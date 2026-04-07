@@ -1,5 +1,9 @@
 #include "launcher_handler.h"
 
+#include <algorithm>
+#include <climits>
+#include <cstdlib>
+#include <sstream>
 #include <string>
 
 #include "base/cef_callback.h"
@@ -19,6 +23,76 @@ bool PickFolderFromFinder(std::string* out_path);
 namespace {
 
 LauncherHandler* g_handler_instance = nullptr;
+
+std::string DecodeQueryValue(const std::string& url, const std::string& key) {
+  CefURLParts parts;
+  if (!CefParseURL(url, parts)) {
+    return "";
+  }
+
+  const std::string query = CefString(&parts.query);
+  const std::string prefix = key + "=";
+  std::stringstream query_stream(query);
+  std::string segment;
+  while (std::getline(query_stream, segment, '&')) {
+    if (segment.compare(0, prefix.size(), prefix) != 0) {
+      continue;
+    }
+    const std::string encoded = segment.substr(prefix.size());
+    return CefURIDecode(encoded, false, UU_NORMAL).ToString();
+  }
+
+  return "";
+}
+
+int DecodePositiveInteger(const std::string& url, const std::string& key) {
+  const std::string value = DecodeQueryValue(url, key);
+  if (value.empty()) {
+    return 0;
+  }
+
+  char* end = nullptr;
+  const long parsed = std::strtol(value.c_str(), &end, 10);
+  if (
+      end == value.c_str() || !end || *end != '\0' || parsed <= 0 ||
+      parsed > INT_MAX) {
+    return 0;
+  }
+
+  return static_cast<int>(parsed);
+}
+
+std::string NormalizePathSeparators(const std::string& path) {
+  std::string normalized = path;
+  std::replace(normalized.begin(), normalized.end(), '\\', '/');
+  return normalized;
+}
+
+std::string QuoteForPosixShell(const std::string& value) {
+  std::string quoted = "'";
+  for (const char ch : value) {
+    if (ch == '\'') {
+      quoted += "'\\''";
+      continue;
+    }
+    quoted.push_back(ch);
+  }
+  quoted.push_back('\'');
+  return quoted;
+}
+
+std::string BuildVsCodeUri(const std::string& path, int line, int column) {
+  const std::string encoded_path =
+      CefURIEncode(NormalizePathSeparators(path), false).ToString();
+  std::string uri = "vscode://file/" + encoded_path;
+  if (line > 0) {
+    uri += ":" + std::to_string(line);
+    if (column > 0) {
+      uri += ":" + std::to_string(column);
+    }
+  }
+  return uri;
+}
 
 }  // namespace
 
@@ -182,6 +256,11 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
     return true;
   }
 
+  if (launcher_bridge::IsOpenInVsCodeRequest(url)) {
+    static_cast<void>(OpenInVsCodeRequest(url));
+    return true;
+  }
+
   if (!launcher_bridge::IsPickFolderRequest(url)) {
     return false;
   }
@@ -195,6 +274,32 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
 #else
   // Unsupported on non-macOS. Cancel navigation to avoid breaking the SPA.
   return true;
+#endif
+}
+
+bool LauncherHandler::OpenInVsCodeRequest(const std::string& url) {
+  const std::string path = DecodeQueryValue(url, "path");
+  if (path.empty()) {
+    return false;
+  }
+
+  const std::string vscode_uri = BuildVsCodeUri(
+      path, DecodePositiveInteger(url, "line"),
+      DecodePositiveInteger(url, "column"));
+
+#if defined(__APPLE__)
+  const std::string command = "open " + QuoteForPosixShell(vscode_uri);
+  return std::system(command.c_str()) == 0;
+#elif defined(__linux__)
+  const std::string command =
+      "xdg-open " + QuoteForPosixShell(vscode_uri) + " >/dev/null 2>&1 &";
+  return std::system(command.c_str()) == 0;
+#elif defined(_WIN32)
+  static_cast<void>(vscode_uri);
+  return false;
+#else
+  static_cast<void>(vscode_uri);
+  return false;
 #endif
 }
 

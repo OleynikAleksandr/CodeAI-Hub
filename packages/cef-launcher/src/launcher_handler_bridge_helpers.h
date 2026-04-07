@@ -16,6 +16,7 @@ inline constexpr char kLauncherScheme[] = "codeai";
 inline constexpr char kLauncherPickFolderHost[] = "pick-folder";
 inline constexpr char kLauncherFileDropHost[] = "file-drop";
 inline constexpr char kLauncherCoreStartHost[] = "core-start";
+inline constexpr char kLauncherOpenInVsCodeHost[] = "open-in-vscode";
 
 inline std::string ToDataUri(const std::string& data,
                              const std::string& mime_type) {
@@ -57,6 +58,10 @@ inline bool IsCoreStartRequest(const std::string& url) {
   return IsLauncherRequestWithHost(url, kLauncherCoreStartHost);
 }
 
+inline bool IsOpenInVsCodeRequest(const std::string& url) {
+  return IsLauncherRequestWithHost(url, kLauncherOpenInVsCodeHost);
+}
+
 inline void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
   if (!frame) {
     return;
@@ -85,6 +90,25 @@ inline void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
   if (typeof window.codeaiLauncher.ensureCoreRunning !== "function") {
     window.codeaiLauncher.ensureCoreRunning = () => {
       window.location.href = "codeai://core-start";
+      return true;
+    };
+  }
+
+  if (typeof window.codeaiLauncher.openInVsCodeFile !== "function") {
+    window.codeaiLauncher.openInVsCodeFile = (payload) => {
+      if (!payload || typeof payload.path !== "string" || payload.path.length === 0) {
+        return false;
+      }
+
+      const params = [`path=${encodeURIComponent(payload.path)}`];
+      if (Number.isInteger(payload.line) && payload.line > 0) {
+        params.push(`line=${payload.line}`);
+      }
+      if (Number.isInteger(payload.column) && payload.column > 0) {
+        params.push(`column=${payload.column}`);
+      }
+
+      window.location.href = `codeai://open-in-vscode?${params.join("&")}`;
       return true;
     };
   }

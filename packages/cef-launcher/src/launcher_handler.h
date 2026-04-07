@@ -63,6 +63,7 @@ class LauncherHandler : public CefClient,
   bool IsClosing() const { return is_closing_; }
 
  private:
+  bool OpenInVsCodeRequest(const std::string& url);
   void PlatformTitleChange(CefRefPtr<CefBrowser> browser,
                            const CefString& title);
   void PlatformShowWindow(CefRefPtr<CefBrowser> browser);
