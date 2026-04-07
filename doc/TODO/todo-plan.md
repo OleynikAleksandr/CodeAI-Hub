@@ -76,8 +76,8 @@
 33. [DONE] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: synchronize canonical SSOT documents before release packaging so shipped behavior and docs stay aligned; expected commit message: `docs(ssot): sync foundation envelope visual projection release contract`
 34. [DONE] Git Commit: `docs(ssot): sync foundation envelope visual projection release contract` (hash: `2e9fa51da`)
 35. [DONE] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline, allow version/materialization updates, and record the result before final packaging; expected commit message: `build(release): cut foundation envelope visual projection artifacts`
-36. [TODO] Git Commit: `build(release): cut foundation envelope visual projection artifacts` (hash: TBD)
-37. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX from a clean tree and confirm the release checklist passes for this scope; expected commit message: `build(release): package foundation envelope visual projection`
+36. [DONE] Git Commit: `build(release): cut foundation envelope visual projection artifacts` (hash: `d1f143d41`)
+37. [DONE] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX from a clean tree and confirm the release checklist passes for this scope; expected commit message: `build(release): package foundation envelope visual projection`
 38. [TODO] Git Commit: `build(release): package foundation envelope visual projection` (hash: TBD)
 39. [TODO] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the FE visual projection scope only after release artifacts are built, packaged, and validated; expected commit message: `docs(closeout): archive foundation envelope visual projection scope`
 40. [TODO] Git Commit: `docs(closeout): archive foundation envelope visual projection scope` (hash: TBD)
