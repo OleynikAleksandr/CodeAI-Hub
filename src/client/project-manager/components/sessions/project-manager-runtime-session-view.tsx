@@ -334,7 +334,6 @@ const ProjectManagerRuntimeSessionView = ({
       allSessions={sessions}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
-      emptyStateStage={sessionScopeStage}
       onCloseSession={hideSession}
       onFileLinkActivate={onFileLinkActivate}
       onSelectSession={setActiveSessionId}

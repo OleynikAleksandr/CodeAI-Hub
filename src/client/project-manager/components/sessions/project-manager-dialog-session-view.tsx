@@ -34,7 +34,6 @@ const ProjectManagerDialogSessionView = (props: {
         allSessions={[]}
         coreConnectionDetail={connection.detail}
         coreConnectionStatus={connection.status}
-        emptyStateStage={props.intent?.stage ?? null}
         onCloseSession={() => props.onExit()}
         onFileLinkActivate={props.onFileLinkActivate}
         onSelectSession={() => {}}
@@ -55,7 +54,6 @@ const ProjectManagerDialogSessionView = (props: {
       allSessions={[session]}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
-      emptyStateStage={props.intent?.stage ?? null}
       onCloseSession={() => props.onExit()}
       onFileLinkActivate={props.onFileLinkActivate}
       onSelectSession={() => {}}
