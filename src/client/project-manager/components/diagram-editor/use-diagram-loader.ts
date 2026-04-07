@@ -12,9 +12,11 @@ import {
   loadDiagramModulesProgressiveResult,
 } from "./diagram-modules-progressive-model";
 import {
+  applyFlowSidecarPositions,
   parseFlowSidecar,
   type FlowSidecarDocument,
 } from "./flow-sidecar-types";
+import { foundationEnvelopeToReactFlow } from "../foundation-envelope/foundation-envelope-to-react-flow";
 
 export type DiagramLoaderStatus = "loading" | "missing" | "ready" | "error";
 export type { DiagramEditorStage } from "./diagram-modules-progressive-model";
@@ -184,10 +186,20 @@ export const useDiagramLoader = (params: {
         sidecarResult.status === "ok"
           ? parseFlowSidecar(sidecarResult.content)
           : null;
+      const baseProjection = foundationEnvelopeToReactFlow(
+        parsedFoundationEnvelope.value
+      );
       setContent(artifactResult.content);
       setModel(null);
       setFlowDocument(nextFlowDocument);
-      setProjection(null);
+      setProjection({
+        ...baseProjection,
+        nodes: applyFlowSidecarPositions({
+          nodes: baseProjection.nodes as never,
+          document: nextFlowDocument,
+          revision: baseProjection.revision,
+        }) as never,
+      } as DiagramFlowProjection);
       setStatus("ready");
     })();
 

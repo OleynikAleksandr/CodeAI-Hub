@@ -46,8 +46,8 @@
 
 ### Stream: Foundation Envelope Model And Projection
 11. [DONE] Add `packages/core/src/workflow/foundation-envelope/foundation-envelope-model.ts`, `packages/core/src/workflow/foundation-envelope/foundation-envelope-markdown-parser.ts`, and `doc/TODO/todo-plan.md`; scope: define the FE visual domain model and a compatibility parser for the current markdown/table shape plus the new projection-friendly fields; expected commit message: `feat(core): parse foundation envelope model`
-12. [TODO] Git Commit: `feat(core): parse foundation envelope model` (hash: TBD)
-13. [TODO] Add `src/client/project-manager/components/foundation-envelope/foundation-envelope-react-flow.types.ts`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-to-react-flow.ts`, and `doc/TODO/todo-plan.md`; scope: project `Application Root`, `Shared Zones`, `Product Parts`, and `Integration Seams` into React Flow nodes/edges with technology-status badges; expected commit message: `feat(pm): project foundation envelope graph`
+12. [DONE] Git Commit: `feat(core): parse foundation envelope model` (hash: `269ddf5be`)
+13. [DONE] Add `src/client/project-manager/components/foundation-envelope/foundation-envelope-react-flow.types.ts`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-to-react-flow.ts`, and `doc/TODO/todo-plan.md`; scope: project `Application Root`, `Shared Zones`, `Product Parts`, and `Integration Seams` into React Flow nodes/edges with technology-status badges; expected commit message: `feat(pm): project foundation envelope graph`
 14. [TODO] Git Commit: `feat(pm): project foundation envelope graph` (hash: TBD)
 
 ### Stream: PM Rendering And Persistence
