@@ -192,14 +192,16 @@ export const useDiagramLoader = (params: {
       setContent(artifactResult.content);
       setModel(null);
       setFlowDocument(nextFlowDocument);
-      setProjection({
+      // Foundation Envelope reuses the shared diagram renderer payload shape
+      // until stage-specific flow types are generalized across the shell.
+      setProjection(({
         ...baseProjection,
         nodes: applyFlowSidecarPositions({
           nodes: baseProjection.nodes as never,
           document: nextFlowDocument,
           revision: baseProjection.revision,
         }) as never,
-      } as DiagramFlowProjection);
+      } as unknown) as DiagramFlowProjection);
       setStatus("ready");
     })();
 
