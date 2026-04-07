@@ -12,18 +12,27 @@ import { DiagramEditorShell } from "./diagram-editor-shell";
 import type { DiagramLoaderStatus } from "./use-diagram-loader";
 
 const resolveDiagramStageId = (
-  _artifactPath: string
-): "diagram_modules" => "diagram_modules";
+  artifactPath: string
+): "diagram_modules" | "foundation_envelope" =>
+  artifactPath.includes("/foundation_envelope/")
+    ? "foundation_envelope"
+    : "diagram_modules";
 
 const buildDiagramRepairPrompt = (params: {
   readonly artifactFileName: string;
   readonly artifactPath: string;
   readonly error: string;
+  readonly stageId: "diagram_modules" | "foundation_envelope";
 }): string =>
   [
     `Исправь артефакт \`${params.artifactFileName}\` по пути \`${params.artifactPath}\`.`,
     "Нужно сохранить валидные пользовательские правки, если они есть.",
     "Устрани parse/validation ошибку и верни корректный canonical artifact для этого stage.",
+    ...(params.stageId === "foundation_envelope"
+      ? [
+          "Сохрани явные `Application Root`, `Shared Zones`, `Product Parts`, `Integration Seams` и projection-friendly markdown structure.",
+        ]
+      : []),
     `Ошибка: ${params.error}`,
   ].join("\n");
 
@@ -191,6 +200,7 @@ export const DiagramStagePanelScaffold: React.FC<DiagramStagePanelScaffoldProps>
                     artifactFileName,
                     artifactPath,
                     error,
+                    stageId,
                   })
                 : null
             }
