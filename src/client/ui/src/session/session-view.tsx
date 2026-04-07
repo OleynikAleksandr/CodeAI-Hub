@@ -3,6 +3,7 @@ import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
 import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
 import EmptyState from "./empty-state";
+import type { FileLinkTarget } from "./file-link-target";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
 import SessionIdBar from "./session-id-bar";
@@ -60,6 +61,7 @@ interface SessionViewProps {
   readonly emptyStateStage?: string | null;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onDismissSwitchOffer?: () => void;
+  readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onRetryInPlace?: () => void;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onSelectSwitchTarget?: (target: SwitchTargetProp) => void;
@@ -140,6 +142,7 @@ const SessionViewBody = ({
   tokenDebugSummaryOverride,
   onSelectSession,
   onCloseSession,
+  onFileLinkActivate,
   onSendMessage,
   showThinkingMessages,
   switchOffer,
@@ -241,6 +244,7 @@ const SessionViewBody = ({
         <div className="session-app__dialog">
           <DialogPanel
             messages={virtualConversationMessages}
+            onFileLinkActivate={onFileLinkActivate}
             providerLabel={providerDisplayLabel}
             providerTheme={providerTheme}
           />

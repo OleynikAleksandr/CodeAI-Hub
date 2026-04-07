@@ -28,11 +28,11 @@
 
 ### Stream: Dialog Markdown File-Link Interception
 1. [DONE] Add explicit local-file link parsing and dialog-link interception in `src/client/ui/src/session/file-link-target.ts`, `src/client/ui/src/session/markdown-content.tsx`, and `src/client/ui/src/session/dialog-panel.tsx`; scope: detect absolute local file hrefs with optional line/column metadata and expose an opt-in interception callback without changing non-file links; expected commit message: `feat(ui): intercept dialog file links`
-2. [IN_PROGRESS] Git Commit: `feat(ui): intercept dialog file links` (hash: TBD)
+2. [DONE] Git Commit: `feat(ui): intercept dialog file links` (hash: `067c0fc2c`)
 
 ### Stream: Session Surface Callback Wiring
-3. [TODO] Thread the dialog file-link callback through `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, and `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; scope: PM session surfaces only, with no behavior change for artifact/help markdown; expected commit message: `feat(pm): wire session file link callbacks`
-4. [TODO] Git Commit: `feat(pm): wire session file link callbacks` (hash: TBD)
+3. [DONE] Thread the dialog file-link callback through `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, and `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; scope: PM session surfaces only, with no behavior change for artifact/help markdown; expected commit message: `feat(pm): wire session file link callbacks`
+4. [IN_PROGRESS] Git Commit: `feat(pm): wire session file link callbacks` (hash: TBD)
 
 ### Stream: PM Opener Strategy
 5. [TODO] Implement the PM opener strategy in `src/client/project-manager/services/project-manager-file-link-opener.ts`, `src/client/project-manager/services/pm-bridges.ts`, and `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; scope: prefer VS Code webview `postMessage` when available and fall back to `vscode://file` handoff in standalone PM; expected commit message: `feat(pm): open dialog file links in vscode`

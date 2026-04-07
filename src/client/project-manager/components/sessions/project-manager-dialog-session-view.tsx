@@ -1,4 +1,5 @@
 import SessionView from "../../../ui/src/session/session-view";
+import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 import { useDialogSwitchOffer } from "./use-dialog-switch-offer";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
@@ -9,6 +10,7 @@ const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
   readonly onExit: () => void;
   readonly emptyStatePending?: boolean;
+  readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
 }) => {
   const {
     connection,
@@ -34,6 +36,7 @@ const ProjectManagerDialogSessionView = (props: {
         coreConnectionStatus={connection.status}
         emptyStateStage={props.intent?.stage ?? null}
         onCloseSession={() => props.onExit()}
+        onFileLinkActivate={props.onFileLinkActivate}
         onSelectSession={() => {}}
         onSendMessage={() => {}}
         emptyStatePending={shouldShowPending}
@@ -54,6 +57,7 @@ const ProjectManagerDialogSessionView = (props: {
       coreConnectionStatus={connection.status}
       emptyStateStage={props.intent?.stage ?? null}
       onCloseSession={() => props.onExit()}
+      onFileLinkActivate={props.onFileLinkActivate}
       onSelectSession={() => {}}
       onSendMessage={(_sessionId, content) => sendMessage(content)}
       providerLabels={providerLabels}

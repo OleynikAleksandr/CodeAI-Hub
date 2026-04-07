@@ -4,6 +4,7 @@ import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
+import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
 import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, resolveSessionThinkingDisplayEnabled, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
@@ -23,6 +24,7 @@ type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
   readonly emptyStatePending?: boolean;
+  readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly startupStage?: string;
 };
 
@@ -30,6 +32,7 @@ const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
   emptyStatePending = false,
+  onFileLinkActivate,
   startupStage = "description",
 }: ProjectManagerSessionViewProps) => {
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
@@ -333,6 +336,7 @@ const ProjectManagerRuntimeSessionView = ({
       coreConnectionStatus={connection.status}
       emptyStateStage={sessionScopeStage}
       onCloseSession={hideSession}
+      onFileLinkActivate={onFileLinkActivate}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
       emptyStatePending={emptyStatePending}
