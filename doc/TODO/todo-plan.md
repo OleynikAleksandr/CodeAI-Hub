@@ -34,8 +34,8 @@
 
 ### Stream: Release Build For User Testing
 5. [DONE] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: announce the launcher query-decode hotfix and the deferred broader documentation pass; expected commit message: `docs(release): prep launcher query decode hotfix release`
-6. [IN_PROGRESS] Git Commit: `docs(release): prep launcher query decode hotfix release` (hash: TBD)
-7. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for the standalone launcher query-decode hotfix; expected commit message: `build(release): cut launcher query decode hotfix`
+6. [DONE] Git Commit: `docs(release): prep launcher query decode hotfix release` (hash: `b349c3f0c`)
+7. [IN_PROGRESS] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for the standalone launcher query-decode hotfix; expected commit message: `build(release): cut launcher query decode hotfix`
 8. [TODO] Git Commit: `build(release): cut launcher query decode hotfix` (hash: TBD)
 
 ### Stream: Scope Closeout
