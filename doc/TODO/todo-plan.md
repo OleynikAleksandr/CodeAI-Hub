@@ -37,14 +37,16 @@
 
 ### Stream: Launcher VS Code URI Repair
 5. [DONE] Update `packages/cef-launcher/src/launcher_handler.cc` and `doc/TODO/todo-plan.md`; scope: build the final `vscode://file/...` target without encoding `/` and `:` again, while keeping optional line/column suffixes; expected commit message: `fix(launcher): preserve standalone vscode file paths`
-6. [IN_PROGRESS] Git Commit: `fix(launcher): preserve standalone vscode file paths` (hash: TBD)
+6. [DONE] Git Commit: `fix(launcher): preserve standalone vscode file paths` (hash: `d42bce29b`)
 
 ### Stream: Docs Sync
-7. [TODO] Sync the clarified standalone fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; scope: document that the remaining hotfix repairs percent-encoded file paths while the external VS Code confirmation prompt may still appear as a platform-level safeguard; expected commit message: `docs(pm): sync file link path encoding hotfix`
-8. [TODO] Git Commit: `docs(pm): sync file link path encoding hotfix` (hash: TBD)
+7. [DONE] Sync the standalone fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/TODO/todo-plan.md`; scope: document that standalone PM decodes percent-encoded file paths before launcher handoff and that the launcher must preserve real filesystem separators inside `vscode://file/...`; expected commit message: `docs(pm): sync standalone file link contract`
+8. [IN_PROGRESS] Git Commit: `docs(pm): sync standalone file link contract` (hash: TBD)
+9. [TODO] Sync the UI-side file-link normalization contract in `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` and `doc/TODO/todo-plan.md`; scope: document that PM dialog markdown decodes percent-encoded absolute paths before using the editor-aware open pipeline, while the external VS Code confirmation prompt may still appear as a platform-level safeguard; expected commit message: `docs(pm): sync ui file link path contract`
+10. [TODO] Git Commit: `docs(pm): sync ui file link path contract` (hash: TBD)
 
 ### Stream: Release Build For User Testing
-9. [TODO] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the path-encoding fix before packaging; expected commit message: `docs(release): prep file link path hotfix release`
-10. [TODO] Git Commit: `docs(release): prep file link path hotfix release` (hash: TBD)
-11. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a hotfix test build; expected commit message: `build(release): cut file link path hotfix`
-12. [TODO] Git Commit: `build(release): cut file link path hotfix` (hash: TBD)
+11. [TODO] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the path-encoding fix before packaging; expected commit message: `docs(release): prep file link path hotfix release`
+12. [TODO] Git Commit: `docs(release): prep file link path hotfix release` (hash: TBD)
+13. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a hotfix test build; expected commit message: `build(release): cut file link path hotfix`
+14. [TODO] Git Commit: `build(release): cut file link path hotfix` (hash: TBD)
