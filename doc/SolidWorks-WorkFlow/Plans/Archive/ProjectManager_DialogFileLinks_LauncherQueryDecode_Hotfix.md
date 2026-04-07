@@ -1,9 +1,10 @@
 # Project Manager Dialog File Links Launcher Query Decode Hotfix
 
-**Status:** Approved for execution (2026-04-07)
+**Status:** Completed and archived after release `1.1.904` (2026-04-07)
 **Created:** 2026-04-07
 **Owner:** Oleksandr + Codex
 **Scope:** Fix the remaining standalone PM file-link regression after `1.1.903`, where Visual Studio Code still receives a path shaped like `/%2FUsers%2F...` and shows `Path does not exist`.
+**Result:** The launcher now decodes the `path` query parameter with filesystem-oriented URI rules before building `vscode://file/...`, release `1.1.904` packages the narrow hotfix for user testing, and the broader method/knowledge documentation remains intentionally deferred until the user confirms the fix works.
 
 ---
 

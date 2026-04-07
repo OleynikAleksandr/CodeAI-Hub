@@ -1,7 +1,7 @@
 # Development TODO Plan
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/ProjectManager_DialogFileLinks_LauncherQueryDecode_Hotfix.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_DialogFileLinks_LauncherQueryDecode_Hotfix.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`
@@ -35,9 +35,9 @@
 ### Stream: Release Build For User Testing
 5. [DONE] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: announce the launcher query-decode hotfix and the deferred broader documentation pass; expected commit message: `docs(release): prep launcher query decode hotfix release`
 6. [DONE] Git Commit: `docs(release): prep launcher query decode hotfix release` (hash: `b349c3f0c`)
-7. [IN_PROGRESS] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for the standalone launcher query-decode hotfix; expected commit message: `build(release): cut launcher query decode hotfix`
-8. [TODO] Git Commit: `build(release): cut launcher query decode hotfix` (hash: TBD)
+7. [DONE] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for the standalone launcher query-decode hotfix; expected commit message: `build(release): cut launcher query decode hotfix`
+8. [DONE] Git Commit: `build(release): cut launcher query decode hotfix` (hash: `62121033a`)
 
 ### Stream: Scope Closeout
-9. [TODO] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the active launcher query-decode hotfix plan after the release build is ready for user testing; expected commit message: `docs(closeout): archive launcher query decode hotfix scope`
-10. [TODO] Git Commit: `docs(closeout): archive launcher query decode hotfix scope` (hash: TBD)
+9. [DONE] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the active launcher query-decode hotfix plan after the release build is ready for user testing; expected commit message: `docs(closeout): archive launcher query decode hotfix scope`
+10. [IN_PROGRESS] Git Commit: `docs(closeout): archive launcher query decode hotfix scope` (hash: TBD)
