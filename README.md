@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.898
-- **Workflow startup truth is now canonical across the whole released trunk chain**: Core repairs the active workflow step from canonical `lastActive` + continuity + artifact evidence, so `Description`, `Virtual Simulation`, `Diagram Modules`, and `Foundation Envelope` reopen under one deterministic workspace-scoped truth instead of stage-specific heuristics.
-- **Project Manager startup routing now follows the same stage resolver for cold start and normal navigation**: workspace auto-select, toolbar clicks, tree clicks, artifact opening, and dialog restore now reuse one stage-to-artifact/session route, eliminating the old split between startup selection and post-click synchronization.
-- **Formal restart symmetry coverage now protects the retrofit**: new core and PM regressions verify canonical `lastActive`, stale-state self-heal, late-step cold-start hydration, shared startup routing, and the pre-existing history-backed continuity baseline before packaged release validation.
+## Current Release — v1.1.899
+- **Workspace open now deliberately starts in `Description`**: the temporary product contract no longer infers startup from continuity recency, `lastActive`, or late-step artifact timestamps, so every workspace open/switch/reconnect lands in the same deterministic stage.
+- **Project Manager startup is now Description-scoped end-to-end**: the toolbar, artifact panel, and session panel all start from `Description`; the right panel opens `Final_Description.md` when present or falls back to `questionnaire.md`, and the left panel no longer auto-leaks later-stage sessions.
+- **Docs and regression coverage now lock the temporary rule explicitly**: the PM navigation SSOT, cluster notes, and startup source-tests all document and verify the same temporary contract before release packaging.
 
-Previous releases (summary): `1.1.800–1.1.897` — Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, workflow-state startup SSOT alignment, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.898` — workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.899] - 2026-04-07
+### Fixed
+- **Workspace startup is temporarily pinned to `Description` across Core and Project Manager**: workspace open, switch, reconnect, and cold-start restore now force `Description` as the startup stage instead of deriving it from continuity recency or late-step artifact timestamps.
+- **Startup restore no longer leaks later-stage sessions into the left panel**: automatic runtime fallback is now Description-scoped, so `Virtual Simulation`, `Diagram Modules`, and `Foundation Envelope` sessions no longer appear on startup unless the user explicitly navigates there.
+- **The released docs and PM regression tests now protect the temporary contract**: Project Manager SSOT/cluster docs plus startup routing source-tests now explicitly lock `workspace open => Description`, `Final_Description.md`/`questionnaire.md` startup selection, and the removal of the old `lastActive` startup selector.
+
 ## [1.1.898] - 2026-04-06
 ### Fixed
 - **Workflow startup truth is now canonical across the released trunk chain**: Core now repairs `lastActive` from the combined workflow-state, continuity, and semantic artifact evidence, so late trunk steps no longer depend on ad hoc per-stage heuristics after restart.

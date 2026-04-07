@@ -48,5 +48,7 @@
 10. [IN_PROGRESS] Git Commit: `docs(pm): document description-first workspace startup` (hash: TBD)
 
 ### Stream: Release Build For User Testing
-11. [TODO] Run the release checklist for this scope in `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, and release/build outputs as needed: finish all streams, keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for description startup reset`
-12. [TODO] Git Commit: `build(release): cut test build for description startup reset` (hash: TBD)
+11. [DONE] Prepare the release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep description startup reset test release`
+12. [IN_PROGRESS] Git Commit: `docs(release): prep description startup reset test release` (hash: TBD)
+13. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for description startup reset`
+14. [TODO] Git Commit: `build(release): cut test build for description startup reset` (hash: TBD)
