@@ -35,11 +35,26 @@ const toPositiveInteger = (value: string | undefined): number | null => {
 const isAbsoluteFilePath = (value: string): boolean =>
   value.startsWith("/") || WINDOWS_ABSOLUTE_PATH_RE.test(value);
 
+const decodeAbsoluteFilePath = (filePath: string): string => {
+  if (!filePath.includes("%")) {
+    return filePath;
+  }
+
+  try {
+    const decoded = decodeURIComponent(filePath);
+    return isAbsoluteFilePath(decoded) ? decoded : filePath;
+  } catch {
+    return filePath;
+  }
+};
+
 const normalizeFileUriPath = (filePath: string): string =>
   FILE_URI_WINDOWS_PATH_RE.test(filePath) ? filePath.slice(1) : filePath;
 
 const parseFileUriLocation = (uri: URL): ParsedLocation | null => {
-  const filePath = normalizeFileUriPath(decodeURIComponent(uri.pathname));
+  const filePath = decodeAbsoluteFilePath(
+    normalizeFileUriPath(decodeURIComponent(uri.pathname))
+  );
   if (!isAbsoluteFilePath(filePath)) {
     return null;
   }
@@ -75,7 +90,7 @@ const parseHashLocation = (href: string): ParsedLocation | null => {
     return null;
   }
 
-  const filePath = href.slice(0, match.index);
+  const filePath = decodeAbsoluteFilePath(href.slice(0, match.index));
   if (!isAbsoluteFilePath(filePath)) {
     return null;
   }
@@ -98,7 +113,7 @@ const parseColonLocation = (href: string): ParsedLocation | null => {
   }
 
   return {
-    filePath: match[1],
+    filePath: decodeAbsoluteFilePath(match[1]),
     line: toPositiveInteger(match[2]),
     column: toPositiveInteger(match[3]),
   };
@@ -133,7 +148,7 @@ export const resolveFileLinkTarget = (href: string): FileLinkTarget | null => {
 
   return {
     href: trimmedHref,
-    filePath: trimmedHref,
+    filePath: decodeAbsoluteFilePath(trimmedHref),
     line: null,
     column: null,
   };

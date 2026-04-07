@@ -15,6 +15,20 @@ test("resolveFileLinkTarget parses unix absolute paths with line and column", ()
   });
 });
 
+test("resolveFileLinkTarget decodes percent-encoded unix absolute paths", () => {
+  const target = resolveFileLinkTarget(
+    "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md:28:3"
+  );
+
+  assert.deepEqual(target, {
+    href: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub%20codex%205.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md:28:3",
+    filePath:
+      "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md",
+    line: 28,
+    column: 3,
+  });
+});
+
 test("resolveFileLinkTarget parses file URI hash locations", () => {
   const target = resolveFileLinkTarget(
     "file:///Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/README.md#L12C4"

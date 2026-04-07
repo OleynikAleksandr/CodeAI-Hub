@@ -29,11 +29,11 @@
 
 ### Stream: Planning And Recovery Reset
 1. [DONE] Reconstruct the remaining standalone regression from the tested `1.1.902` behavior and restate the new path-encoding decision in `doc/SolidWorks-WorkFlow/Plans/ProjectManager_DialogFileLinks_PathEncoding_Hotfix.md`, `doc/TODO/todo-plan.md`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: open a new execution cycle for path normalization and launcher URI repair only; expected commit message: `docs(pm): plan file link path encoding hotfix`
-2. [TODO] Git Commit: `docs(pm): plan file link path encoding hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): plan file link path encoding hotfix` (hash: `55280fada`)
 
 ### Stream: UI File Path Normalization
-3. [TODO] Update `src/client/ui/src/session/file-link-target.ts`, `src/client/ui/src/session/file-link-target.test.ts`, and `doc/TODO/todo-plan.md`; scope: decode percent-encoded absolute file targets before the PM opener pipeline while preserving location parsing; expected commit message: `fix(ui): decode encoded dialog file paths`
-4. [TODO] Git Commit: `fix(ui): decode encoded dialog file paths` (hash: TBD)
+3. [DONE] Update `src/client/ui/src/session/file-link-target.ts`, `src/client/ui/src/session/file-link-target.test.ts`, and `doc/TODO/todo-plan.md`; scope: decode percent-encoded absolute file targets before the PM opener pipeline while preserving location parsing; expected commit message: `fix(ui): decode encoded dialog file paths`
+4. [IN_PROGRESS] Git Commit: `fix(ui): decode encoded dialog file paths` (hash: TBD)
 
 ### Stream: Launcher VS Code URI Repair
 5. [TODO] Update `packages/cef-launcher/src/launcher_handler.cc` and `doc/TODO/todo-plan.md`; scope: build the final `vscode://file/...` target without encoding `/` and `:` again, while keeping optional line/column suffixes; expected commit message: `fix(launcher): preserve standalone vscode file paths`
