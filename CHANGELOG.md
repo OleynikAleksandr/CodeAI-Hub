@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.903] - 2026-04-07
+### Fixed
+- **Standalone PM dialog file links now decode percent-encoded absolute paths before the open pipeline continues**: agent-provided paths such as `...%20...` are normalized back into real filesystem paths before PM routes them to VS Code.
+- **Launcher-side `vscode://file/...` generation now preserves path separators**: the standalone fallback no longer re-encodes `/` or `:` into broken values like `/%2FUsers/...%2520...`, so Visual Studio Code no longer receives a non-existent path after the confirmation prompt.
+- **The remaining standalone safeguard prompt is now explicitly treated as a platform-level behavior, not a PM regression**: the PM/UI/launcher docs now lock the contract that the prompt may still appear, but confirming it must open the real target file and location.
+
 ## [1.1.902] - 2026-04-07
 ### Fixed
 - **Standalone PM dialog file links no longer open a second Chromium window with `ERR_UNKNOWN_URL_SCHEME`**: the dialog surface no longer tries to navigate CEF directly to `vscode://file/...` after the user clicks an agent-provided file reference.

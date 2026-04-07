@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.902
-- **Standalone Project Manager file links no longer spawn a broken Chromium window**: dialog file clicks now stop at the launcher host instead of trying to navigate the CEF surface to `vscode://file/...`, which removes the observed `ERR_UNKNOWN_URL_SCHEME` regression.
-- **Launcher-host handoff now opens the final `vscode://file/...` target in external Visual Studio Code**: VS Code-hosted PM still uses `showTextDocument`, while standalone PM routes the same absolute file target through `codeai://open-in-vscode?...` and lets the launcher open VS Code externally.
-- **Editor-aware file opens still preserve location metadata**: supported dialog links keep `:line:column` or `#LlineCcolumn` targeting, so the final VS Code open path can still reveal the intended position.
+## Current Release — v1.1.903
+- **Standalone PM dialog file links now normalize percent-encoded absolute paths before handoff**: agent-provided targets such as `.../CodeAI-Hub%20codex%205.4/...` are decoded back into real filesystem paths before the editor-aware open flow continues.
+- **Launcher-generated `vscode://file/...` URIs now preserve real filesystem separators**: standalone handoff no longer degrades valid absolute paths into broken targets like `/%2FUsers/...%2520...`, which removes the observed Visual Studio Code `Path does not exist` failure after confirmation.
+- **The standalone confirmation prompt may still appear, but it now resolves to the real file and location**: PM still uses the launcher-host route in standalone mode, while VS Code-hosted PM continues to use the native editor API with `:line:column` or `#LlineCcolumn` targeting.
 
 Previous releases (summary): `1.1.800–1.1.900` — left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
 
