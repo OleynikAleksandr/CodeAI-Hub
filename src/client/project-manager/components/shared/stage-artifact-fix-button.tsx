@@ -6,8 +6,7 @@ import { resolvePreferredWorkflowProviderId } from "../../services/workflow-prov
 
 type RepairableStageId =
   | "virtual_simulation"
-  | "diagram_modules"
-  | "foundation_envelope";
+  | "diagram_modules";
 
 const USER_MESSAGES_CATEGORY = "system_feedback";
 

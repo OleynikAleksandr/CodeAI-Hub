@@ -75,8 +75,8 @@
 
 ### Stream: Panel And Shared UI Cleanup
 25. [DONE] Update `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/main-area-utils.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE panel routing from the main area and keep stage-specific panel selection limited to supported steps; expected commit message: `refactor(pm): drop foundation envelope panel routing`
-26. [TODO] Git Commit: `refactor(pm): drop foundation envelope panel routing` (hash: TBD)
-27. [TODO] Update `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, and `src/client/project-manager/components/layout/use-foundation-envelope-artifact-availability.ts`; scope: remove FE-specific empty-state/artifact-stage handling and delete the FE artifact availability helper path; expected commit message: `refactor(ui): remove foundation envelope shared helpers`
+26. [DONE] Git Commit: `refactor(pm): drop foundation envelope panel routing` (hash: `0e9475103`)
+27. [DONE] Update `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, and `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; scope: remove FE-specific empty-state/artifact-stage handling and prune FE from shared repair surfaces; expected commit message: `refactor(ui): remove foundation envelope shared helpers`
 28. [TODO] Git Commit: `refactor(ui): remove foundation envelope shared helpers` (hash: TBD)
 29. [TODO] Update `src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-to-react-flow.ts`, and `src/client/project-manager/components/foundation-envelope/foundation-envelope-react-flow.types.ts`; scope: remove the FE-specific PM visual implementation after all active entrypoints are cut; expected commit message: `refactor(pm): remove foundation envelope visual implementation`
 30. [TODO] Git Commit: `refactor(pm): remove foundation envelope visual implementation` (hash: TBD)
