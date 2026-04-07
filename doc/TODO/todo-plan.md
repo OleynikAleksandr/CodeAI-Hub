@@ -66,8 +66,8 @@
 25. [DONE] Update `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts` and `doc/TODO/todo-plan.md`; scope: keep workspace-tree/stage-sync expectations aligned with `Foundation Envelope` as the default diagram `Artifacts` surface; expected commit message: `test(pm): keep foundation envelope tree parity`
 26. [DONE] Git Commit: `test(pm): keep foundation envelope tree parity` (hash: `d5d4ee23d`)
 27. [DONE] Update `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts` and `doc/TODO/todo-plan.md`; scope: make the `Foundation Envelope` projection cast explicit enough for webview typecheck while the stage still reuses the shared diagram renderer payload; expected commit message: `fix(pm): satisfy foundation envelope projection typecheck`
-28. [TODO] Git Commit: `fix(pm): satisfy foundation envelope projection typecheck` (hash: TBD)
-29. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: targeted verification for FE visual projection across core + PM/webview surfaces before scope closeout; expected commit message: `test(pm): verify foundation envelope visual projection`
+28. [DONE] Git Commit: `fix(pm): satisfy foundation envelope projection typecheck` (hash: `5df99a239`)
+29. [DONE] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: targeted verification for FE visual projection across core + PM/webview surfaces before scope closeout; expected commit message: `test(pm): verify foundation envelope visual projection`
 30. [TODO] Git Commit: `test(pm): verify foundation envelope visual projection` (hash: TBD)
 
 ### Stream: Release Build And Scope Closeout
