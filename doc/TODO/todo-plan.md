@@ -34,10 +34,10 @@
 1. [DONE] Update `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: activate `foundation-envelope.flow.json` and runtime visual projection for `Foundation Envelope` while keeping `foundation-envelope.md` as semantic SSOT; expected commit message: `docs(workflow): activate foundation envelope visual projection`
 2. [DONE] Git Commit: `docs(workflow): activate foundation envelope visual projection` (hash: `6b314b960`)
 3. [DONE] Update `packages/core/src/templates/source/foundation-envelope-prompt.md`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-panel.tsx`, and `doc/TODO/todo-plan.md`; scope: require projection-friendly markdown structure, remove markdown-only guidance, and keep `.flow.json` runtime-owned instead of agent-generated; expected commit message: `docs(prompt): require projection-ready foundation envelope`
-4. [TODO] Git Commit: `docs(prompt): require projection-ready foundation envelope` (hash: TBD)
+4. [DONE] Git Commit: `docs(prompt): require projection-ready foundation envelope` (hash: `04e5f8c8c`)
 
 ### Stream: Artifact Surface And Loader Generalization
-5. [TODO] Update `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, and `doc/TODO/todo-plan.md`; scope: add `foundation-envelope.flow.json` to workflow artifact typing and allowlist without changing semantic gating rules; expected commit message: `feat(workflow): add foundation envelope flow artifact`
+5. [DONE] Update `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, and `doc/TODO/todo-plan.md`; scope: add `foundation-envelope.flow.json` to workflow artifact typing and allowlist without changing semantic gating rules; expected commit message: `feat(workflow): add foundation envelope flow artifact`
 6. [TODO] Git Commit: `feat(workflow): add foundation envelope flow artifact` (hash: TBD)
 7. [TODO] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: validate and route `Foundation Envelope` sidecar reads/writes through the existing workflow artifact endpoints; expected commit message: `feat(core): route foundation envelope sidecar`
 8. [TODO] Git Commit: `feat(core): route foundation envelope sidecar` (hash: TBD)

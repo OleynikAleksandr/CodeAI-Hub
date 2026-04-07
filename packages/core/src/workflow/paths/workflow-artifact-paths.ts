@@ -26,7 +26,10 @@ const WORKFLOW_STAGE_FILES = new Map<
     "diagram_modules",
     ["product-parts.index.md", "product-part.md", "module-map.flow.json"],
   ],
-  ["foundation_envelope", ["foundation-envelope.md"]],
+  [
+    "foundation_envelope",
+    ["foundation-envelope.md", "foundation-envelope.flow.json"],
+  ],
 ]);
 
 const isWorkflowStage = (value: string): value is WorkflowStageId =>
