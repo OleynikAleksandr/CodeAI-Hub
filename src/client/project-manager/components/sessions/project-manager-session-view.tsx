@@ -62,6 +62,7 @@ export const ProjectManagerSessionView = ({
     <ProjectManagerRuntimeSessionView
       emptyStatePending={Boolean(pendingSessionCreate)}
       preferredSessionId={preferredSessionId}
+      startupStage="description"
       workspacePath={workspacePath}
     />
   );

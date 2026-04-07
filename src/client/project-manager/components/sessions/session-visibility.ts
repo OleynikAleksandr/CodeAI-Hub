@@ -10,6 +10,7 @@ export const useSessionVisibility = (params: {
   readonly sessions: readonly SessionRecord[];
   readonly sessionsRef: MutableRefObject<readonly SessionRecord[]>;
   readonly workspacePath?: string;
+  readonly visibleStage?: string | null;
   readonly forcedHiddenSessionIds?: ReadonlySet<string>;
   readonly setActiveSessionId: (
     next:
@@ -51,6 +52,9 @@ export const useSessionVisibility = (params: {
           const remaining = params.sessionsRef.current.filter(
             (session) =>
               session.workspacePath === params.workspacePath &&
+              (params.visibleStage === null ||
+                params.visibleStage === undefined ||
+                session.stage === params.visibleStage) &&
               session.id !== sessionId &&
               !next.has(session.id)
           );
@@ -59,7 +63,12 @@ export const useSessionVisibility = (params: {
         return next;
       });
     },
-    [params.sessionsRef, params.setActiveSessionId, params.workspacePath]
+    [
+      params.sessionsRef,
+      params.setActiveSessionId,
+      params.visibleStage,
+      params.workspacePath,
+    ]
   );
 
   const removeHiddenSession = useCallback((sessionId: string) => {
@@ -80,12 +89,16 @@ export const useSessionVisibility = (params: {
     return params.sessions.filter(
       (session) =>
         session.workspacePath === params.workspacePath &&
+        (params.visibleStage === null ||
+          params.visibleStage === undefined ||
+          session.stage === params.visibleStage) &&
         !hiddenSessionIds.has(session.id) &&
         !params.forcedHiddenSessionIds?.has(session.id)
     );
   }, [
     params.sessions,
     params.workspacePath,
+    params.visibleStage,
     params.forcedHiddenSessionIds,
     hiddenSessionIds,
   ]);

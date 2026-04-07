@@ -55,6 +55,7 @@ test("project-manager-session-view restores dialog mode only from live PM intent
   assert.equal(source.includes("loadLastDialogIntent"), false);
   assert.equal(source.includes("saveLastDialogIntent"), false);
   assert.equal(source.includes('setViewMode("runtime");'), true);
+  assert.equal(source.includes('startupStage="description"'), true);
 });
 
 test("project-manager-runtime-session-view does not seed empty state from browser-local dialog cache", async () => {
@@ -62,7 +63,8 @@ test("project-manager-runtime-session-view does not seed empty state from browse
 
   assert.equal(source.includes("window.localStorage"), false);
   assert.equal(source.includes("loadLastDialogStage"), false);
-  assert.equal(source.includes("setEmptyStateStage(null);"), true);
+  assert.equal(source.includes("setSessionScopeStage(startupStage);"), true);
+  assert.equal(source.includes("visibleStage: sessionScopeStage"), true);
 });
 
 test("project-manager-runtime-session-view keeps session empty-state sync on live PM events only", async () => {
@@ -77,7 +79,11 @@ test("project-manager-runtime-session-view keeps session empty-state sync on liv
     true
   );
   assert.equal(
-    source.includes('setEmptyStateStage(typeof detail.stage === "string" ? detail.stage : null);'),
+    source.includes("setSessionScopeStage((current) =>"),
+    true
+  );
+  assert.equal(
+    source.includes("setSessionScopeStage(stage);"),
     true
   );
 });

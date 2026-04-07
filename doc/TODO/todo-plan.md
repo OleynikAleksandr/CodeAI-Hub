@@ -33,11 +33,11 @@
 
 ### Stream: PM Startup Route
 3. [DONE] Force workspace-open startup routing to `description` in `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: startup-stage selection only; expected commit message: `fix(pm): always start workspace in description`
-4. [IN_PROGRESS] Git Commit: `fix(pm): always start workspace in description` (hash: TBD)
+4. [DONE] Git Commit: `fix(pm): always start workspace in description` (hash: `12edeb962`)
 
 ### Stream: Session Panel Startup Scope
-5. [TODO] Keep automatic startup session restore Description-scoped in `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, and `src/client/project-manager/components/sessions/session-visibility.ts`; scope: startup fallback only; expected commit message: `fix(pm): scope startup sessions to description`
-6. [TODO] Git Commit: `fix(pm): scope startup sessions to description` (hash: TBD)
+5. [DONE] Keep automatic startup session restore Description-scoped in `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, and `src/client/project-manager/components/sessions/session-visibility.ts`; include aligned source-test sync in `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx` if the runtime-stage contract changes; scope: startup fallback only; expected commit message: `fix(pm): scope startup sessions to description`
+6. [IN_PROGRESS] Git Commit: `fix(pm): scope startup sessions to description` (hash: TBD)
 
 ### Stream: False Startup Heuristics Cleanup
 7. [TODO] Remove or narrow obsolete recency-based startup helpers in `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, and `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; scope: delete invalid startup selectors while preserving still-valid local stage actions; expected commit message: `refactor(pm): remove obsolete startup heuristics`

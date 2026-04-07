@@ -23,12 +23,14 @@ type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
   readonly emptyStatePending?: boolean;
+  readonly startupStage?: string;
 };
 
 const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
   emptyStatePending = false,
+  startupStage = "description",
 }: ProjectManagerSessionViewProps) => {
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
   const providerLabels = useMemo(() => buildProviderLabels(providerCatalog), [providerCatalog]);
@@ -36,7 +38,9 @@ const ProjectManagerRuntimeSessionView = ({
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [emptyStateStage, setEmptyStateStage] = useState<string | null>(null);
+  const [sessionScopeStage, setSessionScopeStage] = useState<string | null>(
+    startupStage
+  );
   const forcedHiddenSessionIds = useMemo<ReadonlySet<string>>(
     () => new Set(),
     []
@@ -51,6 +55,7 @@ const ProjectManagerRuntimeSessionView = ({
       sessions,
       sessionsRef,
       workspacePath,
+      visibleStage: sessionScopeStage,
       forcedHiddenSessionIds,
       setActiveSessionId,
     }
@@ -264,8 +269,8 @@ const ProjectManagerRuntimeSessionView = ({
     reload();
   }, [activeSessionId, reload]);
   useEffect(() => {
-    setEmptyStateStage(null);
-  }, [workspacePath]);
+    setSessionScopeStage(startupStage);
+  }, [startupStage, workspacePath]);
   useEffect(() => {
     const handleDialogIntent = (
       event: Event
@@ -279,14 +284,16 @@ const ProjectManagerRuntimeSessionView = ({
       if (detail?.workspacePath !== workspacePath) {
         return;
       }
-      setEmptyStateStage(typeof detail.stage === "string" ? detail.stage : null);
+      setSessionScopeStage((current) =>
+        typeof detail.stage === "string" ? detail.stage : current ?? startupStage
+      );
     };
     const handleStageActivated = (
       event: Event
     ) => {
       const stage = (event as CustomEvent<{ readonly stage?: string }>).detail?.stage;
       if (typeof stage === "string") {
-        setEmptyStateStage(stage);
+        setSessionScopeStage(stage);
       }
     };
     window.addEventListener("pm:dialog:open", handleDialogIntent);
@@ -295,7 +302,7 @@ const ProjectManagerRuntimeSessionView = ({
       window.removeEventListener("pm:dialog:open", handleDialogIntent);
       window.removeEventListener("pm:stage:activated", handleStageActivated);
     };
-  }, [workspacePath]);
+  }, [startupStage, workspacePath]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useRuntimeModelSync(activeSessionId, setSnapshots);
   useSessionResumeIntent({
@@ -324,7 +331,7 @@ const ProjectManagerRuntimeSessionView = ({
       allSessions={sessions}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
-      emptyStateStage={emptyStateStage}
+      emptyStateStage={sessionScopeStage}
       onCloseSession={hideSession}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
