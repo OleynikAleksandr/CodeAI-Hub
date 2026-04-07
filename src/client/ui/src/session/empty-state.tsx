@@ -19,10 +19,7 @@ const resolveIdleCopy = (
   };
 };
 
-const EmptyState = (props: {
-  readonly pending: boolean;
-  readonly stage: string | null;
-}) => {
+const EmptyState = (props: { readonly pending: boolean }) => {
   const { t } = useLocalization();
   const pendingTitle = t(
     USER_MESSAGES_CATEGORY,

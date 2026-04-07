@@ -58,7 +58,6 @@ interface SessionViewProps {
   readonly coreConnectionDetail?: string;
   readonly coreConnectionStatus: "connecting" | "ready" | "error";
   readonly emptyStatePending?: boolean;
-  readonly emptyStateStage?: string | null;
   readonly onCloseSession: (sessionId: string) => void;
   readonly onDismissSwitchOffer?: () => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
@@ -291,10 +290,7 @@ const SessionView = (props: SessionViewProps) => {
   if (props.sessions.length === 0 && props.showEmptyState) {
     return (
       <div className="session-app" data-session-style-source="canonical">
-        <EmptyState
-          pending={props.emptyStatePending === true}
-          stage={props.emptyStateStage ?? null}
-        />
+        <EmptyState pending={props.emptyStatePending === true} />
       </div>
     );
   }

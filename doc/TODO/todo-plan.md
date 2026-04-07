@@ -105,8 +105,8 @@
 45. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `packages/core/src/templates/source/foundation-envelope-prompt.md`; scope: remove the last active FE contract route, stub contract builder, and source prompt asset from core after PM/runtime entrypoints are gone; expected commit message: `refactor(core): sweep foundation envelope dead references`
 46. [DONE] Git Commit: `refactor(core): sweep foundation envelope dead references` (hash: `574d5f3d9`)
 47. [DONE] Update `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, and `doc/TODO/todo-plan.md`; scope: stop PM session hosts from passing the obsolete stage-aware empty-state prop after FE-specific empty-state copy removal; expected commit message: `refactor(ui): prune empty state stage callers`
-48. [TODO] Git Commit: `refactor(ui): prune empty state stage callers` (hash: TBD)
-49. [TODO] Update `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/session-view.tsx`, and `src/client/ui/src/session/empty-state.test.ts`; scope: remove the obsolete stage field from the empty-state contract and keep the generic idle copy regression aligned with the simplified UI surface; expected commit message: `refactor(ui): remove empty state stage contract`
+48. [DONE] Git Commit: `refactor(ui): prune empty state stage callers` (hash: `61f442964`)
+49. [DONE] Update `src/client/ui/src/session/empty-state.tsx`, `src/client/ui/src/session/session-view.tsx`, and `src/client/ui/src/session/empty-state.test.ts`; scope: remove the obsolete stage field from the empty-state contract and keep the generic idle copy regression aligned with the simplified UI surface; expected commit message: `refactor(ui): remove empty state stage contract`
 50. [TODO] Git Commit: `refactor(ui): remove empty state stage contract` (hash: TBD)
 
 ### Stream: Historical Documentation Cleanup
