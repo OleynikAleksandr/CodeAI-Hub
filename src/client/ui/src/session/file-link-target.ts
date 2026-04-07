@@ -12,8 +12,10 @@ interface ParsedLocation {
 }
 
 const HASH_LOCATION_RE = /#L(\d+)(?:C(\d+))?$/;
-const UNIX_COLON_LOCATION_RE = /^(\/.+):(\d+)(?::(\d+))?$/;
-const WINDOWS_COLON_LOCATION_RE = /^([A-Za-z]:[\\/].+):(\d+)(?::(\d+))?$/;
+const UNIX_COLON_LINE_COLUMN_RE = /^(\/.+):(\d+):(\d+)$/;
+const UNIX_COLON_LINE_RE = /^(\/.+):(\d+)$/;
+const WINDOWS_COLON_LINE_COLUMN_RE = /^([A-Za-z]:[\\/].+):(\d+):(\d+)$/;
+const WINDOWS_COLON_LINE_RE = /^([A-Za-z]:[\\/].+):(\d+)$/;
 const WINDOWS_ABSOLUTE_PATH_RE = /^[A-Za-z]:[\\/]/;
 const FILE_URI_LOCATION_RE = /^L(\d+)(?:C(\d+))?$/;
 const FILE_URI_WINDOWS_PATH_RE = /^\/[A-Za-z]:[\\/]/;
@@ -87,7 +89,10 @@ const parseHashLocation = (href: string): ParsedLocation | null => {
 
 const parseColonLocation = (href: string): ParsedLocation | null => {
   const match =
-    WINDOWS_COLON_LOCATION_RE.exec(href) ?? UNIX_COLON_LOCATION_RE.exec(href);
+    WINDOWS_COLON_LINE_COLUMN_RE.exec(href) ??
+    UNIX_COLON_LINE_COLUMN_RE.exec(href) ??
+    WINDOWS_COLON_LINE_RE.exec(href) ??
+    UNIX_COLON_LINE_RE.exec(href);
   if (!match) {
     return null;
   }

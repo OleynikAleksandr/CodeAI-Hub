@@ -40,18 +40,22 @@
 
 ### Stream: VS Code Host Editor Open
 7. [DONE] Add the PM file-link open contract in `src/extension-module/home-view-message-router/message-types.ts`, `src/extension-module/home-view-message-router.ts`, and `src/extension-module/message-handlers/project-manager-file-link-handler.ts`; scope: validate `pm:file-link:open` payloads and open the target with `workspace.openTextDocument` plus `window.showTextDocument`; expected commit message: `feat(vscode): handle PM file link open requests`
-8. [IN_PROGRESS] Git Commit: `feat(vscode): handle PM file link open requests` (hash: TBD)
+8. [DONE] Git Commit: `feat(vscode): handle PM file link open requests` (hash: `b1d856172`)
 
-### Stream: Regression Coverage
-9. [TODO] Add regression coverage in `src/client/ui/src/session/file-link-target.test.ts`, `src/client/project-manager/services/project-manager-file-link-opener.test.ts`, and `src/extension-module/message-handlers/project-manager-file-link-handler.test.ts`; scope: parser correctness, `vscode://file` fallback generation, and editor-open payload validation; expected commit message: `test(pm): cover dialog file link opening`
-10. [TODO] Git Commit: `test(pm): cover dialog file link opening` (hash: TBD)
+### Stream: Parser Correctness Fix
+9. [DONE] Correct `:line:column` parsing in `src/client/ui/src/session/file-link-target.ts` and `src/client/ui/src/session/file-link-target.test.ts`; scope: keep absolute-path detection intact while making parser correctness green for unix and windows file targets; expected commit message: `fix(ui): correct file link line parsing`
+10. [IN_PROGRESS] Git Commit: `fix(ui): correct file link line parsing` (hash: TBD)
+
+### Stream: Remaining Regression Coverage
+11. [TODO] Add remaining regression coverage in `src/client/project-manager/services/project-manager-file-link-opener.test.ts` and `src/extension-module/message-handlers/project-manager-file-link-handler.test.ts`; scope: `vscode://file` fallback generation and editor-open payload validation after the parser fix lands; expected commit message: `test(pm): cover dialog file link opening`
+12. [TODO] Git Commit: `test(pm): cover dialog file link opening` (hash: TBD)
 
 ### Stream: Docs Sync
-11. [TODO] Sync the implemented contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, and `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; scope: document dialog-only interception, VS Code editor-open ownership, and standalone fallback behavior; expected commit message: `docs(pm): document dialog file link opening`
-12. [TODO] Git Commit: `docs(pm): document dialog file link opening` (hash: TBD)
+13. [TODO] Sync the implemented contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, and `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; scope: document dialog-only interception, VS Code editor-open ownership, and standalone fallback behavior; expected commit message: `docs(pm): document dialog file link opening`
+14. [TODO] Git Commit: `docs(pm): document dialog file link opening` (hash: TBD)
 
 ### Stream: Release Build For User Testing
-13. [TODO] Prepare release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep PM dialog file link test release`
-14. [TODO] Git Commit: `docs(release): prep PM dialog file link test release` (hash: TBD)
-15. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for PM dialog file links`
-16. [TODO] Git Commit: `build(release): cut test build for PM dialog file links` (hash: TBD)
+15. [TODO] Prepare release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep PM dialog file link test release`
+16. [TODO] Git Commit: `docs(release): prep PM dialog file link test release` (hash: TBD)
+17. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for PM dialog file links`
+18. [TODO] Git Commit: `build(release): cut test build for PM dialog file links` (hash: TBD)
