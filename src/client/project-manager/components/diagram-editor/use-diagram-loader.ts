@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type {
   DiagramMapModel,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
+import { parseFoundationEnvelopeMarkdown } from "../../../../../packages/core/src/workflow/foundation-envelope/foundation-envelope-markdown-parser";
 import { api } from "../../api";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
@@ -144,6 +145,19 @@ export const useDiagramLoader = (params: {
         setStatus("error");
         setError(`Не удалось загрузить ${paths.label}: ${artifactResult.error}`);
         setContent(null);
+        return;
+      }
+
+      const parsedFoundationEnvelope = parseFoundationEnvelopeMarkdown(
+        artifactResult.content
+      );
+      if (!parsedFoundationEnvelope.ok) {
+        clearDiagram();
+        setStatus("error");
+        setError(
+          `Не удалось разобрать ${paths.label}: строка ${parsedFoundationEnvelope.error.line}, ${parsedFoundationEnvelope.error.message}`
+        );
+        setContent(artifactResult.content);
         return;
       }
 
