@@ -33,11 +33,11 @@
 
 ### Stream: UI File Path Normalization
 3. [DONE] Update `src/client/ui/src/session/file-link-target.ts`, `src/client/ui/src/session/file-link-target.test.ts`, and `doc/TODO/todo-plan.md`; scope: decode percent-encoded absolute file targets before the PM opener pipeline while preserving location parsing; expected commit message: `fix(ui): decode encoded dialog file paths`
-4. [IN_PROGRESS] Git Commit: `fix(ui): decode encoded dialog file paths` (hash: TBD)
+4. [DONE] Git Commit: `fix(ui): decode encoded dialog file paths` (hash: `fb127006c`)
 
 ### Stream: Launcher VS Code URI Repair
-5. [TODO] Update `packages/cef-launcher/src/launcher_handler.cc` and `doc/TODO/todo-plan.md`; scope: build the final `vscode://file/...` target without encoding `/` and `:` again, while keeping optional line/column suffixes; expected commit message: `fix(launcher): preserve standalone vscode file paths`
-6. [TODO] Git Commit: `fix(launcher): preserve standalone vscode file paths` (hash: TBD)
+5. [DONE] Update `packages/cef-launcher/src/launcher_handler.cc` and `doc/TODO/todo-plan.md`; scope: build the final `vscode://file/...` target without encoding `/` and `:` again, while keeping optional line/column suffixes; expected commit message: `fix(launcher): preserve standalone vscode file paths`
+6. [IN_PROGRESS] Git Commit: `fix(launcher): preserve standalone vscode file paths` (hash: TBD)
 
 ### Stream: Docs Sync
 7. [TODO] Sync the clarified standalone fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; scope: document that the remaining hotfix repairs percent-encoded file paths while the external VS Code confirmation prompt may still appear as a platform-level safeguard; expected commit message: `docs(pm): sync file link path encoding hotfix`

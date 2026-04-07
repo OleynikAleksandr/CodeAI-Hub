@@ -68,6 +68,20 @@ std::string NormalizePathSeparators(const std::string& path) {
   return normalized;
 }
 
+void ReplaceAll(std::string* value,
+                const std::string& needle,
+                const std::string& replacement) {
+  if (!value || needle.empty()) {
+    return;
+  }
+
+  size_t position = 0;
+  while ((position = value->find(needle, position)) != std::string::npos) {
+    value->replace(position, needle.size(), replacement);
+    position += replacement.size();
+  }
+}
+
 std::string QuoteForPosixShell(const std::string& value) {
   std::string quoted = "'";
   for (const char ch : value) {
@@ -82,8 +96,12 @@ std::string QuoteForPosixShell(const std::string& value) {
 }
 
 std::string BuildVsCodeUri(const std::string& path, int line, int column) {
-  const std::string encoded_path =
+  std::string encoded_path =
       CefURIEncode(NormalizePathSeparators(path), false).ToString();
+  ReplaceAll(&encoded_path, "%2F", "/");
+  ReplaceAll(&encoded_path, "%2f", "/");
+  ReplaceAll(&encoded_path, "%3A", ":");
+  ReplaceAll(&encoded_path, "%3a", ":");
   std::string uri = "vscode://file/" + encoded_path;
   if (line > 0) {
     uri += ":" + std::to_string(line);
