@@ -1,10 +1,14 @@
 # Remove Foundation Envelope Workflow Architecture
 
-**Status:** Draft for review (2026-04-07)
+**Status:** Completed / Archived (2026-04-07)
 **Created:** 2026-04-07
 **Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
-**Scope:** Remove `Foundation Envelope` from the active CodeAI Hub workflow entirely, retarget trunk completion to `Diagram Modules`, start branch design directly from `Product Part Specification`, and clean all active code/docs/runtime surfaces that still model `foundation_envelope` as a supported stage.
+**Scope:** Historical record of the corrective scope that removed `Foundation Envelope` from the active CodeAI Hub workflow, retargeted trunk completion to `Diagram Modules`, started branch design directly from `Product Part Specification`, and cleaned active code/docs/runtime surfaces that previously modeled `foundation_envelope` as a supported stage.
+
+> Archive note:
+> This corrective scope was fully implemented on 2026-04-07 and shipped in release `1.1.906`.
+> Keep this document only for historical traceability and regression investigation.
 
 ---
 

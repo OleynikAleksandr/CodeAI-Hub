@@ -4,12 +4,12 @@
 **Created:** 2026-04-05
 **Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
-**Scope:** Historical record of the removed `Foundation Envelope` planning path. This document is kept only until archive closeout and must not be used as an active design intake for new scopes.
+**Scope:** Historical record of the removed `Foundation Envelope` planning path. This document is archived and must not be used as an active design intake for new scopes.
 
 > Retirement note:
 > `Foundation Envelope` removed from the active workflow on 2026-04-07 after release `1.1.905` validation showed that the step added user confusion without providing necessary downstream design value.
 > Active workflow now goes from `Diagram Modules` directly into `Product Part Specification`.
-> This document remains only as history/postmortem evidence and will be moved out of active navigation during closeout.
+> This document remains only as history/postmortem evidence in `Plans/Archive`.
 
 ---
 

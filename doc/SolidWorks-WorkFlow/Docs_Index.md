@@ -62,10 +62,11 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/Remove_Foundation_Envelope_Workflow_Architecture.md` — active corrective scope, который удаляет `Foundation Envelope` из workflow, runtime, Project Manager UX, tests и active docs.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Diagram Modules` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
+- `Plans/Archive/Remove_Foundation_Envelope_Workflow_Architecture.md` — completed corrective scope that removed `Foundation Envelope` from the active workflow and shipped the cleanup release `1.1.906`.
+- `Plans/Archive/Foundation_Envelope_Architecture.md` — retired historical planning path for the removed `Foundation Envelope`; preserved only as postmortem evidence for why the step was abandoned.
 - `Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md` — historical visual wave for the now-removed `Foundation Envelope`; kept only for release/postmortem traceability around `1.1.905`.
 - `Plans/Archive/ProjectManager_DialogFileLinks_LauncherQueryDecode_Hotfix.md` — completed standalone PM hotfix that repaired launcher-side query decoding for `%2F`-encoded filesystem paths, shipped release `1.1.904` for user validation, and intentionally deferred the broader method/knowledge documentation pass until after validation.
 - `Plans/Archive/ProjectManager_DialogFileLinks_PathEncoding_Hotfix.md` — completed standalone PM path-encoding hotfix that decodes percent-encoded dialog file paths, preserves real separators in launcher-generated `vscode://file/...` URIs, accepts the VS Code trust prompt as platform behavior, and shipped the `1.1.903` test release.
