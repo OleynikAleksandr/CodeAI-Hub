@@ -50,6 +50,11 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - левая workflow tree branch = highlighted `Description`, раскрыта только ветка `Description`,
   - правая панель открывает `Final_Description.md`, если он существует, иначе `questionnaire.md`,
   - левая Session panel автоматически показывает только Description-scoped session state или Description Help.
+- В PM agent dialog markdown local file links работают как editor-aware route только для dialog surface:
+  - абсолютные local file targets (`/abs/path.md`, `...:line:column`, `#LlineCcolumn`) перехватываются только в Session UI dialog bubbles;
+  - если PM работает внутри VS Code webview, открытие файла идёт через standard editor API (`workspace.openTextDocument` + `window.showTextDocument`) на стороне extension host;
+  - если PM работает как standalone CEF client без VS Code webview bridge, применяется standard external handoff через `vscode://file/...`;
+  - artifact/help markdown не входят в этот контракт, пока не объявлен отдельный scope.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.

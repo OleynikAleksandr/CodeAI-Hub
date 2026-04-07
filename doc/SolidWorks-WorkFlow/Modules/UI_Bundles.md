@@ -26,6 +26,15 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 ## Установка
 - `~/.codeai-hub/packages/ui/<bundleId>/<version>/` + symlink `current`
 
+## Local File Link Behavior
+- Shared session markdown supports an opt-in local-file interception path instead of hard-wiring editor behavior into every markdown surface.
+- Project Manager uses that opt-in path only for agent dialog bubbles:
+  - absolute local file links remain normal markdown links by default;
+  - PM dialog supplies a file-link callback and routes supported targets to the editor-aware open path;
+  - artifact/help markdown stay on normal anchor behavior until a separate scope changes their contract.
+- When a VS Code webview bridge exists, the UI bundle delegates PM dialog file opens to the extension host message channel; the extension host owns `showTextDocument`.
+- Without a VS Code webview bridge, the UI bundle falls back to `vscode://file/...` URI handoff instead of introducing a bundle-local fake editor implementation.
+
 ## Related Docs
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

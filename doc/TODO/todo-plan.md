@@ -48,11 +48,11 @@
 
 ### Stream: Remaining Regression Coverage
 11. [DONE] Add remaining regression coverage in `src/client/project-manager/services/project-manager-file-link-opener.test.ts` and `src/extension-module/message-handlers/project-manager-file-link-handler.test.ts`; scope: `vscode://file` fallback generation and editor-open payload validation after the parser fix lands; expected commit message: `test(pm): cover dialog file link opening`
-12. [IN_PROGRESS] Git Commit: `test(pm): cover dialog file link opening` (hash: TBD)
+12. [DONE] Git Commit: `test(pm): cover dialog file link opening` (hash: `cfdbd5dc4`)
 
 ### Stream: Docs Sync
-13. [TODO] Sync the implemented contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, and `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; scope: document dialog-only interception, VS Code editor-open ownership, and standalone fallback behavior; expected commit message: `docs(pm): document dialog file link opening`
-14. [TODO] Git Commit: `docs(pm): document dialog file link opening` (hash: TBD)
+13. [DONE] Sync the implemented contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, and `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; scope: document dialog-only interception, VS Code editor-open ownership, and standalone fallback behavior; expected commit message: `docs(pm): document dialog file link opening`
+14. [IN_PROGRESS] Git Commit: `docs(pm): document dialog file link opening` (hash: TBD)
 
 ### Stream: Release Build For User Testing
 15. [TODO] Prepare release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep PM dialog file link test release`
