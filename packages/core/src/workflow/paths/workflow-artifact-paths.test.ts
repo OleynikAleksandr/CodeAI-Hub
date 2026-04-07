@@ -74,3 +74,21 @@ test("resolveWorkflowArtifactPaths resolves foundation envelope path", () => {
     ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
   );
 });
+
+test("resolveWorkflowArtifactPaths resolves foundation envelope flow sidecar path", () => {
+  const result = resolveWorkflowArtifactPaths({
+    workspaceRoot: WORKSPACE_ROOT,
+    workspaceSlug: "demo-workspace",
+    stage: "foundation_envelope",
+    fileName: "foundation-envelope.flow.json",
+  });
+
+  assert.equal(result.ok, true);
+  if (!result.ok) {
+    return;
+  }
+  assert.equal(
+    result.value.relativePath,
+    ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.flow.json"
+  );
+});

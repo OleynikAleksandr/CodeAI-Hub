@@ -91,6 +91,20 @@ const FOUNDATION_ENVELOPE_MARKDOWN = [
   "",
 ].join("\n");
 
+const FOUNDATION_ENVELOPE_FLOW_JSON = `${JSON.stringify(
+  {
+    revision: "foundation-rev-1",
+    nodes: [
+      {
+        id: "application-root",
+        position: { x: 0, y: 0 },
+      },
+    ],
+  },
+  null,
+  2
+)}\n`;
+
 test("artifact upsert saves diagram modules staged index and dynamic product part files", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "http-api-router-product-parts-upsert-")
@@ -199,7 +213,7 @@ test("artifact upsert saves diagram modules staged index and dynamic product par
   }
 });
 
-test("artifact upsert saves foundation envelope markdown for the stage session", async () => {
+test("artifact upsert saves foundation envelope markdown and flow sidecar for the stage session", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "http-api-router-foundation-envelope-upsert-")
   );
@@ -255,6 +269,10 @@ test("artifact upsert saves foundation envelope markdown for the stage session",
               slot: "workspace.foundation_envelope",
               markdown: FOUNDATION_ENVELOPE_MARKDOWN,
             },
+            {
+              slot: "workspace.foundation_envelope.flow",
+              markdown: FOUNDATION_ENVELOPE_FLOW_JSON,
+            },
           ],
         },
       } as Request,
@@ -275,17 +293,25 @@ test("artifact upsert saves foundation envelope markdown for the stage session",
     assert.equal(result.statusCode, 200);
     assert.deepEqual(
       result.payload.saved.map((entry) => entry.slot),
-      ["workspace.foundation_envelope"]
+      ["workspace.foundation_envelope", "workspace.foundation_envelope.flow"]
     );
 
     const artifactPath = path.join(
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`
     );
+    const flowSidecarPath = path.join(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.flow.json`
+    );
 
     assert.equal(
       await readFile(artifactPath, "utf8"),
       FOUNDATION_ENVELOPE_MARKDOWN
+    );
+    assert.equal(
+      await readFile(flowSidecarPath, "utf8"),
+      FOUNDATION_ENVELOPE_FLOW_JSON
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
