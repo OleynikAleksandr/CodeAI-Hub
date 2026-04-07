@@ -95,8 +95,8 @@
 37. [DONE] Update `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`, and `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; scope: retarget PM workflow gating/tree/prompt-pack tests to the reduced trunk without FE; expected commit message: `test(pm): retarget workflow gating without foundation envelope`
 38. [DONE] Git Commit: `test(pm): retarget workflow gating without foundation envelope` (hash: `5803ace33`)
 39. [DONE] Update `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-localization.test.ts`, and `doc/TODO/todo-plan.md`; scope: delete FE-only PM regression coverage that is no longer valid after stage removal; expected commit message: `test(pm): remove foundation envelope regression suite`
-40. [TODO] Git Commit: `test(pm): remove foundation envelope regression suite` (hash: TBD)
-41. [TODO] Update `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/ui/src/session/empty-state.test.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE-specific navigation and empty-state copy coverage after stage removal; expected commit message: `test(ui): remove foundation envelope copy coverage`
+40. [DONE] Git Commit: `test(pm): remove foundation envelope regression suite` (hash: `7ef4839ae`)
+41. [DONE] Update `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/ui/src/session/empty-state.test.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE-specific navigation and empty-state copy coverage after stage removal; expected commit message: `test(ui): remove foundation envelope copy coverage`
 42. [TODO] Git Commit: `test(ui): remove foundation envelope copy coverage` (hash: TBD)
 
 ### Stream: Dead Fragment Sweep

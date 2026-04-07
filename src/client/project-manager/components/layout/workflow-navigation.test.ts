@@ -112,9 +112,9 @@ test("workflow navigation sync keeps stage routing consistent across toolbar and
   );
   assert.equal(
     toolbarSource.includes(
-      '"pm.workflow.stage.foundation_envelope.label"'
+      '"pm.workflow.stage.diagram_modules.label"'
     ),
     true,
-    "toolbar must localize the foundation envelope stage label"
+    "toolbar must localize the diagram modules stage label"
   );
 });
