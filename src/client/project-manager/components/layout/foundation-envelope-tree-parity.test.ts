@@ -11,15 +11,23 @@ const AUTO_SELECT_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/workspace-tree-auto-select.ts"
 );
+const MAIN_AREA_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/main-area-panel-content.tsx"
+);
 const STAGE_SYNC_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/use-stage-panel-sync.ts"
 );
 
 test("foundation envelope tree parity keeps canonical artifact and session sync wiring", async () => {
-  const branchNodesSource = await readFile(BRANCH_NODES_SOURCE_PATH, "utf8");
-  const autoSelectSource = await readFile(AUTO_SELECT_SOURCE_PATH, "utf8");
-  const stageSyncSource = await readFile(STAGE_SYNC_SOURCE_PATH, "utf8");
+  const [branchNodesSource, autoSelectSource, mainAreaSource, stageSyncSource] =
+    await Promise.all([
+      readFile(BRANCH_NODES_SOURCE_PATH, "utf8"),
+      readFile(AUTO_SELECT_SOURCE_PATH, "utf8"),
+      readFile(MAIN_AREA_SOURCE_PATH, "utf8"),
+      readFile(STAGE_SYNC_SOURCE_PATH, "utf8"),
+    ]);
 
   assert.equal(
     branchNodesSource.includes(
@@ -54,4 +62,13 @@ test("foundation envelope tree parity keeps canonical artifact and session sync 
     ),
     true
   );
+  assert.equal(mainAreaSource.includes("FoundationEnvelopeHelp"), true);
+  assert.equal(mainAreaSource.includes("FoundationEnvelopePanel"), true);
+  assert.equal(
+    mainAreaSource.includes(
+      "if (activeTool === FOUNDATION_ENVELOPE_TOOL_LABEL) {"
+    ),
+    true
+  );
+  assert.equal(mainAreaSource.includes("artifactRefreshKey"), true);
 });
