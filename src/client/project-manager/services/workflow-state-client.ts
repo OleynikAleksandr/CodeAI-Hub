@@ -4,8 +4,7 @@ const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules"
-  | "foundation_envelope";
+  | "diagram_modules";
 
 export type ContinuityStageId = WorkflowStageId | "unknown";
 
@@ -80,7 +79,6 @@ const STAGE_ORDER: readonly WorkflowStageId[] = [
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "foundation_envelope",
 ];
 
 const DEFAULT_STAGE_STATUS: WorkflowStageStatus = "idle";

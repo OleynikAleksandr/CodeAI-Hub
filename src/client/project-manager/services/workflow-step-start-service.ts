@@ -16,8 +16,7 @@ type StartWorkflowStepParams = {
 
 type ContinuityStageId =
   | "virtual_simulation"
-  | "diagram_modules"
-  | "foundation_envelope";
+  | "diagram_modules";
 
 type WorkflowStateGetter = (
   workspaceSlug: string,
@@ -150,45 +149,6 @@ export class WorkflowStepStartService {
       workspacePath: params.workspacePath,
       questionnairePath,
       stage: "diagram_modules",
-      providerId: params.providerId,
-      onSessionCreated: params.onSessionCreated,
-    });
-  }
-
-  async startFoundationEnvelope(
-    params: StartWorkflowStepParams
-  ): Promise<string> {
-    const state = await this.getWorkflowState(
-      params.workspaceSlug,
-      params.workspacePath
-    );
-    const existingSessionId = resolveExistingStageSessionIdForExplicitStart({
-      state,
-      stage: "foundation_envelope",
-    });
-    if (existingSessionId) {
-      params.onSessionCreated?.(existingSessionId);
-      return existingSessionId;
-    }
-
-    const envelopeBlocked =
-      state?.gating?.blocked?.foundation_envelope ?? true;
-    if (envelopeBlocked) {
-      throw new Error(
-        "Diagram Modules is not fully ready. Complete Diagram Modules step first."
-      );
-    }
-
-    const artifactLanguage = resolveArtifactsForTheUserLanguage(
-      this.getSettingsPayload()
-    );
-    return this.submitService.submitQuestionnaire({
-      artifactLanguage,
-      workspaceName: params.workspaceName,
-      workspaceSlug: params.workspaceSlug,
-      workspacePath: params.workspacePath,
-      questionnairePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
-      stage: "foundation_envelope",
       providerId: params.providerId,
       onSessionCreated: params.onSessionCreated,
     });
