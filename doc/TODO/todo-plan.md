@@ -65,8 +65,8 @@
 
 ### Stream: Stage Catalog And Start Flow
 17. [DONE] Update `src/client/project-manager/services/workflow-state-client.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, and `src/client/project-manager/services/prompt-pack-builder.ts`; scope: remove FE from PM workflow stage catalog, manual-start flow, and prompt-pack stage typing; expected commit message: `refactor(pm): remove foundation envelope start path`
-18. [TODO] Git Commit: `refactor(pm): remove foundation envelope start path` (hash: TBD)
-19. [TODO] Update `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE contract lookup and visible stage metadata from PM service/model surfaces; expected commit message: `refactor(pm): remove foundation envelope stage metadata`
+18. [DONE] Git Commit: `refactor(pm): remove foundation envelope start path` (hash: `54e057795`)
+19. [DONE] Update `src/client/project-manager/services/description-submit-service.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE contract lookup and visible stage metadata from PM service/model surfaces; expected commit message: `refactor(pm): remove foundation envelope stage metadata`
 20. [TODO] Git Commit: `refactor(pm): remove foundation envelope stage metadata` (hash: TBD)
 21. [TODO] Update `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/workspace-tree.tsx`, and `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`; scope: remove FE labels, buttons, artifact nodes, and session nodes from PM navigation surfaces; expected commit message: `refactor(pm): remove foundation envelope navigation shell`
 22. [TODO] Git Commit: `refactor(pm): remove foundation envelope navigation shell` (hash: TBD)
