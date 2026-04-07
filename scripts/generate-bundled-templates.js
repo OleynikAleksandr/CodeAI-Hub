@@ -47,12 +47,6 @@ const TEMPLATES = [
   },
   {
     audience: "internal_agent_instructions",
-    id: "foundation-envelope-prompt",
-    source: "packages/core/src/templates/source/foundation-envelope-prompt.md",
-    dest: ".codeai-hub/templates/foundation_envelope/foundation-envelope-prompt.md",
-  },
-  {
-    audience: "internal_agent_instructions",
     id: "diagram-modules-prompt",
     source:
       "packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md",
