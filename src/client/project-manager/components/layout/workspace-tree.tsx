@@ -264,9 +264,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }
     : null;
 
+  const resolveNodeExpanded = (node: TreeNode): boolean =>
+    node.stage
+      ? node.stage === activeStage
+      : expandedNodes[node.id] ?? true;
+
   const flattenTree = (node: TreeNode): TreeNode[] => {
     const result: TreeNode[] = [node];
-    const isExpanded = expandedNodes[node.id] ?? true;
+    const isExpanded = resolveNodeExpanded(node);
     if (!node.children || node.children.length === 0 || !isExpanded) {
       return result;
     }
@@ -292,44 +297,56 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         <div className="pm-tree__empty">{emptyWorkspaceLabel}</div>
       ) : (
         <ul className="pm-tree__list">
-          {treeNodes.map((node) => (
-            <li
-              aria-current={node.isSelected ? "true" : undefined}
-              className={`pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`}
-              onClick={node.onSelect}
-              key={node.id}
-              role={node.onSelect ? "button" : undefined}
-              style={{ paddingLeft: `${baseIndent + node.visualDepth * depthIndent}px` }}
-            >
-              {node.isCollapsible && (node.children?.length ?? 0) > 0 ? (
-                <button
-                  aria-expanded={expandedNodes[node.id] ?? true}
-                  className="pm-tree__toggle"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleTreeToggle(node.id);
-                  }}
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    className={
-                      expandedNodes[node.id] ?? true
-                        ? "pm-tree__toggle-icon pm-tree__toggle-icon--expanded"
-                        : "pm-tree__toggle-icon"
-                    }
+          {treeNodes.map((node) => {
+            const isExpanded = resolveNodeExpanded(node);
+            return (
+              <li
+                aria-current={node.isSelected ? "true" : undefined}
+                className={`pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`}
+                onClick={node.onSelect}
+                key={node.id}
+                role={node.onSelect ? "button" : undefined}
+                style={{
+                  paddingLeft: `${baseIndent + node.visualDepth * depthIndent}px`,
+                }}
+              >
+                {node.isCollapsible && (node.children?.length ?? 0) > 0 ? (
+                  <button
+                    aria-expanded={isExpanded}
+                    className="pm-tree__toggle"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      if (node.stage) {
+                        dispatchStageActivated(node.stage);
+                        return;
+                      }
+                      handleTreeToggle(node.id);
+                    }}
+                    type="button"
                   >
-                    ▸
-                  </span>
-                </button>
-              ) : (
-                <span className="pm-tree__status" />
-              )}
-              <span className="pm-tree__label" title={node.title ?? node.label}>
-                {node.label}
-              </span>
-            </li>
-          ))}
+                    <span
+                      aria-hidden="true"
+                      className={
+                        isExpanded
+                          ? "pm-tree__toggle-icon pm-tree__toggle-icon--expanded"
+                          : "pm-tree__toggle-icon"
+                      }
+                    >
+                      ▸
+                    </span>
+                  </button>
+                ) : (
+                  <span className="pm-tree__status" />
+                )}
+                <span
+                  className="pm-tree__label"
+                  title={node.title ?? node.label}
+                >
+                  {node.label}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

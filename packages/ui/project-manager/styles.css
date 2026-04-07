@@ -441,13 +441,30 @@ body {
   align-items: center;
   min-width: 0;
   padding: 6px 12px;
+  margin: 0 8px;
   font-size: 13px;
   color: var(--pm-text-primary);
   cursor: default;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
 }
 
 .pm-tree__item:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+.pm-tree__item--selected {
+  color: var(--pm-accent-strong);
+  background: rgba(66, 201, 162, 0.16);
+  border-color: rgba(66, 201, 162, 0.45);
+}
+
+.pm-tree__item--selected:hover {
+  background: rgba(66, 201, 162, 0.2);
 }
 
 .pm-tree__toggle {
@@ -466,6 +483,10 @@ body {
 
 .pm-tree__toggle:hover {
   color: var(--pm-text-primary);
+}
+
+.pm-tree__item--selected .pm-tree__toggle {
+  color: var(--pm-accent-strong);
 }
 
 .pm-tree__toggle-icon {
@@ -502,6 +523,10 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.pm-tree__item--selected .pm-tree__label {
+  font-weight: 600;
 }
 
 .pm-tree__item--active .pm-tree__status::before {

@@ -27,11 +27,11 @@
 ## Phase 1 — Left Sidebar Active Stage Sync (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Tree Selection Source Of Truth
-1. [IN_PROGRESS] Add left-tree active-stage sync in `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `src/client/project-manager/components/layout/use-workspace-tree-active-stage.ts`; scope: selected-stage state only, keeping workflow status separate from UI selection; expected commit message: `fix(pm): sync left sidebar with active stage`
-2. [TODO] Git Commit: `fix(pm): sync left sidebar with active stage` (hash: TBD)
+1. [DONE] Add left-tree active-stage sync in `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-model.ts`, and `src/client/project-manager/components/layout/use-workspace-tree-active-stage.ts`; scope: selected-stage state only, keeping workflow status separate from UI selection; expected commit message: `fix(pm): sync left sidebar with active stage`
+2. [DONE] Git Commit: `fix(pm): sync left sidebar with active stage` (hash: `a21489562`)
 
 ### Stream: Tree Accordion And Highlight
-3. [TODO] Make only the active stage branch expanded and add selected-stage styling in `src/client/project-manager/components/layout/workspace-tree.tsx` and `packages/ui/project-manager/styles.css`; scope: accordion visibility plus selected-step highlight without changing workflow status markers; expected commit message: `feat(pm): highlight active step in left sidebar`
+3. [IN_PROGRESS] Make only the active stage branch expanded and add selected-stage styling in `src/client/project-manager/components/layout/workspace-tree.tsx` and `packages/ui/project-manager/styles.css`; scope: accordion visibility plus selected-step highlight without changing workflow status markers; expected commit message: `feat(pm): highlight active step in left sidebar`
 4. [TODO] Git Commit: `feat(pm): highlight active step in left sidebar` (hash: TBD)
 
 ### Stream: Navigation Docs And Coverage
