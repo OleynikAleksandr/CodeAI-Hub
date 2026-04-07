@@ -15,14 +15,12 @@ const readNonEmptyString = (value: unknown): string | null =>
 const isWorkflowStageId = (value: unknown): value is WorkflowStageId =>
   value === "description" ||
   value === "virtual_simulation" ||
-  value === "diagram_modules" ||
-  value === "foundation_envelope";
+  value === "diagram_modules";
 
 const WORKFLOW_LAST_ACTIVE_STAGE_ORDER: readonly WorkflowStageId[] = [
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "foundation_envelope",
 ] as const;
 
 const STAGE_RANK = WORKFLOW_LAST_ACTIVE_STAGE_ORDER.reduce<

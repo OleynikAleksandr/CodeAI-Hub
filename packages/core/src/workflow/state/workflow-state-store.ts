@@ -16,7 +16,6 @@ const WORKFLOW_STAGES: WorkflowStageId[] = [
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "foundation_envelope",
 ];
 
 const createInitialStageState = (
