@@ -117,10 +117,10 @@
 
 ### Stream: Verification Fallout Cleanup
 55. [DONE] Update `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, and `doc/TODO/todo-plan.md`; scope: remove residual FE compile-time imports/params surfaced by `typecheck:webview` after the main cleanup wave; expected commit message: `refactor(pm): remove foundation envelope verification fallout`
-56. [TODO] Git Commit: `refactor(pm): remove foundation envelope verification fallout` (hash: TBD)
+56. [DONE] Git Commit: `refactor(pm): remove foundation envelope verification fallout` (hash: `29c74e934`)
 
 ### Stream: Verification
-57. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
+57. [DONE] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
 58. [TODO] Git Commit: `test(workflow): verify foundation envelope removal` (hash: TBD)
 59. [TODO] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
 60. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
