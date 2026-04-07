@@ -8,16 +8,16 @@ import {
   writeHandoffReport,
 } from "./handoff-report-writer";
 
-test("handoff report paths use the canonical foundation envelope continuity folder", async () => {
+test("handoff report paths use the canonical diagram modules continuity folder", async () => {
   const workspaceRoot = mkdtempSync(
-    path.join(os.tmpdir(), "foundation-envelope-handoff-")
+    path.join(os.tmpdir(), "diagram-modules-handoff-")
   );
   const expectedPath = path.join(
     workspaceRoot,
     ".codeai-hub",
     "demo-workspace",
     "continuity",
-    "foundation_envelope",
+    "diagram_modules",
     "root-session",
     "2026-04-05T12-45-00.000Z",
     "handoff-report.md"
@@ -27,7 +27,7 @@ test("handoff report paths use the canonical foundation envelope continuity fold
     buildHandoffReportPath({
       workspaceRoot,
       workspaceSlug: "demo-workspace",
-      stageId: "foundation_envelope",
+      stageId: "diagram_modules",
       rootSessionId: "root-session",
       timestamp: "2026-04-05T12-45-00.000Z",
     }),
@@ -37,7 +37,7 @@ test("handoff report paths use the canonical foundation envelope continuity fold
   const filePath = await writeHandoffReport({
     workspaceRoot,
     workspaceSlug: "demo-workspace",
-    stageId: "foundation_envelope",
+    stageId: "diagram_modules",
     rootSessionId: "root-session",
     timestamp: "2026-04-05T12-45-00.000Z",
     content: "# Handoff Report\n\nReady.\n",

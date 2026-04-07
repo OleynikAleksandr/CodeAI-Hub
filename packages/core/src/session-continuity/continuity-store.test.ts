@@ -6,15 +6,15 @@ import path from "node:path";
 import test from "node:test";
 import { ContinuityChainStore } from "./continuity-store";
 
-test("ContinuityChainStore persists foundation envelope chains under the canonical stage path", async () => {
+test("ContinuityChainStore persists diagram modules chains under the canonical stage path", async () => {
   const workspaceRoot = mkdtempSync(
-    path.join(os.tmpdir(), "foundation-envelope-chain-")
+    path.join(os.tmpdir(), "diagram-modules-chain-")
   );
   const store = new ContinuityChainStore({
     workspaceRoot,
     workspaceSlug: "demo-workspace",
     rootSessionId: "root-session",
-    stage: "foundation_envelope",
+    stage: "diagram_modules",
     clock: () => "2026-04-05T12:40:00.000Z",
   });
 
@@ -30,12 +30,12 @@ test("ContinuityChainStore persists foundation envelope chains under the canonic
     ".codeai-hub",
     "demo-workspace",
     "continuity",
-    "foundation_envelope",
+    "diagram_modules",
     "root-session",
     "chain.json"
   );
 
-  assert.equal(chain.stage, "foundation_envelope");
+  assert.equal(chain.stage, "diagram_modules");
   assert.equal(existsSync(chainPath), true);
   assert.equal(
     existsSync(
@@ -56,6 +56,6 @@ test("ContinuityChainStore persists foundation envelope chains under the canonic
     readonly stage: string;
     readonly rootSessionId: string;
   };
-  assert.equal(saved.stage, "foundation_envelope");
+  assert.equal(saved.stage, "diagram_modules");
   assert.equal(saved.rootSessionId, "root-session");
 });

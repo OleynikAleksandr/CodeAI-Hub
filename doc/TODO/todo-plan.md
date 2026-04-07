@@ -79,14 +79,14 @@
 27. [DONE] Update `src/client/ui/src/session/empty-state.tsx`, `src/client/project-manager/components/shared/stage-artifact-content-view.tsx`, and `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; scope: remove FE-specific empty-state/artifact-stage handling and prune FE from shared repair surfaces; expected commit message: `refactor(ui): remove foundation envelope shared helpers`
 28. [DONE] Git Commit: `refactor(ui): remove foundation envelope shared helpers` (hash: `b49f62850`)
 29. [DONE] Update `src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, and `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`; scope: remove FE from diagram-editor loader, path resolution, and repair routing so the editor only serves Diagram Modules, then delete orphan FE visual/core parser files once their last entrypoints are cut; expected commit message: `refactor(pm): remove foundation envelope diagram loader`
-30. [TODO] Git Commit: `refactor(pm): remove foundation envelope diagram loader` (hash: TBD)
+30. [DONE] Git Commit: `refactor(pm): remove foundation envelope diagram loader` (hash: `75b625e43`)
 
 ## Phase 4 — Regression Coverage And Historical Closeout (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Core Regression Cleanup
 31. [DONE] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.foundation-envelope.test.ts`, and `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; scope: remove or retarget core tests that keep FE alive as an active workflow/artifact contract; expected commit message: `test(core): remove foundation envelope workflow coverage`
-32. [TODO] Git Commit: `test(core): remove foundation envelope workflow coverage` (hash: TBD)
-33. [TODO] Update `packages/core/src/remote-bridge/handlers/foundation-envelope-continuity-restore.test.ts`, `packages/core/src/session-continuity/continuity-store.test.ts`, and `packages/core/src/session-continuity/handoff-report-writer.test.ts`; scope: remove FE-specific continuity coverage after the stage and its continuity path are deleted; expected commit message: `test(core): remove foundation envelope continuity coverage`
+32. [DONE] Git Commit: `test(core): remove foundation envelope workflow coverage` (hash: `b4fdb1520`)
+33. [DONE] Update `packages/core/src/remote-bridge/handlers/foundation-envelope-continuity-restore.test.ts`, `packages/core/src/session-continuity/continuity-store.test.ts`, and `packages/core/src/session-continuity/handoff-report-writer.test.ts`; scope: remove FE-specific continuity coverage after the stage and its continuity path are deleted; expected commit message: `test(core): remove foundation envelope continuity coverage`
 34. [TODO] Git Commit: `test(core): remove foundation envelope continuity coverage` (hash: TBD)
 
 ### Stream: PM Regression Cleanup
@@ -99,7 +99,7 @@
 39. [TODO] Update `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, and `src/client/project-manager/components/layout/workspace-tree-model.ts`; scope: remove stale FE imports/branches/labels that may survive the main PM removal path and keep dead code in shared layout surfaces; expected commit message: `refactor(pm): sweep foundation envelope dead fragments`
 40. [TODO] Git Commit: `refactor(pm): sweep foundation envelope dead fragments` (hash: TBD)
 41. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `packages/core/src/templates/source/foundation-envelope-prompt.md`; scope: remove the last active FE contract route, stub contract builder, and source prompt asset from core after PM/runtime entrypoints are gone; expected commit message: `refactor(core): sweep foundation envelope dead references`
-42. [TODO] Git Commit: `refactor(core): sweep foundation envelope dead references` (hash: TBD)
+42. [DONE] Git Commit: `refactor(core): sweep foundation envelope dead references` (hash: `574d5f3d9`)
 
 ### Stream: Historical Documentation Cleanup
 43. [TODO] Update `doc/Sessions/Session011.md`, `doc/TODO/Archive/todo-plan-phase1-foundation-envelope-visual-projection.md`, and `doc/TODO/todo-plan.md`; scope: keep FE history truthful while removing any misleading next-step/live-navigation assumptions that would route future work through the removed stage; expected commit message: `docs(history): retire foundation envelope live navigation`
