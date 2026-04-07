@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-04-05
+**Updated:** 2026-04-07
 **Owner:** Oleksandr
 
 ---
@@ -22,22 +22,28 @@
 
 После утверждения `Foundation Envelope` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
 
-```
+```text
 Diagram Modules
  └─ Foundation Envelope (trunk end)
-     └─ Product Part (ветка per part)
-         ├─ Cluster (ветка per cluster)
+     └─ Product Part Specification (ветка per part)
+         ├─ Cluster Design (ветка per cluster)
          │   ├─ Cluster Specification (функции, модули, зона ответственности)
          │   ├─ Cluster Facade Contract (внешний контракт кластера)
-         │   └─ Module (ветка per module)
+         │   └─ Module Design (ветка per module)
          │       ├─ Module Specification (интерфейсы, методы, зависимости)
          │       ├─ Module Facade Contract (публичный API модуля)
+         │       ├─ Implementation Foundation (subtree/env/scripts/gates для выбранной wave)
          │       ├─ TODO Plan (фазы, стримы, микро-задачи ≤3 файлов)
          │       └─ Implementation (код + синхронные обновления документации)
-         └─ ... (следующий Cluster)
+         └─ Standalone Module Design
+             ├─ Module Specification
+             ├─ Module Facade Contract
+             ├─ Implementation Foundation (если standalone module входит в выбранную wave)
+             ├─ TODO Plan
+             └─ Implementation
 ```
 
-Ключевое решение: **фасады не являются отдельным шагом ствола**. Спецификация фасада появляется естественно внутри каждой ветки — на уровне кластера (Cluster Facade Contract) и на уровне модуля (Module Facade Contract). Это позволяет работать с фасадами в контексте конкретного блока системы, а не как с неуправляемым плоским списком.
+Ключевое решение: **фасады не являются отдельным шагом ствола**. Для cluster и module используется один design-step, который materialize-ит сразу два артефакта: specification и facade contract. Это позволяет проектировать внутреннюю структуру и публичную boundary одновременно, не превращая фасады в неуправляемый плоский список.
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
 

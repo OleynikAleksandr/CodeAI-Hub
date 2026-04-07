@@ -296,16 +296,16 @@
   - first artifact: `product-parts.index.md`;
   - primary semantic part artifacts: `product-parts/<part-id>.md`.
 - Trunk workflow now extends through `Foundation Envelope`. After envelope approval, work continues as a Development Tree `[DESIGNED, NOT IMPLEMENTED]`:
-  - **Product Part branch** (per each part from Module Graph);
-    - **Cluster branch** (per each cluster inside part):
-      - Cluster Specification (functions, constituent modules, cluster-level responsibility);
-      - Cluster Facade Contract (external contract of the cluster);
-      - **Module branch** (per each module inside cluster):
-        - Module Specification (interfaces, methods, dependencies);
-        - Module Facade Contract (public API);
-        - TODO Plan (phases, streams, micro-tasks ≤3 files);
-        - Implementation (code + sync documentation updates).
-  - Facades are NOT a separate trunk step; they appear naturally inside per-cluster and per-module branches.
+  - **Product Part Specification** (per each part from Module Graph) becomes the branch-root artifact and fixes role, boundaries, owned clusters, standalone modules, and first implementation waves for that part.
+  - **Cluster Design** (per each cluster inside part) is one design-step with two outputs:
+    - Cluster Specification (functions, constituent modules, cluster-level responsibility);
+    - Cluster Facade Contract (external contract of the cluster).
+  - **Module Design** (per each module inside a cluster) is one design-step with two outputs:
+    - Module Specification (interfaces, methods, dependencies);
+    - Module Facade Contract (public API).
+  - **Standalone Module Design** uses the same two-artifact pattern for modules that belong to a `Product Part` but do not belong to any cluster.
+  - `Implementation Foundation` starts only after the selected implementation wave has approved branch artifacts and required seam/shared contracts, then hands off to TODO Plan and code implementation.
+  - Facades are NOT a separate trunk step; they remain separate artifacts, but for clusters and modules they are designed in the same session as the matching specification.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume `Diagram Modules` Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
 - Пока canonical artifact ещё не создан, `Artifacts` panel для workflow stage обязан показывать тот же help-content, что и вкладка `Help`; отдельный pending-intro prose вне help SSOT не допускается.
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
