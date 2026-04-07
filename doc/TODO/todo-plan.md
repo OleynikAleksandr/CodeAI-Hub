@@ -56,6 +56,6 @@
 
 ### Stream: Release Build For User Testing
 15. [DONE] Prepare release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep PM dialog file link test release`
-16. [IN_PROGRESS] Git Commit: `docs(release): prep PM dialog file link test release` (hash: TBD)
-17. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for PM dialog file links`
+16. [DONE] Git Commit: `docs(release): prep PM dialog file link test release` (hash: `6fe98d440`)
+17. [IN_PROGRESS] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for PM dialog file links`
 18. [TODO] Git Commit: `build(release): cut test build for PM dialog file links` (hash: TBD)
