@@ -1,8 +1,4 @@
 import type React from "react";
-import {
-  FoundationEnvelopeHelp,
-  FoundationEnvelopePanel,
-} from "../foundation-envelope/foundation-envelope-panel";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
@@ -20,7 +16,6 @@ import {
 } from "./stage-artifact-mode";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import {
-  FOUNDATION_ENVELOPE_TOOL_LABEL,
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
 
@@ -135,9 +130,6 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
     if (activeTool === "Diagram Modules") {
       return <DiagramModulesHelp />;
     }
-    if (activeTool === FOUNDATION_ENVELOPE_TOOL_LABEL) {
-      return <FoundationEnvelopeHelp />;
-    }
   }
   if (showSourceViewer && sourceArtifact) {
     if (!sourceArtifactAvailable) {
@@ -201,14 +193,6 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   if (activeTool === "Diagram Modules") {
     return renderStagePanel(
       DiagramModulesPanel,
-      activeWorkspacePath,
-      activeWorkspaceSlug,
-      artifactRefreshKey
-    );
-  }
-  if (activeTool === FOUNDATION_ENVELOPE_TOOL_LABEL) {
-    return renderStagePanel(
-      FoundationEnvelopePanel,
       activeWorkspacePath,
       activeWorkspaceSlug,
       artifactRefreshKey
