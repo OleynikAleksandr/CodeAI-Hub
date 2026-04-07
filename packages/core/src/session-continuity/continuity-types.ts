@@ -1,8 +1,7 @@
 type KnownContinuityStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules"
-  | "foundation_envelope";
+  | "diagram_modules";
 
 export type ContinuityStageId = KnownContinuityStageId | "unknown";
 
@@ -10,7 +9,6 @@ const KNOWN_CONTINUITY_STAGE_IDS = new Set<KnownContinuityStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
-  "foundation_envelope",
 ]);
 
 const isKnownContinuityStageId = (

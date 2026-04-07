@@ -47,10 +47,10 @@
 11. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: drop FE artifact validation/routes and stop treating `foundation-envelope.md` or `foundation-envelope.flow.json` as active workflow artifacts; expected commit message: `refactor(core): remove foundation envelope artifact routes`
 12. [DONE] Git Commit: `refactor(core): remove foundation envelope artifact routes` (hash: `66da3e434`)
 13. [DONE] Update `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE prompt/template registration and contract lookup from the active step catalog; expected commit message: `refactor(core): drop foundation envelope prompt contract`
-14. [TODO] Git Commit: `refactor(core): drop foundation envelope prompt contract` (hash: TBD)
+14. [DONE] Git Commit: `refactor(core): drop foundation envelope prompt contract` (hash: `5bb6ad15f`)
 
 ### Stream: Continuity And Runtime Typing Cleanup
-15. [IN_PROGRESS] Update `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE stage/artifact typing from active continuity and workflow path contracts; expected commit message: `refactor(core): prune foundation envelope runtime types`
+15. [DONE] Update `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/workflow/paths/workflow-paths-types.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE stage/artifact typing from active continuity and workflow path contracts; expected commit message: `refactor(core): prune foundation envelope runtime types`
 16. [TODO] Git Commit: `refactor(core): prune foundation envelope runtime types` (hash: TBD)
 
 ## Phase 3 — Remove Foundation Envelope From Project Manager UX (owner: Codex, updated: 2026-04-07)
