@@ -38,8 +38,8 @@
 
 ### Stream: Artifact Surface And Loader Generalization
 5. [DONE] Update `packages/core/src/workflow/paths/workflow-paths-types.ts`, `packages/core/src/workflow/paths/workflow-artifact-paths.ts`, and `doc/TODO/todo-plan.md`; scope: add `foundation-envelope.flow.json` to workflow artifact typing and allowlist without changing semantic gating rules; expected commit message: `feat(workflow): add foundation envelope flow artifact`
-6. [TODO] Git Commit: `feat(workflow): add foundation envelope flow artifact` (hash: TBD)
-7. [TODO] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: validate and route `Foundation Envelope` sidecar reads/writes through the existing workflow artifact endpoints; expected commit message: `feat(core): route foundation envelope sidecar`
+6. [DONE] Git Commit: `feat(workflow): add foundation envelope flow artifact` (hash: `d10f2755e`)
+7. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: validate and route `Foundation Envelope` sidecar reads/writes through the existing workflow artifact endpoints; expected commit message: `feat(core): route foundation envelope sidecar`
 8. [TODO] Git Commit: `feat(core): route foundation envelope sidecar` (hash: TBD)
 9. [TODO] Update `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `src/client/project-manager/components/diagram-editor/use-diagram-loader.ts`, and `doc/TODO/todo-plan.md`; scope: generalize shared diagram stage path/loading logic so `foundation_envelope` can load markdown plus sidecar through the diagram editor pipeline; expected commit message: `refactor(pm): generalize diagram stage loader`
 10. [TODO] Git Commit: `refactor(pm): generalize diagram stage loader` (hash: TBD)

@@ -10,11 +10,13 @@ export type WorkflowArtifactFileName =
   | "product-parts.index.md"
   | "product-part.md"
   | "module-map.flow.json"
-  | "foundation-envelope.md";
+  | "foundation-envelope.md"
+  | "foundation-envelope.flow.json";
 
 type WorkflowParseResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly error: string };
+type WorkflowArtifactValidator = (content: string) => string | null;
 
 const validateRequiredHeader = (params: {
   readonly content: string;
@@ -28,67 +30,112 @@ const validateRequiredHeader = (params: {
   return params.headerPattern.test(params.content) ? null : params.headerError;
 };
 
-const resolveWorkflowArtifactValidationError = (params: {
+const validateJsonObjectSidecar = (params: {
   readonly content: string;
-  readonly fileName: WorkflowArtifactFileName;
+  readonly emptyError: string;
+  readonly invalidJsonError: string;
+  readonly invalidObjectError: string;
 }): string | null => {
-  switch (params.fileName) {
-    case "Final_Description.md":
-      return validateRequiredHeader({
-        content: params.content,
+  if (params.content.trim().length === 0) {
+    return params.emptyError;
+  }
+  try {
+    const parsed = JSON.parse(params.content) as unknown;
+    return typeof parsed === "object" &&
+      parsed !== null &&
+      !Array.isArray(parsed)
+      ? null
+      : params.invalidObjectError;
+  } catch {
+    return params.invalidJsonError;
+  }
+};
+
+const validateVirtualSimulation = (content: string): string | null => {
+  if (content.trim().length === 0) {
+    return "virtual-simulation markdown is empty";
+  }
+  if (!VIRTUAL_SIMULATION_TITLE_RE.test(content)) {
+    return "virtual-simulation markdown is missing '# Virtual Simulation' header";
+  }
+  return (content.match(VIRTUAL_SIMULATION_SCENARIO_RE)?.length ?? 0) < 1
+    ? "virtual-simulation markdown must include at least 1 scenario (## Сценарий N)"
+    : null;
+};
+
+const WORKFLOW_ARTIFACT_VALIDATORS = new Map<
+  WorkflowArtifactFileName,
+  WorkflowArtifactValidator
+>([
+  [
+    "Final_Description.md",
+    (content) =>
+      validateRequiredHeader({
+        content,
         emptyError: "Description markdown is empty",
         headerError: "Description markdown is missing '# Description:' header",
         headerPattern: DESCRIPTION_TITLE_RE,
-      });
-    case "virtual-simulation.md":
-      if (params.content.trim().length === 0) {
-        return "virtual-simulation markdown is empty";
-      }
-      if (!VIRTUAL_SIMULATION_TITLE_RE.test(params.content)) {
-        return "virtual-simulation markdown is missing '# Virtual Simulation' header";
-      }
-      return (params.content.match(VIRTUAL_SIMULATION_SCENARIO_RE)?.length ??
-        0) < 1
-        ? "virtual-simulation markdown must include at least 1 scenario (## Сценарий N)"
-        : null;
-    case "product-parts.index.md":
-      return validateRequiredHeader({
-        content: params.content,
+      }),
+  ],
+  ["virtual-simulation.md", validateVirtualSimulation],
+  [
+    "product-parts.index.md",
+    (content) =>
+      validateRequiredHeader({
+        content,
         emptyError: "Product parts index markdown is empty",
         headerError:
           "Product parts index markdown is missing '# Product Parts Index' header",
         headerPattern: PRODUCT_PARTS_INDEX_TITLE_RE,
-      });
-    case "product-part.md":
-      return validateRequiredHeader({
-        content: params.content,
+      }),
+  ],
+  [
+    "product-part.md",
+    (content) =>
+      validateRequiredHeader({
+        content,
         emptyError: "Module inventory markdown is empty",
         headerError:
           "Module inventory markdown is missing '# Module Inventory' or '# Product Part:' header",
         headerPattern: DIAGRAM_MODULES_TITLE_RE,
-      });
-    case "module-map.flow.json":
-      if (params.content.trim().length === 0) {
-        return "Diagram flow sidecar is empty";
-      }
-      try {
-        const parsed = JSON.parse(params.content) as unknown;
-        return typeof parsed === "object" &&
-          parsed !== null &&
-          !Array.isArray(parsed)
-          ? null
-          : "Diagram flow sidecar must be a JSON object";
-      } catch {
-        return "Diagram flow sidecar is not valid JSON";
-      }
-    case "foundation-envelope.md":
-      return params.content.trim().length === 0
+      }),
+  ],
+  [
+    "module-map.flow.json",
+    (content) =>
+      validateJsonObjectSidecar({
+        content,
+        emptyError: "Diagram flow sidecar is empty",
+        invalidJsonError: "Diagram flow sidecar is not valid JSON",
+        invalidObjectError: "Diagram flow sidecar must be a JSON object",
+      }),
+  ],
+  [
+    "foundation-envelope.md",
+    (content) =>
+      content.trim().length === 0
         ? "Foundation envelope markdown is empty"
-        : null;
-    default:
-      return "Unsupported artifact file";
-  }
-};
+        : null,
+  ],
+  [
+    "foundation-envelope.flow.json",
+    (content) =>
+      validateJsonObjectSidecar({
+        content,
+        emptyError: "Foundation envelope flow sidecar is empty",
+        invalidJsonError: "Foundation envelope flow sidecar is not valid JSON",
+        invalidObjectError:
+          "Foundation envelope flow sidecar must be a JSON object",
+      }),
+  ],
+]);
+
+const resolveWorkflowArtifactValidationError = (params: {
+  readonly content: string;
+  readonly fileName: WorkflowArtifactFileName;
+}): string | null =>
+  WORKFLOW_ARTIFACT_VALIDATORS.get(params.fileName)?.(params.content) ??
+  "Unsupported artifact file";
 
 export const normalizeArtifactContent = (content: string): string =>
   content.endsWith("\n") ? content : `${content}\n`;

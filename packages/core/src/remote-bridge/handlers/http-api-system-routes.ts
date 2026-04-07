@@ -17,7 +17,7 @@ const VIRTUAL_SIMULATION_PATH_RE =
 const DIAGRAM_MODULES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-map\.flow\.json))$/;
 const FOUNDATION_ENVELOPE_PATH_RE =
-  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/foundation_envelope\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?foundation-envelope\.md$/;
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/foundation_envelope\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:foundation-envelope\.md|foundation-envelope\.flow\.json)$/;
 const PRODUCT_PART_SLOT_RE =
   /^diagram\.modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -46,6 +46,13 @@ const WORKFLOW_STAGE_SLOTS = new Map<
     {
       stage: "foundation_envelope",
       fileName: "foundation-envelope.md",
+    },
+  ],
+  [
+    "workspace.foundation_envelope.flow",
+    {
+      stage: "foundation_envelope",
+      fileName: "foundation-envelope.flow.json",
     },
   ],
 ]);
