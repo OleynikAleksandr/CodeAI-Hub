@@ -6,6 +6,8 @@
 **Owner:** Oleksandr + Codex
 **Scope:** Define the next implementation wave for `Foundation Envelope`: user-facing React Flow visual projection in Project Manager, runtime-owned `foundation-envelope.flow.json`, projection-friendly markdown contract, and required updates to the Foundation Envelope agent instructions.
 
+> Historical note (2026-04-07): this archived planning doc remains factual for release `1.1.905`, but `Foundation Envelope` was removed from the active workflow in `Session012`. Keep it only for release/postmortem traceability, not as an active intake doc.
+
 ---
 
 ## 1. Problem

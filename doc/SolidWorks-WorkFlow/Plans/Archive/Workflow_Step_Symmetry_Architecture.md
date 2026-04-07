@@ -5,6 +5,8 @@
 **Owner:** Oleksandr + Codex
 **Scope:** Retrofit the released trunk workflow so `Description`, `Virtual Simulation`, `Diagram Modules`, and `Foundation Envelope` all use one canonical step-passport and startup-restore model, with formal regression coverage and a packaged release at the end.
 
+> Historical note (2026-04-07): this archived scope documents the symmetry retrofit as it existed before `Foundation Envelope` was retired in `Session012`. The trunk referenced here is no longer the active workflow.
+
 ---
 
 ## 1. Problem
