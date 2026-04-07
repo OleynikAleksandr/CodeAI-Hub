@@ -30,10 +30,11 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 - Shared session markdown supports an opt-in local-file interception path instead of hard-wiring editor behavior into every markdown surface.
 - Project Manager uses that opt-in path only for agent dialog bubbles:
   - absolute local file links remain normal markdown links by default;
-  - PM dialog supplies a file-link callback and routes supported targets to the editor-aware open path;
+  - PM dialog supplies a file-link callback, decodes percent-encoded absolute filesystem paths before dispatch, and routes supported targets to the editor-aware open path;
   - artifact/help markdown stay on normal anchor behavior until a separate scope changes their contract.
 - When a VS Code webview bridge exists, the UI bundle delegates PM dialog file opens to the extension host message channel; the extension host owns `showTextDocument`.
 - Without a VS Code webview bridge, the UI bundle prefers the launcher bridge handoff for supported PM dialog file links.
+- In standalone mode, the resulting Visual Studio Code external-open confirmation prompt may still appear; the UI contract only guarantees that the handoff target is a real path, not that the host suppresses the safeguard prompt.
 - Raw `vscode://file/...` URI navigation remains only as a last-resort fallback when neither the webview bridge nor the launcher bridge exists.
 
 ## Related Docs

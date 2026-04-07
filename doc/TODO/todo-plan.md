@@ -41,9 +41,9 @@
 
 ### Stream: Docs Sync
 7. [DONE] Sync the standalone fallback contract in `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, and `doc/TODO/todo-plan.md`; scope: document that standalone PM decodes percent-encoded file paths before launcher handoff and that the launcher must preserve real filesystem separators inside `vscode://file/...`; expected commit message: `docs(pm): sync standalone file link contract`
-8. [IN_PROGRESS] Git Commit: `docs(pm): sync standalone file link contract` (hash: TBD)
-9. [TODO] Sync the UI-side file-link normalization contract in `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` and `doc/TODO/todo-plan.md`; scope: document that PM dialog markdown decodes percent-encoded absolute paths before using the editor-aware open pipeline, while the external VS Code confirmation prompt may still appear as a platform-level safeguard; expected commit message: `docs(pm): sync ui file link path contract`
-10. [TODO] Git Commit: `docs(pm): sync ui file link path contract` (hash: TBD)
+8. [DONE] Git Commit: `docs(pm): sync standalone file link contract` (hash: `9884f4ba0`)
+9. [DONE] Sync the UI-side file-link normalization contract in `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` and `doc/TODO/todo-plan.md`; scope: document that PM dialog markdown decodes percent-encoded absolute paths before using the editor-aware open pipeline, while the external VS Code confirmation prompt may still appear as a platform-level safeguard; expected commit message: `docs(pm): sync ui file link path contract`
+10. [IN_PROGRESS] Git Commit: `docs(pm): sync ui file link path contract` (hash: TBD)
 
 ### Stream: Release Build For User Testing
 11. [TODO] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the path-encoding fix before packaging; expected commit message: `docs(release): prep file link path hotfix release`
