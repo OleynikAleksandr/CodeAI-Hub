@@ -369,7 +369,7 @@ const resolveWorkflowBlockedStages = (params: {
     readonly draftPath?: string;
   } | null;
   readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
-}): Record<WorkflowStageId, boolean> => {
+}): Partial<Record<WorkflowStageId, boolean>> => {
   const descriptionDone = Boolean(params.description?.finalPath);
   const virtualSimulationArtifactAvailable = stageHasArtifact({
     state: params.state,
@@ -380,6 +380,5 @@ const resolveWorkflowBlockedStages = (params: {
     description: false,
     virtual_simulation: !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
-    foundation_envelope: params.diagramModulesProgress?.aggregateReady !== true,
   };
 };

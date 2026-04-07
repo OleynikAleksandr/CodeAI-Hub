@@ -37,14 +37,14 @@
 
 ### Stream: Active Plans And Navigation Cleanup
 7. [DONE] Update `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: remove FE from active docs navigation and mark the old FE architecture path for archive/retirement; expected commit message: `docs(plan): retire foundation envelope architecture path`
-8. [TODO] Git Commit: `docs(plan): retire foundation envelope architecture path` (hash: TBD)
+8. [DONE] Git Commit: `docs(plan): retire foundation envelope architecture path` (hash: `315d50be3`)
 
 ## Phase 2 — Remove Foundation Envelope From Core Workflow Runtime (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Workflow State And Artifact Contracts
-9. [IN_PROGRESS] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts`, and `doc/TODO/todo-plan.md`; scope: remove `foundation_envelope` from active workflow statuses, gating, and filesystem hydration; expected commit message: `refactor(core): remove foundation envelope workflow state`
+9. [DONE] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts`, and `doc/TODO/todo-plan.md`; scope: remove `foundation_envelope` from active workflow statuses, gating, and filesystem hydration; expected commit message: `refactor(core): remove foundation envelope workflow state`
 10. [TODO] Git Commit: `refactor(core): remove foundation envelope workflow state` (hash: TBD)
-11. [TODO] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: drop FE artifact validation/routes and stop treating `foundation-envelope.md` or `foundation-envelope.flow.json` as active workflow artifacts; expected commit message: `refactor(core): remove foundation envelope artifact routes`
+11. [IN_PROGRESS] Update `packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts`, `packages/core/src/remote-bridge/handlers/http-api-system-routes.ts`, and `doc/TODO/todo-plan.md`; scope: drop FE artifact validation/routes and stop treating `foundation-envelope.md` or `foundation-envelope.flow.json` as active workflow artifacts; expected commit message: `refactor(core): remove foundation envelope artifact routes`
 12. [TODO] Git Commit: `refactor(core): remove foundation envelope artifact routes` (hash: TBD)
 13. [TODO] Update `packages/core/src/templates/bundled-templates.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE prompt/template registration and contract lookup from the active step catalog; expected commit message: `refactor(core): drop foundation envelope prompt contract`
 14. [TODO] Git Commit: `refactor(core): drop foundation envelope prompt contract` (hash: TBD)
