@@ -1,7 +1,7 @@
 # Development TODO Plan
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/ProjectManager_WorkspaceStartup_Reset_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_WorkspaceStartup_Reset_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
@@ -23,7 +23,7 @@
   - `npm run build --workspace <package>`
   - `npm run build:webview`
   - `npm run typecheck:webview`
-- `doc/TODO/todo-plan.md` must be updated in real time after each micro-task and each commit.
+- `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md` was updated in real time after each micro-task and each commit.
 
 ## Phase 1 — Description-First Workspace Startup Reset (owner: Codex, updated: 2026-04-07)
 
@@ -45,10 +45,10 @@
 
 ### Stream: Startup Contract Docs And Coverage
 9. [DONE] Sync the temporary startup contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; include aligned source-test sync in `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts` if old `lastActive` startup assumptions surface; scope: docs plus regression coverage for Description-first startup; expected commit message: `docs(pm): document description-first workspace startup`
-10. [IN_PROGRESS] Git Commit: `docs(pm): document description-first workspace startup` (hash: TBD)
+10. [DONE] Git Commit: `docs(pm): document description-first workspace startup` (hash: `abfa5c1dd`)
 
 ### Stream: Release Build For User Testing
-11. [DONE] Prepare the release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep description startup reset test release`
+11. [DONE] Prepare the release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep description startup reset test release`
 12. [DONE] Git Commit: `docs(release): prep description startup reset test release` (hash: `244d309c5`)
-13. [DONE] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for description startup reset`
+13. [DONE] Run the release checklist for this scope in `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for description startup reset`
 14. [DONE] Git Commit: `build(release): cut test build for description startup reset` (hash: `a769e2b73`)

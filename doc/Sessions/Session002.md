@@ -15,8 +15,8 @@
 - Verified on the affected workspace that `workflow/state.json` currently points to `virtual_simulation` even though `foundation-envelope.md` exists and is newer as a semantic artifact.
 - Agreed the temporary product rule for the next implementation wave: `workspace open => Description`, with explicit user clicks remaining the only source of stage changes after startup.
 - Finalized the previously pending `Session001` report so the active session history block is now committed and cleanly closed.
-- Created the planning document `doc/SolidWorks-WorkFlow/Plans/ProjectManager_WorkspaceStartup_Reset_Architecture.md`.
-- Replaced the placeholder `doc/TODO/todo-plan.md` with a new active execution plan for the workspace-startup reset scope, including explicit cleanup of obsolete startup heuristics.
+- Created the planning document `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_WorkspaceStartup_Reset_Architecture.md`.
+- Replaced the placeholder `doc/TODO/todo-plan.md` with the execution plan later archived as `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md`, including explicit cleanup of obsolete startup heuristics.
 - No tests or builds were run in this session because the work stopped at analysis and planning.
 
 ## Git commits
@@ -28,11 +28,11 @@
 
 # 2. Instructions for Next Session
 
-**Recovery Owner:** `doc/TODO/todo-plan.md`
+**Recovery Owner:** `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md`
 
 ## Plans for next session
-- Continue the active execution scope from `doc/TODO/todo-plan.md`.
-- Read the current cycle context pack listed in `doc/TODO/todo-plan.md` before implementation.
+- Continue the active execution scope from `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md`.
+- Read the current cycle context pack listed in `doc/TODO/Archive/todo-plan-phase1-description-first-workspace-startup-reset.md` before implementation.
 - Start with `Phase 1 / Stream: Core Startup Truth`.
 - Keep the temporary startup contract fixed to `workspace open => Description`.
 - Remove obsolete recency-based startup heuristics instead of leaving them as hidden fallback selectors.

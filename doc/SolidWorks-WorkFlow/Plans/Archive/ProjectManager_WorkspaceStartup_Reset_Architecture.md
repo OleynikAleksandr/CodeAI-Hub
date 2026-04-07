@@ -1,6 +1,6 @@
 # Project Manager Workspace Startup Reset Architecture
 
-**Status:** Draft for review (2026-04-07)
+**Status:** Archived after implementation complete (2026-04-07)
 **Created:** 2026-04-07
 **Owner:** Oleksandr + Codex
 **Scope:** Define a temporary canonical startup rule for Project Manager when a workspace is opened, switched, or restored. Until the product has a real "current working focus" model and downstream invalidation for upstream edits, workspace startup must stop inferring a stage from continuity/runtime recency and must always open `Description`.
