@@ -121,8 +121,8 @@
 
 ### Stream: Verification
 57. [DONE] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
-58. [TODO] Git Commit: `test(workflow): verify foundation envelope removal` (hash: TBD)
-59. [TODO] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
+58. [DONE] Git Commit: `test(workflow): verify foundation envelope removal` (hash: `34a1800b9`)
+59. [DONE] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
 60. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
 
 ### Stream: Release Build
