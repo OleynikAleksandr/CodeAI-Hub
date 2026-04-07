@@ -15,7 +15,7 @@ import {
   type FlowSidecarDocument,
 } from "./flow-sidecar-types";
 
-export type DiagramEditorStage = "diagram_modules";
+export type DiagramEditorStage = "diagram_modules" | "foundation_envelope";
 export type DiagramPaths = {
   readonly artifactPath: string;
   readonly flowSidecarPath: string;
@@ -24,12 +24,21 @@ export type DiagramPaths = {
 
 export const resolveDiagramPaths = (
   workspaceSlug: string,
-  _stage: DiagramEditorStage
-): DiagramPaths => ({
-  artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
-  flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
-  label: "Diagram Modules",
-});
+  stage: DiagramEditorStage
+): DiagramPaths => {
+  if (stage === "foundation_envelope") {
+    return {
+      artifactPath: `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`,
+      flowSidecarPath: `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.flow.json`,
+      label: "Foundation Envelope",
+    };
+  }
+  return {
+    artifactPath: `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+    flowSidecarPath: `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
+    label: "Diagram Modules",
+  };
+};
 
 export type ArtifactReadResult =
   | { readonly status: "ok"; readonly content: string }

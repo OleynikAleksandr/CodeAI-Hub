@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import type {
   DiagramMapModel,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import { parseModuleMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-parser";
 import { api } from "../../api";
-import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
   readWorkflowArtifact,
@@ -13,7 +11,6 @@ import {
   loadDiagramModulesProgressiveResult,
 } from "./diagram-modules-progressive-model";
 import {
-  applyFlowSidecarPositions,
   parseFlowSidecar,
   type FlowSidecarDocument,
 } from "./flow-sidecar-types";
@@ -121,7 +118,63 @@ export const useDiagramLoader = (params: {
         setContent(null);
         clearDiagram();
         setStatus("missing");
+        return;
       }
+
+      const artifactResult = await readWorkflowArtifact({
+        httpUrl,
+        workspacePath: params.workspacePath,
+        workspaceSlug: params.workspaceSlug,
+        path: paths.artifactPath,
+      });
+
+      if (cancelled) {
+        return;
+      }
+
+      if (artifactResult.status === "missing") {
+        setContent(null);
+        clearDiagram();
+        setStatus("missing");
+        return;
+      }
+
+      if (artifactResult.status === "error") {
+        clearDiagram();
+        setStatus("error");
+        setError(`Не удалось загрузить ${paths.label}: ${artifactResult.error}`);
+        setContent(null);
+        return;
+      }
+
+      const sidecarResult = await readWorkflowArtifact({
+        httpUrl,
+        workspacePath: params.workspacePath,
+        workspaceSlug: params.workspaceSlug,
+        path: paths.flowSidecarPath,
+      });
+
+      if (cancelled) {
+        return;
+      }
+
+      if (sidecarResult.status === "error") {
+        clearDiagram();
+        setStatus("error");
+        setError(`Не удалось загрузить ${paths.label}: ${sidecarResult.error}`);
+        setContent(artifactResult.content);
+        return;
+      }
+
+      const nextFlowDocument =
+        sidecarResult.status === "ok"
+          ? parseFlowSidecar(sidecarResult.content)
+          : null;
+      setContent(artifactResult.content);
+      setModel(null);
+      setFlowDocument(nextFlowDocument);
+      setProjection(null);
+      setStatus("ready");
     })();
 
     return () => {
