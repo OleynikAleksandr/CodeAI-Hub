@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.905] - 2026-04-07
+### Added
+- **`Foundation Envelope` now renders as a React Flow diagram in the Project Manager `Artifacts` surface**: once the canonical `foundation-envelope.md` exists, the user sees the stage as a diagram-first review surface instead of a raw markdown-only panel.
+
+### Changed
+- **`foundation-envelope.flow.json` is now the runtime-owned layout sidecar for the stage**: semantic ownership remains in `foundation-envelope.md`, while node positions and view-state persistence are stored separately and routed through the shared workflow artifact endpoints.
+- **The shared PM diagram pipeline now covers `Foundation Envelope` end-to-end**: the stage reuses the common diagram loader, persistence path, repair scaffold, help localization contract, workflow-tree parity checks, and webview typecheck expectations instead of maintaining a markdown-only branch.
+
 ## [1.1.904] - 2026-04-07
 ### Fixed
 - **Standalone PM dialog file links now decode launcher query paths as real filesystem paths**: the launcher no longer forwards `%2FUsers%2F...` into Visual Studio Code after the PM bridge has already handed off the file target.

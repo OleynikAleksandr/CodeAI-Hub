@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.904
-- **Standalone launcher now decodes the `path` query parameter as a filesystem path before building the final VS Code handoff**: the remaining `%2FUsers%2F...` path-separator corruption from `1.1.903` is repaired at the launcher query boundary instead of being left inside the outgoing VS Code target.
-- **The standalone open route now treats `%20`, `%2F`, and other encoded path characters consistently across the full PM -> launcher -> VS Code chain**: PM still normalizes local dialog links first, and the launcher now finishes the job by decoding the bridge query with file-oriented unescape rules.
-- **Broader method/knowledge documentation is intentionally deferred until post-release user validation**: this release only ships the narrow query-decode hotfix so the remaining standalone file-link regression can be validated before a wider documentation pass is written.
+## Current Release — v1.1.905
+- **`Foundation Envelope` now opens as a user-facing React Flow diagram in the `Artifacts` surface**: the Project Manager no longer defaults this step to a raw markdown viewer once `foundation-envelope.md` exists, so users can review `Application Root`, `Shared Zones`, `Product Parts`, and `Integration Seams` directly as a diagram.
+- **`foundation-envelope.flow.json` is now the runtime-owned layout sidecar for the stage**: `foundation-envelope.md` stays the semantic SSOT, while manual node positions and view-state persistence travel through the new sidecar without leaking into agent-owned semantic content.
+- **The release now covers the full FE visual path across Core and PM**: workflow artifact routing, sidecar validation/upsert, shared diagram loader/persistence reuse, canonical help localization, tree/session parity tests, and webview typecheck all protect the new diagram-first contract.
 
-Previous releases (summary): `1.1.800–1.1.900` — left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.904` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, `Foundation Envelope` stage shell rollout, Foundation Envelope localization hotfix, Foundation Envelope workflow-tree/session parity fix, Foundation Envelope continuity/cold-start persistence fix, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
