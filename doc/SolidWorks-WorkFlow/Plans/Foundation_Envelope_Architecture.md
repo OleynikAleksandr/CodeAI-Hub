@@ -1,9 +1,15 @@
 # Foundation Envelope Architecture
 
-**Status:** Draft for review (2026-04-05)
+**Status:** Retired from active workflow (2026-04-07)
 **Created:** 2026-04-05
+**Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
-**Scope:** Define a new light workflow step immediately after `Diagram Modules`. The step must formalize the application-wide structural envelope before branch-level specifications begin: `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies per `Product Part`, placement rules, dependency rules, and a user-facing visualization derived from a canonical text artifact.
+**Scope:** Historical record of the removed `Foundation Envelope` planning path. This document is kept only until archive closeout and must not be used as an active design intake for new scopes.
+
+> Retirement note:
+> `Foundation Envelope` removed from the active workflow on 2026-04-07 after release `1.1.905` validation showed that the step added user confusion without providing necessary downstream design value.
+> Active workflow now goes from `Diagram Modules` directly into `Product Part Specification`.
+> This document remains only as history/postmortem evidence and will be moved out of active navigation during closeout.
 
 ---
 
