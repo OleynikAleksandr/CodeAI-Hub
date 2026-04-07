@@ -131,10 +131,14 @@
 63. [DONE] Update `scripts/generate-bundled-templates.js` and `doc/TODO/todo-plan.md`; scope: remove the build-time FE prompt reference that still blocks `build-all` after the runtime/template cleanup wave; expected commit message: `build(release): remove foundation envelope template generator tail`
 64. [DONE] Git Commit: `build(release): remove foundation envelope template generator tail` (hash: `fd0f349e6`)
 65. [DONE] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline after FE removal, capture version/materialization changes, and prepare fresh release artifacts; expected commit message: `build(release): cut workflow removal artifacts`
-66. [TODO] Git Commit: `build(release): cut workflow removal artifacts` (hash: TBD)
-67. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX for the workflow without `Foundation Envelope` and confirm the release checklist passes; expected commit message: `build(release): package workflow without foundation envelope`
+66. [DONE] Git Commit: `build(release): cut workflow removal artifacts` (hash: `c7610c260`)
+67. [DONE] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX for the workflow without `Foundation Envelope` and confirm the release checklist passes; expected commit message: `build(release): package workflow without foundation envelope`
 68. [TODO] Git Commit: `build(release): package workflow without foundation envelope` (hash: TBD)
 
-### Stream: Plan Closeout
-69. [TODO] Update `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: archive or retire FE-only active planning artifacts, keep only history-only references, and close the execution cycle cleanly after release packaging; expected commit message: `docs(closeout): archive foundation envelope removal scope`
-70. [TODO] Git Commit: `docs(closeout): archive foundation envelope removal scope` (hash: TBD)
+### Stream: Planning Doc Closeout
+69. [TODO] Move `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md` and `doc/SolidWorks-WorkFlow/Plans/Remove_Foundation_Envelope_Workflow_Architecture.md`, and update `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: archive the completed FE planning docs and remove them from active navigation after the release is packaged; expected commit message: `docs(closeout): archive foundation envelope planning docs`
+70. [TODO] Git Commit: `docs(closeout): archive foundation envelope planning docs` (hash: TBD)
+
+### Stream: Execution Plan Closeout
+71. [TODO] Update `doc/TODO/todo-plan.md` and move it to `doc/TODO/Archive/todo-plan-phase4-remove-foundation-envelope-workflow.md`; scope: record the final release/closeout hashes, retarget the planning source to the archived path, and archive the completed execution plan so no active scope remains; expected commit message: `docs(closeout): archive foundation envelope execution plan`
+72. [TODO] Git Commit: `docs(closeout): archive foundation envelope execution plan` (hash: TBD)
