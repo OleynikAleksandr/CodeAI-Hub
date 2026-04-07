@@ -87,40 +87,44 @@
 31. [DONE] Update `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.foundation-envelope.test.ts`, and `packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`; scope: remove or retarget core tests that keep FE alive as an active workflow/artifact contract; expected commit message: `test(core): remove foundation envelope workflow coverage`
 32. [DONE] Git Commit: `test(core): remove foundation envelope workflow coverage` (hash: `b4fdb1520`)
 33. [DONE] Update `packages/core/src/remote-bridge/handlers/foundation-envelope-continuity-restore.test.ts`, `packages/core/src/session-continuity/continuity-store.test.ts`, and `packages/core/src/session-continuity/handoff-report-writer.test.ts`; scope: remove FE-specific continuity coverage after the stage and its continuity path are deleted; expected commit message: `test(core): remove foundation envelope continuity coverage`
-34. [TODO] Git Commit: `test(core): remove foundation envelope continuity coverage` (hash: TBD)
+34. [DONE] Git Commit: `test(core): remove foundation envelope continuity coverage` (hash: `c25a96993`)
+35. [DONE] Update `packages/core/src/workflow/paths/workflow-artifact-paths.test.ts`, `packages/core/src/workflow/runtime/workflow-runtime.test.ts`, and `packages/core/src/workflow/state/workflow-last-active-store.test.ts`; scope: remove FE path/runtime/last-active regression coverage after active stage deletion; expected commit message: `test(core): prune foundation envelope path coverage`
+36. [TODO] Git Commit: `test(core): prune foundation envelope path coverage` (hash: TBD)
 
 ### Stream: PM Regression Cleanup
-35. [TODO] Update `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`, and `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; scope: retarget PM workflow gating/tree/prompt-pack tests to the reduced trunk without FE; expected commit message: `test(pm): retarget workflow gating without foundation envelope`
-36. [TODO] Git Commit: `test(pm): retarget workflow gating without foundation envelope` (hash: TBD)
-37. [TODO] Update `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-localization.test.ts`, and `doc/TODO/todo-plan.md`; scope: delete FE-only PM regression coverage that is no longer valid after stage removal; expected commit message: `test(pm): remove foundation envelope regression suite`
-38. [TODO] Git Commit: `test(pm): remove foundation envelope regression suite` (hash: TBD)
+37. [TODO] Update `src/client/project-manager/services/workflow-step-start-service.gating.test.ts`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`, and `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; scope: retarget PM workflow gating/tree/prompt-pack tests to the reduced trunk without FE; expected commit message: `test(pm): retarget workflow gating without foundation envelope`
+38. [TODO] Git Commit: `test(pm): retarget workflow gating without foundation envelope` (hash: TBD)
+39. [TODO] Update `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts`, `src/client/project-manager/components/foundation-envelope/foundation-envelope-localization.test.ts`, and `doc/TODO/todo-plan.md`; scope: delete FE-only PM regression coverage that is no longer valid after stage removal; expected commit message: `test(pm): remove foundation envelope regression suite`
+40. [TODO] Git Commit: `test(pm): remove foundation envelope regression suite` (hash: TBD)
+41. [TODO] Update `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/ui/src/session/empty-state.test.ts`, and `doc/TODO/todo-plan.md`; scope: remove FE-specific navigation and empty-state copy coverage after stage removal; expected commit message: `test(ui): remove foundation envelope copy coverage`
+42. [TODO] Git Commit: `test(ui): remove foundation envelope copy coverage` (hash: TBD)
 
 ### Stream: Dead Fragment Sweep
-39. [TODO] Update `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, and `src/client/project-manager/components/layout/workspace-tree-model.ts`; scope: remove stale FE imports/branches/labels that may survive the main PM removal path and keep dead code in shared layout surfaces; expected commit message: `refactor(pm): sweep foundation envelope dead fragments`
-40. [TODO] Git Commit: `refactor(pm): sweep foundation envelope dead fragments` (hash: TBD)
-41. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `packages/core/src/templates/source/foundation-envelope-prompt.md`; scope: remove the last active FE contract route, stub contract builder, and source prompt asset from core after PM/runtime entrypoints are gone; expected commit message: `refactor(core): sweep foundation envelope dead references`
-42. [DONE] Git Commit: `refactor(core): sweep foundation envelope dead references` (hash: `574d5f3d9`)
+43. [TODO] Update `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, and `src/client/project-manager/components/layout/workspace-tree-model.ts`; scope: remove stale FE imports/branches/labels that may survive the main PM removal path and keep dead code in shared layout surfaces; expected commit message: `refactor(pm): sweep foundation envelope dead fragments`
+44. [TODO] Git Commit: `refactor(pm): sweep foundation envelope dead fragments` (hash: TBD)
+45. [DONE] Update `packages/core/src/remote-bridge/handlers/http-api-router.ts`, `packages/core/src/remote-bridge/handlers/idea-contract-service.ts`, and `packages/core/src/templates/source/foundation-envelope-prompt.md`; scope: remove the last active FE contract route, stub contract builder, and source prompt asset from core after PM/runtime entrypoints are gone; expected commit message: `refactor(core): sweep foundation envelope dead references`
+46. [DONE] Git Commit: `refactor(core): sweep foundation envelope dead references` (hash: `574d5f3d9`)
 
 ### Stream: Historical Documentation Cleanup
-43. [TODO] Update `doc/Sessions/Session011.md`, `doc/TODO/Archive/todo-plan-phase1-foundation-envelope-visual-projection.md`, and `doc/TODO/todo-plan.md`; scope: keep FE history truthful while removing any misleading next-step/live-navigation assumptions that would route future work through the removed stage; expected commit message: `docs(history): retire foundation envelope live navigation`
-44. [TODO] Git Commit: `docs(history): retire foundation envelope live navigation` (hash: TBD)
-45. [TODO] Update `doc/SolidWorks-WorkFlow/Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: mark archived FE planning docs as historical-only and remove wording that leaves the removed step looking active; expected commit message: `docs(history): mark foundation envelope archives as retired`
-46. [TODO] Git Commit: `docs(history): mark foundation envelope archives as retired` (hash: TBD)
+47. [TODO] Update `doc/Sessions/Session011.md`, `doc/TODO/Archive/todo-plan-phase1-foundation-envelope-visual-projection.md`, and `doc/TODO/todo-plan.md`; scope: keep FE history truthful while removing any misleading next-step/live-navigation assumptions that would route future work through the removed stage; expected commit message: `docs(history): retire foundation envelope live navigation`
+48. [TODO] Git Commit: `docs(history): retire foundation envelope live navigation` (hash: TBD)
+49. [TODO] Update `doc/SolidWorks-WorkFlow/Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: mark archived FE planning docs as historical-only and remove wording that leaves the removed step looking active; expected commit message: `docs(history): mark foundation envelope archives as retired`
+50. [TODO] Git Commit: `docs(history): mark foundation envelope archives as retired` (hash: TBD)
 
 ### Stream: Verification
-47. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
-48. [TODO] Git Commit: `test(workflow): verify foundation envelope removal` (hash: TBD)
-49. [TODO] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
-50. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
+51. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
+52. [TODO] Git Commit: `test(workflow): verify foundation envelope removal` (hash: TBD)
+53. [TODO] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
+54. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
 
 ### Stream: Release Build
-51. [TODO] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing product docs before cutting the cleanup release that removes `Foundation Envelope` from the active workflow; expected commit message: `docs(release): sync foundation envelope removal release docs`
-52. [TODO] Git Commit: `docs(release): sync foundation envelope removal release docs` (hash: TBD)
-53. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline after FE removal, capture version/materialization changes, and prepare fresh release artifacts; expected commit message: `build(release): cut workflow removal artifacts`
-54. [TODO] Git Commit: `build(release): cut workflow removal artifacts` (hash: TBD)
-55. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX for the workflow without `Foundation Envelope` and confirm the release checklist passes; expected commit message: `build(release): package workflow without foundation envelope`
-56. [TODO] Git Commit: `build(release): package workflow without foundation envelope` (hash: TBD)
+55. [TODO] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing product docs before cutting the cleanup release that removes `Foundation Envelope` from the active workflow; expected commit message: `docs(release): sync foundation envelope removal release docs`
+56. [TODO] Git Commit: `docs(release): sync foundation envelope removal release docs` (hash: TBD)
+57. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline after FE removal, capture version/materialization changes, and prepare fresh release artifacts; expected commit message: `build(release): cut workflow removal artifacts`
+58. [TODO] Git Commit: `build(release): cut workflow removal artifacts` (hash: TBD)
+59. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX for the workflow without `Foundation Envelope` and confirm the release checklist passes; expected commit message: `build(release): package workflow without foundation envelope`
+60. [TODO] Git Commit: `build(release): package workflow without foundation envelope` (hash: TBD)
 
 ### Stream: Plan Closeout
-57. [TODO] Update `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: archive or retire FE-only active planning artifacts, keep only history-only references, and close the execution cycle cleanly after release packaging; expected commit message: `docs(closeout): archive foundation envelope removal scope`
-58. [TODO] Git Commit: `docs(closeout): archive foundation envelope removal scope` (hash: TBD)
+61. [TODO] Update `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: archive or retire FE-only active planning artifacts, keep only history-only references, and close the execution cycle cleanly after release packaging; expected commit message: `docs(closeout): archive foundation envelope removal scope`
+62. [TODO] Git Commit: `docs(closeout): archive foundation envelope removal scope` (hash: TBD)

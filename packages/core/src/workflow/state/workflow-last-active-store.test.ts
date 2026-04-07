@@ -8,18 +8,18 @@ import {
   WorkflowLastActiveStore,
 } from "./workflow-last-active-store";
 
-test("WorkflowLastActiveStore restores foundation envelope as the last active stage", async () => {
+test("WorkflowLastActiveStore restores diagram modules as the last active stage", async () => {
   const workspaceRoot = mkdtempSync(
-    path.join(os.tmpdir(), "foundation-envelope-last-active-")
+    path.join(os.tmpdir(), "diagram-modules-last-active-")
   );
   const store = new WorkflowLastActiveStore({
     clock: () => "2026-04-05T12:55:00.000Z",
   });
 
   await store.upsert(workspaceRoot, "demo-workspace", {
-    stage: "foundation_envelope",
+    stage: "diagram_modules",
     artifactPath:
-      ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md",
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
   });
 
   const restored = await new WorkflowLastActiveStore().read(
@@ -28,10 +28,10 @@ test("WorkflowLastActiveStore restores foundation envelope as the last active st
   );
 
   assert.ok(restored);
-  assert.equal(restored.stage, "foundation_envelope");
+  assert.equal(restored.stage, "diagram_modules");
   assert.equal(
     restored.artifactPath,
-    ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
+    ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
   );
   assert.equal(restored.updatedAt, "2026-04-05T12:55:00.000Z");
 });
@@ -56,18 +56,12 @@ test("resolvePreferredWorkflowLastActive prefers the latest trunk stage when tim
       artifactPath:
         ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
     },
-    {
-      stage: "foundation_envelope",
-      updatedAt: "2026-04-06T08:00:00.000Z",
-      artifactPath:
-        ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md",
-    },
   ]);
 
   assert.ok(preferred);
-  assert.equal(preferred.stage, "foundation_envelope");
+  assert.equal(preferred.stage, "diagram_modules");
   assert.equal(
     preferred.artifactPath,
-    ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
+    ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
   );
 });

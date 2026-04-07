@@ -108,11 +108,7 @@ const emitDescriptionWrite = async (
 
 const emitArtifactWrite = async (
   harness: RuntimeHarness,
-  stage:
-    | "description"
-    | "virtual_simulation"
-    | "diagram_modules"
-    | "foundation_envelope",
+  stage: "description" | "virtual_simulation" | "diagram_modules",
   filePath: string,
   workspaceSlug = "demo-workspace"
 ): Promise<boolean> =>
@@ -279,26 +275,6 @@ test("WorkflowRuntime records diagram modules semantic writes as last active sta
       stage: "diagram_modules",
       artifactPath:
         ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
-    },
-  ]);
-});
-
-test("WorkflowRuntime records foundation envelope writes as last active stage", async () => {
-  const harness = createHarness();
-
-  const shouldRecord = await emitArtifactWrite(
-    harness,
-    "foundation_envelope",
-    "foundation_envelope/foundation-envelope.md"
-  );
-
-  assert.equal(shouldRecord, true);
-  assert.deepEqual(harness.descriptionUpserts, []);
-  assert.deepEqual(harness.lastActiveUpserts, [
-    {
-      stage: "foundation_envelope",
-      artifactPath:
-        ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md",
     },
   ]);
 });
