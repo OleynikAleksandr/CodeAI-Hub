@@ -1,6 +1,6 @@
 # Project Manager Dialog File Links Open In VS Code Architecture
 
-**Status:** Draft for review (2026-04-07)
+**Status:** Completed and archived after release 1.1.901 (2026-04-07)
 **Created:** 2026-04-07
 **Owner:** Oleksandr + Codex
 **Scope:** Make absolute local file links rendered in the Project Manager agent dialog open in the Visual Studio Code editor instead of falling back to the generic system text handler.
