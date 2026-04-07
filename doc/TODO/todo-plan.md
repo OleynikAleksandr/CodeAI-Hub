@@ -73,7 +73,7 @@
 ### Stream: Release Build And Scope Closeout
 31. [DONE] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing documents before the final release build for the FE visual projection wave; expected commit message: `docs(release): sync foundation envelope visual projection docs`
 32. [TODO] Git Commit: `docs(release): sync foundation envelope visual projection docs` (hash: TBD)
-33. [TODO] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: synchronize canonical SSOT documents before release packaging so shipped behavior and docs stay aligned; expected commit message: `docs(ssot): sync foundation envelope visual projection release contract`
+33. [DONE] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: synchronize canonical SSOT documents before release packaging so shipped behavior and docs stay aligned; expected commit message: `docs(ssot): sync foundation envelope visual projection release contract`
 34. [TODO] Git Commit: `docs(ssot): sync foundation envelope visual projection release contract` (hash: TBD)
 35. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline, allow version/materialization updates, and record the result before final packaging; expected commit message: `build(release): cut foundation envelope visual projection artifacts`
 36. [TODO] Git Commit: `build(release): cut foundation envelope visual projection artifacts` (hash: TBD)

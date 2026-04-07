@@ -54,7 +54,7 @@ Legacy `description.md` допускается только для compat и н�
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
   - `Help` показывает guidance по шагу.
 - Project Manager для `Foundation Envelope` использует тот же user surface `Artifacts/Help`:
-  - `Artifacts` по умолчанию открывает визуальную Foundation Envelope diagram, построенную из `foundation-envelope.md` и optional sidecar `foundation-envelope.flow.json`;
+  - `Artifacts` по умолчанию открывает визуальную Foundation Envelope diagram, построенную из `foundation-envelope.md` и runtime-owned sidecar `foundation-envelope.flow.json`;
   - `Help` показывает guidance по шагу.
 - Visible PM surface для diagram step не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
 - Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
@@ -128,6 +128,7 @@ Manual start не отменяет watcher:
 Для `Foundation Envelope` runtime-контракт diagram-first:
 - canonical semantic output = `foundation-envelope.md`;
 - `foundation-envelope.flow.json` остаётся runtime-owned layout/view sidecar;
+- visual shell/persistence reuse shared diagram pipeline вместо отдельной markdown-only panel implementation;
 - visual projection строится из canonical markdown artifact и не меняет semantic gating.
 
 ---

@@ -307,6 +307,10 @@
   - `Implementation Foundation` starts only after the selected implementation wave has approved branch artifacts and required seam/shared contracts, then hands off to TODO Plan and code implementation.
   - Facades are NOT a separate trunk step; they remain separate artifacts, but for clusters and modules they are designed in the same session as the matching specification.
 - Diagram workflow user surface не может подменять диаграмму raw Markdown source по умолчанию. При reopen/resume `Diagram Modules` Project Manager обязан возвращать пользователя в `Artifacts` (visual diagram), а `Source` оставлять вторичным debug view.
+- `Foundation Envelope` использует тот же diagram-first user surface contract, но с собственным semantic/runtime boundary:
+  - `foundation-envelope.md` остаётся canonical semantic SSOT;
+  - `foundation-envelope.flow.json` остаётся runtime-owned layout/view sidecar;
+  - при reopen/resume `Foundation Envelope` PM обязан возвращать пользователя в `Artifacts` (visual diagram), а не в raw Markdown source.
 - Пока canonical artifact ещё не создан, `Artifacts` panel для workflow stage обязан показывать тот же help-content, что и вкладка `Help`; отдельный pending-intro prose вне help SSOT не допускается.
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
 - `Diagram Modules` не навязывает пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
@@ -315,6 +319,11 @@
   - manual drag/editing внутри React Flow;
   - persisted user-owned positions в `module-map.flow.json`;
   - agent-driven semantic updates when new semantic content is needed.
+- `Foundation Envelope` повторяет те же visual-shell ограничения на своём stage:
+  - user-facing review идёт через shared React Flow shell;
+  - semantic changes живут в `foundation-envelope.md`;
+  - manual drag сохраняется только в `foundation-envelope.flow.json`;
+  - help/localization/tree/session parity должны оставаться согласованными с diagram-first `Artifacts` surface.
 - Diagram canvas interaction model (начиная с 1.1.796):
   - **Option(Alt)+drag** перемещает отдельные ноды; обычный drag (без модификатора) панорамирует canvas;
   - **Dynamic container resizing**: Product Part и Cluster автоматически расширяются/сжимаются при перемещении дочерних нод к границам (минимальная ширина PP = 720px, Cluster = single-column); реализовано через `containerConstraints` в flow node data и bottom-up `resizeContainersToFit` в `DiagramEditorShell`;
