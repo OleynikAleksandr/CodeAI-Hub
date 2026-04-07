@@ -4,7 +4,7 @@
 **Created:** 2026-04-04
 **Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
-**Scope:** Define a late, technology-aware workflow step that runs after `Foundation Envelope` and after the selected implementation branch already has approved `Product Part Specification`, `Cluster Design`, `Module Design`, and required wave-level contracts. The step must materialize real implementation substrate for the selected wave inside the already-defined application envelope.
+**Scope:** Define a late, technology-aware workflow step that runs after `Diagram Modules` and after the selected implementation branch already has approved `Product Part Specification`, `Cluster Design`, `Module Design`, and required wave-level contracts. The step must materialize real implementation substrate for the selected wave inside the already-approved branch and wave contract set.
 
 ---
 
@@ -14,11 +14,10 @@
 
 После обсуждения в этой сессии зафиксировано, что слишком рано пытаться materialize-ить весь implementation substrate сразу для всего workspace. На этапе сразу после диаграммы у нас ещё обычно нет:
 
-- подтверждённого `Application Root`;
-- формализованных `Shared Zones`;
-- формализованных `Integration Seams`;
-- согласованных intended technologies per `Product Part`;
-- детальных спецификаций и контрактов ветки, которую мы реально собираемся реализовывать первой.
+- утверждённого `Product Part Specification` для выбранной ветки;
+- согласованных `Cluster Design` / `Module Design` артефактов;
+- необходимых wave-level contracts для выбранного scope;
+- достаточно уточнённого technology profile для первой implementation wave.
 
 Поэтому ранний global `Implementation Foundation` приводит к неверной архитектуре:
 
@@ -35,7 +34,7 @@
 
 Следовательно, нужен отдельный шаг, но он должен стоять **позже**:
 
-- после `Foundation Envelope`;
+- после `Diagram Modules`;
 - после спецификаций и контрактов выбранной ветки;
 - до `TODO Plan` и до реальной реализации кода.
 
@@ -48,7 +47,7 @@
 Шаг считается успешным, когда для выбранного scope materialize-ено следующее:
 
 1. Выбранный scope реализации зафиксирован явно.
-2. Technology choices этой wave уточнены и привязаны к уже существующему `Foundation Envelope`.
+2. Technology choices этой wave уточнены и привязаны к уже утверждённым branch artifacts выбранной wave.
 3. В файловой структуре создан реальный subtree/skeleton для выбранного scope.
 4. Установлены или инициализированы необходимые environments, packages и toolchains для этого scope.
 5. Созданы canonical scripts и wrappers, которыми должны пользоваться downstream implementation-агенты.
@@ -58,7 +57,7 @@
 
 Ключевой принцип этого шага:
 
-- `Implementation Foundation` materialize-ит **реальную technical surface** для выбранной ветки, но не переопределяет global application structure, уже заданную более ранним шагом `Foundation Envelope`.
+- `Implementation Foundation` materialize-ит **реальную technical surface** для выбранной ветки, но не переопределяет уже утверждённую ownership/design структуру branch artifacts.
 
 ---
 
@@ -66,8 +65,8 @@
 
 Этот шаг не должен:
 
-- заменять собой `Foundation Envelope`;
-- заново определять `Application Root`, `Shared Zones` или `Integration Seams`;
+- заменять собой `Diagram Modules`;
+- заново определять upstream ownership structure и branch design boundaries;
 - писать бизнес-логику модулей;
 - заменять собой `Product Part Specification`, `Cluster Specification`, `Cluster Facade Contract`, `Module Specification`, или `Module Facade Contract`;
 - подменять собой contracts той ветки, которая идёт в реализацию;
@@ -78,19 +77,18 @@
 
 ## 4. Core Decisions
 
-### 4.1. Шаг переносится после `Foundation Envelope` и после branch design/contracts
+### 4.1. Шаг переносится после `Diagram Modules` и после branch design/contracts
 
 Новая целевая позиция шага:
 
 1. `Diagram Modules`
-2. `Foundation Envelope`
-3. `Product Part Specification`
-4. `Cluster Design`
-5. `Module Design`
-6. `Required contracts for the selected wave`
-7. `Implementation Foundation`
-8. `TODO Plan`
-9. `Implementation`
+2. `Product Part Specification`
+3. `Cluster Design`
+4. `Module Design`
+5. `Required contracts for the selected wave`
+6. `Implementation Foundation`
+7. `TODO Plan`
+8. `Implementation`
 
 Это означает, что `Implementation Foundation` больше не является bridge step сразу после диаграммы.
 Он становится поздним, technology-aware preparation step перед кодом.
@@ -111,7 +109,7 @@
 
 - движение идёт малыми шагами;
 - каждый шаг опирается на уже описанную ветку;
-- application structure не теряется, потому что wave materialize-ится внутри ранее зафиксированного envelope.
+- application structure не теряется, потому что wave materialize-ится внутри уже утверждённых diagram/branch artifacts.
 
 ### 4.3. Шаг встроен в продукт, но outputs живут в workspace
 
@@ -160,13 +158,12 @@ Core обязан заранее знать:
 То есть агент не “придумывает шаг”.
 Он завершает вариативную часть внутри уже заданного product contract.
 
-### 4.5. Technology profile наследуется от envelope, а здесь уточняется и реализуется
+### 4.5. Technology profile наследуется от branch design, а здесь уточняется и реализуется
 
-К этому шагу у нас уже должен быть ранний application-level документ, который фиксирует intended technologies per `Product Part`.
+К этому шагу у нас уже должны быть утверждённые branch artifacts, которые фиксируют boundaries, responsibilities и first-wave scope для выбранного `Product Part`.
 
 Задача `Implementation Foundation` — не выбирать всё с нуля, а:
 
-- прочитать envelope;
 - прочитать утверждённый branch design выбранной ветки: `Product Part Specification`, релевантные `Cluster Specification` / `Cluster Facade Contract`, релевантные `Module Specification` / `Module Facade Contract`, и необходимые wave-level contracts;
 - уточнить technology profile до уровня real implementation decisions;
 - materialize-ить эти решения в workspace.
@@ -204,7 +201,7 @@ Core обязан заранее знать:
 
 Следовательно:
 
-- envelope или product policy задают общие expectations и categories;
+- product policy и approved branch design задают общие expectations и categories;
 - `Implementation Foundation` materialize-ит конкретную stack-specific реализацию;
 - downstream agents должны видеть не “какие практики обычно бывают”, а какие gates реально установлены именно для этой wave.
 
@@ -250,14 +247,13 @@ Core обязан заранее знать:
 1. `Description`
 2. `Virtual Simulation`
 3. `Diagram Modules`
-4. `Foundation Envelope`
-5. `Product Part Specification`
-6. `Cluster Design`
-7. `Module Design`
-8. `Required contracts for the selected implementation wave`
-9. `Implementation Foundation`
-10. `TODO Plan`
-11. `Implementation`
+4. `Product Part Specification`
+5. `Cluster Design`
+6. `Module Design`
+7. `Required contracts for the selected implementation wave`
+8. `Implementation Foundation`
+9. `TODO Plan`
+10. `Implementation`
 
 `Implementation Foundation` — это bridge between approved branch design and executable code work.
 
@@ -269,7 +265,6 @@ Core обязан заранее знать:
 - `virtual-simulation.md`
 - `product-parts.index.md`
 - `product-parts/<part-id>.md`
-- `foundation-envelope.md`
 - `product-part-specification.md` выбранного `Product Part`
 - релевантные `cluster-specification.md`
 - релевантные `cluster-facade-contract.md`
@@ -279,7 +274,7 @@ Core обязан заранее знать:
 
 Дополнительные входы:
 
-- technology decisions, помеченные в envelope как `Proposed` / `Needs decision`
+- technology decisions, помеченные в branch artifacts как `Proposed` / `Needs decision`
 - ограничения среды пользователя
 - policy по допустимым tooling/plugin/source категориям
 - явный выбор implementation wave, если параллельно готовы несколько веток
@@ -292,7 +287,7 @@ Core обязан заранее знать:
 **Product Core должен:**
 
 - проверить наличие и пригодность upstream artifacts;
-- проверить, что application envelope уже существует;
+- проверить, что branch design выбранной wave уже существует;
 - подготовить canonical workspace-local surface шага;
 - создать skeleton артефактов шага;
 - передать агенту policy, manifest schema, readiness expectations и execution boundaries;
@@ -300,7 +295,7 @@ Core обязан заранее знать:
 
 **Step Agent должен:**
 
-- прочитать envelope и утверждённый branch design выбранной wave;
+- прочитать утверждённый branch design выбранной wave;
 - уточнить technology profile выбранной wave;
 - доустановить stack-specific toolchains, frameworks и packages в рамках policy;
 - materialize-ить subtree/config/script surface;
@@ -310,8 +305,8 @@ Core обязан заранее знать:
 
 **Step Agent не должен:**
 
-- заново определять global structure приложения;
-- переопределять envelope-level contracts;
+- заново определять upstream ownership structure;
+- переопределять branch-level contracts;
 - произвольно менять schema артефактов;
 - оставлять критичные decisions только в чате;
 - писать бизнес-логику модулей, кроме минимального scaffold baseline.
@@ -376,7 +371,7 @@ Core обязан заранее знать:
 - читать `foundation-manifest.json`;
 - использовать materialized scripts и configs;
 - учитывать knowledge pack этой wave;
-- уважать envelope-level contracts;
+- уважать branch-level contracts;
 - писать только свою часть кода поверх уже подготовленной основы.
 
 ---
@@ -402,18 +397,18 @@ Core обязан заранее знать:
 
 Смягчение:
 
-- все waves обязаны подчиняться единому `Foundation Envelope`;
-- wave-level manifests должны ссылаться на envelope-level assumptions.
+- все waves обязаны подчиняться одному и тому же утверждённому branch design и wave-level contracts;
+- wave-level manifests должны ссылаться на branch-level assumptions выбранной wave.
 
-### 6.3. Drift between envelope and real implementation substrate
+### 6.3. Drift between branch design and real implementation substrate
 
 Риск:
 
-- branch-level materialization начнёт фактически ломать более ранние assembly decisions.
+- branch-level materialization начнёт фактически ломать ранее утверждённый design scope.
 
 Смягчение:
 
-- агент обязан читать envelope перед materialization;
+- агент обязан читать branch design перед materialization;
 - conflicts должны фиксироваться как blockers или upstream revisions, а не замалчиваться.
 
 ### 6.4. Over-installation and unsafe tooling
@@ -434,13 +429,12 @@ Core обязан заранее знать:
 Реализация этого scope должна идти в таком порядке:
 
 1. Выбрать implementation wave.
-2. Прочитать `Foundation Envelope`.
-3. Прочитать утверждённый branch design и required contracts выбранной wave.
-4. Уточнить branch-level technology profile.
-5. Materialize-ить subtree, configs, scripts и environments.
-6. Materialize-ить knowledge pack.
-7. Прогнать readiness checks.
-8. Зафиксировать результат и blockers в `foundation-manifest.json`.
+2. Прочитать утверждённый branch design и required contracts выбранной wave.
+3. Уточнить branch-level technology profile.
+4. Materialize-ить subtree, configs, scripts и environments.
+5. Materialize-ить knowledge pack.
+6. Прогнать readiness checks.
+7. Зафиксировать результат и blockers в `foundation-manifest.json`.
 
 ---
 
@@ -468,7 +462,7 @@ Core обязан заранее знать:
 
 Итоговый принцип:
 
-- global assembly structure фиксируется раньше в `Foundation Envelope`;
+- upstream ownership structure фиксируется раньше в `Diagram Modules`, а wave scope уточняется в branch artifacts;
 - detailed branch design фиксируется в `Product Part Specification`, `Cluster Design`, `Module Design` и wave-level contracts;
 - `Implementation Foundation` переводит выбранную ветку в `implementation-ready` состояние;
 - только после этого начинается `TODO Plan` и код.

@@ -23,7 +23,6 @@
 - `description`
 - `virtual_simulation`
 - `diagram_modules`
-- `foundation_envelope`
 
 ## 3) Источники активации stage
 
@@ -62,7 +61,6 @@ Cold-start restore rule:
 | `description` | `Description` | `Description` row highlighted; only `Description` branch expanded | `Description` | `Artifacts/Help` | `stage=description` |
 | `virtual_simulation` | `VIRTUAL SIMULATION` | `Virtual Simulation` row highlighted; only `Virtual Simulation` branch expanded | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
 | `diagram_modules` | `Diagram Modules` | `Diagram Modules` row highlighted; only `Diagram Modules` branch expanded | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
-| `foundation_envelope` | `Foundation Envelope` | `Foundation Envelope` row highlighted; only `Foundation Envelope` branch expanded | `Foundation Envelope` | `Artifacts/Help` | `stage=foundation_envelope` |
 
 Для `Diagram Modules` правая панель использует `Artifacts/Help` (Source mode был удалён):
 - `Artifacts` открывает визуальный Module Graph, построенный из staged product-part файлов;
@@ -74,7 +72,7 @@ Cold-start restore rule:
 2. Нельзя рендерить header правой панели по старому stage после маршрутизации на новый.
 3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
 4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
-5. Session panel startup restore обязан быть Description-scoped; automatic startup restore не имеет права показывать `virtual_simulation`, `diagram_modules` или `foundation_envelope` sessions.
+5. Session panel startup restore обязан быть Description-scoped; automatic startup restore не имеет права показывать `virtual_simulation` или `diagram_modules` sessions.
 6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; cold-start не имеет права держать отдельный recency-based selector.
 7. Левое дерево не имеет права хранить отдельный persistent expanded-state truth для workflow stage branches; раскрытие stage-веток должно следовать за `activeStage`.
 
@@ -91,7 +89,7 @@ Cold-start restore rule:
 
 1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
-3. Для всех stage доступен `Help`; для `Diagram Modules` доступен `Artifacts/Help` (Source mode был удалён).
+3. Для всех active stage доступен `Help`; для `Diagram Modules` доступен `Artifacts/Help` (Source mode был удалён).
 4. При workspace open/switch/reconnect PM всегда стартует в `Description`.
 5. Левое дерево всегда подсвечивает текущий `activeStage` и оставляет раскрытой только его ветку.
 6. Startup restore не оставляет «залипших» артефактов/сессий позднего шага.
