@@ -163,10 +163,10 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     );
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.foundation_envelope, false);
-    assert.equal(payload.lastActive?.stage, "foundation_envelope");
+    assert.equal(payload.lastActive?.stage, "description");
     assert.equal(
       payload.lastActive?.artifactPath,
-      ".codeai-hub/demo-workspace/foundation_envelope/foundation-envelope.md"
+      ".codeai-hub/demo-workspace/description/Final_Description.md"
     );
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
@@ -253,10 +253,10 @@ test("workflow-state tracks diagram modules progress when not all product parts 
     assert.equal(payload.gating.blocked.diagram_modules, false);
     assert.equal(payload.gating.blocked.foundation_envelope, true);
     assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
-    assert.equal(payload.lastActive?.stage, "diagram_modules");
+    assert.equal(payload.lastActive?.stage, "description");
     assert.equal(
       payload.lastActive?.artifactPath,
-      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+      ".codeai-hub/demo-workspace/description/Final_Description.md"
     );
     assert.equal(
       payload.diagramModulesProgress?.substep,
@@ -311,6 +311,11 @@ test("workflow-state cold start keeps invalid status but still unlocks diagram m
 
     assert.equal(payload.state?.stages.virtual_simulation?.status, "invalid");
     assert.equal(payload.gating.blocked.diagram_modules, false);
+    assert.equal(payload.lastActive?.stage, "description");
+    assert.equal(
+      payload.lastActive?.artifactPath,
+      ".codeai-hub/demo-workspace/description/Final_Description.md"
+    );
     assert.equal(
       payload.state?.stages.virtual_simulation?.gates?.some(
         (gate) => gate.gateId === "virtual-simulation.validation"

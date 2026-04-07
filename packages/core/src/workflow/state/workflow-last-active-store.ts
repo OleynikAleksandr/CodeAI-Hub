@@ -41,7 +41,7 @@ export interface WorkflowLastActiveSnapshot {
   readonly updatedAt: string;
 }
 
-export const compareWorkflowStageOrder = (
+const compareWorkflowStageOrder = (
   left: WorkflowStageId,
   right: WorkflowStageId
 ): number => STAGE_RANK[left] - STAGE_RANK[right];
