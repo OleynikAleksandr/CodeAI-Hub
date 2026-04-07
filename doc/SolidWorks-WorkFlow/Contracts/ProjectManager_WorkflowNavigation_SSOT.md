@@ -1,7 +1,7 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-04-06
+**Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
 
 ---
@@ -35,15 +35,15 @@
 
 Cold-start restore rule:
 - startup restore для Session panel не имеет права читать отдельный browser-local stage/dialog truth;
-- при открытии workspace `activeStage` обязан восстанавливаться только из canonical `workflow-state.lastActive` для текущего workspace;
-- continuity участвует только как history/session layer для уже выбранного `activeStage`, а не как отдельный startup stage selector;
+- при открытии workspace `activeStage` временно фиксирован в `description`;
+- `workflow-state.lastActive` и continuity могут использоваться как reference/history внутри stage-scoped restore path, но не как startup stage selector;
 - любые browser-local кэши допустимы только как ephemeral UI cache и не могут определять `dialogIntent`, `activeStage` или startup session selection.
 
 Канонический route:
-1. Сначала читаем `activeStage` из canonical workspace truth (`workflow-state.lastActive`).
-2. Затем строим stage-scoped artifact/session payload через один shared router.
-3. Затем синхронизируем правую/левую панели.
-4. Затем (если есть) открываем соответствующую dialog-session.
+1. При workspace open/switch/reconnect сначала фиксируем `activeStage=description`.
+2. Затем строим Description-scoped artifact/session payload через тот же shared router, что и для обычного stage click.
+3. Правая панель открывает `Final_Description.md`, если файл уже существует, иначе `questionnaire.md`.
+4. Левая панель открывает только Description session, если она существует; иначе остаётся в Description help/pre-session state.
 
 ## 4) Контракт синхронизации
 
@@ -72,8 +72,8 @@ Cold-start restore rule:
 2. Нельзя рендерить header правой панели по старому stage после маршрутизации на новый.
 3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
 4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
-5. Session panel startup restore обязан брать источник истины из того же workflow-state/continuity route, что и Toolbar/Tree auto-select; отдельный browser-local startup router запрещён.
-6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; нельзя держать отдельную cold-start версию маршрутизации.
+5. Session panel startup restore обязан быть Description-scoped; automatic startup restore не имеет права показывать `virtual_simulation`, `diagram_modules` или `foundation_envelope` sessions.
+6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; cold-start не имеет права держать отдельный recency-based selector.
 
 ## 6) Особый случай Description pre-submit
 
@@ -89,7 +89,8 @@ Cold-start restore rule:
 1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
 3. Для всех stage доступен `Help`; для `Diagram Modules` доступен `Artifacts/Help` (Source mode был удалён).
-4. Переходы между stage не оставляют «залипших» артефактов/сессий предыдущего шага.
+4. При workspace open/switch/reconnect PM всегда стартует в `Description`.
+5. Startup restore не оставляет «залипших» артефактов/сессий позднего шага.
 
 ## 8) Связанные документы
 

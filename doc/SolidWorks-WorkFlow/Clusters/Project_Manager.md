@@ -45,7 +45,10 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel` при drop.
 - Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors, zoom/fit controls или bottom-right minimap; пользовательский UX = Option(Alt)+drag для перемещения нод, обычный drag для панорамирования.
 - Контейнеры (Product Part, Cluster) динамически расширяются/сжимаются при перемещении дочерних нод; siblings не могут наложиться друг на друга (12px gap).
-- При открытии workspace PM auto-select показывает Diagram Modules (если есть активная сессия), а не Virtual Simulation.
+- При открытии workspace/switch/reconnect PM временно всегда стартует в `Description`:
+  - toolbar highlight = `Description`,
+  - правая панель открывает `Final_Description.md`, если он существует, иначе `questionnaire.md`,
+  - левая Session panel автоматически показывает только Description-scoped session state или Description Help.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.

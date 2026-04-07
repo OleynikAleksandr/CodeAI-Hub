@@ -47,12 +47,16 @@ test("runtime session view does not import reviewer auto-focus path", async () =
   );
 });
 
-test("workspace tree auto-select derives startup routing from lastActive and shared stage sync payload", async () => {
+test("workspace tree auto-select keeps description-first startup routing on shared stage sync payload", async () => {
   const source = await readFile(WORKSPACE_TREE_AUTO_SELECT_SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes('const startupStage = state.lastActive?.stage ?? "description";'),
+    source.includes('const STARTUP_STAGE = "description";'),
     true
+  );
+  assert.equal(
+    source.includes('state.lastActive?.stage ?? "description"'),
+    false
   );
   assert.equal(source.includes("resolveStageSyncPayload({"), true);
   assert.equal(source.includes("resolveLatestContinuityChain"), false);

@@ -41,11 +41,11 @@
 
 ### Stream: False Startup Heuristics Cleanup
 7. [DONE] Remove or narrow obsolete recency-based startup helpers in `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/services/workflow-step-start-service.ts`, and `src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; include aligned source-test sync in `src/client/project-manager/components/layout/foundation-envelope-tree-parity.test.ts` if old startup assumptions surface; scope: delete invalid startup selectors while preserving still-valid local stage actions; expected commit message: `refactor(pm): remove obsolete startup heuristics`
-8. [IN_PROGRESS] Git Commit: `refactor(pm): remove obsolete startup heuristics` (hash: TBD)
+8. [DONE] Git Commit: `refactor(pm): remove obsolete startup heuristics` (hash: `c27cdc4f1`)
 
 ### Stream: Startup Contract Docs And Coverage
-9. [TODO] Sync the temporary startup contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; scope: docs plus regression coverage for Description-first startup; expected commit message: `docs(pm): document description-first workspace startup`
-10. [TODO] Git Commit: `docs(pm): document description-first workspace startup` (hash: TBD)
+9. [DONE] Sync the temporary startup contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; include aligned source-test sync in `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts` if old `lastActive` startup assumptions surface; scope: docs plus regression coverage for Description-first startup; expected commit message: `docs(pm): document description-first workspace startup`
+10. [IN_PROGRESS] Git Commit: `docs(pm): document description-first workspace startup` (hash: TBD)
 
 ### Stream: Release Build For User Testing
 11. [TODO] Run the release checklist for this scope in `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`, and release/build outputs as needed: finish all streams, keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for description startup reset`
