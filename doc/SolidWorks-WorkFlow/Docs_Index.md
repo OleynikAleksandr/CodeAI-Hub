@@ -62,6 +62,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/ProjectManager_DialogFileLinks_OpenInVSCode_Architecture.md` — active design intake for opening Project Manager agent-dialog file links in the VS Code editor via the standard editor API when a webview bridge exists, with `vscode://file` fallback for standalone PM.
 - `Plans/Foundation_Envelope_Architecture.md` — design intake для нового лёгкого шага сразу после `Diagram Modules`; формализует `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies per `Product Part` и user-facing visual envelope.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Foundation Envelope` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
