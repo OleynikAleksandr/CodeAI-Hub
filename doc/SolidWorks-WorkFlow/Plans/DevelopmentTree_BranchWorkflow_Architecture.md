@@ -4,13 +4,13 @@
 **Created:** 2026-04-07
 **Updated:** 2026-04-07
 **Owner:** Oleksandr + Codex
-**Scope:** Formalize the branch-level workflow that starts after `Foundation Envelope`: `Product Part Specification`, `Cluster Design`, `Module Design`, standalone-module path, required contracts for the selected implementation wave, and the readiness gate into `Implementation Foundation`.
+**Scope:** Formalize the branch-level workflow that starts directly after `Diagram Modules`: `Product Part Specification`, `Cluster Design`, `Module Design`, standalone-module path, required contracts for the selected implementation wave, and the readiness gate into `Implementation Foundation`.
 
 ---
 
 ## 1. Problem
 
-После `Foundation Envelope` текущий trunk формально заканчивается, но дальше branch-level workflow пока зафиксирован только на очень общем уровне:
+После `Diagram Modules` текущий trunk формально заканчивается, но дальше branch-level workflow пока зафиксирован только на очень общем уровне:
 
 - `Product Part branch`;
 - `Cluster branch`;
@@ -27,7 +27,7 @@
 - как проходит ветка для standalone modules, которые живут внутри `Product Part`, но вне любого cluster;
 - какой именно artifact set считается достаточным для старта `Implementation Foundation`;
 - как должны выглядеть canonical filenames и workspace paths для branch artifacts;
-- как работает `OUTDATED propagation` между envelope, part, cluster, module и implementation wave.
+- как работает `OUTDATED propagation` между `Diagram Modules`, part, cluster, module и implementation wave.
 
 Без этого возникают практические проблемы:
 
@@ -36,13 +36,13 @@
 - `Implementation Foundation` рискует стартовать по “хорошему чату”, а не по утверждённым traceable artifacts;
 - разные `Product Part` и волны реализации могут оформляться по разным схемам.
 
-Следовательно, нужен отдельный planning-док, который формализует branch-level development tree между `Foundation Envelope` и `Implementation Foundation`.
+Следовательно, нужен отдельный planning-док, который формализует branch-level development tree между `Diagram Modules` и `Implementation Foundation`.
 
 ---
 
 ## 2. Product Goal
 
-После утверждения `Foundation Envelope` система должна переходить не в абстрактное “теперь делаем спецификации”, а в жёстко определённый branch-level workflow.
+После утверждения `Diagram Modules` система должна переходить не в абстрактное “теперь делаем спецификации”, а в жёстко определённый branch-level workflow.
 
 Шаг считается корректно спроектированным, когда одновременно выполняются следующие условия:
 
@@ -70,7 +70,7 @@
 Этот planning scope не должен:
 
 - реализовывать branch workflow в продукте прямо сейчас;
-- заменять собой `Foundation Envelope`;
+- заменять собой `Diagram Modules`;
 - заменять собой `Implementation Foundation`;
 - создавать файловый scaffold, environments или toolchains;
 - писать бизнес-логику модулей;
@@ -81,13 +81,13 @@
 
 ## 4. Core Decisions
 
-### 4.1. `Foundation Envelope` остаётся концом trunk
+### 4.1. `Diagram Modules` остаётся концом trunk
 
-`Foundation Envelope` остаётся последним trunk-step.
+`Diagram Modules` остаётся последним trunk-step.
 
 После него начинается Development Tree.
 
-Он не materialize-ит branch specs и не заменяет их.
+Он уже materialize-ит достаточную ownership structure для branch entry и не требует дополнительного bridge-step.
 
 ### 4.2. `Product Part Specification` нужен как первый branch artifact
 
@@ -157,7 +157,8 @@
 
 Он должен опираться на materialized artifacts выбранной wave:
 
-- `foundation-envelope.md`;
+- `product-parts.index.md`;
+- `product-parts/<part-id>.md` для выбранной ветки;
 - `Product Part Specification`;
 - все релевантные `Cluster Specification`;
 - все релевантные `Cluster Facade Contract`;
@@ -207,21 +208,20 @@ Facade contract отвечает на вопрос:
 1. `Description`
 2. `Virtual Simulation`
 3. `Diagram Modules`
-4. `Foundation Envelope`
-5. `Product Part Specification`
-6. `Cluster Design`
-7. `Module Design`
-8. `Required contracts for the selected implementation wave`
-9. `Implementation Foundation`
-10. `TODO Plan`
-11. `Implementation`
+4. `Product Part Specification`
+5. `Cluster Design`
+6. `Module Design`
+7. `Required contracts for the selected implementation wave`
+8. `Implementation Foundation`
+9. `TODO Plan`
+10. `Implementation`
 
-При этом пункты 5–8 живут уже не как новый trunk, а как дерево веток.
+При этом пункты 4–7 живут уже не как новый trunk, а как дерево веток.
 
 ### 5.2. Development Tree shape
 
 ```text
-Foundation Envelope
+Diagram Modules
  └─ Product Part Specification
      ├─ Cluster Design
      │   ├─ Cluster Specification
@@ -334,9 +334,9 @@ Branch-level artifacts должны жить под:
    - `part-id`
    - title
    - short purpose
-2. `Role in Foundation Envelope`
-   - место части внутри `Application Root`
-   - relation to shared zones and integration seams
+2. `Role in Diagram Modules Structure`
+   - место части внутри принятой ownership diagram
+   - relation to upstream `product-parts.index.md` and selected part artifact
 3. `Owned Branch Structure`
    - список cluster-ов
    - список standalone modules
@@ -426,19 +426,20 @@ Cluster/module facade contracts должны быть согласованы с 
 
 `Implementation Foundation` можно запускать только если для выбранной wave готовы:
 
-1. `foundation-envelope.md`
-2. `product-part-specification.md` выбранного `Product Part`
-3. Для каждого затронутого `Cluster`:
+1. `product-parts.index.md`
+2. `product-parts/<part-id>.md` выбранного `Product Part`
+3. `product-part-specification.md` выбранного `Product Part`
+4. Для каждого затронутого `Cluster`:
    - `cluster-specification.md`
    - `cluster-facade-contract.md`
-4. Для каждого затронутого `Module`:
+5. Для каждого затронутого `Module`:
    - `module-specification.md`
    - `module-facade-contract.md`
-5. Для каждого standalone module в scope wave:
+6. Для каждого standalone module в scope wave:
    - `module-specification.md`
    - `module-facade-contract.md`
-6. Все дополнительные seam/shared contracts, без которых subtree materialization пришлось бы угадывать
-7. Достаточно уточнённый technology profile для этой wave
+7. Все дополнительные seam/shared contracts, без которых subtree materialization пришлось бы угадывать
+8. Достаточно уточнённый technology profile для этой wave
 
 ### 8.2. What is not required
 
@@ -464,7 +465,7 @@ Cluster/module facade contracts должны быть согласованы с 
 
 ### 9.1. Upstream to branch roots
 
-Изменение `Foundation Envelope` для конкретного `Product Part`:
+Изменение `product-parts.index.md` или `product-parts/<part-id>.md` для конкретного `Product Part`:
 
 - делает `Product Part Specification` этого part `OUTDATED`;
 - делает `Cluster Design` и `Module Design`, опирающиеся на этот part, `OUTDATED`;
@@ -497,14 +498,15 @@ Cluster/module facade contracts должны быть согласованы с 
 
 Для одной выбранной ветки рекомендуется такой порядок:
 
-1. Прочитать `foundation-envelope.md`.
-2. Выбрать один `Product Part` для следующей wave.
-3. Создать `Product Part Specification`.
-4. Для каждого cluster в этой wave выполнить `Cluster Design`.
-5. Для каждого module в cluster выполнить `Module Design`.
-6. Для standalone modules выполнить `Module Design`.
-7. Зафиксировать дополнительные wave-level contracts только там, где они реально нужны.
-8. Запустить `Implementation Foundation` для этой wave.
+1. Прочитать `product-parts.index.md`.
+2. Прочитать `product-parts/<part-id>.md` выбранного `Product Part`.
+3. Выбрать один `Product Part` для следующей wave.
+4. Создать `Product Part Specification`.
+5. Для каждого cluster в этой wave выполнить `Cluster Design`.
+6. Для каждого module в cluster выполнить `Module Design`.
+7. Для standalone modules выполнить `Module Design`.
+8. Зафиксировать дополнительные wave-level contracts только там, где они реально нужны.
+9. Запустить `Implementation Foundation` для этой wave.
 
 Важно:
 
@@ -517,7 +519,7 @@ Cluster/module facade contracts должны быть согласованы с 
 
 Этот planning scope считается достаточно подготовленным, если после review можно однозначно ответить на вопросы:
 
-1. Какой первый branch artifact появляется после `Foundation Envelope`?
+1. Какой первый branch artifact появляется после `Diagram Modules`?
 2. Являются ли specification и facade contract разными шагами или одной design-сессией?
 3. Где живут standalone modules?
 4. Какой exact artifact set нужен для старта `Implementation Foundation`?
@@ -531,7 +533,7 @@ Cluster/module facade contracts должны быть согласованы с 
 
 После реализации этого planning scope CodeAI Hub должен получить не абстрактную “веточную фазу после envelope”, а детерминированный branch-level workflow:
 
-- `Foundation Envelope` завершает trunk и даёт application assembly baseline;
+- `Diagram Modules` завершает trunk и даёт approved ownership baseline для branch entry;
 - `Product Part Specification` открывает конкретную ветку части продукта;
 - `Cluster Design` создаёт пару `specification + facade contract`;
 - `Module Design` создаёт пару `specification + facade contract`;
@@ -541,6 +543,6 @@ Cluster/module facade contracts должны быть согласованы с 
 
 Итоговый принцип:
 
-- trunk отвечает за понимание продукта и application assembly;
+- trunk отвечает за понимание продукта и ownership structure;
 - branch workflow отвечает за проектирование конкретных частей и их публичных границ;
 - `Implementation Foundation` отвечает за materialization implementation surface только после того, как branch design уже утверждён.

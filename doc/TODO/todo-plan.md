@@ -28,9 +28,9 @@
 ## Phase 1 — Remove Foundation Envelope From Active SSOT (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Trunk And Branch Retargeting
-1. [IN_PROGRESS] Update `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: remove `Foundation Envelope` from the active workflow order, artifacts, gating, and OUTDATED propagation; expected commit message: `docs(workflow): remove foundation envelope from active trunk`
-2. [TODO] Git Commit: `docs(workflow): remove foundation envelope from active trunk` (hash: TBD)
-3. [TODO] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: retarget trunk completion and branch entry from `Foundation Envelope` to `Diagram Modules`; expected commit message: `docs(ssot): retarget branch entry to diagram modules`
+1. [DONE] Update `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, and `doc/TODO/todo-plan.md`; scope: remove `Foundation Envelope` from the active workflow order, artifacts, gating, and OUTDATED propagation; expected commit message: `docs(workflow): remove foundation envelope from active trunk`
+2. [DONE] Git Commit: `docs(workflow): remove foundation envelope from active trunk` (hash: `893c63f20`)
+3. [IN_PROGRESS] Update `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: retarget trunk completion and branch entry from `Foundation Envelope` to `Diagram Modules`; expected commit message: `docs(ssot): retarget branch entry to diagram modules`
 4. [TODO] Git Commit: `docs(ssot): retarget branch entry to diagram modules` (hash: TBD)
 5. [TODO] Update `doc/SolidWorks-WorkFlow/Plans/Implementation_Foundation_Architecture.md`, `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, and `doc/TODO/todo-plan.md`; scope: remove FE prerequisites from late-stage planning/navigation SSOT and align startup/navigation rules with the reduced trunk; expected commit message: `docs(workflow): drop foundation envelope prerequisites`
 6. [TODO] Git Commit: `docs(workflow): drop foundation envelope prerequisites` (hash: TBD)
