@@ -62,6 +62,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/ProjectManager_DialogFileLinks_StandaloneFallback_Fix.md` — active hotfix scope for the standalone PM regression where Chromium tried to open `vscode://file/...` itself instead of handing the dialog file link to the external VS Code application.
 - `Plans/Foundation_Envelope_Architecture.md` — design intake для нового лёгкого шага сразу после `Diagram Modules`; формализует `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies per `Product Part` и user-facing visual envelope.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Foundation Envelope` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
