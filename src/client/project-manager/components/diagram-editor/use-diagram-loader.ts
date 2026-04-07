@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import type {
   DiagramMapModel,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import { parseFoundationEnvelopeMarkdown } from "../../../../../packages/core/src/workflow/foundation-envelope/foundation-envelope-markdown-parser";
 import { api } from "../../api";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
@@ -11,12 +10,7 @@ import {
   type DiagramEditorStage,
   loadDiagramModulesProgressiveResult,
 } from "./diagram-modules-progressive-model";
-import {
-  applyFlowSidecarPositions,
-  parseFlowSidecar,
-  type FlowSidecarDocument,
-} from "./flow-sidecar-types";
-import { foundationEnvelopeToReactFlow } from "../foundation-envelope/foundation-envelope-to-react-flow";
+import type { FlowSidecarDocument } from "./flow-sidecar-types";
 
 export type DiagramLoaderStatus = "loading" | "missing" | "ready" | "error";
 export type { DiagramEditorStage } from "./diagram-modules-progressive-model";
@@ -82,127 +76,44 @@ export const useDiagramLoader = (params: {
     }
 
     void (async () => {
-      if (params.stage === "diagram_modules") {
-        const progressiveResult = await loadDiagramModulesProgressiveResult({
-          workspaceSlug: params.workspaceSlug,
-          flowSidecarPath: paths.flowSidecarPath,
-          readArtifact: (path) =>
-            readWorkflowArtifact({
-              httpUrl,
-              workspacePath: params.workspacePath,
-              workspaceSlug: params.workspaceSlug,
-              path,
-            }),
-        });
-
-        if (cancelled) {
-          return;
-        }
-
-        if (progressiveResult.status === "ready") {
-          setContent(progressiveResult.content);
-          setModel(progressiveResult.model);
-          setFlowDocument(progressiveResult.flowDocument);
-          setProjection(progressiveResult.projection);
-          setStatus("ready");
-          return;
-        }
-
-        if (progressiveResult.status === "error") {
-          clearDiagram();
-          setStatus("error");
-          setError(
-            `Не удалось загрузить ${paths.label}: ${progressiveResult.error}`
-          );
-          setContent(progressiveResult.content ?? null);
-          return;
-        }
-
-        setContent(null);
-        clearDiagram();
-        setStatus("missing");
-        return;
-      }
-
-      const artifactResult = await readWorkflowArtifact({
-        httpUrl,
-        workspacePath: params.workspacePath,
+      const progressiveResult = await loadDiagramModulesProgressiveResult({
         workspaceSlug: params.workspaceSlug,
-        path: paths.artifactPath,
+        flowSidecarPath: paths.flowSidecarPath,
+        readArtifact: (path) =>
+          readWorkflowArtifact({
+            httpUrl,
+            workspacePath: params.workspacePath,
+            workspaceSlug: params.workspaceSlug,
+            path,
+          }),
       });
 
       if (cancelled) {
         return;
       }
 
-      if (artifactResult.status === "missing") {
-        setContent(null);
-        clearDiagram();
-        setStatus("missing");
+      if (progressiveResult.status === "ready") {
+        setContent(progressiveResult.content);
+        setModel(progressiveResult.model);
+        setFlowDocument(progressiveResult.flowDocument);
+        setProjection(progressiveResult.projection);
+        setStatus("ready");
         return;
       }
 
-      if (artifactResult.status === "error") {
-        clearDiagram();
-        setStatus("error");
-        setError(`Не удалось загрузить ${paths.label}: ${artifactResult.error}`);
-        setContent(null);
-        return;
-      }
-
-      const parsedFoundationEnvelope = parseFoundationEnvelopeMarkdown(
-        artifactResult.content
-      );
-      if (!parsedFoundationEnvelope.ok) {
+      if (progressiveResult.status === "error") {
         clearDiagram();
         setStatus("error");
         setError(
-          `Не удалось разобрать ${paths.label}: строка ${parsedFoundationEnvelope.error.line}, ${parsedFoundationEnvelope.error.message}`
+          `Не удалось загрузить ${paths.label}: ${progressiveResult.error}`
         );
-        setContent(artifactResult.content);
+        setContent(progressiveResult.content ?? null);
         return;
       }
 
-      const sidecarResult = await readWorkflowArtifact({
-        httpUrl,
-        workspacePath: params.workspacePath,
-        workspaceSlug: params.workspaceSlug,
-        path: paths.flowSidecarPath,
-      });
-
-      if (cancelled) {
-        return;
-      }
-
-      if (sidecarResult.status === "error") {
-        clearDiagram();
-        setStatus("error");
-        setError(`Не удалось загрузить ${paths.label}: ${sidecarResult.error}`);
-        setContent(artifactResult.content);
-        return;
-      }
-
-      const nextFlowDocument =
-        sidecarResult.status === "ok"
-          ? parseFlowSidecar(sidecarResult.content)
-          : null;
-      const baseProjection = foundationEnvelopeToReactFlow(
-        parsedFoundationEnvelope.value
-      );
-      setContent(artifactResult.content);
-      setModel(null);
-      setFlowDocument(nextFlowDocument);
-      // Foundation Envelope reuses the shared diagram renderer payload shape
-      // until stage-specific flow types are generalized across the shell.
-      setProjection(({
-        ...baseProjection,
-        nodes: applyFlowSidecarPositions({
-          nodes: baseProjection.nodes as never,
-          document: nextFlowDocument,
-          revision: baseProjection.revision,
-        }) as never,
-      } as unknown) as DiagramFlowProjection);
-      setStatus("ready");
+      setContent(null);
+      clearDiagram();
+      setStatus("missing");
     })();
 
     return () => {
