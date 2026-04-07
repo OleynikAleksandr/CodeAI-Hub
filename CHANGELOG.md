@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.900] - 2026-04-07
+### Fixed
+- **The left Project Manager tree now highlights the current workflow step explicitly**: stage selection from the toolbar, tree rows, startup route, and nested artifact/session clicks now converges on one visible selected-stage state in the sidebar.
+- **Only the active workflow branch now stays expanded in the left sidebar**: the tree behaves as an `activeStage` accordion, so inactive workflow steps collapse instead of leaving stale artifact/session rows open after navigation.
+- **The navigation contract and regression coverage now include the left sidebar explicitly**: PM SSOT/cluster docs plus the workflow navigation source-test now require the left tree highlight/accordion behavior to stay aligned with the shared `activeStage`.
+
 ## [1.1.899] - 2026-04-07
 ### Fixed
 - **Workspace startup is temporarily pinned to `Description` across Core and Project Manager**: workspace open, switch, reconnect, and cold-start restore now force `Description` as the startup stage instead of deriving it from continuity recency or late-step artifact timestamps.

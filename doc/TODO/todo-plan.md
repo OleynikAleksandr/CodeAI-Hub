@@ -35,11 +35,11 @@
 4. [DONE] Git Commit: `feat(pm): highlight active step in left sidebar` (hash: `9d50d57b3`)
 
 ### Stream: Navigation Docs And Coverage
-5. [IN_PROGRESS] Sync the left-sidebar stage-selection contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: document the accordion/highlight behavior and guard cross-surface stage sync; expected commit message: `docs(pm): document left sidebar active stage sync`
-6. [TODO] Git Commit: `docs(pm): document left sidebar active stage sync` (hash: TBD)
+5. [DONE] Sync the left-sidebar stage-selection contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: document the accordion/highlight behavior and guard cross-surface stage sync; expected commit message: `docs(pm): document left sidebar active stage sync`
+6. [DONE] Git Commit: `docs(pm): document left sidebar active stage sync` (hash: `88358bcc9`)
 
 ### Stream: Release Build For User Testing
-7. [TODO] Prepare the release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep left sidebar sync test release`
+7. [IN_PROGRESS] Prepare the release docs for the next test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: release-prep docs only so the tree is clean before packaging; expected commit message: `docs(release): prep left sidebar sync test release`
 8. [TODO] Git Commit: `docs(release): prep left sidebar sync test release` (hash: TBD)
 9. [TODO] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a test build; expected commit message: `build(release): cut test build for left sidebar sync`
 10. [TODO] Git Commit: `build(release): cut test build for left sidebar sync` (hash: TBD)
