@@ -29,11 +29,11 @@
 
 ### Stream: Core Startup Truth
 1. [DONE] Remove continuity-recency as a startup-stage selector in `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-last-active-resolver.ts`, and `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; include gate-driven cleanup in `packages/core/src/workflow/state/workflow-last-active-store.ts` if the old stage-order export becomes unused; scope: startup-stage repair only; expected commit message: `fix(pm): remove continuity recency from workspace startup`
-2. [IN_PROGRESS] Git Commit: `fix(pm): remove continuity recency from workspace startup` (hash: TBD)
+2. [DONE] Git Commit: `fix(pm): remove continuity recency from workspace startup` (hash: `a315ca4fd`)
 
 ### Stream: PM Startup Route
-3. [TODO] Force workspace-open startup routing to `description` in `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: startup-stage selection only; expected commit message: `fix(pm): always start workspace in description`
-4. [TODO] Git Commit: `fix(pm): always start workspace in description` (hash: TBD)
+3. [DONE] Force workspace-open startup routing to `description` in `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: startup-stage selection only; expected commit message: `fix(pm): always start workspace in description`
+4. [IN_PROGRESS] Git Commit: `fix(pm): always start workspace in description` (hash: TBD)
 
 ### Stream: Session Panel Startup Scope
 5. [TODO] Keep automatic startup session restore Description-scoped in `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, and `src/client/project-manager/components/sessions/session-visibility.ts`; scope: startup fallback only; expected commit message: `fix(pm): scope startup sessions to description`

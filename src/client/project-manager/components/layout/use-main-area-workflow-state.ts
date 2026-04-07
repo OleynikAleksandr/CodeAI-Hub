@@ -3,12 +3,9 @@ import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import { useWorkflowStateSnapshot, workflowStateStore } from "../../services/workflow-state-store";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
-import {
-  FOUNDATION_ENVELOPE_TOOL_LABEL,
-  VIRTUAL_SIMULATION_TOOL_LABEL,
-} from "./use-workflow-tool-select";
-import type { WorkflowStageId, WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import type { DescriptionSessionGuard } from "./use-description-session-guard";
+const DESCRIPTION_TOOL = "Description";
 
 type DescriptionDocument = {
   readonly workspacePath: string;
@@ -34,21 +31,8 @@ type UseMainAreaWorkflowStateParams = {
   readonly descriptionGuardRef: MutableRefObject<DescriptionSessionGuard>;
 };
 
-const TOOL_BY_STAGE: Record<WorkflowStageId, string> = {
-  description: "Description",
-  virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
-  diagram_modules: "Diagram Modules",
-  foundation_envelope:
-    FOUNDATION_ENVELOPE_TOOL_LABEL,
-};
-
-const resolveLastActiveTool = (state: WorkflowStateSnapshot | null): string => {
-  const stage = state?.lastActive?.stage;
-  if (!stage) {
-    return TOOL_BY_STAGE.description;
-  }
-  return TOOL_BY_STAGE[stage];
-};
+const resolveStartupTool = (_state: WorkflowStateSnapshot | null): string =>
+  DESCRIPTION_TOOL;
 
 const isCanonicalDescriptionPath = (path: string): boolean =>
   /\/description\/Final_Description\.md$/.test(path);
@@ -93,7 +77,7 @@ export const useMainAreaWorkflowState = (
     const { snapshot: state, workspaceSlug, workspacePath, loaded } = storeState;
     if (!workspaceSlug || !workspacePath || !loaded) return;
     const branch = state?.description;
-    const resolvedActiveTool = resolveLastActiveTool(state);
+    const resolvedActiveTool = resolveStartupTool(state);
     if (state && autoResolvedActiveToolRef.current !== workspaceSlug) {
       autoResolvedActiveToolRef.current = workspaceSlug;
       params.setActiveTool(resolvedActiveTool);
@@ -118,7 +102,7 @@ export const useMainAreaWorkflowState = (
         ? branch.questionnairePath
         : `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
     const nextQuestionnaire =
-      nextHasDescriptionSession && !nextDescription
+      !nextDescription
         ? { path: questionnairePath, label: "questionnaire.md" as const }
         : null;
     params.setQuestionnaireDocument(
@@ -126,7 +110,7 @@ export const useMainAreaWorkflowState = (
     );
     if (isEmptyWorkflowState(state) && autoOpenedWorkspaceRef.current !== workspaceSlug) {
       autoOpenedWorkspaceRef.current = workspaceSlug;
-      params.setActiveTool("Description");
+      params.setActiveTool(DESCRIPTION_TOOL);
     }
   }, [storeState, params.setActiveTool, params.setDescriptionDocument, params.setHasDescriptionSession, params.setQuestionnaireDocument, params.descriptionGuardRef]);
 };

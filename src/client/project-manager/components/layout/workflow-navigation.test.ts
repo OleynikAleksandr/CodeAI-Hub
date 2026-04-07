@@ -19,14 +19,30 @@ const WORKSPACE_TREE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/workspace-tree.tsx"
 );
+const WORKSPACE_TREE_AUTO_SELECT_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/workspace-tree-auto-select.ts"
+);
+const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
+);
 
 test("workflow navigation sync keeps stage routing consistent across toolbar and tree", async () => {
-  const [mainAreaUtilsSource, mainAreaSource, toolbarSource, workspaceTreeSource] =
-    await Promise.all([
+  const [
+    mainAreaUtilsSource,
+    mainAreaSource,
+    toolbarSource,
+    workspaceTreeSource,
+    workspaceTreeAutoSelectSource,
+    mainAreaWorkflowStateSource,
+  ] = await Promise.all([
       readFile(MAIN_AREA_UTILS_PATH, "utf8"),
       readFile(MAIN_AREA_PATH, "utf8"),
       readFile(TOOLBAR_PATH, "utf8"),
       readFile(WORKSPACE_TREE_PATH, "utf8"),
+      readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
+      readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
     ]);
 
   assert.equal(
@@ -58,6 +74,26 @@ test("workflow navigation sync keeps stage routing consistent across toolbar and
     workspaceTreeSource.includes("onSelect: () => dispatchStageActivated(stage),"),
     true,
     "workflow stage nodes must use unified stage dispatch route"
+  );
+  assert.equal(
+    workspaceTreeAutoSelectSource.includes('const STARTUP_STAGE = "description";'),
+    true,
+    "workspace startup auto-select must force the description stage"
+  );
+  assert.equal(
+    workspaceTreeAutoSelectSource.includes('state.lastActive?.stage ?? "description"'),
+    false,
+    "workspace startup auto-select must not derive stage from lastActive"
+  );
+  assert.equal(
+    mainAreaWorkflowStateSource.includes("const resolveStartupTool"),
+    true,
+    "main area startup bootstrap must keep a dedicated description-first tool resolver"
+  );
+  assert.equal(
+    mainAreaWorkflowStateSource.includes("nextHasDescriptionSession && !nextDescription"),
+    false,
+    "description startup must keep questionnaire routing independent from runtime session presence"
   );
   assert.equal(
     toolbarSource.includes(

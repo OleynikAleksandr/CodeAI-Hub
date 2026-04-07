@@ -2,6 +2,8 @@ import { useCallback, useRef } from "react";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 
+const STARTUP_STAGE = "description";
+
 export type SessionResumeIntent = {
   readonly providerId: string;
   readonly providerSessionId: string | null;
@@ -55,7 +57,7 @@ export const useWorkspaceTreeAutoSelect = (
         return;
       }
 
-      const startupStage = state.lastActive?.stage ?? "description";
+      const startupStage = STARTUP_STAGE;
       const payload = resolveStageSyncPayload({
         stage: startupStage,
         workflowState: state,
