@@ -31,7 +31,6 @@ const createWorkflowState = (
     description: "completed",
     virtual_simulation: "in_progress",
     diagram_modules: "idle",
-    foundation_envelope: "idle",
   },
   continuity: { chains: [] },
   lastActive: null,
@@ -41,7 +40,6 @@ const createWorkflowState = (
       description: false,
       virtual_simulation: false,
       diagram_modules: false,
-      foundation_envelope: true,
     },
   },
   ...overrides,
@@ -66,7 +64,6 @@ test("startDiagramModules starts from virtual-simulation artifact without comple
           description: "completed",
           virtual_simulation: "in_progress",
           diagram_modules: "idle",
-          foundation_envelope: "idle",
         },
       }),
     getSettingsPayload: () =>
@@ -121,7 +118,6 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
             description: false,
             virtual_simulation: false,
             diagram_modules: true,
-            foundation_envelope: true,
           },
         },
       }),
@@ -139,98 +135,5 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
         providerId: "codexCli",
       }),
     /Missing virtual-simulation\.md/
-  );
-});
-
-test("startFoundationEnvelope starts from diagram modules artifacts when gating is open", async () => {
-  installWindowStub();
-  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
-
-  let captured:
-    | {
-        readonly artifactLanguage?: string;
-        readonly questionnairePath: string;
-        readonly stage?: string;
-      }
-    | null = null;
-
-  const service = new WorkflowStepStartService({
-    getWorkflowState: async () =>
-      createWorkflowState({
-        stages: {
-          description: "completed",
-          virtual_simulation: "completed",
-          diagram_modules: "completed",
-          foundation_envelope: "idle",
-        },
-        gating: {
-          blocked: {
-            description: false,
-            virtual_simulation: false,
-            diagram_modules: false,
-            foundation_envelope: false,
-          },
-        },
-      }),
-    getSettingsPayload: () =>
-      ({
-        settings: {
-          general: {
-            localization: {
-              categories: {
-                artifactsForTheUser: "uk",
-              },
-            },
-          },
-        },
-      }) as const,
-    submitService: {
-      submitQuestionnaire: async (params) => {
-        captured = {
-          artifactLanguage: params.artifactLanguage,
-          questionnairePath: params.questionnairePath,
-          stage: params.stage,
-        };
-        return "foundation-envelope-session";
-      },
-    },
-  });
-
-  const sessionId = await service.startFoundationEnvelope({
-    workspaceName: "Demo Workspace",
-    workspacePath: "/tmp/demo",
-    workspaceSlug: "demo-workspace",
-    providerId: "codexCli",
-  });
-
-  assert.equal(sessionId, "foundation-envelope-session");
-  assert.deepEqual(captured, {
-    artifactLanguage: "uk",
-    questionnairePath:
-      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
-    stage: "foundation_envelope",
-  });
-});
-
-test("foundation envelope start rejects when gating stays blocked", async () => {
-  installWindowStub();
-  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
-
-  const service = new WorkflowStepStartService({
-    getWorkflowState: async () => createWorkflowState(),
-    submitService: {
-      submitQuestionnaire: async () => "unexpected-session",
-    },
-  });
-
-  await assert.rejects(
-    () =>
-      service.startFoundationEnvelope({
-        workspaceName: "Demo Workspace",
-        workspacePath: "/tmp/demo",
-        workspaceSlug: "demo-workspace",
-        providerId: "codexCli",
-      }),
-    /Diagram Modules is not fully ready/
   );
 });

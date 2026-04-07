@@ -15,7 +15,6 @@ const createWorkflowState = (): WorkflowStateSnapshot => ({
     description: "completed",
     virtual_simulation: "completed",
     diagram_modules: "completed",
-    foundation_envelope: "idle",
   },
   continuity: {
     chains: [
@@ -46,7 +45,6 @@ const createWorkflowState = (): WorkflowStateSnapshot => ({
       description: false,
       virtual_simulation: false,
       diagram_modules: false,
-      foundation_envelope: false,
     },
   },
 });
