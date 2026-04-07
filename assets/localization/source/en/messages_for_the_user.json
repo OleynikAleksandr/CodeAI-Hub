@@ -95,7 +95,7 @@
   "pm.foundation_envelope.help.dialog_item_2": "which zones are shared across multiple Product Parts and must not be hidden inside one branch;",
   "pm.foundation_envelope.help.dialog_item_3": "which `Integration Seams` and cross-part responsibilities must stay explicit before branch-level specs begin;",
   "pm.foundation_envelope.help.dialog_item_4": "which technology decisions, placement rules, and dependency directions are fixed, proposed, or still open.",
-  "pm.foundation_envelope.help.scope": "`foundation-envelope.md` is not a low-level module contract, not an implementation scaffold, and not a visual layout file. It captures the stable application-wide assembly baseline that downstream docs must inherit.",
-  "pm.foundation_envelope.help.output": "Step output: `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.md`.",
+  "pm.foundation_envelope.help.scope": "`foundation-envelope.md` is not a low-level module contract, not an implementation scaffold, and not a user-owned layout file. It captures the stable application-wide assembly baseline that downstream docs must inherit, and the runtime can project a diagram from it.",
+  "pm.foundation_envelope.help.output": "Step outputs: `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.md` as the semantic SSOT, plus optional runtime-owned `.codeai-hub/<workspace>/foundation_envelope/foundation-envelope.flow.json` for layout/view state.",
   "pm.foundation_envelope.error.load": "Could not load Foundation Envelope."
 }

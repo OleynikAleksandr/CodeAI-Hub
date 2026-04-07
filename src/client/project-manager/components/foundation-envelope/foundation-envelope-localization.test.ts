@@ -31,13 +31,19 @@ test("foundation envelope panel reads localized help and shell copy from canonic
     true
   );
   assert.equal(
-    panelSource.includes('"pm.foundation_envelope.error.load"'),
+    panelSource.includes('"pm.foundation_envelope.help.output"'),
     true
   );
   assert.equal(
     panelSource.includes('"pm.workflow.stage.foundation_envelope.label"'),
     true
   );
+  assert.equal(panelSource.includes("DiagramStagePanelScaffold"), true);
+  assert.equal(panelSource.includes("useDiagramLoader"), true);
+  assert.equal(panelSource.includes("useDiagramPersistence"), true);
+  assert.equal(panelSource.includes("pendingContent={<FoundationEnvelopeHelp />}"), true);
+  assert.equal(panelSource.includes("StageArtifactContentView"), false);
+  assert.equal(panelSource.includes("useStageArtifactLoader"), false);
 
   assert.equal(
     userMessages["pm.foundation_envelope.help.title"],
@@ -55,9 +61,9 @@ test("foundation envelope panel reads localized help and shell copy from canonic
     userMessages["pm.foundation_envelope.help.scope"] ?? "",
     /application-wide assembly baseline/
   );
-  assert.equal(
-    userMessages["pm.foundation_envelope.error.load"],
-    "Could not load Foundation Envelope."
+  assert.match(
+    userMessages["pm.foundation_envelope.help.output"] ?? "",
+    /foundation-envelope\.flow\.json/
   );
 
   assert.equal(
