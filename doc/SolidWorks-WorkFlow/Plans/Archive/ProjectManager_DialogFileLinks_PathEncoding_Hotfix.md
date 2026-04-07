@@ -1,9 +1,10 @@
 # Project Manager Dialog File Links Path Encoding Hotfix
 
-**Status:** Draft for review (2026-04-07)
+**Status:** Completed and archived after release `1.1.903` (2026-04-07)
 **Created:** 2026-04-07
 **Owner:** Oleksandr + Codex
 **Scope:** Fix the remaining standalone PM file-link regression where the launcher handoff reaches Visual Studio Code with a percent-encoded broken path such as `/%2FUsers/...%2520...`, causing `Path does not exist`.
+**Result:** PM now decodes percent-encoded absolute dialog file paths before handoff, the launcher preserves real filesystem separators in `vscode://file/...`, and release `1.1.903` packages the hotfix while keeping the host confirmation prompt as an acceptable platform safeguard.
 
 ---
 

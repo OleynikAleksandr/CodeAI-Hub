@@ -62,10 +62,10 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/ProjectManager_DialogFileLinks_PathEncoding_Hotfix.md` — active hotfix scope for the remaining standalone PM regression where the launcher handoff reaches VS Code with a broken percent-encoded path such as `/%2FUsers/...%2520...`.
 - `Plans/Foundation_Envelope_Architecture.md` — design intake для нового лёгкого шага сразу после `Diagram Modules`; формализует `Application Root`, `Shared Zones`, `Integration Seams`, intended technologies per `Product Part` и user-facing visual envelope.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Foundation Envelope` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
+- `Plans/Archive/ProjectManager_DialogFileLinks_PathEncoding_Hotfix.md` — completed standalone PM path-encoding hotfix that decodes percent-encoded dialog file paths, preserves real separators in launcher-generated `vscode://file/...` URIs, accepts the VS Code trust prompt as platform behavior, and shipped the `1.1.903` test release.
 - `Plans/Archive/ProjectManager_DialogFileLinks_StandaloneFallback_Fix.md` — completed standalone PM hotfix scope that replaced the broken Chromium `vscode://file/...` navigation with launcher-host handoff and shipped the `1.1.902` test release.
 - `Plans/Archive/ProjectManager_DialogFileLinks_OpenInVSCode_Architecture.md` — completed PM dialog file-link scope that routed absolute local file links into the VS Code editor, added standalone `vscode://file` fallback, synced targeted regression coverage, and shipped the `1.1.901` test release.
 - `Plans/Archive/ProjectManager_WorkspaceStartup_Reset_Architecture.md` — completed startup-reset scope that fixed workspace-open routing to `Description`, removed recency-based startup heuristics, aligned session/artifact startup behavior, and shipped the `1.1.899` test release.

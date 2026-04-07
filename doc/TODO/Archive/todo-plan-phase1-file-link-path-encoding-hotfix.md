@@ -1,7 +1,7 @@
 # Development TODO Plan
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/ProjectManager_DialogFileLinks_PathEncoding_Hotfix.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_DialogFileLinks_PathEncoding_Hotfix.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
@@ -48,9 +48,9 @@
 ### Stream: Release Build For User Testing
 11. [DONE] Prepare release docs for the next hotfix test build in `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: document the path-encoding fix before packaging; expected commit message: `docs(release): prep file link path hotfix release`
 12. [DONE] Git Commit: `docs(release): prep file link path hotfix release` (hash: `ba7f104f5`)
-13. [IN_PROGRESS] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a hotfix test build; expected commit message: `build(release): cut file link path hotfix`
-14. [TODO] Git Commit: `build(release): cut file link path hotfix` (hash: TBD)
+13. [DONE] Run the release checklist for this scope in `doc/TODO/todo-plan.md` and release/build outputs: keep a clean tree before packaging, execute `./scripts/build-all.sh`, verify fresh tarballs in `doc/tmp/releases/`, execute `./scripts/build-release.sh --use-current-version`, and sync the final release status for user test delivery; scope: release closeout and packaging for a hotfix test build; expected commit message: `build(release): cut file link path hotfix`
+14. [DONE] Git Commit: `build(release): cut file link path hotfix` (hash: `d2072f54c`)
 
 ### Stream: Scope Closeout
-15. [TODO] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the active path-encoding hotfix plan after the release build is ready for user testing; expected commit message: `docs(closeout): archive file link path encoding hotfix scope`
-16. [TODO] Git Commit: `docs(closeout): archive file link path encoding hotfix scope` (hash: TBD)
+15. [DONE] Archive the completed execution cycle in `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: close the active path-encoding hotfix plan after the release build is ready for user testing; expected commit message: `docs(closeout): archive file link path encoding hotfix scope`
+16. [IN_PROGRESS] Git Commit: `docs(closeout): archive file link path encoding hotfix scope` (hash: TBD)
