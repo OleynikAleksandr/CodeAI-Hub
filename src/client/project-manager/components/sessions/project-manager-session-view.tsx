@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
+import { openProjectManagerFileLink } from "../../services/project-manager-file-link-opener";
 import ProjectManagerDialogSessionView, {
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view";
@@ -21,6 +23,9 @@ export const ProjectManagerSessionView = ({
   const [dialogIntent, setDialogIntent] = useState<DialogOpenIntent | null>(
     null
   );
+  const handleFileLinkActivate = useCallback((target: FileLinkTarget) => {
+    openProjectManagerFileLink(target);
+  }, []);
 
   useEffect(() => {
     setDialogIntent(null);
@@ -54,6 +59,7 @@ export const ProjectManagerSessionView = ({
         emptyStatePending={Boolean(pendingSessionCreate)}
         intent={dialogIntent}
         onExit={() => setViewMode("runtime")}
+        onFileLinkActivate={handleFileLinkActivate}
       />
     );
   }
@@ -61,6 +67,7 @@ export const ProjectManagerSessionView = ({
   return (
     <ProjectManagerRuntimeSessionView
       emptyStatePending={Boolean(pendingSessionCreate)}
+      onFileLinkActivate={handleFileLinkActivate}
       preferredSessionId={preferredSessionId}
       startupStage="description"
       workspacePath={workspacePath}

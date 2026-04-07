@@ -1,5 +1,18 @@
+interface ProjectManagerFileLinkOpenPayload {
+  readonly column?: number | null;
+  readonly line?: number | null;
+  readonly path: string;
+}
+
+export type ProjectManagerVscodeMessage =
+  | { type: "projects:pickFolder" }
+  | {
+      readonly payload: ProjectManagerFileLinkOpenPayload;
+      readonly type: "pm:file-link:open";
+    };
+
 export type VscodeBridge = {
-  postMessage: (message: unknown) => void;
+  postMessage: (message: ProjectManagerVscodeMessage) => void;
 };
 
 export type LauncherBridge = {
@@ -32,4 +45,3 @@ export const resolveLauncherBridge = (): LauncherBridge | null => {
   }
   return bridge;
 };
-

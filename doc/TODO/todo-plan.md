@@ -32,11 +32,11 @@
 
 ### Stream: Session Surface Callback Wiring
 3. [DONE] Thread the dialog file-link callback through `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, and `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; scope: PM session surfaces only, with no behavior change for artifact/help markdown; expected commit message: `feat(pm): wire session file link callbacks`
-4. [IN_PROGRESS] Git Commit: `feat(pm): wire session file link callbacks` (hash: TBD)
+4. [DONE] Git Commit: `feat(pm): wire session file link callbacks` (hash: `998111602`)
 
 ### Stream: PM Opener Strategy
-5. [TODO] Implement the PM opener strategy in `src/client/project-manager/services/project-manager-file-link-opener.ts`, `src/client/project-manager/services/pm-bridges.ts`, and `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; scope: prefer VS Code webview `postMessage` when available and fall back to `vscode://file` handoff in standalone PM; expected commit message: `feat(pm): open dialog file links in vscode`
-6. [TODO] Git Commit: `feat(pm): open dialog file links in vscode` (hash: TBD)
+5. [DONE] Implement the PM opener strategy in `src/client/project-manager/services/project-manager-file-link-opener.ts`, `src/client/project-manager/services/pm-bridges.ts`, and `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; scope: prefer VS Code webview `postMessage` when available and fall back to `vscode://file` handoff in standalone PM; expected commit message: `feat(pm): open dialog file links in vscode`
+6. [IN_PROGRESS] Git Commit: `feat(pm): open dialog file links in vscode` (hash: TBD)
 
 ### Stream: VS Code Host Editor Open
 7. [TODO] Add the PM file-link open contract in `src/extension-module/home-view-message-router/message-types.ts`, `src/extension-module/home-view-message-router.ts`, and `src/extension-module/message-handlers/project-manager-file-link-handler.ts`; scope: validate `pm:file-link:open` payloads and open the target with `workspace.openTextDocument` plus `window.showTextDocument`; expected commit message: `feat(vscode): handle PM file link open requests`
