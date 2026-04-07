@@ -64,7 +64,57 @@ test("openProjectManagerFileLink posts the VS Code open request when webview bri
   ]);
 });
 
-test("openProjectManagerFileLink falls back to vscode file URI handoff without webview bridge", () => {
+test("openProjectManagerFileLink prefers launcher bridge handoff in standalone mode", () => {
+  const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
+  const originalDocument = Object.getOwnPropertyDescriptor(
+    globalThis,
+    "document"
+  );
+  const payloads: unknown[] = [];
+
+  Object.defineProperty(globalThis, "window", {
+    configurable: true,
+    value: {
+      codeaiLauncher: {
+        pickFolder: () => true,
+        openInVsCodeFile: (payload: unknown) => {
+          payloads.push(payload);
+          return true;
+        },
+      },
+    },
+  });
+  Object.defineProperty(globalThis, "document", {
+    configurable: true,
+    value: {
+      createElement: () => {
+        throw new Error("anchor fallback must not run when launcher bridge exists");
+      },
+    },
+  });
+
+  try {
+    openProjectManagerFileLink({
+      href: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/README.md:28:3",
+      filePath: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/README.md",
+      line: 28,
+      column: 3,
+    });
+  } finally {
+    restoreGlobalProperty("window", originalWindow);
+    restoreGlobalProperty("document", originalDocument);
+  }
+
+  assert.deepEqual(payloads, [
+    {
+      path: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/README.md",
+      line: 28,
+      column: 3,
+    },
+  ]);
+});
+
+test("openProjectManagerFileLink falls back to vscode file URI handoff without any bridge", () => {
   const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
   const originalDocument = Object.getOwnPropertyDescriptor(
     globalThis,

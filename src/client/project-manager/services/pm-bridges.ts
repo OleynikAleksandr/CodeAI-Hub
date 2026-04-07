@@ -1,4 +1,4 @@
-interface ProjectManagerFileLinkOpenPayload {
+export interface ProjectManagerFileLinkOpenPayload {
   readonly column?: number | null;
   readonly line?: number | null;
   readonly path: string;
@@ -16,6 +16,7 @@ export type VscodeBridge = {
 };
 
 export type LauncherBridge = {
+  openInVsCodeFile?: (payload: ProjectManagerFileLinkOpenPayload) => boolean;
   pickFolder: () => boolean;
 };
 

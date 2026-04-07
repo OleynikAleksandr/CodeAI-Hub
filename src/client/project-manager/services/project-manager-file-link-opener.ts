@@ -1,5 +1,5 @@
 import type { FileLinkTarget } from "../../ui/src/session/file-link-target";
-import { resolveVscodeBridge } from "./pm-bridges";
+import { resolveLauncherBridge, resolveVscodeBridge } from "./pm-bridges";
 
 const WINDOWS_SEPARATOR_RE = /\\/g;
 
@@ -34,6 +34,17 @@ export const openProjectManagerFileLink = (target: FileLinkTarget): void => {
         column: target.column,
       },
     });
+    return;
+  }
+
+  const launcher = resolveLauncherBridge();
+  if (
+    launcher?.openInVsCodeFile?.({
+      path: target.filePath,
+      line: target.line,
+      column: target.column,
+    })
+  ) {
     return;
   }
 

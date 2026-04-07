@@ -27,11 +27,11 @@
 
 ### Stream: Planning And Recovery Reset
 1. [DONE] Reconstruct the regression from the shipped `1.1.901` behavior and restate the product decision in `doc/SolidWorks-WorkFlow/Plans/ProjectManager_DialogFileLinks_StandaloneFallback_Fix.md`, `doc/TODO/todo-plan.md`, and `doc/SolidWorks-WorkFlow/Docs_Index.md`; scope: open a new execution cycle with the launcher-host fallback fix as the only active scope; expected commit message: `docs(pm): plan standalone file link fallback fix`
-2. [TODO] Git Commit: `docs(pm): plan standalone file link fallback fix` (hash: TBD)
+2. [DONE] Git Commit: `docs(pm): plan standalone file link fallback fix` (hash: `3a2dbfeec`)
 
 ### Stream: PM Launcher Bridge Fallback
-3. [TODO] Update `src/client/project-manager/services/pm-bridges.ts`, `src/client/project-manager/services/project-manager-file-link-opener.ts`, and `src/client/project-manager/services/project-manager-file-link-opener.test.ts`; scope: prefer a launcher bridge handoff for standalone file links before the raw URI fallback, while keeping the VS Code webview path unchanged; expected commit message: `fix(pm): route standalone file links through launcher bridge`
-4. [TODO] Git Commit: `fix(pm): route standalone file links through launcher bridge` (hash: TBD)
+3. [DONE] Update `src/client/project-manager/services/pm-bridges.ts`, `src/client/project-manager/services/project-manager-file-link-opener.ts`, and `src/client/project-manager/services/project-manager-file-link-opener.test.ts`; scope: prefer a launcher bridge handoff for standalone file links before the raw URI fallback, while keeping the VS Code webview path unchanged; expected commit message: `fix(pm): route standalone file links through launcher bridge`
+4. [IN_PROGRESS] Git Commit: `fix(pm): route standalone file links through launcher bridge` (hash: TBD)
 
 ### Stream: Launcher Host External Handoff
 5. [TODO] Update `packages/cef-launcher/src/launcher_handler_bridge_helpers.h`, `packages/cef-launcher/src/launcher_handler.h`, and `packages/cef-launcher/src/launcher_handler.cc`; scope: add a dedicated launcher command for PM file-link handoff and cancel in-window navigation before delegating the generated VS Code URI to the OS; expected commit message: `fix(launcher): hand off vscode file links externally`
