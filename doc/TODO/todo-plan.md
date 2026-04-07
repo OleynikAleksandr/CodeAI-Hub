@@ -115,20 +115,24 @@
 53. [DONE] Update `doc/SolidWorks-WorkFlow/Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Step_Symmetry_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: mark archived FE planning docs as historical-only and remove wording that leaves the removed step looking active; expected commit message: `docs(history): mark foundation envelope archives as retired`
 54. [DONE] Git Commit: `docs(history): mark foundation envelope archives as retired` (hash: `7be4328a4`)
 
+### Stream: Verification Fallout Cleanup
+55. [DONE] Update `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/workspace-tree-auto-select.ts`, and `doc/TODO/todo-plan.md`; scope: remove residual FE compile-time imports/params surfaced by `typecheck:webview` after the main cleanup wave; expected commit message: `refactor(pm): remove foundation envelope verification fallout`
+56. [TODO] Git Commit: `refactor(pm): remove foundation envelope verification fallout` (hash: TBD)
+
 ### Stream: Verification
-55. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
-56. [TODO] Git Commit: `test(workflow): verify foundation envelope removal` (hash: TBD)
-57. [TODO] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
-58. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
+57. [TODO] Run `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`, and update `doc/TODO/todo-plan.md`; scope: verify the reduced workflow compiles cleanly after FE removal across core + PM/webview surfaces; expected commit message: `test(workflow): verify foundation envelope removal`
+58. [TODO] Git Commit: `test(workflow): verify foundation envelope removal` (hash: TBD)
+59. [TODO] Run `rg -n \"Foundation Envelope|foundation-envelope|foundation_envelope\" doc src packages -g '!**/dist/**' -g '!node_modules'` and update `doc/TODO/todo-plan.md`; scope: perform a final dead-reference sweep, classify any remaining hits as required history vs actionable leftovers, and ensure no live FE fragments remain before release packaging; expected commit message: `test(repo): verify foundation envelope cleanup`
+60. [TODO] Git Commit: `test(repo): verify foundation envelope cleanup` (hash: TBD)
 
 ### Stream: Release Build
-59. [DONE] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing product docs before cutting the cleanup release that removes `Foundation Envelope` from the active workflow; expected commit message: `docs(release): sync foundation envelope removal release docs`
-60. [TODO] Git Commit: `docs(release): sync foundation envelope removal release docs` (hash: TBD)
-61. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline after FE removal, capture version/materialization changes, and prepare fresh release artifacts; expected commit message: `build(release): cut workflow removal artifacts`
-62. [TODO] Git Commit: `build(release): cut workflow removal artifacts` (hash: TBD)
-63. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX for the workflow without `Foundation Envelope` and confirm the release checklist passes; expected commit message: `build(release): package workflow without foundation envelope`
-64. [TODO] Git Commit: `build(release): package workflow without foundation envelope` (hash: TBD)
+61. [DONE] Update `README.md`, `CHANGELOG.md`, and `doc/TODO/todo-plan.md`; scope: synchronize release-facing product docs before cutting the cleanup release that removes `Foundation Envelope` from the active workflow; expected commit message: `docs(release): sync foundation envelope removal release docs`
+62. [DONE] Git Commit: `docs(release): sync foundation envelope removal release docs` (hash: `41c0f7fbf`)
+63. [TODO] Run `./scripts/build-all.sh` and update `doc/TODO/todo-plan.md`; scope: execute the mandatory release build pipeline after FE removal, capture version/materialization changes, and prepare fresh release artifacts; expected commit message: `build(release): cut workflow removal artifacts`
+64. [TODO] Git Commit: `build(release): cut workflow removal artifacts` (hash: TBD)
+65. [TODO] Run `./scripts/build-release.sh --use-current-version` and update `doc/TODO/todo-plan.md`; scope: package the final VSIX for the workflow without `Foundation Envelope` and confirm the release checklist passes; expected commit message: `build(release): package workflow without foundation envelope`
+66. [TODO] Git Commit: `build(release): package workflow without foundation envelope` (hash: TBD)
 
 ### Stream: Plan Closeout
-65. [TODO] Update `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: archive or retire FE-only active planning artifacts, keep only history-only references, and close the execution cycle cleanly after release packaging; expected commit message: `docs(closeout): archive foundation envelope removal scope`
-66. [TODO] Git Commit: `docs(closeout): archive foundation envelope removal scope` (hash: TBD)
+67. [TODO] Update `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Foundation_Envelope_Architecture.md`, and `doc/TODO/todo-plan.md`; scope: archive or retire FE-only active planning artifacts, keep only history-only references, and close the execution cycle cleanly after release packaging; expected commit message: `docs(closeout): archive foundation envelope removal scope`
+68. [TODO] Git Commit: `docs(closeout): archive foundation envelope removal scope` (hash: TBD)

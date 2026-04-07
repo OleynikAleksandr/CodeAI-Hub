@@ -21,7 +21,6 @@ type WorkspaceTreeAutoSelectParams = {
   readonly workspaceSlug?: string | null;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable: boolean;
-  readonly foundationEnvelopeArtifactAvailable: boolean;
   readonly onSelectArtifact: (artifactPath: string, label: string) => void;
   readonly onResumeSession: (payload: SessionResumeIntent) => void;
   readonly onClearArtifactWithTool: (activeTool: string) => void;
@@ -67,8 +66,6 @@ export const useWorkspaceTreeAutoSelect = (
           params.virtualSimulationArtifactAvailable,
         diagramModulesArtifactAvailable:
           params.diagramModulesArtifactAvailable,
-        foundationEnvelopeArtifactAvailable:
-          params.foundationEnvelopeArtifactAvailable,
       });
 
       dispatchStageActivated(startupStage);
@@ -83,7 +80,6 @@ export const useWorkspaceTreeAutoSelect = (
       pendingWorkspaceIdRef.current = null;
     },
     [
-      params.foundationEnvelopeArtifactAvailable,
       params.diagramModulesArtifactAvailable,
       params.onClearArtifactWithTool,
       params.onResumeSession,

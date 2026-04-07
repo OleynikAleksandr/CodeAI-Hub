@@ -19,7 +19,6 @@ import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
 import { StatusBar } from "./status-bar";
 import { Toolbar } from "./toolbar";
 import {
-  FOUNDATION_ENVELOPE_TOOL_LABEL,
   VIRTUAL_SIMULATION_TOOL_LABEL,
   useWorkflowToolSelect,
 } from "./use-workflow-tool-select";
@@ -40,7 +39,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
         "Description",
         VIRTUAL_SIMULATION_TOOL_LABEL,
         "Diagram Modules",
-        FOUNDATION_ENVELOPE_TOOL_LABEL,
       ]
     : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
