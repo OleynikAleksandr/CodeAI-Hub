@@ -9,6 +9,7 @@ import {
   resolveRoleLabel,
 } from "./dialog-panel-message-utils";
 import { buildDialogPanelScrollAnchor } from "./dialog-panel-scroll-anchor";
+import type { FileLinkTarget } from "./file-link-target";
 import type { ProviderTheme } from "./helpers";
 import MarkdownContent from "./markdown-content";
 
@@ -17,6 +18,7 @@ const USER_MESSAGES_CATEGORY = "system_feedback";
 
 interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
+  readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly providerLabel?: string | null;
   readonly providerTheme?: ProviderTheme | null;
 }
@@ -26,6 +28,7 @@ interface ThinkingMessageProps {
   readonly expanded: boolean;
   readonly label: string;
   readonly message: SessionMessage;
+  readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onToggle: (messageId: string) => void;
 }
 
@@ -33,10 +36,12 @@ interface StandardMessageProps {
   readonly className: string;
   readonly label: string;
   readonly message: SessionMessage;
+  readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
 }
 
 const DialogPanel = ({
   messages,
+  onFileLinkActivate,
   providerTheme = null,
   providerLabel = null,
 }: DialogPanelProps) => {
@@ -163,6 +168,7 @@ const DialogPanel = ({
                 key={message.id}
                 label={label}
                 message={message}
+                onFileLinkActivate={onFileLinkActivate}
                 onToggle={toggleThinking}
               />
             );
@@ -174,6 +180,7 @@ const DialogPanel = ({
               key={message.id}
               label={label}
               message={message}
+              onFileLinkActivate={onFileLinkActivate}
             />
           );
         })}
@@ -188,6 +195,7 @@ const ThinkingMessage = ({
   message,
   expanded,
   onToggle,
+  onFileLinkActivate,
   label,
   className,
 }: ThinkingMessageProps) => {
@@ -228,6 +236,7 @@ const ThinkingMessage = ({
           className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
           content={message.content}
           id={`thinking-${message.id}`}
+          onFileLinkActivate={onFileLinkActivate}
         />
       ) : null}
     </article>
@@ -238,6 +247,7 @@ const StandardMessage = ({
   message,
   label,
   className,
+  onFileLinkActivate,
 }: StandardMessageProps) => {
   const messageDate = new Date(message.createdAt);
   return (
@@ -254,6 +264,7 @@ const StandardMessage = ({
       <MarkdownContent
         className="session-dialog__content"
         content={message.content}
+        onFileLinkActivate={onFileLinkActivate}
       />
     </article>
   );

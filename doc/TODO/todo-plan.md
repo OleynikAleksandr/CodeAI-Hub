@@ -27,8 +27,8 @@
 ## Phase 1 — PM Dialog File Links Open In VS Code (owner: Codex, updated: 2026-04-07)
 
 ### Stream: Dialog Markdown File-Link Interception
-1. [TODO] Add explicit local-file link parsing and dialog-link interception in `src/client/ui/src/session/file-link-target.ts`, `src/client/ui/src/session/markdown-content.tsx`, and `src/client/ui/src/session/dialog-panel.tsx`; scope: detect absolute local file hrefs with optional line/column metadata and expose an opt-in interception callback without changing non-file links; expected commit message: `feat(ui): intercept dialog file links`
-2. [TODO] Git Commit: `feat(ui): intercept dialog file links` (hash: TBD)
+1. [DONE] Add explicit local-file link parsing and dialog-link interception in `src/client/ui/src/session/file-link-target.ts`, `src/client/ui/src/session/markdown-content.tsx`, and `src/client/ui/src/session/dialog-panel.tsx`; scope: detect absolute local file hrefs with optional line/column metadata and expose an opt-in interception callback without changing non-file links; expected commit message: `feat(ui): intercept dialog file links`
+2. [IN_PROGRESS] Git Commit: `feat(ui): intercept dialog file links` (hash: TBD)
 
 ### Stream: Session Surface Callback Wiring
 3. [TODO] Thread the dialog file-link callback through `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, and `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; scope: PM session surfaces only, with no behavior change for artifact/help markdown; expected commit message: `feat(pm): wire session file link callbacks`
