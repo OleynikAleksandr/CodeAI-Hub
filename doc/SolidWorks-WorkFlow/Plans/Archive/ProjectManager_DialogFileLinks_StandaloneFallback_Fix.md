@@ -1,6 +1,6 @@
 # Project Manager Dialog File Links Standalone Fallback Fix
 
-**Status:** Draft for review (2026-04-07)
+**Status:** Completed and archived after release 1.1.902 (2026-04-07)
 **Created:** 2026-04-07
 **Owner:** Oleksandr + Codex
 **Scope:** Fix the failed standalone Project Manager file-link fallback so dialog links open in Visual Studio Code instead of triggering a second Chromium window with `ERR_UNKNOWN_URL_SCHEME`.
