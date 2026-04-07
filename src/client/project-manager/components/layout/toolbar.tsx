@@ -41,12 +41,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           "pm.workflow.stage.diagram_modules.label",
           WORKFLOW_LABELS.diagram_modules
         );
-      case WORKFLOW_LABELS.foundation_envelope:
-        return t(
-          UI_LABELS_CATEGORY,
-          "pm.workflow.stage.foundation_envelope.label",
-          WORKFLOW_LABELS.foundation_envelope
-        );
       default:
         return tool;
     }

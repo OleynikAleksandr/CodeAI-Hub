@@ -23,14 +23,11 @@ import {
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
-import { useFoundationEnvelopeArtifactAvailability } from "./use-foundation-envelope-artifact-availability";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
 const DIAGRAM_MODULES_BLOCKED_FALLBACK =
   "BLOCKED: requires virtual-simulation.md (DONE)";
-const FOUNDATION_ENVELOPE_BLOCKED_FALLBACK =
-  "BLOCKED: requires Diagram Modules aggregate-ready output (DONE)";
 
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
@@ -90,12 +87,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workspacePath,
       workspaceSlug,
     });
-  const foundationEnvelopeArtifactAvailable =
-    useFoundationEnvelopeArtifactAvailability({
-      enabled: Boolean(selectedWorkspaceId),
-      workspacePath,
-      workspaceSlug,
-    });
 
   const selectArtifact = useCallback(
     (artifactPath: string, label: string) => {
@@ -147,7 +138,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     workspacePath,
     virtualSimulationArtifactAvailable,
     diagramModulesArtifactAvailable,
-    foundationEnvelopeArtifactAvailable,
     selectArtifact,
     dispatchDialogOpenIntent,
     clearArtifactWithTool,
@@ -160,7 +150,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       workspaceSlug,
       virtualSimulationArtifactAvailable,
       diagramModulesArtifactAvailable,
-      foundationEnvelopeArtifactAvailable,
       onSelectArtifact: selectArtifact,
       onResumeSession: dispatchDialogOpenIntent,
       onClearArtifactWithTool: clearArtifactWithTool,
@@ -207,10 +196,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }));
     }
 
-    const foundationEnvelopeStageLabel = resolveStageLabel(
-      "foundation_envelope",
-      t
-    );
     const stageCtx = {
       workflowState,
       workspaceSlug,
@@ -218,20 +203,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       descriptionArtifactAvailable,
       virtualSimulationArtifactAvailable,
       diagramModulesArtifactAvailable,
-      foundationEnvelopeArtifactAvailable,
       selectArtifact,
       dispatchDialogOpenIntent,
       clearArtifactWithTool,
-      resolveFoundationEnvelopeSessionLabel: (providerTitle: string) =>
-        t(
-          UI_LABELS_CATEGORY,
-          "pm.workflow.stage.foundation_envelope.session_label",
-          "{stageLabel} {providerTitle}",
-          {
-            providerTitle,
-            stageLabel: foundationEnvelopeStageLabel,
-          }
-        ),
     };
 
     return WORKFLOW_STAGE_ORDER.map((stage) => {
@@ -376,12 +350,6 @@ const resolveStageLabel = (
         "pm.workflow.stage.diagram_modules.label",
         WORKFLOW_LABELS.diagram_modules
       );
-    case "foundation_envelope":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.foundation_envelope.label",
-        WORKFLOW_LABELS.foundation_envelope
-      );
   }
 };
 
@@ -421,12 +389,6 @@ const resolveStageTitle = (
         UI_LABELS_CATEGORY,
         "pm.workflow.stage.diagram_modules.blocked_title",
         DIAGRAM_MODULES_BLOCKED_FALLBACK
-      );
-    case "foundation_envelope":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.foundation_envelope.blocked_title",
-        FOUNDATION_ENVELOPE_BLOCKED_FALLBACK
       );
   }
 };

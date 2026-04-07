@@ -1,6 +1,5 @@
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { FOUNDATION_ENVELOPE_TOOL_LABEL } from "./use-workflow-tool-select";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 import { resolveDiagramStageSyncPayload } from "./workspace-tree-diagram-branch-nodes";
@@ -100,10 +99,7 @@ export const buildDescriptionBranchNodes = (options: {
 
 const resolveLatestStageChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
-  stage:
-    | "virtual_simulation"
-    | "diagram_modules"
-    | "foundation_envelope"
+  stage: "virtual_simulation" | "diagram_modules"
 ) => {
   let best: (typeof chains)[number] | null = null;
   for (const chain of chains) {
@@ -133,8 +129,7 @@ export const resolveStageSyncPayload = (options: {
   readonly workspacePath: string;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly diagramModulesArtifactAvailable?: boolean;
-  readonly foundationEnvelopeArtifactAvailable?: boolean;
-}): StageSyncPayload => {
+} & Record<string, unknown>): StageSyncPayload => {
   const { stage, workflowState, workspaceSlug, workspacePath } = options;
 
   if (stage === "description") {
@@ -196,38 +191,6 @@ export const resolveStageSyncPayload = (options: {
       workspacePath,
       diagramModulesArtifactAvailable: options.diagramModulesArtifactAvailable,
     });
-  }
-
-  if (stage === "foundation_envelope") {
-    const chain = resolveLatestStageChain(
-      workflowState.continuity.chains,
-      "foundation_envelope"
-    );
-    const last = chain?.segments.at(-1) ?? null;
-    const foundationArtifactPath =
-      `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`;
-    const foundationArtifactAvailable =
-      options.foundationEnvelopeArtifactAvailable ?? false;
-    return {
-      artifact: foundationArtifactAvailable
-        ? { path: foundationArtifactPath, label: "foundation-envelope.md" }
-        : null,
-      clearTool: foundationArtifactAvailable
-        ? null
-        : FOUNDATION_ENVELOPE_TOOL_LABEL,
-      session: last
-        ? {
-            providerId: last.providerId,
-            providerSessionId: last.providerSessionId,
-            workspacePath,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage: "foundation_envelope",
-            sessionKind: "collector",
-            runSlug: null,
-          }
-        : null,
-    };
   }
 
   return { artifact: null, clearTool: null, session: null };
@@ -319,93 +282,6 @@ export const buildVirtualSimulationBranchNodes = (options: {
   return nodes;
 };
 
-export const buildFoundationEnvelopeBranchNodes = (options: {
-  readonly workflowState: WorkflowStateSnapshot | null;
-  readonly foundationEnvelopeArtifactAvailable: boolean;
-  readonly workspaceSlug: string | null;
-  readonly workspacePath?: string;
-  readonly selectArtifact: (artifactPath: string, label: string) => void;
-  readonly dispatchDialogOpenIntent: (payload: SessionResumeIntent) => void;
-  readonly clearArtifactWithTool: (activeTool: string) => void;
-  readonly resolveSessionLabel: (providerTitle: string) => string;
-}): readonly TreeNode[] => {
-  const workflowState = options.workflowState;
-  const workspaceSlug = options.workspaceSlug;
-  const workspacePath = options.workspacePath;
-
-  if (!(workflowState && workspaceSlug && workspacePath)) {
-    return [];
-  }
-
-  const nodes: TreeNode[] = [];
-  const artifactPath =
-    `.codeai-hub/${workspaceSlug}/foundation_envelope/foundation-envelope.md`;
-  const chain = resolveLatestStageChain(
-    workflowState.continuity.chains,
-    "foundation_envelope"
-  );
-  const last = chain?.segments.at(-1) ?? null;
-
-  if (options.foundationEnvelopeArtifactAvailable) {
-    nodes.push({
-      id: "workflow:foundation_envelope:artifact",
-      label: "foundation-envelope.md",
-      title: artifactPath,
-      status: "active",
-      visualDepth: 2,
-      onSelect: () => {
-        dispatchStageActivated("foundation_envelope");
-        options.selectArtifact(
-          artifactPath,
-          "foundation-envelope.md"
-        );
-        if (last) {
-          options.dispatchDialogOpenIntent({
-            providerId: last.providerId,
-            providerSessionId: last.providerSessionId,
-            workspacePath,
-            workspaceSlug,
-            initiativeSlug: workspaceSlug,
-            stage: "foundation_envelope",
-            sessionKind: "collector",
-            runSlug: null,
-          });
-        }
-      },
-    });
-  }
-
-  if (!(chain && last)) {
-    return nodes;
-  }
-
-  const providerTitle = resolveProviderTitle(last.providerId);
-  nodes.push({
-    id: `workflow:foundation_envelope:session:${chain.rootSessionId}`,
-    label: options.resolveSessionLabel(providerTitle),
-    status: "active",
-    visualDepth: 2,
-    onSelect: () => {
-      dispatchStageActivated("foundation_envelope");
-      options.dispatchDialogOpenIntent({
-        providerId: last.providerId,
-        providerSessionId: last.providerSessionId,
-        workspacePath,
-        workspaceSlug,
-        initiativeSlug: workspaceSlug,
-        stage: "foundation_envelope",
-        sessionKind: "collector",
-        runSlug: null,
-      });
-      if (options.foundationEnvelopeArtifactAvailable) {
-        options.selectArtifact(artifactPath, "foundation-envelope.md");
-      } else {
-        options.clearArtifactWithTool(
-          FOUNDATION_ENVELOPE_TOOL_LABEL
-        );
-      }
-    },
-  });
-
-  return nodes;
-};
+export const buildFoundationEnvelopeBranchNodes = (
+  _options: Record<string, unknown>
+): readonly TreeNode[] => [];
