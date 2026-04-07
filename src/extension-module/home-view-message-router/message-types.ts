@@ -25,6 +25,11 @@ export interface LayoutMessage {
   readonly type: "ui:updateLayout";
 }
 
+export interface ProjectManagerFileLinkOpenMessage {
+  readonly payload?: unknown;
+  readonly type: "pm:file-link:open";
+}
+
 export interface GenericMessage {
   readonly payload?: unknown;
   readonly type: string;
@@ -46,6 +51,7 @@ export type ProviderPickerMessage =
 export type WebviewMessage =
   | CommandMessage
   | LayoutMessage
+  | ProjectManagerFileLinkOpenMessage
   | ProviderPickerMessage
   | SettingsMessage
   | GenericMessage;
@@ -84,4 +90,16 @@ export const isLayoutMessage = (
   }
 
   return (message as LayoutMessage).type === "ui:updateLayout";
+};
+
+export const isProjectManagerFileLinkOpenMessage = (
+  message: WebviewMessage
+): message is ProjectManagerFileLinkOpenMessage => {
+  if (!message || typeof message !== "object") {
+    return false;
+  }
+
+  return (
+    (message as ProjectManagerFileLinkOpenMessage).type === "pm:file-link:open"
+  );
 };

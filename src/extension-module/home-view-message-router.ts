@@ -10,10 +10,12 @@ import { validateLayoutPayload } from "./home-view-message-router/layout-utils";
 import {
   isCommandMessage,
   isLayoutMessage,
+  isProjectManagerFileLinkOpenMessage,
   isProviderPickerMessage,
   type WebviewMessage,
 } from "./home-view-message-router/message-types";
 import { handleProviderPickerMessage } from "./home-view-message-router/provider-picker-handler";
+import { handleProjectManagerFileLinkOpenMessage } from "./message-handlers/project-manager-file-link-handler";
 import {
   type SettingsMessage,
   SettingsMessageHandler,
@@ -127,6 +129,13 @@ export class HomeViewMessageRouter {
 
     if (this.canHandleSettingsMessage(message)) {
       this.settingsHandler.handle(message, webview);
+      return;
+    }
+
+    if (isProjectManagerFileLinkOpenMessage(message)) {
+      handleProjectManagerFileLinkOpenMessage(message).catch(() => {
+        /* errors handled in the dedicated handler */
+      });
       return;
     }
 

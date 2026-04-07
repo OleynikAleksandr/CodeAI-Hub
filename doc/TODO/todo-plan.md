@@ -36,11 +36,11 @@
 
 ### Stream: PM Opener Strategy
 5. [DONE] Implement the PM opener strategy in `src/client/project-manager/services/project-manager-file-link-opener.ts`, `src/client/project-manager/services/pm-bridges.ts`, and `src/client/project-manager/components/sessions/project-manager-session-view.tsx`; scope: prefer VS Code webview `postMessage` when available and fall back to `vscode://file` handoff in standalone PM; expected commit message: `feat(pm): open dialog file links in vscode`
-6. [IN_PROGRESS] Git Commit: `feat(pm): open dialog file links in vscode` (hash: TBD)
+6. [DONE] Git Commit: `feat(pm): open dialog file links in vscode` (hash: `f7247bb1f`)
 
 ### Stream: VS Code Host Editor Open
-7. [TODO] Add the PM file-link open contract in `src/extension-module/home-view-message-router/message-types.ts`, `src/extension-module/home-view-message-router.ts`, and `src/extension-module/message-handlers/project-manager-file-link-handler.ts`; scope: validate `pm:file-link:open` payloads and open the target with `workspace.openTextDocument` plus `window.showTextDocument`; expected commit message: `feat(vscode): handle PM file link open requests`
-8. [TODO] Git Commit: `feat(vscode): handle PM file link open requests` (hash: TBD)
+7. [DONE] Add the PM file-link open contract in `src/extension-module/home-view-message-router/message-types.ts`, `src/extension-module/home-view-message-router.ts`, and `src/extension-module/message-handlers/project-manager-file-link-handler.ts`; scope: validate `pm:file-link:open` payloads and open the target with `workspace.openTextDocument` plus `window.showTextDocument`; expected commit message: `feat(vscode): handle PM file link open requests`
+8. [IN_PROGRESS] Git Commit: `feat(vscode): handle PM file link open requests` (hash: TBD)
 
 ### Stream: Regression Coverage
 9. [TODO] Add regression coverage in `src/client/ui/src/session/file-link-target.test.ts`, `src/client/project-manager/services/project-manager-file-link-opener.test.ts`, and `src/extension-module/message-handlers/project-manager-file-link-handler.test.ts`; scope: parser correctness, `vscode://file` fallback generation, and editor-open payload validation; expected commit message: `test(pm): cover dialog file link opening`
