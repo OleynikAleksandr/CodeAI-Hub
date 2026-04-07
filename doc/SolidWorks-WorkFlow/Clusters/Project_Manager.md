@@ -47,6 +47,7 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - Контейнеры (Product Part, Cluster) динамически расширяются/сжимаются при перемещении дочерних нод; siblings не могут наложиться друг на друга (12px gap).
 - При открытии workspace/switch/reconnect PM временно всегда стартует в `Description`:
   - toolbar highlight = `Description`,
+  - левая workflow tree branch = highlighted `Description`, раскрыта только ветка `Description`,
   - правая панель открывает `Final_Description.md`, если он существует, иначе `questionnaire.md`,
   - левая Session panel автоматически показывает только Description-scoped session state или Description Help.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
@@ -55,6 +56,7 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 
 Дополнительный инвариант навигации:
 - любой route на workflow stage (Toolbar/Tree/auto-select) обязан сначала синхронизировать `activeStage`, чтобы Toolbar, Session route и правая панель не расходились.
+- левое workflow tree обязано читать тот же `activeStage`: highlighted row и единственная раскрытая stage-ветка всегда должны соответствовать активному шагу.
 - канон: `ProjectManager_WorkflowNavigation_SSOT.md`.
 
 ## 4) Recovery UX (обязательно)

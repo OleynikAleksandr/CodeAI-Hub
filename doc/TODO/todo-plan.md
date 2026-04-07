@@ -31,11 +31,11 @@
 2. [DONE] Git Commit: `fix(pm): sync left sidebar with active stage` (hash: `a21489562`)
 
 ### Stream: Tree Accordion And Highlight
-3. [IN_PROGRESS] Make only the active stage branch expanded and add selected-stage styling in `src/client/project-manager/components/layout/workspace-tree.tsx` and `packages/ui/project-manager/styles.css`; scope: accordion visibility plus selected-step highlight without changing workflow status markers; expected commit message: `feat(pm): highlight active step in left sidebar`
-4. [TODO] Git Commit: `feat(pm): highlight active step in left sidebar` (hash: TBD)
+3. [DONE] Make only the active stage branch expanded and add selected-stage styling in `src/client/project-manager/components/layout/workspace-tree.tsx` and `packages/ui/project-manager/styles.css`; scope: accordion visibility plus selected-step highlight without changing workflow status markers; expected commit message: `feat(pm): highlight active step in left sidebar`
+4. [DONE] Git Commit: `feat(pm): highlight active step in left sidebar` (hash: `9d50d57b3`)
 
 ### Stream: Navigation Docs And Coverage
-5. [TODO] Sync the left-sidebar stage-selection contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: document the accordion/highlight behavior and guard cross-surface stage sync; expected commit message: `docs(pm): document left sidebar active stage sync`
+5. [IN_PROGRESS] Sync the left-sidebar stage-selection contract in `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, and `src/client/project-manager/components/layout/workflow-navigation.test.ts`; scope: document the accordion/highlight behavior and guard cross-surface stage sync; expected commit message: `docs(pm): document left sidebar active stage sync`
 6. [TODO] Git Commit: `docs(pm): document left sidebar active stage sync` (hash: TBD)
 
 ### Stream: Release Build For User Testing

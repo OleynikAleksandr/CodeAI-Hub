@@ -76,6 +76,21 @@ test("workflow navigation sync keeps stage routing consistent across toolbar and
     "workflow stage nodes must use unified stage dispatch route"
   );
   assert.equal(
+    workspaceTreeSource.includes("useWorkspaceTreeActiveStage"),
+    true,
+    "workspace tree must subscribe to the shared active-stage route"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("node.stage === activeStage"),
+    true,
+    "workspace tree stage expansion must derive from activeStage"
+  );
+  assert.equal(
+    workspaceTreeSource.includes("pm-tree__item--selected"),
+    true,
+    "workspace tree must render a dedicated selected-stage modifier"
+  );
+  assert.equal(
     workspaceTreeAutoSelectSource.includes('const STARTUP_STAGE = "description";'),
     true,
     "workspace startup auto-select must force the description stage"
