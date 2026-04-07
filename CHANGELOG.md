@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.904] - 2026-04-07
+### Fixed
+- **Standalone PM dialog file links now decode launcher query paths as real filesystem paths**: the launcher no longer forwards `%2FUsers%2F...` into Visual Studio Code after the PM bridge has already handed off the file target.
+- **The remaining `Path does not exist` regression from `1.1.903` is narrowed to the correct boundary and repaired there**: the `path` query parameter now uses filesystem-oriented URI unescape rules before the final `vscode://file/...` URI is assembled.
+
+### Deferred
+- **Broader method/knowledge documentation for the multi-step standalone file-link debugging sequence remains deferred until the user confirms this release works**.
+
 ## [1.1.903] - 2026-04-07
 ### Fixed
 - **Standalone PM dialog file links now decode percent-encoded absolute paths before the open pipeline continues**: agent-provided paths such as `...%20...` are normalized back into real filesystem paths before PM routes them to VS Code.
