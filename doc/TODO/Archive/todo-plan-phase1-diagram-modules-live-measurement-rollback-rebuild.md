@@ -56,4 +56,4 @@
 
 ### Stream: Closeout
 15. [DONE] Заархивировать planning-doc и execution plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-diagram-modules-live-measurement-rollback-rebuild.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs(closeout): archive rollback rebuild scope`
-16. [IN_PROGRESS] Git Commit: `docs(closeout): archive rollback rebuild scope` (hash: TBD)
+16. [DONE] Git Commit: `docs(closeout): archive rollback rebuild scope` (hash: `6b94b6147`)
