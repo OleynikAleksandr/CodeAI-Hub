@@ -61,8 +61,8 @@
 
 ### Stream: Release Build
 1. [DONE] Запустить `./scripts/build-all.sh`, принять version/manifest bump для следующего релиза и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture measured diagram gap fix version bump`
-2. [TODO] Git Commit: `build(release): capture measured diagram gap fix version bump` (hash: TBD)
-3. [TODO] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для measured gap scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package measured diagram gap fix release`
+2. [DONE] Git Commit: `build(release): capture measured diagram gap fix version bump` (hash: `d0f0574ce`)
+3. [DONE] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для measured gap scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package measured diagram gap fix release`
 4. [TODO] Git Commit: `build(release): package measured diagram gap fix release` (hash: TBD)
 
 ## Phase 4 — Planning And Execution Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
