@@ -259,6 +259,37 @@ Reviewer / long-discussion loop здесь признаётся важной б�
 - проблема проявляется не только при длинном title, но и при длинном purpose text;
 - сам факт наличия purpose surface уже недостаточен, если container не умеет зарезервировать под неё весь vertical budget.
 
+### 11.7. Measured post-render min-gap enforcement completed on 2026-04-08
+
+Пользовательский тест релиза `1.1.907` подтвердил, что одного усиления projection-time height heuristics недостаточно.
+
+Root cause зафиксирован явно:
+- projection already reserved nominal gaps and paddings;
+- but the first-open layout still trusted estimated node heights instead of the actual React Flow measured boxes;
+- shell-level collision repair existed only for dragged nodes, not for the first rendered layout.
+
+Принятый corrective contract теперь такой:
+- deterministic projection остаётся начальным seed layout;
+- после first render React Flow bridge поднимает реальные measured width/height каждого ownership node;
+- shell запускает отдельный measured normalization pass;
+- hard invariant теперь формулируется на **реальных** box sizes: между всеми соседними ownership boxes (`Product Part`, `Cluster`, `Module`) должен оставаться минимум `4px`.
+
+Что именно реализовано:
+- добавлен pure measured-layout normalizer, который снизу вверх перепаковывает later siblings вниз без перестройки `x`-колонок и без “teleport” поведения ранних узлов;
+- cluster and product-part heights теперь могут дорасти после first render по реально измеренному самому нижнему child bottom;
+- отдельный React Flow child bridge читает `getInternalNode(...).measured` и прокидывает measured nodes в shell;
+- stale `module-map.flow.json` geometry снова инвалидируется через новый `FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 2`, чтобы дофиксная layout-метрика не переиспользовалась как canonical.
+
+Новый evidence set для measured contract:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
+Практический смысл этого pass:
+- теперь first-open layout больше не обязан идеально угадать высоты на projection stage;
+- если реальный текст растянул карточку сильнее прогноза, measured pass обязан опустить следующий sibling и расширить контейнер до безопасной нижней границы;
+- это напрямую убирает остаточные overlap cases, которые пользователь всё ещё видел на `1.1.907`.
+
 ### 11.2. Cluster header/body separation тоже остаётся нестабилен
 
 Во втором плотном сценарии первый module card внутри cluster-а всё ещё может подниматься слишком рано и налезать на description cluster-а.

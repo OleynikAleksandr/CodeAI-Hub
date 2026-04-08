@@ -47,10 +47,10 @@
 
 ### Stream: Flow Sidecar Metric Bump
 1. [DONE] Повысить layout metric version для `module-map.flow.json`, чтобы pre-measured geometry не применялась поверх нового measured contract; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale sidecars for measured layout`
-2. [TODO] Git Commit: `fix(diagram): invalidate stale sidecars for measured layout` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram): invalidate stale sidecars for measured layout` (hash: `f3140441f`)
 
 ### Stream: Verification Evidence And SSOT Sync
-1. [TODO] Прогнать таргетную verification wave для нового measured gap contract и синхронизировать accepted docs/evidence; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured min-gap autolayout fix`
+1. [DONE] Прогнать таргетную verification wave для нового measured gap contract и синхронизировать accepted docs/evidence; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured min-gap autolayout fix`
 2. [TODO] Git Commit: `docs(diagram): record measured min-gap autolayout fix` (hash: TBD)
 
 ## Phase 3 — Release Build And Session Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
