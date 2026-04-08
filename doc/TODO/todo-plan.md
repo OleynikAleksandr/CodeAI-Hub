@@ -48,10 +48,10 @@
 11. [DONE] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify live measurement stabilization prerequisites`
 12. [DONE] Git Commit: `build(release): verify live measurement stabilization prerequisites` (hash: `42b181f49`)
 13. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture live measurement stabilization version bump`
-14. [TODO] Git Commit: `build(release): capture live measurement stabilization version bump` (hash: TBD)
-15. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package live measurement stabilization release`
+14. [DONE] Git Commit: `build(release): capture live measurement stabilization version bump` (hash: `e5e4f2432`)
+15. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package live measurement stabilization release`
 16. [TODO] Git Commit: `build(release): package live measurement stabilization release` (hash: TBD)
 
 ### Stream: Closeout
-17. [TODO] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Stabilization_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-live-measurement-stabilization.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive live measurement stabilization scope`
+17. [IN_PROGRESS] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Stabilization_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-live-measurement-stabilization.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive live measurement stabilization scope`
 18. [TODO] Git Commit: `docs(closeout): archive live measurement stabilization scope` (hash: TBD)
