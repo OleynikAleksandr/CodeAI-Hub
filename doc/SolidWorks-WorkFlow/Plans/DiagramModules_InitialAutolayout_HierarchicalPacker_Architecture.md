@@ -1,6 +1,6 @@
 # Diagram Modules Initial Autolayout Hierarchical Packer — Architecture
 
-**Status:** Proposed corrective scope
+**Status:** Accepted implementation baseline
 **Date:** 2026-04-08
 **Owner:** Oleksandr + Codex
 **Scope:** post-release corrective wave after `1.1.910`; fix the remaining `Diagram Modules` defect where first-open autolayout still lets modules visually run into `Cluster` and `Product Part` lower bounds, while preserving the already-working manual layout behavior
@@ -186,3 +186,13 @@ After this corrective scope:
 - first-open autolayout without `module-map.flow.json` must stop depending on guessed container heights and instead repack from measured hierarchy;
 - dense localized `Cluster` and `Product Part` cases must converge to a stable safe layout after the measured validation loop;
 - the fix must ship in one new release build for user validation.
+
+---
+
+## 7. Implementation progress on 2026-04-08
+
+Already implemented in the active execution cycle:
+- projection now declares `layoutSource`, so the shell can distinguish `seed-autolayout` from `persisted-sidecar`;
+- the measured shell path is now layout-source-aware while manual drag remains unchanged;
+- `seed-autolayout` now uses a pure hierarchical packer that repacks children from measured `bodyStartY` and measured visual heights, then resizes `Cluster` and `Product Part` owners until the layout settles;
+- regression evidence now covers both sides of the split: safe seed autolayout and preserved sidecar-backed manual composition.

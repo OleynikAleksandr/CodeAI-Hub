@@ -45,10 +45,10 @@
 9. [DONE] Ввести pure hierarchical packer для seed autolayout и перевести measured normalizer на fixed-point pack-and-validate loop; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): rebuild initial autolayout from measured hierarchy`
 10. [DONE] Git Commit: `fix(diagram): rebuild initial autolayout from measured hierarchy` (hash: 361010d81)
 11. [DONE] Добавить regression evidence для seed autolayout safety и persisted-layout preservation; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover measured initial autolayout solver`
-12. [TODO] Git Commit: `test(diagram): cover measured initial autolayout solver` (hash: TBD)
+12. [DONE] Git Commit: `test(diagram): cover measured initial autolayout solver` (hash: 1754949f0)
 
 ### Stream: SSOT And Release Docs
-13. [TODO] Синхронизировать Diagram Modules SSOT и planning-doc с новым measured-first initial autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured initial autolayout contract`
+13. [DONE] Синхронизировать Diagram Modules SSOT и planning-doc с новым measured-first initial autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured initial autolayout contract`
 14. [TODO] Git Commit: `docs(diagram): record measured initial autolayout contract` (hash: TBD)
 15. [TODO] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare initial autolayout packer release`
 16. [TODO] Git Commit: `docs(release): prepare initial autolayout packer release` (hash: TBD)

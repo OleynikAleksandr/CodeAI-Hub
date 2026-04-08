@@ -428,3 +428,30 @@ Root cause зафиксирован явно:
 - нижняя граница ownership containers теперь определяется по тому, что пользователь реально видит, а не только по border-box math;
 - ручное перетаскивание больше не может сохранять контейнеры на старом локальном resize contract;
 - следующий релиз должен валидироваться на том же Gemini workspace, где пользователь воспроизвёл совпадающий дефект и в auto, и в manual mode.
+
+### 11.10. Initial autolayout hierarchical packer accepted on 2026-04-08
+
+Пользовательский ретест релиза `1.1.910` показал, что предыдущий corrective slice решил manual mode, но не решил first-open autolayout:
+- persisted sidecar-backed layouts теперь должны сохранять пользовательскую композицию;
+- manual drag уже держит положительный визуальный зазор;
+- но initial autolayout без `module-map.flow.json` всё ещё нельзя строить как старый heuristic seed с последующим repair pass.
+
+Принятый contract теперь разделяет layout source:
+- `persisted-sidecar` path сохраняет текущую preserve-and-normalize модель;
+- `seed-autolayout` path обязан пересобирать ownership hierarchy от measured geometry.
+
+Для `seed-autolayout` runtime теперь обязан:
+1. упаковать `Module` cards внутри каждого `Cluster` от measured `bodyStartY` и measured visual heights;
+2. пересчитать высоту `Cluster` от deepest direct child visual bottom;
+3. упаковать `Cluster` boxes и standalone `Module` cards внутри `Product Part` от уже финализированных child boxes;
+4. пересчитать высоту `Product Part` от deepest direct child visual bottom;
+5. повторять этот pack/resize sequence до fixed point.
+
+Это означает, что first-open path больше не моделируется как “projection guess + minimal repair”.
+Теперь это “deterministic seed columns + measured hierarchical pack-and-validate loop”.
+
+Новый evidence set для этого corrective contract:
+- projection now carries explicit `layoutSource`, so measured normalization distinguishes `seed-autolayout` from `persisted-sidecar`;
+- persisted-sidecar path keeps the conservative preserve contract and does not repack the saved composition from scratch;
+- seed autolayout now runs through a dedicated pure hierarchical packer that settles `Cluster` and `Product Part` bounds from measured direct children;
+- regression coverage explicitly proves both sides of the split: safe initial autolayout and preserved sidecar-backed composition.
