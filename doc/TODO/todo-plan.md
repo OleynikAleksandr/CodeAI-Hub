@@ -32,10 +32,10 @@
 1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session019.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session019.md`; expected commit: `docs(plan): open module shadow visual-bottom scope`
 2. [DONE] Git Commit: `docs(plan): open module shadow visual-bottom scope` (hash: `75e3a9b64`)
 3. [DONE] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register module shadow visual-bottom scope`
-4. [TODO] Git Commit: `docs(index): register module shadow visual-bottom scope` (hash: TBD)
+4. [DONE] Git Commit: `docs(index): register module shadow visual-bottom scope` (hash: `df56538a0`)
 
 ### Stream: Shared Bounds Fix
-5. [TODO] Исправить shared module visual-bottom overflow contract и синхронизировать regression tests для measured/manual paths; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-bounds.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`; expected commit: `fix(diagram): account for module shadow in visual bounds`
+5. [DONE] Исправить shared module visual-bottom overflow contract и синхронизировать regression tests для measured/manual paths; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-bounds.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`; expected commit: `fix(diagram): account for module shadow in visual bounds`
 6. [TODO] Git Commit: `fix(diagram): account for module shadow in visual bounds` (hash: TBD)
 
 ### Stream: SSOT And Release Notes

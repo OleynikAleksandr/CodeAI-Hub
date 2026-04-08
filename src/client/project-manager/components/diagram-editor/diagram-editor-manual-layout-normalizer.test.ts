@@ -118,8 +118,8 @@ test("normalizeManualDiagramLayout clamps modules to the measured container body
     return;
   }
 
-  assert.equal(fsSync.position.y, 299);
-  assert.equal(Number(cluster.style?.height), 479);
+  assert.equal(fsSync.position.y, 309);
+  assert.equal(Number(cluster.style?.height), 499);
 });
 
 test("normalizeManualDiagramLayout resizes product parts from direct child visual bottoms", () => {
@@ -149,5 +149,5 @@ test("normalizeManualDiagramLayout resizes product parts from direct child visua
   }
 
   assert.equal(providerFacade.position.y, 607);
-  assert.equal(Number(productPart.style?.height), 787);
+  assert.equal(Number(productPart.style?.height), 797);
 });

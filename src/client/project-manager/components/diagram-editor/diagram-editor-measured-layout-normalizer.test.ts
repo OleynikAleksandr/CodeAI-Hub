@@ -159,10 +159,10 @@ test("normalizeMeasuredDiagramLayout rebuilds cluster and product-part layout fr
   }
 
   assert.equal(clusterNode.position.y, 140);
-  assert.equal(actionPanel.position.y, 306);
-  assert.equal(Number(clusterNode.style?.height), 500);
-  assert.equal(standaloneNode.position.y, 644);
-  assert.equal(Number(productPartNode.style?.height), 818);
+  assert.equal(actionPanel.position.y, 316);
+  assert.equal(Number(clusterNode.style?.height), 520);
+  assert.equal(standaloneNode.position.y, 664);
+  assert.equal(Number(productPartNode.style?.height), 848);
   assert.equal(
     standaloneNode.position.y - (clusterNode.position.y + Number(clusterNode.style?.height)),
     MEASURED_LAYOUT_MIN_SAFE_GAP
@@ -211,8 +211,8 @@ test("normalizeMeasuredDiagramLayout keeps top-level product parts separated whe
     return;
   }
 
-  assert.equal(Number(firstProductPart.style?.height), 818);
-  assert.equal(secondProductPart.position.y, 842);
+  assert.equal(Number(firstProductPart.style?.height), 848);
+  assert.equal(secondProductPart.position.y, 872);
 });
 
 test("normalizeMeasuredDiagramLayout preserves persisted-sidecar composition instead of repacking from seed", () => {
@@ -263,9 +263,9 @@ test("normalizeMeasuredDiagramLayout preserves persisted-sidecar composition ins
   }
 
   assert.equal(clusterNode.position.y, 180);
-  assert.equal(standaloneNode.position.y, 738);
-  assert.equal(Number(clusterNode.style?.height), 554);
-  assert.equal(Number(productPartNode.style?.height), 912);
+  assert.equal(standaloneNode.position.y, 748);
+  assert.equal(Number(clusterNode.style?.height), 564);
+  assert.equal(Number(productPartNode.style?.height), 932);
 });
 
 test("normalizeMeasuredDiagramLayout pushes standalone modules below wide clusters when their horizontal bounds overlap", () => {
@@ -315,8 +315,8 @@ test("normalizeMeasuredDiagramLayout pushes standalone modules below wide cluste
   assert.equal(clusterNode.position.y, 140);
   assert.equal(leftClusterModule.position.y, 110);
   assert.equal(rightClusterModule.position.y, 110);
-  assert.equal(Number(clusterNode.style?.height), 314);
-  assert.equal(standaloneNode.position.y, 458);
+  assert.equal(Number(clusterNode.style?.height), 324);
+  assert.equal(standaloneNode.position.y, 468);
   assert.equal(
     standaloneNode.position.y - (clusterNode.position.y + Number(clusterNode.style?.height)),
     MEASURED_LAYOUT_MIN_SAFE_GAP

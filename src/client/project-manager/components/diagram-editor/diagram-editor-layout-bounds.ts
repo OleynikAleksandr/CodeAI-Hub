@@ -7,7 +7,11 @@ import type {
 
 const DEFAULT_NODE_WIDTH = 240;
 const DEFAULT_NODE_HEIGHT = 100;
-const MODULE_VISUAL_BOTTOM_OVERFLOW = 12;
+const MODULE_CARD_SHADOW_Y = 10;
+const MODULE_CARD_SHADOW_BLUR = 24;
+// React Flow measured height stops at the border-box; reserve the visible shadow tail explicitly.
+const MODULE_VISUAL_BOTTOM_OVERFLOW =
+  MODULE_CARD_SHADOW_Y + Math.ceil(MODULE_CARD_SHADOW_BLUR / 2);
 
 export const getContainerConstraints = (
   data: DiagramFlowNodeData
