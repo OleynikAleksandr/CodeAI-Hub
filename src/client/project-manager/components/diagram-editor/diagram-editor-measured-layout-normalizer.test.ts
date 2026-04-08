@@ -69,15 +69,37 @@ const createClusterNode = (): DiagramFlowNode => ({
   },
 });
 
+const createWideClusterNode = (): DiagramFlowNode => ({
+  id: "cluster:workspace-fs",
+  type: "cluster",
+  position: { x: 24, y: 110 },
+  parentId: "product-part:project-manager-ui",
+  width: 608,
+  height: 260,
+  measured: { width: 608, height: 260, bodyStartY: 110 },
+  style: { width: 608, height: 260 },
+  data: {
+    stage: "diagram_modules",
+    nodeKind: "cluster",
+    clusterId: "workspace-fs",
+    productPartId: "project-manager-ui",
+    title: "Workspace Fs",
+    purpose: "Owns a wide footprint inside the product part.",
+    moduleIds: ["markdown-parser", "fs-sync"],
+    containerConstraints: CLUSTER_CONSTRAINTS,
+  },
+});
+
 const createModuleNode = (params: {
   readonly id: string;
+  readonly x?: number;
   readonly y: number;
   readonly height: number;
   readonly parentId: string;
 }): DiagramFlowNode => ({
   id: params.id,
   type: "module",
-  position: { x: 24, y: params.y },
+  position: { x: params.x ?? 24, y: params.y },
   parentId: params.parentId,
   width: 240,
   height: params.height,
@@ -244,4 +266,59 @@ test("normalizeMeasuredDiagramLayout preserves persisted-sidecar composition ins
   assert.equal(standaloneNode.position.y, 738);
   assert.equal(Number(clusterNode.style?.height), 554);
   assert.equal(Number(productPartNode.style?.height), 912);
+});
+
+test("normalizeMeasuredDiagramLayout pushes standalone modules below wide clusters when their horizontal bounds overlap", () => {
+  const result = normalizeMeasuredDiagramLayout([
+    createProductPartNode({
+      id: "product-part:project-manager-ui",
+      y: 0,
+      height: 260,
+    }),
+    createWideClusterNode(),
+    createModuleNode({
+      id: "markdown-parser",
+      x: 24,
+      y: 110,
+      height: 180,
+      parentId: "cluster:workspace-fs",
+    }),
+    createModuleNode({
+      id: "fs-sync",
+      x: 276,
+      y: 110,
+      height: 170,
+      parentId: "cluster:workspace-fs",
+    }),
+    createModuleNode({
+      id: "code-validator",
+      x: 344,
+      y: 140,
+      height: 150,
+      parentId: "product-part:project-manager-ui",
+    }),
+  ]);
+
+  const clusterNode = result.find((node) => node.id === "cluster:workspace-fs");
+  const standaloneNode = result.find((node) => node.id === "code-validator");
+  const leftClusterModule = result.find((node) => node.id === "markdown-parser");
+  const rightClusterModule = result.find((node) => node.id === "fs-sync");
+
+  assert.notEqual(clusterNode, undefined);
+  assert.notEqual(standaloneNode, undefined);
+  assert.notEqual(leftClusterModule, undefined);
+  assert.notEqual(rightClusterModule, undefined);
+  if (!clusterNode || !standaloneNode || !leftClusterModule || !rightClusterModule) {
+    return;
+  }
+
+  assert.equal(clusterNode.position.y, 140);
+  assert.equal(leftClusterModule.position.y, 110);
+  assert.equal(rightClusterModule.position.y, 110);
+  assert.equal(Number(clusterNode.style?.height), 314);
+  assert.equal(standaloneNode.position.y, 458);
+  assert.equal(
+    standaloneNode.position.y - (clusterNode.position.y + Number(clusterNode.style?.height)),
+    MEASURED_LAYOUT_MIN_SAFE_GAP
+  );
 });
