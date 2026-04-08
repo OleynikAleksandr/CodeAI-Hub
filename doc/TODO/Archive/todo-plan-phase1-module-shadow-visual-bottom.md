@@ -54,4 +54,4 @@
 
 ### Stream: Closeout
 17. [DONE] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-module-shadow-visual-bottom.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive module shadow visual-bottom scope`
-18. [TODO] Git Commit: `docs(closeout): archive module shadow visual-bottom scope` (hash: TBD)
+18. [DONE] Git Commit: `docs(closeout): archive module shadow visual-bottom scope` (hash: `dddf44297`)
