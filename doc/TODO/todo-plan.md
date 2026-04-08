@@ -34,11 +34,11 @@
 
 ### Stream: Code rollback
 3. [DONE] Откатить measurement bridge к контракту релиза `1.1.914` и выровнять regression expectations; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; commit: `fix(diagram): rollback live measurement bridge`
-4. [IN_PROGRESS] Git Commit: `fix(diagram): rollback live measurement bridge` (hash: TBD)
+4. [DONE] Git Commit: `fix(diagram): rollback live measurement bridge` (hash: `75ca21e07`)
 
 ### Stream: SSOT rollback
-5. [TODO] Убрать из active SSOT принятие `Live Measurement Stabilization` как текущего контракта; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`; commit: `docs(diagram): rollback live measurement stabilization contract`
-6. [TODO] Git Commit: `docs(diagram): rollback live measurement stabilization contract` (hash: TBD)
+5. [DONE] Убрать из active SSOT принятие `Live Measurement Stabilization` как текущего контракта; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`; commit: `docs(diagram): rollback live measurement stabilization contract`
+6. [IN_PROGRESS] Git Commit: `docs(diagram): rollback live measurement stabilization contract` (hash: TBD)
 
 ### Stream: Release docs
 7. [TODO] Подготовить release docs для rollback rebuild `1.1.916`; scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): prepare rollback rebuild release`
