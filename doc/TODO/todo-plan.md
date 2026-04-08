@@ -49,10 +49,10 @@
 11. [DONE] Синхронизировать Diagram Modules SSOT и активный planning-doc с принятым shared visual-bounds contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramModules_SharedVisualBounds_And_ManualAutolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record shared visual bounds contract`
 12. [DONE] Git Commit: `docs(diagram): record shared visual bounds contract` (hash: ac768f327)
 13. [DONE] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare shared visual bounds release`
-14. [DONE] Git Commit: `docs(release): prepare shared visual bounds release` (hash: TBD)
+14. [DONE] Git Commit: `docs(release): prepare shared visual bounds release` (hash: 9a88c39fe)
 
 ### Stream: Release Build
-15. [TODO] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture shared visual bounds version bump`
-16. [TODO] Git Commit: `build(release): capture shared visual bounds version bump` (hash: TBD)
+15. [DONE] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture shared visual bounds version bump`
+16. [DONE] Git Commit: `build(release): capture shared visual bounds version bump` (hash: TBD)
 17. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package shared visual bounds release`
 18. [TODO] Git Commit: `build(release): package shared visual bounds release` (hash: TBD)
