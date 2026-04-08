@@ -7,13 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.917
-- **React Flow removed**: `@xyflow/react` dependency deleted. ProductPart cards render in a responsive CSS Grid. Native browser scroll replaces canvas pan/zoom. Context menu clicks fixed.
+## Current Release — v1.1.921
+- **React Flow removed**: `@xyflow/react` dependency deleted. ProductPart cards render in single-column CSS Grid layout with native scroll.
 - **CSS Grid at all levels**: ProductParts, Clusters, and Modules all use browser-native CSS Grid — zero JS layout code.
 - **Right-click context menu** for ProductPart (columns, aspect ratio) and Cluster (module columns) layout overrides.
+- **Cmd/Ctrl+scroll zoom** with smooth sensitivity; Cmd/Ctrl+0 resets to 100%; clickable zoom badge.
 - **Edges between modules removed** from the diagram canvas.
 
-Previous releases (summary): `1.1.800–1.1.915` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the heuristic-only Diagram Modules boundary wave in `1.1.907`, the measured sibling-gap repair wave in `1.1.908`, the measured ownership reflow wave in `1.1.909`, the shared visual-bounds and manual-drag stabilization wave in `1.1.910`, the initial hierarchical packer split in `1.1.911`, the overlap-aware initial-autolayout release in `1.1.912`, the rebuild-only package refresh in `1.1.913`, the shadow-tail visual-bottom wave in `1.1.914`, the short-lived live-measurement stabilization wave in `1.1.915`, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.917` — CSS Grid layout engine replacing the iterative settle-loop (~1350 lines deleted), standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the heuristic-only Diagram Modules boundary wave in `1.1.907–1.1.915`, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.
