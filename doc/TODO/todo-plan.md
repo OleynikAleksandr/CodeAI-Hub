@@ -47,7 +47,7 @@
 ### Stream: Release Build
 11. [DONE] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify live measurement stabilization prerequisites`
 12. [DONE] Git Commit: `build(release): verify live measurement stabilization prerequisites` (hash: `42b181f49`)
-13. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture live measurement stabilization version bump`
+13. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture live measurement stabilization version bump`
 14. [TODO] Git Commit: `build(release): capture live measurement stabilization version bump` (hash: TBD)
 15. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package live measurement stabilization release`
 16. [TODO] Git Commit: `build(release): package live measurement stabilization release` (hash: TBD)
