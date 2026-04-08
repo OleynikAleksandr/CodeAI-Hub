@@ -50,9 +50,9 @@
 
 ### Stream: Release build
 11. [DONE] Выполнить `./scripts/build-all.sh`, принять version bump и обновить статус плана; scope: versioned release files + `doc/TODO/todo-plan.md`; commit: `build(release): capture rollback rebuild version bump`
-12. [IN_PROGRESS] Git Commit: `build(release): capture rollback rebuild version bump` (hash: TBD)
-13. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить артефакты и отметить completion в плане; scope: release artifacts + `doc/TODO/todo-plan.md`; commit: `build(release): package rollback rebuild release`
-14. [TODO] Git Commit: `build(release): package rollback rebuild release` (hash: TBD)
+12. [DONE] Git Commit: `build(release): capture rollback rebuild version bump` (hash: `20cc4bb73`)
+13. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить артефакты и отметить completion в плане; scope: release artifacts + `doc/TODO/todo-plan.md`; commit: `build(release): package rollback rebuild release`
+14. [IN_PROGRESS] Git Commit: `build(release): package rollback rebuild release` (hash: TBD)
 
 ### Stream: Closeout
 15. [TODO] Заархивировать planning-doc и execution plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs(closeout): archive rollback rebuild scope`
