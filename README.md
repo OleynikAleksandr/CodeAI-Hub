@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.908
-- **`Diagram Modules` first-open layout now self-heals against real rendered node sizes**: after React Flow measures the actual `Product Part`, `Cluster`, and `Module` boxes, the shell runs a deterministic normalization pass that pushes only later siblings downward when dense localized content would otherwise create overlap.
-- **A hard `4px` minimum safe gap is now enforced on measured ownership boxes**: the released diagram surface no longer relies only on projection-time text estimates, so cluster stacks, standalone modules, and lower container boundaries stay visually separated even when the browser renders cards taller than the heuristic budget predicted.
-- **`module-map.flow.json` sidecars now invalidate again for the measured-layout contract**: the layout compatibility fingerprint moves to the new post-render geometry baseline, preventing pre-fix saved positions from overriding the corrected runtime layout contract.
+## Current Release — v1.1.909
+- **`Diagram Modules` ownership containers now reflow from measured children instead of guessed heights**: after first render, the runtime uses real `Module` card heights plus measured ownership header boundaries to rebuild `Cluster` and `Product Part` geometry bottom-up, rather than patching a projection-time estimate.
+- **`Cluster` and `Product Part` boundaries now follow finalized measured columns**: the shell preserves the deterministic seed columns, but final `y` positions and container heights are derived from finalized measured children, so lower boundaries no longer lag behind the real rendered content.
+- **`module-map.flow.json` sidecars now invalidate for the measured ownership reflow contract**: the layout compatibility fingerprint advances again, preventing `1.1.908` repair-pass geometry from overriding the new measured-first ownership layout pipeline.
 
-Previous releases (summary): `1.1.800–1.1.907` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the first heuristic-only Diagram Modules boundary wave in `1.1.907`, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.908` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the heuristic-only Diagram Modules boundary wave in `1.1.907`, the measured sibling-gap repair wave in `1.1.908`, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

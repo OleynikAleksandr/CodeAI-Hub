@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.909] - 2026-04-08
+### Fixed
+- **`Diagram Modules` now rebuilds ownership layout from measured children instead of patching guessed container heights**: after React Flow measures the actual cards, the runtime derives `Cluster` and `Product Part` geometry bottom-up from finalized module boxes and measured ownership header boundaries.
+- **`Cluster` and `Product Part` lower boundaries now follow finalized measured columns**: ownership containers no longer trust stale seed heights when dense content expands a child card, so the visible lower border grows from the deepest finalized child bottom plus padding.
+- **`module-map.flow.json` now rejects stale `1.1.908` ownership geometry**: the layout metric version was bumped again for the measured-first reflow contract, so pre-fix repair-pass sidecars no longer override the released ownership layout pipeline.
+
 ## [1.1.908] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` now normalizes first-open layout against measured React Flow node sizes**: after the browser renders the actual ownership cards, the shell repacks later siblings downward and expands `Cluster` / `Product Part` containers so dense localized content no longer overlaps siblings or container bottoms.

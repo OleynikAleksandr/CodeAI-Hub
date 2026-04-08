@@ -54,10 +54,10 @@
 
 ### Stream: Flow Sidecar Metric Bump
 1. [DONE] Повысить layout metric version для `module-map.flow.json`, чтобы stale geometry from `1.1.908` не применялась поверх measured-first ownership reflow; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale sidecars for ownership reflow`
-2. [TODO] Git Commit: `fix(diagram): invalidate stale sidecars for ownership reflow` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram): invalidate stale sidecars for ownership reflow` (hash: `ef2292297`)
 
 ### Stream: Release Preparation
-1. [TODO] Подготовить release-facing документацию и closeout tracking для measured ownership reflow release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare measured ownership reflow release`
+1. [DONE] Подготовить release-facing документацию и closeout tracking для measured ownership reflow release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare measured ownership reflow release`
 2. [TODO] Git Commit: `docs(release): prepare measured ownership reflow release` (hash: TBD)
 
 ## Phase 4 — Release Build And Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
