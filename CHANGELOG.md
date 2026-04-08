@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.914] - 2026-04-08
+### Fixed
+- **`Diagram Modules` now reserves the real lower shadow tail of module cards before ownership containers resize**: shared visual bounds no longer stop at the DOM measured border-box height, so lower `Cluster` / `Product Part` borders follow the visible card bottom instead of visually cutting through the last module.
+- **The tightened module visual-bottom allowance is now shared across first-open autolayout and manual normalization**: both layout paths compute deepest direct child bottoms from the same shadow-aware helper, removing the last split where lower-boundary safety could still depend on path-specific geometry assumptions.
+
 ## [1.1.913] - 2026-04-08
 ### Changed
 - **Release `1.1.913` rebuilds the already shipped `1.1.912` baseline without new product-logic changes**: the package was reissued under a fresh version so clients that did not refresh the previous Project Manager delivery can consume a new release identity.

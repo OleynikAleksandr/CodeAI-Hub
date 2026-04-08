@@ -40,8 +40,8 @@
 
 ### Stream: SSOT And Release Notes
 7. [DONE] Обновить Diagram Modules SSOT под новый visual-bottom contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record module shadow visual-bottom contract`
-8. [TODO] Git Commit: `docs(diagram): record module shadow visual-bottom contract` (hash: TBD)
-9. [TODO] Обновить release-facing docs под новый corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare module shadow visual-bottom release`
+8. [DONE] Git Commit: `docs(diagram): record module shadow visual-bottom contract` (hash: `c0465c7bd`)
+9. [DONE] Обновить release-facing docs под новый corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare module shadow visual-bottom release`
 10. [TODO] Git Commit: `docs(release): prepare module shadow visual-bottom release` (hash: TBD)
 
 ### Stream: Release Build
