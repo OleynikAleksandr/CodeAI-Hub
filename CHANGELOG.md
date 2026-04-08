@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.912] - 2026-04-08
+### Fixed
+- **`Diagram Modules` now measures ownership header boundaries in zoom-safe flow coordinates before initial autolayout runs**: the React Flow bridge converts rendered header height back through the current viewport zoom before emitting `bodyStartY`, eliminating the regression where first-open module cards could start inside `Product Part` or `Cluster` header text on fit-scaled diagrams.
+- **First-open `Diagram Modules` packing now uses horizontal-overlap conflict rules instead of exact seed-column identity**: wide `Cluster` boxes and standalone `Module` cards inside one `Product Part` are repacked whenever their actual horizontal bounds intersect, so different `x` seeds no longer let ownership bottoms overlap visually.
+- **The released first-open layout contract now combines top-boundary and bottom-boundary safety explicitly**: top clearance comes from zoom-correct measured header starts, while bottom clearance comes from overlap-aware sibling packing plus deepest-direct-child container resize; persisted sidecar layouts keep the conservative preserve path for manual compositions.
+
 ## [1.1.911] - 2026-04-08
 ### Fixed
 - **First-open `Diagram Modules` autolayout now rebuilds ownership from measured hierarchy instead of repairing heuristic carry-over**: when no `module-map.flow.json` is applied, the measured path repacks `Module` cards inside `Cluster`, then repacks finalized `Cluster` boxes and standalone modules inside `Product Part`, and repeats until the ownership geometry reaches a stable fixed point.

@@ -44,12 +44,12 @@
 
 ### Stream: SSOT And Release Notes
 11. [DONE] Обновить SSOT по Diagram Modules autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record overlap-aware autolayout contract`
-12. [TODO] Git Commit: `docs(diagram): record overlap-aware autolayout contract` (hash: TBD)
-13. [IN_PROGRESS] Обновить release-facing docs под новый corrective scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare overlap-aware autolayout release`
+12. [DONE] Git Commit: `docs(diagram): record overlap-aware autolayout contract` (hash: `21ffab113`)
+13. [DONE] Обновить release-facing docs под новый corrective scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare overlap-aware autolayout release`
 14. [TODO] Git Commit: `docs(release): prepare overlap-aware autolayout release` (hash: TBD)
 
 ### Stream: Release Build
-15. [TODO] Прогнать таргетные тесты и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture overlap-aware autolayout version bump`
+15. [IN_PROGRESS] Прогнать таргетные тесты и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture overlap-aware autolayout version bump`
 16. [TODO] Git Commit: `build(release): capture overlap-aware autolayout version bump` (hash: TBD)
 17. [TODO] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты; scope: release build outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package overlap-aware autolayout release`
 18. [TODO] Git Commit: `build(release): package overlap-aware autolayout release` (hash: TBD)
