@@ -167,15 +167,18 @@ const ProductPartNode = ({
   readonly data: ProductPartFlowNodeData;
 }) => {
   const onContextMenuCb = useContext(ContextMenuContext);
+
+  // Standalone modules are grouped into ONE grid slot so they stack
+  // vertically inside a single column instead of each taking a cell.
   const slots: SlotDescriptor[] = [
     ...data.clusters.map((c) => ({
       kind: "cluster" as const,
       moduleCount: c.modules.length,
       moduleColumns: c.layoutParams.moduleColumns,
     })),
-    ...data.standaloneModules.map(() => ({
-      kind: "standaloneModule" as const,
-    })),
+    ...(data.standaloneModules.length > 0
+      ? [{ kind: "standaloneModule" as const }]
+      : []),
   ];
   const columns = resolveProductPartColumns(slots, data.layoutParams);
 
@@ -221,9 +224,13 @@ const ProductPartNode = ({
         {data.clusters.map((c) => (
           <ClusterCard data={c} key={c.clusterId} />
         ))}
-        {data.standaloneModules.map((m) => (
-          <ModuleCard data={m} key={m.moduleId} />
-        ))}
+        {data.standaloneModules.length > 0 && (
+          <div style={{ display: "grid", gap: 12, alignContent: "start" }}>
+            {data.standaloneModules.map((m) => (
+              <ModuleCard data={m} key={m.moduleId} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -232,6 +239,22 @@ const ProductPartNode = ({
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 2;
 const ZOOM_STEP = 0.05;
+
+const zoomBadgeStyle: React.CSSProperties = {
+  position: "sticky",
+  bottom: 8,
+  left: 8,
+  width: "fit-content",
+  padding: "4px 10px",
+  borderRadius: 8,
+  fontSize: 11,
+  color: "var(--pm-text-muted)",
+  background: "rgba(15, 22, 36, 0.85)",
+  border: "1px solid var(--pm-border-color)",
+  cursor: "pointer",
+  userSelect: "none",
+  zIndex: 10,
+};
 
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
@@ -251,10 +274,18 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
     });
   }, []);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "0") {
+      e.preventDefault();
+      setZoom(1);
+    }
+  }, []);
+
   return (
     <div
       ref={containerRef}
       style={{
+        position: "relative",
         width: "100%",
         height: "100%",
         minHeight: 420,
@@ -264,7 +295,9 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
         borderRadius: 16,
         boxShadow: "var(--pm-shadow-soft)",
       }}
+      tabIndex={0}
       onWheel={handleWheel}
+      onKeyDown={handleKeyDown}
       onContextMenu={(e) => {
         if (e.target === e.currentTarget) e.preventDefault();
       }}
@@ -286,6 +319,17 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
           ))}
         </div>
       </ContextMenuContext.Provider>
+      {zoom !== 1 && (
+        <div
+          role="button"
+          style={zoomBadgeStyle}
+          tabIndex={0}
+          onClick={() => setZoom(1)}
+          onKeyDown={(e) => e.key === "Enter" && setZoom(1)}
+        >
+          {Math.round(zoom * 100)}% · click to reset
+        </div>
+      )}
     </div>
   );
 };
