@@ -27,12 +27,12 @@
 
 ### Stream: Planning Scope Opening
 1. [DONE] Зафиксировать новый corrective scope для measured autolayout min-gap enforcement в planning/navigation docs и открыть active execution baseline; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(plan): open measured diagram gap enforcement scope`
-2. [TODO] Git Commit: `docs(plan): open measured diagram gap enforcement scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): open measured diagram gap enforcement scope` (hash: `27a2bd089`)
 
 ## Phase 1 — Measured Layout Normalization (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Measured Gap Normalizer Core
-1. [TODO] Добавить pure measured-layout normalizer с hard `MIN_SAFE_GAP = 4px` и расширить node typing для measured width/height, чтобы controlled React Flow state мог работать по реальным box sizes; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`; ожидаемый commit message: `fix(diagram): add measured gap normalizer`
+1. [DONE] Добавить pure measured-layout normalizer с hard `MIN_SAFE_GAP = 4px` и расширить node typing для measured width/height, чтобы controlled React Flow state мог работать по реальным box sizes; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`; ожидаемый commit message: `fix(diagram): add measured gap normalizer`
 2. [TODO] Git Commit: `fix(diagram): add measured gap normalizer` (hash: TBD)
 
 ### Stream: React Flow Measurement Bridge

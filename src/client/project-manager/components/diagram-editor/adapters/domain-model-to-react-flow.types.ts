@@ -16,6 +16,10 @@ export type DiagramFlowStage = "diagram_modules";
 export type DiagramFlowNodeType = "cluster" | "module";
 
 export type DiagramFlowNodeStyle = Readonly<Record<string, number | string>>;
+export type DiagramFlowNodeMeasuredSize = {
+  readonly width?: number;
+  readonly height?: number;
+};
 
 export type DiagramFlowEdgeType = "relation";
 
@@ -76,6 +80,9 @@ export type DiagramFlowNode = {
   readonly position: DiagramFlowPosition;
   readonly parentId?: string;
   readonly extent?: "parent";
+  readonly width?: number;
+  readonly height?: number;
+  readonly measured?: DiagramFlowNodeMeasuredSize;
   readonly style?: DiagramFlowNodeStyle;
   readonly data: DiagramFlowNodeData;
 };
