@@ -108,9 +108,14 @@ export type DiagramFlowEdge = {
   readonly data: DiagramFlowEdgeData;
 };
 
+export type DiagramFlowProjectionLayoutSource =
+  | "seed-autolayout"
+  | "persisted-sidecar";
+
 export type DiagramFlowProjection = {
   readonly stage: DiagramFlowStage;
   readonly revision: string;
   readonly nodes: readonly DiagramFlowNode[];
   readonly edges: readonly DiagramFlowEdge[];
+  readonly layoutSource?: DiagramFlowProjectionLayoutSource;
 };

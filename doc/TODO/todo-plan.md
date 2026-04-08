@@ -36,7 +36,7 @@
 4. [TODO] Git Commit: `docs(session): start initial autolayout packer cycle` (hash: TBD)
 
 ### Stream: Layout Source Split
-5. [TODO] Добавить projection-level layout source для различения seed autolayout и persisted sidecar path; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `feat(diagram): tag projection layout source`
+5. [DONE] Добавить projection-level layout source для различения seed autolayout и persisted sidecar path; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `feat(diagram): tag projection layout source`
 6. [TODO] Git Commit: `feat(diagram): tag projection layout source` (hash: TBD)
 7. [TODO] Переключить shell measured path на layout-source-aware branch без изменения manual drag contract; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): gate measured autolayout by layout source`
 8. [TODO] Git Commit: `fix(diagram): gate measured autolayout by layout source` (hash: TBD)

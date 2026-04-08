@@ -11,6 +11,7 @@ import { materializeModuleMapFromStagedProductPart } from "./diagram-modules-sta
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
   applyFlowSidecarPositions,
+  FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
   parseFlowSidecar,
   type FlowSidecarDocument,
 } from "./flow-sidecar-types";
@@ -272,6 +273,11 @@ export const loadDiagramModulesProgressiveResult = async (params: {
       sidecarResult.status === "ok"
         ? parseFlowSidecar(sidecarResult.content)
         : null;
+    const sidecarCoversProjection =
+      !!flowDocument
+      && flowDocument.revision === baseProjection.revision
+      && flowDocument.layoutMetricVersion === FLOW_SIDECAR_LAYOUT_METRIC_VERSION
+      && baseProjection.nodes.every((node) => node.id in flowDocument.nodes);
     return {
       status: "ready",
       content: indexResult.content,
@@ -279,6 +285,9 @@ export const loadDiagramModulesProgressiveResult = async (params: {
       flowDocument,
       projection: {
         ...baseProjection,
+        layoutSource: sidecarCoversProjection
+          ? "persisted-sidecar"
+          : "seed-autolayout",
         nodes: applyFlowSidecarPositions({
           nodes: baseProjection.nodes,
           document: flowDocument,
