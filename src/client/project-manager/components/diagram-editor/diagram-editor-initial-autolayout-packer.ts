@@ -72,7 +72,7 @@ const rangesOverlapWithGap = (
 ): boolean =>
   !(startA + sizeA + gap <= startB || startB + sizeB + gap <= startA);
 
-const packContainerColumns = (
+const packContainerChildrenByOverlap = (
   result: DiagramFlowNode[],
   containerNode: DiagramFlowNode,
   childIndices: readonly number[],
@@ -84,25 +84,34 @@ const packContainerColumns = (
   }
 
   const bodyStartY = getContainerBodyStartY(containerNode, constraints);
-  const columns = new Map<number, number[]>();
-  for (const childIndex of childIndices) {
-    const child = result[childIndex]!;
-    const columnX = Math.max(constraints.childMinX, child.position.x);
-    const indices = columns.get(columnX) ?? [];
-    indices.push(childIndex);
-    columns.set(columnX, indices);
-  }
+  const ordered = [...childIndices].sort((leftIndex, rightIndex) =>
+    compareNodeOrder(result[leftIndex]!, result[rightIndex]!)
+  );
+  const placed: number[] = [];
 
-  for (const [columnX, indices] of [...columns.entries()].sort((left, right) => left[0] - right[0])) {
-    let nextY = bodyStartY;
-    const ordered = [...indices].sort((leftIndex, rightIndex) =>
-      compareNodeOrder(result[leftIndex]!, result[rightIndex]!)
-    );
-    for (const childIndex of ordered) {
-      const child = result[childIndex]!;
-      result[childIndex] = repositionNode(child, columnX, nextY);
-      nextY += getNodeVisualHeight(result[childIndex]!) + gap;
+  for (const childIndex of ordered) {
+    const child = result[childIndex]!;
+    const nextX = Math.max(constraints.childMinX, child.position.x);
+    let nextY = Math.max(bodyStartY, child.position.y);
+
+    for (const placedIndex of placed) {
+      const sibling = result[placedIndex]!;
+      if (
+        !rangesOverlapWithGap(
+          nextX,
+          getNodeBaseWidth(child),
+          sibling.position.x,
+          getNodeBaseWidth(sibling),
+          gap
+        )
+      ) {
+        continue;
+      }
+      nextY = Math.max(nextY, getNodeVisualBottom(sibling) + gap);
     }
+
+    result[childIndex] = repositionNode(child, nextX, nextY);
+    placed.push(childIndex);
   }
 };
 
@@ -209,7 +218,7 @@ const settleOnce = (
     if (!childIndices || childIndices.length === 0) {
       continue;
     }
-    packContainerColumns(result, node, childIndices, gap);
+    packContainerChildrenByOverlap(result, node, childIndices, gap);
     resizeContainer(result, index, childIndices);
   }
 
@@ -221,7 +230,7 @@ const settleOnce = (
     if (!childIndices || childIndices.length === 0) {
       continue;
     }
-    packContainerColumns(result, node, childIndices, gap);
+    packContainerChildrenByOverlap(result, node, childIndices, gap);
     resizeContainer(result, index, childIndices);
   }
 

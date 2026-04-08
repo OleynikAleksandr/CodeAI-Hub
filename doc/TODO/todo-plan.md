@@ -36,10 +36,10 @@
 
 ### Stream: Seed Autolayout Solver
 5. [DONE] Исправить измерение `bodyStartY` под zoom/transform в measured layout bridge, чтобы верхние границы children стартовали от unscaled header boundary; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): correct measured body start under zoom`
-6. [TODO] Git Commit: `fix(diagram): correct measured body start under zoom` (hash: TBD)
-7. [IN_PROGRESS] Заменить exact-column packing на overlap-aware sibling packing в initial packer; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): pack initial autolayout by overlapping bounds`
+6. [DONE] Git Commit: `fix(diagram): correct measured body start under zoom` (hash: `906f4f7c7`)
+7. [DONE] Заменить exact-column packing на overlap-aware sibling packing в initial packer; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): pack initial autolayout by overlapping bounds`
 8. [TODO] Git Commit: `fix(diagram): pack initial autolayout by overlapping bounds` (hash: TBD)
-9. [TODO] Добавить regression tests на wide-cluster / overlapping-footprint packing; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram): cover overlap-aware initial autolayout`
+9. [IN_PROGRESS] Добавить regression tests на wide-cluster / overlapping-footprint packing; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram): cover overlap-aware initial autolayout`
 10. [TODO] Git Commit: `test(diagram): cover overlap-aware initial autolayout` (hash: TBD)
 
 ### Stream: SSOT And Release Notes
