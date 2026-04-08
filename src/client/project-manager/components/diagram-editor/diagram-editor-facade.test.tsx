@@ -8,10 +8,6 @@ const FACADE_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx"
 );
-const MEASURED_BRIDGE_SOURCE_PATH = path.resolve(
-  process.cwd(),
-  "src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx"
-);
 const SHELL_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx"
@@ -28,37 +24,18 @@ const SCAFFOLD_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx"
 );
-test("diagram-editor-facade keeps React Flow diagnostics widgets but no auto-layout controls", async () => {
+test("diagram-editor-facade keeps React Flow without legacy layout bridge", async () => {
   const source = await readFile(FACADE_SOURCE_PATH, "utf8");
   assert.equal(source.includes("<Controls"), false);
   assert.equal(source.includes("<MiniMap"), false);
   assert.equal(source.includes("nodesDraggable"), true);
-  assert.equal(source.includes("DiagramEditorMeasuredLayoutBridge"), true);
-  assert.equal(source.includes("onMeasuredNodes"), true);
+  assert.equal(source.includes("DiagramEditorMeasuredLayoutBridge"), false);
+  assert.equal(source.includes("onMeasuredNodes"), false);
+  assert.equal(source.includes("measurementRevision"), false);
+  assert.equal(source.includes("data-diagram-container-header-id"), false);
+  assert.equal(source.includes("data-diagram-body-start-offset"), false);
   assert.equal(source.includes("ReactFlowProvider"), false);
-  assert.equal(source.includes("useReactFlow"), false);
-  assert.equal(source.includes("useNodesInitialized"), false);
   assert.equal(source.includes("Auto-layout"), false);
-  assert.equal(source.includes("layoutProfileOptions"), false);
-});
-
-test("diagram-editor measurement bridge carries measured ownership header boundaries", async () => {
-  const source = await readFile(MEASURED_BRIDGE_SOURCE_PATH, "utf8");
-
-  assert.equal(source.includes("getContainerHeaderElements"), true);
-  assert.equal(source.includes("resolveMeasuredBodyStartY"), true);
-  assert.equal(source.includes("reactFlow.getZoom()"), true);
-  assert.equal(
-    source.includes('document.querySelectorAll<HTMLElement>("[data-diagram-container-header-id]")'),
-    true
-  );
-  assert.equal(source.includes("diagramBodyStartOffset"), true);
-  assert.equal(source.includes("bodyStartY"), true);
-  assert.equal(
-    source.includes("getBoundingClientRect().height / normalizedZoom"),
-    true
-  );
-  assert.equal(source.includes("measured?.bodyStartY"), true);
 });
 test("diagram-editor-shell is now user-owned layout only", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");

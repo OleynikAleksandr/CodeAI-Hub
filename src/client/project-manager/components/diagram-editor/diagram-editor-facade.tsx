@@ -8,21 +8,14 @@ import {
 } from "@xyflow/react";
 import type {
   ClusterFlowNodeData,
-  DiagramFlowEdge,
   DiagramFlowNode,
   ModuleFlowNodeData,
   ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
-import { DiagramEditorMeasuredLayoutBridge } from "./diagram-editor-measured-layout-bridge";
 
 type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
-  readonly edges: readonly DiagramFlowEdge[];
   readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
-  readonly onMeasuredNodes?: (
-    nodes: readonly DiagramFlowNode[]
-  ) => void | Promise<void>;
-  readonly measurementRevision?: string;
   readonly title: string;
   readonly subtitle?: string;
 };
@@ -106,11 +99,7 @@ const purposeTextStyle: React.CSSProperties = {
   color: "var(--pm-text-muted)",
 };
 
-const PRODUCT_PART_BODY_START_OFFSET = 30;
-const CLUSTER_BODY_START_OFFSET = 26;
-
 const ContainerNode = ({
-  id,
   data,
 }: {
   readonly id: string;
@@ -119,11 +108,7 @@ const ContainerNode = ({
   if (data.nodeKind === "productPart") {
     return (
       <div style={productPartCardStyle}>
-        <div
-          data-diagram-body-start-offset={PRODUCT_PART_BODY_START_OFFSET}
-          data-diagram-container-header-id={id}
-          style={productPartHeaderStyle}
-        >
+        <div style={productPartHeaderStyle}>
           <div style={containerSummaryStyle}>
             <div style={nodeCaptionStyle}>Product Part</div>
             <strong style={{ fontSize: 15 }}>{data.title}</strong>
@@ -143,11 +128,7 @@ const ContainerNode = ({
 
   return (
     <div style={clusterCardStyle}>
-      <div
-        data-diagram-body-start-offset={CLUSTER_BODY_START_OFFSET}
-        data-diagram-container-header-id={id}
-        style={containerHeaderStyle}
-      >
+      <div style={containerHeaderStyle}>
         <div style={nodeCaptionStyle}>Cluster</div>
         <strong style={{ fontSize: 13 }}>{data.title}</strong>
         <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
@@ -222,10 +203,7 @@ const DRAG_CLASS = "diagram-drag-mode";
 
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
-  edges,
   onNodesChange,
-  onMeasuredNodes,
-  measurementRevision,
   title,
   subtitle,
 }) => {
@@ -267,7 +245,6 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
       {!draggable && <style>{`.${PAN_CLASS} .react-flow__node{pointer-events:none}`}</style>}
       <ReactFlow
         fitView
-        edges={edges as never}
         nodes={nodes as never}
         nodeTypes={NODE_TYPES}
         onNodesChange={onNodesChange as never}
@@ -278,11 +255,6 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
         zoomOnDoubleClick={false}
         style={canvasStyle}
       >
-        <DiagramEditorMeasuredLayoutBridge
-          measurementRevision={measurementRevision}
-          nodes={nodes}
-          onMeasuredNodes={onMeasuredNodes}
-        />
         <Background gap={24} size={1} />
       </ReactFlow>
     </div>
