@@ -280,7 +280,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             <StageArtifactHeaderToggle
               availableModes={artifactHeaderModes}
               extraActions={detachButton}
-              hint={activeTool === "Diagram Modules" ? "Zoom: scroll · Pan: drag · Move node: ⌥(Alt)+drag" : undefined}
+              hint={activeTool === "Diagram Modules" ? "Zoom: ⌘/Ctrl+scroll · Reset: ⌘/Ctrl+0" : undefined}
               mode={artifactHeaderMode}
               onModeChange={setArtifactHeaderMode}
               title={artifactHeaderTitle}
