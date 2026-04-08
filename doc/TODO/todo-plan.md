@@ -31,8 +31,8 @@
 ## Phase 1 — Initial Autolayout Hierarchical Packer (owner: Codex, updated: 2026-04-08)
 ### Stream: Planning Baseline
 1. [DONE] Открыть corrective scope под measured-first initial autolayout packer, новый active `todo-plan` и навигационный индекс; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(plan): open initial autolayout packer scope`
-2. [TODO] Git Commit: `docs(plan): open initial autolayout packer scope` (hash: TBD)
-3. [TODO] Создать continuation report новой corrective wave; scope: `doc/Sessions/Session016.md`; ожидаемый commit message: `docs(session): start initial autolayout packer cycle`
+2. [DONE] Git Commit: `docs(plan): open initial autolayout packer scope` (hash: 516fdf0dd)
+3. [DONE] Создать continuation report новой corrective wave; scope: `doc/Sessions/Session016.md`; ожидаемый commit message: `docs(session): start initial autolayout packer cycle`
 4. [TODO] Git Commit: `docs(session): start initial autolayout packer cycle` (hash: TBD)
 
 ### Stream: Layout Source Split
