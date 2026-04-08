@@ -42,12 +42,12 @@
 7. [DONE] Обновить Diagram Modules SSOT под новый visual-bottom contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record module shadow visual-bottom contract`
 8. [DONE] Git Commit: `docs(diagram): record module shadow visual-bottom contract` (hash: `c0465c7bd`)
 9. [DONE] Обновить release-facing docs под новый corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare module shadow visual-bottom release`
-10. [TODO] Git Commit: `docs(release): prepare module shadow visual-bottom release` (hash: TBD)
+10. [DONE] Git Commit: `docs(release): prepare module shadow visual-bottom release` (hash: `f580cf2ae`)
 
 ### Stream: Release Build
-11. [TODO] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify module shadow visual-bottom prerequisites`
+11. [DONE] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify module shadow visual-bottom prerequisites`
 12. [TODO] Git Commit: `build(release): verify module shadow visual-bottom prerequisites` (hash: TBD)
-13. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture module shadow visual-bottom version bump`
+13. [IN_PROGRESS] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture module shadow visual-bottom version bump`
 14. [TODO] Git Commit: `build(release): capture module shadow visual-bottom version bump` (hash: TBD)
 15. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package module shadow visual-bottom release`
 16. [TODO] Git Commit: `build(release): package module shadow visual-bottom release` (hash: TBD)
