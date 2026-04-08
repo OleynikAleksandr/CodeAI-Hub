@@ -53,6 +53,6 @@
 
 ### Stream: Release Build
 15. [DONE] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture shared visual bounds version bump`
-16. [DONE] Git Commit: `build(release): capture shared visual bounds version bump` (hash: TBD)
-17. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package shared visual bounds release`
-18. [TODO] Git Commit: `build(release): package shared visual bounds release` (hash: TBD)
+16. [DONE] Git Commit: `build(release): capture shared visual bounds version bump` (hash: c78b4fb21)
+17. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package shared visual bounds release`
+18. [DONE] Git Commit: `build(release): package shared visual bounds release` (hash: TBD)
