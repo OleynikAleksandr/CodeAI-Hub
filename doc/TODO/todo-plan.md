@@ -48,12 +48,12 @@
 
 ### Stream: Shell Snapshot And Runtime Evidence
 1. [DONE] Синхронизировать shell snapshot contract и таргетную runtime verification wave для measured-first ownership reflow; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured ownership reflow evidence`
-2. [TODO] Git Commit: `docs(diagram): record measured ownership reflow evidence` (hash: TBD)
+2. [DONE] Git Commit: `docs(diagram): record measured ownership reflow evidence` (hash: `b91990cc0`)
 
 ## Phase 3 — Sidecar Invalidation And Release Preparation (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Flow Sidecar Metric Bump
-1. [TODO] Повысить layout metric version для `module-map.flow.json`, чтобы stale geometry from `1.1.908` не применялась поверх measured-first ownership reflow; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale sidecars for ownership reflow`
+1. [DONE] Повысить layout metric version для `module-map.flow.json`, чтобы stale geometry from `1.1.908` не применялась поверх measured-first ownership reflow; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale sidecars for ownership reflow`
 2. [TODO] Git Commit: `fix(diagram): invalidate stale sidecars for ownership reflow` (hash: TBD)
 
 ### Stream: Release Preparation
