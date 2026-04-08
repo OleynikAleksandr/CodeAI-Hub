@@ -22,21 +22,13 @@ test("diagram editor shell explains the staged Diagram Modules empty state", asy
   assert.equal(source.includes("Add semantic entities"), false);
 });
 
-test("diagram editor shell normalizes first-open layout after measured node sizes arrive", async () => {
+test("diagram editor shell applies node changes without legacy layout normalizers", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
 
-  assert.equal(source.includes("normalizeMeasuredDiagramLayout"), true);
-  assert.equal(source.includes("normalizeManualDiagramLayout"), true);
-  assert.equal(source.includes("handleMeasuredNodes"), true);
-  assert.equal(
-    source.includes("left.measured?.bodyStartY === right.measured?.bodyStartY"),
-    true
-  );
-  assert.equal(source.includes("onMeasuredNodes={handleMeasuredNodes}"), true);
-  assert.equal(source.includes("measurementRevision={projection.revision}"), true);
-  assert.equal(source.includes('projection.layoutSource ?? "seed-autolayout"'), true);
-  assert.equal(
-    source.includes("const nextNodes = normalizeManualDiagramLayout(applied, movedIds);"),
-    true
-  );
+  assert.equal(source.includes("applyNodeChanges"), true);
+  assert.equal(source.includes("normalizeManualDiagramLayout"), false);
+  assert.equal(source.includes("normalizeMeasuredDiagramLayout"), false);
+  assert.equal(source.includes("handleMeasuredNodes"), false);
+  assert.equal(source.includes("sameMeasuredLayoutSnapshot"), false);
+  assert.equal(source.includes("seed-autolayout"), false);
 });

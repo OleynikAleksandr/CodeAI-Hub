@@ -5,41 +5,7 @@ import type {
   DiagramFlowNode,
   DiagramFlowProjection,
 } from "./adapters/domain-model-to-react-flow.types";
-import { normalizeManualDiagramLayout } from "./diagram-editor-manual-layout-normalizer";
-import { normalizeMeasuredDiagramLayout } from "./diagram-editor-measured-layout-normalizer";
 import { DiagramEditorFacade } from "./diagram-editor-facade";
-
-const getNumericStyleMetric = (
-  node: DiagramFlowNode,
-  key: "width" | "height" | "minHeight"
-): number | undefined => {
-  const value = node.style?.[key];
-  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
-};
-
-const sameMeasuredNodeLayout = (
-  left: DiagramFlowNode,
-  right: DiagramFlowNode
-): boolean =>
-  left.id === right.id
-  && left.parentId === right.parentId
-  && left.position.x === right.position.x
-  && left.position.y === right.position.y
-  && left.width === right.width
-  && left.height === right.height
-  && left.measured?.width === right.measured?.width
-  && left.measured?.height === right.measured?.height
-  && left.measured?.bodyStartY === right.measured?.bodyStartY
-  && getNumericStyleMetric(left, "width") === getNumericStyleMetric(right, "width")
-  && getNumericStyleMetric(left, "height") === getNumericStyleMetric(right, "height")
-  && getNumericStyleMetric(left, "minHeight") === getNumericStyleMetric(right, "minHeight");
-
-const sameMeasuredLayoutSnapshot = (
-  left: readonly DiagramFlowNode[],
-  right: readonly DiagramFlowNode[]
-): boolean =>
-  left.length === right.length
-  && left.every((node, index) => sameMeasuredNodeLayout(node, right[index]!));
 
 type DiagramEditorShellProps = {
   readonly projection: DiagramFlowProjection;
@@ -78,17 +44,15 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       );
       let nextNodesSnapshot: readonly DiagramFlowNode[] | null = null;
 
-      const movedIds = new Set(changes.filter((c) => c.type === "position").map((c) => c.id));
       setNodes((current) => {
         const applied = applyNodeChanges(
           changes as NodeChange[],
           current as never
         ) as DiagramFlowNode[];
-        const nextNodes = normalizeManualDiagramLayout(applied, movedIds);
         if (shouldPersist) {
-          nextNodesSnapshot = nextNodes;
+          nextNodesSnapshot = applied;
         }
-        return nextNodes;
+        return applied;
       });
 
       if (nextNodesSnapshot) {
@@ -96,21 +60,6 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       }
     },
     [onNodesChange]
-  );
-
-  const handleMeasuredNodes = useCallback(
-    (measuredNodes: readonly DiagramFlowNode[]): void => {
-      setNodes((current) => {
-        const normalizedNodes = normalizeMeasuredDiagramLayout(
-          measuredNodes,
-          projection.layoutSource ?? "seed-autolayout"
-        );
-        return sameMeasuredLayoutSnapshot(current, normalizedNodes)
-          ? current
-          : normalizedNodes;
-      });
-    },
-    [projection.layoutSource]
   );
 
   return (
@@ -128,10 +77,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       ) : null}
       <div style={{ display: "flex", flex: "1 1 auto", minHeight: 420 }}>
         <DiagramEditorFacade
-          edges={projection.edges}
-          measurementRevision={projection.revision}
           nodes={nodes}
-          onMeasuredNodes={handleMeasuredNodes}
           onNodesChange={handleFlowNodesChange}
           subtitle={subtitle}
           title={title}
