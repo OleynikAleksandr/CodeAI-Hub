@@ -61,6 +61,7 @@
 - Остальные legacy-path redirect notes в `Contracts/` сохранены только ради старых ссылок из session reports / archived TODO и не используются как source of truth.
 
 ### Plans (pre-implementation / non-SSOT)
+- `Plans/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md` — active rollback scope after release `1.1.915`; restores `Diagram Modules` measurement bridge behavior to the stable `1.1.914` baseline, removes the live-measurement stabilization contract from active SSOT, and rebuilds the product as release `1.1.916`.
 - `Plans/Archive/DiagramModules_LiveMeasurement_Stabilization_Architecture.md` — completed corrective scope after release `1.1.914`; stabilized the first-open `Diagram Modules` measurement bridge with post-render re-measure triggers (`requestAnimationFrame`, `document.fonts.ready`, `ResizeObserver`) and shipped release `1.1.915`.
 - `Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md` — completed corrective scope after release `1.1.913`; tightened shared module visual-bottom bounds to include the real lower card shadow in both autolayout and manual owner-resize math, then shipped release `1.1.914`.
 - `Plans/Archive/ProjectManager_ReleaseRebuild_1.1.913_Architecture.md` — completed release-only scope that rebuilt Project Manager and the full bundle under version `1.1.913` after the user reported that local update did not pick up release `1.1.912`.
