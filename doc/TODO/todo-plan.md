@@ -46,13 +46,13 @@
 2. [DONE] Git Commit: `test(diagram): cover localized autolayout boundaries` (hash: `25cf7a41a`)
 
 ### Stream: Verification Fallout And SSOT Sync
-1. [IN_PROGRESS] Прогнать таргетную verification wave для PM diagram surface, устранить возможный fallout и синхронизировать accepted layout contract/evidence в активных документах; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record verified autolayout boundary fix`
-2. [TODO] Git Commit: `docs(diagram): record verified autolayout boundary fix` (hash: TBD)
+1. [DONE] Прогнать таргетную verification wave для PM diagram surface, устранить возможный fallout и синхронизировать accepted layout contract/evidence в активных документах; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record verified autolayout boundary fix`
+2. [DONE] Git Commit: `docs(diagram): record verified autolayout boundary fix` (hash: `cb8572cae`)
 
 ## Phase 3 — Release Build And Session Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Release Preparation
-1. [TODO] Подготовить release-facing документацию и closeout tracking перед финальной сборкой этого scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare diagram autolayout fix release`
+1. [IN_PROGRESS] Подготовить release-facing документацию и closeout tracking перед финальной сборкой этого scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare diagram autolayout fix release`
 2. [TODO] Git Commit: `docs(release): prepare diagram autolayout fix release` (hash: TBD)
 
 ### Stream: Release Build

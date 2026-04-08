@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.907] - 2026-04-08
+### Fixed
+- **`Diagram Modules` localized first-open layout now keeps dense cards inside their boundaries**: the initial React Flow projection uses a more conservative height budget for `Product Part`, `Cluster`, and `Module` cards, preventing the dense `Project Manager Workflow Ui`-style scenarios from crossing sibling cards or container bottoms on Russian long-copy baselines.
+- **`module-map.flow.json` now rejects stale geometry after layout-metric changes**: the layout sidecar includes a `layoutMetricVersion` compatibility guard, so positions saved under the previous height model no longer override the repaired computed layout.
+- **Release verification now includes localized dense diagram regressions explicitly**: targeted PM diagram tests now cover dense cluster and standalone boundary safety alongside the sidecar compatibility path before the release build.
+
 ## [1.1.906] - 2026-04-07
 ### Removed
 - **`Foundation Envelope` is removed from the active workflow**: the supported trunk now stops at `Diagram Modules`, and branch design starts directly from `Product Part Specification` without a separate FE stage.
