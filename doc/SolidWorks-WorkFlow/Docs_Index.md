@@ -62,10 +62,10 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md` — active corrective scope for dense/localized `Diagram Modules`; hardens initial height metrics, introduces sidecar layout fingerprinting, adds regression evidence for cluster/product-part boundary safety, and ends with a release build wave.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Diagram Modules` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
+- `Plans/Archive/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md` — completed corrective scope for dense/localized `Diagram Modules`; hardened initial height metrics, introduced sidecar layout fingerprinting, added regression evidence for cluster/product-part boundary safety, and shipped release `1.1.907`.
 - `Plans/Archive/Remove_Foundation_Envelope_Workflow_Architecture.md` — completed corrective scope that removed `Foundation Envelope` from the active workflow and shipped the cleanup release `1.1.906`.
 - `Plans/Archive/Foundation_Envelope_Architecture.md` — retired historical planning path for the removed `Foundation Envelope`; preserved only as postmortem evidence for why the step was abandoned.
 - `Plans/Archive/Foundation_Envelope_VisualProjection_Architecture.md` — historical visual wave for the now-removed `Foundation Envelope`; kept only for release/postmortem traceability around `1.1.905`.

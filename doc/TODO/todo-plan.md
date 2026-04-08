@@ -1,12 +1,12 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_UserFacing_Layout_And_Format_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
@@ -59,12 +59,12 @@
 1. [DONE] Запустить `./scripts/build-all.sh`, принять version/manifest bump для релиза `1.1.907` и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture diagram autolayout fix version bump`
 2. [DONE] Git Commit: `build(release): capture diagram autolayout fix version bump` (hash: `814e697b4`)
 3. [DONE] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для этого scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package diagram autolayout boundary fix release`
-4. [TODO] Git Commit: `build(release): package diagram autolayout boundary fix release` (hash: TBD)
+4. [DONE] Git Commit: `build(release): package diagram autolayout boundary fix release` (hash: `a40a65c62`)
 
 ## Phase 4 — Planning And Execution Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Planning Doc Closeout
-1. [TODO] Перенести завершённый corrective planning-док в archive и синхронизировать `Docs_Index.md` после успешной release packaging; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout planning docs`
+1. [DONE] Перенести завершённый corrective planning-док в archive и синхронизировать `Docs_Index.md` после успешной release packaging; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout planning docs`
 2. [TODO] Git Commit: `docs(closeout): archive diagram autolayout planning docs` (hash: TBD)
 
 ### Stream: Execution Plan Closeout
