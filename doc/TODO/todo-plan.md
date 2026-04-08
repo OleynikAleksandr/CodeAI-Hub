@@ -32,11 +32,11 @@
 ## Phase 1 — Initial Layout Metric Hardening (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Height Budget Contract
-1. [IN_PROGRESS] Пересчитать height budget для `Product Part` / `Cluster` / `Module`, исправить budget для purpose text и зафиксировать стабильные header/body boundaries без overlap; при необходимости синхронизировать fallout assertion для shortest-column standalone wrap; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`; ожидаемый commit message: `fix(diagram): harden initial layout height metrics`
-2. [TODO] Git Commit: `fix(diagram): harden initial layout height metrics` (hash: TBD)
+1. [DONE] Пересчитать height budget для `Product Part` / `Cluster` / `Module`, исправить budget для purpose text и зафиксировать стабильные header/body boundaries без overlap; при необходимости синхронизировать fallout assertion для shortest-column standalone wrap; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`; ожидаемый commit message: `fix(diagram): harden initial layout height metrics`
+2. [DONE] Git Commit: `fix(diagram): harden initial layout height metrics` (hash: `a9cd3d261`)
 
 ### Stream: Flow Sidecar Fingerprint
-1. [TODO] Добавить layout metric fingerprint в schema/apply-path `module-map.flow.json`, чтобы legacy geometry не применялась после изменения визуальной метрики; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale flow sidecars after metric changes`
+1. [IN_PROGRESS] Добавить layout metric fingerprint в schema/apply-path `module-map.flow.json`, чтобы legacy geometry не применялась после изменения визуальной метрики; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale flow sidecars after metric changes`
 2. [TODO] Git Commit: `fix(diagram): invalidate stale flow sidecars after metric changes` (hash: TBD)
 
 ## Phase 2 — Dense Regression Evidence And Docs Sync (owner: Oleksandr + Codex, updated: 2026-04-08)

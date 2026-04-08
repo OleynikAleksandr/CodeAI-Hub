@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   applyFlowSidecarPositions,
   buildFlowSidecarDocument,
+  FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
   parseFlowSidecar,
   serializeFlowSidecar,
 } from "./flow-sidecar-types";
@@ -36,6 +37,10 @@ test("flow sidecar serializes manual node positions", () => {
   const parsed = parseFlowSidecar(serializeFlowSidecar(document));
 
   assert.notEqual(parsed, null);
+  assert.equal(
+    parsed?.layoutMetricVersion,
+    FLOW_SIDECAR_LAYOUT_METRIC_VERSION
+  );
   assert.deepEqual(parsed?.nodes["module-a"], { x: 120, y: 240 });
 });
 
@@ -187,6 +192,7 @@ test("flow sidecar applies saved positions only when the diagram revision matche
     document: {
       version: 1,
       revision: "rev-match",
+      layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
       updated: new Date().toISOString(),
       nodes: {
         "product-part:control-shell": { x: 240, y: 160 },
@@ -199,6 +205,7 @@ test("flow sidecar applies saved positions only when the diagram revision matche
     document: {
       version: 1,
       revision: "rev-stale",
+      layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
       updated: new Date().toISOString(),
       nodes: {
         "product-part:control-shell": { x: 480, y: 320 },
@@ -209,6 +216,41 @@ test("flow sidecar applies saved positions only when the diagram revision matche
 
   assert.deepEqual(applied[0]?.position, { x: 240, y: 160 });
   assert.deepEqual(skipped[0]?.position, { x: 0, y: 0 });
+});
+
+test("flow sidecar falls back to computed layout when layout metric version changes", () => {
+  const nodes = [
+    {
+      id: "product-part:control-shell",
+      type: "cluster" as const,
+      position: { x: 10, y: 20 },
+      data: {
+        stage: "diagram_modules" as const,
+        nodeKind: "productPart" as const,
+        productPartId: "control-shell",
+        title: "Control Shell",
+        purpose: "Hosts the operator-facing runtime control surface.",
+        clusterIds: ["security"],
+        standaloneModuleIds: [],
+      },
+    },
+  ];
+
+  const result = applyFlowSidecarPositions({
+    nodes,
+    document: {
+      version: 1,
+      revision: "rev-match",
+      layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION + 1,
+      updated: new Date().toISOString(),
+      nodes: {
+        "product-part:control-shell": { x: 240, y: 160 },
+      },
+    },
+    revision: "rev-match",
+  });
+
+  assert.deepEqual(result[0]?.position, { x: 10, y: 20 });
 });
 
 test("flow sidecar falls back to computed layout when sidecar does not cover all nodes", () => {
@@ -248,6 +290,7 @@ test("flow sidecar falls back to computed layout when sidecar does not cover all
     document: {
       version: 1,
       revision: "rev-partial",
+      layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
       updated: new Date().toISOString(),
       nodes: {
         "product-part:shell": { x: 500, y: 600 },

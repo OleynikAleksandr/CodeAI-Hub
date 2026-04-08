@@ -1,5 +1,7 @@
 import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
 
+export const FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 1;
+
 export type FlowSidecarViewport = {
   readonly x: number;
   readonly y: number;
@@ -9,6 +11,7 @@ export type FlowSidecarViewport = {
 export type FlowSidecarDocument = {
   readonly version: 1;
   readonly revision: string;
+  readonly layoutMetricVersion?: number;
   readonly updated: string;
   readonly nodes: Readonly<Record<string, { readonly x: number; readonly y: number }>>;
   readonly viewport?: FlowSidecarViewport;
@@ -62,6 +65,9 @@ export const parseFlowSidecar = (
     return {
       version: 1,
       revision: parsed.revision,
+      layoutMetricVersion: isFiniteNumber(parsed.layoutMetricVersion)
+        ? parsed.layoutMetricVersion
+        : undefined,
       updated: parsed.updated,
       nodes,
       viewport,
@@ -81,6 +87,7 @@ export const buildFlowSidecarDocument = (params: {
 }): FlowSidecarDocument => ({
   version: 1,
   revision: params.revision,
+  layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
   updated: new Date().toISOString(),
   nodes: Object.fromEntries(
     params.nodes.map((node) => [
@@ -99,7 +106,11 @@ export const applyFlowSidecarPositions = (params: {
   readonly document: FlowSidecarDocument | null;
   readonly revision: string;
 }): readonly DiagramFlowNode[] => {
-  if (!params.document || params.document.revision !== params.revision) {
+  if (
+    !params.document
+    || params.document.revision !== params.revision
+    || params.document.layoutMetricVersion !== FLOW_SIDECAR_LAYOUT_METRIC_VERSION
+  ) {
     return params.nodes;
   }
 
