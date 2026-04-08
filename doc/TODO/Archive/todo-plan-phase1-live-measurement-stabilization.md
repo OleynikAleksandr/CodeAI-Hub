@@ -54,4 +54,4 @@
 
 ### Stream: Closeout
 17. [DONE] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Stabilization_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-live-measurement-stabilization.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive live measurement stabilization scope`
-18. [TODO] Git Commit: `docs(closeout): archive live measurement stabilization scope` (hash: TBD)
+18. [DONE] Git Commit: `docs(closeout): archive live measurement stabilization scope` (hash: `cbb9d0a4f`)
