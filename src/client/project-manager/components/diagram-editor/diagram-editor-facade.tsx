@@ -232,7 +232,7 @@ const ProductPartNode = ({
 
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 2;
-const ZOOM_STEP = 0.05;
+const ZOOM_STEP = 0.01;
 
 const zoomBadgeStyle: React.CSSProperties = {
   position: "sticky",
