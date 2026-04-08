@@ -1,48 +1,16 @@
 import type {
-  ContainerConstraints,
   DiagramFlowNode,
-  DiagramFlowNodeData,
-  DiagramFlowNodeStyle,
 } from "./adapters/domain-model-to-react-flow.types";
+import {
+  getContainerBodyStartY,
+  getContainerConstraints,
+  getNodeBaseWidth,
+  getNodeVisualBottom,
+  getNodeVisualHeight,
+} from "./diagram-editor-layout-bounds";
 
 export const MEASURED_LAYOUT_MIN_SAFE_GAP = 4;
 const TOP_LEVEL_ROW_GAP = 24;
-const DEFAULT_NODE_WIDTH = 240;
-const DEFAULT_NODE_HEIGHT = 100;
-
-const getConstraints = (
-  data: DiagramFlowNodeData
-): ContainerConstraints | undefined =>
-  data.nodeKind === "productPart" || data.nodeKind === "cluster"
-    ? data.containerConstraints
-    : undefined;
-
-const getNumericStyleMetric = (
-  style: DiagramFlowNodeStyle | undefined,
-  key: "width" | "height" | "minHeight"
-): number | undefined => {
-  const value = style?.[key];
-  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
-};
-
-const getNodeWidth = (node: DiagramFlowNode): number =>
-  getNumericStyleMetric(node.style, "width")
-  ?? node.measured?.width
-  ?? node.width
-  ?? DEFAULT_NODE_WIDTH;
-
-const getNodeHeight = (node: DiagramFlowNode): number =>
-  node.data.nodeKind === "module"
-    ? node.measured?.height
-      ?? getNumericStyleMetric(node.style, "height")
-      ?? node.height
-      ?? getNumericStyleMetric(node.style, "minHeight")
-      ?? DEFAULT_NODE_HEIGHT
-    : getNumericStyleMetric(node.style, "height")
-      ?? node.measured?.height
-      ?? node.height
-      ?? getNumericStyleMetric(node.style, "minHeight")
-      ?? DEFAULT_NODE_HEIGHT;
 
 const rangesOverlapWithGap = (
   startA: number,
@@ -85,8 +53,14 @@ const resizeNode = (
   width: number,
   height: number
 ): DiagramFlowNode => {
-  const currentWidth = getNumericStyleMetric(node.style, "width");
-  const currentHeight = getNumericStyleMetric(node.style, "height");
+  const currentWidth =
+    typeof node.style?.width === "number" && Number.isFinite(node.style.width)
+      ? node.style.width
+      : undefined;
+  const currentHeight =
+    typeof node.style?.height === "number" && Number.isFinite(node.style.height)
+      ? node.style.height
+      : undefined;
   if (currentWidth === width && currentHeight === height) {
     return node;
   }
@@ -100,24 +74,22 @@ const resizeNode = (
   };
 };
 
-const getBodyStartY = (
-  node: DiagramFlowNode,
-  constraints: ContainerConstraints
-): number => node.measured?.bodyStartY ?? constraints.childMinY;
-
 const reflowContainerChildren = (
   result: DiagramFlowNode[],
   containerNode: DiagramFlowNode,
   childIndices: readonly number[],
-  constraints: ContainerConstraints,
   gap: number
 ): void => {
+  const constraints = getContainerConstraints(containerNode.data);
+  if (!constraints) {
+    return;
+  }
   const ordered = [...childIndices]
     .sort((leftIndex, rightIndex) =>
       result[leftIndex]!.position.x - result[rightIndex]!.position.x
       || compareNodeOrder(result[leftIndex]!, result[rightIndex]!)
     );
-  const bodyStartY = getBodyStartY(containerNode, constraints);
+  const bodyStartY = getContainerBodyStartY(containerNode, constraints);
   const nextYByColumn = new Map<number, number>();
 
   for (const childIndex of ordered) {
@@ -126,23 +98,28 @@ const reflowContainerChildren = (
     const nextSeedY = nextYByColumn.get(nextX) ?? bodyStartY;
     const nextY = Math.max(bodyStartY, nextSeedY, child.position.y);
     result[childIndex] = repositionNode(child, nextX, nextY);
-    nextYByColumn.set(nextX, nextY + getNodeHeight(child) + gap);
+    nextYByColumn.set(nextX, nextY + getNodeVisualHeight(result[childIndex]!) + gap);
   }
 };
 
 const resizeContainer = (
   result: DiagramFlowNode[],
   containerIndex: number,
-  childIndices: readonly number[],
-  constraints: ContainerConstraints
+  childIndices: readonly number[]
 ): void => {
+  const containerNode = result[containerIndex]!;
+  const constraints = getContainerConstraints(containerNode.data);
+  if (!constraints) {
+    return;
+  }
+
   let maxRight = 0;
   let maxBottom = 0;
 
   for (const childIndex of childIndices) {
     const child = result[childIndex]!;
-    maxRight = Math.max(maxRight, child.position.x + getNodeWidth(child));
-    maxBottom = Math.max(maxBottom, child.position.y + getNodeHeight(child));
+    maxRight = Math.max(maxRight, child.position.x + getNodeBaseWidth(child));
+    maxBottom = Math.max(maxBottom, getNodeVisualBottom(child));
   }
 
   const nextWidth = Math.max(constraints.minWidth, maxRight + constraints.paddingRight);
@@ -151,7 +128,7 @@ const resizeContainer = (
     maxBottom + constraints.paddingBottom
   );
 
-  result[containerIndex] = resizeNode(result[containerIndex]!, nextWidth, nextHeight);
+  result[containerIndex] = resizeNode(containerNode, nextWidth, nextHeight);
 };
 
 const normalizeTopLevelNodes = (result: DiagramFlowNode[], indices: readonly number[]): void => {
@@ -169,15 +146,15 @@ const normalizeTopLevelNodes = (result: DiagramFlowNode[], indices: readonly num
       if (
         !rangesOverlapWithGap(
           node.position.x,
-          getNodeWidth(node),
+          getNodeBaseWidth(node),
           sibling.position.x,
-          getNodeWidth(sibling),
+          getNodeBaseWidth(sibling),
           TOP_LEVEL_ROW_GAP
         )
       ) {
         continue;
       }
-      nextY = Math.max(nextY, sibling.position.y + getNodeHeight(sibling) + TOP_LEVEL_ROW_GAP);
+      nextY = Math.max(nextY, sibling.position.y + getNodeVisualHeight(sibling) + TOP_LEVEL_ROW_GAP);
     }
 
     result[nodeIndex] = repositionNode(node, node.position.x, nextY);
@@ -206,38 +183,34 @@ export const normalizeMeasuredDiagramLayout = (
     if (node.data.nodeKind !== "cluster") {
       continue;
     }
-    const constraints = getConstraints(node.data);
     const childIndices = childIndicesByParent.get(node.id);
-    if (!constraints || !childIndices || childIndices.length === 0) {
+    if (!childIndices || childIndices.length === 0) {
       continue;
     }
     reflowContainerChildren(
       result,
       node,
       childIndices,
-      constraints,
       MEASURED_LAYOUT_MIN_SAFE_GAP
     );
-    resizeContainer(result, index, childIndices, constraints);
+    resizeContainer(result, index, childIndices);
   }
 
   for (const [index, node] of result.entries()) {
     if (node.data.nodeKind !== "productPart") {
       continue;
     }
-    const constraints = getConstraints(node.data);
     const childIndices = childIndicesByParent.get(node.id);
-    if (!constraints || !childIndices || childIndices.length === 0) {
+    if (!childIndices || childIndices.length === 0) {
       continue;
     }
     reflowContainerChildren(
       result,
       node,
       childIndices,
-      constraints,
       MEASURED_LAYOUT_MIN_SAFE_GAP
     );
-    resizeContainer(result, index, childIndices, constraints);
+    resizeContainer(result, index, childIndices);
   }
 
   normalizeTopLevelNodes(result, topLevelIndices);

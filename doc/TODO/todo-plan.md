@@ -31,11 +31,11 @@
 ## Phase 1 — Shared Visual Bounds Corrective Scope (owner: Codex, updated: 2026-04-08)
 ### Stream: Planning Baseline
 1. [DONE] Открыть corrective scope для `Diagram Modules` под shared visual bounds и unified auto/manual layout contract; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_SharedVisualBounds_And_ManualAutolayout_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(plan): open shared visual bounds corrective scope`
-2. [DONE] Git Commit: `docs(plan): open shared visual bounds corrective scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): open shared visual bounds corrective scope` (hash: fa3cdaa15)
 
 ### Stream: Shared Visual Bounds Engine
-3. [TODO] Ввести shared visual-bounds helper и перевести measured autolayout на вычисление container bottoms по deepest direct child visual bound; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-bounds.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`; ожидаемый commit message: `fix(diagram): derive measured layout from visual bounds`
-4. [TODO] Git Commit: `fix(diagram): derive measured layout from visual bounds` (hash: TBD)
+3. [DONE] Ввести shared visual-bounds helper и перевести measured autolayout на вычисление container bottoms по deepest direct child visual bound; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-bounds.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`; ожидаемый commit message: `fix(diagram): derive measured layout from visual bounds`
+4. [DONE] Git Commit: `fix(diagram): derive measured layout from visual bounds` (hash: TBD)
 
 ### Stream: Unified Manual Drag
 5. [TODO] Вынести manual drag resize в pure helper и перевести shell на тот же shared geometry contract, что и autolayout; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): unify manual drag container bounds`

@@ -137,10 +137,10 @@ test("normalizeMeasuredDiagramLayout rebuilds cluster and product-part layout fr
   }
 
   assert.equal(clusterNode.position.y, 140);
-  assert.equal(actionPanel.position.y, 294);
-  assert.equal(Number(clusterNode.style?.height), 476);
-  assert.equal(standaloneNode.position.y, 620);
-  assert.equal(Number(productPartNode.style?.height), 782);
+  assert.equal(actionPanel.position.y, 306);
+  assert.equal(Number(clusterNode.style?.height), 500);
+  assert.equal(standaloneNode.position.y, 644);
+  assert.equal(Number(productPartNode.style?.height), 818);
   assert.equal(
     standaloneNode.position.y - (clusterNode.position.y + Number(clusterNode.style?.height)),
     MEASURED_LAYOUT_MIN_SAFE_GAP
@@ -189,6 +189,6 @@ test("normalizeMeasuredDiagramLayout keeps top-level product parts separated whe
     return;
   }
 
-  assert.equal(Number(firstProductPart.style?.height), 782);
-  assert.equal(secondProductPart.position.y, 806);
+  assert.equal(Number(firstProductPart.style?.height), 818);
+  assert.equal(secondProductPart.position.y, 842);
 });
