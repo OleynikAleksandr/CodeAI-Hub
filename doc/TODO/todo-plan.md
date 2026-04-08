@@ -36,10 +36,10 @@
 
 ### Stream: Shared Bounds Fix
 5. [DONE] Исправить shared module visual-bottom overflow contract и синхронизировать regression tests для measured/manual paths; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-bounds.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`; expected commit: `fix(diagram): account for module shadow in visual bounds`
-6. [TODO] Git Commit: `fix(diagram): account for module shadow in visual bounds` (hash: TBD)
+6. [DONE] Git Commit: `fix(diagram): account for module shadow in visual bounds` (hash: `03714aa70`)
 
 ### Stream: SSOT And Release Notes
-7. [TODO] Обновить Diagram Modules SSOT под новый visual-bottom contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record module shadow visual-bottom contract`
+7. [DONE] Обновить Diagram Modules SSOT под новый visual-bottom contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record module shadow visual-bottom contract`
 8. [TODO] Git Commit: `docs(diagram): record module shadow visual-bottom contract` (hash: TBD)
 9. [TODO] Обновить release-facing docs под новый corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare module shadow visual-bottom release`
 10. [TODO] Git Commit: `docs(release): prepare module shadow visual-bottom release` (hash: TBD)

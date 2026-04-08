@@ -487,3 +487,31 @@ Root cause зафиксирован явно:
 - `npx tsx --test --test-name-pattern 'measurement bridge|diagram-editor-shell is now user-owned layout only|diagram stage scaffold keeps the visual shell stretched to full panel height|diagram modules panel persists manual node positions without layout profiles|diagram-editor-facade keeps React Flow diagnostics widgets' src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`
 - `npm run build:webview`
 - `npm run typecheck:webview`
+
+### 11.12. Module shadow visual-bottom allowance accepted on 2026-04-08
+
+Следующий пользовательский ретест после rebuild `1.1.913` показал более узкий остаточный defect profile:
+- верхние границы `Module` cards уже не залезают в header-zones `Cluster` / `Product Part`;
+- sibling packing и owner resize продолжают работать как по автолайауту, так и по manual path;
+- но нижние границы ownership containers всё ещё визуально режут нижний край module cards.
+
+Уточнённый root cause теперь зафиксирован так:
+- React Flow measured node height покрывает только border-box rendered card;
+- у `Module` card есть внешний `box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24)`;
+- этот visual tail не входит в measured height, поэтому shared `visualBottom` contract с прежним allowance `12px` оставался заниженным.
+
+Принятый contract после этого corrective pass:
+1. `Module` visual bottom больше не равен measured DOM bottom;
+2. shared layout-bounds helper обязан резервировать explicit bottom shadow allowance, вычисленный из shipped module-card CSS shadow, а не из произвольной эвристики;
+3. и initial measured autolayout, и manual normalize path обязаны использовать один и тот же tightened module visual-bottom budget;
+4. owner resize по `Cluster` и `Product Part` должен происходить от deepest direct child **visual** bottom, включая bottom shadow allowance module cards.
+
+Практически это означает:
+- безопасный нижний зазор теперь строится от того, что пользователь реально видит на экране, а не только от measured border-box;
+- оставшийся defect после `1.1.912` / `1.1.913` классифицирован как shared visual-bounds underestimation, а не как новый packing bug;
+- последующий release validation должен подтверждать именно исчезновение нижнего visual overlap на Gemini workspace пользователя.
+
+Новый evidence set для этого tightened visual-bottom contract:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`
+- `npm run build:webview`
+- `npm run typecheck:webview`
