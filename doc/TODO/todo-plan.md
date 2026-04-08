@@ -48,10 +48,10 @@
 11. [DONE] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify module shadow visual-bottom prerequisites`
 12. [DONE] Git Commit: `build(release): verify module shadow visual-bottom prerequisites` (hash: `20029b5bc`)
 13. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture module shadow visual-bottom version bump`
-14. [TODO] Git Commit: `build(release): capture module shadow visual-bottom version bump` (hash: TBD)
-15. [IN_PROGRESS] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package module shadow visual-bottom release`
+14. [DONE] Git Commit: `build(release): capture module shadow visual-bottom version bump` (hash: `5dbf5c623`)
+15. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package module shadow visual-bottom release`
 16. [TODO] Git Commit: `build(release): package module shadow visual-bottom release` (hash: TBD)
 
 ### Stream: Closeout
-17. [TODO] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-module-shadow-visual-bottom.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive module shadow visual-bottom scope`
+17. [IN_PROGRESS] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-module-shadow-visual-bottom.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive module shadow visual-bottom scope`
 18. [TODO] Git Commit: `docs(closeout): archive module shadow visual-bottom scope` (hash: TBD)
