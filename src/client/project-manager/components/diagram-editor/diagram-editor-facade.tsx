@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
   Background,
   ReactFlow,
@@ -12,6 +12,7 @@ import type {
   ModuleFlowNodeData,
   ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
+import type { ContextMenuTarget } from "./diagram-editor-context-menu";
 import {
   resolveClusterModuleColumns,
   resolveProductPartColumns,
@@ -21,9 +22,13 @@ import {
 type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
   readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
+  readonly onContextMenu?: (target: ContextMenuTarget, position: { x: number; y: number }) => void;
   readonly title: string;
   readonly subtitle?: string;
 };
+
+type ContextMenuCallback = (target: ContextMenuTarget, position: { x: number; y: number }) => void;
+const ContextMenuContext = createContext<ContextMenuCallback | null>(null);
 
 const canvasStyle: React.CSSProperties = { width: "100%", height: "100%" };
 
@@ -122,12 +127,24 @@ const ModuleCard = ({ data }: { readonly data: ModuleFlowNodeData }) => (
 );
 
 const ClusterCard = ({ data }: { readonly data: ClusterFlowNodeData }) => {
+  const onContextMenuCb = useContext(ContextMenuContext);
   const moduleCols = resolveClusterModuleColumns(
     data.modules.length,
     data.layoutParams,
   );
   return (
-    <div style={clusterCardStyle}>
+    <div
+      style={clusterCardStyle}
+      onContextMenu={(e) => {
+        if (!onContextMenuCb) return;
+        e.preventDefault();
+        e.stopPropagation();
+        onContextMenuCb(
+          { kind: "cluster", clusterId: data.clusterId, currentModuleColumns: data.layoutParams.moduleColumns },
+          { x: e.clientX, y: e.clientY },
+        );
+      }}
+    >
       <div style={{ display: "grid", gap: 4, alignContent: "start" }}>
         <div style={nodeCaptionStyle}>Cluster</div>
         <strong style={{ fontSize: 13 }}>{data.title}</strong>
@@ -215,6 +232,7 @@ const DRAG_CLASS = "diagram-drag-mode";
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   onNodesChange,
+  onContextMenu,
   title,
   subtitle,
 }) => {
@@ -256,20 +274,37 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
       {!draggable && (
         <style>{`.${PAN_CLASS} .react-flow__node{pointer-events:none}`}</style>
       )}
-      <ReactFlow
-        fitView
-        nodes={nodes as never}
-        nodeTypes={NODE_TYPES}
-        onNodesChange={onNodesChange as never}
-        nodesDraggable={draggable}
-        nodesConnectable={false}
-        elementsSelectable={draggable}
-        panOnDrag
-        zoomOnDoubleClick={false}
-        style={canvasStyle}
-      >
-        <Background gap={24} size={1} />
-      </ReactFlow>
+      <ContextMenuContext.Provider value={onContextMenu ?? null}>
+        <ReactFlow
+          fitView
+          nodes={nodes as never}
+          nodeTypes={NODE_TYPES}
+          onNodesChange={onNodesChange as never}
+          onNodeContextMenu={(event, node) => {
+            if (!onContextMenu) return;
+            event.preventDefault();
+            const data = node.data as ProductPartFlowNodeData;
+            onContextMenu(
+              {
+                kind: "productPart",
+                productPartId: data.productPartId,
+                currentColumns: data.layoutParams.columns,
+                currentAspectRatio: data.layoutParams.targetAspectRatio,
+              },
+              { x: event.clientX, y: event.clientY },
+            );
+          }}
+          onPaneContextMenu={(event) => event.preventDefault()}
+          nodesDraggable={draggable}
+          nodesConnectable={false}
+          elementsSelectable={draggable}
+          panOnDrag
+          zoomOnDoubleClick={false}
+          style={canvasStyle}
+        >
+          <Background gap={24} size={1} />
+        </ReactFlow>
+      </ContextMenuContext.Provider>
     </div>
   );
 };

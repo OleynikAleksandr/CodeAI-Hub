@@ -4,8 +4,23 @@ import { useCallback, useEffect, useState } from "react";
 import type {
   DiagramFlowNode,
   DiagramFlowProjection,
+  ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
+import {
+  DiagramEditorContextMenu,
+  type ContextMenuTarget,
+} from "./diagram-editor-context-menu";
 import { DiagramEditorFacade } from "./diagram-editor-facade";
+import type {
+  ClusterModuleColumns,
+  ProductPartLayoutColumns,
+  TargetAspectRatio,
+} from "./diagram-editor-layout-params";
+
+type ContextMenuState = {
+  readonly target: ContextMenuTarget;
+  readonly position: { readonly x: number; readonly y: number };
+} | null;
 
 type DiagramEditorShellProps = {
   readonly projection: DiagramFlowProjection;
@@ -22,6 +37,37 @@ const resolveEmptyStateMessage = (title: string): string =>
     ? "Staged shell is ready. After `product-parts.index.md` is parsed, Product Part skeleton nodes appear here and expand as runtime materializes each `product-parts/<part-id>.md`."
     : "The diagram has no renderable nodes yet. Review the stage artifact or rerun the step if this state persists.";
 
+const updateNodeLayoutParam = (
+  nodes: readonly DiagramFlowNode[],
+  productPartId: string,
+  patch: Partial<{ columns: ProductPartLayoutColumns; targetAspectRatio: TargetAspectRatio }>,
+): DiagramFlowNode[] =>
+  nodes.map((node) => {
+    const data = node.data as ProductPartFlowNodeData;
+    if (data.productPartId !== productPartId) return node as DiagramFlowNode;
+    return {
+      ...node,
+      data: { ...data, layoutParams: { ...data.layoutParams, ...patch } },
+    } as DiagramFlowNode;
+  });
+
+const updateClusterLayoutParam = (
+  nodes: readonly DiagramFlowNode[],
+  clusterId: string,
+  moduleColumns: ClusterModuleColumns,
+): DiagramFlowNode[] =>
+  nodes.map((node) => {
+    const data = node.data as ProductPartFlowNodeData;
+    const clusterIndex = data.clusters.findIndex((c) => c.clusterId === clusterId);
+    if (clusterIndex === -1) return node as DiagramFlowNode;
+    const clusters = [...data.clusters];
+    clusters[clusterIndex] = {
+      ...clusters[clusterIndex]!,
+      layoutParams: { ...clusters[clusterIndex]!.layoutParams, moduleColumns },
+    };
+    return { ...node, data: { ...data, clusters } } as DiagramFlowNode;
+  });
+
 export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   projection,
   title,
@@ -32,6 +78,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   const [nodes, setNodes] = useState<readonly DiagramFlowNode[]>(
     initialNodes ?? projection.nodes
   );
+  const [contextMenu, setContextMenu] = useState<ContextMenuState>(null);
 
   useEffect(() => {
     setNodes(initialNodes ?? projection.nodes);
@@ -62,6 +109,46 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     [onNodesChange]
   );
 
+  const handleContextMenu = useCallback(
+    (target: ContextMenuTarget, position: { x: number; y: number }) => {
+      setContextMenu({ target, position });
+    },
+    [],
+  );
+
+  const handleProductPartColumnsChange = useCallback(
+    (productPartId: string, columns: ProductPartLayoutColumns) => {
+      setNodes((current) => {
+        const next = updateNodeLayoutParam(current, productPartId, { columns });
+        void onNodesChange?.(next);
+        return next;
+      });
+    },
+    [onNodesChange],
+  );
+
+  const handleProductPartAspectRatioChange = useCallback(
+    (productPartId: string, targetAspectRatio: TargetAspectRatio) => {
+      setNodes((current) => {
+        const next = updateNodeLayoutParam(current, productPartId, { targetAspectRatio });
+        void onNodesChange?.(next);
+        return next;
+      });
+    },
+    [onNodesChange],
+  );
+
+  const handleClusterModuleColumnsChange = useCallback(
+    (clusterId: string, moduleColumns: ClusterModuleColumns) => {
+      setNodes((current) => {
+        const next = updateClusterLayoutParam(current, clusterId, moduleColumns);
+        void onNodesChange?.(next);
+        return next;
+      });
+    },
+    [onNodesChange],
+  );
+
   return (
     <div
       style={{
@@ -78,11 +165,22 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       <div style={{ display: "flex", flex: "1 1 auto", minHeight: 420 }}>
         <DiagramEditorFacade
           nodes={nodes}
+          onContextMenu={handleContextMenu}
           onNodesChange={handleFlowNodesChange}
           subtitle={subtitle}
           title={title}
         />
       </div>
+      {contextMenu ? (
+        <DiagramEditorContextMenu
+          onClose={() => setContextMenu(null)}
+          onClusterModuleColumnsChange={handleClusterModuleColumnsChange}
+          onProductPartAspectRatioChange={handleProductPartAspectRatioChange}
+          onProductPartColumnsChange={handleProductPartColumnsChange}
+          position={contextMenu.position}
+          target={contextMenu.target}
+        />
+      ) : null}
     </div>
   );
 };
