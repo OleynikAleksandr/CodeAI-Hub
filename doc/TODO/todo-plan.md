@@ -42,7 +42,7 @@
 8. [TODO] Git Commit: `fix(diagram): gate measured autolayout by layout source` (hash: TBD)
 
 ### Stream: Measured Initial Packer
-9. [TODO] Ввести pure hierarchical packer для seed autolayout и перевести measured normalizer на fixed-point pack-and-validate loop; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): rebuild initial autolayout from measured hierarchy`
+9. [DONE] Ввести pure hierarchical packer для seed autolayout и перевести measured normalizer на fixed-point pack-and-validate loop; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): rebuild initial autolayout from measured hierarchy`
 10. [TODO] Git Commit: `fix(diagram): rebuild initial autolayout from measured hierarchy` (hash: TBD)
 11. [TODO] Добавить regression evidence для seed autolayout safety и persisted-layout preservation; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover measured initial autolayout solver`
 12. [TODO] Git Commit: `test(diagram): cover measured initial autolayout solver` (hash: TBD)

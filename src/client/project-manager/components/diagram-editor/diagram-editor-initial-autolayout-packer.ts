@@ -1,7 +1,4 @@
-import type {
-  DiagramFlowNode,
-  DiagramFlowProjectionLayoutSource,
-} from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
 import {
   getContainerBodyStartY,
   getContainerConstraints,
@@ -9,19 +6,9 @@ import {
   getNodeVisualBottom,
   getNodeVisualHeight,
 } from "./diagram-editor-layout-bounds";
-import { settleInitialAutolayoutFromMeasurements } from "./diagram-editor-initial-autolayout-packer";
 
-export const MEASURED_LAYOUT_MIN_SAFE_GAP = 4;
-const TOP_LEVEL_ROW_GAP = 24;
-
-const rangesOverlapWithGap = (
-  startA: number,
-  sizeA: number,
-  startB: number,
-  sizeB: number,
-  gap: number
-): boolean =>
-  !(startA + sizeA + gap <= startB || startB + sizeB + gap <= startA);
+const INITIAL_AUTOLAYOUT_TOP_LEVEL_GAP = 24;
+const MAX_SETTLE_ITERATIONS = 6;
 
 const compareNodeOrder = (
   left: DiagramFlowNode,
@@ -76,7 +63,16 @@ const resizeNode = (
   };
 };
 
-const reflowContainerChildren = (
+const rangesOverlapWithGap = (
+  startA: number,
+  sizeA: number,
+  startB: number,
+  sizeB: number,
+  gap: number
+): boolean =>
+  !(startA + sizeA + gap <= startB || startB + sizeB + gap <= startA);
+
+const packContainerColumns = (
   result: DiagramFlowNode[],
   containerNode: DiagramFlowNode,
   childIndices: readonly number[],
@@ -86,21 +82,27 @@ const reflowContainerChildren = (
   if (!constraints) {
     return;
   }
-  const ordered = [...childIndices]
-    .sort((leftIndex, rightIndex) =>
-      result[leftIndex]!.position.x - result[rightIndex]!.position.x
-      || compareNodeOrder(result[leftIndex]!, result[rightIndex]!)
-    );
-  const bodyStartY = getContainerBodyStartY(containerNode, constraints);
-  const nextYByColumn = new Map<number, number>();
 
-  for (const childIndex of ordered) {
+  const bodyStartY = getContainerBodyStartY(containerNode, constraints);
+  const columns = new Map<number, number[]>();
+  for (const childIndex of childIndices) {
     const child = result[childIndex]!;
-    const nextX = Math.max(constraints.childMinX, child.position.x);
-    const nextSeedY = nextYByColumn.get(nextX) ?? bodyStartY;
-    const nextY = Math.max(bodyStartY, nextSeedY, child.position.y);
-    result[childIndex] = repositionNode(child, nextX, nextY);
-    nextYByColumn.set(nextX, nextY + getNodeVisualHeight(result[childIndex]!) + gap);
+    const columnX = Math.max(constraints.childMinX, child.position.x);
+    const indices = columns.get(columnX) ?? [];
+    indices.push(childIndex);
+    columns.set(columnX, indices);
+  }
+
+  for (const [columnX, indices] of [...columns.entries()].sort((left, right) => left[0] - right[0])) {
+    let nextY = bodyStartY;
+    const ordered = [...indices].sort((leftIndex, rightIndex) =>
+      compareNodeOrder(result[leftIndex]!, result[rightIndex]!)
+    );
+    for (const childIndex of ordered) {
+      const child = result[childIndex]!;
+      result[childIndex] = repositionNode(child, columnX, nextY);
+      nextY += getNodeVisualHeight(result[childIndex]!) + gap;
+    }
   }
 };
 
@@ -117,23 +119,23 @@ const resizeContainer = (
 
   let maxRight = 0;
   let maxBottom = 0;
-
   for (const childIndex of childIndices) {
     const child = result[childIndex]!;
     maxRight = Math.max(maxRight, child.position.x + getNodeBaseWidth(child));
     maxBottom = Math.max(maxBottom, getNodeVisualBottom(child));
   }
 
-  const nextWidth = Math.max(constraints.minWidth, maxRight + constraints.paddingRight);
-  const nextHeight = Math.max(
-    constraints.minHeight,
-    maxBottom + constraints.paddingBottom
+  result[containerIndex] = resizeNode(
+    containerNode,
+    Math.max(constraints.minWidth, maxRight + constraints.paddingRight),
+    Math.max(constraints.minHeight, maxBottom + constraints.paddingBottom)
   );
-
-  result[containerIndex] = resizeNode(containerNode, nextWidth, nextHeight);
 };
 
-const normalizeTopLevelNodes = (result: DiagramFlowNode[], indices: readonly number[]): void => {
+const normalizeTopLevelNodes = (
+  result: DiagramFlowNode[],
+  indices: readonly number[]
+): void => {
   const ordered = [...indices].sort((leftIndex, rightIndex) =>
     compareNodeOrder(result[leftIndex]!, result[rightIndex]!)
   );
@@ -151,12 +153,17 @@ const normalizeTopLevelNodes = (result: DiagramFlowNode[], indices: readonly num
           getNodeBaseWidth(node),
           sibling.position.x,
           getNodeBaseWidth(sibling),
-          TOP_LEVEL_ROW_GAP
+          INITIAL_AUTOLAYOUT_TOP_LEVEL_GAP
         )
       ) {
         continue;
       }
-      nextY = Math.max(nextY, sibling.position.y + getNodeVisualHeight(sibling) + TOP_LEVEL_ROW_GAP);
+      nextY = Math.max(
+        nextY,
+        sibling.position.y
+          + getNodeVisualHeight(sibling)
+          + INITIAL_AUTOLAYOUT_TOP_LEVEL_GAP
+      );
     }
 
     result[nodeIndex] = repositionNode(node, node.position.x, nextY);
@@ -164,10 +171,23 @@ const normalizeTopLevelNodes = (result: DiagramFlowNode[], indices: readonly num
   }
 };
 
-const normalizePreservedMeasuredDiagramLayout = (
-  allNodes: readonly DiagramFlowNode[]
-): readonly DiagramFlowNode[] => {
-  const result = allNodes.map((node) => cloneNode(node));
+const buildLayoutSignature = (nodes: readonly DiagramFlowNode[]): string =>
+  nodes
+    .map((node) =>
+      [
+        node.id,
+        node.position.x,
+        node.position.y,
+        node.style?.width ?? "",
+        node.style?.height ?? "",
+      ].join(":")
+    )
+    .join("|");
+
+const settleOnce = (
+  result: DiagramFlowNode[],
+  gap: number
+): void => {
   const childIndicesByParent = new Map<string, number[]>();
   const topLevelIndices: number[] = [];
 
@@ -189,12 +209,7 @@ const normalizePreservedMeasuredDiagramLayout = (
     if (!childIndices || childIndices.length === 0) {
       continue;
     }
-    reflowContainerChildren(
-      result,
-      node,
-      childIndices,
-      MEASURED_LAYOUT_MIN_SAFE_GAP
-    );
+    packContainerColumns(result, node, childIndices, gap);
     resizeContainer(result, index, childIndices);
   }
 
@@ -206,26 +221,28 @@ const normalizePreservedMeasuredDiagramLayout = (
     if (!childIndices || childIndices.length === 0) {
       continue;
     }
-    reflowContainerChildren(
-      result,
-      node,
-      childIndices,
-      MEASURED_LAYOUT_MIN_SAFE_GAP
-    );
+    packContainerColumns(result, node, childIndices, gap);
     resizeContainer(result, index, childIndices);
   }
 
   normalizeTopLevelNodes(result, topLevelIndices);
-  return result;
 };
 
-export const normalizeMeasuredDiagramLayout = (
+export const settleInitialAutolayoutFromMeasurements = (
   allNodes: readonly DiagramFlowNode[],
-  layoutSource: DiagramFlowProjectionLayoutSource = "seed-autolayout"
-): readonly DiagramFlowNode[] =>
-  layoutSource === "persisted-sidecar"
-    ? normalizePreservedMeasuredDiagramLayout(allNodes)
-    : settleInitialAutolayoutFromMeasurements(
-        allNodes,
-        MEASURED_LAYOUT_MIN_SAFE_GAP
-      );
+  gap: number
+): readonly DiagramFlowNode[] => {
+  const result = allNodes.map((node) => cloneNode(node));
+  let previousSignature = "";
+
+  for (let iteration = 0; iteration < MAX_SETTLE_ITERATIONS; iteration += 1) {
+    settleOnce(result, gap);
+    const nextSignature = buildLayoutSignature(result);
+    if (nextSignature === previousSignature) {
+      break;
+    }
+    previousSignature = nextSignature;
+  }
+
+  return result;
+};
