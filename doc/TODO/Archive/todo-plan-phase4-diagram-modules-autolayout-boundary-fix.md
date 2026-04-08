@@ -65,8 +65,8 @@
 
 ### Stream: Planning Doc Closeout
 1. [DONE] Перенести завершённый corrective planning-док в archive и синхронизировать `Docs_Index.md` после успешной release packaging; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout planning docs`
-2. [TODO] Git Commit: `docs(closeout): archive diagram autolayout planning docs` (hash: TBD)
+2. [DONE] Git Commit: `docs(closeout): archive diagram autolayout planning docs` (hash: `fd39c4b04`)
 
 ### Stream: Execution Plan Closeout
-1. [TODO] Обновить `doc/TODO/todo-plan.md`, перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-diagram-modules-autolayout-boundary-fix.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout execution plan`
-2. [TODO] Git Commit: `docs(closeout): archive diagram autolayout execution plan` (hash: TBD)
+1. [DONE] Обновить `doc/TODO/todo-plan.md`, перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-diagram-modules-autolayout-boundary-fix.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout execution plan`
+2. [IN_PROGRESS] Git Commit: `docs(closeout): archive diagram autolayout execution plan` (hash: TBD)
