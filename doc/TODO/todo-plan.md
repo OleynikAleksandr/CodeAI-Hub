@@ -51,12 +51,12 @@
 
 ### Stream: Verification Evidence And SSOT Sync
 1. [DONE] Прогнать таргетную verification wave для нового measured gap contract и синхронизировать accepted docs/evidence; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured min-gap autolayout fix`
-2. [TODO] Git Commit: `docs(diagram): record measured min-gap autolayout fix` (hash: TBD)
+2. [DONE] Git Commit: `docs(diagram): record measured min-gap autolayout fix` (hash: `3b093e234`)
 
 ## Phase 3 — Release Build And Session Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Release Preparation
-1. [TODO] Подготовить release-facing документацию и closeout tracking для measured min-gap fix release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare measured diagram gap fix release`
+1. [DONE] Подготовить release-facing документацию и closeout tracking для measured min-gap fix release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare measured diagram gap fix release`
 2. [TODO] Git Commit: `docs(release): prepare measured diagram gap fix release` (hash: TBD)
 
 ### Stream: Release Build

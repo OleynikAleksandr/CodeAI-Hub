@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.907
-- **`Diagram Modules` localized autolayout is hardened for dense first-open review surfaces**: `Product Part`, `Cluster`, and `Module` cards now reserve enough vertical budget for Russian long-copy scenarios, so dense PM review graphs no longer clip sibling cards or container bottoms on initial render.
-- **`module-map.flow.json` now carries a layout-metric compatibility guard**: stale sidecar geometry calculated before the repaired height model is ignored automatically, allowing the corrected computed layout to win until the user saves fresh manual positions.
-- **The release verification surface now locks these diagram fixes explicitly**: localized dense cluster/product-part regressions, PM diagram sidecar compatibility tests, `build:webview`, and `typecheck:webview` now protect the repaired boundary contract before packaging.
+## Current Release — v1.1.908
+- **`Diagram Modules` first-open layout now self-heals against real rendered node sizes**: after React Flow measures the actual `Product Part`, `Cluster`, and `Module` boxes, the shell runs a deterministic normalization pass that pushes only later siblings downward when dense localized content would otherwise create overlap.
+- **A hard `4px` minimum safe gap is now enforced on measured ownership boxes**: the released diagram surface no longer relies only on projection-time text estimates, so cluster stacks, standalone modules, and lower container boundaries stay visually separated even when the browser renders cards taller than the heuristic budget predicted.
+- **`module-map.flow.json` sidecars now invalidate again for the measured-layout contract**: the layout compatibility fingerprint moves to the new post-render geometry baseline, preventing pre-fix saved positions from overriding the corrected runtime layout contract.
 
-Previous releases (summary): `1.1.800–1.1.906` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.907` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the first heuristic-only Diagram Modules boundary wave in `1.1.907`, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

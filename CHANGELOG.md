@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.908] - 2026-04-08
+### Fixed
+- **`Diagram Modules` now normalizes first-open layout against measured React Flow node sizes**: after the browser renders the actual ownership cards, the shell repacks later siblings downward and expands `Cluster` / `Product Part` containers so dense localized content no longer overlaps siblings or container bottoms.
+- **The released diagram surface now enforces a hard `4px` minimum safe gap on actual ownership boxes**: `Product Part`, `Cluster`, and `Module` cards keep a real post-render separation contract instead of relying only on projection-time height guesses.
+- **`module-map.flow.json` now rejects stale pre-measured geometry again**: the layout sidecar compatibility fingerprint was bumped for the measured-layout contract, so old saved positions no longer override the repaired runtime normalization path.
+
 ## [1.1.907] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` localized first-open layout now keeps dense cards inside their boundaries**: the initial React Flow projection uses a more conservative height budget for `Product Part`, `Cluster`, and `Module` cards, preventing the dense `Project Manager Workflow Ui`-style scenarios from crossing sibling cards or container bottoms on Russian long-copy baselines.
