@@ -36,10 +36,10 @@
 
 ### Stream: Release Notes
 5. [DONE] Обновить release-facing docs под новый релизный rebuild; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare project manager rebuild release`
-6. [TODO] Git Commit: `docs(release): prepare project manager rebuild release` (hash: TBD)
+6. [DONE] Git Commit: `docs(release): prepare project manager rebuild release` (hash: `b016823c0`)
 
 ### Stream: Release Build
-7. [TODO] Прогнать таргетные webview проверки перед релизом и зафиксировать readiness; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify project manager rebuild prerequisites`
+7. [DONE] Прогнать таргетные webview проверки перед релизом и зафиксировать readiness; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify project manager rebuild prerequisites`
 8. [TODO] Git Commit: `build(release): verify project manager rebuild prerequisites` (hash: TBD)
 9. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture project manager rebuild version bump`
 10. [TODO] Git Commit: `build(release): capture project manager rebuild version bump` (hash: TBD)
