@@ -1,12 +1,12 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_UserFacing_Layout_And_Format_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
@@ -69,10 +69,10 @@
 
 ### Stream: Closeout Plan Re-Slicing
 1. [DONE] Переписать post-release closeout на отдельные микрозадачи `≤3 файлов`, чтобы archive/update шаги не перескакивали обязательные commit-points и real-time tracking в `todo-plan.md`; scope: `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(plan): split measured gap release closeout steps`
-2. [TODO] Git Commit: `docs(plan): split measured gap release closeout steps` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): split measured gap release closeout steps` (hash: `8c959cc58`)
 
 ### Stream: Planning Doc Closeout
-1. [TODO] Перенести завершённый measured-gap planning-doc в archive, обновить `Docs_Index.md` и перевести `todo-plan.md` на архивный planning source; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(closeout): archive measured diagram gap planning docs`
+1. [DONE] Перенести завершённый measured-gap planning-doc в archive, обновить `Docs_Index.md` и перевести `todo-plan.md` на архивный planning source; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(closeout): archive measured diagram gap planning docs`
 2. [TODO] Git Commit: `docs(closeout): archive measured diagram gap planning docs` (hash: TBD)
 
 ### Stream: Execution Plan Closeout

@@ -62,10 +62,10 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md` — active corrective scope for `Diagram Modules` first-open overlaps after release `1.1.907`; introduces a measured post-render normalization pass, enforces a hard `4px` minimum safe gap between rendered ownership boxes, bumps sidecar layout metrics again, and ends with a new release build.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Diagram Modules` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
+- `Plans/Archive/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md` — completed corrective scope for `Diagram Modules` first-open overlaps after release `1.1.907`; introduced measured post-render normalization, enforced a hard `4px` minimum safe gap between rendered ownership boxes, invalidated stale sidecar geometry again, and shipped release `1.1.908`.
 - `Plans/Archive/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md` — completed corrective scope for dense/localized `Diagram Modules`; hardened initial height metrics, introduced sidecar layout fingerprinting, added regression evidence for cluster/product-part boundary safety, and shipped release `1.1.907`.
 - `Plans/Archive/Remove_Foundation_Envelope_Workflow_Architecture.md` — completed corrective scope that removed `Foundation Envelope` from the active workflow and shipped the cleanup release `1.1.906`.
 - `Plans/Archive/Foundation_Envelope_Architecture.md` — retired historical planning path for the removed `Foundation Envelope`; preserved only as postmortem evidence for why the step was abandoned.
