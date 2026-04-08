@@ -3,6 +3,8 @@
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
 ## [Unreleased]
+### Changed
+- **React Flow removed from Diagram Modules**: the `@xyflow/react` dependency is deleted. ProductPart cards now render in a responsive CSS Grid (`auto-fill, minmax(480px, 1fr)`) instead of a React Flow canvas. Native browser scroll replaces pan/zoom. Context menu clicks are fixed (React Flow's `pointer-events: none` was blocking them).
 
 ## [1.1.917] - 2026-04-08
 ### Changed

@@ -8,7 +8,8 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Bug registry: `doc/BugRegistry.md`
 
 ## Current Release — v1.1.917
-- **`Diagram Modules` layout has been rebuilt from scratch with CSS Grid**: the iterative settle-loop layout engine (~1350 lines) is deleted. Browser-native CSS Grid now computes all sizes from actual rendered text — zero height estimation, zero multi-pass normalization.
+- **React Flow removed**: `@xyflow/react` dependency deleted. ProductPart cards render in a responsive CSS Grid. Native browser scroll replaces canvas pan/zoom. Context menu clicks fixed.
+- **CSS Grid at all levels**: ProductParts, Clusters, and Modules all use browser-native CSS Grid — zero JS layout code.
 - **Right-click context menu** for ProductPart (columns, aspect ratio) and Cluster (module columns) layout overrides.
 - **Edges between modules removed** from the diagram canvas.
 
