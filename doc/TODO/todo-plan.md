@@ -1,12 +1,12 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredOwnershipReflow_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_MeasuredOwnershipReflow_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_UserFacing_Layout_And_Format_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredOwnershipReflow_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_MeasuredOwnershipReflow_Architecture.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
@@ -66,10 +66,10 @@
 1. [DONE] Запустить `./scripts/build-all.sh`, принять version/manifest bump для следующего релиза и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture measured ownership reflow version bump`
 2. [DONE] Git Commit: `build(release): capture measured ownership reflow version bump` (hash: `8940d10ca`)
 3. [DONE] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для measured ownership reflow scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package measured ownership reflow release`
-4. [TODO] Git Commit: `build(release): package measured ownership reflow release` (hash: TBD)
+4. [DONE] Git Commit: `build(release): package measured ownership reflow release` (hash: `4d1b15d6d`)
 
 ### Stream: Planning Doc Closeout
-1. [TODO] Перенести завершённый measured ownership reflow planning-doc в archive, обновить `Docs_Index.md` и перевести `todo-plan.md` на архивный planning source; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredOwnershipReflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(closeout): archive measured ownership reflow planning docs`
+1. [DONE] Перенести завершённый measured ownership reflow planning-doc в archive, обновить `Docs_Index.md` и перевести `todo-plan.md` на архивный planning source; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredOwnershipReflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(closeout): archive measured ownership reflow planning docs`
 2. [TODO] Git Commit: `docs(closeout): archive measured ownership reflow planning docs` (hash: TBD)
 
 ### Stream: Execution Plan Closeout
