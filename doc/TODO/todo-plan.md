@@ -51,10 +51,10 @@
 13. [DONE] Синхронизировать Diagram Modules SSOT и planning-doc с новым measured-first initial autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured initial autolayout contract`
 14. [DONE] Git Commit: `docs(diagram): record measured initial autolayout contract` (hash: c9bc83095)
 15. [DONE] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare initial autolayout packer release`
-16. [TODO] Git Commit: `docs(release): prepare initial autolayout packer release` (hash: TBD)
+16. [DONE] Git Commit: `docs(release): prepare initial autolayout packer release` (hash: 5e3a93be3)
 
 ### Stream: Release Build
-17. [TODO] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture initial autolayout packer version bump`
+17. [DONE] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture initial autolayout packer version bump`
 18. [TODO] Git Commit: `build(release): capture initial autolayout packer version bump` (hash: TBD)
 19. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package initial autolayout packer release`
 20. [TODO] Git Commit: `build(release): package initial autolayout packer release` (hash: TBD)
