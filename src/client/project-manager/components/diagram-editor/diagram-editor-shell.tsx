@@ -101,13 +101,16 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   const handleMeasuredNodes = useCallback(
     (measuredNodes: readonly DiagramFlowNode[]): void => {
       setNodes((current) => {
-        const normalizedNodes = normalizeMeasuredDiagramLayout(measuredNodes);
+        const normalizedNodes = normalizeMeasuredDiagramLayout(
+          measuredNodes,
+          projection.layoutSource ?? "seed-autolayout"
+        );
         return sameMeasuredLayoutSnapshot(current, normalizedNodes)
           ? current
           : normalizedNodes;
       });
     },
-    []
+    [projection.layoutSource]
   );
 
   return (

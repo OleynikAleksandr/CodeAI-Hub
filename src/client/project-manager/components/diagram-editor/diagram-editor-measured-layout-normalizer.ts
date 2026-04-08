@@ -1,5 +1,6 @@
 import type {
   DiagramFlowNode,
+  DiagramFlowProjectionLayoutSource,
 } from "./adapters/domain-model-to-react-flow.types";
 import {
   getContainerBodyStartY,
@@ -162,7 +163,7 @@ const normalizeTopLevelNodes = (result: DiagramFlowNode[], indices: readonly num
   }
 };
 
-export const normalizeMeasuredDiagramLayout = (
+const normalizePreservedMeasuredDiagramLayout = (
   allNodes: readonly DiagramFlowNode[]
 ): readonly DiagramFlowNode[] => {
   const result = allNodes.map((node) => cloneNode(node));
@@ -216,3 +217,11 @@ export const normalizeMeasuredDiagramLayout = (
   normalizeTopLevelNodes(result, topLevelIndices);
   return result;
 };
+
+export const normalizeMeasuredDiagramLayout = (
+  allNodes: readonly DiagramFlowNode[],
+  layoutSource: DiagramFlowProjectionLayoutSource = "seed-autolayout"
+): readonly DiagramFlowNode[] =>
+  layoutSource === "persisted-sidecar"
+    ? normalizePreservedMeasuredDiagramLayout(allNodes)
+    : normalizePreservedMeasuredDiagramLayout(allNodes);

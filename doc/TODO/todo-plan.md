@@ -33,18 +33,18 @@
 1. [DONE] Открыть corrective scope под measured-first initial autolayout packer, новый active `todo-plan` и навигационный индекс; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(plan): open initial autolayout packer scope`
 2. [DONE] Git Commit: `docs(plan): open initial autolayout packer scope` (hash: 516fdf0dd)
 3. [DONE] Создать continuation report новой corrective wave; scope: `doc/Sessions/Session016.md`; ожидаемый commit message: `docs(session): start initial autolayout packer cycle`
-4. [TODO] Git Commit: `docs(session): start initial autolayout packer cycle` (hash: TBD)
+4. [DONE] Git Commit: `docs(session): start initial autolayout packer cycle` (hash: 28ee638e9)
 
 ### Stream: Layout Source Split
 5. [DONE] Добавить projection-level layout source для различения seed autolayout и persisted sidecar path; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `feat(diagram): tag projection layout source`
-6. [TODO] Git Commit: `feat(diagram): tag projection layout source` (hash: TBD)
-7. [TODO] Переключить shell measured path на layout-source-aware branch без изменения manual drag contract; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): gate measured autolayout by layout source`
+6. [DONE] Git Commit: `feat(diagram): tag projection layout source` (hash: 73aa01a6c)
+7. [DONE] Переключить shell measured path на layout-source-aware branch без изменения manual drag contract; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): gate measured autolayout by layout source`
 8. [TODO] Git Commit: `fix(diagram): gate measured autolayout by layout source` (hash: TBD)
 
 ### Stream: Measured Initial Packer
 9. [TODO] Ввести pure hierarchical packer для seed autolayout и перевести measured normalizer на fixed-point pack-and-validate loop; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): rebuild initial autolayout from measured hierarchy`
 10. [TODO] Git Commit: `fix(diagram): rebuild initial autolayout from measured hierarchy` (hash: TBD)
-11. [TODO] Добавить regression evidence для seed autolayout safety и persisted-layout preservation; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover measured initial autolayout solver`
+11. [TODO] Добавить regression evidence для seed autolayout safety и persisted-layout preservation; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover measured initial autolayout solver`
 12. [TODO] Git Commit: `test(diagram): cover measured initial autolayout solver` (hash: TBD)
 
 ### Stream: SSOT And Release Docs
