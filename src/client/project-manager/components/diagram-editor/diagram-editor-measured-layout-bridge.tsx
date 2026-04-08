@@ -36,6 +36,15 @@ const getContainerHeaderElements = (): ReadonlyMap<string, HTMLElement> =>
       .filter((entry): entry is readonly [string, HTMLElement] => Boolean(entry[0]))
   );
 
+const resolveMeasuredBodyStartY = (
+  element: HTMLElement,
+  bodyStartOffset: number,
+  zoom: number
+): number => {
+  const normalizedZoom = Number.isFinite(zoom) && zoom > 0 ? zoom : 1;
+  return Math.ceil(element.getBoundingClientRect().height / normalizedZoom) + bodyStartOffset;
+};
+
 export const DiagramEditorMeasuredLayoutBridge = ({
   nodes,
   measurementRevision,
@@ -55,6 +64,7 @@ export const DiagramEditorMeasuredLayoutBridge = ({
     }
 
     const containerHeaderElements = getContainerHeaderElements();
+    const zoom = reactFlow.getZoom();
     const measuredNodes = nodes.map((node) => {
       const internalNode = reactFlow.getInternalNode(node.id);
       const measuredWidth = internalNode?.measured.width;
@@ -64,7 +74,7 @@ export const DiagramEditorMeasuredLayoutBridge = ({
         containerHeaderElement?.dataset.diagramBodyStartOffset ?? 0
       );
       const bodyStartY = containerHeaderElement
-        ? Math.ceil(containerHeaderElement.getBoundingClientRect().height) + bodyStartOffset
+        ? resolveMeasuredBodyStartY(containerHeaderElement, bodyStartOffset, zoom)
         : undefined;
 
       if (

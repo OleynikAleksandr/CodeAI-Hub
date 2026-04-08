@@ -46,12 +46,18 @@ test("diagram-editor measurement bridge carries measured ownership header bounda
   const source = await readFile(MEASURED_BRIDGE_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("getContainerHeaderElements"), true);
+  assert.equal(source.includes("resolveMeasuredBodyStartY"), true);
+  assert.equal(source.includes("reactFlow.getZoom()"), true);
   assert.equal(
     source.includes('document.querySelectorAll<HTMLElement>("[data-diagram-container-header-id]")'),
     true
   );
   assert.equal(source.includes("diagramBodyStartOffset"), true);
   assert.equal(source.includes("bodyStartY"), true);
+  assert.equal(
+    source.includes("getBoundingClientRect().height / normalizedZoom"),
+    true
+  );
   assert.equal(source.includes("measured?.bodyStartY"), true);
 });
 test("diagram-editor-shell is now user-owned layout only", async () => {

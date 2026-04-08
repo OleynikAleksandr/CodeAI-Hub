@@ -31,27 +31,29 @@
 ### Stream: Scope Setup
 1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session017.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_OverlapAwarePacking_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session017.md`; expected commit: `docs(plan): open overlap-aware initial autolayout scope`
 2. [DONE] Git Commit: `docs(plan): open overlap-aware initial autolayout scope` (hash: `bcdb87418`)
-3. [IN_PROGRESS] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register overlap-aware initial autolayout scope`
-4. [TODO] Git Commit: `docs(index): register overlap-aware initial autolayout scope` (hash: TBD)
+3. [DONE] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register overlap-aware initial autolayout scope`
+4. [DONE] Git Commit: `docs(index): register overlap-aware initial autolayout scope` (hash: `6b9b5da0d`)
 
 ### Stream: Seed Autolayout Solver
-5. [TODO] Заменить exact-column packing на overlap-aware sibling packing в initial packer; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): pack initial autolayout by overlapping bounds`
-6. [TODO] Git Commit: `fix(diagram): pack initial autolayout by overlapping bounds` (hash: TBD)
-7. [TODO] Добавить regression tests на wide-cluster / overlapping-footprint packing; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram): cover overlap-aware initial autolayout`
-8. [TODO] Git Commit: `test(diagram): cover overlap-aware initial autolayout` (hash: TBD)
+5. [DONE] Исправить измерение `bodyStartY` под zoom/transform в measured layout bridge, чтобы верхние границы children стартовали от unscaled header boundary; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): correct measured body start under zoom`
+6. [TODO] Git Commit: `fix(diagram): correct measured body start under zoom` (hash: TBD)
+7. [IN_PROGRESS] Заменить exact-column packing на overlap-aware sibling packing в initial packer; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-initial-autolayout-packer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): pack initial autolayout by overlapping bounds`
+8. [TODO] Git Commit: `fix(diagram): pack initial autolayout by overlapping bounds` (hash: TBD)
+9. [TODO] Добавить regression tests на wide-cluster / overlapping-footprint packing; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test(diagram): cover overlap-aware initial autolayout`
+10. [TODO] Git Commit: `test(diagram): cover overlap-aware initial autolayout` (hash: TBD)
 
 ### Stream: SSOT And Release Notes
-9. [TODO] Обновить SSOT по Diagram Modules autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record overlap-aware autolayout contract`
-10. [TODO] Git Commit: `docs(diagram): record overlap-aware autolayout contract` (hash: TBD)
-11. [TODO] Обновить release-facing docs под новый corrective scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare overlap-aware autolayout release`
-12. [TODO] Git Commit: `docs(release): prepare overlap-aware autolayout release` (hash: TBD)
+11. [TODO] Обновить SSOT по Diagram Modules autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record overlap-aware autolayout contract`
+12. [TODO] Git Commit: `docs(diagram): record overlap-aware autolayout contract` (hash: TBD)
+13. [TODO] Обновить release-facing docs под новый corrective scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare overlap-aware autolayout release`
+14. [TODO] Git Commit: `docs(release): prepare overlap-aware autolayout release` (hash: TBD)
 
 ### Stream: Release Build
-13. [TODO] Прогнать таргетные тесты и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture overlap-aware autolayout version bump`
-14. [TODO] Git Commit: `build(release): capture overlap-aware autolayout version bump` (hash: TBD)
-15. [TODO] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты; scope: release build outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package overlap-aware autolayout release`
-16. [TODO] Git Commit: `build(release): package overlap-aware autolayout release` (hash: TBD)
+15. [TODO] Прогнать таргетные тесты и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture overlap-aware autolayout version bump`
+16. [TODO] Git Commit: `build(release): capture overlap-aware autolayout version bump` (hash: TBD)
+17. [TODO] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты; scope: release build outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package overlap-aware autolayout release`
+18. [TODO] Git Commit: `build(release): package overlap-aware autolayout release` (hash: TBD)
 
 ### Stream: Closeout
-17. [TODO] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`, подготовить финальный `Session017.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/...`, `doc/TODO/Archive/...`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive overlap-aware autolayout scope`
-18. [TODO] Git Commit: `docs(closeout): archive overlap-aware autolayout scope` (hash: TBD)
+19. [TODO] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`, подготовить финальный `Session017.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/...`, `doc/TODO/Archive/...`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive overlap-aware autolayout scope`
+20. [TODO] Git Commit: `docs(closeout): archive overlap-aware autolayout scope` (hash: TBD)
