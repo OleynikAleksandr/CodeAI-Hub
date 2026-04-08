@@ -29,6 +29,8 @@ test("diagram-editor-facade keeps React Flow diagnostics widgets but no auto-lay
   assert.equal(source.includes("<Controls"), false);
   assert.equal(source.includes("<MiniMap"), false);
   assert.equal(source.includes("nodesDraggable"), true);
+  assert.equal(source.includes("DiagramEditorMeasuredLayoutBridge"), true);
+  assert.equal(source.includes("onMeasuredNodes"), true);
   assert.equal(source.includes("ReactFlowProvider"), false);
   assert.equal(source.includes("useReactFlow"), false);
   assert.equal(source.includes("useNodesInitialized"), false);
@@ -261,4 +263,3 @@ test("module inventory parser reads product part hierarchy without flattening ow
   assert.equal(result.value.modules[0]?.cluster, "workspace-core");
   assert.equal(result.value.modules[2]?.cluster, undefined);
 });
-

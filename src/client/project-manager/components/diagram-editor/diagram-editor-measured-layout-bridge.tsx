@@ -1,0 +1,77 @@
+import { useEffect, useRef } from "react";
+import { useNodesInitialized, useReactFlow } from "@xyflow/react";
+import type {
+  DiagramFlowEdge,
+  DiagramFlowNode,
+} from "./adapters/domain-model-to-react-flow.types";
+
+type DiagramEditorMeasuredLayoutBridgeProps = {
+  readonly nodes: readonly DiagramFlowNode[];
+  readonly measurementRevision?: string;
+  readonly onMeasuredNodes?: (
+    nodes: readonly DiagramFlowNode[]
+  ) => void | Promise<void>;
+};
+
+const buildMeasurementSignature = (nodes: readonly DiagramFlowNode[]): string =>
+  nodes
+    .map((node) =>
+      [
+        node.id,
+        node.position.x,
+        node.position.y,
+        node.measured?.width ?? node.width ?? 0,
+        node.measured?.height ?? node.height ?? 0,
+      ].join(":")
+    )
+    .join("|");
+
+export const DiagramEditorMeasuredLayoutBridge = ({
+  nodes,
+  measurementRevision,
+  onMeasuredNodes,
+}: DiagramEditorMeasuredLayoutBridgeProps) => {
+  const reactFlow = useReactFlow<DiagramFlowNode, DiagramFlowEdge>();
+  const nodesInitialized = useNodesInitialized();
+  const lastMeasurementSignatureRef = useRef<string>("");
+
+  useEffect(() => {
+    lastMeasurementSignatureRef.current = "";
+  }, [measurementRevision]);
+
+  useEffect(() => {
+    if (!nodesInitialized || !onMeasuredNodes) {
+      return;
+    }
+
+    const measuredNodes = nodes.map((node) => {
+      const internalNode = reactFlow.getInternalNode(node.id);
+      const measuredWidth = internalNode?.measured.width;
+      const measuredHeight = internalNode?.measured.height;
+
+      if (measuredWidth === undefined && measuredHeight === undefined) {
+        return node;
+      }
+
+      return {
+        ...node,
+        width: measuredWidth ?? node.width,
+        height: measuredHeight ?? node.height,
+        measured: {
+          width: measuredWidth ?? node.measured?.width ?? node.width,
+          height: measuredHeight ?? node.measured?.height ?? node.height,
+        },
+      };
+    });
+
+    const measurementSignature = buildMeasurementSignature(measuredNodes);
+    if (measurementSignature === lastMeasurementSignatureRef.current) {
+      return;
+    }
+
+    lastMeasurementSignatureRef.current = measurementSignature;
+    void onMeasuredNodes(measuredNodes);
+  }, [nodes, nodesInitialized, onMeasuredNodes, reactFlow]);
+
+  return null;
+};

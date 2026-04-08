@@ -13,11 +13,16 @@ import type {
   ModuleFlowNodeData,
   ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
+import { DiagramEditorMeasuredLayoutBridge } from "./diagram-editor-measured-layout-bridge";
 
 type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
   readonly edges: readonly DiagramFlowEdge[];
   readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
+  readonly onMeasuredNodes?: (
+    nodes: readonly DiagramFlowNode[]
+  ) => void | Promise<void>;
+  readonly measurementRevision?: string;
   readonly title: string;
   readonly subtitle?: string;
 };
@@ -206,6 +211,8 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   edges,
   onNodesChange,
+  onMeasuredNodes,
+  measurementRevision,
   title,
   subtitle,
 }) => {
@@ -258,6 +265,11 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
         zoomOnDoubleClick={false}
         style={canvasStyle}
       >
+        <DiagramEditorMeasuredLayoutBridge
+          measurementRevision={measurementRevision}
+          nodes={nodes}
+          onMeasuredNodes={onMeasuredNodes}
+        />
         <Background gap={24} size={1} />
       </ReactFlow>
     </div>

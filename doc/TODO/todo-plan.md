@@ -33,10 +33,10 @@
 
 ### Stream: Measured Gap Normalizer Core
 1. [DONE] Добавить pure measured-layout normalizer с hard `MIN_SAFE_GAP = 4px` и расширить node typing для measured width/height, чтобы controlled React Flow state мог работать по реальным box sizes; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`; ожидаемый commit message: `fix(diagram): add measured gap normalizer`
-2. [TODO] Git Commit: `fix(diagram): add measured gap normalizer` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram): add measured gap normalizer` (hash: `e7f2957f4`)
 
 ### Stream: React Flow Measurement Bridge
-1. [TODO] Считать фактические размеры узлов после first render через React Flow hooks и прокинуть measured layout callback в shell без возврата к старым auto-layout controls; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; ожидаемый commit message: `fix(diagram): bridge measured node sizes from react flow`
+1. [DONE] Считать фактические размеры узлов после first render через React Flow hooks и прокинуть measured layout callback в shell без возврата к старым auto-layout controls; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; ожидаемый commit message: `fix(diagram): bridge measured node sizes from react flow`
 2. [TODO] Git Commit: `fix(diagram): bridge measured node sizes from react flow` (hash: TBD)
 
 ### Stream: Shell Measured Normalization Apply
