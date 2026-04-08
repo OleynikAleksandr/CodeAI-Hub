@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.916] - 2026-04-08
+### Reverted
+- **`Diagram Modules` measurement bridge now ships again with the pre-`1.1.915` baseline instead of the stabilized live measurement experiment**: the release removes the extra runtime hooks added in `1.1.915`, including `ResizeObserver`, post-font re-measure after `document.fonts.ready`, and window-resize measurement rescheduling.
+- **Release `1.1.916` is a rollback rebuild on top of the stable `1.1.914` baseline**: this package is intended to remove the hangs/trim/manual-layout regression path introduced in `1.1.915` while the remaining autolayout defect is investigated separately.
+
 ## [1.1.915] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` first-open autolayout now waits for stabilized live measurement instead of trusting the first DOM snapshot**: the measurement bridge re-emits geometry after the next animation frame, after late `document.fonts.ready`, and after real node/header resize events, so ownership containers can resize from the final card heights rather than from an early under-measured pass.

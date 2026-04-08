@@ -38,11 +38,11 @@
 
 ### Stream: SSOT rollback
 5. [DONE] Убрать из active SSOT принятие `Live Measurement Stabilization` как текущего контракта; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`; commit: `docs(diagram): rollback live measurement stabilization contract`
-6. [IN_PROGRESS] Git Commit: `docs(diagram): rollback live measurement stabilization contract` (hash: TBD)
+6. [DONE] Git Commit: `docs(diagram): rollback live measurement stabilization contract` (hash: `942edef3b`)
 
 ### Stream: Release docs
-7. [TODO] Подготовить release docs для rollback rebuild `1.1.916`; scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): prepare rollback rebuild release`
-8. [TODO] Git Commit: `docs(release): prepare rollback rebuild release` (hash: TBD)
+7. [DONE] Подготовить release docs для rollback rebuild `1.1.916`; scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): prepare rollback rebuild release`
+8. [IN_PROGRESS] Git Commit: `docs(release): prepare rollback rebuild release` (hash: TBD)
 
 ### Stream: Verification
 9. [TODO] Прогнать таргетные проверки rollback-базы и зафиксировать статус в плане; scope: repo verification (`npx tsx --test ...`, `npm run build:webview`, `npm run typecheck:webview`) + `doc/TODO/todo-plan.md`; commit: `build(release): verify rollback rebuild prerequisites`
