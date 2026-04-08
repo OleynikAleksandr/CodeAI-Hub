@@ -17,12 +17,16 @@ test("diagram modules renderer differentiates product part and cluster container
 
   assert.equal(source.includes('data.nodeKind === "productPart"'), true);
   assert.equal(source.includes("Product Part"), true);
+  assert.equal(source.includes("data-diagram-container-header-id={id}"), true);
+  assert.equal(source.includes("data-diagram-body-start-offset"), true);
+  assert.equal(source.includes("PRODUCT_PART_BODY_START_OFFSET = 30"), true);
+  assert.equal(source.includes("CLUSTER_BODY_START_OFFSET = 26"), true);
   assert.equal(source.includes("Clusters: {data.clusterIds.length}"), true);
   assert.equal(source.includes("Standalone Modules:"), true);
   assert.equal(source.includes("Purpose"), true);
   assert.equal(source.includes("data.purpose"), true);
   assert.equal(
-    source.includes('gridTemplateColumns: "minmax(0, 1fr) minmax(240px, 320px)"'),
+    source.includes('gridTemplateColumns: "auto minmax(240px, 1fr)"'),
     true
   );
   assert.equal(source.includes("Kind: {data.kind}"), true);
@@ -38,5 +42,5 @@ test("diagram modules panel explains ownership hierarchy in the pending state", 
   const source = await readFile(MODULES_HELP_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("Product Part"), true);
-  assert.equal(source.includes("Product Part -&gt; Cluster -&gt; Module"), true);
+  assert.equal(source.includes("Product Part -> Cluster -> Module"), true);
 });

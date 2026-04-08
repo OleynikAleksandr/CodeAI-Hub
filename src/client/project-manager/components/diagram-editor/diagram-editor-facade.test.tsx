@@ -8,6 +8,10 @@ const FACADE_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx"
 );
+const MEASURED_BRIDGE_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx"
+);
 const SHELL_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx"
@@ -36,6 +40,19 @@ test("diagram-editor-facade keeps React Flow diagnostics widgets but no auto-lay
   assert.equal(source.includes("useNodesInitialized"), false);
   assert.equal(source.includes("Auto-layout"), false);
   assert.equal(source.includes("layoutProfileOptions"), false);
+});
+
+test("diagram-editor measurement bridge carries measured ownership header boundaries", async () => {
+  const source = await readFile(MEASURED_BRIDGE_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("getContainerHeaderElements"), true);
+  assert.equal(
+    source.includes('document.querySelectorAll<HTMLElement>("[data-diagram-container-header-id]")'),
+    true
+  );
+  assert.equal(source.includes("diagramBodyStartOffset"), true);
+  assert.equal(source.includes("bodyStartY"), true);
+  assert.equal(source.includes("measured?.bodyStartY"), true);
 });
 test("diagram-editor-shell is now user-owned layout only", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");

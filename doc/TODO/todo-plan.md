@@ -28,16 +28,16 @@
 
 ### Stream: Planning Scope Opening
 1. [DONE] Зафиксировать новый corrective scope для measured-first ownership reflow в planning/navigation docs и открыть active execution baseline; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredOwnershipReflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(plan): open measured ownership reflow scope`
-2. [TODO] Git Commit: `docs(plan): open measured ownership reflow scope` (hash: TBD)
+2. [DONE] Git Commit: `docs(plan): open measured ownership reflow scope` (hash: `fde825ff4`)
 
 ## Phase 1 — Ownership Measurement Contract (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Ownership Header DOM Hooks
-1. [TODO] Расширить measured node contract ownership boundary-метрикой и добавить DOM hooks в renderer/bridge для сбора реального `bodyStartY` из ownership header; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`; ожидаемый commit message: `fix(diagram): collect measured ownership header boundaries`
-2. [TODO] Git Commit: `fix(diagram): collect measured ownership header boundaries` (hash: TBD)
+1. [DONE] Расширить measured node contract ownership boundary-метрикой и добавить DOM hooks в renderer/bridge для сбора реального `bodyStartY` из ownership header; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.types.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`; ожидаемый commit message: `fix(diagram): collect measured ownership header boundaries`
+2. [DONE] Git Commit: `fix(diagram): collect measured ownership header boundaries` (hash: `3acacde1e`)
 
 ### Stream: Measurement Contract Regression Evidence
-1. [TODO] Обновить source-level regression coverage для ownership renderer / facade / shell measured snapshot, чтобы новый measured contract нельзя было потерять без тестового падения; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`; ожидаемый commit message: `test(diagram): cover measured ownership measurement contract`
+1. [DONE] Обновить source-level regression coverage для ownership renderer и measurement bridge contract, чтобы новый measured ownership header path нельзя было потерять без тестового падения; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; ожидаемый commit message: `test(diagram): cover measured ownership measurement contract`
 2. [TODO] Git Commit: `test(diagram): cover measured ownership measurement contract` (hash: TBD)
 
 ## Phase 2 — Measured-First Ownership Reflow (owner: Oleksandr + Codex, updated: 2026-04-08)
