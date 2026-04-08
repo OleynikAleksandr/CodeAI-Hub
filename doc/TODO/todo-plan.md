@@ -39,9 +39,9 @@
 
 ### Stream: Unified Manual Drag
 5. [DONE] Вынести manual drag resize в pure helper и перевести shell на тот же shared geometry contract, что и autolayout; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): unify manual drag container bounds`
-6. [DONE] Git Commit: `fix(diagram): unify manual drag container bounds` (hash: TBD)
-7. [TODO] Обновить shell regression evidence под новый manual-layout contract; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover unified manual layout contract`
-8. [TODO] Git Commit: `test(diagram): cover unified manual layout contract` (hash: TBD)
+6. [DONE] Git Commit: `fix(diagram): unify manual drag container bounds` (hash: ba950ac6b)
+7. [DONE] Обновить shell regression evidence под новый manual-layout contract; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover unified manual layout contract`
+8. [DONE] Git Commit: `test(diagram): cover unified manual layout contract` (hash: TBD)
 
 ### Stream: Sidecar And SSOT Sync
 9. [TODO] Поднять layout metric version sidecar под shared visual-bounds contract и зафиксировать pure regression evidence; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): invalidate sidecars for visual bounds contract`

@@ -26,6 +26,7 @@ test("diagram editor shell normalizes first-open layout after measured node size
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("normalizeMeasuredDiagramLayout"), true);
+  assert.equal(source.includes("normalizeManualDiagramLayout"), true);
   assert.equal(source.includes("handleMeasuredNodes"), true);
   assert.equal(
     source.includes("left.measured?.bodyStartY === right.measured?.bodyStartY"),
@@ -33,4 +34,8 @@ test("diagram editor shell normalizes first-open layout after measured node size
   );
   assert.equal(source.includes("onMeasuredNodes={handleMeasuredNodes}"), true);
   assert.equal(source.includes("measurementRevision={projection.revision}"), true);
+  assert.equal(
+    source.includes("const nextNodes = normalizeManualDiagramLayout(applied, movedIds);"),
+    true
+  );
 });
