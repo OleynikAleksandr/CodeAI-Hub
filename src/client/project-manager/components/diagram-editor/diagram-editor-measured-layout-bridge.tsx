@@ -22,9 +22,19 @@ const buildMeasurementSignature = (nodes: readonly DiagramFlowNode[]): string =>
         node.position.y,
         node.measured?.width ?? node.width ?? 0,
         node.measured?.height ?? node.height ?? 0,
+        node.measured?.bodyStartY ?? 0,
       ].join(":")
     )
     .join("|");
+
+const getContainerHeaderElements = (): ReadonlyMap<string, HTMLElement> =>
+  new Map(
+    Array.from(
+      document.querySelectorAll<HTMLElement>("[data-diagram-container-header-id]")
+    )
+      .map((element) => [element.dataset.diagramContainerHeaderId, element] as const)
+      .filter((entry): entry is readonly [string, HTMLElement] => Boolean(entry[0]))
+  );
 
 export const DiagramEditorMeasuredLayoutBridge = ({
   nodes,
@@ -44,12 +54,24 @@ export const DiagramEditorMeasuredLayoutBridge = ({
       return;
     }
 
+    const containerHeaderElements = getContainerHeaderElements();
     const measuredNodes = nodes.map((node) => {
       const internalNode = reactFlow.getInternalNode(node.id);
       const measuredWidth = internalNode?.measured.width;
       const measuredHeight = internalNode?.measured.height;
+      const containerHeaderElement = containerHeaderElements.get(node.id);
+      const bodyStartOffset = Number(
+        containerHeaderElement?.dataset.diagramBodyStartOffset ?? 0
+      );
+      const bodyStartY = containerHeaderElement
+        ? Math.ceil(containerHeaderElement.getBoundingClientRect().height) + bodyStartOffset
+        : undefined;
 
-      if (measuredWidth === undefined && measuredHeight === undefined) {
+      if (
+        measuredWidth === undefined
+        && measuredHeight === undefined
+        && bodyStartY === undefined
+      ) {
         return node;
       }
 
@@ -60,6 +82,7 @@ export const DiagramEditorMeasuredLayoutBridge = ({
         measured: {
           width: measuredWidth ?? node.measured?.width ?? node.width,
           height: measuredHeight ?? node.measured?.height ?? node.height,
+          bodyStartY: bodyStartY ?? node.measured?.bodyStartY,
         },
       };
     });

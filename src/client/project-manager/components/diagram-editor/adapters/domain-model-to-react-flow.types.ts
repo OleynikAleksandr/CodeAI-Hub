@@ -19,6 +19,7 @@ export type DiagramFlowNodeStyle = Readonly<Record<string, number | string>>;
 export type DiagramFlowNodeMeasuredSize = {
   readonly width?: number;
   readonly height?: number;
+  readonly bodyStartY?: number;
 };
 
 export type DiagramFlowEdgeType = "relation";

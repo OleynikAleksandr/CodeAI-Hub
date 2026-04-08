@@ -106,15 +106,24 @@ const purposeTextStyle: React.CSSProperties = {
   color: "var(--pm-text-muted)",
 };
 
+const PRODUCT_PART_BODY_START_OFFSET = 30;
+const CLUSTER_BODY_START_OFFSET = 26;
+
 const ContainerNode = ({
+  id,
   data,
 }: {
+  readonly id: string;
   readonly data: ClusterFlowNodeData | ProductPartFlowNodeData;
 }) => {
   if (data.nodeKind === "productPart") {
     return (
       <div style={productPartCardStyle}>
-        <div style={productPartHeaderStyle}>
+        <div
+          data-diagram-body-start-offset={PRODUCT_PART_BODY_START_OFFSET}
+          data-diagram-container-header-id={id}
+          style={productPartHeaderStyle}
+        >
           <div style={containerSummaryStyle}>
             <div style={nodeCaptionStyle}>Product Part</div>
             <strong style={{ fontSize: 15 }}>{data.title}</strong>
@@ -134,7 +143,11 @@ const ContainerNode = ({
 
   return (
     <div style={clusterCardStyle}>
-      <div style={containerHeaderStyle}>
+      <div
+        data-diagram-body-start-offset={CLUSTER_BODY_START_OFFSET}
+        data-diagram-container-header-id={id}
+        style={containerHeaderStyle}
+      >
         <div style={nodeCaptionStyle}>Cluster</div>
         <strong style={{ fontSize: 13 }}>{data.title}</strong>
         <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
