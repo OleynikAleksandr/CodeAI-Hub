@@ -387,3 +387,44 @@ Root cause зафиксирован явно:
 - boundary safety для `Cluster` и `Product Part` больше не зависит от projection-time guesses о высоте модулей;
 - измерение ownership header boundary стало частью runtime contract;
 - следующий релиз должен валидироваться на том же workspace, который показал провал `1.1.908`.
+
+### 11.9. Shared visual bounds and unified manual/autolayout contract completed on 2026-04-08
+
+Пользовательский ретест релиза `1.1.909` показал ещё один остаточный дефект:
+- нижняя граница `Cluster` и `Product Part` визуально всё ещё могла пересекаться с нижним краем `Module`;
+- тот же симптом воспроизводился не только в first-open autolayout, но и после ручного перетаскивания;
+- удаление `module-map.flow.json` меняло расстановку, но не убирало сам класс дефекта.
+
+Это доказало сразу две вещи:
+- проблема жила в общем ownership boundary contract, а не только в одном initial measured pass;
+- border-box geometry всё ещё расходилась с тем, что фактически видит пользователь.
+
+Критический root cause зафиксирован явно:
+- `Module` card использует внешний `box-shadow`, который визуально выходит за пределы React Flow border box;
+- measured autolayout и manual drag resize до этого corrective slice не делили один и тот же geometry helper;
+- manual shell path продолжал пересчитывать container bounds из локальной fallback-модели (`style.height` / `style.minHeight`), а не из общего measured contract.
+
+Принятый контракт после этого pass:
+1. layout engine считает boundary safety не по одному border box, а по **visual bottom** прямого child-элемента;
+2. для `Module` вводится explicit visual bottom allowance, компенсирующий внешний shadow на нижней границе;
+3. высота `Cluster` всегда считается как `max(visualBottom всех direct module children) + bottom padding`;
+4. высота `Product Part` всегда считается как `max(visualBottom всех direct cluster/standalone children) + bottom padding`;
+5. autolayout и manual drag обязаны вызывать один и тот же shared geometry contract, а не две расходящиеся resize-ветки;
+6. stale `module-map.flow.json` снова инвалидируется через новый `FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 4`.
+
+Что именно реализовано:
+- добавлен shared layout-bounds helper для canonical width/height/body-start/visual-bottom math;
+- measured normalizer теперь строит container bottoms от deepest direct child visual bottom;
+- shell manual drag path вынесен в отдельный pure manual normalizer и больше не держит свою локальную container-resize логику;
+- shell-level regression evidence теперь отдельно фиксирует, что manual drag проходит через unified normalizer, а не через старый local resize path.
+
+Новый evidence set для shared visual-bounds contract:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`
+
+Практический смысл этого pass:
+- нижняя граница ownership containers теперь определяется по тому, что пользователь реально видит, а не только по border-box math;
+- ручное перетаскивание больше не может сохранять контейнеры на старом локальном resize contract;
+- следующий релиз должен валидироваться на том же Gemini workspace, где пользователь воспроизвёл совпадающий дефект и в auto, и в manual mode.
