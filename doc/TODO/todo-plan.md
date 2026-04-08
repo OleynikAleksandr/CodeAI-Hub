@@ -52,9 +52,21 @@
 ## Phase 3 — Release Build And Session Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Release Preparation
-1. [IN_PROGRESS] Подготовить release-facing документацию и closeout tracking перед финальной сборкой этого scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare diagram autolayout fix release`
-2. [TODO] Git Commit: `docs(release): prepare diagram autolayout fix release` (hash: TBD)
+1. [DONE] Подготовить release-facing документацию и closeout tracking перед финальной сборкой этого scope; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare diagram autolayout fix release`
+2. [DONE] Git Commit: `docs(release): prepare diagram autolayout fix release` (hash: `56fff330b`)
 
 ### Stream: Release Build
-1. [TODO] Запустить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, перенести свежие артефакты в `doc/tmp/releases/` и зафиксировать release результаты в `doc/Sessions/Session013.md`; scope: `release manifests/version artifacts`, `doc/tmp/releases/`, `doc/Sessions/Session013.md`; ожидаемый commit message: `build(release): package diagram autolayout boundary fix release`
-2. [TODO] Git Commit: `build(release): package diagram autolayout boundary fix release` (hash: TBD)
+1. [DONE] Запустить `./scripts/build-all.sh`, принять version/manifest bump для релиза `1.1.907` и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture diagram autolayout fix version bump`
+2. [TODO] Git Commit: `build(release): capture diagram autolayout fix version bump` (hash: TBD)
+3. [TODO] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для этого scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package diagram autolayout boundary fix release`
+4. [TODO] Git Commit: `build(release): package diagram autolayout boundary fix release` (hash: TBD)
+
+## Phase 4 — Planning And Execution Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
+
+### Stream: Planning Doc Closeout
+1. [TODO] Перенести завершённый corrective planning-док в archive и синхронизировать `Docs_Index.md` после успешной release packaging; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout planning docs`
+2. [TODO] Git Commit: `docs(closeout): archive diagram autolayout planning docs` (hash: TBD)
+
+### Stream: Execution Plan Closeout
+1. [TODO] Обновить `doc/TODO/todo-plan.md`, перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-diagram-modules-autolayout-boundary-fix.md`; ожидаемый commit message: `docs(closeout): archive diagram autolayout execution plan`
+2. [TODO] Git Commit: `docs(closeout): archive diagram autolayout execution plan` (hash: TBD)
