@@ -34,6 +34,7 @@ test("diagram editor shell normalizes first-open layout after measured node size
   );
   assert.equal(source.includes("onMeasuredNodes={handleMeasuredNodes}"), true);
   assert.equal(source.includes("measurementRevision={projection.revision}"), true);
+  assert.equal(source.includes('projection.layoutSource ?? "seed-autolayout"'), true);
   assert.equal(
     source.includes("const nextNodes = normalizeManualDiagramLayout(applied, movedIds);"),
     true

@@ -192,3 +192,56 @@ test("normalizeMeasuredDiagramLayout keeps top-level product parts separated whe
   assert.equal(Number(firstProductPart.style?.height), 818);
   assert.equal(secondProductPart.position.y, 842);
 });
+
+test("normalizeMeasuredDiagramLayout preserves persisted-sidecar composition instead of repacking from seed", () => {
+  const result = normalizeMeasuredDiagramLayout(
+    [
+      createProductPartNode({
+        id: "product-part:project-manager-ui",
+        y: 0,
+        height: 260,
+      }),
+      {
+        ...createClusterNode(),
+        position: { x: 24, y: 180 },
+      },
+      createModuleNode({
+        id: "step-navigator",
+        y: 140,
+        height: 180,
+        parentId: "cluster:workflow-control",
+      }),
+      createModuleNode({
+        id: "action-panel",
+        y: 360,
+        height: 170,
+        parentId: "cluster:workflow-control",
+      }),
+      createModuleNode({
+        id: "core-client",
+        y: 720,
+        height: 150,
+        parentId: "product-part:project-manager-ui",
+      }),
+    ],
+    "persisted-sidecar"
+  );
+
+  const clusterNode = result.find((node) => node.id === "cluster:workflow-control");
+  const standaloneNode = result.find((node) => node.id === "core-client");
+  const productPartNode = result.find(
+    (node) => node.id === "product-part:project-manager-ui"
+  );
+
+  assert.notEqual(clusterNode, undefined);
+  assert.notEqual(standaloneNode, undefined);
+  assert.notEqual(productPartNode, undefined);
+  if (!clusterNode || !standaloneNode || !productPartNode) {
+    return;
+  }
+
+  assert.equal(clusterNode.position.y, 180);
+  assert.equal(standaloneNode.position.y, 738);
+  assert.equal(Number(clusterNode.style?.height), 554);
+  assert.equal(Number(productPartNode.style?.height), 912);
+});
