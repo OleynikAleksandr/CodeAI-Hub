@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_ModuleShadowVisualBottom_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
@@ -50,8 +50,8 @@
 13. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture module shadow visual-bottom version bump`
 14. [DONE] Git Commit: `build(release): capture module shadow visual-bottom version bump` (hash: `5dbf5c623`)
 15. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package module shadow visual-bottom release`
-16. [TODO] Git Commit: `build(release): package module shadow visual-bottom release` (hash: TBD)
+16. [DONE] Git Commit: `build(release): package module shadow visual-bottom release` (hash: `58dfef644`)
 
 ### Stream: Closeout
-17. [IN_PROGRESS] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-module-shadow-visual-bottom.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive module shadow visual-bottom scope`
+17. [DONE] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-module-shadow-visual-bottom.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive module shadow visual-bottom scope`
 18. [TODO] Git Commit: `docs(closeout): archive module shadow visual-bottom scope` (hash: TBD)

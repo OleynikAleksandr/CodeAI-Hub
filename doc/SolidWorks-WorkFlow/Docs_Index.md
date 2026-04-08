@@ -61,7 +61,7 @@
 - Остальные legacy-path redirect notes в `Contracts/` сохранены только ради старых ссылок из session reports / archived TODO и не используются как source of truth.
 
 ### Plans (pre-implementation / non-SSOT)
-- `Plans/DiagramModules_ModuleShadowVisualBottom_Architecture.md` — active corrective scope after release `1.1.913`; tightens shared module visual-bottom bounds so container resize accounts for the real lower card shadow instead of only measured border-box height.
+- `Plans/Archive/DiagramModules_ModuleShadowVisualBottom_Architecture.md` — completed corrective scope after release `1.1.913`; tightened shared module visual-bottom bounds to include the real lower card shadow in both autolayout and manual owner-resize math, then shipped release `1.1.914`.
 - `Plans/Archive/ProjectManager_ReleaseRebuild_1.1.913_Architecture.md` — completed release-only scope that rebuilt Project Manager and the full bundle under version `1.1.913` after the user reported that local update did not pick up release `1.1.912`.
 - `Plans/README.md` — правила жизненного цикла planning-доков.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.

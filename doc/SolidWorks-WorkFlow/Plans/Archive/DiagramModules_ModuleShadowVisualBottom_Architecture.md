@@ -1,6 +1,6 @@
 # Diagram Modules — Module Shadow Visual Bottom Architecture
 
-**Status:** Approved for execution
+**Status:** Completed and archived after release `1.1.914`
 **Date:** 2026-04-08
 **Owner:** Oleksandr + Codex
 **Scope:** corrective scope after release `1.1.913`
