@@ -37,6 +37,7 @@ const sameMeasuredNodeLayout = (
   && left.height === right.height
   && left.measured?.width === right.measured?.width
   && left.measured?.height === right.measured?.height
+  && left.measured?.bodyStartY === right.measured?.bodyStartY
   && getNumericStyleMetric(left, "width") === getNumericStyleMetric(right, "width")
   && getNumericStyleMetric(left, "height") === getNumericStyleMetric(right, "height")
   && getNumericStyleMetric(left, "minHeight") === getNumericStyleMetric(right, "minHeight");

@@ -34,6 +34,7 @@ const createProductPartNode = (params: {
   position: { x: 0, y: params.y },
   width: 720,
   height: params.height,
+  measured: { width: 720, height: params.height, bodyStartY: 140 },
   style: { width: 720, height: params.height },
   data: {
     stage: "diagram_modules",
@@ -54,6 +55,7 @@ const createClusterNode = (): DiagramFlowNode => ({
   parentId: "product-part:project-manager-ui",
   width: 288,
   height: 260,
+  measured: { width: 288, height: 260, bodyStartY: 110 },
   style: { width: 288, height: 260 },
   data: {
     stage: "diagram_modules",
@@ -97,7 +99,7 @@ const createModuleNode = (params: {
   },
 });
 
-test("normalizeMeasuredDiagramLayout pushes overlapping cluster and standalone children downward using measured heights", () => {
+test("normalizeMeasuredDiagramLayout rebuilds cluster and product-part layout from measured body starts and child heights", () => {
   const result = normalizeMeasuredDiagramLayout([
     createProductPartNode({ id: "product-part:project-manager-ui", y: 0, height: 260 }),
     createClusterNode(),
@@ -134,13 +136,18 @@ test("normalizeMeasuredDiagramLayout pushes overlapping cluster and standalone c
     return;
   }
 
-  assert.equal(actionPanel.position.y, 270);
-  assert.equal(Number(clusterNode.style?.height), 452);
-  assert.equal(standaloneNode.position.y, 566);
-  assert.equal(Number(productPartNode.style?.height), 728);
+  assert.equal(clusterNode.position.y, 140);
+  assert.equal(actionPanel.position.y, 294);
+  assert.equal(Number(clusterNode.style?.height), 476);
+  assert.equal(standaloneNode.position.y, 620);
+  assert.equal(Number(productPartNode.style?.height), 782);
   assert.equal(
     standaloneNode.position.y - (clusterNode.position.y + Number(clusterNode.style?.height)),
     MEASURED_LAYOUT_MIN_SAFE_GAP
+  );
+  assert.equal(
+    result.find((node) => node.id === "step-navigator")?.position.y,
+    110
   );
 });
 
@@ -182,6 +189,6 @@ test("normalizeMeasuredDiagramLayout keeps top-level product parts separated whe
     return;
   }
 
-  assert.equal(Number(firstProductPart.style?.height), 728);
-  assert.equal(secondProductPart.position.y, 752);
+  assert.equal(Number(firstProductPart.style?.height), 782);
+  assert.equal(secondProductPart.position.y, 806);
 });

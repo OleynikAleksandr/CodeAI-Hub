@@ -38,12 +38,12 @@
 
 ### Stream: Measurement Contract Regression Evidence
 1. [DONE] Обновить source-level regression coverage для ownership renderer и measurement bridge contract, чтобы новый measured ownership header path нельзя было потерять без тестового падения; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; ожидаемый commit message: `test(diagram): cover measured ownership measurement contract`
-2. [TODO] Git Commit: `test(diagram): cover measured ownership measurement contract` (hash: TBD)
+2. [DONE] Git Commit: `test(diagram): cover measured ownership measurement contract` (hash: `3dc4fb952`)
 
 ## Phase 2 — Measured-First Ownership Reflow (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Reflow Core
-1. [TODO] Перестроить measured layout pass как bottom-up ownership reflow от реальных `Module` heights и measured `bodyStartY`, чтобы `Cluster` и `Product Part` вычислялись из finalized children, а не из guessed heights; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): rebuild ownership layout from measured children`
+1. [DONE] Перестроить measured layout pass как bottom-up ownership reflow от реальных `Module` heights и measured `bodyStartY`, чтобы `Cluster` и `Product Part` вычислялись из finalized children, а не из guessed heights; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): rebuild ownership layout from measured children`
 2. [TODO] Git Commit: `fix(diagram): rebuild ownership layout from measured children` (hash: TBD)
 
 ### Stream: Shell Snapshot And Runtime Evidence
