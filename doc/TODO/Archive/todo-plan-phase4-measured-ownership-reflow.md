@@ -70,8 +70,8 @@
 
 ### Stream: Planning Doc Closeout
 1. [DONE] Перенести завершённый measured ownership reflow planning-doc в archive, обновить `Docs_Index.md` и перевести `todo-plan.md` на архивный planning source; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredOwnershipReflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(closeout): archive measured ownership reflow planning docs`
-2. [TODO] Git Commit: `docs(closeout): archive measured ownership reflow planning docs` (hash: TBD)
+2. [DONE] Git Commit: `docs(closeout): archive measured ownership reflow planning docs` (hash: `929e1762b`)
 
 ### Stream: Execution Plan Closeout
-1. [TODO] Перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-measured-ownership-reflow.md`; ожидаемый commit message: `docs(closeout): archive measured ownership reflow execution plan`
-2. [TODO] Git Commit: `docs(closeout): archive measured ownership reflow execution plan` (hash: TBD)
+1. [DONE] Перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-measured-ownership-reflow.md`; ожидаемый commit message: `docs(closeout): archive measured ownership reflow execution plan`
+2. [IN_PROGRESS] Git Commit: `docs(closeout): archive measured ownership reflow execution plan` (hash: TBD)
