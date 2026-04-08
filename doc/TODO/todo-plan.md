@@ -26,13 +26,13 @@
 ## Phase 0 — Scope Opening And Planning Baseline (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Planning Scope Opening
-1. [IN_PROGRESS] Зафиксировать новый corrective scope в planning/navigation docs и открыть execution baseline для текущего цикла; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(plan): open diagram autolayout boundary fix scope`
-2. [TODO] Git Commit: `docs(plan): open diagram autolayout boundary fix scope` (hash: TBD)
+1. [DONE] Зафиксировать новый corrective scope в planning/navigation docs и открыть execution baseline для текущего цикла; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Autolayout_HeightMetrics_And_SidecarFingerprint_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(plan): open diagram autolayout boundary fix scope`
+2. [DONE] Git Commit: `docs(plan): open diagram autolayout boundary fix scope` (hash: `2b44d6626`)
 
 ## Phase 1 — Initial Layout Metric Hardening (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Height Budget Contract
-1. [TODO] Пересчитать height budget для `Product Part` / `Cluster` / `Module`, исправить budget для purpose text и зафиксировать стабильные header/body boundaries без overlap; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`; ожидаемый commit message: `fix(diagram): harden initial layout height metrics`
+1. [IN_PROGRESS] Пересчитать height budget для `Product Part` / `Cluster` / `Module`, исправить budget для purpose text и зафиксировать стабильные header/body boundaries без overlap; при необходимости синхронизировать fallout assertion для shortest-column standalone wrap; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`; ожидаемый commit message: `fix(diagram): harden initial layout height metrics`
 2. [TODO] Git Commit: `fix(diagram): harden initial layout height metrics` (hash: TBD)
 
 ### Stream: Flow Sidecar Fingerprint

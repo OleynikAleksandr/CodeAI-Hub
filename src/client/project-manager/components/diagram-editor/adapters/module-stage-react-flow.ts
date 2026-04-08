@@ -19,11 +19,11 @@ const LH11 = 14, LH12 = 15, LH13 = 16, LH14 = 17, LH15 = 18; // Math.ceil(fontSi
 const LH12_135 = 17; // Math.ceil(12 * 1.35) — module responsibility lineHeight:1.35
 // Module card: nodeCardStyle padding "12px 14px", content width 212px
 const MC_PAD = 12, MC_CONTENT_W = MODULE_CARD_WIDTH - 28;
-const MC_TITLE_CPL = Math.floor(MC_CONTENT_W / 8.5); // bold 14px
-const MC_RESP_CPL = Math.floor(MC_CONTENT_W / 7.2);  // regular 12px
+const MC_TITLE_CPL = Math.floor(MC_CONTENT_W / 9); // bold 14px, conservative for Space Grotesk + Cyrillic
+const MC_RESP_CPL = Math.floor(MC_CONTENT_W / 8.4);  // regular 12px, conservative to avoid dense localized overlap
 // Cluster: clusterCardStyle padding "14px 14px 18px", containerHeaderStyle gap:4
 const CL_PAD_TOP = 14, CL_GAP = 4, CL_CONTENT_W = CLUSTER_X_STEP - CLUSTER_PADDING_X * 2 - 28;
-const CL_TITLE_CPL = Math.floor(CL_CONTENT_W / 7.8), CL_PURPOSE_CPL = Math.floor(CL_CONTENT_W / 6.6);
+const CL_TITLE_CPL = Math.floor(CL_CONTENT_W / 8.4), CL_PURPOSE_CPL = Math.floor(CL_CONTENT_W / 7.2);
 const CL_PURPOSE_LH = 16; // Math.ceil(11 * 1.4) — purposeTextStyle lineHeight:1.4
 // Product part: productPartCardStyle padding "18px 18px 22px"
 const PP_CARD_PAD_TOP = 18, PP_TITLE_CPL = 30, PP_PURPOSE_PAD = 10;
@@ -46,10 +46,10 @@ const getProductPartSummaryHeight = (title: string): number =>
   LH11 + 4 + estimateTextLines(title, PP_TITLE_CPL) * LH15 + 4 + LH12;
 // Purpose panel: padding + caption + mt6 + text + padding
 const getPurposePanelHeight = (purpose: string, charsPerLine: number): number =>
-  PP_PURPOSE_PAD + LH11 + 6 + estimateTextLines(purpose, charsPerLine) * LH11 + PP_PURPOSE_PAD;
+  PP_PURPOSE_PAD + LH11 + 6 + estimateTextLines(purpose, charsPerLine) * CL_PURPOSE_LH + PP_PURPOSE_PAD;
 const getPurposeCharsPerLine = (productPartWidth: number): number => {
   const purposePanelWidth = Math.max(240, productPartWidth - 220);
-  return Math.max(20, Math.floor((purposePanelWidth - 28) / 6.6));
+  return Math.max(20, Math.floor((purposePanelWidth - 28) / 7));
 };
 // Product part header: card padding-top + max(summary, purpose) + transition gap
 const getProductPartHeaderHeight = (productPart: Pick<ProductPartEntity, "title" | "purpose">, productPartWidth: number): number =>

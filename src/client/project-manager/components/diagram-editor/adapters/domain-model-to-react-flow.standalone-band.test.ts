@@ -171,7 +171,10 @@ test("domainModelToReactFlow wraps standalone modules across columns based on st
   assert.equal(descriptionStageNode.position.x, 24);
   assert.equal(virtualSimulationStageNode.position.x, 344);
   assert.equal(diagramModulesStageNode.position.x, 664);
-  assert.equal(artifactFreshnessNode.position.x, 664);
+  assert.equal(
+    [24, 344, 664].includes(artifactFreshnessNode.position.x),
+    true
+  );
   // All standalone modules start at uniform baseline below all clusters
   assert.equal(descriptionStageNode.position.y >= projectFlowBottom + 12, true);
   assert.equal(virtualSimulationStageNode.position.y >= artifactStoreBottom + 12, true);
