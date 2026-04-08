@@ -49,8 +49,8 @@
 
 ### Stream: SSOT And Release Docs
 13. [DONE] Синхронизировать Diagram Modules SSOT и planning-doc с новым measured-first initial autolayout contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured initial autolayout contract`
-14. [TODO] Git Commit: `docs(diagram): record measured initial autolayout contract` (hash: TBD)
-15. [TODO] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare initial autolayout packer release`
+14. [DONE] Git Commit: `docs(diagram): record measured initial autolayout contract` (hash: c9bc83095)
+15. [DONE] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare initial autolayout packer release`
 16. [TODO] Git Commit: `docs(release): prepare initial autolayout packer release` (hash: TBD)
 
 ### Stream: Release Build

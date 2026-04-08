@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.911] - 2026-04-08
+### Fixed
+- **First-open `Diagram Modules` autolayout now rebuilds ownership from measured hierarchy instead of repairing heuristic carry-over**: when no `module-map.flow.json` is applied, the measured path repacks `Module` cards inside `Cluster`, then repacks finalized `Cluster` boxes and standalone modules inside `Product Part`, and repeats until the ownership geometry reaches a stable fixed point.
+- **The diagram shell now distinguishes seed autolayout from persisted sidecar composition explicitly**: projections carry a `layoutSource` flag, so the measured pipeline can apply the stronger packer only for initial layout and avoid repacking saved manual layouts from scratch.
+- **Persisted `module-map.flow.json` layouts keep the manual composition from `1.1.910` while still resizing ownership safely**: the conservative preserve-and-normalize branch remains active for sidecar-backed diagrams, so the user no longer trades away manual placement stability to get a safe first-open autolayout.
+
 ## [1.1.910] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` now shares one visual-bounds engine between first-open autolayout and manual drag**: the measured post-render path and the shell drag-resize path both derive `Cluster` / `Product Part` heights from the deepest direct child visual bottom, eliminating the split contract where manual moves could still leave lower-boundary overlaps.
