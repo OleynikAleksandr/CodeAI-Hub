@@ -42,11 +42,11 @@
 
 ### Stream: Release docs
 7. [DONE] Подготовить release docs для rollback rebuild `1.1.916`; scope: `README.md`, `CHANGELOG.md`; commit: `docs(release): prepare rollback rebuild release`
-8. [IN_PROGRESS] Git Commit: `docs(release): prepare rollback rebuild release` (hash: TBD)
+8. [DONE] Git Commit: `docs(release): prepare rollback rebuild release` (hash: `f82d278e5`)
 
 ### Stream: Verification
-9. [TODO] Прогнать таргетные проверки rollback-базы и зафиксировать статус в плане; scope: repo verification (`npx tsx --test ...`, `npm run build:webview`, `npm run typecheck:webview`) + `doc/TODO/todo-plan.md`; commit: `build(release): verify rollback rebuild prerequisites`
-10. [TODO] Git Commit: `build(release): verify rollback rebuild prerequisites` (hash: TBD)
+9. [DONE] Прогнать таргетные проверки rollback-базы и зафиксировать статус в плане; scope: repo verification (`npx tsx --test ...`, `npm run build:webview`, `npm run typecheck:webview`) + `doc/TODO/todo-plan.md`; commit: `build(release): verify rollback rebuild prerequisites`
+10. [IN_PROGRESS] Git Commit: `build(release): verify rollback rebuild prerequisites` (hash: TBD)
 
 ### Stream: Release build
 11. [TODO] Выполнить `./scripts/build-all.sh`, принять version bump и обновить статус плана; scope: versioned release files + `doc/TODO/todo-plan.md`; commit: `build(release): capture rollback rebuild version bump`
