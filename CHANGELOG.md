@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.915] - 2026-04-08
+### Fixed
+- **`Diagram Modules` first-open autolayout now waits for stabilized live measurement instead of trusting the first DOM snapshot**: the measurement bridge re-emits geometry after the next animation frame, after late `document.fonts.ready`, and after real node/header resize events, so ownership containers can resize from the final card heights rather than from an early under-measured pass.
+- **Bridge dedupe now includes runtime owner style bounds as part of the measurement signature**: `Cluster` and `Product Part` reflow passes are no longer dropped just because the initial measurement arrived before the owner boxes completed their first resize cycle.
+
 ## [1.1.914] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` now reserves the real lower shadow tail of module cards before ownership containers resize**: shared visual bounds no longer stop at the DOM measured border-box height, so lower `Cluster` / `Product Part` borders follow the visible card bottom instead of visually cutting through the last module.
