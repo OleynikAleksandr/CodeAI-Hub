@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
@@ -29,7 +29,7 @@
 
 ## Phase 1 — Diagram Modules rollback rebuild after 1.1.915 (owner: Codex, updated: 2026-04-08)
 ### Stream: Scope bootstrap
-1. [DONE] Открыть rollback rebuild scope и зарегистрировать его в навигации; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs(plan): open rollback rebuild scope`
+1. [DONE] Открыть rollback rebuild scope и зарегистрировать его в навигации; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-diagram-modules-live-measurement-rollback-rebuild.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs(plan): open rollback rebuild scope`
 2. [DONE] Git Commit: `docs(plan): open rollback rebuild scope` (hash: `9ba2ed370`)
 
 ### Stream: Code rollback
@@ -52,8 +52,8 @@
 11. [DONE] Выполнить `./scripts/build-all.sh`, принять version bump и обновить статус плана; scope: versioned release files + `doc/TODO/todo-plan.md`; commit: `build(release): capture rollback rebuild version bump`
 12. [DONE] Git Commit: `build(release): capture rollback rebuild version bump` (hash: `20cc4bb73`)
 13. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить артефакты и отметить completion в плане; scope: release artifacts + `doc/TODO/todo-plan.md`; commit: `build(release): package rollback rebuild release`
-14. [IN_PROGRESS] Git Commit: `build(release): package rollback rebuild release` (hash: TBD)
+14. [DONE] Git Commit: `build(release): package rollback rebuild release` (hash: `1e2ceb11f`)
 
 ### Stream: Closeout
-15. [TODO] Заархивировать planning-doc и execution plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs(closeout): archive rollback rebuild scope`
-16. [TODO] Git Commit: `docs(closeout): archive rollback rebuild scope` (hash: TBD)
+15. [DONE] Заархивировать planning-doc и execution plan, обновить `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_LiveMeasurement_Rollback_Rebuild_Architecture.md`, `doc/TODO/Archive/todo-plan-phase1-diagram-modules-live-measurement-rollback-rebuild.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs(closeout): archive rollback rebuild scope`
+16. [IN_PROGRESS] Git Commit: `docs(closeout): archive rollback rebuild scope` (hash: TBD)
