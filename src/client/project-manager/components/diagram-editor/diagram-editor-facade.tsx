@@ -168,17 +168,15 @@ const ProductPartNode = ({
 }) => {
   const onContextMenuCb = useContext(ContextMenuContext);
 
-  // Standalone modules are grouped into ONE grid slot so they stack
-  // vertically inside a single column instead of each taking a cell.
   const slots: SlotDescriptor[] = [
     ...data.clusters.map((c) => ({
       kind: "cluster" as const,
       moduleCount: c.modules.length,
       moduleColumns: c.layoutParams.moduleColumns,
     })),
-    ...(data.standaloneModules.length > 0
-      ? [{ kind: "standaloneModule" as const }]
-      : []),
+    ...data.standaloneModules.map(() => ({
+      kind: "standaloneModule" as const,
+    })),
   ];
   const columns = resolveProductPartColumns(slots, data.layoutParams);
 
@@ -224,13 +222,9 @@ const ProductPartNode = ({
         {data.clusters.map((c) => (
           <ClusterCard data={c} key={c.clusterId} />
         ))}
-        {data.standaloneModules.length > 0 && (
-          <div style={{ display: "grid", gap: 12, alignContent: "start" }}>
-            {data.standaloneModules.map((m) => (
-              <ModuleCard data={m} key={m.moduleId} />
-            ))}
-          </div>
-        )}
+        {data.standaloneModules.map((m) => (
+          <ModuleCard data={m} key={m.moduleId} />
+        ))}
       </div>
     </div>
   );
