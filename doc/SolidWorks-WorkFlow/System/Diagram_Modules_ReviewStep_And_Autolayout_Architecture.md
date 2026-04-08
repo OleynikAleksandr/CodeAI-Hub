@@ -455,3 +455,35 @@ Root cause зафиксирован явно:
 - persisted-sidecar path keeps the conservative preserve contract and does not repack the saved composition from scratch;
 - seed autolayout now runs through a dedicated pure hierarchical packer that settles `Cluster` and `Product Part` bounds from measured direct children;
 - regression coverage explicitly proves both sides of the split: safe initial autolayout and preserved sidecar-backed composition.
+
+### 11.11. Zoom-safe body-start measurement plus overlap-aware packing accepted on 2026-04-08
+
+Следующий пользовательский ретест показал, что одного ownership packer-а недостаточно:
+- после устранения нижних пересечений верхние границы `Module` cards всё ещё могли залезать в header text `Product Part` и `Cluster`;
+- визуально это выглядело как корректный lower clearance, но сломанный top clearance;
+- значит в runtime одновременно существовали два независимых дефекта: top-boundary measurement и bottom-boundary packing.
+
+Критический root cause зафиксирован так:
+- React Flow рендерит canvas под viewport zoom через CSS transform;
+- bridge до этого corrective slice брал `bodyStartY` через `getBoundingClientRect().height`, то есть в viewport/screen pixels;
+- autolayout solver затем интерпретировал это значение как flow-coordinate height, из-за чего при zoom `< 1` header boundary становилась заниженной и child nodes стартовали слишком высоко.
+
+Принятый контракт после этого pass:
+1. top clearance ownership containers должен строиться только от **unscaled** measured header boundary;
+2. bridge обязан переводить measured header DOM height обратно в flow coordinates через текущий `reactFlow.getZoom()`;
+3. fixed renderer offset (`data-diagram-body-start-offset`) остаётся в flow coordinates и не масштабируется повторно;
+4. после этого seed-autolayout packer обязан раскладывать direct children не по exact `x` column, а по **horizontal bounds overlap**;
+5. итоговый safe layout для first-open path теперь есть комбинация двух инвариантов:
+   - `top`: zoom-safe `bodyStartY`
+   - `bottom`: overlap-aware sibling packing + resize from deepest direct child bottom.
+
+Практически это означает:
+- верхняя граница module placement больше не зависит от viewport zoom;
+- wide `Cluster` inside `Product Part` теперь конфликтует со standalone `Module`, даже если у них разные seed `x`;
+- first-open layout больше не может считать, что два sibling box-а независимы только потому, что у них разные column keys.
+
+Новый evidence set для combined contract:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`
+- `npx tsx --test --test-name-pattern 'measurement bridge|diagram-editor-shell is now user-owned layout only|diagram stage scaffold keeps the visual shell stretched to full panel height|diagram modules panel persists manual node positions without layout profiles|diagram-editor-facade keeps React Flow diagnostics widgets' src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`
+- `npm run build:webview`
+- `npm run typecheck:webview`
