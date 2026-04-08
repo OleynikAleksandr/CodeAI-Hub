@@ -41,12 +41,12 @@
 
 ### Stream: Shell Measured Normalization Apply
 1. [DONE] Применить measured normalization pass в `diagram-editor-shell.tsx`, чтобы first-open layout автоматически перепаковывался по фактическим box sizes ещё до ручного drag workflow; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`; ожидаемый commit message: `fix(diagram): normalize measured diagram layout in shell`
-2. [TODO] Git Commit: `fix(diagram): normalize measured diagram layout in shell` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram): normalize measured diagram layout in shell` (hash: `14badd074`)
 
 ## Phase 2 — Sidecar Invalidation And Regression Evidence (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Flow Sidecar Metric Bump
-1. [TODO] Повысить layout metric version для `module-map.flow.json`, чтобы pre-measured geometry не применялась поверх нового measured contract; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale sidecars for measured layout`
+1. [DONE] Повысить layout metric version для `module-map.flow.json`, чтобы pre-measured geometry не применялась поверх нового measured contract; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale sidecars for measured layout`
 2. [TODO] Git Commit: `fix(diagram): invalidate stale sidecars for measured layout` (hash: TBD)
 
 ### Stream: Verification Evidence And SSOT Sync

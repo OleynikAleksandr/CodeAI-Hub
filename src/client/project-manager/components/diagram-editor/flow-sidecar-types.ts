@@ -1,6 +1,6 @@
 import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
 
-export const FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 1;
+export const FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 2;
 
 export type FlowSidecarViewport = {
   readonly x: number;
