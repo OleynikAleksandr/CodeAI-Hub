@@ -63,14 +63,18 @@
 1. [DONE] Запустить `./scripts/build-all.sh`, принять version/manifest bump для следующего релиза и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture measured diagram gap fix version bump`
 2. [DONE] Git Commit: `build(release): capture measured diagram gap fix version bump` (hash: `d0f0574ce`)
 3. [DONE] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для measured gap scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package measured diagram gap fix release`
-4. [TODO] Git Commit: `build(release): package measured diagram gap fix release` (hash: TBD)
+4. [DONE] Git Commit: `build(release): package measured diagram gap fix release` (hash: `aef93540b`)
 
 ## Phase 4 — Planning And Execution Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)
 
+### Stream: Closeout Plan Re-Slicing
+1. [DONE] Переписать post-release closeout на отдельные микрозадачи `≤3 файлов`, чтобы archive/update шаги не перескакивали обязательные commit-points и real-time tracking в `todo-plan.md`; scope: `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(plan): split measured gap release closeout steps`
+2. [TODO] Git Commit: `docs(plan): split measured gap release closeout steps` (hash: TBD)
+
 ### Stream: Planning Doc Closeout
-1. [TODO] Перенести завершённый measured-gap planning-doc в archive и синхронизировать `Docs_Index.md` после успешной release packaging; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(closeout): archive measured diagram gap planning docs`
+1. [TODO] Перенести завершённый measured-gap planning-doc в archive, обновить `Docs_Index.md` и перевести `todo-plan.md` на архивный planning source; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(closeout): archive measured diagram gap planning docs`
 2. [TODO] Git Commit: `docs(closeout): archive measured diagram gap planning docs` (hash: TBD)
 
 ### Stream: Execution Plan Closeout
-1. [TODO] Обновить `doc/TODO/todo-plan.md`, перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-measured-diagram-gap-fix.md`; ожидаемый commit message: `docs(closeout): archive measured diagram gap execution plan`
+1. [TODO] Перенести завершённый execution plan в `doc/TODO/Archive/` и оставить активный path пустым до нового scope; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase4-measured-diagram-gap-fix.md`; ожидаемый commit message: `docs(closeout): archive measured diagram gap execution plan`
 2. [TODO] Git Commit: `docs(closeout): archive measured diagram gap execution plan` (hash: TBD)
