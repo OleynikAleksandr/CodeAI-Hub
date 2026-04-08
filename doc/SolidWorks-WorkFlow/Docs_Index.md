@@ -61,7 +61,7 @@
 - Остальные legacy-path redirect notes в `Contracts/` сохранены только ради старых ссылок из session reports / archived TODO и не используются как source of truth.
 
 ### Plans (pre-implementation / non-SSOT)
-- `Plans/ProjectManager_ReleaseRebuild_1.1.913_Architecture.md` — active release-only scope that rebuilds Project Manager and the full bundle with a fresh version after the user reported that local update did not pick up release `1.1.912`.
+- `Plans/Archive/ProjectManager_ReleaseRebuild_1.1.913_Architecture.md` — completed release-only scope that rebuilt Project Manager and the full bundle under version `1.1.913` after the user reported that local update did not pick up release `1.1.912`.
 - `Plans/README.md` — правила жизненного цикла planning-доков.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Diagram Modules` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
