@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.916
-- **Release `1.1.916` rolls `Diagram Modules` back to the stable measurement-bridge baseline from `1.1.914`**: the short-lived stabilized live measurement cycle from `1.1.915` is removed instead of being extended further.
-- **The rollback explicitly drops the added live hooks from `1.1.915`**: `ResizeObserver`, post-font re-measure through `document.fonts.ready`, and window-resize rescheduling are no longer part of the shipped measurement bridge contract.
-- **This rebuild is meant to restore the pre-`1.1.915` manual-layout stability while keeping autolayout investigation open**: the package is intentionally a clean rollback baseline for the next corrective wave, not a claim that the `Diagram Modules` autolayout defect is finally solved.
+## Current Release — v1.1.917
+- **`Diagram Modules` layout has been rebuilt from scratch with CSS Grid**: the iterative settle-loop layout engine (~1350 lines) is deleted. Browser-native CSS Grid now computes all sizes from actual rendered text — zero height estimation, zero multi-pass normalization.
+- **Right-click context menu** for ProductPart (columns, aspect ratio) and Cluster (module columns) layout overrides.
+- **Edges between modules removed** from the diagram canvas.
 
 Previous releases (summary): `1.1.800–1.1.915` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the heuristic-only Diagram Modules boundary wave in `1.1.907`, the measured sibling-gap repair wave in `1.1.908`, the measured ownership reflow wave in `1.1.909`, the shared visual-bounds and manual-drag stabilization wave in `1.1.910`, the initial hierarchical packer split in `1.1.911`, the overlap-aware initial-autolayout release in `1.1.912`, the rebuild-only package refresh in `1.1.913`, the shadow-tail visual-bottom wave in `1.1.914`, the short-lived live-measurement stabilization wave in `1.1.915`, and earlier localization/provider/release stabilization waves.
 

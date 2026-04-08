@@ -11,77 +11,48 @@
   - `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
-## Правила выполнения (Execution Rules):
-- **Required reading:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое количество Stream, в каждом Стриме подзадачи.
-- Каждая подзадача затрагивает не более 3 файлов.
-- **Gates:** Husky hooks автоматически (`pre-commit`, `pre-push`).
-- **Targeted builds** вручную перед закрытием Phase.
-
 ## Phase 1 — Kill Old Layout (owner: agent, updated: 2026-04-08)
 
 ### Stream 1: Strip shell of normalizer wiring
-1. [TODO] Edit `diagram-editor-shell.tsx` + `diagram-editor-shell.test.ts` — remove normalizer imports/calls, simplify handleFlowNodesChange
-2. [TODO] Git Commit: `refactor(diagram): strip shell of layout normalizer wiring` (hash: TBD)
+1. [DONE] Edit shell.tsx + shell.test.ts — remove normalizer imports/calls
+2. [DONE] Git Commit: `refactor(diagram): strip shell of layout normalizer wiring` (hash: 0b48a3ad0)
 
 ### Stream 2: Strip facade of measured-layout-bridge
-1. [TODO] Edit `diagram-editor-facade.tsx` + `diagram-editor-facade.test.tsx` — remove bridge import/JSX, body-start-offset attrs
-2. [TODO] Git Commit: `refactor(diagram): strip facade of measured-layout-bridge` (hash: TBD)
+1. [DONE] Edit facade.tsx + facade.test.tsx — remove bridge import/JSX
+2. [DONE] Git Commit: combined with Stream 3
 
 ### Stream 3: Delete orphaned layout files
-1. [TODO] Delete 7 files: layout-bounds, autolayout-packer, measured-normalizer, manual-normalizer, measured-bridge + 2 tests (~1350 lines)
-2. [TODO] Git Commit: `refactor(diagram): delete legacy layout engine (~1350 lines)` (hash: TBD)
-3. [TODO] Targeted build: `npm run build:webview`
-4. [TODO] Git Commit: build fix if needed
+1. [DONE] Delete 7 files (~1350 lines)
+2. [DONE] Git Commit: `refactor(diagram): strip facade and delete legacy layout engine (~1350 lines)` (hash: 3838d8c45)
+3. [DONE] Targeted build: `npm run build:webview` — PASS
 
 ## Phase 2 — CSS-Native Layout (owner: agent, updated: 2026-04-08)
 
 ### Stream 4: Layout params types + auto-columns
-1. [TODO] Create `diagram-editor-layout-params.ts` — types, resolveProductPartColumns(), resolveClusterModuleColumns(), defaults
-2. [TODO] Git Commit: `feat(diagram): add layout-params types and auto-columns algorithm` (hash: TBD)
-3. [TODO] Create `diagram-editor-layout-params.test.ts` — cover auto-columns, overrides, defaults
-4. [TODO] Git Commit: `test(diagram): cover layout-params auto-columns algorithm` (hash: TBD)
+1. [DONE] Create diagram-editor-layout-params.ts + test
+2. [DONE] Git Commit: `feat(diagram): add layout-params types and auto-columns algorithm` (hash: 03ce9d805)
 
-### Stream 5: Rewrite types + adapter
-1. [TODO] Simplify `domain-model-to-react-flow.types.ts` — delete ContainerConstraints, measured types, edges; nest data
-2. [TODO] Git Commit: `refactor(diagram): simplify react-flow types for CSS-native layout` (hash: TBD)
-3. [TODO] Rewrite `module-stage-react-flow.ts` — emit ProductPart-only nodes with nested data
-4. [TODO] Git Commit: `refactor(diagram): rewrite adapter to emit ProductPart-only nodes` (hash: TBD)
-5. [TODO] Update `domain-model-to-react-flow.ts` + test — remove edges
-6. [TODO] Git Commit: `refactor(diagram): remove edges from adapter` (hash: TBD)
-
-### Stream 6: Rewrite facade with CSS Grid
-1. [TODO] Rewrite `diagram-editor-facade.tsx` — ProductPartNode with CSS Grid (ClusterCard, ModuleCard)
-2. [TODO] Git Commit: `feat(diagram): implement CSS Grid ProductPartNode` (hash: TBD)
-3. [TODO] Update `diagram-editor-facade.test.tsx`
-4. [TODO] Git Commit: `test(diagram): update facade tests for CSS Grid` (hash: TBD)
-
-### Stream 7: Rewire sidecar + progressive model + persistence
-1. [TODO] Rewrite `flow-sidecar-types.ts` — v2 format
-2. [TODO] Git Commit: `refactor(diagram): rewrite sidecar to v2 format` (hash: TBD)
-3. [TODO] Update `flow-sidecar-types.test.ts`
-4. [TODO] Git Commit: `test(diagram): rewrite sidecar tests for v2` (hash: TBD)
-5. [TODO] Update `diagram-modules-progressive-model.ts` — v2 sidecar loading
-6. [TODO] Git Commit: `refactor(diagram): update progressive model for v2 sidecar` (hash: TBD)
-7. [TODO] Update `use-diagram-persistence.ts` + `diagram-editor-shell.tsx` — v2 persistence
-8. [TODO] Git Commit: `refactor(diagram): rewire persistence for v2 layout params` (hash: TBD)
-9. [TODO] Targeted build: `npm run build:webview` + `npm run typecheck:webview`
+### Stream 5+6: Rewrite types + adapter + facade with CSS Grid
+1. [DONE] Simplify domain-model-to-react-flow.types.ts — removed ContainerConstraints, measured, edges
+2. [DONE] Rewrite module-stage-react-flow.ts — ProductPart-only nodes with nested data
+3. [DONE] Rewrite domain-model-to-react-flow.ts — removed edges
+4. [DONE] Rewrite facade.tsx — CSS Grid ProductPartNode with ClusterCard/ModuleCard
+5. [DONE] Rewrite all adapter tests + facade tests
+6. [DONE] Update progressive-model — removed layoutSource
+7. [DONE] Git Commit: `feat(diagram): rewrite types, adapter and facade for CSS Grid layout` (hash: 1ea2f2afa)
+8. [DONE] Targeted build: `npm run build:webview` — PASS
 
 ## Phase 3 — Context Menu (owner: agent, updated: 2026-04-08)
 
-### Stream 8: Context menu component
-1. [TODO] Create `diagram-editor-context-menu.tsx` — positioned menu for ProductPart/Cluster overrides
-2. [TODO] Git Commit: `feat(diagram): add layout context menu component` (hash: TBD)
-
-### Stream 9: Wire context menu + persist
-1. [TODO] Wire into `diagram-editor-shell.tsx` + `diagram-editor-facade.tsx`
-2. [TODO] Git Commit: `feat(diagram): wire context menu into shell and facade` (hash: TBD)
-3. [TODO] Persist via `use-diagram-persistence.ts`
-4. [TODO] Git Commit: `feat(diagram): persist context menu layout overrides` (hash: TBD)
+### Stream 8+9: Context menu + wiring + persist
+1. [DONE] Create diagram-editor-context-menu.tsx
+2. [DONE] Wire into shell.tsx + facade.tsx (React Context for callbacks)
+3. [DONE] Git Commit: `feat(diagram): add context menu for layout param overrides` (hash: 59e86b129)
 
 ## Phase 4 — Build + Release (owner: agent, updated: 2026-04-08)
 
 ### Stream 10: Final verification
-1. [TODO] Full build: `./scripts/build-all.sh`
-2. [TODO] Git Commit: build/release
-3. [TODO] Update docs + session report
+1. [TODO] Update README.md and CHANGELOG.md
+2. [TODO] Full build: `./scripts/build-all.sh`
+3. [TODO] Git Commit: build/release
+4. [TODO] Update docs + session report

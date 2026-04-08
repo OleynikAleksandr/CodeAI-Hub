@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.917] - 2026-04-08
+### Changed
+- **`Diagram Modules` layout replaced with CSS Grid**: the entire self-written iterative settle-loop layout engine (~1350 lines, 7 files) has been deleted and replaced with browser-native CSS Grid layout inside ProductPart nodes. Clusters and Modules are now rendered as regular React components (not separate React Flow nodes), and all sizing is computed by the browser from actual text content — no more height estimation or multi-pass normalization.
+- **Layout context menu (right-click)**: ProductPart nodes support `Columns` (Auto / 2–5) and `Aspect Ratio` (Landscape / Wide / Square) overrides; Cluster cards support `Module Columns` (Auto / 1–3) overrides. Changes apply instantly via CSS Grid re-render.
+- **Edges between modules removed**: relation edges are no longer rendered on the diagram canvas.
+
 ## [1.1.916] - 2026-04-08
 ### Reverted
 - **`Diagram Modules` measurement bridge now ships again with the pre-`1.1.915` baseline instead of the stabilized live measurement experiment**: the release removes the extra runtime hooks added in `1.1.915`, including `ResizeObserver`, post-font re-measure after `document.fonts.ready`, and window-resize measurement rescheduling.
