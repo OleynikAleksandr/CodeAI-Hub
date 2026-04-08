@@ -32,10 +32,10 @@
 1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session020.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_LiveMeasurement_Stabilization_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session020.md`; expected commit: `docs(plan): open live measurement stabilization scope`
 2. [DONE] Git Commit: `docs(plan): open live measurement stabilization scope` (hash: `d2efeade5`)
 3. [DONE] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register live measurement stabilization scope`
-4. [TODO] Git Commit: `docs(index): register live measurement stabilization scope` (hash: TBD)
+4. [DONE] Git Commit: `docs(index): register live measurement stabilization scope` (hash: `da1ef605e`)
 
 ### Stream: Bridge Stabilization
-5. [TODO] Стабилизировать measurement bridge для поздней DOM-геометрии и синхронизировать bridge regression coverage; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): stabilize live measurement bridge`
+5. [DONE] Стабилизировать measurement bridge для поздней DOM-геометрии и синхронизировать bridge regression coverage; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): stabilize live measurement bridge`
 6. [TODO] Git Commit: `fix(diagram): stabilize live measurement bridge` (hash: TBD)
 
 ### Stream: SSOT And Release Notes

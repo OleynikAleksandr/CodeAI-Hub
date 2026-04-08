@@ -46,10 +46,15 @@ test("diagram-editor measurement bridge carries measured ownership header bounda
   const source = await readFile(MEASURED_BRIDGE_SOURCE_PATH, "utf8");
 
   assert.equal(source.includes("getContainerHeaderElements"), true);
+  assert.equal(source.includes("getFlowNodeElements"), true);
   assert.equal(source.includes("resolveMeasuredBodyStartY"), true);
   assert.equal(source.includes("reactFlow.getZoom()"), true);
   assert.equal(
     source.includes('document.querySelectorAll<HTMLElement>("[data-diagram-container-header-id]")'),
+    true
+  );
+  assert.equal(
+    source.includes('document.querySelectorAll<HTMLElement>(".react-flow__node")'),
     true
   );
   assert.equal(source.includes("diagramBodyStartOffset"), true);
@@ -59,6 +64,10 @@ test("diagram-editor measurement bridge carries measured ownership header bounda
     true
   );
   assert.equal(source.includes("measured?.bodyStartY"), true);
+  assert.equal(source.includes("ResizeObserver"), true);
+  assert.equal(source.includes("window.requestAnimationFrame"), true);
+  assert.equal(source.includes("document.fonts?.ready"), true);
+  assert.equal(source.includes("window.addEventListener(\"resize\", scheduleMeasurement)"), true);
 });
 test("diagram-editor-shell is now user-owned layout only", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
