@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.913] - 2026-04-08
+### Changed
+- **Release `1.1.913` rebuilds the already shipped `1.1.912` baseline without new product-logic changes**: the package was reissued under a fresh version so clients that did not refresh the previous Project Manager delivery can consume a new release identity.
+- **Standalone Project Manager and VSIX artifacts were rebuilt end-to-end**: the standard release pipeline was rerun to publish a fresh `project-manager` tarball and a new extension package on top of the current `main` snapshot.
+
 ## [1.1.912] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` now measures ownership header boundaries in zoom-safe flow coordinates before initial autolayout runs**: the React Flow bridge converts rendered header height back through the current viewport zoom before emitting `bodyStartY`, eliminating the regression where first-open module cards could start inside `Product Part` or `Cluster` header text on fit-scaled diagrams.

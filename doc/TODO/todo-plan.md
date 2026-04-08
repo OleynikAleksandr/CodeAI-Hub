@@ -32,10 +32,10 @@
 1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session018.md` для release-only cycle; scope: `doc/SolidWorks-WorkFlow/Plans/ProjectManager_ReleaseRebuild_1.1.913_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session018.md`; expected commit: `docs(plan): open project manager release rebuild scope`
 2. [DONE] Git Commit: `docs(plan): open project manager release rebuild scope` (hash: `b30107a48`)
 3. [DONE] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register project manager release rebuild scope`
-4. [TODO] Git Commit: `docs(index): register project manager release rebuild scope` (hash: TBD)
+4. [DONE] Git Commit: `docs(index): register project manager release rebuild scope` (hash: `ecfc6799d`)
 
 ### Stream: Release Notes
-5. [TODO] Обновить release-facing docs под новый релизный rebuild; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare project manager rebuild release`
+5. [DONE] Обновить release-facing docs под новый релизный rebuild; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare project manager rebuild release`
 6. [TODO] Git Commit: `docs(release): prepare project manager rebuild release` (hash: TBD)
 
 ### Stream: Release Build
