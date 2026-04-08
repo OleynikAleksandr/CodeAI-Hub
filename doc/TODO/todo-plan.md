@@ -55,6 +55,6 @@
 
 ### Stream: Release Build
 17. [DONE] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture initial autolayout packer version bump`
-18. [TODO] Git Commit: `build(release): capture initial autolayout packer version bump` (hash: TBD)
-19. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package initial autolayout packer release`
+18. [DONE] Git Commit: `build(release): capture initial autolayout packer version bump` (hash: 46ff68512)
+19. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package initial autolayout packer release`
 20. [TODO] Git Commit: `build(release): package initial autolayout packer release` (hash: TBD)
