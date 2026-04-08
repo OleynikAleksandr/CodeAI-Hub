@@ -42,8 +42,8 @@
 7. [DONE] Прогнать таргетные webview проверки перед релизом и зафиксировать readiness; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify project manager rebuild prerequisites`
 8. [DONE] Git Commit: `build(release): verify project manager rebuild prerequisites` (hash: `b0890fab9`)
 9. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture project manager rebuild version bump`
-10. [TODO] Git Commit: `build(release): capture project manager rebuild version bump` (hash: TBD)
-11. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и свежий `project-manager` tarball; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package project manager rebuild release`
+10. [DONE] Git Commit: `build(release): capture project manager rebuild version bump` (hash: `74ae9f761`)
+11. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и свежий `project-manager` tarball; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package project manager rebuild release`
 12. [TODO] Git Commit: `build(release): package project manager rebuild release` (hash: TBD)
 
 ### Stream: Closeout
