@@ -1,5 +1,4 @@
 import type React from "react";
-import { applyNodeChanges, type NodeChange } from "@xyflow/react";
 import { useCallback, useEffect, useState } from "react";
 import type {
   DiagramFlowNode,
@@ -84,31 +83,6 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     setNodes(initialNodes ?? projection.nodes);
   }, [initialNodes, projection.nodes, projection.revision]);
 
-  const handleFlowNodesChange = useCallback(
-    (changes: readonly NodeChange[]): void => {
-      const shouldPersist = changes.some(
-        (change) => change.type === "position" && change.dragging === false
-      );
-      let nextNodesSnapshot: readonly DiagramFlowNode[] | null = null;
-
-      setNodes((current) => {
-        const applied = applyNodeChanges(
-          changes as NodeChange[],
-          current as never
-        ) as DiagramFlowNode[];
-        if (shouldPersist) {
-          nextNodesSnapshot = applied;
-        }
-        return applied;
-      });
-
-      if (nextNodesSnapshot) {
-        void onNodesChange?.(nextNodesSnapshot);
-      }
-    },
-    [onNodesChange]
-  );
-
   const handleContextMenu = useCallback(
     (target: ContextMenuTarget, position: { x: number; y: number }) => {
       setContextMenu({ target, position });
@@ -166,7 +140,6 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
         <DiagramEditorFacade
           nodes={nodes}
           onContextMenu={handleContextMenu}
-          onNodesChange={handleFlowNodesChange}
           subtitle={subtitle}
           title={title}
         />

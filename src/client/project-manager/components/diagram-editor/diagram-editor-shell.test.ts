@@ -22,13 +22,13 @@ test("diagram editor shell explains the staged Diagram Modules empty state", asy
   assert.equal(source.includes("Add semantic entities"), false);
 });
 
-test("diagram editor shell applies node changes without legacy layout normalizers", async () => {
+test("diagram editor shell has no React Flow dependency and no legacy layout normalizers", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
 
-  assert.equal(source.includes("applyNodeChanges"), true);
+  assert.equal(source.includes("@xyflow/react"), false);
+  assert.equal(source.includes("applyNodeChanges"), false);
   assert.equal(source.includes("normalizeManualDiagramLayout"), false);
   assert.equal(source.includes("normalizeMeasuredDiagramLayout"), false);
   assert.equal(source.includes("handleMeasuredNodes"), false);
-  assert.equal(source.includes("sameMeasuredLayoutSnapshot"), false);
   assert.equal(source.includes("seed-autolayout"), false);
 });

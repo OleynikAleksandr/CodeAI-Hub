@@ -25,31 +25,29 @@ const SCAFFOLD_SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx"
 );
 
-test("diagram-editor-facade uses CSS Grid ProductPartNode without legacy layout", async () => {
+test("diagram-editor-facade uses CSS Grid ProductPartNode without React Flow", async () => {
   const source = await readFile(FACADE_SOURCE_PATH, "utf8");
   assert.equal(source.includes("ProductPartNode"), true);
   assert.equal(source.includes("ClusterCard"), true);
   assert.equal(source.includes("ModuleCard"), true);
   assert.equal(source.includes("resolveProductPartColumns"), true);
   assert.equal(source.includes("resolveClusterModuleColumns"), true);
-  assert.equal(source.includes("nodesDraggable"), true);
+  assert.equal(source.includes("auto-fill"), true);
+  assert.equal(source.includes("@xyflow/react"), false);
+  assert.equal(source.includes("ReactFlow"), false);
+  assert.equal(source.includes("nodesDraggable"), false);
   assert.equal(source.includes("DiagramEditorMeasuredLayoutBridge"), false);
-  assert.equal(source.includes("onMeasuredNodes"), false);
-  assert.equal(source.includes("containerConstraints"), false);
-  assert.equal(source.includes("data-diagram-container-header-id"), false);
   assert.equal(source.includes("ReactFlowProvider"), false);
-  assert.equal(source.includes("Auto-layout"), false);
 });
 
-test("diagram-editor-shell is now user-owned layout only", async () => {
+test("diagram-editor-shell has no React Flow dependency", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
-  assert.equal(source.includes("applyNodeChanges"), true);
-  assert.equal(source.includes("handleFlowNodesChange"), true);
-  assert.equal(source.includes("void onNodesChange?.(nextNodesSnapshot);"), true);
+  assert.equal(source.includes("@xyflow/react"), false);
+  assert.equal(source.includes("applyNodeChanges"), false);
+  assert.equal(source.includes("handleFlowNodesChange"), false);
+  assert.equal(source.includes("handleContextMenu"), true);
   assert.equal(source.includes("SaveStatusIndicator"), false);
   assert.equal(source.includes("viewportRefreshToken"), false);
-  assert.equal(source.includes("onFlowStateChange"), false);
-  assert.equal(source.includes("initialLayoutProfile"), false);
   assert.equal(source.includes("Auto-layout"), false);
 });
 

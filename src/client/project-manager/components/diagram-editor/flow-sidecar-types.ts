@@ -90,44 +90,17 @@ export const buildFlowSidecarDocument = (params: {
   layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
   updated: new Date().toISOString(),
   nodes: Object.fromEntries(
-    params.nodes.map((node) => [
-      node.id,
-      {
-        x: node.position.x,
-        y: node.position.y,
-      },
-    ])
+    params.nodes.map((node) => [node.id, { x: 0, y: 0 }])
   ),
   viewport: params.viewport,
 });
 
+/**
+ * With CSS Grid layout, positions are managed by the browser.
+ * This function is a no-op pass-through kept for sidecar v2 compatibility.
+ */
 export const applyFlowSidecarPositions = (params: {
   readonly nodes: readonly DiagramFlowNode[];
   readonly document: FlowSidecarDocument | null;
   readonly revision: string;
-}): readonly DiagramFlowNode[] => {
-  if (
-    !params.document
-    || params.document.revision !== params.revision
-    || params.document.layoutMetricVersion !== FLOW_SIDECAR_LAYOUT_METRIC_VERSION
-  ) {
-    return params.nodes;
-  }
-
-  // Fallback to computed layout if sidecar does not cover all nodes
-  const allCovered = params.nodes.every((node) => node.id in params.document!.nodes);
-  if (!allCovered) {
-    return params.nodes;
-  }
-
-  return params.nodes.map((node) => {
-    const position = params.document?.nodes[node.id];
-    if (!position) {
-      return node;
-    }
-    return {
-      ...node,
-      position,
-    };
-  });
-};
+}): readonly DiagramFlowNode[] => params.nodes;

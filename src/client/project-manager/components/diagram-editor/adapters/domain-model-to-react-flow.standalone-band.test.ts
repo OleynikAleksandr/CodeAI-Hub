@@ -2,6 +2,7 @@ import type { ModuleMapModel } from "../../../../../../packages/core/src/workflo
 import assert from "node:assert/strict";
 import test from "node:test";
 import { domainModelToReactFlow } from "./domain-model-to-react-flow";
+import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
 
 const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -123,63 +124,32 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow wraps standalone modules across columns based on standalone count", () => {
+test("domainModelToReactFlow nests clusters and standalone modules inside ProductPart data", () => {
   const result = domainModelToReactFlow(STANDALONE_WRAP_FIXTURE);
 
-  const productPartNode = result.nodes.find(
-    (node) => node.id === "product-part:local-core-runtime"
-  );
-  const projectFlowCluster = result.nodes.find((node) => node.id === "cluster:project-flow");
-  const artifactStoreCluster = result.nodes.find((node) => node.id === "cluster:artifact-store");
-  const descriptionStageNode = result.nodes.find(
-    (node) => node.id === "description-stage"
-  );
-  const virtualSimulationStageNode = result.nodes.find(
-    (node) => node.id === "virtual-simulation-stage"
-  );
-  const diagramModulesStageNode = result.nodes.find(
-    (node) => node.id === "diagram-modules-stage"
-  );
-  const artifactFreshnessNode = result.nodes.find(
-    (node) => node.id === "artifact-freshness"
-  );
+  assert.equal(result.nodes.length, 1);
+  const ppNode = result.nodes[0]!;
+  assert.equal(ppNode.id, "product-part:local-core-runtime");
+  assert.equal(ppNode.type, "productPart");
 
-  assert.notEqual(productPartNode, undefined);
-  assert.notEqual(projectFlowCluster, undefined);
-  assert.notEqual(artifactStoreCluster, undefined);
-  assert.notEqual(descriptionStageNode, undefined);
-  assert.notEqual(virtualSimulationStageNode, undefined);
-  assert.notEqual(diagramModulesStageNode, undefined);
-  assert.notEqual(artifactFreshnessNode, undefined);
-  if (
-    !productPartNode ||
-    !projectFlowCluster ||
-    !artifactStoreCluster ||
-    !descriptionStageNode ||
-    !virtualSimulationStageNode ||
-    !diagramModulesStageNode ||
-    !artifactFreshnessNode
-  ) {
-    return;
-  }
+  const data = ppNode.data as ProductPartFlowNodeData;
+  assert.equal(data.clusters.length, 2);
+  assert.equal(data.standaloneModules.length, 4);
 
-  const projectFlowBottom = projectFlowCluster.position.y + Number(projectFlowCluster.style?.height ?? 0);
-  const artifactStoreBottom = artifactStoreCluster.position.y + Number(artifactStoreCluster.style?.height ?? 0);
+  const projectFlow = data.clusters.find((c) => c.clusterId === "project-flow");
+  assert.notEqual(projectFlow, undefined);
+  assert.equal(projectFlow?.modules.length, 1);
+  assert.equal(projectFlow?.modules[0]?.moduleId, "stage-flow-controller");
 
-  // 4 standalone modules → 3 columns, product part widens to accommodate
-  assert.equal(productPartNode.style?.width, 1008);
-  assert.equal(descriptionStageNode.position.x, 24);
-  assert.equal(virtualSimulationStageNode.position.x, 344);
-  assert.equal(diagramModulesStageNode.position.x, 664);
-  assert.equal(
-    [24, 344, 664].includes(artifactFreshnessNode.position.x),
-    true
-  );
-  // All standalone modules start at uniform baseline below all clusters
-  assert.equal(descriptionStageNode.position.y >= projectFlowBottom + 12, true);
-  assert.equal(virtualSimulationStageNode.position.y >= artifactStoreBottom + 12, true);
-  assert.equal(diagramModulesStageNode.position.y, descriptionStageNode.position.y);
-  assert.equal(artifactFreshnessNode.position.y > diagramModulesStageNode.position.y, true);
+  const artifactStore = data.clusters.find((c) => c.clusterId === "artifact-store");
+  assert.notEqual(artifactStore, undefined);
+  assert.equal(artifactStore?.modules.length, 1);
+
+  const standaloneIds = data.standaloneModules.map((m) => m.moduleId);
+  assert.equal(standaloneIds.includes("description-stage"), true);
+  assert.equal(standaloneIds.includes("virtual-simulation-stage"), true);
+  assert.equal(standaloneIds.includes("diagram-modules-stage"), true);
+  assert.equal(standaloneIds.includes("artifact-freshness"), true);
 });
 
 const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
@@ -200,7 +170,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
     {
       id: "workflow-orchestration",
       title: "Workflow Orchestration",
-      purpose: "Runs and coordinates workflow stages, execution rules, and downstream refresh decisions for the active project.",
+      purpose: "Runs and coordinates workflow stages.",
       productPart: "local-core-runtime",
       moduleIds: ["step-eligibility-guard", "step-execution-coordinator", "dependency-refresh-marker"],
     },
@@ -210,7 +180,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
       id: "step-eligibility-guard",
       kind: "service",
       title: "Step Eligibility Guard",
-      responsibility: "Decides whether the requested workflow step is allowed to run from the current project state.",
+      responsibility: "Decides whether the requested workflow step is allowed.",
       productPart: "local-core-runtime",
       cluster: "workflow-orchestration",
       inputs: [],
@@ -224,7 +194,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
       id: "step-execution-coordinator",
       kind: "service",
       title: "Step Execution Coordinator",
-      responsibility: "Runs an approved workflow step against the right inputs and records the resulting artifact chain.",
+      responsibility: "Runs an approved workflow step against the right inputs.",
       productPart: "local-core-runtime",
       cluster: "workflow-orchestration",
       inputs: [],
@@ -238,7 +208,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
       id: "dependency-refresh-marker",
       kind: "service",
       title: "Dependency Refresh Marker",
-      responsibility: "Marks later workflow results as outdated when an earlier approved artifact changes.",
+      responsibility: "Marks later workflow results as outdated.",
       productPart: "local-core-runtime",
       cluster: "workflow-orchestration",
       inputs: [],
@@ -252,147 +222,20 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow gives stacked cluster modules enough vertical space to avoid overlap", () => {
+test("domainModelToReactFlow nests all cluster modules inside the cluster data", () => {
   const result = domainModelToReactFlow(CLUSTER_STACK_FIXTURE);
 
-  const clusterNode = result.nodes.find(
-    (node) => node.id === "cluster:workflow-orchestration"
-  );
-  const eligibilityNode = result.nodes.find(
-    (node) => node.id === "step-eligibility-guard"
-  );
-  const executionNode = result.nodes.find(
-    (node) => node.id === "step-execution-coordinator"
-  );
-  const refreshNode = result.nodes.find(
-    (node) => node.id === "dependency-refresh-marker"
-  );
+  assert.equal(result.nodes.length, 1);
+  const data = result.nodes[0]!.data as ProductPartFlowNodeData;
 
-  assert.notEqual(clusterNode, undefined);
-  assert.notEqual(eligibilityNode, undefined);
-  assert.notEqual(executionNode, undefined);
-  assert.notEqual(refreshNode, undefined);
-  if (!clusterNode || !eligibilityNode || !executionNode || !refreshNode) {
-    return;
-  }
+  assert.equal(data.clusters.length, 1);
+  const cluster = data.clusters[0]!;
+  assert.equal(cluster.clusterId, "workflow-orchestration");
+  assert.equal(cluster.modules.length, 3);
 
-  // 3 modules → 2-column layout (col 0: eligibility + refresh, col 1: execution)
-  assert.equal(eligibilityNode.position.x, 24);
-  assert.equal(executionNode.position.x, 276);
-  assert.equal(refreshNode.position.x, 24);
-  assert.equal(eligibilityNode.position.y > 0, true);
-  // Two-column: eligibility and execution start at same Y
-  assert.equal(executionNode.position.y, eligibilityNode.position.y);
-  // refresh stacks below eligibility in col 0
-  assert.equal(refreshNode.position.y > eligibilityNode.position.y, true);
-  assert.equal(Number(clusterNode.style?.height ?? 0) > refreshNode.position.y, true);
-});
-
-const LOCALIZED_CLUSTER_BOUNDARY_FIXTURE: ModuleMapModel = {
-  version: 1,
-  stage: "diagram_modules",
-  revision: "localized-cluster-boundary",
-  updated: "2026-04-08T08:35:00Z",
-  productParts: [
-    {
-      id: "project-manager",
-      title: "Project Manager",
-      purpose:
-        "Проект Manager является главной пользовательской оболочкой продукта и ведет пользователя по обязательным стадиям workflow.",
-      clusterIds: ["pm-workflow-ui"],
-      standaloneModuleIds: [],
-    },
-  ],
-  clusters: [
-    {
-      id: "pm-workflow-ui",
-      title: "Project Manager Workflow Ui",
-      purpose:
-        "Ведёт пользователя по стадиям workflow, показывает прогресс и управляет переходами между подтверждёнными действиями.",
-      productPart: "project-manager",
-      moduleIds: [
-        "stage-navigation-guide",
-        "step-run-control",
-        "project-structure-map",
-      ],
-    },
-  ],
-  modules: [
-    {
-      id: "stage-navigation-guide",
-      kind: "service",
-      title: "Stage Navigation Guide",
-      responsibility:
-        "Показывает обязательные стадии, текущий шаг и доступные следующие или предыдущие действия.",
-      productPart: "project-manager",
-      cluster: "pm-workflow-ui",
-      inputs: [],
-      outputs: [],
-      contractTargets: [],
-      codeTargets: [],
-      origin: "agent",
-      status: "proposed",
-    },
-    {
-      id: "step-run-control",
-      kind: "service",
-      title: "Step Run Control",
-      responsibility:
-        "Запускает активный шаг, показывает его статус выполнения и поддерживает повторный запуск или возврат к уточнению.",
-      productPart: "project-manager",
-      cluster: "pm-workflow-ui",
-      inputs: [],
-      outputs: [],
-      contractTargets: [],
-      codeTargets: [],
-      origin: "agent",
-      status: "proposed",
-    },
-    {
-      id: "project-structure-map",
-      kind: "service",
-      title: "Project Structure Map",
-      responsibility:
-        "Показывает дерево product parts, clusters, modules и готовность связанных артефактов как понятную карту проекта.",
-      productPart: "project-manager",
-      cluster: "pm-workflow-ui",
-      inputs: [],
-      outputs: [],
-      contractTargets: [],
-      codeTargets: [],
-      origin: "agent",
-      status: "proposed",
-    },
-  ],
-  relations: [],
-};
-
-test("domainModelToReactFlow keeps localized dense cluster modules inside the cluster boundary", () => {
-  const result = domainModelToReactFlow(LOCALIZED_CLUSTER_BOUNDARY_FIXTURE);
-
-  const clusterNode = result.nodes.find((node) => node.id === "cluster:pm-workflow-ui");
-  const stageNavigationNode = result.nodes.find(
-    (node) => node.id === "stage-navigation-guide"
-  );
-  const projectStructureNode = result.nodes.find(
-    (node) => node.id === "project-structure-map"
-  );
-
-  assert.notEqual(clusterNode, undefined);
-  assert.notEqual(stageNavigationNode, undefined);
-  assert.notEqual(projectStructureNode, undefined);
-  if (!clusterNode || !stageNavigationNode || !projectStructureNode) {
-    return;
-  }
-
-  const stageNavigationBottom =
-    stageNavigationNode.position.y
-    + Number(stageNavigationNode.style?.minHeight ?? 0);
-  const projectStructureBottom =
-    projectStructureNode.position.y
-    + Number(projectStructureNode.style?.minHeight ?? 0);
-  const clusterBottom = Number(clusterNode.style?.height ?? 0);
-
-  assert.equal(projectStructureNode.position.y >= stageNavigationBottom + 12, true);
-  assert.equal(projectStructureBottom + 12 <= clusterBottom, true);
+  const moduleIds = cluster.modules.map((m) => m.moduleId);
+  assert.equal(moduleIds.includes("step-eligibility-guard"), true);
+  assert.equal(moduleIds.includes("step-execution-coordinator"), true);
+  assert.equal(moduleIds.includes("dependency-refresh-marker"), true);
+  assert.equal(data.standaloneModules.length, 0);
 });

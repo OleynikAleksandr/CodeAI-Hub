@@ -1,11 +1,5 @@
 import type React from "react";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import {
-  Background,
-  ReactFlow,
-  type NodeChange,
-  type NodeTypes,
-} from "@xyflow/react";
+import { createContext, useContext } from "react";
 import type {
   ClusterFlowNodeData,
   DiagramFlowNode,
@@ -21,7 +15,6 @@ import {
 
 type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
-  readonly onNodesChange?: (changes: readonly NodeChange[]) => void;
   readonly onContextMenu?: (target: ContextMenuTarget, position: { x: number; y: number }) => void;
   readonly title: string;
   readonly subtitle?: string;
@@ -29,8 +22,6 @@ type DiagramEditorFacadeProps = {
 
 type ContextMenuCallback = (target: ContextMenuTarget, position: { x: number; y: number }) => void;
 const ContextMenuContext = createContext<ContextMenuCallback | null>(null);
-
-const canvasStyle: React.CSSProperties = { width: "100%", height: "100%" };
 
 // -- Module card styles --
 const nodeCardStyle: React.CSSProperties = {
@@ -175,6 +166,7 @@ const ProductPartNode = ({
   readonly id: string;
   readonly data: ProductPartFlowNodeData;
 }) => {
+  const onContextMenuCb = useContext(ContextMenuContext);
   const slots: SlotDescriptor[] = [
     ...data.clusters.map((c) => ({
       kind: "cluster" as const,
@@ -188,7 +180,22 @@ const ProductPartNode = ({
   const columns = resolveProductPartColumns(slots, data.layoutParams);
 
   return (
-    <div style={productPartCardStyle}>
+    <div
+      style={productPartCardStyle}
+      onContextMenu={(e) => {
+        if (!onContextMenuCb) return;
+        e.preventDefault();
+        onContextMenuCb(
+          {
+            kind: "productPart",
+            productPartId: data.productPartId,
+            currentColumns: data.layoutParams.columns,
+            currentAspectRatio: data.layoutParams.targetAspectRatio,
+          },
+          { x: e.clientX, y: e.clientY },
+        );
+      }}
+    >
       <div style={productPartHeaderStyle}>
         <div style={{ display: "grid", gap: 4, minWidth: 0 }}>
           <div style={nodeCaptionStyle}>Product Part</div>
@@ -222,89 +229,41 @@ const ProductPartNode = ({
   );
 };
 
-const NODE_TYPES = {
-  productPart: ProductPartNode as React.ComponentType,
-} as unknown as NodeTypes;
-
-const PAN_CLASS = "diagram-pan-mode";
-const DRAG_CLASS = "diagram-drag-mode";
-
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
-  onNodesChange,
   onContextMenu,
   title,
   subtitle,
-}) => {
-  const [ctrlHeld, setCtrlHeld] = useState(false);
-
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Alt") setCtrlHeld(true);
-  }, []);
-  const handleKeyUp = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Alt") setCtrlHeld(false);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("blur", () => setCtrlHeld(false));
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [handleKeyDown, handleKeyUp]);
-
-  const draggable = ctrlHeld && Boolean(onNodesChange);
-
-  return (
-    <div
-      className={draggable ? DRAG_CLASS : PAN_CLASS}
-      style={{
-        width: "100%",
-        height: "100%",
-        minHeight: 420,
-        background: "var(--pm-bg-surface)",
-        border: "1px solid var(--pm-border-color)",
-        borderRadius: 16,
-        overflow: "hidden",
-        boxShadow: "var(--pm-shadow-soft)",
-      }}
-    >
-      {!draggable && (
-        <style>{`.${PAN_CLASS} .react-flow__node{pointer-events:none}`}</style>
-      )}
-      <ContextMenuContext.Provider value={onContextMenu ?? null}>
-        <ReactFlow
-          fitView
-          nodes={nodes as never}
-          nodeTypes={NODE_TYPES}
-          onNodesChange={onNodesChange as never}
-          onNodeContextMenu={(event, node) => {
-            if (!onContextMenu) return;
-            event.preventDefault();
-            const data = node.data as ProductPartFlowNodeData;
-            onContextMenu(
-              {
-                kind: "productPart",
-                productPartId: data.productPartId,
-                currentColumns: data.layoutParams.columns,
-                currentAspectRatio: data.layoutParams.targetAspectRatio,
-              },
-              { x: event.clientX, y: event.clientY },
-            );
-          }}
-          onPaneContextMenu={(event) => event.preventDefault()}
-          nodesDraggable={draggable}
-          nodesConnectable={false}
-          elementsSelectable={draggable}
-          panOnDrag
-          zoomOnDoubleClick={false}
-          style={canvasStyle}
-        >
-          <Background gap={24} size={1} />
-        </ReactFlow>
-      </ContextMenuContext.Provider>
-    </div>
-  );
-};
+}) => (
+  <div
+    style={{
+      width: "100%",
+      height: "100%",
+      minHeight: 420,
+      overflow: "auto",
+      background: "var(--pm-bg-surface)",
+      border: "1px solid var(--pm-border-color)",
+      borderRadius: 16,
+      boxShadow: "var(--pm-shadow-soft)",
+      padding: 18,
+    }}
+    onContextMenu={(e) => {
+      if (e.target === e.currentTarget) e.preventDefault();
+    }}
+  >
+    <ContextMenuContext.Provider value={onContextMenu ?? null}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
+          gap: 18,
+          alignContent: "start",
+        }}
+      >
+        {nodes.map((node) => (
+          <ProductPartNode data={node.data} id={node.id} key={node.id} />
+        ))}
+      </div>
+    </ContextMenuContext.Provider>
+  </div>
+);

@@ -8,16 +8,9 @@ import type {
   ProductPartLayoutParams,
 } from "../diagram-editor-layout-params";
 
-export type DiagramFlowPosition = {
-  readonly x: number;
-  readonly y: number;
-};
-
 export type DiagramFlowStage = "diagram_modules";
 
 export type DiagramFlowNodeType = "productPart";
-
-export type DiagramFlowNodeStyle = Readonly<Record<string, number | string>>;
 
 // -- Nested data types (rendered by CSS Grid inside ProductPartNode) --
 
@@ -66,8 +59,6 @@ export type DiagramFlowNodeData = ProductPartFlowNodeData;
 export type DiagramFlowNode = {
   readonly id: string;
   readonly type: DiagramFlowNodeType;
-  readonly position: DiagramFlowPosition;
-  readonly style?: DiagramFlowNodeStyle;
   readonly data: DiagramFlowNodeData;
 };
 

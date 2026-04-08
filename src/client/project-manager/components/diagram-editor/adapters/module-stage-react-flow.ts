@@ -16,7 +16,6 @@ type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
 type ProductPartEntity = NonNullable<ModuleMapModel["productParts"]>[number];
 
 const DEFAULT_PRODUCT_PART_ID = "default-product-part";
-const PRODUCT_PART_Y_STEP = 40;
 
 const toProductPartNodeId = (productPartId: string): string =>
   `product-part:${productPartId}`;
@@ -34,7 +33,7 @@ const compareById = <T extends { readonly id: string }>(
 ): number => left.id.localeCompare(right.id);
 
 export type LayoutOverrides = {
-  readonly productParts?: Readonly<Record<string, Partial<ProductPartLayoutParams> & { x?: number; y?: number }>>;
+  readonly productParts?: Readonly<Record<string, Partial<ProductPartLayoutParams>>>;
   readonly clusters?: Readonly<Record<string, Partial<ClusterLayoutParams>>>;
 };
 
@@ -168,7 +167,7 @@ export const buildModuleStageNodes = (
 
   const nodes: DiagramFlowNode[] = [];
 
-  for (const [index, productPart] of productParts.entries()) {
+  for (const productPart of productParts) {
     const clusterIds = getClusterIds(productPart, model, clustersById);
     const standaloneModuleIds = getStandaloneModuleIds(
       productPart,
@@ -206,13 +205,9 @@ export const buildModuleStageNodes = (
       .filter((m): m is ModuleEntity => m !== undefined)
       .map((m) => buildModuleData(m, productPart.id));
 
-    const posX = ppOverride?.x ?? 0;
-    const posY = ppOverride?.y ?? index * PRODUCT_PART_Y_STEP;
-
     nodes.push({
       id: toProductPartNodeId(productPart.id),
       type: "productPart",
-      position: { x: posX, y: posY },
       data: {
         stage: "diagram_modules",
         nodeKind: "productPart",
