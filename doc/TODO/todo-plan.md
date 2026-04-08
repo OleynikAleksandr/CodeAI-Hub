@@ -29,9 +29,9 @@
 
 ## Phase 1 — Diagram Modules module shadow visual bottom fix (owner: Codex, updated: 2026-04-08)
 ### Stream: Scope Setup
-1. [TODO] Создать planning-doc, новый `todo-plan.md` и стартовый `Session019.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session019.md`; expected commit: `docs(plan): open module shadow visual-bottom scope`
-2. [TODO] Git Commit: `docs(plan): open module shadow visual-bottom scope` (hash: TBD)
-3. [TODO] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register module shadow visual-bottom scope`
+1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session019.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_ModuleShadowVisualBottom_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session019.md`; expected commit: `docs(plan): open module shadow visual-bottom scope`
+2. [DONE] Git Commit: `docs(plan): open module shadow visual-bottom scope` (hash: `75e3a9b64`)
+3. [DONE] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register module shadow visual-bottom scope`
 4. [TODO] Git Commit: `docs(index): register module shadow visual-bottom scope` (hash: TBD)
 
 ### Stream: Shared Bounds Fix
