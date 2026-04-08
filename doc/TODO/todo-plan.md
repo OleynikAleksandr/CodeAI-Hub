@@ -47,9 +47,9 @@
 9. [DONE] Поднять layout metric version sidecar под shared visual-bounds contract и зафиксировать pure regression evidence; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix(diagram): invalidate sidecars for visual bounds contract`
 10. [DONE] Git Commit: `fix(diagram): invalidate sidecars for visual bounds contract` (hash: 112544ad2)
 11. [DONE] Синхронизировать Diagram Modules SSOT и активный planning-doc с принятым shared visual-bounds contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DiagramModules_SharedVisualBounds_And_ManualAutolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record shared visual bounds contract`
-12. [DONE] Git Commit: `docs(diagram): record shared visual bounds contract` (hash: TBD)
-13. [TODO] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare shared visual bounds release`
-14. [TODO] Git Commit: `docs(release): prepare shared visual bounds release` (hash: TBD)
+12. [DONE] Git Commit: `docs(diagram): record shared visual bounds contract` (hash: ac768f327)
+13. [DONE] Подготовить release-facing docs для нового corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare shared visual bounds release`
+14. [DONE] Git Commit: `docs(release): prepare shared visual bounds release` (hash: TBD)
 
 ### Stream: Release Build
 15. [TODO] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture shared visual bounds version bump`

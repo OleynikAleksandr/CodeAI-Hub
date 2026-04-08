@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.909
-- **`Diagram Modules` ownership containers now reflow from measured children instead of guessed heights**: after first render, the runtime uses real `Module` card heights plus measured ownership header boundaries to rebuild `Cluster` and `Product Part` geometry bottom-up, rather than patching a projection-time estimate.
-- **`Cluster` and `Product Part` boundaries now follow finalized measured columns**: the shell preserves the deterministic seed columns, but final `y` positions and container heights are derived from finalized measured children, so lower boundaries no longer lag behind the real rendered content.
-- **`module-map.flow.json` sidecars now invalidate for the measured ownership reflow contract**: the layout compatibility fingerprint advances again, preventing `1.1.908` repair-pass geometry from overriding the new measured-first ownership layout pipeline.
+## Current Release — v1.1.910
+- **`Diagram Modules` now uses one shared visual-bounds contract for autolayout and manual drag**: both first-open normalization and post-drag container resize derive `Cluster` and `Product Part` lower bounds from the deepest direct child visual bottom, instead of mixing measured layout with a second shell-local fallback path.
+- **Visible lower-edge safety now follows what the user actually sees, not only the React Flow border box**: `Module` cards reserve an explicit visual-bottom allowance for their outer shadow, so lower ownership borders no longer stop at a mathematically safe border box while still appearing to overlap visually.
+- **`module-map.flow.json` sidecars now invalidate again for the shared visual-bounds contract**: the layout compatibility fingerprint advances to prevent pre-fix geometry from overriding the new unified auto/manual boundary pipeline.
 
-Previous releases (summary): `1.1.800–1.1.908` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the heuristic-only Diagram Modules boundary wave in `1.1.907`, the measured sibling-gap repair wave in `1.1.908`, and earlier localization/provider/release stabilization waves.
+Previous releases (summary): `1.1.800–1.1.909` — standalone file-link query decode hotfixes, left-sidebar active-stage sync, temporary `Description`-first workspace startup, workflow-state startup SSOT alignment, Diagram Modules canonical English naming under localized prose, Codex raw-rollout dialog semantics, Codex empty-terminal answer recovery, the short-lived `Foundation Envelope` rollout later retired in `1.1.906`, the heuristic-only Diagram Modules boundary wave in `1.1.907`, the measured sibling-gap repair wave in `1.1.908`, the measured ownership reflow wave in `1.1.909`, and earlier localization/provider/release stabilization waves.
 
 ## Features
 - **Unified provider orchestration**: launch Claude, Codex, or Gemini sessions from an identical picker; the dialog surfaces connection state, enforces one-provider selection, and reminds you to install/authenticate matching CLIs.

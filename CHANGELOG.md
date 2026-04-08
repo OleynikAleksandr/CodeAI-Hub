@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.910] - 2026-04-08
+### Fixed
+- **`Diagram Modules` now shares one visual-bounds engine between first-open autolayout and manual drag**: the measured post-render path and the shell drag-resize path both derive `Cluster` / `Product Part` heights from the deepest direct child visual bottom, eliminating the split contract where manual moves could still leave lower-boundary overlaps.
+- **Lower ownership borders now respect visible module chrome instead of only React Flow border-box height**: module cards reserve explicit visual-bottom allowance for their outer shadow, so dense cards no longer appear to run into cluster or product-part bottoms when the underlying border box was technically still inside the container.
+- **`module-map.flow.json` now rejects stale geometry from the pre-unified boundary contract**: the layout metric version advances again, preventing older sidecars from restoring positions calculated before the shared visual-bounds engine existed.
+
 ## [1.1.909] - 2026-04-08
 ### Fixed
 - **`Diagram Modules` now rebuilds ownership layout from measured children instead of patching guessed container heights**: after React Flow measures the actual cards, the runtime derives `Cluster` and `Product Part` geometry bottom-up from finalized module boxes and measured ownership header boundaries.
