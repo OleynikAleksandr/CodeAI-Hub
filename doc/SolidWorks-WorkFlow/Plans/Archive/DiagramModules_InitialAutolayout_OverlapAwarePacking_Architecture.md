@@ -1,6 +1,6 @@
 # Diagram Modules — Initial Autolayout Overlap-Aware Packing Architecture
 
-**Status:** Proposed
+**Status:** Completed corrective scope shipped in release `1.1.912`
 **Date:** 2026-04-08
 **Owner:** Oleksandr + Codex
 **Scope:** corrective scope after release `1.1.911`
@@ -110,4 +110,17 @@ Scope считается закрытым только если выполняе
 
 ## 7. Completion Note
 
-Заполняется после реализации и релиза.
+Scope completed on 2026-04-08.
+
+Delivered outcome:
+- `Diagram Modules` first-open layout now measures ownership `bodyStartY` in zoom-safe flow coordinates before seed autolayout runs.
+- initial packer no longer relies on exact `x` column identity alone and now repacks direct children by horizontal-overlap conflicts, which fixes wide-cluster versus standalone-module ownership collisions inside one `Product Part`.
+- regression coverage now protects the combined contract: zoom-safe top clearance plus overlap-aware bottom packing.
+
+Release verification:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`
+- `npx tsx --test --test-name-pattern 'measurement bridge|diagram-editor-shell is now user-owned layout only|diagram stage scaffold keeps the visual shell stretched to full panel height|diagram modules panel persists manual node positions without layout profiles|diagram-editor-facade keeps React Flow diagnostics widgets' src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`

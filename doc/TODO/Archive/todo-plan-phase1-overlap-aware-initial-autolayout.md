@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_OverlapAwarePacking_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_InitialAutolayout_OverlapAwarePacking_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
@@ -52,8 +52,8 @@
 15. [DONE] Прогнать таргетные тесты и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture overlap-aware autolayout version bump`
 16. [DONE] Git Commit: `build(release): capture overlap-aware autolayout version bump` (hash: `a7342a7b8`)
 17. [DONE] Выполнить `./scripts/build-all.sh` и затем `./scripts/build-release.sh --use-current-version`, проверить VSIX и tarball-артефакты; scope: release build outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package overlap-aware autolayout release`
-18. [TODO] Git Commit: `build(release): package overlap-aware autolayout release` (hash: TBD)
+18. [DONE] Git Commit: `build(release): package overlap-aware autolayout release` (hash: `52930f7ac`)
 
 ### Stream: Closeout
-19. [IN_PROGRESS] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`, подготовить финальный `Session017.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/...`, `doc/TODO/Archive/...`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive overlap-aware autolayout scope`
+19. [DONE] Заархивировать planning-doc и todo-plan, обновить `Docs_Index.md`, подготовить финальный `Session017.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/...`, `doc/TODO/Archive/...`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs(closeout): archive overlap-aware autolayout scope`
 20. [TODO] Git Commit: `docs(closeout): archive overlap-aware autolayout scope` (hash: TBD)
