@@ -42,11 +42,11 @@
 ## Phase 2 — Dense Regression Evidence And Docs Sync (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Dense Localized Regression Coverage
-1. [IN_PROGRESS] Добавить regression fixtures для локализованного dense cluster stack и standalone bottom boundary, воспроизводящие пользовательский сценарий без налезаний; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; ожидаемый commit message: `test(diagram): cover localized autolayout boundaries`
-2. [TODO] Git Commit: `test(diagram): cover localized autolayout boundaries` (hash: TBD)
+1. [DONE] Добавить regression fixtures для локализованного dense cluster stack и standalone bottom boundary, воспроизводящие пользовательский сценарий без налезаний; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; ожидаемый commit message: `test(diagram): cover localized autolayout boundaries`
+2. [DONE] Git Commit: `test(diagram): cover localized autolayout boundaries` (hash: `25cf7a41a`)
 
 ### Stream: Verification Fallout And SSOT Sync
-1. [TODO] Прогнать таргетную verification wave для PM diagram surface, устранить возможный fallout и синхронизировать accepted layout contract/evidence в активных документах; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record verified autolayout boundary fix`
+1. [IN_PROGRESS] Прогнать таргетную verification wave для PM diagram surface, устранить возможный fallout и синхронизировать accepted layout contract/evidence в активных документах; scope: `src/client/project-manager/components/diagram-editor/adapters/module-stage-react-flow.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record verified autolayout boundary fix`
 2. [TODO] Git Commit: `docs(diagram): record verified autolayout boundary fix` (hash: TBD)
 
 ## Phase 3 — Release Build And Session Closeout (owner: Oleksandr + Codex, updated: 2026-04-08)

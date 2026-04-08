@@ -294,3 +294,24 @@ Reviewer / long-discussion loop здесь признаётся важной б�
 - расширить width allocation для `Product Part` purpose panel;
 - добить regression tests под stable header/body boundary и consistent stack start;
 - после этого собрать ещё один локальный release baseline для пользовательского retest.
+
+### 11.6. Localized boundary hardening pass completed on 2026-04-08
+
+В текущем corrective scope подтверждено следующее:
+
+- initial layout estimator в `module-stage-react-flow.ts` стал консервативнее для текущего PM font stack и длинных русскоязычных строк;
+- `Product Part` purpose panel теперь считает высоту по фактическому `line-height: 1.4`, а не по заниженному single-line budget;
+- плотный localized cluster scenario больше не оставляет только 12px safety reserve на заниженной card height: regression fixtures отдельно проверяют, что последний module card не пересекает ни sibling сверху, ни нижнюю границу cluster-а;
+- плотный localized standalone scenario отдельно проверяет, что `Dialogue Control Module`-класс сценариев не пересекает нижнюю границу owning `Product Part`;
+- `module-map.flow.json` получил `layoutMetricVersion` compatibility guard, поэтому legacy sidecar geometry, рассчитанная по старой высотной модели, больше не применяется поверх новой projection.
+
+Текущий evidence set для этого pass:
+
+- `npx tsx --test src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
+Итог этого pass:
+
+- accepted boundary теперь включает не только semantic `revision`, но и compatibility fingerprint визуальной метрики sidecar;
+- localized dense `Diagram Modules` scenario зафиксирован в постоянном regression наборе как обязательный guardrail перед релизом.
