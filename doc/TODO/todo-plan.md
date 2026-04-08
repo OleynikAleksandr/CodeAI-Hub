@@ -57,10 +57,10 @@
 
 ### Stream: Release Preparation
 1. [DONE] Подготовить release-facing документацию и closeout tracking для measured min-gap fix release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(release): prepare measured diagram gap fix release`
-2. [TODO] Git Commit: `docs(release): prepare measured diagram gap fix release` (hash: TBD)
+2. [DONE] Git Commit: `docs(release): prepare measured diagram gap fix release` (hash: `52c88127a`)
 
 ### Stream: Release Build
-1. [TODO] Запустить `./scripts/build-all.sh`, принять version/manifest bump для следующего релиза и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture measured diagram gap fix version bump`
+1. [DONE] Запустить `./scripts/build-all.sh`, принять version/manifest bump для следующего релиза и подготовить чистое дерево под финальную упаковку; scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build(release): capture measured diagram gap fix version bump`
 2. [TODO] Git Commit: `build(release): capture measured diagram gap fix version bump` (hash: TBD)
 3. [TODO] Запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить release-closeout для measured gap scope; scope: `release artifacts`, `doc/tmp/releases/`, `release packaging outputs`; ожидаемый commit message: `build(release): package measured diagram gap fix release`
 4. [TODO] Git Commit: `build(release): package measured diagram gap fix release` (hash: TBD)
