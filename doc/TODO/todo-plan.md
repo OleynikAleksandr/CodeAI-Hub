@@ -46,10 +46,10 @@
 
 ### Stream: Release Build
 11. [DONE] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify module shadow visual-bottom prerequisites`
-12. [TODO] Git Commit: `build(release): verify module shadow visual-bottom prerequisites` (hash: TBD)
-13. [IN_PROGRESS] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture module shadow visual-bottom version bump`
+12. [DONE] Git Commit: `build(release): verify module shadow visual-bottom prerequisites` (hash: `20029b5bc`)
+13. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture module shadow visual-bottom version bump`
 14. [TODO] Git Commit: `build(release): capture module shadow visual-bottom version bump` (hash: TBD)
-15. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package module shadow visual-bottom release`
+15. [IN_PROGRESS] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый `VSIX` и tarball-артефакты; scope: release packaging outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): package module shadow visual-bottom release`
 16. [TODO] Git Commit: `build(release): package module shadow visual-bottom release` (hash: TBD)
 
 ### Stream: Closeout
