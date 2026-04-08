@@ -92,35 +92,29 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
 
   const handleProductPartColumnsChange = useCallback(
     (productPartId: string, columns: ProductPartLayoutColumns) => {
-      setNodes((current) => {
-        const next = updateNodeLayoutParam(current, productPartId, { columns });
-        void onNodesChange?.(next);
-        return next;
-      });
+      setNodes((current) =>
+        updateNodeLayoutParam(current, productPartId, { columns }),
+      );
     },
-    [onNodesChange],
+    [],
   );
 
   const handleProductPartAspectRatioChange = useCallback(
     (productPartId: string, targetAspectRatio: TargetAspectRatio) => {
-      setNodes((current) => {
-        const next = updateNodeLayoutParam(current, productPartId, { targetAspectRatio });
-        void onNodesChange?.(next);
-        return next;
-      });
+      setNodes((current) =>
+        updateNodeLayoutParam(current, productPartId, { targetAspectRatio }),
+      );
     },
-    [onNodesChange],
+    [],
   );
 
   const handleClusterModuleColumnsChange = useCallback(
     (clusterId: string, moduleColumns: ClusterModuleColumns) => {
-      setNodes((current) => {
-        const next = updateClusterLayoutParam(current, clusterId, moduleColumns);
-        void onNodesChange?.(next);
-        return next;
-      });
+      setNodes((current) =>
+        updateClusterLayoutParam(current, clusterId, moduleColumns),
+      );
     },
-    [onNodesChange],
+    [],
   );
 
   return (

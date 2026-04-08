@@ -1,5 +1,5 @@
 import type React from "react";
-import { createContext, useContext } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 import type {
   ClusterFlowNodeData,
   DiagramFlowNode,
@@ -229,41 +229,63 @@ const ProductPartNode = ({
   );
 };
 
+const ZOOM_MIN = 0.25;
+const ZOOM_MAX = 2;
+const ZOOM_STEP = 0.05;
+
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
   onContextMenu,
   title,
   subtitle,
-}) => (
-  <div
-    style={{
-      width: "100%",
-      height: "100%",
-      minHeight: 420,
-      overflow: "auto",
-      background: "var(--pm-bg-surface)",
-      border: "1px solid var(--pm-border-color)",
-      borderRadius: 16,
-      boxShadow: "var(--pm-shadow-soft)",
-      padding: 18,
-    }}
-    onContextMenu={(e) => {
-      if (e.target === e.currentTarget) e.preventDefault();
-    }}
-  >
-    <ContextMenuContext.Provider value={onContextMenu ?? null}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
-          gap: 18,
-          alignContent: "start",
-        }}
-      >
-        {nodes.map((node) => (
-          <ProductPartNode data={node.data} id={node.id} key={node.id} />
-        ))}
-      </div>
-    </ContextMenuContext.Provider>
-  </div>
-);
+}) => {
+  const [zoom, setZoom] = useState(1);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (!(e.metaKey || e.ctrlKey)) return;
+    e.preventDefault();
+    setZoom((current) => {
+      const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+      return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, current + delta));
+    });
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight: 420,
+        overflow: "auto",
+        background: "var(--pm-bg-surface)",
+        border: "1px solid var(--pm-border-color)",
+        borderRadius: 16,
+        boxShadow: "var(--pm-shadow-soft)",
+      }}
+      onWheel={handleWheel}
+      onContextMenu={(e) => {
+        if (e.target === e.currentTarget) e.preventDefault();
+      }}
+    >
+      <ContextMenuContext.Provider value={onContextMenu ?? null}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            gap: 18,
+            padding: 18,
+            alignContent: "start",
+            transformOrigin: "top left",
+            transform: `scale(${zoom})`,
+          }}
+        >
+          {nodes.map((node) => (
+            <ProductPartNode data={node.data} id={node.id} key={node.id} />
+          ))}
+        </div>
+      </ContextMenuContext.Provider>
+    </div>
+  );
+};
