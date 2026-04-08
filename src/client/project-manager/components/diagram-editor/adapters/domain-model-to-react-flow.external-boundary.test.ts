@@ -2,6 +2,7 @@ import type { ModuleMapModel } from "../../../../../../packages/core/src/workflo
 import assert from "node:assert/strict";
 import test from "node:test";
 import { domainModelToReactFlow } from "./domain-model-to-react-flow";
+import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
 
 const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -86,36 +87,28 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow keeps external provider nodes outside product part containers", () => {
+test("domainModelToReactFlow nests external modules as standalone inside product part data", () => {
   const result = domainModelToReactFlow(EXTERNAL_BOUNDARY_FIXTURE);
+
+  assert.equal(result.nodes.length, 2);
 
   const runtimeNode = result.nodes.find(
     (node) => node.id === "product-part:local-core-runtime"
   );
+  assert.ok(runtimeNode);
+
+  const data = runtimeNode.data as ProductPartFlowNodeData;
+  assert.equal(data.clusters.length, 1);
+  assert.equal(data.clusters[0]!.clusterId, "provider-bridge");
+  assert.equal(data.standaloneModules.length, 1);
+  assert.equal(data.standaloneModules[0]!.moduleId, "selected-ai-provider");
+  assert.equal(data.standaloneModules[0]!.kind, "external");
+
   const managerNode = result.nodes.find(
     (node) => node.id === "product-part:standalone-project-manager"
   );
-  const integrationNode = result.nodes.find(
-    (node) => node.id === "ai-provider-integration"
-  );
-  const providerNode = result.nodes.find(
-    (node) => node.id === "selected-ai-provider"
-  );
-
-  assert.notEqual(runtimeNode, undefined);
-  assert.notEqual(managerNode, undefined);
-  assert.notEqual(integrationNode, undefined);
-  assert.notEqual(providerNode, undefined);
-  if (!runtimeNode || !managerNode || !integrationNode || !providerNode) {
-    return;
-  }
-
-  assert.equal(integrationNode.parentId, "cluster:provider-bridge");
-  assert.equal(providerNode.parentId, undefined);
-  assert.equal(providerNode.extent, undefined);
-  assert.equal(
-    providerNode.position.x > Number(runtimeNode.style?.width ?? 0),
-    true
-  );
-  assert.equal(managerNode.position.y >= providerNode.position.y + 120, true);
+  assert.ok(managerNode);
+  const managerData = managerNode.data as ProductPartFlowNodeData;
+  assert.equal(managerData.clusters.length, 1);
+  assert.equal(managerData.standaloneModules.length, 0);
 });

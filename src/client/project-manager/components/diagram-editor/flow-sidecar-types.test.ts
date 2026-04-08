@@ -7,31 +7,33 @@ import {
   parseFlowSidecar,
   serializeFlowSidecar,
 } from "./flow-sidecar-types";
+import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
+
+const makeProductPartNode = (
+  id: string,
+  position: { x: number; y: number },
+): DiagramFlowNode => ({
+  id: `product-part:${id}`,
+  type: "productPart",
+  position,
+  data: {
+    stage: "diagram_modules",
+    nodeKind: "productPart",
+    productPartId: id,
+    title: id,
+    purpose: `Purpose of ${id}`,
+    clusterIds: [],
+    standaloneModuleIds: [],
+    clusters: [],
+    standaloneModules: [],
+    layoutParams: { columns: "auto", targetAspectRatio: "landscape" },
+  },
+});
 
 test("flow sidecar serializes manual node positions", () => {
   const document = buildFlowSidecarDocument({
     revision: "rev-1",
-    nodes: [
-      {
-        id: "module-a",
-        type: "module",
-        position: { x: 120, y: 240 },
-        data: {
-          stage: "diagram_modules",
-          nodeKind: "module",
-          moduleId: "module-a",
-          title: "Module A",
-          kind: "service",
-          responsibility: "A",
-          status: "accepted",
-          origin: "agent",
-          productPart: "default-product-part",
-          cluster: undefined,
-          inputCount: 0,
-          outputCount: 1,
-        },
-      },
-    ],
+    nodes: [makeProductPartNode("control-shell", { x: 120, y: 240 })],
   });
 
   const parsed = parseFlowSidecar(serializeFlowSidecar(document));
@@ -41,7 +43,7 @@ test("flow sidecar serializes manual node positions", () => {
     parsed?.layoutMetricVersion,
     FLOW_SIDECAR_LAYOUT_METRIC_VERSION
   );
-  assert.deepEqual(parsed?.nodes["module-a"], { x: 120, y: 240 });
+  assert.deepEqual(parsed?.nodes["product-part:control-shell"], { x: 120, y: 240 });
 });
 
 test("flow sidecar ignores legacy layout profile fields", () => {
@@ -51,7 +53,7 @@ test("flow sidecar ignores legacy layout profile fields", () => {
       revision: "rev-2",
       updated: new Date().toISOString(),
       nodes: {
-        "module-a": { x: 0, y: 0 },
+        "product-part:shell": { x: 0, y: 0 },
       },
       layoutProfile: "fill_space",
     })
@@ -59,133 +61,24 @@ test("flow sidecar ignores legacy layout profile fields", () => {
 
   assert.notEqual(parsed, null);
   assert.equal("layoutProfile" in (parsed ?? {}), false);
-  assert.deepEqual(parsed?.nodes["module-a"], { x: 0, y: 0 });
+  assert.deepEqual(parsed?.nodes["product-part:shell"], { x: 0, y: 0 });
 });
 
-test("flow sidecar preserves nested ownership node positions as layout-only data", () => {
+test("flow sidecar preserves product part positions as layout-only data", () => {
   const document = buildFlowSidecarDocument({
     revision: "rev-nested",
     nodes: [
-      {
-        id: "product-part:control-shell",
-        type: "cluster",
-        position: { x: 40, y: 24 },
-        data: {
-          stage: "diagram_modules",
-          nodeKind: "productPart",
-          productPartId: "control-shell",
-          title: "Control Shell",
-          purpose: "Hosts the operator-facing runtime control surface.",
-          clusterIds: ["security"],
-          standaloneModuleIds: ["config-store"],
-        },
-      },
-      {
-        id: "cluster:security",
-        type: "cluster",
-        position: { x: 24, y: 72 },
-        parentId: "product-part:control-shell",
-        extent: "parent",
-        data: {
-          stage: "diagram_modules",
-          nodeKind: "cluster",
-          clusterId: "security",
-          productPartId: "control-shell",
-          title: "Security",
-          purpose: "Keeps identity and session boundaries consistent.",
-          moduleIds: ["auth-service"],
-        },
-      },
-      {
-        id: "auth-service",
-        type: "module",
-        position: { x: 24, y: 72 },
-        parentId: "cluster:security",
-        extent: "parent",
-        data: {
-          stage: "diagram_modules",
-          nodeKind: "module",
-          moduleId: "auth-service",
-          title: "Auth Service",
-          kind: "service",
-          responsibility: "Authenticates operators and sessions.",
-          status: "accepted",
-          origin: "agent",
-          productPart: "control-shell",
-          cluster: "security",
-          inputCount: 1,
-          outputCount: 1,
-        },
-      },
-      {
-        id: "config-store",
-        type: "module",
-        position: { x: 24, y: 328 },
-        parentId: "product-part:control-shell",
-        extent: "parent",
-        data: {
-          stage: "diagram_modules",
-          nodeKind: "module",
-          moduleId: "config-store",
-          title: "Config Store",
-          kind: "store",
-          responsibility: "Keeps runtime configuration readable.",
-          status: "proposed",
-          origin: "agent",
-          productPart: "control-shell",
-          cluster: undefined,
-          inputCount: 1,
-          outputCount: 1,
-        },
-      },
-      {
-        id: "activity-log",
-        type: "module",
-        position: { x: 344, y: 328 },
-        parentId: "product-part:control-shell",
-        extent: "parent",
-        data: {
-          stage: "diagram_modules",
-          nodeKind: "module",
-          moduleId: "activity-log",
-          title: "Activity Log",
-          kind: "store",
-          responsibility: "Stores user-visible activity history.",
-          status: "proposed",
-          origin: "agent",
-          productPart: "control-shell",
-          cluster: undefined,
-          inputCount: 1,
-          outputCount: 1,
-        },
-      },
+      makeProductPartNode("control-shell", { x: 40, y: 24 }),
+      makeProductPartNode("runtime", { x: 0, y: 400 }),
     ],
   });
 
   assert.deepEqual(document.nodes["product-part:control-shell"], { x: 40, y: 24 });
-  assert.deepEqual(document.nodes["cluster:security"], { x: 24, y: 72 });
-  assert.deepEqual(document.nodes["auth-service"], { x: 24, y: 72 });
-  assert.deepEqual(document.nodes["config-store"], { x: 24, y: 328 });
-  assert.deepEqual(document.nodes["activity-log"], { x: 344, y: 328 });
+  assert.deepEqual(document.nodes["product-part:runtime"], { x: 0, y: 400 });
 });
 
 test("flow sidecar applies saved positions only when the diagram revision matches", () => {
-  const nodes = [
-    {
-      id: "product-part:control-shell",
-      type: "cluster" as const,
-      position: { x: 0, y: 0 },
-      data: {
-        stage: "diagram_modules" as const,
-        nodeKind: "productPart" as const,
-        productPartId: "control-shell",
-        title: "Control Shell",
-        purpose: "Hosts the operator-facing runtime control surface.",
-        clusterIds: ["security"],
-        standaloneModuleIds: [],
-      },
-    },
-  ];
+  const nodes = [makeProductPartNode("control-shell", { x: 0, y: 0 })];
 
   const applied = applyFlowSidecarPositions({
     nodes,
@@ -194,9 +87,7 @@ test("flow sidecar applies saved positions only when the diagram revision matche
       revision: "rev-match",
       layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
       updated: new Date().toISOString(),
-      nodes: {
-        "product-part:control-shell": { x: 240, y: 160 },
-      },
+      nodes: { "product-part:control-shell": { x: 240, y: 160 } },
     },
     revision: "rev-match",
   });
@@ -207,9 +98,7 @@ test("flow sidecar applies saved positions only when the diagram revision matche
       revision: "rev-stale",
       layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
       updated: new Date().toISOString(),
-      nodes: {
-        "product-part:control-shell": { x: 480, y: 320 },
-      },
+      nodes: { "product-part:control-shell": { x: 480, y: 320 } },
     },
     revision: "rev-current",
   });
@@ -219,22 +108,7 @@ test("flow sidecar applies saved positions only when the diagram revision matche
 });
 
 test("flow sidecar falls back to computed layout when layout metric version changes", () => {
-  const nodes = [
-    {
-      id: "product-part:control-shell",
-      type: "cluster" as const,
-      position: { x: 10, y: 20 },
-      data: {
-        stage: "diagram_modules" as const,
-        nodeKind: "productPart" as const,
-        productPartId: "control-shell",
-        title: "Control Shell",
-        purpose: "Hosts the operator-facing runtime control surface.",
-        clusterIds: ["security"],
-        standaloneModuleIds: [],
-      },
-    },
-  ];
+  const nodes = [makeProductPartNode("control-shell", { x: 10, y: 20 })];
 
   const result = applyFlowSidecarPositions({
     nodes,
@@ -243,9 +117,7 @@ test("flow sidecar falls back to computed layout when layout metric version chan
       revision: "rev-match",
       layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION + 1,
       updated: new Date().toISOString(),
-      nodes: {
-        "product-part:control-shell": { x: 240, y: 160 },
-      },
+      nodes: { "product-part:control-shell": { x: 240, y: 160 } },
     },
     revision: "rev-match",
   });
@@ -255,34 +127,8 @@ test("flow sidecar falls back to computed layout when layout metric version chan
 
 test("flow sidecar falls back to computed layout when sidecar does not cover all nodes", () => {
   const nodes = [
-    {
-      id: "product-part:shell",
-      type: "cluster" as const,
-      position: { x: 10, y: 20 },
-      data: {
-        stage: "diagram_modules" as const,
-        nodeKind: "productPart" as const,
-        productPartId: "shell",
-        title: "Shell",
-        purpose: "Entry point.",
-        clusterIds: [],
-        standaloneModuleIds: [],
-      },
-    },
-    {
-      id: "product-part:runtime",
-      type: "cluster" as const,
-      position: { x: 400, y: 20 },
-      data: {
-        stage: "diagram_modules" as const,
-        nodeKind: "productPart" as const,
-        productPartId: "runtime",
-        title: "Runtime",
-        purpose: "Core runtime.",
-        clusterIds: [],
-        standaloneModuleIds: [],
-      },
-    },
+    makeProductPartNode("shell", { x: 10, y: 20 }),
+    makeProductPartNode("runtime", { x: 400, y: 20 }),
   ];
 
   const result = applyFlowSidecarPositions({
@@ -292,15 +138,11 @@ test("flow sidecar falls back to computed layout when sidecar does not cover all
       revision: "rev-partial",
       layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
       updated: new Date().toISOString(),
-      nodes: {
-        "product-part:shell": { x: 500, y: 600 },
-        // product-part:runtime is NOT in sidecar
-      },
+      nodes: { "product-part:shell": { x: 500, y: 600 } },
     },
     revision: "rev-partial",
   });
 
-  // Must keep computed positions — sidecar is incomplete
   assert.deepEqual(result[0]?.position, { x: 10, y: 20 });
   assert.deepEqual(result[1]?.position, { x: 400, y: 20 });
 });
