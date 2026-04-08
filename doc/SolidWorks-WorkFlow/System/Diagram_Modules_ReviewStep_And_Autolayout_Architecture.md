@@ -515,3 +515,34 @@ Root cause зафиксирован явно:
 - `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`
 - `npm run build:webview`
 - `npm run typecheck:webview`
+
+### 11.13. Live measurement stabilization accepted on 2026-04-08
+
+Следующий пользовательский ретест релиза `1.1.914` подтвердил, что visual-bottom allowance сам по себе не устраняет remaining initial-autolayout defect:
+- lower overlap у `Cluster` и `Product Part` всё ещё воспроизводился сразу после первого открытия `Diagram Modules`;
+- manual drag path в пользовательских проверках выглядел заметно лучше, чем first-open autolayout;
+- значит residual defect был классифицирован уже не как pure bounds math error, а как **timing bug первого measurement snapshot**.
+
+Уточнённый root cause зафиксирован так:
+- initial `DiagramEditorMeasuredLayoutBridge` снимал measured nodes слишком рано, почти как одноразовый snapshot после `nodesInitialized`;
+- для `Diagram Modules` этого недостаточно, потому что финальная card geometry зависит от позднего text wrapping, рабочего font stack Project Manager и post-render стабилизации DOM после mount/fitView;
+- если первый snapshot был занижен, owner resize у `Cluster` и `Product Part` строился от under-measured child heights;
+- после позднего роста DOM bridge уже не обязан был делать ещё один measured emission, поэтому first-open autolayout оставался зафиксированным на неверной геометрии.
+
+Принятый contract после этого corrective pass:
+1. initial autolayout geometry больше не считается valid по первому доступному measurement snapshot;
+2. measurement bridge обязан делать stabilized re-measure минимум по трём trigger-ам:
+   - следующий animation frame после render,
+   - поздняя готовность шрифтов через `document.fonts.ready`,
+   - фактическое изменение размеров node/header DOM через `ResizeObserver`;
+3. measurement dedupe обязан учитывать и runtime style bounds owner nodes, чтобы второй pass не терялся после owner resize;
+4. first-open `Diagram Modules` acceptance теперь привязан не к “single measurement”, а к “stable live measurement before final normalize”.
+
+Практически это означает:
+- initial autolayout больше не должен зависеть от того, успел ли браузер до первого snapshot догрузить нужный шрифт и окончательно завернуть русскоязычный текст;
+- если реальная DOM-геометрия module cards изменилась после первого mount, bridge обязан переэмитить measured nodes и дать normalizer пересчитать ownership bounds;
+- manual path и first-open path теперь должны сходиться к одной и той же live geometry без ручного вмешательства пользователя.
+
+Новый evidence set для stabilized live measurement contract:
+- `npx tsx --test --test-name-pattern "measurement bridge carries measured ownership header boundaries" src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`
+- `npm run typecheck:webview`

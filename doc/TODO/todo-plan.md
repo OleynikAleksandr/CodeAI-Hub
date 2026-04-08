@@ -36,10 +36,10 @@
 
 ### Stream: Bridge Stabilization
 5. [DONE] Стабилизировать measurement bridge для поздней DOM-геометрии и синхронизировать bridge regression coverage; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`, `doc/TODO/todo-plan.md`; expected commit: `fix(diagram): stabilize live measurement bridge`
-6. [TODO] Git Commit: `fix(diagram): stabilize live measurement bridge` (hash: TBD)
+6. [DONE] Git Commit: `fix(diagram): stabilize live measurement bridge` (hash: `065b29895`)
 
 ### Stream: SSOT And Release Notes
-7. [TODO] Обновить Diagram Modules SSOT под stabilized live measurement contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record live measurement stabilization contract`
+7. [DONE] Обновить Diagram Modules SSOT под stabilized live measurement contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record live measurement stabilization contract`
 8. [TODO] Git Commit: `docs(diagram): record live measurement stabilization contract` (hash: TBD)
 9. [TODO] Обновить release-facing docs под новый corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare live measurement stabilization release`
 10. [TODO] Git Commit: `docs(release): prepare live measurement stabilization release` (hash: TBD)
