@@ -62,6 +62,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/DiagramModules_MeasuredAutolayout_MinGap_Architecture.md` — active corrective scope for `Diagram Modules` first-open overlaps after release `1.1.907`; introduces a measured post-render normalization pass, enforces a hard `4px` minimum safe gap between rendered ownership boxes, bumps sidecar layout metrics again, and ends with a new release build.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Diagram Modules` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
 - `Plans/MultiProvider_Orchestration_Scenarios.md` — deferred orchestration scope, ещё не начатый в реализации.
