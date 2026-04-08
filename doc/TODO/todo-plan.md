@@ -42,10 +42,10 @@
 7. [DONE] Обновить Diagram Modules SSOT под stabilized live measurement contract; scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(diagram): record live measurement stabilization contract`
 8. [DONE] Git Commit: `docs(diagram): record live measurement stabilization contract` (hash: `a4b85849e`)
 9. [DONE] Обновить release-facing docs под новый corrective release; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(release): prepare live measurement stabilization release`
-10. [TODO] Git Commit: `docs(release): prepare live measurement stabilization release` (hash: TBD)
+10. [DONE] Git Commit: `docs(release): prepare live measurement stabilization release` (hash: `26cc745ce`)
 
 ### Stream: Release Build
-11. [TODO] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify live measurement stabilization prerequisites`
+11. [DONE] Прогнать таргетные diagram tests и webview сборки перед релизом; scope: runtime verification only + `doc/TODO/todo-plan.md`; expected commit: `build(release): verify live measurement stabilization prerequisites`
 12. [TODO] Git Commit: `build(release): verify live measurement stabilization prerequisites` (hash: TBD)
 13. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать новый version bump; scope: release version outputs + `doc/TODO/todo-plan.md`; expected commit: `build(release): capture live measurement stabilization version bump`
 14. [TODO] Git Commit: `build(release): capture live measurement stabilization version bump` (hash: TBD)
