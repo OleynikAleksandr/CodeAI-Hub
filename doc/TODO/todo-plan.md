@@ -37,10 +37,10 @@
 
 ### Stream: React Flow Measurement Bridge
 1. [DONE] Считать фактические размеры узлов после first render через React Flow hooks и прокинуть measured layout callback в shell без возврата к старым auto-layout controls; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-bridge.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`; ожидаемый commit message: `fix(diagram): bridge measured node sizes from react flow`
-2. [TODO] Git Commit: `fix(diagram): bridge measured node sizes from react flow` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram): bridge measured node sizes from react flow` (hash: `1dc79f914`)
 
 ### Stream: Shell Measured Normalization Apply
-1. [TODO] Применить measured normalization pass в `diagram-editor-shell.tsx`, чтобы first-open layout автоматически перепаковывался по фактическим box sizes ещё до ручного drag workflow; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`; ожидаемый commit message: `fix(diagram): normalize measured diagram layout in shell`
+1. [DONE] Применить measured normalization pass в `diagram-editor-shell.tsx`, чтобы first-open layout автоматически перепаковывался по фактическим box sizes ещё до ручного drag workflow; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`; ожидаемый commit message: `fix(diagram): normalize measured diagram layout in shell`
 2. [TODO] Git Commit: `fix(diagram): normalize measured diagram layout in shell` (hash: TBD)
 
 ## Phase 2 — Sidecar Invalidation And Regression Evidence (owner: Oleksandr + Codex, updated: 2026-04-08)

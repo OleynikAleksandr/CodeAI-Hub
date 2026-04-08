@@ -7,6 +7,7 @@ import type {
   DiagramFlowNodeData,
   DiagramFlowProjection,
 } from "./adapters/domain-model-to-react-flow.types";
+import { normalizeMeasuredDiagramLayout } from "./diagram-editor-measured-layout-normalizer";
 import { DiagramEditorFacade } from "./diagram-editor-facade";
 
 const DEFAULT_MODULE_WIDTH = 240;
@@ -15,6 +16,37 @@ const SIBLING_GAP = 12;
 
 const getConstraints = (data: DiagramFlowNodeData): ContainerConstraints | undefined =>
   (data.nodeKind === "productPart" || data.nodeKind === "cluster") ? data.containerConstraints : undefined;
+
+const getNumericStyleMetric = (
+  node: DiagramFlowNode,
+  key: "width" | "height" | "minHeight"
+): number | undefined => {
+  const value = node.style?.[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+};
+
+const sameMeasuredNodeLayout = (
+  left: DiagramFlowNode,
+  right: DiagramFlowNode
+): boolean =>
+  left.id === right.id
+  && left.parentId === right.parentId
+  && left.position.x === right.position.x
+  && left.position.y === right.position.y
+  && left.width === right.width
+  && left.height === right.height
+  && left.measured?.width === right.measured?.width
+  && left.measured?.height === right.measured?.height
+  && getNumericStyleMetric(left, "width") === getNumericStyleMetric(right, "width")
+  && getNumericStyleMetric(left, "height") === getNumericStyleMetric(right, "height")
+  && getNumericStyleMetric(left, "minHeight") === getNumericStyleMetric(right, "minHeight");
+
+const sameMeasuredLayoutSnapshot = (
+  left: readonly DiagramFlowNode[],
+  right: readonly DiagramFlowNode[]
+): boolean =>
+  left.length === right.length
+  && left.every((node, index) => sameMeasuredNodeLayout(node, right[index]!));
 
 const nodeRect = (node: DiagramFlowNode) => {
   const w = Number(node.style?.width ?? DEFAULT_MODULE_WIDTH);
@@ -183,6 +215,18 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
     [onNodesChange]
   );
 
+  const handleMeasuredNodes = useCallback(
+    (measuredNodes: readonly DiagramFlowNode[]): void => {
+      setNodes((current) => {
+        const normalizedNodes = normalizeMeasuredDiagramLayout(measuredNodes);
+        return sameMeasuredLayoutSnapshot(current, normalizedNodes)
+          ? current
+          : normalizedNodes;
+      });
+    },
+    []
+  );
+
   return (
     <div
       style={{
@@ -199,7 +243,9 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
       <div style={{ display: "flex", flex: "1 1 auto", minHeight: 420 }}>
         <DiagramEditorFacade
           edges={projection.edges}
+          measurementRevision={projection.revision}
           nodes={nodes}
+          onMeasuredNodes={handleMeasuredNodes}
           onNodesChange={handleFlowNodesChange}
           subtitle={subtitle}
           title={title}

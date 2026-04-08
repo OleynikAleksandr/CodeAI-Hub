@@ -21,3 +21,12 @@ test("diagram editor shell explains the staged Diagram Modules empty state", asy
   );
   assert.equal(source.includes("Add semantic entities"), false);
 });
+
+test("diagram editor shell normalizes first-open layout after measured node sizes arrive", async () => {
+  const source = await readFile(SHELL_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("normalizeMeasuredDiagramLayout"), true);
+  assert.equal(source.includes("handleMeasuredNodes"), true);
+  assert.equal(source.includes("onMeasuredNodes={handleMeasuredNodes}"), true);
+  assert.equal(source.includes("measurementRevision={projection.revision}"), true);
+});
