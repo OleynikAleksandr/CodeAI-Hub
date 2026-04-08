@@ -30,8 +30,8 @@
 ## Phase 1 — Diagram Modules live measurement stabilization fix (owner: Codex, updated: 2026-04-08)
 ### Stream: Scope Setup
 1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session020.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_LiveMeasurement_Stabilization_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session020.md`; expected commit: `docs(plan): open live measurement stabilization scope`
-2. [TODO] Git Commit: `docs(plan): open live measurement stabilization scope` (hash: TBD)
-3. [TODO] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register live measurement stabilization scope`
+2. [DONE] Git Commit: `docs(plan): open live measurement stabilization scope` (hash: `d2efeade5`)
+3. [DONE] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register live measurement stabilization scope`
 4. [TODO] Git Commit: `docs(index): register live measurement stabilization scope` (hash: TBD)
 
 ### Stream: Bridge Stabilization
