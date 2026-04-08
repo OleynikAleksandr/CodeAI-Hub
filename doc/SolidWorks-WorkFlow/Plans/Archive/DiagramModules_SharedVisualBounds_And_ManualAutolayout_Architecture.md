@@ -1,6 +1,6 @@
 # Diagram Modules Shared Visual Bounds And Unified Manual Autolayout — Architecture
 
-**Status:** Accepted implementation baseline
+**Status:** Completed corrective scope shipped in release `1.1.910`
 **Date:** 2026-04-08
 **Owner:** Oleksandr + Codex
 **Scope:** post-release corrective wave after `1.1.909`; fix the common boundary-overlap defect in `Diagram Modules` for both first-open autolayout and manual dragging by replacing duplicated border-box math with one shared visual-bounds contract and shipping a new release build
@@ -258,6 +258,9 @@ After this corrective scope:
 Already implemented in the active execution cycle:
 - a shared layout-bounds helper now owns canonical base width/height, measured ownership `bodyStartY`, and module visual-bottom math;
 - measured autolayout normalization now grows `Cluster` and `Product Part` from the deepest direct child visual bottom instead of border-box-only heights;
+- manual drag normalization now reuses the same shared visual-bounds contract, so the shell no longer resizes ownership containers from fallback local border-box math;
+- sidecar layout metric version was raised again so older `.flow.json` geometry cannot override the new shared visual-bounds contract;
+- release verification passed through targeted `tsx --test` suites, `npm run build:webview`, `npm run typecheck:webview`, `./scripts/build-all.sh`, and `./scripts/build-release.sh --use-current-version`, producing release `1.1.910`.
 - manual drag resize no longer lives as a shell-local fallback algorithm and now runs through a dedicated pure manual normalizer using the same geometry contract;
 - the shell regression surface explicitly proves that manual position changes route through the unified manual normalizer;
 - the flow sidecar layout metric version has been bumped to invalidate stale geometry from the pre-fix contract.
