@@ -287,3 +287,112 @@ test("domainModelToReactFlow gives stacked cluster modules enough vertical space
   assert.equal(refreshNode.position.y > eligibilityNode.position.y, true);
   assert.equal(Number(clusterNode.style?.height ?? 0) > refreshNode.position.y, true);
 });
+
+const LOCALIZED_CLUSTER_BOUNDARY_FIXTURE: ModuleMapModel = {
+  version: 1,
+  stage: "diagram_modules",
+  revision: "localized-cluster-boundary",
+  updated: "2026-04-08T08:35:00Z",
+  productParts: [
+    {
+      id: "project-manager",
+      title: "Project Manager",
+      purpose:
+        "Проект Manager является главной пользовательской оболочкой продукта и ведет пользователя по обязательным стадиям workflow.",
+      clusterIds: ["pm-workflow-ui"],
+      standaloneModuleIds: [],
+    },
+  ],
+  clusters: [
+    {
+      id: "pm-workflow-ui",
+      title: "Project Manager Workflow Ui",
+      purpose:
+        "Ведёт пользователя по стадиям workflow, показывает прогресс и управляет переходами между подтверждёнными действиями.",
+      productPart: "project-manager",
+      moduleIds: [
+        "stage-navigation-guide",
+        "step-run-control",
+        "project-structure-map",
+      ],
+    },
+  ],
+  modules: [
+    {
+      id: "stage-navigation-guide",
+      kind: "service",
+      title: "Stage Navigation Guide",
+      responsibility:
+        "Показывает обязательные стадии, текущий шаг и доступные следующие или предыдущие действия.",
+      productPart: "project-manager",
+      cluster: "pm-workflow-ui",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "step-run-control",
+      kind: "service",
+      title: "Step Run Control",
+      responsibility:
+        "Запускает активный шаг, показывает его статус выполнения и поддерживает повторный запуск или возврат к уточнению.",
+      productPart: "project-manager",
+      cluster: "pm-workflow-ui",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+    {
+      id: "project-structure-map",
+      kind: "service",
+      title: "Project Structure Map",
+      responsibility:
+        "Показывает дерево product parts, clusters, modules и готовность связанных артефактов как понятную карту проекта.",
+      productPart: "project-manager",
+      cluster: "pm-workflow-ui",
+      inputs: [],
+      outputs: [],
+      contractTargets: [],
+      codeTargets: [],
+      origin: "agent",
+      status: "proposed",
+    },
+  ],
+  relations: [],
+};
+
+test("domainModelToReactFlow keeps localized dense cluster modules inside the cluster boundary", () => {
+  const result = domainModelToReactFlow(LOCALIZED_CLUSTER_BOUNDARY_FIXTURE);
+
+  const clusterNode = result.nodes.find((node) => node.id === "cluster:pm-workflow-ui");
+  const stageNavigationNode = result.nodes.find(
+    (node) => node.id === "stage-navigation-guide"
+  );
+  const projectStructureNode = result.nodes.find(
+    (node) => node.id === "project-structure-map"
+  );
+
+  assert.notEqual(clusterNode, undefined);
+  assert.notEqual(stageNavigationNode, undefined);
+  assert.notEqual(projectStructureNode, undefined);
+  if (!clusterNode || !stageNavigationNode || !projectStructureNode) {
+    return;
+  }
+
+  const stageNavigationBottom =
+    stageNavigationNode.position.y
+    + Number(stageNavigationNode.style?.minHeight ?? 0);
+  const projectStructureBottom =
+    projectStructureNode.position.y
+    + Number(projectStructureNode.style?.minHeight ?? 0);
+  const clusterBottom = Number(clusterNode.style?.height ?? 0);
+
+  assert.equal(projectStructureNode.position.y >= stageNavigationBottom + 12, true);
+  assert.equal(projectStructureBottom + 12 <= clusterBottom, true);
+});

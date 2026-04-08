@@ -36,13 +36,13 @@
 2. [DONE] Git Commit: `fix(diagram): harden initial layout height metrics` (hash: `a9cd3d261`)
 
 ### Stream: Flow Sidecar Fingerprint
-1. [IN_PROGRESS] Добавить layout metric fingerprint в schema/apply-path `module-map.flow.json`, чтобы legacy geometry не применялась после изменения визуальной метрики; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale flow sidecars after metric changes`
-2. [TODO] Git Commit: `fix(diagram): invalidate stale flow sidecars after metric changes` (hash: TBD)
+1. [DONE] Добавить layout metric fingerprint в schema/apply-path `module-map.flow.json`, чтобы legacy geometry не применялась после изменения визуальной метрики; scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts`; ожидаемый commit message: `fix(diagram): invalidate stale flow sidecars after metric changes`
+2. [DONE] Git Commit: `fix(diagram): invalidate stale flow sidecars after metric changes` (hash: `765c2ae3d`)
 
 ## Phase 2 — Dense Regression Evidence And Docs Sync (owner: Oleksandr + Codex, updated: 2026-04-08)
 
 ### Stream: Dense Localized Regression Coverage
-1. [TODO] Добавить regression fixtures для локализованного dense cluster stack и standalone bottom boundary, воспроизводящие пользовательский сценарий без налезаний; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; ожидаемый commit message: `test(diagram): cover localized autolayout boundaries`
+1. [IN_PROGRESS] Добавить regression fixtures для локализованного dense cluster stack и standalone bottom boundary, воспроизводящие пользовательский сценарий без налезаний; scope: `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.standalone-band.test.ts`, `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.product-parts.test.ts`; ожидаемый commit message: `test(diagram): cover localized autolayout boundaries`
 2. [TODO] Git Commit: `test(diagram): cover localized autolayout boundaries` (hash: TBD)
 
 ### Stream: Verification Fallout And SSOT Sync
