@@ -29,9 +29,9 @@
 
 ## Phase 1 — Diagram Modules initial autolayout overlap-aware packing (owner: Codex, updated: 2026-04-08)
 ### Stream: Scope Setup
-1. [IN_PROGRESS] Создать planning-doc, новый `todo-plan.md` и стартовый `Session017.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_OverlapAwarePacking_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session017.md`; expected commit: `docs(plan): open overlap-aware initial autolayout scope`
-2. [TODO] Git Commit: `docs(plan): open overlap-aware initial autolayout scope` (hash: TBD)
-3. [TODO] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register overlap-aware initial autolayout scope`
+1. [DONE] Создать planning-doc, новый `todo-plan.md` и стартовый `Session017.md` для corrective cycle; scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_OverlapAwarePacking_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session017.md`; expected commit: `docs(plan): open overlap-aware initial autolayout scope`
+2. [DONE] Git Commit: `docs(plan): open overlap-aware initial autolayout scope` (hash: `bcdb87418`)
+3. [IN_PROGRESS] Зарегистрировать новый active scope в `Docs_Index.md`; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs(index): register overlap-aware initial autolayout scope`
 4. [TODO] Git Commit: `docs(index): register overlap-aware initial autolayout scope` (hash: TBD)
 
 ### Stream: Seed Autolayout Solver
