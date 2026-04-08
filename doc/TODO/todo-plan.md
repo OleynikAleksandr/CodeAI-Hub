@@ -35,11 +35,11 @@
 
 ### Stream: Shared Visual Bounds Engine
 3. [DONE] Ввести shared visual-bounds helper и перевести measured autolayout на вычисление container bottoms по deepest direct child visual bound; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-bounds.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`; ожидаемый commit message: `fix(diagram): derive measured layout from visual bounds`
-4. [DONE] Git Commit: `fix(diagram): derive measured layout from visual bounds` (hash: TBD)
+4. [DONE] Git Commit: `fix(diagram): derive measured layout from visual bounds` (hash: 365b554fd)
 
 ### Stream: Unified Manual Drag
-5. [TODO] Вынести manual drag resize в pure helper и перевести shell на тот же shared geometry contract, что и autolayout; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): unify manual drag container bounds`
-6. [TODO] Git Commit: `fix(diagram): unify manual drag container bounds` (hash: TBD)
+5. [DONE] Вынести manual drag resize в pure helper и перевести shell на тот же shared geometry contract, что и autolayout; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-manual-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): unify manual drag container bounds`
+6. [DONE] Git Commit: `fix(diagram): unify manual drag container bounds` (hash: TBD)
 7. [TODO] Обновить shell regression evidence под новый manual-layout contract; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test(diagram): cover unified manual layout contract`
 8. [TODO] Git Commit: `test(diagram): cover unified manual layout contract` (hash: TBD)
 
