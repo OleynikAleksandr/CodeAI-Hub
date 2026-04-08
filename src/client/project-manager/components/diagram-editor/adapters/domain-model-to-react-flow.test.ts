@@ -2,6 +2,7 @@ import type { ModuleMapModel } from "../../../../../../packages/core/src/workflo
 import assert from "node:assert/strict";
 import test from "node:test";
 import { domainModelToReactFlow } from "./domain-model-to-react-flow";
+import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
 
 const MODULE_MAP_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -98,110 +99,43 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
   ],
 };
 
-
-test("domainModelToReactFlow projects module map into product part, cluster, and module hierarchy", () => {
+test("domainModelToReactFlow emits one ProductPart node with nested clusters and modules", () => {
   const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
 
   assert.equal(result.stage, "diagram_modules");
   assert.equal(result.revision, "deadbeef");
-  assert.equal(result.nodes.length, 6);
-  assert.equal(result.edges.length, 2);
+  assert.equal(result.nodes.length, 1);
 
-  assert.deepEqual(
-    result.nodes.map((node) => node.id),
-    [
-      "product-part:control-shell",
-      "cluster:delivery",
-      "cluster:security",
-      "api-gateway",
-      "auth-service",
-      "config-store",
-    ]
-  );
+  const ppNode = result.nodes[0]!;
+  assert.equal(ppNode.id, "product-part:control-shell");
+  assert.equal(ppNode.type, "productPart");
+  assert.equal(ppNode.data.nodeKind, "productPart");
 
-  const productPartNode = result.nodes[0];
-  assert.equal(productPartNode.type, "cluster");
-  assert.equal(productPartNode.parentId, undefined);
-  assert.equal(productPartNode.extent, undefined);
-  assert.equal(productPartNode.style?.width, 720);
-  assert.equal(productPartNode.data.nodeKind, "productPart");
-  assert.equal((productPartNode.data as Record<string, unknown>).productPartId, "control-shell");
-  assert.equal((productPartNode.data as Record<string, unknown>).title, "Control Shell");
-  assert.ok("containerConstraints" in productPartNode.data);
+  const data = ppNode.data as ProductPartFlowNodeData;
+  assert.equal(data.productPartId, "control-shell");
+  assert.equal(data.title, "Control Shell");
+  assert.equal(data.clusters.length, 2);
+  assert.equal(data.standaloneModules.length, 1);
 
-  const deliveryCluster = result.nodes[1];
-  assert.equal(deliveryCluster.type, "cluster");
-  assert.equal(deliveryCluster.parentId, "product-part:control-shell");
-  assert.equal(deliveryCluster.extent, undefined);
-  assert.equal(deliveryCluster.data.nodeKind, "cluster");
-  assert.equal((deliveryCluster.data as Record<string, unknown>).clusterId, "delivery");
-  assert.ok("containerConstraints" in deliveryCluster.data);
+  const delivery = data.clusters[0]!;
+  assert.equal(delivery.clusterId, "delivery");
+  assert.equal(delivery.modules.length, 1);
+  assert.equal(delivery.modules[0]!.moduleId, "api-gateway");
+  assert.equal(delivery.modules[0]!.kind, "gateway");
+  assert.equal(delivery.modules[0]!.cluster, "delivery");
 
-  const gatewayNode = result.nodes[3];
-  assert.equal(gatewayNode.type, "module");
-  assert.equal(gatewayNode.parentId, "cluster:delivery");
-  assert.equal(gatewayNode.extent, undefined);
-  assert.deepEqual(gatewayNode.position, { x: 24, y: 120 });
-  assert.deepEqual(gatewayNode.data, {
-    stage: "diagram_modules",
-    nodeKind: "module",
-    moduleId: "api-gateway",
-    title: "API Gateway",
-    kind: "gateway",
-    responsibility: "Routes external requests into the platform.",
-    status: "proposed",
-    origin: "agent",
-    productPart: "control-shell",
-    cluster: "delivery",
-    inputCount: 1,
-    outputCount: 1,
-  });
+  const security = data.clusters[1]!;
+  assert.equal(security.clusterId, "security");
+  assert.equal(security.modules.length, 1);
+  assert.equal(security.modules[0]!.moduleId, "auth-service");
 
-  assert.equal(
-    result.nodes
-      .filter((node) => node.type === "module")
-      .every((node) => typeof node.parentId === "string"),
-    true
-  );
+  const standalone = data.standaloneModules[0]!;
+  assert.equal(standalone.moduleId, "config-store");
+  assert.equal(standalone.cluster, undefined);
+  assert.equal(standalone.productPart, "control-shell");
+});
 
-  const standaloneNode = result.nodes[5];
-  assert.equal(standaloneNode.parentId, "product-part:control-shell");
-  assert.deepEqual(standaloneNode.position, { x: 24, y: 368 });
-
-  assert.deepEqual(result.edges, [
-    {
-      id: "api-gateway__sync-call__auth-service",
-      type: "relation",
-      source: "api-gateway",
-      target: "auth-service",
-      label: "authorize()",
-      data: {
-        stage: "diagram_modules",
-        edgeKind: "relation",
-        relationId: "api-gateway__sync-call__auth-service",
-        relationType: "sync-call",
-        criticality: "high",
-        label: "authorize()",
-        origin: "agent",
-        status: "proposed",
-      },
-    },
-    {
-      id: "auth-service__shared-data__config-store",
-      type: "relation",
-      source: "auth-service",
-      target: "config-store",
-      label: undefined,
-      data: {
-        stage: "diagram_modules",
-        edgeKind: "relation",
-        relationId: "auth-service__shared-data__config-store",
-        relationType: "shared-data",
-        criticality: undefined,
-        label: undefined,
-        origin: "user",
-        status: "accepted",
-      },
-    },
-  ]);
+test("domainModelToReactFlow projection has no edges", () => {
+  const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
+  assert.equal("edges" in result, false);
 });

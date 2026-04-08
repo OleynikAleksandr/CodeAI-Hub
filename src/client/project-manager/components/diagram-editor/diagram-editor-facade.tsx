@@ -12,6 +12,11 @@ import type {
   ModuleFlowNodeData,
   ProductPartFlowNodeData,
 } from "./adapters/domain-model-to-react-flow.types";
+import {
+  resolveClusterModuleColumns,
+  resolveProductPartColumns,
+  type SlotDescriptor,
+} from "./diagram-editor-layout-params";
 
 type DiagramEditorFacadeProps = {
   readonly nodes: readonly DiagramFlowNode[];
@@ -20,11 +25,9 @@ type DiagramEditorFacadeProps = {
   readonly subtitle?: string;
 };
 
-const canvasStyle: React.CSSProperties = {
-  width: "100%",
-  height: "100%",
-};
+const canvasStyle: React.CSSProperties = { width: "100%", height: "100%" };
 
+// -- Module card styles --
 const nodeCardStyle: React.CSSProperties = {
   minWidth: 220,
   maxWidth: 260,
@@ -43,9 +46,8 @@ const nodeCaptionStyle: React.CSSProperties = {
   color: "var(--pm-text-muted)",
 };
 
+// -- ProductPart card styles --
 const productPartCardStyle: React.CSSProperties = {
-  width: "100%",
-  height: "100%",
   borderRadius: 28,
   border: "1px solid rgba(92, 134, 190, 0.35)",
   background:
@@ -54,27 +56,14 @@ const productPartCardStyle: React.CSSProperties = {
   padding: "18px 18px 22px",
 };
 
+// -- Cluster card styles --
 const clusterCardStyle: React.CSSProperties = {
-  width: "100%",
-  height: "100%",
   borderRadius: 22,
   border: "1px dashed rgba(66, 201, 162, 0.48)",
   background:
     "linear-gradient(180deg, rgba(11, 41, 36, 0.18), rgba(9, 20, 24, 0.1))",
   boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.02)",
   padding: "14px 14px 18px",
-};
-
-const containerHeaderStyle: React.CSSProperties = {
-  display: "grid",
-  gap: 4,
-  alignContent: "start",
-};
-
-const containerSummaryStyle: React.CSSProperties = {
-  display: "grid",
-  gap: 4,
-  minWidth: 0,
 };
 
 const productPartHeaderStyle: React.CSSProperties = {
@@ -99,48 +88,9 @@ const purposeTextStyle: React.CSSProperties = {
   color: "var(--pm-text-muted)",
 };
 
-const ContainerNode = ({
-  data,
-}: {
-  readonly id: string;
-  readonly data: ClusterFlowNodeData | ProductPartFlowNodeData;
-}) => {
-  if (data.nodeKind === "productPart") {
-    return (
-      <div style={productPartCardStyle}>
-        <div style={productPartHeaderStyle}>
-          <div style={containerSummaryStyle}>
-            <div style={nodeCaptionStyle}>Product Part</div>
-            <strong style={{ fontSize: 15 }}>{data.title}</strong>
-            <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
-              Clusters: {data.clusterIds.length} | Standalone Modules:{" "}
-              {data.standaloneModuleIds.length}
-            </div>
-          </div>
-          <div style={purposePanelStyle}>
-            <div style={nodeCaptionStyle}>Purpose</div>
-            <div style={purposeTextStyle}>{data.purpose}</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+// -- Sub-components (not React Flow nodes) --
 
-  return (
-    <div style={clusterCardStyle}>
-      <div style={containerHeaderStyle}>
-        <div style={nodeCaptionStyle}>Cluster</div>
-        <strong style={{ fontSize: 13 }}>{data.title}</strong>
-        <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
-          Modules: {data.moduleIds.length}
-        </div>
-        <div style={purposeTextStyle}>{data.purpose}</div>
-      </div>
-    </div>
-  );
-};
-
-const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
+const ModuleCard = ({ data }: { readonly data: ModuleFlowNodeData }) => (
   <div style={nodeCardStyle}>
     <div style={nodeCaptionStyle}>Module</div>
     <strong style={{ display: "block", fontSize: 14, marginTop: 4 }}>
@@ -160,42 +110,103 @@ const ModuleNode = ({ data }: { readonly data: ModuleFlowNodeData }) => (
       {data.responsibility}
     </div>
     {data.cluster ? (
-      <div
-        style={{
-          marginTop: 8,
-          fontSize: 11,
-          color: "var(--pm-accent-strong)",
-        }}
-      >
+      <div style={{ marginTop: 8, fontSize: 11, color: "var(--pm-accent-strong)" }}>
         {data.cluster}
       </div>
-    ) : data.kind === "external" ? (
-      <div
-        style={{
-          marginTop: 8,
-          fontSize: 11,
-          color: "var(--pm-accent-strong)",
-        }}
-      >
-        External to {data.productPart}
-      </div>
     ) : (
-      <div
-        style={{
-          marginTop: 8,
-          fontSize: 11,
-          color: "var(--pm-text-muted)",
-        }}
-      >
+      <div style={{ marginTop: 8, fontSize: 11, color: "var(--pm-text-muted)" }}>
         Standalone in {data.productPart}
       </div>
     )}
   </div>
 );
 
+const ClusterCard = ({ data }: { readonly data: ClusterFlowNodeData }) => {
+  const moduleCols = resolveClusterModuleColumns(
+    data.modules.length,
+    data.layoutParams,
+  );
+  return (
+    <div style={clusterCardStyle}>
+      <div style={{ display: "grid", gap: 4, alignContent: "start" }}>
+        <div style={nodeCaptionStyle}>Cluster</div>
+        <strong style={{ fontSize: 13 }}>{data.title}</strong>
+        <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
+          Modules: {data.modules.length}
+        </div>
+        <div style={purposeTextStyle}>{data.purpose}</div>
+      </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${moduleCols}, 1fr)`,
+          gap: 12,
+          marginTop: 12,
+        }}
+      >
+        {data.modules.map((m) => (
+          <ModuleCard data={m} key={m.moduleId} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ProductPartNode = ({
+  data,
+}: {
+  readonly id: string;
+  readonly data: ProductPartFlowNodeData;
+}) => {
+  const slots: SlotDescriptor[] = [
+    ...data.clusters.map((c) => ({
+      kind: "cluster" as const,
+      moduleCount: c.modules.length,
+      moduleColumns: c.layoutParams.moduleColumns,
+    })),
+    ...data.standaloneModules.map(() => ({
+      kind: "standaloneModule" as const,
+    })),
+  ];
+  const columns = resolveProductPartColumns(slots, data.layoutParams);
+
+  return (
+    <div style={productPartCardStyle}>
+      <div style={productPartHeaderStyle}>
+        <div style={{ display: "grid", gap: 4, minWidth: 0 }}>
+          <div style={nodeCaptionStyle}>Product Part</div>
+          <strong style={{ fontSize: 15 }}>{data.title}</strong>
+          <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
+            Clusters: {data.clusters.length} | Standalone Modules:{" "}
+            {data.standaloneModules.length}
+          </div>
+        </div>
+        <div style={purposePanelStyle}>
+          <div style={nodeCaptionStyle}>Purpose</div>
+          <div style={purposeTextStyle}>{data.purpose}</div>
+        </div>
+      </div>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          gap: 12,
+          marginTop: 12,
+        }}
+      >
+        {data.clusters.map((c) => (
+          <ClusterCard data={c} key={c.clusterId} />
+        ))}
+        {data.standaloneModules.map((m) => (
+          <ModuleCard data={m} key={m.moduleId} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const NODE_TYPES = {
-  cluster: ContainerNode as React.ComponentType,
-  module: ModuleNode as React.ComponentType,
+  productPart: ProductPartNode as React.ComponentType,
 } as unknown as NodeTypes;
 
 const PAN_CLASS = "diagram-pan-mode";
@@ -242,7 +253,9 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
         boxShadow: "var(--pm-shadow-soft)",
       }}
     >
-      {!draggable && <style>{`.${PAN_CLASS} .react-flow__node{pointer-events:none}`}</style>}
+      {!draggable && (
+        <style>{`.${PAN_CLASS} .react-flow__node{pointer-events:none}`}</style>
+      )}
       <ReactFlow
         fitView
         nodes={nodes as never}
