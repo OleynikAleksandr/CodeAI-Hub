@@ -346,3 +346,44 @@ Root cause зафиксирован явно:
 
 - accepted boundary теперь включает не только semantic `revision`, но и compatibility fingerprint визуальной метрики sidecar;
 - localized dense `Diagram Modules` scenario зафиксирован в постоянном regression наборе как обязательный guardrail перед релизом.
+
+### 11.8. Measured-first ownership reflow completed on 2026-04-08
+
+Пользовательский ретест релиза `1.1.908` подтвердил, что одного measured sibling-gap enforcement недостаточно.
+
+Что именно осталось сломанным после `1.1.908`:
+- module-to-module gap действительно стабилизировался;
+- но `Module` всё ещё мог визуально упираться в нижнюю границу `Cluster`;
+- а `Cluster` / standalone `Module` всё ещё могли упираться в нижнюю границу `Product Part`.
+
+Критическое подтверждение root cause:
+- в user-provided workspace `diagram_modules` не было `module-map.flow.json`;
+- значит проблема воспроизводилась на freshly computed layout, а не на stale sidecar geometry;
+- следовательно, сама ownership layout model оставалась неправильной.
+
+Принятый контракт после этого corrective pass:
+- projection остаётся только deterministic seed для `x`-колонок, ownership relations и stable ordering;
+- React Flow bridge теперь поднимает не только measured width/height node boxes, но и measured `bodyStartY` для ownership headers;
+- `bodyStartY` строится от реального rendered header content plus fixed renderer offsets, а не от text heuristics;
+- pure measured pass теперь не "ремонтирует" guessed parent height, а пересобирает `Cluster` и `Product Part` снизу вверх из finalized measured children;
+- для ownership containers authoritative height теперь берётся из finalized `style.height`, а не из stale measured seed height.
+
+Практическая модель reflow теперь такая:
+1. внутри `Cluster` modules раскладываются по seed columns от measured `bodyStartY`;
+2. высота `Cluster` вычисляется из deepest measured child bottom plus bottom padding;
+3. внутри `Product Part` clusters и standalone modules раскладываются по своим seed columns от measured product-part `bodyStartY`;
+4. высота `Product Part` вычисляется из deepest finalized child bottom plus bottom padding;
+5. только после этого раздвигаются top-level `Product Part` siblings.
+
+Новый evidence set для measured-first ownership contract:
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`
+- `npx tsx --test --test-name-pattern 'measurement bridge carries measured ownership header boundaries|keeps React Flow diagnostics widgets' src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
+Итог этого pass:
+- boundary safety для `Cluster` и `Product Part` больше не зависит от projection-time guesses о высоте модулей;
+- измерение ownership header boundary стало частью runtime contract;
+- следующий релиз должен валидироваться на том же workspace, который показал провал `1.1.908`.

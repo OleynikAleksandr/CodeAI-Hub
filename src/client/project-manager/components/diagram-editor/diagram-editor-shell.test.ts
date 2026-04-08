@@ -27,6 +27,10 @@ test("diagram editor shell normalizes first-open layout after measured node size
 
   assert.equal(source.includes("normalizeMeasuredDiagramLayout"), true);
   assert.equal(source.includes("handleMeasuredNodes"), true);
+  assert.equal(
+    source.includes("left.measured?.bodyStartY === right.measured?.bodyStartY"),
+    true
+  );
   assert.equal(source.includes("onMeasuredNodes={handleMeasuredNodes}"), true);
   assert.equal(source.includes("measurementRevision={projection.revision}"), true);
 });

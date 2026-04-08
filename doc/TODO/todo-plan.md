@@ -44,10 +44,10 @@
 
 ### Stream: Reflow Core
 1. [DONE] Перестроить measured layout pass как bottom-up ownership reflow от реальных `Module` heights и measured `bodyStartY`, чтобы `Cluster` и `Product Part` вычислялись из finalized children, а не из guessed heights; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-measured-layout-normalizer.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx`; ожидаемый commit message: `fix(diagram): rebuild ownership layout from measured children`
-2. [TODO] Git Commit: `fix(diagram): rebuild ownership layout from measured children` (hash: TBD)
+2. [DONE] Git Commit: `fix(diagram): rebuild ownership layout from measured children` (hash: `89c5646d9`)
 
 ### Stream: Shell Snapshot And Runtime Evidence
-1. [TODO] Синхронизировать shell snapshot contract и таргетную runtime verification wave для measured-first ownership reflow; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured ownership reflow evidence`
+1. [DONE] Синхронизировать shell snapshot contract и таргетную runtime verification wave для measured-first ownership reflow; scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts`, `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs(diagram): record measured ownership reflow evidence`
 2. [TODO] Git Commit: `docs(diagram): record measured ownership reflow evidence` (hash: TBD)
 
 ## Phase 3 — Sidecar Invalidation And Release Preparation (owner: Oleksandr + Codex, updated: 2026-04-08)
