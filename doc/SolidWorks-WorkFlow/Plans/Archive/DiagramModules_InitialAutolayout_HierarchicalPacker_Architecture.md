@@ -1,6 +1,6 @@
 # Diagram Modules Initial Autolayout Hierarchical Packer — Architecture
 
-**Status:** Accepted implementation baseline
+**Status:** Completed corrective scope shipped in release `1.1.911`
 **Date:** 2026-04-08
 **Owner:** Oleksandr + Codex
 **Scope:** post-release corrective wave after `1.1.910`; fix the remaining `Diagram Modules` defect where first-open autolayout still lets modules visually run into `Cluster` and `Product Part` lower bounds, while preserving the already-working manual layout behavior
@@ -196,3 +196,4 @@ Already implemented in the active execution cycle:
 - the measured shell path is now layout-source-aware while manual drag remains unchanged;
 - `seed-autolayout` now uses a pure hierarchical packer that repacks children from measured `bodyStartY` and measured visual heights, then resizes `Cluster` and `Product Part` owners until the layout settles;
 - regression evidence now covers both sides of the split: safe seed autolayout and preserved sidecar-backed manual composition.
+- release verification passed through targeted `tsx --test` runs, `npm run build:webview`, `npm run typecheck:webview`, `./scripts/build-all.sh`, and `./scripts/build-release.sh --use-current-version`, producing release `1.1.911`.

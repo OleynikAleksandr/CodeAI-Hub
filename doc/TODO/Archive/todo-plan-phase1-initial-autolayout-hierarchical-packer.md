@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_InitialAutolayout_HierarchicalPacker_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`
@@ -57,4 +57,4 @@
 17. [DONE] Прогнать таргетные diagram-editor tests и `./scripts/build-all.sh` для нового release baseline; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): capture initial autolayout packer version bump`
 18. [DONE] Git Commit: `build(release): capture initial autolayout packer version bump` (hash: 46ff68512)
 19. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` и зафиксировать packaged release artifacts; scope: рабочее дерево + `doc/TODO/todo-plan.md`; ожидаемый commit message: `build(release): package initial autolayout packer release`
-20. [TODO] Git Commit: `build(release): package initial autolayout packer release` (hash: TBD)
+20. [DONE] Git Commit: `build(release): package initial autolayout packer release` (hash: 0e3911b9d)
