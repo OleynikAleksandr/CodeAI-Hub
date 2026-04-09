@@ -130,7 +130,35 @@
 
 ---
 
-## Phase Closeout Requirements (обязательно после завершения Phase 2)
-- Перенести завершённый `todo-plan.md` в `doc/TODO/Archive/todo-plan-phase1-2-diagram-sidecar-v2-and-docs-cleanup.md` при старте следующего scope.
-- Провести ревизию `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md`: перенести итоговые выводы в `System/` / `Clusters/` SSOT (уже сделано в Phase 1, Stream 4), затем архивировать planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/` при старте следующего scope.
+## Phase 3 — Projection Naming Cleanup + Archive Compression (owner: Codex, updated: 2026-04-09)
+
+Контекст: dead-code/dead-links аудит после Phase 2 показал, что (1) adapter layer `diagram-editor/adapters/` всё ещё именован вокруг React Flow, хотя сам React Flow удалён в `1.1.921`; (2) `doc/.../Plans/Archive/` и `doc/TODO/Archive/` содержат 96 файлов с ~62 stale inline-refs, замусоривающими grep-based аудиты. Оба под-скоупа — чисто docs/refactor, release build не требуется.
+
+Planning source: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming_And_Archive_Compression_Architecture.md`
+
+### Stream 3A: Projection naming cleanup (atomic rename)
+
+1. [TODO] Atomic rename: `git mv` 7 файлов в `adapters/` (`domain-model-to-react-flow.ts*`, `module-stage-react-flow.ts`), переименовать 8 типов (`Diagram*Flow*` → `Diagram*Projection*`), переименовать функцию `domainModelToReactFlow()` → `domainModelToProjection()`, обновить все 10 импортёров (import path + type names + function name) в одном атомарном commit. Scope: ~16 файлов (justified deviation from ≤3 правила для rename — см. planning-doc §5.1). Verification: `grep -r "react-flow\|DiagramFlowNode\|domainModelToReactFlow" src/ packages/` → 0 matches; `typecheck:webview` + `check:knip` + `lint` зелёные; 17 flow-sidecar tests зелёные.
+2. [TODO] Git Commit: `refactor(diagram): rename react-flow adapter naming to projection` (hash: TBD)
+
+### Stream 3B.1: Compress Plans/Archive directory
+
+1. [TODO] `cd doc/SolidWorks-WorkFlow/Plans && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создать `doc/SolidWorks-WorkFlow/Plans/Archive.README.md` с pointer'ом на zip + инструкцией распаковки. Scope: ~78 файлов через bulk rm + 2 новых файла (единая архивация).
+2. [TODO] Git Commit: `docs(archive): compress Plans/Archive directory into Archive.zip` (hash: TBD)
+
+### Stream 3B.2: Compress TODO/Archive directory
+
+1. [TODO] `cd doc/TODO && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создать `doc/TODO/Archive.README.md` с pointer'ом на zip. Scope: ~22 файла через bulk rm + 2 новых.
+2. [TODO] Git Commit: `docs(archive): compress TODO/Archive directory into Archive.zip` (hash: TBD)
+
+### Stream 3B.3: Update Docs_Index.md after archive compression
+
+1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: заменить отдельные bullets на `Plans/Archive/*.md` (~20 строк) одним pointer-bullet на `Plans/Archive.zip` + короткой нотой «unzip для доступа к исходным документам». Scope: 1 файл.
+2. [TODO] Git Commit: `docs: point Docs_Index at Plans/Archive.zip after compression` (hash: TBD)
+
+---
+
+## Phase Closeout Requirements (обязательно после завершения Phase 1+2+3)
+- Перенести завершённый `todo-plan.md` в `doc/TODO/Archive.zip` потомка `todo-plan-phase1-2-3-sidecar-v2-docs-cleanup-and-projection-rename.md` при старте следующего scope (после zip архивации работа с TODO Archive идёт через unzip/re-zip цикл, либо — проще — при старте нового scope сохранять его в `doc/TODO/todo-plan.md` с пометкой closure).
+- Провести ревизию `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md` и `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming_And_Archive_Compression_Architecture.md`: оба — completed planning-doc'и, итоги в Session025 report. Архивация в `Plans/Archive.zip` или удаление при старте следующего scope.
 - Создать новый `doc/TODO/todo-plan.md` только при начале следующего scope.
