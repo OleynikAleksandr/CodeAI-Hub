@@ -331,7 +331,7 @@
 - `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
 
-## 6.5) Diagram Modules Ownership Hierarchy Boundary (Phase 6, 2026-03-21; updated Phase 57, 2026-03-24)
+## 6.5) Diagram Modules Ownership Hierarchy Boundary (Phase 6, 2026-03-21; updated 2026-04-09 post React Flow removal and Sidecar v2)
 
 - `Diagram Modules` больше не ограничивается semantic baseline вида `cluster + standalone module`.
 - Канонический semantic runtime contract для module stage теперь включает `ProductPartEntity[]`, `ClusterEntity[]`, `ModuleEntity[]` и `ModuleRelation[]`.
@@ -340,14 +340,14 @@
   - не может быть пустым;
   - не может использоваться как relation endpoint.
 - `Cluster` обязан принадлежать ровно одному `Product Part`, а `Module` обязан принадлежать ровно одному `Product Part` и максимум одному `Cluster`.
-- React Flow projection для `Diagram Modules` обязан использовать nested container model:
-  - product part node = top-level container;
-  - cluster node = child container через `parentId` (no `extent: "parent"` — containers resize dynamically);
-  - module node = child node внутри cluster или напрямую внутри product part, если модуль standalone;
-  - container nodes хранят `containerConstraints` (childMinX/Y, minWidth/Height, padding) для dynamic resize и collision avoidance.
-- First-open auto-layout для ownership-aware `Diagram Modules` обязан оставаться readable без user drag:
-  - top-level `Product Part` containers раскладываются как независимые row/lane sections и не могут overlap друг с другом;
-  - internal standalone modules группируются в отдельную предсказуемую band внутри owning product part и не могут хаотично расширять cluster grid;
+- Visual shell projection для `Diagram Modules` обязана использовать nested CSS Grid container model:
+  - `Product Part` = top-level CSS Grid контейнер, положение которого задаётся декларативными layout params (`columns`, `targetAspectRatio`);
+  - `Cluster` = nested CSS Grid контейнер внутри owning product part, чья внутренняя раскладка задаётся per-cluster `moduleColumns`;
+  - `Module` = child card внутри cluster или напрямую внутри product part, если модуль standalone;
+  - контейнеры не владеют pixel-level constraints (`parentId`, `extent: "parent"`, `containerConstraints`, collision avoidance) — layout driven целиком браузерным CSS Grid движком, а не JS measure/place pass (см. §6.2, §6.4).
+- First-open composition для ownership-aware `Diagram Modules` обязан оставаться readable без user drag:
+  - top-level `Product Part` containers раскладываются как независимые lane sections и не могут overlap друг с другом;
+  - standalone modules внутри `Product Part` компактизируются через тот же owning-grid, а не через отдельный auto-layout pass;
   - ownership-free external modules/boundaries (например выбранный AI provider) визуализируются вне product-part container, а не как внутренние элементы его ownership layer.
 - Начиная с workflow cleanup baseline (`2026-04-07`), `Diagram Modules` фиксируется как главный user-feedback checkpoint и одновременно как последний шаг ствола:
   - пользователь именно здесь впервые видит архитектуру в наглядной форме и должен иметь возможность активно её корректировать;
@@ -356,32 +356,29 @@
 - Начиная с product-part decomposition baseline (`2026-03-23`), `Diagram Modules` больше не должен упираться в giant single-turn generation:
   - сначала runtime materialize-ит `product-parts.index.md`;
   - затем отдельные `Product Part` materialize-ятся по одному;
-  - `React Flow` обязан progressively регенерировать graph по мере появления новых part artifacts;
+  - visual shell обязана progressively регенерировать CSS Grid composition по мере появления новых part artifacts;
   - relation lines и cross-part wiring исключаются из первого обязательного baseline slice.
-- First-open layout contract для `Diagram Modules` должен быть детерминированным и идти по схеме `measure -> place`:
-  - runtime сначала измеряет header/content budget для `Product Part`, `Cluster` и `Module`;
-  - затем размещает child nodes накопительно по реальным высотам, а не только по грубым константам;
-  - child cards не имеют права пересекать header-zone parent container.
+- First-open layout contract для `Diagram Modules` теперь полностью декларативен:
+  - runtime отдаёт visual shell только semantic tree (`Product Part -> Cluster -> Module`) и optional layout params из sidecar v2;
+  - CSS Grid контейнеры раскладывают child cards нативно — runtime не выполняет JS-based measure/place pass, runtime не владеет header budget'ами и не вычисляет child positions вручную;
+  - defaults layout params выбираются projection layer'ом (`columns: auto`, `targetAspectRatio: landscape`, `moduleColumns: auto`), пока пользователь не override-ит их через right-click context menu.
 - User-facing hierarchy contract для ownership containers:
   - `Product Part` и `Cluster` обязаны показывать короткий purpose/description surface, а не только title и counters;
-  - standalone modules должны компактизироваться под более короткую измеренную колонку внутри owning product part;
-  - outer frame `Product Part` должен замыкаться по реально занятому содержимому плюс симметричные paddings, без пустой декоративной вертикали.
-- `module-map.flow.json` остаётся non-semantic layout sidecar даже после введения ownership hierarchy:
-  - хранит только geometry/positions;
-  - не переносит ownership semantics;
-  - применяется только если `Revision` sidecar совпадает с текущим semantic artifact.
+  - standalone modules компактизируются через owning product part CSS Grid column track, а не через отдельную band-logic;
+  - outer frame `Product Part` замыкается по реально занятому CSS Grid содержимому — без пустой декоративной вертикали.
+- `module-map.flow.json` остаётся non-semantic layout sidecar:
+  - хранит placeholder positions, viewport и (в формате v2) опциональную секцию `layoutParams` с declarative CSS Grid overrides (`columns`/`targetAspectRatio` на ProductPart, `moduleColumns` на Cluster);
+  - не переносит ownership semantics и не дублирует содержимое канонического `.md`;
+  - применяется только если `Revision` sidecar совпадает с текущим semantic artifact; если нет, visual shell стартует с projection defaults и игнорирует sidecar (см. §6.2).
 - Runtime orchestration contract для `Diagram Modules` использует step-by-step workflow (начиная с 1.1.778):
   - index turn: агент создаёт `product-parts.index.md`, задаёт вопросы по составу, ждёт подтверждения пользователя;
   - part turns: пользователь подтверждает → агент создаёт один `Product Part`, ждёт подтверждения;
-  - graph автоматически обновляется при каждом новом artifact (`pm:diagram:refresh` event);
-  - sidebar label: `Module Graph` (Source mode убран — граф является основным артефактом).
+  - visual shell автоматически обновляется при каждом новом artifact (`pm:diagram:refresh` event);
+  - sidebar label: `Module Graph` (Source mode убран — визуальная композиция является основным артефактом).
 
 Канонические документы:
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
-
-Связанный planning-док:
-- `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`
 
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
