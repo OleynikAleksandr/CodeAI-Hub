@@ -156,6 +156,20 @@ Planning source: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming
 1. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Docs_Index.md`: заменены отдельные bullets на `Plans/Archive/*.md` (~28 строк) одним pointer-bullet на `Plans/Archive.zip` + короткой нотой про `Archive.README.md` и доступ через git history. `check:links` 87 файлов проверены (от 179 до 87 после zip компрессии), все зелёные. Scope: 1 файл.
 2. [DONE] Git Commit: `docs: point Docs_Index at Plans/Archive.zip after compression` (hash: `2a38f4efe`)
 
+### Stream 3C: Release Build 1.1.923
+
+Обоснование релиза: Stream 3A переименовал файлы и типы внутри `src/client/project-manager/components/diagram-editor/adapters/` — это реальные изменения исходного кода, которые попадают в webview bundle → VSIX. Без release build пользовательский VSIX остаётся 1.1.922 baseline и не содержит переименованные файлы. Archive compression (3B) не трогает runtime — это чисто worktree hygiene. Phase 2 cleanup тоже docs-only. Итого: единственный code change, попадающий в VSIX 1.1.923, — projection naming cleanup. No user-visible behavior change.
+
+Release notes must honestly reflect: internal refactor release без новых user features; рекомендуется всем, кто развивает расширение, чтобы source tree оставался синхронизирован.
+
+1. [TODO] Sync SSOT + README + CHANGELOG для 1.1.923: `README.md` (Current Release → 1.1.923 с коротким "internal refactor" descriptor), `CHANGELOG.md` (новая `[1.1.923]` entry под Changed с описанием projection rename + архивации как worktree hygiene). `SystemArchitecture.md` и `Clusters/Project_Manager.md` не трогаем — контракт диаграммы не менялся, rename чисто internal. Scope: `README.md`, `CHANGELOG.md` (2 файла).
+2. [TODO] Git Commit: `docs: update README and CHANGELOG for 1.1.923 release` (hash: TBD)
+3. [TODO] Убедиться что `git status` чистый, затем запустить `./scripts/build-all.sh`. Версии поднимаются до `1.1.923` во всех manifest'ах. Manifest bumps закоммитить вручную (build-all.sh не создаёт коммит).
+4. [TODO] Git Commit: `build(release): bump version to 1.1.923` (hash: TBD)
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version` и проверить вывод: `Step 7: Verifying SDK exclusions ✅`, `Removing dev dependencies ✅`, `✅ Package created`. Забрать `codeai-hub-1.1.923.vsix`, перенести tarball'ы в `doc/tmp/releases/`.
+6. [SKIPPED] Git Commit: VSIX не трекается репозиторием, дополнительный коммит не нужен — после шага 5 дерево остаётся чистым.
+7. [TODO — user action] Smoke verify: установить VSIX, убедиться что диаграмма `Diagram Modules` по-прежнему открывается, right-click layout params работают, sidecar v2 persist сохранился после reload (регрессионная проверка, что projection rename не сломал behavior).
+
 ---
 
 ## Phase Closeout Requirements (обязательно после завершения Phase 1+2+3)
