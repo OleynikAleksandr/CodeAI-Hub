@@ -189,6 +189,31 @@ export const parseFlowSidecar = (
   }
 };
 
+const sortObjectByKey = <T>(
+  entries: Readonly<Record<string, T>>
+): Readonly<Record<string, T>> =>
+  Object.fromEntries(
+    Object.entries(entries).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+  );
+
+const collectLayoutParamsFromNodes = (
+  nodes: readonly DiagramFlowNode[]
+): FlowSidecarLayoutParams => {
+  const productParts: Record<string, ProductPartLayoutParams> = {};
+  const clusters: Record<string, ClusterLayoutParams> = {};
+  for (const node of nodes) {
+    const data = node.data;
+    productParts[data.productPartId] = { ...data.layoutParams };
+    for (const cluster of data.clusters) {
+      clusters[cluster.clusterId] = { ...cluster.layoutParams };
+    }
+  }
+  return {
+    productParts: sortObjectByKey(productParts),
+    clusters: sortObjectByKey(clusters),
+  };
+};
+
 export const serializeFlowSidecar = (document: FlowSidecarDocument): string =>
   `${JSON.stringify(document, null, 2)}\n`;
 
@@ -197,13 +222,16 @@ export const buildFlowSidecarDocument = (params: {
   readonly nodes: readonly DiagramFlowNode[];
   readonly viewport?: FlowSidecarViewport;
 }): FlowSidecarDocument => ({
-  version: 1,
+  version: 2,
   revision: params.revision,
   layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
   updated: new Date().toISOString(),
-  nodes: Object.fromEntries(
-    params.nodes.map((node) => [node.id, { x: 0, y: 0 }])
+  nodes: sortObjectByKey(
+    Object.fromEntries(
+      params.nodes.map((node) => [node.id, { x: 0, y: 0 }])
+    )
   ),
+  layoutParams: collectLayoutParamsFromNodes(params.nodes),
   viewport: params.viewport,
 });
 
