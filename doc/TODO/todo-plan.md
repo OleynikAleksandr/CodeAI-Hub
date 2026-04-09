@@ -84,8 +84,8 @@
 
 ### Stream: Fix React Flow references in active Contracts
 
-1. [TODO] `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — заменить React Flow-reference (line ~49-50) на nested CSS Grid, убрать minimap bullet. Scope: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md` (2 файла).
-2. [TODO] Git Commit: `docs(ssot): drop React Flow/minimap references in FacadeClassDiagram and Workflow_CLI` (hash: TBD)
+1. [DONE] `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — заменить React Flow-reference (line ~49-50) на nested CSS Grid, убрать minimap bullet. Scope: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md` (2 файла).
+2. [DONE] Git Commit: `docs(ssot): drop React Flow/minimap references in FacadeClassDiagram and Workflow_CLI` (hash: `1871d1657`)
 
 ### Stream: Archive historical diagram docs from System/
 
