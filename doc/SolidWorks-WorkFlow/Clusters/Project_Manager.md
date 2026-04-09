@@ -40,11 +40,15 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - правая панель имеет переключатель `Artifacts/Help`.
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
 - Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode убран):
-  - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
-  - `*.flow.json` не показывается пользователю как артефакт;
-  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel` при drop.
-- Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors, zoom/fit controls или bottom-right minimap; пользовательский UX = Option(Alt)+drag для перемещения нод, обычный drag для панорамирования.
-- Контейнеры (Product Part, Cluster) динамически расширяются/сжимаются при перемещении дочерних нод; siblings не могут наложиться друг на друга (12px gap).
+  - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов через nested CSS Grid (React Flow удалён в релизе `1.1.921`);
+  - `*.flow.json` не показывается пользователю как артефакт; с релиза `1.1.922` sidecar v2 хранит также declarative CSS Grid layout params;
+  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после write.
+- Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors, zoom/fit controls или bottom-right minimap. Пользователь композирует диаграмму через:
+  - right-click context menu на ProductPart: `columns` (`auto` | 2..5), `targetAspectRatio` (`landscape` | `wide` | `square`);
+  - right-click context menu на Cluster: `moduleColumns` (`auto` | 1..3);
+  - CSS transform zoom: Cmd/Ctrl+scroll (25–200%, шаг 1%); reset — Cmd/Ctrl+0 или clickable badge в bottom-left при scale ≠ 100%.
+- Выбранные layout params сразу уходят в `module-map.flow.json` v2 через `onNodesChange` и переживают reload: read-path применяет их поверх projection defaults через `applyFlowSidecarLayoutParams`. Backwards compat с v1 sidecar (без секции `layoutParams`) сохраняется — такой sidecar трактуется как «defaults повсюду».
+- CSS Grid контейнеры (Product Part, Cluster) сами рассчитывают размер и расположение card'ов браузером; нет `containerConstraints` / `resizeContainersToFit` / collision avoidance в JS.
 - При открытии workspace/switch/reconnect PM временно всегда стартует в `Description`:
   - toolbar highlight = `Description`,
   - левая workflow tree branch = highlighted `Description`, раскрыта только ветка `Description`,
