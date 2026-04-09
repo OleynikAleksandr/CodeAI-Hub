@@ -89,44 +89,44 @@
 
 ### Stream: Archive historical diagram docs from System/
 
-1. [TODO] `git mv System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md` → `Plans/Archive/` (исторический trace §11.1–§11.12, SSOT уже в `SystemArchitecture.md §6.2/§6.4`). Scope: 1 файл через rename.
-2. [TODO] Git Commit: `docs(archive): move Diagram_Modules_ReviewStep_And_Autolayout historical trace to Plans/Archive` (hash: TBD)
-3. [TODO] `git mv System/Diagram_UserFacing_Layout_And_Format_Architecture.md` → `Plans/Archive/` (status «Discussion baseline», drafts запрещены в `System/` по `Plans/README.md §3`). Scope: 1 файл.
-4. [TODO] Git Commit: `docs(archive): move Diagram_UserFacing_Layout_And_Format discussion baseline to Plans/Archive` (hash: TBD)
-5. [TODO] `git mv System/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md` → `Plans/Archive/` (содержит React Flow references и UX refactor planning — выводы уже в SSOT). Scope: 1 файл.
-6. [TODO] Git Commit: `docs(archive): move Diagram_Modules_StepByStep UX refactor plan to Plans/Archive` (hash: TBD)
+1. [DONE] `git mv System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md` → `Plans/Archive/` (исторический trace §11.1–§11.12, SSOT уже в `SystemArchitecture.md §6.2/§6.4`). Scope: 1 файл через rename.
+2. [DONE] Git Commit: `docs(archive): move Diagram_Modules_ReviewStep_And_Autolayout historical trace to Plans/Archive` (hash: `bc8484181`)
+3. [DONE] `git mv System/Diagram_UserFacing_Layout_And_Format_Architecture.md` → `Plans/Archive/` (status «Discussion baseline», drafts запрещены в `System/` по `Plans/README.md §3`). Scope: 1 файл.
+4. [DONE] Git Commit: `docs(archive): move Diagram_UserFacing_Layout_And_Format discussion baseline to Plans/Archive` (hash: `f56720b94`)
+5. [DONE] `git mv System/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md` → `Plans/Archive/` (содержит React Flow references и UX refactor planning — выводы уже в SSOT). Scope: 1 файл.
+6. [DONE] Git Commit: `docs(archive): move Diagram_Modules_StepByStep UX refactor plan to Plans/Archive` (hash: `c97d3e0d6`)
 
 ### Stream: Archive Contracts React Flow planning doc
 
-1. [TODO] `git mv Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md` → `Plans/Archive/` (весь документ построен на React Flow projection pipeline, удалённой в 1.1.921). Scope: 1 файл.
-2. [TODO] Git Commit: `docs(archive): move Diagram_Modules_ProductPart_Hierarchy_DSL React Flow plan to Plans/Archive` (hash: TBD)
+1. [DONE] `git mv Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md` → `Plans/Archive/` (весь документ построен на React Flow projection pipeline, удалённой в 1.1.921). Scope: 1 файл.
+2. [DONE] Git Commit: `docs(archive): move Diagram_Modules_ProductPart_Hierarchy_DSL React Flow plan to Plans/Archive` (hash: `03e121081`)
 
 ### Stream: Delete dead compat-redirect stubs from Contracts/ (batch 1)
 
 Пояснение: все пять compat-redirect документов — это короткие pointer-stub'ы. Два из них (`Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`) указывают на уже существующие файлы в `Plans/Archive/`. Три оставшихся (`ProviderSessionHome_IsolationAndRecovery.md`, `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`) указывают на удалённые или несуществующие originals (`Plans/StandaloneReviewer_Module.md` в Plans/ отсутствует). Все пять — dead pointers, move в Archive бессмысленен. Правильное действие — `git rm` из Contracts/; исторические планы, где они существуют, уже в Plans/Archive/.
 
-1. [TODO] `git rm` трёх compat-stub'ов: `Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`, `ProviderSessionHome_IsolationAndRecovery.md`. Scope: 3 файла.
-2. [TODO] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 1)` (hash: TBD)
+1. [DONE] `git rm` трёх compat-stub'ов: `Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`, `ProviderSessionHome_IsolationAndRecovery.md`. Scope: 3 файла.
+2. [DONE] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 1)` (hash: `75450880d`)
 
 ### Stream: Delete dead compat-redirect stubs from Contracts/ (batch 2)
 
-1. [TODO] `git rm` двух оставшихся compat-stub'ов: `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`. Scope: 2 файла.
-2. [TODO] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 2)` (hash: TBD)
+1. [DONE] `git rm` двух оставшихся compat-stub'ов: `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`. Scope: 2 файла.
+2. [DONE] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 2)` (hash: `2efd8aae0`)
 
 ### Stream: Archive Greenfield polygon + resolve remaining System/ drafts
 
-1. [TODO] `git mv System/Greenfield_Architecture_Polygon.md` → `Plans/Archive/` (status «Draft»). Scope: 1 файл.
-2. [TODO] Git Commit: `docs(archive): move Greenfield_Architecture_Polygon draft to Plans/Archive` (hash: TBD)
+1. [DONE] `git mv System/Greenfield_Architecture_Polygon.md` → `Plans/Archive/` (status «Draft»). Scope: 1 файл.
+2. [DONE] Git Commit: `docs(archive): move Greenfield_Architecture_Polygon draft to Plans/Archive` (hash: `f8d48eed7`)
 
 ### Stream: Fix Modules/Claude.md paths + Codex/Gemini symmetry
 
-1. [TODO] В `Modules/Claude.md` поправить пути `src/provider-usage-limits/…` → `packages/core/src/provider-usage-limits/…` (facades реально в Core). Добавить короткий раздел usage-limits в `Modules/Codex.md` и `Modules/Gemini.md` для симметрии (или убрать из Claude). Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` (3 файла).
-2. [TODO] Git Commit: `docs(modules): align Claude/Codex/Gemini usage-limits paths and structure` (hash: TBD)
+1. [DONE] В `Modules/Claude.md` поправить пути `src/provider-usage-limits/…` → `packages/core/src/provider-usage-limits/…` (facades реально в Core). Добавить короткий раздел usage-limits в `Modules/Codex.md` и `Modules/Gemini.md` для симметрии (или убрать из Claude). Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` (3 файла).
+2. [DONE] Git Commit: `docs(modules): align Claude/Codex/Gemini usage-limits paths and structure` (hash: `2923bd1de`)
 
 ### Stream: Update Docs_Index.md
 
-1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: убрать ссылки на перенесённые compat-redirects (bullet в секции «Contracts (compat / legacy filenames)»), добавить архивированные diagram docs и Greenfield polygon в секцию `Plans/Archive/`. Scope: 1 файл.
-2. [TODO] Git Commit: `docs: sync Docs_Index with Phase 2 documentation cleanup moves` (hash: TBD)
+1. [DONE] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: убрать ссылки на перенесённые compat-redirects (bullet в секции «Contracts (compat / legacy filenames)»), добавить архивированные diagram docs и Greenfield polygon в секцию `Plans/Archive/`. Scope: 1 файл.
+2. [DONE] Git Commit: `docs: sync Docs_Index with Phase 2 documentation cleanup moves` (hash: `2e7be06ca`)
 
 ---
 
