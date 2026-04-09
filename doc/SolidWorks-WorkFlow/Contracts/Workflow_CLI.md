@@ -49,7 +49,7 @@ Legacy `description.md` допускается только для compat и н�
 - Project Manager для `Diagram Modules` использует user surface `Artifacts/Help` (Source mode был удалён):
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
   - `Help` показывает guidance по шагу.
-- Visible PM surface для diagram step не должна требовать `Auto-layout`, layout profiles, inline semantic editors или bottom-right minimap.
+- Visible PM surface для diagram step рендерится через nested CSS Grid (React Flow удалён в релизе `1.1.921`) и управляется через right-click context menu (layout params `columns`, `targetAspectRatio`, `moduleColumns`, сохраняемые в `module-map.flow.json` v2 `layoutParams`); inline semantic editors не допускаются.
 - Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
 
 ---

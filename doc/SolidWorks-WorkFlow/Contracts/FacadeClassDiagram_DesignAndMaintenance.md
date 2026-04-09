@@ -46,8 +46,8 @@
 Для текущего diagram workflow это означает:
 - semantic SSOT шага `Diagram Modules` хранится в staged Markdown артефактах (`product-parts.index.md` + `product-parts/<part-id>.md`);
 - визуальная композиция хранится отдельно в `module-map.flow.json`;
-- Project Manager рендерит диаграмму из Markdown DSL через React Flow;
-- visible runtime surface больше не использует Mermaid как source-of-truth, не показывает inline semantic editors и не держит bottom-right minimap.
+- Project Manager рендерит диаграмму из Markdown DSL через nested CSS Grid (React Flow удалён в релизе `1.1.921`);
+- visible runtime surface больше не использует Mermaid как source-of-truth и не показывает inline semantic editors.
 
 ---
 
@@ -185,7 +185,7 @@ PR считается завершённым только если:
 - Для runtime workflow шага `Diagram Modules` канонический формат — staged Markdown артефакты:
   - `product-parts.index.md` + `product-parts/<part-id>.md` как semantic SSOT;
   - `module-map.flow.json` как manual-layout/view sidecar;
-  - React Flow rendering в PM как user-facing surface.
+  - nested CSS Grid rendering в PM как user-facing surface (с `1.1.922` sidecar v2 хранит также declarative `layoutParams` для CSS Grid overrides).
 - `Mermaid` допустим только для explanatory documentation, временных investigation notes или одноразовых design sketches вне runtime workflow.
 - Если в документации используется `Mermaid`, он не должен рассматриваться как source-of-truth для PM rendering, watcher gating или agent merge path.
 
