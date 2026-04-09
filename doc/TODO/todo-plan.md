@@ -138,23 +138,23 @@ Planning source: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming
 
 ### Stream 3A: Projection naming cleanup (atomic rename)
 
-1. [TODO] Atomic rename: `git mv` 7 файлов в `adapters/` (`domain-model-to-react-flow.ts*`, `module-stage-react-flow.ts`), переименовать 8 типов (`Diagram*Flow*` → `Diagram*Projection*`), переименовать функцию `domainModelToReactFlow()` → `domainModelToProjection()`, обновить все 10 импортёров (import path + type names + function name) в одном атомарном commit. Scope: ~16 файлов (justified deviation from ≤3 правила для rename — см. planning-doc §5.1). Verification: `grep -r "react-flow\|DiagramFlowNode\|domainModelToReactFlow" src/ packages/` → 0 matches; `typecheck:webview` + `check:knip` + `lint` зелёные; 17 flow-sidecar tests зелёные.
-2. [TODO] Git Commit: `refactor(diagram): rename react-flow adapter naming to projection` (hash: TBD)
+1. [DONE] Atomic rename: `git mv` 7 файлов в `adapters/` (`domain-model-to-react-flow.ts*`, `module-stage-react-flow.ts`), переименовать 8 типов (`Diagram*Flow*` → `Diagram*Projection*`), переименовать функцию `domainModelToReactFlow()` → `domainModelToProjection()`, обновить все импортёры (import path + type names + function name) в одном атомарном commit. Scope: 16 файлов (justified deviation from ≤3 правила для rename — см. planning-doc §5.1). Verification: `grep -r "react-flow\|DiagramFlowNode\|domainModelToReactFlow" src/` → 0 matches; `typecheck:webview` + `check:knip` + `lint` зелёные; 36 diagram-editor tests зелёные.
+2. [DONE] Git Commit: `refactor(diagram): rename react-flow adapter naming to projection` (hash: `afa7711bb`)
 
 ### Stream 3B.1: Compress Plans/Archive directory
 
-1. [TODO] `cd doc/SolidWorks-WorkFlow/Plans && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создать `doc/SolidWorks-WorkFlow/Plans/Archive.README.md` с pointer'ом на zip + инструкцией распаковки. Scope: ~78 файлов через bulk rm + 2 новых файла (единая архивация).
-2. [TODO] Git Commit: `docs(archive): compress Plans/Archive directory into Archive.zip` (hash: TBD)
+1. [DONE] `cd doc/SolidWorks-WorkFlow/Plans && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создан `doc/SolidWorks-WorkFlow/Plans/Archive.README.md` с pointer'ом на zip + инструкцией распаковки. Scope: 77 архивных файлов → zip + 2 новых (Archive.zip + Archive.README.md), 78 files changed / 14361 deletions.
+2. [DONE] Git Commit: `docs(archive): compress Plans/Archive directory into Archive.zip` (hash: `95ba9267e`)
 
 ### Stream 3B.2: Compress TODO/Archive directory
 
-1. [TODO] `cd doc/TODO && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создать `doc/TODO/Archive.README.md` с pointer'ом на zip. Scope: ~22 файла через bulk rm + 2 новых.
-2. [TODO] Git Commit: `docs(archive): compress TODO/Archive directory into Archive.zip` (hash: TBD)
+1. [DONE] `cd doc/TODO && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создан `doc/TODO/Archive.README.md`. Scope: 19 архивных файлов → zip + 2 новых, 21 files changed / 1189 deletions.
+2. [DONE] Git Commit: `docs(archive): compress TODO/Archive directory into Archive.zip` (hash: `3a58f6421`)
 
 ### Stream 3B.3: Update Docs_Index.md after archive compression
 
-1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: заменить отдельные bullets на `Plans/Archive/*.md` (~20 строк) одним pointer-bullet на `Plans/Archive.zip` + короткой нотой «unzip для доступа к исходным документам». Scope: 1 файл.
-2. [TODO] Git Commit: `docs: point Docs_Index at Plans/Archive.zip after compression` (hash: TBD)
+1. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Docs_Index.md`: заменены отдельные bullets на `Plans/Archive/*.md` (~28 строк) одним pointer-bullet на `Plans/Archive.zip` + короткой нотой про `Archive.README.md` и доступ через git history. `check:links` 87 файлов проверены (от 179 до 87 после zip компрессии), все зелёные. Scope: 1 файл.
+2. [DONE] Git Commit: `docs: point Docs_Index at Plans/Archive.zip after compression` (hash: `2a38f4efe`)
 
 ---
 
