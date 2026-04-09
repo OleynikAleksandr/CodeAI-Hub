@@ -1,14 +1,22 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md`
+- **Planning source:** (docs-only cleanup scope; план оформлен прямо здесь без отдельного planning-doc в `Plans/`, см. раздел «Scope rationale» ниже)
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.2 Diagram Visual Shell Boundary, §6.4 Diagram Workflow Stabilization Boundary
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.2 Diagram Visual Shell Boundary, §6.5 Diagram Modules Ownership Hierarchy Boundary
+  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` § Шаг 3 — Diagram Modules
+  - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` (будет удалён в Stream 3)
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` §3 Diagram Modules UX контракт
-  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md` (required reading перед каждым фиксом)
-  - `doc/Sessions/Session024.md` — baseline React Flow removal + CSS Grid, release `1.1.921`
+  - `doc/Sessions/Session025.md` — baseline Sidecar v2 / Phase 2 docs cleanup / projection rename / release `1.1.923`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
+
+## Scope rationale
+
+Session025 удалил React Flow из кодовой базы (1.1.921) и переименовал projection adapters (1.1.923), но часть active SSOT документации всё ещё описывает React Flow API (`parentId`, `containerConstraints`, `measure -> place`, `React Flow может показать skeleton`). Также противоречит §6.2: устаревшие bullet'ы говорят `module-map.flow.json хранит только geometry/positions`, тогда как sidecar v2 хранит дополнительно `layoutParams`.
+
+Дополнительно `System/` содержит planning-doc `Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`, который полностью материализован в SystemArchitecture.md §6.3-§6.5 и сохраняет устаревшие React Flow описания (весь §5 — «Принятая React Flow-модель»). По `Plans/README.md §3` такой doc должен быть либо в `Plans/`, либо удалён; поскольку итоги уже в SSOT, правильно удалить.
+
+Scope чисто docs-only (не затрагивает исходный код и runtime), поэтому не требует отдельного planning-doc в `Plans/` и не требует release build — VSIX не меняется.
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
@@ -20,159 +28,37 @@
   - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:knip`, `npm run format:fix`
   - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
   - Ручной прогон этих команд обычно не нужен (только для диагностики).
-- **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
+- **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент. Для docs-only scope таргетные сборки не запускаем.
 - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
-- Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами.
-- **Real-time Документация**: любое изменение архитектуры/логики требует синхронного обновления и `todo-plan.md` и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита.
-- Phase завершается на чистом дереве: запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball'ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+- **Real-time Документация**: любое изменение архитектуры/логики требует синхронного обновления и `todo-plan.md` и документации **ДО** коммита.
+- **Release build:** этот scope чисто docs-only (VSIX surface не меняется), поэтому release build не запускается. Phase закрывается на чистом дереве без `build-all.sh`.
 - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
 ---
 
-## Phase 1 — Sidecar v2 Persisted Layout Params (owner: Codex, updated: 2026-04-09)
+## Phase 1 — React Flow Residual References Cleanup (owner: Claude, updated: 2026-04-09)
 
-### Stream: Sidecar v2 Schema and Parser
+### Stream 0 — Phase closeout Session025 (archival of previous cycle)
 
-1. [DONE] Расширить `FlowSidecarDocument` до `version: 1 | 2` и добавить опциональное поле `layoutParams` (productParts + clusters). Импортировать типы из `diagram-editor-layout-params.ts`. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-2. [DONE] Git Commit: `feat(diagram): extend FlowSidecarDocument type with layoutParams (v2)` (hash: `3055fb78b`)
-3. [DONE] Обновить `parseFlowSidecar`: принимать `version: 1 | 2`, валидировать enum-значения `columns`/`targetAspectRatio`/`moduleColumns`, неизвестные значения отбрасывать. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-4. [DONE] Git Commit: `feat(diagram): parse sidecar v2 layoutParams with enum guards` (hash: `b08563758`)
-5. [DONE] Обновить `buildFlowSidecarDocument`: принимать layoutParams из nodes, сериализовать `version: 2`, отсортировать ключи для стабильного diff. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-6. [DONE] Git Commit: `feat(diagram): serialize sidecar v2 layoutParams with sorted keys` (hash: `ee261d71c`)
-7. [DONE] Добавить round-trip и backwards-compat тесты: v1 parse без layoutParams, v2 round-trip, неизвестные enum fallback, corrupt JSON. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts` (≤1 файл).
-8. [DONE] Git Commit: `test(diagram): cover sidecar v1/v2 parse, serialize, backwards compat` (hash: `3a86514ea`)
+1. [IN_PROGRESS] Завершить Session025 closeout (TODO side): переместить `doc/TODO/todo-plan.md` (все три Phase DONE) в `TODO/Archive.zip` как `todo-plan-phase1-2-3-sidecar-v2-docs-cleanup-projection-rename.md`; удалить nested stale `Archive/Archive.zip` внутри `TODO/Archive.zip` (pre-existing cleanup debt из Session025, сжал 756KB → 64KB); переархивировать `TODO/Archive.zip` чистым; обновить `TODO/Archive.README.md` счётчик и описание. Затем создать новый пустой `doc/TODO/todo-plan.md` для текущего scope (этот файл). Scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive.zip`, `doc/TODO/Archive.README.md` (3 файла).
+2. [TODO] Git Commit: `docs(archive): close Session025 todo-plan and purge nested Archive.zip debt` (hash: TBD)
+3. [TODO] Архивировать оба completed planning-doc'а из Session025 в `Plans/Archive.zip`: `DiagramModules_Sidecar_v2_LayoutParams_Architecture.md` и `DiagramModules_Projection_Naming_And_Archive_Compression_Architecture.md`. Обновить `Plans/Archive.README.md` счётчик. Pragmatic 4-file exception: 2 deletions + Archive.zip repack + README counter — это один атомарный archive move; split зипа через half-state коммит создаёт больше церемонии, чем сам move (тот же pattern, что Session025 Stream 3A rename justified 16-file exception). Scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md` (delete), `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming_And_Archive_Compression_Architecture.md` (delete), `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/SolidWorks-WorkFlow/Plans/Archive.README.md` (4 файла, justified exception).
+4. [TODO] Git Commit: `docs(archive): move Session025 completed planning docs into Plans/Archive.zip` (hash: TBD)
+5. [TODO] Обновить `Docs_Index.md` — убрать bullet'ы на оба completed planning-doc'а и обновить описание `Plans/Archive.zip` (уже не «77 документов», а «историческая коллекция, пополняется при каждом closeout»). Scope: `doc/SolidWorks-WorkFlow/Docs_Index.md` (1 файл).
+6. [TODO] Git Commit: `docs: point Docs_Index at compacted Plans/Archive.zip after Session025 closeout` (hash: TBD)
 
-### Stream: Load Path — apply layoutParams on nodes
+### Stream 1 — Rewrite SystemArchitecture.md §6.5 under CSS Grid
 
-1. [DONE] Добавить функцию `applyFlowSidecarLayoutParams(nodes, document)` — merge productPart и cluster params в `DiagramFlowNode.data.layoutParams` без мутаций; сразу проинтегрировать её в read-path внутри `diagram-modules-progressive-model.ts` рядом с существующим `applyFlowSidecarPositions` (правильный call-site, а не `use-diagram-persistence.ts`, который отвечает только за write-path). Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts` (2 файла).
-2. [DONE] Git Commit: `feat(diagram): apply sidecar v2 layoutParams on diagram load` (hash: `676a3b6f5`)
-3. [DONE] Добавить unit-тесты `applyFlowSidecarLayoutParams`: ProductPart only, Cluster only, both, no match, stable identity. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts` (≤1 файл).
-4. [DONE] Git Commit: `test(diagram): cover applyFlowSidecarLayoutParams merge cases` (hash: `5ead42d5b`)
+1. [TODO] Переписать §6.5 bullet про React Flow projection nested container model (lines 343-347): убрать `parentId`, `extent: "parent"`, `containerConstraints` — переформулировать под nested CSS Grid containers (Product Part = top-level grid, Cluster = nested grid, Module = child card). Убрать `React Flow` из line 359 (progressive rendering bullet). Заменить `measure -> place` bullet на CSS Grid-driven layout через declarative `columns` / `targetAspectRatio` / `moduleColumns` params. Поправить описание `module-map.flow.json` (lines 369-372) под sidecar v2 (хранит positions + layoutParams). Убрать pointer `Связанный planning-док` (line 384) на doc, который удаляется в Stream 3. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (1 файл).
+2. [TODO] Git Commit: `docs(ssot): rewrite SystemArchitecture §6.5 under CSS Grid post React Flow removal` (hash: TBD)
 
-### Stream: Persist Path — context-menu → sidecar
+### Stream 2 — Rewrite WorkflowSteps_Overview.md Шаг 3 under CSS Grid
 
-1. [DONE] В `diagram-editor-shell.tsx` три context-menu handler'а (`handleProductPartColumnsChange`, `handleProductPartAspectRatioChange`, `handleClusterModuleColumnsChange`) вызывают `onNodesChange?.(updated)` после `setNodes(updated)`. Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx` (≤1 файл).
-2. [DONE] Git Commit: `feat(diagram): persist context-menu layout params via onNodesChange` (hash: `d8b582561`)
-3. [DONE] Shell regression test (source-based): три handler'а содержат `onNodesChange?.(next)`; `useEffect` по-прежнему делает `setNodes(initialNodes ?? projection.nodes)`. Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts` (≤1 файл).
-4. [DONE] Git Commit: `test(diagram): shell preserves layout params across projection rebuild` (hash: `e510c19bf`)
-5. [SKIPPED] `pendingLayoutParamEditsRef` merge — не понадобился: load path через `applyFlowSidecarLayoutParams` возвращает nodes с override'ами поверх projection defaults, поэтому flicker невозможен архитектурно. Condition из planning-doc §5.3 alt удовлетворена, fallback не включаем.
-6. [SKIPPED] Git Commit: `fix(diagram): merge pending layout param edits across projection rebuild` — не создаётся, задача 5 skipped.
+1. [TODO] Обновить § Шаг 3 — Diagram Modules: заменить `React Flow может показать skeleton` (line 165), `React Flow последовательно заменяет placeholders` (line 178) на нейтральное `visual shell / diagram editor`. Обновить описание `module-map.flow.json` (line 170) под sidecar v2 (положения + CSS Grid layout params). Убрать `measure -> place` bullet (lines 180-184) — заменить на declarative CSS Grid контракт. Scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` (1 файл).
+2. [TODO] Git Commit: `docs(ssot): rewrite WorkflowSteps_Overview Diagram Modules step under CSS Grid` (hash: TBD)
 
-### Stream: SSOT Documentation Sync (BEFORE release build)
+### Stream 3 — Delete obsolete Diagram_Modules_ProductPart_Decomposition planning doc
 
-1. [DONE] Обновить `SystemArchitecture.md` §6.2 и §6.4: убрать упоминания React Flow / `Option(Alt)+drag` / bottom-right minimap / auto-layout chrome; заменить на CSS Grid + persisted layoutParams в sidecar v2. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (≤1 файл).
-2. [DONE] Git Commit: `docs(ssot): sync SystemArchitecture §6.2/§6.4 with CSS Grid + sidecar v2` (hash: `6f314a561`)
-3. [DONE] Обновить `Clusters/Project_Manager.md` §3: bullet про Option(Alt)+drag / dynamic resizing / minimap → актуальный CSS Grid + right-click layout params + Cmd+scroll zoom + sidecar v2 persist. Scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` (≤1 файл).
-4. [DONE] Git Commit: `docs(ssot): sync Project_Manager §3 with CSS Grid diagram contract` (hash: `2ddcc3c47`)
-5. [DONE] Обновить `README.md` раздел `What's New` для `1.1.922` и `CHANGELOG.md` с описанием Sidecar v2 + persisted layout params + backwards compat с v1. Scope: `README.md`, `CHANGELOG.md` (≤2 файла).
-6. [DONE] Git Commit: `docs: update README and CHANGELOG for 1.1.922 release` (hash: `496916803`)
+1. [TODO] Удалить `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`. Итоги документа уже в `SystemArchitecture.md §6.3-§6.5` и `WorkflowSteps_Overview.md § Шаг 3`; документ содержит outdated §5 "Принятая React Flow-модель" и битые pointers на архивные `Sessions/Archive/Session132.md` и `Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`. По `Plans/README.md §3` planning-доки не должны жить в `System/`. Проверить `Docs_Index.md` — не содержит ссылок (уже проверено — не содержит). Финальная ревизия `git grep`: внутри active tree не должно остаться pointers на этот файл. Scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` (1 файл, удаление).
+2. [TODO] Git Commit: `docs(cleanup): delete materialized Diagram Modules ProductPart Decomposition planning doc` (hash: TBD)
 
-### Stream: Release Build 1.1.922
-
-1. [DONE] Убедиться, что `git status` чистый, `npm install` выполнен, все стримы выше закрыты. Запустить `./scripts/build-all.sh` (он поднимет версию и вызовет `build-release.sh --use-current-version`). На практике build-all.sh не создаёт коммит с bump — манифесты оставались staged и коммитились вручную.
-2. [DONE] Git Commit: `build(release): bump version to 1.1.922` (hash: `63ded1ead`)
-3. [DONE] Запустить `./scripts/build-release.sh --use-current-version` и проверить вывод: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Результат: `codeai-hub-1.1.922.vsix` (2.0M, 1789 файлов); tarball'ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
-4. [SKIPPED] Git Commit: `build(release): package 1.1.922 with sidecar v2 layout params persist` — не создаётся, VSIX не трекается репозиторием и не меняет файлы в рабочем дереве.
-5. [TODO — user action] Smoke verify: установить VSIX, открыть workspace с v1 sidecar → отсутствие ошибок + defaults; правый клик → `columns: 3` → `Cmd+R` → `columns: 3` сохранилось; проверить файл `module-map.flow.json` на `version: 2` и заполненный `layoutParams.productParts`. Передано пользователю для финальной проверки.
-6. [DONE] Git Commit: нет — smoke verify завершается обновлением todo-plan статуса и session report.
-
----
-
-## Phase 2 — doc/SolidWorks-WorkFlow Documentation Cleanup (owner: Codex, updated: 2026-04-09)
-
-Контекст: аудит документации после релиза `1.1.922` выявил React Flow upon active SSOT, компат-редиректы в неправильной директории и незакрытые draft документы в `System/`. Этот scope чистит накопленный drift одним заходом без архитектурных изменений (docs-only, code не трогаем).
-
-### Stream: Fix React Flow references in active Contracts
-
-1. [DONE] `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — заменить React Flow-reference (line ~49-50) на nested CSS Grid, убрать minimap bullet. Scope: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md` (2 файла).
-2. [DONE] Git Commit: `docs(ssot): drop React Flow/minimap references in FacadeClassDiagram and Workflow_CLI` (hash: `1871d1657`)
-
-### Stream: Archive historical diagram docs from System/
-
-1. [DONE] `git mv System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md` → `Plans/Archive/` (исторический trace §11.1–§11.12, SSOT уже в `SystemArchitecture.md §6.2/§6.4`). Scope: 1 файл через rename.
-2. [DONE] Git Commit: `docs(archive): move Diagram_Modules_ReviewStep_And_Autolayout historical trace to Plans/Archive` (hash: `bc8484181`)
-3. [DONE] `git mv System/Diagram_UserFacing_Layout_And_Format_Architecture.md` → `Plans/Archive/` (status «Discussion baseline», drafts запрещены в `System/` по `Plans/README.md §3`). Scope: 1 файл.
-4. [DONE] Git Commit: `docs(archive): move Diagram_UserFacing_Layout_And_Format discussion baseline to Plans/Archive` (hash: `f56720b94`)
-5. [DONE] `git mv System/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md` → `Plans/Archive/` (содержит React Flow references и UX refactor planning — выводы уже в SSOT). Scope: 1 файл.
-6. [DONE] Git Commit: `docs(archive): move Diagram_Modules_StepByStep UX refactor plan to Plans/Archive` (hash: `c97d3e0d6`)
-
-### Stream: Archive Contracts React Flow planning doc
-
-1. [DONE] `git mv Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md` → `Plans/Archive/` (весь документ построен на React Flow projection pipeline, удалённой в 1.1.921). Scope: 1 файл.
-2. [DONE] Git Commit: `docs(archive): move Diagram_Modules_ProductPart_Hierarchy_DSL React Flow plan to Plans/Archive` (hash: `03e121081`)
-
-### Stream: Delete dead compat-redirect stubs from Contracts/ (batch 1)
-
-Пояснение: все пять compat-redirect документов — это короткие pointer-stub'ы. Два из них (`Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`) указывают на уже существующие файлы в `Plans/Archive/`. Три оставшихся (`ProviderSessionHome_IsolationAndRecovery.md`, `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`) указывают на удалённые или несуществующие originals (`Plans/StandaloneReviewer_Module.md` в Plans/ отсутствует). Все пять — dead pointers, move в Archive бессмысленен. Правильное действие — `git rm` из Contracts/; исторические планы, где они существуют, уже в Plans/Archive/.
-
-1. [DONE] `git rm` трёх compat-stub'ов: `Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`, `ProviderSessionHome_IsolationAndRecovery.md`. Scope: 3 файла.
-2. [DONE] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 1)` (hash: `75450880d`)
-
-### Stream: Delete dead compat-redirect stubs from Contracts/ (batch 2)
-
-1. [DONE] `git rm` двух оставшихся compat-stub'ов: `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`. Scope: 2 файла.
-2. [DONE] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 2)` (hash: `2efd8aae0`)
-
-### Stream: Archive Greenfield polygon + resolve remaining System/ drafts
-
-1. [DONE] `git mv System/Greenfield_Architecture_Polygon.md` → `Plans/Archive/` (status «Draft»). Scope: 1 файл.
-2. [DONE] Git Commit: `docs(archive): move Greenfield_Architecture_Polygon draft to Plans/Archive` (hash: `f8d48eed7`)
-
-### Stream: Fix Modules/Claude.md paths + Codex/Gemini symmetry
-
-1. [DONE] В `Modules/Claude.md` поправить пути `src/provider-usage-limits/…` → `packages/core/src/provider-usage-limits/…` (facades реально в Core). Добавить короткий раздел usage-limits в `Modules/Codex.md` и `Modules/Gemini.md` для симметрии (или убрать из Claude). Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` (3 файла).
-2. [DONE] Git Commit: `docs(modules): align Claude/Codex/Gemini usage-limits paths and structure` (hash: `2923bd1de`)
-
-### Stream: Update Docs_Index.md
-
-1. [DONE] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: убрать ссылки на перенесённые compat-redirects (bullet в секции «Contracts (compat / legacy filenames)»), добавить архивированные diagram docs и Greenfield polygon в секцию `Plans/Archive/`. Scope: 1 файл.
-2. [DONE] Git Commit: `docs: sync Docs_Index with Phase 2 documentation cleanup moves` (hash: `2e7be06ca`)
-
----
-
-## Phase 3 — Projection Naming Cleanup + Archive Compression (owner: Codex, updated: 2026-04-09)
-
-Контекст: dead-code/dead-links аудит после Phase 2 показал, что (1) adapter layer `diagram-editor/adapters/` всё ещё именован вокруг React Flow, хотя сам React Flow удалён в `1.1.921`; (2) `doc/.../Plans/Archive/` и `doc/TODO/Archive/` содержат 96 файлов с ~62 stale inline-refs, замусоривающими grep-based аудиты. Оба под-скоупа — чисто docs/refactor, release build не требуется.
-
-Planning source: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming_And_Archive_Compression_Architecture.md`
-
-### Stream 3A: Projection naming cleanup (atomic rename)
-
-1. [DONE] Atomic rename: `git mv` 7 файлов в `adapters/` (`domain-model-to-react-flow.ts*`, `module-stage-react-flow.ts`), переименовать 8 типов (`Diagram*Flow*` → `Diagram*Projection*`), переименовать функцию `domainModelToReactFlow()` → `domainModelToProjection()`, обновить все импортёры (import path + type names + function name) в одном атомарном commit. Scope: 16 файлов (justified deviation from ≤3 правила для rename — см. planning-doc §5.1). Verification: `grep -r "react-flow\|DiagramFlowNode\|domainModelToReactFlow" src/` → 0 matches; `typecheck:webview` + `check:knip` + `lint` зелёные; 36 diagram-editor tests зелёные.
-2. [DONE] Git Commit: `refactor(diagram): rename react-flow adapter naming to projection` (hash: `afa7711bb`)
-
-### Stream 3B.1: Compress Plans/Archive directory
-
-1. [DONE] `cd doc/SolidWorks-WorkFlow/Plans && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создан `doc/SolidWorks-WorkFlow/Plans/Archive.README.md` с pointer'ом на zip + инструкцией распаковки. Scope: 77 архивных файлов → zip + 2 новых (Archive.zip + Archive.README.md), 78 files changed / 14361 deletions.
-2. [DONE] Git Commit: `docs(archive): compress Plans/Archive directory into Archive.zip` (hash: `95ba9267e`)
-
-### Stream 3B.2: Compress TODO/Archive directory
-
-1. [DONE] `cd doc/TODO && zip -r -q Archive.zip Archive/ && git rm -r Archive/ && git add Archive.zip`. Создан `doc/TODO/Archive.README.md`. Scope: 19 архивных файлов → zip + 2 новых, 21 files changed / 1189 deletions.
-2. [DONE] Git Commit: `docs(archive): compress TODO/Archive directory into Archive.zip` (hash: `3a58f6421`)
-
-### Stream 3B.3: Update Docs_Index.md after archive compression
-
-1. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Docs_Index.md`: заменены отдельные bullets на `Plans/Archive/*.md` (~28 строк) одним pointer-bullet на `Plans/Archive.zip` + короткой нотой про `Archive.README.md` и доступ через git history. `check:links` 87 файлов проверены (от 179 до 87 после zip компрессии), все зелёные. Scope: 1 файл.
-2. [DONE] Git Commit: `docs: point Docs_Index at Plans/Archive.zip after compression` (hash: `2a38f4efe`)
-
-### Stream 3C: Release Build 1.1.923
-
-Обоснование релиза: Stream 3A переименовал файлы и типы внутри `src/client/project-manager/components/diagram-editor/adapters/` — это реальные изменения исходного кода, которые попадают в webview bundle → VSIX. Без release build пользовательский VSIX остаётся 1.1.922 baseline и не содержит переименованные файлы. Archive compression (3B) не трогает runtime — это чисто worktree hygiene. Phase 2 cleanup тоже docs-only. Итого: единственный code change, попадающий в VSIX 1.1.923, — projection naming cleanup. No user-visible behavior change.
-
-Release notes must honestly reflect: internal refactor release без новых user features; рекомендуется всем, кто развивает расширение, чтобы source tree оставался синхронизирован.
-
-1. [DONE] Sync SSOT + README + CHANGELOG для 1.1.923: `README.md` (Current Release → 1.1.923 с коротким "internal refactor" descriptor), `CHANGELOG.md` (новая `[1.1.923]` entry под Changed с описанием projection rename + архивации как worktree hygiene). `SystemArchitecture.md` и `Clusters/Project_Manager.md` не трогаем — контракт диаграммы не менялся, rename чисто internal. Scope: `README.md`, `CHANGELOG.md` (2 файла).
-2. [DONE] Git Commit: `docs: update README and CHANGELOG for 1.1.923 release` (hash: `63f20c5d5`)
-3. [DONE] Запущен `./scripts/build-all.sh` на чистом дереве. Версии bumped до `1.1.923` в 16 manifest'ах (package.json + lock + 6 assets/manifest + 8 packages/*/package.json). Launcher `1.1.923` пересобран, все tarball'ы (`claude/codex/gemini-module-1.1.923.tar.bz2`, `codeai-hub-core-1.1.923.tar.bz2`, `CodeAIHubLauncher-1.1.923.tar.bz2`, UI tarballs) в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
-4. [DONE] Git Commit: `build(release): bump version to 1.1.923` (hash: `a05161bea`)
-5. [DONE] Запущен `./scripts/build-release.sh --use-current-version`: `Step 7: Verifying SDK exclusions ✅`, `Removing dev dependencies ✅`, `✅ Package created`, VSIX runtime surface verified. Итог: `codeai-hub-1.1.923.vsix`, 2.0 M, 1789 файлов.
-6. [SKIPPED] Git Commit: VSIX не трекается репозиторием, дополнительный коммит не нужен — после шага 5 дерево остаётся чистым.
-7. [TODO — user action] Smoke verify: установить VSIX, убедиться что диаграмма `Diagram Modules` по-прежнему открывается, right-click layout params работают, sidecar v2 persist сохранился после reload (регрессионная проверка, что projection rename не сломал behavior).
-
----
-
-## Phase Closeout Requirements (обязательно после завершения Phase 1+2+3)
-- Перенести завершённый `todo-plan.md` в `doc/TODO/Archive.zip` потомка `todo-plan-phase1-2-3-sidecar-v2-docs-cleanup-and-projection-rename.md` при старте следующего scope (после zip архивации работа с TODO Archive идёт через unzip/re-zip цикл, либо — проще — при старте нового scope сохранять его в `doc/TODO/todo-plan.md` с пометкой closure).
-- Провести ревизию `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md` и `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming_And_Archive_Compression_Architecture.md`: оба — completed planning-doc'и, итоги в Session025 report. Архивация в `Plans/Archive.zip` или удаление при старте следующего scope.
-- Создать новый `doc/TODO/todo-plan.md` только при начале следующего scope.

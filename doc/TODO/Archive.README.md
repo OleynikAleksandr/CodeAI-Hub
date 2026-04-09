@@ -1,9 +1,10 @@
 # TODO/Archive — compressed
 
 Completed `todo-plan.md` snapshots for closed execution cycles are
-stored in `Archive.zip` alongside this file. The zip contains 22 `.md`
-files that were individual files in `doc/TODO/Archive/` before the
-Phase 3 cleanup (Session025, 2026-04-09).
+stored in `Archive.zip` alongside this file. The original batch of 19
+`.md` files was migrated from individual files in `doc/TODO/Archive/`
+during the Phase 3 cleanup (Session025, 2026-04-09). The count grows
+by one each time a completed cycle is archived.
 
 ## Why compressed
 
