@@ -5,9 +5,9 @@
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.2 Diagram Visual Shell Boundary, §6.5 Diagram Modules Ownership Hierarchy Boundary
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` § Шаг 3 — Diagram Modules
-  - `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` (будет удалён в Stream 3)
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` §3 Diagram Modules UX контракт
   - `doc/Sessions/Session025.md` — baseline Sidecar v2 / Phase 2 docs cleanup / projection rename / release `1.1.923`
+  - Historical (удалён в Stream 3 Session026 после материализации в §6.5 и §Шаг 3): `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` — доступен через `git log --all --follow` / `git show HEAD^:...`.
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Scope rationale
@@ -55,10 +55,10 @@ Scope чисто docs-only (не затрагивает исходный код 
 ### Stream 2 — Rewrite WorkflowSteps_Overview.md Шаг 3 under CSS Grid
 
 1. [DONE] Обновить § Шаг 3 — Diagram Modules: заменить `React Flow может показать skeleton` (line 165), `React Flow последовательно заменяет placeholders` (line 178) на нейтральное `visual shell / diagram editor`. Обновить описание `module-map.flow.json` (line 170) под sidecar v2 (положения + CSS Grid layout params). Убрать `measure -> place` bullet (lines 180-184) — заменить на declarative CSS Grid контракт. Scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` (1 файл).
-2. [DONE] Git Commit: `docs(ssot): rewrite WorkflowSteps_Overview Diagram Modules step under CSS Grid` (hash: TBD)
+2. [DONE] Git Commit: `docs(ssot): rewrite WorkflowSteps_Overview Diagram Modules step under CSS Grid` (hash: `c48f089fd`)
 
 ### Stream 3 — Delete obsolete Diagram_Modules_ProductPart_Decomposition planning doc
 
-1. [TODO] Удалить `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`. Итоги документа уже в `SystemArchitecture.md §6.3-§6.5` и `WorkflowSteps_Overview.md § Шаг 3`; документ содержит outdated §5 "Принятая React Flow-модель" и битые pointers на архивные `Sessions/Archive/Session132.md` и `Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`. По `Plans/README.md §3` planning-доки не должны жить в `System/`. Проверить `Docs_Index.md` — не содержит ссылок (уже проверено — не содержит). Финальная ревизия `git grep`: внутри active tree не должно остаться pointers на этот файл. Scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` (1 файл, удаление).
-2. [TODO] Git Commit: `docs(cleanup): delete materialized Diagram Modules ProductPart Decomposition planning doc` (hash: TBD)
+1. [DONE] Удалить `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`. Итоги документа уже в `SystemArchitecture.md §6.3-§6.5` и `WorkflowSteps_Overview.md § Шаг 3`; документ содержит outdated §5 "Принятая React Flow-модель" и битые pointers на архивные `Sessions/Archive/Session132.md` и `Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`. По `Plans/README.md §3` planning-доки не должны жить в `System/`. `Docs_Index.md` не содержит ссылок; pointer из `SystemArchitecture.md §6.5` уже убран в Stream 1. Git grep по active tree после удаления: только self-references в текущем `todo-plan.md`. Scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` (delete), `doc/TODO/todo-plan.md` (2 файла).
+2. [DONE] Git Commit: `docs(cleanup): delete materialized Diagram Modules ProductPart Decomposition planning doc` (hash: TBD)
 
