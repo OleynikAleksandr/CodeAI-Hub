@@ -5,6 +5,7 @@
 
 ## Где живёт код
 - `packages/Codex_Module/`
+- Usage-limits facade for Codex lives in Core: `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts` (shared cluster, see `packages/core/src/provider-usage-limits/`).
 
 ## Provider-home (канон)
 - `CODEX_HOME=~/.codeai-hub/providers/codex/home`

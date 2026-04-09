@@ -5,6 +5,7 @@
 
 ## Где живёт код
 - `packages/Gemini_Module/`
+- Usage-limits facade for Gemini lives in Core: `packages/core/src/provider-usage-limits/providers/gemini/gemini-usage-limits-facade.ts` (shared cluster, see `packages/core/src/provider-usage-limits/`).
 
 ## Messaging cluster
 - `packages/Gemini_Module/src/messaging/message-processor.ts` — thin façade: `createAccumulator`, `handleEvent`, `finalize`.

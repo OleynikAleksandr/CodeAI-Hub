@@ -22,9 +22,10 @@
 - Core threads explicit Claude `thinkingEnabled` + `reasoningEffort` through applied turn config; the Claude SDK path now uses `thinking: { type: "adaptive" | "disabled" }` plus `effort`, instead of deprecated `maxThinkingTokens`.
 - Effective runtime model identity for Claude is now `thinking:off` when reasoning is disabled and `reasoning:<effort>` when it is enabled, so the client can see Claude effort changes through the normal `session:model:update` path.
 
-## Usage-limits cluster
-- `src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts` — facade for header/runtime usage-limit normalization and stream payload shaping.
-- `src/provider-usage-limits/providers/claude/claude-usage-token-resolver.ts` — platform/env/credential OAuth token resolution helper for the usage-limits facade.
+## Usage-limits cluster (lives in Core, not in Claude_Module)
+- `packages/core/src/provider-usage-limits/providers/claude/claude-usage-limits-facade.ts` — facade for header/runtime usage-limit normalization and stream payload shaping.
+- `packages/core/src/provider-usage-limits/providers/claude/claude-usage-token-resolver.ts` — platform/env/credential OAuth token resolution helper for the usage-limits facade.
+- All three providers (Claude, Codex, Gemini) share this Core cluster — see `packages/core/src/provider-usage-limits/` for the shared facade and per-provider adapters.
 
 ## Provider-home (канон)
 - `HOME=~/.codeai-hub/providers/claude/home`
