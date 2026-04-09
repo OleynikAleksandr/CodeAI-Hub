@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.923] - 2026-04-09
+### Changed
+- **Projection naming cleanup (internal refactor)**: the Diagram Modules adapter layer no longer carries React Flow naming. `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts*` and `module-stage-react-flow.ts` are renamed to `domain-model-to-projection.ts*` and `module-stage-projection.ts`. Eight types move from `DiagramFlow*` / `ProductPartFlowNodeData` / `ClusterFlowNodeData` / `ModuleFlowNodeData` to their `Projection`-prefixed equivalents, and `domainModelToReactFlow()` becomes `domainModelToProjection()`. Sidecar-related names (`FlowSidecarDocument`, `parseFlowSidecar`, `buildFlowSidecarDocument`, `applyFlowSidecarPositions`, `applyFlowSidecarLayoutParams`, `FlowSidecarLayoutParams`, `FlowSidecarViewport`) are kept as-is because they reference the on-disk `module-map.flow.json` sidecar file, not React Flow.
+- **Archive compression (docs hygiene)**: `doc/SolidWorks-WorkFlow/Plans/Archive/` (77 historical planning documents) and `doc/TODO/Archive/` (19 historical todo-plans) were compressed into `Archive.zip` files with accompanying `Archive.README.md` pointer notes. Grep-based dead-code / dead-links audits no longer hit ~62 stale inline references inside closed historical plans. Git history is preserved — `git log --all --follow` on any archived path still works.
+
+### Not changed
+- **No user-visible behavior changes**: Diagram Modules rendering, layout params context menu, sidecar v2 persistence, zoom, and every other product surface behave identically to `1.1.922`. This is an internal hygiene release built on top of the same behavior baseline.
+
 ## [1.1.922] - 2026-04-09
 ### Added
 - **Sidecar v2 persists Diagram Modules layout params**: `module-map.flow.json` schema bumped to `version: 2` with a new `layoutParams` section storing per-ProductPart (`columns`, `targetAspectRatio`) and per-Cluster (`moduleColumns`) CSS Grid overrides. Right-click context-menu selections now survive diagram reload, PM restart, and cross-window sidecar sync.
