@@ -1,9 +1,10 @@
 # Plans/Archive — compressed
 
 Historical planning documents for closed execution cycles are stored in
-`Archive.zip` alongside this file. The zip contains 77 `.md` files that
-were individual files in `doc/SolidWorks-WorkFlow/Plans/Archive/` before
-the Phase 3 cleanup (Session025, 2026-04-09).
+`Archive.zip` alongside this file. The original batch of 76 `.md` files
+was migrated from individual files in `doc/SolidWorks-WorkFlow/Plans/Archive/`
+during the Phase 3 cleanup (Session025, 2026-04-09). The count grows
+each time a completed planning-doc is archived from a new execution cycle.
 
 ## Why compressed
 
