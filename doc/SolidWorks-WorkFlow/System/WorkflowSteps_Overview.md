@@ -162,12 +162,12 @@ Manual start из верхнего toolbar PM:
 
 `product-parts.index.md` является первым canonical orchestration artifact этого шага:
 - он фиксирует список `Product Part`, их порядок, purpose и generation status;
-- по нему `React Flow` может показать skeleton общей картины ещё до materialization всех part-файлов.
+- по нему visual shell может показать skeleton общей картины ещё до materialization всех part-файлов.
 
 `product-parts/<part-id>.md` являются canonical semantic artifacts отдельных `Product Part`.
 Каждый такой файл materialize-ит один ownership subtree `Product Part -> Cluster -> Module`.
 
-`module-map.flow.json` хранит только layout/view state визуального редактора.
+`module-map.flow.json` хранит layout/view state визуального редактора — placeholder positions, viewport и (в формате v2) опциональную секцию `layoutParams` с declarative CSS Grid overrides (`columns`/`targetAspectRatio` на ProductPart, `moduleColumns` на Cluster).
 Visual diagram materialize-ится runtime из index + part artifacts и не требует отдельного raw semantic map-файла в workspace.
 
 ### User-facing baseline
@@ -175,13 +175,13 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 - `Diagram Modules` обязан быть читаемым уже при первом открытии, даже если `module-map.flow.json` ещё не существует.
 - Шаг должен materialize-иться progressive:
   - сначала появляется skeleton planned `Product Part` из `product-parts.index.md`;
-  - затем `React Flow` последовательно заменяет placeholders реальными ownership trees по мере появления `product-parts/<part-id>.md`;
+  - затем visual shell последовательно заменяет placeholders реальными ownership trees по мере появления `product-parts/<part-id>.md`;
   - пользователь не обязан подтверждать каждый `Product Part` через чат между turn-ами.
-- First-open layout для ownership hierarchy должен следовать детерминированному правилу `measure -> place`:
-  - сначала измеряются header/content blocks `Product Part`, `Cluster`, `Module`;
-  - затем layout раскладывает их сверху вниз по реальным размерам;
-  - дочерние cards не имеют права залезать в header-zone родителя;
-  - standalone modules должны компактизироваться внутри `Product Part`, а не падать в пустой нижний band.
+- First-open layout для ownership hierarchy полностью декларативен через nested CSS Grid:
+  - runtime отдаёт visual shell semantic tree (`Product Part -> Cluster -> Module`) и optional layout params из sidecar v2;
+  - CSS Grid контейнеры раскладывают child cards нативно — без JS measure/place pass и без pixel-level container constraints;
+  - standalone modules компактизируются через owning product part grid track, а не через отдельную band-logic;
+  - permanent composition overrides пользователь задаёт через right-click context menu (`columns`, `targetAspectRatio`, `moduleColumns`), и они сохраняются в sidecar v2 `layoutParams`.
 - `Product Part` и `Cluster` обязаны показывать короткий purpose/description layer, чтобы пользователь видел не только состав, но и назначение уровня иерархии.
 - Relation lines и cross-part graph wiring не входят в обязательный baseline первого полезного результата `Diagram Modules`; базовый review-step должен сначала стабилизировать структуру `Product Part -> Cluster -> Module`.
 

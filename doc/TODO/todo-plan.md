@@ -50,12 +50,12 @@ Scope чисто docs-only (не затрагивает исходный код 
 ### Stream 1 — Rewrite SystemArchitecture.md §6.5 under CSS Grid
 
 1. [DONE] Переписать §6.5 bullet про React Flow projection nested container model (lines 343-347): убрать `parentId`, `extent: "parent"`, `containerConstraints` — переформулировать под nested CSS Grid containers (Product Part = top-level grid, Cluster = nested grid, Module = child card). Убрать `React Flow` из line 359 (progressive rendering bullet). Заменить `measure -> place` bullet на CSS Grid-driven layout через declarative `columns` / `targetAspectRatio` / `moduleColumns` params. Поправить описание `module-map.flow.json` (lines 369-372) под sidecar v2 (хранит positions + layoutParams). Убрать pointer `Связанный planning-док` (line 384) на doc, который удаляется в Stream 3. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (1 файл).
-2. [DONE] Git Commit: `docs(ssot): rewrite SystemArchitecture §6.5 under CSS Grid post React Flow removal` (hash: TBD)
+2. [DONE] Git Commit: `docs(ssot): rewrite SystemArchitecture §6.5 under CSS Grid post React Flow removal` (hash: `4aa0c02f8`)
 
 ### Stream 2 — Rewrite WorkflowSteps_Overview.md Шаг 3 under CSS Grid
 
-1. [TODO] Обновить § Шаг 3 — Diagram Modules: заменить `React Flow может показать skeleton` (line 165), `React Flow последовательно заменяет placeholders` (line 178) на нейтральное `visual shell / diagram editor`. Обновить описание `module-map.flow.json` (line 170) под sidecar v2 (положения + CSS Grid layout params). Убрать `measure -> place` bullet (lines 180-184) — заменить на declarative CSS Grid контракт. Scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` (1 файл).
-2. [TODO] Git Commit: `docs(ssot): rewrite WorkflowSteps_Overview Diagram Modules step under CSS Grid` (hash: TBD)
+1. [DONE] Обновить § Шаг 3 — Diagram Modules: заменить `React Flow может показать skeleton` (line 165), `React Flow последовательно заменяет placeholders` (line 178) на нейтральное `visual shell / diagram editor`. Обновить описание `module-map.flow.json` (line 170) под sidecar v2 (положения + CSS Grid layout params). Убрать `measure -> place` bullet (lines 180-184) — заменить на declarative CSS Grid контракт. Scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` (1 файл).
+2. [DONE] Git Commit: `docs(ssot): rewrite WorkflowSteps_Overview Diagram Modules step under CSS Grid` (hash: TBD)
 
 ### Stream 3 — Delete obsolete Diagram_Modules_ProductPart_Decomposition planning doc
 
