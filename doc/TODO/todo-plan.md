@@ -69,12 +69,12 @@
 
 ### Stream: Release Build 1.1.922
 
-1. [TODO] Убедиться, что `git status` чистый, `npm install` выполнен, все стримы выше закрыты. Запустить `./scripts/build-all.sh` (он поднимет версию и вызовет `build-release.sh --use-current-version`).
-2. [TODO] Git Commit: `build(release): bump version to 1.1.922` (hash: TBD — auto-created by build-all.sh)
-3. [TODO] Проверить вывод `build-release.sh`: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забрать `codeai-hub-1.1.922.vsix`, перенести tarball'ы в `doc/tmp/releases/`.
-4. [TODO] Git Commit: `build(release): package 1.1.922 with sidecar v2 layout params persist` (hash: TBD)
-5. [TODO] Smoke verify: установить VSIX, открыть workspace с v1 sidecar → отсутствие ошибок + defaults; правый клик → `columns: 3` → `Cmd+R` → `columns: 3` сохранилось; проверить файл `module-map.flow.json` на `version: 2` и заполненный `layoutParams.productParts`.
-6. [TODO] Git Commit: нет — smoke verify завершается апдейтом todo-plan статуса и session report (вне этого plan).
+1. [DONE] Убедиться, что `git status` чистый, `npm install` выполнен, все стримы выше закрыты. Запустить `./scripts/build-all.sh` (он поднимет версию и вызовет `build-release.sh --use-current-version`). На практике build-all.sh не создаёт коммит с bump — манифесты оставались staged и коммитились вручную.
+2. [DONE] Git Commit: `build(release): bump version to 1.1.922` (hash: `63ded1ead`)
+3. [DONE] Запустить `./scripts/build-release.sh --use-current-version` и проверить вывод: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Результат: `codeai-hub-1.1.922.vsix` (2.0M, 1789 файлов); tarball'ы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
+4. [SKIPPED] Git Commit: `build(release): package 1.1.922 with sidecar v2 layout params persist` — не создаётся, VSIX не трекается репозиторием и не меняет файлы в рабочем дереве.
+5. [TODO — user action] Smoke verify: установить VSIX, открыть workspace с v1 sidecar → отсутствие ошибок + defaults; правый клик → `columns: 3` → `Cmd+R` → `columns: 3` сохранилось; проверить файл `module-map.flow.json` на `version: 2` и заполненный `layoutParams.productParts`. Передано пользователю для финальной проверки.
+6. [DONE] Git Commit: нет — smoke verify завершается обновлением todo-plan статуса и session report.
 
 ---
 
