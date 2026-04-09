@@ -1,3 +1,7 @@
+import type {
+  ClusterLayoutParams,
+  ProductPartLayoutParams,
+} from "./diagram-editor-layout-params";
 import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
 
 export const FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 4;
@@ -8,12 +12,23 @@ export type FlowSidecarViewport = {
   readonly zoom: number;
 };
 
+/**
+ * Sidecar v2 layoutParams section: declarative CSS Grid layout overrides
+ * that survive diagram reload. Keyed by productPartId / clusterId; missing
+ * entries fall back to `defaultProductPartLayout()` / `defaultClusterLayout()`.
+ */
+export type FlowSidecarLayoutParams = {
+  readonly productParts: Readonly<Record<string, ProductPartLayoutParams>>;
+  readonly clusters: Readonly<Record<string, ClusterLayoutParams>>;
+};
+
 export type FlowSidecarDocument = {
-  readonly version: 1;
+  readonly version: 1 | 2;
   readonly revision: string;
   readonly layoutMetricVersion?: number;
   readonly updated: string;
   readonly nodes: Readonly<Record<string, { readonly x: number; readonly y: number }>>;
+  readonly layoutParams?: FlowSidecarLayoutParams;
   readonly viewport?: FlowSidecarViewport;
 };
 
