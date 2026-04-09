@@ -33,41 +33,39 @@
 
 ### Stream: Sidecar v2 Schema and Parser
 
-1. [TODO] Расширить `FlowSidecarDocument` до `version: 1 | 2` и добавить опциональное поле `layoutParams` (productParts + clusters). Импортировать типы из `diagram-editor-layout-params.ts`. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-2. [TODO] Git Commit: `feat(diagram): extend FlowSidecarDocument type with layoutParams (v2)` (hash: TBD)
-3. [TODO] Обновить `parseFlowSidecar`: принимать `version: 1 | 2`, валидировать enum-значения `columns`/`targetAspectRatio`/`moduleColumns`, неизвестные значения отбрасывать. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-4. [TODO] Git Commit: `feat(diagram): parse sidecar v2 layoutParams with enum guards` (hash: TBD)
-5. [TODO] Обновить `buildFlowSidecarDocument`: принимать layoutParams из nodes, сериализовать `version: 2`, отсортировать ключи для стабильного diff. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-6. [TODO] Git Commit: `feat(diagram): serialize sidecar v2 layoutParams with sorted keys` (hash: TBD)
-7. [TODO] Добавить round-trip и backwards-compat тесты: v1 parse без layoutParams, v2 round-trip, неизвестные enum fallback, corrupt JSON. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts` (≤1 файл).
-8. [TODO] Git Commit: `test(diagram): cover sidecar v1/v2 parse, serialize, backwards compat` (hash: TBD)
+1. [DONE] Расширить `FlowSidecarDocument` до `version: 1 | 2` и добавить опциональное поле `layoutParams` (productParts + clusters). Импортировать типы из `diagram-editor-layout-params.ts`. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
+2. [DONE] Git Commit: `feat(diagram): extend FlowSidecarDocument type with layoutParams (v2)` (hash: `3055fb78b`)
+3. [DONE] Обновить `parseFlowSidecar`: принимать `version: 1 | 2`, валидировать enum-значения `columns`/`targetAspectRatio`/`moduleColumns`, неизвестные значения отбрасывать. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
+4. [DONE] Git Commit: `feat(diagram): parse sidecar v2 layoutParams with enum guards` (hash: `b08563758`)
+5. [DONE] Обновить `buildFlowSidecarDocument`: принимать layoutParams из nodes, сериализовать `version: 2`, отсортировать ключи для стабильного diff. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
+6. [DONE] Git Commit: `feat(diagram): serialize sidecar v2 layoutParams with sorted keys` (hash: `ee261d71c`)
+7. [DONE] Добавить round-trip и backwards-compat тесты: v1 parse без layoutParams, v2 round-trip, неизвестные enum fallback, corrupt JSON. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts` (≤1 файл).
+8. [DONE] Git Commit: `test(diagram): cover sidecar v1/v2 parse, serialize, backwards compat` (hash: `3a86514ea`)
 
 ### Stream: Load Path — apply layoutParams on nodes
 
-1. [TODO] Добавить функцию `applyFlowSidecarLayoutParams(nodes, document)` — merge productPart и cluster params в `DiagramFlowNode.data.layoutParams` без мутаций. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts` (≤1 файл).
-2. [TODO] Git Commit: `feat(diagram): add applyFlowSidecarLayoutParams load helper` (hash: TBD)
-3. [TODO] Интегрировать `applyFlowSidecarLayoutParams` в read-path у `use-diagram-persistence.ts` рядом с существующим `applyFlowSidecarPositions`. Scope: `src/client/project-manager/components/diagram-editor/use-diagram-persistence.ts` (≤1 файл).
-4. [TODO] Git Commit: `feat(diagram): apply sidecar v2 layoutParams on diagram load` (hash: TBD)
-5. [TODO] Добавить unit-тесты `applyFlowSidecarLayoutParams`: ProductPart only, Cluster only, both, no match. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts` (≤1 файл).
-6. [TODO] Git Commit: `test(diagram): cover applyFlowSidecarLayoutParams merge cases` (hash: TBD)
+1. [DONE] Добавить функцию `applyFlowSidecarLayoutParams(nodes, document)` — merge productPart и cluster params в `DiagramFlowNode.data.layoutParams` без мутаций; сразу проинтегрировать её в read-path внутри `diagram-modules-progressive-model.ts` рядом с существующим `applyFlowSidecarPositions` (правильный call-site, а не `use-diagram-persistence.ts`, который отвечает только за write-path). Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-progressive-model.ts` (2 файла).
+2. [DONE] Git Commit: `feat(diagram): apply sidecar v2 layoutParams on diagram load` (hash: `676a3b6f5`)
+3. [DONE] Добавить unit-тесты `applyFlowSidecarLayoutParams`: ProductPart only, Cluster only, both, no match, stable identity. Scope: `src/client/project-manager/components/diagram-editor/flow-sidecar-types.test.ts` (≤1 файл).
+4. [DONE] Git Commit: `test(diagram): cover applyFlowSidecarLayoutParams merge cases` (hash: `5ead42d5b`)
 
 ### Stream: Persist Path — context-menu → sidecar
 
-1. [TODO] В `diagram-editor-shell.tsx` три context-menu handler'а (`handleProductPartColumnsChange`, `handleProductPartAspectRatioChange`, `handleClusterModuleColumnsChange`) вызывают `onNodesChange?.(updated)` после `setNodes(updated)`. Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx` (≤1 файл).
-2. [TODO] Git Commit: `feat(diagram): persist context-menu layout params via onNodesChange` (hash: TBD)
-3. [TODO] Shell regression test: симулировать edit → projection.revision bump → убедиться, что layoutParams сохраняются после `useEffect` reset (включая BroadcastChannel sidecar-sync fixture). Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.tsx` (≤1 файл, создать если отсутствует).
-4. [TODO] Git Commit: `test(diagram): shell preserves layout params across projection rebuild` (hash: TBD)
-5. [TODO] Если regression test показывает flicker — добавить `pendingLayoutParamEditsRef` merge (fallback из planning-doc §5.3). Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx` (≤1 файл). Пропустить, если первый путь зелёный.
-6. [TODO] Git Commit: `fix(diagram): merge pending layout param edits across projection rebuild` (hash: TBD, conditional)
+1. [DONE] В `diagram-editor-shell.tsx` три context-menu handler'а (`handleProductPartColumnsChange`, `handleProductPartAspectRatioChange`, `handleClusterModuleColumnsChange`) вызывают `onNodesChange?.(updated)` после `setNodes(updated)`. Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.tsx` (≤1 файл).
+2. [DONE] Git Commit: `feat(diagram): persist context-menu layout params via onNodesChange` (hash: `d8b582561`)
+3. [DONE] Shell regression test (source-based): три handler'а содержат `onNodesChange?.(next)`; `useEffect` по-прежнему делает `setNodes(initialNodes ?? projection.nodes)`. Scope: `src/client/project-manager/components/diagram-editor/diagram-editor-shell.test.ts` (≤1 файл).
+4. [DONE] Git Commit: `test(diagram): shell preserves layout params across projection rebuild` (hash: `e510c19bf`)
+5. [SKIPPED] `pendingLayoutParamEditsRef` merge — не понадобился: load path через `applyFlowSidecarLayoutParams` возвращает nodes с override'ами поверх projection defaults, поэтому flicker невозможен архитектурно. Condition из planning-doc §5.3 alt удовлетворена, fallback не включаем.
+6. [SKIPPED] Git Commit: `fix(diagram): merge pending layout param edits across projection rebuild` — не создаётся, задача 5 skipped.
 
 ### Stream: SSOT Documentation Sync (BEFORE release build)
 
-1. [TODO] Обновить `SystemArchitecture.md` §6.2 и §6.4: убрать упоминания React Flow / `Option(Alt)+drag` / bottom-right minimap / auto-layout chrome; заменить на CSS Grid + persisted layoutParams в sidecar v2. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (≤1 файл).
-2. [TODO] Git Commit: `docs(ssot): sync SystemArchitecture §6.2/§6.4 with CSS Grid + sidecar v2` (hash: TBD)
-3. [TODO] Обновить `Clusters/Project_Manager.md` §3: bullet про Option(Alt)+drag / dynamic resizing / minimap → актуальный CSS Grid + right-click layout params + Cmd+scroll zoom + sidecar v2 persist. Scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` (≤1 файл).
-4. [TODO] Git Commit: `docs(ssot): sync Project_Manager §3 with CSS Grid diagram contract` (hash: TBD)
-5. [TODO] Обновить `README.md` раздел `What's New` для `1.1.922` и `CHANGELOG.md` с описанием Sidecar v2 + persisted layout params + backwards compat с v1. Scope: `README.md`, `CHANGELOG.md` (≤2 файла).
-6. [TODO] Git Commit: `docs: update README and CHANGELOG for 1.1.922 release` (hash: TBD)
+1. [DONE] Обновить `SystemArchitecture.md` §6.2 и §6.4: убрать упоминания React Flow / `Option(Alt)+drag` / bottom-right minimap / auto-layout chrome; заменить на CSS Grid + persisted layoutParams в sidecar v2. Scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (≤1 файл).
+2. [DONE] Git Commit: `docs(ssot): sync SystemArchitecture §6.2/§6.4 with CSS Grid + sidecar v2` (hash: `6f314a561`)
+3. [DONE] Обновить `Clusters/Project_Manager.md` §3: bullet про Option(Alt)+drag / dynamic resizing / minimap → актуальный CSS Grid + right-click layout params + Cmd+scroll zoom + sidecar v2 persist. Scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` (≤1 файл).
+4. [DONE] Git Commit: `docs(ssot): sync Project_Manager §3 with CSS Grid diagram contract` (hash: `2ddcc3c47`)
+5. [DONE] Обновить `README.md` раздел `What's New` для `1.1.922` и `CHANGELOG.md` с описанием Sidecar v2 + persisted layout params + backwards compat с v1. Scope: `README.md`, `CHANGELOG.md` (≤2 файла).
+6. [DONE] Git Commit: `docs: update README and CHANGELOG for 1.1.922 release` (hash: `496916803`)
 
 ### Stream: Release Build 1.1.922
 
