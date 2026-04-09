@@ -9,9 +9,11 @@ import type {
   ProductPartLayoutParams,
 } from "./diagram-editor-layout-params";
 import {
+  applyFlowSidecarLayoutParams,
   applyFlowSidecarPositions,
   buildFlowSidecarDocument,
   FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
+  type FlowSidecarDocument,
   parseFlowSidecar,
   serializeFlowSidecar,
 } from "./flow-sidecar-types";
@@ -227,6 +229,123 @@ test("parseFlowSidecar v2 without layoutParams section yields undefined layoutPa
 
 test("parseFlowSidecar returns null for corrupt JSON", () => {
   assert.equal(parseFlowSidecar("{not json"), null);
+});
+
+const makeLayoutDocument = (
+  layoutParams: FlowSidecarDocument["layoutParams"]
+): FlowSidecarDocument => ({
+  version: 2,
+  revision: "rev-apply",
+  layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
+  updated: new Date().toISOString(),
+  nodes: {},
+  layoutParams,
+});
+
+test("applyFlowSidecarLayoutParams overrides ProductPart layout params", () => {
+  const nodes = [makeProductPartNode("control-shell")];
+  const result = applyFlowSidecarLayoutParams({
+    nodes,
+    document: makeLayoutDocument({
+      productParts: {
+        "control-shell": { columns: 3, targetAspectRatio: "wide" },
+      },
+      clusters: {},
+    }),
+  });
+
+  assert.notEqual(result, nodes);
+  assert.deepEqual(result[0]?.data.layoutParams, {
+    columns: 3,
+    targetAspectRatio: "wide",
+  });
+});
+
+test("applyFlowSidecarLayoutParams overrides Cluster module columns", () => {
+  const cluster = makeCluster("auth-cluster");
+  const nodes = [makeProductPartNode("control-shell", undefined, [cluster])];
+  const result = applyFlowSidecarLayoutParams({
+    nodes,
+    document: makeLayoutDocument({
+      productParts: {},
+      clusters: { "auth-cluster": { moduleColumns: 2 } },
+    }),
+  });
+
+  assert.notEqual(result, nodes);
+  assert.equal(result[0]?.data.clusters[0]?.layoutParams.moduleColumns, 2);
+  assert.deepEqual(result[0]?.data.layoutParams, {
+    columns: "auto",
+    targetAspectRatio: "landscape",
+  });
+});
+
+test("applyFlowSidecarLayoutParams handles both ProductPart and Cluster overrides", () => {
+  const cluster = makeCluster("auth-cluster");
+  const nodes = [
+    makeProductPartNode(
+      "control-shell",
+      { columns: "auto", targetAspectRatio: "landscape" },
+      [cluster]
+    ),
+  ];
+  const result = applyFlowSidecarLayoutParams({
+    nodes,
+    document: makeLayoutDocument({
+      productParts: {
+        "control-shell": { columns: 4, targetAspectRatio: "square" },
+      },
+      clusters: { "auth-cluster": { moduleColumns: 3 } },
+    }),
+  });
+
+  assert.notEqual(result, nodes);
+  assert.deepEqual(result[0]?.data.layoutParams, {
+    columns: 4,
+    targetAspectRatio: "square",
+  });
+  assert.equal(result[0]?.data.clusters[0]?.layoutParams.moduleColumns, 3);
+});
+
+test("applyFlowSidecarLayoutParams returns original reference when nothing matches", () => {
+  const nodes = [
+    makeProductPartNode("control-shell", undefined, [
+      makeCluster("auth-cluster"),
+    ]),
+  ];
+  const result = applyFlowSidecarLayoutParams({
+    nodes,
+    document: makeLayoutDocument({
+      productParts: {
+        "other-part": { columns: 5, targetAspectRatio: "wide" },
+      },
+      clusters: { "other-cluster": { moduleColumns: 3 } },
+    }),
+  });
+
+  assert.equal(result, nodes);
+});
+
+test("applyFlowSidecarLayoutParams returns original reference when document lacks layoutParams", () => {
+  const nodes = [makeProductPartNode("control-shell")];
+  const result = applyFlowSidecarLayoutParams({
+    nodes,
+    document: {
+      version: 1,
+      revision: "rev-v1",
+      layoutMetricVersion: FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
+      updated: new Date().toISOString(),
+      nodes: {},
+    },
+  });
+
+  assert.equal(result, nodes);
+});
+
+test("applyFlowSidecarLayoutParams returns original reference when document is null", () => {
+  const nodes = [makeProductPartNode("control-shell")];
+  const result = applyFlowSidecarLayoutParams({ nodes, document: null });
+  assert.equal(result, nodes);
 });
 
 test("buildFlowSidecarDocument sorts productParts and clusters alphabetically", () => {
