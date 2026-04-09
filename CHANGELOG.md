@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.922] - 2026-04-09
+### Added
+- **Sidecar v2 persists Diagram Modules layout params**: `module-map.flow.json` schema bumped to `version: 2` with a new `layoutParams` section storing per-ProductPart (`columns`, `targetAspectRatio`) and per-Cluster (`moduleColumns`) CSS Grid overrides. Right-click context-menu selections now survive diagram reload, PM restart, and cross-window sidecar sync.
+- **Backwards-compat parser**: `parseFlowSidecar` accepts both `version: 1` and `version: 2` payloads. Invalid enum values in the `layoutParams` section are dropped per entry instead of failing the whole sidecar; workspace sidecar files from `1.1.921` keep loading without errors and fall back to defaults until the first context-menu edit upgrades them to v2.
+- **Stable sidecar diffs**: `buildFlowSidecarDocument` writes `nodes`, `layoutParams.productParts`, and `layoutParams.clusters` in alphabetical order, so user-visible git diffs of `module-map.flow.json` stay minimal when a single entry changes.
+
+### Changed
+- **Diagram editor shell**: right-click layout param handlers (`columns`, `targetAspectRatio`, `moduleColumns`) now push the updated nodes through `onNodesChange`, which the persistence hook writes into the sidecar file. The projection-reset `useEffect` still prefers `initialNodes` as the first source so persisted overrides ride the next projection rebuild via `applyFlowSidecarLayoutParams`.
+- **Downgrade behavior (documented caveat)**: if a workspace opens a v2 sidecar with `1.1.921` the older parser will reject it (it required `version === 1` exactly) and the diagram will render with defaults. This is graceful degradation, not corruption.
+
 ## [1.1.921] - 2026-04-08
 ### Changed
 - **React Flow removed from Diagram Modules**: the `@xyflow/react` dependency is deleted. ProductPart cards now render in a single-column CSS Grid instead of a React Flow canvas. Native browser scroll replaces pan/zoom.
