@@ -244,3 +244,60 @@ export const applyFlowSidecarPositions = (params: {
   readonly document: FlowSidecarDocument | null;
   readonly revision: string;
 }): readonly DiagramFlowNode[] => params.nodes;
+
+/**
+ * Merge sidecar-persisted layoutParams (v2) back onto projection nodes.
+ * ProductPart params override the ProductPart node layoutParams; cluster
+ * params override the matching nested cluster layoutParams inside each
+ * ProductPart's `data.clusters`. Missing entries fall back to whatever
+ * defaults the adapter already put on the node. Returns a new array only
+ * when at least one node actually changes — otherwise the original array
+ * reference is returned so downstream `useEffect` dependencies stay stable.
+ */
+export const applyFlowSidecarLayoutParams = (params: {
+  readonly nodes: readonly DiagramFlowNode[];
+  readonly document: FlowSidecarDocument | null;
+}): readonly DiagramFlowNode[] => {
+  const layoutParams = params.document?.layoutParams;
+  if (!layoutParams) {
+    return params.nodes;
+  }
+
+  let changed = false;
+  const next = params.nodes.map((node) => {
+    const data = node.data;
+    const productPartOverride =
+      layoutParams.productParts[data.productPartId];
+
+    let clustersChanged = false;
+    const nextClusters = data.clusters.map((cluster) => {
+      const override = layoutParams.clusters[cluster.clusterId];
+      if (!override) {
+        return cluster;
+      }
+      clustersChanged = true;
+      return {
+        ...cluster,
+        layoutParams: { ...cluster.layoutParams, ...override },
+      };
+    });
+
+    if (!(productPartOverride || clustersChanged)) {
+      return node;
+    }
+
+    changed = true;
+    return {
+      ...node,
+      data: {
+        ...data,
+        layoutParams: productPartOverride
+          ? { ...data.layoutParams, ...productPartOverride }
+          : data.layoutParams,
+        clusters: clustersChanged ? nextClusters : data.clusters,
+      },
+    };
+  });
+
+  return changed ? next : params.nodes;
+};

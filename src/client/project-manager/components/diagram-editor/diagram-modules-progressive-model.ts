@@ -10,6 +10,7 @@ import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
 import { materializeModuleMapFromStagedProductPart } from "./diagram-modules-staged-part-parser";
 import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
 import {
+  applyFlowSidecarLayoutParams,
   applyFlowSidecarPositions,
   FLOW_SIDECAR_LAYOUT_METRIC_VERSION,
   parseFlowSidecar,
@@ -281,7 +282,10 @@ export const loadDiagramModulesProgressiveResult = async (params: {
       projection: {
         ...baseProjection,
         nodes: applyFlowSidecarPositions({
-          nodes: baseProjection.nodes,
+          nodes: applyFlowSidecarLayoutParams({
+            nodes: baseProjection.nodes,
+            document: flowDocument,
+          }),
           document: flowDocument,
           revision: baseProjection.revision,
         }),
