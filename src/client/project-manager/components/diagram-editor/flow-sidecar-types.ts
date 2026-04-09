@@ -38,6 +38,96 @@ const isFiniteNumber = (value: unknown): value is number =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const PRODUCT_PART_COLUMNS_VALUES = new Set<ProductPartLayoutParams["columns"]>([
+  "auto",
+  2,
+  3,
+  4,
+  5,
+]);
+const TARGET_ASPECT_RATIO_VALUES = new Set<
+  ProductPartLayoutParams["targetAspectRatio"]
+>(["landscape", "wide", "square"]);
+const CLUSTER_MODULE_COLUMNS_VALUES = new Set<
+  ClusterLayoutParams["moduleColumns"]
+>(["auto", 1, 2, 3]);
+
+const parseProductPartLayoutParams = (
+  value: unknown
+): ProductPartLayoutParams | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const { columns, targetAspectRatio } = value;
+  if (
+    !PRODUCT_PART_COLUMNS_VALUES.has(
+      columns as ProductPartLayoutParams["columns"]
+    ) ||
+    !TARGET_ASPECT_RATIO_VALUES.has(
+      targetAspectRatio as ProductPartLayoutParams["targetAspectRatio"]
+    )
+  ) {
+    return null;
+  }
+  return {
+    columns: columns as ProductPartLayoutParams["columns"],
+    targetAspectRatio:
+      targetAspectRatio as ProductPartLayoutParams["targetAspectRatio"],
+  };
+};
+
+const parseClusterLayoutParams = (
+  value: unknown
+): ClusterLayoutParams | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const { moduleColumns } = value;
+  if (
+    !CLUSTER_MODULE_COLUMNS_VALUES.has(
+      moduleColumns as ClusterLayoutParams["moduleColumns"]
+    )
+  ) {
+    return null;
+  }
+  return {
+    moduleColumns: moduleColumns as ClusterLayoutParams["moduleColumns"],
+  };
+};
+
+const parseLayoutParamsSection = (
+  value: unknown
+): FlowSidecarLayoutParams | undefined => {
+  if (!isRecord(value)) {
+    return undefined;
+  }
+  const productPartsSource = isRecord(value.productParts)
+    ? value.productParts
+    : {};
+  const clustersSource = isRecord(value.clusters) ? value.clusters : {};
+
+  const productParts = Object.fromEntries(
+    Object.entries(productPartsSource).flatMap(([id, raw]) => {
+      const parsed = parseProductPartLayoutParams(raw);
+      return parsed === null ? [] : ([[id, parsed]] as const);
+    })
+  );
+  const clusters = Object.fromEntries(
+    Object.entries(clustersSource).flatMap(([id, raw]) => {
+      const parsed = parseClusterLayoutParams(raw);
+      return parsed === null ? [] : ([[id, parsed]] as const);
+    })
+  );
+
+  if (
+    Object.keys(productParts).length === 0 &&
+    Object.keys(clusters).length === 0
+  ) {
+    return undefined;
+  }
+  return { productParts, clusters };
+};
+
 export const parseFlowSidecar = (
   content: string
 ): FlowSidecarDocument | null => {
@@ -46,7 +136,11 @@ export const parseFlowSidecar = (
     if (!isRecord(parsed)) {
       return null;
     }
-    if (parsed.version !== 1 || typeof parsed.revision !== "string") {
+    const version =
+      parsed.version === 1 || parsed.version === 2
+        ? (parsed.version as 1 | 2)
+        : null;
+    if (version === null || typeof parsed.revision !== "string") {
       return null;
     }
     if (typeof parsed.updated !== "string" || !isRecord(parsed.nodes)) {
@@ -77,14 +171,17 @@ export const parseFlowSidecar = (
         }
       : undefined;
 
+    const layoutParams = parseLayoutParamsSection(parsed.layoutParams);
+
     return {
-      version: 1,
+      version,
       revision: parsed.revision,
       layoutMetricVersion: isFiniteNumber(parsed.layoutMetricVersion)
         ? parsed.layoutMetricVersion
         : undefined,
       updated: parsed.updated,
       nodes,
+      layoutParams,
       viewport,
     };
   } catch {
