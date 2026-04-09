@@ -162,11 +162,11 @@ Planning source: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Projection_Naming
 
 Release notes must honestly reflect: internal refactor release без новых user features; рекомендуется всем, кто развивает расширение, чтобы source tree оставался синхронизирован.
 
-1. [TODO] Sync SSOT + README + CHANGELOG для 1.1.923: `README.md` (Current Release → 1.1.923 с коротким "internal refactor" descriptor), `CHANGELOG.md` (новая `[1.1.923]` entry под Changed с описанием projection rename + архивации как worktree hygiene). `SystemArchitecture.md` и `Clusters/Project_Manager.md` не трогаем — контракт диаграммы не менялся, rename чисто internal. Scope: `README.md`, `CHANGELOG.md` (2 файла).
-2. [TODO] Git Commit: `docs: update README and CHANGELOG for 1.1.923 release` (hash: TBD)
-3. [TODO] Убедиться что `git status` чистый, затем запустить `./scripts/build-all.sh`. Версии поднимаются до `1.1.923` во всех manifest'ах. Manifest bumps закоммитить вручную (build-all.sh не создаёт коммит).
-4. [TODO] Git Commit: `build(release): bump version to 1.1.923` (hash: TBD)
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version` и проверить вывод: `Step 7: Verifying SDK exclusions ✅`, `Removing dev dependencies ✅`, `✅ Package created`. Забрать `codeai-hub-1.1.923.vsix`, перенести tarball'ы в `doc/tmp/releases/`.
+1. [DONE] Sync SSOT + README + CHANGELOG для 1.1.923: `README.md` (Current Release → 1.1.923 с коротким "internal refactor" descriptor), `CHANGELOG.md` (новая `[1.1.923]` entry под Changed с описанием projection rename + архивации как worktree hygiene). `SystemArchitecture.md` и `Clusters/Project_Manager.md` не трогаем — контракт диаграммы не менялся, rename чисто internal. Scope: `README.md`, `CHANGELOG.md` (2 файла).
+2. [DONE] Git Commit: `docs: update README and CHANGELOG for 1.1.923 release` (hash: `63f20c5d5`)
+3. [DONE] Запущен `./scripts/build-all.sh` на чистом дереве. Версии bumped до `1.1.923` в 16 manifest'ах (package.json + lock + 6 assets/manifest + 8 packages/*/package.json). Launcher `1.1.923` пересобран, все tarball'ы (`claude/codex/gemini-module-1.1.923.tar.bz2`, `codeai-hub-core-1.1.923.tar.bz2`, `CodeAIHubLauncher-1.1.923.tar.bz2`, UI tarballs) в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
+4. [DONE] Git Commit: `build(release): bump version to 1.1.923` (hash: `a05161bea`)
+5. [DONE] Запущен `./scripts/build-release.sh --use-current-version`: `Step 7: Verifying SDK exclusions ✅`, `Removing dev dependencies ✅`, `✅ Package created`, VSIX runtime surface verified. Итог: `codeai-hub-1.1.923.vsix`, 2.0 M, 1789 файлов.
 6. [SKIPPED] Git Commit: VSIX не трекается репозиторием, дополнительный коммит не нужен — после шага 5 дерево остаётся чистым.
 7. [TODO — user action] Smoke verify: установить VSIX, убедиться что диаграмма `Diagram Modules` по-прежнему открывается, right-click layout params работают, sidecar v2 persist сохранился после reload (регрессионная проверка, что projection rename не сломал behavior).
 
