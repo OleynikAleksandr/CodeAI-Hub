@@ -78,8 +78,57 @@
 
 ---
 
-## Phase Closeout Requirements (обязательно после завершения Phase 1)
-- Перенести завершённый `todo-plan.md` в `doc/TODO/Archive/todo-plan-phase1-diagram-sidecar-v2.md`.
-- Провести ревизию `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md`: перенести итоговые выводы в `System/` / `Clusters/` SSOT, затем архивировать planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/` или удалить, если нет исторической ценности.
-- Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`.
-- Создать новый `doc/TODO/todo-plan.md` только после завершения этой ревизии (только при начале нового scope).
+## Phase 2 — doc/SolidWorks-WorkFlow Documentation Cleanup (owner: Codex, updated: 2026-04-09)
+
+Контекст: аудит документации после релиза `1.1.922` выявил React Flow upon active SSOT, компат-редиректы в неправильной директории и незакрытые draft документы в `System/`. Этот scope чистит накопленный drift одним заходом без архитектурных изменений (docs-only, code не трогаем).
+
+### Stream: Fix React Flow references in active Contracts
+
+1. [TODO] `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — заменить React Flow-reference (line ~49-50) на nested CSS Grid, убрать minimap bullet. Scope: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md` (2 файла).
+2. [TODO] Git Commit: `docs(ssot): drop React Flow/minimap references in FacadeClassDiagram and Workflow_CLI` (hash: TBD)
+
+### Stream: Archive historical diagram docs from System/
+
+1. [TODO] `git mv System/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md` → `Plans/Archive/` (исторический trace §11.1–§11.12, SSOT уже в `SystemArchitecture.md §6.2/§6.4`). Scope: 1 файл через rename.
+2. [TODO] Git Commit: `docs(archive): move Diagram_Modules_ReviewStep_And_Autolayout historical trace to Plans/Archive` (hash: TBD)
+3. [TODO] `git mv System/Diagram_UserFacing_Layout_And_Format_Architecture.md` → `Plans/Archive/` (status «Discussion baseline», drafts запрещены в `System/` по `Plans/README.md §3`). Scope: 1 файл.
+4. [TODO] Git Commit: `docs(archive): move Diagram_UserFacing_Layout_And_Format discussion baseline to Plans/Archive` (hash: TBD)
+5. [TODO] `git mv System/Diagram_Modules_StepByStep_Workflow_And_UX_Refactor.md` → `Plans/Archive/` (содержит React Flow references и UX refactor planning — выводы уже в SSOT). Scope: 1 файл.
+6. [TODO] Git Commit: `docs(archive): move Diagram_Modules_StepByStep UX refactor plan to Plans/Archive` (hash: TBD)
+
+### Stream: Archive Contracts React Flow planning doc
+
+1. [TODO] `git mv Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md` → `Plans/Archive/` (весь документ построен на React Flow projection pipeline, удалённой в 1.1.921). Scope: 1 файл.
+2. [TODO] Git Commit: `docs(archive): move Diagram_Modules_ProductPart_Hierarchy_DSL React Flow plan to Plans/Archive` (hash: TBD)
+
+### Stream: Move compat-redirects from Contracts/ to Plans/Archive/ (batch 1)
+
+1. [TODO] `git mv` трёх compat-redirect нот: `Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`, `ProviderSessionHome_IsolationAndRecovery.md` → `Plans/Archive/`. Scope: 3 файла.
+2. [TODO] Git Commit: `docs(archive): relocate Contracts compat-redirects batch 1 to Plans/Archive` (hash: TBD)
+
+### Stream: Move compat-redirects from Contracts/ to Plans/Archive/ (batch 2)
+
+1. [TODO] `git mv` двух оставшихся compat-redirects: `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md` → `Plans/Archive/`. Scope: 2 файла.
+2. [TODO] Git Commit: `docs(archive): relocate Contracts compat-redirects batch 2 to Plans/Archive` (hash: TBD)
+
+### Stream: Archive Greenfield polygon + resolve remaining System/ drafts
+
+1. [TODO] `git mv System/Greenfield_Architecture_Polygon.md` → `Plans/Archive/` (status «Draft»). Scope: 1 файл.
+2. [TODO] Git Commit: `docs(archive): move Greenfield_Architecture_Polygon draft to Plans/Archive` (hash: TBD)
+
+### Stream: Fix Modules/Claude.md paths + Codex/Gemini symmetry
+
+1. [TODO] В `Modules/Claude.md` поправить пути `src/provider-usage-limits/…` → `packages/core/src/provider-usage-limits/…` (facades реально в Core). Добавить короткий раздел usage-limits в `Modules/Codex.md` и `Modules/Gemini.md` для симметрии (или убрать из Claude). Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md` (3 файла).
+2. [TODO] Git Commit: `docs(modules): align Claude/Codex/Gemini usage-limits paths and structure` (hash: TBD)
+
+### Stream: Update Docs_Index.md
+
+1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: убрать ссылки на перенесённые compat-redirects (bullet в секции «Contracts (compat / legacy filenames)»), добавить архивированные diagram docs и Greenfield polygon в секцию `Plans/Archive/`. Scope: 1 файл.
+2. [TODO] Git Commit: `docs: sync Docs_Index with Phase 2 documentation cleanup moves` (hash: TBD)
+
+---
+
+## Phase Closeout Requirements (обязательно после завершения Phase 2)
+- Перенести завершённый `todo-plan.md` в `doc/TODO/Archive/todo-plan-phase1-2-diagram-sidecar-v2-and-docs-cleanup.md` при старте следующего scope.
+- Провести ревизию `doc/SolidWorks-WorkFlow/Plans/DiagramModules_Sidecar_v2_LayoutParams_Architecture.md`: перенести итоговые выводы в `System/` / `Clusters/` SSOT (уже сделано в Phase 1, Stream 4), затем архивировать planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/` при старте следующего scope.
+- Создать новый `doc/TODO/todo-plan.md` только при начале следующего scope.
