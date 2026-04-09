@@ -101,15 +101,17 @@
 1. [TODO] `git mv Contracts/Diagram_Modules_ProductPart_Hierarchy_DSL_Architecture.md` → `Plans/Archive/` (весь документ построен на React Flow projection pipeline, удалённой в 1.1.921). Scope: 1 файл.
 2. [TODO] Git Commit: `docs(archive): move Diagram_Modules_ProductPart_Hierarchy_DSL React Flow plan to Plans/Archive` (hash: TBD)
 
-### Stream: Move compat-redirects from Contracts/ to Plans/Archive/ (batch 1)
+### Stream: Delete dead compat-redirect stubs from Contracts/ (batch 1)
 
-1. [TODO] `git mv` трёх compat-redirect нот: `Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`, `ProviderSessionHome_IsolationAndRecovery.md` → `Plans/Archive/`. Scope: 3 файла.
-2. [TODO] Git Commit: `docs(archive): relocate Contracts compat-redirects batch 1 to Plans/Archive` (hash: TBD)
+Пояснение: все пять compat-redirect документов — это короткие pointer-stub'ы. Два из них (`Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`) указывают на уже существующие файлы в `Plans/Archive/`. Три оставшихся (`ProviderSessionHome_IsolationAndRecovery.md`, `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`) указывают на удалённые или несуществующие originals (`Plans/StandaloneReviewer_Module.md` в Plans/ отсутствует). Все пять — dead pointers, move в Archive бессмысленен. Правильное действие — `git rm` из Contracts/; исторические планы, где они существуют, уже в Plans/Archive/.
 
-### Stream: Move compat-redirects from Contracts/ to Plans/Archive/ (batch 2)
+1. [TODO] `git rm` трёх compat-stub'ов: `Description_LegacyCleanup_Architecture.md`, `ProjectManager_VirtualSimulation_ColdStartRecovery.md`, `ProviderSessionHome_IsolationAndRecovery.md`. Scope: 3 файла.
+2. [TODO] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 1)` (hash: TBD)
 
-1. [TODO] `git mv` двух оставшихся compat-redirects: `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md` → `Plans/Archive/`. Scope: 2 файла.
-2. [TODO] Git Commit: `docs(archive): relocate Contracts compat-redirects batch 2 to Plans/Archive` (hash: TBD)
+### Stream: Delete dead compat-redirect stubs from Contracts/ (batch 2)
+
+1. [TODO] `git rm` двух оставшихся compat-stub'ов: `ProviderSessionHome_SnapshotEngine_Design.md`, `StandaloneReviewer_Module.md`. Scope: 2 файла.
+2. [TODO] Git Commit: `docs(cleanup): remove dead compat-redirect stubs from Contracts/ (batch 2)` (hash: TBD)
 
 ### Stream: Archive Greenfield polygon + resolve remaining System/ drafts
 
