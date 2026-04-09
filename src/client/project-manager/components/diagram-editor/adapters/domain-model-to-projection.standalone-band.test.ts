@@ -1,8 +1,8 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { domainModelToReactFlow } from "./domain-model-to-react-flow";
-import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
+import { domainModelToProjection } from "./domain-model-to-projection";
+import type { ProductPartProjectionNodeData } from "./domain-model-to-projection.types";
 
 const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -124,15 +124,15 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow nests clusters and standalone modules inside ProductPart data", () => {
-  const result = domainModelToReactFlow(STANDALONE_WRAP_FIXTURE);
+test("domainModelToProjection nests clusters and standalone modules inside ProductPart data", () => {
+  const result = domainModelToProjection(STANDALONE_WRAP_FIXTURE);
 
   assert.equal(result.nodes.length, 1);
   const ppNode = result.nodes[0]!;
   assert.equal(ppNode.id, "product-part:local-core-runtime");
   assert.equal(ppNode.type, "productPart");
 
-  const data = ppNode.data as ProductPartFlowNodeData;
+  const data = ppNode.data as ProductPartProjectionNodeData;
   assert.equal(data.clusters.length, 2);
   assert.equal(data.standaloneModules.length, 4);
 
@@ -222,11 +222,11 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow nests all cluster modules inside the cluster data", () => {
-  const result = domainModelToReactFlow(CLUSTER_STACK_FIXTURE);
+test("domainModelToProjection nests all cluster modules inside the cluster data", () => {
+  const result = domainModelToProjection(CLUSTER_STACK_FIXTURE);
 
   assert.equal(result.nodes.length, 1);
-  const data = result.nodes[0]!.data as ProductPartFlowNodeData;
+  const data = result.nodes[0]!.data as ProductPartProjectionNodeData;
 
   assert.equal(data.clusters.length, 1);
   const cluster = data.clusters[0]!;

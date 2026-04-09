@@ -4,7 +4,7 @@ import {
   isWorkspaceSessionResponse,
   joinUrl,
 } from "../../services/description-questionnaire-utils";
-import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramProjectionNode } from "./adapters/domain-model-to-projection.types";
 import type { DiagramMapModel } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import { serializeDiagramMapDsl } from "../../../../../packages/core/src/workflow/diagram-dsl/markdown-dsl-serializer";
 import {
@@ -79,7 +79,7 @@ export const useDiagramPersistence = (params: {
   readonly saveState: DiagramSaveState;
   readonly persistNodes: (payload: {
     readonly revision: string;
-    readonly nodes: readonly DiagramFlowNode[];
+    readonly nodes: readonly DiagramProjectionNode[];
   }) => Promise<void>;
   readonly persistModel: (model: DiagramMapModel) => Promise<void>;
   readonly markConflict: () => void;
@@ -112,7 +112,7 @@ export const useDiagramPersistence = (params: {
 
   const persistNodes = async (payload: {
     readonly revision: string;
-    readonly nodes: readonly DiagramFlowNode[];
+    readonly nodes: readonly DiagramProjectionNode[];
   }): Promise<void> => {
     setSaveState("saving");
     const sessionId = await ensureWorkspaceSession({

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type {
-  ClusterFlowNodeData,
-  DiagramFlowNode,
-} from "./adapters/domain-model-to-react-flow.types";
+  ClusterProjectionNodeData,
+  DiagramProjectionNode,
+} from "./adapters/domain-model-to-projection.types";
 import type {
   ClusterLayoutParams,
   ProductPartLayoutParams,
@@ -21,7 +21,7 @@ import {
 const makeCluster = (
   clusterId: string,
   layoutParams: ClusterLayoutParams = { moduleColumns: "auto" }
-): ClusterFlowNodeData => ({
+): ClusterProjectionNodeData => ({
   stage: "diagram_modules",
   nodeKind: "cluster",
   clusterId,
@@ -39,8 +39,8 @@ const makeProductPartNode = (
     columns: "auto",
     targetAspectRatio: "landscape",
   },
-  clusters: readonly ClusterFlowNodeData[] = []
-): DiagramFlowNode => ({
+  clusters: readonly ClusterProjectionNodeData[] = []
+): DiagramProjectionNode => ({
   id: `product-part:${id}`,
   type: "productPart",
   data: {

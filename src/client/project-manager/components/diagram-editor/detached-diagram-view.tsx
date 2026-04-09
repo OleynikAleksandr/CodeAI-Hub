@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useDiagramLoader } from "./use-diagram-loader";
 import { useDiagramPersistence } from "./use-diagram-persistence";
 import { DiagramEditorShell } from "./diagram-editor-shell";
-import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramProjectionNode } from "./adapters/domain-model-to-projection.types";
 
 type DetachedDiagramViewProps = {
   readonly workspacePath: string;
@@ -45,7 +45,7 @@ export const DetachedDiagramView: React.FC<DetachedDiagramViewProps> = ({
   });
 
   const handleNodesChange = useCallback(
-    async (nodes: readonly DiagramFlowNode[]) => {
+    async (nodes: readonly DiagramProjectionNode[]) => {
       if (!projection) return;
       await persistNodes({ nodes, revision: projection.revision });
     },

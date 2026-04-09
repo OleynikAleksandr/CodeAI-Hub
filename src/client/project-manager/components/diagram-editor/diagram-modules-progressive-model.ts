@@ -6,9 +6,9 @@ import type {
   ModuleRelation,
   ProductPartEntity,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import { domainModelToReactFlow } from "./adapters/domain-model-to-react-flow";
+import { domainModelToProjection } from "./adapters/domain-model-to-projection";
 import { materializeModuleMapFromStagedProductPart } from "./diagram-modules-staged-part-parser";
-import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramProjection } from "./adapters/domain-model-to-projection.types";
 import {
   applyFlowSidecarLayoutParams,
   applyFlowSidecarPositions,
@@ -201,7 +201,7 @@ export type DiagramModulesProgressiveLoadResult =
       readonly status: "ready";
       readonly content: string;
       readonly model: DiagramMapModel;
-      readonly projection: DiagramFlowProjection;
+      readonly projection: DiagramProjection;
       readonly flowDocument: FlowSidecarDocument | null;
     }
   | { readonly status: "missing" }
@@ -268,7 +268,7 @@ export const loadDiagramModulesProgressiveResult = async (params: {
       skeleton,
       parts: partModelsResult.partModels,
     });
-    const baseProjection = domainModelToReactFlow(progressiveModel);
+    const baseProjection = domainModelToProjection(progressiveModel);
     const sidecarResult = await params.readArtifact(params.flowSidecarPath);
     const flowDocument =
       sidecarResult.status === "ok"

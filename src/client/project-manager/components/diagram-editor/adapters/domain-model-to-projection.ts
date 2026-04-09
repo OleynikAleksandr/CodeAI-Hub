@@ -1,11 +1,11 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
-import type { DiagramFlowProjection } from "./domain-model-to-react-flow.types";
-import { buildModuleStageNodes, type LayoutOverrides } from "./module-stage-react-flow";
+import type { DiagramProjection } from "./domain-model-to-projection.types";
+import { buildModuleStageNodes, type LayoutOverrides } from "./module-stage-projection";
 
-export const domainModelToReactFlow = (
+export const domainModelToProjection = (
   model: ModuleMapModel,
   overrides?: LayoutOverrides,
-): DiagramFlowProjection => ({
+): DiagramProjection => ({
   stage: model.stage,
   revision: model.revision,
   nodes: buildModuleStageNodes(model, overrides),

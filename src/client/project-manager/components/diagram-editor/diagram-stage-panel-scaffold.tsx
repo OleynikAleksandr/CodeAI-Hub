@@ -4,9 +4,9 @@ import { api } from "../../api";
 import { StageArtifactFixButton } from "../shared/stage-artifact-fix-button";
 import { StageArtifactPendingLayout } from "../shared/stage-artifact-stage-panel";
 import type {
-  DiagramFlowNode,
-  DiagramFlowProjection,
-} from "./adapters/domain-model-to-react-flow.types";
+  DiagramProjectionNode,
+  DiagramProjection,
+} from "./adapters/domain-model-to-projection.types";
 import { DiagramEditorSection } from "./diagram-editor-section";
 import { DiagramEditorShell } from "./diagram-editor-shell";
 import type { DiagramLoaderStatus } from "./use-diagram-loader";
@@ -89,15 +89,15 @@ type DiagramStagePanelScaffoldProps = {
   readonly conflicts: readonly string[];
   readonly content: string | null;
   readonly error: string | null;
-  readonly initialNodes?: readonly DiagramFlowNode[];
+  readonly initialNodes?: readonly DiagramProjectionNode[];
   readonly introText: string;
   readonly onDismissConflicts: () => void;
   readonly onNodesChange?: (
-    nodes: readonly DiagramFlowNode[]
+    nodes: readonly DiagramProjectionNode[]
   ) => void | Promise<void>;
   readonly onStartFix: (params: FixStartParams) => Promise<void>;
   readonly pendingContent: React.ReactNode;
-  readonly projection: DiagramFlowProjection | null;
+  readonly projection: DiagramProjection | null;
   readonly status: DiagramLoaderStatus;
   readonly title: string;
   readonly workspacePath: string;

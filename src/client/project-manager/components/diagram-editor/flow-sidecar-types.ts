@@ -2,7 +2,7 @@ import type {
   ClusterLayoutParams,
   ProductPartLayoutParams,
 } from "./diagram-editor-layout-params";
-import type { DiagramFlowNode } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramProjectionNode } from "./adapters/domain-model-to-projection.types";
 
 export const FLOW_SIDECAR_LAYOUT_METRIC_VERSION = 4;
 
@@ -197,7 +197,7 @@ const sortObjectByKey = <T>(
   );
 
 const collectLayoutParamsFromNodes = (
-  nodes: readonly DiagramFlowNode[]
+  nodes: readonly DiagramProjectionNode[]
 ): FlowSidecarLayoutParams => {
   const productParts: Record<string, ProductPartLayoutParams> = {};
   const clusters: Record<string, ClusterLayoutParams> = {};
@@ -219,7 +219,7 @@ export const serializeFlowSidecar = (document: FlowSidecarDocument): string =>
 
 export const buildFlowSidecarDocument = (params: {
   readonly revision: string;
-  readonly nodes: readonly DiagramFlowNode[];
+  readonly nodes: readonly DiagramProjectionNode[];
   readonly viewport?: FlowSidecarViewport;
 }): FlowSidecarDocument => ({
   version: 2,
@@ -240,10 +240,10 @@ export const buildFlowSidecarDocument = (params: {
  * This function is a no-op pass-through kept for sidecar v2 compatibility.
  */
 export const applyFlowSidecarPositions = (params: {
-  readonly nodes: readonly DiagramFlowNode[];
+  readonly nodes: readonly DiagramProjectionNode[];
   readonly document: FlowSidecarDocument | null;
   readonly revision: string;
-}): readonly DiagramFlowNode[] => params.nodes;
+}): readonly DiagramProjectionNode[] => params.nodes;
 
 /**
  * Merge sidecar-persisted layoutParams (v2) back onto projection nodes.
@@ -255,9 +255,9 @@ export const applyFlowSidecarPositions = (params: {
  * reference is returned so downstream `useEffect` dependencies stay stable.
  */
 export const applyFlowSidecarLayoutParams = (params: {
-  readonly nodes: readonly DiagramFlowNode[];
+  readonly nodes: readonly DiagramProjectionNode[];
   readonly document: FlowSidecarDocument | null;
-}): readonly DiagramFlowNode[] => {
+}): readonly DiagramProjectionNode[] => {
   const layoutParams = params.document?.layoutParams;
   if (!layoutParams) {
     return params.nodes;

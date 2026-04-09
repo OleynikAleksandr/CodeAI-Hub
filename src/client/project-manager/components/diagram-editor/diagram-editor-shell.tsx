@@ -1,10 +1,10 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import type {
-  DiagramFlowNode,
-  DiagramFlowProjection,
-  ProductPartFlowNodeData,
-} from "./adapters/domain-model-to-react-flow.types";
+  DiagramProjectionNode,
+  DiagramProjection,
+  ProductPartProjectionNodeData,
+} from "./adapters/domain-model-to-projection.types";
 import {
   DiagramEditorContextMenu,
   type ContextMenuTarget,
@@ -22,12 +22,12 @@ type ContextMenuState = {
 } | null;
 
 type DiagramEditorShellProps = {
-  readonly projection: DiagramFlowProjection;
+  readonly projection: DiagramProjection;
   readonly title: string;
   readonly subtitle?: string;
-  readonly initialNodes?: readonly DiagramFlowNode[];
+  readonly initialNodes?: readonly DiagramProjectionNode[];
   readonly onNodesChange?: (
-    nodes: readonly DiagramFlowNode[]
+    nodes: readonly DiagramProjectionNode[]
   ) => void | Promise<void>;
 };
 
@@ -37,34 +37,34 @@ const resolveEmptyStateMessage = (title: string): string =>
     : "The diagram has no renderable nodes yet. Review the stage artifact or rerun the step if this state persists.";
 
 const updateNodeLayoutParam = (
-  nodes: readonly DiagramFlowNode[],
+  nodes: readonly DiagramProjectionNode[],
   productPartId: string,
   patch: Partial<{ columns: ProductPartLayoutColumns; targetAspectRatio: TargetAspectRatio }>,
-): DiagramFlowNode[] =>
+): DiagramProjectionNode[] =>
   nodes.map((node) => {
-    const data = node.data as ProductPartFlowNodeData;
-    if (data.productPartId !== productPartId) return node as DiagramFlowNode;
+    const data = node.data as ProductPartProjectionNodeData;
+    if (data.productPartId !== productPartId) return node as DiagramProjectionNode;
     return {
       ...node,
       data: { ...data, layoutParams: { ...data.layoutParams, ...patch } },
-    } as DiagramFlowNode;
+    } as DiagramProjectionNode;
   });
 
 const updateClusterLayoutParam = (
-  nodes: readonly DiagramFlowNode[],
+  nodes: readonly DiagramProjectionNode[],
   clusterId: string,
   moduleColumns: ClusterModuleColumns,
-): DiagramFlowNode[] =>
+): DiagramProjectionNode[] =>
   nodes.map((node) => {
-    const data = node.data as ProductPartFlowNodeData;
+    const data = node.data as ProductPartProjectionNodeData;
     const clusterIndex = data.clusters.findIndex((c) => c.clusterId === clusterId);
-    if (clusterIndex === -1) return node as DiagramFlowNode;
+    if (clusterIndex === -1) return node as DiagramProjectionNode;
     const clusters = [...data.clusters];
     clusters[clusterIndex] = {
       ...clusters[clusterIndex]!,
       layoutParams: { ...clusters[clusterIndex]!.layoutParams, moduleColumns },
     };
-    return { ...node, data: { ...data, clusters } } as DiagramFlowNode;
+    return { ...node, data: { ...data, clusters } } as DiagramProjectionNode;
   });
 
 export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
@@ -74,7 +74,7 @@ export const DiagramEditorShell: React.FC<DiagramEditorShellProps> = ({
   initialNodes,
   onNodesChange,
 }) => {
-  const [nodes, setNodes] = useState<readonly DiagramFlowNode[]>(
+  const [nodes, setNodes] = useState<readonly DiagramProjectionNode[]>(
     initialNodes ?? projection.nodes
   );
   const [contextMenu, setContextMenu] = useState<ContextMenuState>(null);

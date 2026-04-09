@@ -8,13 +8,13 @@ import type {
   ProductPartLayoutParams,
 } from "../diagram-editor-layout-params";
 
-export type DiagramFlowStage = "diagram_modules";
+export type DiagramProjectionStage = "diagram_modules";
 
-export type DiagramFlowNodeType = "productPart";
+export type DiagramProjectionNodeType = "productPart";
 
 // -- Nested data types (rendered by CSS Grid inside ProductPartNode) --
 
-export type ModuleFlowNodeData = {
+export type ModuleProjectionNodeData = {
   readonly stage: "diagram_modules";
   readonly nodeKind: "module";
   readonly moduleId: string;
@@ -29,7 +29,7 @@ export type ModuleFlowNodeData = {
   readonly outputCount: number;
 };
 
-export type ClusterFlowNodeData = {
+export type ClusterProjectionNodeData = {
   readonly stage: "diagram_modules";
   readonly nodeKind: "cluster";
   readonly clusterId: string;
@@ -37,11 +37,11 @@ export type ClusterFlowNodeData = {
   readonly title: string;
   readonly purpose: string;
   readonly moduleIds: readonly string[];
-  readonly modules: readonly ModuleFlowNodeData[];
+  readonly modules: readonly ModuleProjectionNodeData[];
   readonly layoutParams: ClusterLayoutParams;
 };
 
-export type ProductPartFlowNodeData = {
+export type ProductPartProjectionNodeData = {
   readonly stage: "diagram_modules";
   readonly nodeKind: "productPart";
   readonly productPartId: string;
@@ -49,21 +49,21 @@ export type ProductPartFlowNodeData = {
   readonly purpose: string;
   readonly clusterIds: readonly string[];
   readonly standaloneModuleIds: readonly string[];
-  readonly clusters: readonly ClusterFlowNodeData[];
-  readonly standaloneModules: readonly ModuleFlowNodeData[];
+  readonly clusters: readonly ClusterProjectionNodeData[];
+  readonly standaloneModules: readonly ModuleProjectionNodeData[];
   readonly layoutParams: ProductPartLayoutParams;
 };
 
-export type DiagramFlowNodeData = ProductPartFlowNodeData;
+export type DiagramProjectionNodeData = ProductPartProjectionNodeData;
 
-export type DiagramFlowNode = {
+export type DiagramProjectionNode = {
   readonly id: string;
-  readonly type: DiagramFlowNodeType;
-  readonly data: DiagramFlowNodeData;
+  readonly type: DiagramProjectionNodeType;
+  readonly data: DiagramProjectionNodeData;
 };
 
-export type DiagramFlowProjection = {
-  readonly stage: DiagramFlowStage;
+export type DiagramProjection = {
+  readonly stage: DiagramProjectionStage;
   readonly revision: string;
-  readonly nodes: readonly DiagramFlowNode[];
+  readonly nodes: readonly DiagramProjectionNode[];
 };

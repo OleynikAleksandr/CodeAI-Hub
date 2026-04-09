@@ -1,8 +1,8 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { domainModelToReactFlow } from "./domain-model-to-react-flow";
-import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
+import { domainModelToProjection } from "./domain-model-to-projection";
+import type { ProductPartProjectionNodeData } from "./domain-model-to-projection.types";
 
 const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -237,8 +237,8 @@ const TWO_CLUSTER_STANDALONE_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow emits one node per product part with nested data", () => {
-  const result = domainModelToReactFlow(MULTI_PRODUCT_PART_FIXTURE);
+test("domainModelToProjection emits one node per product part with nested data", () => {
+  const result = domainModelToProjection(MULTI_PRODUCT_PART_FIXTURE);
 
   assert.equal(result.nodes.length, 2);
 
@@ -247,13 +247,13 @@ test("domainModelToReactFlow emits one node per product part with nested data", 
   assert.ok(coreNode);
   assert.ok(shellNode);
 
-  const coreData = coreNode.data as ProductPartFlowNodeData;
+  const coreData = coreNode.data as ProductPartProjectionNodeData;
   assert.equal(coreData.clusters.length, 1);
   assert.equal(coreData.clusters[0]!.clusterId, "project-flow");
   assert.equal(coreData.standaloneModules.length, 1);
   assert.equal(coreData.standaloneModules[0]!.moduleId, "artifact-freshness");
 
-  const shellData = shellNode.data as ProductPartFlowNodeData;
+  const shellData = shellNode.data as ProductPartProjectionNodeData;
   assert.equal(shellData.clusters.length, 3);
   assert.deepEqual(
     shellData.clusters.map((c) => c.clusterId),
@@ -262,11 +262,11 @@ test("domainModelToReactFlow emits one node per product part with nested data", 
   assert.equal(shellData.standaloneModules.length, 0);
 });
 
-test("domainModelToReactFlow nests cluster modules correctly", () => {
-  const result = domainModelToReactFlow(TWO_CLUSTER_STANDALONE_FIXTURE);
+test("domainModelToProjection nests cluster modules correctly", () => {
+  const result = domainModelToProjection(TWO_CLUSTER_STANDALONE_FIXTURE);
 
   assert.equal(result.nodes.length, 1);
-  const data = result.nodes[0]!.data as ProductPartFlowNodeData;
+  const data = result.nodes[0]!.data as ProductPartProjectionNodeData;
 
   assert.equal(data.clusters.length, 2);
   const workflow = data.clusters[0]!;
@@ -284,9 +284,9 @@ test("domainModelToReactFlow nests cluster modules correctly", () => {
   assert.equal(data.standaloneModules[0]!.moduleId, "workspace-provider-binding");
 });
 
-test("domainModelToReactFlow assigns default layout params", () => {
-  const result = domainModelToReactFlow(TWO_CLUSTER_STANDALONE_FIXTURE);
-  const data = result.nodes[0]!.data as ProductPartFlowNodeData;
+test("domainModelToProjection assigns default layout params", () => {
+  const result = domainModelToProjection(TWO_CLUSTER_STANDALONE_FIXTURE);
+  const data = result.nodes[0]!.data as ProductPartProjectionNodeData;
 
   assert.equal(data.layoutParams.columns, "auto");
   assert.equal(data.layoutParams.targetAspectRatio, "landscape");

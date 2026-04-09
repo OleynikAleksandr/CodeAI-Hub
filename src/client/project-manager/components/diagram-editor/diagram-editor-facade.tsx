@@ -1,11 +1,11 @@
 import type React from "react";
 import { createContext, useCallback, useContext, useRef, useState } from "react";
 import type {
-  ClusterFlowNodeData,
-  DiagramFlowNode,
-  ModuleFlowNodeData,
-  ProductPartFlowNodeData,
-} from "./adapters/domain-model-to-react-flow.types";
+  ClusterProjectionNodeData,
+  DiagramProjectionNode,
+  ModuleProjectionNodeData,
+  ProductPartProjectionNodeData,
+} from "./adapters/domain-model-to-projection.types";
 import type { ContextMenuTarget } from "./diagram-editor-context-menu";
 import {
   resolveClusterModuleColumns,
@@ -14,7 +14,7 @@ import {
 } from "./diagram-editor-layout-params";
 
 type DiagramEditorFacadeProps = {
-  readonly nodes: readonly DiagramFlowNode[];
+  readonly nodes: readonly DiagramProjectionNode[];
   readonly onContextMenu?: (target: ContextMenuTarget, position: { x: number; y: number }) => void;
   readonly title: string;
   readonly subtitle?: string;
@@ -84,9 +84,9 @@ const purposeTextStyle: React.CSSProperties = {
   color: "var(--pm-text-muted)",
 };
 
-// -- Sub-components (not React Flow nodes) --
+// -- Sub-components (plain React components rendered inside CSS Grid cells) --
 
-const ModuleCard = ({ data }: { readonly data: ModuleFlowNodeData }) => (
+const ModuleCard = ({ data }: { readonly data: ModuleProjectionNodeData }) => (
   <div style={nodeCardStyle}>
     <div style={nodeCaptionStyle}>Module</div>
     <strong style={{ display: "block", fontSize: 14, marginTop: 4 }}>
@@ -117,7 +117,7 @@ const ModuleCard = ({ data }: { readonly data: ModuleFlowNodeData }) => (
   </div>
 );
 
-const ClusterCard = ({ data }: { readonly data: ClusterFlowNodeData }) => {
+const ClusterCard = ({ data }: { readonly data: ClusterProjectionNodeData }) => {
   const onContextMenuCb = useContext(ContextMenuContext);
   const moduleCols = resolveClusterModuleColumns(
     data.modules.length,
@@ -164,7 +164,7 @@ const ProductPartNode = ({
   data,
 }: {
   readonly id: string;
-  readonly data: ProductPartFlowNodeData;
+  readonly data: ProductPartProjectionNodeData;
 }) => {
   const onContextMenuCb = useContext(ContextMenuContext);
 

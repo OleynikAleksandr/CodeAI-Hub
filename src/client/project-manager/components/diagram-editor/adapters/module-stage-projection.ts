@@ -6,10 +6,10 @@ import {
   type ProductPartLayoutParams,
 } from "../diagram-editor-layout-params";
 import type {
-  ClusterFlowNodeData,
-  DiagramFlowNode,
-  ModuleFlowNodeData,
-} from "./domain-model-to-react-flow.types";
+  ClusterProjectionNodeData,
+  DiagramProjectionNode,
+  ModuleProjectionNodeData,
+} from "./domain-model-to-projection.types";
 
 type ModuleEntity = ModuleMapModel["modules"][number];
 type ClusterEntity = NonNullable<ModuleMapModel["clusters"]>[number];
@@ -41,7 +41,7 @@ const buildModuleData = (
   module: ModuleEntity,
   productPart: string,
   cluster?: string,
-): ModuleFlowNodeData => ({
+): ModuleProjectionNodeData => ({
   stage: "diagram_modules",
   nodeKind: "module",
   moduleId: module.id,
@@ -58,9 +58,9 @@ const buildModuleData = (
 
 const buildClusterData = (
   cluster: ClusterEntity,
-  modules: readonly ModuleFlowNodeData[],
+  modules: readonly ModuleProjectionNodeData[],
   layoutParams: ClusterLayoutParams,
-): ClusterFlowNodeData => ({
+): ClusterProjectionNodeData => ({
   stage: "diagram_modules",
   nodeKind: "cluster",
   clusterId: cluster.id,
@@ -132,14 +132,14 @@ const getStandaloneModuleIds = (
   ).filter((id) => modulesById.has(id));
 
 /**
- * Build one React Flow node per ProductPart. Clusters and Modules
- * are nested inside ProductPart data — they are NOT separate RF nodes.
+ * Build one projection node per ProductPart. Clusters and Modules
+ * are nested inside ProductPart data — they are NOT separate nodes.
  * CSS Grid inside ProductPartNode handles all internal layout.
  */
 export const buildModuleStageNodes = (
   model: ModuleMapModel,
   overrides?: LayoutOverrides,
-): readonly DiagramFlowNode[] => {
+): readonly DiagramProjectionNode[] => {
   const modulesById = new Map(
     model.modules.map((m) => [m.id, m]),
   );
@@ -157,7 +157,7 @@ export const buildModuleStageNodes = (
     {
       id: DEFAULT_PRODUCT_PART_ID,
       title: humanizeIdentifier(DEFAULT_PRODUCT_PART_ID),
-      purpose: "Fallback product part derived in the React Flow adapter",
+      purpose: "Fallback product part derived in the projection adapter",
       clusterIds: [...fallbackClusters.keys()],
       standaloneModuleIds: model.modules
         .filter((m) => !m.cluster)
@@ -165,7 +165,7 @@ export const buildModuleStageNodes = (
     },
   ];
 
-  const nodes: DiagramFlowNode[] = [];
+  const nodes: DiagramProjectionNode[] = [];
 
   for (const productPart of productParts) {
     const clusterIds = getClusterIds(productPart, model, clustersById);
@@ -181,7 +181,7 @@ export const buildModuleStageNodes = (
       ...ppOverride,
     };
 
-    const clusters: ClusterFlowNodeData[] = [];
+    const clusters: ClusterProjectionNodeData[] = [];
     for (const clusterId of clusterIds) {
       const cluster = clustersById.get(clusterId);
       if (!cluster) continue;

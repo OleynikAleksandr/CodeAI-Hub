@@ -1,8 +1,8 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { domainModelToReactFlow } from "./domain-model-to-react-flow";
-import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
+import { domainModelToProjection } from "./domain-model-to-projection";
+import type { ProductPartProjectionNodeData } from "./domain-model-to-projection.types";
 
 const MODULE_MAP_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -99,8 +99,8 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
   ],
 };
 
-test("domainModelToReactFlow emits one ProductPart node with nested clusters and modules", () => {
-  const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
+test("domainModelToProjection emits one ProductPart node with nested clusters and modules", () => {
+  const result = domainModelToProjection(MODULE_MAP_FIXTURE);
 
   assert.equal(result.stage, "diagram_modules");
   assert.equal(result.revision, "deadbeef");
@@ -111,7 +111,7 @@ test("domainModelToReactFlow emits one ProductPart node with nested clusters and
   assert.equal(ppNode.type, "productPart");
   assert.equal(ppNode.data.nodeKind, "productPart");
 
-  const data = ppNode.data as ProductPartFlowNodeData;
+  const data = ppNode.data as ProductPartProjectionNodeData;
   assert.equal(data.productPartId, "control-shell");
   assert.equal(data.title, "Control Shell");
   assert.equal(data.clusters.length, 2);
@@ -135,7 +135,7 @@ test("domainModelToReactFlow emits one ProductPart node with nested clusters and
   assert.equal(standalone.productPart, "control-shell");
 });
 
-test("domainModelToReactFlow projection has no edges", () => {
-  const result = domainModelToReactFlow(MODULE_MAP_FIXTURE);
+test("domainModelToProjection projection has no edges", () => {
+  const result = domainModelToProjection(MODULE_MAP_FIXTURE);
   assert.equal("edges" in result, false);
 });

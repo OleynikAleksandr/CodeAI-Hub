@@ -1,8 +1,8 @@
 import type { ModuleMapModel } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import assert from "node:assert/strict";
 import test from "node:test";
-import { domainModelToReactFlow } from "./domain-model-to-react-flow";
-import type { ProductPartFlowNodeData } from "./domain-model-to-react-flow.types";
+import { domainModelToProjection } from "./domain-model-to-projection";
+import type { ProductPartProjectionNodeData } from "./domain-model-to-projection.types";
 
 const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
   version: 1,
@@ -87,8 +87,8 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
   relations: [],
 };
 
-test("domainModelToReactFlow nests external modules as standalone inside product part data", () => {
-  const result = domainModelToReactFlow(EXTERNAL_BOUNDARY_FIXTURE);
+test("domainModelToProjection nests external modules as standalone inside product part data", () => {
+  const result = domainModelToProjection(EXTERNAL_BOUNDARY_FIXTURE);
 
   assert.equal(result.nodes.length, 2);
 
@@ -97,7 +97,7 @@ test("domainModelToReactFlow nests external modules as standalone inside product
   );
   assert.ok(runtimeNode);
 
-  const data = runtimeNode.data as ProductPartFlowNodeData;
+  const data = runtimeNode.data as ProductPartProjectionNodeData;
   assert.equal(data.clusters.length, 1);
   assert.equal(data.clusters[0]!.clusterId, "provider-bridge");
   assert.equal(data.standaloneModules.length, 1);
@@ -108,7 +108,7 @@ test("domainModelToReactFlow nests external modules as standalone inside product
     (node) => node.id === "product-part:standalone-project-manager"
   );
   assert.ok(managerNode);
-  const managerData = managerNode.data as ProductPartFlowNodeData;
+  const managerData = managerNode.data as ProductPartProjectionNodeData;
   assert.equal(managerData.clusters.length, 1);
   assert.equal(managerData.standaloneModules.length, 0);
 });

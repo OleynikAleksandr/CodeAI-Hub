@@ -3,7 +3,7 @@ import type {
   DiagramMapModel,
 } from "../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import { api } from "../../api";
-import type { DiagramFlowProjection } from "./adapters/domain-model-to-react-flow.types";
+import type { DiagramProjection } from "./adapters/domain-model-to-projection.types";
 import {
   readWorkflowArtifact,
   resolveDiagramPaths,
@@ -19,7 +19,7 @@ export type DiagramLoaderResult = {
   readonly content: string | null;
   readonly error: string | null;
   readonly model: DiagramMapModel | null;
-  readonly projection: DiagramFlowProjection | null;
+  readonly projection: DiagramProjection | null;
   readonly flowDocument: FlowSidecarDocument | null;
   readonly artifactPath: string;
   readonly flowSidecarPath: string;
@@ -33,7 +33,7 @@ export const useDiagramLoader = (params: {
   const [status, setStatus] = useState<DiagramLoaderStatus>("loading");
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [projection, setProjection] = useState<DiagramFlowProjection | null>(null);
+  const [projection, setProjection] = useState<DiagramProjection | null>(null);
   const [model, setModel] = useState<DiagramMapModel | null>(null);
   const [flowDocument, setFlowDocument] = useState<FlowSidecarDocument | null>(null);
   const [pollTick, setPollTick] = useState(0);
