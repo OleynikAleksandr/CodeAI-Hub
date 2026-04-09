@@ -32,3 +32,29 @@ test("diagram editor shell has no React Flow dependency and no legacy layout nor
   assert.equal(source.includes("handleMeasuredNodes"), false);
   assert.equal(source.includes("seed-autolayout"), false);
 });
+
+test("diagram editor shell persists context-menu layout param edits via onNodesChange", async () => {
+  const source = await readFile(SHELL_SOURCE_PATH, "utf8");
+
+  // All three right-click layout param handlers must push the updated
+  // nodes through onNodesChange so Sidecar v2 can store them. If these
+  // vanish, user edits silently stop surviving reload again.
+  const onNodesChangeCalls = source.match(/onNodesChange\?\.\(next\)/g) ?? [];
+  assert.equal(
+    onNodesChangeCalls.length >= 3,
+    true,
+    `expected at least 3 onNodesChange?.(next) call sites, found ${onNodesChangeCalls.length}`
+  );
+
+  assert.equal(source.includes("handleProductPartColumnsChange"), true);
+  assert.equal(source.includes("handleProductPartAspectRatioChange"), true);
+  assert.equal(source.includes("handleClusterModuleColumnsChange"), true);
+
+  // projection-reset useEffect must still prefer initialNodes over
+  // projection.nodes; otherwise the sidecar-applied layoutParams get
+  // overwritten by raw adapter defaults on every projection rebuild.
+  assert.equal(
+    source.includes("setNodes(initialNodes ?? projection.nodes)"),
+    true
+  );
+});
