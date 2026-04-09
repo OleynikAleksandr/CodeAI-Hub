@@ -234,25 +234,26 @@
 - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 
-## 6.2) Diagram Visual Shell Boundary (Phase 2, 2026-03-16; updated Phase 57, 2026-03-24)
+## 6.2) Diagram Visual Shell Boundary (Phase 2, 2026-03-16; updated 2026-04-09 for Sidecar v2 layoutParams)
 
-- Project Manager для `Diagram Modules` рендерит канонические DSL artifacts через diagram-first visual shell на базе React Flow.
+- Project Manager для `Diagram Modules` рендерит канонические DSL artifacts через diagram-first visual shell на базе CSS Grid (React Flow удалён в релизе `1.1.921`).
 - Правый panel contract для diagram stage = `Artifacts | Help` (Source mode убран):
   - `Artifacts` показывает саму диаграмму;
   - `Help` показывает guidance по шагу.
 - Visual shell не владеет semantic state:
   - source of truth остаётся `product-parts.index.md` + `product-parts/<part-id>.md`;
-  - shell работает как projection layer `Markdown DSL -> domain model -> flow nodes/edges`, но владеет только layout/view state.
+  - shell работает как projection layer `Markdown DSL -> domain model -> nested CSS Grid`, но владеет только layout/view state.
 - `*.flow.json` остаётся non-semantic sidecar:
-  - хранит positions/viewport для visual shell;
+  - формат v2 хранит опциональную секцию `layoutParams` (`productParts` + `clusters`) с declarative CSS Grid overrides, помимо placeholder positions и viewport;
+  - parser принимает payload'ы обеих версий (`v1` без `layoutParams` и `v2` с ними); невалидные enum-значения `columns`/`targetAspectRatio`/`moduleColumns` отбрасываются entry-by-entry и возвращаются к defaults;
   - пишется отдельно через `workspace-file-write`;
   - не меняет содержимое канонического `.md`;
   - не показывается пользователю как primary artifact.
-- Если sidecar отсутствует или не совпадает по `Revision`, shell обязан взять стартовые координаты из собственной domain projection и затем позволить пользователю вручную корректировать layout прямо в React Flow.
-- Product contract для diagram layout теперь `manual-layout first`:
+- Если sidecar отсутствует, не совпадает по `Revision` или относится к более ранней версии формата, shell обязан взять стартовую CSS Grid композицию из собственной domain projection. Пользовательские CSS Grid overrides, сохранённые в `layoutParams`, применяются поверх defaults через `applyFlowSidecarLayoutParams` в read-path.
+- Product contract для diagram layout теперь `CSS Grid declarative first`:
   - AI/DSL задаёт semantic structure диаграммы;
-  - пользовательская композиция принадлежит `*.flow.json`;
-  - автоматический layout engine не определяет финальный пользовательский вид диаграммы.
+  - декларативные CSS Grid параметры (`columns`, `targetAspectRatio` на ProductPart; `moduleColumns` на Cluster) принадлежат `*.flow.json` v2 и управляются через right-click context menu;
+  - пользователь не таскает ноды мышью — permanent composition состояние выражается через layout params, а не через pixel-positions.
 - Browser/UI bundle не должен зависеть от Node-only imports ради рендера diagram artifacts; для `Revision` browser-safe parsing path может переиспользовать уже записанное поле `- Revision:` из канонического Markdown DSL.
 
 Канонические документы:
@@ -285,8 +286,8 @@
 - Shared diagram editor UX обязан сохранять визуальную непрерывность:
   - background refresh не должен очищать уже загруженный graph перед следующим успешным parse/load;
   - empty semantic graph обязан показывать explicit placeholder вместо silent blank canvas;
-  - manual drag changes обязаны обновлять текущий React Flow canvas в реальном времени и сохраняться в `*.flow.json`;
-  - visual shell не показывает auto-layout chrome, zoom/fit controls или bottom-right minimap; единственный interaction mode = Option(Alt)+drag для node movement, обычный drag панорамирует canvas.
+  - layout param changes (right-click context menu) обязаны обновлять CSS Grid рендер в реальном времени и сохраняться в `*.flow.json` v2 `layoutParams`;
+  - visual shell не показывает auto-layout chrome, zoom/fit controls или bottom-right minimap; зум выполняется через CSS `transform` по Cmd/Ctrl+scroll (25–200%, шаг 1%), reset — Cmd/Ctrl+0; drag-based node movement отсутствует — композиция управляется декларативными layout params.
 - Workflow tree child nodes для `Diagram Modules` обязаны наследовать актуальные stage-level `blocked/outdated` сигналы; поддеревья диаграмм не могут маскировать реальный gating state как постоянный `active`.
 - Fresh toolbar bootstrap для шага `Diagram Modules` обязан следовать тому же product contract, что и `Description -> Virtual Simulation`: если upstream canonical artifact уже существует, PM обязан разрешить ручной запуск следующего шага без дополнительного требования `upstream stage === completed` и без превращения `invalid/outdated` статуса upstream stage в hard blocker. Эти статусы остаются диагностическими, но не отменяют user-driven переход на следующий шаг.
 - `WorkflowState` на cold start не может зависеть только от watcher-memory. При чтении `/workflow-state` Core обязан гидрировать canonical artifacts (`Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`) с диска, чтобы gating и stage snapshot оставались корректными после перезапуска Core / Project Manager.
@@ -311,19 +312,17 @@
 - Ordinary dialog reopen/recovery contract обязан сохранять identity continuity между PM, Core continuity и provider runtime. Если runtime по любой причине создает fresh provider session вместо обычного resume, новый binding должен быть immediately normalized в continuity/index до следующего outbound user turn, а PM не имеет права бесконечно повторять `createSession(old providerSessionId)` для того же continuity entry.
 - `Diagram Modules` не навязывает пользователю inline semantic editors или bottom-right minimap. Product UX обязан опираться на:
   - AI-generated semantic structure в canonical `.md`;
-  - nested ownership containers для `Diagram Modules`, где `Product Part` = top-level container, `Cluster` = child container, `Module` = child node внутри cluster или напрямую внутри owning product part;
-  - manual drag/editing внутри React Flow;
-  - persisted user-owned positions в `module-map.flow.json`;
+  - nested ownership containers для `Diagram Modules`, где `Product Part` = top-level CSS Grid контейнер, `Cluster` = nested CSS Grid контейнер, `Module` = child card внутри cluster или напрямую внутри owning product part;
+  - right-click context menu для decalarative layout params (columns, aspect ratio, module columns), результат которых сохраняется в `module-map.flow.json` v2 `layoutParams`;
   - agent-driven semantic updates when new semantic content is needed.
-- Diagram canvas interaction model (начиная с 1.1.796):
-  - **Option(Alt)+drag** перемещает отдельные ноды; обычный drag (без модификатора) панорамирует canvas;
-  - **Dynamic container resizing**: Product Part и Cluster автоматически расширяются/сжимаются при перемещении дочерних нод к границам (минимальная ширина PP = 720px, Cluster = single-column); реализовано через `containerConstraints` в flow node data и bottom-up `resizeContainersToFit` в `DiagramEditorShell`;
-  - **Collision avoidance**: siblings внутри одного контейнера и Product Part-ы между собой не могут наложиться друг на друга (12px SIBLING_GAP, AABB minimum-translation-vector);
-  - **Multi-column layout**: кластеры с 3+ модулями используют 2-column layout (CLUSTER_MULTI_COL_THRESHOLD = 2).
-- Detachable diagram window (начиная с 1.1.795):
-  - кнопка `Detach` в artifact header (слева от `Artifacts` toggle) открывает full-viewport ReactFlow в отдельном CEF popup через `window.open()`;
-  - detached окно использует тот же sidecar файл (`module-map.flow.json`), что и основной PM — позиции нод синхронизированы;
-  - при drop (конце перетаскивания) `BroadcastChannel("pm:diagram:sidecar-sync")` уведомляет другое окно о перезагрузке sidecar;
+- Diagram canvas interaction model (начиная с релиза `1.1.922`, Sidecar v2):
+  - **Right-click context menu** на ProductPart: `columns` (`auto` | 2..5), `targetAspectRatio` (`landscape` | `wide` | `square`); на Cluster: `moduleColumns` (`auto` | 1..3). Выбранные значения мутируют in-memory nodes, сразу уходят в sidecar v2 через `onNodesChange`, и переживают reload через `applyFlowSidecarLayoutParams` на read-path;
+  - **Zoom**: CSS `transform: scale(...)` по Cmd/Ctrl+scroll (range 25–200%, шаг 1%); reset — Cmd/Ctrl+0 или clickable badge в bottom-left при scale ≠ 100%;
+  - **Без drag-based node movement**: CSS Grid сам раскладывает card'ы согласно layout params. Нет collision avoidance/containerConstraints/resizeContainersToFit — всё это реализует браузер.
+- Detachable diagram window:
+  - кнопка `Detach` в artifact header (слева от `Artifacts` toggle) открывает full-viewport CSS Grid view в отдельном CEF popup через `window.open()`;
+  - detached окно использует тот же sidecar файл (`module-map.flow.json`), что и основной PM — layout params v2 синхронизированы;
+  - `BroadcastChannel("pm:diagram:sidecar-sync")` уведомляет второе окно о перезагрузке sidecar после write;
   - реализация: `detached-diagram-view.tsx`, `detach-diagram-button.tsx`, `stage-artifact-header-toggle.tsx` (`extraActions` slot).
 - Workspace auto-select (начиная с 1.1.791): при открытии workspace PM проверяет Diagram Modules **перед** Virtual Simulation и показывает последний шаг с активной сессией.
 
