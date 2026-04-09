@@ -60,5 +60,5 @@ Scope чисто docs-only (не затрагивает исходный код 
 ### Stream 3 — Delete obsolete Diagram_Modules_ProductPart_Decomposition planning doc
 
 1. [DONE] Удалить `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md`. Итоги документа уже в `SystemArchitecture.md §6.3-§6.5` и `WorkflowSteps_Overview.md § Шаг 3`; документ содержит outdated §5 "Принятая React Flow-модель" и битые pointers на архивные `Sessions/Archive/Session132.md` и `Plans/Diagram_Modules_ReviewStep_And_Autolayout_Architecture.md`. По `Plans/README.md §3` planning-доки не должны жить в `System/`. `Docs_Index.md` не содержит ссылок; pointer из `SystemArchitecture.md §6.5` уже убран в Stream 1. Git grep по active tree после удаления: только self-references в текущем `todo-plan.md`. Scope: `doc/SolidWorks-WorkFlow/System/Diagram_Modules_ProductPart_Decomposition_And_Progressive_Rendering_Architecture.md` (delete), `doc/TODO/todo-plan.md` (2 файла).
-2. [DONE] Git Commit: `docs(cleanup): delete materialized Diagram Modules ProductPart Decomposition planning doc` (hash: TBD)
+2. [DONE] Git Commit: `docs(cleanup): delete materialized Diagram Modules ProductPart Decomposition planning doc` (hash: `cc34ec1e5`)
 
