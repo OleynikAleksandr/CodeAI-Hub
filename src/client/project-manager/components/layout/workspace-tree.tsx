@@ -241,7 +241,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const resolveNodeExpanded = (node: TreeNode): boolean =>
     node.stage
       ? node.stage === activeStage
-      : expandedNodes[node.id] ?? true;
+      : expandedNodes[node.id] ?? !node.id.startsWith("devtree:");
 
   const flattenTree = (node: TreeNode): TreeNode[] => {
     const result: TreeNode[] = [node];
