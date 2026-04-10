@@ -110,9 +110,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
     resetGuard();
     if (!activeWorkspace) {
       setActiveTool(null);
-      return;
     }
-    setActiveTool("Description");
+    // Startup tool is resolved by useMainAreaWorkflowState after store
+    // load and reinforced by the sidebar auto-select event.
   }, [activeWorkspace?.id]);
 
   useEffect(() => {
