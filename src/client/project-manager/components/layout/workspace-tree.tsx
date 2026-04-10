@@ -8,8 +8,8 @@ import {
   type WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
-import { resolveStageChildren } from "./workspace-tree-stage-children";
 import { useStagePanelSync } from "./use-stage-panel-sync";
+import { buildDevelopmentTreeNodes } from "./workspace-tree-diagram-branch-nodes";
 import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
@@ -53,11 +53,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
-  const workspaceLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.sidebar.workspace.label",
-    "Workspace"
-  );
   const emptyWorkspaceLabel = t(
     USER_MESSAGES_CATEGORY,
     "pm.workspace_tree.empty_label",
@@ -162,7 +157,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       return;
     }
     markWorkspaceChanged();
-    setExpandedNodes({ workspace: true });
+    setExpandedNodes({});
   }, [
     markWorkspaceChanged,
     resetPendingSelection,
@@ -192,26 +187,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         label: resolveStageLabel(stage, t),
         status: "todo",
         stage,
-        visualDepth: 1,
+        visualDepth: 0,
       }));
     }
-
-    const stageCtx = {
-      workflowState,
-      workspaceSlug,
-      workspacePath,
-      descriptionArtifactAvailable,
-      virtualSimulationArtifactAvailable,
-      diagramModulesArtifactAvailable,
-      selectArtifact,
-      dispatchDialogOpenIntent,
-      clearArtifactWithTool,
-    };
 
     return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
       const blocked = workflowState.gating.blocked[stage] ?? false;
-      const children = resolveStageChildren(stage, stageCtx);
       return {
         id: `workflow:${stage}`,
         label: resolveStageLabel(stage, t),
@@ -219,32 +201,18 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         title: resolveStageTitle(stage, status, blocked, t),
         isSelected: stage === activeStage,
         status: resolveTreeStatus(status, blocked),
-        visualDepth: 1,
-        isCollapsible: children.length > 0,
-        children: children.length > 0 ? children : undefined,
+        visualDepth: 0,
         onSelect: () => dispatchStageActivated(stage),
       };
     });
   };
 
-  const rootNode: TreeNode | null = selectedWorkspaceId
-    ? {
-        id: "workspace",
-        label: workspaceName ?? workspaceLabel,
-        status: "active",
-        visualDepth: 0,
-        isCollapsible: true,
-        children: resolveStageNodes(),
-      }
-    : null;
-
   const resolveNodeExpanded = (node: TreeNode): boolean =>
-    node.stage
-      ? node.stage === activeStage
-      : expandedNodes[node.id] ?? !node.id.startsWith("devtree:");
+    expandedNodes[node.id] ?? !node.id.startsWith("devtree:");
 
   const flattenTree = (node: TreeNode): TreeNode[] => {
     const result: TreeNode[] = [node];
+    if (node.kind === "separator") return result;
     const isExpanded = resolveNodeExpanded(node);
     if (!node.children || node.children.length === 0 || !isExpanded) {
       return result;
@@ -255,7 +223,44 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     return result;
   };
 
-  const treeNodes = rootNode ? flattenTree(rootNode) : [];
+  const buildTreeNodes = (): TreeNode[] => {
+    if (!selectedWorkspaceId) return [];
+    const nodes: TreeNode[] = [];
+
+    // Documentation Tree section
+    const docSeparator: TreeNode = {
+      id: "section:documentation",
+      kind: "separator",
+      label: "Documentation Tree",
+      status: "todo",
+      visualDepth: 0,
+    };
+    nodes.push(docSeparator);
+    for (const stage of resolveStageNodes()) {
+      nodes.push(stage);
+    }
+
+    // Development Tree section (only when parts exist)
+    const devTree = workflowState?.developmentTree;
+    if (devTree?.parts.length) {
+      const devSeparator: TreeNode = {
+        id: "section:development",
+        kind: "separator",
+        label: "Development Tree",
+        status: "todo",
+        visualDepth: 0,
+      };
+      nodes.push(devSeparator);
+      const devNodes = buildDevelopmentTreeNodes(devTree, 0);
+      for (const dn of devNodes) {
+        nodes.push(...flattenTree(dn));
+      }
+    }
+
+    return nodes;
+  };
+
+  const treeNodes = buildTreeNodes();
 
   const handleTreeToggle = (id: string) => {
     setExpandedNodes((current) => {
@@ -272,6 +277,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ) : (
         <ul className="pm-tree__list">
           {treeNodes.map((node) => {
+            if (node.kind === "separator") {
+              return (
+                <li className="pm-tree__separator" key={node.id}>
+                  {node.label}
+                </li>
+              );
+            }
             const isExpanded = resolveNodeExpanded(node);
             return (
               <li
@@ -290,10 +302,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
                     className="pm-tree__toggle"
                     onClick={(event) => {
                       event.stopPropagation();
-                      if (node.stage) {
-                        dispatchStageActivated(node.stage);
-                        return;
-                      }
                       handleTreeToggle(node.id);
                     }}
                     type="button"

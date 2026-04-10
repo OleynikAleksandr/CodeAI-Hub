@@ -166,15 +166,19 @@
 - Release baseline: только после чистого дерева, актуального `README.md`, `CHANGELOG.md`, `doc/` и зафиксированных путей к tarball/VSIX.
 
 ### Stream: Release surface documentation
-1. [TODO] Актуализировать release-facing docs для shipped Development Tree baseline — scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: document development tree execution baseline`
-2. [TODO] Git Commit: `docs: document development tree execution baseline` (hash: TBD)
+1. [DONE] Актуализировать release-facing docs — README.md (v1.1.924), CHANGELOG.md (v1.1.924), SystemArchitecture.md (invariant #20 dev tree read model) (2026-04-10)
+2. [DONE] Git Commit: `docs: document development tree execution baseline` (hash: 7debeead7)
 
 ### Stream: Final release candidate closeout
-3. [TODO] Зафиксировать результаты финальной сборки, обновить `doc/TODO/todo-plan.md`, создать session closeout report и указать расположение release artifacts — scope: `doc/TODO/todo-plan.md`, `doc/Sessions/`, `doc/tmp/releases/`; ожидаемый commit message: `chore: finalize development tree release candidate`
-4. [TODO] Git Commit: `chore: finalize development tree release candidate` (hash: TBD)
+3. [DONE] `./scripts/build-all.sh` → v1.1.924 (all providers, core, launcher, UI). `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.1.924.vsix` (2.0M, 1798 files). Все гейты зелёные. Tarballs скопированы в `doc/tmp/releases/` (2026-04-10)
+4. [DONE] Git Commit: `chore: bump version to 1.1.924 via build-all.sh` (hash: 2e05f9e2d)
 
-### Stream: User feedback and SSOT sync
-5. [TODO] Получить фидбэк от пользователя по новому релизу, зафиксировать все замечания и правки — scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/`; ожидаемый commit message: `docs: capture user feedback on development tree release`
-6. [TODO] Git Commit: `docs: capture user feedback on development tree release` (hash: TBD)
-7. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
-8. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)
+### Stream: User feedback — sidebar tree sections
+5. [DONE] Заменить workspace root node на section separators (Documentation Tree / Development Tree); trunk stages стали leaf nodes без artifact/session children — scope: `workspace-tree.tsx`, `workspace-tree-model.ts`, `workspace-tree-diagram-branch-nodes.ts`, `styles.css`, `workflow-navigation.test.ts`, `workspace-tree-diagram-branch-nodes.test.ts` (2026-04-10)
+6. [IN_PROGRESS] Git Commit: `feat: replace workspace root with section separators and leaf stage nodes` (hash: TBD)
+
+### Stream: SSOT sync and release rebuild
+7. [IN_PROGRESS] Rebuild release — `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`
+8. [TODO] Git Commit: chore: bump version (hash: TBD)
+9. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
+10. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)

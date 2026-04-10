@@ -10,6 +10,7 @@ export type TreeNode = {
   readonly label: string;
   readonly status: TreeStatus;
   readonly visualDepth: number;
+  readonly kind?: "separator";
   readonly stage?: WorkflowStageId;
   readonly title?: string;
   readonly isSelected?: boolean;

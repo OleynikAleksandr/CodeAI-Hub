@@ -549,6 +549,26 @@ body {
   background: #7b8aa1;
 }
 
+.pm-tree__separator {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px 4px;
+  margin: 0 8px;
+  font-size: 10px;
+  color: var(--pm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  list-style: none;
+}
+
+.pm-tree__separator::after {
+  flex: 1;
+  height: 1px;
+  content: "";
+  background: var(--pm-border-color);
+}
+
 /* ========== Main Area ========== */
 .pm-main-area {
   display: flex;

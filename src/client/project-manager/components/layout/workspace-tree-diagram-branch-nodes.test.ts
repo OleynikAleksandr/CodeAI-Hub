@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildDiagramModulesBranchNodes,
+  buildDevelopmentTreeNodes,
 } from "./workspace-tree-diagram-branch-nodes";
 import {
   WORKFLOW_STAGE_OUTDATED_TITLE,
@@ -173,4 +174,33 @@ test("buildDiagramModulesBranchNodes projects development tree nodes from snapsh
   assert.equal(coreNode.id, "devtree:core-services");
   assert.equal(coreNode.status, "todo");
   assert.equal(coreNode.children, undefined);
+});
+
+test("buildDevelopmentTreeNodes respects custom baseDepth for top-level rendering", () => {
+  const workflowState = createWorkflowStateWithTree();
+
+  const nodes = buildDevelopmentTreeNodes(workflowState.developmentTree!, 0);
+
+  assert.equal(nodes.length, 2);
+
+  // Parts at depth 0
+  const uiShell = nodes[0];
+  assert.ok(uiShell);
+  assert.equal(uiShell.visualDepth, 0);
+  assert.equal(uiShell.id, "devtree:ui-shell");
+
+  // Cluster at depth 1
+  const cluster = uiShell.children?.[0];
+  assert.ok(cluster);
+  assert.equal(cluster.visualDepth, 1);
+
+  // Module at depth 2
+  const mod = cluster.children?.[0];
+  assert.ok(mod);
+  assert.equal(mod.visualDepth, 2);
+
+  // Skeleton part at depth 0
+  const corePart = nodes[1];
+  assert.ok(corePart);
+  assert.equal(corePart.visualDepth, 0);
 });

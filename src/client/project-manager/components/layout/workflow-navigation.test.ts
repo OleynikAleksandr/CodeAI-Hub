@@ -94,9 +94,9 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "workspace tree must subscribe to the shared active-stage route"
   );
   assert.equal(
-    workspaceTreeSource.includes("node.stage === activeStage"),
+    workspaceTreeSource.includes("isSelected: stage === activeStage"),
     true,
-    "workspace tree stage expansion must derive from activeStage"
+    "workspace tree stage selection must derive from activeStage"
   );
   assert.equal(
     workspaceTreeSource.includes("pm-tree__item--selected"),

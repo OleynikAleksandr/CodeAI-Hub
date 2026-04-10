@@ -4,8 +4,6 @@ import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { TreeNode } from "./workspace-tree-model";
 import { resolveDiagramStageSyncPayload } from "./workspace-tree-diagram-branch-nodes";
 
-export { buildDiagramModulesBranchNodes } from "./workspace-tree-diagram-branch-nodes";
-
 const resolveProviderTitle = (providerId: string): string =>
   providerId === "claudeCodeCli" || providerId === "codexCli" || providerId === "geminiCli"
     ? getDefaultProviderTitle(providerId)
@@ -19,7 +17,7 @@ const dispatchStageActivated = (stage: string): void => {
   );
 };
 
-export const buildDescriptionBranchNodes = (options: {
+const buildDescriptionBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly descriptionArtifactAvailable: boolean;
   readonly workspaceSlug: string | null;
@@ -196,7 +194,7 @@ export const resolveStageSyncPayload = (options: {
   return { artifact: null, clearTool: null, session: null };
 };
 
-export const buildVirtualSimulationBranchNodes = (options: {
+const buildVirtualSimulationBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly virtualSimulationArtifactAvailable: boolean;
   readonly workspaceSlug: string | null;

@@ -196,7 +196,7 @@ const buildPartTreeNode = (
   };
 };
 
-const buildDevelopmentTreeNodes = (
+export const buildDevelopmentTreeNodes = (
   tree: WorkflowStateSnapshot["developmentTree"],
   baseDepth: number
 ): readonly TreeNode[] => {
