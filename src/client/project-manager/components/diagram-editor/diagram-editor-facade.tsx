@@ -237,7 +237,8 @@ const ZOOM_STEP = 0.01;
 const zoomBadgeStyle: React.CSSProperties = {
   position: "sticky",
   bottom: 8,
-  left: 8,
+  marginLeft: "auto",
+  marginRight: 8,
   width: "fit-content",
   padding: "4px 10px",
   borderRadius: 8,
