@@ -1,7 +1,7 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-04-06
+**Updated:** 2026-04-10
 **Owner:** Oleksandr + Codex
 **Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
 
@@ -116,27 +116,23 @@ Continuity хранит историю диалога. Workflow-state храни
 
 Минимальный PM contract:
 
-- toolbar label and button state;
-- workflow tree stage row;
-- child artifact/session rows, если они заявлены для данного шага;
+- sidebar stage node with three-color indicator (gray/orange/green);
 - blocked/help/empty-state surfaces;
 - artifact open/select path;
 - session reopen path;
-- workspace auto-select;
+- workspace auto-select (last active non-idle stage);
 - startup restore.
 
 Инвариант навигации:
 
-- toolbar click;
 - tree stage click;
-- tree artifact click;
-- tree session click;
+- branch node click (for Development Tree nodes);
 - workspace auto-select;
 - startup restore
 
 должны приходить к одному и тому же `activeStage + session + artifact`.
 
-Child rows обязаны наследовать реальный stage-level state. Они не могут рисовать собственную выдуманную семантику.
+Trunk stages являются leaf nodes в sidebar (секция Documentation Tree). Development Tree branch nodes (Product Part / Cluster / Module) проецируются в отдельной секции sidebar как collapsible nodes.
 
 ---
 

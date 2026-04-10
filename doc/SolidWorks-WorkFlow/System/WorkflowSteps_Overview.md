@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-04-07
+**Updated:** 2026-04-10
 **Owner:** Oleksandr
 
 ---
@@ -12,12 +12,18 @@
 
 Пользователь не обязан «продумать всё заранее» на первом шаге. Каждый шаг добавляет только один слой ясности и формирует артефакт, который нужен следующему шагу.
 
+### Навигация по стволу — sidebar-only (начиная с v1.1.924):
+- Верхний stage toolbar удалён. Единственная навигационная поверхность — sidebar Workflow Tree.
+- Sidebar разделён на две секции: **Documentation Tree** (trunk stages) и **Development Tree** (branch nodes).
+- Trunk stages отображаются как leaf nodes с трёхцветными индикаторами: gray (idle), orange (in_progress), green (artifact available).
+- При открытии workspace sidebar автоматически выбирает последний активный (не idle) stage.
+
 ### Ствол (trunk) — реализован:
 - **Шаг 1 (Description):** что за продукт, для кого, и какие базовые сценарии должны работать.
 - **Шаг 2 (Virtual Simulation):** как продукт должен вести себя в сценариях использования.
 - **Шаг 3 (Diagram Modules):** из каких Product Part / Cluster / Module состоит система.
 
-### Ветки (branches) — `[DESIGNED, NOT IMPLEMENTED]`:
+### Ветки (branches) — `[READ MODEL IMPLEMENTED, SESSIONS DEFERRED]`:
 
 После утверждения `Diagram Modules` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
 
@@ -44,6 +50,11 @@ Diagram Modules
 Ключевое решение: **фасады не являются отдельным шагом ствола**. Для cluster и module используется один design-step, который materialize-ит сразу два артефакта: specification и facade contract. Это позволяет проектировать внутреннюю структуру и публичную boundary одновременно, не превращая фасады в неуправляемый плоский список.
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
+
+Текущий статус реализации Development Tree (v1.1.931):
+- Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
+- Branch-node selection: `pm:branch:selected` event обновляет main area panel header; placeholder surface показывает kind label.
+- Deferred: lazy session lifecycle, provider inheritance, draft-artifact gating, outdated propagation, progress counters.
 
 ---
 
@@ -144,7 +155,7 @@ Manual start из PM + resume-сессия агента:
 
 ### Подход
 
-Manual start из верхнего toolbar PM:
+Manual start из sidebar Workflow Tree:
 - пользователь сам решает, когда `virtual-simulation.md` уже достаточно хороший для перехода на следующий шаг;
 - запуск требует доступный canonical upstream artifact `virtual-simulation.md`;
 - PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.

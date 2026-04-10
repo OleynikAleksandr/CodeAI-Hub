@@ -190,5 +190,5 @@
 16. [DONE] Git Commit: `docs: update release build checklist for version-sync rule` (hash: 5b9521325)
 
 ### Stream: SSOT sync
-17. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
-18. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)
+17. [DONE] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (2026-04-10)
+18. [DONE] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)
