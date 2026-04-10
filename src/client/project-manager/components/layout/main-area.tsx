@@ -265,6 +265,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             onSetActiveToolNull={() => setActiveTool(null)}
             questionnaireDocumentExists={questionnaireDocument !== null}
             selectedArtifact={selectedArtifact}
+            selectedBranchNode={selectedBranchNode}
             shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
             workflowStoreLoaded={workflowStoreLoaded}
           />

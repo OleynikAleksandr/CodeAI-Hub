@@ -15,6 +15,7 @@ import {
   type ArtifactHeaderMode,
 } from "./stage-artifact-mode";
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
+import type { BranchNodeSelection } from "./main-area-utils";
 import {
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
@@ -63,6 +64,7 @@ interface ArtifactContentProps {
   readonly onSelectedArtifactClear: () => void;
   readonly questionnaireDocumentExists: boolean;
   readonly selectedArtifact: SelectedArtifact | null;
+  readonly selectedBranchNode: BranchNodeSelection | null;
   readonly shouldShowQuestionnaireEditor: boolean;
   readonly workflowStoreLoaded: boolean;
 }
@@ -82,9 +84,25 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   onSelectedArtifactClear,
   questionnaireDocumentExists,
   selectedArtifact,
+  selectedBranchNode,
   shouldShowQuestionnaireEditor,
   workflowStoreLoaded,
 }) => {
+  if (selectedBranchNode) {
+    const kindLabel =
+      selectedBranchNode.kind === "product-part"
+        ? "Product Part"
+        : selectedBranchNode.kind === "cluster"
+          ? "Cluster"
+          : "Module";
+    return (
+      <div className="pm-placeholder">
+        <strong>{kindLabel}: {selectedBranchNode.label}</strong>
+        <br />
+        Branch artifact surface will be available after the first Design session.
+      </div>
+    );
+  }
   const sourceArtifact = resolveDiagramSourceArtifact({
     activeTool,
     workspacePath: activeWorkspacePath,
