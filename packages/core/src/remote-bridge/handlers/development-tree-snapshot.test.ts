@@ -1,0 +1,83 @@
+import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import test from "node:test";
+import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
+
+const PART_CONTENT = `# Product Part: UI Shell
+
+## Identity
+
+| Field | Value |
+|-------|-------|
+| Part ID | \`ui-shell\` |
+| Purpose | Primary user interface shell |
+
+## Owned Clusters
+
+### Cluster: \`layout-cluster\`
+
+**Purpose:** Layout management
+
+| \`main-area\` | \`Main Area\` | Core layout surface |
+| \`sidebar\` | \`Sidebar\` | Navigation surface |
+
+## Direct Standalone Modules Under This Part
+
+| \`theme-engine\` | \`Theme Engine\` | Theming |
+`;
+
+test("readDevelopmentTreeSnapshot returns skeleton for planned-only parts", async () => {
+  const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
+  try {
+    const result = await readDevelopmentTreeSnapshot({
+      workspaceRoot: tmpDir,
+      workspaceSlug: "demo",
+      plannedPartIds: ["ui-shell", "core"],
+      generatedPartIds: [],
+    });
+    assert.equal(result.parts.length, 2);
+    assert.equal(result.parts[0]?.status, "skeleton");
+    assert.equal(result.parts[0]?.clusters.length, 0);
+    assert.equal(result.parts[1]?.status, "skeleton");
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("readDevelopmentTreeSnapshot extracts clusters and modules from materialized parts", async () => {
+  const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
+  try {
+    const partDir = path.join(
+      tmpDir,
+      ".codeai-hub/demo/diagram_modules/product-parts"
+    );
+    await mkdir(partDir, { recursive: true });
+    await writeFile(path.join(partDir, "ui-shell.md"), PART_CONTENT, "utf8");
+
+    const result = await readDevelopmentTreeSnapshot({
+      workspaceRoot: tmpDir,
+      workspaceSlug: "demo",
+      plannedPartIds: ["ui-shell"],
+      generatedPartIds: ["ui-shell"],
+    });
+
+    assert.equal(result.parts.length, 1);
+    const part = result.parts[0];
+    assert.ok(part);
+    assert.equal(part.id, "ui-shell");
+    assert.equal(part.status, "materialized");
+    assert.equal(part.clusters.length, 1);
+    assert.equal(part.clusters[0]?.id, "layout-cluster");
+    assert.equal(part.clusters[0]?.modules.length, 2);
+    assert.equal(part.clusters[0]?.modules[0]?.id, "main-area");
+    assert.equal(part.clusters[0]?.modules[0]?.title, "Main Area");
+    assert.equal(part.clusters[0]?.modules[1]?.id, "sidebar");
+    assert.equal(part.standaloneModules.length, 1);
+    assert.equal(part.standaloneModules[0]?.id, "theme-engine");
+    assert.equal(part.standaloneModules[0]?.title, "Theme Engine");
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});

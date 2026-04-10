@@ -8,6 +8,63 @@ import {
 } from "./workspace-tree-model";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 
+const createWorkflowStateWithTree = (): WorkflowStateSnapshot => ({
+  workspaceSlug: "demo",
+  updatedAt: "2026-04-10T10:00:00.000Z",
+  stages: {
+    description: "completed",
+    virtual_simulation: "completed",
+    diagram_modules: "completed",
+  },
+  continuity: {
+    chains: [
+      {
+        rootSessionId: "dm-root",
+        workspaceSlug: "demo",
+        stage: "diagram_modules",
+        updatedAt: "2026-04-10T10:00:00.000Z",
+        segments: [
+          {
+            sessionId: "dm-session",
+            providerId: "claudeCodeCli",
+            providerSessionId: "dm-provider",
+            createdAt: "2026-04-10T09:00:00.000Z",
+          },
+        ],
+      },
+    ],
+  },
+  lastActive: null,
+  description: null,
+  gating: {
+    blocked: { description: false, virtual_simulation: false, diagram_modules: false },
+  },
+  developmentTree: {
+    parts: [
+      {
+        id: "ui-shell",
+        status: "materialized",
+        clusters: [
+          {
+            id: "layout-cluster",
+            modules: [
+              { id: "main-area", title: "Main Area" },
+              { id: "sidebar", title: "Sidebar" },
+            ],
+          },
+        ],
+        standaloneModules: [{ id: "theme-engine", title: "Theme Engine" }],
+      },
+      {
+        id: "core-services",
+        status: "skeleton",
+        clusters: [],
+        standaloneModules: [],
+      },
+    ],
+  },
+});
+
 const createWorkflowState = (): WorkflowStateSnapshot => ({
   workspaceSlug: "demo",
   updatedAt: "2026-03-16T20:00:00.000Z",
@@ -69,4 +126,51 @@ test("buildDiagramModulesBranchNodes keeps outdated status on artifact and sessi
   assert.match(nodes[0]?.title ?? "", new RegExp(WORKFLOW_STAGE_OUTDATED_TITLE));
   assert.equal(nodes[1]?.status, "outdated");
   assert.equal(nodes[1]?.title, WORKFLOW_STAGE_OUTDATED_TITLE);
+});
+
+test("buildDiagramModulesBranchNodes projects development tree nodes from snapshot", () => {
+  const workflowState = createWorkflowStateWithTree();
+
+  const nodes = buildDiagramModulesBranchNodes({
+    workflowState,
+    diagramModulesArtifactAvailable: true,
+    workspaceSlug: "demo",
+    workspacePath: "/tmp/demo",
+    selectArtifact: () => {},
+    dispatchDialogOpenIntent: () => {},
+    clearArtifactWithTool: () => {},
+  });
+
+  // 2 base nodes (artifact + session) + 2 dev tree part nodes
+  assert.equal(nodes.length, 4);
+
+  // First dev tree node: materialized part with clusters and standalone modules
+  const uiShellNode = nodes[2];
+  assert.ok(uiShellNode);
+  assert.equal(uiShellNode.id, "devtree:ui-shell");
+  assert.equal(uiShellNode.status, "draft");
+  assert.equal(uiShellNode.isCollapsible, true);
+  assert.equal(uiShellNode.children?.length, 2); // 1 cluster + 1 standalone
+
+  // Cluster node with modules
+  const clusterNode = uiShellNode.children?.[0];
+  assert.ok(clusterNode);
+  assert.equal(clusterNode.id, "devtree:ui-shell:layout-cluster");
+  assert.equal(clusterNode.isCollapsible, true);
+  assert.equal(clusterNode.children?.length, 2);
+  assert.equal(clusterNode.children?.[0]?.label, "Main Area");
+  assert.equal(clusterNode.children?.[1]?.label, "Sidebar");
+
+  // Standalone module node
+  const standaloneNode = uiShellNode.children?.[1];
+  assert.ok(standaloneNode);
+  assert.equal(standaloneNode.id, "devtree:ui-shell:standalone:theme-engine");
+  assert.equal(standaloneNode.label, "Theme Engine");
+
+  // Second dev tree node: skeleton part
+  const coreNode = nodes[3];
+  assert.ok(coreNode);
+  assert.equal(coreNode.id, "devtree:core-services");
+  assert.equal(coreNode.status, "todo");
+  assert.equal(coreNode.children, undefined);
 });
