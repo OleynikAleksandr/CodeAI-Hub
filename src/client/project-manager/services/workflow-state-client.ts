@@ -55,6 +55,27 @@ export type DescriptionBranchSnapshot = {
   readonly primarySession?: DescriptionSessionRef;
 };
 
+export type DevelopmentTreeModuleNode = {
+  readonly id: string;
+  readonly title: string;
+};
+
+export type DevelopmentTreeClusterNode = {
+  readonly id: string;
+  readonly modules: readonly DevelopmentTreeModuleNode[];
+};
+
+export type DevelopmentTreePartNode = {
+  readonly id: string;
+  readonly status: "skeleton" | "materialized";
+  readonly clusters: readonly DevelopmentTreeClusterNode[];
+  readonly standaloneModules: readonly DevelopmentTreeModuleNode[];
+};
+
+export type DevelopmentTreeSnapshot = {
+  readonly parts: readonly DevelopmentTreePartNode[];
+};
+
 export type WorkflowStateSnapshot = {
   readonly workspaceSlug: string;
   readonly updatedAt: string;
@@ -64,6 +85,7 @@ export type WorkflowStateSnapshot = {
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
   readonly diagramModulesProgress?: Record<string, unknown> | null;
+  readonly developmentTree?: DevelopmentTreeSnapshot | null;
 };
 
 type WorkflowStateResponse = {
@@ -73,6 +95,7 @@ type WorkflowStateResponse = {
   readonly description?: unknown;
   readonly gating?: unknown;
   readonly diagramModulesProgress?: unknown;
+  readonly developmentTree?: unknown;
 };
 
 const STAGE_ORDER: readonly WorkflowStageId[] = [
@@ -232,6 +255,64 @@ const parseDescriptionBranch = (
   };
 };
 
+const parseDevelopmentTreeModuleNode = (
+  payload: unknown
+): DevelopmentTreeModuleNode | null => {
+  if (!isRecord(payload)) return null;
+  const id = readNonEmptyString(payload.id);
+  const title = readNonEmptyString(payload.title);
+  if (!(id && title)) return null;
+  return { id, title };
+};
+
+const parseDevelopmentTreeClusterNode = (
+  payload: unknown
+): DevelopmentTreeClusterNode | null => {
+  if (!isRecord(payload)) return null;
+  const id = readNonEmptyString(payload.id);
+  if (!id) return null;
+  const modules = Array.isArray(payload.modules)
+    ? payload.modules.map(parseDevelopmentTreeModuleNode).filter(
+        (m): m is DevelopmentTreeModuleNode => m !== null
+      )
+    : [];
+  return { id, modules };
+};
+
+const parseDevelopmentTreePartNode = (
+  payload: unknown
+): DevelopmentTreePartNode | null => {
+  if (!isRecord(payload)) return null;
+  const id = readNonEmptyString(payload.id);
+  if (!id) return null;
+  const status =
+    payload.status === "materialized" ? "materialized" : "skeleton";
+  const clusters = Array.isArray(payload.clusters)
+    ? payload.clusters.map(parseDevelopmentTreeClusterNode).filter(
+        (c): c is DevelopmentTreeClusterNode => c !== null
+      )
+    : [];
+  const standaloneModules = Array.isArray(payload.standaloneModules)
+    ? payload.standaloneModules.map(parseDevelopmentTreeModuleNode).filter(
+        (m): m is DevelopmentTreeModuleNode => m !== null
+      )
+    : [];
+  return { id, status, clusters, standaloneModules };
+};
+
+const parseDevelopmentTreeSnapshot = (
+  payload: unknown
+): DevelopmentTreeSnapshot | null => {
+  if (!isRecord(payload)) return null;
+  const parts = Array.isArray(payload.parts)
+    ? payload.parts.map(parseDevelopmentTreePartNode).filter(
+        (p): p is DevelopmentTreePartNode => p !== null
+      )
+    : [];
+  if (parts.length === 0) return null;
+  return { parts };
+};
+
 const parseWorkflowState = (
   payload: unknown
 ): WorkflowStateSnapshot | null => {
@@ -254,6 +335,9 @@ const parseWorkflowState = (
   const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
     ? response.diagramModulesProgress
     : null;
+  const developmentTree = parseDevelopmentTreeSnapshot(
+    response?.developmentTree
+  );
   if (isRecord(stagesPayload)) {
     for (const stage of STAGE_ORDER) {
       const stageState = stagesPayload[stage];
@@ -276,6 +360,7 @@ const parseWorkflowState = (
     description,
     gating,
     diagramModulesProgress,
+    developmentTree,
   };
 };
 

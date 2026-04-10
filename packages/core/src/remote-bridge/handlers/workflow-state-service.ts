@@ -21,6 +21,7 @@ import type {
   WorkflowStageId,
   WorkflowWatcherEvent,
 } from "../../workflow/watcher/watcher-types";
+import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 import {
   type DiagramModulesProgressSnapshot,
   readDiagramModulesProgressSnapshot,
@@ -141,30 +142,39 @@ export class WorkflowStateService {
                 diagramModulesProgress,
               })
             )
-            .then((validatedState) => {
-              const canonicalLastActive = resolveCanonicalLastActive({
-                chains,
-                description,
-                lastActive,
-                state: validatedState,
+            .then((validatedState) =>
+              readDevelopmentTreeSnapshot({
+                workspaceRoot,
                 workspaceSlug: workspaceSlugResult.value,
-              });
-              const gating = {
-                blocked: resolveWorkflowBlockedStages({
-                  state: validatedState,
+                plannedPartIds: diagramModulesProgress?.plannedPartIds ?? [],
+                generatedPartIds:
+                  diagramModulesProgress?.generatedPartIds ?? [],
+              }).then((developmentTree) => {
+                const canonicalLastActive = resolveCanonicalLastActive({
+                  chains,
                   description,
+                  lastActive,
+                  state: validatedState,
+                  workspaceSlug: workspaceSlugResult.value,
+                });
+                const gating = {
+                  blocked: resolveWorkflowBlockedStages({
+                    state: validatedState,
+                    description,
+                    diagramModulesProgress,
+                  }),
+                };
+                res.json({
+                  state: validatedState,
+                  continuity: { chains },
+                  description,
+                  lastActive: canonicalLastActive,
+                  gating,
                   diagramModulesProgress,
-                }),
-              };
-              res.json({
-                state: validatedState,
-                continuity: { chains },
-                description,
-                lastActive: canonicalLastActive,
-                gating,
-                diagramModulesProgress,
-              });
-            });
+                  developmentTree,
+                });
+              })
+            );
         }
       )
       .catch((error) => {
