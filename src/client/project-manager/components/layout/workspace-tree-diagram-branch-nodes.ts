@@ -1,5 +1,10 @@
 import { getDefaultProviderTitle } from "../../../../types/provider";
-import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import type {
+  DevelopmentTreeClusterNode,
+  DevelopmentTreeModuleNode,
+  DevelopmentTreePartNode,
+  WorkflowStateSnapshot,
+} from "../../services/workflow-state-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { StageSyncPayload } from "./workspace-tree-branch-nodes";
 import {
@@ -107,6 +112,64 @@ export const resolveDiagramStageSyncPayload = (options: {
   };
 };
 
+const buildModuleTreeNode = (
+  mod: DevelopmentTreeModuleNode,
+  partId: string,
+  clusterId: string | null,
+  depth: number
+): TreeNode => ({
+  id: clusterId
+    ? `devtree:${partId}:${clusterId}:${mod.id}`
+    : `devtree:${partId}:standalone:${mod.id}`,
+  label: mod.title,
+  status: "todo",
+  visualDepth: depth,
+});
+
+const buildClusterTreeNode = (
+  cluster: DevelopmentTreeClusterNode,
+  partId: string,
+  depth: number
+): TreeNode => ({
+  id: `devtree:${partId}:${cluster.id}`,
+  label: cluster.id,
+  status: "todo",
+  visualDepth: depth,
+  isCollapsible: cluster.modules.length > 0,
+  children: cluster.modules.map((mod) =>
+    buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
+  ),
+});
+
+const buildPartTreeNode = (
+  part: DevelopmentTreePartNode,
+  depth: number
+): TreeNode => {
+  const children: TreeNode[] = [];
+  for (const cluster of part.clusters) {
+    children.push(buildClusterTreeNode(cluster, part.id, depth + 1));
+  }
+  for (const mod of part.standaloneModules) {
+    children.push(buildModuleTreeNode(mod, part.id, null, depth + 1));
+  }
+  return {
+    id: `devtree:${part.id}`,
+    label: part.id,
+    status: part.status === "materialized" ? "draft" : "todo",
+    visualDepth: depth,
+    isCollapsible: children.length > 0,
+    children: children.length > 0 ? children : undefined,
+  };
+};
+
+const buildDevelopmentTreeNodes = (
+  tree: WorkflowStateSnapshot["developmentTree"],
+  baseDepth: number
+): readonly TreeNode[] => {
+  if (!tree?.parts.length) return [];
+  return tree.parts.map((part) => buildPartTreeNode(part, baseDepth));
+};
+
 export const buildDiagramModulesBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly diagramModulesArtifactAvailable: boolean;
@@ -188,5 +251,15 @@ export const buildDiagramModulesBranchNodes = (options: {
       }
     },
   });
+
+  // Append development tree branch nodes (Product Parts / Clusters / Modules)
+  const devTreeNodes = buildDevelopmentTreeNodes(
+    workflowState.developmentTree,
+    2
+  );
+  for (const node of devTreeNodes) {
+    nodes.push(node);
+  }
+
   return nodes;
 };
