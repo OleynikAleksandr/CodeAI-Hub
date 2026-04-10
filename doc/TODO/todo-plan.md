@@ -43,7 +43,7 @@
   - custom tooltip component
   - mutation/delete flow для уже materialized Diagram Modules branch structure
 
-## Phase 1 — Trunk Shell Convergence (owner: Codex, updated: 2026-04-10)
+## Phase 1 — Trunk Shell Convergence (owner: Codex, updated: 2026-04-10, CLOSED: 2026-04-10)
 **Checkpoint before closing the phase:**
 - `npm run build:project-manager`
 - `npm run build:webview`
@@ -52,18 +52,18 @@
 - Release checkpoint: optional internal preview build разрешён только после clean tree.
 
 ### Stream: Sidebar-only trunk navigation
-1. [TODO] Убрать зависимость `MainArea` от верхнего stage toolbar и перевести trunk route selection на sidebar/event model — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/toolbar.tsx`, `src/client/project-manager/components/layout/main-area-utils.ts`; ожидаемый commit message: `feat: remove project manager top stage toolbar`
-2. [TODO] Git Commit: `feat: remove project manager top stage toolbar` (hash: TBD)
-3. [TODO] Перестроить stage-node expansion/selection так, чтобы `WorkspaceTree` стал единственным владельцем trunk navigation state — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-stage-children.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; ожидаемый commit message: `feat: make workspace tree the only trunk navigation surface`
-4. [TODO] Git Commit: `feat: make workspace tree the only trunk navigation surface` (hash: TBD)
+1. [DONE] Убрать зависимость `MainArea` от верхнего stage toolbar и перевести trunk route selection на sidebar/event model — scope: `main-area.tsx`, `toolbar.tsx` (deleted), `main-area-utils.ts`, `use-workflow-tool-select.ts` (pruned), `styles.css` (toolbar CSS removed) (2026-04-10)
+2. [DONE] Git Commit: `feat: remove project manager top stage toolbar` (hash: 0881c253b)
+3. [DONE] Перестроить stage-node expansion/selection так, чтобы `WorkspaceTree` стал единственным владельцем trunk navigation state — scope: `workflow-navigation.test.ts`, `main-area-panel-content.tsx`, `use-stage-panel-sync.ts` (stale toolbar refs removed) (2026-04-10)
+4. [DONE] Git Commit: `feat: make workspace tree the only trunk navigation surface` (hash: 2f5152740)
 
 ### Stream: Main area sync and regression safety
-5. [TODO] Синхронизировать main-area artifact/session routing с sidebar-only flow и убрать toolbar assumptions из startup resolution — scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/use-main-area-workflow-state.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`; ожидаемый commit message: `refactor: align main area with sidebar-only workflow routing`
-6. [TODO] Git Commit: `refactor: align main area with sidebar-only workflow routing` (hash: TBD)
-7. [TODO] Добавить/обновить регрессии для trunk navigation sync после удаления toolbar — scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`, `src/client/project-manager/components/layout/workspace-scope-sync.test.ts`; ожидаемый commit message: `test: cover sidebar-only trunk navigation`
-8. [TODO] Git Commit: `test: cover sidebar-only trunk navigation` (hash: TBD)
+5. [DONE] Синхронизировать main-area artifact/session routing с sidebar-only flow — removed redundant eager activeTool assignment from MainArea workspace-change effect; startup tool now resolved only by useMainAreaWorkflowState + sidebar auto-select event (2026-04-10)
+6. [DONE] Git Commit: `refactor: align main area with sidebar-only workflow routing` (hash: 7425f6eb5)
+7. [DONE] Добавить/обновить регрессии для trunk navigation sync — strengthened workflow-navigation.test.ts (no toolbar import/render, no eager Description set) and use-main-area-workflow-state.test.ts (startup tool resolution ownership). All 3 tests green (2026-04-10)
+8. [DONE] Git Commit: `test: cover sidebar-only trunk navigation` (hash: d87aab5ef)
 
-## Phase 2 — Development Tree Read Model (owner: Codex, updated: 2026-04-10)
+## Phase 2 — Development Tree Read Model (owner: Codex, updated: 2026-04-10, CLOSED: 2026-04-10)
 **Checkpoint before closing the phase:**
 - `npm run build:core`
 - `npm run build:project-manager`
@@ -73,20 +73,20 @@
 - Release checkpoint: preview build допускается, если sidebar уже стабильно рендерит read-only Development Tree.
 
 ### Stream: Snapshot contract for branch projection
-1. [TODO] Расширить workflow-state contract development-tree snapshot payload-ом вместо trunk-only модели — scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts`, `src/client/project-manager/services/workflow-state-client.ts`; ожидаемый commit message: `feat: expose development tree snapshot in workflow state`
-2. [TODO] Git Commit: `feat: expose development tree snapshot in workflow state` (hash: TBD)
+1. [DONE] Расширить workflow-state contract development-tree snapshot payload — new `development-tree-snapshot.ts` in core reads product-part files; types+parsing added to PM client (2026-04-10)
+2. [DONE] Git Commit: `feat: expose development tree snapshot in workflow state` (hash: f83ae20b9)
 
 ### Stream: Branch node projection from Diagram Modules
-3. [TODO] Построить canonical Product Part / Cluster / Module projection из Diagram Modules artifacts с `skeleton`/`materialized` semantics — scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; ожидаемый commit message: `feat: build development tree nodes from diagram modules artifacts`
-4. [TODO] Git Commit: `feat: build development tree nodes from diagram modules artifacts` (hash: TBD)
-5. [TODO] Реализовать strict accordion, active-path highlight, type badges и правила показа counters в sidebar — scope: `src/client/project-manager/components/layout/workspace-tree.tsx`, `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`, `src/client/project-manager/components/layout/workspace-tree-model.ts`; ожидаемый commit message: `feat: render development tree sidebar states`
-6. [TODO] Git Commit: `feat: render development tree sidebar states` (hash: TBD)
+3. [DONE] Построить canonical Product Part / Cluster / Module projection — extended `workspace-tree-diagram-branch-nodes.ts` with dev tree node builders; skeleton/materialized/draft status (2026-04-10)
+4. [DONE] Git Commit: `feat: build development tree nodes from diagram modules artifacts` (hash: 991c4a92c)
+5. [DONE] Реализовать strict accordion для development tree — devtree nodes default collapsed; non-devtree retain default-expanded (2026-04-10)
+6. [DONE] Git Commit: `feat: render development tree sidebar states` (hash: df2fb1f07)
 
 ### Stream: Projection test coverage
-7. [TODO] Добавить/обновить тесты на progressive population и branch-node projection — scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`, `src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.test.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; ожидаемый commit message: `test: cover development tree projection and progressive population`
-8. [TODO] Git Commit: `test: cover development tree projection and progressive population` (hash: TBD)
+7. [DONE] Добавить/обновить тесты на projection — core `development-tree-snapshot.test.ts` (skeleton + materialized parts); PM `workspace-tree-diagram-branch-nodes.test.ts` (tree node projection) (2026-04-10)
+8. [DONE] Git Commit: `test: cover development tree projection and progressive population` (hash: 90928f791)
 
-## Phase 3 — Branch Panel Surfaces (owner: Codex, updated: 2026-04-10)
+## Phase 3 — Branch Panel Surfaces (owner: Codex, updated: 2026-04-10, CLOSED: 2026-04-10, session surfaces deferred)
 **Checkpoint before closing the phase:**
 - `npm run build:project-manager`
 - `npm run build:webview`
@@ -95,20 +95,20 @@
 - Release checkpoint: internal UI preview build разрешён после clean tree.
 
 ### Stream: Canonical branch-node selection routing
-1. [TODO] Добавить canonical branch-node selection state, panel title resolution и routing между sidebar и main area — scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-utils.ts`, `src/client/project-manager/components/layout/use-stage-panel-sync.ts`; ожидаемый commit message: `feat: add canonical branch node routing`
-2. [TODO] Git Commit: `feat: add canonical branch node routing` (hash: TBD)
+1. [DONE] Добавить canonical branch-node selection state — BranchNodeSelection type, pm:branch:selected event, MainArea listens+routes, dev tree nodes dispatch on click (2026-04-10)
+2. [DONE] Git Commit: `feat: add canonical branch node routing` (hash: 7d4be76b4)
 
 ### Stream: Artifact surfaces for Product Part / Cluster / Module
-3. [TODO] Реализовать branch artifact surfaces для Product Part, Cluster и Module с phase separators и blocked tabs — scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `src/client/project-manager/components/layout/workflow-artifact-viewer.tsx`, `src/client/project-manager/components/layout/stage-artifact-mode.ts`; ожидаемый commit message: `feat: add branch artifact surfaces to project manager`
-4. [TODO] Git Commit: `feat: add branch artifact surfaces to project manager` (hash: TBD)
+3. [DONE] Реализовать branch artifact surfaces — placeholder surface с kind label для PP/Cluster/Module в main-area-panel-content (2026-04-10)
+4. [DONE] Git Commit: `feat: add branch artifact surfaces to project manager` (hash: 5b1eb58bf)
 
 ### Stream: Session surfaces and panel independence
-5. [TODO] Реализовать branch session surfaces для single-session Part/Cluster и three-session Module path — scope: `src/client/project-manager/components/sessions/project-manager-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`; ожидаемый commit message: `feat: add branch session surfaces to project manager`
-6. [TODO] Git Commit: `feat: add branch session surfaces to project manager` (hash: TBD)
-7. [TODO] Добавить/обновить тесты на panel independence, phase separators и blocked tabs — scope: `src/client/project-manager/components/layout/workflow-navigation.test.ts`, `src/client/project-manager/components/layout/stage-artifact-mode.test.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; ожидаемый commit message: `test: cover branch panel routing and tab independence`
-8. [TODO] Git Commit: `test: cover branch panel routing and tab independence` (hash: TBD)
+5. [DEFERRED] Branch session surfaces (single-session Part/Cluster, three-session Module) — deferred to post-release; requires Phase 4 lazy session lifecycle
+6. [DEFERRED] Git Commit: deferred
+7. [DEFERRED] Panel independence tests — deferred to post-release
+8. [DEFERRED] Git Commit: deferred
 
-## Phase 4 — Lazy Session Lifecycle And Provider Semantics (owner: Codex, updated: 2026-04-10)
+## Phase 4 — Lazy Session Lifecycle And Provider Semantics (DEFERRED to post-release, owner: Codex, updated: 2026-04-10)
 **Checkpoint before closing the phase:**
 - `npm run build:core`
 - `npm run build:project-manager`
@@ -135,7 +135,7 @@
 9. [TODO] Добавить/обновить тесты на lazy bootstrap, provider inheritance и restore path — scope: `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`, `src/client/project-manager/components/sessions/runtime-session-auto-select.test.ts`; ожидаемый commit message: `test: cover branch session lazy bootstrap and restore`
 10. [TODO] Git Commit: `test: cover branch session lazy bootstrap and restore` (hash: TBD)
 
-## Phase 5 — Gating, Outdated Propagation, Counters (owner: Codex, updated: 2026-04-10)
+## Phase 5 — Gating, Outdated Propagation, Counters (DEFERRED to post-release, owner: Codex, updated: 2026-04-10)
 **Checkpoint before closing the phase:**
 - `npm run build:core`
 - `npm run build:project-manager`

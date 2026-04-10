@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.924] - 2026-04-10
+### Added
+- **Development Tree baseline**: after Diagram Modules completes, the sidebar now projects a Product Part / Cluster / Module tree derived from the generated product-part artifacts. Skeleton parts (planned but not yet generated) appear as `todo`; materialized parts appear as `draft` with nested cluster and module children.
+- **Branch-node selection routing**: clicking a development tree node (Product Part, Cluster, or Module) dispatches a `pm:branch:selected` event. The main area panel header and artifact surface update to reflect the selected branch node.
+- **Development tree snapshot in workflow state**: the workflow-state API response now includes a `developmentTree` field with the tree structure extracted from Diagram Modules artifacts on the core side.
+
+### Changed
+- **Sidebar-only trunk navigation**: the top stage toolbar (Description / Virtual Simulation / Diagram Modules) is removed. The sidebar workspace tree is now the only navigation surface for trunk stages. Startup tool resolution is owned by `useMainAreaWorkflowState` and reinforced by the sidebar auto-select event.
+
+### Not changed
+- Branch session lifecycle (lazy start, provider inheritance, restore) is deferred to a follow-up release. Branch panels show a placeholder surface until Design sessions produce artifacts.
+
 ## [1.1.923] - 2026-04-09
 ### Changed
 - **Projection naming cleanup (internal refactor)**: the Diagram Modules adapter layer no longer carries React Flow naming. `src/client/project-manager/components/diagram-editor/adapters/domain-model-to-react-flow.ts*` and `module-stage-react-flow.ts` are renamed to `domain-model-to-projection.ts*` and `module-stage-projection.ts`. Eight types move from `DiagramFlow*` / `ProductPartFlowNodeData` / `ClusterFlowNodeData` / `ModuleFlowNodeData` to their `Projection`-prefixed equivalents, and `domainModelToReactFlow()` becomes `domainModelToProjection()`. Sidecar-related names (`FlowSidecarDocument`, `parseFlowSidecar`, `buildFlowSidecarDocument`, `applyFlowSidecarPositions`, `applyFlowSidecarLayoutParams`, `FlowSidecarLayoutParams`, `FlowSidecarViewport`) are kept as-is because they reference the on-disk `module-map.flow.json` sidecar file, not React Flow.

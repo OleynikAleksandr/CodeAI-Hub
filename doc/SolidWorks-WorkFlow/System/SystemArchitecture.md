@@ -72,6 +72,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`.
 19. **New workflow-step rollout must clone a mature reference-step contract end-to-end**: introducing a new stage is not allowed to stop at toolbar visibility, prompt wiring, or artifact creation. A supported new step must ship with synchronized stage identity, artifact paths, PM parity, localization ownership, continuity routing, handoff paths, cold-start persistence, direct regression coverage, and packaged-release validation. Partial stage shells are not acceptable.
    - Канон: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
+20. **Development Tree read model**: after Diagram Modules, the workflow-state API exposes a `developmentTree` snapshot with Product Part / Cluster / Module tree structure derived from generated product-part artifacts. The sidebar projects these as collapsible branch nodes. Branch-node selection dispatches `pm:branch:selected` and updates the main area panel header. Trunk navigation is sidebar-only — the top stage toolbar is removed.
+   - Канон: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 

@@ -7,10 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.923
-- **Internal hygiene release**: no user-visible behavior changes relative to `1.1.922`. Diagram Modules continues to render through nested CSS Grid with sidecar v2 persisted layout params exactly as before.
-- **Projection naming cleanup**: the Diagram Modules adapter layer (`src/client/project-manager/components/diagram-editor/adapters/`) no longer carries the `react-flow` name it inherited from the pre-`1.1.921` runtime. Files, types (`DiagramFlow*` → `DiagramProjection*`), and the `domainModelToReactFlow()` function were renamed to reflect the actual CSS Grid projection pipeline.
-- **Worktree cleanup**: historical planning documents in `doc/SolidWorks-WorkFlow/Plans/Archive/` and `doc/TODO/Archive/` were compressed into `Archive.zip` files so grep-based audits stop hitting stale inline references. Git history for all archived documents is preserved via `git log --all --follow`.
+## Current Release — v1.1.924
+- **Development Tree baseline**: after Diagram Modules, the sidebar projects a Product Part / Cluster / Module tree from generated artifacts. Skeleton parts show as `todo`; materialized parts expand with cluster and module children.
+- **Sidebar-only trunk navigation**: the top stage toolbar is removed; the workspace tree is the sole navigation surface.
+- **Branch-node selection routing**: clicking a dev tree node updates the panel header and artifact surface.
+- **Deferred**: branch session lifecycle (lazy start, provider inheritance, gating, outdated propagation) ships in a follow-up release.
 
 ### 1.1.922 (previous)
 - **Sidecar v2 persists layout params**: `module-map.flow.json` schema bumped to `version: 2` with a new `layoutParams` section holding per-ProductPart (`columns`, `targetAspectRatio`) and per-Cluster (`moduleColumns`) CSS Grid overrides. Right-click selections now survive diagram reload, PM restart, and cross-window sidecar sync.
