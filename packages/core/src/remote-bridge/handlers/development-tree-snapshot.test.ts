@@ -46,6 +46,62 @@ test("readDevelopmentTreeSnapshot returns skeleton for planned-only parts", asyn
   }
 });
 
+// Real-world DSL uses `| module-id | kind | Responsibility |` columns.
+// The parser must derive the display title from the kebab-case ID when
+// the second column is a single-word kind token (service, adapter, etc.).
+const KIND_COLUMN_PART_CONTENT = `# Product Part: VS Code Extension
+
+## Identity
+
+| Field | Value |
+|-------|-------|
+| Part ID | \`vs-code-extension\` |
+| Purpose | Shell entry point |
+
+## Standalone Modules
+
+| \`module-id\` | \`kind\` | Responsibility |
+| --- | --- | --- |
+| \`extension-entry-shell\` | \`service\` | Entry commands |
+| \`runtime-handshake-adapter\` | \`adapter\` | Runtime connection |
+`;
+
+test("readDevelopmentTreeSnapshot humanizes module IDs when column 2 is a kind token", async () => {
+  const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-kind-"));
+  try {
+    const partDir = path.join(
+      tmpDir,
+      ".codeai-hub/demo/diagram_modules/product-parts"
+    );
+    await mkdir(partDir, { recursive: true });
+    await writeFile(
+      path.join(partDir, "vs-code-extension.md"),
+      KIND_COLUMN_PART_CONTENT,
+      "utf8"
+    );
+
+    const result = await readDevelopmentTreeSnapshot({
+      workspaceRoot: tmpDir,
+      workspaceSlug: "demo",
+      plannedPartIds: ["vs-code-extension"],
+      generatedPartIds: ["vs-code-extension"],
+    });
+
+    assert.equal(result.parts.length, 1);
+    const part = result.parts[0];
+    assert.ok(part);
+    assert.equal(part.standaloneModules.length, 2);
+    assert.equal(
+      part.standaloneModules[0]?.title,
+      "Extension Entry Shell",
+      "single-word kind column must trigger ID humanization"
+    );
+    assert.equal(part.standaloneModules[1]?.title, "Runtime Handshake Adapter");
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test("readDevelopmentTreeSnapshot extracts clusters and modules from materialized parts", async () => {
   const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
   try {

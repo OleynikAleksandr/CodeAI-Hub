@@ -9,6 +9,14 @@ const MODULE_ROW_RE =
   /^\|\s*(?:\d+\s*\|\s*)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|/gm;
 const STANDALONE_SECTION_RE = /^##\s+(?:Direct\s+)?Standalone\s+Modules/im;
 
+// Converts kebab-case identifiers to human-readable Title Case.
+// "extension-entry-shell" → "Extension Entry Shell"
+const humanizeKebabId = (id: string): string =>
+  id
+    .split("-")
+    .map((w) => (w.length > 0 ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(" ");
+
 export interface DevelopmentTreeModuleNode {
   readonly id: string;
   readonly title: string;
@@ -46,8 +54,19 @@ const extractModuleRows = (
   const modules: DevelopmentTreeModuleNode[] = [];
   for (const match of section.matchAll(MODULE_ROW_RE)) {
     const id = match[1]?.trim();
-    const title = match[2]?.trim();
-    if (id && title && !modules.some((m) => m.id === id)) {
+    const col2 = match[2]?.trim();
+    if (!(id && col2)) {
+      continue;
+    }
+    // Skip the table header row (e.g. `| module-id | kind | ...`)
+    if (id === "module-id") {
+      continue;
+    }
+    // If column 2 contains spaces it is a human-readable title (e.g. "Main Area").
+    // If it is a single word without spaces it is a DSL kind token (e.g. "service",
+    // "adapter") — derive the display title from the kebab-case module ID instead.
+    const title = col2.includes(" ") ? col2 : humanizeKebabId(id);
+    if (!modules.some((m) => m.id === id)) {
       modules.push({ id, title });
     }
   }
