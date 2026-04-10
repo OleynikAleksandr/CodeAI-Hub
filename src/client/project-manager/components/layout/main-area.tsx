@@ -4,7 +4,7 @@ import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { useDescriptionSessionGuard } from "./use-description-session-guard";
 import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
-import { dispatchStageActivated, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
+import { resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
 import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
 import {
   normalizeArtifactHeaderMode,
@@ -17,10 +17,8 @@ import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
 import { StatusBar } from "./status-bar";
-import { Toolbar } from "./toolbar";
 import {
   VIRTUAL_SIMULATION_TOOL_LABEL,
-  useWorkflowToolSelect,
 } from "./use-workflow-tool-select";
 
 interface MainAreaProps {
@@ -34,13 +32,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
   onSizeChange,
   activeWorkspace,
 }) => {
-  const tools: readonly string[] = activeWorkspace
-    ? [
-        "Description",
-        VIRTUAL_SIMULATION_TOOL_LABEL,
-        "Diagram Modules",
-      ]
-    : [];
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [preferredSessionId, setPreferredSessionId] = useState<string | null>(null);
   const [selectedArtifact, setSelectedArtifact] = useState<{
@@ -71,13 +62,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
     useState<ArtifactHeaderMode>("artifacts");
   const { guardRef: descriptionGuardRef, activateGuard, resetGuard } =
     useDescriptionSessionGuard(hasDescriptionSession);
-  const handleToolSelect = useWorkflowToolSelect({
-    activeWorkspace,
-    setActiveTool,
-    setPendingSessionCreate,
-    setPreferredSessionId,
-    onStageActivated: dispatchStageActivated,
-  });
 
   useEffect(() => {
     const onSelected = (event: Event) => {
@@ -249,11 +233,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
   return (
     <main className="pm-main-area">
-      <Toolbar
-        activeTool={activeTool ?? undefined}
-        onToolSelect={handleToolSelect}
-        tools={tools}
-      />
       <PanelContainer
         artifactContent={
           <MainAreaArtifactContent

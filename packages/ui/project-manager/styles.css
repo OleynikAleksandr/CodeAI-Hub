@@ -7,9 +7,7 @@
     "Space Grotesk", "Sora", "IBM Plex Sans", "Segoe UI", sans-serif;
   --pm-sidebar-min-width: 220px;
   --pm-sidebar-max-width: 420px;
-  --pm-toolbar-height: 44px;
   --pm-status-bar-height: 44px;
-  --pm-tool-height: 32px;
   --pm-resizer-width: 6px;
   --pm-panel-min-width: 240px;
   --pm-bg-primary: #0f1216;
@@ -558,52 +556,6 @@ body {
   flex-direction: column;
   min-width: 0;
   background: var(--pm-bg-primary);
-}
-
-/* ========== Tool Palette ========== */
-.pm-tool-palette {
-  display: flex;
-  align-items: center;
-  height: var(--pm-toolbar-height);
-  min-height: var(--pm-toolbar-height);
-  padding: 0 12px;
-  background: var(--pm-bg-secondary);
-  border-bottom: 1px solid var(--pm-border-color);
-}
-
-.pm-tool-palette__track {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  overflow-x: auto;
-}
-
-.pm-tool {
-  height: var(--pm-tool-height);
-  padding: 0 14px;
-  font-size: 12px;
-  color: var(--pm-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid transparent;
-  border-radius: 10px;
-  transition:
-    border-color 0.15s ease,
-    color 0.15s ease,
-    background 0.15s ease;
-}
-
-.pm-tool:hover {
-  color: var(--pm-text-primary);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-.pm-tool--active {
-  color: var(--pm-accent-strong);
-  background: rgba(66, 201, 162, 0.16);
-  border-color: rgba(66, 201, 162, 0.6);
 }
 
 /* ========== Split Panels ========== */
