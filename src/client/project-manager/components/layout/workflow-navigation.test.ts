@@ -58,11 +58,23 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "main area must react to stage activation events from sidebar tree"
   );
 
-  // main area must not render a toolbar
+  // main area must not render a toolbar or import it
   assert.equal(
     mainAreaSource.includes("<Toolbar"),
     false,
     "main area must not render a top stage toolbar — sidebar is the only navigation surface"
+  );
+  assert.equal(
+    mainAreaSource.includes('from "./toolbar"'),
+    false,
+    "main area must not import toolbar component"
+  );
+
+  // main area must not eagerly set activeTool to Description on workspace change
+  assert.equal(
+    mainAreaSource.includes('setActiveTool("Description")'),
+    false,
+    "main area must not bypass sidebar by eagerly setting Description tool on workspace change"
   );
 
   // workspace tree dispatches stage activation events

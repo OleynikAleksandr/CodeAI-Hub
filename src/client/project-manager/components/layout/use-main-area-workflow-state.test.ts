@@ -19,4 +19,10 @@ test("use-main-area-workflow-state keeps description-first startup tool and prim
   assert.equal(source.includes("branch?.session?.providerSessionId"), false);
   assert.equal(source.includes("branch?.sessionKind"), false);
   assert.equal(source.includes('label: "questionnaire.md" as const'), true);
+  // Sidebar-only: startup tool resolved here, not by MainArea directly
+  assert.equal(
+    source.includes("params.setActiveTool(resolvedActiveTool)"),
+    true,
+    "workflow state hook must own startup tool resolution, not MainArea workspace-change effect"
+  );
 });
