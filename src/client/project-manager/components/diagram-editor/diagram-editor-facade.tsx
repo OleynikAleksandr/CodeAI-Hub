@@ -1,5 +1,5 @@
 import type React from "react";
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type {
   ClusterProjectionNodeData,
   DiagramProjectionNode,
@@ -234,22 +234,6 @@ const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 2;
 const ZOOM_STEP = 0.01;
 
-const zoomBadgeStyle: React.CSSProperties = {
-  position: "sticky",
-  bottom: 8,
-  marginLeft: "auto",
-  marginRight: 8,
-  width: "fit-content",
-  padding: "4px 10px",
-  borderRadius: 8,
-  fontSize: 11,
-  color: "var(--pm-text-muted)",
-  background: "rgba(15, 22, 36, 0.85)",
-  border: "1px solid var(--pm-border-color)",
-  cursor: "pointer",
-  userSelect: "none",
-  zIndex: 10,
-};
 
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
@@ -259,6 +243,23 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
 }) => {
   const [zoom, setZoom] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("pm:diagram:zoom", { detail: { zoom } })
+    );
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("pm:diagram:zoom", { detail: { zoom: 1 } })
+      );
+    };
+  }, [zoom]);
+
+  useEffect(() => {
+    const handler = () => setZoom(1);
+    window.addEventListener("pm:diagram:zoom:reset", handler);
+    return () => window.removeEventListener("pm:diagram:zoom:reset", handler);
+  }, []);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     if (!(e.metaKey || e.ctrlKey)) return;
@@ -314,17 +315,6 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
           ))}
         </div>
       </ContextMenuContext.Provider>
-      {zoom !== 1 && (
-        <div
-          role="button"
-          style={zoomBadgeStyle}
-          tabIndex={0}
-          onClick={() => setZoom(1)}
-          onKeyDown={(e) => e.key === "Enter" && setZoom(1)}
-        >
-          {Math.round(zoom * 100)}% · click to reset
-        </div>
-      )}
     </div>
   );
 };

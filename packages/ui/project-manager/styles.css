@@ -823,6 +823,21 @@ body {
   color: var(--pm-text-primary);
 }
 
+.pm-status-zoom {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--pm-text-muted);
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--pm-border-color);
+  border-radius: 6px;
+}
+
+.pm-status-zoom:hover {
+  color: var(--pm-text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .pm-status-hint {
   color: var(--pm-text-muted);
   text-transform: uppercase;
