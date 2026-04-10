@@ -104,19 +104,19 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     "workspace tree must render a dedicated selected-stage modifier"
   );
   assert.equal(
-    workspaceTreeAutoSelectSource.includes('const STARTUP_STAGE = "description";'),
+    workspaceTreeAutoSelectSource.includes("resolveLastActiveStage"),
     true,
-    "workspace startup auto-select must force the description stage"
+    "workspace startup auto-select must resolve the last active stage dynamically"
   );
   assert.equal(
-    workspaceTreeAutoSelectSource.includes('state.lastActive?.stage ?? "description"'),
-    false,
-    "workspace startup auto-select must not derive stage from lastActive"
+    workspaceTreeAutoSelectSource.includes('const FALLBACK_STAGE'),
+    true,
+    "workspace startup auto-select must define a fallback stage"
   );
   assert.equal(
     mainAreaWorkflowStateSource.includes("const resolveStartupTool"),
     true,
-    "main area startup bootstrap must keep a dedicated description-first tool resolver"
+    "main area startup bootstrap must keep a dedicated startup tool resolver"
   );
   assert.equal(
     mainAreaWorkflowStateSource.includes("nextHasDescriptionSession && !nextDescription"),

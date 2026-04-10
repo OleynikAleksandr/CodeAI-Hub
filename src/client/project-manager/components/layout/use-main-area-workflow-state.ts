@@ -3,8 +3,13 @@ import { isEmptyWorkflowState } from "../../services/workflow-state-helpers";
 import { useWorkflowStateSnapshot, workflowStateStore } from "../../services/workflow-state-store";
 import type { WorkspaceProject } from "../../types";
 import { resolveWorkspaceSlug } from "./main-area-utils";
-import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import {
+  WORKFLOW_STAGE_ORDER,
+  type WorkflowStageId,
+  type WorkflowStateSnapshot,
+} from "../../services/workflow-state-client";
 import type { DescriptionSessionGuard } from "./use-description-session-guard";
+import { resolveToolByStage } from "./main-area-utils";
 const DESCRIPTION_TOOL = "Description";
 
 type DescriptionDocument = {
@@ -31,8 +36,16 @@ type UseMainAreaWorkflowStateParams = {
   readonly descriptionGuardRef: MutableRefObject<DescriptionSessionGuard>;
 };
 
-const resolveStartupTool = (_state: WorkflowStateSnapshot | null): string =>
-  DESCRIPTION_TOOL;
+const resolveStartupTool = (state: WorkflowStateSnapshot | null): string => {
+  if (!state) return DESCRIPTION_TOOL;
+  for (let i = WORKFLOW_STAGE_ORDER.length - 1; i >= 0; i--) {
+    const stage = WORKFLOW_STAGE_ORDER[i]!;
+    if (state.stages[stage] !== "idle") {
+      return resolveToolByStage(stage) ?? DESCRIPTION_TOOL;
+    }
+  }
+  return DESCRIPTION_TOOL;
+};
 
 const isCanonicalDescriptionPath = (path: string): boolean =>
   /\/description\/Final_Description\.md$/.test(path);

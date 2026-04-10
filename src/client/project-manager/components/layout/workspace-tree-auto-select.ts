@@ -1,8 +1,22 @@
 import { useCallback, useRef } from "react";
-import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import {
+  WORKFLOW_STAGE_ORDER,
+  type WorkflowStageId,
+  type WorkflowStateSnapshot,
+} from "../../services/workflow-state-client";
 import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 
-const STARTUP_STAGE = "description";
+const FALLBACK_STAGE: WorkflowStageId = "description";
+
+const resolveLastActiveStage = (
+  state: WorkflowStateSnapshot
+): WorkflowStageId => {
+  for (let i = WORKFLOW_STAGE_ORDER.length - 1; i >= 0; i--) {
+    const stage = WORKFLOW_STAGE_ORDER[i]!;
+    if (state.stages[stage] !== "idle") return stage;
+  }
+  return FALLBACK_STAGE;
+};
 
 export type SessionResumeIntent = {
   readonly providerId: string;
@@ -56,7 +70,7 @@ export const useWorkspaceTreeAutoSelect = (
         return;
       }
 
-      const startupStage = STARTUP_STAGE;
+      const startupStage = resolveLastActiveStage(state);
       const payload = resolveStageSyncPayload({
         stage: startupStage,
         workflowState: state,
