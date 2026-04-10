@@ -4,7 +4,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.930] - 2026-04-10
+## [1.1.931] - 2026-04-10
 ### Added
 - **Development Tree baseline**: after Diagram Modules completes, the sidebar projects a Product Part / Cluster / Module tree from generated artifacts. Skeleton parts appear as `todo`; materialized parts as `draft` with nested children.
 - **Branch-node selection routing**: clicking a dev tree node dispatches `pm:branch:selected` and updates the panel header and artifact surface.
