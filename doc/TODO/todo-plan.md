@@ -177,8 +177,16 @@
 5. [DONE] Заменить workspace root node на section separators (Documentation Tree / Development Tree); trunk stages стали leaf nodes без artifact/session children — scope: `workspace-tree.tsx`, `workspace-tree-model.ts`, `workspace-tree-diagram-branch-nodes.ts`, `styles.css`, `workflow-navigation.test.ts`, `workspace-tree-diagram-branch-nodes.test.ts` (2026-04-10)
 6. [DONE] Git Commit: `feat: replace workspace root with section separators and leaf stage nodes` (hash: b0560574c)
 
-### Stream: SSOT sync and release rebuild
-7. [IN_PROGRESS] Rebuild release — `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`
-8. [TODO] Git Commit: chore: bump version (hash: TBD)
-9. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
-10. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)
+### Stream: UI polish — stage indicators, auto-select, zoom badge
+7. [DONE] Three-color stage indicators (gray/orange/green) + idle-first priority in resolveTreeStatus + artifact-based green override — scope: `workspace-tree-model.ts`, `workspace-tree.tsx`, `styles.css` (2026-04-10)
+8. [DONE] Git Commit: `feat: three-color stage indicators` (hash: 3ded24a81), `fix: idle stages show gray` (hash: e570f43ee), `fix: derive green from artifact` (hash: fb89275a6)
+9. [DONE] Auto-select last active stage on workspace open — scope: `workspace-tree-auto-select.ts`, `use-main-area-workflow-state.ts`, `workflow-navigation.test.ts` (2026-04-10)
+10. [DONE] Git Commit: `feat: auto-select last active stage on workspace open` (hash: 72e749faa)
+11. [DONE] Move zoom badge from diagram canvas to status bar — scope: `diagram-editor-facade.tsx`, `status-bar.tsx`, `styles.css` (2026-04-10)
+12. [DONE] Git Commit: `fix: move zoom badge from diagram canvas to status bar` (hash: 56c00badb)
+13. [DONE] Release v1.1.930 — `build-all.sh` + `build-release.sh` → `codeai-hub-1.1.930.vsix` (2.0M, 1797 files) (2026-04-10)
+14. [DONE] Git Commit: `chore: bump version to 1.1.930 via build-all.sh` (hash: 3f14f1a5f)
+
+### Stream: SSOT sync
+15. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
+16. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)

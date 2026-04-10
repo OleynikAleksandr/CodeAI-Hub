@@ -4,18 +4,20 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.924] - 2026-04-10
+## [1.1.930] - 2026-04-10
 ### Added
-- **Development Tree baseline**: after Diagram Modules completes, the sidebar now projects a Product Part / Cluster / Module tree derived from the generated product-part artifacts. Skeleton parts (planned but not yet generated) appear as `todo`; materialized parts appear as `draft` with nested cluster and module children.
-- **Branch-node selection routing**: clicking a development tree node (Product Part, Cluster, or Module) dispatches a `pm:branch:selected` event. The main area panel header and artifact surface update to reflect the selected branch node.
-- **Development tree snapshot in workflow state**: the workflow-state API response now includes a `developmentTree` field with the tree structure extracted from Diagram Modules artifacts on the core side.
+- **Development Tree baseline**: after Diagram Modules completes, the sidebar projects a Product Part / Cluster / Module tree from generated artifacts. Skeleton parts appear as `todo`; materialized parts as `draft` with nested children.
+- **Branch-node selection routing**: clicking a dev tree node dispatches `pm:branch:selected` and updates the panel header and artifact surface.
 
 ### Changed
-- **Sidebar-only trunk navigation**: the top stage toolbar (Description / Virtual Simulation / Diagram Modules) is removed. The sidebar workspace tree is now the only navigation surface for trunk stages. Startup tool resolution is owned by `useMainAreaWorkflowState` and reinforced by the sidebar auto-select event.
-- **Section separators and leaf stage nodes**: the workspace root node is replaced by two section separators — "Documentation Tree" (for trunk stages) and "Development Tree" (for branch nodes). Trunk stages are now flat leaf nodes without expandable artifact/session children; panel sync is handled internally via `pm:stage:activated`.
+- **Sidebar-only trunk navigation**: the top stage toolbar is removed; the workspace tree is the sole navigation surface.
+- **Section separators and leaf stage nodes**: workspace root replaced by "Documentation Tree" / "Development Tree" separators. Trunk stages are flat leaf nodes; panel sync via `pm:stage:activated`.
+- **Three-color stage indicators**: gray (idle), orange (in progress), green (artifact available). Stage color derived from artifact availability, not core completed event.
+- **Auto-select last active stage**: on workspace open, the last non-idle stage is selected instead of always starting at Description.
+- **Zoom badge in status bar**: diagram zoom indicator moved from scrollable canvas to the bottom status bar for consistent visibility.
 
 ### Not changed
-- Branch session lifecycle (lazy start, provider inheritance, restore) is deferred to a follow-up release. Branch panels show a placeholder surface until Design sessions produce artifacts.
+- Branch session lifecycle (lazy start, provider inheritance, restore) is deferred to a follow-up release. Branch panels show a placeholder surface.
 
 ## [1.1.923] - 2026-04-09
 ### Changed
