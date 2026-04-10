@@ -1,7 +1,6 @@
 import type {
   EntityOrigin,
   EntityStatus,
-  ModuleKind,
 } from "../../../../../../packages/core/src/workflow/diagram-dsl/diagram-dsl-types";
 import type {
   ClusterLayoutParams,
@@ -19,12 +18,9 @@ export type ModuleProjectionNodeData = {
   readonly nodeKind: "module";
   readonly moduleId: string;
   readonly title: string;
-  readonly kind: ModuleKind;
   readonly responsibility: string;
   readonly status: EntityStatus;
   readonly origin: EntityOrigin;
-  readonly productPart: string;
-  readonly cluster?: string;
   readonly inputCount: number;
   readonly outputCount: number;
 };

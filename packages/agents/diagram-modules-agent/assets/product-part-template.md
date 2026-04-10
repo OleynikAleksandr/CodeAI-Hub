@@ -19,16 +19,16 @@ The runtime coordinates staged workflow execution, workspace-level lifecycle and
 
 **Purpose:** Coordinates staged workflow execution and workspace-level lifecycle.
 
-| `module-id` | `kind` | Responsibility |
-| --- | --- | --- |
-| `workflow-step-runner` | `service` | Executes the active workflow step and routes staged transitions |
-| `workflow-state-store` | `store` | Persists current workflow progress and staged artifact readiness |
+| `module-id` | Responsibility |
+| --- | --- |
+| `workflow-step-runner` | Executes the active workflow step and routes staged transitions |
+| `workflow-state-store` | Persists current workflow progress and staged artifact readiness |
 
 ## Standalone Modules
 
-| `module-id` | `kind` | Responsibility |
-| --- | --- | --- |
-| `provider-session-bridge` | `adapter` | Connects provider turns with the runtime session lifecycle |
+| `module-id` | Responsibility |
+| --- | --- |
+| `provider-session-bridge` | Connects provider turns with the runtime session lifecycle |
 
 ## Simple Relations
 
@@ -57,7 +57,7 @@ Canonical authoring rules:
 - Purpose section expands the one-liner from Identity into a short paragraph
 - Owned Clusters section uses `### \`cluster-id\`` headers, each with a **Purpose:** line and a module table
 - Standalone Modules section contains a single module table
-- Module table columns: `module-id` | `kind` | Responsibility
+- Module table columns: `module-id` | Responsibility
 - Do not mirror sibling Product Parts; each part file owns only its subtree
 - Use a cluster only for a real subsystem boundary, not as a decorative grouping
 - Keep the module standalone unless there is a confirmed subsystem boundary that requires a separate cluster

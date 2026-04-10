@@ -5,9 +5,7 @@ import {
   type EntityStatus,
   type MarkdownDslParseError,
   type MarkdownDslParseWarning,
-  MODULE_KINDS,
   type ModuleEntity,
-  type ModuleKind,
 } from "./diagram-dsl-types";
 import {
   type Block,
@@ -90,15 +88,6 @@ const parseBaseEntity = (
   return { id, origin, status };
 };
 
-const validateModuleKind = (
-  kind: string,
-  moduleId: string,
-  line: number
-): MarkdownDslParseError | null =>
-  isOneOf(kind, MODULE_KINDS)
-    ? null
-    : invalidMetadataError(line, `Invalid module enum value for ${moduleId}`);
-
 const validateModuleProductPart = (
   moduleId: string,
   line: number,
@@ -151,16 +140,12 @@ export const parseModule = (
 ): ParsedModule | MarkdownDslParseError => {
   const fields = parseFields(block, warnings);
   const base = parseBaseEntity(fields, block, "Module");
-  const kind = required(fields, "Kind", block.line);
   const title = required(fields, "Title", block.line);
   const responsibility = required(fields, "Responsibility", block.line);
   const productPart = fields.scalars.get("Product Part")?.trim() || undefined;
   const cluster = fields.scalars.get("Cluster")?.trim() || undefined;
   if ("code" in base) {
     return base;
-  }
-  if (typeof kind !== "string") {
-    return kind;
   }
   if (typeof title !== "string") {
     return title;
@@ -169,7 +154,6 @@ export const parseModule = (
     return responsibility;
   }
   for (const validationError of [
-    validateModuleKind(kind, base.id, block.line),
     validateModuleProductPart(base.id, block.line, productPart, options),
     validateModuleCluster(base.id, block.line, cluster, options),
   ]) {
@@ -180,7 +164,6 @@ export const parseModule = (
   const ownership = resolveModuleOwnership(productPart, options);
   return {
     ...base,
-    kind: kind as ModuleKind,
     title,
     responsibility,
     ...ownership,

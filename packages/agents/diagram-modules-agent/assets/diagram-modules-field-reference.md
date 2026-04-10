@@ -30,9 +30,9 @@ Format inside `product-parts/<part-id>.md`:
 
 **Purpose:** one short line describing the role of this subsystem.
 
-| `module-id` | `kind` | Responsibility |
-| --- | --- | --- |
-| `example-module` | `service` | One-line responsibility |
+| `module-id` | Responsibility |
+| --- | --- |
+| `example-module` | One-line responsibility |
 ```
 
 Rules:
@@ -48,14 +48,13 @@ Rules:
 Modules are described in tables inside Owned Clusters or Standalone Modules sections:
 
 ```markdown
-| `module-id` | `kind` | Responsibility |
-| --- | --- | --- |
-| `example-module` | `service` | One-line responsibility |
+| `module-id` | Responsibility |
+| --- | --- |
+| `example-module` | One-line responsibility |
 ```
 
 Fields:
 - `module-id`: a stable kebab-case identifier and the canonical English module name source;
-- `kind`: a required DSL classifier; one of `service`, `library`, `adapter`, `gateway`, `store`, `external`. It is a secondary classification, so do not derive the architecture from `kind`;
 - `Responsibility`: one short line describing the main responsibility of the module.
 
 Rules:

@@ -8,9 +8,7 @@ import {
   type MarkdownDslParseError,
   type MarkdownDslParseResult,
   type MarkdownDslParseWarning,
-  MODULE_KINDS,
   type ModuleEntity,
-  type ModuleKind,
   type ModuleMapModel,
   type ModuleRelation,
   RELATION_TYPES,
@@ -133,14 +131,10 @@ const parseModule = (
 ): ModuleEntity | MarkdownDslParseError => {
   const fields = parseFields(block, warnings);
   const base = parseBaseEntity(fields, block, "Module");
-  const kind = required(fields, "Kind", block.line);
   const title = required(fields, "Title", block.line);
   const responsibility = required(fields, "Responsibility", block.line);
   if ("code" in base) {
     return base;
-  }
-  if (typeof kind !== "string") {
-    return kind;
   }
   if (typeof title !== "string") {
     return title;
@@ -148,16 +142,8 @@ const parseModule = (
   if (typeof responsibility !== "string") {
     return responsibility;
   }
-  if (!isOneOf(kind, MODULE_KINDS)) {
-    return {
-      code: "invalid-metadata",
-      line: block.line,
-      message: `Invalid module enum value for ${base.id}`,
-    };
-  }
   return {
     ...base,
-    kind: kind as ModuleKind,
     title,
     responsibility,
     cluster: fields.scalars.get("Cluster")?.trim() || undefined,

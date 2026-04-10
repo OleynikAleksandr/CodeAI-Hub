@@ -58,7 +58,7 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
   modules: [
     {
       id: "workspace-entry",
-      kind: "adapter",
+
       title: "Workspace Entry",
       responsibility: "Opens a project workspace.",
       productPart: "desktop-shell",
@@ -72,7 +72,7 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
     },
     {
       id: "artifact-review",
-      kind: "adapter",
+
       title: "Artifact Review",
       responsibility: "Shows the current artifact.",
       productPart: "desktop-shell",
@@ -86,7 +86,7 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
     },
     {
       id: "stage-navigation",
-      kind: "adapter",
+
       title: "Stage Navigation",
       responsibility: "Moves between workflow stages.",
       productPart: "desktop-shell",
@@ -100,7 +100,7 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
     },
     {
       id: "stage-flow-controller",
-      kind: "service",
+
       title: "Stage Flow Controller",
       responsibility: "Controls stage order.",
       productPart: "local-core-runtime",
@@ -114,7 +114,7 @@ const MULTI_PRODUCT_PART_FIXTURE: ModuleMapModel = {
     },
     {
       id: "artifact-freshness",
-      kind: "service",
+
       title: "Artifact Freshness",
       responsibility: "Marks downstream artifacts stale.",
       productPart: "local-core-runtime",
@@ -166,7 +166,7 @@ const TWO_CLUSTER_STANDALONE_FIXTURE: ModuleMapModel = {
   modules: [
     {
       id: "stage-flow-controller",
-      kind: "service",
+
       title: "Stage Flow Controller",
       responsibility: "Controls stage order.",
       productPart: "local-core-runtime",
@@ -180,7 +180,7 @@ const TWO_CLUSTER_STANDALONE_FIXTURE: ModuleMapModel = {
     },
     {
       id: "project-state-registry",
-      kind: "store",
+
       title: "Project State Registry",
       responsibility: "Keeps the current workflow state readable.",
       productPart: "local-core-runtime",
@@ -194,7 +194,7 @@ const TWO_CLUSTER_STANDALONE_FIXTURE: ModuleMapModel = {
     },
     {
       id: "session-history-continuity",
-      kind: "store",
+
       title: "Session History Continuity",
       responsibility: "Restores user dialogue on reopen.",
       productPart: "local-core-runtime",
@@ -208,7 +208,7 @@ const TWO_CLUSTER_STANDALONE_FIXTURE: ModuleMapModel = {
     },
     {
       id: "runtime-lifetime-manager",
-      kind: "service",
+
       title: "Runtime Lifetime Manager",
       responsibility: "Keeps runtime alive as a separate process.",
       productPart: "local-core-runtime",
@@ -222,7 +222,7 @@ const TWO_CLUSTER_STANDALONE_FIXTURE: ModuleMapModel = {
     },
     {
       id: "workspace-provider-binding",
-      kind: "store",
+
       title: "Workspace Provider Binding",
       responsibility: "Pins one active AI provider for the workspace.",
       productPart: "local-core-runtime",

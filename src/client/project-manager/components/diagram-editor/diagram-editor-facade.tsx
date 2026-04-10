@@ -89,7 +89,7 @@ const purposeTextStyle: React.CSSProperties = {
 const ModuleCard = ({ data }: { readonly data: ModuleProjectionNodeData }) => (
   <div style={nodeCardStyle}>
     <div style={nodeCaptionStyle}>Module</div>
-    <strong style={{ display: "block", fontSize: 14, marginTop: 4 }}>
+    <strong style={{ display: "block", fontSize: 14, marginTop: 4, color: "var(--pm-accent-strong)" }}>
       {data.title}
     </strong>
     <div
@@ -102,15 +102,6 @@ const ModuleCard = ({ data }: { readonly data: ModuleProjectionNodeData }) => (
     >
       {data.responsibility}
     </div>
-    {data.cluster ? (
-      <div style={{ marginTop: 8, fontSize: 11, color: "var(--pm-accent-strong)" }}>
-        {data.cluster}
-      </div>
-    ) : (
-      <div style={{ marginTop: 8, fontSize: 11, color: "var(--pm-text-muted)" }}>
-        Standalone in {data.productPart}
-      </div>
-    )}
   </div>
 );
 
@@ -135,7 +126,7 @@ const ClusterCard = ({ data }: { readonly data: ClusterProjectionNodeData }) => 
     >
       <div style={{ display: "grid", gap: 4, alignContent: "start" }}>
         <div style={nodeCaptionStyle}>Cluster</div>
-        <strong style={{ fontSize: 13 }}>{data.title}</strong>
+        <strong style={{ fontSize: 13, color: "var(--pm-accent-strong)" }}>{data.title}</strong>
         <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
           Modules: {data.modules.length}
         </div>
@@ -197,7 +188,7 @@ const ProductPartNode = ({
       <div style={productPartHeaderStyle}>
         <div style={{ display: "grid", gap: 4, minWidth: 0 }}>
           <div style={nodeCaptionStyle}>Product Part</div>
-          <strong style={{ fontSize: 15 }}>{data.title}</strong>
+          <strong style={{ fontSize: 15, color: "var(--pm-accent-strong)" }}>{data.title}</strong>
           <div style={{ fontSize: 12, color: "var(--pm-text-muted)" }}>
             Clusters: {data.clusters.length} | Standalone Modules:{" "}
             {data.standaloneModules.length}

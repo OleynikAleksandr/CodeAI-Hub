@@ -90,7 +90,7 @@ test("parseModuleMapDsl parses canonical module map and computes revision", () =
   assert.equal(result.value.relations.length, 1);
   assert.deepEqual(result.value.modules[0], {
     id: "auth-service",
-    kind: "service",
+
     title: "Authentication Service",
     responsibility: "Handle login and token validation",
     cluster: "security",
@@ -106,7 +106,7 @@ test("parseModuleMapDsl parses canonical module map and computes revision", () =
   });
   assert.deepEqual(result.value.modules[1], {
     id: "user-store",
-    kind: "store",
+
     title: "User Store",
     responsibility: "CRUD for users",
     cluster: undefined,

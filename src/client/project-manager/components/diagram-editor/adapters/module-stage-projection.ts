@@ -39,19 +39,14 @@ export type LayoutOverrides = {
 
 const buildModuleData = (
   module: ModuleEntity,
-  productPart: string,
-  cluster?: string,
 ): ModuleProjectionNodeData => ({
   stage: "diagram_modules",
   nodeKind: "module",
   moduleId: module.id,
   title: module.title,
-  kind: module.kind,
   responsibility: module.responsibility,
   status: module.status,
   origin: module.origin,
-  productPart,
-  cluster,
   inputCount: module.inputs.length,
   outputCount: module.outputs.length,
 });
@@ -195,7 +190,7 @@ export const buildModuleStageNodes = (
       const modules = cluster.moduleIds
         .map((moduleId) => modulesById.get(moduleId))
         .filter((m): m is ModuleEntity => m !== undefined)
-        .map((m) => buildModuleData(m, productPart.id, clusterId));
+        .map((m) => buildModuleData(m));
 
       clusters.push(buildClusterData(cluster, modules, clLayout));
     }
@@ -203,7 +198,7 @@ export const buildModuleStageNodes = (
     const standaloneModules = standaloneModuleIds
       .map((moduleId) => modulesById.get(moduleId))
       .filter((m): m is ModuleEntity => m !== undefined)
-      .map((m) => buildModuleData(m, productPart.id));
+      .map((m) => buildModuleData(m));
 
     nodes.push({
       id: toProductPartNodeId(productPart.id),

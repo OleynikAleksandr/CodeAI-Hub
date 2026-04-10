@@ -79,7 +79,6 @@ test("3-column table uses humanized module-id as title instead of kind", () => {
   const browser = modules.find((m) => m.id === "workspace-catalog-browser");
   assert.ok(browser, "workspace-catalog-browser must exist");
   assert.equal(browser.title, "Workspace Catalog Browser", "title must be humanized from module-id, not kind");
-  assert.equal(browser.kind, "service", "kind must be preserved from col2");
   assert.notEqual(browser.title, "service", "title must NOT be the kind value");
 
   const treeView = modules.find((m) => m.id === "workspace-tree-view");
@@ -89,11 +88,10 @@ test("3-column table uses humanized module-id as title instead of kind", () => {
   const store = modules.find((m) => m.id === "project-store");
   assert.ok(store, "project-store must exist");
   assert.equal(store.title, "Project Store");
-  assert.equal(store.kind, "store", "kind must be preserved from col2");
 
   const bridge = modules.find((m) => m.id === "provider-session-bridge");
   assert.ok(bridge, "provider-session-bridge must exist");
-  assert.equal(bridge.kind, "adapter", "standalone module kind must be preserved");
+  assert.equal(bridge.title, "Provider Session Bridge");
 });
 
 test("responsibility with pipe inside backticks is not truncated", () => {

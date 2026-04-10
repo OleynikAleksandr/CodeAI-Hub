@@ -8,7 +8,6 @@ import type {
 const MISSING_BASELINE_REVISION = "missing-baseline";
 
 const MODULE_FIELD_LABELS = new Map<keyof ModuleEntity, string>([
-  ["kind", "Kind"],
   ["title", "Title"],
   ["responsibility", "Responsibility"],
   ["cluster", "Cluster"],
@@ -56,7 +55,7 @@ const createAddedSummary = (params: {
   readonly entity: ModuleEntity | ModuleRelation;
 }): string =>
   params.entityType === "module"
-    ? `Module: ${params.entity.id} (Kind: ${(params.entity as ModuleEntity).kind}, Title: ${(params.entity as ModuleEntity).title})`
+    ? `Module: ${params.entity.id} (Title: ${(params.entity as ModuleEntity).title})`
     : `Relation: ${params.entity.id}`;
 
 const createRemovedSummary = (params: {

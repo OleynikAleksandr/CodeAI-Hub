@@ -70,7 +70,6 @@ const buildModuleBlock = (
   const lines = [
     `${headingLevel} Module: ${entity.id}`,
     `- Id: ${entity.id}`,
-    `- Kind: ${entity.kind}`,
     `- Title: ${entity.title}`,
     `- Responsibility: ${entity.responsibility}`,
   ];

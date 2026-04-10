@@ -30,7 +30,6 @@ test("diagram modules renderer differentiates product part and cluster container
     true
   );
   assert.equal(source.includes("Modules: {data.moduleIds.length}"), true);
-  assert.equal(source.includes('data.kind === "external"'), true);
   assert.equal(source.includes("External to {data.productPart}"), true);
   assert.equal(source.includes("Standalone in {data.productPart}"), true);
   assert.equal(source.includes("width: \"100%\""), true);

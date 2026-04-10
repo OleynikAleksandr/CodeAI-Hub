@@ -37,7 +37,7 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
   modules: [
     {
       id: "api-gateway",
-      kind: "gateway",
+
       title: "API Gateway",
       responsibility: "Routes external requests into the platform.",
       productPart: "control-shell",
@@ -51,7 +51,7 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "auth-service",
-      kind: "service",
+
       title: "Auth Service",
       responsibility: "Authenticates operators and sessions.",
       productPart: "control-shell",
@@ -65,7 +65,7 @@ const MODULE_MAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "config-store",
-      kind: "store",
+
       title: "Config Store",
       responsibility: "Stores deployment configuration.",
       productPart: "control-shell",
@@ -121,8 +121,6 @@ test("domainModelToProjection emits one ProductPart node with nested clusters an
   assert.equal(delivery.clusterId, "delivery");
   assert.equal(delivery.modules.length, 1);
   assert.equal(delivery.modules[0]!.moduleId, "api-gateway");
-  assert.equal(delivery.modules[0]!.kind, "gateway");
-  assert.equal(delivery.modules[0]!.cluster, "delivery");
 
   const security = data.clusters[1]!;
   assert.equal(security.clusterId, "security");
@@ -131,8 +129,6 @@ test("domainModelToProjection emits one ProductPart node with nested clusters an
 
   const standalone = data.standaloneModules[0]!;
   assert.equal(standalone.moduleId, "config-store");
-  assert.equal(standalone.cluster, undefined);
-  assert.equal(standalone.productPart, "control-shell");
 });
 
 test("domainModelToProjection projection has no edges", () => {

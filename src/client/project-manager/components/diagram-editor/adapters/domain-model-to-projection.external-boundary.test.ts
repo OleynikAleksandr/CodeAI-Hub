@@ -44,7 +44,7 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
   modules: [
     {
       id: "ai-provider-integration",
-      kind: "gateway",
+
       title: "AI Provider Integration",
       responsibility: "Sends runtime requests to the selected provider.",
       productPart: "local-core-runtime",
@@ -58,7 +58,7 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
     },
     {
       id: "selected-ai-provider",
-      kind: "external",
+
       title: "Selected AI Provider",
       responsibility: "External provider that fulfills runtime requests.",
       productPart: "local-core-runtime",
@@ -71,7 +71,7 @@ const EXTERNAL_BOUNDARY_FIXTURE: ModuleMapModel = {
     },
     {
       id: "artifact-review-surface",
-      kind: "adapter",
+
       title: "Artifact Review Surface",
       responsibility: "Shows the current artifact to the user.",
       productPart: "standalone-project-manager",
@@ -102,7 +102,6 @@ test("domainModelToProjection nests external modules as standalone inside produc
   assert.equal(data.clusters[0]!.clusterId, "provider-bridge");
   assert.equal(data.standaloneModules.length, 1);
   assert.equal(data.standaloneModules[0]!.moduleId, "selected-ai-provider");
-  assert.equal(data.standaloneModules[0]!.kind, "external");
 
   const managerNode = result.nodes.find(
     (node) => node.id === "product-part:standalone-project-manager"

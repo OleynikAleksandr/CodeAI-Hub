@@ -11,7 +11,7 @@ const MODULE_MAP_BASELINE: ModuleMapModel = {
   modules: [
     {
       id: "auth-service",
-      kind: "service",
+
       title: "Authentication Service",
       responsibility: "Handle login and token validation",
       cluster: "security",
@@ -27,7 +27,7 @@ const MODULE_MAP_BASELINE: ModuleMapModel = {
     },
     {
       id: "legacy-adapter",
-      kind: "adapter",
+
       title: "Legacy Adapter",
       responsibility: "Bridge old API",
       inputs: [],
@@ -78,7 +78,7 @@ test("buildModuleMapChangeSummary tracks module and relation additions removals 
       },
       {
         id: "notification-service",
-        kind: "service",
+
         title: "Notification Service",
         responsibility: "Deliver outbound notifications",
         inputs: ["notification-event"],
@@ -126,8 +126,7 @@ test("buildModuleMapChangeSummary tracks module and relation additions removals 
       entityType: "module",
       entityId: "notification-service",
       action: "added",
-      summary:
-        "Module: notification-service (Kind: service, Title: Notification Service)",
+      summary: "Module: notification-service (Title: Notification Service)",
     },
     {
       entityType: "module",

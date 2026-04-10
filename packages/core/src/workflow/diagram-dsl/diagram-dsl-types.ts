@@ -1,13 +1,5 @@
 export const ENTITY_ORIGINS = ["agent", "user", "merged"] as const;
 export const ENTITY_STATUSES = ["proposed", "accepted", "deprecated"] as const;
-export const MODULE_KINDS = [
-  "service",
-  "library",
-  "adapter",
-  "gateway",
-  "store",
-  "external",
-] as const;
 export const RELATION_TYPES = [
   "sync-call",
   "async-event",
@@ -17,7 +9,6 @@ export const RELATION_TYPES = [
 export const CRITICALITY_LEVELS = ["high", "medium", "low"] as const;
 export type EntityOrigin = (typeof ENTITY_ORIGINS)[number];
 export type EntityStatus = (typeof ENTITY_STATUSES)[number];
-export type ModuleKind = (typeof MODULE_KINDS)[number];
 export type RelationType = (typeof RELATION_TYPES)[number];
 export type Criticality = (typeof CRITICALITY_LEVELS)[number];
 
@@ -45,7 +36,6 @@ export interface ModuleEntity {
   readonly contractTargets: readonly string[];
   readonly id: string;
   readonly inputs: readonly string[];
-  readonly kind: ModuleKind;
   readonly notes?: string;
   readonly origin: EntityOrigin;
   readonly outputs: readonly string[];

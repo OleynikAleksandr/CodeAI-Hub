@@ -42,7 +42,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
   modules: [
     {
       id: "stage-flow-controller",
-      kind: "service",
+
       title: "Stage Flow Controller",
       responsibility: "Controls stage order.",
       productPart: "local-core-runtime",
@@ -56,7 +56,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "workspace-artifact-store",
-      kind: "store",
+
       title: "Workspace Artifact Store",
       responsibility: "Stores artifacts in the workspace.",
       productPart: "local-core-runtime",
@@ -70,7 +70,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "description-stage",
-      kind: "service",
+
       title: "Description Stage",
       responsibility: "Builds the description artifact.",
       productPart: "local-core-runtime",
@@ -83,7 +83,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "virtual-simulation-stage",
-      kind: "service",
+
       title: "Virtual Simulation Stage",
       responsibility: "Builds the simulation artifact.",
       productPart: "local-core-runtime",
@@ -96,7 +96,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "diagram-modules-stage",
-      kind: "service",
+
       title: "Diagram Modules Stage",
       responsibility: "Builds the module inventory.",
       productPart: "local-core-runtime",
@@ -109,7 +109,7 @@ const STANDALONE_WRAP_FIXTURE: ModuleMapModel = {
     },
     {
       id: "artifact-freshness",
-      kind: "service",
+
       title: "Artifact Freshness",
       responsibility: "Marks downstream artifacts stale.",
       productPart: "local-core-runtime",
@@ -178,7 +178,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
   modules: [
     {
       id: "step-eligibility-guard",
-      kind: "service",
+
       title: "Step Eligibility Guard",
       responsibility: "Decides whether the requested workflow step is allowed.",
       productPart: "local-core-runtime",
@@ -192,7 +192,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
     },
     {
       id: "step-execution-coordinator",
-      kind: "service",
+
       title: "Step Execution Coordinator",
       responsibility: "Runs an approved workflow step against the right inputs.",
       productPart: "local-core-runtime",
@@ -206,7 +206,7 @@ const CLUSTER_STACK_FIXTURE: ModuleMapModel = {
     },
     {
       id: "dependency-refresh-marker",
-      kind: "service",
+
       title: "Dependency Refresh Marker",
       responsibility: "Marks later workflow results as outdated.",
       productPart: "local-core-runtime",
