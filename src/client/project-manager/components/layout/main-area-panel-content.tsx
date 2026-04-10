@@ -203,8 +203,9 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   }
   return (
     <div className="pm-placeholder">
-      Выберите шаг в Toolbar. Для Description начните с <code>questionnaire.md</code> и
-      доведите единую сессию до <code>Final_Description.md</code>.
+      Select a workflow stage in the sidebar tree. For Description, start with{" "}
+      <code>questionnaire.md</code> and complete a single session to produce{" "}
+      <code>Final_Description.md</code>.
     </div>
   );
 };

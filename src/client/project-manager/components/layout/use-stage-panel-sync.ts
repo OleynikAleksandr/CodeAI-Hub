@@ -4,9 +4,8 @@ import { resolveStageSyncPayload } from "./workspace-tree-branch-nodes";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 
 /**
- * Resolves artifact + session for a given stage, dispatches the
- * appropriate events, and listens for `pm:stage:activated` so that
- * toolbar clicks also trigger the same synchronisation.
+ * Resolves artifact + session for a given stage and listens for
+ * `pm:stage:activated` so that sidebar tree clicks trigger panel sync.
  */
 export const useStagePanelSync = (params: {
   readonly workflowState: WorkflowStateSnapshot | null;

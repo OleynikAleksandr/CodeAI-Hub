@@ -11,10 +11,6 @@ const MAIN_AREA_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/main-area.tsx"
 );
-const TOOLBAR_PATH = path.resolve(
-  process.cwd(),
-  "src/client/project-manager/components/layout/toolbar.tsx"
-);
 const WORKSPACE_TREE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/workspace-tree.tsx"
@@ -28,43 +24,48 @@ const MAIN_AREA_WORKFLOW_STATE_PATH = path.resolve(
   "src/client/project-manager/components/layout/use-main-area-workflow-state.ts"
 );
 
-test("workflow navigation sync keeps stage routing consistent across toolbar and tree", async () => {
+test("sidebar-only workflow navigation keeps stage routing consistent", async () => {
   const [
     mainAreaUtilsSource,
     mainAreaSource,
-    toolbarSource,
     workspaceTreeSource,
     workspaceTreeAutoSelectSource,
     mainAreaWorkflowStateSource,
   ] = await Promise.all([
       readFile(MAIN_AREA_UTILS_PATH, "utf8"),
       readFile(MAIN_AREA_PATH, "utf8"),
-      readFile(TOOLBAR_PATH, "utf8"),
       readFile(WORKSPACE_TREE_PATH, "utf8"),
       readFile(WORKSPACE_TREE_AUTO_SELECT_PATH, "utf8"),
       readFile(MAIN_AREA_WORKFLOW_STATE_PATH, "utf8"),
     ]);
 
+  // main-area-utils still maps stage IDs to tool labels for panel routing
   assert.equal(
-    mainAreaUtilsSource.includes("const resolveStageByTool"),
+    mainAreaUtilsSource.includes("STAGE_TO_TOOL_MAP"),
     true,
-    "main-area-utils must keep an explicit stage resolver for toolbar tool mapping"
-  );
-  assert.equal(
-    mainAreaUtilsSource.includes('detail: { stage, source: "toolbar" }'),
-    true,
-    "toolbar stage activation event must include stage source metadata"
+    "main-area-utils must keep stage-to-tool mapping for panel routing"
   );
   assert.equal(
     mainAreaUtilsSource.includes("skipSession"),
     false,
     "stage activation route must not keep stage-specific skipSession exceptions"
   );
+
+  // main area reacts to sidebar stage events
   assert.equal(
     mainAreaSource.includes('window.addEventListener("pm:stage:activated", onStageActivated);'),
     true,
-    "main area must react to stage activation events from tree/auto-select routes"
+    "main area must react to stage activation events from sidebar tree"
   );
+
+  // main area must not render a toolbar
+  assert.equal(
+    mainAreaSource.includes("<Toolbar"),
+    false,
+    "main area must not render a top stage toolbar — sidebar is the only navigation surface"
+  );
+
+  // workspace tree dispatches stage activation events
   assert.equal(
     workspaceTreeSource.includes('new CustomEvent("pm:stage:activated"'),
     true,
@@ -109,12 +110,5 @@ test("workflow navigation sync keeps stage routing consistent across toolbar and
     mainAreaWorkflowStateSource.includes("nextHasDescriptionSession && !nextDescription"),
     false,
     "description startup must keep questionnaire routing independent from runtime session presence"
-  );
-  assert.equal(
-    toolbarSource.includes(
-      '"pm.workflow.stage.diagram_modules.label"'
-    ),
-    true,
-    "toolbar must localize the diagram modules stage label"
   );
 });
