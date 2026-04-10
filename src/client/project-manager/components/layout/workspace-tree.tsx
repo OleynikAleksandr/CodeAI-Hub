@@ -191,16 +191,23 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }));
     }
 
+    const stageArtifactAvailable: Record<WorkflowStageId, boolean> = {
+      description: descriptionArtifactAvailable,
+      virtual_simulation: virtualSimulationArtifactAvailable,
+      diagram_modules: diagramModulesArtifactAvailable,
+    };
+
     return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
       const blocked = workflowState.gating.blocked[stage] ?? false;
+      const hasArtifact = stageArtifactAvailable[stage];
       return {
         id: `workflow:${stage}`,
         label: resolveStageLabel(stage, t),
         stage,
         title: resolveStageTitle(stage, status, blocked, t),
         isSelected: stage === activeStage,
-        status: resolveTreeStatus(status, blocked),
+        status: resolveTreeStatus(status, blocked, hasArtifact),
         visualDepth: 0,
         onSelect: () => dispatchStageActivated(stage),
       };

@@ -36,7 +36,8 @@ export const WORKFLOW_STAGE_BLOCKED_TITLES: Record<WorkflowStageId, string> = {
 
 export const resolveTreeStatus = (
   status: WorkflowStageStatus,
-  blocked: boolean
+  blocked: boolean,
+  hasArtifact = false
 ): TreeStatus =>
   status === "idle"
     ? "todo"
@@ -44,7 +45,7 @@ export const resolveTreeStatus = (
       ? "outdated"
       : blocked || status === "invalid"
         ? "blocked"
-        : status === "completed"
+        : hasArtifact || status === "completed"
           ? "active"
           : status === "in_progress"
             ? "progress"
