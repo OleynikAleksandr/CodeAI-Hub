@@ -1,6 +1,6 @@
 # Development Tree Branch Workflow Architecture
 
-**Status:** Draft for review (2026-04-07, updated 2026-04-10)
+**Status:** Accepted (2026-04-10, rollout sync for first unified execution cycle)
 **Created:** 2026-04-07
 **Updated:** 2026-04-10
 **Owner:** Oleksandr + Codex
@@ -58,8 +58,8 @@
    - **Planning session** — materialize-ит `Implementation Foundation` + `TODO Plan`.
    - **Execution session** — materialize-ит `Implementation` (реальный код).
 4. Для standalone modules действует тот же три-сессионный `Module` path без искусственного обязательного cluster layer.
-5. Каждая следующая module session gated на завершение артефактов предыдущей (Design → Planning → Execution).
-6. `Implementation Foundation` создаётся Planning session только после того, как Design session завершила `Module Specification` + `Module Facade Contract`.
+5. Каждая следующая module session gated на наличие обязательных артефактов предыдущей фазы хотя бы в draft-state (Design → Planning → Execution).
+6. `Planning session` становится доступной только после materialization draft `Module Specification` + draft `Module Facade Contract`. `Execution session` становится доступной только после materialization draft `Implementation Foundation` + draft `TODO Plan`.
 7. Все branch artifacts имеют предсказуемые canonical paths.
 8. `OUTDATED propagation` между upstream и downstream artifacts формализована заранее.
 
@@ -147,12 +147,12 @@ Module проектируется и реализуется через три о
 - `Implementation Foundation` — technical scaffold: file structure, dependencies, configs, environment setup.
 - `TODO Plan` — фазы, стримы, микро-задачи ≤3 файлов, ожидаемые commit messages.
 
-Planning session gated на завершение обоих Design artifacts. Foundation и TODO Plan создаются одним агентом, потому что Foundation определяет scaffold, а TODO разбивает его на micro-tasks, которые ссылаются на этот scaffold.
+Planning session gated на наличие draft `Module Specification` и draft `Module Facade Contract`. Как только gate unlock-нулся, пользователь сам решает, запускать ли Planning session; автостарт запрещён. Foundation и TODO Plan создаются одним агентом, потому что Foundation определяет scaffold, а TODO разбивает его на micro-tasks, которые ссылаются на этот scaffold.
 
 **Execution session** (один агент) — один «артефакт»:
 - `Implementation` — реальный код в репозитории.
 
-Execution session gated на завершение обоих Planning artifacts. Execution agent обязан обновлять TODO Plan в ходе реализации (статусы, commit hashes, реструктуризация streams).
+Execution session gated на наличие draft `Implementation Foundation` и draft `TODO Plan`. Как только gate unlock-нулся, пользователь сам решает, запускать ли Execution session; автостарт запрещён. Execution agent обязан обновлять TODO Plan в ходе реализации (статусы, commit hashes, реструктуризация streams).
 
 Три сессии отражают три когнитивных режима: design (архитектурное мышление), planning (декомпозиция на шаги), execution (код + коммиты). У каждой фазы свой context window profile. Объединение планирования и исполнения в одного агента расточительно — контекст на planning-thinking мешает execution-thinking.
 
@@ -475,7 +475,7 @@ Cluster/module facade contracts должны быть согласованы с 
 
 ### 8.1. Design → Planning gate (per module)
 
-Planning session можно запускать только если для данного module готовы:
+Planning session можно запускать только если для данного module уже materialized хотя бы как draft:
 
 1. `module-specification.md`
 2. `module-facade-contract.md`
@@ -487,14 +487,14 @@ Planning session можно запускать только если для да
 
 ### 8.2. Planning → Execution gate (per module)
 
-Execution session можно запускать только если для данного module готовы:
+Execution session можно запускать только если для данного module уже materialized хотя бы как draft:
 
 1. `implementation-foundation.md`
 2. `todo-plan.md`
 
 ### 8.3. Wave-level gate (cross-module)
 
-Для запуска Planning sessions целой wave готовы:
+Для запуска Planning sessions целой wave должны существовать хотя бы как draft:
 
 1. `product-parts.index.md`
 2. `product-parts/<part-id>.md` выбранного `Product Part`
@@ -591,7 +591,112 @@ Gates нужны, чтобы каждая следующая сессия:
 
 ---
 
-## 11. Verification Target
+## 11. Implementation Rollout for First Unified Execution Cycle
+
+### 11.1. Почему нужен один unified `doc/TODO/todo-plan.md`
+
+Первую implementation wave для Development Tree не стоит дробить на несколько независимых `todo-plan`.
+
+Причина:
+
+- sidebar-only navigation, branch read model, panel surfaces, lazy sessions, provider semantics и gating опираются на один и тот же PM/Core contract;
+- если разнести их по нескольким planning cycles заранее, boundaries между фазами начнут drift-ить раньше, чем появится рабочий end-to-end slice;
+- пользователю нужен один прозрачный execution dashboard, где видно не только текущую микро-задачу, но и точки, после которых уже имеет смысл делать visual walkthrough или internal release checkpoint.
+
+Следовательно, первый execution cycle ведётся через **один** `doc/TODO/todo-plan.md`, но этот план обязан быть:
+
+- фазированным;
+- разбитым на stream-ы по ownership;
+- переписываемым в реальном времени, если какая-то micro-task вырастает больше чем в `≤3` файла.
+
+### 11.2. Canonical phase map
+
+Для первого unified execution cycle используется такой canonical порядок фаз:
+
+1. **Phase 1 — Trunk shell convergence**
+   - убрать зависимость от верхнего stage toolbar;
+   - оставить sidebar единственной navigation surface для trunk stages;
+   - синхронизировать active route, header и panel selection без branch-node логики.
+2. **Phase 2 — Development Tree read model**
+   - materialize-ить Product Part / Cluster / Module projection из Diagram Modules artifacts;
+   - ввести strict accordion, active-path highlight, skeleton rows и progressive population.
+3. **Phase 3 — Branch panel surfaces**
+   - добавить Product Part / Cluster / Module surfaces в Sessions + Artifacts zones;
+   - сделать независимые tab groups, disabled tabs и panel titles.
+4. **Phase 4 — Lazy session lifecycle**
+   - ввести shell sessions для branch nodes;
+   - запускать provider session только на первом сообщении;
+   - materialize-ить workspace default provider + per-session override + restore semantics.
+5. **Phase 5 — Gating, outdated, counters**
+   - закрепить unlock только по наличию required draft artifacts;
+   - провести `OUTDATED` propagation и отделить progress indicators от gating logic;
+   - закрыть прямые UI/Core regressions.
+6. **Phase 6 — Release hardening**
+   - синхронизировать документы;
+   - пройти final build/release checklist;
+   - собрать tarball/VSIX и зафиксировать release-ready baseline.
+
+### 11.3. Phase exit and checkpoint policy
+
+Каждая фаза закрывается только после двух типов проверки:
+
+1. **Targeted builds** для реально затронутых кластеров.
+2. **Manual visual walkthrough** для тех PM surface, которые эта фаза меняет.
+
+Минимальная checkpoint matrix для первого execution cycle:
+
+- **После Phase 1**
+  - `npm run build:project-manager`
+  - `npm run build:webview`
+  - `npm run typecheck:webview`
+  - визуальная проверка: `Description` / `Virtual Simulation` / `Diagram Modules` открываются и синхронизируются только через sidebar.
+- **После Phase 2**
+  - `npm run build:core`
+  - `npm run build:project-manager`
+  - `npm run build:webview`
+  - `npm run typecheck:webview`
+  - визуальная проверка: branch tree появляется progressive-но и читается как принятый prototype baseline.
+- **После Phase 3**
+  - `npm run build:project-manager`
+  - `npm run build:webview`
+  - `npm run typecheck:webview`
+  - визуальная проверка: Product Part / Cluster / Module selection заполняет обе панели, а tab groups работают независимо.
+- **После Phase 4**
+  - `npm run build:core`
+  - `npm run build:project-manager`
+  - `npm run build:webview`
+  - `npm run typecheck:webview`
+  - визуальная проверка: shell sessions, first-message bootstrap, provider inheritance и restore path работают end-to-end.
+- **После Phase 5**
+  - `npm run build:core`
+  - `npm run build:project-manager`
+  - `npm run build:webview`
+  - `npm run typecheck:webview`
+  - визуальная проверка: disabled Planning/Execution tabs unlock-ятся только по draft artifacts; `done/total` остаётся только progress-indicator.
+- **Phase 6**
+  - обязательный финальный проход:
+    - `./scripts/build-all.sh`
+    - `./scripts/build-release.sh --use-current-version`
+
+**Release checkpoint policy:**
+
+- после **Phase 1** допустим internal preview build, если пользователь хочет отдельно проверить trunk-shell convergence;
+- после **Phase 3** допустим internal UI preview build, если branch surfaces уже визуально целостны;
+- после **Phase 5** допустим release-candidate checkpoint;
+- полноценный release baseline формируется только после **Phase 6**.
+
+### 11.4. Explicit exclusions for this first cycle
+
+В первый unified execution cycle **не входят**:
+
+- detailed `Implementation` tab view из `DevelopmentTree_Sidebar_Visualization_Architecture.md`, §10.2;
+- custom tooltip component из того же документа, §10.3;
+- mutation/delete flow для уже materialized Diagram Modules branch structure;
+- любые отдельные trunk-рефакторинги вне той части, которая нужна для Development Tree rollout.
+
+---
+
+## 12. Verification Target
 
 Этот planning scope считается достаточно подготовленным, если после review можно однозначно ответить на вопросы:
 
@@ -604,10 +709,13 @@ Gates нужны, чтобы каждая следующая сессия:
 7. По каким путям и именам должны жить branch artifacts?
 8. Как branch-level changes помечают downstream sessions как `OUTDATED`?
 9. Является ли TODO Plan живым артефактом и кто его обновляет?
+10. В каком порядке идут implementation phases первого unified execution cycle?
+11. После каких фаз обязательны visual walkthrough checkpoints, а после каких допустим internal release checkpoint?
+12. Какие implementation details сознательно исключены из первого цикла и не должны ломать запуск `todo-plan`?
 
 ---
 
-## 12. Expected Outcome
+## 13. Expected Outcome
 
 После реализации этого planning scope CodeAI Hub должен получить не абстрактную "веточную фазу после envelope", а детерминированный branch-level workflow:
 
@@ -618,8 +726,8 @@ Gates нужны, чтобы каждая следующая сессия:
 - `Module Planning` создаёт `Implementation Foundation` + `TODO Plan` (1 Planning session, 2 artifacts);
 - `Module Execution` реализует код по плану, обновляя TODO Plan (1 Execution session, 1 artifact);
 - standalone modules проходят тот же три-сессионный путь без искусственного cluster layer;
-- каждая следующая module session gated на завершение артефактов предыдущей;
-- filesystem scaffold, environments и toolchains materialize-ятся только после завершения design-слоя, а не раньше.
+- каждая следующая module session gated на наличие обязательных draft artifacts предыдущей фазы, а не на completion counters;
+- filesystem scaffold, environments и toolchains materialize-ятся только после появления обязательных design draft artifacts, а не раньше.
 
 Итоговый принцип:
 

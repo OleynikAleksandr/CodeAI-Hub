@@ -138,10 +138,14 @@ Gating chain для trunk stages:
 
 Gating chain для branch node sessions (внутри одного module):
 - **Design session** — доступна сразу после появления узла module в Development Tree.
-- **Planning session** — заблокирована, пока Design session не создаст оба артефакта (Module Spec + Module Facade).
-- **Execution session** — заблокирована, пока Planning session не создаст оба артефакта (Implementation Foundation + TODO Plan).
+- **Planning session** — видна сразу как disabled tab, но разблокируется только после materialization draft `Module Specification` и draft `Module Facade Contract`.
+- **Execution session** — видна сразу как disabled tab, но разблокируется только после materialization draft `Implementation Foundation` и draft `TODO Plan`.
 
 Для Product Parts и Clusters есть только одна сессия (Design), поэтому intra-node gating не применяется.
+
+**Архитектурный контракт gating:** unlock следующей сессии основан только на наличии обязательных артефактов предыдущей фазы хотя бы в draft-state. `done/total` counters и любые completion-метрики в gating не участвуют.
+
+**Разблокировка не равна старту.** Когда tab стал доступным, система только разрешает пользователю открыть следующую сессию. Автостарт запрещён: запуск/продолжение Planning или Execution происходит только по явному действию пользователя.
 
 ### 4.6. Паттерн Help
 
@@ -524,7 +528,7 @@ Clusters и Product Parts не рендерят separators (одна фаза, �
 
 - **Sessions:** 3 таба — `Design │ Planning │ Execution`. Phase separators между каждым.
 - **Artifacts:** 5 табов — `Module Spec`, `Module Facade` │ `Implementation Foundation`, `TODO Plan` │ `Implementation`. Phase separators после `Facade` и после `TODO Plan`.
-- **Gating:** Design доступен сразу. Planning заблокирован до завершения Design artifacts. Execution заблокирован до завершения Planning artifacts.
+- **Gating:** Design доступен сразу. Planning tab виден сразу, но заблокирован до появления draft `Module Spec` + draft `Module Facade`. Execution tab виден сразу, но заблокирован до появления draft `Implementation Foundation` + draft `TODO Plan`. Разблокировка не запускает следующую сессию автоматически.
 - **Panel title (clustered):** `<Product Part> / <Cluster> / <Module>`. Standalone: `<Product Part> / <Module>`.
 - **Tab status dots:** done (accent-green), in progress (amber), todo (muted grey).
 
@@ -533,6 +537,8 @@ Clusters и Product Parts не рендерят separators (одна фаза, �
 - Module `done/total` = количество artifact tabs в состоянии «done» (из 5).
 - Cluster counter = Cluster Spec + Cluster Facade + все module totals.
 - Product Part counter = Part Specification + все cluster totals + все standalone module totals.
+
+`done/total` и tab status dots — только индикаторы прогресса. Они не используются для unlock gating между Design / Planning / Execution.
 
 ---
 
