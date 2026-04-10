@@ -112,6 +112,18 @@ export const resolveDiagramStageSyncPayload = (options: {
   };
 };
 
+const dispatchBranchSelected = (detail: {
+  readonly kind: string;
+  readonly nodeId: string;
+  readonly label: string;
+  readonly partId: string;
+  readonly clusterId?: string;
+}): void => {
+  window.dispatchEvent(
+    new CustomEvent("pm:branch:selected", { detail })
+  );
+};
+
 const buildModuleTreeNode = (
   mod: DevelopmentTreeModuleNode,
   partId: string,
@@ -124,6 +136,14 @@ const buildModuleTreeNode = (
   label: mod.title,
   status: "todo",
   visualDepth: depth,
+  onSelect: () =>
+    dispatchBranchSelected({
+      kind: "module",
+      nodeId: mod.id,
+      label: mod.title,
+      partId,
+      clusterId: clusterId ?? undefined,
+    }),
 });
 
 const buildClusterTreeNode = (
@@ -139,6 +159,13 @@ const buildClusterTreeNode = (
   children: cluster.modules.map((mod) =>
     buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
   ),
+  onSelect: () =>
+    dispatchBranchSelected({
+      kind: "cluster",
+      nodeId: cluster.id,
+      label: cluster.id,
+      partId,
+    }),
 });
 
 const buildPartTreeNode = (
@@ -159,6 +186,13 @@ const buildPartTreeNode = (
     visualDepth: depth,
     isCollapsible: children.length > 0,
     children: children.length > 0 ? children : undefined,
+    onSelect: () =>
+      dispatchBranchSelected({
+        kind: "product-part",
+        nodeId: part.id,
+        label: part.id,
+        partId: part.id,
+      }),
   };
 };
 

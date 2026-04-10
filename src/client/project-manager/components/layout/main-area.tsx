@@ -4,7 +4,7 @@ import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { useDescriptionSessionGuard } from "./use-description-session-guard";
 import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
-import { resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
+import { type BranchNodeSelection, parseBranchNodeSelection, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
 import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
 import {
   normalizeArtifactHeaderMode,
@@ -58,6 +58,8 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [pendingSessionCreate, setPendingSessionCreate] = useState<{
     readonly providerTitle: string;
   } | null>(null);
+  const [selectedBranchNode, setSelectedBranchNode] =
+    useState<BranchNodeSelection | null>(null);
   const [artifactHeaderMode, setArtifactHeaderMode] =
     useState<ArtifactHeaderMode>("artifacts");
   const { guardRef: descriptionGuardRef, activateGuard, resetGuard } =
@@ -86,16 +88,26 @@ export const MainArea: React.FC<MainAreaProps> = ({
       const nextTool = resolveToolByStage(stage);
       if (nextTool) {
         setActiveTool(nextTool);
+        setSelectedBranchNode(null);
         setArtifactHeaderMode("artifacts");
+      }
+    };
+    const onBranchSelected = (event: Event) => {
+      const detail = (event as CustomEvent).detail;
+      const parsed = parseBranchNodeSelection(detail);
+      if (parsed) {
+        setSelectedBranchNode(parsed);
       }
     };
     window.addEventListener("pm:artifact:selected", onSelected);
     window.addEventListener("pm:artifact:cleared", onCleared);
     window.addEventListener("pm:stage:activated", onStageActivated);
+    window.addEventListener("pm:branch:selected", onBranchSelected);
     return () => {
       window.removeEventListener("pm:artifact:selected", onSelected);
       window.removeEventListener("pm:artifact:cleared", onCleared);
       window.removeEventListener("pm:stage:activated", onStageActivated);
+      window.removeEventListener("pm:branch:selected", onBranchSelected);
     };
   }, []);
 
@@ -106,6 +118,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setQuestionnaireDocument(null);
     // hasDescriptionSession: owned by useMainAreaWorkflowState after store poll
     setPendingSessionCreate(null);
+    setSelectedBranchNode(null);
     setArtifactHeaderMode("artifacts");
     resetGuard();
     if (!activeWorkspace) {
@@ -229,7 +242,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
     !hasDescriptionSessionPending &&
     workflowStoreLoaded;
   const artifactHeaderModes = resolveArtifactHeaderModes(activeTool);
-  const artifactHeaderTitle = activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
+  const artifactHeaderTitle = selectedBranchNode
+    ? selectedBranchNode.label
+    : activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
   return (
     <main className="pm-main-area">
