@@ -66,8 +66,19 @@
 - **Левая панель (Sessions zone)** — agent session(s) этого step. Tab bar появляется только когда сессий две или больше.
 - **Правая панель (Artifacts zone)** — artifact(s) этого step. Tab bar появляется только когда артефактов два или больше.
 - **Две зоны независимы.** Клик по табу в одной зоне не заставляет другую зону меняться. Пользователь может читать любой artifact tab, продолжая разговор с любым session tab того же узла.
+- **Tab selection state — per-node, ephemeral.** При переключении на другой узел tab selection сбрасывается на первый доступный (незаблокированный) tab в каждой зоне. Не восстанавливается при restart.
 
 Это правило применяется одинаково к trunk stages, Product Parts, Clusters и Modules. Без sub-rows нигде.
+
+**Canonical node identity.** Каждый узел имеет canonical ID, построенный из пути в DM-данных:
+
+- Trunk stages: существующие `stageId` (`description`, `virtual_simulation`, `diagram_modules`).
+- `pp:<part-id>`
+- `cl:<part-id>/<cluster-id>`
+- `m:<part-id>/<cluster-id>/<module-id>` (clustered)
+- `m:<part-id>/standalone/<module-id>` (standalone)
+
+Этот ID используется для session routing, restore, continuity binding и sidebar selection state.
 
 ### 4.2. Удаление верхнего tab bar
 
@@ -78,6 +89,8 @@
 - ~40 px вертикального пространства, занятого bar-ом.
 
 Навигация, которую раньше обеспечивал tab bar, полностью переходит в клики по рядам сайдбара.
+
+**Startup / restore contract.** Active node при cold start восстанавливается из persisted workflow state по canonical node ID. Если узел больше не существует или stale — restore идёт к ближайшему валидному ancestor. Если и это невозможно — fallback на `description`.
 
 ### 4.3. Lazy-инициализация сессий (instruction pack prepend)
 
@@ -109,6 +122,8 @@ Shell-сессия содержит: тип узла, тип агента, сс�
 **Per-session override:** Нижняя панель каждой сессии отображает текущий провайдер + модель. Пользователь может поменять любой из них до отправки первого сообщения или между turn-ами. Override применяется только к этой сессии — не меняет workspace default.
 
 **Timing binding:** Реальный вызов `createSession()` у провайдера происходит в Фазе 2 (первое сообщение), используя провайдер + модель, которые показаны в нижней панели на этот момент.
+
+**Source of truth:** Workspace default provider живёт в workspace-scoped persisted workflow metadata. Default model для этого провайдера берётся из user settings (или workspace metadata, если задана). Per-session override провайдера и модели живёт в session-level metadata. Все три значения (workspace provider, workspace model, per-session overrides) восстанавливаются при restart.
 
 ### 4.5. Sequential gating
 
@@ -274,8 +289,9 @@ Standalone modules рендерятся как direct children PP wrapper, по�
 Секция Development Tree auto-populate из данных Diagram Modules в реальном времени.
 
 - **Source of truth:** `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md` плюс `product-parts/<part-id>.md` файлы.
-- **Триггер:** любая запись в эти файлы. Как только новый Product Part, Cluster или Module появляется, соответствующий узел появляется в Development Tree со статусом «not started» (counter `0/N`).
-- **Shell-сессии создаются немедленно** для каждого нового узла (см. §4.3 Фаза 1).
+- **Триггер:** любая запись в эти файлы. DM работает как progressive pipeline: сначала index с planned parts, потом materialized part-файлы по одному.
+- **Progressive population:** PP появляется в Development Tree сразу из `product-parts.index.md` (skeleton, внутренняя структура пуста, counter скрыт — `N` ещё неизвестен). Counter `0/N` появляется после materialization `product-parts/<part-id>.md`, когда внутренняя структура (clusters, modules) становится известна. Clusters и modules внутри PP заполняются по мере materialization соответствующего `product-parts/<part-id>.md`. Это консистентно с существующим progressive DM pipeline, где visual shell строит skeleton по index без part-файлов.
+- **Shell-сессии создаются по мере population:** для PP — при появлении в index; для clusters/modules — при materialization part-файла (см. §4.3 Фаза 1).
 - **Без ручной инициализации.** Никакой кнопки «Development Tree». Branch tree растёт тихо по мере роста Diagram Modules.
 - **Добавления — тихие.** Добавление нового module никогда не промптит пользователя.
 - **Порядок следует данным Diagram Modules.** Product Parts идут в порядке `product-parts.index.md`. Clusters и modules — в порядке каждого `product-parts/<part-id>.md`.
