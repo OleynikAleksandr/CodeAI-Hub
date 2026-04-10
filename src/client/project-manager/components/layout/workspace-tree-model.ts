@@ -3,7 +3,7 @@ import type {
   WorkflowStageStatus,
 } from "../../services/workflow-state-client";
 
-export type TreeStatus = "active" | "todo" | "blocked" | "draft" | "outdated";
+export type TreeStatus = "active" | "progress" | "todo" | "blocked" | "draft" | "outdated";
 
 export type TreeNode = {
   readonly id: string;
@@ -42,6 +42,8 @@ export const resolveTreeStatus = (
     ? "outdated"
     : blocked || status === "invalid"
       ? "blocked"
-      : status === "completed" || status === "in_progress"
+      : status === "completed"
         ? "active"
-        : "todo";
+        : status === "in_progress"
+          ? "progress"
+          : "todo";
