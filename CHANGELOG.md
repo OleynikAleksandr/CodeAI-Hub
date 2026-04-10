@@ -12,6 +12,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ### Changed
 - **Sidebar-only trunk navigation**: the top stage toolbar (Description / Virtual Simulation / Diagram Modules) is removed. The sidebar workspace tree is now the only navigation surface for trunk stages. Startup tool resolution is owned by `useMainAreaWorkflowState` and reinforced by the sidebar auto-select event.
+- **Section separators and leaf stage nodes**: the workspace root node is replaced by two section separators — "Documentation Tree" (for trunk stages) and "Development Tree" (for branch nodes). Trunk stages are now flat leaf nodes without expandable artifact/session children; panel sync is handled internally via `pm:stage:activated`.
 
 ### Not changed
 - Branch session lifecycle (lazy start, provider inheritance, restore) is deferred to a follow-up release. Branch panels show a placeholder surface until Design sessions produce artifacts.

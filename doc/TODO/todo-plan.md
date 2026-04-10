@@ -175,7 +175,7 @@
 
 ### Stream: User feedback — sidebar tree sections
 5. [DONE] Заменить workspace root node на section separators (Documentation Tree / Development Tree); trunk stages стали leaf nodes без artifact/session children — scope: `workspace-tree.tsx`, `workspace-tree-model.ts`, `workspace-tree-diagram-branch-nodes.ts`, `styles.css`, `workflow-navigation.test.ts`, `workspace-tree-diagram-branch-nodes.test.ts` (2026-04-10)
-6. [IN_PROGRESS] Git Commit: `feat: replace workspace root with section separators and leaf stage nodes` (hash: TBD)
+6. [DONE] Git Commit: `feat: replace workspace root with section separators and leaf stage nodes` (hash: b0560574c)
 
 ### Stream: SSOT sync and release rebuild
 7. [IN_PROGRESS] Rebuild release — `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`
