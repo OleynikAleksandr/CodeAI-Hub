@@ -92,9 +92,6 @@ const ModuleCard = ({ data }: { readonly data: ModuleProjectionNodeData }) => (
     <strong style={{ display: "block", fontSize: 14, marginTop: 4 }}>
       {data.title}
     </strong>
-    <div style={{ marginTop: 4, fontSize: 11, color: "var(--pm-accent-strong)" }}>
-      Kind: {data.kind}
-    </div>
     <div
       style={{
         marginTop: 6,

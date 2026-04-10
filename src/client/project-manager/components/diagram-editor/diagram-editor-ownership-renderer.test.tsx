@@ -29,7 +29,6 @@ test("diagram modules renderer differentiates product part and cluster container
     source.includes('gridTemplateColumns: "auto minmax(240px, 1fr)"'),
     true
   );
-  assert.equal(source.includes("Kind: {data.kind}"), true);
   assert.equal(source.includes("Modules: {data.moduleIds.length}"), true);
   assert.equal(source.includes('data.kind === "external"'), true);
   assert.equal(source.includes("External to {data.productPart}"), true);
