@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-10 17:45 (CEST)
 **Branch:** main
-**Version:** 1.1.930
+**Version:** 1.1.931
 **Execution Scope Status:** ACTIVE
 
 ---
@@ -15,11 +15,13 @@
 
 - **Three-color stage indicators** — introduced `progress` tree status. Mapping: gray = idle (nothing exists), orange = in_progress (session started, no final artifact), green = completed or artifact available. Fixed idle+blocked showing red instead of gray (idle now checked first). Fixed `in_progress` stages showing green when artifact exists by adding `hasArtifact` parameter to `resolveTreeStatus`.
 
-- **Auto-select last active stage** — on workspace open, sidebar and main area now select the LAST non-idle stage (diagram_modules → virtual_simulation → description) instead of always starting at Description. Updated both `workspace-tree-auto-select.ts` (`resolveLastActiveStage`) and `use-main-area-workflow-state.ts` (`resolveStartupTool`).
+- **Auto-select last active stage** — on workspace open, sidebar and main area now select the LAST non-idle stage (diagram_modules -> virtual_simulation -> description) instead of always starting at Description. Updated both `workspace-tree-auto-select.ts` (`resolveLastActiveStage`) and `use-main-area-workflow-state.ts` (`resolveStartupTool`).
 
-- **Zoom badge relocated to status bar** — the diagram zoom indicator ("83% · click to reset") moved from inside the scrollable diagram canvas (where it was hidden by scroll overflow) to the bottom status bar next to "Workflow Tree MVP". Communication via `pm:diagram:zoom` and `pm:diagram:zoom:reset` events.
+- **Zoom badge relocated to status bar** — the diagram zoom indicator ("83% - click to reset") moved from inside the scrollable diagram canvas (where it was hidden by scroll overflow) to the bottom status bar next to "Workflow Tree MVP". Communication via `pm:diagram:zoom` and `pm:diagram:zoom:reset` events.
 
-- All changes verified via `build:project-manager`, `build:webview`, `typecheck:webview`, and relevant test suites.
+- **Release Build Checklist updated** — preamble step 0 in CLAUDE.md, AGENTS.md, GEMINI.md now requires determining the UPCOMING version (current + 1) and updating README/CHANGELOG to that version BEFORE running build-all.sh.
+
+- Release v1.1.931 shipped: README, CHANGELOG, VSIX all aligned.
 
 ## Git commits
 (ВАЖНО: при `Execution Scope Status: ACTIVE` следующая сессия обязана просмотреть каждый коммит через `git show --stat <hash>` и `git show <hash>`.)
@@ -38,6 +40,11 @@
 - `ef4d7b092 chore: bump version to 1.1.929 via build-all.sh`
 - `56c00badb fix: move zoom badge from diagram canvas to status bar`
 - `3f14f1a5f chore: bump version to 1.1.930 via build-all.sh`
+- `193be2e7d docs: update README, CHANGELOG, session report and todo-plan for v1.1.930`
+- `3f12870c1 docs: align README and CHANGELOG with v1.1.931`
+- `06c18a617 chore: bump version to 1.1.931 via build-all.sh`
+- `5b9521325 docs: update release build checklist for version-sync rule`
+- `717698909 docs: mark release checklist commit as done in todo-plan`
 
 ---
 
@@ -47,14 +54,16 @@
 
 ## Plans for next session
 
-- Продолжать UI polish по фидбэку пользователя. Основные направления:
-  - Visual walkthrough v1.1.930 — проверить все изменения в живом релизе
-  - Проверить поведение auto-select для разных workspace (пустой, частично заполненный, полный)
-  - Проверить zoom badge в status bar — виден ли при zoom, корректен ли reset
-  - Собрать дополнительный фидбэк по sidebar separators и цветам индикаторов
-- После завершения UI polish: закрыть Phase 6 в `doc/TODO/todo-plan.md` и решить, открывать ли новый execution cycle для Phases 4-5 (lazy sessions, gating, outdated propagation)
-- **Известные open items из todo-plan Phase 6:**
-  - SSOT sync (SystemArchitecture.md, WorkflowSteps_Overview.md, Guardrails) — items 9-10
+- Продолжать активный execution scope по `doc/TODO/todo-plan.md`.
+- **Ближайшие открытые задачи (Phase 6, Stream: SSOT sync, items 17-18):**
+  - Актуализировать SSOT-документы: `SystemArchitecture.md`, `WorkflowSteps_Overview.md`, `Workflow_NewStep_Rollout_Guardrails.md`
+  - После закрытия SSOT sync — Phase 6 полностью закрыта, можно архивировать todo-plan
+- **После закрытия Phase 6:**
+  - Провести Plans closeout (ревизия `doc/SolidWorks-WorkFlow/Plans/`)
+  - Решить с пользователем: открывать ли новый execution cycle для Phases 4-5 (lazy sessions, gating, outdated propagation) или переключиться на другой scope
+- **Дополнительный UI polish по фидбэку:**
+  - Visual walkthrough v1.1.931 — проверить section separators, три цвета индикаторов, auto-select, zoom badge в status bar
+  - Собрать дополнительный фидбэк
 - **Deferred scope (Phases 4-5):**
   - Lazy session lifecycle для branch nodes (PP/Cluster/Module)
   - Provider inheritance и session restore
