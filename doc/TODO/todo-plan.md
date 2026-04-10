@@ -184,9 +184,11 @@
 10. [DONE] Git Commit: `feat: auto-select last active stage on workspace open` (hash: 72e749faa)
 11. [DONE] Move zoom badge from diagram canvas to status bar — scope: `diagram-editor-facade.tsx`, `status-bar.tsx`, `styles.css` (2026-04-10)
 12. [DONE] Git Commit: `fix: move zoom badge from diagram canvas to status bar` (hash: 56c00badb)
-13. [DONE] Release v1.1.930 — `build-all.sh` + `build-release.sh` → `codeai-hub-1.1.930.vsix` (2.0M, 1797 files) (2026-04-10)
-14. [DONE] Git Commit: `chore: bump version to 1.1.930 via build-all.sh` (hash: 3f14f1a5f)
+13. [DONE] Release v1.1.931 — README/CHANGELOG aligned to v1.1.931 before build-all.sh; `build-all.sh` + `build-release.sh` → `codeai-hub-1.1.931.vsix` (2.0M, 1797 files) (2026-04-10)
+14. [DONE] Git Commit: `docs: align README and CHANGELOG with v1.1.931` (hash: 3f12870c1), `chore: bump version to 1.1.931 via build-all.sh` (hash: 06c18a617)
+15. [DONE] Update Release Build Checklist (preamble step 0) in CLAUDE.md, AGENTS.md, GEMINI.md — version in docs must match UPCOMING build-all version (2026-04-10)
+16. [TODO] Git Commit: `docs: update release build checklist for version-sync rule` (hash: TBD)
 
 ### Stream: SSOT sync
-15. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
-16. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)
+17. [TODO] Актуализировать SSOT-документы под проверенную новую архитектуру — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync SSOT documents with verified development tree architecture`
+18. [TODO] Git Commit: `docs: sync SSOT documents with verified development tree architecture` (hash: TBD)
