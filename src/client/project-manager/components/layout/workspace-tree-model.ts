@@ -38,12 +38,14 @@ export const resolveTreeStatus = (
   status: WorkflowStageStatus,
   blocked: boolean
 ): TreeStatus =>
-  status === "outdated"
-    ? "outdated"
-    : blocked || status === "invalid"
-      ? "blocked"
-      : status === "completed"
-        ? "active"
-        : status === "in_progress"
-          ? "progress"
-          : "todo";
+  status === "idle"
+    ? "todo"
+    : status === "outdated"
+      ? "outdated"
+      : blocked || status === "invalid"
+        ? "blocked"
+        : status === "completed"
+          ? "active"
+          : status === "in_progress"
+            ? "progress"
+            : "todo";
