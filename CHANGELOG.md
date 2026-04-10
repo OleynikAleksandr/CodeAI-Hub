@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.932] - 2026-04-10
+### Changed
+- **Module kind field removed**: the internal DSL classifier (`service`, `adapter`, `gateway`, etc.) is removed from the entire codebase — types, parsers, serializer, diff service, agent templates, and all tests. The field was never used for behavioral decisions.
+- **Diagram card cleanup**: module cards no longer show the redundant cluster/standalone footer line. Visual hierarchy already communicates membership.
+- **Accent-colored titles**: module, cluster, and product part names on the diagram now use the accent color for better readability.
+- **Development tree module names**: the sidebar now displays humanized module IDs (e.g. "Extension Entry Shell") instead of DSL kind tokens ("service").
+
 ## [1.1.931] - 2026-04-10
 ### Added
 - **Development Tree baseline**: after Diagram Modules completes, the sidebar projects a Product Part / Cluster / Module tree from generated artifacts. Skeleton parts appear as `todo`; materialized parts as `draft` with nested children.
