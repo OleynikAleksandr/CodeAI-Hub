@@ -10,6 +10,7 @@ type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
   readonly preferredSessionId?: string | null;
   readonly pendingSessionCreate?: { readonly providerTitle: string } | null;
+  readonly startupStage?: string;
 };
 
 type ViewMode = "runtime" | "dialog";
@@ -18,6 +19,7 @@ export const ProjectManagerSessionView = ({
   workspacePath,
   preferredSessionId,
   pendingSessionCreate = null,
+  startupStage = "description",
 }: ProjectManagerSessionViewProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>("runtime");
   const [dialogIntent, setDialogIntent] = useState<DialogOpenIntent | null>(
@@ -69,7 +71,7 @@ export const ProjectManagerSessionView = ({
       emptyStatePending={Boolean(pendingSessionCreate)}
       onFileLinkActivate={handleFileLinkActivate}
       preferredSessionId={preferredSessionId}
-      startupStage="description"
+      startupStage={startupStage}
       workspacePath={workspacePath}
     />
   );

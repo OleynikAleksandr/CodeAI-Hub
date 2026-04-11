@@ -240,6 +240,13 @@ const TOOL_TO_CONFIRMABLE_STAGE: Record<string, ConfirmableStageId> = {
   "Diagram Modules": "diagram_modules",
 };
 
+const resolveStartupStageFromTool = (tool: string | null): string => {
+  if (!tool) return "description";
+  if (tool === VIRTUAL_SIMULATION_TOOL_LABEL) return "virtual_simulation";
+  if (tool === "Diagram Modules") return "diagram_modules";
+  return "description";
+};
+
 interface SessionContentProps {
   readonly activeTool: string | null;
   readonly onStepStarted: (sessionId: string) => void;
@@ -291,6 +298,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     <ProjectManagerSessionView
       pendingSessionCreate={pendingSessionCreate}
       preferredSessionId={preferredSessionId}
+      startupStage={resolveStartupStageFromTool(activeTool)}
       workspacePath={workspacePath}
     />
   );
