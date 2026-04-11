@@ -5,6 +5,8 @@ import type {
 
 export type TreeStatus = "active" | "progress" | "todo" | "blocked" | "draft" | "outdated";
 
+export type TreeNodeType = "product-part" | "cluster" | "module";
+
 export type TreeNode = {
   readonly id: string;
   readonly label: string;
@@ -17,6 +19,7 @@ export type TreeNode = {
   readonly onSelect?: () => void;
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
+  readonly nodeType?: TreeNodeType;
 };
 
 export const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {

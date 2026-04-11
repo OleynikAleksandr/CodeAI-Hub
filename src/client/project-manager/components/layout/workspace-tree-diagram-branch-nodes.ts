@@ -136,6 +136,7 @@ const buildModuleTreeNode = (
   label: mod.title,
   status: "todo",
   visualDepth: depth,
+  nodeType: "module",
   onSelect: () =>
     dispatchBranchSelected({
       kind: "module",
@@ -155,6 +156,7 @@ const buildClusterTreeNode = (
   label: cluster.id,
   status: "todo",
   visualDepth: depth,
+  nodeType: "cluster",
   isCollapsible: cluster.modules.length > 0,
   children: cluster.modules.map((mod) =>
     buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
@@ -184,6 +186,7 @@ const buildPartTreeNode = (
     label: part.id,
     status: part.status === "materialized" ? "draft" : "todo",
     visualDepth: depth,
+    nodeType: "product-part",
     isCollapsible: children.length > 0,
     children: children.length > 0 ? children : undefined,
     onSelect: () =>

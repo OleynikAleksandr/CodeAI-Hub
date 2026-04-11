@@ -569,6 +569,134 @@ body {
   background: var(--pm-border-color);
 }
 
+/* ========== Development Tree: Type Markers ========== */
+.pm-tree__type-marker {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: #a0aab6;
+  cursor: pointer;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+}
+
+.pm-tree__item--progress .pm-tree__type-marker {
+  color: #1a1207;
+  background: #d9a441;
+  border-color: #d9a441;
+}
+
+.pm-tree__item--active .pm-tree__type-marker {
+  color: #08221c;
+  background: var(--pm-accent-strong);
+  border-color: var(--pm-accent-strong);
+}
+
+.pm-tree__type-marker--has-children {
+  outline: 1px solid var(--pm-accent-strong);
+  outline-offset: 2px;
+}
+
+/* ========== Development Tree: PP Wrapper ========== */
+.pm-tree__pp-wrapper {
+  display: block;
+  margin: 4px 8px;
+  list-style: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.pm-tree__pp-wrapper--open {
+  padding: 2px 0 8px;
+  background: rgba(66, 201, 162, 0.04);
+  border-color: rgba(66, 201, 162, 0.45);
+}
+
+.pm-tree__pp-wrapper > .pm-tree__item {
+  margin: 0;
+}
+
+.pm-tree__pp-wrapper--open > .pm-tree__item {
+  background: transparent;
+  border-color: transparent;
+}
+
+.pm-tree__pp-wrapper--open > .pm-tree__item.pm-tree__item--selected {
+  color: var(--pm-accent-strong);
+}
+
+.pm-tree__pp-children {
+  padding: 0;
+  margin: 2px 10px 0 12px;
+  list-style: none;
+}
+
+/* ========== Development Tree: Cluster Wrapper ========== */
+.pm-tree__cluster-wrapper {
+  position: relative;
+  display: block;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.pm-tree__cluster-wrapper > .pm-tree__item {
+  margin: 0;
+}
+
+.pm-tree__cluster-wrapper--open > .pm-tree__item .pm-tree__label {
+  color: var(--pm-accent-strong);
+}
+
+/* ========== Development Tree: Cluster Connector Lines ========== */
+.pm-tree__cluster-children {
+  position: relative;
+  padding: 0;
+  margin: 0 0 2px 23px;
+  list-style: none;
+}
+
+.pm-tree__cluster-children > .pm-tree__item {
+  position: relative;
+  padding-left: 18px;
+  margin: 0;
+}
+
+.pm-tree__cluster-children > .pm-tree__item::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 14px;
+  height: 1px;
+  content: "";
+  background: rgba(95, 227, 186, 0.32);
+}
+
+.pm-tree__cluster-children > .pm-tree__item::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  content: "";
+  background: rgba(95, 227, 186, 0.32);
+}
+
+.pm-tree__cluster-children > .pm-tree__item:last-child::after {
+  height: 50%;
+}
+
 /* ========== Main Area ========== */
 .pm-main-area {
   display: flex;

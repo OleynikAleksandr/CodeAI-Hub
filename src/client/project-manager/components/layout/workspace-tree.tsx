@@ -214,88 +214,143 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     });
   };
 
-  const resolveNodeExpanded = (node: TreeNode): boolean =>
-    expandedNodes[node.id] ?? !node.id.startsWith("devtree:");
-
-  const flattenTree = (node: TreeNode): TreeNode[] => {
-    const result: TreeNode[] = [node];
-    if (node.kind === "separator") return result;
-    const isExpanded = resolveNodeExpanded(node);
-    if (!node.children || node.children.length === 0 || !isExpanded) {
-      return result;
-    }
-    for (const child of node.children) {
-      result.push(...flattenTree(child));
-    }
-    return result;
-  };
-
-  const buildTreeNodes = (): TreeNode[] => {
-    if (!selectedWorkspaceId) return [];
-    const nodes: TreeNode[] = [];
-
-    // Documentation Tree section
-    const docSeparator: TreeNode = {
-      id: "section:documentation",
-      kind: "separator",
-      label: "Documentation Tree",
-      status: "todo",
-      visualDepth: 0,
-    };
-    nodes.push(docSeparator);
-    for (const stage of resolveStageNodes()) {
-      nodes.push(stage);
-    }
-
-    // Development Tree section (only when parts exist)
-    const devTree = workflowState?.developmentTree;
-    if (devTree?.parts.length) {
-      const devSeparator: TreeNode = {
-        id: "section:development",
-        kind: "separator",
-        label: "Development Tree",
-        status: "todo",
-        visualDepth: 0,
-      };
-      nodes.push(devSeparator);
-      const devNodes = buildDevelopmentTreeNodes(devTree, 0);
-      for (const dn of devNodes) {
-        nodes.push(...flattenTree(dn));
-      }
-    }
-
-    return nodes;
-  };
-
-  const treeNodes = buildTreeNodes();
+  const resolveNodeExpanded = (nodeId: string): boolean =>
+    expandedNodes[nodeId] ?? false;
 
   const handleTreeToggle = (id: string) => {
     setExpandedNodes((current) => {
       const next = { ...current };
-      next[id] = !(current[id] ?? true);
+      next[id] = !current[id];
       return next;
     });
   };
 
+  const trunkNodes = resolveStageNodes();
+  const devTree = workflowState?.developmentTree;
+  const devTreeNodes =
+    selectedWorkspaceId && devTree?.parts.length
+      ? buildDevelopmentTreeNodes(devTree, 0)
+      : [];
+
+  const TYPE_MARKER_LABELS: Record<string, string> = {
+    "product-part": "P",
+    cluster: "C",
+    module: "M",
+  };
+
+  const renderTypeMarker = (node: TreeNode) => {
+    const letter = TYPE_MARKER_LABELS[node.nodeType ?? ""];
+    if (!letter) return <span className="pm-tree__status" />;
+    const hasChildren = (node.children?.length ?? 0) > 0;
+    return (
+      <span
+        className={`pm-tree__type-marker${hasChildren ? " pm-tree__type-marker--has-children" : ""}`}
+      >
+        {letter}
+      </span>
+    );
+  };
+
+  const renderItemClass = (node: TreeNode) =>
+    `pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`;
+
+  const renderModuleRow = (node: TreeNode) => (
+    <li
+      className={renderItemClass(node)}
+      key={node.id}
+      onClick={node.onSelect}
+      role={node.onSelect ? "button" : undefined}
+    >
+      {renderTypeMarker(node)}
+      <span className="pm-tree__label" title={node.title ?? node.label}>
+        {node.label}
+      </span>
+    </li>
+  );
+
+  const renderClusterNode = (node: TreeNode) => {
+    const isOpen = resolveNodeExpanded(node.id);
+    const clusterModules = node.children ?? [];
+    return (
+      <li
+        className={`pm-tree__cluster-wrapper${isOpen ? " pm-tree__cluster-wrapper--open" : ""}`}
+        key={node.id}
+      >
+        <div
+          className={renderItemClass(node)}
+          onClick={() => {
+            node.onSelect?.();
+            if (node.isCollapsible) handleTreeToggle(node.id);
+          }}
+          role="button"
+        >
+          {renderTypeMarker(node)}
+          <span className="pm-tree__label" title={node.title ?? node.label}>
+            {node.label}
+          </span>
+        </div>
+        {isOpen && clusterModules.length > 0 && (
+          <ul className="pm-tree__cluster-children">
+            {clusterModules.map((mod) => renderModuleRow(mod))}
+          </ul>
+        )}
+      </li>
+    );
+  };
+
+  const renderPartNode = (node: TreeNode) => {
+    const isOpen = resolveNodeExpanded(node.id);
+    const clusters =
+      node.children?.filter((c) => c.nodeType === "cluster") ?? [];
+    const standaloneModules =
+      node.children?.filter((c) => c.nodeType === "module") ?? [];
+    return (
+      <li
+        className={`pm-tree__pp-wrapper${isOpen ? " pm-tree__pp-wrapper--open" : ""}`}
+        key={node.id}
+      >
+        <div
+          className={renderItemClass(node)}
+          onClick={() => {
+            node.onSelect?.();
+            if (node.isCollapsible) handleTreeToggle(node.id);
+          }}
+          role="button"
+        >
+          {renderTypeMarker(node)}
+          <span className="pm-tree__label" title={node.title ?? node.label}>
+            {node.label}
+          </span>
+        </div>
+        {isOpen && (clusters.length > 0 || standaloneModules.length > 0) && (
+          <ul className="pm-tree__pp-children">
+            {clusters.map((cluster) => renderClusterNode(cluster))}
+            {standaloneModules.map((mod) => renderModuleRow(mod))}
+          </ul>
+        )}
+      </li>
+    );
+  };
+
+  const hasContent =
+    selectedWorkspaceId && (trunkNodes.length > 0 || devTreeNodes.length > 0);
+
   return (
     <div className="pm-sidebar__tree">
-      {treeNodes.length === 0 ? (
+      {!hasContent ? (
         <div className="pm-tree__empty">{emptyWorkspaceLabel}</div>
       ) : (
         <ul className="pm-tree__list">
-          {treeNodes.map((node) => {
-            if (node.kind === "separator") {
-              return (
-                <li className="pm-tree__separator" key={node.id}>
-                  {node.label}
-                </li>
-              );
-            }
-            const isExpanded = resolveNodeExpanded(node);
+          {/* Documentation Tree — flat trunk rows */}
+          <li className="pm-tree__separator" key="section:documentation">
+            Documentation Tree
+          </li>
+          {trunkNodes.map((node) => {
+            const isExpanded = resolveNodeExpanded(node.id);
             return (
               <li
                 aria-current={node.isSelected ? "true" : undefined}
-                className={`pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`}
+                className={renderItemClass(node)}
                 onClick={node.onSelect}
                 key={node.id}
                 role={node.onSelect ? "button" : undefined}
@@ -336,6 +391,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
               </li>
             );
           })}
+
+          {/* Development Tree — nested structure */}
+          {devTreeNodes.length > 0 && (
+            <>
+              <li className="pm-tree__separator" key="section:development">
+                Development Tree
+              </li>
+              {devTreeNodes.map((partNode) => renderPartNode(partNode))}
+            </>
+          )}
         </ul>
       )}
     </div>
