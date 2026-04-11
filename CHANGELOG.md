@@ -4,16 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.937] - 2026-04-11
+## [1.1.938] - 2026-04-11
 ### Added
 - **Stage confirmation card**: clicking an idle trunk stage (Virtual Simulation, Diagram Modules) in the sidebar shows a confirmation card in the left panel. The card displays the upstream artifact name and availability status, a warning that Start confirms readiness, and a Start button that creates the agent session and sends the instruction pack automatically. When the upstream artifact is missing, the button is disabled and a blocked message is shown. Localized via `ui_interface` / `user_guidance` / `system_feedback` categories.
 
-### Fixed
-- **Session scope stage**: session tab now reflects the active stage immediately after creation instead of defaulting to "Description".
-- **Startup session resume**: deferred `pm:dialog:open` dispatch on workspace auto-select so the session view listener is mounted before the event fires. Fixes sessions not loading on workspace open.
+### Changed
+- **Prop-based session intent**: `ProjectManagerSessionView` receives `initialDialogIntent` as a prop resolved from workflow state continuity chains, instead of relying on `pm:dialog:open` broadcast events for startup and navigation. Sessions load instantly on workspace open and stage switch regardless of React mount timing. The event listener remains for runtime-only scenarios (confirmation card Start, manual sidebar clicks). Scales to any number of sessions without timing workarounds.
+- **Neutral empty state**: session panel shows "No active session" / "Select a workflow step in the sidebar" instead of Description-specific questionnaire instructions.
+- **Dynamic startupStage**: session scope reflects the active stage immediately instead of hardcoded "description".
 
-## [1.1.935–1.1.936] - 2026-04-11
-- Intermediate releases (superseded by 1.1.937).
+## [1.1.935–1.1.937] - 2026-04-11
+- Intermediate releases (superseded by 1.1.938).
 
 ## [1.1.934] - 2026-04-11
 ### Changed
