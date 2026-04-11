@@ -16,13 +16,20 @@
 
 ## Phase 1 — Stage Confirmation Card (owner: Claude, updated: 2026-04-11)
 
-### Stream: Confirmation Card Component + Main Area Integration
+### Stream: Confirmation Card Component + Main Area Integration — DONE
 
-1. [DONE] Create `src/client/project-manager/components/shared/stage-confirmation-card.tsx`: component with upstream artifact info helpers, start logic via WorkflowStepStartService, localized texts (ui_interface / user_guidance / system_feedback categories), existing PM CSS classes. Scope: 1 new file.
-2. [DONE] Update `main-area.tsx`: destructure `snapshot` from `useWorkflowStateSnapshot()`, add `handleStepStarted` callback, pass new props to `MainAreaSessionContent`. Scope: 1 file.
-3. [DONE] Update `main-area-panel-content.tsx`: extend `SessionContentProps`, add confirmation card branch for idle VS/DM stages without existing session, import `hasExistingStageSession` + `StageConfirmationCard`. Scope: 1 file.
-4. [DONE] Run targeted builds: `npm run build:webview` + `npm run typecheck:webview` — both green.
-5. [DONE] Git Commit: `feat: add stage confirmation card for trunk workflow step launch` (hash: 3c3462713)
-6. [DONE] Update documentation: todo-plan.md, README, CHANGELOG for v1.1.935.
-7. [DONE] Git Commit: `docs: align README and CHANGELOG with v1.1.935` (hash: TBD)
-8. [TODO] Release build: `build-all.sh` + `build-release.sh`.
+1. [DONE] Create `stage-confirmation-card.tsx` (hash: 3c3462713)
+2. [DONE] Fix hardcoded `startupStage="description"` → dynamic prop (hash: 1437eab0e)
+3. [DONE] Prop-based session intent replaces event-based startup (hash: dd4ec40af)
+4. [DONE] Derived viewMode eliminates session view flashing (hash: 8a8ec1685)
+5. [DONE] Neutral empty state text (hash: fbf6269f1)
+6. [DONE] Smooth fade transition on confirmation card start (hash: 57d7293aa)
+7. [DONE] Eliminate session view jitter from workflow state polling (hash: 57695362e)
+8. [DONE] Pass session intent via props after confirmation card start (hash: ad44efa40)
+
+### Stream: Open issues for next session
+
+1. [TODO] Button spinner not visible — CSS class `pm-confirmation-card__start-btn--starting` specificity raised but still not rendering in production. Investigate whether the CSS file is loaded in correct order or whether `pm-provider-picker__button` padding override still wins.
+2. [TODO] Test full Start→fade→session flow end-to-end after fix ad44efa40. Previous release (v1.1.940) had the card fade out but session not appearing without manual stage switching. v1.1.942 should fix this via prop-based intent.
+3. [TODO] Update `SystemArchitecture.md` and `WorkflowSteps_Overview.md` with confirmation card boundary notes.
+4. [TODO] Session report for this session.
