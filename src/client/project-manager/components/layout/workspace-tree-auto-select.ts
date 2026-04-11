@@ -89,7 +89,11 @@ export const useWorkspaceTreeAutoSelect = (
         params.onClearArtifactWithTool(payload.clearTool);
       }
       if (payload.session) {
-        params.onResumeSession(payload.session);
+        // Defer session resume so React can process the stage activation,
+        // re-render MainAreaSessionContent, and mount ProjectManagerSessionView
+        // (which registers the pm:dialog:open listener) before the event fires.
+        const sessionPayload = payload.session;
+        window.setTimeout(() => params.onResumeSession(sessionPayload), 0);
       }
       pendingWorkspaceIdRef.current = null;
     },
