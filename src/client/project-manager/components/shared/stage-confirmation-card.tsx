@@ -133,7 +133,7 @@ export const StageConfirmationCard: React.FC<{
   readonly workflowSnapshot: WorkflowStateSnapshot;
   readonly workspaceSlug: string;
   readonly workspacePath: string;
-  readonly onStarted: (sessionId: string) => void;
+  readonly onStarted: (sessionId: string, intent: StageSessionIntent) => void;
 }> = (props) => {
   const { stage, workflowSnapshot, workspaceSlug, workspacePath, onStarted } =
     props;
@@ -177,6 +177,16 @@ export const StageConfirmationCard: React.FC<{
       }
 
       const onSessionCreated = (sessionId: string) => {
+        const intent: StageSessionIntent = {
+          providerId,
+          providerSessionId: null,
+          workspacePath,
+          workspaceSlug,
+          initiativeSlug: workspaceSlug,
+          stage,
+          sessionKind: "collector",
+          runSlug: null,
+        };
         // Fade out the confirmation card, then switch to session view
         const cardEl = cardRef.current;
         if (cardEl) {
@@ -184,21 +194,7 @@ export const StageConfirmationCard: React.FC<{
         }
         const switchDelay = cardEl ? 300 : 0;
         window.setTimeout(() => {
-          onStarted(sessionId);
-          window.dispatchEvent(
-            new CustomEvent("pm:dialog:open", {
-              detail: {
-                providerId,
-                providerSessionId: null,
-                workspacePath,
-                workspaceSlug,
-                initiativeSlug: workspaceSlug,
-                stage,
-                sessionKind: "collector",
-                runSlug: null,
-              },
-            })
-          );
+          onStarted(sessionId, intent);
         }, switchDelay);
       };
 

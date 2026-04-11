@@ -228,9 +228,29 @@ export const MainArea: React.FC<MainAreaProps> = ({
 
   const { loaded: workflowStoreLoaded, snapshot: workflowSnapshot } = useWorkflowStateSnapshot();
 
-  const handleStepStarted = useCallback((sessionId: string) => {
-    setPreferredSessionId(sessionId);
-  }, []);
+  const [stepStartedIntent, setStepStartedIntent] = useState<{
+    readonly providerId: string;
+    readonly providerSessionId: string | null;
+    readonly workspacePath: string;
+    readonly workspaceSlug: string;
+    readonly initiativeSlug: string | null;
+    readonly stage: string | null;
+    readonly sessionKind: "collector" | null;
+    readonly runSlug: string | null;
+  } | null>(null);
+
+  const handleStepStarted = useCallback(
+    (sessionId: string, intent: NonNullable<typeof stepStartedIntent>) => {
+      setPreferredSessionId(sessionId);
+      setStepStartedIntent(intent);
+    },
+    []
+  );
+
+  // Reset started intent when stage changes
+  useEffect(() => {
+    setStepStartedIntent(null);
+  }, [activeTool]);
   const isDescriptionActive = activeTool === "Description";
   const activeWorkspaceSlug = activeWorkspace ? resolveWorkspaceSlug(activeWorkspace) : null;
   const shouldShowQuestionnaireEditor = Boolean(
@@ -294,6 +314,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
             pendingSessionCreate={pendingSessionCreate}
             preferredSessionId={preferredSessionId}
             showDescriptionHelp={showDescriptionHelpInSessionPanel}
+            stepStartedIntent={stepStartedIntent}
             workflowSnapshot={workflowSnapshot}
             workspacePath={activeWorkspace?.path}
             workspaceSlug={activeWorkspaceSlug}

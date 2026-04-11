@@ -9,6 +9,7 @@ import {
   hasExistingStageSession,
   resolveStageSessionIntent,
   StageConfirmationCard,
+  type StageSessionIntent,
 } from "../shared/stage-confirmation-card";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
@@ -251,10 +252,11 @@ const resolveStartupStageFromTool = (tool: string | null): string => {
 
 interface SessionContentProps {
   readonly activeTool: string | null;
-  readonly onStepStarted: (sessionId: string) => void;
+  readonly onStepStarted: (sessionId: string, intent: StageSessionIntent) => void;
   readonly pendingSessionCreate: { readonly providerTitle: string } | null;
   readonly preferredSessionId: string | null;
   readonly showDescriptionHelp: boolean;
+  readonly stepStartedIntent: StageSessionIntent | null;
   readonly workflowSnapshot: WorkflowStateSnapshot | null;
   readonly workspacePath: string | undefined;
   readonly workspaceSlug: string | null;
@@ -266,6 +268,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   pendingSessionCreate,
   preferredSessionId,
   showDescriptionHelp,
+  stepStartedIntent,
   workflowSnapshot,
   workspacePath,
   workspaceSlug,
@@ -274,11 +277,13 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     return <DescriptionStepHelp />;
   }
 
-  // Show confirmation card for idle VS/DM stages without an existing session
+  // Show confirmation card for idle VS/DM stages without an existing session,
+  // UNLESS the step was just started (stepStartedIntent is set)
   const confirmableStage = activeTool
     ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
     : undefined;
   if (
+    !stepStartedIntent &&
     confirmableStage &&
     workflowSnapshot &&
     workspaceSlug &&
@@ -319,7 +324,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   return (
     <ProjectManagerSessionView
-      initialDialogIntent={initialIntent}
+      initialDialogIntent={stepStartedIntent ?? initialIntent}
       pendingSessionCreate={pendingSessionCreate}
       preferredSessionId={preferredSessionId}
       startupStage={stageId}
