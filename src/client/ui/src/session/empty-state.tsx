@@ -9,12 +9,12 @@ const resolveIdleCopy = (
     title: t(
       USER_MESSAGES_CATEGORY,
       "session.empty_state.idle_title",
-      "Start with the Description questionnaire"
+      "No active session"
     ),
     description: t(
       USER_MESSAGES_CATEGORY,
       "session.empty_state.idle_description",
-      'In Artifacts on the right, complete the questionnaire and click "Submit questionnaire". Pick one provider to open the Description dialog, then continue in the same session until `Final_Description.md` is ready.'
+      "Select a workflow step in the sidebar to start or resume a session."
     ),
   };
 };
