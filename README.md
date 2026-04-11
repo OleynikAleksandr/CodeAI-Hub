@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.932
-- **Development Tree baseline**: after Diagram Modules, the sidebar projects a Product Part / Cluster / Module tree. "Documentation Tree" and "Development Tree" section separators replace the old workspace root node.
+## Current Release — v1.1.933
+- **Type markers in development tree**: P/C/M letter markers replace toggle triangles and type badges. Status-driven colors (gray/orange/green) and green outline on expandable nodes with children.
+- **Nested sidebar structure**: ProductPart wrapper with accent frame, cluster connector lines to child modules.
+- **Development Tree baseline**: after Diagram Modules, the sidebar projects a Product Part / Cluster / Module tree.
 - **Three-color stage indicators**: gray (idle), orange (in progress), green (artifact available).
-- **Auto-select last active stage**: opening a workspace jumps to the last non-idle stage.
-- **Zoom badge in status bar**: diagram zoom indicator relocated for consistent visibility.
 - **Deferred**: branch session lifecycle (lazy start, provider inheritance, gating, outdated propagation) ships in a follow-up release.
 
 ### 1.1.922 (previous)

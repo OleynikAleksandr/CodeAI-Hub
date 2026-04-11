@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.933] - 2026-04-11
+### Changed
+- **Type markers**: development tree branch nodes now display P/C/M letter markers (19×19px) instead of separate toggle triangles and type badges. Marker color follows three-state scheme: gray (idle), orange (in-progress), green (done). Expandable markers with children show a green outline with 2px offset.
+- **Nested sidebar structure**: development tree renders as nested DOM with ProductPart wrapper (accent frame on expand), cluster wrapper with vertical/horizontal connector lines to child modules. Row click expands/collapses without separate chevron.
+
 ## [1.1.932] - 2026-04-10
 ### Changed
 - **Module kind field removed**: the internal DSL classifier (`service`, `adapter`, `gateway`, etc.) is removed from the entire codebase — types, parsers, serializer, diff service, agent templates, and all tests. The field was never used for behavioral decisions.
