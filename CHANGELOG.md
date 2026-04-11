@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.935] - 2026-04-11
+### Added
+- **Stage confirmation card**: clicking an idle trunk stage (Virtual Simulation, Diagram Modules) in the sidebar shows a confirmation card in the left panel. The card displays the upstream artifact name and availability status, a warning that Start confirms readiness, and a Start button that creates the agent session and sends the instruction pack automatically. When the upstream artifact is missing, the button is disabled and a blocked message is shown. Localized via `ui_interface` / `user_guidance` / `system_feedback` categories.
+
 ## [1.1.934] - 2026-04-11
 ### Changed
 - **Type markers**: development tree branch nodes now display P/C/M letter markers (19×19px) instead of separate toggle triangles and type badges. Marker color follows three-state scheme: gray (idle), orange (in-progress), green (done). Expandable markers with children show a green outline with 2px offset.

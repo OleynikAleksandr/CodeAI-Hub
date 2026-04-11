@@ -18,12 +18,11 @@
 
 ### Stream: Confirmation Card Component + Main Area Integration
 
-1. [TODO] Create `src/client/project-manager/components/shared/stage-confirmation-card.tsx`: component with upstream artifact info helpers, start logic via WorkflowStepStartService, localized texts, existing PM CSS classes. Scope: 1 new file.
-2. [TODO] Git Commit: `feat: add stage confirmation card component` (hash: TBD)
-3. [TODO] Update `main-area.tsx`: destructure `snapshot` from `useWorkflowStateSnapshot()`, add `handleStepStarted` callback, pass new props to `MainAreaSessionContent`. Scope: 1 file.
-4. [TODO] Update `main-area-panel-content.tsx`: extend `SessionContentProps`, add confirmation card branch for idle VS/DM stages without existing session. Scope: 1 file.
-5. [TODO] Git Commit: `feat: integrate stage confirmation card into main area panels` (hash: TBD)
-6. [TODO] Run targeted builds: `npm run build:webview` + `npm run typecheck:webview`. Fix if needed.
-7. [TODO] Git Commit: `fix: ...` (hash: TBD, only if build fixes needed)
-8. [TODO] Update documentation: `SystemArchitecture.md` (add confirmation card boundary note), `WorkflowSteps_Overview.md` (update VS/DM start mechanism), `todo-plan.md` status.
-9. [TODO] Git Commit: `docs: update architecture and workflow docs for confirmation card` (hash: TBD)
+1. [DONE] Create `src/client/project-manager/components/shared/stage-confirmation-card.tsx`: component with upstream artifact info helpers, start logic via WorkflowStepStartService, localized texts (ui_interface / user_guidance / system_feedback categories), existing PM CSS classes. Scope: 1 new file.
+2. [DONE] Update `main-area.tsx`: destructure `snapshot` from `useWorkflowStateSnapshot()`, add `handleStepStarted` callback, pass new props to `MainAreaSessionContent`. Scope: 1 file.
+3. [DONE] Update `main-area-panel-content.tsx`: extend `SessionContentProps`, add confirmation card branch for idle VS/DM stages without existing session, import `hasExistingStageSession` + `StageConfirmationCard`. Scope: 1 file.
+4. [DONE] Run targeted builds: `npm run build:webview` + `npm run typecheck:webview` — both green.
+5. [DONE] Git Commit: `feat: add stage confirmation card for trunk workflow step launch` (hash: 3c3462713)
+6. [DONE] Update documentation: todo-plan.md, README, CHANGELOG for v1.1.935.
+7. [DONE] Git Commit: `docs: align README and CHANGELOG with v1.1.935` (hash: TBD)
+8. [TODO] Release build: `build-all.sh` + `build-release.sh`.
