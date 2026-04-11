@@ -1,4 +1,5 @@
 import type React from "react";
+import { useMemo } from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
@@ -296,10 +297,13 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   }
 
   const stageId = resolveStartupStageFromTool(activeTool);
-  const initialIntent =
-    workflowSnapshot && workspacePath && workspaceSlug
-      ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
-      : null;
+  const initialIntent = useMemo(
+    () =>
+      workflowSnapshot && workspacePath && workspaceSlug
+        ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
+        : null,
+    [stageId, workflowSnapshot, workspacePath, workspaceSlug]
+  );
 
   return (
     <ProjectManagerSessionView

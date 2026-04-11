@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
 import { openProjectManagerFileLink } from "../../services/project-manager-file-link-opener";
 import type { StageSessionIntent } from "../shared/stage-confirmation-card";
@@ -15,8 +15,6 @@ type ProjectManagerSessionViewProps = {
   readonly initialDialogIntent?: StageSessionIntent | null;
 };
 
-type ViewMode = "runtime" | "dialog";
-
 export const ProjectManagerSessionView = ({
   workspacePath,
   preferredSessionId,
@@ -24,33 +22,18 @@ export const ProjectManagerSessionView = ({
   startupStage = "description",
   initialDialogIntent = null,
 }: ProjectManagerSessionViewProps) => {
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    initialDialogIntent ? "dialog" : "runtime"
-  );
-  const [dialogIntent, setDialogIntent] = useState<DialogOpenIntent | null>(
-    initialDialogIntent
-  );
-  const appliedIntentRef = useRef<StageSessionIntent | null>(initialDialogIntent);
+  // Runtime override — set ONLY by pm:dialog:open events (confirmation card Start, manual clicks).
+  // Cleared on workspace or stage change.
+  const [dialogIntentOverride, setDialogIntentOverride] =
+    useState<DialogOpenIntent | null>(null);
+
   const handleFileLinkActivate = useCallback((target: FileLinkTarget) => {
     openProjectManagerFileLink(target);
   }, []);
 
-  // When initialDialogIntent changes (stage switch, startup), sync immediately
+  // Clear override on workspace change
   useEffect(() => {
-    if (initialDialogIntent === appliedIntentRef.current) return;
-    appliedIntentRef.current = initialDialogIntent;
-    if (initialDialogIntent) {
-      setDialogIntent(initialDialogIntent);
-      setViewMode("dialog");
-    } else {
-      setViewMode("runtime");
-    }
-  }, [initialDialogIntent]);
-
-  useEffect(() => {
-    setDialogIntent(null);
-    setViewMode("runtime");
-    appliedIntentRef.current = null;
+    setDialogIntentOverride(null);
   }, [workspacePath]);
 
   // Runtime events (new session creation via confirmation card, manual navigation)
@@ -66,8 +49,7 @@ export const ProjectManagerSessionView = ({
       ) {
         return;
       }
-      setDialogIntent(detail);
-      setViewMode("dialog");
+      setDialogIntentOverride(detail);
     };
     window.addEventListener("pm:dialog:open", handler);
     return () => {
@@ -75,12 +57,15 @@ export const ProjectManagerSessionView = ({
     };
   }, []);
 
-  if (viewMode === "dialog") {
+  // Derived — no intermediate renders, no flashing
+  const effectiveIntent = dialogIntentOverride ?? initialDialogIntent;
+
+  if (effectiveIntent) {
     return (
       <ProjectManagerDialogSessionView
         emptyStatePending={Boolean(pendingSessionCreate)}
-        intent={dialogIntent}
-        onExit={() => setViewMode("runtime")}
+        intent={effectiveIntent}
+        onExit={() => setDialogIntentOverride(null)}
         onFileLinkActivate={handleFileLinkActivate}
       />
     );
