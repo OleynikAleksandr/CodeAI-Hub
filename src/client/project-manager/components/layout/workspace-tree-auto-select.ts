@@ -89,15 +89,7 @@ export const useWorkspaceTreeAutoSelect = (
         params.onClearArtifactWithTool(payload.clearTool);
       }
       if (payload.session) {
-        // Defer session resume so React can process the stage activation,
-        // re-render MainAreaSessionContent, and mount ProjectManagerSessionView
-        // (which registers the pm:dialog:open listener) before the event fires.
-        // requestAnimationFrame waits for the browser paint after React commit;
-        // the nested setTimeout ensures useEffect listeners are registered.
-        const sessionPayload = payload.session;
-        requestAnimationFrame(() => {
-          window.setTimeout(() => params.onResumeSession(sessionPayload), 50);
-        });
+        params.onResumeSession(payload.session);
       }
       pendingWorkspaceIdRef.current = null;
     },

@@ -6,6 +6,7 @@ import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import {
   hasExistingStageSession,
+  resolveStageSessionIntent,
   StageConfirmationCard,
 } from "../shared/stage-confirmation-card";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
@@ -294,11 +295,18 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     );
   }
 
+  const stageId = resolveStartupStageFromTool(activeTool);
+  const initialIntent =
+    workflowSnapshot && workspacePath && workspaceSlug
+      ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
+      : null;
+
   return (
     <ProjectManagerSessionView
+      initialDialogIntent={initialIntent}
       pendingSessionCreate={pendingSessionCreate}
       preferredSessionId={preferredSessionId}
-      startupStage={resolveStartupStageFromTool(activeTool)}
+      startupStage={stageId}
       workspacePath={workspacePath}
     />
   );

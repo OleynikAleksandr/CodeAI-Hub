@@ -53,16 +53,77 @@ const resolveUpstreamArtifactInfo = (
   };
 };
 
+const resolveLatestChainSegment = (
+  snapshot: WorkflowStateSnapshot,
+  stage: string
+): { readonly providerId: string; readonly providerSessionId: string } | null => {
+  const chains = snapshot.continuity?.chains ?? [];
+  let best: { readonly updatedAt: string; readonly providerId: string; readonly providerSessionId: string } | null = null;
+  for (const chain of chains) {
+    if (chain.stage !== stage) continue;
+    const last = chain.segments.at(-1);
+    if (!last) continue;
+    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
+      best = { updatedAt: chain.updatedAt, providerId: last.providerId, providerSessionId: last.providerSessionId };
+    }
+  }
+  return best;
+};
+
 export const hasExistingStageSession = (
   stage: ConfirmableStageId,
   snapshot: WorkflowStateSnapshot
-): boolean => {
-  const chains = snapshot.continuity?.chains ?? [];
-  for (const chain of chains) {
-    if (chain.stage !== stage) continue;
-    if (chain.segments.length > 0) return true;
+): boolean => resolveLatestChainSegment(snapshot, stage) !== null;
+
+export type StageSessionIntent = {
+  readonly providerId: string;
+  readonly providerSessionId: string | null;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+  readonly initiativeSlug: string | null;
+  readonly stage: string | null;
+  readonly sessionKind: "collector" | null;
+  readonly runSlug: string | null;
+};
+
+/**
+ * Resolve the dialog intent for a trunk stage from workflow state.
+ * Returns null if the stage has no existing session in continuity chains.
+ * Used as a prop-based alternative to pm:dialog:open for startup/navigation.
+ */
+export const resolveStageSessionIntent = (
+  stage: string,
+  snapshot: WorkflowStateSnapshot,
+  workspacePath: string,
+  workspaceSlug: string
+): StageSessionIntent | null => {
+  // Description uses its own session path, not continuity chains
+  if (stage === "description") {
+    const session = snapshot.description?.primarySession;
+    if (!session) return null;
+    return {
+      providerId: session.providerId,
+      providerSessionId: session.providerSessionId,
+      workspacePath,
+      workspaceSlug,
+      initiativeSlug: workspaceSlug,
+      stage: "description",
+      sessionKind: "collector",
+      runSlug: null,
+    };
   }
-  return false;
+  const segment = resolveLatestChainSegment(snapshot, stage);
+  if (!segment) return null;
+  return {
+    providerId: segment.providerId,
+    providerSessionId: segment.providerSessionId,
+    workspacePath,
+    workspaceSlug,
+    initiativeSlug: workspaceSlug,
+    stage,
+    sessionKind: "collector",
+    runSlug: null,
+  };
 };
 
 const startService = new WorkflowStepStartService();

@@ -56,6 +56,7 @@ test("project-manager-session-view restores dialog mode only from live PM intent
   assert.equal(source.includes("saveLastDialogIntent"), false);
   assert.equal(source.includes('setViewMode("runtime");'), true);
   assert.equal(source.includes("startupStage={startupStage}"), true);
+  assert.equal(source.includes("initialDialogIntent"), true);
 });
 
 test("project-manager-runtime-session-view does not seed empty state from browser-local dialog cache", async () => {
