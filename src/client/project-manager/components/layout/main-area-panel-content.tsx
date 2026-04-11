@@ -1,5 +1,5 @@
 import type React from "react";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
@@ -297,13 +297,25 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   }
 
   const stageId = resolveStartupStageFromTool(activeTool);
-  const initialIntent = useMemo(
-    () =>
-      workflowSnapshot && workspacePath && workspaceSlug
-        ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
-        : null,
-    [stageId, workflowSnapshot, workspacePath, workspaceSlug]
-  );
+  const nextIntent =
+    workflowSnapshot && workspacePath && workspaceSlug
+      ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
+      : null;
+  // Stabilize intent identity — only create a new object when the
+  // session actually changed, not on every workflow state poll cycle.
+  const intentRef = useRef(nextIntent);
+  const initialIntent = useMemo(() => {
+    const prev = intentRef.current;
+    if (
+      prev?.providerId === nextIntent?.providerId &&
+      prev?.providerSessionId === nextIntent?.providerSessionId &&
+      prev?.stage === nextIntent?.stage
+    ) {
+      return prev;
+    }
+    intentRef.current = nextIntent;
+    return nextIntent;
+  }, [nextIntent]);
 
   return (
     <ProjectManagerSessionView

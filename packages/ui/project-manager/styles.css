@@ -1169,7 +1169,7 @@ body {
     transform 0.3s ease;
 }
 
-.pm-confirmation-card__start-btn--starting {
+.pm-provider-picker__button.pm-confirmation-card__start-btn--starting {
   position: relative;
   padding-left: 34px;
   pointer-events: none;

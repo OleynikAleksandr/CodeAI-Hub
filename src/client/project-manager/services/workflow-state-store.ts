@@ -72,8 +72,16 @@ class WorkflowStateStore {
     const poll = async () => {
       const snapshot = await api.getWorkflowState(slug, wPath);
       if (this.cancelled || this.state.workspaceSlug !== slug) return;
+      // Skip emit if snapshot data has not changed — prevents
+      // unnecessary re-renders in all subscribers every poll cycle.
+      const prev = this.state.snapshot;
+      const changed =
+        !this.state.loaded ||
+        !prev ||
+        !snapshot ||
+        prev.updatedAt !== snapshot.updatedAt;
       this.state = { workspaceSlug: slug, workspacePath: wPath, snapshot, loaded: true };
-      this.emit();
+      if (changed) this.emit();
       if (fast && snapshot) {
         fast = false;
         window.clearInterval(this.timer);
