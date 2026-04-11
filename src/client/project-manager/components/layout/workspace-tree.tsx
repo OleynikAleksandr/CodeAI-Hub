@@ -48,6 +48,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const [expandedNodes, setExpandedNodes] = useState<
     Readonly<Record<string, boolean>>
   >({});
+  const [openPartId, setOpenPartId] = useState<string | null>(null);
+  const [openClusterId, setOpenClusterId] = useState<string | null>(null);
   const activeStage = useWorkspaceTreeActiveStage(selectedWorkspaceId);
   const storeState = useWorkflowStateSnapshot();
   const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
@@ -158,6 +160,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     }
     markWorkspaceChanged();
     setExpandedNodes({});
+    setOpenPartId(null);
+    setOpenClusterId(null);
   }, [
     markWorkspaceChanged,
     resetPendingSelection,
@@ -225,6 +229,20 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     });
   };
 
+  const togglePart = (partId: string) => {
+    if (openPartId === partId) {
+      setOpenPartId(null);
+      setOpenClusterId(null);
+    } else {
+      setOpenPartId(partId);
+      setOpenClusterId(null);
+    }
+  };
+
+  const toggleCluster = (clusterId: string) => {
+    setOpenClusterId(openClusterId === clusterId ? null : clusterId);
+  };
+
   const trunkNodes = resolveStageNodes();
   const devTree = workflowState?.developmentTree;
   const devTreeNodes =
@@ -269,7 +287,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   );
 
   const renderClusterNode = (node: TreeNode) => {
-    const isOpen = resolveNodeExpanded(node.id);
+    const isOpen = openClusterId === node.id;
     const clusterModules = node.children ?? [];
     return (
       <li
@@ -280,7 +298,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           className={renderItemClass(node)}
           onClick={() => {
             node.onSelect?.();
-            if (node.isCollapsible) handleTreeToggle(node.id);
+            if (node.isCollapsible) toggleCluster(node.id);
           }}
           role="button"
         >
@@ -299,7 +317,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   };
 
   const renderPartNode = (node: TreeNode) => {
-    const isOpen = resolveNodeExpanded(node.id);
+    const isOpen = openPartId === node.id;
     const clusters =
       node.children?.filter((c) => c.nodeType === "cluster") ?? [];
     const standaloneModules =
@@ -313,7 +331,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           className={renderItemClass(node)}
           onClick={() => {
             node.onSelect?.();
-            if (node.isCollapsible) handleTreeToggle(node.id);
+            if (node.isCollapsible) togglePart(node.id);
           }}
           role="button"
         >
