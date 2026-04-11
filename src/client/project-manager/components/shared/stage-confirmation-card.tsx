@@ -141,6 +141,7 @@ export const StageConfirmationCard: React.FC<{
   const [startInFlight, setStartInFlight] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
   const mountedRef = useRef(true);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(
     () => () => {
@@ -176,22 +177,29 @@ export const StageConfirmationCard: React.FC<{
       }
 
       const onSessionCreated = (sessionId: string) => {
-        onStarted(sessionId);
-        // Dispatch pm:dialog:open so the left panel switches to the session
-        window.dispatchEvent(
-          new CustomEvent("pm:dialog:open", {
-            detail: {
-              providerId,
-              providerSessionId: null,
-              workspacePath,
-              workspaceSlug,
-              initiativeSlug: workspaceSlug,
-              stage,
-              sessionKind: "collector",
-              runSlug: null,
-            },
-          })
-        );
+        // Fade out the confirmation card, then switch to session view
+        const cardEl = cardRef.current;
+        if (cardEl) {
+          cardEl.classList.add("pm-confirmation-card--fading");
+        }
+        const switchDelay = cardEl ? 300 : 0;
+        window.setTimeout(() => {
+          onStarted(sessionId);
+          window.dispatchEvent(
+            new CustomEvent("pm:dialog:open", {
+              detail: {
+                providerId,
+                providerSessionId: null,
+                workspacePath,
+                workspaceSlug,
+                initiativeSlug: workspaceSlug,
+                stage,
+                sessionKind: "collector",
+                runSlug: null,
+              },
+            })
+          );
+        }, switchDelay);
       };
 
       if (stage === "virtual_simulation") {
@@ -285,8 +293,12 @@ export const StageConfirmationCard: React.FC<{
     "No provider available for the agent."
   );
 
+  const btnClassName = startInFlight
+    ? "pm-provider-picker__button pm-provider-picker__button--primary pm-confirmation-card__start-btn--starting"
+    : "pm-provider-picker__button pm-provider-picker__button--primary";
+
   return (
-    <div className="pm-details" style={{ padding: "24px 20px" }}>
+    <div className="pm-details" ref={cardRef} style={{ padding: "24px 20px" }}>
       <div style={{ marginBottom: 16 }}>
         <strong style={{ fontSize: 14 }}>{titleText}</strong>
       </div>
@@ -327,7 +339,7 @@ export const StageConfirmationCard: React.FC<{
 
         <div style={{ marginTop: 8 }}>
           <button
-            className="pm-provider-picker__button pm-provider-picker__button--primary"
+            className={btnClassName}
             disabled={blocked || startInFlight || !hasProviders}
             onClick={handleStart}
             type="button"

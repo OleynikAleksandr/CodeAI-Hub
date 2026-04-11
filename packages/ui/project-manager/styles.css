@@ -1158,4 +1158,41 @@ body {
   opacity: 0.5;
 }
 
+/* -------- Confirmation card start transition -------- */
+
+.pm-confirmation-card--fading {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.pm-confirmation-card__start-btn--starting {
+  position: relative;
+  padding-left: 34px;
+  pointer-events: none;
+}
+
+.pm-confirmation-card__start-btn--starting::before {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  content: "";
+  border: 2px solid rgba(8, 34, 28, 0.3);
+  border-top-color: #08221c;
+  border-radius: 50%;
+  animation: pm-spin 0.6s linear infinite;
+}
+
+@keyframes pm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Session UI styles are sourced from media/session-view.css. */
