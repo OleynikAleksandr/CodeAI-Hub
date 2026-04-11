@@ -7,9 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.936
+## Current Release — v1.1.937
 - **Stage confirmation card**: clicking an idle trunk stage (Virtual Simulation, Diagram Modules) in the sidebar now shows a confirmation card in the left panel instead of an empty view. The card displays the upstream artifact name and availability, a warning that clicking Start confirms readiness, and a Start button that creates the session and sends the instruction pack automatically. Localized via ui_interface / user_guidance / system_feedback categories.
-- **Session scope fix**: session tab now shows the correct stage label (e.g. "Diagram Modules Gemini") immediately after session creation instead of defaulting to "Description".
+- **Session scope fix**: session tab now shows the correct stage label immediately after session creation instead of defaulting to "Description".
+- **Startup session resume fix**: existing sessions now load correctly on workspace open. Previously the dialog open event could fire before the session view was mounted.
 
 ### 1.1.934 (previous)
 - **Type markers in development tree**: P/C/M letter markers replace toggle triangles and type badges. Status-driven colors (gray/orange/green) and green outline on expandable nodes with children.
