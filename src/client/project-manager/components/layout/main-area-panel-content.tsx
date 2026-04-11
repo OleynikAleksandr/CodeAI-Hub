@@ -4,6 +4,11 @@ import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
 import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
+import {
+  hasExistingStageSession,
+  StageConfirmationCard,
+} from "../shared/stage-confirmation-card";
+import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
@@ -228,25 +233,65 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
   );
 };
 
+type ConfirmableStageId = "virtual_simulation" | "diagram_modules";
+
+const TOOL_TO_CONFIRMABLE_STAGE: Record<string, ConfirmableStageId> = {
+  [VIRTUAL_SIMULATION_TOOL_LABEL]: "virtual_simulation",
+  "Diagram Modules": "diagram_modules",
+};
+
 interface SessionContentProps {
+  readonly activeTool: string | null;
+  readonly onStepStarted: (sessionId: string) => void;
   readonly pendingSessionCreate: { readonly providerTitle: string } | null;
   readonly preferredSessionId: string | null;
   readonly showDescriptionHelp: boolean;
+  readonly workflowSnapshot: WorkflowStateSnapshot | null;
   readonly workspacePath: string | undefined;
+  readonly workspaceSlug: string | null;
 }
 
 export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
+  activeTool,
+  onStepStarted,
   pendingSessionCreate,
   preferredSessionId,
   showDescriptionHelp,
+  workflowSnapshot,
   workspacePath,
-}) =>
-  showDescriptionHelp ? (
-    <DescriptionStepHelp />
-  ) : (
+  workspaceSlug,
+}) => {
+  if (showDescriptionHelp) {
+    return <DescriptionStepHelp />;
+  }
+
+  // Show confirmation card for idle VS/DM stages without an existing session
+  const confirmableStage = activeTool
+    ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
+    : undefined;
+  if (
+    confirmableStage &&
+    workflowSnapshot &&
+    workspaceSlug &&
+    workspacePath &&
+    !hasExistingStageSession(confirmableStage, workflowSnapshot)
+  ) {
+    return (
+      <StageConfirmationCard
+        onStarted={onStepStarted}
+        stage={confirmableStage}
+        workflowSnapshot={workflowSnapshot}
+        workspacePath={workspacePath}
+        workspaceSlug={workspaceSlug}
+      />
+    );
+  }
+
+  return (
     <ProjectManagerSessionView
       pendingSessionCreate={pendingSessionCreate}
       preferredSessionId={preferredSessionId}
       workspacePath={workspacePath}
     />
   );
+};

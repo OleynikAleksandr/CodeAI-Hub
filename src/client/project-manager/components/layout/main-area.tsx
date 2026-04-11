@@ -226,7 +226,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
     selectedArtifact?.workspaceSlug,
   ]);
 
-  const { loaded: workflowStoreLoaded } = useWorkflowStateSnapshot();
+  const { loaded: workflowStoreLoaded, snapshot: workflowSnapshot } = useWorkflowStateSnapshot();
+
+  const handleStepStarted = useCallback((sessionId: string) => {
+    setPreferredSessionId(sessionId);
+  }, []);
   const isDescriptionActive = activeTool === "Description";
   const activeWorkspaceSlug = activeWorkspace ? resolveWorkspaceSlug(activeWorkspace) : null;
   const shouldShowQuestionnaireEditor = Boolean(
@@ -285,10 +289,14 @@ export const MainArea: React.FC<MainAreaProps> = ({
         onSizeChange={onSizeChange}
         sessionContent={
           <MainAreaSessionContent
+            activeTool={activeTool}
+            onStepStarted={handleStepStarted}
             pendingSessionCreate={pendingSessionCreate}
             preferredSessionId={preferredSessionId}
             showDescriptionHelp={showDescriptionHelpInSessionPanel}
+            workflowSnapshot={workflowSnapshot}
             workspacePath={activeWorkspace?.path}
+            workspaceSlug={activeWorkspaceSlug}
           />
         }
         sizes={sizes}
