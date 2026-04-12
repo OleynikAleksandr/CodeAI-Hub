@@ -8,6 +8,7 @@ import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
 import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, resolveSessionThinkingDisplayEnabled, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
+import type { UsageLimitsRefreshRequest } from "../../../ui/src/session/session-id-bar";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { resolveProjectManagerCoreConfig, useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { useSessionResumeIntent } from "./session-resume-intent";
@@ -309,8 +310,8 @@ const ProjectManagerRuntimeSessionView = ({
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useRuntimeModelSync(activeSessionId, setSnapshots);
   const handleRefreshUsageLimits = useCallback(
-    (providerId: string) => {
-      api.refreshUsageLimits(providerId);
+    (request: UsageLimitsRefreshRequest) => {
+      api.refreshUsageLimits(request);
     },
     []
   );

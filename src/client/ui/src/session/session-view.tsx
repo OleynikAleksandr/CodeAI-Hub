@@ -6,7 +6,7 @@ import EmptyState from "./empty-state";
 import type { FileLinkTarget } from "./file-link-target";
 import { mapProviderTheme } from "./helpers";
 import InputPanel from "./input-panel";
-import SessionIdBar from "./session-id-bar";
+import SessionIdBar, { type UsageLimitsRefreshRequest } from "./session-id-bar";
 import {
   resolveContinuationChainOrEmpty,
   resolveVirtualConversationMessages,
@@ -61,7 +61,7 @@ interface SessionViewProps {
   readonly onCloseSession: (sessionId: string) => void;
   readonly onDismissSwitchOffer?: () => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
-  readonly onRefreshUsageLimits?: (providerId: string) => void;
+  readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
   readonly onRetryInPlace?: () => void;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onSelectSwitchTarget?: (target: SwitchTargetProp) => void;
@@ -240,6 +240,7 @@ const SessionViewBody = ({
       <SessionIdBar
         binding={activeSession.binding}
         onRefreshUsageLimits={onRefreshUsageLimits}
+        sessionId={activeSessionId}
         status={activeSession.status}
       />
       <div className="session-app__content">

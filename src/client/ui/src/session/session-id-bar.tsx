@@ -9,9 +9,16 @@ import { readLastKnownUsageLimitsState } from "./usage-limits-cache";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
+export interface UsageLimitsRefreshRequest {
+  readonly providerId: string;
+  readonly providerSessionId: string | null;
+  readonly sessionId: string;
+}
+
 interface SessionIdBarProps {
   readonly binding: SessionBindingInfo;
-  readonly onRefreshUsageLimits?: (providerId: string) => void;
+  readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
+  readonly sessionId: string;
   readonly status: SessionStatusInfo;
 }
 
@@ -159,14 +166,24 @@ const resolveRawProviderId = (status: SessionStatusInfo): string | null => {
 const SessionIdBar = ({
   binding,
   onRefreshUsageLimits,
+  sessionId,
   status,
 }: SessionIdBarProps) => {
   const rawProviderId = resolveRawProviderId(status);
   useEffect(() => {
     if (rawProviderId && onRefreshUsageLimits) {
-      onRefreshUsageLimits(rawProviderId);
+      onRefreshUsageLimits({
+        sessionId,
+        providerId: rawProviderId,
+        providerSessionId: binding.providerSessionId,
+      });
     }
-  }, [rawProviderId, onRefreshUsageLimits]);
+  }, [
+    binding.providerSessionId,
+    onRefreshUsageLimits,
+    rawProviderId,
+    sessionId,
+  ]);
   const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
   const cachedUsageLimitsState = readLastKnownUsageLimitsState(
     providerScopeKey,
