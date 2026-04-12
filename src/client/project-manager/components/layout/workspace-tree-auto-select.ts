@@ -52,13 +52,19 @@ export const useWorkspaceTreeAutoSelect = (
   params: WorkspaceTreeAutoSelectParams
 ) => {
   const pendingWorkspaceIdRef = useRef<string | null>(null);
+  // Track whether stage activation was already dispatched for the
+  // current workspace — prevents duplicate pm:stage:activated / artifact
+  // events on retry while still allowing the session dispatch to retry.
+  const stageDispatchedRef = useRef(false);
 
   const markWorkspaceChanged = useCallback(() => {
     pendingWorkspaceIdRef.current = params.selectedWorkspaceId ?? null;
+    stageDispatchedRef.current = false;
   }, [params.selectedWorkspaceId]);
 
   const resetPendingSelection = useCallback(() => {
     pendingWorkspaceIdRef.current = null;
+    stageDispatchedRef.current = false;
   }, []);
 
   const handleStateUpdate = useCallback(
@@ -82,16 +88,24 @@ export const useWorkspaceTreeAutoSelect = (
           params.diagramModulesArtifactAvailable,
       });
 
-      dispatchStageActivated(startupStage);
-      if (payload.artifact) {
-        params.onSelectArtifact(payload.artifact.path, payload.artifact.label);
-      } else if (payload.clearTool) {
-        params.onClearArtifactWithTool(payload.clearTool);
+      // Dispatch stage activation and artifact events only once per
+      // workspace — retries should only attempt the session dispatch.
+      if (!stageDispatchedRef.current) {
+        stageDispatchedRef.current = true;
+        dispatchStageActivated(startupStage);
+        if (payload.artifact) {
+          params.onSelectArtifact(payload.artifact.path, payload.artifact.label);
+        } else if (payload.clearTool) {
+          params.onClearArtifactWithTool(payload.clearTool);
+        }
       }
       if (payload.session) {
         params.onResumeSession(payload.session);
+        pendingWorkspaceIdRef.current = null;
       }
-      pendingWorkspaceIdRef.current = null;
+      // If no session found (continuity chains may still be loading),
+      // keep pendingWorkspaceIdRef alive so the next store snapshot
+      // retries auto-select for the session dispatch only.
     },
     [
       params.diagramModulesArtifactAvailable,

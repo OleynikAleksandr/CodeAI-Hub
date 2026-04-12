@@ -74,12 +74,15 @@ class WorkflowStateStore {
       if (this.cancelled || this.state.workspaceSlug !== slug) return;
       // Skip emit if snapshot data has not changed — prevents
       // unnecessary re-renders in all subscribers every poll cycle.
+      // Compare updatedAt AND continuity chain count — chains may
+      // populate after the initial snapshot without changing updatedAt.
       const prev = this.state.snapshot;
       const changed =
         !this.state.loaded ||
         !prev ||
         !snapshot ||
-        prev.updatedAt !== snapshot.updatedAt;
+        prev.updatedAt !== snapshot.updatedAt ||
+        prev.continuity.chains.length !== snapshot.continuity.chains.length;
       this.state = { workspaceSlug: slug, workspacePath: wPath, snapshot, loaded: true };
       if (changed) this.emit();
       if (fast && snapshot) {
