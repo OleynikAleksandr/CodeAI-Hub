@@ -317,8 +317,17 @@ export class SessionRequestHandler {
 
   async handleRefreshUsageLimits(providerId: string): Promise<void> {
     const adapter = this.providerRegistry.getAdapter(providerId);
+    this.logger.info("[DIAG] handleRefreshUsageLimits", {
+      providerId,
+      hasAdapter: Boolean(adapter),
+      hasMethod: typeof adapter?.refreshUsageLimits === "function",
+    });
     if (typeof adapter?.refreshUsageLimits === "function") {
       const broadcast = (event: unknown): void => {
+        this.logger.info("[DIAG] broadcasting usage limits", {
+          providerId,
+          hasEvent: Boolean(event),
+        });
         this.broadcaster({
           type: "session:stream",
           payload: { sessionId: `provider_${providerId}`, event },
