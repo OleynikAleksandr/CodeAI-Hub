@@ -84,10 +84,6 @@ export class WorkflowStateService {
     );
 
     if (!workspaceRoot) {
-      // [DIAG] Session restore diagnostics — remove after investigation
-      this.logger.info("[WorkflowState] no workspaceRoot — empty chains", {
-        slug: workspaceSlugResult.value,
-      });
       res.json({
         state,
         continuity: { chains: [] },
@@ -168,27 +164,6 @@ export class WorkflowStateService {
                     diagramModulesProgress,
                   }),
                 };
-                // [DIAG] Session restore diagnostics — remove after investigation
-                const nonIdleStages = Object.entries(
-                  validatedState.stages ?? {}
-                )
-                  .filter(
-                    ([, v]) => (v as { status?: string }).status !== "idle"
-                  )
-                  .map(
-                    ([k, v]) =>
-                      `${k}:${(v as { status?: string }).status ?? "?"}`
-                  );
-                this.logger.info("[WorkflowState] snapshot served", {
-                  slug: workspaceSlugResult.value,
-                  chainsCount: chains.length,
-                  chainStages: chains.map(
-                    (c) => `${c.stage ?? "?"}(${c.segments.length}seg)`
-                  ),
-                  descriptionHasSession: Boolean(description?.primarySession),
-                  nonIdleStages,
-                  updatedAt: validatedState.updatedAt,
-                });
                 res.json({
                   state: validatedState,
                   continuity: { chains },

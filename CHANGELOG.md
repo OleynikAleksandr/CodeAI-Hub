@@ -4,10 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.945] - 2026-04-12
+## [1.1.953] - 2026-04-12
 ### Fixed
 - **Confirmation card localization**: added all missing message IDs to approved source dictionaries (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`) so confirmation card texts are localizable. Fixed `confirm_warning` to use template variable `{upstreamStage}` instead of JS template literal.
-- **Session auto-restore on workspace open**: auto-select now retries session dispatch when continuity chains are not yet available on the first poll snapshot. WorkflowStateStore emits when chain count changes even if `updatedAt` is unchanged.
+- **Session auto-restore on workspace open**: auto-select retries session dispatch when chains are not yet available. WorkflowStateStore emits when chain count changes. Dialog list retry no longer overwrites already-loaded message history — the `dialog:list:result` handler now skips re-bootstrap if the dialog was already matched and loaded.
+- **Right panel jitter during agent responses**: memoized `MainAreaArtifactContent` JSX via `useMemo` so Help/Artifacts panel does not re-render when session messages stream in. Wrapped `MainAreaArtifactContent` with `React.memo` for additional protection.
 
 ## [1.1.938] - 2026-04-11
 ### Added

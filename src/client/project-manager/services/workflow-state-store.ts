@@ -84,11 +84,6 @@ class WorkflowStateStore {
         prev.updatedAt !== snapshot.updatedAt ||
         prev.continuity.chains.length !== snapshot.continuity.chains.length;
       this.state = { workspaceSlug: slug, workspacePath: wPath, snapshot, loaded: true };
-      // [DIAG] Session restore diagnostics — remove after investigation
-      console.log("[Store] " + JSON.stringify({
-        slug, changed, chains: snapshot?.continuity?.chains?.length ?? 0,
-        stages: snapshot ? Object.entries(snapshot.stages).filter(([, v]) => v !== "idle").map(([k, v]) => `${k}:${v}`) : [],
-      }));
       if (changed) this.emit();
       if (fast && snapshot) {
         fast = false;

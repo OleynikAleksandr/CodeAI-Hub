@@ -60,15 +60,6 @@ export const ProjectManagerSessionView = ({
   // Derived — no intermediate renders, no flashing
   const effectiveIntent = dialogIntentOverride ?? initialDialogIntent;
 
-  // [DIAG] Session restore diagnostics — remove after investigation
-  console.log("[SessionView] render " + JSON.stringify({
-    hasOverride: Boolean(dialogIntentOverride),
-    hasInitialProp: Boolean(initialDialogIntent),
-    effectiveStage: effectiveIntent?.stage ?? "null",
-    effectiveProvider: effectiveIntent?.providerId ?? "null",
-    willShowDialog: Boolean(effectiveIntent),
-  }));
-
   if (effectiveIntent) {
     return (
       <ProjectManagerDialogSessionView

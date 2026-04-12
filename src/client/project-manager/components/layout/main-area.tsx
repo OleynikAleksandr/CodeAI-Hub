@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { useDescriptionSessionGuard } from "./use-description-session-guard";
@@ -270,30 +270,47 @@ export const MainArea: React.FC<MainAreaProps> = ({
     ? selectedBranchNode.label
     : activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
+  const handleSelectedArtifactClear = useCallback(() => setSelectedArtifact(null), []);
+  const handleSetActiveToolNull = useCallback(() => setActiveTool(null), []);
+  const descriptionDocumentExists = descriptionDocument !== null;
+  const questionnaireDocumentExists = questionnaireDocument !== null;
+
+  const memoizedArtifactContent = useMemo(
+    () => (
+      <MainAreaArtifactContent
+        activeTool={activeTool}
+        activeWorkspaceName={activeWorkspace?.name}
+        activeWorkspacePath={activeWorkspace?.path}
+        activeWorkspaceSlug={activeWorkspaceSlug}
+        artifactRefreshKey={artifactRefreshKey}
+        descriptionDocumentExists={descriptionDocumentExists}
+        headerMode={artifactHeaderMode}
+        hasDescriptionSession={hasDescriptionSession}
+        onDescriptionSessionCreated={handleDescriptionSessionCreated}
+        onPendingSessionCreateChange={setPendingSessionCreate}
+        onSelectedArtifactClear={handleSelectedArtifactClear}
+        onSetActiveToolNull={handleSetActiveToolNull}
+        questionnaireDocumentExists={questionnaireDocumentExists}
+        selectedArtifact={selectedArtifact}
+        selectedBranchNode={selectedBranchNode}
+        shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
+        workflowStoreLoaded={workflowStoreLoaded}
+      />
+    ),
+    [
+      activeTool, activeWorkspace?.name, activeWorkspace?.path,
+      activeWorkspaceSlug, artifactRefreshKey, descriptionDocumentExists,
+      artifactHeaderMode, hasDescriptionSession, handleDescriptionSessionCreated,
+      setPendingSessionCreate, handleSelectedArtifactClear, handleSetActiveToolNull,
+      questionnaireDocumentExists, selectedArtifact, selectedBranchNode,
+      shouldShowQuestionnaireEditor, workflowStoreLoaded,
+    ]
+  );
+
   return (
     <main className="pm-main-area">
       <PanelContainer
-        artifactContent={
-          <MainAreaArtifactContent
-            activeTool={activeTool}
-            activeWorkspaceName={activeWorkspace?.name}
-            activeWorkspacePath={activeWorkspace?.path}
-            activeWorkspaceSlug={activeWorkspaceSlug}
-            artifactRefreshKey={artifactRefreshKey}
-            descriptionDocumentExists={descriptionDocument !== null}
-            headerMode={artifactHeaderMode}
-            hasDescriptionSession={hasDescriptionSession}
-            onDescriptionSessionCreated={handleDescriptionSessionCreated}
-            onPendingSessionCreateChange={setPendingSessionCreate}
-            onSelectedArtifactClear={() => setSelectedArtifact(null)}
-            onSetActiveToolNull={() => setActiveTool(null)}
-            questionnaireDocumentExists={questionnaireDocument !== null}
-            selectedArtifact={selectedArtifact}
-            selectedBranchNode={selectedBranchNode}
-            shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
-            workflowStoreLoaded={workflowStoreLoaded}
-          />
-        }
+        artifactContent={memoizedArtifactContent}
         artifactHeaderContent={
           artifactHeaderTitle ? (
             <StageArtifactHeaderToggle

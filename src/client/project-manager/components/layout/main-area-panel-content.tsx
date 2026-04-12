@@ -1,5 +1,5 @@
+import { memo, useMemo, useRef } from "react";
 import type React from "react";
-import { useMemo, useRef } from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
@@ -77,7 +77,7 @@ interface ArtifactContentProps {
   readonly workflowStoreLoaded: boolean;
 }
 
-export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
+export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   activeTool,
   activeWorkspaceName,
   activeWorkspacePath,
@@ -234,7 +234,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = ({
       <code>Final_Description.md</code>.
     </div>
   );
-};
+});
 
 type ConfirmableStageId = "virtual_simulation" | "diagram_modules";
 
@@ -306,15 +306,6 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     workflowSnapshot && workspacePath && workspaceSlug
       ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
       : null;
-  // [DIAG] Session restore diagnostics — remove after investigation
-  console.log("[SessionContent] " + JSON.stringify({
-    activeTool,
-    stageId,
-    hasSnapshot: Boolean(workflowSnapshot),
-    nextIntentProvider: nextIntent?.providerId ?? "null",
-    nextIntentStage: nextIntent?.stage ?? "null",
-    chains: workflowSnapshot?.continuity?.chains?.length ?? 0,
-  }));
   // Stabilize intent identity — only create a new object when the
   // session actually changed, not on every workflow state poll cycle.
   const intentRef = useRef(nextIntent);

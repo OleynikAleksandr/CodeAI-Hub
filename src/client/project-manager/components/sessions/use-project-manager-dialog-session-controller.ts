@@ -137,17 +137,8 @@ export const useProjectManagerDialogSessionController = (
     latestWorkspaceSnapshotRef.current = null;
 
     if (!intent) {
-      // [DIAG] Session restore diagnostics — remove after investigation
-      console.log("[DialogCtrl] intent effect: null intent — reset");
       return;
     }
-
-    // [DIAG] Session restore diagnostics — remove after investigation
-    console.log("[DialogCtrl] intent effect: " + JSON.stringify({
-      stage: intent.stage, provider: intent.providerId,
-      providerSessionId: intent.providerSessionId ?? "null",
-      slug: intent.workspaceSlug,
-    }));
 
     // Ensure Core scope is selected for this workspace so dialog commands are accepted.
     api.selectWorkspace({

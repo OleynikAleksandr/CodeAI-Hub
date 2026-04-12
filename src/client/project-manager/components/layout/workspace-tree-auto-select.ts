@@ -69,17 +69,10 @@ export const useWorkspaceTreeAutoSelect = (
 
   const handleStateUpdate = useCallback(
     (state: WorkflowStateSnapshot | null) => {
-      // [DIAG] Session restore diagnostics — remove after investigation
-      console.log("[AutoSelect] called " + JSON.stringify({
-        pending: pendingWorkspaceIdRef.current, selected: params.selectedWorkspaceId,
-        hasState: Boolean(state), slug: params.workspaceSlug, dispatched: stageDispatchedRef.current,
-      }));
       if (pendingWorkspaceIdRef.current !== params.selectedWorkspaceId) {
-        console.log("[AutoSelect] SKIP: pendingId mismatch");
         return;
       }
       if (!state || !params.workspaceSlug || !params.workspacePath) {
-        console.log("[AutoSelect] SKIP: missing state/slug/path");
         return;
       }
 
@@ -95,12 +88,6 @@ export const useWorkspaceTreeAutoSelect = (
           params.diagramModulesArtifactAvailable,
       });
 
-      console.log("[AutoSelect] resolved " + JSON.stringify({
-        startupStage, hasSession: Boolean(payload.session),
-        provider: payload.session?.providerId ?? "null",
-        chains: state.continuity?.chains?.length ?? 0,
-      }));
-
       // Dispatch stage activation and artifact events only once per
       // workspace — retries should only attempt the session dispatch.
       if (!stageDispatchedRef.current) {
@@ -113,11 +100,8 @@ export const useWorkspaceTreeAutoSelect = (
         }
       }
       if (payload.session) {
-        console.log("[AutoSelect] dispatching pm:dialog:open", payload.session.stage);
         params.onResumeSession(payload.session);
         pendingWorkspaceIdRef.current = null;
-      } else {
-        console.log("[AutoSelect] NO session — keeping pending for retry");
       }
       // If no session found (continuity chains may still be loading),
       // keep pendingWorkspaceIdRef alive so the next store snapshot

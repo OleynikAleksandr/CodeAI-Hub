@@ -79,12 +79,6 @@ export const useProjectManagerDialogCoreEvents = (options: {
           return;
         }
         const match = resolveDialogMatch({ intent, dialogs: parsed });
-        // [DIAG] Session restore diagnostics — remove after investigation
-        console.log("[DialogEvents] dialog:list:result " + JSON.stringify({
-          slug: workspaceSlug, dialogCount: parsed.length, hasMatch: Boolean(match),
-          intentStage: intent.stage, intentProvider: intent.providerId,
-          dialogStages: parsed.map(d => `${d.stage}:${d.providerId}`),
-        }));
         if (!match) {
           return;
         }
@@ -161,32 +155,19 @@ export const useProjectManagerDialogCoreEvents = (options: {
         const dialogId = readDialogString(payload?.dialogId);
         const lastCursor = readDialogCursor(payload?.lastCursor);
         const messages = payload?.messages;
-        // [DIAG] Session restore diagnostics — remove after investigation
-        console.log("[DialogEvents] dialog:history:result " + JSON.stringify({
-          slug: workspaceSlug, dialogId, msgCount: Array.isArray(messages) ? messages.length : "not-array",
-          hasIntent: Boolean(options.pendingIntentRef.current),
-          currentDialogId: options.dialogIdRef.current,
-          hasSession: Boolean(options.sessionRef.current),
-          intentSlugMatch: options.pendingIntentRef.current?.workspaceSlug === workspaceSlug,
-          dialogIdMatch: !options.dialogIdRef.current || options.dialogIdRef.current === dialogId,
-        }));
         if (workspaceSlug === null || dialogId === null || !Array.isArray(messages)) {
-          console.log("[DialogEvents] SKIP history: parse fail");
           return;
         }
         const intent = options.pendingIntentRef.current;
         const currentDialogId = options.dialogIdRef.current;
         const currentSession = options.sessionRef.current;
         if (!intent || intent.workspaceSlug !== workspaceSlug) {
-          console.log("[DialogEvents] SKIP history: slug mismatch");
           return;
         }
         if (currentDialogId && currentDialogId !== dialogId) {
-          console.log("[DialogEvents] SKIP history: dialogId mismatch");
           return;
         }
         if (!currentSession) {
-          console.log("[DialogEvents] SKIP history: no current session");
           return;
         }
         const requestedCursor = options.pendingHistoryCursorRef.current.get(dialogId) ?? 0;
