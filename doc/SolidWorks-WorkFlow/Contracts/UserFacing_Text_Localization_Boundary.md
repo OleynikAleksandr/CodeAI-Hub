@@ -113,6 +113,23 @@ When adding or changing user-facing product copy:
 
 ---
 
+## 4.5. Source Dictionary File Map
+
+The localization pipeline loads **approved** source dictionary files first. Legacy files exist as fallback but are **shadowed** when the approved file is present. Never add new keys to legacy files.
+
+- Runtime category `ui_interface` / `workflow_terms` → **`ui_labels.json`** (approved); `ui_interface.json`, `workflow_terms.json` are legacy
+- Runtime category `user_guidance` → **`ui_helper_text.json`** (approved); `user_guidance.json` is legacy
+- Runtime category `system_feedback` → **`messages_for_the_user.json`** (approved); `system_feedback.json` is legacy
+- Runtime category `interactive_templates` → **`artifacts_for_the_user.json`** (approved); `interactive_templates.json` is legacy
+
+All files live under `assets/localization/source/en/`. The registry logic is in `packages/localization/src/source-dictionary-registry.ts` (`resolveBundledSourceFileCandidates`).
+
+When a component calls `t(category, messageId, fallback)`, the `category` is the runtime id (e.g. `user_guidance`), but the source key must exist in the **approved** file for that category (`ui_helper_text.json`), not the legacy one.
+
+For template variables use `{variableName}` syntax in dictionary values and pass `variables` object to `t()`. Do not use JS template literals in fallback strings for interpolation — the fallback must match the dictionary value format exactly.
+
+---
+
 ## 5. Review Checklist
 
 Before closing a task that adds text, verify:
@@ -122,6 +139,8 @@ Before closing a task that adds text, verify:
 3. Does the source dictionary now contain the canonical English text?
 4. Does the rendered surface read through localization lookup/runtime payload?
 5. Did any internal-only text accidentally become user-localizable?
+6. Were keys added to the **approved** source dictionary file (§4.5), not a legacy one?
+7. Do template variables use `{name}` syntax in both the dictionary value and the fallback string?
 
 If any answer is unclear, the task is not complete.
 
