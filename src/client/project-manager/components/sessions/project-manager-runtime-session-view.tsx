@@ -308,16 +308,12 @@ const ProjectManagerRuntimeSessionView = ({
   }, [startupStage, workspacePath]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useRuntimeModelSync(activeSessionId, setSnapshots);
-  useEffect(() => {
-    if (!activeSessionId) {
-      return;
-    }
-    const record = sessions.find((s) => s.id === activeSessionId);
-    const providerId = record?.providerIds[0] ?? null;
-    if (providerId) {
+  const handleRefreshUsageLimits = useCallback(
+    (providerId: string) => {
       api.refreshUsageLimits(providerId);
-    }
-  }, [activeSessionId, sessions]);
+    },
+    []
+  );
   useSessionResumeIntent({
     sessionsRef,
     focusSession: (sessionId) => {
@@ -346,6 +342,7 @@ const ProjectManagerRuntimeSessionView = ({
       coreConnectionStatus={connection.status}
       onCloseSession={hideSession}
       onFileLinkActivate={onFileLinkActivate}
+      onRefreshUsageLimits={handleRefreshUsageLimits}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
       emptyStatePending={emptyStatePending}

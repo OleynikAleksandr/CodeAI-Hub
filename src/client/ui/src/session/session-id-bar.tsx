@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect } from "react";
 import type {
   SessionBindingInfo,
   SessionStatusInfo,
@@ -11,6 +11,7 @@ const SESSION_ID_PREFIX_LENGTH = 8;
 
 interface SessionIdBarProps {
   readonly binding: SessionBindingInfo;
+  readonly onRefreshUsageLimits?: (providerId: string) => void;
   readonly status: SessionStatusInfo;
 }
 
@@ -138,7 +139,34 @@ const LimitRow = ({ row }: { readonly row: LimitRowData }) => (
   </div>
 );
 
-const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
+const resolveRawProviderId = (status: SessionStatusInfo): string | null => {
+  const raw = status.models?.[0]?.providerId;
+  if (typeof raw !== "string") {
+    return null;
+  }
+  switch (raw) {
+    case "claudeCodeCli":
+      return "claudeCodeCli";
+    case "codexCli":
+      return "codexCli";
+    case "geminiCli":
+      return "geminiCli";
+    default:
+      return raw;
+  }
+};
+
+const SessionIdBar = ({
+  binding,
+  onRefreshUsageLimits,
+  status,
+}: SessionIdBarProps) => {
+  const rawProviderId = resolveRawProviderId(status);
+  useEffect(() => {
+    if (rawProviderId && onRefreshUsageLimits) {
+      onRefreshUsageLimits(rawProviderId);
+    }
+  }, [rawProviderId, onRefreshUsageLimits]);
   const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
   const cachedUsageLimitsState = readLastKnownUsageLimitsState(
     providerScopeKey,

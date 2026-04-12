@@ -61,6 +61,7 @@ interface SessionViewProps {
   readonly onCloseSession: (sessionId: string) => void;
   readonly onDismissSwitchOffer?: () => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
+  readonly onRefreshUsageLimits?: (providerId: string) => void;
   readonly onRetryInPlace?: () => void;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onSelectSwitchTarget?: (target: SwitchTargetProp) => void;
@@ -142,6 +143,7 @@ const SessionViewBody = ({
   onSelectSession,
   onCloseSession,
   onFileLinkActivate,
+  onRefreshUsageLimits,
   onSendMessage,
   showThinkingMessages,
   switchOffer,
@@ -237,6 +239,7 @@ const SessionViewBody = ({
       {header}
       <SessionIdBar
         binding={activeSession.binding}
+        onRefreshUsageLimits={onRefreshUsageLimits}
         status={activeSession.status}
       />
       <div className="session-app__content">
