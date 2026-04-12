@@ -3,7 +3,6 @@ import {
   areUsageLimitLabelsEqual,
   extractUsageLimitLabels,
 } from "../../../ui/src/session/usage-limit-labels";
-import { writeLastKnownUsageLimits } from "../../../ui/src/session/usage-limits-cache";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -60,25 +59,57 @@ const areUsageLimitsEqual = (
 const normalizeProviderScopeKey = (value: string | null | undefined): string =>
   value?.trim().toLowerCase() ?? "";
 
+const buildGlobalProviderScopeKey = (providerFamily: string): string =>
+  `${providerFamily}:global`;
+
+const normalizeProviderFamily = (value: string | null | undefined): string => {
+  const normalized = normalizeProviderScopeKey(value);
+  if (!normalized) {
+    return "";
+  }
+  const prefix = normalized.split(":")[0] ?? normalized;
+  if (prefix.includes("claude")) {
+    return "claude";
+  }
+  if (prefix.includes("codex")) {
+    return "codex";
+  }
+  if (prefix.includes("gemini")) {
+    return "gemini";
+  }
+  return prefix;
+};
+
 const extractProviderScopeKey = (event: unknown): string => {
   if (!isRecord(event)) {
     return "";
   }
 
-  const direct = readString(event.providerScopeKey);
-  if (direct) {
-    return normalizeProviderScopeKey(direct);
+  const directProviderFamily = normalizeProviderFamily(
+    readString(event.providerScopeKey)
+  );
+  if (directProviderFamily) {
+    return buildGlobalProviderScopeKey(directProviderFamily);
   }
 
   const data = isRecord(event.data) ? event.data : null;
-  return normalizeProviderScopeKey(readString(data?.providerScopeKey));
+  const dataProviderFamily = normalizeProviderFamily(
+    readString(data?.providerScopeKey)
+  );
+  return dataProviderFamily
+    ? buildGlobalProviderScopeKey(dataProviderFamily)
+    : "";
 };
 
 const resolveProviderScopeKey = (
   snapshot: SessionSnapshots[string]
-): string =>
-  normalizeProviderScopeKey(snapshot.status.providerScopeKey) ||
-  normalizeProviderScopeKey(snapshot.status.providerSummary);
+): string => {
+  const providerFamily =
+    normalizeProviderFamily(snapshot.status.providerScopeKey) ||
+    normalizeProviderFamily(snapshot.status.models?.[0]?.providerId) ||
+    normalizeProviderFamily(snapshot.status.providerSummary);
+  return providerFamily ? buildGlobalProviderScopeKey(providerFamily) : "";
+};
 
 const hasUsageLimits = (
   usageLimits: SessionSnapshots[string]["status"]["usageLimits"]
@@ -168,6 +199,7 @@ export const updateSnapshotsWithUsageLimits = (
   const sourceProviderKey =
     extractProviderScopeKey(payload.event) ||
     resolveProviderScopeKey(sourceSnapshot);
+  const sourceProviderFamily = normalizeProviderFamily(sourceProviderKey);
   const currentSourceProviderKey = normalizeProviderScopeKey(
     sourceSnapshot.status.providerScopeKey
   );
@@ -183,13 +215,6 @@ export const updateSnapshotsWithUsageLimits = (
     return snapshots;
   }
 
-  writeLastKnownUsageLimits(
-    sourceProviderKey,
-    usageLimits,
-    sourceSnapshot.status.providerSummary,
-    usageLimitLabels
-  );
-
   const now = Date.now();
   const nextSnapshots: SessionSnapshots = { ...snapshots };
   let changed = false;
@@ -198,9 +223,13 @@ export const updateSnapshotsWithUsageLimits = (
     const currentProviderScopeKey = normalizeProviderScopeKey(
       snapshot.status.providerScopeKey
     );
+    const currentProviderFamily =
+      normalizeProviderFamily(currentProviderScopeKey) ||
+      normalizeProviderFamily(snapshot.status.models?.[0]?.providerId) ||
+      normalizeProviderFamily(snapshot.status.providerSummary);
     const sameProviderScope =
-      sourceProviderKey.length > 0 &&
-      resolveProviderScopeKey(snapshot) === sourceProviderKey;
+      sourceProviderFamily.length > 0 &&
+      currentProviderFamily === sourceProviderFamily;
     const shouldUpdateScopeKey =
       sourceProviderKey.length > 0 &&
       currentProviderScopeKey !== sourceProviderKey;
@@ -236,4 +265,3 @@ export const updateSnapshotsWithUsageLimits = (
 
   return changed ? nextSnapshots : snapshots;
 };
-

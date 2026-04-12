@@ -32,7 +32,7 @@ test("SessionRequestHandler refreshUsageLimits broadcasts into the active runtim
         workspacePath: params.workspacePath,
       });
       params.broadcast({
-        providerScopeKey: "claude:provider-session-usage",
+        providerScopeKey: "claude:global",
         usageLimits: {
           currentSession: {
             percentUsed: 42,
@@ -41,7 +41,7 @@ test("SessionRequestHandler refreshUsageLimits broadcasts into the active runtim
         },
         data: {
           kind: "usage_limits",
-          providerScopeKey: "claude:provider-session-usage",
+          providerScopeKey: "claude:global",
           usageLimits: {
             currentSession: {
               percentUsed: 42,
@@ -83,4 +83,14 @@ test("SessionRequestHandler refreshUsageLimits broadcasts into the active runtim
     );
   });
   assert.ok(usageLimitsStreamEvent);
+  assert.equal(
+    (
+      usageLimitsStreamEvent.payload as {
+        readonly event?: {
+          readonly data?: { readonly providerScopeKey?: string };
+        };
+      }
+    ).event?.data?.providerScopeKey,
+    "claude:global"
+  );
 });
