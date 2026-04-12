@@ -4,9 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.944] - 2026-04-12
+## [1.1.945] - 2026-04-12
 ### Fixed
 - **Confirmation card localization**: added all missing message IDs to approved source dictionaries (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`) so confirmation card texts are localizable. Fixed `confirm_warning` to use template variable `{upstreamStage}` instead of JS template literal.
+- **Session auto-restore on workspace open**: auto-select now retries session dispatch when continuity chains are not yet available on the first poll snapshot. WorkflowStateStore emits when chain count changes even if `updatedAt` is unchanged.
 
 ## [1.1.938] - 2026-04-11
 ### Added
