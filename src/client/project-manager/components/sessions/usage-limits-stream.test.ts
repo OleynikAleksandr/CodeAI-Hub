@@ -6,6 +6,7 @@ import {
 } from "./usage-limits-stream";
 
 const createSnapshot = (options?: {
+  readonly providerScopeKey?: string;
   readonly providerSummary?: string;
   readonly updatedAt?: number;
   readonly usageLimits?: SessionSnapshot["status"]["usageLimits"];
@@ -19,6 +20,9 @@ const createSnapshot = (options?: {
   },
   status: {
     providerSummary: options?.providerSummary ?? "Claude",
+    ...(options?.providerScopeKey
+      ? { providerScopeKey: options.providerScopeKey }
+      : {}),
     tokenUsage: { used: 0, limit: 200_000 },
     connectionState: "running",
     continuityLock: {
@@ -111,16 +115,26 @@ test("updateSnapshotsWithUsageLimits ignores malformed payloads", () => {
   assert.equal(next, snapshots);
 });
 
-test("updateSnapshotsWithUsageLimits propagates latest limits to all sessions of same provider", () => {
+test("updateSnapshotsWithUsageLimits normalizes same-provider sessions to a global scope key", () => {
   const snapshots = {
-    s1: createSnapshot({ providerSummary: "Claude" }),
-    s2: createSnapshot({ providerSummary: "Claude" }),
-    s3: createSnapshot({ providerSummary: "Codex" }),
+    s1: createSnapshot({
+      providerSummary: "CodeAI-Hub codex 5.4",
+      providerScopeKey: "codex:019d816e-legacy-a",
+    }),
+    s2: createSnapshot({
+      providerSummary: "Codex",
+      providerScopeKey: "codex:019d8253-legacy-b",
+    }),
+    s3: createSnapshot({
+      providerSummary: "Claude",
+      providerScopeKey: "claude:global",
+    }),
   };
 
   const next = updateSnapshotsWithUsageLimits(snapshots, {
     sessionId: "s1",
     event: {
+      providerScopeKey: "codex:019d816e-legacy-a",
       usageLimits: {
         currentSession: {
           percentUsed: 9,
@@ -135,7 +149,9 @@ test("updateSnapshotsWithUsageLimits propagates latest limits to all sessions of
   });
 
   assert.equal(next.s1.status.usageLimits?.currentSession?.percentUsed, 9);
+  assert.equal(next.s1.status.providerScopeKey, "codex:global");
   assert.equal(next.s2.status.usageLimits?.currentSession?.percentUsed, 9);
+  assert.equal(next.s2.status.providerScopeKey, "codex:global");
   assert.equal(next.s3.status.usageLimits, undefined);
+  assert.equal(next.s3.status.providerScopeKey, "claude:global");
 });
-

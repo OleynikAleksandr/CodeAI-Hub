@@ -60,3 +60,19 @@ test("createInitialSnapshot keeps non-workflow sessions idle", () => {
 
   assert.equal(snapshot.status.connectionState, "idle");
 });
+
+test("createInitialSnapshot stores provider-global usage limit scope", () => {
+  const session = createSessionRecord({
+    binding: {
+      providerSessionId: "provider-session-1",
+      status: "ready",
+    },
+  });
+  const snapshot = createInitialSnapshot(
+    session,
+    new Map<ProviderStackId, string>([["codexCli", "Codex"]]),
+    null
+  );
+
+  assert.equal(snapshot.status.providerScopeKey, "codex:global");
+});
