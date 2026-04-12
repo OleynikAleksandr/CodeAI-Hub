@@ -88,6 +88,13 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (!match) {
           return;
         }
+        // Skip re-bootstrap if this dialog was already matched and
+        // bootstrapped — retry dialog:list:result responses must not
+        // overwrite messages that were already loaded by the first
+        // dialog:history:result.
+        if (options.dialogIdRef.current === match.dialogId && options.sessionRef.current) {
+          return;
+        }
         const providerId = resolveProviderId(match.providerId);
         const preferredRuntimeSessionId =
           match.latestSessionId ?? match.rootSessionId;
