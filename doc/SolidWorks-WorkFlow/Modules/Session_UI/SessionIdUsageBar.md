@@ -13,7 +13,8 @@
 
 - `binding`
 - `status`
-- `onRefreshUsageLimits(providerId)`
+- `sessionId`
+- `onRefreshUsageLimits({ sessionId, providerId, providerSessionId })`
 
 ## Откуда берет правду
 
@@ -32,7 +33,7 @@
 - `session:stream` usage-limit payloads;
 - `updateSnapshotsWithUsageLimits(...)`;
 - write/read through `usage-limits-cache`;
-- manual refresh через `api.refreshUsageLimits(providerId)`.
+- manual refresh через `api.refreshUsageLimits({ sessionId, providerId, providerSessionId })`.
 
 ## Когда обновляется
 
@@ -40,12 +41,14 @@
 - при любом `session:binding`;
 - при каждом релевантном usage-limits stream event;
 - при смене активной сессии;
-- при mount/provider change самой панели.
+- при cold-start restore active session;
+- при смене `providerSessionId` у active session после restore/rebind;
+- при mount/session change/provider change самой панели.
 
 ## Что отдает наружу
 
 Панель сама триггерит side effect:
-- в `useEffect()` вызывает `onRefreshUsageLimits(providerId)`.
+- в `useEffect()` вызывает session-scoped `onRefreshUsageLimits(...)` для текущей active session.
 
 ## Локальный state
 
@@ -55,3 +58,4 @@
 
 - один usage-limits event может обновить не только текущий snapshot, а все snapshots того же `providerScopeKey`;
 - это не чисто read-only projection panel: она сама участвует в refresh-механизме.
+- manual refresh больше не использует synthetic provider session bucket в UI-path: refresh должен вернуться в реальный runtime `sessionId`, иначе panel не получит rerender через snapshots.

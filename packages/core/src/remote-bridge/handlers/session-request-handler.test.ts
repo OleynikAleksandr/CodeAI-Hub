@@ -3,6 +3,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import "./session-request-handler.usage-limits.test";
 import { readAppliedProviderTurnConfig } from "../types";
 import {
   createDescriptionSession,
