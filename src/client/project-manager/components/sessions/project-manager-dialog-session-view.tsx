@@ -1,5 +1,8 @@
+import { useCallback } from "react";
+import { api } from "../../api";
 import SessionView from "../../../ui/src/session/session-view";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
+import type { UsageLimitsRefreshRequest } from "../../../ui/src/session/session-id-bar";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 import { useDialogSwitchOffer } from "./use-dialog-switch-offer";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
@@ -25,6 +28,12 @@ const ProjectManagerDialogSessionView = (props: {
   const { switchOffer, dismissSwitchOffer, acceptRetryInPlace, acceptSwitchTarget } =
     useDialogSwitchOffer(session?.id ?? null);
   useRuntimeModelSync(session?.id ?? null, setSnapshots);
+  const handleRefreshUsageLimits = useCallback(
+    (request: UsageLimitsRefreshRequest) => {
+      api.refreshUsageLimits(request);
+    },
+    []
+  );
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;
@@ -36,6 +45,7 @@ const ProjectManagerDialogSessionView = (props: {
         coreConnectionStatus={connection.status}
         onCloseSession={() => props.onExit()}
         onFileLinkActivate={props.onFileLinkActivate}
+        onRefreshUsageLimits={handleRefreshUsageLimits}
         onSelectSession={() => {}}
         onSendMessage={() => {}}
         emptyStatePending={shouldShowPending}
@@ -56,6 +66,7 @@ const ProjectManagerDialogSessionView = (props: {
       coreConnectionStatus={connection.status}
       onCloseSession={() => props.onExit()}
       onFileLinkActivate={props.onFileLinkActivate}
+      onRefreshUsageLimits={handleRefreshUsageLimits}
       onSelectSession={() => {}}
       onSendMessage={(_sessionId, content) => sendMessage(content)}
       providerLabels={providerLabels}

@@ -7,6 +7,10 @@ const SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-session-view.tsx"
 );
+const DIALOG_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx"
+);
 const RUNTIME_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
@@ -54,9 +58,20 @@ test("project-manager-session-view restores dialog mode only from live PM intent
   assert.equal(source.includes("window.localStorage"), false);
   assert.equal(source.includes("loadLastDialogIntent"), false);
   assert.equal(source.includes("saveLastDialogIntent"), false);
-  assert.equal(source.includes('setViewMode("runtime");'), true);
+  assert.equal(source.includes("setDialogIntentOverride(null);"), true);
   assert.equal(source.includes("startupStage={startupStage}"), true);
   assert.equal(source.includes("initialDialogIntent"), true);
+});
+
+test("project-manager-dialog-session-view wires usage limits refresh into SessionView", async () => {
+  const source = await readFile(DIALOG_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("const handleRefreshUsageLimits = useCallback("),
+    true
+  );
+  assert.equal(source.includes("api.refreshUsageLimits(request);"), true);
+  assert.equal(source.includes("onRefreshUsageLimits={handleRefreshUsageLimits}"), true);
 });
 
 test("project-manager-runtime-session-view does not seed empty state from browser-local dialog cache", async () => {
