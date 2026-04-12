@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.954] - 2026-04-12
+### Fixed
+- **Codex rate limits**: replaced broken RPC reader (`codex app-server` fails on `prolite` plan type) with direct HTTP reader that calls `chatgpt.com/backend-api/wham/usage`. Session and weekly limits now display reliably.
+- **Proactive rate limits on session open**: Codex and Claude now fetch usage limits immediately on session create/resume instead of waiting for the first completed turn. Limits appear in the ID panel as soon as the session opens.
+
 ## [1.1.953] - 2026-04-12
 ### Fixed
 - **Confirmation card localization**: added all missing message IDs to approved source dictionaries (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`) so confirmation card texts are localizable. Fixed `confirm_warning` to use template variable `{upstreamStage}` instead of JS template literal.
