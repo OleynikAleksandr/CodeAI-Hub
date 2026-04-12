@@ -13,7 +13,6 @@ import type {
 import type { Settings } from "../components/settings/settings-state-model";
 import { buildModelInfoList } from "./model-info-builder";
 import { readLastKnownTokenUsage } from "./token-usage-cache";
-import { readLastKnownUsageLimits } from "./usage-limits-cache";
 
 export type ProviderCatalog = Partial<
   Record<ProviderStackId, ProviderStackDescriptor>
@@ -43,6 +42,10 @@ const createDefaultBinding = (): SessionBindingInfo => ({
 
 const USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX = "global";
 
+const buildGlobalUsageLimitScopeKey = (
+  providerId: "claude" | "codex" | "gemini"
+): string => `${providerId}:${USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX}`;
+
 const mapUsageLimitProviderId = (
   providerId: ProviderStackId | null | undefined
 ): "claude" | "codex" | "gemini" | null => {
@@ -58,16 +61,35 @@ const mapUsageLimitProviderId = (
   }
 };
 
+const readUsageLimitProviderFromScopeKey = (
+  scopeKey: string | null | undefined
+): "claude" | "codex" | "gemini" | null => {
+  const normalized = scopeKey?.trim().toLowerCase();
+  if (!normalized) {
+    return null;
+  }
+  const prefix = normalized.split(":")[0] ?? normalized;
+  if (prefix.includes("claude")) {
+    return "claude";
+  }
+  if (prefix.includes("codex")) {
+    return "codex";
+  }
+  if (prefix.includes("gemini")) {
+    return "gemini";
+  }
+  return null;
+};
+
 const buildUsageLimitScopeKey = (
-  providerId: ProviderStackId | null | undefined,
-  providerSessionId: string | null | undefined
+  providerId: ProviderStackId | null | undefined
 ): string | null => {
   const usageLimitProviderId = mapUsageLimitProviderId(providerId);
   if (!usageLimitProviderId) {
     return null;
   }
 
-  return `${usageLimitProviderId}:${providerSessionId?.trim() || USAGE_LIMITS_GLOBAL_SCOPE_SUFFIX}`;
+  return buildGlobalUsageLimitScopeKey(usageLimitProviderId);
 };
 
 export const normalizeBinding = (
@@ -86,22 +108,22 @@ export const normalizeBinding = (
 };
 
 const resolveSessionUsageLimitScopeKey = (
-  session: Pick<SessionRecord, "providerIds" | "binding">
-): string | null =>
-  buildUsageLimitScopeKey(
-    session.providerIds[0] ?? null,
-    session.binding.providerSessionId
-  );
+  session: Pick<SessionRecord, "providerIds">
+): string | null => buildUsageLimitScopeKey(session.providerIds[0] ?? null);
 
 export const resolveStatusUsageLimitScopeKey = (
   status: Pick<SessionStatusInfo, "models" | "providerScopeKey">,
-  binding?: Pick<SessionBindingInfo, "providerSessionId"> | null
-): string | null =>
-  status.providerScopeKey?.trim().toLowerCase() ||
-  buildUsageLimitScopeKey(
-    status.models?.[0]?.providerId,
-    binding?.providerSessionId ?? null
+  _binding?: Pick<SessionBindingInfo, "providerSessionId"> | null
+): string | null => {
+  const existingProviderId = readUsageLimitProviderFromScopeKey(
+    status.providerScopeKey
   );
+  if (existingProviderId) {
+    return buildGlobalUsageLimitScopeKey(existingProviderId);
+  }
+
+  return buildUsageLimitScopeKey(status.models?.[0]?.providerId);
+};
 
 export const applyBindingToSessionSnapshot = (
   snapshot: SessionSnapshot,
@@ -111,11 +133,6 @@ export const applyBindingToSessionSnapshot = (
     snapshot.status,
     binding
   );
-  const cachedUsageLimits = readLastKnownUsageLimits(
-    providerScopeKey,
-    snapshot.status.providerSummary
-  );
-  const usageLimits = snapshot.status.usageLimits ?? cachedUsageLimits;
 
   return {
     ...snapshot,
@@ -123,7 +140,6 @@ export const applyBindingToSessionSnapshot = (
     status: {
       ...snapshot.status,
       ...(providerScopeKey ? { providerScopeKey } : {}),
-      ...(usageLimits ? { usageLimits } : {}),
     },
   };
 };
@@ -163,10 +179,6 @@ export const createInitialSnapshot = (
   const cachedTokenUsage = session.binding.providerSessionId
     ? readLastKnownTokenUsage(session.binding.providerSessionId)
     : null;
-  const cachedUsageLimits = readLastKnownUsageLimits(
-    providerScopeKey,
-    providersSummary
-  );
 
   const status: SessionStatusInfo = {
     providerSummary: providersSummary,
@@ -176,7 +188,6 @@ export const createInitialSnapshot = (
       used: cachedTokenUsage?.used ?? 0,
       limit: cachedTokenUsage?.limit ?? 200_000,
     },
-    ...(cachedUsageLimits ? { usageLimits: cachedUsageLimits } : {}),
     continuityLock: {
       active: false,
       updatedAt: now,

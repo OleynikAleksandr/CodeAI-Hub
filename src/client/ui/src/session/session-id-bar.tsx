@@ -5,7 +5,6 @@ import type {
 } from "../../../../types/session";
 import { resolveStatusUsageLimitScopeKey } from "./helpers";
 import { buildResetLabel } from "./session-id-bar-reset-format";
-import { readLastKnownUsageLimitsState } from "./usage-limits-cache";
 
 const SESSION_ID_PREFIX_LENGTH = 8;
 
@@ -184,17 +183,9 @@ const SessionIdBar = ({
     rawProviderId,
     sessionId,
   ]);
-  const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
-  const cachedUsageLimitsState = readLastKnownUsageLimitsState(
-    providerScopeKey,
-    status.providerSummary
-  );
-  const resolvedUsageLimits =
-    status.usageLimits ?? cachedUsageLimitsState?.usageLimits ?? null;
+  const resolvedUsageLimits = status.usageLimits ?? null;
   const resolvedUsageLimitLabels =
-    status.usageLimitLabels ??
-    cachedUsageLimitsState?.usageLimitLabels ??
-    buildFallbackLabels(status, binding);
+    status.usageLimitLabels ?? buildFallbackLabels(status, binding);
 
   const primary = buildLimitRowData(
     resolvedUsageLimits?.currentSession,
