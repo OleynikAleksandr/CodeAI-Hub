@@ -7,17 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.965
-- **Stage confirmation card**: clicking an idle trunk stage (Virtual Simulation, Diagram Modules) in the sidebar now shows a confirmation card in the left panel. The card displays the upstream artifact name and availability, a warning that clicking Start confirms readiness, and a Start button that creates the session and sends the instruction pack automatically.
-- **Prop-based session intent**: session view receives its dialog intent as a prop resolved from workflow state, not via broadcast events. Sessions load instantly on workspace open and stage switch — no timing workarounds.
-- **Neutral empty state**: session panel shows "No active session" instead of Description-specific text.
+## Current Release — v1.1.966
+- **Session-scoped usage limits refresh**: `Session ID + Usage Limits` now refreshes against the real active session context (`sessionId + providerId + providerSessionId`) instead of a provider-wide synthetic bucket.
+- **Cold-start and stage-switch coverage**: usage limits refresh now reruns when Project Manager restores the active workflow session on workspace open and when the user switches to another workflow step/session.
+- **Immediate rerender path**: Core broadcasts manual refresh results back into the concrete runtime `sessionId`, so the active snapshot updates immediately through the normal `session:stream -> snapshots -> rerender` flow.
 
-### 1.1.934 (previous)
-- **Type markers in development tree**: P/C/M letter markers replace toggle triangles and type badges. Status-driven colors (gray/orange/green) and green outline on expandable nodes with children.
-- **Nested sidebar structure**: ProductPart wrapper with accent frame, cluster connector lines to child modules.
-- **Development Tree baseline**: after Diagram Modules, the sidebar projects a Product Part / Cluster / Module tree.
-- **Three-color stage indicators**: gray (idle), orange (in progress), green (artifact available).
-- **Deferred**: branch session lifecycle (lazy start, provider inheritance, gating, outdated propagation) ships in a follow-up release.
+### 1.1.965 (previous)
+- **Codex rate limits**: replaced broken RPC reader (`codex app-server` fails on `prolite` plan type) with direct HTTP reader that calls `chatgpt.com/backend-api/wham/usage`. Session and weekly limits now display reliably.
+- **Gemini rate limits**: expanded model whitelist to cover all current Gemini models (3.1 Pro, 3 Pro, 3 Flash, 3.1 Flash Lite, 2.5 Pro, 2.5 Flash). Unknown model IDs are now auto-formatted instead of silently dropped.
+- **Proactive rate limits on session open**: all three providers (Codex, Claude, Gemini) now fetch usage limits immediately on session create/resume instead of waiting for the first completed turn.
 
 ### 1.1.922 (previous)
 - **Sidecar v2 persists layout params**: `module-map.flow.json` schema bumped to `version: 2` with a new `layoutParams` section holding per-ProductPart (`columns`, `targetAspectRatio`) and per-Cluster (`moduleColumns`) CSS Grid overrides. Right-click selections now survive diagram reload, PM restart, and cross-window sidecar sync.

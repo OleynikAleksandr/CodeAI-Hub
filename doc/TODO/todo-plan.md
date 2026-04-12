@@ -31,8 +31,8 @@
 6. [DONE] Git Commit: `test: cover session-scoped usage limits refresh` (hash: TBD; текущий commit этой сессии)
 
 ### Stream: Release build and closeout
-1. [TODO] Подготовить release-документы под будущую версию и синхронизировать связанные `doc/` материалы по этому scope; scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session004.md`; ожидаемый commit message: `docs: prepare release notes for session-scoped usage limits refresh`
-2. [TODO] Git Commit: `docs: prepare release notes for session-scoped usage limits refresh` (hash: TBD)
+1. [DONE] Подготовить release-документы под будущую версию и синхронизировать связанные `doc/` материалы по этому scope; scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session004.md`; ожидаемый commit message: `docs: prepare release notes for session-scoped usage limits refresh`
+2. [DONE] Git Commit: `docs: prepare release notes for session-scoped usage limits refresh` (hash: TBD; текущий commit этой сессии)
 3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и зафиксировать итоги в `doc/Sessions/Session004.md`; scope: release verification + session closeout; ожидаемый commit message: `docs: record session-scoped usage limits release validation`

@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.966] - 2026-04-12
+### Fixed
+- **Session-scoped usage limits refresh**: `Session ID + Usage Limits` now sends manual refresh requests with the real active session context (`sessionId`, `providerId`, `providerSessionId`) instead of a provider-wide synthetic scope.
+- **Runtime-scoped refresh broadcast**: Core now routes manual usage-limits refresh results back into the concrete runtime `sessionId`, so the active Project Manager snapshot rerenders immediately through the normal `session:stream` path.
+- **Bound provider session reads**: Claude, Codex, and Gemini manual refresh paths now read usage limits for the active bound provider session instead of the synthetic `proactive` bucket.
+- **Regression coverage**: added dedicated Core coverage for the session-scoped refresh path and documented the factual `SessionIdUsageBar` contract.
+
 ## [1.1.965] - 2026-04-12
 ### Fixed
 - **Codex rate limits**: replaced broken RPC reader (`codex app-server` fails on `prolite` plan type) with direct HTTP reader that calls `chatgpt.com/backend-api/wham/usage`. Session and weekly limits now display reliably.
