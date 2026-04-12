@@ -40,6 +40,31 @@ export class CodexUsageSync {
     this.usageLimitsFacade = usageLimitsFacade;
   }
 
+  async proactiveRefresh(session: ActiveSession): Promise<CodexUsageLimits> {
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
+      return null;
+    }
+    const providerSessionId =
+      session.codexThreadId || `proactive_${session.sessionId}`;
+
+    const payload = await facade
+      .readStreamPayload({
+        workspacePath: session.workspacePath,
+        runtimeSessionId: session.sessionId,
+        providerSessionId,
+        force: true,
+      })
+      .catch(() => null);
+
+    if (!payload?.usageLimits) {
+      return null;
+    }
+
+    emitUsageLimitsStreamPayload(session, providerSessionId, payload);
+    return payload.usageLimits;
+  }
+
   async safeRefresh(session: ActiveSession): Promise<CodexUsageLimits> {
     const providerSessionId = session.codexThreadId;
     if (!providerSessionId) {

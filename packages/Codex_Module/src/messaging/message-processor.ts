@@ -95,7 +95,7 @@ export class CodexMessageProcessor {
   }
 
   proactiveUsageLimitsRefresh(session: ActiveSession): void {
-    this.usageSync.safeRefresh(session).catch((error: unknown) => {
+    this.usageSync.proactiveRefresh(session).catch((error: unknown) => {
       this.options?.reporter?.warn?.(
         `Codex proactive usage limits refresh failed: ${
           error instanceof Error ? error.message : String(error)
