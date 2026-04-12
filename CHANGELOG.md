@@ -4,13 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.1.963] - 2026-04-12
+## [1.1.964] - 2026-04-12
 ### Fixed
 - **Codex rate limits**: replaced broken RPC reader (`codex app-server` fails on `prolite` plan type) with direct HTTP reader that calls `chatgpt.com/backend-api/wham/usage`. Session and weekly limits now display reliably.
 - **Gemini rate limits**: expanded model whitelist to cover all current Gemini models (3.1 Pro, 3 Pro, 3 Flash, 3.1 Flash Lite, 2.5 Pro, 2.5 Flash). Unknown model IDs are now auto-formatted instead of silently dropped.
 - **Proactive rate limits on session open**: all three providers (Codex, Claude, Gemini) now fetch usage limits immediately on session create/resume instead of waiting for the first completed turn.
 
-## [1.1.963] - 2026-04-12
+## [1.1.964] - 2026-04-12
 ### Fixed
 - **Confirmation card localization**: added all missing message IDs to approved source dictionaries (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`) so confirmation card texts are localizable. Fixed `confirm_warning` to use template variable `{upstreamStage}` instead of JS template literal.
 - **Session auto-restore on workspace open**: auto-select retries session dispatch when chains are not yet available. WorkflowStateStore emits when chain count changes. Dialog list retry no longer overwrites already-loaded message history — the `dialog:list:result` handler now skips re-bootstrap if the dialog was already matched and loaded.
