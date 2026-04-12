@@ -62,10 +62,10 @@
 ## Phase 3 — Dialog-mode usage-limits refresh restore after release smoke (owner: Codex, updated: 2026-04-12)
 ### Stream: Restore PM dialog refresh path
 1. [DONE] Подключить `Session ID + Usage Limits` refresh callback в Project Manager dialog-mode `SessionView` и закрыть regression guard на source-level wiring; scope: `src/client/project-manager/components/sessions/{project-manager-dialog-session-view.tsx,project-manager-session-view.test.tsx}`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `fix: restore usage limits refresh in dialog session view`
-2. [TODO] Git Commit: `fix: restore usage limits refresh in dialog session view` (hash: TBD)
+2. [DONE] Git Commit: `fix: restore usage limits refresh in dialog session view` (hash: `d8c4e7d2a`)
 
 ### Stream: Patched release build and closeout
-1. [TODO] Подготовить release-документы под будущую версию `1.1.968` и синхронизировать active todo-plan под dialog-mode fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for dialog usage limits refresh`
+1. [DONE] Подготовить release-документы под будущую версию `1.1.968` и синхронизировать active todo-plan под dialog-mode fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for dialog usage limits refresh`
 2. [TODO] Git Commit: `docs: prepare release notes for dialog usage limits refresh` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)

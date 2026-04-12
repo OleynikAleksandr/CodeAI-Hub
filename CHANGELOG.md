@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.968] - 2026-04-12
+### Fixed
+- **Dialog-session refresh wiring**: Project Manager dialog-mode session screens now pass `onRefreshUsageLimits` into `SessionView`, restoring live usage-limits refresh on active workflow stage dialogs.
+- **Limits visible again across providers**: Codex, Claude, and Gemini usage limits render again in Project Manager because the manual refresh request is now sent from both runtime-session and dialog-session surfaces.
+- **No backend contract rollback**: the release keeps the existing provider-global, live-only usage-limits contract from `1.1.967`; this patch only restores the missing UI trigger path.
+
 ## [1.1.967] - 2026-04-12
 ### Fixed
 - **Provider-global usage limits**: the same provider now shares one canonical usage-limits scope across workflow sessions instead of keeping separate limits per provider session id.

@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.967
+## Current Release — v1.1.968
+- **Dialog-session usage limits restored**: Project Manager dialog-mode sessions now trigger the same live `Session ID + Usage Limits` refresh path as runtime sessions, so limits render again on active workflow stage screens.
+- **Live quota readers remain authoritative**: Codex, Claude, and Gemini limits continue to come from their provider-specific live quota/HTML readers, not from SDK usage logs or stale browser state.
+- **Provider-global behavior retained**: sessions that use the same provider still converge to one provider-global usage scope (`claude:global`, `codex:global`, `gemini:global`) across workflow steps.
+
+### 1.1.967 (previous)
 - **Provider-global usage limits**: sessions that use the same provider now converge to a shared provider-global usage scope (`claude:global`, `codex:global`, `gemini:global`) instead of diverging by provider session id.
 - **No stale usage-limits cache**: `Session ID + Usage Limits` no longer hydrates from persistent browser cache and now renders only from live snapshot state after refresh.
 - **Legacy scope migration on restore**: restored workflow sessions with old session-specific usage-limit scope keys are normalized into the provider-global contract as soon as fresh limits arrive.
