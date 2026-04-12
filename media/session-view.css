@@ -196,10 +196,11 @@
 .session-id-bar {
   box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
   min-height: 32px;
-  padding: 2px 8px;
+  padding: 4px 8px;
 }
 
 .session-id-bar__id {
