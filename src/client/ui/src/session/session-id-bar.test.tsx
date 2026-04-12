@@ -55,6 +55,7 @@ test("SessionIdBar falls back to cached usage limits for same provider", () => {
         providerSessionId: "3f4364a8-1234-5678-9012",
         status: "ready",
       },
+      sessionId: "runtime-session-1",
       status: {
         providerSummary: "Claude",
         tokenUsage: { used: 0, limit: 200_000 },
