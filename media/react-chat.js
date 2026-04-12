@@ -8424,6 +8424,14 @@
       status: "preview",
       family: "gemini-3",
       supportedThinkingLevels: ["minimal", "low", "medium", "high"]
+    },
+    {
+      id: "gemini-3.1-flash-lite-preview",
+      displayName: "Gemini 3.1 Flash Lite",
+      description: "Lightweight model with fast responses and low cost.",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["off", "minimal", "low"]
     }
   ];
   var GEMINI_MODEL_ID_SET = new Set(
