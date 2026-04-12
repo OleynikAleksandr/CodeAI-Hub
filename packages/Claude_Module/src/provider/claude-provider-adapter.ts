@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { SDKAuthManager } from "../auth/sdk-auth-manager";
 import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
@@ -5,19 +6,25 @@ import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
 import { ClaudeSDKManager } from "../sdk/claude-sdk-manager";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
-import type { ClaudeModuleOptions } from "../types";
+import type {
+  ClaudeModuleOptions,
+  ClaudeUsageLimitsFacadeBridge,
+  ClaudeUsageLimitsStreamPayload,
+} from "../types";
 
 export type SessionListener = (payload: unknown) => void;
 
 export class ClaudeProviderAdapter {
   private readonly sdkManager: ClaudeSDKManager;
   private readonly authManager: SDKAuthManager;
+  private readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
   private readonly workspacePath: string;
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly pendingEvents = new Map<string, unknown[]>();
   private readonly sessionIdAliases = new Map<string, string>();
 
   constructor(options: ClaudeModuleOptions) {
+    this.usageLimitsFacade = options.usageLimitsFacade;
     const reporter = options.reporter;
     this.workspacePath = options.workspace.workspacePath;
     const projectPath = this.resolveProjectPath(
@@ -76,8 +83,42 @@ export class ClaudeProviderAdapter {
     return resumedId;
   }
 
-  refreshUsageLimits(sessionId: string): void {
-    this.sdkManager.proactiveUsageLimitsRefresh(sessionId);
+  refreshUsageLimits(
+    sessionId: string,
+    broadcast?: (event: unknown) => void
+  ): void {
+    const session = this.sdkManager.getSession(sessionId);
+    if (session) {
+      this.sdkManager.proactiveUsageLimitsRefresh(sessionId);
+      return;
+    }
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
+      return;
+    }
+    const emit =
+      broadcast ?? ((e: unknown) => this.dispatchMessage(sessionId, e));
+    facade
+      .readStreamPayload({
+        workspacePath: this.workspacePath,
+        runtimeSessionId: sessionId,
+        providerSessionId: sessionId,
+        force: true,
+      })
+      .then((payload: ClaudeUsageLimitsStreamPayload | null) => {
+        if (!payload?.usageLimits) {
+          return;
+        }
+        emit({
+          usageLimits: payload.usageLimits,
+          data: payload.data,
+          uuid: `${crypto.randomUUID()}::usage_limits`,
+          timestamp: new Date().toISOString(),
+        });
+      })
+      .catch(() => {
+        // Best-effort standalone refresh.
+      });
   }
 
   async closeSession(sessionId: string): Promise<void> {

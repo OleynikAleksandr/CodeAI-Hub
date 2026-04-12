@@ -92,7 +92,10 @@ export class RemoteBridgeMessageRouter {
         break;
       case "session:refreshUsageLimits":
         this.deps.sessionHandler
-          .handleRefreshUsageLimits(incoming.payload.sessionId)
+          .handleRefreshUsageLimits(
+            incoming.payload.sessionId,
+            incoming.payload.providerId
+          )
           .catch(() => {
             // Best-effort refresh; failures are non-blocking.
           });

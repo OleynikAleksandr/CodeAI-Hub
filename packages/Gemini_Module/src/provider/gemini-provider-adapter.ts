@@ -188,12 +188,41 @@ export class GeminiProviderAdapter {
     });
   }
 
-  async refreshUsageLimits(sessionId: string): Promise<void> {
+  async refreshUsageLimits(
+    sessionId: string,
+    broadcast?: (event: unknown) => void
+  ): Promise<void> {
     const manager = this.requireSessionManager();
     const session = manager.getSession(sessionId);
     if (session) {
       await this.refreshUsageLimitsAfterTurn(session, sessionId);
+      return;
     }
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
+      return;
+    }
+    const providerSessionId = sessionId;
+    const payload = await facade
+      .readStreamPayload({
+        workspacePath: this.options.workspace.workspacePath ?? process.cwd(),
+        runtimeSessionId: sessionId,
+        providerSessionId,
+        force: true,
+      })
+      .catch(() => null);
+    if (!payload?.usageLimits) {
+      return;
+    }
+    const emit =
+      broadcast ?? ((e: unknown) => this.dispatchMessage(sessionId, e));
+    emit({
+      usageLimits: payload.usageLimits,
+      data: payload.data,
+      providerScopeKey: payload.providerScopeKey,
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   async closeSession(sessionId: string): Promise<void> {

@@ -4,17 +4,23 @@ import { CodexMessageProcessor } from "../messaging/message-processor";
 import { CodexSDKManager } from "../sdk/codex-sdk-manager";
 import { CodexSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
-import type { CodexModuleOptions, CodexTurnOptions } from "../types";
+import type {
+  CodexModuleOptions,
+  CodexTurnOptions,
+  CodexUsageLimitsFacadeBridge,
+} from "../types";
 
 export type SessionListener = (payload: unknown) => void;
 
 export class CodexProviderAdapter {
   private readonly sdkManager: CodexSDKManager;
+  private readonly usageLimitsFacade?: CodexUsageLimitsFacadeBridge;
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly pendingEvents = new Map<string, unknown[]>();
   private readonly sessionIdAliases = new Map<string, string>();
 
   constructor(options: CodexModuleOptions) {
+    this.usageLimitsFacade = options.usageLimitsFacade;
     const installer = new CodexInstaller(options.installerPaths, {
       logger: options.reporter,
     });
@@ -62,11 +68,42 @@ export class CodexProviderAdapter {
     return resumedId;
   }
 
-  refreshUsageLimits(sessionId: string): void {
+  refreshUsageLimits(
+    sessionId: string,
+    broadcast?: (event: unknown) => void
+  ): void {
     const session = this.sdkManager.getSession(sessionId);
     if (session) {
       this.sdkManager.proactiveUsageLimitsRefresh(session);
+      return;
     }
+    const facade = this.usageLimitsFacade;
+    if (!facade) {
+      return;
+    }
+    const emit =
+      broadcast ?? ((e: unknown) => this.dispatchMessage(sessionId, e));
+    facade
+      .readStreamPayload({
+        workspacePath: process.cwd(),
+        runtimeSessionId: sessionId,
+        providerSessionId: `proactive_${sessionId}`,
+        force: true,
+      })
+      .then((payload) => {
+        if (!payload?.usageLimits) {
+          return;
+        }
+        emit({
+          usageLimits: payload.usageLimits,
+          data: payload.data,
+          uuid: `${crypto.randomUUID()}::usage_limits`,
+          timestamp: new Date().toISOString(),
+        });
+      })
+      .catch(() => {
+        // Best-effort standalone refresh.
+      });
   }
 
   async closeSession(sessionId: string): Promise<void> {

@@ -310,7 +310,13 @@ const ProjectManagerRuntimeSessionView = ({
   useRuntimeModelSync(activeSessionId, setSnapshots);
   useEffect(() => {
     if (activeSessionId) {
-      api.refreshUsageLimits(activeSessionId);
+      const record = sessionsRef.current.find(
+        (s) => s.id === activeSessionId
+      );
+      const providerId = record?.providerIds[0] ?? null;
+      if (providerId) {
+        api.refreshUsageLimits(activeSessionId, providerId);
+      }
     }
   }, [activeSessionId]);
   useSessionResumeIntent({
