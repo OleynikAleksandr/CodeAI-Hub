@@ -12,6 +12,5 @@
   "session.empty_state.idle_description": "Select a workflow step in the sidebar to start or resume a session.",
   "settings.core_controls.idle_status_label": "Core restart status will appear here.",
   "pm.workspace_tree.empty_label": "Select a workspace to start.",
-  "pm.sidebar.workspace.menu_empty_label": "No workspaces yet.",
-  "pm.confirmation_card.no_provider": "No provider available for the agent."
+  "pm.sidebar.workspace.menu_empty_label": "No workspaces yet."
 }

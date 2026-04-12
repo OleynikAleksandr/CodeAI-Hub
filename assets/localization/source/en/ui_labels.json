@@ -68,5 +68,11 @@
   "pm.status_bar.workflow_hint_label": "Workflow Tree MVP",
   "pm.stage_artifact_header.mode.artifacts": "Artifacts",
   "pm.stage_artifact_header.mode.help": "Help",
-  "pm.stage_artifact_header.mode.source": "Source"
+  "pm.stage_artifact_header.mode.source": "Source",
+  "pm.confirmation_card.title.virtual_simulation": "Virtual Simulation",
+  "pm.confirmation_card.title.diagram_modules": "Diagram Modules",
+  "pm.confirmation_card.start_button": "Start step",
+  "pm.confirmation_card.starting_button": "Starting...",
+  "pm.confirmation_card.artifact_available": "available",
+  "pm.confirmation_card.artifact_not_found": "not found"
 }

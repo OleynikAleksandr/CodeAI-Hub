@@ -59,9 +59,5 @@
   "pm.virtual_simulation.help.glossary.boundary": "`Boundary` is a border between parts of the system.",
   "pm.virtual_simulation.help.coverage_guidance": "`virtual-simulation.md` should contain as many scenarios as needed to cover the product without blind spots. Related system behaviors can be grouped for clarity, but not to satisfy an artificial numeric limit.",
   "pm.virtual_simulation.help.refinement_guidance": "The agent should ask only the missing questions and stop refining once it considers the document a strong enough foundation for the next step. The decision to move on still stays with you.",
-  "pm.virtual_simulation.help.output": "Step output: `.codeai-hub/<workspace>/virtual_simulation/virtual-simulation.md`.",
-  "pm.confirmation_card.input_label": "This step will use the following artifact as input:",
-  "pm.confirmation_card.confirm_warning": "By clicking Start, you confirm that the {upstreamStage} artifact is complete and ready for the next step. The agent will begin working immediately.",
-  "pm.confirmation_card.blocked.virtual_simulation": "Complete the Description step first.",
-  "pm.confirmation_card.blocked.diagram_modules": "Complete the Virtual Simulation step first."
+  "pm.virtual_simulation.help.output": "Step output: `.codeai-hub/<workspace>/virtual_simulation/virtual-simulation.md`."
 }
