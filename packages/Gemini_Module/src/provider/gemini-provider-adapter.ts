@@ -192,31 +192,22 @@ export class GeminiProviderAdapter {
     sessionId: string,
     broadcast?: (event: unknown) => void
   ): Promise<void> {
-    const manager = this.requireSessionManager();
-    const session = manager.getSession(sessionId);
-    if (session) {
-      await this.refreshUsageLimitsAfterTurn(session, sessionId);
-      return;
-    }
     const facade = this.usageLimitsFacade;
-    if (!facade) {
+    if (!(facade && broadcast)) {
       return;
     }
-    const providerSessionId = sessionId;
     const payload = await facade
       .readStreamPayload({
         workspacePath: this.options.workspace.workspacePath ?? process.cwd(),
         runtimeSessionId: sessionId,
-        providerSessionId,
+        providerSessionId: sessionId,
         force: true,
       })
       .catch(() => null);
     if (!payload?.usageLimits) {
       return;
     }
-    const emit =
-      broadcast ?? ((e: unknown) => this.dispatchMessage(sessionId, e));
-    emit({
+    broadcast({
       usageLimits: payload.usageLimits,
       data: payload.data,
       providerScopeKey: payload.providerScopeKey,

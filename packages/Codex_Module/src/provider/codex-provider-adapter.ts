@@ -72,17 +72,10 @@ export class CodexProviderAdapter {
     sessionId: string,
     broadcast?: (event: unknown) => void
   ): void {
-    const session = this.sdkManager.getSession(sessionId);
-    if (session) {
-      this.sdkManager.proactiveUsageLimitsRefresh(session);
-      return;
-    }
     const facade = this.usageLimitsFacade;
-    if (!facade) {
+    if (!(facade && broadcast)) {
       return;
     }
-    const emit =
-      broadcast ?? ((e: unknown) => this.dispatchMessage(sessionId, e));
     facade
       .readStreamPayload({
         workspacePath: process.cwd(),
@@ -94,7 +87,7 @@ export class CodexProviderAdapter {
         if (!payload?.usageLimits) {
           return;
         }
-        emit({
+        broadcast({
           usageLimits: payload.usageLimits,
           data: payload.data,
           uuid: `${crypto.randomUUID()}::usage_limits`,
@@ -102,7 +95,7 @@ export class CodexProviderAdapter {
         });
       })
       .catch(() => {
-        // Best-effort standalone refresh.
+        // Best-effort refresh.
       });
   }
 

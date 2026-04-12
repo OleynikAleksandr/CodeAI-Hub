@@ -87,17 +87,10 @@ export class ClaudeProviderAdapter {
     sessionId: string,
     broadcast?: (event: unknown) => void
   ): void {
-    const session = this.sdkManager.getSession(sessionId);
-    if (session) {
-      this.sdkManager.proactiveUsageLimitsRefresh(sessionId);
-      return;
-    }
     const facade = this.usageLimitsFacade;
-    if (!facade) {
+    if (!(facade && broadcast)) {
       return;
     }
-    const emit =
-      broadcast ?? ((e: unknown) => this.dispatchMessage(sessionId, e));
     facade
       .readStreamPayload({
         workspacePath: this.workspacePath,
@@ -109,7 +102,7 @@ export class ClaudeProviderAdapter {
         if (!payload?.usageLimits) {
           return;
         }
-        emit({
+        broadcast({
           usageLimits: payload.usageLimits,
           data: payload.data,
           uuid: `${crypto.randomUUID()}::usage_limits`,
@@ -117,7 +110,7 @@ export class ClaudeProviderAdapter {
         });
       })
       .catch(() => {
-        // Best-effort standalone refresh.
+        // Best-effort refresh.
       });
   }
 
