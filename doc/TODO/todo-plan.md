@@ -28,12 +28,14 @@
 3. [DONE] Перевести Core refresh transport и provider adapters на реальный runtime session + bound provider session id без synthetic provider bucket; scope: `packages/core/src/remote-bridge/`, `packages/core/src/provider-registry/`, `packages/{Claude,Codex,Gemini}_Module/src/provider/`; ожидаемый commit message: `fix: scope usage limits refresh to runtime sessions`
 4. [DONE] Git Commit: `fix: scope usage limits refresh to runtime sessions` (hash: `a0e5d5adc`)
 5. [DONE] Закрыть regression coverage и factual doc sync для session-scoped refresh path; scope: `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `test: cover session-scoped usage limits refresh`
-6. [DONE] Git Commit: `test: cover session-scoped usage limits refresh` (hash: TBD; текущий commit этой сессии)
+6. [DONE] Git Commit: `test: cover session-scoped usage limits refresh` (hash: `ab7d8f93f`)
 
 ### Stream: Release build and closeout
 1. [DONE] Подготовить release-документы под будущую версию и синхронизировать связанные `doc/` материалы по этому scope; scope: `README.md`, `CHANGELOG.md`, `doc/Sessions/Session004.md`; ожидаемый commit message: `docs: prepare release notes for session-scoped usage limits refresh`
 2. [DONE] Git Commit: `docs: prepare release notes for session-scoped usage limits refresh` (hash: `a9d9523a2`)
 3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
-4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: TBD; текущий commit этой сессии)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и зафиксировать итоги в `doc/Sessions/Session004.md`; scope: release verification + session closeout; ожидаемый commit message: `docs: record session-scoped usage limits release validation`
-6. [TODO] Git Commit: `docs: record session-scoped usage limits release validation` (hash: TBD)
+4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `8abfb874f`)
+5. [DONE] Устранить release-blocker compile regression после session-scoped `sessionId` contract в `SessionIdBar`; scope: `src/client/ui/src/session/session-id-bar.test.tsx`; ожидаемый commit message: `test: pass session id to session id bar test`
+6. [DONE] Git Commit: `test: pass session id to session id bar test` (hash: `9e5f8f56f`)
+7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record session-scoped usage limits release validation`
+8. [DONE] Git Commit: `docs: record session-scoped usage limits release validation` (hash: TBD; текущий commit этой сессии)
