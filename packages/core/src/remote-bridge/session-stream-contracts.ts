@@ -177,10 +177,7 @@ export type SessionIncomingMessage =
     }
   | {
       readonly type: "session:refreshUsageLimits";
-      readonly payload: {
-        readonly sessionId: string;
-        readonly providerId: string;
-      };
+      readonly payload: { readonly providerId: string };
     }
   | {
       readonly type: "dialog:switch:request";

@@ -210,10 +210,7 @@ export type OutgoingMessage =
   | { readonly type: "settings:load" }
   | {
       readonly type: "session:refreshUsageLimits";
-      readonly payload: {
-        readonly sessionId: string;
-        readonly providerId: string;
-      };
+      readonly payload: { readonly providerId: string };
     };
 
 export type DialogSwitchRequestPayload = {

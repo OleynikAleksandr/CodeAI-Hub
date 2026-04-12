@@ -68,19 +68,16 @@ export class CodexProviderAdapter {
     return resumedId;
   }
 
-  refreshUsageLimits(
-    sessionId: string,
-    broadcast?: (event: unknown) => void
-  ): void {
+  refreshUsageLimits(broadcast: (event: unknown) => void): void {
     const facade = this.usageLimitsFacade;
-    if (!(facade && broadcast)) {
+    if (!facade) {
       return;
     }
     facade
       .readStreamPayload({
         workspacePath: process.cwd(),
-        runtimeSessionId: sessionId,
-        providerSessionId: `proactive_${sessionId}`,
+        runtimeSessionId: "proactive",
+        providerSessionId: "proactive",
         force: true,
       })
       .then((payload) => {

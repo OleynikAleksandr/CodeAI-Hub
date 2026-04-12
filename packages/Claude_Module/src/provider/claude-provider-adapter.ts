@@ -83,19 +83,16 @@ export class ClaudeProviderAdapter {
     return resumedId;
   }
 
-  refreshUsageLimits(
-    sessionId: string,
-    broadcast?: (event: unknown) => void
-  ): void {
+  refreshUsageLimits(broadcast: (event: unknown) => void): void {
     const facade = this.usageLimitsFacade;
-    if (!(facade && broadcast)) {
+    if (!facade) {
       return;
     }
     facade
       .readStreamPayload({
         workspacePath: this.workspacePath,
-        runtimeSessionId: sessionId,
-        providerSessionId: sessionId,
+        runtimeSessionId: "proactive",
+        providerSessionId: "proactive",
         force: true,
       })
       .then((payload: ClaudeUsageLimitsStreamPayload | null) => {

@@ -315,19 +315,16 @@ export class SessionRequestHandler {
     await this.stopAction.handleStop(sessionId);
   }
 
-  async handleRefreshUsageLimits(
-    sessionId: string,
-    providerId: string
-  ): Promise<void> {
+  async handleRefreshUsageLimits(providerId: string): Promise<void> {
     const adapter = this.providerRegistry.getAdapter(providerId);
     if (typeof adapter?.refreshUsageLimits === "function") {
       const broadcast = (event: unknown): void => {
         this.broadcaster({
           type: "session:stream",
-          payload: { sessionId, event },
+          payload: { sessionId: `provider_${providerId}`, event },
         });
       };
-      await adapter.refreshUsageLimits(sessionId, broadcast);
+      await adapter.refreshUsageLimits(broadcast);
     }
   }
 

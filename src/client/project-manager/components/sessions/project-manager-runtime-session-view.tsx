@@ -315,7 +315,7 @@ const ProjectManagerRuntimeSessionView = ({
     const record = sessions.find((s) => s.id === activeSessionId);
     const providerId = record?.providerIds[0] ?? null;
     if (providerId) {
-      api.refreshUsageLimits(activeSessionId, providerId);
+      api.refreshUsageLimits(providerId);
     }
   }, [activeSessionId, sessions]);
   useSessionResumeIntent({

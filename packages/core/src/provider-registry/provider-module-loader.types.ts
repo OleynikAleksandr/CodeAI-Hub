@@ -86,8 +86,7 @@ export interface ProviderAdapter {
   createSession(workspacePath?: string): Promise<string>;
   initialize(): Promise<void>;
   refreshUsageLimits?(
-    sessionId: string,
-    broadcast?: (event: unknown) => void
+    broadcast: (event: unknown) => void
   ): Promise<void> | void;
   resumeSession?(sessionId: string, workspacePath?: string): Promise<string>;
   sendMessage(
