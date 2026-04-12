@@ -52,9 +52,9 @@
 8. [DONE] Git Commit: `docs: sync provider-global usage limits contract` (hash: `5a87481cc`)
 
 ### Stream: Patched release build and closeout
-1. [IN_PROGRESS] Подготовить release-документы под будущую версию `1.1.967` и синхронизировать active todo-plan с patched provider-global contract; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for provider-global usage limits`
-2. [TODO] Git Commit: `docs: prepare release notes for provider-global usage limits` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
-4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record provider-global usage limits release validation`
+1. [DONE] Подготовить release-документы под будущую версию `1.1.967` и синхронизировать active todo-plan с patched provider-global contract; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for provider-global usage limits`
+2. [DONE] Git Commit: `docs: prepare release notes for provider-global usage limits` (hash: `9d266f8c2`)
+3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
+4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `e2853324a`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record provider-global usage limits release validation`
 6. [TODO] Git Commit: `docs: record provider-global usage limits release validation` (hash: TBD)
