@@ -20,7 +20,7 @@
 
 - `binding.providerSessionId` и `binding.status` из snapshot/binding path;
 - `status.usageLimits` и `status.usageLimitLabels` из snapshot;
-- fallback path — `usage-limits-cache`, если snapshot ещё не наполнен.
+- persistent fallback cache для usage limits отсутствует.
 
 ## Как обновляется
 
@@ -32,7 +32,6 @@
 ### Usage limits side
 - `session:stream` usage-limit payloads;
 - `updateSnapshotsWithUsageLimits(...)`;
-- write/read through `usage-limits-cache`;
 - manual refresh через `api.refreshUsageLimits({ sessionId, providerId, providerSessionId })`.
 
 ## Когда обновляется
@@ -56,6 +55,7 @@
 
 ## Особенности
 
-- один usage-limits event может обновить не только текущий snapshot, а все snapshots того же `providerScopeKey`;
+- один usage-limits event может обновить не только текущий snapshot, а все snapshots того же provider family;
+- для usage limits canonical `providerScopeKey` теперь provider-global (`claude:global`, `codex:global`, `gemini:global`);
 - это не чисто read-only projection panel: она сама участвует в refresh-механизме.
 - manual refresh больше не использует synthetic provider session bucket в UI-path: refresh должен вернуться в реальный runtime `sessionId`, иначе panel не получит rerender через snapshots.

@@ -1,6 +1,6 @@
 # Session Usage Limits Refresh Architecture
 
-**Status:** Draft for review (2026-04-12)
+**Status:** Updated after release smoke (2026-04-12)
 **Created:** 2026-04-12
 **Owner:** Oleksandr + Codex
 **Scope:** Fix the Session ID + Usage Limits panel refresh flow so usage limits reload when Project Manager restores the active session on workspace open and when the user switches between workflow steps/sessions.
@@ -11,10 +11,15 @@
 
 `SessionIdUsageBar` currently calls `onRefreshUsageLimits(providerId)`, but the manual refresh path is provider-wide instead of session-scoped.
 
-Current behavior breaks the expected UI update flow in two places:
+Initial implementation fixed the refresh trigger/broadcast flow, but release smoke on `1.1.966` exposed two remaining contract violations:
 
-1. Core broadcasts manual refresh results under a synthetic session id (`provider_<providerId>`), so the UI reducer cannot map the payload back to the active session snapshot.
-2. Provider adapters read manual refresh data under a synthetic provider session id (`proactive`), so the resulting `providerScopeKey` does not match the active session binding/provider scope shown in Project Manager.
+1. usage limits still kept provider-session-scoped `providerScopeKey`, so different sessions of the same provider could continue to display different buckets;
+2. UI still had a persistent fallback cache path, so the panel could render stale limits even before the fresh per-session refresh completed.
+
+Current behavior therefore still breaks the expected UI update flow in these places:
+
+1. restored or switched workflow sessions can retain old session-specific `providerScopeKey` values for the same provider;
+2. `SessionIdUsageBar` can still render stale cache instead of live snapshot state.
 
 Because of that, the panel may still show stale cache or no usage limits after:
 
@@ -46,7 +51,7 @@ This scope does not:
 - redesign the visual layout of `SessionIdUsageBar`;
 - change token usage logic;
 - redefine provider-specific quota semantics;
-- introduce a new usage limits store outside the existing session snapshots/cache flow.
+- introduce a new usage limits store outside the existing session snapshots flow.
 
 ---
 
@@ -84,17 +89,28 @@ Synthetic ids such as `provider_<providerId>` are not allowed on this path becau
 
 Manual refresh must use the active session's bound `providerSessionId` instead of the synthetic `proactive` id.
 
-This keeps `providerScopeKey` aligned with the session snapshot/provider binding used by `SessionIdUsageBar`.
+This keeps the live read bound to the real provider runtime session while still allowing the final UI scope to be normalized to provider-global identity.
 
-### 4.5. Existing snapshot/cache path remains the single render source
+### 4.5. Usage limit scope is provider-global
 
-`SessionIdUsageBar` stays stateless.
+Usage limits are provider-wide, not provider-session-wide.
 
-Live render source remains:
+Therefore every usage-limit payload and every session snapshot must converge to:
+
+- `claude:global`
+- `codex:global`
+- `gemini:global`
+
+This normalization must also migrate old restored session-specific keys (`claude:<session>`, `codex:<session>`, `gemini:<session>`) into the provider-global key during snapshot/update processing.
+
+### 4.6. No persistent usage-limits cache
+
+`SessionIdUsageBar` stays stateless and must render only from live snapshot state:
 
 - `status.usageLimits`;
-- `status.usageLimitLabels`;
-- fallback `usage-limits-cache`.
+- `status.usageLimitLabels`.
+
+Persistent browser-side fallback cache is not allowed for usage limits. When Project Manager shows a session, it already triggers a fresh refresh request, so cached usage limits only introduce visible divergence.
 
 The fix must update snapshots through the existing `session:stream -> updateSnapshotsWithUsageLimits(...) -> setSnapshots(...)` path.
 
@@ -113,6 +129,9 @@ Expected touch points:
 - `packages/core/src/provider-registry/provider-module-loader.types.ts`
 - `packages/core/src/remote-bridge/remote-bridge-message-router.ts`
 - `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+- `packages/core/src/provider-usage-limits/provider-usage-limits-scope-key.ts`
+- `src/client/ui/src/session/helpers.ts`
+- `src/client/project-manager/components/sessions/usage-limits-stream.ts`
 - provider adapters for Claude/Codex/Gemini
 
 Tests must cover:
@@ -120,4 +139,5 @@ Tests must cover:
 - refresh trigger on active session switch;
 - refresh trigger when binding becomes ready;
 - session-scoped Core broadcast instead of synthetic provider session id;
-- snapshot update/rerender path for the active session.
+- provider-global snapshot convergence across different sessions of the same provider;
+- absence of persistent usage-limits fallback cache in `SessionIdUsageBar`.

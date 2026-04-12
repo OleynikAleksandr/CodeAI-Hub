@@ -38,4 +38,15 @@
 5. [DONE] Устранить release-blocker compile regression после session-scoped `sessionId` contract в `SessionIdBar`; scope: `src/client/ui/src/session/session-id-bar.test.tsx`; ожидаемый commit message: `test: pass session id to session id bar test`
 6. [DONE] Git Commit: `test: pass session id to session id bar test` (hash: `9e5f8f56f`)
 7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record session-scoped usage limits release validation`
-8. [DONE] Git Commit: `docs: record session-scoped usage limits release validation` (hash: TBD; текущий commit этой сессии)
+8. [DONE] Git Commit: `docs: record session-scoped usage limits release validation` (hash: `df46fc32e`)
+
+## Phase 2 — Provider-global no-cache correction after release smoke (owner: Codex, updated: 2026-04-12)
+### Stream: Remove stale usage-limits paths
+1. [DONE] Убрать persistent UI fallback cache для usage limits и нормализовать UI snapshot scope в provider-global contract; scope: `src/client/ui/src/session/`; ожидаемый commit message: `fix: remove persistent usage limits cache`
+2. [DONE] Git Commit: `fix: remove persistent usage limits cache` (hash: `385f1feb9`)
+3. [DONE] Нормализовать usage-limits propagation/event scope до provider-global contract в PM/Core path; scope: `src/client/project-manager/components/sessions/`, `packages/core/src/provider-usage-limits/`, `packages/core/src/remote-bridge/handlers/`; ожидаемый commit message: `fix: make usage limits provider-global`
+4. [DONE] Git Commit: `fix: make usage limits provider-global` (hash: `d72d7c736`)
+5. [DONE] Обновить regression coverage под live-only provider-global usage limits contract; scope: `src/client/ui/src/session/`, `src/client/project-manager/components/sessions/`, `packages/core/src/remote-bridge/handlers/`; ожидаемый commit message: `test: cover provider-global usage limits`
+6. [DONE] Git Commit: `test: cover provider-global usage limits` (hash: `0ce8374f5`)
+7. [DONE] Синхронизировать planning/module docs и active todo-plan под no-cache provider-global contract; scope: `doc/SolidWorks-WorkFlow/Plans/`, `doc/SolidWorks-WorkFlow/Modules/`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: sync provider-global usage limits contract`
+8. [TODO] Git Commit: `docs: sync provider-global usage limits contract` (hash: TBD)
