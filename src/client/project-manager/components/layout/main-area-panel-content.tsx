@@ -306,6 +306,18 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     workflowSnapshot && workspacePath && workspaceSlug
       ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
       : null;
+  // [DIAG] Session restore diagnostics — remove after investigation
+  console.log("[SessionContent] intent resolution", {
+    activeTool,
+    stageId,
+    hasSnapshot: Boolean(workflowSnapshot),
+    hasWorkspacePath: Boolean(workspacePath),
+    hasWorkspaceSlug: Boolean(workspaceSlug),
+    nextIntentProviderId: nextIntent?.providerId ?? "null",
+    nextIntentStage: nextIntent?.stage ?? "null",
+    chainsLength: workflowSnapshot?.continuity?.chains?.length ?? 0,
+    stepStartedIntentStage: stepStartedIntent?.stage ?? "null",
+  });
   // Stabilize intent identity — only create a new object when the
   // session actually changed, not on every workflow state poll cycle.
   const intentRef = useRef(nextIntent);
