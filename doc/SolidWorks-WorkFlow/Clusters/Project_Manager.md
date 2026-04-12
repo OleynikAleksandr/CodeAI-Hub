@@ -12,6 +12,7 @@
 - Dialog routing (messages vs status): `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
 - Workflow navigation SSOT (stage selection): `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
 - Session Continuity: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+- Session UI panel inventory: `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
 - Launcher: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`
 

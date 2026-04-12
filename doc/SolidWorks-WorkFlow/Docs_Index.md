@@ -38,6 +38,7 @@
 - `Modules/Localization.md` — SSOT persistent UI localization module, including the four user-facing categories and the English-only internal-instructions boundary.
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
 - `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager).
+- `Modules/Session_UI/README.md` — factual inventory of the five Session UI panels inside Project Manager, including truth-paths, update channels, outputs, side effects, and code ownership.
 
 ### Contracts (активные)
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
