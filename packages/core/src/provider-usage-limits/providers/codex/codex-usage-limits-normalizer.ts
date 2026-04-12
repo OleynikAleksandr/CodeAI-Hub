@@ -7,7 +7,7 @@ import type {
 
 type CodexUsageLimitSource = Extract<
   ProviderUsageLimitSource,
-  "codex_rollout_fallback" | "codex_rpc"
+  "codex_live" | "codex_rollout_fallback" | "codex_rpc"
 >;
 
 export interface CodexRolloutUsageLimitsSnapshot {
@@ -102,7 +102,7 @@ const parseRateLimitBucket = (
   };
 };
 
-export const extractCodexUsageLimitsSnapshotFromRateLimits = (payload: {
+const extractCodexUsageLimitsSnapshotFromRateLimits = (payload: {
   readonly collectedAt?: string | null;
   readonly rateLimits: unknown;
 }): CodexRolloutUsageLimitsSnapshot | null => {

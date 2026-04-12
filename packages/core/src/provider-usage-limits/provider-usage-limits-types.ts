@@ -10,6 +10,7 @@ export type ProviderUsageLimitWindowKind =
   | "provider-specific";
 
 export type ProviderUsageLimitSource =
+  | "codex_live"
   | "codex_rpc"
   | "codex_status"
   | "codex_rollout_fallback"

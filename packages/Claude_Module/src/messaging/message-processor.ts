@@ -59,6 +59,21 @@ export class SDKMessageProcessor {
     this.finishHandler.configureContextUsageReader(config);
   }
 
+  proactiveUsageLimitsRefresh(
+    session: ActiveSession,
+    claudeSessionId: string | null | undefined
+  ): void {
+    this.finishHandler
+      .proactiveUsageLimitsRefresh(session, claudeSessionId)
+      .catch((error: unknown) => {
+        this.reporter?.warn?.(
+          `Claude proactive usage limits refresh failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      });
+  }
+
   enqueueTurn(
     sessionId: string,
     turn: ClaudeQueuedTurn,

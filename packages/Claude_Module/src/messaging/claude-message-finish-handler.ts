@@ -107,6 +107,13 @@ export class ClaudeMessageFinishHandler {
     });
   }
 
+  async proactiveUsageLimitsRefresh(
+    session: ActiveSession,
+    claudeSessionId: string | null | undefined
+  ): Promise<void> {
+    await this.usageSync.readCompletionPayload(session, claudeSessionId);
+  }
+
   async handleRateLimitEvent(
     session: ActiveSession,
     message: ClaudeStreamMessage

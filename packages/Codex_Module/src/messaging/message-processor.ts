@@ -29,6 +29,7 @@ export class CodexMessageProcessor {
   readonly rolloutLiveSync: CodexRolloutLiveSync;
   private readonly router: CodexStreamEventRouter;
   private readonly sessionManager: CodexSessionManager;
+  private readonly usageSync: CodexUsageSync;
 
   constructor(
     sessionManager: CodexSessionManager,
@@ -40,7 +41,7 @@ export class CodexMessageProcessor {
     const structuredOutput = new StructuredOutputStreamController();
     const reasoningStreams = new CodexReasoningStreams();
     const tokenUsageSync = new CodexTokenUsageSync(options?.reporter);
-    const usageSync = new CodexUsageSync(
+    this.usageSync = new CodexUsageSync(
       options?.reporter,
       options?.usageLimitsFacade
     );
@@ -49,7 +50,7 @@ export class CodexMessageProcessor {
       reasoningStreams,
       this.emitter,
       tokenUsageSync,
-      usageSync
+      this.usageSync
     );
     this.rolloutLiveSync = new CodexRolloutLiveSync(
       structuredOutput,
@@ -90,6 +91,16 @@ export class CodexMessageProcessor {
     session.processingLoop = loop.catch((error) => {
       this.options?.reporter?.error?.("Codex queue processing failed", error);
       session.eventEmitter.emit("error", { type: "processor", error });
+    });
+  }
+
+  proactiveUsageLimitsRefresh(session: ActiveSession): void {
+    this.usageSync.safeRefresh(session).catch((error: unknown) => {
+      this.options?.reporter?.warn?.(
+        `Codex proactive usage limits refresh failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     });
   }
 

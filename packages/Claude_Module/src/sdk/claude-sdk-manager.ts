@@ -133,7 +133,16 @@ export class ClaudeSDKManager {
       sessionId,
       new SDKSessionLoggerFacade()
     );
+    this.proactiveUsageLimitsRefresh(sessionId);
     return sessionId;
+  }
+
+  private proactiveUsageLimitsRefresh(sessionId: string): void {
+    const session = this.deps.sessions.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    this.deps.processor.proactiveUsageLimitsRefresh(session, sessionId);
   }
 
   async sendMessage(

@@ -4,36 +4,33 @@ import type {
   ReadProviderUsageLimitsParams,
 } from "../../provider-usage-limits-types";
 import {
+  CodexLiveUsageReader,
+  type CodexLiveUsageReaderOptions,
+} from "./codex-live-usage-reader";
+import {
   CodexRolloutUsageLimitsReader,
   type CodexRolloutUsageLimitsReaderOptions,
 } from "./codex-rollout-usage-limits-reader";
-import {
-  CodexRpcUsageLimitsReader,
-  type CodexRpcUsageLimitsReaderOptions,
-} from "./codex-rpc-usage-limits-reader";
 import { CodexUsageLimitsNormalizer } from "./codex-usage-limits-normalizer";
 
 export type CodexUsageLimitsFacadeOptions =
   CodexRolloutUsageLimitsReaderOptions &
-    CodexRpcUsageLimitsReaderOptions & {
+    CodexLiveUsageReaderOptions & {
       readonly normalizer?: CodexUsageLimitsNormalizer;
-      readonly rpcReader?: CodexRpcUsageLimitsReader;
+      readonly liveReader?: CodexLiveUsageReader;
       readonly rolloutReader?: CodexRolloutUsageLimitsReader;
     };
 
 export class CodexUsageLimitsFacade {
   readonly #normalizer: CodexUsageLimitsNormalizer;
-  readonly #rpcReader: CodexRpcUsageLimitsReader;
+  readonly #liveReader: CodexLiveUsageReader;
   readonly #rolloutReader: CodexRolloutUsageLimitsReader;
 
   constructor(options: CodexUsageLimitsFacadeOptions = {}) {
     this.#normalizer = options.normalizer ?? new CodexUsageLimitsNormalizer();
-    this.#rpcReader =
-      options.rpcReader ??
-      new CodexRpcUsageLimitsReader({
-        envKey: options.envKey,
-        normalizer: this.#normalizer,
-      });
+    this.#liveReader =
+      options.liveReader ??
+      new CodexLiveUsageReader({ normalizer: this.#normalizer });
     this.#rolloutReader =
       options.rolloutReader ??
       new CodexRolloutUsageLimitsReader({
@@ -48,9 +45,9 @@ export class CodexUsageLimitsFacade {
       return null;
     }
 
-    const runtimeSnapshot = await this.#rpcReader.read(params);
-    if (runtimeSnapshot) {
-      return runtimeSnapshot;
+    const liveSnapshot = await this.#liveReader.read(params);
+    if (liveSnapshot) {
+      return liveSnapshot;
     }
 
     const snapshot = await this.#rolloutReader.read(params.providerSessionId);

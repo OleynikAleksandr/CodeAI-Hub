@@ -190,6 +190,7 @@ export class CodexSDKManager {
     const thread = this.createThread(session);
     session.thread = thread;
     this.deps.processor.initializeSession(session, thread);
+    this.deps.processor.proactiveUsageLimitsRefresh(session);
     return tempId;
   }
 
@@ -211,6 +212,7 @@ export class CodexSDKManager {
     (thread as unknown as { _id?: string | null })._id = threadId;
     session.thread = thread;
     this.deps.processor.initializeSession(session, thread);
+    this.deps.processor.proactiveUsageLimitsRefresh(session);
     return threadId;
   }
 
