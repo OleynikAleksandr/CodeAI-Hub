@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.943] - 2026-04-12
+### Fixed
+- **Confirmation card localization**: added all missing message IDs to source dictionaries (`ui_interface.json`, `user_guidance.json`, `system_feedback.json`) so confirmation card texts are localizable. Fixed `confirm_warning` to use template variable `{upstreamStage}` instead of JS template literal.
+
 ## [1.1.938] - 2026-04-11
 ### Added
 - **Stage confirmation card**: clicking an idle trunk stage (Virtual Simulation, Diagram Modules) in the sidebar shows a confirmation card in the left panel. The card displays the upstream artifact name and availability status, a warning that Start confirms readiness, and a Start button that creates the agent session and sends the instruction pack automatically. When the upstream artifact is missing, the button is disabled and a blocked message is shown. Localized via `ui_interface` / `user_guidance` / `system_feedback` categories.

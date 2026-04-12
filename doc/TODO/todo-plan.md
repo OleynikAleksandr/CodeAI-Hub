@@ -27,9 +27,10 @@
 7. [DONE] Eliminate session view jitter from workflow state polling (hash: 57695362e)
 8. [DONE] Pass session intent via props after confirmation card start (hash: ad44efa40)
 
-### Stream: Open issues for next session
+### Stream: Localization & Open Issues (updated: 2026-04-12)
 
-1. [TODO] Button spinner not visible — CSS class `pm-confirmation-card__start-btn--starting` specificity raised but still not rendering in production. Investigate whether the CSS file is loaded in correct order or whether `pm-provider-picker__button` padding override still wins.
-2. [TODO] Test full Start→fade→session flow end-to-end after fix ad44efa40. Previous release (v1.1.940) had the card fade out but session not appearing without manual stage switching. v1.1.942 should fix this via prop-based intent.
-3. [TODO] Update `SystemArchitecture.md` and `WorkflowSteps_Overview.md` with confirmation card boundary notes.
-4. [TODO] Session report for this session.
+1. [DONE] Add confirmation card localization keys to source dictionaries + fix `confirm_warning` to use `{upstreamStage}` template variable (hash: 9a21948d6)
+2. [TODO] Button spinner not visible — CSS class `pm-confirmation-card__start-btn--starting` specificity raised but still not rendering in production. Investigate whether the CSS file is loaded in correct order or whether `pm-provider-picker__button` padding override still wins.
+3. [TODO] Test full Start→fade→session flow end-to-end after fix ad44efa40. Previous release (v1.1.940) had the card fade out but session not appearing without manual stage switching. v1.1.942 should fix this via prop-based intent.
+4. [TODO] Update `SystemArchitecture.md` and `WorkflowSteps_Overview.md` with confirmation card boundary notes.
+5. [TODO] Session report for this session.
