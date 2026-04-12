@@ -79,6 +79,12 @@ export const useProjectManagerDialogCoreEvents = (options: {
           return;
         }
         const match = resolveDialogMatch({ intent, dialogs: parsed });
+        // [DIAG] Session restore diagnostics — remove after investigation
+        console.log("[DialogEvents] dialog:list:result " + JSON.stringify({
+          slug: workspaceSlug, dialogCount: parsed.length, hasMatch: Boolean(match),
+          intentStage: intent.stage, intentProvider: intent.providerId,
+          dialogStages: parsed.map(d => `${d.stage}:${d.providerId}`),
+        }));
         if (!match) {
           return;
         }
