@@ -91,19 +91,12 @@ export class RemoteBridgeMessageRouter {
         await this.handleSessionStopMessage(incoming.payload);
         break;
       case "session:refreshUsageLimits":
-        this.deps.logger.info("[DIAG] refreshUsageLimits received", {
-          providerId: incoming.payload.providerId,
-        });
         this.deps.sessionHandler
-          .handleRefreshUsageLimits(incoming.payload.providerId)
-          .then(() => {
-            this.deps.logger.info("[DIAG] refreshUsageLimits completed", {
-              providerId: incoming.payload.providerId,
-            });
-          })
+          .handleRefreshUsageLimits(incoming.payload)
           .catch((error: unknown) => {
-            this.deps.logger.warn("[DIAG] refreshUsageLimits failed", {
+            this.deps.logger.warn("refreshUsageLimits failed", {
               providerId: incoming.payload.providerId,
+              sessionId: incoming.payload.sessionId,
               error: error instanceof Error ? error.message : String(error),
             });
           });

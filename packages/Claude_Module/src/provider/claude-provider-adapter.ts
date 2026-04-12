@@ -83,23 +83,29 @@ export class ClaudeProviderAdapter {
     return resumedId;
   }
 
-  refreshUsageLimits(broadcast: (event: unknown) => void): void {
+  refreshUsageLimits(params: {
+    readonly broadcast: (event: unknown) => void;
+    readonly providerSessionId: string;
+    readonly runtimeSessionId: string;
+    readonly workspacePath: string;
+  }): void {
     const facade = this.usageLimitsFacade;
     if (!facade) {
       return;
     }
     facade
       .readStreamPayload({
-        workspacePath: this.workspacePath,
-        runtimeSessionId: "proactive",
-        providerSessionId: "proactive",
+        workspacePath: params.workspacePath,
+        runtimeSessionId: params.runtimeSessionId,
+        providerSessionId: params.providerSessionId,
         force: true,
       })
       .then((payload: ClaudeUsageLimitsStreamPayload | null) => {
         if (!payload?.usageLimits) {
           return;
         }
-        broadcast({
+        params.broadcast({
+          providerScopeKey: payload.providerScopeKey,
           usageLimits: payload.usageLimits,
           data: payload.data,
           uuid: `${crypto.randomUUID()}::usage_limits`,

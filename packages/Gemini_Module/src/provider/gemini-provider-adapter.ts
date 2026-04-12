@@ -188,23 +188,28 @@ export class GeminiProviderAdapter {
     });
   }
 
-  async refreshUsageLimits(broadcast: (event: unknown) => void): Promise<void> {
+  async refreshUsageLimits(params: {
+    readonly broadcast: (event: unknown) => void;
+    readonly providerSessionId: string;
+    readonly runtimeSessionId: string;
+    readonly workspacePath: string;
+  }): Promise<void> {
     const facade = this.usageLimitsFacade;
     if (!facade) {
       return;
     }
     const payload = await facade
       .readStreamPayload({
-        workspacePath: this.options.workspace.workspacePath ?? process.cwd(),
-        runtimeSessionId: "proactive",
-        providerSessionId: "proactive",
+        workspacePath: params.workspacePath,
+        runtimeSessionId: params.runtimeSessionId,
+        providerSessionId: params.providerSessionId,
         force: true,
       })
       .catch(() => null);
     if (!payload?.usageLimits) {
       return;
     }
-    broadcast({
+    params.broadcast({
       usageLimits: payload.usageLimits,
       data: payload.data,
       providerScopeKey: payload.providerScopeKey,
