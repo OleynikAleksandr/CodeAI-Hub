@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.967] - 2026-04-12
+### Fixed
+- **Provider-global usage limits**: the same provider now shares one canonical usage-limits scope across workflow sessions instead of keeping separate limits per provider session id.
+- **Persistent cache removal**: `Session ID + Usage Limits` no longer falls back to browser-stored usage-limit snapshots, so the panel reflects only fresh live snapshot data.
+- **Legacy scope normalization**: restored sessions with old session-specific `providerScopeKey` values are normalized into the provider-global contract when usage limits propagate through Project Manager.
+
 ## [1.1.966] - 2026-04-12
 ### Fixed
 - **Session-scoped usage limits refresh**: `Session ID + Usage Limits` now sends manual refresh requests with the real active session context (`sessionId`, `providerId`, `providerSessionId`) instead of a provider-wide synthetic scope.

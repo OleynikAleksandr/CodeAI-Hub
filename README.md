@@ -7,15 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.966
+## Current Release — v1.1.967
+- **Provider-global usage limits**: sessions that use the same provider now converge to a shared provider-global usage scope (`claude:global`, `codex:global`, `gemini:global`) instead of diverging by provider session id.
+- **No stale usage-limits cache**: `Session ID + Usage Limits` no longer hydrates from persistent browser cache and now renders only from live snapshot state after refresh.
+- **Legacy scope migration on restore**: restored workflow sessions with old session-specific usage-limit scope keys are normalized into the provider-global contract as soon as fresh limits arrive.
+
+### 1.1.966 (previous)
 - **Session-scoped usage limits refresh**: `Session ID + Usage Limits` now refreshes against the real active session context (`sessionId + providerId + providerSessionId`) instead of a provider-wide synthetic bucket.
 - **Cold-start and stage-switch coverage**: usage limits refresh now reruns when Project Manager restores the active workflow session on workspace open and when the user switches to another workflow step/session.
 - **Immediate rerender path**: Core broadcasts manual refresh results back into the concrete runtime `sessionId`, so the active snapshot updates immediately through the normal `session:stream -> snapshots -> rerender` flow.
-
-### 1.1.965 (previous)
-- **Codex rate limits**: replaced broken RPC reader (`codex app-server` fails on `prolite` plan type) with direct HTTP reader that calls `chatgpt.com/backend-api/wham/usage`. Session and weekly limits now display reliably.
-- **Gemini rate limits**: expanded model whitelist to cover all current Gemini models (3.1 Pro, 3 Pro, 3 Flash, 3.1 Flash Lite, 2.5 Pro, 2.5 Flash). Unknown model IDs are now auto-formatted instead of silently dropped.
-- **Proactive rate limits on session open**: all three providers (Codex, Claude, Gemini) now fetch usage limits immediately on session create/resume instead of waiting for the first completed turn.
 
 ### 1.1.922 (previous)
 - **Sidecar v2 persists layout params**: `module-map.flow.json` schema bumped to `version: 2` with a new `layoutParams` section holding per-ProductPart (`columns`, `targetAspectRatio`) and per-Cluster (`moduleColumns`) CSS Grid overrides. Right-click selections now survive diagram reload, PM restart, and cross-window sidecar sync.
