@@ -183,8 +183,7 @@ export class WorkflowStateService {
                   slug: workspaceSlugResult.value,
                   chainsCount: chains.length,
                   chainStages: chains.map(
-                    (c: { stage?: string; segments?: unknown[] }) =>
-                      `${c.stage ?? "?"}(${Array.isArray(c.segments) ? c.segments.length : 0}seg)`
+                    (c) => `${c.stage ?? "?"}(${c.segments.length}seg)`
                   ),
                   descriptionHasSession: Boolean(description?.primarySession),
                   nonIdleStages,
