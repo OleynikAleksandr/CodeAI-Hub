@@ -70,14 +70,10 @@ export const useWorkspaceTreeAutoSelect = (
   const handleStateUpdate = useCallback(
     (state: WorkflowStateSnapshot | null) => {
       // [DIAG] Session restore diagnostics — remove after investigation
-      console.log("[AutoSelect] handleStateUpdate called", {
-        pendingId: pendingWorkspaceIdRef.current,
-        selectedId: params.selectedWorkspaceId,
-        hasState: Boolean(state),
-        slug: params.workspaceSlug,
-        path: Boolean(params.workspacePath),
-        stageDispatched: stageDispatchedRef.current,
-      });
+      console.log("[AutoSelect] called " + JSON.stringify({
+        pending: pendingWorkspaceIdRef.current, selected: params.selectedWorkspaceId,
+        hasState: Boolean(state), slug: params.workspaceSlug, dispatched: stageDispatchedRef.current,
+      }));
       if (pendingWorkspaceIdRef.current !== params.selectedWorkspaceId) {
         console.log("[AutoSelect] SKIP: pendingId mismatch");
         return;
@@ -99,12 +95,11 @@ export const useWorkspaceTreeAutoSelect = (
           params.diagramModulesArtifactAvailable,
       });
 
-      console.log("[AutoSelect] resolved", {
-        startupStage,
-        hasSession: Boolean(payload.session),
-        sessionProviderId: payload.session?.providerId ?? "null",
-        chainsLength: state.continuity?.chains?.length ?? 0,
-      });
+      console.log("[AutoSelect] resolved " + JSON.stringify({
+        startupStage, hasSession: Boolean(payload.session),
+        provider: payload.session?.providerId ?? "null",
+        chains: state.continuity?.chains?.length ?? 0,
+      }));
 
       // Dispatch stage activation and artifact events only once per
       // workspace — retries should only attempt the session dispatch.

@@ -85,17 +85,10 @@ class WorkflowStateStore {
         prev.continuity.chains.length !== snapshot.continuity.chains.length;
       this.state = { workspaceSlug: slug, workspacePath: wPath, snapshot, loaded: true };
       // [DIAG] Session restore diagnostics — remove after investigation
-      console.log("[WorkflowStateStore] poll result", {
-        slug,
-        changed,
-        loaded: true,
-        hasSnapshot: Boolean(snapshot),
-        chainsLength: snapshot?.continuity?.chains?.length ?? 0,
-        prevChainsLength: prev?.continuity?.chains?.length ?? 0,
-        updatedAt: snapshot?.updatedAt ?? "null",
-        prevUpdatedAt: prev?.updatedAt ?? "null",
+      console.log("[Store] " + JSON.stringify({
+        slug, changed, chains: snapshot?.continuity?.chains?.length ?? 0,
         stages: snapshot ? Object.entries(snapshot.stages).filter(([, v]) => v !== "idle").map(([k, v]) => `${k}:${v}`) : [],
-      });
+      }));
       if (changed) this.emit();
       if (fast && snapshot) {
         fast = false;
