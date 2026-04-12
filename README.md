@@ -7,7 +7,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.960
+## Current Release — v1.1.961
 - **Stage confirmation card**: clicking an idle trunk stage (Virtual Simulation, Diagram Modules) in the sidebar now shows a confirmation card in the left panel. The card displays the upstream artifact name and availability, a warning that clicking Start confirms readiness, and a Start button that creates the session and sends the instruction pack automatically.
 - **Prop-based session intent**: session view receives its dialog intent as a prop resolved from workflow state, not via broadcast events. Sessions load instantly on workspace open and stage switch — no timing workarounds.
 - **Neutral empty state**: session panel shows "No active session" instead of Description-specific text.
