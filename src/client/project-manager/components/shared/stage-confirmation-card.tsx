@@ -274,7 +274,8 @@ export const StageConfirmationCard: React.FC<{
   const confirmText = t(
     UI_HELPER_TEXT_CATEGORY,
     "pm.confirmation_card.confirm_warning",
-    `By clicking Start, you confirm that the ${upstreamStageLabel} artifact is complete and ready for the next step. The agent will begin working immediately.`
+    "By clicking Start, you confirm that the {upstreamStage} artifact is complete and ready for the next step. The agent will begin working immediately.",
+    { upstreamStage: upstreamStageLabel }
   );
   const blockedText = t(
     UI_HELPER_TEXT_CATEGORY,
