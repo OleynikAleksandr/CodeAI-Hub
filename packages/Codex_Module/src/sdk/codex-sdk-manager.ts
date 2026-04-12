@@ -224,6 +224,10 @@ export class CodexSDKManager {
     return this.deps.sessions.getSession(sessionId);
   }
 
+  proactiveUsageLimitsRefresh(session: ActiveSession): void {
+    this.deps.processor.proactiveUsageLimitsRefresh(session);
+  }
+
   async sendMessage(
     sessionId: string,
     content: string,

@@ -207,7 +207,11 @@ export type OutgoingMessage =
       readonly type: "dialog:switch:request";
       readonly payload: DialogSwitchRequestPayload;
     }
-  | { readonly type: "settings:load" };
+  | { readonly type: "settings:load" }
+  | {
+      readonly type: "session:refreshUsageLimits";
+      readonly payload: { readonly sessionId: string };
+    };
 
 export type DialogSwitchRequestPayload = {
   readonly sessionId: string;

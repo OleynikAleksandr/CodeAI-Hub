@@ -137,7 +137,7 @@ export class ClaudeSDKManager {
     return sessionId;
   }
 
-  private proactiveUsageLimitsRefresh(sessionId: string): void {
+  proactiveUsageLimitsRefresh(sessionId: string): void {
     const session = this.deps.sessions.getSession(sessionId);
     if (!session) {
       return;

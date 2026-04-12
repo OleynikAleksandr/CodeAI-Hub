@@ -315,6 +315,18 @@ export class SessionRequestHandler {
     await this.stopAction.handleStop(sessionId);
   }
 
+  async handleRefreshUsageLimits(sessionId: string): Promise<void> {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return;
+    }
+    const providerId = session.providerId;
+    const adapter = this.providerRegistry.getAdapter(providerId);
+    if (typeof adapter?.refreshUsageLimits === "function") {
+      await adapter.refreshUsageLimits(sessionId);
+    }
+  }
+
   hasRetryBudget(sessionId: string): boolean {
     return this.retryState.hasRetryBudget(sessionId);
   }

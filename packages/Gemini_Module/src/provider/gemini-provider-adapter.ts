@@ -188,6 +188,14 @@ export class GeminiProviderAdapter {
     });
   }
 
+  async refreshUsageLimits(sessionId: string): Promise<void> {
+    const manager = this.requireSessionManager();
+    const session = manager.getSession(sessionId);
+    if (session) {
+      await this.refreshUsageLimitsAfterTurn(session, sessionId);
+    }
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     const manager = this.requireSessionManager();
     await manager.closeSession(sessionId);

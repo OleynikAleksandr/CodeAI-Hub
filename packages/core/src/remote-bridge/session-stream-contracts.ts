@@ -176,6 +176,12 @@ export type SessionIncomingMessage =
       };
     }
   | {
+      readonly type: "session:refreshUsageLimits";
+      readonly payload: {
+        readonly sessionId: string;
+      };
+    }
+  | {
       readonly type: "dialog:switch:request";
       readonly payload: {
         readonly dialogId: string;

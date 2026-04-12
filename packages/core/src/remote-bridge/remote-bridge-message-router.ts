@@ -90,6 +90,13 @@ export class RemoteBridgeMessageRouter {
       case "session:stop":
         await this.handleSessionStopMessage(incoming.payload);
         break;
+      case "session:refreshUsageLimits":
+        this.deps.sessionHandler
+          .handleRefreshUsageLimits(incoming.payload.sessionId)
+          .catch(() => {
+            // Best-effort refresh; failures are non-blocking.
+          });
+        break;
       case "projects:list":
         this.deps.projectHandler.handleList();
         break;

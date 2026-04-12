@@ -308,6 +308,11 @@ const ProjectManagerRuntimeSessionView = ({
   }, [startupStage, workspacePath]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useRuntimeModelSync(activeSessionId, setSnapshots);
+  useEffect(() => {
+    if (activeSessionId) {
+      api.refreshUsageLimits(activeSessionId);
+    }
+  }, [activeSessionId]);
   useSessionResumeIntent({
     sessionsRef,
     focusSession: (sessionId) => {

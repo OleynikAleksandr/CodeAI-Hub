@@ -76,6 +76,10 @@ export class ClaudeProviderAdapter {
     return resumedId;
   }
 
+  refreshUsageLimits(sessionId: string): void {
+    this.sdkManager.proactiveUsageLimitsRefresh(sessionId);
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     await this.sdkManager.closeSession(sessionId);
     this.listeners.delete(sessionId);

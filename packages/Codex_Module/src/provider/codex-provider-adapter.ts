@@ -62,6 +62,13 @@ export class CodexProviderAdapter {
     return resumedId;
   }
 
+  refreshUsageLimits(sessionId: string): void {
+    const session = this.sdkManager.getSession(sessionId);
+    if (session) {
+      this.sdkManager.proactiveUsageLimitsRefresh(session);
+    }
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     await this.sdkManager.closeSession(sessionId);
     this.listeners.delete(sessionId);

@@ -166,6 +166,10 @@ class ProjectManagerApi {
     this.send({ type: "session:delete", payload: { sessionId } });
   }
 
+  refreshUsageLimits(sessionId: string): void {
+    this.send({ type: "session:refreshUsageLimits", payload: { sessionId } });
+  }
+
   sendSessionMessage(
     sessionId: string,
     content: string,
