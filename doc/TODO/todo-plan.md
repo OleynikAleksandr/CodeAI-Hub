@@ -30,7 +30,17 @@
 ### Stream: Localization & Open Issues (updated: 2026-04-12)
 
 1. [DONE] Add confirmation card localization keys to source dictionaries + fix `confirm_warning` to use `{upstreamStage}` template variable (hash: 9a21948d6)
-2. [TODO] Button spinner not visible — CSS class `pm-confirmation-card__start-btn--starting` specificity raised but still not rendering in production. Investigate whether the CSS file is loaded in correct order or whether `pm-provider-picker__button` padding override still wins.
-3. [TODO] Test full Start→fade→session flow end-to-end after fix ad44efa40. Previous release (v1.1.940) had the card fade out but session not appearing without manual stage switching. v1.1.942 should fix this via prop-based intent.
-4. [TODO] Update `SystemArchitecture.md` and `WorkflowSteps_Overview.md` with confirmation card boundary notes.
-5. [TODO] Session report for this session.
+2. [DONE] Move keys from legacy to approved source dictionaries (hash: 07f27e16e)
+3. [DONE] Add §4.5 Source Dictionary File Map to localization boundary contract (hash: 57ab76b9a)
+4. [DONE] Add approved dictionary file map to invariant 16 in SystemArchitecture (hash: 23975c67c)
+5. [TODO] Button spinner not visible — CSS class `pm-confirmation-card__start-btn--starting` specificity raised but still not rendering in production.
+6. [TODO] Test full Start→fade→session flow end-to-end.
+7. [TODO] Update `WorkflowSteps_Overview.md` with confirmation card boundary notes.
+
+### Stream: Session Restore on Workspace Open (updated: 2026-04-12)
+
+1. [DONE] Auto-select retry when first snapshot has no session (hash: 43b44b05d)
+2. [DONE] WorkflowStateStore emit on chains count change (hash: 43b44b05d)
+3. [DONE] Prevent retry dialog:list:result from overwriting loaded messages (hash: 0998d319a)
+4. [DONE] Memoize artifact panel to prevent right-panel jitter during agent responses (hash: 627bd5444)
+5. [DONE] Remove all diagnostic logs (hash: 627bd5444)
