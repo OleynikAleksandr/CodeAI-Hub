@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import path from "node:path";
@@ -60,6 +60,8 @@ interface GeminiSettingsModule {
   loadSettings(workspacePath: string): GeminiLoadedSettings;
 }
 
+const QUOTA_PROBE_MODEL = "gemini-3.1-flash-lite-preview";
+
 interface GeminiQuotaConfig {
   getActiveModel?(): string;
   getLastRetrievedQuota?(): unknown;
@@ -69,7 +71,9 @@ interface GeminiQuotaConfig {
 }
 
 interface GeminiConfigModule {
-  loadCliConfig(
+  Config?: new (options: Record<string, unknown>) => GeminiQuotaConfig;
+  DEFAULT_GEMINI_FLASH_MODEL?: string;
+  loadCliConfig?(
     settings: GeminiMergedSettings,
     sessionId: string,
     argv: Record<string, unknown>,
@@ -195,6 +199,30 @@ const extractQuotaBuckets = (
     ? (value.buckets as readonly GeminiQuotaApiBucket[])
     : null;
 
+const readJsonFile = (filePath: string): unknown => {
+  try {
+    return JSON.parse(readFileSync(filePath, "utf8")) as unknown;
+  } catch {
+    return null;
+  }
+};
+
+const createFallbackSettingsModule = (): GeminiSettingsModule => ({
+  loadSettings: (workspacePath = process.cwd()) => {
+    const userSettings = readJsonFile(
+      path.join(homedir(), ".gemini", "settings.json")
+    );
+    const workspaceSettings = readJsonFile(
+      path.join(workspacePath, ".gemini", "settings.json")
+    );
+    const merged = {
+      ...(isRecord(userSettings) ? userSettings : {}),
+      ...(isRecord(workspaceSettings) ? workspaceSettings : {}),
+    } as GeminiMergedSettings;
+    return { merged };
+  },
+});
+
 let modulesPromise: Promise<GeminiQuotaModules> | null = null;
 
 const loadGeminiQuotaModules = (): Promise<GeminiQuotaModules> => {
@@ -218,14 +246,26 @@ const loadGeminiQuotaModules = (): Promise<GeminiQuotaModules> => {
     );
 
     const [config, settings, content] = await Promise.all([
-      loadModuleFromCandidates<GeminiConfigModule>(cliRoot, [
+      loadModuleFromCandidates<GeminiConfigModule>(cliCoreRoot, [
         ["dist", "src", "config", "config.js"],
         ["dist", "config", "config.js"],
-      ]),
-      loadModuleFromCandidates<GeminiSettingsModule>(cliRoot, [
+      ]).catch(() =>
+        loadModuleFromCandidates<GeminiConfigModule>(cliRoot, [
+          ["dist", "src", "config", "config.js"],
+          ["dist", "config", "config.js"],
+        ])
+      ),
+      loadModuleFromCandidates<GeminiSettingsModule>(cliCoreRoot, [
         ["dist", "src", "config", "settings.js"],
         ["dist", "config", "settings.js"],
-      ]),
+      ])
+        .catch(() =>
+          loadModuleFromCandidates<GeminiSettingsModule>(cliRoot, [
+            ["dist", "src", "config", "settings.js"],
+            ["dist", "config", "settings.js"],
+          ])
+        )
+        .catch((): GeminiSettingsModule => createFallbackSettingsModule()),
       loadModuleFromCandidates<GeminiContentModule>(cliCoreRoot, [
         ["dist", "src", "core", "contentGenerator.js"],
         ["dist", "core", "contentGenerator.js"],
@@ -269,11 +309,11 @@ export class GeminiQuotaApiUsageLimitsReader {
 
     const sessionId =
       params.providerSessionId?.trim() || params.runtimeSessionId.trim();
-    const config = await modules.config.loadCliConfig(
-      settings.merged,
+    const config = await this.#createConfig(
+      modules,
+      settings,
       sessionId,
-      buildCliArgv(params.workspacePath),
-      { cwd: params.workspacePath }
+      params.workspacePath
     );
 
     await config.refreshAuth(authType);
@@ -309,5 +349,44 @@ export class GeminiQuotaApiUsageLimitsReader {
       },
       source: "gemini_quota_api",
     });
+  }
+
+  async #createConfig(
+    modules: GeminiQuotaModules,
+    settings: GeminiLoadedSettings,
+    sessionId: string,
+    workspacePath: string
+  ): Promise<GeminiQuotaConfig> {
+    if (typeof modules.config.loadCliConfig === "function") {
+      return await modules.config.loadCliConfig(
+        settings.merged,
+        sessionId,
+        buildCliArgv(workspacePath),
+        { cwd: workspacePath }
+      );
+    }
+
+    if (modules.config.Config) {
+      return new modules.config.Config({
+        sessionId,
+        targetDir: workspacePath,
+        cwd: workspacePath,
+        approvalMode: "yolo",
+        debugMode: false,
+        includeDirectories: [workspacePath],
+        interactive: false,
+        listExtensions: false,
+        listSessions: false,
+        allowedTools: [],
+        allowedMcpServers: [],
+        blockedMcpServers: [],
+        question: "",
+        model: QUOTA_PROBE_MODEL,
+        showMemoryUsage: false,
+        usageStatisticsEnabled: false,
+      });
+    }
+
+    throw new Error("Gemini config module has no loadCliConfig or Config");
   }
 }

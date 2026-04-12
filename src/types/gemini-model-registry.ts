@@ -1,6 +1,9 @@
 export type GeminiThinkingLevel = "minimal" | "low" | "medium" | "high" | "off";
 
-export type GeminiModelId = "gemini-3.1-pro-preview" | "gemini-3-flash-preview";
+export type GeminiModelId =
+  | "gemini-3.1-pro-preview"
+  | "gemini-3-flash-preview"
+  | "gemini-3.1-flash-lite-preview";
 
 export interface GeminiModelDescriptor {
   readonly description: string;
@@ -27,6 +30,14 @@ export const GEMINI_RECOMMENDED_MODELS: readonly GeminiModelDescriptor[] = [
     status: "preview",
     family: "gemini-3",
     supportedThinkingLevels: ["minimal", "low", "medium", "high"],
+  },
+  {
+    id: "gemini-3.1-flash-lite-preview",
+    displayName: "Gemini 3.1 Flash Lite",
+    description: "Lightweight model with fast responses and low cost.",
+    status: "preview",
+    family: "gemini-3",
+    supportedThinkingLevels: ["off", "minimal", "low"],
   },
 ] as const;
 

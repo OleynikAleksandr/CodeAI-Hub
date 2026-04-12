@@ -96,6 +96,48 @@ const buildFallbackLabels = (
   }
 };
 
+interface LimitRowData {
+  readonly fillStyle: LimitBarStyle | undefined;
+  readonly label: string;
+  readonly percentUsed: number | null;
+  readonly resetLabel: string | null;
+}
+
+const buildLimitRowData = (
+  bucket:
+    | { readonly percentUsed?: number; readonly resetsAt?: string | null }
+    | null
+    | undefined,
+  fallbackLabel: string
+): LimitRowData => {
+  const percentUsed = bucket?.percentUsed ?? null;
+  const resetsAt = bucket?.resetsAt ?? null;
+  const resetLabel = resetsAt ? buildResetLabel(resetsAt) : null;
+  const fillStyle: LimitBarStyle | undefined =
+    percentUsed === null
+      ? undefined
+      : ({
+          "--limit-fill": `${clampPercent(percentUsed)}%`,
+        } as unknown as CSSProperties);
+  return { fillStyle, label: fallbackLabel, percentUsed, resetLabel };
+};
+
+const LimitRow = ({ row }: { readonly row: LimitRowData }) => (
+  <div
+    className="session-id-bar__limit-row"
+    title={row.resetLabel ?? undefined}
+  >
+    <span className="session-id-bar__limit-label">
+      {renderLimitLabel({
+        label: row.label,
+        percentUsed: row.percentUsed,
+        resetLabel: row.resetLabel,
+      })}
+    </span>
+    <span className="session-id-bar__limit-bar" style={row.fillStyle} />
+  </div>
+);
+
 const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
   const providerScopeKey = resolveStatusUsageLimitScopeKey(status, binding);
   const cachedUsageLimitsState = readLastKnownUsageLimitsState(
@@ -108,32 +150,19 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
     status.usageLimitLabels ??
     cachedUsageLimitsState?.usageLimitLabels ??
     buildFallbackLabels(status, binding);
-  const sessionPercent =
-    resolvedUsageLimits?.currentSession?.percentUsed ?? null;
-  const sessionResetsAt = resolvedUsageLimits?.currentSession?.resetsAt ?? null;
-  const weeklyPercent =
-    resolvedUsageLimits?.currentWeekAllModels?.percentUsed ?? null;
-  const weeklyResetsAt =
-    resolvedUsageLimits?.currentWeekAllModels?.resetsAt ?? null;
-  const sessionResetLabel = sessionResetsAt
-    ? buildResetLabel(sessionResetsAt)
-    : null;
-  const weeklyResetLabel = weeklyResetsAt
-    ? buildResetLabel(weeklyResetsAt)
-    : null;
 
-  const sessionFillStyle: LimitBarStyle | undefined =
-    sessionPercent === null
-      ? undefined
-      : ({
-          "--limit-fill": `${clampPercent(sessionPercent)}%`,
-        } as unknown as CSSProperties);
-  const weeklyFillStyle: LimitBarStyle | undefined =
-    weeklyPercent === null
-      ? undefined
-      : ({
-          "--limit-fill": `${clampPercent(weeklyPercent)}%`,
-        } as unknown as CSSProperties);
+  const primary = buildLimitRowData(
+    resolvedUsageLimits?.currentSession,
+    resolvedUsageLimitLabels.currentSession ?? "Session"
+  );
+  const secondary = buildLimitRowData(
+    resolvedUsageLimits?.currentWeekAllModels,
+    resolvedUsageLimitLabels.currentWeekAllModels ?? "Weekly"
+  );
+  const tertiary = buildLimitRowData(
+    resolvedUsageLimits?.currentWeekSonnetOnly,
+    resolvedUsageLimitLabels.currentWeekSonnetOnly ?? "Model Weekly"
+  );
 
   return (
     <section
@@ -142,35 +171,9 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
     >
       <span className="session-id-bar__id">{resolveIdLabel(binding)}</span>
       <div aria-hidden className="session-id-bar__limits">
-        <div
-          className="session-id-bar__limit-row"
-          title={sessionResetLabel ?? undefined}
-        >
-          <span className="session-id-bar__limit-label">
-            {renderLimitLabel({
-              label: resolvedUsageLimitLabels.currentSession ?? "Session",
-              percentUsed: sessionPercent,
-              resetLabel: sessionResetLabel,
-            })}
-          </span>
-          <span
-            className="session-id-bar__limit-bar"
-            style={sessionFillStyle}
-          />
-        </div>
-        <div
-          className="session-id-bar__limit-row"
-          title={weeklyResetLabel ?? undefined}
-        >
-          <span className="session-id-bar__limit-label">
-            {renderLimitLabel({
-              label: resolvedUsageLimitLabels.currentWeekAllModels ?? "Weekly",
-              percentUsed: weeklyPercent,
-              resetLabel: weeklyResetLabel,
-            })}
-          </span>
-          <span className="session-id-bar__limit-bar" style={weeklyFillStyle} />
-        </div>
+        <LimitRow row={primary} />
+        <LimitRow row={secondary} />
+        {tertiary.percentUsed !== null && <LimitRow row={tertiary} />}
       </div>
     </section>
   );
