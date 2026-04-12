@@ -45,6 +45,7 @@ const DAILY_WINDOW_THRESHOLD_MS = 36 * 60 * 60 * 1000;
 const GEMINI_MODEL_DISPLAY_NAMES: Readonly<Record<string, string>> = {
   "gemini-3.1-pro-preview": "Gemini 3.1 Pro",
   "gemini-3-flash-preview": "Gemini 3 Flash",
+  "gemini-3.1-flash-lite-preview": "Gemini 3.1 Flash Lite",
 };
 
 const resolveModelDisplayName = (modelId: string | null): string | null => {
@@ -203,7 +204,6 @@ const buildWindowCandidate = (
     typeof bucket.modelId === "string" && bucket.modelId.trim().length > 0
       ? bucket.modelId.trim()
       : null;
-  // Skip buckets for models not in our known registry
   const displayName = resolveModelDisplayName(modelId);
   if (modelId && !displayName) {
     return null;

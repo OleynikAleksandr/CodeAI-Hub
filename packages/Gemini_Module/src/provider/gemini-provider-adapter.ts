@@ -135,6 +135,9 @@ export class GeminiProviderAdapter {
         });
       }
     });
+    this.refreshUsageLimitsAfterTurn(session, sessionId).catch(() => {
+      // Proactive refresh is best-effort; failures are non-blocking.
+    });
     return sessionId;
   }
 

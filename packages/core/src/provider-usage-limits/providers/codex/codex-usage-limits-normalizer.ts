@@ -7,7 +7,7 @@ import type {
 
 type CodexUsageLimitSource = Extract<
   ProviderUsageLimitSource,
-  "codex_live" | "codex_rollout_fallback" | "codex_rpc"
+  "codex_live" | "codex_rollout_fallback"
 >;
 
 export interface CodexRolloutUsageLimitsSnapshot {
