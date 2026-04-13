@@ -118,6 +118,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     logger: options.logger,
     sessionManager: options.sessionManager,
     sessionStorage: options.sessionStorage,
+    sessionTranslation,
   });
   const retryState = new SessionRequestHandlerRetryState({
     broadcaster: options.broadcaster,

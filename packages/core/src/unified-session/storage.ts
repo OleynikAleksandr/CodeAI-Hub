@@ -1,8 +1,12 @@
 import { homedir } from "node:os";
 import path from "node:path";
 import {
+  type AppendMessageTranslationOptions,
   buildSessionFilePath,
+  buildSessionTranslationFilePath,
   readSessionEvents,
+  readSessionTranslationOverlayMap,
+  SessionTranslationOverlayWriter,
   sanitizeWorkspaceSlug,
   UnifiedSessionWriter,
 } from "@codeai-hub/unified-session";
@@ -25,6 +29,7 @@ interface PendingSession {
   readonly providerId: string;
   providerSessionId?: string;
   readonly queue: SessionMessage[];
+  translationWriter?: SessionTranslationOverlayWriter;
   readonly workspaceSlug: string;
   writer?: UnifiedSessionWriter;
   writerSessionId?: string;
@@ -133,6 +138,70 @@ export class UnifiedSessionStorage {
     await this.writeMessage(entry, message);
   }
 
+  async appendMessageTranslation(
+    sessionId: string,
+    translation: AppendMessageTranslationOptions
+  ): Promise<void> {
+    const entry = this.sessions.get(sessionId);
+    if (!entry) {
+      return;
+    }
+    if (!entry.translationWriter) {
+      entry.translationWriter = new SessionTranslationOverlayWriter({
+        rootDirectory: this.rootDirectory,
+        workspaceSlug: entry.workspaceSlug,
+        provider: entry.providerId,
+        sessionId: entry.historySessionId,
+      });
+    }
+    await entry.translationWriter.appendTranslation(translation);
+  }
+
+  async readMessageTranslationMap(
+    session: Session
+  ): Promise<Map<string, AppendMessageTranslationOptions>> {
+    const entry = this.sessions.get(session.id);
+    const historySessionId = sanitizeSessionId(
+      entry?.historySessionId ?? session.providerSessionId ?? session.id
+    );
+    if (!historySessionId) {
+      return new Map();
+    }
+
+    const preferredWorkspaceSlug =
+      entry?.workspaceSlug ||
+      getWorkspaceKeyFromPath(session.workspacePath, this.defaultWorkspaceSlug);
+    const workspaceSlugs = await listUnifiedSessionWorkspaceSlugs({
+      rootDirectory: this.rootDirectory,
+      logger: this.logger,
+    });
+    const candidates = new Set<string>([
+      preferredWorkspaceSlug,
+      ...workspaceSlugs,
+    ]);
+
+    const translations = new Map<string, AppendMessageTranslationOptions>();
+    for (const workspaceSlug of candidates) {
+      const filePath = buildSessionTranslationFilePath({
+        rootDirectory: this.rootDirectory,
+        workspaceSlug,
+        provider: session.providerId,
+        sessionId: historySessionId,
+      });
+      const records = await readSessionTranslationOverlayMap(filePath);
+      for (const [messageId, record] of records) {
+        translations.set(messageId, {
+          messageId: record.messageId,
+          sourceHash: record.sourceHash,
+          targetLanguage: record.targetLanguage,
+          timestamp: record.timestamp,
+          translatedContent: record.translatedContent,
+        });
+      }
+    }
+    return translations;
+  }
+
   close(sessionId: string, reason?: string): void {
     const entry = this.sessions.get(sessionId);
     if (!entry) {
@@ -152,6 +221,16 @@ export class UnifiedSessionStorage {
         );
       });
     }
+    entry.translationWriter?.close().catch((error: unknown) => {
+      this.logger.error(
+        "Failed to close unified session translation overlay writer",
+        error as Error,
+        {
+          sessionId,
+          providerId: entry.providerId,
+        }
+      );
+    });
   }
 
   async readMessages(session: Session): Promise<SessionMessage[]> {

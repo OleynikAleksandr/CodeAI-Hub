@@ -1,4 +1,5 @@
 import type { SessionManager, SessionRole } from "../../session-manager";
+import type { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
@@ -30,6 +31,7 @@ interface SessionRequestHandlerEventMessagesDependencies {
   readonly logger: Logger;
   readonly sessionManager: SessionManager;
   readonly sessionStorage: UnifiedSessionStorage;
+  readonly sessionTranslation: SessionTranslationFacade;
 }
 
 export class SessionRequestHandlerEventMessages {
@@ -140,6 +142,15 @@ export class SessionRequestHandlerEventMessages {
       .then(() => {
         this.deps.broadcaster({ type: "session:message", payload: message });
         this.broadcastDialogMessage(options.sessionId, message);
+        this.maybeTranslateDialogMessage(options.sessionId, message).catch(
+          (error: unknown) => {
+            this.deps.logger.warn("Failed to translate dialog message", {
+              sessionId: options.sessionId,
+              messageId: message.id,
+              error: error instanceof Error ? error.message : String(error),
+            });
+          }
+        );
       })
       .catch((error: unknown) => {
         this.deps.logger.error(
@@ -166,6 +177,55 @@ export class SessionRequestHandlerEventMessages {
         dialogId,
         sessionId,
         message,
+      },
+    });
+  }
+
+  private async maybeTranslateDialogMessage(
+    sessionId: string,
+    message: ReturnType<SessionManager["appendMessage"]> extends infer T
+      ? Exclude<T, null>
+      : never
+  ): Promise<void> {
+    const translated =
+      await this.deps.sessionTranslation.translateDialogMessage({
+        sessionId,
+        messageId: message.id,
+        role: message.role,
+        tag: message.tag,
+        content: message.content,
+      });
+    if (!translated) {
+      return;
+    }
+
+    await this.deps.sessionStorage.appendMessageTranslation(sessionId, {
+      messageId: translated.messageId,
+      sourceHash: translated.sourceHash,
+      targetLanguage: translated.targetLanguage,
+      translatedContent: translated.translatedContent,
+    });
+    const translationPayload = {
+      sessionId: translated.sessionId,
+      messageId: translated.messageId,
+      sourceHash: translated.sourceHash,
+      targetLanguage: translated.targetLanguage,
+      localizedContent: translated.translatedContent,
+    } as const;
+    this.deps.broadcaster({
+      type: "session:message_translation",
+      payload: translationPayload,
+    });
+    const dialogId = this.deps.continuityRootBySessionId.get(sessionId) ?? null;
+    if (!dialogId) {
+      return;
+    }
+    this.deps.broadcaster({
+      type: "dialog:message_translation",
+      payload: {
+        dialogId,
+        sessionId,
+        translation: translationPayload,
       },
     });
   }
