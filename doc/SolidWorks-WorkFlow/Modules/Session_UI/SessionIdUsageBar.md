@@ -60,4 +60,5 @@
 - для usage limits canonical `providerScopeKey` теперь provider-global (`claude:global`, `codex:global`, `gemini:global`);
 - это не чисто read-only projection panel: она сама участвует в refresh-механизме.
 - в dialog auto-select path panel не должна запускать refresh на bootstrap placeholder без runtime session; сначала PM обязан принять materialized runtime session и только потом панель шлет refresh.
+- dialog restore adoption нельзя привязывать к PM-only `sessionKind`: если Core runtime session не сериализует этот флаг, panel иначе навсегда останется на placeholder `pending` snapshot.
 - manual refresh больше не использует synthetic provider session bucket в UI-path: refresh должен вернуться в реальный runtime `sessionId`, иначе panel не получит rerender через snapshots.

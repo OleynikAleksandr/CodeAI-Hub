@@ -102,4 +102,21 @@
 3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `36814ee98`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record dialog runtime restore release validation`
-6. [DONE] Git Commit: `docs: record dialog runtime restore release validation` (hash: TBD)
+6. [DONE] Git Commit: `docs: record dialog runtime restore release validation` (hash: `a00a02eb2`)
+
+## Phase 6 — Simplify dialog restore adoption after 1.1.970 smoke (owner: Codex, updated: 2026-04-13)
+### Stream: Remove PM-only sessionKind blocker
+1. [DONE] Убрать blocking match по `sessionKind` из dialog restore adoption: auto-select bootstrap знает PM-only `collector`, а Core runtime `session:created` этот флаг не сериализует, из-за чего placeholder session не заменялся реальным runtime session и refresh не наступал; scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; ожидаемый commit message: `fix: adopt restored dialog sessions without session kind match`
+2. [DONE] Git Commit: `fix: adopt restored dialog sessions without session kind match` (hash: `367782de8`)
+3. [DONE] Упростить path до минимального решения без лишней синхронизации `session`/binding state; scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; ожидаемый commit message: `refactor: simplify dialog restore adoption path`
+4. [DONE] Git Commit: `refactor: simplify dialog restore adoption path` (hash: `e03f4b662`)
+5. [DONE] Добавить regression guard, что dialog restore adoption не зависит от `sessionKind`, которого нет в Core runtime `session:created`; scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; ожидаемый commit message: `test: cover dialog restore adoption without session kind`
+6. [DONE] Git Commit: `test: cover dialog restore adoption without session kind` (hash: `024647c33`)
+
+### Stream: Release build and closeout
+1. [TODO] Подготовить release-документы под будущую версию `1.1.971` и синхронизировать active plan/doc материалы под simplified dialog restore adoption; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for simplified dialog restore adoption`
+2. [TODO] Git Commit: `docs: prepare release notes for simplified dialog restore adoption` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
+4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record simplified dialog restore release validation`
+6. [TODO] Git Commit: `docs: record simplified dialog restore release validation` (hash: TBD)

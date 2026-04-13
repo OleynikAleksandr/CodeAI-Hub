@@ -188,3 +188,19 @@ The corrective contract is:
 4. `SessionIdUsageBar` may trigger manual usage-limits refresh only when binding is `ready`.
 
 This keeps the refresh coupled to real runtime materialization instead of speculative dialog bootstrap state.
+
+### 6.4. Simplification after release 1.1.970 smoke
+
+Release `1.1.970` removed the early skipped refresh, but logs still showed no later `pm.refreshUsageLimits.requested` event on the first auto-opened step.
+
+The remaining root cause was simpler than a new timing race:
+
+1. PM bootstrap session carried `sessionKind: "collector"` from workflow intent;
+2. Core runtime `session:created` payload did not preserve `sessionKind` and arrived as `null`;
+3. PM dialog restore adoption still required `created.sessionKind === current.sessionKind`;
+4. because of that one PM-only mismatch, the placeholder bootstrap session was never replaced by the real runtime session;
+5. `SessionIdUsageBar` therefore stayed attached to the placeholder `pending` snapshot and never emitted the ready-time refresh.
+
+The corrective rule is intentionally minimal:
+
+- dialog restore adoption must key on actual continuity identity (`workspace`, `stage`, `run`, `provider`, `providerSessionId`) and must not depend on PM-only `sessionKind` metadata that Core runtime restore does not serialize.
