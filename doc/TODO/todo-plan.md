@@ -27,11 +27,11 @@
 
 ## Phase 1 — Provider Override Start Path (owner: Codex, updated: 2026-04-13)
 ### Stream: Execution Bootstrap
-1. [IN_PROGRESS] Зафиксировать active execution cycle по accepted planning-doc и обновить навигацию scope — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Plans/StageConfirmationCard_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs: start stage confirmation provider override cycle`
-2. [TODO] Git Commit: `docs: start stage confirmation provider override cycle` (hash: TBD)
+1. [DONE] Зафиксировать active execution cycle по accepted planning-doc и обновить навигацию scope — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Plans/StageConfirmationCard_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs: start stage confirmation provider override cycle`
+2. [DONE] Git Commit: `docs: start stage confirmation provider override cycle` (hash: `c261ada82`)
 
 ### Stream: Previous Step Provider Resolver
-3. [TODO] Реализовать stage-aware inheritance для previous trunk provider и connected fallback — scope: `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/services/workflow-provider-resolver.test.ts`; ожидаемый commit message: `fix: inherit previous trunk provider for step start`
+3. [DONE] Реализовать stage-aware inheritance для previous trunk provider и connected fallback — scope: `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/services/workflow-provider-resolver.test.ts`; ожидаемый commit message: `fix: inherit previous trunk provider for step start`
 4. [TODO] Git Commit: `fix: inherit previous trunk provider for step start` (hash: TBD)
 
 ### Stream: Confirmation Card Selector
