@@ -11,6 +11,7 @@ import type {
   LocalizationCategoryKey,
   LocalizationWorkflowTermsPolicy,
 } from "./use-settings-state-support";
+import { SUPPORTED_LOCALIZATION_ENGINE_IDS } from "./use-settings-state-support";
 
 type LocalizationSettings = Settings["general"]["localization"];
 
@@ -98,6 +99,31 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
+const resolveTranslationEngineLabel = (
+  engineId: string,
+  t: ReturnType<typeof useLocalization>["t"]
+): string => {
+  if (engineId === "codex-gpt-5.4-mini") {
+    return t(
+      "ui_interface",
+      "settings.localization.translation_engine.option.codex_gpt54_mini",
+      "OpenAI Codex · GPT-5.4 Mini"
+    );
+  }
+  if (engineId === "codex-gpt-5.3-codex-spark") {
+    return t(
+      "ui_interface",
+      "settings.localization.translation_engine.option.codex_gpt53_spark",
+      "OpenAI Codex · GPT-5.3 Codex Spark"
+    );
+  }
+  return t(
+    "ui_interface",
+    "settings.localization.translation_engine.option.google_gtx",
+    "Google GTX Free"
+  );
+};
+
 const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   localization,
   onCategoryLanguageChange,
@@ -175,12 +201,10 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   const engineOptions =
     availableEngines.length > 0
       ? availableEngines
-      : [
-          {
-            engineId: localization.engineId,
-            languages: [],
-          },
-        ];
+      : SUPPORTED_LOCALIZATION_ENGINE_IDS.map((engineId) => ({
+          engineId,
+          languages: [],
+        }));
   const activeEngine =
     availableEngines.find(
       (engine) => engine.engineId === localization.engineId
@@ -236,7 +260,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             {t(
               "user_guidance",
               "settings.localization.translation_engine.description",
-              "Engine used for bundle materialization and language-catalog lookup."
+              "Engine used for localization bundle materialization and live translation of user-facing assistant text."
             )}
           </p>
           <select
@@ -246,7 +270,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
           >
             {engineOptions.map((engine) => (
               <option key={engine.engineId} value={engine.engineId}>
-                {engine.engineId}
+                {resolveTranslationEngineLabel(engine.engineId, t)}
               </option>
             ))}
           </select>

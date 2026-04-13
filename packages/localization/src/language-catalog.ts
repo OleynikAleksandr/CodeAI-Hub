@@ -61,4 +61,12 @@ export const DEFAULT_ENGINE_LANGUAGE_CATALOGS: readonly LocalizationEngineLangua
       engineId: "google-gtx",
       languages: GOOGLE_GTX_LANGUAGES,
     },
+    {
+      engineId: "codex-gpt-5.4-mini",
+      languages: GOOGLE_GTX_LANGUAGES,
+    },
+    {
+      engineId: "codex-gpt-5.3-codex-spark",
+      languages: GOOGLE_GTX_LANGUAGES,
+    },
   ];

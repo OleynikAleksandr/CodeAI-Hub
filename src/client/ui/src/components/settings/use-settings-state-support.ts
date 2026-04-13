@@ -104,6 +104,14 @@ export const clampGeminiContextWindowTokenLimit = (value: number): number =>
 const LEGACY_SOURCE_LANGUAGE = "source";
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+export const SUPPORTED_LOCALIZATION_ENGINE_IDS = [
+  "google-gtx",
+  "codex-gpt-5.4-mini",
+  "codex-gpt-5.3-codex-spark",
+] as const;
+const SUPPORTED_LOCALIZATION_ENGINE_ID_SET = new Set<string>(
+  SUPPORTED_LOCALIZATION_ENGINE_IDS
+);
 
 const normalizeLocalizationSelection = (value: string): string => {
   const trimmed = value.trim();
@@ -117,7 +125,13 @@ const normalizeLocalizationSelection = (value: string): string => {
 
 export const normalizeLocalizationEngineId = (value: string): string => {
   const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID;
+  if (!(trimmed.length > 0)) {
+    return DEFAULT_LOCALIZATION_ENGINE_ID;
+  }
+
+  return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed)
+    ? trimmed
+    : DEFAULT_LOCALIZATION_ENGINE_ID;
 };
 
 const deriveWorkflowTermsPolicy = (
