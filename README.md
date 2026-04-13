@@ -7,11 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.969
+## Current Release — v1.1.970
+- **Auto-select runtime-restore fix**: Project Manager no longer fires usage-limits refresh from a dialog bootstrap placeholder before the real runtime session exists, so limits can render on the auto-opened workflow step after workspace launch.
+- **Pending-to-runtime adoption in dialog mode**: when Core materializes the runtime session for a restored dialog continuity entry, PM now replaces the placeholder snapshot with that real runtime session and carries the loaded dialog history forward.
+- **Ready-only manual refresh**: `Session ID + Usage Limits` now waits for `binding.status === ready` before sending manual refresh, preventing skipped requests against non-existent runtime sessions during restore.
+
+### 1.1.969 (previous)
 - **Auto-select diagnostics routed into file logs**: standalone Project Manager now forwards usage-limits investigation events into Core-owned file logging, so the restore/bootstrap trace is captured in `~/.codeai-hub/logs/core/core.log`.
 - **Refresh decision visibility in Core**: Core now records whether a manual usage-limits refresh found a runtime session, found a bound provider session id, and was actually dispatched to the provider adapter.
 - **Diagnostic-only release**: this build is for isolating the auto-select usage-limits race after workspace open; it does not claim a behavioural fix yet.
-
 ### 1.1.968 (previous)
 - **Dialog-session usage limits restored**: Project Manager dialog-mode sessions now trigger the same live `Session ID + Usage Limits` refresh path as runtime sessions, so limits render again on active workflow stage screens.
 - **Live quota readers remain authoritative**: Codex, Claude, and Gemini limits continue to come from their provider-specific live quota/HTML readers, not from SDK usage logs or stale browser state.

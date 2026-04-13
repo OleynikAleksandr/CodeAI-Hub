@@ -97,7 +97,7 @@
 4. [DONE] Git Commit: `test: cover dialog usage limits runtime restore` (hash: `bbe64a6a7`)
 
 ### Stream: Release build and closeout
-1. [TODO] Подготовить release-документы под будущую версию `1.1.970` и синхронизировать active plan/doc материалы под auto-select runtime-restore fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for dialog runtime restore fix`
+1. [DONE] Подготовить release-документы под будущую версию `1.1.970` и синхронизировать active plan/doc материалы под auto-select runtime-restore fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for dialog runtime restore fix`
 2. [TODO] Git Commit: `docs: prepare release notes for dialog runtime restore fix` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)

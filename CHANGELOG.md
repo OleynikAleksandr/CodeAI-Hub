@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.970] - 2026-04-13
+### Fixed
+- **Auto-select dialog restore race**: Project Manager no longer sends manual usage-limits refresh while the dialog restore path still points at a placeholder bootstrap session without a materialized runtime session.
+- **Runtime-session adoption after restore**: when Core creates the real runtime session for a restored dialog continuity entry, PM now swaps the placeholder snapshot to that runtime session and keeps the existing dialog history attached.
+- **Ready-only refresh effect**: `Session ID + Usage Limits` now waits for `binding.status === ready`, so the manual refresh request is emitted only after runtime restore/rebind has completed.
+
 ## [1.1.969] - 2026-04-13
 ### Changed
 - **Project Manager diagnostics now persist to Core logs**: standalone PM forwards usage-limits investigation events into Core over the websocket bridge, so restore/bootstrap diagnostics land in `~/.codeai-hub/logs/core/core.log` instead of depending on browser console access.
