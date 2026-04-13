@@ -117,7 +117,11 @@ export class SessionManager {
     sessionId: string,
     role: SessionRole,
     content: string,
-    options?: { readonly timestamp?: string; readonly tag?: string }
+    options?: {
+      readonly messageId?: string;
+      readonly timestamp?: string;
+      readonly tag?: string;
+    }
   ): SessionMessage | null {
     const session = this.sessions.get(sessionId);
     if (!session) {
@@ -125,7 +129,7 @@ export class SessionManager {
     }
 
     const message: SessionMessage = {
-      id: randomUUID(),
+      id: options?.messageId ?? randomUUID(),
       role,
       content,
       sessionId,

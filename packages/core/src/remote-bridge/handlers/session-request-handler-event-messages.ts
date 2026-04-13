@@ -8,6 +8,7 @@ export interface DialogMessagePayload {
   readonly role?: string;
   readonly tag?: string;
   readonly timestamp?: string;
+  readonly uuid?: string;
 }
 
 export type MessageContentPayload =
@@ -69,6 +70,10 @@ export class SessionRequestHandlerEventMessages {
       content: payload.content,
       timestamp: payload.timestamp,
       tag,
+      messageId:
+        typeof payload.uuid === "string" && payload.uuid.trim().length > 0
+          ? payload.uuid.trim()
+          : undefined,
     });
   }
 
@@ -112,6 +117,7 @@ export class SessionRequestHandlerEventMessages {
     readonly sessionId: string;
     readonly role: SessionRole;
     readonly content: string;
+    readonly messageId?: string;
     readonly timestamp?: string;
     readonly tag?: string;
   }): void {
@@ -120,6 +126,7 @@ export class SessionRequestHandlerEventMessages {
       options.role,
       options.content,
       {
+        ...(options.messageId ? { messageId: options.messageId } : {}),
         ...(options.timestamp ? { timestamp: options.timestamp } : {}),
         ...(options.tag ? { tag: options.tag } : {}),
       }
