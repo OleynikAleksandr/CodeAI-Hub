@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
+import type { CoreBridgeSessionMessageTranslationPayload } from "../../../ui/src/core-bridge/types";
 import {
   isContextDecisionPending,
   isRolloverPendingAfterTerminalTurn,
@@ -26,6 +27,7 @@ type SessionBindingUpdate = {
   readonly status: "pending" | "ready" | "failed";
 };
 type SessionMessageUpdate = { readonly sessionId: string; readonly message: SessionMessage };
+type SessionMessageTranslationUpdate = CoreBridgeSessionMessageTranslationPayload;
 type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
@@ -177,12 +179,43 @@ export const applyWorkspaceSnapshotToSnapshots = (
 };
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const sanitizeSessionMessageTranslationPayload = (
+  payload: unknown
+): SessionMessageTranslationUpdate | null => {
+  if (!isRecord(payload) || typeof payload.sessionId !== "string") {
+    return null;
+  }
+  if (
+    typeof payload.messageId !== "string" ||
+    typeof payload.localizedContent !== "string" ||
+    typeof payload.sourceHash !== "string" ||
+    typeof payload.targetLanguage !== "string"
+  ) {
+    return null;
+  }
+  const localizedContent = payload.localizedContent.trim();
+  if (localizedContent.length === 0) {
+    return null;
+  }
+  return {
+    sessionId: payload.sessionId,
+    messageId: payload.messageId,
+    localizedContent,
+    sourceHash: payload.sourceHash,
+    targetLanguage: payload.targetLanguage,
+  };
+};
+
 export const useProjectManagerSessionStream = (params: {
   readonly onSessionCreated: (session: SessionRecord) => void;
   readonly onSessionMessage: (payload: SessionMessageUpdate) => void;
   readonly onSessionHistory: (payload: SessionHistoryUpdate) => void;
   readonly onSessionBinding: (payload: SessionBindingUpdate) => void;
   readonly onSessionDeleted: (sessionId: string) => void;
+  readonly onSessionMessageTranslation?: (
+    payload: SessionMessageTranslationUpdate
+  ) => void;
   readonly onSessionStream?: (payload: {
     readonly sessionId: string;
     readonly event: unknown;
@@ -219,6 +252,15 @@ export const useProjectManagerSessionStream = (params: {
             sessionId: payload.sessionId,
             messages: payload.messages,
           });
+        }
+        return;
+      }
+      if (message.type === "session:message_translation") {
+        const normalized = sanitizeSessionMessageTranslationPayload(
+          message.payload
+        );
+        if (normalized) {
+          params.onSessionMessageTranslation?.(normalized);
         }
         return;
       }
@@ -284,6 +326,7 @@ export const useProjectManagerSessionStream = (params: {
     params.onSessionDeleted,
     params.onSessionHistory,
     params.onSessionMessage,
+    params.onSessionMessageTranslation,
     params.onWorkspaceSnapshot,
   ]);
 };

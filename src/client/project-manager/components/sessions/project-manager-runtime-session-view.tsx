@@ -6,6 +6,7 @@ import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store"
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
 import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, resolveSessionThinkingDisplayEnabled, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
 import type { UsageLimitsRefreshRequest } from "../../../ui/src/session/session-id-bar";
@@ -36,6 +37,10 @@ const ProjectManagerRuntimeSessionView = ({
   onFileLinkActivate,
   startupStage = "description",
 }: ProjectManagerSessionViewProps) => {
+  const sessionMessageLocalization = useMemo(
+    () => new SessionMessageLocalizationFacade(),
+    []
+  );
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
   const providerLabels = useMemo(() => buildProviderLabels(providerCatalog), [providerCatalog]);
   const { settings, reload } = useProjectManagerSettings();
@@ -231,6 +236,10 @@ const ProjectManagerRuntimeSessionView = ({
     onSessionDeleted: handleSessionDeleted,
     onSessionHistory: handleSessionHistory,
     onSessionMessage: handleSessionMessage,
+    onSessionMessageTranslation: (payload) =>
+      setSnapshots((previous) =>
+        sessionMessageLocalization.applyMessageTranslation(previous, payload)
+      ),
     onSessionStream: (payload) =>
       setSnapshots((previous) =>
         updateSnapshotsWithUsageLimits(updateSnapshotsWithTokenUsage(previous, payload), payload)
