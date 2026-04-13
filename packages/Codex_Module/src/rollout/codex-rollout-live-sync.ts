@@ -114,7 +114,9 @@ export class CodexRolloutLiveSync {
       const translated = await this.thoughtTranslator.translateReasoning(
         event.content,
         session.runtimeTurnConfig?.messagesForTheUserLanguage ??
-          session.messagesForTheUserLanguage
+          session.messagesForTheUserLanguage,
+        session.runtimeTurnConfig?.translationEngineId ??
+          session.translationEngineId
       );
       this.emitter.emitDialogMessage(
         session,
