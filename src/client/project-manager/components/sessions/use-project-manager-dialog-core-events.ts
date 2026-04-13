@@ -114,15 +114,30 @@ export const useProjectManagerDialogCoreEvents = (options: {
           dialogId: match.dialogId,
           providerSessionId: match.providerSessionId,
         });
-        if (
+        const shouldRequestRestore =
           match.providerSessionId &&
           shouldCreateRuntimeRestore({
             requests: options.restoreRequestInFlightRef.current,
             restoreKey,
             hasRuntimeSession: runtimeSession.hasRuntimeSession,
             now: Date.now(),
-          })
-        ) {
+          });
+        api.logDiagnostic({
+          channel: "usage-limits",
+          event: "pm.dialog.bootstrap.resolved",
+          context: {
+            dialogId: match.dialogId,
+            hasRuntimeSession: runtimeSession.hasRuntimeSession,
+            matchedProviderId: match.providerId,
+            matchedProviderSessionId: match.providerSessionId,
+            preferredRuntimeSessionId,
+            resolvedRuntimeSessionId: runtimeSession.runtimeSessionId,
+            restoreRequested: Boolean(shouldRequestRestore),
+            stage: intent.stage ?? match.stage,
+            workspacePath: intent.workspacePath,
+          },
+        });
+        if (shouldRequestRestore) {
           api.createSession({
             providerId: match.providerId ?? intent.providerId,
             providerSessionId: match.providerSessionId,

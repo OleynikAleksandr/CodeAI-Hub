@@ -13,6 +13,7 @@ import type {
   CoreStatePayload,
   IncomingMessage,
   OutgoingMessage,
+  ProjectManagerDiagnosticLogPayload,
   ProjectUpdatePayload,
   SettingsLoadedPayload,
   WorkspaceSelectPayload,
@@ -171,9 +172,21 @@ class ProjectManagerApi {
     readonly providerSessionId: string | null;
     readonly sessionId: string;
   }): void {
+    this.logDiagnostic({
+      channel: "usage-limits",
+      event: "pm.refreshUsageLimits.requested",
+      context: params,
+    });
     this.send({
       type: "session:refreshUsageLimits",
       payload: params,
+    });
+  }
+
+  logDiagnostic(payload: ProjectManagerDiagnosticLogPayload): void {
+    this.send({
+      type: "pm:diag:log",
+      payload,
     });
   }
 

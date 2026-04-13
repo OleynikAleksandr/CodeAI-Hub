@@ -149,6 +149,12 @@ export type DialogSendRequestPayload = {
   readonly content: string;
 };
 
+export type ProjectManagerDiagnosticLogPayload = {
+  readonly channel: string;
+  readonly event: string;
+  readonly context?: Record<string, unknown>;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -208,6 +214,10 @@ export type OutgoingMessage =
       readonly payload: DialogSwitchRequestPayload;
     }
   | { readonly type: "settings:load" }
+  | {
+      readonly type: "pm:diag:log";
+      readonly payload: ProjectManagerDiagnosticLogPayload;
+    }
   | {
       readonly type: "session:refreshUsageLimits";
       readonly payload: {
