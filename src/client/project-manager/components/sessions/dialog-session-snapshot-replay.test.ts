@@ -174,3 +174,33 @@ test("dialog controller retries stalled cold-open history request after timeout"
     "watchdog must issue a forced full-history retry for stalled cold-open"
   );
 });
+
+test("dialog restore bootstrap stays pending until runtime session materializes", async () => {
+  const [controllerSource, coreEventsSource] = await Promise.all([
+    readFile(CONTROLLER_SOURCE_PATH, "utf8"),
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    coreEventsSource.includes('status: "pending" as const'),
+    true,
+    "dialog bootstrap must keep placeholder session binding pending when runtime session is still absent"
+  );
+  assert.equal(
+    controllerSource.includes('current.binding.status !== "ready"'),
+    true,
+    "dialog controller must detect unresolved placeholder sessions before adopting a materialized runtime session"
+  );
+  assert.equal(
+    controllerSource.includes(
+      "currentProviderSessionId === createdProviderSessionId"
+    ),
+    true,
+    "dialog controller must match late runtime materialization by providerSessionId continuity"
+  );
+  assert.equal(
+    controllerSource.includes("const { [current.id]: _discarded, ...withoutPlaceholder } = next;"),
+    true,
+    "dialog controller must remove the placeholder snapshot after adopting the real runtime session"
+  );
+});

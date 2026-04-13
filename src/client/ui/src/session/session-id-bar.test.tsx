@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import SessionIdBar from "./session-id-bar";
+
+const SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/ui/src/session/session-id-bar.tsx"
+);
 
 test("SessionIdBar renders live usage limits from session status", () => {
   Object.assign(globalThis, { React: { createElement } });
@@ -64,4 +71,19 @@ test("SessionIdBar does not invent usage limits without live status data", () =>
   assert.equal(html.includes("Weekly 12%"), false);
   assert.equal(html.includes(">Session<"), true);
   assert.equal(html.includes(">Weekly<"), true);
+});
+
+test("SessionIdBar refresh effect waits for ready binding state", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes('binding.status === "ready"'),
+    true,
+    "usage limits refresh must not fire before binding becomes ready"
+  );
+  assert.equal(
+    source.includes("binding.status,"),
+    true,
+    "usage limits refresh effect must rerun when binding status changes to ready"
+  );
 });
