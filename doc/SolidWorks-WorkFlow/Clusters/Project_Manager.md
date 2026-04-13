@@ -39,6 +39,12 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - После `Submit questionnaire` создаётся runtime-сессия Description:
   - левая панель возвращается к Session UI,
   - правая панель имеет переключатель `Artifacts/Help`.
+- Для idle trunk stages `Virtual Simulation` и `Diagram Modules`, у которых ещё нет continuity session:
+  - левая панель `Sessions` показывает confirmation card вместо session view;
+  - card показывает upstream artifact, helper warning, inline provider selector и `Start step`;
+  - default provider наследуется от предыдущего trunk step (`Description -> Virtual Simulation`, `Virtual Simulation -> Diagram Modules`);
+  - пользователь может оставить inherited provider и запустить шаг одним кликом или явно переключить provider до старта;
+  - как только continuity session уже существует, selector исчезает вместе с confirmation card и PM возвращается к обычному resume/open-session поведению.
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
 - Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode убран):
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов через nested CSS Grid (React Flow удалён в релизе `1.1.921`);
@@ -64,6 +70,11 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - raw `vscode://file/...` handoff остаётся только как последний резервный fallback вне launcher/webview bridge-сред;
   - artifact/help markdown не входят в этот контракт, пока не объявлен отдельный scope.
 - Semantic changes для diagram steps ожидаются через agent-run или прямое редактирование canonical Markdown, а не через visible inline UI.
+- Для нового trunk-step bootstrap provider, выбранный на confirmation card, считается authoritative уже на PM intent path:
+  - `pm:dialog:open` / startup intent обязаны нести explicit `providerId` выбранного шага;
+  - dialog bootstrap snapshot должен seed-ить provider/model labels из этого intent, даже если dialog index payload ещё не дал нормализованный provider;
+  - нижняя status/model panel затем converge-ится через обычный `useRuntimeModelSync()` / `session:model:update`;
+  - header usage-limits refresh по-прежнему стартует только после `binding.status = "ready"`, но уже для runtime session/provider identity нового шага, а не предыдущего trunk provider.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.
 

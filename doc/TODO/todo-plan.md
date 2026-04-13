@@ -49,10 +49,10 @@
 
 ### Stream: Runtime Surface Regression Locks
 11. [DONE] Зафиксировать тестами, что status bar и usage refresh продолжают следовать runtime provider path после step start — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/ui/src/session/session-id-bar.test.tsx`; ожидаемый commit message: `test: cover provider override runtime sync`
-12. [TODO] Git Commit: `test: cover provider override runtime sync` (hash: TBD)
+12. [DONE] Git Commit: `test: cover provider override runtime sync` (hash: `18fdae5bf`)
 
 ### Stream: Workflow and PM SSOT Sync
-13. [TODO] Обновить trunk workflow и PM cluster docs под inline provider override contract — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; ожидаемый commit message: `docs: sync workflow provider override contract`
+13. [DONE] Обновить trunk workflow и PM cluster docs под inline provider override contract — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; ожидаемый commit message: `docs: sync workflow provider override contract`
 14. [TODO] Git Commit: `docs: sync workflow provider override contract` (hash: TBD)
 
 ### Stream: Session UI Module Sync

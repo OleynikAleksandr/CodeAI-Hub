@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-04-10
+**Updated:** 2026-04-13
 **Owner:** Oleksandr
 
 ---
@@ -132,6 +132,9 @@ Standalone reviewer остаётся отдельным deferred-модулем 
 ### Подход
 
 Manual start из PM + resume-сессия агента:
+- если у шага ещё нет continuity session, левая панель `Sessions` показывает confirmation card с upstream artifact, inline selector провайдера и кнопкой `Start step`;
+- провайдер по умолчанию наследуется от `Description.primarySession.providerId`, но пользователь может до старта выбрать любой `connected` provider;
+- если пользователь не меняет выбор, запуск остаётся one-click path и идёт на унаследованном provider;
 - агент читает `Final_Description.md`;
 - агент задаёт только уточнения, которые реально улучшают сценарии;
 - агент обновляет `virtual-simulation.md` итеративно.
@@ -159,6 +162,9 @@ Manual start из sidebar Workflow Tree:
 - пользователь сам решает, когда `virtual-simulation.md` уже достаточно хороший для перехода на следующий шаг;
 - запуск требует доступный canonical upstream artifact `virtual-simulation.md`;
 - PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
+- если continuity session для шага ещё нет, confirmation card предвыбирает провайдера последнего trunk-step (`virtual_simulation`), а не провайдера из `Description`;
+- пользователь может прямо на карточке переключить provider до запуска; выбранный provider становится authoritative identity для новой step-session bootstrap path;
+- после materialization новой step-session нижняя model/status surface и header usage-limits surface должны перейти на выбранный provider/runtime identity; когда у шага уже есть continuity session, confirmation card не показывается и resume path остаётся без pre-start provider override.
 
 ### Входы
 
