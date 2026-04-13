@@ -175,6 +175,17 @@ export const useProjectManagerDialogSessionController = (
 
   useProjectManagerSessionStream({
     onSessionBinding: (payload) => {
+      setSession((current) =>
+        current?.id === payload.sessionId
+          ? {
+              ...current,
+              binding: {
+                providerSessionId: payload.providerSessionId,
+                status: payload.status,
+              },
+            }
+          : current
+      );
       setSnapshots((previous) => {
         const current = previous[payload.sessionId];
         if (!current) {
@@ -205,7 +216,6 @@ export const useProjectManagerDialogSessionController = (
         const isSameWorkspace = created.workspacePath === intent.workspacePath;
         const isSameStage = created.stage === current.stage;
         const isSameRun = created.runSlug === current.runSlug;
-        const isSameKind = created.sessionKind === current.sessionKind;
         const isSameProvider = created.providerIds[0] === current.providerIds[0];
         const isSameSession = created.id === current.id;
         const isRolloverChild = created.continuationParentId === current.id;
@@ -222,7 +232,6 @@ export const useProjectManagerDialogSessionController = (
             isSameWorkspace &&
             isSameStage &&
             isSameRun &&
-            isSameKind &&
             isSameProvider &&
             shouldAdopt
           )
