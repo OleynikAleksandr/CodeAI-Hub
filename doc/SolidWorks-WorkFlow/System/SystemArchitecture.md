@@ -125,6 +125,10 @@
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
 - `Settings -> General -> Core Controls` now uses a staged restart flow owned by `HomeViewMessageRouter` + `CoreProcessManager`: explicit `stop -> wait -> start`, progress/status messages posted back into the webview, and a button-local visible status surface instead of a blind fire-and-forget restart action
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_Module/`, `packages/Gemini_Module/`
+- Core-owned session translation overlay cluster: `packages/core/src/session-translation/`, `packages/core/src/unified-session/storage.ts`, `packages/unified-session/src/session-translation-overlay-store.ts`
+  - providers now emit source-first thinking/reasoning with stable `messageId`, and Core owns async translation scheduling, persistence, and live bridge patching (`session:message_translation`, `dialog:message_translation`)
+  - canonical session/dialog transcript stays native-only; translated text is stored separately in per-session `*.translations.jsonl` overlays and merged back into history as `localizedContent` only when `messageId + sourceHash` still match
+  - UI renders `localizedContent ?? content`, so late translation completion upgrades already-visible messages in place without delaying the original thinking stream
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing
@@ -133,7 +137,6 @@
 - Codex messaging cluster: `packages/Codex_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn orchestration surface
   - `codex-applied-turn-config.ts` = applies Core-owned next-turn effective model identity onto the active thread runtime and strips internal transport metadata before SDK execution
-  - `codex-thought-translation-adapter.ts` = Codex-local adapter over shared translation facade for reasoning deltas
   - `packages/Codex_Module/src/logging/session-logger.ts` + `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` = отвечают за SDK diagnostics и reasoning config patching; подтверждать реально применённые model/reasoning значения нужно по raw provider rollout JSONL, а не по отдельному normalized feedback contract в `sdk-codex-*.jsonl`
   - `codex-event-stream-consumer.ts` = startup-lock / idle-pulse event stream consumer
   - `codex-stream-event-router.ts` = thread/item/assistant/structured-output routing
@@ -145,21 +148,19 @@
   - `message-processor.ts` = thin façade / turn event normalization entrypoint
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
   - `gemini-assistant-event-normalizer.ts` = assistant/thinking/finished boundary normalization
-  - `gemini-thought-translation-adapter.ts` = Gemini-local adapter over shared translation facade; `thought-translator-service.ts` is compatibility re-export only
   - `gemini-system-event-normalizer.ts` = tool/system/warning event normalization
-  - `packages/Gemini_Module/src/logging/session-logger.ts` + `gemini-system-event-normalizer.ts` + `gemini-assistant-event-normalizer.ts` = сохраняют raw/diagnostic Gemini session artifacts; active baseline не промотирует `model_info`, `thought` или `thinkingLevel` в отдельный normalized provider-feedback contract; translated thoughts и segmented final assistant output now drain through one deferred flush boundary before runtime fallback accounting
+  - `packages/Gemini_Module/src/logging/session-logger.ts` + `gemini-system-event-normalizer.ts` + `gemini-assistant-event-normalizer.ts` = сохраняют raw/diagnostic Gemini session artifacts; active baseline не промотирует `model_info`, `thought` или `thinkingLevel` в отдельный normalized provider-feedback contract; thinking text is emitted source-first and any translation now arrives later through the Core overlay path
 - Gemini session façade cluster: `packages/Gemini_Module/src/session/`
   - `gemini-session-manager.ts` = façade
-  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals; bootstrap/lifecycle now keep a mutable `runtimeTurnConfig` so Core-applied model/thinking changes can retune existing Gemini sessions without re-deriving model/thinking authority from local provider settings; `gemini-turn-runner.ts` treats assistant output from tool-producing legs as progress-only output, drains deferred Gemini dialog emits before detaching segment accounting listeners, and `gemini-session-lifecycle.ts` differentiates `initial` and `post_tool` stalled watchdog windows for Gemini follow-up legs; GeminiSessionManager owns the GeminiThoughtTranslationAdapter instance directly and passes it down the turn pipeline
+  - `gemini-session-bootstrapper.ts`, `gemini-session-settings-resolver.ts`, `gemini-session-store.ts`, `gemini-session-lifecycle.ts`, `gemini-turn-runner.ts`, `gemini-tool-call-orchestrator.ts` = runtime internals; bootstrap/lifecycle now keep a mutable `runtimeTurnConfig` so Core-applied model/thinking changes can retune existing Gemini sessions without re-deriving model/thinking authority from local provider settings; `gemini-turn-runner.ts` treats assistant output from tool-producing legs as progress-only output, drains deferred Gemini dialog emits before detaching segment accounting listeners, and `gemini-session-lifecycle.ts` differentiates `initial` and `post_tool` stalled watchdog windows for Gemini follow-up legs
 - Gemini provider send path: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`
   - `gemini-applied-turn-config.ts` = reads Core-applied next-turn effective model identity for Gemini sends and stages runtime overrides before provider execution
   - `gemini-provider-adapter.ts` = consumes the shared Core-applied runtime envelope on outbound send; `gemini-session-settings-resolver.ts` now treats Core-provided model/thinking as authoritative over local snapshot values, leaving `settings.json` only as fallback for continuity/runtime defaults that are not part of the applied turn contract; stalled-turn watchdog failures are surfaced as provider `turn_failed` events and kept on the recoverable session path instead of escalating through generic provider-runtime failure recovery, while non-thinking assistant text from a leg that still emitted tool calls is no longer accepted as whole-turn completion proof
 - Claude SDK send path: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
   - `claude-sdk-manager.ts` derives the active turn model from Core-applied turn config on send path; `handlers/session-request-handler-applied-turn-config.ts` resolves Claude `defaultModel` from the shared persisted settings snapshot before outbound send, so Claude no longer falls back to a stale process-start env alias when Settings change during a live Core session
   - CodeAI Hub-managed Claude turns now keep filesystem `settingSources` empty, which places the provider in full SDK isolation mode and blocks parent-directory `CLAUDE.md` / settings discovery from the active workspace path
-  - visible Claude thinking now flows through `claude-thought-translation-adapter.ts`; Core threads `messagesForTheUserLanguage` into Claude runtime turn config, translation failures are non-blocking, and `en` keeps the upstream provider wording unchanged
-  - long Claude thinking is chunked before translation so Google GTX GET-size overflow on oversized reasoning blocks does not fall back to English; after translation, the router emits the visible reasoning as several readable `tag: "thinking"` dialog chunks instead of one giant bubble
-  - short assistant progress text that belongs to a Claude message ending with `stream_event.message_delta.delta.stop_reason = "tool_use"` is now buffered and localized on the user-facing path, while ordinary final assistant replies that end with `end_turn` stay on the normal untranslated assistant-output path
+  - visible Claude thinking is now emitted source-first with stable ids and translated later through the Core overlay pipeline; `claude-thought-translation-adapter.ts` remains only for short generic assistant progress/pre-tool text that stays provider-local
+  - short assistant progress text that belongs to a Claude message ending with `stream_event.message_delta.delta.stop_reason = "tool_use"` is still buffered and localized on the user-facing path, while ordinary final assistant replies that end with `end_turn` stay on the normal untranslated assistant-output path
   - Claude thinking settings now use `thinking.enabled + effort`; Core includes `thinkingEnabled` and `reasoningEffort` in applied turn config, while the client sees enabled Claude effort through effective identities such as `sonnet reasoning:high` rather than only `thinking:on`
   - current Claude SDK semantics for `claude-opus-4-6` still keep final thought-summary verbosity provider-owned even when CodeAI Hub sends explicit `effort`, so short visible thought summaries in provider-home JSONL are not a UI truncation bug by themselves
 - CEF Launcher native boundary: `packages/cef-launcher/src/launcher_handler.cc`
@@ -169,20 +170,17 @@
   - `src/client/ui/src/app-host/use-settings-models-sync.ts` = ready sessions no longer guess a new runtime identity from settings before Core confirms the applied effective model config
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` now emits `session:model:update` from the outbound applied turn-config itself for regular new turns, so PM label sync does not depend on a provider-specific `model_info` or `system` event being emitted afterward and does not reconstruct identity from split fields on the UI side
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
-- Codex thought translation and visible thinking: `packages/Codex_Module/src/messaging/codex-thought-translation-adapter.ts`, `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `src/client/ui/src/session/dialog-panel-message-utils.ts`
-  - reasoning deltas are translated through the shared runtime translation module;
-  - Core threads `messagesForTheUserLanguage` from the shared settings snapshot into Codex runtime so visible reasoning follows the selected `Messages for the User` language; `en` skips translation and preserves upstream provider wording;
-  - visible output uses `role: "assistant"` with `tag: "thinking"` and the standard assistant bubble path whenever upstream Codex actually sends reasoning summaries;
+- Codex visible thinking: `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/core/src/session-translation/`
+  - reasoning deltas are emitted immediately in source form and translated asynchronously through the Core overlay pipeline;
+  - Core threads `messagesForTheUserLanguage` from the shared settings snapshot into the overlay translator, so visible reasoning follows the selected `Messages for the User` language while the native transcript remains unchanged;
+  - visible output still uses `role: "assistant"` with `tag: "thinking"` whenever upstream Codex actually sends reasoning summaries;
   - `model_reasoning_summary = "none"` means no reasoning summaries reach CodeAI Hub, so there is nothing to translate or display;
   - the provider settings toggle updates provider-home `config.toml` immediately and saved settings remain the restart-proof source of truth for future Codex materialization;
   - legacy hidden collapsible thinking UI remains only for archived `role: "thinking"` history.
-- Gemini Thought Translator: `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
-  - Adapts Gemini agent thoughts into shared `@codeai-hub/translation` facade calls; current engine path is Google GTX / `translate.googleapis.com`
-  - Core threads `messagesForTheUserLanguage` from the shared settings snapshot into Gemini runtime so visible thought bubbles follow the selected `Messages for the User` language; `en` skips translation and preserves upstream provider wording
-  - Buffered in `GeminiMessageProcessor.handleThoughtEvent()`: pending translations are awaited before real response emit, and the no-pending-translations path emits the final assistant segment synchronously
-  - Emitted as `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" when `thinkingDisplaySyncEnabled` is on; when the display flag is off, the Session UI filters the bubble while the runtime history/logging path remains intact
-  - `thought-translator-service.ts` remains a compatibility re-export for historical imports
-  - Graceful degradation: on failure, English original is emitted as fallback
+- Gemini visible thinking: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/core/src/session-translation/`
+  - Gemini thought text is emitted source-first, then optionally upgraded through the Core overlay translator; `en` skips translation and preserves upstream provider wording
+  - visible output remains `role: "assistant"` with `tag: "thinking"` — UI renders as "Gemini · Thinking" when `thinkingDisplaySyncEnabled` is on; when the display flag is off, the Session UI filters the bubble while runtime history/logging path remains intact
+  - graceful degradation is now overlay-based: on failure, the original English thought remains visible because the source transcript was already persisted first
   - Канон: `doc/SolidWorks-WorkFlow/Contracts/Gemini_ThoughtTranslation.md`, `packages/translation/src/translation-facade.ts`
 
 ## 5) Workflow Boundary (Description, 2026-03-01)

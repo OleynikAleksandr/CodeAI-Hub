@@ -1,7 +1,7 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-04
+**Updated:** 2026-04-13
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.881`)
 
@@ -42,7 +42,8 @@ This module depends on `@codeai-hub/translation`, but it is a separate boundary.
 `Localization` does not own:
 
 - translation transport details (`@codeai-hub/translation` owns that);
-- provider outputs, reasoning text, or user-authored content;
+- provider outputs, reasoning source transcripts, or user-authored content;
+- runtime thinking overlay storage under unified session history (`*.translations.jsonl`);
 - extension/core/browser transport that delivers runtime payloads to specific UI surfaces;
 - workflow/business semantics outside localized copy itself.
 
@@ -194,6 +195,7 @@ Important live behaviors:
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`.
+- the same persisted `translationEngineId` now also feeds Core-owned live thinking overlay translation; Localization still does not own the overlay storage or replay path, but it remains the SSOT for which engine the product selected.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
 - mixed DSL artifacts may keep canonical structural names/titles in English even while surrounding descriptive prose follows `Artifacts for the User`; `Diagram Modules` `Product Part` / `Cluster` / `Module` naming is the live reference case.

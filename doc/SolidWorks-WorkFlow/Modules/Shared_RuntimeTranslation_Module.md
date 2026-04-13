@@ -1,7 +1,7 @@
 # Shared Runtime Translation Module - Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-03-31
+**Updated:** 2026-04-13
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.854`)
 
@@ -14,11 +14,10 @@ It translates short runtime text fragments through an engine-neutral facade and 
 
 Current production use:
 
-- Gemini thoughts are translated from English to Russian through the free Google Translate endpoint.
-- Codex reasoning deltas are translated from English to Russian through the same shared facade and are emitted as visible assistant-thinking bubbles by the provider-local adapter.
-- Translation failure is non-blocking and falls back to the original text.
-- Gemini emits translated output as `role: "assistant"` with `tag: "thinking"`.
-- Codex emits translated reasoning output as `role: "assistant"` with `tag: "thinking"` as well.
+- live provider thinking/reasoning is emitted source-first and stored in canonical session history without rewriting the native transcript;
+- Core owns the runtime translation overlay pipeline for persisted thinking messages and broadcasts async `session:message_translation` / `dialog:message_translation` patches when translation completes;
+- translated text is stored as per-session sidecar overlay records (`*.translations.jsonl`) and is merged into history reads as `localizedContent`, while the source text remains the only canonical transcript;
+- translation failure is non-blocking and falls back to the original text in the visible UI.
 
 Planned reuse boundary:
 
@@ -121,27 +120,33 @@ This keeps the module reusable for Gemini, Codex, and non-provider runtime consu
 
 ## 5. Current Consumers and Adapter Boundary
 
-### 5.1 Gemini
+### 5.1 Core-owned live translation overlays
 
-Gemini consumes the shared module through a provider-local adapter:
+Runtime thinking translation is now consumed by Core instead of provider-local visible adapters:
 
-- `packages/Gemini_Module/src/messaging/gemini-thought-translation-adapter.ts`
-- `packages/Gemini_Module/src/messaging/thought-translator-service.ts` (compatibility re-export only)
+- `packages/core/src/session-translation/session-translation-facade.ts`
+- `packages/core/src/session-translation/session-message-localization-projector.ts`
+- `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`
+- `packages/core/src/unified-session/storage.ts`
+- `packages/unified-session/src/session-translation-overlay-store.ts`
 
-Current Gemini rules:
+Current live overlay rules:
 
-- `ThoughtSummary` is converted into plain text using `subject: description` when a subject exists, otherwise `description`.
-- The adapter calls `TranslationFacade.translate(...)` with the current reasoning translation request shape.
-- The message processor keeps `pendingTranslations` and drains them before the final assistant segment of the same finished leg is emitted.
-- The visible contract remains `role: "assistant"` with `tag: "thinking"`.
-- Translation failure still falls back to the original English text.
+- providers emit native/source thinking text immediately with stable `messageId`;
+- Core decides whether that message should be translated and calls `TranslationFacade.translate(...)` asynchronously;
+- successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;
+- history reads merge `localizedContent` from the sidecar only when `messageId + sourceHash` still match, so stale translations are ignored;
+- UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
 
-### 5.2 Codex boundary
+### 5.2 Provider boundary
 
-Codex reasoning translation must use a separate provider-local adapter when that stream is enabled.
-The shared module must not know about Codex stream snapshots, placeholder markers, or the Codex-specific choice between `role: "thinking"` and any tagged assistant presentation.
+Provider modules still own provider-specific text extraction and message identity, but they no longer block visible thinking on translation completion.
 
-That logic belongs in the Codex integration layer, not in `@codeai-hub/translation`.
+Current provider boundary:
+
+- Gemini and Codex now emit source-first thinking text directly into the dialog/runtime stream;
+- Claude keeps provider-local translation only for generic assistant progress/pre-tool text that is not part of the Core-owned thinking overlay path;
+- `@codeai-hub/translation` still must not know about provider stream buffers, placeholder markers, UI roles, or dialog/session storage.
 
 ### 5.3 Future document and artifact adapters
 
@@ -158,12 +163,12 @@ The shared module still stays translation-only.
 
 ## 6. Runtime Packaging Invariant
 
-Installed Gemini provider bundles are self-contained at runtime.
+Installed provider bundles that consume the shared translation package are self-contained at runtime.
 
 Build and release rules:
 
-- `scripts/build-gemini-module.sh` vendors `@codeai-hub/translation` into the installed Gemini runtime root.
-- `scripts/build-release.sh` verifies that the installed Gemini bundle can load with the bundled translation package present.
+- `scripts/build-claude-module.sh`, `scripts/build-codex-module.sh`, and `scripts/build-gemini-module.sh` vendor `@codeai-hub/translation` into the installed provider runtime root.
+- `scripts/build-release.sh` verifies that the installed Claude, Codex, and Gemini bundles can load with the bundled translation package present.
 - The installed provider must not depend on workspace `node_modules` to resolve the shared translation package.
 
 This invariant exists because provider bundles are loaded outside the repo workspace tree.
@@ -187,7 +192,7 @@ This invariant exists because provider bundles are loaded outside the repo works
 5. The engine layer remains pluggable.
    Google GTX is the current default, not a forever-hardcoded implementation detail.
 
-6. Installed Gemini bundles must remain runnable without the repo workspace dependency tree.
+6. Installed provider bundles that use runtime translation must remain runnable without the repo workspace dependency tree.
    Required shared runtime dependencies are copied into the provider bundle root by the build pipeline.
 
 ---
@@ -197,13 +202,15 @@ This invariant exists because provider bundles are loaded outside the repo works
 Current validation surface:
 
 - `npm run build --workspace=@codeai-hub/translation`
-- `node --test --import tsx packages/Gemini_Module/src/messaging/message-processor.test.ts`
-- `node --test --import tsx packages/Gemini_Module/src/session/gemini-session-manager.test.ts`
+- `node --test packages/core/dist/session-translation/session-message-localization-projector.test.js`
+- `node --test packages/unified-session/dist/session-translation-overlay-store.test.js`
 - `npm run build --workspace=@codeai-hub/gemini-module`
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `npm run build --workspace=@codeai-hub/codex-module`
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 
-The `1.1.854` release validates that the installed Gemini provider bundle loads successfully with the bundled shared translation package.
+The `1.1.972` baseline validates that installed Claude, Codex, and Gemini provider bundles all load successfully with the bundled shared translation package, while Core-owned translation overlays stay replay-safe through JSONL sidecars.
 
 ---
 
