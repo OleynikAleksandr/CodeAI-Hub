@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import type { UsageMetadata } from "@google/genai";
-import { GeminiThoughtTranslationAdapter } from "../messaging/gemini-thought-translation-adapter";
 import type { GeminiCliModules } from "../runtime/cli-types";
 import type { ModuleReporter } from "../types";
 import { GeminiSessionBootstrapper } from "./gemini-session-bootstrapper";
@@ -24,7 +23,6 @@ export class GeminiSessionManager {
   private readonly turnRunner: GeminiTurnRunner;
   private readonly modules: GeminiCliModules;
   private readonly toolExecutorFacade: GeminiToolExecutorFacade;
-  private readonly thoughtTranslator: GeminiThoughtTranslationAdapter;
   private readonly reporter?: ModuleReporter;
 
   constructor(modules: GeminiCliModules, reporter?: ModuleReporter) {
@@ -36,13 +34,11 @@ export class GeminiSessionManager {
       this.modules,
       reporter
     );
-    this.thoughtTranslator = new GeminiThoughtTranslationAdapter(reporter);
     this.turnRunner = new GeminiTurnRunner({
       emitEvents: (session, events) =>
         this.sessionLifecycle.emitEvents(session, events),
       modules: this.modules,
       reporter,
-      thoughtTranslator: this.thoughtTranslator,
       toolCallOrchestrator: new GeminiToolCallOrchestrator(
         this.toolExecutorFacade
       ),
