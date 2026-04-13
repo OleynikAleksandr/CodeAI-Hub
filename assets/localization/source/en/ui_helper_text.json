@@ -4,7 +4,7 @@
   "settings.localization.category_bridge_helper": "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category.",
   "settings.localization.language_catalog_helper": "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase.",
   "settings.localization.default_language.description": "Fallback language for categories that do not have their own override.",
-  "settings.localization.translation_engine.description": "Engine used for bundle materialization and language-catalog lookup.",
+  "settings.localization.translation_engine.description": "Engine used for localization bundle materialization and live translation of user-facing assistant text.",
   "settings.localization.glossary_protection.description": "Keep protected terms, provider names, and product vocabulary stable during localization.",
   "settings.localization.do_not_translate_terms.description": "Open the glossary file in VS Code and edit one English term per line. The file is created automatically on first open and starts with common product and workflow terms.",
   "settings.localization.do_not_translate_terms.placeholder": "Project Manager",
