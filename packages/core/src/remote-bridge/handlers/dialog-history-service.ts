@@ -3,9 +3,13 @@ import { homedir } from "node:os";
 import path from "node:path";
 import {
   buildSessionFilePath,
+  buildSessionTranslationFilePath,
   readSessionEvents,
+  readSessionTranslationOverlayMap,
+  type SessionMessageTranslationRecord,
   sanitizeWorkspaceSlug,
 } from "@codeai-hub/unified-session";
+import { SessionMessageLocalizationProjector } from "../../session-translation/session-message-localization-projector";
 import type { Logger } from "../../telemetry/logger";
 import { DialogOpenService } from "./dialog-open-service";
 
@@ -13,6 +17,7 @@ const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 
 export interface DialogHistoryMessage {
   readonly content: string;
+  readonly localizedContent?: string;
   readonly messageId: string;
   readonly role: "system" | "user" | "assistant" | "thinking";
   readonly tag?: string;
@@ -32,6 +37,8 @@ type SessionMessageRecord = Extract<
 
 export class DialogHistoryService {
   private readonly logger: Logger;
+  private readonly localizationProjector =
+    new SessionMessageLocalizationProjector();
   private readonly openService: DialogOpenService;
 
   constructor(options: { readonly logger: Logger }) {
@@ -41,7 +48,8 @@ export class DialogHistoryService {
 
   private appendMessageRecord(
     byId: Map<string, DialogHistoryMessage>,
-    record: SessionRecord
+    record: SessionRecord,
+    translations: ReadonlyMap<string, SessionMessageTranslationRecord>
   ): void {
     if (record.type !== "message") {
       return;
@@ -50,11 +58,21 @@ export class DialogHistoryService {
     if (byId.has(messageRecord.messageId)) {
       return;
     }
+    const localizedContent = this.localizationProjector.resolveLocalizedContent(
+      {
+        message: {
+          id: messageRecord.messageId,
+          content: messageRecord.content,
+        },
+        translations,
+      }
+    );
     byId.set(messageRecord.messageId, {
       messageId: messageRecord.messageId,
       role: messageRecord.role,
       content: messageRecord.content,
       timestamp: messageRecord.timestamp,
+      ...(localizedContent ? { localizedContent } : {}),
       ...(messageRecord.tag ? { tag: messageRecord.tag } : {}),
     });
   }
@@ -72,6 +90,7 @@ export class DialogHistoryService {
 
   private buildMessagesFromRecords(
     records: readonly SessionRecord[],
+    translations: ReadonlyMap<string, SessionMessageTranslationRecord>,
     cursor?: number | null
   ): DialogHistoryResult {
     const lastCursor = records.length;
@@ -81,7 +100,7 @@ export class DialogHistoryService {
 
     const byId = new Map<string, DialogHistoryMessage>();
     for (const record of slice) {
-      this.appendMessageRecord(byId, record);
+      this.appendMessageRecord(byId, record, translations);
     }
 
     const messages = Array.from(byId.values());
@@ -91,10 +110,14 @@ export class DialogHistoryService {
 
   private async readHistoryFromFile(options: {
     readonly filePath: string;
+    readonly translationFilePath: string;
     readonly cursor?: number | null;
   }): Promise<DialogHistoryResult> {
-    const records = await readSessionEvents(options.filePath);
-    return this.buildMessagesFromRecords(records, options.cursor);
+    const [records, translations] = await Promise.all([
+      readSessionEvents(options.filePath),
+      readSessionTranslationOverlayMap(options.translationFilePath),
+    ]);
+    return this.buildMessagesFromRecords(records, translations, options.cursor);
   }
 
   private async resolveProviderIds(options: {
@@ -155,10 +178,17 @@ export class DialogHistoryService {
         provider: providerId,
         sessionId,
       });
+      const translationFilePath = buildSessionTranslationFilePath({
+        rootDirectory: SESSION_ROOT,
+        workspaceSlug: workspaceKey,
+        provider: providerId,
+        sessionId,
+      });
 
       try {
         return await this.readHistoryFromFile({
           filePath,
+          translationFilePath,
           cursor: options.cursor,
         });
       } catch (error: unknown) {

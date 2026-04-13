@@ -160,6 +160,9 @@ export class HttpApiSessionRoutes {
           id: message.id,
           role: message.role,
           content: message.content,
+          ...(typeof message.localizedContent === "string"
+            ? { localizedContent: message.localizedContent }
+            : {}),
           timestamp: message.timestamp,
           sessionId: message.sessionId,
         })),
