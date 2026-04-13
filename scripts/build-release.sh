@@ -267,6 +267,15 @@ for artefact in "${REQUIRED_FILES[@]}"; do
   fi
 done
 
+CLAUDE_INSTALL_ROOT="$HOME/.codeai-hub/providers/claude/$VERSION"
+if [[ ! -f "$CLAUDE_INSTALL_ROOT/node_modules/@codeai-hub/translation/package.json" ]]; then
+  echo "❌ Missing bundled @codeai-hub/translation package in $CLAUDE_INSTALL_ROOT" >&2
+  exit 1
+fi
+
+node -e "require('$CLAUDE_INSTALL_ROOT/dist/index.js')"
+echo "✅ Claude provider bundle loads with bundled shared translation package"
+
 CODEX_INSTALL_ROOT="$HOME/.codeai-hub/providers/codex/$VERSION"
 if [[ ! -f "$CODEX_INSTALL_ROOT/node_modules/@codeai-hub/translation/package.json" ]]; then
   echo "❌ Missing bundled @codeai-hub/translation package in $CODEX_INSTALL_ROOT" >&2
