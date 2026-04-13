@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.972] - 2026-04-13
+### Added
+- **Inline provider override on trunk confirmation cards**: idle `Virtual Simulation` and `Diagram Modules` stages now show a visible provider selector in the confirmation card. The previous-step provider is preselected and marked inline, but the user can switch to any connected provider before launching the next step.
+
+### Fixed
+- **Chosen-provider bootstrap identity**: Project Manager now seeds dialog/bootstrap snapshots from the explicit step-start provider intent when opening a new trunk-step session, so the lower status/model panel starts on the correct provider context even before the final runtime model update arrives.
+- **Provider-correct restore request path**: runtime restore/bootstrap no longer re-reads a stale provider identity from dialog-list payloads when the explicit step-start provider should remain authoritative.
+- **Limits follow the selected provider**: after the new step session becomes `ready`, `Session ID + Usage Limits` refreshes against the selected provider/runtime identity and shows the correct provider-family limits instead of lingering on the previous step provider.
+
 ## [1.1.971] - 2026-04-13
 ### Fixed
 - **PM/Core `sessionKind` mismatch removed from restore adoption**: Project Manager no longer requires `sessionKind` equality when adopting the real runtime session after dialog auto-restore, because Core `session:created` does not preserve that PM-only field.

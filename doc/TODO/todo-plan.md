@@ -57,11 +57,11 @@
 
 ### Stream: Session UI Module Sync
 15. [DONE] Обновить factual docs для status panel и usage limits bar под chosen-provider start path — scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; ожидаемый commit message: `docs: sync session ui provider override behavior`
-16. [TODO] Git Commit: `docs: sync session ui provider override behavior` (hash: TBD)
+16. [DONE] Git Commit: `docs: sync session ui provider override behavior` (hash: `34c892f2a`)
 
 ## Phase 3 — Release Build (owner: Codex, updated: 2026-04-13)
 ### Stream: Release Notes Prep
-17. [TODO] Подготовить release notes и release-visible docs для следующей версии до build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for step provider override`
+17. [DONE] Подготовить release notes и release-visible docs для следующей версии до build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for step provider override`
 18. [TODO] Git Commit: `docs: prepare release notes for step provider override` (hash: TBD)
 
 ### Stream: Build All Version Bump

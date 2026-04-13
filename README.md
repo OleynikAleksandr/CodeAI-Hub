@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.971
+## Current Release — v1.1.972
+- **Trunk-step provider override**: idle `Virtual Simulation` and `Diagram Modules` confirmation cards now show an inline provider selector. The previous-step provider stays preselected for the one-click path, but you can switch to any connected provider before pressing `Start step`.
+- **Chosen-provider bootstrap sync**: when a new step starts on a different provider, Project Manager now seeds the dialog/bootstrap snapshot from the explicit step-start provider intent, so the lower model/status panel opens on the correct provider context instead of inheriting stale state from the previous trunk step.
+- **Provider-correct usage limits after step start**: once the new step session reaches `binding.status === ready`, `Session ID + Usage Limits` refreshes against the selected provider/runtime identity and shows the correct provider-family limits (`Claude`, `Codex`, or `Gemini`).
+
+### 1.1.971 (previous)
 - **Simplified dialog restore adoption**: Project Manager no longer blocks restored runtime-session adoption on PM-only `sessionKind`, so the auto-opened workflow step can actually switch from placeholder to real runtime session on first workspace open.
 - **First-open limits path restored**: once the real runtime session is adopted, the existing ready-time `Session ID + Usage Limits` refresh path runs on the first auto-selected step instead of waiting for a manual step switch.
 - **No extra restore heuristics**: the fix removes one invalid matcher condition instead of adding more branching, keeping the dialog restore path aligned to real continuity identity (`workspace`, `stage`, `run`, `provider`, `providerSessionId`).
