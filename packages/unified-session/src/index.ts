@@ -2,6 +2,18 @@ import type { FileHandle } from "node:fs/promises";
 import { mkdir, open, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
+export type {
+  AppendMessageTranslationOptions,
+  SessionMessageTranslationRecord,
+  SessionTranslationOverlayWriterOptions,
+} from "./session-translation-overlay-store";
+export {
+  buildSessionTranslationFilePath,
+  readSessionTranslationOverlayMap,
+  readSessionTranslationOverlayRecords,
+  SessionTranslationOverlayWriter,
+} from "./session-translation-overlay-store";
+
 const SESSION_FILE_EXTENSION = ".jsonl";
 const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_REGEX = /-+/g;
