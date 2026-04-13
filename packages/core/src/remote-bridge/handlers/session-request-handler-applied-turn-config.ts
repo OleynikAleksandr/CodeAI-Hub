@@ -1,17 +1,18 @@
 import path from "node:path";
 import type { CoreConfig } from "../../config";
-import { loadMessagesForTheUserLanguage } from "../../config/provider-settings-snapshot";
 import {
   buildProviderEffectiveModelId,
   resolveProviderTurnConfigEntry,
 } from "../../config/provider-turn-config-resolver";
 import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
+import { SessionTranslationPolicyResolver } from "../../session-translation/session-translation-policy-resolver";
 import {
   type AppliedProviderTurnConfig,
   withAppliedProviderTurnConfig,
 } from "../types";
 
 const SETTINGS_FILE_NAME = "settings.json";
+const translationPolicyResolver = new SessionTranslationPolicyResolver();
 
 export class SessionRequestHandlerAppliedTurnConfig {
   private readonly config: CoreConfig;
@@ -66,6 +67,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       baseModelId && resolved.thinkingLevelByModel
         ? resolved.thinkingLevelByModel[baseModelId]
         : undefined;
+    const translationPolicy = translationPolicyResolver.resolve(settingsPath);
 
     return {
       providerId,
@@ -78,7 +80,8 @@ export class SessionRequestHandlerAppliedTurnConfig {
           thinkingEnabled: resolved.thinkingEnabled,
           thinkingLevel,
         }) ?? resolved.effectiveModelId,
-      messagesForTheUserLanguage: loadMessagesForTheUserLanguage(settingsPath),
+      messagesForTheUserLanguage:
+        translationPolicy.targetLanguage ?? translationPolicy.sourceLanguage,
       modelId: baseModelId,
       reasoningEffort,
       source: targetModelId ? "switch_request" : "settings_snapshot",

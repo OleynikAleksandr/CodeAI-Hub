@@ -42,6 +42,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
+const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
@@ -183,5 +184,22 @@ export const loadMessagesForTheUserLanguage = (
     categories,
     ["messagesForTheUser", "systemFeedback"],
     defaultLanguage
+  );
+};
+
+export const loadTranslationEngineId = (settingsPath: string): string => {
+  const parsed = loadJsonSnapshot(settingsPath);
+  if (!parsed) {
+    return DEFAULT_TRANSLATION_ENGINE_ID;
+  }
+
+  const general = isRecord(parsed.general) ? parsed.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+
+  return (
+    normalizeOptionalString(localization.engineId) ??
+    DEFAULT_TRANSLATION_ENGINE_ID
   );
 };
