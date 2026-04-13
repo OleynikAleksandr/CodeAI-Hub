@@ -145,6 +145,7 @@
   - `structured-output-stream-controller.ts` = façade over structured output parser/state helpers
   - `structured-output-parser.ts`, `structured-output-state.ts` = prompt/schema parsing and extractor/session state internals
   - `codex-usage-sync.ts`, `codex-token-usage-sync.ts` = usage-limits/token synchronization internals
+  - rollout `final_answer` replay/live sync under workflow `outputSchema` must keep a plain-text fallback path when structured parsing does not yield `assistantText`; provider-complete final answers are not allowed to disappear just because the rollout payload was not JSON
 - Gemini messaging cluster: `packages/Gemini_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn event normalization entrypoint
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
@@ -173,6 +174,7 @@
 - Codex response policy runtime: `packages/Codex_Module/src/response-policy/`
 - Codex visible thinking: `packages/Codex_Module/src/messaging/codex-session-event-emitter.ts`, `packages/Codex_Module/src/messaging/codex-stream-event-router.ts`, `packages/core/src/session-translation/`
   - reasoning deltas are emitted immediately in source form and translated asynchronously through the Core overlay pipeline;
+  - rollout reasoning replay/live sync is also source-first now; provider-local rollout translation is forbidden because it creates nested translation calls on top of active Codex turns and competes with the Core-owned overlay contract;
   - Core threads `messagesForTheUserLanguage` from the shared settings snapshot into the overlay translator, so visible reasoning follows the selected `Messages for the User` language while the native transcript remains unchanged;
   - visible output still uses `role: "assistant"` with `tag: "thinking"` whenever upstream Codex actually sends reasoning summaries;
   - `model_reasoning_summary = "none"` means no reasoning summaries reach CodeAI Hub, so there is nothing to translate or display;

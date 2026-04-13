@@ -26,6 +26,7 @@
 ## Reasoning translation and thinking display
 - `packages/Codex_Module/src/messaging/codex-reasoning-streams.ts` аккумулирует SDK reasoning deltas по `item.id` и остаётся source-of-truth для промежуточного reasoning state.
 - Visible Codex reasoning теперь emit-ится source-first из provider pipeline, а translation выполняется Core-owned overlay path-ом после persist/broadcast исходного сообщения.
+- `codex-rollout-live-sync.ts` больше не выполняет provider-local translation для rollout reasoning; rollout replay/live sync обязаны emit-ить source text only, чтобы не запускать nested Codex translation calls внутри активного Codex turn-а.
 - Новый user-facing contract для Codex reasoning остаётся `role: "assistant"` + `tag: "thinking"`. Это повторно использует стандартную assistant bubble path и выравнивает UX Codex с Gemini.
 - Legacy `role: "thinking"` сохраняется только как compatibility fallback для старых transcript-ов и archived raw history; это больше не основной visible path.
 - User-facing Codex settings expose `Reasoning in dialog` as a provider-level toggle backed by `reasoningSummaryEnabled` in `settings.json`.
@@ -40,6 +41,7 @@
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Internal turns не должны эмитить user-facing `assistant` / `stream_event` / lifecycle events; suppression централизован в messaging emitter helper.
 - Provider-native raw rollout JSONL в `CODEX_HOME/sessions/**/rollout-*.jsonl` является единственным semantic source of truth для Codex user-visible output: `agent_reasoning` -> `thinking`, `agent_message.phase=commentary` -> assistant progress/commentary, `agent_message.phase=final_answer` -> terminal assistant answer.
+- Если rollout `final_answer` приходит plain text under `outputSchema`, `codex-rollout-live-sync.ts` обязан emit-ить safe raw-text assistant fallback, когда structured parser не смог извлечь `assistantText`; otherwise valid provider final answers silently disappear from UI.
 - Commentary-phase `agent_message` для structured output остаётся скрытым, чтобы финальный ответ не дублировался в UI.
 - Structured-output passthrough (`hybrid` / `debug_raw`) обязан переживать `sessionId` promotion без потери accumulated state.
 - User-facing Codex settings в baseline line экспонируют три модели: `gpt-5.3-codex`, `gpt-5.4`, `gpt-5.4-mini`.
