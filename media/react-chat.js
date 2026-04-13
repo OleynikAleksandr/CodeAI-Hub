@@ -8833,6 +8833,14 @@
   var LEGACY_SOURCE_LANGUAGE2 = "source";
   var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
+  var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
+    "google-gtx",
+    "codex-gpt-5.4-mini",
+    "codex-gpt-5.3-codex-spark"
+  ];
+  var SUPPORTED_LOCALIZATION_ENGINE_ID_SET = new Set(
+    SUPPORTED_LOCALIZATION_ENGINE_IDS
+  );
   var normalizeLocalizationSelection = (value) => {
     const trimmed = value.trim();
     if (!trimmed) {
@@ -8842,7 +8850,10 @@
   };
   var normalizeLocalizationEngineId = (value) => {
     const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
+    if (!(trimmed.length > 0)) {
+      return DEFAULT_LOCALIZATION_ENGINE_ID2;
+    }
+    return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed) ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
   };
   var deriveWorkflowTermsPolicy2 = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE2 ? "keep_english" : "translate";
   var resolveLocalizationCategory2 = (categories, candidateKeys, fallback) => {
@@ -10925,6 +10936,27 @@
     height: "16px",
     marginTop: "2px"
   };
+  var resolveTranslationEngineLabel = (engineId, t) => {
+    if (engineId === "codex-gpt-5.4-mini") {
+      return t(
+        "ui_interface",
+        "settings.localization.translation_engine.option.codex_gpt54_mini",
+        "OpenAI Codex \xB7 GPT-5.4 Mini"
+      );
+    }
+    if (engineId === "codex-gpt-5.3-codex-spark") {
+      return t(
+        "ui_interface",
+        "settings.localization.translation_engine.option.codex_gpt53_spark",
+        "OpenAI Codex \xB7 GPT-5.3 Codex Spark"
+      );
+    }
+    return t(
+      "ui_interface",
+      "settings.localization.translation_engine.option.google_gtx",
+      "Google GTX Free"
+    );
+  };
   var LocalizationSettingsCard = ({
     localization,
     onCategoryLanguageChange,
@@ -10995,12 +11027,10 @@
       code: "source",
       label: defaultLanguageLabel
     };
-    const engineOptions = availableEngines.length > 0 ? availableEngines : [
-      {
-        engineId: localization.engineId,
-        languages: []
-      }
-    ];
+    const engineOptions = availableEngines.length > 0 ? availableEngines : SUPPORTED_LOCALIZATION_ENGINE_IDS.map((engineId) => ({
+      engineId,
+      languages: []
+    }));
     const activeEngine = availableEngines.find(
       (engine) => engine.engineId === localization.engineId
     ) ?? engineOptions[0];
@@ -11044,7 +11074,7 @@
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: t(
                 "user_guidance",
                 "settings.localization.translation_engine.description",
-                "Engine used for bundle materialization and language-catalog lookup."
+                "Engine used for localization bundle materialization and live translation of user-facing assistant text."
               ) }),
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
                 "select",
@@ -11052,7 +11082,7 @@
                   onChange: (event) => onEngineIdChange(event.target.value),
                   style: engineSelectStyles,
                   value: activeEngineId,
-                  children: engineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: engine.engineId }, engine.engineId))
+                  children: engineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: resolveTranslationEngineLabel(engine.engineId, t) }, engine.engineId))
                 }
               )
             ] }),
