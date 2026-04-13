@@ -1,7 +1,7 @@
 # Контракт Gemini Thought Translation
 
 **Статус:** Implemented on `main`  
-**Обновлено:** 2026-03-31  
+**Обновлено:** 2026-04-13  
 **Owner:** Oleksandr + Codex  
 **Validated on:** `main` (`v1.1.854`)
 
@@ -9,12 +9,12 @@
 
 ## Status checkpoint
 
-- `Gemini` thoughts переводятся внутри Gemini provider pipeline, но execution path теперь проходит через Gemini-local adapter поверх shared runtime translation package `@codeai-hub/translation`.
+- `Gemini` thoughts больше не переводятся внутри blocking provider pipeline: Gemini emit-ит source text сразу, а Core делает async translation overlay поверх уже сохранённого сообщения.
 - Текущая engine path использует бесплатный Google Translate HTTP endpoint `translate.googleapis.com`, но уже через `TranslationFacade` + `GoogleTranslateClient`, а не как отдельный provider-only helper.
-- Направление перевода фиксировано: English thought text -> Russian output.
-- Переведённая мысль persist-ится и broadcast-ится как `role: "assistant"` с `tag: "thinking"`.
-- UI рендерит это сообщение как обычный видимый assistant bubble с label `Gemini · Thinking`.
-- Реализация намеренно маленькая: без cache, без batching, без retry queue, без user-locale negotiation и без generic translation module в Core.
+- Направление перевода больше не жёстко зашито в Gemini layer: target language берётся из Core-threaded `messagesForTheUserLanguage`.
+- Переведённая мысль больше не хранится как второй dialog message; она persist-ится как sidecar overlay (`*.translations.jsonl`) и попадает в UI как `localizedContent` patch для уже существующего `assistant` + `tag: "thinking"` сообщения.
+- UI рендерит это сообщение как обычный видимый assistant bubble с label `Gemini · Thinking`, используя `localizedContent ?? content`.
+- Реализация намеренно маленькая: без rewrite native transcript, без retry queue, без user-locale negotiation внутри Gemini provider и без generic translation module в Core UI layer.
 
 Этот документ является implemented SSOT для текущего поведения. Он заменяет старые planning-материалы, которые сначала описывали эту же feature через `Flash-Lite`, затем через Google Translate migration plan, а затем как спекулятивный глобальный localization layer. Shared runtime translation module теперь живёт в `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` как отдельный reusable boundary, а Gemini держит только provider-local adapter и session wiring.
 
@@ -25,9 +25,9 @@
 Этот контракт описывает один конкретный runtime path:
 
 1. Gemini SDK эмитит `Thought` event.
-2. CodeAI Hub переводит эту мысль на русский язык через shared translation facade.
-3. Core сохраняет и повторно рассылает переведённый текст как tagged assistant message.
-4. UI показывает его как видимое "thinking" assistant message.
+2. Gemini provider формирует source thinking text и сразу эмитит его как `assistant` + `tag: "thinking"` с stable `messageId`.
+3. Core асинхронно переводит эту мысль через shared translation facade, сохраняет sidecar overlay и рассылает translation patch.
+4. UI показывает уже существующее "thinking" assistant message и при готовности overlay заменяет только отображаемый текст.
 
 Контракт относится только к Gemini.
 
@@ -38,7 +38,7 @@
 - Нет перевода для Claude или Codex provider streams.
 - Нет generic translation service в `packages/core/src/translation/`; shared translation module живёт в `packages/translation/`.
 - Нет перевода user prompts перед отправкой в providers.
-- Нет persistent cache для translated thoughts.
+- Нет persistent cache, который переписывает native thought transcript.
 - Нет multi-language support, управляемого user settings.
 - Нет отдельной translated записи `role: "thinking"` в JSONL.
 
@@ -67,32 +67,19 @@ Code owners:
 Code owner:
 - `packages/Gemini_Module/src/messaging/message-processor.ts`
 
-`handleThoughtEvent()` не пишет raw Gemini thought в видимую translated lane.
+`handleThoughtEvent()` теперь не ждёт translation completion.
 
 Вместо этого он:
 - логирует incoming thought summary;
-- форматирует original English fallback text;
-- запускает async translation через `ThoughtTranslatorService` compatibility surface, backed by `GeminiThoughtTranslationAdapter`;
-- сохраняет promise в `pendingTranslations`;
-- при success эмитит `dialog_message` с:
+- форматирует source thought text;
+- сразу эмитит `dialog_message` с:
   - `role: "assistant"`
-  - translated Russian content
+  - source content
   - `tag: "thinking"`
-- при failure эмитит original English formatted text с тем же `tag: "thinking"`.
+- сохраняет stable `messageId`, чтобы Core позже мог дообогатить это же сообщение translation overlay patch-ем.
 
-Далее `handleFinishedEvent()`:
-- собирает все `pendingTranslations`, относящиеся к текущему finished leg;
-- если `pendingTranslations` пуст, эмитит финальный assistant response segment сразу;
-- иначе ставит финальный assistant response segment в serial flush chain;
-- этот chain ждёт `Promise.allSettled(...)` по всем pending thought translations данного leg;
-- только после этого эмитит реальный assistant response segment.
-
-Это удерживает translated thoughts перед final assistant reply для того же finished segment.
-
-Дополнительный runtime contract:
-- message processor обязан иметь явный `drain` pending Gemini dialog emits;
-- turn нельзя считать локально завершённым, пока этот `drain` не завершился;
-- это предотвращает late translated `thinking` и final assistant segment от выхода за границу turn finalization/fallback accounting.
+`handleFinishedEvent()` больше не обязан удерживать финальный assistant reply ради Gemini thought translation.
+Turn finalization зависит только от реального provider lifecycle, а не от async overlay translation completion.
 
 ### 3.3. Wiring в Session manager
 
@@ -116,23 +103,24 @@ Code owners:
 - `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`
 
 Контракт на границе Core:
-- translated Gemini thought приходит как `dialog_message`;
+- source Gemini thought приходит как обычный `dialog_message`;
 - `payload.tag` сохраняется;
-- `SessionMessage` поддерживает optional `tag?: string`;
-- сообщение добавляется в session memory и unified-session storage с сохранением этого tag;
-- то же tagged message broadcast-ится в client/UI.
+- `SessionMessage` поддерживает optional `tag?: string` и optional `localizedContent?: string`;
+- native сообщение добавляется в session memory и unified-session storage как канонический transcript;
+- после async translation Core пишет sidecar `message-translation` запись и broadcast-ит patch event для того же `messageId`.
 
 Каноническая storage shape:
 
 ```json
 {
   "role": "assistant",
-  "content": "Переведённый текст мысли Gemini",
-  "tag": "thinking"
+  "content": "Original Gemini thought text",
+  "tag": "thinking",
+  "localizedContent": "Переведённый текст мысли Gemini"
 }
 ```
 
-Переведённая мысль не хранится как вторая role или как параллельный translation artifact.
+Переведённая мысль не хранится как вторая role, но хранится как sidecar translation artifact, ссылающийся на исходное сообщение по `messageId`.
 
 ### 3.5. UI rendering
 
@@ -156,13 +144,13 @@ UI contract:
 ## 4. Invariants
 
 1. Failure перевода является non-blocking.
-   Если Google Translate падает, уходит в timeout или возвращает invalid data, пользователь всё равно получает original English thought text.
+   Если translation engine падает, уходит в timeout или возвращает invalid data, пользователь всё равно получает original thought text, потому что source message уже был сохранён и показан до overlay path.
 
 2. Feature не должна требовать provider credentials.
    Thought translation не может зависеть от Gemini API keys, Flash models или любого paid translation layer.
 
-3. Ordering является частью контракта.
-   Final assistant segment для того же finished stream не должен обгонять unresolved translated thoughts из этого же segment.
+3. Ordering больше не зависит от translation completion.
+   Final assistant segment не должен искусственно ждать overlay translation только ради визуального порядка.
 
 4. Pending translation flush должен быть наблюдаемым для runtime finalization.
    Если turn дошёл до `finished`, но translated thoughts ещё не дофлашены, provider layer обязан дождаться `drain` до принятия решения о segmented-vs-fallback final emit.
@@ -190,8 +178,10 @@ UI contract:
   - `packages/Gemini_Module/src/session/gemini-turn-runner.ts`
 - Core storage/broadcast boundary:
   - `packages/core/src/session-manager/index.ts`
-  - `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
-  - `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`
+  - `packages/core/src/session-translation/session-translation-facade.ts`
+  - `packages/core/src/session-translation/session-message-localization-projector.ts`
+  - `packages/core/src/unified-session/storage.ts`
+  - `packages/unified-session/src/session-translation-overlay-store.ts`
 - UI labeling/rendering:
   - `src/types/session.ts`
   - `src/client/ui/src/session/dialog-panel-message-utils.ts`
@@ -204,8 +194,8 @@ UI contract:
 Текущая проверка кода подтверждает:
 - Google Translate endpoint реально используется в реализации.
 - Никакого `Flash-Lite` translation path в runtime code больше нет.
-- `tag: "thinking"` сохраняется end-to-end.
+- `tag: "thinking"` сохраняется end-to-end, а translated overlay больше не требует второй dialog message записи.
 - UI rendering path соответствует tagged assistant contract.
 
 Текущий gap:
-- нет standalone unit test, который прямо бьёт failure path shared translation engine/adapter; текущая coverage фиксирует end-to-end Gemini visible contract через message processor и session manager tests.
+- provider-level failure path shared translation engine по-прежнему покрыт в основном интеграционными messaging tests; отдельный Core overlay contract теперь дополнительно закрыт `session-message-localization-projector.test.ts`.
