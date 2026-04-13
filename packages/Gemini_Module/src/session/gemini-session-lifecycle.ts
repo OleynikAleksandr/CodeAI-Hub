@@ -31,6 +31,7 @@ export class GeminiSessionLifecycle {
         modelId?: string;
         thinkingDisplaySyncEnabled?: boolean;
         thinkingLevel?: string;
+        translationEngineId?: string;
       };
     }
   ): void {
@@ -42,18 +43,22 @@ export class GeminiSessionLifecycle {
     const pendingThinkingLevel = owner.pendingThinkingLevelOverride as
       | string
       | undefined;
+    const pendingTranslationEngineId =
+      owner.pendingTranslationEngineIdOverride as string | undefined;
     if (
       !(
         pendingMessagesForTheUserLanguage ||
         pendingModel ||
         pendingThinkingLevel ||
-        pendingThinkingDisplaySyncOverride !== undefined
+        pendingThinkingDisplaySyncOverride !== undefined ||
+        pendingTranslationEngineId
       )
     ) {
       owner.pendingMessagesForTheUserLanguageOverride = undefined;
       owner.pendingModelOverride = undefined;
       owner.pendingThinkingDisplaySyncOverride = undefined;
       owner.pendingThinkingLevelOverride = undefined;
+      owner.pendingTranslationEngineIdOverride = undefined;
       return;
     }
 
@@ -79,11 +84,16 @@ export class GeminiSessionLifecycle {
       session.runtimeTurnConfig.thinkingDisplaySyncEnabled =
         pendingThinkingDisplaySyncOverride;
     }
+    if (pendingTranslationEngineId) {
+      session.runtimeTurnConfig.translationEngineId =
+        pendingTranslationEngineId;
+    }
 
     owner.pendingMessagesForTheUserLanguageOverride = undefined;
     owner.pendingModelOverride = undefined;
     owner.pendingThinkingDisplaySyncOverride = undefined;
     owner.pendingThinkingLevelOverride = undefined;
+    owner.pendingTranslationEngineIdOverride = undefined;
   }
 
   async closeSession(

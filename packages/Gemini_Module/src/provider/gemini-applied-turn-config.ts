@@ -8,6 +8,7 @@ export interface AppliedGeminiTurnConfig {
   readonly modelId?: string;
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingLevel?: string;
+  readonly translationEngineId?: string;
 }
 
 interface GeminiRuntimeOverrideOwner {
@@ -15,6 +16,7 @@ interface GeminiRuntimeOverrideOwner {
   pendingModelOverride?: string;
   pendingThinkingDisplaySyncOverride?: boolean;
   pendingThinkingLevelOverride?: string;
+  pendingTranslationEngineIdOverride?: string;
 }
 
 const readOptionalTrimmedString = (value: unknown): string | undefined =>
@@ -39,6 +41,9 @@ const readAppliedGeminiTurnConfig = (
         ? candidate.thinkingDisplaySyncEnabled
         : true,
     thinkingLevel: readOptionalTrimmedString(candidate.thinkingLevel),
+    translationEngineId: readOptionalTrimmedString(
+      candidate.translationEngineId
+    ),
   };
 };
 
@@ -64,18 +69,24 @@ export const applyGeminiTurnRuntimeConfig = (options: {
   if (appliedConfig.thinkingLevel) {
     options.owner.pendingThinkingLevelOverride = appliedConfig.thinkingLevel;
   }
+  if (appliedConfig.translationEngineId) {
+    options.owner.pendingTranslationEngineIdOverride =
+      appliedConfig.translationEngineId;
+  }
 
   if (
     appliedConfig.messagesForTheUserLanguage ||
     appliedConfig.modelId ||
     appliedConfig.thinkingLevel ||
-    appliedConfig.thinkingDisplaySyncEnabled !== undefined
+    appliedConfig.thinkingDisplaySyncEnabled !== undefined ||
+    appliedConfig.translationEngineId
   ) {
     options.reporter?.info?.("Gemini runtime override set", {
       messagesForTheUserLanguage: appliedConfig.messagesForTheUserLanguage,
       modelId: appliedConfig.modelId,
       thinkingDisplaySyncEnabled: appliedConfig.thinkingDisplaySyncEnabled,
       thinkingLevel: appliedConfig.thinkingLevel,
+      translationEngineId: appliedConfig.translationEngineId,
     });
   }
 };
