@@ -64,16 +64,22 @@ Current source files:
 - `packages/translation/src/translation-request-normalizer.ts` - trims and normalizes input and options.
 - `packages/translation/src/translation-response-parser.ts` - parses raw Google payloads into text.
 - `packages/translation/src/google-translate-client.ts` - HTTP client for `translate.googleapis.com`.
+- `packages/translation/src/codex-cli-path-resolver.ts` - resolves the production Codex CLI executable for translation-backed engines.
+- `packages/translation/src/codex-translation-runtime-home-facade.ts` - builds isolated provider-owned Codex homes for translation-only runs.
+- `packages/translation/src/codex-cli-translation-engine.ts` - Codex-backed translation engine for `gpt-5.4-mini` and `gpt-5.3-codex-spark`.
 
-Current default engine:
+Current bundled engines:
 
 - `google-gtx`
+- `codex-gpt-5.4-mini`
+- `codex-gpt-5.3-codex-spark`
 
 Implementation notes:
 
 - The facade depends on the engine contract, not on Google-specific code directly.
 - The request/response helpers stay split into small files so no single utility file becomes a new runtime god module.
-- The first engine is intentionally the free Google Translate path; the package is engine-pluggable so a different backend can be added later without changing consumer contracts.
+- `google-gtx` remains the zero-config default; the two Codex-backed engines reuse an isolated translation-only Codex runtime instead of the full workspace agent surface.
+- The package stays engine-pluggable so a different backend can be added later without changing consumer contracts.
 
 ---
 
@@ -146,6 +152,7 @@ Current provider boundary:
 
 - Gemini and Codex now emit source-first thinking text directly into the dialog/runtime stream;
 - Claude keeps provider-local translation only for generic assistant progress/pre-tool text that is not part of the Core-owned thinking overlay path;
+- provider-local live adapters that still translate visible assistant progress now read the persisted `translationEngineId` selected in Localization settings instead of hardcoding `google-gtx`;
 - `@codeai-hub/translation` still must not know about provider stream buffers, placeholder markers, UI roles, or dialog/session storage.
 
 ### 5.3 Future document and artifact adapters

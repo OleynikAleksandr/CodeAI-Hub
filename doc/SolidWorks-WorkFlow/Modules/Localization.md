@@ -194,7 +194,11 @@ Important live behaviors:
 - identical source strings are deduplicated within one materialization run;
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
-- current default engine id is `google-gtx`.
+- current default engine id is `google-gtx`;
+- the current selectable engine set is:
+  - `google-gtx`
+  - `codex-gpt-5.4-mini`
+  - `codex-gpt-5.3-codex-spark`
 - the same persisted `translationEngineId` now also feeds Core-owned live thinking overlay translation; Localization still does not own the overlay storage or replay path, but it remains the SSOT for which engine the product selected.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
@@ -232,7 +236,7 @@ Current live browser behavior:
 - the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;
-- the settings card exposes engine catalogs through a constrained selector and language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
+- the settings card exposes a constrained `Translation engine` selector with `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, and `OpenAI Codex · GPT-5.3 Codex Spark`, plus language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
 
 ---
 
