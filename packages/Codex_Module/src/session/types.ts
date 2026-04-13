@@ -19,6 +19,7 @@ export interface SessionLogger {
 export interface CodexRuntimeTurnConfig {
   messagesForTheUserLanguage?: string;
   thinkingDisplaySyncEnabled?: boolean;
+  translationEngineId?: string;
 }
 
 export interface ActiveSession {
@@ -37,6 +38,7 @@ export interface ActiveSession {
   sessionId: string;
   structuredOutputUuids?: Set<string>;
   thread?: Thread;
+  translationEngineId?: string;
   readonly workspacePath: string;
 }
 

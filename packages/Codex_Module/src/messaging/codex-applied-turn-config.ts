@@ -26,6 +26,7 @@ interface ResolvedAppliedCodexTurnConfig {
   readonly reasoningEffort?: CodexReasoningEffort;
   readonly runtimeModelId?: string;
   readonly thinkingDisplaySyncEnabled?: boolean;
+  readonly translationEngineId?: string;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -69,6 +70,10 @@ const readAppliedCodexTurnConfig = (
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
         ? candidate.thinkingDisplaySyncEnabled
         : undefined,
+    translationEngineId:
+      typeof candidate.translationEngineId === "string"
+        ? candidate.translationEngineId
+        : undefined,
   };
 };
 
@@ -87,6 +92,11 @@ export const applyCodexTurnRuntimeConfig = (
   if (appliedConfig?.thinkingDisplaySyncEnabled !== undefined) {
     session.runtimeTurnConfig.thinkingDisplaySyncEnabled =
       appliedConfig.thinkingDisplaySyncEnabled;
+  }
+  if (appliedConfig?.translationEngineId) {
+    session.translationEngineId = appliedConfig.translationEngineId;
+    session.runtimeTurnConfig.translationEngineId =
+      appliedConfig.translationEngineId;
   }
   if (appliedConfig && session.thread) {
     const thread = session.thread as unknown as ThreadRuntimeState;

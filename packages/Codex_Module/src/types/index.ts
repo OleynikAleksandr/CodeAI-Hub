@@ -22,6 +22,7 @@ export interface CodexAppliedTurnConfig {
   readonly providerId: "codexCli";
   readonly reasoningEffort?: CodexReasoningEffort;
   readonly source: "settings_snapshot" | "switch_request";
+  readonly translationEngineId?: string;
 }
 
 export interface CodexWorkspaceOptions {
