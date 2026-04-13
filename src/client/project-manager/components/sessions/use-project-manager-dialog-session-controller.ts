@@ -175,17 +175,6 @@ export const useProjectManagerDialogSessionController = (
 
   useProjectManagerSessionStream({
     onSessionBinding: (payload) => {
-      setSession((current) =>
-        current?.id === payload.sessionId
-          ? {
-              ...current,
-              binding: {
-                providerSessionId: payload.providerSessionId,
-                status: payload.status,
-              },
-            }
-          : current
-      );
       setSnapshots((previous) => {
         const current = previous[payload.sessionId];
         if (!current) {
