@@ -1,12 +1,32 @@
+import { CodexCliTranslationEngine } from "./codex-cli-translation-engine";
 import { GoogleTranslateClient } from "./google-translate-client";
 import type {
   TranslationReporter,
   TranslationRequest,
   TranslationResult,
 } from "./translation-contract";
-import type { TranslationFacadeOptions } from "./translation-engine";
+import type {
+  TranslationEngine,
+  TranslationFacadeOptions,
+} from "./translation-engine";
 import { TranslationEngineRegistry } from "./translation-engine-registry";
 import { normalizeTranslationRequest } from "./translation-request-normalizer";
+
+const createDefaultTranslationEngines = (
+  reporter?: TranslationReporter
+): readonly TranslationEngine[] => [
+  new GoogleTranslateClient({ reporter }),
+  new CodexCliTranslationEngine({
+    engineId: "codex-gpt-5.4-mini",
+    modelId: "gpt-5.4-mini",
+    reporter,
+  }),
+  new CodexCliTranslationEngine({
+    engineId: "codex-gpt-5.3-codex-spark",
+    modelId: "gpt-5.3-codex-spark",
+    reporter,
+  }),
+];
 
 const createSkippedResult = (
   request: TranslationRequest
@@ -41,9 +61,8 @@ export class TranslationFacade {
 
   constructor(options: TranslationFacadeOptions = {}) {
     this.reporter = options.reporter;
-    const engines = options.engines ?? [
-      new GoogleTranslateClient({ reporter: this.reporter }),
-    ];
+    const engines =
+      options.engines ?? createDefaultTranslationEngines(this.reporter);
     this.registry = new TranslationEngineRegistry(
       engines,
       options.defaultEngineId ?? "google-gtx"
