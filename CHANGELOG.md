@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.975] - 2026-04-13
+### Added
+- **Selectable translation engines**: `Settings -> Localization -> Translation engine` now offers `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, and `OpenAI Codex · GPT-5.3 Codex Spark`.
+
+### Changed
+- **Shared engine propagation**: the selected `translationEngineId` now travels from persisted localization settings through Core applied turn config into Codex, Claude, and Gemini live translation paths.
+- **Catalog-backed selector stability**: the settings UI keeps all supported translation-engine options visible even before localization runtime bootstrap finishes loading.
+
 ## [1.1.974] - 2026-04-13
 ### Changed
 - **Release rebuild only**: this package is a clean rebuild of the already shipped `1.1.973` baseline with a fresh release number for distribution and validation.
