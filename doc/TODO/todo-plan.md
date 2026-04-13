@@ -83,8 +83,8 @@
 
 ### Stream: Diagnostic release build and closeout
 1. [DONE] Подготовить release-документы под будущую версию `1.1.969` и явно зафиксировать, что релиз добавляет диагностику для auto-select refresh race, а не behavioural fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for usage limits diagnostics`
-2. [TODO] Git Commit: `docs: prepare release notes for usage limits diagnostics` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
-4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record usage limits diagnostics release validation`
+2. [DONE] Git Commit: `docs: prepare release notes for usage limits diagnostics` (hash: `e5407ebf3`)
+3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
+4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `66b06d8b9`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record usage limits diagnostics release validation`
 6. [TODO] Git Commit: `docs: record usage limits diagnostics release validation` (hash: TBD)
