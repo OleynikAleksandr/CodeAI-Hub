@@ -40,11 +40,11 @@
 
 ### Stream: Confirmation Card Localization
 7. [DONE] Синхронизировать localized copy для provider override card — scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `assets/localization/source/en/messages_for_the_user.json`; ожидаемый commit message: `docs: localize stage confirmation provider override copy`
-8. [TODO] Git Commit: `docs: localize stage confirmation provider override copy` (hash: TBD)
+8. [DONE] Git Commit: `docs: localize stage confirmation provider override copy` (hash: `850151c37`)
 
 ## Phase 2 — Runtime Sync and Documentation (owner: Codex, updated: 2026-04-13)
 ### Stream: Dialog Bootstrap Provider Sync
-9. [TODO] Привязать dialog bootstrap к explicit provider intent для model/status и usage-limits surfaces нового step session — scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; ожидаемый commit message: `fix: seed dialog bootstrap from chosen step provider`
+9. [DONE] Привязать dialog bootstrap к explicit provider intent для model/status и usage-limits surfaces нового step session — scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; ожидаемый commit message: `fix: seed dialog bootstrap from chosen step provider`
 10. [TODO] Git Commit: `fix: seed dialog bootstrap from chosen step provider` (hash: TBD)
 
 ### Stream: Runtime Surface Regression Locks

@@ -66,6 +66,13 @@ test("dialog core events replay workspace snapshot after creating base snapshot"
     "dialog core events must resolve runtime sessionId against latest workspace snapshot"
   );
   assert.equal(
+    source.includes(
+      "resolveProviderId(match.providerId) ?? resolveProviderId(intent.providerId);"
+    ),
+    true,
+    "dialog bootstrap must fall back to explicit dialog intent provider when list payload lacks a normalized provider id"
+  );
+  assert.equal(
     resolverSource.includes("session.providerSessionId === options.providerSessionId"),
     true,
     "runtime session fallback must support providerSessionId identity when session ids drift"
@@ -87,6 +94,11 @@ test("dialog core events dedupe resumed dialog runtime restore requests", async 
     source.includes("shouldCreateRuntimeRestore"),
     true,
     "dialog open must consult restore dedupe helper before createSession"
+  );
+  assert.equal(
+    source.includes("providerId: providerId ?? intent.providerId,"),
+    true,
+    "runtime restore must reuse the seeded provider identity instead of re-reading stale dialog list values"
   );
   assert.equal(
     source.includes("options.restoreRequestInFlightRef.current"),

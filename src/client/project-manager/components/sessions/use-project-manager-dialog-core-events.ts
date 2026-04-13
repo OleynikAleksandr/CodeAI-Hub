@@ -89,7 +89,8 @@ export const useProjectManagerDialogCoreEvents = (options: {
         if (options.dialogIdRef.current === match.dialogId && options.sessionRef.current) {
           return;
         }
-        const providerId = resolveProviderId(match.providerId);
+        const providerId =
+          resolveProviderId(match.providerId) ?? resolveProviderId(intent.providerId);
         const preferredRuntimeSessionId =
           match.latestSessionId ?? match.rootSessionId;
         const latestSnapshot = options.latestWorkspaceSnapshotRef.current;
@@ -137,10 +138,12 @@ export const useProjectManagerDialogCoreEvents = (options: {
           context: {
             dialogId: match.dialogId,
             hasRuntimeSession: runtimeSession.hasRuntimeSession,
+            intentProviderId: intent.providerId,
             matchedProviderId: match.providerId,
             matchedProviderSessionId: match.providerSessionId,
             preferredRuntimeSessionId,
             resolvedRuntimeSessionId: runtimeSession.runtimeSessionId,
+            seededProviderId: providerId ?? intent.providerId,
             restoreRequested: Boolean(shouldRequestRestore),
             stage: intent.stage ?? match.stage,
             workspacePath: intent.workspacePath,
@@ -148,7 +151,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
         });
         if (shouldRequestRestore) {
           api.createSession({
-            providerId: match.providerId ?? intent.providerId,
+            providerId: providerId ?? intent.providerId,
             providerSessionId: match.providerSessionId,
             workspacePath: intent.workspacePath,
             initiativeSlug: intent.initiativeSlug ?? intent.workspaceSlug,
