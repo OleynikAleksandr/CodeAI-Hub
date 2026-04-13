@@ -24,6 +24,7 @@ export interface ServerProvider {
 export interface ServerSessionMessage {
   readonly content?: string;
   readonly id?: string;
+  readonly localizedContent?: string;
   readonly role?: SessionMessageRole;
   readonly sessionId?: string;
   readonly tag?: string;
@@ -60,6 +61,14 @@ export interface CoreBridgeStatePayload {
 export interface CoreBridgeSessionMessagePayload {
   readonly message: SessionMessage;
   readonly sessionId: string;
+}
+
+export interface CoreBridgeSessionMessageTranslationPayload {
+  readonly localizedContent: string;
+  readonly messageId: string;
+  readonly sessionId: string;
+  readonly sourceHash: string;
+  readonly targetLanguage: string;
 }
 
 export interface CoreBridgeSessionBindingPayload {

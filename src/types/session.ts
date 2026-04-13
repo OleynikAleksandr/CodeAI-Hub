@@ -6,6 +6,7 @@ export interface SessionMessage {
   readonly content: string;
   readonly createdAt: number;
   readonly id: string;
+  readonly localizedContent?: string;
   readonly role: SessionMessageRole;
   readonly tag?: string;
 }

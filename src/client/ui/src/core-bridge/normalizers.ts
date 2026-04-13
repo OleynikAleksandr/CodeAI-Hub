@@ -83,6 +83,10 @@ export const sanitizeMessage = (
     role,
     content: normalizedContent,
     createdAt: toNumberTimestamp(message.timestamp),
+    ...(typeof message.localizedContent === "string" &&
+    message.localizedContent.trim().length > 0
+      ? { localizedContent: message.localizedContent }
+      : {}),
     ...(typeof message.tag === "string" ? { tag: message.tag } : {}),
   };
 };
