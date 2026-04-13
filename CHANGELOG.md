@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.976] - 2026-04-13
+### Fixed
+- **Codex rollout thinking translation**: rollout-backed Codex thinking now follows the same source-first plus Core overlay path as the rest of the thinking pipeline, instead of triggering a second provider-local translation attempt inside the active Codex turn.
+- **Missing final reply under `outputSchema`**: plain-text rollout `final_answer` messages now fall back to raw assistant output when structured parsing does not produce `assistantText`, so workflow turns no longer end with thinking only and no visible final answer.
+
+### Changed
+- **Codex rollout cleanup**: the obsolete provider-local Codex thought-translation adapter was removed after rollout thinking translation ownership moved entirely into the Core overlay path.
+
 ## [1.1.975] - 2026-04-13
 ### Added
 - **Selectable translation engines**: `Settings -> Localization -> Translation engine` now offers `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, and `OpenAI Codex · GPT-5.3 Codex Spark`.

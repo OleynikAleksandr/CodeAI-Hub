@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.975
-- **Selectable translation engines**: `Settings -> Localization -> Translation engine` now offers `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, and `OpenAI Codex · GPT-5.3 Codex Spark`.
-- **Shared engine selection across live translation paths**: the selected `translationEngineId` now propagates from persisted settings through Core applied turn config into Codex, Claude, and Gemini live translation paths, so visible runtime translations no longer hardcode `google-gtx`.
-- **Catalog-backed localization selector**: the localization runtime exposes the same bundled engine set to the UI language catalog, and the settings selector remains stable even before runtime bootstrap finishes loading.
+## Current Release — v1.1.976
+- **Codex Spark thinking translation repaired**: Codex rollout thinking now stays on the source-first path and is upgraded by the Core-owned translation overlay instead of attempting a second provider-local translation inside the active Codex turn.
+- **Final assistant restore under workflow schema mode**: rollout `final_answer` plain text now has a safe fallback path when structured parsing yields no `assistantText`, so Codex workflow turns no longer finish without a visible final reply.
+- **Dead rollout adapter removed**: the obsolete provider-local Codex thought-translation adapter has been removed, keeping the runtime aligned with the single-owner overlay architecture and preventing `knip` regressions.
 
 ### 1.1.974 (previous)
 - **Release rebuild of the `1.1.973` baseline**: this package is a clean rebuild with a fresh release identity. It does not introduce new product-logic changes beyond the already shipped thinking-translation overlay wave.
