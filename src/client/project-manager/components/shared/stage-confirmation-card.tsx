@@ -1,7 +1,7 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import type { ProviderStackId } from "../../../../types/provider";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
@@ -9,7 +9,6 @@ import { WorkflowStepStartService } from "../../services/workflow-step-start-ser
 
 type ConfirmableStageId = "virtual_simulation" | "diagram_modules";
 
-// Localization categories per UserFacing_Text_Localization_Boundary contract
 const UI_LABELS_CATEGORY = "ui_interface";
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 const SYSTEM_FEEDBACK_CATEGORY = "system_feedback";
@@ -29,10 +28,12 @@ type UpstreamArtifactInfo = {
   readonly available: boolean;
 };
 
+const isProviderStackId = (value: unknown): value is ProviderStackId =>
+  value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
+
 const resolveUpstreamArtifactInfo = (
   stage: ConfirmableStageId,
-  snapshot: WorkflowStateSnapshot,
-  workspaceSlug: string
+  snapshot: WorkflowStateSnapshot
 ): UpstreamArtifactInfo => {
   if (stage === "virtual_simulation") {
     const finalPath = snapshot.description?.finalPath;
@@ -41,11 +42,9 @@ const resolveUpstreamArtifactInfo = (
       available: typeof finalPath === "string" && finalPath.length > 0,
     };
   }
-  // diagram_modules — upstream is virtual-simulation.md
   const vsStageStatus = snapshot.stages.virtual_simulation;
   const hasVsArtifact =
     vsStageStatus === "in_progress" || vsStageStatus === "completed";
-  // Also check gating: if diagram_modules is not blocked, upstream is available
   const blocked = snapshot.gating.blocked.diagram_modules ?? true;
   return {
     fileName: "virtual-simulation.md",
@@ -58,16 +57,48 @@ const resolveLatestChainSegment = (
   stage: string
 ): { readonly providerId: string; readonly providerSessionId: string } | null => {
   const chains = snapshot.continuity?.chains ?? [];
-  let best: { readonly updatedAt: string; readonly providerId: string; readonly providerSessionId: string } | null = null;
+  let best:
+    | {
+        readonly updatedAt: string;
+        readonly providerId: string;
+        readonly providerSessionId: string;
+      }
+    | null = null;
   for (const chain of chains) {
     if (chain.stage !== stage) continue;
     const last = chain.segments.at(-1);
     if (!last) continue;
     if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
-      best = { updatedAt: chain.updatedAt, providerId: last.providerId, providerSessionId: last.providerSessionId };
+      best = {
+        updatedAt: chain.updatedAt,
+        providerId: last.providerId,
+        providerSessionId: last.providerSessionId,
+      };
     }
   }
   return best;
+};
+
+const resolveInheritedStageProviderId = (
+  stage: ConfirmableStageId,
+  snapshot: WorkflowStateSnapshot
+): ProviderStackId | null => {
+  const descriptionProviderId = snapshot.description?.primarySession?.providerId;
+  if (stage === "virtual_simulation") {
+    return isProviderStackId(descriptionProviderId)
+      ? descriptionProviderId
+      : null;
+  }
+
+  const virtualSimulationProviderId =
+    resolveLatestChainSegment(snapshot, "virtual_simulation")?.providerId;
+  if (isProviderStackId(virtualSimulationProviderId)) {
+    return virtualSimulationProviderId;
+  }
+
+  return isProviderStackId(descriptionProviderId)
+    ? descriptionProviderId
+    : null;
 };
 
 export const hasExistingStageSession = (
@@ -86,18 +117,12 @@ export type StageSessionIntent = {
   readonly runSlug: string | null;
 };
 
-/**
- * Resolve the dialog intent for a trunk stage from workflow state.
- * Returns null if the stage has no existing session in continuity chains.
- * Used as a prop-based alternative to pm:dialog:open for startup/navigation.
- */
 export const resolveStageSessionIntent = (
   stage: string,
   snapshot: WorkflowStateSnapshot,
   workspacePath: string,
   workspaceSlug: string
 ): StageSessionIntent | null => {
-  // Description uses its own session path, not continuity chains
   if (stage === "description") {
     const session = snapshot.description?.primarySession;
     if (!session) return null;
@@ -140,8 +165,11 @@ export const StageConfirmationCard: React.FC<{
   const { t } = useLocalization();
   const [startInFlight, setStartInFlight] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
+  const [selectedProviderId, setSelectedProviderId] =
+    useState<ProviderStackId | null>(null);
   const mountedRef = useRef(true);
   const cardRef = useRef<HTMLDivElement>(null);
+  const selectionScopeKeyRef = useRef<string | null>(null);
 
   useEffect(
     () => () => {
@@ -150,35 +178,109 @@ export const StageConfirmationCard: React.FC<{
     []
   );
 
-  const upstream = resolveUpstreamArtifactInfo(
-    stage,
-    workflowSnapshot,
-    workspaceSlug
-  );
+  const uiLabel = (key: string, fallback: string, replacements?: Record<string, string>) =>
+    t(UI_LABELS_CATEGORY, key, fallback, replacements);
+  const helperText = (
+    key: string,
+    fallback: string,
+    replacements?: Record<string, string>
+  ) => t(UI_HELPER_TEXT_CATEGORY, key, fallback, replacements);
+  const userMessage = (key: string, fallback: string) =>
+    t(SYSTEM_FEEDBACK_CATEGORY, key, fallback);
+
+  const upstream = resolveUpstreamArtifactInfo(stage, workflowSnapshot);
   const blocked = !upstream.available;
-  const stageLabel = STAGE_LABELS[stage];
-  const upstreamStageLabel = UPSTREAM_STAGE_LABELS[stage];
 
   const providers = api.getDescriptionProviders();
-  const hasProviders = providers.length > 0;
+  const defaultProviderId =
+    resolvePreferredWorkflowProviderId({
+      workflowState: workflowSnapshot,
+      providers,
+      stage,
+    }) ?? null;
+  const inheritedProviderId = resolveInheritedStageProviderId(
+    stage,
+    workflowSnapshot
+  );
+  const selectedProvider =
+    providers.find((provider) => provider.id === selectedProviderId) ?? null;
+  const hasConnectedProviders = providers.some((provider) => provider.connected);
+  const isUsingInheritedProvider =
+    inheritedProviderId !== null && selectedProviderId === inheritedProviderId;
+  const canStart =
+    !blocked &&
+    !startInFlight &&
+    selectedProviderId !== null &&
+    selectedProvider?.connected === true;
+
+  useEffect(() => {
+    const scopeKey = `${workspaceSlug}:${stage}`;
+    const isScopeChange = selectionScopeKeyRef.current !== scopeKey;
+    selectionScopeKeyRef.current = scopeKey;
+
+    setSelectedProviderId((current) => {
+      if (isScopeChange) {
+        return defaultProviderId;
+      }
+      const currentProvider = providers.find((provider) => provider.id === current);
+      if (currentProvider?.connected) {
+        return current;
+      }
+      return defaultProviderId;
+    });
+  }, [defaultProviderId, providers, stage, workspaceSlug]);
+
+  const providerTitle =
+    selectedProvider?.title ??
+    providers.find((provider) => provider.id === inheritedProviderId)?.title ??
+    "Provider";
+  const titleText = uiLabel(`pm.confirmation_card.title.${stage}`, STAGE_LABELS[stage]);
+  const startLabel = uiLabel("pm.confirmation_card.start_button", "Start step");
+  const startingLabel = uiLabel(
+    "pm.confirmation_card.starting_button",
+    "Starting..."
+  );
+  const availableLabel = uiLabel("pm.confirmation_card.artifact_available", "available");
+  const notFoundLabel = uiLabel("pm.confirmation_card.artifact_not_found", "not found");
+  const providerLabelText = uiLabel("pm.confirmation_card.provider_label", "Agent provider");
+  const previousStepBadgeText = uiLabel(
+    "pm.confirmation_card.previous_provider_badge",
+    "previous step"
+  );
+  const inputLabel = helperText(
+    "pm.confirmation_card.input_label",
+    "This step will use the following artifact as input:"
+  );
+  const confirmText = helperText(
+    "pm.confirmation_card.confirm_warning",
+    "By clicking Start, you confirm that the {upstreamStage} artifact is complete and ready for the next step. The agent will begin working immediately.",
+    { upstreamStage: UPSTREAM_STAGE_LABELS[stage] }
+  );
+  const blockedText = helperText(
+    `pm.confirmation_card.blocked.${stage}`,
+    `Complete the ${UPSTREAM_STAGE_LABELS[stage]} step first.`
+  );
+  const selectedProviderHintText = helperText(
+    isUsingInheritedProvider
+      ? "pm.confirmation_card.selected_provider_hint"
+      : "pm.confirmation_card.selected_provider_override_hint",
+    isUsingInheritedProvider
+      ? "{providerTitle} is preselected from the previous step. You can switch to any available provider before launch. If you do nothing, Start step will continue with that provider."
+      : "{providerTitle} is selected for this step. Start step will launch the new session on that provider, and you can still switch before launch.",
+    { providerTitle }
+  );
+  const noProviderText = userMessage("pm.confirmation_card.no_provider", "No provider available for the agent.");
 
   const handleStart = useCallback(() => {
-    if (blocked || startInFlight || !hasProviders) return;
+    if (!canStart || !selectedProviderId) {
+      return;
+    }
     setStartInFlight(true);
     setStartError(null);
     void (async () => {
-      const providerId =
-        resolvePreferredWorkflowProviderId({
-          workflowState: workflowSnapshot,
-          providers,
-        }) ?? providers.at(0)?.id;
-      if (!providerId) {
-        throw new Error("No provider available.");
-      }
-
       const onSessionCreated = (sessionId: string) => {
         const intent: StageSessionIntent = {
-          providerId,
+          providerId: selectedProviderId,
           providerSessionId: null,
           workspacePath,
           workspaceSlug,
@@ -187,7 +289,6 @@ export const StageConfirmationCard: React.FC<{
           sessionKind: "collector",
           runSlug: null,
         };
-        // Fade out the confirmation card, then switch to session view
         const cardEl = cardRef.current;
         if (cardEl) {
           cardEl.classList.add("pm-confirmation-card--fading");
@@ -202,14 +303,14 @@ export const StageConfirmationCard: React.FC<{
         await startService.startVirtualSimulation({
           workspacePath,
           workspaceSlug,
-          providerId: providerId as ProviderStackId,
+          providerId: selectedProviderId,
           onSessionCreated,
         });
       } else {
         await startService.startDiagramModules({
           workspacePath,
           workspaceSlug,
-          providerId: providerId as ProviderStackId,
+          providerId: selectedProviderId,
           onSessionCreated,
         });
       }
@@ -227,68 +328,13 @@ export const StageConfirmationCard: React.FC<{
         }
       });
   }, [
-    blocked,
-    hasProviders,
+    canStart,
     onStarted,
-    providers,
+    selectedProviderId,
     stage,
-    startInFlight,
-    workflowSnapshot,
     workspacePath,
     workspaceSlug,
   ]);
-
-  // UI Labels — short interface terms
-  const titleText = t(
-    UI_LABELS_CATEGORY,
-    `pm.confirmation_card.title.${stage}`,
-    stageLabel
-  );
-  const startLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.confirmation_card.start_button",
-    "Start step"
-  );
-  const startingLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.confirmation_card.starting_button",
-    "Starting..."
-  );
-  const availableLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.confirmation_card.artifact_available",
-    "available"
-  );
-  const notFoundLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.confirmation_card.artifact_not_found",
-    "not found"
-  );
-
-  // UI Helper Text — explanatory interface copy
-  const inputLabel = t(
-    UI_HELPER_TEXT_CATEGORY,
-    "pm.confirmation_card.input_label",
-    "This step will use the following artifact as input:"
-  );
-  const confirmText = t(
-    UI_HELPER_TEXT_CATEGORY,
-    "pm.confirmation_card.confirm_warning",
-    "By clicking Start, you confirm that the {upstreamStage} artifact is complete and ready for the next step. The agent will begin working immediately.",
-    { upstreamStage: upstreamStageLabel }
-  );
-  const blockedText = t(
-    UI_HELPER_TEXT_CATEGORY,
-    `pm.confirmation_card.blocked.${stage}`,
-    `Complete the ${upstreamStageLabel} step first.`
-  );
-
-  // Messages for the User — runtime feedback
-  const noProviderText = t(
-    SYSTEM_FEEDBACK_CATEGORY,
-    "pm.confirmation_card.no_provider",
-    "No provider available for the agent."
-  );
 
   const btnClassName = startInFlight
     ? "pm-provider-picker__button pm-provider-picker__button--primary pm-confirmation-card__start-btn--starting"
@@ -296,9 +342,9 @@ export const StageConfirmationCard: React.FC<{
 
   return (
     <div className="pm-details" ref={cardRef} style={{ padding: "24px 20px" }}>
-      <div style={{ marginBottom: 16 }}>
-        <strong style={{ fontSize: 14 }}>{titleText}</strong>
-      </div>
+      <strong style={{ display: "block", fontSize: 14, marginBottom: 16 }}>
+        {titleText}
+      </strong>
 
       <div style={{ display: "grid", gap: 12 }}>
         <div>{inputLabel}</div>
@@ -314,11 +360,13 @@ export const StageConfirmationCard: React.FC<{
         >
           <code>{upstream.fileName}</code>
           {upstream.available ? (
-            <span style={{ marginLeft: 8, color: "var(--pm-accent-strong)", fontSize: 11 }}>
+            <span
+              style={{ color: "var(--pm-accent-strong)", fontSize: 11, marginLeft: 8 }}
+            >
               {availableLabel}
             </span>
           ) : (
-            <span style={{ marginLeft: 8, color: "#e5534b", fontSize: 11 }}>
+            <span style={{ color: "#e5534b", fontSize: 11, marginLeft: 8 }}>
               {notFoundLabel}
             </span>
           )}
@@ -334,10 +382,93 @@ export const StageConfirmationCard: React.FC<{
           </div>
         )}
 
+        <div style={{ display: "grid", gap: 8 }}>
+          <div
+            style={{
+              color: "var(--pm-text-muted)",
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+            }}
+          >
+            {providerLabelText}
+          </div>
+          <div style={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {providers.map((provider) => {
+              const isSelected = provider.id === selectedProviderId;
+              const isInherited = provider.id === inheritedProviderId;
+              const isDisabled = !provider.connected || startInFlight;
+              return (
+                <label
+                  key={provider.id}
+                  aria-disabled={isDisabled}
+                  style={{
+                    alignItems: "center",
+                    background: isSelected
+                      ? "rgba(95, 227, 186, 0.1)"
+                      : "rgba(255,255,255,0.03)",
+                    border: isSelected
+                      ? "1px solid rgba(95, 227, 186, 0.36)"
+                      : "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: 999,
+                    color: isSelected
+                      ? "var(--pm-accent-strong)"
+                      : "var(--pm-text-muted)",
+                    cursor: isDisabled ? "not-allowed" : "pointer",
+                    display: "inline-flex",
+                    gap: 8,
+                    opacity: isDisabled ? 0.48 : 1,
+                    padding: "8px 12px",
+                  }}
+                >
+                  <input
+                    checked={isSelected}
+                    disabled={isDisabled}
+                    name={`pm-stage-provider-${stage}`}
+                    onChange={() => setSelectedProviderId(provider.id)}
+                    style={{ opacity: 0, pointerEvents: "none", position: "absolute" }}
+                    type="radio"
+                  />
+                  <span style={{ fontSize: 13, fontWeight: 600 }}>
+                    {provider.title}
+                  </span>
+                  {isInherited ? (
+                    <span
+                      style={{
+                        alignItems: "center",
+                        background: isSelected
+                          ? "rgba(95, 227, 186, 0.12)"
+                          : "rgba(255,255,255,0.06)",
+                        borderRadius: 999,
+                        color: isSelected
+                          ? "var(--pm-accent-strong)"
+                          : "rgba(219, 228, 238, 0.56)",
+                        display: "inline-flex",
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: "0.04em",
+                        padding: "2px 7px",
+                      }}
+                    >
+                      {previousStepBadgeText}
+                    </span>
+                  ) : null}
+                </label>
+              );
+            })}
+          </div>
+          {hasConnectedProviders && selectedProvider ? (
+            <div style={{ color: "var(--pm-text-muted)", fontSize: 12 }}>
+              {selectedProviderHintText}
+            </div>
+          ) : null}
+        </div>
+
         <div style={{ marginTop: 8 }}>
           <button
             className={btnClassName}
-            disabled={blocked || startInFlight || !hasProviders}
+            disabled={!canStart}
             onClick={handleStart}
             type="button"
           >
@@ -350,8 +481,10 @@ export const StageConfirmationCard: React.FC<{
             {startError}
           </div>
         ) : null}
-        {!hasProviders && !blocked ? (
-          <div style={{ color: "var(--pm-text-muted)", fontSize: 13, marginTop: 4 }}>
+        {!hasConnectedProviders && !blocked ? (
+          <div
+            style={{ color: "var(--pm-text-muted)", fontSize: 13, marginTop: 4 }}
+          >
             {noProviderText}
           </div>
         ) : null}

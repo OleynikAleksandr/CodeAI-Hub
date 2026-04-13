@@ -32,10 +32,10 @@
 
 ### Stream: Previous Step Provider Resolver
 3. [DONE] Реализовать stage-aware inheritance для previous trunk provider и connected fallback — scope: `src/client/project-manager/services/workflow-provider-resolver.ts`, `src/client/project-manager/services/workflow-provider-resolver.test.ts`; ожидаемый commit message: `fix: inherit previous trunk provider for step start`
-4. [TODO] Git Commit: `fix: inherit previous trunk provider for step start` (hash: TBD)
+4. [DONE] Git Commit: `fix: inherit previous trunk provider for step start` (hash: `0575032da`)
 
 ### Stream: Confirmation Card Selector
-5. [TODO] Добавить inline provider selector и явный provider forwarding в start path confirmation card — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx`, `src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; ожидаемый commit message: `feat: add provider override to stage confirmation card`
+5. [DONE] Добавить inline provider selector и явный provider forwarding в start path confirmation card — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx`, `src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; ожидаемый commit message: `feat: add provider override to stage confirmation card`
 6. [TODO] Git Commit: `feat: add provider override to stage confirmation card` (hash: TBD)
 
 ### Stream: Confirmation Card Localization
