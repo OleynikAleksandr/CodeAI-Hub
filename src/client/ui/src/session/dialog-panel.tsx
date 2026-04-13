@@ -6,6 +6,7 @@ import {
   extractSegmentBoundaryLabel,
   isSegmentBoundaryMessage,
   mergeThinkingMessages,
+  resolveDisplayContent,
   resolveRoleLabel,
 } from "./dialog-panel-message-utils";
 import { buildDialogPanelScrollAnchor } from "./dialog-panel-scroll-anchor";
@@ -234,7 +235,7 @@ const ThinkingMessage = ({
         <MarkdownContent
           allowEmphasis={false}
           className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
-          content={message.content}
+          content={resolveDisplayContent(message)}
           id={`thinking-${message.id}`}
           onFileLinkActivate={onFileLinkActivate}
         />
@@ -263,7 +264,7 @@ const StandardMessage = ({
       </header>
       <MarkdownContent
         className="session-dialog__content"
-        content={message.content}
+        content={resolveDisplayContent(message)}
         onFileLinkActivate={onFileLinkActivate}
       />
     </article>

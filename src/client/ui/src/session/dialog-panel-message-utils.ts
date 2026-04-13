@@ -33,6 +33,9 @@ export const buildMessageClassNames = (
   return classes.join(" ");
 };
 
+export const resolveDisplayContent = (message: SessionMessage): string =>
+  message.localizedContent ?? message.content;
+
 export const resolveRoleLabel = (
   message: SessionMessage,
   providerLabel: string | null
@@ -64,9 +67,12 @@ const mergeThinkingDisplayMessage = (
 ): SessionMessage => {
   const useAssistantThinking =
     isAssistantThinkingMessage(previous) || isAssistantThinkingMessage(next);
+  const content = `${previous.content}\n${next.content}`;
+  const localizedContent = `${resolveDisplayContent(previous)}\n${resolveDisplayContent(next)}`;
   return {
     ...previous,
-    content: `${previous.content}\n${next.content}`,
+    content,
+    ...(localizedContent === content ? {} : { localizedContent }),
     ...(useAssistantThinking ? { role: "assistant", tag: "thinking" } : {}),
   };
 };

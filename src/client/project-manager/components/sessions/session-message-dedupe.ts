@@ -11,6 +11,26 @@ const isReplayDuplicate = (options: {
   options.existing.createdAt === options.incoming.createdAt &&
   options.existing.content === options.incoming.content;
 
+const mergeLocalizedContent = (options: {
+  readonly existing: SessionMessage;
+  readonly incoming: SessionMessage;
+}): SessionMessage | null => {
+  if (options.existing.id !== options.incoming.id) {
+    return null;
+  }
+  if (
+    options.existing.localizedContent === options.incoming.localizedContent ||
+    typeof options.incoming.localizedContent !== "string" ||
+    options.incoming.localizedContent.trim().length === 0
+  ) {
+    return null;
+  }
+  return {
+    ...options.existing,
+    localizedContent: options.incoming.localizedContent,
+  };
+};
+
 export const appendOptimisticUserMessage = (
   snapshots: SessionSnapshots,
   sessionId: string,
@@ -42,8 +62,26 @@ export const appendDedupedSessionMessageToSnapshots = (
   ) {
     return snapshots;
   }
-  if (snapshot.messages.some((message) => message.id === payload.message.id)) {
-    return snapshots;
+  const messageIndex = snapshot.messages.findIndex(
+    (message) => message.id === payload.message.id
+  );
+  if (messageIndex >= 0) {
+    const merged = mergeLocalizedContent({
+      existing: snapshot.messages[messageIndex],
+      incoming: payload.message,
+    });
+    if (!merged) {
+      return snapshots;
+    }
+    const messages = [...snapshot.messages];
+    messages[messageIndex] = merged;
+    return {
+      ...snapshots,
+      [payload.sessionId]: {
+        ...snapshot,
+        messages,
+      },
+    };
   }
 
   // Reconnect/replay can deliver the same message multiple times with new ids
