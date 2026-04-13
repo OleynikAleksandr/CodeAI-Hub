@@ -11,6 +11,7 @@ import {
   UnifiedSessionWriter,
 } from "@codeai-hub/unified-session";
 import type { Session, SessionMessage } from "../session-manager";
+import { SessionMessageLocalizationProjector } from "../session-translation/session-message-localization-projector";
 import type { Logger } from "../telemetry/logger";
 import { getWorkspaceKeyFromPath } from "../workspaces/workspace-key";
 import {
@@ -38,6 +39,8 @@ interface PendingSession {
 export class UnifiedSessionStorage {
   private readonly logger: Logger;
   private readonly defaultWorkspaceSlug: string;
+  private readonly localizationProjector =
+    new SessionMessageLocalizationProjector();
   private readonly rootDirectory: string;
   private readonly sessions = new Map<string, PendingSession>();
 
@@ -295,7 +298,21 @@ export class UnifiedSessionStorage {
 
     const messages = Array.from(messagesById.values());
     messages.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-    return messages;
+
+    const translations = await this.readMessageTranslationMap(session);
+    return messages.map((message) => {
+      const localizedContent =
+        this.localizationProjector.resolveLocalizedContent({
+          message,
+          translations,
+        });
+      return localizedContent
+        ? {
+            ...message,
+            localizedContent,
+          }
+        : message;
+    });
   }
 
   async backfillHistory(options: {

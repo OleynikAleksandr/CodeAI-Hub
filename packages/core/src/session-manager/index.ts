@@ -5,6 +5,7 @@ export type SessionRole = "user" | "assistant" | "system" | "thinking";
 export interface SessionMessage {
   readonly content: string;
   readonly id: string;
+  readonly localizedContent?: string;
   readonly role: SessionRole;
   readonly sessionId: string;
   readonly tag?: string;
