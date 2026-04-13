@@ -114,7 +114,7 @@
 6. [DONE] Git Commit: `test: cover dialog restore adoption without session kind` (hash: `024647c33`)
 
 ### Stream: Release build and closeout
-1. [TODO] Подготовить release-документы под будущую версию `1.1.971` и синхронизировать active plan/doc материалы под simplified dialog restore adoption; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for simplified dialog restore adoption`
+1. [DONE] Подготовить release-документы под будущую версию `1.1.971` и синхронизировать active plan/doc материалы под simplified dialog restore adoption; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for simplified dialog restore adoption`
 2. [TODO] Git Commit: `docs: prepare release notes for simplified dialog restore adoption` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)

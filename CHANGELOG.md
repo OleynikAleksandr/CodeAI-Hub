@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.971] - 2026-04-13
+### Fixed
+- **PM/Core `sessionKind` mismatch removed from restore adoption**: Project Manager no longer requires `sessionKind` equality when adopting the real runtime session after dialog auto-restore, because Core `session:created` does not preserve that PM-only field.
+- **First auto-opened step can now leave placeholder state**: the restored dialog session is adopted on the first workspace open, so the active snapshot can reach the existing ready-time usage-limits refresh path without a manual stage switch.
+- **Smaller restore contract**: the dialog restore path now keys only on actual continuity identity (`workspace`, `stage`, `run`, `provider`, `providerSessionId`) instead of accumulating extra PM-only conditions.
+
 ## [1.1.970] - 2026-04-13
 ### Fixed
 - **Auto-select dialog restore race**: Project Manager no longer sends manual usage-limits refresh while the dialog restore path still points at a placeholder bootstrap session without a materialized runtime session.
