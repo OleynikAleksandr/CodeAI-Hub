@@ -18,6 +18,7 @@ import {
   backfillUnifiedSessionHistory,
   tryPromoteSessionFile,
 } from "./unified-session-backfill";
+import { UnifiedSessionStorageDiagnostics } from "./unified-session-storage-diagnostics";
 import { listUnifiedSessionWorkspaceSlugs } from "./workspace-slugs";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
@@ -38,6 +39,7 @@ interface PendingSession {
 
 export class UnifiedSessionStorage {
   private readonly logger: Logger;
+  private readonly diagnostics: UnifiedSessionStorageDiagnostics;
   private readonly defaultWorkspaceSlug: string;
   private readonly localizationProjector =
     new SessionMessageLocalizationProjector();
@@ -50,6 +52,10 @@ export class UnifiedSessionStorage {
     readonly logger: Logger;
   }) {
     this.logger = options.logger;
+    this.diagnostics = new UnifiedSessionStorageDiagnostics({
+      logger: options.logger,
+      rootDirectory: options.rootDirectory ?? SESSION_ROOT,
+    });
     this.defaultWorkspaceSlug = options.workspaceSlug
       ? sanitizeWorkspaceSlug(options.workspaceSlug)
       : "default-workspace";
@@ -116,8 +122,6 @@ export class UnifiedSessionStorage {
     if (!entry) {
       return;
     }
-    // Codex/SDK sometimes emits placeholder thinking markers (e.g. `<!-- -->`)
-    // that are not user-visible and only add noise to the UI transcript.
     if (
       message.role === "thinking" &&
       (message.content.trim().length === 0 ||
@@ -158,6 +162,13 @@ export class UnifiedSessionStorage {
       });
     }
     await entry.translationWriter.appendTranslation(translation);
+    this.diagnostics.logTranslationOverlayAppended({
+      sessionId,
+      providerId: entry.providerId,
+      workspaceSlug: entry.workspaceSlug,
+      historySessionId: entry.historySessionId,
+      translation,
+    });
   }
 
   async readMessageTranslationMap(
@@ -386,9 +397,6 @@ export class UnifiedSessionStorage {
     }
 
     if (entry.writer && entry.writerSessionId !== sanitizedHistorySessionId) {
-      // Codex/Claude sessions may start with a provisional id and later "promote"
-      // to the real provider session id. Keep a single history file by renaming
-      // the existing JSONL instead of creating a second one.
       if (entry.writerSessionId && !entry.historySessionIdLocked) {
         this.callPromoteSessionFile({
           workspaceSlug,
@@ -397,9 +405,6 @@ export class UnifiedSessionStorage {
           toSessionId: sanitizedHistorySessionId,
         });
       }
-
-      // Keep using the existing writer handle; only update our bookkeeping so
-      // reads and future flushes target the promoted session id.
       entry.writerSessionId = sanitizedHistorySessionId;
 
       this.flushQueue(entry).catch((error: unknown) => {
@@ -483,6 +488,12 @@ export class UnifiedSessionStorage {
       content: message.content,
       timestamp: message.timestamp,
       ...(message.tag ? { tag: message.tag } : {}),
+    });
+    this.diagnostics.logThinkingMessageAppended({
+      providerId: entry.providerId,
+      workspaceSlug: entry.workspaceSlug,
+      historySessionId: entry.historySessionId,
+      message,
     });
   }
 }

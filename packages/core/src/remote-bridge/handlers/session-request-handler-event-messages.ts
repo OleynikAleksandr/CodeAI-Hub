@@ -4,6 +4,8 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
 
+const MESSAGE_PREVIEW_LENGTH = 160;
+
 export interface DialogMessagePayload {
   readonly content?: unknown;
   readonly role?: string;
@@ -33,6 +35,25 @@ interface SessionRequestHandlerEventMessagesDependencies {
   readonly sessionStorage: UnifiedSessionStorage;
   readonly sessionTranslation: SessionTranslationFacade;
 }
+
+type PersistedSessionMessage = Exclude<
+  ReturnType<SessionManager["appendMessage"]>,
+  null
+>;
+
+const isThinkingDisplayMessage = (
+  message: Pick<PersistedSessionMessage, "role" | "tag">
+): boolean =>
+  message.role === "thinking" ||
+  (message.role === "assistant" && message.tag === "thinking");
+
+const buildMessagePreview = (content: string): string => {
+  const normalized = content.replace(/\s+/gu, " ").trim();
+  if (normalized.length <= MESSAGE_PREVIEW_LENGTH) {
+    return normalized;
+  }
+  return `${normalized.slice(0, MESSAGE_PREVIEW_LENGTH)}...`;
+};
 
 export class SessionRequestHandlerEventMessages {
   private readonly deps: SessionRequestHandlerEventMessagesDependencies;
@@ -136,12 +157,39 @@ export class SessionRequestHandlerEventMessages {
     if (!message) {
       return;
     }
+    const thinkingMessage = isThinkingDisplayMessage(message);
 
     this.deps.sessionStorage
       .appendMessage(options.sessionId, message)
       .then(() => {
+        if (thinkingMessage) {
+          this.deps.logger.info(
+            "Thinking dialog message persisted and ready for broadcast",
+            {
+              sessionId: options.sessionId,
+              messageId: message.id,
+              role: message.role,
+              tag: message.tag,
+              contentLength: message.content.length,
+              preview: buildMessagePreview(message.content),
+              timestamp: message.timestamp,
+            }
+          );
+        }
         this.deps.broadcaster({ type: "session:message", payload: message });
         this.broadcastDialogMessage(options.sessionId, message);
+        if (thinkingMessage) {
+          this.deps.logger.info(
+            "Thinking dialog message broadcast dispatched",
+            {
+              sessionId: options.sessionId,
+              messageId: message.id,
+              role: message.role,
+              tag: message.tag,
+              contentLength: message.content.length,
+            }
+          );
+        }
         this.maybeTranslateDialogMessage(options.sessionId, message).catch(
           (error: unknown) => {
             this.deps.logger.warn("Failed to translate dialog message", {
@@ -163,9 +211,7 @@ export class SessionRequestHandlerEventMessages {
 
   private broadcastDialogMessage(
     sessionId: string,
-    message: ReturnType<SessionManager["appendMessage"]> extends infer T
-      ? Exclude<T, null>
-      : never
+    message: PersistedSessionMessage
   ): void {
     const dialogId = this.deps.continuityRootBySessionId.get(sessionId) ?? null;
     if (!dialogId) {
@@ -183,10 +229,21 @@ export class SessionRequestHandlerEventMessages {
 
   private async maybeTranslateDialogMessage(
     sessionId: string,
-    message: ReturnType<SessionManager["appendMessage"]> extends infer T
-      ? Exclude<T, null>
-      : never
+    message: PersistedSessionMessage
   ): Promise<void> {
+    if (isThinkingDisplayMessage(message)) {
+      this.deps.logger.info(
+        "Thinking dialog message entered translation pipeline",
+        {
+          sessionId,
+          messageId: message.id,
+          role: message.role,
+          tag: message.tag,
+          contentLength: message.content.length,
+          preview: buildMessagePreview(message.content),
+        }
+      );
+    }
     const translated =
       await this.deps.sessionTranslation.translateDialogMessage({
         sessionId,
@@ -199,11 +256,25 @@ export class SessionRequestHandlerEventMessages {
       return;
     }
 
+    this.deps.logger.info("Persisting session translation overlay", {
+      sessionId,
+      messageId: translated.messageId,
+      sourceHash: translated.sourceHash,
+      targetLanguage: translated.targetLanguage,
+      translatedLength: translated.translatedContent.length,
+    });
     await this.deps.sessionStorage.appendMessageTranslation(sessionId, {
       messageId: translated.messageId,
       sourceHash: translated.sourceHash,
       targetLanguage: translated.targetLanguage,
       translatedContent: translated.translatedContent,
+    });
+    this.deps.logger.info("Persisted session translation overlay", {
+      sessionId,
+      messageId: translated.messageId,
+      sourceHash: translated.sourceHash,
+      targetLanguage: translated.targetLanguage,
+      translatedLength: translated.translatedContent.length,
     });
     const translationPayload = {
       sessionId: translated.sessionId,
@@ -217,6 +288,14 @@ export class SessionRequestHandlerEventMessages {
       payload: translationPayload,
     });
     const dialogId = this.deps.continuityRootBySessionId.get(sessionId) ?? null;
+    this.deps.logger.info("Broadcasted session translation patch", {
+      sessionId,
+      dialogId,
+      messageId: translated.messageId,
+      sourceHash: translated.sourceHash,
+      targetLanguage: translated.targetLanguage,
+      translatedLength: translated.translatedContent.length,
+    });
     if (!dialogId) {
       return;
     }
@@ -227,6 +306,14 @@ export class SessionRequestHandlerEventMessages {
         sessionId,
         translation: translationPayload,
       },
+    });
+    this.deps.logger.info("Broadcasted dialog translation patch", {
+      sessionId,
+      dialogId,
+      messageId: translated.messageId,
+      sourceHash: translated.sourceHash,
+      targetLanguage: translated.targetLanguage,
+      translatedLength: translated.translatedContent.length,
     });
   }
 
