@@ -28,6 +28,7 @@ type DialogHistoryRecord = {
   readonly messageId: string;
   readonly role: "system" | "user" | "assistant" | "thinking";
   readonly content: string;
+  readonly localizedContent?: string;
   readonly timestamp: string;
   readonly tag?: string;
 };
@@ -91,11 +92,17 @@ const sanitizeDialogHistoryRecord = (value: unknown): DialogHistoryRecord | null
     return null;
   }
   const tag = typeof value.tag === "string" ? value.tag : undefined;
+  const localizedContent =
+    typeof value.localizedContent === "string" &&
+    value.localizedContent.trim().length > 0
+      ? value.localizedContent
+      : undefined;
   return {
     messageId: value.messageId,
     role,
     content: value.content,
     timestamp: value.timestamp,
+    ...(localizedContent ? { localizedContent } : {}),
     ...(tag ? { tag } : {}),
   };
 };
@@ -176,12 +183,14 @@ export const convertHistoryToMessages = (records: readonly unknown[]): SessionMe
     const createdAt = Number.isNaN(Date.parse(sanitized.timestamp))
       ? Date.now()
       : Date.parse(sanitized.timestamp);
-    const stableId = `${sanitized.timestamp}::${sanitized.role}::${sanitized.messageId}`;
     result.push({
-      id: stableId,
+      id: sanitized.messageId,
       role: sanitized.role,
       content: sanitized.content,
       createdAt,
+      ...(sanitized.localizedContent
+        ? { localizedContent: sanitized.localizedContent }
+        : {}),
       ...(sanitized.tag ? { tag: sanitized.tag } : {}),
     });
   }

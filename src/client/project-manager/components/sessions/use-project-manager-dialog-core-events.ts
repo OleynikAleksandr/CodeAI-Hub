@@ -3,6 +3,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
+import type { CoreBridgeSessionMessageTranslationPayload } from "../../../ui/src/core-bridge/types";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
   mergeHistoryIntoSnapshots,
@@ -40,7 +41,49 @@ type RequestDialogHistory = (
   options?: DialogHistoryRequestOptions
 ) => void;
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const sanitizeDialogMessageTranslationPayload = (
+  payload: unknown
+): {
+  readonly dialogId: string;
+  readonly translation: CoreBridgeSessionMessageTranslationPayload;
+} | null => {
+  if (!isRecord(payload) || typeof payload.dialogId !== "string") {
+    return null;
+  }
+  const translation = payload.translation;
+  if (
+    !isRecord(translation) ||
+    typeof translation.sessionId !== "string" ||
+    typeof translation.messageId !== "string" ||
+    typeof translation.localizedContent !== "string" ||
+    typeof translation.sourceHash !== "string" ||
+    typeof translation.targetLanguage !== "string"
+  ) {
+    return null;
+  }
+  const localizedContent = translation.localizedContent.trim();
+  if (localizedContent.length === 0) {
+    return null;
+  }
+  return {
+    dialogId: payload.dialogId,
+    translation: {
+      sessionId: translation.sessionId,
+      messageId: translation.messageId,
+      localizedContent,
+      sourceHash: translation.sourceHash,
+      targetLanguage: translation.targetLanguage,
+    },
+  };
+};
+
 export const useProjectManagerDialogCoreEvents = (options: {
+  readonly applyMessageTranslation: (
+    payload: CoreBridgeSessionMessageTranslationPayload
+  ) => void;
   readonly requestDialogList: RequestDialogList;
   readonly requestDialogHistory: RequestDialogHistory;
   readonly latestWorkspaceSnapshotRef: MutableRefObject<WorkspaceSnapshotPushPayload | null>;
@@ -297,6 +340,23 @@ export const useProjectManagerDialogCoreEvents = (options: {
         return;
       }
 
+      if (message.type === "dialog:message_translation") {
+        const payload = sanitizeDialogMessageTranslationPayload(message.payload);
+        if (!payload) {
+          return;
+        }
+        const currentSession = options.sessionRef.current;
+        const currentDialogId = options.dialogIdRef.current;
+        if (!currentSession || !currentDialogId || payload.dialogId !== currentDialogId) {
+          return;
+        }
+        options.applyMessageTranslation({
+          ...payload.translation,
+          sessionId: currentSession.id,
+        });
+        return;
+      }
+
       if (message.type === "core:state") {
         const intent = options.pendingIntentRef.current;
         const currentDialogId = options.dialogIdRef.current;
@@ -315,6 +375,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
       unsubscribe();
     };
   }, [
+    options.applyMessageTranslation,
     options.requestDialogHistory,
     options.requestDialogList,
     options.settingsRef,

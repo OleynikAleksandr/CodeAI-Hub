@@ -4,6 +4,7 @@ import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { createInitialSnapshot, resolveSessionThinkingDisplayEnabled, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import {
   buildProviderLabels,
@@ -32,6 +33,10 @@ export type ProjectManagerDialogSessionController = {
 export const useProjectManagerDialogSessionController = (
   intent: DialogOpenIntent | null
 ): ProjectManagerDialogSessionController => {
+  const sessionMessageLocalization = useMemo(
+    () => new SessionMessageLocalizationFacade(),
+    []
+  );
   const [session, setSession] = useState<SessionRecord | null>(null);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [tokenDebugSummaryOverride, setTokenDebugSummaryOverride] = useState<string | undefined>(undefined);
@@ -298,6 +303,10 @@ export const useProjectManagerDialogSessionController = (
   });
 
   useProjectManagerDialogCoreEvents({
+    applyMessageTranslation: (payload) =>
+      setSnapshots((previous) =>
+        sessionMessageLocalization.applyMessageTranslation(previous, payload)
+      ),
     requestDialogList,
     requestDialogHistory,
     latestWorkspaceSnapshotRef,
