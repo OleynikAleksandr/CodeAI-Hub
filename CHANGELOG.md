@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.974] - 2026-04-13
+### Changed
+- **Release rebuild only**: this package is a clean rebuild of the already shipped `1.1.973` baseline with a fresh release number for distribution and validation.
+
+### Not changed
+- **No new product logic in this rebuild**: the source-first thinking overlay pipeline, persisted localized history projection, and Claude translation packaging fix remain exactly as shipped in `1.1.973`.
+
 ## [1.1.973] - 2026-04-13
 ### Changed
 - **Source-first thinking delivery**: Gemini, Codex, and Claude now emit visible thinking into session history immediately in the provider's native language, while translation runs asynchronously in Core instead of blocking the first render path.

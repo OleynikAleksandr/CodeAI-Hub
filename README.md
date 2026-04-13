@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.973
+## Current Release — v1.1.974
+- **Release rebuild of the `1.1.973` baseline**: this package is a clean rebuild with a fresh release identity. It does not introduce new product-logic changes beyond the already shipped thinking-translation overlay wave.
+- **Source-first thinking overlays remain current**: visible reasoning/thinking still appears immediately in the provider's native language and is then patched to the user's language through stable `messageId`-based translation overlays.
+- **Claude runtime packaging guard remains active**: the release still validates that the installed Claude bundle includes `@codeai-hub/translation`, preserving the fixed pre-tool translation runtime path.
+
+### 1.1.973 (previous)
 - **Source-first thinking overlays**: visible reasoning/thinking messages now appear immediately in their native provider language, then asynchronously switch to the user's language through stable `messageId`-based translation overlays instead of waiting on provider-local translation before render.
 - **Persisted localized history projection**: translated thinking is now cached per session in a Core-owned sidecar and reapplied on history load, so reopening a session restores already-localized reasoning without rewriting the canonical transcript.
 - **Claude runtime packaging guard**: release packaging now validates that the Claude installed bundle includes `@codeai-hub/translation`, closing the runtime gap that could break Claude's remaining provider-local pre-tool translation path.
