@@ -203,29 +203,61 @@ export const useProjectManagerDialogSessionController = (
         }
 
         const isSameWorkspace = created.workspacePath === intent.workspacePath;
-        const isRolloverChild = created.continuationParentId === current.id;
         const isSameStage = created.stage === current.stage;
         const isSameRun = created.runSlug === current.runSlug;
-        if (!(isSameWorkspace && isRolloverChild && isSameStage && isSameRun)) {
+        const isSameKind = created.sessionKind === current.sessionKind;
+        const isSameProvider = created.providerIds[0] === current.providerIds[0];
+        const isSameSession = created.id === current.id;
+        const isRolloverChild = created.continuationParentId === current.id;
+        const currentProviderSessionId = current.binding.providerSessionId;
+        const createdProviderSessionId = created.binding.providerSessionId;
+        const isRestoreMaterialization =
+          current.binding.status !== "ready" &&
+          currentProviderSessionId !== null &&
+          currentProviderSessionId === createdProviderSessionId;
+        const shouldAdopt =
+          isSameSession || isRolloverChild || isRestoreMaterialization;
+        if (
+          !(
+            isSameWorkspace &&
+            isSameStage &&
+            isSameRun &&
+            isSameKind &&
+            isSameProvider &&
+            shouldAdopt
+          )
+        ) {
           return current;
         }
 
         setSnapshots((previous) => {
-          if (previous[created.id]) {
-            return previous;
-          }
-          const carriedMessages = previous[current.id]?.messages ?? [];
-          const carriedTodos = previous[current.id]?.todos ?? [];
+          const currentSnapshot = previous[current.id];
+          const existingCreatedSnapshot = previous[created.id];
+          const carriedMessages =
+            existingCreatedSnapshot?.messages.length
+              ? existingCreatedSnapshot.messages
+              : currentSnapshot?.messages ?? [];
+          const carriedTodos =
+            existingCreatedSnapshot?.todos.length
+              ? existingCreatedSnapshot.todos
+              : currentSnapshot?.todos ?? [];
           const labelsForCreated = buildProviderLabels(created.providerIds[0] ?? null);
-          const base = createInitialSnapshot(created, labelsForCreated, settingsRef.current);
+          const base =
+            existingCreatedSnapshot ??
+            createInitialSnapshot(created, labelsForCreated, settingsRef.current);
           let next: SessionSnapshots = {
             ...previous,
             [created.id]: {
               ...base,
+              binding: created.binding,
               messages: carriedMessages,
               todos: carriedTodos,
             },
           };
+          if (isRestoreMaterialization && current.id !== created.id) {
+            const { [current.id]: _discarded, ...withoutPlaceholder } = next;
+            next = withoutPlaceholder;
+          }
           const latest = latestWorkspaceSnapshotRef.current;
           if (latest && latest.workspaceRoot === created.workspacePath) {
             next = applyWorkspaceSnapshotToSnapshots(next, latest);

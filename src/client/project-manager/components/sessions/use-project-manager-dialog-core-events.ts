@@ -102,13 +102,22 @@ export const useProjectManagerDialogCoreEvents = (options: {
           dialogId: match.dialogId,
           providerSessionId: match.providerSessionId,
         });
-        const nextSession = buildDialogSessionRecord({
+        const bootstrapSession = buildDialogSessionRecord({
           runtimeSessionId: runtimeSession.runtimeSessionId,
           dialogId: match.dialogId,
           providerId,
           providerSessionId: match.providerSessionId,
           intent,
         });
+        const nextSession = runtimeSession.hasRuntimeSession
+          ? bootstrapSession
+          : {
+              ...bootstrapSession,
+              binding: {
+                ...bootstrapSession.binding,
+                status: "pending" as const,
+              },
+            };
         const restoreKey = buildDialogRestoreRequestKey({
           workspacePath: intent.workspacePath,
           dialogId: match.dialogId,

@@ -170,7 +170,7 @@ const SessionIdBar = ({
 }: SessionIdBarProps) => {
   const rawProviderId = resolveRawProviderId(status);
   useEffect(() => {
-    if (rawProviderId && onRefreshUsageLimits) {
+    if (binding.status === "ready" && rawProviderId && onRefreshUsageLimits) {
       onRefreshUsageLimits({
         sessionId,
         providerId: rawProviderId,
@@ -178,6 +178,7 @@ const SessionIdBar = ({
       });
     }
   }, [
+    binding.status,
     binding.providerSessionId,
     onRefreshUsageLimits,
     rawProviderId,
