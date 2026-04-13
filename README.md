@@ -7,15 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.976
+## Current Release — v1.1.977
+- **Codex artifact language no longer falls back to English after PM restart**: Project Manager now reuses the persisted browser localization bootstrap snapshot when live settings cache is not ready, so `Artifacts for the User` stays aligned with the saved runtime language.
+- **Codex translation runtime survives legacy auth layout**: isolated translation-only Codex homes now bootstrap from provider home first and transparently fall back to legacy `~/.codex` auth/cache when needed.
+- **Thinking translation chunks stay independent**: Codex reasoning delta messages now emit deterministic per-chunk ids instead of reusing one provider item id, preventing later translation overlays from overwriting earlier thinking fragments in live/replay/history paths.
+
+### 1.1.976 (previous)
 - **Codex Spark thinking translation repaired**: Codex rollout thinking now stays on the source-first path and is upgraded by the Core-owned translation overlay instead of attempting a second provider-local translation inside the active Codex turn.
 - **Final assistant restore under workflow schema mode**: rollout `final_answer` plain text now has a safe fallback path when structured parsing yields no `assistantText`, so Codex workflow turns no longer finish without a visible final reply.
 - **Dead rollout adapter removed**: the obsolete provider-local Codex thought-translation adapter has been removed, keeping the runtime aligned with the single-owner overlay architecture and preventing `knip` regressions.
-
-### 1.1.974 (previous)
-- **Release rebuild of the `1.1.973` baseline**: this package is a clean rebuild with a fresh release identity. It does not introduce new product-logic changes beyond the already shipped thinking-translation overlay wave.
-- **Source-first thinking overlays remain current**: visible reasoning/thinking still appears immediately in the provider's native language and is then patched to the user's language through stable `messageId`-based translation overlays.
-- **Claude runtime packaging guard remains active**: the release still validates that the installed Claude bundle includes `@codeai-hub/translation`, preserving the fixed pre-tool translation runtime path.
 
 ### 1.1.973 (previous)
 - **Source-first thinking overlays**: visible reasoning/thinking messages now appear immediately in their native provider language, then asynchronously switch to the user's language through stable `messageId`-based translation overlays instead of waiting on provider-local translation before render.

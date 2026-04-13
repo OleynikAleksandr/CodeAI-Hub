@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.977] - 2026-04-13
+### Fixed
+- **PM artifact-language restart regression**: workflow prompt-pack assembly now falls back to the persisted browser localization bootstrap snapshot when live settings have not reloaded yet, so `Artifacts for the User` no longer silently degrades from `ru` to `en` after Project Manager reconnect/cold-start.
+- **Codex translation runtime bootstrap**: isolated translation-only Codex runs now resolve auth/cache artifacts from provider home first and fall back to legacy `~/.codex` data when the provider-owned home is not present yet.
+- **Thinking overlay chunk identity**: Codex reasoning delta messages now emit deterministic per-chunk ids instead of reusing one provider item id, preventing later translation overlays from overwriting earlier thinking fragments in live/replay/history paths.
+
 ## [1.1.976] - 2026-04-13
 ### Fixed
 - **Codex rollout thinking translation**: rollout-backed Codex thinking now follows the same source-first plus Core overlay path as the rest of the thinking pipeline, instead of triggering a second provider-local translation attempt inside the active Codex turn.
