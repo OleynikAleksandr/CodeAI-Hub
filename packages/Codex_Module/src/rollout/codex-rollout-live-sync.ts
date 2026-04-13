@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import { PROVIDER } from "../messaging/codex-message-processor-shared";
 import type { CodexSessionEventEmitter } from "../messaging/codex-session-event-emitter";
-import { CodexThoughtTranslationAdapter } from "../messaging/codex-thought-translation-adapter";
 import type {
   StructuredOutputResult,
   StructuredOutputStreamController,
@@ -19,11 +18,31 @@ import { CodexRolloutTailState } from "./codex-rollout-tail-state";
 
 const TERMINAL_DRAIN_ATTEMPTS = 3;
 const TERMINAL_DRAIN_DELAY_MS = 75;
+const STRUCTURED_PAYLOAD_START = new Set(["{", "["]);
 
 const sleep = (delayMs: number): Promise<void> =>
   new Promise((resolve) => {
     setTimeout(resolve, delayMs);
   });
+
+const resolveRolloutAssistantText = (
+  rawText: string,
+  parsedAssistantText?: string
+): string | undefined => {
+  const normalizedAssistant = parsedAssistantText?.trim();
+  if (normalizedAssistant) {
+    return parsedAssistantText;
+  }
+
+  const normalizedRaw = rawText.trim();
+  if (!normalizedRaw) {
+    return;
+  }
+
+  return STRUCTURED_PAYLOAD_START.has(normalizedRaw[0] ?? "")
+    ? undefined
+    : rawText;
+};
 
 interface CodexRolloutSyncResult {
   readonly advanced: boolean;
@@ -41,17 +60,15 @@ export class CodexRolloutLiveSync {
   private readonly emitter: CodexSessionEventEmitter;
   private readonly reader: CodexRolloutReader;
   private readonly structuredOutput: StructuredOutputStreamController;
-  private readonly thoughtTranslator: CodexThoughtTranslationAdapter;
 
   constructor(
     structuredOutput: StructuredOutputStreamController,
     emitter: CodexSessionEventEmitter,
-    reporter?: ModuleReporter
+    _reporter?: ModuleReporter
   ) {
     this.structuredOutput = structuredOutput;
     this.emitter = emitter;
     this.reader = new CodexRolloutReader();
-    this.thoughtTranslator = new CodexThoughtTranslationAdapter(reporter);
   }
 
   async sync(session: ActiveSession): Promise<CodexRolloutSyncResult> {
@@ -98,10 +115,10 @@ export class CodexRolloutLiveSync {
     }
   }
 
-  private async emitParsedEvent(
+  private emitParsedEvent(
     session: ActiveSession,
     event: CodexRolloutParsedEvent
-  ): Promise<void> {
+  ): void {
     if (session.internalTurn) {
       return;
     }
@@ -111,17 +128,10 @@ export class CodexRolloutLiveSync {
         return;
       }
 
-      const translated = await this.thoughtTranslator.translateReasoning(
-        event.content,
-        session.runtimeTurnConfig?.messagesForTheUserLanguage ??
-          session.messagesForTheUserLanguage,
-        session.runtimeTurnConfig?.translationEngineId ??
-          session.translationEngineId
-      );
       this.emitter.emitDialogMessage(
         session,
         "thinking",
-        translated ?? event.content,
+        event.content,
         this.buildSegmentId(event)
       );
       return;
@@ -182,7 +192,11 @@ export class CodexRolloutLiveSync {
       this.emitAssistantChunk(session, itemId, result.streamDelta);
     }
     this.emitStructuredOutput(session, itemId, result);
-    if (!result.assistantText) {
+    const assistantText = resolveRolloutAssistantText(
+      event.content,
+      result.assistantText
+    );
+    if (!assistantText) {
       return;
     }
 
@@ -194,7 +208,7 @@ export class CodexRolloutLiveSync {
       provider: PROVIDER,
       sessionId: session.sessionId,
       threadId: session.codexThreadId,
-      content: result.assistantText,
+      content: assistantText,
       uuid: itemId,
       timestamp: event.timestamp ?? new Date().toISOString(),
     });
