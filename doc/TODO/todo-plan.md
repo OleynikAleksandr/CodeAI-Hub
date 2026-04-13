@@ -87,4 +87,19 @@
 3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `66b06d8b9`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record usage limits diagnostics release validation`
-6. [TODO] Git Commit: `docs: record usage limits diagnostics release validation` (hash: TBD)
+6. [DONE] Git Commit: `docs: record usage limits diagnostics release validation` (hash: `a9e3a9da1`)
+
+## Phase 5 — Auto-select dialog runtime restore correction after diagnostic proof (owner: Codex, updated: 2026-04-13)
+### Stream: Defer refresh until runtime materialization
+1. [DONE] Удержать dialog bootstrap session в `pending` до materialization runtime session и перевести PM adoption на continuity match по `providerSessionId`, чтобы auto-select не отправлял usage-limits refresh в несуществующий runtime session; scope: `src/client/project-manager/components/sessions/{use-project-manager-dialog-core-events.ts,use-project-manager-dialog-session-controller.ts}`, `src/client/ui/src/session/session-id-bar.tsx`; ожидаемый commit message: `fix: defer dialog usage limits refresh until runtime restore`
+2. [DONE] Git Commit: `fix: defer dialog usage limits refresh until runtime restore` (hash: `6aeb42834`)
+3. [DONE] Добавить regression guards на `pending` bootstrap/adoption path и `ready-only` refresh effect в `SessionIdBar`; scope: `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`, `src/client/ui/src/session/session-id-bar.test.tsx`; ожидаемый commit message: `test: cover dialog usage limits runtime restore`
+4. [DONE] Git Commit: `test: cover dialog usage limits runtime restore` (hash: `bbe64a6a7`)
+
+### Stream: Release build and closeout
+1. [TODO] Подготовить release-документы под будущую версию `1.1.970` и синхронизировать active plan/doc материалы под auto-select runtime-restore fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for dialog runtime restore fix`
+2. [TODO] Git Commit: `docs: prepare release notes for dialog runtime restore fix` (hash: TBD)
+3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
+4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
+5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record dialog runtime restore release validation`
+6. [TODO] Git Commit: `docs: record dialog runtime restore release validation` (hash: TBD)

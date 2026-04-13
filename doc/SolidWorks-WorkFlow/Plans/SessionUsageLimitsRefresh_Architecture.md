@@ -170,3 +170,21 @@ Tests must cover:
 - session-scoped Core broadcast instead of synthetic provider session id;
 - provider-global snapshot convergence across different sessions of the same provider;
 - absence of persistent usage-limits fallback cache in `SessionIdUsageBar`.
+
+### 6.3. Fix after diagnostic proof
+
+Diagnostics from `1.1.969` confirmed the race:
+
+1. PM auto-select bootstrap could resolve a dialog continuity entry with known `providerSessionId` but without a materialized runtime session;
+2. `SessionIdUsageBar` still fired `refreshUsageLimits(...)` immediately from that bootstrap record;
+3. Core correctly skipped the refresh because no runtime session existed yet;
+4. no second refresh was emitted until the user forced a remount by switching steps.
+
+The corrective contract is:
+
+1. dialog bootstrap records without a live runtime session must stay `binding.status = pending`;
+2. PM must adopt the later `session:created` runtime session for the same dialog continuity by matching workspace/stage/run/provider identity and `providerSessionId`;
+3. placeholder bootstrap snapshots must be replaced once the real runtime session materializes;
+4. `SessionIdUsageBar` may trigger manual usage-limits refresh only when binding is `ready`.
+
+This keeps the refresh coupled to real runtime materialization instead of speculative dialog bootstrap state.

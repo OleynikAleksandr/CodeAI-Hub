@@ -32,7 +32,7 @@
 ### Usage limits side
 - `session:stream` usage-limit payloads;
 - `updateSnapshotsWithUsageLimits(...)`;
-- manual refresh через `api.refreshUsageLimits({ sessionId, providerId, providerSessionId })`.
+- manual refresh через `api.refreshUsageLimits({ sessionId, providerId, providerSessionId })`, но только когда `binding.status === ready`.
 
 ## Когда обновляется
 
@@ -42,7 +42,8 @@
 - при смене активной сессии;
 - при cold-start restore active session;
 - при смене `providerSessionId` у active session после restore/rebind;
-- при mount/session change/provider change самой панели.
+- при переходе placeholder dialog bootstrap session из `pending` в materialized runtime session;
+- при mount/session change/provider change самой панели, если binding уже `ready`.
 
 ## Что отдает наружу
 
@@ -58,4 +59,5 @@
 - один usage-limits event может обновить не только текущий snapshot, а все snapshots того же provider family;
 - для usage limits canonical `providerScopeKey` теперь provider-global (`claude:global`, `codex:global`, `gemini:global`);
 - это не чисто read-only projection panel: она сама участвует в refresh-механизме.
+- в dialog auto-select path panel не должна запускать refresh на bootstrap placeholder без runtime session; сначала PM обязан принять materialized runtime session и только потом панель шлет refresh.
 - manual refresh больше не использует synthetic provider session bucket в UI-path: refresh должен вернуться в реальный runtime `sessionId`, иначе panel не получит rerender через snapshots.
