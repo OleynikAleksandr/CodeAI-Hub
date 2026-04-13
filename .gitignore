@@ -13,6 +13,8 @@ tmp/
 .gemini/
 .codeai-hub/
 GEMINI.md
+doc/Sessions/
+doc/TODO/
 
 lefthook.yml
 *.vsix
