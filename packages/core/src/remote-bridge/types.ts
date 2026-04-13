@@ -51,6 +51,7 @@ export interface AppliedProviderTurnConfig {
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevel?: string;
+  readonly translationEngineId?: string;
 }
 
 const APPLIED_PROVIDER_TURN_CONFIG_KEY = "__codeaiAppliedTurnConfig";
@@ -108,6 +109,10 @@ export const readAppliedProviderTurnConfig = (
     reasoningEffort:
       typeof candidate.reasoningEffort === "string"
         ? candidate.reasoningEffort
+        : undefined,
+    translationEngineId:
+      typeof candidate.translationEngineId === "string"
+        ? candidate.translationEngineId
         : undefined,
     thinkingEnabled:
       typeof candidate.thinkingEnabled === "boolean"

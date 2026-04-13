@@ -85,6 +85,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       modelId: baseModelId,
       reasoningEffort,
       source: targetModelId ? "switch_request" : "settings_snapshot",
+      translationEngineId: translationPolicy.engineId,
       ...(resolved.thinkingEnabled === undefined
         ? {}
         : { thinkingEnabled: resolved.thinkingEnabled }),
