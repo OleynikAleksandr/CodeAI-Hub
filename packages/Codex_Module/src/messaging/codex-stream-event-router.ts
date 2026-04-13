@@ -16,7 +16,6 @@ import {
 } from "./codex-message-processor-shared";
 import type { CodexReasoningStreams } from "./codex-reasoning-streams";
 import type { CodexSessionEventEmitter } from "./codex-session-event-emitter";
-import { CodexThoughtTranslationAdapter } from "./codex-thought-translation-adapter";
 import { handleCodexThreadStarted } from "./codex-thread-start-handler";
 import type {
   StructuredOutputResult,
@@ -48,7 +47,6 @@ export class CodexStreamEventRouter {
   private readonly reporter?: ModuleReporter;
   private readonly sessionManager: CodexSessionManager;
   readonly structuredOutput: StructuredOutputStreamController;
-  private readonly thoughtTranslator: CodexThoughtTranslationAdapter;
 
   constructor(
     sessionManager: CodexSessionManager,
@@ -64,7 +62,6 @@ export class CodexStreamEventRouter {
     this.emitter = emitter;
     this.finishHandler = finishHandler;
     this.reporter = reporter;
-    this.thoughtTranslator = new CodexThoughtTranslationAdapter(reporter);
   }
 
   async dispatchEvent(
@@ -174,7 +171,7 @@ export class CodexStreamEventRouter {
         item.text
       );
       if (delta) {
-        return this.emitTranslatedReasoning(session, item.id, delta);
+        this.emitter.emitDialogMessage(session, "thinking", delta, item.id);
       }
       return;
     }
@@ -185,26 +182,9 @@ export class CodexStreamEventRouter {
         item.text
       );
       if (delta) {
-        return this.emitTranslatedReasoning(session, item.id, delta);
+        this.emitter.emitDialogMessage(session, "thinking", delta, item.id);
       }
     }
-  }
-
-  private async emitTranslatedReasoning(
-    session: ActiveSession,
-    itemId: string,
-    delta: string
-  ): Promise<void> {
-    const translated = await this.thoughtTranslator.translateReasoning(
-      delta,
-      session.messagesForTheUserLanguage
-    );
-    this.emitter.emitDialogMessage(
-      session,
-      "thinking",
-      translated ?? delta,
-      itemId
-    );
   }
 
   private handleAgentMessageItem(
@@ -378,9 +358,7 @@ export class CodexStreamEventRouter {
     return true;
   }
 
-  private async flushPendingAgentMessageAsThinking(
-    session: ActiveSession
-  ): Promise<void> {
+  private flushPendingAgentMessageAsThinking(session: ActiveSession): void {
     const pending = this.pendingAgentMessages.get(session.sessionId);
     if (!pending) {
       return;
@@ -392,15 +370,10 @@ export class CodexStreamEventRouter {
       return;
     }
 
-    const translated = await this.thoughtTranslator.translateReasoning(
-      content,
-      session.runtimeTurnConfig?.messagesForTheUserLanguage ??
-        session.messagesForTheUserLanguage
-    );
     this.emitter.emitDialogMessage(
       session,
       "thinking",
-      translated ?? content,
+      content,
       pending.itemId
     );
   }
