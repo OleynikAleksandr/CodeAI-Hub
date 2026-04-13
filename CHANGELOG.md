@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.973] - 2026-04-13
+### Changed
+- **Source-first thinking delivery**: Gemini, Codex, and Claude now emit visible thinking into session history immediately in the provider's native language, while translation runs asynchronously in Core instead of blocking the first render path.
+- **Localized history projection**: Core persists translated thinking overlays per session and reapplies them on runtime/dialog history load through `localizedContent`, so previously translated thoughts reopen already localized without rewriting the canonical transcript.
+
+### Fixed
+- **Mixed-language thinking race**: the first reasoning chunks no longer fall back permanently to English just because the live translation request times out or returns late; the UI can now patch the already-rendered message when the translation arrives.
+- **Claude packaging gap**: release packaging now vendors and validates `@codeai-hub/translation` inside the installed Claude provider bundle, preventing runtime failures in the remaining provider-local pre-tool translation path.
+
 ## [1.1.972] - 2026-04-13
 ### Added
 - **Inline provider override on trunk confirmation cards**: idle `Virtual Simulation` and `Diagram Modules` stages now show a visible provider selector in the confirmation card. The previous-step provider is preselected and marked inline, but the user can switch to any connected provider before launching the next step.

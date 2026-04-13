@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.972
+## Current Release — v1.1.973
+- **Source-first thinking overlays**: visible reasoning/thinking messages now appear immediately in their native provider language, then asynchronously switch to the user's language through stable `messageId`-based translation overlays instead of waiting on provider-local translation before render.
+- **Persisted localized history projection**: translated thinking is now cached per session in a Core-owned sidecar and reapplied on history load, so reopening a session restores already-localized reasoning without rewriting the canonical transcript.
+- **Claude runtime packaging guard**: release packaging now validates that the Claude installed bundle includes `@codeai-hub/translation`, closing the runtime gap that could break Claude's remaining provider-local pre-tool translation path.
+
+### 1.1.972 (previous)
 - **Trunk-step provider override**: idle `Virtual Simulation` and `Diagram Modules` confirmation cards now show an inline provider selector. The previous-step provider stays preselected for the one-click path, but you can switch to any connected provider before pressing `Start step`.
 - **Chosen-provider bootstrap sync**: when a new step starts on a different provider, Project Manager now seeds the dialog/bootstrap snapshot from the explicit step-start provider intent, so the lower model/status panel opens on the correct provider context instead of inheriting stale state from the previous trunk step.
 - **Provider-correct usage limits after step start**: once the new step session reaches `binding.status === ready`, `Session ID + Usage Limits` refreshes against the selected provider/runtime identity and shows the correct provider-family limits (`Claude`, `Codex`, or `Gemini`).
