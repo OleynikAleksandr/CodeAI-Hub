@@ -328,6 +328,16 @@ export class SessionRequestHandler {
       this.providerSessions.get(params.sessionId)?.providerSessionId ||
       session?.providerSessionId ||
       null;
+    this.logger.info("Usage limits refresh request received", {
+      adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
+      boundProviderSessionId,
+      requestedProviderId: params.providerId,
+      requestedProviderSessionId: params.providerSessionId,
+      resolvedProviderId,
+      runtimeSessionFound: Boolean(session),
+      sessionId: params.sessionId,
+      workspacePath: session?.workspacePath ?? null,
+    });
     if (
       session &&
       boundProviderSessionId &&
@@ -345,7 +355,23 @@ export class SessionRequestHandler {
         runtimeSessionId: params.sessionId,
         workspacePath: session.workspacePath,
       });
+      this.logger.info("Usage limits refresh dispatched to adapter", {
+        providerSessionId: boundProviderSessionId,
+        resolvedProviderId,
+        sessionId: params.sessionId,
+        workspacePath: session.workspacePath,
+      });
+      return;
     }
+    this.logger.warn("Usage limits refresh skipped", {
+      adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
+      boundProviderSessionId,
+      requestedProviderId: params.providerId,
+      requestedProviderSessionId: params.providerSessionId,
+      resolvedProviderId,
+      runtimeSessionFound: Boolean(session),
+      sessionId: params.sessionId,
+    });
   }
 
   hasRetryBudget(sessionId: string): boolean {

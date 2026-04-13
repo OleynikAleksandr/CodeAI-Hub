@@ -72,6 +72,16 @@ export class RemoteBridgeMessageRouter {
       return;
     }
     switch (incoming.type) {
+      case "pm:diag:log":
+        this.deps.logger.info("Project Manager diagnostic log", {
+          channel: incoming.payload.channel,
+          clientId,
+          event: incoming.payload.event,
+          ...(incoming.payload.context
+            ? { context: incoming.payload.context }
+            : {}),
+        });
+        break;
       case "session:create":
         await this.sessionCreateRouter.handle(clientId, incoming);
         break;

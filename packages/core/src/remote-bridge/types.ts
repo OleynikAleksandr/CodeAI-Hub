@@ -223,6 +223,15 @@ interface CoreIncomingMessage {
   readonly type: "settings:load";
 }
 
+interface ProjectManagerDiagnosticLogIncomingMessage {
+  readonly payload: {
+    readonly channel: string;
+    readonly event: string;
+    readonly context?: Record<string, unknown>;
+  };
+  readonly type: "pm:diag:log";
+}
+
 type DialogIncomingMessage =
   | {
       readonly type: "dialog:list";
@@ -273,6 +282,7 @@ type ProjectIncomingMessage =
 
 export type IncomingMessage =
   | CoreIncomingMessage
+  | ProjectManagerDiagnosticLogIncomingMessage
   | DialogIncomingMessage
   | ProjectIncomingMessage
   | SessionIncomingMessage
