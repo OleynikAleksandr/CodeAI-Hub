@@ -1,5 +1,7 @@
+import path from "node:path";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
+import { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import { SessionContinuityLockService } from "./session-continuity-lock-service";
 import { SessionDescriptionDialogSync } from "./session-description-dialog-sync";
 import { SessionProviderBindingService } from "./session-provider-binding-service";
@@ -38,6 +40,7 @@ export interface SessionRequestHandlerRuntimeCore {
   readonly retryState: SessionRequestHandlerRetryState;
   readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   readonly sessionResolution: SessionRequestHandlerSessionResolution;
+  readonly sessionTranslation: SessionTranslationFacade;
 }
 
 export const createSessionRequestHandlerRuntimeCore = (
@@ -101,6 +104,13 @@ export const createSessionRequestHandlerRuntimeCore = (
   const continuityRoot = new SessionRequestHandlerContinuityRoot({
     logger: options.logger,
     sessionStorage: options.sessionStorage,
+  });
+  const sessionTranslation = new SessionTranslationFacade({
+    logger: options.logger,
+    settingsPath: path.join(
+      path.dirname(options.config.claudeSettingsPath),
+      "settings.json"
+    ),
   });
   const eventMessages = new SessionRequestHandlerEventMessages({
     broadcaster: options.broadcaster,
@@ -264,5 +274,6 @@ export const createSessionRequestHandlerRuntimeCore = (
     retryState,
     sessionBootstrap,
     sessionResolution,
+    sessionTranslation,
   };
 };
