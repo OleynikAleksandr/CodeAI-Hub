@@ -53,11 +53,10 @@ const resolveBootstrapArtifactLanguage = (): string | null => {
   }
 
   const bootstrapSettings = readBrowserLocalizationBootstrapSnapshot()?.settings;
-  const categories =
-    bootstrapSettings &&
-    isRecordValue(bootstrapSettings.categories)
-      ? bootstrapSettings.categories
-      : null;
+  const categoriesCandidate: unknown = bootstrapSettings?.categories;
+  const categories = isRecordValue(categoriesCandidate)
+    ? categoriesCandidate
+    : null;
 
   return (
     normalizeArtifactLanguage(categories?.artifacts_for_the_user) ??
