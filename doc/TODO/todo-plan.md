@@ -98,8 +98,8 @@
 
 ### Stream: Release build and closeout
 1. [DONE] Подготовить release-документы под будущую версию `1.1.970` и синхронизировать active plan/doc материалы под auto-select runtime-restore fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for dialog runtime restore fix`
-2. [TODO] Git Commit: `docs: prepare release notes for dialog runtime restore fix` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
-4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record dialog runtime restore release validation`
-6. [TODO] Git Commit: `docs: record dialog runtime restore release validation` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare release notes for dialog runtime restore fix` (hash: `a41da113c`)
+3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
+4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `36814ee98`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record dialog runtime restore release validation`
+6. [DONE] Git Commit: `docs: record dialog runtime restore release validation` (hash: TBD)
