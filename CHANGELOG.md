@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.969] - 2026-04-13
+### Changed
+- **Project Manager diagnostics now persist to Core logs**: standalone PM forwards usage-limits investigation events into Core over the websocket bridge, so restore/bootstrap diagnostics land in `~/.codeai-hub/logs/core/core.log` instead of depending on browser console access.
+- **Usage-limits refresh decision logging**: Core records whether the manual refresh path found the runtime session, resolved a bound `providerSessionId`, and actually dispatched the request to the provider adapter.
+- **Investigation-only release**: this package is intended to capture the auto-select refresh race after workspace open; it does not yet claim a user-visible fix for that regression.
+
 ## [1.1.968] - 2026-04-12
 ### Fixed
 - **Dialog-session refresh wiring**: Project Manager dialog-mode session screens now pass `onRefreshUsageLimits` into `SessionView`, restoring live usage-limits refresh on active workflow stage dialogs.

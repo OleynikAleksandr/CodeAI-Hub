@@ -78,11 +78,11 @@
 2. [DONE] Git Commit: `chore: add project manager usage limits diagnostics` (hash: `e6f9426d6`)
 3. [DONE] Добавить Core-side решение/исход manual refresh path (`request received`, `refresh skipped`, `refresh dispatched`) в `~/.codeai-hub/logs/core/core.log`; scope: `packages/core/src/remote-bridge/{types.ts,remote-bridge-message-router.ts,handlers/session-request-handler.ts}`; ожидаемый commit message: `chore: add core usage limits diagnostics`
 4. [DONE] Git Commit: `chore: add core usage limits diagnostics` (hash: `153e9f742`)
-5. [TODO] Синхронизировать planning-doc и active todo-plan под diagnostic bridge для расследования auto-select race; scope: `doc/SolidWorks-WorkFlow/Plans/SessionUsageLimitsRefresh_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: sync usage limits diagnostics plan`
-6. [TODO] Git Commit: `docs: sync usage limits diagnostics plan` (hash: TBD)
+5. [DONE] Синхронизировать planning-doc и active todo-plan под diagnostic bridge для расследования auto-select race; scope: `doc/SolidWorks-WorkFlow/Plans/SessionUsageLimitsRefresh_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: sync usage limits diagnostics plan`
+6. [DONE] Git Commit: `docs: sync usage limits diagnostics plan` (hash: `5b35faf22`)
 
 ### Stream: Diagnostic release build and closeout
-1. [TODO] Подготовить release-документы под будущую версию `1.1.969` и явно зафиксировать, что релиз добавляет диагностику для auto-select refresh race, а не behavioural fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for usage limits diagnostics`
+1. [DONE] Подготовить release-документы под будущую версию `1.1.969` и явно зафиксировать, что релиз добавляет диагностику для auto-select refresh race, а не behavioural fix; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for usage limits diagnostics`
 2. [TODO] Git Commit: `docs: prepare release notes for usage limits diagnostics` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
