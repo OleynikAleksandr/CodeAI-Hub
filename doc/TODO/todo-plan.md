@@ -119,4 +119,8 @@
 3. [DONE] Выполнить `./scripts/build-all.sh`, проверить результаты release bump и чистоту дерева; scope: release tooling + version bump outputs; ожидаемый commit message: `chore: bump version via build-all.sh`
 4. [DONE] Git Commit: `chore: bump version via build-all.sh` (hash: `736255f28`)
 5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball outputs и подготовить closeout materials; scope: release verification + session closeout; ожидаемый commit message: `docs: record simplified dialog restore release validation`
-6. [DONE] Git Commit: `docs: record simplified dialog restore release validation` (hash: TBD)
+6. [DONE] Git Commit: `docs: record simplified dialog restore release validation` (hash: `b92719970`)
+
+### Stream: Module documentation backfill after successful 1.1.971 smoke
+1. [DONE] Подробно зафиксировать в `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md` финальный рабочий контракт панели `Session ID + Usage Limits` после успешного smoke `1.1.971`, включая `pending` bootstrap, `ready`-only refresh и removal of `sessionKind` blocker; scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: expand session id usage bar module contract`
+2. [DONE] Git Commit: `docs: expand session id usage bar module contract` (hash: TBD)
