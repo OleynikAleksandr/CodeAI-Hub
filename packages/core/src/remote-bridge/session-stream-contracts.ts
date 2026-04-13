@@ -107,9 +107,21 @@ export interface SessionModelUpdatePayload {
   readonly sessionId: string;
 }
 
+export interface SessionMessageTranslationPayload {
+  readonly localizedContent: string;
+  readonly messageId: string;
+  readonly sessionId: string;
+  readonly sourceHash: string;
+  readonly targetLanguage: string;
+}
+
 export type SessionBridgeEvent =
   | { readonly type: "session:created"; readonly payload: SerializedSession }
   | { readonly type: "session:message"; readonly payload: unknown }
+  | {
+      readonly type: "session:message_translation";
+      readonly payload: SessionMessageTranslationPayload;
+    }
   | {
       readonly type: "session:binding";
       readonly payload: {

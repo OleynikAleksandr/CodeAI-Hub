@@ -7,6 +7,7 @@ import type {
   SerializedSession,
   SessionBridgeEvent,
   SessionIncomingMessage,
+  SessionMessageTranslationPayload,
 } from "./session-stream-contracts";
 import type {
   WorkspaceBridgeEvent,
@@ -25,6 +26,7 @@ export type {
   SerializedSession,
   SessionBridgeEvent,
   SessionIncomingMessage,
+  SessionMessageTranslationPayload,
   SessionModelUpdatePayload,
   TurnFailedPayload,
   TurnStateStreamData,
@@ -165,6 +167,14 @@ type DialogBridgeEvent =
         readonly dialogId: string;
         readonly sessionId: string;
         readonly message: unknown;
+      };
+    }
+  | {
+      readonly type: "dialog:message_translation";
+      readonly payload: {
+        readonly dialogId: string;
+        readonly sessionId: string;
+        readonly translation: SessionMessageTranslationPayload;
       };
     }
   | {
