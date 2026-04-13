@@ -192,6 +192,11 @@ test("dialog restore bootstrap stays pending until runtime session materializes"
     "dialog controller must detect unresolved placeholder sessions before adopting a materialized runtime session"
   );
   assert.equal(
+    controllerSource.includes("const isSameKind = created.sessionKind === current.sessionKind;"),
+    false,
+    "dialog restore adoption must not depend on sessionKind equality because runtime session:created does not preserve PM bootstrap sessionKind"
+  );
+  assert.equal(
     controllerSource.includes(
       "currentProviderSessionId === createdProviderSessionId"
     ),
