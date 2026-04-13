@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.978] - 2026-04-13
+### Added
+- **Core-side thinking translation trace logging**: every user-visible thinking message now writes a correlation trail to `~/.codeai-hub/logs/core/core.log`, covering message persistence, translation dispatch start, translation completion/fallback, overlay append, and session/dialog translation patch broadcast.
+
+### Changed
+- **Diagnostic release for mixed-language Codex thinking**: this build is meant to capture why only part of a multi-fragment Codex reasoning burst receives localized overlay patches. It does not yet change UI aggregation or translation-engine policy.
+
+### Not fixed yet
+- **Partial thinking localization remains under investigation**: native rollout segmentation and unified-session persistence are already confirmed correct; the open issue is why some reasoning `messageId`s complete the overlay path while others end in `fallback / empty_translation`.
+
 ## [1.1.977] - 2026-04-13
 ### Fixed
 - **PM artifact-language restart regression**: workflow prompt-pack assembly now falls back to the persisted browser localization bootstrap snapshot when live settings have not reloaded yet, so `Artifacts for the User` no longer silently degrades from `ru` to `en` after Project Manager reconnect/cold-start.

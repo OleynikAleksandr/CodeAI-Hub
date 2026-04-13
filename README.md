@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.977
+## Current Release — v1.1.978
+- **Thinking translation pipeline tracing in Core**: Core now logs the full lifecycle of each thinking translation candidate by `sessionId`, `messageId`, and `sourceHash`: append, translation dispatch, translation result, overlay persistence, and patch broadcast.
+- **Overlay persistence diagnostics**: unified session storage now records when each translated thinking overlay is appended to `*.translations.jsonl`, including the resolved target file path.
+- **Diagnostic-only release**: this package is intended to capture why only part of a Codex thinking burst receives localized overlay patches; it does not yet claim a behavioural fix for the mixed-language thinking regression.
+
+### 1.1.977 (previous)
 - **Codex artifact language no longer falls back to English after PM restart**: Project Manager now reuses the persisted browser localization bootstrap snapshot when live settings cache is not ready, so `Artifacts for the User` stays aligned with the saved runtime language.
 - **Codex translation runtime survives legacy auth layout**: isolated translation-only Codex homes now bootstrap from provider home first and transparently fall back to legacy `~/.codex` auth/cache when needed.
 - **Thinking translation chunks stay independent**: Codex reasoning delta messages now emit deterministic per-chunk ids instead of reusing one provider item id, preventing later translation overlays from overwriting earlier thinking fragments in live/replay/history paths.
