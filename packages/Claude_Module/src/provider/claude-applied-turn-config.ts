@@ -8,6 +8,7 @@ export interface AppliedClaudeTurnConfig {
   readonly reasoningEffort?: "low" | "medium" | "high" | "max";
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
+  readonly translationEngineId?: string;
 }
 
 const readOptionalTrimmedString = (value: unknown): string | undefined =>
@@ -43,6 +44,9 @@ const readAppliedClaudeTurnConfig = (
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
         ? candidate.thinkingDisplaySyncEnabled
         : true,
+    translationEngineId: readOptionalTrimmedString(
+      candidate.translationEngineId
+    ),
   };
 };
 
@@ -67,4 +71,8 @@ export const applyClaudeTurnRuntimeConfig = (options: {
   }
   options.owner.runtimeTurnConfig.thinkingDisplaySyncEnabled =
     appliedConfig.thinkingDisplaySyncEnabled;
+  if (appliedConfig.translationEngineId) {
+    options.owner.runtimeTurnConfig.translationEngineId =
+      appliedConfig.translationEngineId;
+  }
 };

@@ -24,6 +24,7 @@ export interface ClaudeRuntimeTurnConfig {
   reasoningEffort?: "low" | "medium" | "high" | "max";
   thinkingDisplaySyncEnabled?: boolean;
   thinkingEnabled?: boolean;
+  translationEngineId?: string;
 }
 
 export interface ClaudeQueuedTurn {
