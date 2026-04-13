@@ -1,6 +1,6 @@
 # Session Usage Limits Refresh Architecture
 
-**Status:** Updated after release smoke (2026-04-12)
+**Status:** Updated after release smoke + diagnostics instrumentation (2026-04-13)
 **Created:** 2026-04-12
 **Owner:** Oleksandr + Codex
 **Scope:** Fix the Session ID + Usage Limits panel refresh flow so usage limits reload when Project Manager restores the active session on workspace open and when the user switches between workflow steps/sessions.
@@ -133,6 +133,35 @@ Expected touch points:
 - `src/client/ui/src/session/helpers.ts`
 - `src/client/project-manager/components/sessions/usage-limits-stream.ts`
 - provider adapters for Claude/Codex/Gemini
+
+## 6. Diagnostic Follow-Up After Release 1.1.968
+
+Release smoke for `1.1.968` exposed one more path-specific regression signature:
+
+1. when Project Manager auto-selects the last active workflow step on workspace open, usage limits can fail to appear forever for that auto-opened step;
+2. after a manual step switch away and back, the same step often shows limits correctly.
+
+This symptom indicates a likely race in the restore/bootstrap sequence rather than a provider quota-reader failure.
+
+### 6.1. Investigation hypothesis
+
+The highest-probability failure mode is:
+
+1. PM resolves the dialog/runtime session shell during auto-select;
+2. `Session ID + Usage Limits` triggers manual refresh before the real runtime session is materialized in Core;
+3. Core drops or skips that refresh because the runtime session binding is still absent;
+4. later manual step switching remounts the panel and replays the same refresh after runtime session bootstrap is complete.
+
+### 6.2. Diagnostic requirement
+
+To validate that sequence, PM and Core must emit one correlated diagnostic chain into file-backed logs under `~/.codeai-hub/logs/`:
+
+1. PM dialog bootstrap resolution (`dialogId`, `preferredRuntimeSessionId`, `resolvedRuntimeSessionId`, `hasRuntimeSession`, `restoreRequested`);
+2. PM `refreshUsageLimits(...)` request payload;
+3. Core refresh decision (`runtimeSessionFound`, `boundProviderSessionId`, `adapterAvailable`);
+4. Core final outcome (`refresh dispatched` vs `refresh skipped`).
+
+For standalone PM this means diagnostics must not rely on browser DevTools console as the primary source of truth; PM signals should be forwarded into Core-owned file logging.
 
 Tests must cover:
 
