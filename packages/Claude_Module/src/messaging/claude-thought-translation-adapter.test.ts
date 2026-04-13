@@ -61,3 +61,23 @@ test("ClaudeThoughtTranslationAdapter skips translation when target language is 
   assert.equal(translated, null);
   assert.deepEqual(calls, []);
 });
+
+test("ClaudeThoughtTranslationAdapter forwards the selected translation engine", async () => {
+  const engineIds: string[] = [];
+  const adapter = new ClaudeThoughtTranslationAdapter(undefined, {
+    translate: (request: TranslationRequest) => {
+      engineIds.push(request.engineId ?? "");
+      return Promise.resolve(
+        createTranslatedResult(request, `[ru] ${request.text}`)
+      );
+    },
+  });
+
+  await adapter.translateReasoning(
+    "Need to read the file",
+    "ru",
+    "codex-gpt-5.4-mini"
+  );
+
+  assert.deepEqual(engineIds, ["codex-gpt-5.4-mini"]);
+});

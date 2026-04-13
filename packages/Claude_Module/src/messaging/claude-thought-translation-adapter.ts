@@ -9,7 +9,7 @@ import {
 const SOURCE_LANGUAGE = "en";
 const TRANSLATION_MAX_CHUNK_CHARS = 1200;
 const TRANSLATION_TIMEOUT_MS = 5000;
-const TRANSLATION_ENGINE_ID = "google-gtx";
+const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 const TRANSLATION_PROVIDER_ID = "claude";
 
 const resolveTargetLanguage = (value?: string): string | null => {
@@ -24,11 +24,13 @@ const resolveTargetLanguage = (value?: string): string | null => {
 export interface ClaudeTextTranslationAdapter {
   translateReasoning(
     text: string,
-    targetLanguage?: string
+    targetLanguage?: string,
+    translationEngineId?: string
   ): Promise<string | null>;
   translateUserFacingText(
     text: string,
-    targetLanguage?: string
+    targetLanguage?: string,
+    translationEngineId?: string
   ): Promise<string | null>;
 }
 
@@ -56,9 +58,10 @@ export class ClaudeThoughtTranslationAdapter
 
   translateReasoning(
     text: string,
-    targetLanguage?: string
+    targetLanguage?: string,
+    translationEngineId?: string
   ): Promise<string | null> {
-    return this.translateText(text, targetLanguage, {
+    return this.translateText(text, targetLanguage, translationEngineId, {
       category: "reasoning",
       warningLabel: "Claude reasoning translation failed",
     });
@@ -66,9 +69,10 @@ export class ClaudeThoughtTranslationAdapter
 
   translateUserFacingText(
     text: string,
-    targetLanguage?: string
+    targetLanguage?: string,
+    translationEngineId?: string
   ): Promise<string | null> {
-    return this.translateText(text, targetLanguage, {
+    return this.translateText(text, targetLanguage, translationEngineId, {
       category: "generic",
       warningLabel: "Claude assistant text translation failed",
     });
@@ -77,6 +81,7 @@ export class ClaudeThoughtTranslationAdapter
   private async translateText(
     text: string,
     targetLanguage: string | undefined,
+    translationEngineId: string | undefined,
     options: {
       readonly category: TranslationRequest["category"];
       readonly warningLabel: string;
@@ -91,7 +96,11 @@ export class ClaudeThoughtTranslationAdapter
     try {
       const requestBase = {
         category: options.category,
-        engineId: TRANSLATION_ENGINE_ID,
+        engineId:
+          typeof translationEngineId === "string" &&
+          translationEngineId.trim().length > 0
+            ? translationEngineId
+            : DEFAULT_TRANSLATION_ENGINE_ID,
         providerId: TRANSLATION_PROVIDER_ID,
         sourceLanguage: SOURCE_LANGUAGE,
         targetLanguage: resolvedTargetLanguage,

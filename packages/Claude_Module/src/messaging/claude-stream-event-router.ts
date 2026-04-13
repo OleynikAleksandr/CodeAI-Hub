@@ -348,7 +348,8 @@ export class ClaudeStreamEventRouter {
 
     const translated = await this.thoughtTranslator.translateUserFacingText(
       pending.content,
-      session.runtimeTurnConfig.messagesForTheUserLanguage
+      session.runtimeTurnConfig.messagesForTheUserLanguage,
+      session.runtimeTurnConfig.translationEngineId
     );
     return translated ?? pending.content;
   }
