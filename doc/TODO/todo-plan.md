@@ -62,10 +62,10 @@
 ## Phase 3 — Release Build (owner: Codex, updated: 2026-04-13)
 ### Stream: Release Notes Prep
 17. [DONE] Подготовить release notes и release-visible docs для следующей версии до build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare release notes for step provider override`
-18. [TODO] Git Commit: `docs: prepare release notes for step provider override` (hash: TBD)
+18. [DONE] Git Commit: `docs: prepare release notes for step provider override` (hash: `f7d1da976`)
 
 ### Stream: Build All Version Bump
-19. [TODO] Запустить `./scripts/build-all.sh`, проверить сгенерированные version surfaces и зафиксировать bump — scope: `root release metadata`, `VS Code extension/package manifests`, `bundled provider distributions`; ожидаемый commit message: `chore: bump version via build-all.sh`
+19. [DONE] Запустить `./scripts/build-all.sh`, проверить сгенерированные version surfaces и зафиксировать bump — scope: `root release metadata`, `VS Code extension/package manifests`, `bundled provider distributions`; ожидаемый commit message: `chore: bump version via build-all.sh`
 20. [TODO] Git Commit: `chore: bump version via build-all.sh` (hash: TBD)
 
 ### Stream: Final Release Packaging
