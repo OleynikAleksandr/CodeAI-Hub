@@ -87,7 +87,8 @@ export class GeminiAssistantEventNormalizer {
       const pending = this.thoughtTranslator
         .translateThought(
           value,
-          session.runtimeTurnConfig.messagesForTheUserLanguage
+          session.runtimeTurnConfig.messagesForTheUserLanguage,
+          session.runtimeTurnConfig.translationEngineId
         )
         .then((translated: string | null) => {
           this.emitDialogMessage(

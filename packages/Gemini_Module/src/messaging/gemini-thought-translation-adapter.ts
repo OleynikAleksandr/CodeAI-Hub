@@ -5,7 +5,7 @@ import type { ModuleReporter } from "../types";
 const SOURCE_LANGUAGE = "en";
 const TRANSLATION_TIMEOUT_MS = 3000;
 const TRANSLATION_CATEGORY = "reasoning";
-const TRANSLATION_ENGINE_ID = "google-gtx";
+const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 const TRANSLATION_PROVIDER_ID = "gemini";
 
 const resolveTargetLanguage = (value?: string): string | null => {
@@ -33,7 +33,8 @@ export class GeminiThoughtTranslationAdapter {
 
   async translateThought(
     thought: ThoughtSummaryLike,
-    targetLanguage?: string
+    targetLanguage?: string,
+    translationEngineId?: string
   ): Promise<string | null> {
     const input = this.buildInput(thought);
     const resolvedTargetLanguage = resolveTargetLanguage(targetLanguage);
@@ -44,7 +45,11 @@ export class GeminiThoughtTranslationAdapter {
     try {
       const request = {
         category: TRANSLATION_CATEGORY,
-        engineId: TRANSLATION_ENGINE_ID,
+        engineId:
+          typeof translationEngineId === "string" &&
+          translationEngineId.trim().length > 0
+            ? translationEngineId
+            : DEFAULT_TRANSLATION_ENGINE_ID,
         providerId: TRANSLATION_PROVIDER_ID,
         sourceLanguage: SOURCE_LANGUAGE,
         targetLanguage: resolvedTargetLanguage,

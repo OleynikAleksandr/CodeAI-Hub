@@ -206,6 +206,7 @@ test("GeminiSessionManager treats late stall after terminal answer as completed 
 test("GeminiSessionManager flushes delayed translated thinking before one final assistant answer", async () => {
   const finalAnswer = "Финальное описание готово.";
   const translatedThinking = "Сначала закончу внутреннюю проверку.";
+  let capturedTranslationEngineId: string | undefined;
   const manager = new GeminiSessionManager(
     createModules(
       ["provider-session-translated-thinking-dedup"],
@@ -232,11 +233,18 @@ test("GeminiSessionManager flushes delayed translated thinking before one final 
     manager as unknown as {
       thoughtTranslator: {
         translateThought: (
-          thought: Readonly<{ description: string; subject: string }>
+          thought: Readonly<{ description: string; subject: string }>,
+          _targetLanguage?: string,
+          translationEngineId?: string
         ) => Promise<string | null>;
       };
     }
-  ).thoughtTranslator.translateThought = async () => {
+  ).thoughtTranslator.translateThought = async (
+    _thought,
+    _targetLanguage,
+    translationEngineId
+  ) => {
+    capturedTranslationEngineId = translationEngineId;
     await new Promise((resolve) => setTimeout(resolve, 20));
     return translatedThinking;
   };
@@ -244,6 +252,7 @@ test("GeminiSessionManager flushes delayed translated thinking before one final 
   const result = await manager.createSession({
     workspacePath: "/tmp/workspace-translated-thinking-dedup",
   });
+  result.session.runtimeTurnConfig.translationEngineId = "codex-gpt-5.4-mini";
   const events: unknown[] = [];
   result.session.eventEmitter.on("message", (payload) => {
     events.push(payload);
@@ -273,6 +282,7 @@ test("GeminiSessionManager flushes delayed translated thinking before one final 
     1
   );
   assert.equal(fallbackAssistantEvents.length, 0);
+  assert.equal(capturedTranslationEngineId, "codex-gpt-5.4-mini");
   assert.equal(
     events.filter(
       (payload) => (payload as { type?: string }).type === "turn_completed"
