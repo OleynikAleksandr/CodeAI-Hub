@@ -53,10 +53,10 @@
 
 ### Stream: Workflow and PM SSOT Sync
 13. [DONE] Обновить trunk workflow и PM cluster docs под inline provider override contract — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; ожидаемый commit message: `docs: sync workflow provider override contract`
-14. [TODO] Git Commit: `docs: sync workflow provider override contract` (hash: TBD)
+14. [DONE] Git Commit: `docs: sync workflow provider override contract` (hash: `f93af3237`)
 
 ### Stream: Session UI Module Sync
-15. [TODO] Обновить factual docs для status panel и usage limits bar под chosen-provider start path — scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; ожидаемый commit message: `docs: sync session ui provider override behavior`
+15. [DONE] Обновить factual docs для status panel и usage limits bar под chosen-provider start path — scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; ожидаемый commit message: `docs: sync session ui provider override behavior`
 16. [TODO] Git Commit: `docs: sync session ui provider override behavior` (hash: TBD)
 
 ## Phase 3 — Release Build (owner: Codex, updated: 2026-04-13)

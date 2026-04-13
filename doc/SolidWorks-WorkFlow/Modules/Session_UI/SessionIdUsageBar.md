@@ -75,6 +75,14 @@ Refresh effect перевычисляется при изменении:
 
 Это важный инвариант: панель не имеет права отправлять refresh для placeholder session, пока у неё нет подтверждённой runtime identity.
 
+### Chosen-provider start path
+
+Если новый trunk step был запущен с confirmation card на провайдере, отличном от previous-step default:
+- bootstrap snapshot всё равно должен нести provider identity выбранного шага, чтобы usage surface не осталась привязанной к старой provider family;
+- пока binding ещё `pending`, панель может показывать только pending/unavailable state и не должна отправлять refresh;
+- как только PM принимает materialized runtime session и binding становится `ready`, refresh обязан уйти с `sessionId` + `providerId` + `providerSessionId` именно нового выбранного provider path;
+- после этого `status.providerScopeKey` / fallback labels и live limits принадлежат новой provider family (`claude`, `codex` или `gemini`), а не предыдущему trunk step.
+
 ## Финальный dialog/auto-select contract после 1.1.971
 
 Проблемный path был связан не с рендером самих полос, а с тем, какая session считалась активной в момент первого auto-open.
@@ -105,6 +113,11 @@ Refresh effect перевычисляется при изменении:
 - placeholder snapshot удаляется;
 - все накопленные messages/todos переносятся на materialized session;
 - `SessionIdBar` получает новый `sessionId` + `binding.status = "ready"` и триггерит session-scoped refresh.
+
+Для provider override start path этот же adoption contract критичен ещё и для provider family:
+- placeholder snapshot уже должен быть seeded выбранным provider;
+- materialized runtime session должна совпасть по тому же provider path;
+- только тогда первый ready-refresh покажет лимиты выбранного провайдера без промежуточного показа лимитов предыдущего шага.
 
 ## Что именно было исправлено
 
