@@ -25,6 +25,9 @@
     "packages/localization": {
       "entry": ["src/**/*.test.ts"]
     },
+    "packages/translation": {
+      "entry": ["src/**/*.test.ts"]
+    },
     "packages/initiatives": {},
     "packages/unified-session": {
       "entry": ["src/**/*.test.ts"]

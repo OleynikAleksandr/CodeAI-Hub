@@ -79,6 +79,7 @@ Implementation notes:
 - The facade depends on the engine contract, not on Google-specific code directly.
 - The request/response helpers stay split into small files so no single utility file becomes a new runtime god module.
 - `google-gtx` remains the zero-config default; the two Codex-backed engines reuse an isolated translation-only Codex runtime instead of the full workspace agent surface.
+- the isolated Codex translation runtime resolves authentication artifacts from provider home first and falls back to legacy `~/.codex` artifacts when the provider-owned home has not been materialized yet; missing `models_cache.json` is tolerated, but missing auth is still a hard failure.
 - The package stays engine-pluggable so a different backend can be added later without changing consumer contracts.
 
 ---
@@ -201,6 +202,8 @@ This invariant exists because provider bundles are loaded outside the repo works
 
 6. Installed provider bundles that use runtime translation must remain runnable without the repo workspace dependency tree.
    Required shared runtime dependencies are copied into the provider bundle root by the build pipeline.
+7. Codex-backed translation runtimes must not assume the provider-owned Codex home already exists on disk.
+   Translation-only isolated homes must be able to bootstrap from legacy `~/.codex` authentication artifacts so cold-start and freshly migrated installs do not fail before the first translation request.
 
 ---
 

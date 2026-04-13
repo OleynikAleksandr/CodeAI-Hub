@@ -1,7 +1,15 @@
-import { copyFile, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  copyFile,
+  mkdir,
+  mkdtemp,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
+const LEGACY_CODEX_HOME = path.join(homedir(), ".codex");
 const PROVIDER_CODEX_HOME = path.join(
   homedir(),
   ".codeai-hub",
@@ -42,15 +50,19 @@ const buildConfigToml = (options: {
     "",
   ].join("\n");
 
-const copyProviderArtifact = async (
-  sourceHome: string,
-  destinationHome: string,
-  fileName: string
-): Promise<void> => {
-  await copyFile(
-    path.join(sourceHome, fileName),
-    path.join(destinationHome, fileName)
-  );
+const resolveExistingArtifactPath = async (
+  candidatePaths: readonly string[]
+): Promise<string | null> => {
+  for (const candidatePath of candidatePaths) {
+    try {
+      await access(candidatePath);
+      return candidatePath;
+    } catch {
+      // Continue until an existing artifact is found.
+    }
+  }
+
+  return null;
 };
 
 export interface CodexTranslationRuntimeOptions {
@@ -67,7 +79,20 @@ export interface CodexTranslationRuntimeHandle {
   readonly workspacePath: string;
 }
 
+export interface CodexTranslationRuntimeHomeFacadeOptions {
+  readonly legacyCodexHome?: string;
+  readonly providerCodexHome?: string;
+}
+
 export class CodexTranslationRuntimeHomeFacade {
+  private readonly legacyCodexHome: string;
+  private readonly providerCodexHome: string;
+
+  constructor(options: CodexTranslationRuntimeHomeFacadeOptions = {}) {
+    this.legacyCodexHome = options.legacyCodexHome ?? LEGACY_CODEX_HOME;
+    this.providerCodexHome = options.providerCodexHome ?? PROVIDER_CODEX_HOME;
+  }
+
   async materialize(
     options: CodexTranslationRuntimeOptions
   ): Promise<CodexTranslationRuntimeHandle> {
@@ -79,12 +104,8 @@ export class CodexTranslationRuntimeHomeFacade {
     await mkdir(homePath, { recursive: true });
     await mkdir(workspacePath, { recursive: true });
 
-    await copyProviderArtifact(PROVIDER_CODEX_HOME, homePath, CODEX_AUTH_FILE);
-    await copyProviderArtifact(
-      PROVIDER_CODEX_HOME,
-      homePath,
-      CODEX_MODELS_CACHE_FILE
-    );
+    await this.copyRequiredArtifact(homePath, CODEX_AUTH_FILE);
+    await this.copyOptionalArtifact(homePath, CODEX_MODELS_CACHE_FILE);
 
     const instructionsFilePath = path.join(homePath, DEFAULT_INSTRUCTIONS_FILE);
     await writeFile(
@@ -92,6 +113,7 @@ export class CodexTranslationRuntimeHomeFacade {
       `${options.modelInstructions.trim()}\n`,
       "utf8"
     );
+
     await writeFile(
       path.join(homePath, "config.toml"),
       buildConfigToml({
@@ -116,5 +138,34 @@ export class CodexTranslationRuntimeHomeFacade {
         });
       },
     };
+  }
+
+  private async copyRequiredArtifact(
+    destinationHome: string,
+    fileName: string
+  ): Promise<void> {
+    const sourcePath = await this.resolveArtifactPath(fileName);
+    if (!sourcePath) {
+      throw new Error(`Codex translation runtime missing required ${fileName}`);
+    }
+    await copyFile(sourcePath, path.join(destinationHome, fileName));
+  }
+
+  private async copyOptionalArtifact(
+    destinationHome: string,
+    fileName: string
+  ): Promise<void> {
+    const sourcePath = await this.resolveArtifactPath(fileName);
+    if (!sourcePath) {
+      return;
+    }
+    await copyFile(sourcePath, path.join(destinationHome, fileName));
+  }
+
+  private resolveArtifactPath(fileName: string): Promise<string | null> {
+    return resolveExistingArtifactPath([
+      path.join(this.providerCodexHome, fileName),
+      path.join(this.legacyCodexHome, fileName),
+    ]);
   }
 }
