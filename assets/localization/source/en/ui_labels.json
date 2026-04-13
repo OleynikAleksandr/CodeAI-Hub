@@ -74,5 +74,7 @@
   "pm.confirmation_card.start_button": "Start step",
   "pm.confirmation_card.starting_button": "Starting...",
   "pm.confirmation_card.artifact_available": "available",
-  "pm.confirmation_card.artifact_not_found": "not found"
+  "pm.confirmation_card.artifact_not_found": "not found",
+  "pm.confirmation_card.provider_label": "Agent provider",
+  "pm.confirmation_card.previous_provider_badge": "previous step"
 }

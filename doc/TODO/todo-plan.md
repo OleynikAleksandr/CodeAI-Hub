@@ -36,10 +36,10 @@
 
 ### Stream: Confirmation Card Selector
 5. [DONE] Добавить inline provider selector и явный provider forwarding в start path confirmation card — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx`, `src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; ожидаемый commit message: `feat: add provider override to stage confirmation card`
-6. [TODO] Git Commit: `feat: add provider override to stage confirmation card` (hash: TBD)
+6. [DONE] Git Commit: `feat: add provider override to stage confirmation card` (hash: `826faa373`)
 
 ### Stream: Confirmation Card Localization
-7. [TODO] Синхронизировать localized copy для provider override card — scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `assets/localization/source/en/messages_for_the_user.json`; ожидаемый commit message: `docs: localize stage confirmation provider override copy`
+7. [DONE] Синхронизировать localized copy для provider override card — scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`, `assets/localization/source/en/messages_for_the_user.json`; ожидаемый commit message: `docs: localize stage confirmation provider override copy`
 8. [TODO] Git Commit: `docs: localize stage confirmation provider override copy` (hash: TBD)
 
 ## Phase 2 — Runtime Sync and Documentation (owner: Codex, updated: 2026-04-13)

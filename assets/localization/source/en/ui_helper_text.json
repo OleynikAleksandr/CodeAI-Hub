@@ -111,5 +111,7 @@
   "pm.confirmation_card.input_label": "This step will use the following artifact as input:",
   "pm.confirmation_card.confirm_warning": "By clicking Start, you confirm that the {upstreamStage} artifact is complete and ready for the next step. The agent will begin working immediately.",
   "pm.confirmation_card.blocked.virtual_simulation": "Complete the Description step first.",
-  "pm.confirmation_card.blocked.diagram_modules": "Complete the Virtual Simulation step first."
+  "pm.confirmation_card.blocked.diagram_modules": "Complete the Virtual Simulation step first.",
+  "pm.confirmation_card.selected_provider_hint": "{providerTitle} is preselected from the previous step. You can switch to any available provider before launch. If you do nothing, Start step will continue with that provider.",
+  "pm.confirmation_card.selected_provider_override_hint": "{providerTitle} is selected for this step. Start step will launch the new session on that provider, and you can still switch before launch."
 }

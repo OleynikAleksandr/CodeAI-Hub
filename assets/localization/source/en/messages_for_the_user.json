@@ -85,5 +85,5 @@
   "pm.diagram_modules.help.runtime_templates": "The runtime templates for this step live in `.codeai-hub/templates/diagram_modules/`: the main frame defines the staged contract for the index and part files, `diagram-modules-field-reference.md` explains the field meanings, and the merge and compatibility aggregate rules are described in `diagram-modules-merge-rules.md`.",
   "pm.diagram_modules.help.module_map_note": "`module-map.flow.json` does not describe the architecture. This file stores layout only and may update during progressive graph regeneration or after manual card dragging.",
   "pm.diagram_modules.help.refinement_guidance": "The agent should ask only the missing questions and stop refining once it considers the inventory a strong enough foundation to continue. The decision to move forward still stays with you.",
-  "pm.confirmation_card.no_provider": "No provider available for the agent."
+  "pm.confirmation_card.no_provider": "No connected provider is available for this step."
 }
