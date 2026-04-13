@@ -32,6 +32,18 @@ const isSubstantiveFallbackCandidate = (content: string): boolean => {
   );
 };
 
+const buildReasoningDeltaMessageId = (
+  itemId: string,
+  fullText: string
+): string => {
+  const fingerprint = crypto
+    .createHash("sha1")
+    .update(fullText)
+    .digest("hex")
+    .slice(0, 12);
+  return `${itemId}::reasoning:${fingerprint}`;
+};
+
 export class CodexStreamEventRouter {
   private readonly emitter: CodexSessionEventEmitter;
   private readonly fallbackAssistantCandidates = new Map<
@@ -171,7 +183,12 @@ export class CodexStreamEventRouter {
         item.text
       );
       if (delta) {
-        this.emitter.emitDialogMessage(session, "thinking", delta, item.id);
+        this.emitter.emitDialogMessage(
+          session,
+          "thinking",
+          delta,
+          buildReasoningDeltaMessageId(item.id, item.text)
+        );
       }
       return;
     }
@@ -182,7 +199,12 @@ export class CodexStreamEventRouter {
         item.text
       );
       if (delta) {
-        this.emitter.emitDialogMessage(session, "thinking", delta, item.id);
+        this.emitter.emitDialogMessage(
+          session,
+          "thinking",
+          delta,
+          buildReasoningDeltaMessageId(item.id, item.text)
+        );
       }
     }
   }

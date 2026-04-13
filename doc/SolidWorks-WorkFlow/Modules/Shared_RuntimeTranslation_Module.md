@@ -139,11 +139,12 @@ Runtime thinking translation is now consumed by Core instead of provider-local v
 
 Current live overlay rules:
 
-- providers emit native/source thinking text immediately with stable `messageId`;
+- providers emit native/source thinking text immediately with stable per-emission `messageId`;
 - Core decides whether that message should be translated and calls `TranslationFacade.translate(...)` asynchronously;
 - successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;
 - history reads merge `localizedContent` from the sidecar only when `messageId + sourceHash` still match, so stale translations are ignored;
 - UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
+- providers that stream one reasoning item across multiple visible delta messages must not reuse the same `messageId` for every delta chunk; overlay/replay stores are keyed by `messageId`, so later translations would otherwise overwrite earlier thinking fragments from the same provider item.
 
 ### 5.2 Provider boundary
 
