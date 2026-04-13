@@ -342,16 +342,14 @@ export class ClaudeStreamEventRouter {
       return pending.content;
     }
 
-    const translated =
-      pending.semanticRole === "thinking"
-        ? await this.thoughtTranslator.translateReasoning(
-            pending.content,
-            session.runtimeTurnConfig.messagesForTheUserLanguage
-          )
-        : await this.thoughtTranslator.translateUserFacingText(
-            pending.content,
-            session.runtimeTurnConfig.messagesForTheUserLanguage
-          );
+    if (pending.semanticRole === "thinking") {
+      return pending.content;
+    }
+
+    const translated = await this.thoughtTranslator.translateUserFacingText(
+      pending.content,
+      session.runtimeTurnConfig.messagesForTheUserLanguage
+    );
     return translated ?? pending.content;
   }
 
@@ -407,10 +405,10 @@ export class ClaudeStreamEventRouter {
     return suggestedResponse;
   }
 
-  private async emitThinkingChunks(
+  private emitThinkingChunks(
     session: ActiveSession,
     message: ClaudeStreamMessage
-  ): Promise<void> {
+  ): void {
     const content = message.message?.content;
     if (!Array.isArray(content)) {
       return;
@@ -428,16 +426,7 @@ export class ClaudeStreamEventRouter {
           this.thinkingMessageIdBySession.set(session.sessionId, messageId);
         }
         const thinking = (block as { readonly thinking: string }).thinking;
-        const translated = await this.thoughtTranslator.translateReasoning(
-          thinking,
-          session.runtimeTurnConfig.messagesForTheUserLanguage
-        );
-        emitClaudeThinkingDialog(
-          session,
-          message,
-          translated ?? thinking,
-          "thinking"
-        );
+        emitClaudeThinkingDialog(session, message, thinking, "thinking");
       }
     }
   }
