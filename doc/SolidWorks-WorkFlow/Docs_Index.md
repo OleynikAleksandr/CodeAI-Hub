@@ -63,6 +63,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Codex_TranslationEngine_ReleaseHotfix_Architecture.md` — active release-hotfix scope for the `1.1.975` Codex translation-engine regression (`Spark` thinking translation + missing final assistant under rollout `outputSchema`).
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — design intake для branch-level workflow сразу после `Diagram Modules`; формализует `Product Part Specification`, единые design-step'ы `Cluster Design` / `Module Design` с парой артефактов `specification + facade contract`, standalone-module path, wave-level contracts и readiness gate в `Implementation Foundation`.
 - `Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md` — design draft для визуализации Development Tree в левом сайдбаре PM (Product Part → Cluster → Module без artifact leaves); фиксирует PP frame, cluster connector lines, `PP`/`CL`/`M` type badges, удаление дубликата workspace root, перенос Part/Cluster/Module artifacts в tabs Artifacts panel, tooltip-on-hover requirement и открытые вопросы (Documentation Tree, custom tooltip delay, accordion mode); содержит ссылку на интерактивный prototype `doc/tmp/prototypes/development-tree-sidebar.html`.
 - `Plans/Implementation_Foundation_Architecture.md` — design intake для позднего branch-level шага после `Diagram Modules` и approved specs/contracts выбранной wave; описывает subtree scaffold, stack-specific environments, quality gates, scripts и knowledge artifacts перед кодом.
