@@ -233,6 +233,7 @@ Current live browser behavior:
 - Settings WebView reads that snapshot through HTML bootstrap injection (`window.__CODEAI_LOCALIZATION_BOOTSTRAP__`) before JS mounts;
 - Project Manager reads the same persisted snapshot through core HTTP endpoint `/api/v1/localization/bootstrap` before `root.render(...)`;
 - settings webview and Project Manager app root feed that payload into the shared `LocalizationProvider`, so localized surfaces do not resolve bundles independently;
+- workflow prompt-pack assembly in Project Manager must treat the persisted browser bootstrap snapshot as a valid fallback source for `Artifacts for the User` language when live `settings:loaded` cache is not ready yet; reconnect/cold-start paths must not silently degrade staged artifact language back to default `en` while persisted localization state still says `ru`;
 - the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;

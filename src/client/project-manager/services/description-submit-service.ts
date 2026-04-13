@@ -1,5 +1,6 @@
 import type { ProviderStackId } from "../../../types/provider";
 import { api } from "../api";
+import { readBrowserLocalizationBootstrapSnapshot } from "../../ui/src/app-host/localization-runtime-contract";
 import type { SettingsLoadedPayload } from "../core-stream-message-types";
 import { IDEA_COLLECTOR_FALLBACK_SCHEMA } from "../../ui/src/services/idea-collector-fallback-schema";
 import { normalizeIdeaCollectorSchema } from "../../ui/src/services/idea-collector-schema-utils";
@@ -46,6 +47,24 @@ const normalizeArtifactLanguage = (value: unknown): string | null => {
     : normalized;
 };
 
+const resolveBootstrapArtifactLanguage = (): string | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const bootstrapSettings = readBrowserLocalizationBootstrapSnapshot()?.settings;
+  const categories =
+    bootstrapSettings &&
+    isRecordValue(bootstrapSettings.categories)
+      ? bootstrapSettings.categories
+      : null;
+
+  return (
+    normalizeArtifactLanguage(categories?.artifacts_for_the_user) ??
+    normalizeArtifactLanguage(categories?.interactive_templates)
+  );
+};
+
 export const resolveArtifactsForTheUserLanguage = (
   payload: SettingsLoadedPayload | null | undefined
 ): string => {
@@ -61,6 +80,7 @@ export const resolveArtifactsForTheUserLanguage = (
   return (
     normalizeArtifactLanguage(categories?.artifactsForTheUser) ??
     normalizeArtifactLanguage(categories?.interactiveTemplates) ??
+    resolveBootstrapArtifactLanguage() ??
     DEFAULT_ARTIFACT_LANGUAGE
   );
 };
