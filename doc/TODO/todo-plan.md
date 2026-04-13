@@ -45,10 +45,10 @@
 ## Phase 2 — Runtime Sync and Documentation (owner: Codex, updated: 2026-04-13)
 ### Stream: Dialog Bootstrap Provider Sync
 9. [DONE] Привязать dialog bootstrap к explicit provider intent для model/status и usage-limits surfaces нового step session — scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; ожидаемый commit message: `fix: seed dialog bootstrap from chosen step provider`
-10. [TODO] Git Commit: `fix: seed dialog bootstrap from chosen step provider` (hash: TBD)
+10. [DONE] Git Commit: `fix: seed dialog bootstrap from chosen step provider` (hash: `95aadaec7`)
 
 ### Stream: Runtime Surface Regression Locks
-11. [TODO] Зафиксировать тестами, что status bar и usage refresh продолжают следовать runtime provider path после step start — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/ui/src/session/session-id-bar.test.tsx`; ожидаемый commit message: `test: cover provider override runtime sync`
+11. [DONE] Зафиксировать тестами, что status bar и usage refresh продолжают следовать runtime provider path после step start — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/ui/src/session/session-id-bar.test.tsx`; ожидаемый commit message: `test: cover provider override runtime sync`
 12. [TODO] Git Commit: `test: cover provider override runtime sync` (hash: TBD)
 
 ### Stream: Workflow and PM SSOT Sync

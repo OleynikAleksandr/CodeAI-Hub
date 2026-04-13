@@ -86,4 +86,24 @@ test("SessionIdBar refresh effect waits for ready binding state", async () => {
     true,
     "usage limits refresh effect must rerun when binding status changes to ready"
   );
+  assert.equal(
+    source.includes("const rawProviderId = resolveRawProviderId(status);"),
+    true,
+    "usage limits refresh must resolve provider from live runtime status"
+  );
+  assert.equal(
+    source.includes("providerId: rawProviderId,"),
+    true,
+    "usage limits refresh request must use the runtime provider identity"
+  );
+  assert.equal(
+    source.includes("binding.providerSessionId,"),
+    true,
+    "usage limits refresh effect must rerun when the bound provider session changes"
+  );
+  assert.equal(
+    source.includes("sessionId,"),
+    true,
+    "usage limits refresh effect must follow the active runtime session id"
+  );
 });

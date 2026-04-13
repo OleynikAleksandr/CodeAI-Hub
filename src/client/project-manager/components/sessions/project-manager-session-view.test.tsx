@@ -67,11 +67,16 @@ test("project-manager-dialog-session-view wires usage limits refresh into Sessio
   const source = await readFile(DIALOG_SOURCE_PATH, "utf8");
 
   assert.equal(
+    source.includes("useRuntimeModelSync(session?.id ?? null, setSnapshots);"),
+    true
+  );
+  assert.equal(
     source.includes("const handleRefreshUsageLimits = useCallback("),
     true
   );
   assert.equal(source.includes("api.refreshUsageLimits(request);"), true);
   assert.equal(source.includes("onRefreshUsageLimits={handleRefreshUsageLimits}"), true);
+  assert.equal(source.includes("activeSessionId={session.id}"), true);
 });
 
 test("project-manager-runtime-session-view does not seed empty state from browser-local dialog cache", async () => {
