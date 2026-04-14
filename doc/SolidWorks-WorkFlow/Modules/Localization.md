@@ -192,8 +192,8 @@ Current browser bootstrap snapshot contract stores:
 Important live behaviors:
 
 - identical source strings are deduplicated within one materialization run;
-- the materializer now opts into explicit shared `chunkingMode = "auto"` so long help/settings strings follow the same engine-aware safe chunk planner as live runtime translation;
-- bundle materialization tracks how many unique translation operations ended in whole-string fallback versus assembled `partial_fallback`, so verification can distinguish "nothing translated" from "some chunks stayed English by design";
+- interface/bootstrap bundle materialization now opts into explicit `chunkingMode = "disabled"` and prefers one large request per dictionary batch instead of shared chunk planning;
+- bundle materialization uses dynamic watchdog timeouts plus automatic retry and tracks how many unique translation operations ended in whole-string fallback versus assembled `partial_fallback`, so verification can distinguish "nothing translated" from "some chunks stayed English by design";
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`;
@@ -203,6 +203,7 @@ Important live behaviors:
   - `codex-gpt-5.3-codex-spark`
 - the same persisted `translationEngineId` now also feeds Core-owned live thinking overlay translation; Localization still does not own the overlay storage or replay path, but it remains the SSOT for which engine the product selected.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
+- strict settings save-path synchronization now materializes required translated runtime bundles in deterministic order (`user_guidance -> system_feedback -> interactive_templates -> ui_interface -> workflow_terms`) and refuses to emit a ready payload while any required bundle still contains fallback or `partial_fallback` entries.
 - workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
 - mixed DSL artifacts may keep canonical structural names/titles in English even while surrounding descriptive prose follows `Artifacts for the User`; `Diagram Modules` `Product Part` / `Cluster` / `Module` naming is the live reference case.
 
@@ -235,6 +236,7 @@ Current live browser behavior:
 - Settings WebView reads that snapshot through HTML bootstrap injection (`window.__CODEAI_LOCALIZATION_BOOTSTRAP__`) before JS mounts;
 - Project Manager reads the same persisted snapshot through core HTTP endpoint `/api/v1/localization/bootstrap` before `root.render(...)`;
 - settings webview and Project Manager app root feed that payload into the shared `LocalizationProvider`, so localized surfaces do not resolve bundles independently;
+- Settings `Save Changes` now drives a blocking strict localization sync through `LocalizationFacade.synchronizeRuntimePayload(...)`; the settings surface stays busy, and Project Manager/new session sends stay blocked until translated interface bundles are ready;
 - workflow prompt-pack assembly in Project Manager must treat the persisted browser bootstrap snapshot as a valid fallback source for `Artifacts for the User` language when live `settings:loaded` cache is not ready yet; reconnect/cold-start paths must not silently degrade staged artifact language back to default `en` while persisted localization state still says `ru`;
 - the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
@@ -279,11 +281,12 @@ Release verification additionally relies on:
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 
-The current chunked-materialization baseline validates that:
+The current localization recovery baseline validates that:
 
-- localization bundles compile against the shared chunk-planning path without changing the source-dictionary/glossary ownership boundary;
+- localization bundles compile after strict save-path synchronization, deterministic required-bundle ordering, and non-chunked interface materialization without changing the source-dictionary/glossary ownership boundary;
 - `LocalizationMaterializationResult` now exposes counts for whole-string fallback versus `partial_fallback` among unique translation operations, so operator verification can distinguish timeout classes during future repros;
-- `@codeai-hub/core` and `@codeai-hub/localization` still build successfully against the updated shared translation contract.
+- `@codeai-hub/core`, `@codeai-hub/localization`, `build:webview`, and `typecheck:webview` still pass against the updated recovery contract;
+- Core-owned live translation overlays now serialize dispatch through one shared queue and stay disabled until a matching localization bootstrap snapshot is ready for the current settings.
 
 ---
 

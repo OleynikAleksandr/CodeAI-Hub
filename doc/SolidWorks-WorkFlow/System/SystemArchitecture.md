@@ -74,7 +74,7 @@
    - Канон: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
 20. **Development Tree read model and sidebar-only navigation**: the top stage toolbar is removed (v1.1.924). Sidebar Workflow Tree is the sole navigation surface, split into two labeled sections: **Documentation Tree** (trunk stages as leaf nodes) and **Development Tree** (branch nodes). Trunk stages use three-color indicators: gray (idle — nothing exists), orange (in_progress — session started, no final artifact), green (artifact available). On workspace open, sidebar auto-selects the last non-idle stage (diagram_modules → virtual_simulation → description). Zoom badge relocated from diagram canvas to status bar. After Diagram Modules, the workflow-state API exposes a `developmentTree` snapshot with Product Part / Cluster / Module tree structure derived from generated product-part artifacts. The sidebar projects these as collapsible branch nodes with skeleton/materialized/draft status. Branch-node selection dispatches `pm:branch:selected` and updates the main area panel header with a placeholder surface.
    - Канон: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md`.
-21. **Universal translation chunking invariant**: long user-facing translation requests must be chunked at safe text boundaries through the shared translation package using engine-specific conservative budgets; if one chunk fails, fallback-to-English is allowed only for that chunk, while neighbouring chunks may still translate and assemble into one final surface.
+21. **Translation execution-mode invariant**: live/user-facing translation requests may use shared safe chunk planning with engine-specific conservative budgets, but interface/bootstrap localization is allowed to opt out of chunking and use strict whole-request materialization. In both modes, fallback handling must be explicit: live overlays may degrade per message, while startup localization sync may not report ready until required bundles are fully materialized.
    - Канон: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
 
 ## 4) Где искать правду в коде (high-signal)
@@ -123,6 +123,7 @@
   - `src/core/webview-module/webview-html-generator.ts` injects `window.__CODEAI_LOCALIZATION_BOOTSTRAP__` into Settings WebView HTML when a persisted startup snapshot exists
   - `src/client/ui/src/index.tsx` and `src/client/project-manager/index.tsx` perform pre-render localization bootstrap hydration, while `/api/v1/localization/bootstrap` feeds the Project Manager cold-start path
   - `src/client/ui/src/app-host/settings-only-host.tsx` and `src/client/project-manager/app.tsx` provide one shared `LocalizationProvider` at the app boundary; localized PM leaves consume that provider instead of loading settings locally
+  - settings save-path now performs a blocking strict localization sync before emitting `settings:saved`; Project Manager and new session sends stay blocked until required translated bundles are ready
   - bundled English source catalogs are no longer embedded as live browser data; component fallback strings remain only as a last-resort safety path when neither persisted bootstrap snapshot nor refreshed runtime payload is available
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
   - the localization card now exposes engine selection through a catalog-backed selector and language selection through a searchable combobox; visible `English` maps to canonical persisted `source`
@@ -135,7 +136,7 @@
   - providers now emit source-first thinking/reasoning with stable `messageId`, and Core owns async translation scheduling, persistence, and live bridge patching (`session:message_translation`, `dialog:message_translation`)
   - canonical session/dialog transcript stays native-only; translated text is stored separately in per-session `*.translations.jsonl` overlays and merged back into history as `localizedContent` only when `messageId + sourceHash` still match
   - UI renders `localizedContent ?? content`, so late translation completion upgrades already-visible messages in place without delaying the original thinking stream
-  - long translation candidates now flow through the shared chunk planner before engine dispatch, so one slow sub-fragment no longer forces whole-message fallback by default
+  - live overlay translation now resolves settings per dispatch, serializes execution through one shared worker queue, and refuses to start while the persisted localization bootstrap snapshot does not match current settings
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing

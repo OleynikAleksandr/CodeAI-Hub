@@ -58,12 +58,12 @@
 16. [DONE] Git Commit: `feat: serialize live session translation` (hash: `f8a3ca464`)
 
 ### Stream: Residual regression triage
-17. [IN_PROGRESS] Повторно проверить и чинить restart hydration / runtime model label drift только после стабилизации translation path, если баги сохранятся — scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; ожидаемый commit message: `fix: resolve remaining localization sync regressions`
-18. [TODO] Git Commit: `fix: resolve remaining localization sync regressions` (hash: TBD)
+17. [DONE] Повторно проверить и чинить restart hydration / runtime model label drift только после стабилизации translation path, если баги сохранятся — scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; ожидаемый commit message: `fix: resolve remaining localization sync regressions`
+18. [DONE] Git Commit: `fix: resolve remaining localization sync regressions` (hash: `2bfe0ae85`)
 
 ## Phase 5 — Documentation and release (owner: Codex, updated: 2026-04-14)
 ### Stream: Documentation sync and targeted verification
-19. [TODO] Синхронизировать SSOT и зафиксировать targeted verification после recovery implementation — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: record localization recovery contract`
+19. [IN_PROGRESS] Синхронизировать SSOT и зафиксировать targeted verification после recovery implementation — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: record localization recovery contract`
 20. [TODO] Git Commit: `docs: record localization recovery contract` (hash: TBD)
 
 ### Stream: Release preparation
