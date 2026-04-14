@@ -35,5 +35,7 @@
 4. [DONE] Git Commit: `docs: prepare release 1.1.983 notes` (hash: `b9d480c7b`)
 
 ### Stream: Release Wave And Closeout
-5. [IN_PROGRESS] Выполнить таргетные проверки, `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем заархивировать завершённые planning/todo артефакты текущего scope и обновить навигационный closeout. Scope: release/build wave, `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/TODO/Archive.zip`. Commit: `build: prepare release 1.1.983 artifacts`
+5. [DONE] Выполнить таргетные проверки и `./scripts/build-all.sh`, затем зафиксировать релизную волну версии `1.1.983` (version bumps + manifests) отдельным коммитом перед финальной упаковкой. Scope: release/build wave, `package.json`, `package-lock.json`, `assets/*/manifest.json`. Commit: `build: prepare release 1.1.983 artifacts`
 6. [TODO] Git Commit: `build: prepare release 1.1.983 artifacts` (hash: TBD)
+7. [TODO] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, затем заархивировать завершённые planning/todo артефакты текущего scope и обновить навигационный closeout без нового активного execution scope. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/TODO/Archive.zip`, `doc/SolidWorks-WorkFlow/Docs_Index.md`. Commit: `docs: close thinking translation hotfix scope`
+8. [TODO] Git Commit: `docs: close thinking translation hotfix scope` (hash: TBD)
