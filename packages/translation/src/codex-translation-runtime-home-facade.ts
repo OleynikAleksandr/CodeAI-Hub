@@ -1,9 +1,12 @@
 import {
   access,
   copyFile,
+  cp,
+  lstat,
   mkdir,
   mkdtemp,
   rm,
+  symlink,
   writeFile,
 } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -22,6 +25,13 @@ const DEFAULT_SANDBOX_MODE = "read-only";
 const DEFAULT_REASONING_SUMMARY = "none";
 const CODEX_AUTH_FILE = "auth.json";
 const CODEX_MODELS_CACHE_FILE = "models_cache.json";
+const OPTIONAL_BOOTSTRAP_ARTIFACTS = [
+  ".tmp/app-server-remote-plugin-sync-v1",
+  ".tmp/plugins",
+  ".tmp/plugins.sha",
+  "installation_id",
+  "skills",
+] as const;
 
 const toTomlString = (value: string): string =>
   `"${value.split("\\").join("\\\\").split('"').join('\\"')}"`;
@@ -106,6 +116,7 @@ export class CodexTranslationRuntimeHomeFacade {
 
     await this.copyRequiredArtifact(homePath, CODEX_AUTH_FILE);
     await this.copyOptionalArtifact(homePath, CODEX_MODELS_CACHE_FILE);
+    await this.reuseOptionalBootstrapArtifacts(homePath);
 
     const instructionsFilePath = path.join(homePath, DEFAULT_INSTRUCTIONS_FILE);
     await writeFile(
@@ -167,5 +178,37 @@ export class CodexTranslationRuntimeHomeFacade {
       path.join(this.providerCodexHome, fileName),
       path.join(this.legacyCodexHome, fileName),
     ]);
+  }
+
+  private async reuseOptionalBootstrapArtifacts(
+    destinationHome: string
+  ): Promise<void> {
+    for (const relativePath of OPTIONAL_BOOTSTRAP_ARTIFACTS) {
+      await this.reuseOptionalArtifact(destinationHome, relativePath);
+    }
+  }
+
+  private async reuseOptionalArtifact(
+    destinationHome: string,
+    relativePath: string
+  ): Promise<void> {
+    const sourcePath = await this.resolveArtifactPath(relativePath);
+    if (!sourcePath) {
+      return;
+    }
+
+    const destinationPath = path.join(destinationHome, relativePath);
+    await mkdir(path.dirname(destinationPath), { recursive: true });
+    const sourceStats = await lstat(sourcePath);
+    const symlinkType =
+      process.platform === "win32" && sourceStats.isDirectory()
+        ? "junction"
+        : undefined;
+
+    try {
+      await symlink(sourcePath, destinationPath, symlinkType);
+    } catch {
+      await cp(sourcePath, destinationPath, { recursive: true });
+    }
   }
 }

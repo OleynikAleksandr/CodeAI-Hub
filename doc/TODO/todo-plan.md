@@ -34,11 +34,11 @@
 
 ## Phase 3 — Interface localization performance recovery (owner: Codex, updated: 2026-04-14)
 ### Stream: Bundle-level localization batching
-5. [IN_PROGRESS] Перевести interface localization с per-entry translation на structured bundle-level batch requests без semantic chunk planner — scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-materializer.test.ts`, один translation helper при необходимости; ожидаемый commit message: `feat: batch interface localization bundles`
-6. [TODO] Git Commit: `feat: batch interface localization bundles` (hash: TBD)
+5. [DONE] Перевести interface localization с per-entry translation на structured bundle-level batch requests без semantic chunk planner — scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-materializer.test.ts`, один translation helper при необходимости; ожидаемый commit message: `feat: batch interface localization bundles`
+6. [DONE] Git Commit: `feat: batch interface localization bundles` (hash: `27cb566e1`)
 
 ### Stream: Codex translation runtime warm bootstrap
-7. [TODO] Убрать повторный plugin bootstrap в temp Codex translation runtime через reuse provider-home artifacts — scope: `packages/translation/src/codex-translation-runtime-home-facade.ts`, optional translation test, `doc/TODO/todo-plan.md`; ожидаемый commit message: `perf: reuse codex translation runtime bootstrap artifacts`
+7. [IN_PROGRESS] Убрать повторный plugin bootstrap в temp Codex translation runtime через reuse provider-home artifacts — scope: `packages/translation/src/codex-translation-runtime-home-facade.ts`, optional translation test, `doc/TODO/todo-plan.md`; ожидаемый commit message: `perf: reuse codex translation runtime bootstrap artifacts`
 8. [TODO] Git Commit: `perf: reuse codex translation runtime bootstrap artifacts` (hash: TBD)
 
 ## Phase 4 — Documentation sync and verification (owner: Codex, updated: 2026-04-14)

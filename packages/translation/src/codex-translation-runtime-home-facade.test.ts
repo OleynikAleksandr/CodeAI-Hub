@@ -93,3 +93,99 @@ test("CodexTranslationRuntimeHomeFacade tolerates missing models cache", async (
     await rm(root, { recursive: true, force: true });
   }
 });
+
+test("CodexTranslationRuntimeHomeFacade reuses bootstrap artifacts from legacy home", async () => {
+  const root = await createTempRoot();
+  const legacyCodexHome = path.join(root, "legacy");
+  const providerCodexHome = path.join(root, "provider-missing");
+
+  await mkdir(path.join(legacyCodexHome, ".tmp", "plugins"), {
+    recursive: true,
+  });
+  await mkdir(path.join(legacyCodexHome, "skills", ".system"), {
+    recursive: true,
+  });
+  await writeFile(
+    path.join(legacyCodexHome, "auth.json"),
+    '{"token":"legacy"}\n',
+    "utf8"
+  );
+  await writeFile(
+    path.join(legacyCodexHome, ".tmp", "plugins", "README.md"),
+    "plugin-cache\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(legacyCodexHome, ".tmp", "plugins.sha"),
+    "sha256:cached\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(legacyCodexHome, ".tmp", "app-server-remote-plugin-sync-v1"),
+    "synced\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(legacyCodexHome, "installation_id"),
+    "installation-123\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(
+      legacyCodexHome,
+      "skills",
+      ".system",
+      ".codex-system-skills.marker"
+    ),
+    "installed\n",
+    "utf8"
+  );
+
+  const facade = new CodexTranslationRuntimeHomeFacade({
+    legacyCodexHome,
+    providerCodexHome,
+  });
+
+  const runtime = await facade.materialize({
+    modelId: "gpt-5.4-mini",
+    modelInstructions: "Translate precisely.",
+    reasoningEffort: "low",
+  });
+
+  try {
+    const runtimePluginReadme = await readFile(
+      path.join(runtime.homePath, ".tmp", "plugins", "README.md"),
+      "utf8"
+    );
+    const runtimePluginSha = await readFile(
+      path.join(runtime.homePath, ".tmp", "plugins.sha"),
+      "utf8"
+    );
+    const runtimeSyncMarker = await readFile(
+      path.join(runtime.homePath, ".tmp", "app-server-remote-plugin-sync-v1"),
+      "utf8"
+    );
+    const runtimeInstallationId = await readFile(
+      path.join(runtime.homePath, "installation_id"),
+      "utf8"
+    );
+    const runtimeSkillsMarker = await readFile(
+      path.join(
+        runtime.homePath,
+        "skills",
+        ".system",
+        ".codex-system-skills.marker"
+      ),
+      "utf8"
+    );
+
+    assert.equal(runtimePluginReadme, "plugin-cache\n");
+    assert.equal(runtimePluginSha, "sha256:cached\n");
+    assert.equal(runtimeSyncMarker, "synced\n");
+    assert.equal(runtimeInstallationId, "installation-123\n");
+    assert.equal(runtimeSkillsMarker, "installed\n");
+  } finally {
+    await runtime.cleanup();
+    await rm(root, { recursive: true, force: true });
+  }
+});
