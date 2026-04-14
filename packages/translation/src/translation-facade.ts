@@ -1,5 +1,6 @@
 import { CodexCliTranslationEngine } from "./codex-cli-translation-engine";
 import { GoogleTranslateClient } from "./google-translate-client";
+import { createTranslationChunkPlan } from "./translation-chunk-planner";
 import type {
   TranslationReporter,
   TranslationRequest,
@@ -55,6 +56,51 @@ const createFallbackResult = (
   translatedText: null,
 });
 
+const createTranslatedResult = (
+  request: TranslationRequest,
+  engine: string,
+  translatedText: string,
+  errorCode?: string
+): TranslationResult => ({
+  engine,
+  errorCode,
+  finalText: translatedText,
+  originalText: request.text,
+  sourceLanguage: request.sourceLanguage,
+  status: "translated",
+  targetLanguage: request.targetLanguage,
+  translatedText,
+});
+
+const createChunkedResult = (
+  request: TranslationRequest,
+  chunkResults: readonly TranslationResult[],
+  resolvedEngineId: string
+): TranslationResult => {
+  const finalText = chunkResults.map((result) => result.finalText).join("");
+  const translatedChunkCount = chunkResults.filter(
+    (result) => result.status === "translated"
+  ).length;
+
+  if (translatedChunkCount === 0) {
+    return createFallbackResult(
+      request,
+      resolvedEngineId,
+      chunkResults.find((result) => result.errorCode)?.errorCode ??
+        "chunk_translation_failed"
+    );
+  }
+
+  return createTranslatedResult(
+    request,
+    resolvedEngineId,
+    finalText,
+    translatedChunkCount === chunkResults.length
+      ? undefined
+      : "partial_fallback"
+  );
+};
+
 export class TranslationFacade {
   private readonly reporter?: TranslationReporter;
   private readonly registry: TranslationEngineRegistry;
@@ -84,7 +130,24 @@ export class TranslationFacade {
     }
 
     try {
-      return await engine.translate(normalized);
+      const chunkPlan = createTranslationChunkPlan(
+        normalized.text,
+        normalized.chunkPolicy
+      );
+      if (chunkPlan.chunkCount <= 1) {
+        return await engine.translate(normalized);
+      }
+
+      const chunkResults: TranslationResult[] = [];
+      for (const chunk of chunkPlan.chunks) {
+        chunkResults.push(
+          await engine.translate({
+            ...normalized,
+            text: chunk.text,
+          })
+        );
+      }
+      return createChunkedResult(normalized, chunkResults, engine.id);
     } catch (error) {
       this.reporter?.warn?.("Translation engine threw unexpectedly", {
         engineId: engine.id,
