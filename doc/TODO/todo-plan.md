@@ -29,15 +29,15 @@
 1. [DONE] Закрыть предыдущий diagnostic planning scope и утвердить `Universal_ChunkedTranslation_Architecture.md` как новый planning source — scope: `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/SolidWorks-WorkFlow/Plans/Codex_ThinkingTranslation_Diagnostics_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Universal_ChunkedTranslation_Architecture.md`; ожидаемый commit message: `docs: approve universal chunked translation scope`
 2. [DONE] Git Commit: `docs: approve universal chunked translation scope` (hash: `b02e1e358`)
 3. [DONE] Архивировать завершённый diagnostic `todo-plan`, открыть tracked active-path для TODO-документов и оформить новый active execution plan для universal chunked translation — scope: `.gitignore`, `doc/TODO/Archive.zip`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: activate universal chunked translation plan`
-4. [TODO] Git Commit: `docs: activate universal chunked translation plan` (hash: TBD)
+4. [DONE] Git Commit: `docs: activate universal chunked translation plan` (hash: `4a1d2dbb7`)
 
 ### Stream: Shared translation foundation
-5. [IN_PROGRESS] Добавить engine-specific chunk policy contract и registry для shared translation boundary — scope: `packages/translation/src/translation-contract.ts`, `packages/translation/src/translation-request-normalizer.ts`, `packages/translation/src/translation-engine-profile-registry.ts`; ожидаемый commit message: `feat: add translation chunk policy profiles`
-6. [TODO] Git Commit: `feat: add translation chunk policy profiles` (hash: TBD)
-7. [TODO] Реализовать safe chunk boundary resolver / planner / assembler для markdown-safe translation splits — scope: `packages/translation/src/translation-chunk-boundary-resolver.ts`, `packages/translation/src/translation-chunk-planner.ts`, `packages/translation/src/translation-chunk-assembler.ts`; ожидаемый commit message: `feat: add translation chunk planner primitives`
-8. [TODO] Git Commit: `feat: add translation chunk planner primitives` (hash: TBD)
-9. [TODO] Подключить universal chunking к `TranslationFacade` и обновить SSOT shared runtime translation module — scope: `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; ожидаемый commit message: `feat: enable chunked shared translation`
-10. [TODO] Git Commit: `feat: enable chunked shared translation` (hash: TBD)
+5. [DONE] Добавить engine-specific chunk policy contract и registry для shared translation boundary — scope: `packages/translation/src/translation-contract.ts`, `packages/translation/src/translation-request-normalizer.ts`, `packages/translation/src/translation-engine-profile-registry.ts`; ожидаемый commit message: `feat: add translation chunk policy profiles`
+6. [DONE] Git Commit: `feat: add translation chunk policy profiles` (hash: `750d21b4b`)
+7. [DONE] Реализовать safe chunk boundary resolver / planner и подключить per-chunk execution path в `TranslationFacade` — scope: `packages/translation/src/translation-chunk-boundary-resolver.ts`, `packages/translation/src/translation-chunk-planner.ts`, `packages/translation/src/translation-facade.ts`; ожидаемый commit message: `feat: add translation chunk planner primitives`
+8. [DONE] Git Commit: `feat: add translation chunk planner primitives` (hash: `664bcb6aa`)
+9. [DONE] Синхронизировать SSOT shared runtime translation module и system-level invariants с новым chunked translation contract — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync chunked translation module contract`
+10. [TODO] Git Commit: `docs: sync chunked translation module contract` (hash: TBD)
 
 ## Phase 2 — Consumer integration and diagnostics (owner: Codex, updated: 2026-04-14)
 ### Stream: Core live translation path

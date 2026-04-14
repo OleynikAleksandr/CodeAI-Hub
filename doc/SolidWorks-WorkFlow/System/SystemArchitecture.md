@@ -20,7 +20,7 @@
 - **UI bundles**: `project-manager`, `vscode-webview`.
 - **CEF Launcher**: локальный клиент для Project Manager.
 - **Providers**: Claude/Codex/Gemini модули (CLI/SDK контуры).
-- **Shared runtime translation module**: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (package: `packages/translation/`; engine-neutral facade used by Gemini today and future localization adapters tomorrow).
+- **Shared runtime translation module**: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (package: `packages/translation/`; engine-neutral facade with engine-aware safe chunk planning and per-chunk fallback assembly for live overlays today and localization adapters tomorrow).
 - **Localization module**: `doc/SolidWorks-WorkFlow/Modules/Localization.md` (package: `packages/localization/`; owns bundled English source catalogs, glossary protection, localized bundle persistence, runtime payload contracts, and UI lookup primitives).
 - **Gemini bundled runtime dependency**: installed Gemini provider bundles vendor `@codeai-hub/translation` into their own runtime root so the provider can resolve the shared translation package outside the workspace `node_modules` tree.
 
@@ -74,6 +74,8 @@
    - Канон: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`, `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`.
 20. **Development Tree read model and sidebar-only navigation**: the top stage toolbar is removed (v1.1.924). Sidebar Workflow Tree is the sole navigation surface, split into two labeled sections: **Documentation Tree** (trunk stages as leaf nodes) and **Development Tree** (branch nodes). Trunk stages use three-color indicators: gray (idle — nothing exists), orange (in_progress — session started, no final artifact), green (artifact available). On workspace open, sidebar auto-selects the last non-idle stage (diagram_modules → virtual_simulation → description). Zoom badge relocated from diagram canvas to status bar. After Diagram Modules, the workflow-state API exposes a `developmentTree` snapshot with Product Part / Cluster / Module tree structure derived from generated product-part artifacts. The sidebar projects these as collapsible branch nodes with skeleton/materialized/draft status. Branch-node selection dispatches `pm:branch:selected` and updates the main area panel header with a placeholder surface.
    - Канон: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md`.
+21. **Universal translation chunking invariant**: long user-facing translation requests must be chunked at safe text boundaries through the shared translation package using engine-specific conservative budgets; if one chunk fails, fallback-to-English is allowed only for that chunk, while neighbouring chunks may still translate and assemble into one final surface.
+   - Канон: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`.
 
 ## 4) Где искать правду в коде (high-signal)
 
@@ -112,6 +114,9 @@
   - `src/localization-facade.ts` = thin public package façade
   - `src/localization-contract.ts`, `src/localization-facade.ts` = runtime payload contract plus materialized bundle resolution
   - `src/localization-materializer.ts`, `src/source-dictionary-registry.ts`, `src/glossary-*.ts`, `src/localization-*-store.ts` = source dictionaries, glossary protection, bundle persistence, metadata reuse
+- Shared translation package: `packages/translation/`
+  - `src/translation-facade.ts` = thin facade that now resolves engine-specific chunk policies and assembles per-chunk translation results into one request-level outcome
+  - `src/translation-engine-profile-registry.ts`, `src/translation-chunk-boundary-resolver.ts`, `src/translation-chunk-planner.ts` = internal chunk-budget registry plus safe-boundary planning path used before dispatching long translation requests
 - Browser localization lookup: `src/client/ui/src/app-host/use-localization.ts`
   - shared browser-side localization runtime consumed by settings host and localized PM surfaces
   - `src/extension-module/message-handlers/settings-message-handler.ts` and `packages/core/src/remote-bridge/handlers/settings-request-handler.ts` now hydrate `localizationRuntime` payloads from persisted settings before sending them into the browser
@@ -130,6 +135,7 @@
   - providers now emit source-first thinking/reasoning with stable `messageId`, and Core owns async translation scheduling, persistence, and live bridge patching (`session:message_translation`, `dialog:message_translation`)
   - canonical session/dialog transcript stays native-only; translated text is stored separately in per-session `*.translations.jsonl` overlays and merged back into history as `localizedContent` only when `messageId + sourceHash` still match
   - UI renders `localizedContent ?? content`, so late translation completion upgrades already-visible messages in place without delaying the original thinking stream
+  - long translation candidates now flow through the shared chunk planner before engine dispatch, so one slow sub-fragment no longer forces whole-message fallback by default
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing
