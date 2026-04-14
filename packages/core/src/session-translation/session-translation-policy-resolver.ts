@@ -7,7 +7,6 @@ import {
   LOCALIZATION_SOURCE_SELECTION,
   type LocalizationRuntimeSettingsSnapshot,
   type LocalizationWorkflowTermsPolicy,
-  resolveLocalizationPaths,
 } from "@codeai-hub/localization";
 import {
   loadMessagesForTheUserLanguage,
@@ -68,6 +67,14 @@ const resolveLocalizationCategory = (
 
 const resolveCodeAiHomeDirectory = (settingsPath: string): string =>
   path.dirname(path.dirname(settingsPath));
+
+const resolveBrowserRuntimeBootstrapPath = (settingsPath: string): string =>
+  path.join(
+    resolveCodeAiHomeDirectory(settingsPath),
+    "localization",
+    "cache",
+    "browser-runtime-bootstrap.json"
+  );
 
 const parseSettingsSnapshot = (
   value: unknown
@@ -240,8 +247,7 @@ export class SessionTranslationPolicyResolver {
   } | null {
     try {
       const raw = readFileSync(
-        resolveLocalizationPaths(resolveCodeAiHomeDirectory(settingsPath))
-          .browserRuntimeBootstrapFilePath,
+        resolveBrowserRuntimeBootstrapPath(settingsPath),
         "utf8"
       );
       const parsed = JSON.parse(raw) as unknown;

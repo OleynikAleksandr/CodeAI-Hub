@@ -157,6 +157,7 @@ Current live overlay rules:
 
 - providers emit native/source thinking text immediately with stable per-emission `messageId`;
 - Core decides whether that message should be translated and calls `TranslationFacade.translate(...)` asynchronously;
+- the Core translation gate enables live reasoning translation only after the persisted localization bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` matches the active localization settings and reports `system_feedback.source = "materialized"`;
 - successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;
 - history reads merge `localizedContent` from the sidecar only when `messageId + sourceHash` still match, so stale translations are ignored;
 - UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
