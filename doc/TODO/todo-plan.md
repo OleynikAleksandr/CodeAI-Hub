@@ -49,8 +49,8 @@
 12. [DONE] Git Commit: `feat: add resilient localization translation retries` (hash: `17d788417`)
 
 ### Stream: Deterministic bundle completion
-13. [IN_PROGRESS] Ввести deterministic category priority (`ui_helper_text` → `messages_for_the_user` → `artifacts_for_the_user` → `ui_labels` → `workflow_terms`) и strict sync-ready completion gate без partial fallback acceptance — scope: `packages/localization/src/localization-facade.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`; ожидаемый commit message: `feat: prioritize required localization bundles`
-14. [TODO] Git Commit: `feat: prioritize required localization bundles` (hash: TBD)
+13. [DONE] Ввести deterministic category priority (`ui_helper_text` → `messages_for_the_user` → `artifacts_for_the_user` → `ui_labels` → `workflow_terms`) и strict sync-ready completion gate без partial fallback acceptance — scope: `packages/localization/src/localization-facade.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`; ожидаемый commit message: `feat: prioritize required localization bundles`
+14. [DONE] Git Commit: `feat: prioritize required localization bundles` (hash: `65f308114`)
 
 ## Phase 4 — Live translation stabilization and residual bug triage (owner: Codex, updated: 2026-04-14)
 ### Stream: Session translation queue
