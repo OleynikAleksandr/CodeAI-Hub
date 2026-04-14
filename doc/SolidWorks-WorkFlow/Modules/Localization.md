@@ -192,8 +192,8 @@ Current browser bootstrap snapshot contract stores:
 Important live behaviors:
 
 - identical source strings are deduplicated within one materialization run;
-- interface/bootstrap bundle materialization now opts into explicit `chunkingMode = "disabled"` and prefers one large request per dictionary batch instead of shared chunk planning;
-- bundle materialization uses dynamic watchdog timeouts plus automatic retry and tracks how many unique translation operations ended in whole-string fallback versus assembled `partial_fallback`, so verification can distinguish "nothing translated" from "some chunks stayed English by design";
+- interface/bootstrap bundle materialization now opts into explicit `chunkingMode = "disabled"` and sends one structured marker-preserving batch request per dictionary bundle instead of per-entry translation or shared semantic chunk planning;
+- bundle materialization uses dynamic watchdog timeouts plus automatic retry; strict save-sync treats missing/malformed marker segments as entry-level `partial_fallback` and does not report ready until every required entry in the selected bundle set parses successfully;
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`;
@@ -204,6 +204,7 @@ Important live behaviors:
 - the same persisted `translationEngineId` now also feeds Core-owned live thinking overlay translation; Localization still does not own the overlay storage or replay path, but it remains the SSOT for which engine the product selected.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - strict settings save-path synchronization now materializes required translated runtime bundles in deterministic order (`user_guidance -> system_feedback -> interactive_templates -> ui_interface -> workflow_terms`) and refuses to emit a ready payload while any required bundle still contains fallback or `partial_fallback` entries.
+- Codex-backed bundle materialization now reuses warm bootstrap artifacts (`.tmp/plugins*`, `installation_id`, `skills`) from the resolved Codex home when building temp translation runtimes, so one bundle sync no longer pays repeated plugin bootstrap cost on every request.
 - workflow-created user-facing artifact shell text and brief user-facing workflow chat updates may follow the configured `Artifacts for the User` language, but internal prompt assets remain outside Localization materialization and stay English-only.
 - mixed DSL artifacts may keep canonical structural names/titles in English even while surrounding descriptive prose follows `Artifacts for the User`; `Diagram Modules` `Product Part` / `Cluster` / `Module` naming is the live reference case.
 
@@ -242,6 +243,7 @@ Current live browser behavior:
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;
 - the settings card exposes a constrained `Translation engine` selector with `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, and `OpenAI Codex · GPT-5.3 Codex Spark`, plus language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
+- Project Manager busy/localization blocking surfaces must keep hook order invariant across `busy -> ready` transitions; blocking may hide interactive content, but it must not mount a blank renderer shell after sync completion.
 
 ---
 
@@ -265,6 +267,9 @@ Current live browser behavior:
 
 Current validation surface:
 
+- `npx tsx --test packages/localization/src/localization-materializer.test.ts`
+- `npx tsx --test packages/translation/src/codex-translation-runtime-home-facade.test.ts`
+- `npx tsx --test src/client/project-manager/components/layout/main-area-panel-content.test.ts`
 - `npm run clean --workspace=@codeai-hub/translation`
 - `npm run build --workspace=@codeai-hub/translation`
 - `node --test packages/translation/dist/translation-chunk-boundary-resolver.test.js`

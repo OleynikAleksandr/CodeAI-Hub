@@ -38,10 +38,10 @@
 6. [DONE] Git Commit: `feat: batch interface localization bundles` (hash: `27cb566e1`)
 
 ### Stream: Codex translation runtime warm bootstrap
-7. [IN_PROGRESS] Убрать повторный plugin bootstrap в temp Codex translation runtime через reuse provider-home artifacts — scope: `packages/translation/src/codex-translation-runtime-home-facade.ts`, optional translation test, `doc/TODO/todo-plan.md`; ожидаемый commit message: `perf: reuse codex translation runtime bootstrap artifacts`
-8. [TODO] Git Commit: `perf: reuse codex translation runtime bootstrap artifacts` (hash: TBD)
+7. [DONE] Убрать повторный plugin bootstrap в temp Codex translation runtime через reuse provider-home artifacts — scope: `packages/translation/src/codex-translation-runtime-home-facade.ts`, optional translation test, `doc/TODO/todo-plan.md`; ожидаемый commit message: `perf: reuse codex translation runtime bootstrap artifacts`
+8. [DONE] Git Commit: `perf: reuse codex translation runtime bootstrap artifacts` (hash: `dbf2be100`)
 
 ## Phase 4 — Documentation sync and verification (owner: Codex, updated: 2026-04-14)
 ### Stream: SSOT and targeted checks
-9. [TODO] Синхронизировать SSOT по bundle-level interface batching и PM blocked-state safety, затем зафиксировать targeted verification — scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: record localization batching hotfix contract`
+9. [IN_PROGRESS] Синхронизировать SSOT по bundle-level interface batching и PM blocked-state safety, затем зафиксировать targeted verification — scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: record localization batching hotfix contract`
 10. [TODO] Git Commit: `docs: record localization batching hotfix contract` (hash: TBD)
