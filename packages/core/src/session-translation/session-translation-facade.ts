@@ -8,13 +8,12 @@ import {
   type SessionTranslationDispatchCandidate,
   SessionTranslationDispatcher,
 } from "./session-translation-dispatcher";
-import {
-  type SessionTranslationPolicy,
-  SessionTranslationPolicyResolver,
-} from "./session-translation-policy-resolver";
+import { SessionTranslationPolicyResolver } from "./session-translation-policy-resolver";
 
-const TRANSLATION_TIMEOUT_MS = 3000;
 const TRANSLATION_PREVIEW_LENGTH = 160;
+const TRANSLATION_TIMEOUT_BASE_MS = 5000;
+const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
+const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
 
 export interface SessionTranslationFacadeOptions {
   readonly logger: Logger;
@@ -49,25 +48,28 @@ const buildLogPreview = (content: string): string => {
   return `${normalized.slice(0, TRANSLATION_PREVIEW_LENGTH)}...`;
 };
 
+const resolveTranslationTimeoutMs = (content: string): number =>
+  Math.min(
+    TRANSLATION_TIMEOUT_MAX_MS,
+    TRANSLATION_TIMEOUT_BASE_MS +
+      content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
+  );
+
 export class SessionTranslationFacade {
   private readonly dispatcher = new SessionTranslationDispatcher();
   private readonly logger: Logger;
-  private readonly policy: SessionTranslationPolicy;
+  private readonly policyResolver = new SessionTranslationPolicyResolver();
+  private readonly settingsPath: string;
 
   constructor(options: SessionTranslationFacadeOptions) {
     this.logger = options.logger;
-    this.policy = new SessionTranslationPolicyResolver().resolve(
-      options.settingsPath
-    );
+    this.settingsPath = options.settingsPath;
   }
 
   shouldTranslateDialogMessage(
     candidate: SessionTranslationDispatchCandidate
   ): boolean {
-    return (
-      this.policy.enabled &&
-      this.dispatcher.shouldTranslateDialogMessage(candidate)
-    );
+    return this.dispatcher.shouldTranslateDialogMessage(candidate);
   }
 
   private createTranslationReporter(
@@ -104,7 +106,7 @@ export class SessionTranslationFacade {
     const thinkingCandidate = isThinkingTranslationCandidate(candidate);
     const dispatcherAccepted =
       this.dispatcher.shouldTranslateDialogMessage(candidate);
-    if (!(this.policy.enabled && dispatcherAccepted)) {
+    if (!dispatcherAccepted) {
       if (thinkingCandidate) {
         this.logger.info("Session translation skipped before dispatch", {
           sessionId: candidate.sessionId,
@@ -113,38 +115,21 @@ export class SessionTranslationFacade {
           tag: candidate.tag,
           contentLength: candidate.content.length,
           preview: buildLogPreview(candidate.content),
-          policyEnabled: this.policy.enabled,
+          policyEnabled: true,
           dispatcherAccepted,
-          engineId: this.policy.engineId,
-          targetLanguage: this.policy.targetLanguage,
-          skipReason: this.policy.enabled
-            ? "dispatcher_rejected"
-            : "policy_disabled",
-        });
-      }
-      return null;
-    }
-    if (!this.policy.targetLanguage) {
-      if (thinkingCandidate) {
-        this.logger.info("Session translation skipped before dispatch", {
-          sessionId: candidate.sessionId,
-          messageId: candidate.messageId,
-          role: candidate.role,
-          tag: candidate.tag,
-          contentLength: candidate.content.length,
-          preview: buildLogPreview(candidate.content),
-          policyEnabled: this.policy.enabled,
-          dispatcherAccepted,
-          engineId: this.policy.engineId,
-          targetLanguage: this.policy.targetLanguage,
-          skipReason: "missing_target_language",
+          engineId: null,
+          targetLanguage: null,
+          skipReason: "dispatcher_rejected",
         });
       }
       return null;
     }
 
     const sourceHash = computeSessionMessageSourceHash(candidate.content);
-    this.logger.info("Session translation dispatch started", {
+    const queuedAt = Date.now();
+    const queuedSnapshot = this.dispatcher.snapshot();
+    const timeoutMs = resolveTranslationTimeoutMs(candidate.content);
+    this.logger.info("Session translation queued", {
       sessionId: candidate.sessionId,
       messageId: candidate.messageId,
       role: candidate.role,
@@ -152,24 +137,34 @@ export class SessionTranslationFacade {
       sourceHash,
       contentLength: candidate.content.length,
       preview: buildLogPreview(candidate.content),
-      engineId: this.policy.engineId,
-      targetLanguage: this.policy.targetLanguage,
-      timeoutMs: TRANSLATION_TIMEOUT_MS,
+      activeJobs: queuedSnapshot.activeJobs,
+      pendingJobs: queuedSnapshot.pendingJobs,
+      timeoutMs,
     });
 
-    const translation = new TranslationFacade({
-      reporter: this.createTranslationReporter(candidate, sourceHash),
-    });
-    const result = await translation.translate({
-      category: "reasoning",
-      engineId: this.policy.engineId,
-      sourceLanguage: this.policy.sourceLanguage,
-      targetLanguage: this.policy.targetLanguage,
-      text: candidate.content,
-      timeoutMs: TRANSLATION_TIMEOUT_MS,
-    });
-    if (result.status !== "translated") {
-      this.logger.warn("Session translation returned non-translated result", {
+    return await this.dispatcher.dispatch(async () => {
+      const policy = this.policyResolver.resolve(this.settingsPath);
+      if (!(policy.enabled && policy.targetLanguage)) {
+        if (thinkingCandidate) {
+          this.logger.info("Session translation skipped before dispatch", {
+            sessionId: candidate.sessionId,
+            messageId: candidate.messageId,
+            role: candidate.role,
+            tag: candidate.tag,
+            contentLength: candidate.content.length,
+            preview: buildLogPreview(candidate.content),
+            policyEnabled: policy.enabled,
+            dispatcherAccepted,
+            engineId: policy.engineId,
+            targetLanguage: policy.targetLanguage,
+            skipReason: policy.skipReason ?? "policy_disabled",
+            queueWaitMs: Date.now() - queuedAt,
+          });
+        }
+        return null;
+      }
+
+      this.logger.info("Session translation dispatch started", {
         sessionId: candidate.sessionId,
         messageId: candidate.messageId,
         role: candidate.role,
@@ -177,21 +172,26 @@ export class SessionTranslationFacade {
         sourceHash,
         contentLength: candidate.content.length,
         preview: buildLogPreview(candidate.content),
-        requestedEngineId: this.policy.engineId,
-        resolvedEngineId: result.engine,
-        targetLanguage: this.policy.targetLanguage,
-        timeoutMs: TRANSLATION_TIMEOUT_MS,
-        status: result.status,
-        errorCode: result.errorCode,
+        engineId: policy.engineId,
+        targetLanguage: policy.targetLanguage,
+        timeoutMs,
+        queueWaitMs: Date.now() - queuedAt,
+        ...this.dispatcher.snapshot(),
       });
-      return null;
-    }
 
-    const translatedContent = result.finalText.trim();
-    if (translatedContent.length === 0) {
-      this.logger.warn(
-        "Session translation produced empty translated content",
-        {
+      const translation = new TranslationFacade({
+        reporter: this.createTranslationReporter(candidate, sourceHash),
+      });
+      const result = await translation.translate({
+        category: "reasoning",
+        engineId: policy.engineId,
+        sourceLanguage: policy.sourceLanguage,
+        targetLanguage: policy.targetLanguage,
+        text: candidate.content,
+        timeoutMs,
+      });
+      if (result.status !== "translated") {
+        this.logger.warn("Session translation returned non-translated result", {
           sessionId: candidate.sessionId,
           messageId: candidate.messageId,
           role: candidate.role,
@@ -199,35 +199,59 @@ export class SessionTranslationFacade {
           sourceHash,
           contentLength: candidate.content.length,
           preview: buildLogPreview(candidate.content),
-          requestedEngineId: this.policy.engineId,
+          requestedEngineId: policy.engineId,
           resolvedEngineId: result.engine,
-          targetLanguage: this.policy.targetLanguage,
-        }
-      );
-      return null;
-    }
+          targetLanguage: policy.targetLanguage,
+          timeoutMs,
+          status: result.status,
+          errorCode: result.errorCode,
+        });
+        return null;
+      }
 
-    this.logger.info("Session translation completed", {
-      sessionId: candidate.sessionId,
-      messageId: candidate.messageId,
-      role: candidate.role,
-      tag: candidate.tag,
-      sourceHash,
-      sourceLength: candidate.content.length,
-      translatedLength: translatedContent.length,
-      preview: buildLogPreview(candidate.content),
-      requestedEngineId: this.policy.engineId,
-      resolvedEngineId: result.engine,
-      targetLanguage: this.policy.targetLanguage,
-      timeoutMs: TRANSLATION_TIMEOUT_MS,
+      const translatedContent = result.finalText.trim();
+      if (translatedContent.length === 0) {
+        this.logger.warn(
+          "Session translation produced empty translated content",
+          {
+            sessionId: candidate.sessionId,
+            messageId: candidate.messageId,
+            role: candidate.role,
+            tag: candidate.tag,
+            sourceHash,
+            contentLength: candidate.content.length,
+            preview: buildLogPreview(candidate.content),
+            requestedEngineId: policy.engineId,
+            resolvedEngineId: result.engine,
+            targetLanguage: policy.targetLanguage,
+          }
+        );
+        return null;
+      }
+
+      this.logger.info("Session translation completed", {
+        sessionId: candidate.sessionId,
+        messageId: candidate.messageId,
+        role: candidate.role,
+        tag: candidate.tag,
+        sourceHash,
+        sourceLength: candidate.content.length,
+        translatedLength: translatedContent.length,
+        preview: buildLogPreview(candidate.content),
+        requestedEngineId: policy.engineId,
+        resolvedEngineId: result.engine,
+        targetLanguage: policy.targetLanguage,
+        timeoutMs,
+        queueWaitMs: Date.now() - queuedAt,
+      });
+
+      return {
+        sessionId: candidate.sessionId,
+        messageId: candidate.messageId,
+        sourceHash,
+        targetLanguage: policy.targetLanguage,
+        translatedContent,
+      };
     });
-
-    return {
-      sessionId: candidate.sessionId,
-      messageId: candidate.messageId,
-      sourceHash,
-      targetLanguage: this.policy.targetLanguage,
-      translatedContent,
-    };
   }
 }

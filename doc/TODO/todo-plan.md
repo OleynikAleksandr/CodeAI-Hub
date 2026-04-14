@@ -54,7 +54,7 @@
 
 ## Phase 4 — Live translation stabilization and residual bug triage (owner: Codex, updated: 2026-04-14)
 ### Stream: Session translation queue
-15. [TODO] Добавить queue/concurrency limit для live session translation и запретить ей конкурировать с initial localization sync — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `packages/core/src/session-translation/session-translation-dispatcher.ts`; ожидаемый commit message: `feat: serialize live session translation`
+15. [IN_PROGRESS] Добавить queue/concurrency limit для live session translation и запретить ей конкурировать с initial localization sync — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `packages/core/src/session-translation/session-translation-dispatcher.ts`; ожидаемый commit message: `feat: serialize live session translation`
 16. [TODO] Git Commit: `feat: serialize live session translation` (hash: TBD)
 
 ### Stream: Residual regression triage
