@@ -18,7 +18,7 @@ Current production use:
 - Core owns the runtime translation overlay pipeline for persisted thinking messages and broadcasts async `session:message_translation` / `dialog:message_translation` patches when translation completes;
 - translated text is stored as per-session sidecar overlay records (`*.translations.jsonl`) and is merged into history reads as `localizedContent`, while the source text remains the only canonical transcript;
 - translation failure is non-blocking and falls back to the original text in the visible UI.
-- long user-facing fragments are now planned into engine-aware safe chunks before dispatch, so one timeout no longer forces whole-string fallback by default.
+- long user-facing fragments are now planned into engine-aware safe chunks before dispatch, so one timeout no longer forces whole-string fallback by default, but live `reasoning` overlays now keep provider-emitted thinking blocks intact unless a caller explicitly opts back into chunking.
 
 Planned reuse boundary:
 
@@ -85,7 +85,7 @@ Implementation notes:
 - The facade depends on the engine contract, not on Google-specific code directly.
 - The request/response helpers stay split into small files so no single utility file becomes a new runtime god module.
 - `google-gtx` remains the zero-config default; the two Codex-backed engines reuse an isolated translation-only Codex runtime instead of the full workspace agent surface.
-- long requests are no longer sent as one monolithic string by default; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract.
+- long requests are no longer sent as one monolithic string by default for generic/document translation; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract, while `reasoning` defaults to one translate call per provider-emitted block.
 - safe boundary priority is paragraph break -> list boundary -> sentence boundary -> clause boundary -> hard split outside protected regions.
 - protected regions currently include fenced code, inline code, Markdown links, `{placeholders}`, and glossary markers such as `[[CAIHUB_TERM_n]]`.
 - initial conservative chunk budgets are engine-specific:
@@ -131,7 +131,7 @@ export class TranslationFacade {
 Contract rules:
 
 - `sourceLanguage` and `targetLanguage` are explicit on every request.
-- callers may leave `chunkingMode` unset and accept the engine-default chunk policy; `"disabled"` is an explicit opt-out, not the baseline.
+- callers may leave `chunkingMode` unset and accept the engine-default chunk policy for `generic` / `document` translation, while `reasoning` now defaults to `"disabled"` unless the caller explicitly opts back into `"auto"`.
 - The facade returns translation outcome data only.
 - The facade does not emit session messages or mutate provider state.
 - The facade does not infer message roles, tags, or UI placement.
@@ -157,6 +157,7 @@ Current live overlay rules:
 
 - providers emit native/source thinking text immediately with stable per-emission `messageId`;
 - Core decides whether that message should be translated and calls `TranslationFacade.translate(...)` asynchronously;
+- reasoning overlays now translate each provider-emitted thinking message as one block by default instead of re-planning it through the shared chunk planner;
 - the Core translation gate enables live reasoning translation only after the persisted localization bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` matches the active localization settings and reports `system_feedback.source = "materialized"`;
 - successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;
 - history reads merge `localizedContent` from the sidecar only when `messageId + sourceHash` still match, so stale translations are ignored;

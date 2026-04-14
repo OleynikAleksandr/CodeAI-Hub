@@ -37,6 +37,28 @@ class FakeChunkEngine implements TranslationEngine {
   }
 }
 
+class RecordingEngine implements TranslationEngine {
+  readonly id = "fake";
+  readonly calls: string[] = [];
+
+  translate(request: {
+    readonly sourceLanguage: string;
+    readonly targetLanguage: string;
+    readonly text: string;
+  }): Promise<TranslationResult> {
+    this.calls.push(request.text);
+    return {
+      engine: this.id,
+      finalText: `[ru] ${request.text}`,
+      originalText: request.text,
+      sourceLanguage: request.sourceLanguage,
+      status: "translated",
+      targetLanguage: request.targetLanguage,
+      translatedText: `[ru] ${request.text}`,
+    };
+  }
+}
+
 test("TranslationFacade assembles translated and fallback chunks into one translated result", async () => {
   const translation = new TranslationFacade({
     defaultEngineId: "fake",
@@ -70,4 +92,72 @@ test("TranslationFacade assembles translated and fallback chunks into one transl
     result.finalText.includes("[ru] This closing paragraph confirms"),
     true
   );
+});
+
+test("TranslationFacade disables chunking by default for reasoning requests", async () => {
+  const engine = new RecordingEngine();
+  const translation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [engine],
+  });
+  const sourceText = [
+    "Reasoning fragment one is intentionally verbose so the shared generic profile would normally split it into multiple requests when chunking stays enabled. It keeps adding detail about runtime translation latency to push the payload above the conservative chunk threshold.\n\n",
+    "Reasoning fragment two continues the same internal thought and exists only to ensure the payload clearly exceeds the generic soft character limit while still representing one provider-emitted reasoning block.",
+  ].join("");
+
+  const result = await translation.translate({
+    category: "reasoning",
+    engineId: "fake",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: sourceText,
+    timeoutMs: 3000,
+  });
+
+  assert.equal(result.status, "translated");
+  assert.equal(engine.calls.length, 1);
+  assert.equal(engine.calls[0], sourceText);
+});
+
+test("TranslationFacade still chunks generic requests by default and reasoning can explicitly opt back in", async () => {
+  const genericEngine = new RecordingEngine();
+  const genericTranslation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [genericEngine],
+  });
+  const sourceText = [
+    "Generic fragment one is intentionally verbose so the shared planner keeps the previous chunking behavior for non-reasoning content. It repeats itself a little to make sure the fallback google profile budget is exceeded without any ambiguity.\n\n",
+    "Generic fragment two continues the long payload so default chunking remains necessary for document-like or generic long-form translation requests.",
+  ].join("");
+
+  const genericResult = await genericTranslation.translate({
+    category: "generic",
+    engineId: "fake",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: sourceText,
+    timeoutMs: 3000,
+  });
+
+  assert.equal(genericResult.status, "translated");
+  assert.equal(genericEngine.calls.length > 1, true);
+
+  const reasoningEngine = new RecordingEngine();
+  const reasoningTranslation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [reasoningEngine],
+  });
+
+  const reasoningResult = await reasoningTranslation.translate({
+    category: "reasoning",
+    chunkingMode: "auto",
+    engineId: "fake",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: sourceText,
+    timeoutMs: 3000,
+  });
+
+  assert.equal(reasoningResult.status, "translated");
+  assert.equal(reasoningEngine.calls.length > 1, true);
 });

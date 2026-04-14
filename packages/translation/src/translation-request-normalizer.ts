@@ -8,6 +8,9 @@ import { TranslationEngineProfileRegistry } from "./translation-engine-profile-r
 
 const DEFAULT_TRANSLATION_TIMEOUT_MS = 3000;
 const DEFAULT_TRANSLATION_CHUNKING_MODE = "auto";
+const DEFAULT_REASONING_CHUNKING_MODE = "disabled";
+const REASONING_CATEGORY = "reasoning";
+const DEFAULT_TRANSLATION_CATEGORY = "generic";
 const profileRegistry = new TranslationEngineProfileRegistry();
 
 const trimToNull = (value: string | undefined): string | null => {
@@ -16,9 +19,21 @@ const trimToNull = (value: string | undefined): string | null => {
 };
 
 const normalizeChunkingMode = (
+  category: string,
   value: TranslationChunkingMode | undefined
-): TranslationChunkingMode =>
-  value === "disabled" ? "disabled" : DEFAULT_TRANSLATION_CHUNKING_MODE;
+): TranslationChunkingMode => {
+  if (value === "disabled") {
+    return "disabled";
+  }
+
+  if (value === "auto") {
+    return "auto";
+  }
+
+  return category === REASONING_CATEGORY
+    ? DEFAULT_REASONING_CHUNKING_MODE
+    : DEFAULT_TRANSLATION_CHUNKING_MODE;
+};
 
 export interface NormalizedTranslationRequestWithChunkPolicy
   extends NormalizedTranslationRequest {
@@ -36,12 +51,13 @@ export const normalizeTranslationRequest = (
     return null;
   }
 
+  const category = trimToNull(request.category) ?? DEFAULT_TRANSLATION_CATEGORY;
   const engineId = trimToNull(request.engineId) ?? "google-gtx";
-  const chunkingMode = normalizeChunkingMode(request.chunkingMode);
+  const chunkingMode = normalizeChunkingMode(category, request.chunkingMode);
 
   return {
     ...request,
-    category: trimToNull(request.category) ?? "generic",
+    category,
     chunkPolicy: profileRegistry.resolveChunkPolicy(engineId, chunkingMode),
     chunkingMode,
     engineId,
