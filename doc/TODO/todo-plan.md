@@ -50,16 +50,16 @@
 
 ## Phase 3 — Verification and regression coverage (owner: Codex, updated: 2026-04-14)
 ### Stream: Translation package coverage
-15. [TODO] Добавить unit coverage для chunk planning и per-chunk fallback assembly — scope: `packages/translation/src/translation-chunk-planner.test.ts`, `packages/translation/src/translation-facade.test.ts`, `packages/translation/src/translation-chunk-boundary-resolver.test.ts`; ожидаемый commit message: `test: cover chunked translation planning`
+15. [DONE] Добавить unit coverage для chunk planning и per-chunk fallback assembly — scope: `packages/translation/src/translation-chunk-planner.test.ts`, `packages/translation/src/translation-facade.test.ts`, `packages/translation/src/translation-chunk-boundary-resolver.test.ts`; ожидаемый commit message: `test: cover chunked translation planning`
 16. [DONE] Git Commit: `test: cover chunked translation planning` (hash: `a37698af0`)
 17. [DONE] Выполнить таргетные сборки `@codeai-hub/translation`, `@codeai-hub/localization`, `@codeai-hub/core` и зафиксировать результаты verification wave в документации текущего scope — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `docs: record chunked translation verification`
 18. [DONE] Git Commit: `docs: record chunked translation verification` (hash: `4c7247a1e`)
 
 ## Phase 4 — Release packaging and closeout (owner: Codex, updated: 2026-04-14)
 ### Stream: Release prep
-19. [IN_PROGRESS] Подготовить release notes для следующего релиза и обновить активный `todo-plan` под release closeout — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare chunked translation release notes`
-20. [TODO] Git Commit: `docs: prepare chunked translation release notes` (hash: TBD)
-21. [TODO] Выполнить `./scripts/build-all.sh`, поднять версии и зафиксировать runtime manifests / package versions — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build: prepare chunked translation runtime artifacts`
+19. [DONE] Подготовить release notes для следующего релиза и обновить активный `todo-plan` под release closeout — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare chunked translation release notes`
+20. [DONE] Git Commit: `docs: prepare chunked translation release notes` (hash: `b2891414a`)
+21. [DONE] Выполнить `./scripts/build-all.sh`, поднять версии и зафиксировать runtime manifests / package versions — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build: prepare chunked translation runtime artifacts`
 22. [TODO] Git Commit: `build: prepare chunked translation runtime artifacts` (hash: TBD)
 23. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarballs и завершить execution cycle архивированием planning/todo документов, обновлением индекса и session report — scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session012.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(archive): close chunked translation execution cycle`
 24. [TODO] Git Commit: `docs(archive): close chunked translation execution cycle` (hash: TBD)
