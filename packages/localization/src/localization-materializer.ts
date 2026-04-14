@@ -333,7 +333,7 @@ export class LocalizationMaterializer {
             };
         const translationResult = await this.translationFacade.translate({
           category,
-          chunkingMode: "auto",
+          chunkingMode: "disabled",
           engineId,
           sourceLanguage,
           targetLanguage,
