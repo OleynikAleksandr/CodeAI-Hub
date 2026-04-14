@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.984] - 2026-04-14
+### Fixed
+- **Reasoning defaults to one-block translation**: shared translation request normalization now resolves `category = reasoning` to `chunkingMode = "disabled"` unless a caller explicitly opts back into chunking.
+- **Live thinking overlays stop paying sequential chunk latency**: Codex, Gemini, and Claude reasoning messages now translate as one provider-emitted block instead of `2-5` sequential subrequests through the shared chunk planner.
+- **Chunk planner preserved for non-reasoning content**: `generic` and `document` translation keep the existing engine-aware chunk policy, so long-form bundle/document translation does not lose its current fallback protections.
+
 ## [1.1.983] - 2026-04-14
 ### Fixed
 - **Canonical bootstrap path for live thinking translation**: `SessionTranslationPolicyResolver` now reads the persisted browser localization bootstrap from `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` instead of constructing a double-prefixed `~/.codeai-hub/.codeai-hub/...` path.

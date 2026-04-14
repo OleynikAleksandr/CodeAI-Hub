@@ -7,15 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.983
+## Current Release — v1.1.984
+- **Reasoning translation no longer re-chunks live thinking by default**: shared runtime translation now keeps each provider-emitted reasoning block intact unless a caller explicitly opts back into chunking.
+- **Lower latency for Codex, Gemini, and Claude thinking overlays**: the Core-owned reasoning overlay path now sends one translation request per visible thinking message instead of `2-5` sequential subrequests for the same message.
+- **Reasoning chunking remains opt-in only**: generic/document translation keeps the existing engine-aware chunk planner, while reasoning can still explicitly request `chunkingMode = auto` for future experimental callers.
+
+### 1.1.983 (previous)
 - **Codex thinking translation bootstrap path repaired**: Core now reads the persisted localization bootstrap snapshot from the canonical `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` path instead of a double-prefixed non-existent path under `~/.codeai-hub/.codeai-hub/...`.
 - **Live reasoning overlays resume dispatch**: once the persisted bootstrap matches the active localization settings, Codex `thinking` fragments can again enter the translation dispatch path and produce async overlay patches instead of being skipped forever as `localization_sync_pending`.
 - **Regression coverage for production-like settings/bootstrap layout**: Core now tests the exact `~/.codeai-hub/settings/` + `~/.codeai-hub/localization/cache/` layout that previously disabled all Codex thinking translation in release runtime.
-
-### 1.1.982 (previous)
-- **Interface localization now translates whole bundles**: settings/help/message bundles are sent as one structured marker-preserving batch per category instead of dozens of per-entry Codex calls, which removes the main cause of multi-minute localization spinner waits.
-- **Codex translation runtime reuses warm bootstrap artifacts**: temp translation-only `CODEX_HOME` instances now reuse cached plugin/bootstrap metadata from the resolved Codex home, avoiding repeated plugin bootstrap during interface localization sync.
-- **Project Manager no longer blanks after localization blocking**: PM busy placeholders keep hook order stable across `busy -> ready`, so the renderer recovers normally after strict localization sync completes.
 
 ### 1.1.978 (previous)
 - **Codex artifact language no longer falls back to English after PM restart**: Project Manager now reuses the persisted browser localization bootstrap snapshot when live settings cache is not ready, so `Artifacts for the User` stays aligned with the saved runtime language.
