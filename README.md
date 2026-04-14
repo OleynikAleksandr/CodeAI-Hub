@@ -7,12 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.978
-- **Thinking translation pipeline tracing in Core**: Core now logs the full lifecycle of each thinking translation candidate by `sessionId`, `messageId`, and `sourceHash`: append, translation dispatch, translation result, overlay persistence, and patch broadcast.
-- **Overlay persistence diagnostics**: unified session storage now records when each translated thinking overlay is appended to `*.translations.jsonl`, including the resolved target file path.
-- **Diagnostic-only release**: this package is intended to capture why only part of a Codex thinking burst receives localized overlay patches; it does not yet claim a behavioural fix for the mixed-language thinking regression.
+## Current Release — v1.1.979
+- **Universal chunked translation for long user-facing text**: the shared translation package now plans long requests into safe chunks at paragraph/list/sentence/clause boundaries, respects protected Markdown/code/placeholders, and assembles a single result with per-chunk fallback instead of whole-string timeout loss.
+- **Chunk diagnostics in Core**: thinking translation logs now include chunk planning, per-chunk dispatch/completion, elapsed time, and assembly summary under the same `sessionId` / `messageId` / `sourceHash` trace path.
+- **Localization materialization follows the same chunked contract**: long Settings/Help bundle strings now go through the shared chunk planner, and localization verification can distinguish full fallback from `partial_fallback` across unique translation operations.
 
-### 1.1.977 (previous)
+### 1.1.978 (previous)
 - **Codex artifact language no longer falls back to English after PM restart**: Project Manager now reuses the persisted browser localization bootstrap snapshot when live settings cache is not ready, so `Artifacts for the User` stays aligned with the saved runtime language.
 - **Codex translation runtime survives legacy auth layout**: isolated translation-only Codex homes now bootstrap from provider home first and transparently fall back to legacy `~/.codex` auth/cache when needed.
 - **Thinking translation chunks stay independent**: Codex reasoning delta messages now emit deterministic per-chunk ids instead of reusing one provider item id, preventing later translation overlays from overwriting earlier thinking fragments in live/replay/history paths.

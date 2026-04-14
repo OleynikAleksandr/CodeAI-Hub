@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.979] - 2026-04-14
+### Added
+- **Universal chunk planner in shared translation**: long translation requests now split at safe paragraph/list/sentence/clause boundaries, respect protected Markdown/code/link/placeholder spans, and run through engine-specific conservative chunk budgets before dispatch.
+- **Chunked translation regression tests**: added dedicated coverage for protected-boundary resolution, multi-chunk round-trip planning, and partial-fallback assembly in `@codeai-hub/translation`.
+
+### Changed
+- **Core translation diagnostics now trace chunk execution**: session translation logs include chunk plan metadata, per-chunk dispatch/completion with elapsed time, and final assembly summary under the existing `sessionId` / `messageId` / `sourceHash` correlation path.
+- **Localization materialization now uses the shared chunk contract explicitly**: long localized help/settings strings opt into shared `chunkingMode = "auto"` and materialization results now expose counts for whole-string fallback versus `partial_fallback` across unique translation operations.
+
 ## [1.1.978] - 2026-04-13
 ### Added
 - **Core-side thinking translation trace logging**: every user-visible thinking message now writes a correlation trail to `~/.codeai-hub/logs/core/core.log`, covering message persistence, translation dispatch start, translation completion/fallback, overlay append, and session/dialog translation patch broadcast.
