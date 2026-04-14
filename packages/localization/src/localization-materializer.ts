@@ -1,7 +1,13 @@
 import { createHash } from "node:crypto";
-import { TranslationFacade } from "@codeai-hub/translation";
+import {
+  TranslationFacade,
+  type TranslationResult,
+} from "@codeai-hub/translation";
 import { GlossaryBundleLoader } from "./glossary-bundle-loader";
-import type { ResolvedGlossary } from "./glossary-contract";
+import type {
+  ProtectedGlossaryToken,
+  ResolvedGlossary,
+} from "./glossary-contract";
 import { GlossaryMergeService } from "./glossary-merge-service";
 import { GlossaryProtector } from "./glossary-protector";
 import { LanguageCatalogService } from "./language-catalog-service";
@@ -57,6 +63,11 @@ interface SourceDictionaryTranslationResult {
   readonly partialFallbackTranslationCount: number;
 }
 
+interface ProtectedTranslationAttemptResult {
+  readonly restoredText: string;
+  readonly translationResult: TranslationResult;
+}
+
 const normalizeLanguage = (
   value: string | undefined,
   fallback: string
@@ -64,6 +75,21 @@ const normalizeLanguage = (
   const trimmed = value?.trim() ?? "";
   return trimmed.length > 0 ? trimmed : fallback;
 };
+
+const LOCALIZATION_TRANSLATION_RETRY_LIMIT = 3;
+const LOCALIZATION_TRANSLATION_TIMEOUT_BASE_MS = 6000;
+const LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS = 60_000;
+const LOCALIZATION_TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 18;
+
+const resolveLocalizationTranslationTimeoutMs = (text: string): number =>
+  Math.min(
+    LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS,
+    LOCALIZATION_TRANSLATION_TIMEOUT_BASE_MS +
+      text.length * LOCALIZATION_TRANSLATION_TIMEOUT_PER_CHARACTER_MS
+  );
+
+const hasUsableLocalizedText = (text: string): boolean =>
+  text.trim().length > 0;
 
 const shouldSkipTranslation = (
   sourceLanguage: string,
@@ -331,13 +357,12 @@ export class LocalizationMaterializer {
               protectedText: sourceText,
               tokens: [],
             };
-        const translationResult = await this.translationFacade.translate({
+        const translationResult = await this.translateProtectedTextWithRetry({
           category,
-          chunkingMode: "disabled",
           engineId,
+          protectedText,
           sourceLanguage,
           targetLanguage,
-          text: protectedText.protectedText,
         });
         if (translationResult.status !== "translated") {
           fallbackTranslationCount += 1;
@@ -363,5 +388,68 @@ export class LocalizationMaterializer {
       fallbackTranslationCount,
       partialFallbackTranslationCount,
     };
+  }
+
+  private async translateProtectedTextWithRetry(options: {
+    readonly category: LocalizationCategoryId;
+    readonly engineId: string;
+    readonly protectedText: {
+      readonly protectedText: string;
+      readonly tokens: readonly ProtectedGlossaryToken[];
+    };
+    readonly sourceLanguage: string;
+    readonly targetLanguage: string;
+  }): Promise<TranslationResult> {
+    const timeoutMs = resolveLocalizationTranslationTimeoutMs(
+      options.protectedText.protectedText
+    );
+    let lastAttempt: ProtectedTranslationAttemptResult | null = null;
+
+    for (
+      let attemptIndex = 0;
+      attemptIndex < LOCALIZATION_TRANSLATION_RETRY_LIMIT;
+      attemptIndex += 1
+    ) {
+      const translationResult = await this.translationFacade.translate({
+        category: options.category,
+        chunkingMode: "disabled",
+        engineId: options.engineId,
+        sourceLanguage: options.sourceLanguage,
+        targetLanguage: options.targetLanguage,
+        text: options.protectedText.protectedText,
+        timeoutMs,
+      });
+      const restoredText = this.glossaryProtector.restore(
+        translationResult.finalText,
+        options.targetLanguage,
+        options.protectedText.tokens
+      );
+
+      lastAttempt = {
+        restoredText,
+        translationResult,
+      };
+
+      const completedWithoutFallback =
+        translationResult.status === "translated" &&
+        translationResult.errorCode !== "partial_fallback" &&
+        hasUsableLocalizedText(restoredText);
+      if (completedWithoutFallback) {
+        return translationResult;
+      }
+    }
+
+    return (
+      lastAttempt?.translationResult ?? {
+        engine: options.engineId,
+        errorCode: "localization_retry_exhausted",
+        finalText: options.protectedText.protectedText,
+        originalText: options.protectedText.protectedText,
+        sourceLanguage: options.sourceLanguage,
+        status: "fallback",
+        targetLanguage: options.targetLanguage,
+        translatedText: null,
+      }
+    );
   }
 }
