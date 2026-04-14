@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.981] - 2026-04-14
+### Fixed
+- **Bundle-level interface localization batching**: localization save-sync now translates each selected interface bundle as one structured marker-preserving request instead of dispatching Codex per entry, eliminating the multiplicative slowdown that kept the localization spinner active for minutes.
+- **Warm Codex translation bootstrap reuse**: temp translation-only Codex runtimes now reuse cached plugin/bootstrap artifacts from the resolved Codex home, removing repeated plugin bootstrap overhead during interface localization.
+- **Project Manager blank screen after localization blocking**: PM main-area busy placeholders now keep hook order invariant across `busy -> ready`, so the UI recovers cleanly after strict localization sync instead of rendering an empty shell.
+
 ## [1.1.980] - 2026-04-14
 ### Fixed
 - **Blocking localization readiness on save**: localization `Save Changes` now waits for Core to rematerialize and activate the required runtime bundles in deterministic priority order before Project Manager resumes interactive work.

@@ -43,5 +43,10 @@
 
 ## Phase 4 — Documentation sync and verification (owner: Codex, updated: 2026-04-14)
 ### Stream: SSOT and targeted checks
-9. [IN_PROGRESS] Синхронизировать SSOT по bundle-level interface batching и PM blocked-state safety, затем зафиксировать targeted verification — scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: record localization batching hotfix contract`
-10. [TODO] Git Commit: `docs: record localization batching hotfix contract` (hash: TBD)
+9. [DONE] Синхронизировать SSOT по bundle-level interface batching и PM blocked-state safety, затем зафиксировать targeted verification — scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: record localization batching hotfix contract`
+10. [DONE] Git Commit: `docs: record localization batching hotfix contract` (hash: `2f67f9c75`)
+
+## Phase 5 — Release build and closure (owner: Codex, updated: 2026-04-14)
+### Stream: Release 1.1.981
+11. [IN_PROGRESS] Актуализировать release-facing документы на будущую версию `1.1.981`, затем выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` для hotfix scope — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare localization batching hotfix release notes`
+12. [TODO] Git Commit: `docs: prepare localization batching hotfix release notes` (hash: TBD)

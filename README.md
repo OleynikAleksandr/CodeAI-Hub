@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.980
-- **Blocking localization sync before UI resume**: `Save Changes` for localization now waits for Core to rematerialize and activate all required runtime bundles in deterministic priority order, while Project Manager and new session sends stay locked behind a visible sync spinner.
-- **Interface localization no longer competes with live translation**: Settings/Help/User-message bundles now materialize as whole requests with dynamic watchdog timeouts and automatic retries instead of chunk fan-out, so partial English fallback is no longer accepted as a successful interface state.
-- **Serialized live translation recovery**: Core resolves localization settings per dispatch, gates live session translation until the persisted bootstrap matches the saved settings, and runs all live overlay work through one shared queue to prevent model/engine drift and translation races after restart.
+## Current Release — v1.1.981
+- **Interface localization now translates whole bundles**: settings/help/message bundles are sent as one structured marker-preserving batch per category instead of dozens of per-entry Codex calls, which removes the main cause of multi-minute localization spinner waits.
+- **Codex translation runtime reuses warm bootstrap artifacts**: temp translation-only `CODEX_HOME` instances now reuse cached plugin/bootstrap metadata from the resolved Codex home, avoiding repeated plugin bootstrap during interface localization sync.
+- **Project Manager no longer blanks after localization blocking**: PM busy placeholders keep hook order stable across `busy -> ready`, so the renderer recovers normally after strict localization sync completes.
 
 ### 1.1.978 (previous)
 - **Codex artifact language no longer falls back to English after PM restart**: Project Manager now reuses the persisted browser localization bootstrap snapshot when live settings cache is not ready, so `Artifacts for the User` stays aligned with the saved runtime language.
