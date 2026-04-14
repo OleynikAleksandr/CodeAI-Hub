@@ -1,9 +1,22 @@
 export type TranslationStatus = "translated" | "fallback" | "skipped";
 
 export type TranslationCategory = "reasoning" | "generic" | "document";
+export type TranslationChunkingMode = "auto" | "disabled";
+
+export interface TranslationChunkPolicy {
+  readonly hardCharacterLimit: number;
+  readonly mode: TranslationChunkingMode;
+  readonly softCharacterLimit: number;
+}
+
+export interface TranslationEngineProfile {
+  readonly chunkPolicy: TranslationChunkPolicy;
+  readonly engineId: string;
+}
 
 export interface TranslationRequest {
   readonly category?: TranslationCategory | string;
+  readonly chunkingMode?: TranslationChunkingMode;
   readonly engineId?: string;
   readonly providerId?: string;
   readonly sourceLanguage: string;
