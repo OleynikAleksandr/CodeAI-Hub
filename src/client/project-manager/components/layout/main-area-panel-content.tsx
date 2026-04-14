@@ -153,26 +153,6 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   workflowStoreLoaded,
 }) => {
   const localizationSyncStatus = useLocalizationSyncStatus();
-
-  if (localizationSyncStatus.busy) {
-    return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
-  }
-
-  if (selectedBranchNode) {
-    const kindLabel =
-      selectedBranchNode.kind === "product-part"
-        ? "Product Part"
-        : selectedBranchNode.kind === "cluster"
-          ? "Cluster"
-          : "Module";
-    return (
-      <div className="pm-placeholder">
-        <strong>{kindLabel}: {selectedBranchNode.label}</strong>
-        <br />
-        Branch artifact surface will be available after the first Design session.
-      </div>
-    );
-  }
   const sourceArtifact = resolveDiagramSourceArtifact({
     activeTool,
     workspacePath: activeWorkspacePath,
@@ -206,8 +186,28 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
     !showArtifactViewer &&
     !showSourceViewer &&
     workflowStoreLoaded &&
-    (shouldShowQuestionnaireEditor || (!descriptionDocumentExists && !questionnaireDocumentExists));
+    (shouldShowQuestionnaireEditor ||
+      (!descriptionDocumentExists && !questionnaireDocumentExists));
 
+  if (localizationSyncStatus.busy) {
+    return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
+  }
+
+  if (selectedBranchNode) {
+    const kindLabel =
+      selectedBranchNode.kind === "product-part"
+        ? "Product Part"
+        : selectedBranchNode.kind === "cluster"
+          ? "Cluster"
+          : "Module";
+    return (
+      <div className="pm-placeholder">
+        <strong>{kindLabel}: {selectedBranchNode.label}</strong>
+        <br />
+        Branch artifact surface will be available after the first Design session.
+      </div>
+    );
+  }
   if (helpMode) {
     if (activeTool === "Description") {
       return <DescriptionStepHelp />;
@@ -336,6 +336,32 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   workspaceSlug,
 }) => {
   const localizationSyncStatus = useLocalizationSyncStatus();
+  const stageId = resolveStartupStageFromTool(activeTool);
+  const confirmableStage = activeTool
+    ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
+    : undefined;
+  const nextIntent =
+    workflowSnapshot && workspacePath && workspaceSlug
+      ? resolveStageSessionIntent(
+          stageId,
+          workflowSnapshot,
+          workspacePath,
+          workspaceSlug
+        )
+      : null;
+  const intentRef = useRef(nextIntent);
+  const initialIntent = useMemo(() => {
+    const prev = intentRef.current;
+    if (
+      prev?.providerId === nextIntent?.providerId &&
+      prev?.providerSessionId === nextIntent?.providerSessionId &&
+      prev?.stage === nextIntent?.stage
+    ) {
+      return prev;
+    }
+    intentRef.current = nextIntent;
+    return nextIntent;
+  }, [nextIntent]);
 
   if (localizationSyncStatus.busy) {
     return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
@@ -347,9 +373,6 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   // Show confirmation card for idle VS/DM stages without an existing session,
   // UNLESS the step was just started (stepStartedIntent is set)
-  const confirmableStage = activeTool
-    ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
-    : undefined;
   if (
     !stepStartedIntent &&
     confirmableStage &&
@@ -368,27 +391,6 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
       />
     );
   }
-
-  const stageId = resolveStartupStageFromTool(activeTool);
-  const nextIntent =
-    workflowSnapshot && workspacePath && workspaceSlug
-      ? resolveStageSessionIntent(stageId, workflowSnapshot, workspacePath, workspaceSlug)
-      : null;
-  // Stabilize intent identity — only create a new object when the
-  // session actually changed, not on every workflow state poll cycle.
-  const intentRef = useRef(nextIntent);
-  const initialIntent = useMemo(() => {
-    const prev = intentRef.current;
-    if (
-      prev?.providerId === nextIntent?.providerId &&
-      prev?.providerSessionId === nextIntent?.providerSessionId &&
-      prev?.stage === nextIntent?.stage
-    ) {
-      return prev;
-    }
-    intentRef.current = nextIntent;
-    return nextIntent;
-  }, [nextIntent]);
 
   return (
     <ProjectManagerSessionView
