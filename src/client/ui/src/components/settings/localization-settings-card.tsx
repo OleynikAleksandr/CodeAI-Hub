@@ -99,6 +99,11 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
+const formatUnknownTranslationEngineLabel = (engineId: string): string =>
+  engineId.startsWith("codex-")
+    ? `OpenAI Codex · ${engineId.slice("codex-".length)}`
+    : engineId;
+
 const resolveTranslationEngineLabel = (
   engineId: string,
   t: ReturnType<typeof useLocalization>["t"]
@@ -117,11 +122,14 @@ const resolveTranslationEngineLabel = (
       "OpenAI Codex · GPT-5.3 Codex Spark"
     );
   }
-  return t(
-    "ui_interface",
-    "settings.localization.translation_engine.option.google_gtx",
-    "Google GTX Free"
-  );
+  if (engineId === "google-gtx") {
+    return t(
+      "ui_interface",
+      "settings.localization.translation_engine.option.google_gtx",
+      "Google GTX Free"
+    );
+  }
+  return formatUnknownTranslationEngineLabel(engineId);
 };
 
 const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
@@ -205,10 +213,19 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
           engineId,
           languages: [],
         }));
-  const activeEngine =
-    availableEngines.find(
-      (engine) => engine.engineId === localization.engineId
-    ) ?? engineOptions[0];
+  const selectedEngineOption = engineOptions.find(
+    (engine) => engine.engineId === localization.engineId
+  );
+  const visibleEngineOptions = selectedEngineOption
+    ? engineOptions
+    : [
+        {
+          engineId: localization.engineId,
+          languages: [],
+        },
+        ...engineOptions,
+      ];
+  const activeEngine = selectedEngineOption ?? visibleEngineOptions[0];
   const languageOptions: readonly LocalizationLanguageOption[] = [
     sourceLanguageOption,
     ...(activeEngine?.languages ?? []).map((language) => ({
@@ -221,7 +238,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   const resolveCategoryValue = (value: string): string =>
     value.toLowerCase() === "en" ? "source" : value;
 
-  const activeEngineId = activeEngine?.engineId ?? localization.engineId;
+  const activeEngineId = localization.engineId;
 
   const engineSelectStyles: CSSProperties = {
     ...inputStyles,
@@ -268,7 +285,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             style={engineSelectStyles}
             value={activeEngineId}
           >
-            {engineOptions.map((engine) => (
+            {visibleEngineOptions.map((engine) => (
               <option key={engine.engineId} value={engine.engineId}>
                 {resolveTranslationEngineLabel(engine.engineId, t)}
               </option>

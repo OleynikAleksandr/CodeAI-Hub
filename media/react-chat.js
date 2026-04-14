@@ -10956,6 +10956,7 @@
     height: "16px",
     marginTop: "2px"
   };
+  var formatUnknownTranslationEngineLabel = (engineId) => engineId.startsWith("codex-") ? `OpenAI Codex \xB7 ${engineId.slice("codex-".length)}` : engineId;
   var resolveTranslationEngineLabel = (engineId, t) => {
     if (engineId === "codex-gpt-5.4-mini") {
       return t(
@@ -10971,11 +10972,14 @@
         "OpenAI Codex \xB7 GPT-5.3 Codex Spark"
       );
     }
-    return t(
-      "ui_interface",
-      "settings.localization.translation_engine.option.google_gtx",
-      "Google GTX Free"
-    );
+    if (engineId === "google-gtx") {
+      return t(
+        "ui_interface",
+        "settings.localization.translation_engine.option.google_gtx",
+        "Google GTX Free"
+      );
+    }
+    return formatUnknownTranslationEngineLabel(engineId);
   };
   var LocalizationSettingsCard = ({
     localization,
@@ -11051,9 +11055,17 @@
       engineId,
       languages: []
     }));
-    const activeEngine = availableEngines.find(
+    const selectedEngineOption = engineOptions.find(
       (engine) => engine.engineId === localization.engineId
-    ) ?? engineOptions[0];
+    );
+    const visibleEngineOptions = selectedEngineOption ? engineOptions : [
+      {
+        engineId: localization.engineId,
+        languages: []
+      },
+      ...engineOptions
+    ];
+    const activeEngine = selectedEngineOption ?? visibleEngineOptions[0];
     const languageOptions = [
       sourceLanguageOption,
       ...(activeEngine?.languages ?? []).map((language) => ({
@@ -11064,7 +11076,7 @@
       (option) => option.code.toLowerCase() !== "en" || option.code === "source"
     );
     const resolveCategoryValue = (value) => value.toLowerCase() === "en" ? "source" : value;
-    const activeEngineId = activeEngine?.engineId ?? localization.engineId;
+    const activeEngineId = localization.engineId;
     const engineSelectStyles = {
       ...inputStyles3,
       appearance: "none"
@@ -11102,7 +11114,7 @@
                   onChange: (event) => onEngineIdChange(event.target.value),
                   style: engineSelectStyles,
                   value: activeEngineId,
-                  children: engineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: resolveTranslationEngineLabel(engine.engineId, t) }, engine.engineId))
+                  children: visibleEngineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: resolveTranslationEngineLabel(engine.engineId, t) }, engine.engineId))
                 }
               )
             ] }),

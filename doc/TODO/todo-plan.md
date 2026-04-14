@@ -54,11 +54,11 @@
 
 ## Phase 4 — Live translation stabilization and residual bug triage (owner: Codex, updated: 2026-04-14)
 ### Stream: Session translation queue
-15. [IN_PROGRESS] Добавить queue/concurrency limit для live session translation и запретить ей конкурировать с initial localization sync — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `packages/core/src/session-translation/session-translation-dispatcher.ts`; ожидаемый commit message: `feat: serialize live session translation`
-16. [TODO] Git Commit: `feat: serialize live session translation` (hash: TBD)
+15. [DONE] Добавить queue/concurrency limit для live session translation и запретить ей конкурировать с initial localization sync — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `packages/core/src/session-translation/session-translation-dispatcher.ts`; ожидаемый commit message: `feat: serialize live session translation`
+16. [DONE] Git Commit: `feat: serialize live session translation` (hash: `f8a3ca464`)
 
 ### Stream: Residual regression triage
-17. [TODO] Повторно проверить и чинить restart hydration / runtime model label drift только после стабилизации translation path, если баги сохранятся — scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; ожидаемый commit message: `fix: resolve remaining localization sync regressions`
+17. [IN_PROGRESS] Повторно проверить и чинить restart hydration / runtime model label drift только после стабилизации translation path, если баги сохранятся — scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; ожидаемый commit message: `fix: resolve remaining localization sync regressions`
 18. [TODO] Git Commit: `fix: resolve remaining localization sync regressions` (hash: TBD)
 
 ## Phase 5 — Documentation and release (owner: Codex, updated: 2026-04-14)

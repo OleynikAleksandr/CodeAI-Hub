@@ -7,7 +7,7 @@
  * the actual model in use rather than the settings default.
  */
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { api } from "../../api";
 import { buildModelInfo } from "../../../ui/src/session/model-info-builder";
@@ -35,11 +35,74 @@ const modelInfoChanged = (
   left.reasoning !== right.reasoning ||
   left.source !== right.source;
 
+type RuntimeModelUpdatePayload = {
+  readonly modelId: string;
+  readonly providerId?: string;
+  readonly sessionId: string;
+};
+
+const applyRuntimeModelUpdate = (
+  previous: SessionSnapshots,
+  resolvedId: string,
+  payload: RuntimeModelUpdatePayload
+): SessionSnapshots => {
+  const snapshot = previous[resolvedId];
+  const models = snapshot?.status.models;
+  if (!models?.length) {
+    return previous;
+  }
+  const currentModel = models[0];
+  const updatedModel = buildModelInfo(
+    (payload.providerId as typeof currentModel.providerId | undefined) ??
+      currentModel.providerId,
+    null,
+    payload.modelId,
+    "runtime"
+  );
+  if (!modelInfoChanged(currentModel, updatedModel)) {
+    return previous;
+  }
+
+  return {
+    ...previous,
+    [resolvedId]: {
+      ...snapshot,
+      status: {
+        ...snapshot.status,
+        models: [updatedModel, ...models.slice(1)],
+      },
+    },
+  };
+};
+
 export const useRuntimeModelSync = (
   activeSessionId: string | null,
   setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>
 ): void => {
+  const pendingUpdatesRef = useRef(new Map<string, RuntimeModelUpdatePayload>());
+
   useEffect(() => {
+    setSnapshots((previous) => {
+      if (!activeSessionId) {
+        return previous;
+      }
+      const pendingUpdate = pendingUpdatesRef.current.get(activeSessionId);
+      if (!pendingUpdate) {
+        return previous;
+      }
+
+      const next = applyRuntimeModelUpdate(
+        previous,
+        activeSessionId,
+        pendingUpdate
+      );
+      if (next !== previous) {
+        pendingUpdatesRef.current.delete(activeSessionId);
+        pendingUpdatesRef.current.delete(pendingUpdate.sessionId);
+      }
+      return next;
+    });
+
     const unsubscribe = api.onCoreEvent((message) => {
       if (message.type !== "session:model:update") {
         return;
@@ -64,35 +127,26 @@ export const useRuntimeModelSync = (
               ? activeSessionId
               : null;
         if (!resolvedId) {
+          const pendingUpdate = {
+            modelId,
+            providerId: payload.providerId,
+            sessionId,
+          } satisfies RuntimeModelUpdatePayload;
+          pendingUpdatesRef.current.set(sessionId, pendingUpdate);
+          if (activeSessionId) {
+            pendingUpdatesRef.current.set(activeSessionId, pendingUpdate);
+          }
           return previous;
         }
-        const snapshot = previous[resolvedId];
-        const models = snapshot.status.models;
-        if (!models?.length) {
-          return previous;
+        pendingUpdatesRef.current.delete(sessionId);
+        if (activeSessionId) {
+          pendingUpdatesRef.current.delete(activeSessionId);
         }
-        const currentModel = models[0];
-        const updatedModel = buildModelInfo(
-          (payload.providerId as typeof currentModel.providerId | undefined) ??
-            currentModel.providerId,
-          null,
+        return applyRuntimeModelUpdate(previous, resolvedId, {
           modelId,
-          "runtime"
-        );
-        if (!modelInfoChanged(currentModel, updatedModel)) {
-          return previous;
-        }
-        const updatedModels = [
-          updatedModel,
-          ...models.slice(1),
-        ];
-        return {
-          ...previous,
-          [resolvedId]: {
-            ...snapshot,
-            status: { ...snapshot.status, models: updatedModels },
-          },
-        };
+          providerId: payload.providerId,
+          sessionId,
+        });
       });
     });
     return () => {
