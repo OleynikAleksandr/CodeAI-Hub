@@ -61,6 +61,16 @@ export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
 
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
+const isSettingsSaveErrorMessage = (
+  message: unknown
+): message is { readonly type: "settings:save-error" } => {
+  if (!(message && typeof message === "object" && "type" in message)) {
+    return false;
+  }
+
+  return message.type === "settings:save-error";
+};
+
 export const useSettingsState = (): UseSettingsStateResult => {
   const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
   const createBootstrapSettings = (
@@ -124,57 +134,68 @@ export const useSettingsState = (): UseSettingsStateResult => {
   }));
 
   useEffect(() => {
-    vscode.postMessage({
-      type: "settings:load",
-    });
-
     const handleMessage = (event: MessageEvent) => {
+      if (isSettingsSaveErrorMessage(event.data)) {
+        setSaving(false);
+        return;
+      }
+
       if (!isIncomingMessage(event.data)) {
         return;
       }
 
-      if (event.data.type === "settings:loaded") {
-        const nextSettings = normalizeLoadedLocalizationSettings(
-          mapSettingsSnapshot(event.data.settings)
-        );
-        initialSettingsRef.current = nextSettings;
-        setLocalizationRuntime(event.data.localizationRuntime ?? null);
-        setSettings(nextSettings);
-        setResetting(false);
-        setHasChanges(false);
-      }
-
-      if (event.data.type === "settings:saved") {
-        const nextSettings = normalizeLoadedLocalizationSettings(
-          mapSettingsSnapshot(event.data.settings)
-        );
-        initialSettingsRef.current = nextSettings;
-        setLocalizationRuntime(event.data.localizationRuntime ?? null);
-        setSettings(nextSettings);
-        setSaving(false);
-        setHasChanges(false);
-      }
-
-      if (event.data.type === "settings:versions") {
-        const incomingVersions = event.data.versions ?? null;
-        setVersions({
-          data: incomingVersions,
-          loading: false,
-          error: event.data.error ?? null,
-          updatingTargets: [],
-        });
-      }
-
-      if (event.data.type === "settings:core-control-status") {
-        setCoreControl({
-          busy: event.data.busy,
-          message: event.data.message ?? null,
-          phase: event.data.phase,
-        });
+      switch (event.data.type) {
+        case "settings:loaded": {
+          const nextSettings = normalizeLoadedLocalizationSettings(
+            mapSettingsSnapshot(event.data.settings)
+          );
+          initialSettingsRef.current = nextSettings;
+          setLocalizationRuntime(event.data.localizationRuntime ?? null);
+          setSettings(nextSettings);
+          setSaving(false);
+          setResetting(false);
+          setHasChanges(false);
+          return;
+        }
+        case "settings:saved": {
+          const nextSettings = normalizeLoadedLocalizationSettings(
+            mapSettingsSnapshot(event.data.settings)
+          );
+          initialSettingsRef.current = nextSettings;
+          setLocalizationRuntime(event.data.localizationRuntime ?? null);
+          setSettings(nextSettings);
+          setSaving(false);
+          setHasChanges(false);
+          return;
+        }
+        case "settings:versions": {
+          const incomingVersions = event.data.versions ?? null;
+          setVersions({
+            data: incomingVersions,
+            loading: false,
+            error: event.data.error ?? null,
+            updatingTargets: [],
+          });
+          return;
+        }
+        case "settings:core-control-status": {
+          setCoreControl({
+            busy: event.data.busy,
+            message: event.data.message ?? null,
+            phase: event.data.phase,
+          });
+          return;
+        }
+        default: {
+          return;
+        }
       }
     };
 
     window.addEventListener("message", handleMessage);
+    vscode.postMessage({
+      type: "settings:load",
+    });
     return () => {
       window.removeEventListener("message", handleMessage);
     };

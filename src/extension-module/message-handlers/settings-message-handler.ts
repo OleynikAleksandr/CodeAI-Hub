@@ -70,24 +70,7 @@ export class SettingsMessageHandler {
         break;
       }
       case "settings:save": {
-        const nextSettings = parseSettingsSnapshot(message.settings);
-        if (!nextSettings) {
-          window.showWarningMessage(
-            "Received invalid settings payload. Changes were not saved."
-          );
-          return;
-        }
-        this.settingsState = nextSettings;
-        applyDefaultModelsEnv(this.settingsState);
-        persistSettingsSnapshot(this.settingsState).catch(() => {
-          /* ignore persistence errors */
-        });
-        syncCodexProviderReasoningSummaryConfig(
-          this.settingsState.providers.codex.reasoningSummaryEnabled
-        ).catch(() => {
-          /* ignore sync errors */
-        });
-        this.postSavedNotification(webview).catch(() => {
+        this.handleSaveRequest(message.settings, webview).catch(() => {
           /* noop */
         });
         break;
@@ -143,6 +126,8 @@ export class SettingsMessageHandler {
   }
 
   private async postSettings(webview: Webview): Promise<void> {
+    this.settingsState = loadSettingsSnapshot();
+    applyDefaultModelsEnv(this.settingsState);
     await webview.postMessage({
       type: "settings:loaded",
       ...(await this.resolveEnvelopePayload()),
@@ -199,6 +184,46 @@ export class SettingsMessageHandler {
       type: "settings:saved",
       ...(await this.resolveEnvelopePayload()),
     });
+  }
+
+  private async postSaveError(webview: Webview, error: string): Promise<void> {
+    await webview.postMessage({
+      type: "settings:save-error",
+      error,
+    });
+  }
+
+  private async handleSaveRequest(
+    rawSettings: unknown,
+    webview: Webview
+  ): Promise<void> {
+    const nextSettings = parseSettingsSnapshot(rawSettings);
+    if (!nextSettings) {
+      const reason =
+        "Received invalid settings payload. Changes were not saved.";
+      window.showWarningMessage(reason);
+      await this.postSaveError(webview, reason);
+      return;
+    }
+
+    this.settingsState = nextSettings;
+    applyDefaultModelsEnv(this.settingsState);
+
+    try {
+      await persistSettingsSnapshot(this.settingsState);
+      syncCodexProviderReasoningSummaryConfig(
+        this.settingsState.providers.codex.reasoningSummaryEnabled
+      ).catch(() => {
+        /* ignore sync errors */
+      });
+      await this.postSavedNotification(webview);
+    } catch (error) {
+      const reason = this.describeError(error);
+      window.showErrorMessage(
+        `Failed to synchronize localization settings: ${reason}`
+      );
+      await this.postSaveError(webview, reason);
+    }
   }
 
   private async handleOpenUserGlossaryFile(): Promise<void> {

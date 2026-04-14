@@ -29,6 +29,7 @@ const containerStyles: React.CSSProperties = {
   height: "100%",
   display: "flex",
   flexDirection: "column",
+  position: "relative",
   background: settingsColorTokens.surface,
   color: settingsColorTokens.textSecondary,
 };
@@ -65,6 +66,52 @@ const stackStyles: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: settingsSpacingTokens.containerGap,
+};
+
+const syncOverlayStyles: React.CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "rgba(7, 10, 16, 0.7)",
+  zIndex: 10,
+  padding: settingsSpacingTokens.pagePadding,
+};
+
+const syncCardStyles: React.CSSProperties = {
+  maxWidth: "520px",
+  width: "100%",
+  borderRadius: "14px",
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
+  background: "rgba(18, 24, 34, 0.96)",
+  boxShadow: "0 18px 48px rgba(0, 0, 0, 0.35)",
+  padding: "20px",
+  display: "flex",
+  flexDirection: "column",
+  gap: "12px",
+};
+
+const syncSpinnerStyles: React.CSSProperties = {
+  width: "30px",
+  height: "30px",
+  borderRadius: "999px",
+  border: `3px solid ${settingsColorTokens.borderStrong}`,
+  borderTopColor: settingsColorTokens.actionPrimary,
+  animation: "settings-spin 0.9s linear infinite",
+};
+
+const syncTitleStyles: React.CSSProperties = {
+  margin: 0,
+  color: settingsColorTokens.textPrimary,
+  fontSize: settingsTypographyTokens.titleFontSize,
+  fontWeight: 700,
+};
+
+const syncDescriptionStyles: React.CSSProperties = {
+  margin: 0,
+  color: settingsColorTokens.textSecondary,
+  lineHeight: 1.6,
 };
 
 const settingsTabs: ReadonlyArray<{
@@ -114,9 +161,17 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
     handleReset,
     handleUpdateProvider,
   } = state;
+  const localizationSyncTitle = "Synchronizing localization";
+  const localizationSyncDescription =
+    "Please wait. CodeAI Hub is preparing translated interface help and user-facing messages. Project Manager and new sessions stay blocked until synchronization completes.";
 
   return (
-    <div aria-busy={!ready} style={containerStyles}>
+    <div aria-busy={saving || !ready} style={containerStyles}>
+      <style>
+        {
+          "@keyframes settings-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }"
+        }
+      </style>
       <SettingsHeader onClose={onClose} />
       <div style={tabBarStyles}>
         {settingsTabs.map((tab) => (
@@ -296,6 +351,15 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
         resetting={resetting}
         saving={saving}
       />
+      {saving ? (
+        <div aria-live="polite" role="status" style={syncOverlayStyles}>
+          <div style={syncCardStyles}>
+            <div style={syncSpinnerStyles} />
+            <p style={syncTitleStyles}>{localizationSyncTitle}</p>
+            <p style={syncDescriptionStyles}>{localizationSyncDescription}</p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
