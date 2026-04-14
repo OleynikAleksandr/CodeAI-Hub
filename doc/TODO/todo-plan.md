@@ -63,13 +63,13 @@
 
 ## Phase 5 — Documentation and release (owner: Codex, updated: 2026-04-14)
 ### Stream: Documentation sync and targeted verification
-19. [IN_PROGRESS] Синхронизировать SSOT и зафиксировать targeted verification после recovery implementation — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: record localization recovery contract`
-20. [TODO] Git Commit: `docs: record localization recovery contract` (hash: TBD)
+19. [DONE] Синхронизировать SSOT и зафиксировать targeted verification после recovery implementation — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: record localization recovery contract`
+20. [DONE] Git Commit: `docs: record localization recovery contract` (hash: `cacabd88e`)
 
 ### Stream: Release preparation
-21. [TODO] Обновить release-facing docs на будущую версию до запуска release scripts — scope: `README.md`, `CHANGELOG.md`, связанные архитектурные документы `doc/`; ожидаемый commit message: `docs: prepare localization recovery release notes`
-22. [TODO] Git Commit: `docs: prepare localization recovery release notes` (hash: TBD)
+21. [DONE] Обновить release-facing docs на будущую версию до запуска release scripts — scope: `README.md`, `CHANGELOG.md`, связанные архитектурные документы `doc/`; ожидаемый commit message: `docs: prepare localization recovery release notes`
+22. [DONE] Git Commit: `docs: prepare localization recovery release notes` (hash: `297739656`)
 
 ### Stream: Release build
-23. [TODO] Выполнить release checklist, собрать новый VSIX и свежие runtime artifacts только после зелёных verification streams — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; ожидаемый commit message: `build: prepare localization recovery release artifacts`
+23. [IN_PROGRESS] Выполнить release checklist, собрать новый VSIX и свежие runtime artifacts только после зелёных verification streams — scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; ожидаемый commit message: `build: prepare localization recovery release artifacts`
 24. [TODO] Git Commit: `build: prepare localization recovery release artifacts` (hash: TBD)
