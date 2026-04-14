@@ -32,8 +32,8 @@
 
 ### Stream: Release Metadata
 3. [DONE] Обновить release-facing документы на будущую версию `1.1.983` и зафиксировать hotfix в changelog перед build wave. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Commit: `docs: prepare release 1.1.983 notes`
-4. [IN_PROGRESS] Git Commit: `docs: prepare release 1.1.983 notes` (hash: TBD)
+4. [DONE] Git Commit: `docs: prepare release 1.1.983 notes` (hash: `b9d480c7b`)
 
 ### Stream: Release Wave And Closeout
-5. [TODO] Выполнить таргетные проверки, `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем заархивировать завершённые planning/todo артефакты текущего scope и обновить навигационный closeout. Scope: release/build wave, `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/TODO/Archive.zip`. Commit: `build: prepare release 1.1.983 artifacts`
+5. [IN_PROGRESS] Выполнить таргетные проверки, `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем заархивировать завершённые planning/todo артефакты текущего scope и обновить навигационный closeout. Scope: release/build wave, `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/TODO/Archive.zip`. Commit: `build: prepare release 1.1.983 artifacts`
 6. [TODO] Git Commit: `build: prepare release 1.1.983 artifacts` (hash: TBD)
