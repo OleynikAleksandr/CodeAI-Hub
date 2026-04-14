@@ -42,17 +42,17 @@
 ## Phase 2 — Consumer integration and diagnostics (owner: Codex, updated: 2026-04-14)
 ### Stream: Core live translation path
 11. [DONE] Протянуть chunk-level diagnostics в session translation overlay path без изменения transcript contract — scope: `packages/translation/src/translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `chore: trace chunked session translation`
-12. [TODO] Git Commit: `chore: trace chunked session translation` (hash: TBD)
+12. [DONE] Git Commit: `chore: trace chunked session translation` (hash: `83f68bc2a`)
 
 ### Stream: Localization materialization
 13. [DONE] Подключить `LocalizationMaterializer` к shared chunked translation policy и обновить module docs — scope: `packages/localization/src/localization-materializer.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `feat: apply chunked translation to localization materializer`
-14. [TODO] Git Commit: `feat: apply chunked translation to localization materializer` (hash: TBD)
+14. [DONE] Git Commit: `feat: apply chunked translation to localization materializer` (hash: `eeb05c000`)
 
 ## Phase 3 — Verification and regression coverage (owner: Codex, updated: 2026-04-14)
 ### Stream: Translation package coverage
 15. [TODO] Добавить unit coverage для chunk planning и per-chunk fallback assembly — scope: `packages/translation/src/translation-chunk-planner.test.ts`, `packages/translation/src/translation-facade.test.ts`, `packages/translation/src/translation-chunk-boundary-resolver.test.ts`; ожидаемый commit message: `test: cover chunked translation planning`
-16. [TODO] Git Commit: `test: cover chunked translation planning` (hash: TBD)
-17. [TODO] Выполнить таргетные сборки `@codeai-hub/translation`, `@codeai-hub/localization`, `@codeai-hub/core` и зафиксировать результаты verification wave в документации текущего scope — scope: `packages/translation`, `packages/localization`, `packages/core`; ожидаемый commit message: `docs: record chunked translation verification`
+16. [DONE] Git Commit: `test: cover chunked translation planning` (hash: `a37698af0`)
+17. [DONE] Выполнить таргетные сборки `@codeai-hub/translation`, `@codeai-hub/localization`, `@codeai-hub/core` и зафиксировать результаты verification wave в документации текущего scope — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `docs: record chunked translation verification`
 18. [TODO] Git Commit: `docs: record chunked translation verification` (hash: TBD)
 
 ## Phase 4 — Release packaging and closeout (owner: Codex, updated: 2026-04-14)

@@ -263,6 +263,11 @@ Current live browser behavior:
 
 Current validation surface:
 
+- `npm run clean --workspace=@codeai-hub/translation`
+- `npm run build --workspace=@codeai-hub/translation`
+- `node --test packages/translation/dist/translation-chunk-boundary-resolver.test.js`
+- `node --test packages/translation/dist/translation-chunk-planner.test.js`
+- `node --test packages/translation/dist/translation-facade.test.js`
 - `npm run build --workspace @codeai-hub/localization`
 - `npm run build --workspace @codeai-hub/core`
 - `npm run build:webview`
@@ -273,6 +278,12 @@ Release verification additionally relies on:
 
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
+
+The current chunked-materialization baseline validates that:
+
+- localization bundles compile against the shared chunk-planning path without changing the source-dictionary/glossary ownership boundary;
+- `LocalizationMaterializationResult` now exposes counts for whole-string fallback versus `partial_fallback` among unique translation operations, so operator verification can distinguish timeout classes during future repros;
+- `@codeai-hub/core` and `@codeai-hub/localization` still build successfully against the updated shared translation contract.
 
 ---
 

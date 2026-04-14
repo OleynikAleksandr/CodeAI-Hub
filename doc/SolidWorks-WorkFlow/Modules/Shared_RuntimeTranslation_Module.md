@@ -233,6 +233,12 @@ This invariant exists because provider bundles are loaded outside the repo works
 Current validation surface:
 
 - `npm run build --workspace=@codeai-hub/translation`
+- `npm run clean --workspace=@codeai-hub/translation`
+- `node --test packages/translation/dist/codex-translation-runtime-home-facade.test.js`
+- `node --test packages/translation/dist/translation-chunk-boundary-resolver.test.js`
+- `node --test packages/translation/dist/translation-chunk-planner.test.js`
+- `node --test packages/translation/dist/translation-facade.test.js`
+- `npm run build --workspace=@codeai-hub/core`
 - `node --test packages/core/dist/session-translation/session-message-localization-projector.test.js`
 - `node --test packages/unified-session/dist/session-translation-overlay-store.test.js`
 - `npm run build --workspace=@codeai-hub/gemini-module`
@@ -241,7 +247,12 @@ Current validation surface:
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 
-The `1.1.972` baseline validates that installed Claude, Codex, and Gemini provider bundles all load successfully with the bundled shared translation package, while Core-owned translation overlays stay replay-safe through JSONL sidecars.
+The current chunked-translation baseline validates:
+
+- engine-aware chunk planning and protected-boundary resolution through dedicated translation package tests;
+- per-chunk fallback assembly into one request-level `translated` result with `errorCode = "partial_fallback"` when at least one chunk succeeds;
+- `@codeai-hub/core` still compiling against the shared reporter-based chunk diagnostics path;
+- installed Claude, Codex, and Gemini provider bundles continuing to load with the bundled shared translation package while Core-owned translation overlays stay replay-safe through JSONL sidecars.
 
 ---
 
