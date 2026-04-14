@@ -63,23 +63,23 @@ interface SourceDictionaryTranslationResult {
   readonly partialFallbackTranslationCount: number;
 }
 
-interface ProtectedTranslationAttemptResult {
-  readonly restoredText: string;
-  readonly translationResult: TranslationResult;
+interface StructuredBatchEntry {
+  readonly entryId: number;
+  readonly messageIds: string[];
+  readonly protectedText: string;
+  readonly sourceText: string;
+  readonly tokens: readonly ProtectedGlossaryToken[];
 }
 
-const normalizeLanguage = (
-  value: string | undefined,
-  fallback: string
-): string => {
-  const trimmed = value?.trim() ?? "";
-  return trimmed.length > 0 ? trimmed : fallback;
-};
+const normalizeLanguage = (value: string | undefined, fallback: string) =>
+  value?.trim() || fallback;
 
 const LOCALIZATION_TRANSLATION_RETRY_LIMIT = 3;
 const LOCALIZATION_TRANSLATION_TIMEOUT_BASE_MS = 6000;
-const LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS = 60_000;
+const LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS = 180_000;
 const LOCALIZATION_TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 18;
+const LOCALIZATION_BATCH_TRANSLATION_CATEGORY = "localization_bundle";
+const LOCALIZATION_BATCH_MARKER_PREFIX = "__CODEAI_HUB_LOCALIZATION_ENTRY__";
 
 const resolveLocalizationTranslationTimeoutMs = (text: string): number =>
   Math.min(
@@ -102,6 +102,12 @@ const resolveEffectiveGlossaryCategory = (
   category: LocalizationCategoryId
 ): LocalizationCategoryId =>
   category === "ui_interface" ? "workflow_terms" : category;
+
+const createBatchMarker = (entryId: number, boundary: "END" | "START") =>
+  `${LOCALIZATION_BATCH_MARKER_PREFIX}${entryId}__${boundary}__`;
+
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const createCompositeSourceHash = (
   sourceDictionary: LocalizationSourceDictionary,
@@ -332,16 +338,13 @@ export class LocalizationMaterializer {
       );
     }
 
-    const translationCache = new Map<string, string>();
-    let fallbackTranslationCount = 0;
-    let partialFallbackTranslationCount = 0;
-    const translatedEntries: Record<string, string> = {};
-
+    const structuredBatchEntries: StructuredBatchEntry[] = [];
+    const structuredEntryBySource = new Map<string, StructuredBatchEntry>();
     for (const [messageId, sourceText] of Object.entries(
       sourceDictionary.entries
     )) {
-      let translatedText = translationCache.get(sourceText);
-      if (!translatedText) {
+      let structuredEntry = structuredEntryBySource.get(sourceText);
+      if (!structuredEntry) {
         const protectedText = this.glossaryProtector.hasApplicableRules(
           category,
           targetLanguage,
@@ -353,30 +356,73 @@ export class LocalizationMaterializer {
               targetLanguage,
               glossary
             )
-          : {
-              protectedText: sourceText,
-              tokens: [],
-            };
-        const translationResult = await this.translateProtectedTextWithRetry({
-          category,
-          engineId,
-          protectedText,
-          sourceLanguage,
-          targetLanguage,
-        });
-        if (translationResult.status !== "translated") {
-          fallbackTranslationCount += 1;
-        } else if (translationResult.errorCode === "partial_fallback") {
-          partialFallbackTranslationCount += 1;
-        }
-        translatedText = this.glossaryProtector.restore(
-          translationResult.finalText,
-          targetLanguage,
-          protectedText.tokens
-        );
-        translationCache.set(sourceText, translatedText);
+          : { protectedText: sourceText, tokens: [] };
+        structuredEntry = {
+          entryId: structuredBatchEntries.length,
+          messageIds: [messageId],
+          protectedText: protectedText.protectedText,
+          sourceText,
+          tokens: protectedText.tokens,
+        };
+        structuredEntryBySource.set(sourceText, structuredEntry);
+        structuredBatchEntries.push(structuredEntry);
+        continue;
       }
-      translatedEntries[messageId] = translatedText;
+      structuredEntry.messageIds.push(messageId);
+    }
+    if (structuredBatchEntries.length === 0) {
+      return {
+        bundle: this.createSourceBundle(sourceDictionary, targetLanguage),
+        fallbackTranslationCount: 0,
+        partialFallbackTranslationCount: 0,
+      };
+    }
+
+    const batchText = structuredBatchEntries
+      .map(
+        (entry) =>
+          `${createBatchMarker(entry.entryId, "START")}\n${entry.protectedText}\n${createBatchMarker(entry.entryId, "END")}`
+      )
+      .join("\n\n");
+    const translationResult = await this.translateProtectedTextWithRetry({
+      category: LOCALIZATION_BATCH_TRANSLATION_CATEGORY,
+      engineId,
+      protectedText: { protectedText: batchText, tokens: [] },
+      sourceLanguage,
+      targetLanguage,
+    });
+    if (translationResult.status !== "translated") {
+      return {
+        bundle: this.createSourceBundle(sourceDictionary, targetLanguage),
+        fallbackTranslationCount: structuredBatchEntries.length,
+        partialFallbackTranslationCount: 0,
+      };
+    }
+
+    const fallbackTranslationCount = 0;
+    let partialFallbackTranslationCount =
+      translationResult.errorCode === "partial_fallback" ? 1 : 0;
+    const translatedEntries: Record<string, string> = {};
+    for (const entry of structuredBatchEntries) {
+      const match = new RegExp(
+        `${escapeRegExp(createBatchMarker(entry.entryId, "START"))}\\s*([\\s\\S]*?)\\s*${escapeRegExp(createBatchMarker(entry.entryId, "END"))}`
+      ).exec(translationResult.finalText);
+      const restoredText = match
+        ? this.glossaryProtector.restore(
+            match[1]?.trim() ?? "",
+            targetLanguage,
+            entry.tokens
+          )
+        : "";
+      const translatedText = hasUsableLocalizedText(restoredText)
+        ? restoredText
+        : entry.sourceText;
+      if (!hasUsableLocalizedText(restoredText)) {
+        partialFallbackTranslationCount += 1;
+      }
+      for (const messageId of entry.messageIds) {
+        translatedEntries[messageId] = translatedText;
+      }
     }
 
     return {
@@ -391,7 +437,7 @@ export class LocalizationMaterializer {
   }
 
   private async translateProtectedTextWithRetry(options: {
-    readonly category: LocalizationCategoryId;
+    readonly category: string;
     readonly engineId: string;
     readonly protectedText: {
       readonly protectedText: string;
@@ -403,7 +449,7 @@ export class LocalizationMaterializer {
     const timeoutMs = resolveLocalizationTranslationTimeoutMs(
       options.protectedText.protectedText
     );
-    let lastAttempt: ProtectedTranslationAttemptResult | null = null;
+    let lastAttempt: TranslationResult | null = null;
 
     for (
       let attemptIndex = 0;
@@ -425,10 +471,7 @@ export class LocalizationMaterializer {
         options.protectedText.tokens
       );
 
-      lastAttempt = {
-        restoredText,
-        translationResult,
-      };
+      lastAttempt = translationResult;
 
       const completedWithoutFallback =
         translationResult.status === "translated" &&
@@ -440,7 +483,7 @@ export class LocalizationMaterializer {
     }
 
     return (
-      lastAttempt?.translationResult ?? {
+      lastAttempt ?? {
         engine: options.engineId,
         errorCode: "localization_retry_exhausted",
         finalText: options.protectedText.protectedText,
