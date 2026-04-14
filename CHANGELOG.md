@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.983] - 2026-04-14
+### Fixed
+- **Canonical bootstrap path for live thinking translation**: `SessionTranslationPolicyResolver` now reads the persisted browser localization bootstrap from `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` instead of constructing a double-prefixed `~/.codeai-hub/.codeai-hub/...` path.
+- **Codex reasoning overlays no longer stall behind a false pending gate**: when the persisted bootstrap already matches the active localization settings, Core now enables the live translation policy and allows `thinking` fragments to reach async translation dispatch instead of skipping them forever as `localization_sync_pending`.
+- **Regression coverage for release runtime layout**: added a production-like settings/bootstrap path test so future changes cannot silently break the `~/.codeai-hub/settings/` -> `~/.codeai-hub/localization/cache/` bootstrap contract again.
+
 ## [1.1.982] - 2026-04-14
 ### Fixed
 - **Bundle-level interface localization batching**: localization save-sync now translates each selected interface bundle as one structured marker-preserving request instead of dispatching Codex per entry, eliminating the multiplicative slowdown that kept the localization spinner active for minutes.

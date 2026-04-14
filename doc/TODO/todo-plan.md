@@ -28,11 +28,11 @@
 
 ### Stream: Translation Policy Hotfix
 1. [DONE] Исправить bootstrap-path resolution в `packages/core/src/session-translation/`, добавить regression coverage и синхронно обновить SSOT runtime translation модуля. Scope: `packages/core/src/session-translation/`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/TODO/todo-plan.md`. Commit: `fix: restore codex thinking translation bootstrap path`
-2. [IN_PROGRESS] Git Commit: `fix: restore codex thinking translation bootstrap path` (hash: TBD)
+2. [DONE] Git Commit: `fix: restore codex thinking translation bootstrap path` (hash: `c04bf335c`)
 
 ### Stream: Release Metadata
-3. [TODO] Обновить release-facing документы на будущую версию `1.1.983` и зафиксировать hotfix в changelog перед build wave. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Commit: `docs: prepare release 1.1.983 notes`
-4. [TODO] Git Commit: `docs: prepare release 1.1.983 notes` (hash: TBD)
+3. [DONE] Обновить release-facing документы на будущую версию `1.1.983` и зафиксировать hotfix в changelog перед build wave. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Commit: `docs: prepare release 1.1.983 notes`
+4. [IN_PROGRESS] Git Commit: `docs: prepare release 1.1.983 notes` (hash: TBD)
 
 ### Stream: Release Wave And Closeout
 5. [TODO] Выполнить таргетные проверки, `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем заархивировать завершённые planning/todo артефакты текущего scope и обновить навигационный closeout. Scope: release/build wave, `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/TODO/Archive.zip`. Commit: `build: prepare release 1.1.983 artifacts`

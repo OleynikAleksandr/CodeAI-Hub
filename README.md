@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.982
+## Current Release — v1.1.983
+- **Codex thinking translation bootstrap path repaired**: Core now reads the persisted localization bootstrap snapshot from the canonical `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` path instead of a double-prefixed non-existent path under `~/.codeai-hub/.codeai-hub/...`.
+- **Live reasoning overlays resume dispatch**: once the persisted bootstrap matches the active localization settings, Codex `thinking` fragments can again enter the translation dispatch path and produce async overlay patches instead of being skipped forever as `localization_sync_pending`.
+- **Regression coverage for production-like settings/bootstrap layout**: Core now tests the exact `~/.codeai-hub/settings/` + `~/.codeai-hub/localization/cache/` layout that previously disabled all Codex thinking translation in release runtime.
+
+### 1.1.982 (previous)
 - **Interface localization now translates whole bundles**: settings/help/message bundles are sent as one structured marker-preserving batch per category instead of dozens of per-entry Codex calls, which removes the main cause of multi-minute localization spinner waits.
 - **Codex translation runtime reuses warm bootstrap artifacts**: temp translation-only `CODEX_HOME` instances now reuse cached plugin/bootstrap metadata from the resolved Codex home, avoiding repeated plugin bootstrap during interface localization sync.
 - **Project Manager no longer blanks after localization blocking**: PM busy placeholders keep hook order stable across `busy -> ready`, so the renderer recovers normally after strict localization sync completes.
