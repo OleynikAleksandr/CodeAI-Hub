@@ -14,7 +14,9 @@ tmp/
 .codeai-hub/
 GEMINI.md
 doc/Sessions/
-doc/TODO/
+doc/TODO/*
+!doc/TODO/Archive.zip
+!doc/TODO/todo-plan.md
 
 lefthook.yml
 *.vsix
