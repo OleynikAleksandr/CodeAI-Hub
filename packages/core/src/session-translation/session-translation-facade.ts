@@ -1,4 +1,7 @@
-import { TranslationFacade } from "@codeai-hub/translation";
+import {
+  TranslationFacade,
+  type TranslationReporter,
+} from "@codeai-hub/translation";
 import type { Logger } from "../telemetry/logger";
 import { computeSessionMessageSourceHash } from "./session-message-source-hash";
 import {
@@ -50,7 +53,6 @@ export class SessionTranslationFacade {
   private readonly dispatcher = new SessionTranslationDispatcher();
   private readonly logger: Logger;
   private readonly policy: SessionTranslationPolicy;
-  private readonly translation = new TranslationFacade();
 
   constructor(options: SessionTranslationFacadeOptions) {
     this.logger = options.logger;
@@ -66,6 +68,34 @@ export class SessionTranslationFacade {
       this.policy.enabled &&
       this.dispatcher.shouldTranslateDialogMessage(candidate)
     );
+  }
+
+  private createTranslationReporter(
+    candidate: SessionMessageTranslationCandidate,
+    sourceHash: string
+  ): TranslationReporter {
+    const baseMetadata = {
+      messageId: candidate.messageId,
+      role: candidate.role,
+      sessionId: candidate.sessionId,
+      sourceHash,
+      tag: candidate.tag,
+    };
+
+    return {
+      info: (message: string, metadata?: Record<string, unknown>) => {
+        this.logger.info(message, {
+          ...baseMetadata,
+          ...metadata,
+        });
+      },
+      warn: (message: string, metadata?: Record<string, unknown>) => {
+        this.logger.warn(message, {
+          ...baseMetadata,
+          ...metadata,
+        });
+      },
+    };
   }
 
   async translateDialogMessage(
@@ -127,7 +157,10 @@ export class SessionTranslationFacade {
       timeoutMs: TRANSLATION_TIMEOUT_MS,
     });
 
-    const result = await this.translation.translate({
+    const translation = new TranslationFacade({
+      reporter: this.createTranslationReporter(candidate, sourceHash),
+    });
+    const result = await translation.translate({
       category: "reasoning",
       engineId: this.policy.engineId,
       sourceLanguage: this.policy.sourceLanguage,

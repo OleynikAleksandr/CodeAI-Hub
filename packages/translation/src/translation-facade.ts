@@ -101,6 +101,26 @@ const createChunkedResult = (
   );
 };
 
+const createChunkReporterMetadata = (
+  request: TranslationRequest,
+  chunk: {
+    readonly end: number;
+    readonly index: number;
+    readonly start: number;
+    readonly text: string;
+  },
+  chunkCount: number
+): Record<string, unknown> => ({
+  category: request.category ?? "generic",
+  chunkCount,
+  chunkEnd: chunk.end,
+  chunkIndex: chunk.index,
+  chunkSourceLength: chunk.text.length,
+  chunkStart: chunk.start,
+  engineId: request.engineId ?? "google-gtx",
+  targetLanguage: request.targetLanguage,
+});
+
 export class TranslationFacade {
   private readonly reporter?: TranslationReporter;
   private readonly registry: TranslationEngineRegistry;
@@ -138,16 +158,75 @@ export class TranslationFacade {
         return await engine.translate(normalized);
       }
 
+      this.reporter?.info?.("Translation chunk plan created", {
+        category: normalized.category,
+        chunkCharacterLengths: chunkPlan.chunks.map(
+          (chunk) => chunk.text.length
+        ),
+        chunkCount: chunkPlan.chunkCount,
+        engineId: engine.id,
+        hardCharacterLimit: normalized.chunkPolicy.hardCharacterLimit,
+        softCharacterLimit: normalized.chunkPolicy.softCharacterLimit,
+        sourceLength: normalized.text.length,
+        targetLanguage: normalized.targetLanguage,
+      });
+
       const chunkResults: TranslationResult[] = [];
       for (const chunk of chunkPlan.chunks) {
-        chunkResults.push(
-          await engine.translate({
-            ...normalized,
-            text: chunk.text,
-          })
-        );
+        const startedAt = Date.now();
+        this.reporter?.info?.("Translation chunk dispatch started", {
+          ...createChunkReporterMetadata(
+            normalized,
+            chunk,
+            chunkPlan.chunkCount
+          ),
+        });
+        const chunkResult = await engine.translate({
+          ...normalized,
+          text: chunk.text,
+        });
+        const metadata = {
+          ...createChunkReporterMetadata(
+            normalized,
+            chunk,
+            chunkPlan.chunkCount
+          ),
+          elapsedMs: Date.now() - startedAt,
+          errorCode: chunkResult.errorCode,
+          resolvedEngineId: chunkResult.engine,
+          status: chunkResult.status,
+        };
+        if (chunkResult.status === "translated") {
+          this.reporter?.info?.("Translation chunk completed", metadata);
+        } else {
+          this.reporter?.warn?.(
+            "Translation chunk returned non-translated result",
+            metadata
+          );
+        }
+        chunkResults.push(chunkResult);
       }
-      return createChunkedResult(normalized, chunkResults, engine.id);
+      const assembledResult = createChunkedResult(
+        normalized,
+        chunkResults,
+        engine.id
+      );
+      this.reporter?.info?.("Translation chunk assembly completed", {
+        category: normalized.category,
+        chunkCount: chunkPlan.chunkCount,
+        engineId: engine.id,
+        errorCode: assembledResult.errorCode,
+        fallbackChunkCount: chunkResults.filter(
+          (result) => result.status !== "translated"
+        ).length,
+        finalStatus: assembledResult.status,
+        sourceLength: normalized.text.length,
+        targetLanguage: normalized.targetLanguage,
+        translatedChunkCount: chunkResults.filter(
+          (result) => result.status === "translated"
+        ).length,
+      });
+      return assembledResult;
     } catch (error) {
       this.reporter?.warn?.("Translation engine threw unexpectedly", {
         engineId: engine.id,

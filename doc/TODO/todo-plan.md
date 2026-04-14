@@ -37,11 +37,11 @@
 7. [DONE] Реализовать safe chunk boundary resolver / planner и подключить per-chunk execution path в `TranslationFacade` — scope: `packages/translation/src/translation-chunk-boundary-resolver.ts`, `packages/translation/src/translation-chunk-planner.ts`, `packages/translation/src/translation-facade.ts`; ожидаемый commit message: `feat: add translation chunk planner primitives`
 8. [DONE] Git Commit: `feat: add translation chunk planner primitives` (hash: `664bcb6aa`)
 9. [DONE] Синхронизировать SSOT shared runtime translation module и system-level invariants с новым chunked translation contract — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: sync chunked translation module contract`
-10. [TODO] Git Commit: `docs: sync chunked translation module contract` (hash: TBD)
+10. [DONE] Git Commit: `docs: sync chunked translation module contract` (hash: `2ae7f8ec4`)
 
 ## Phase 2 — Consumer integration and diagnostics (owner: Codex, updated: 2026-04-14)
 ### Stream: Core live translation path
-11. [TODO] Протянуть chunk-level diagnostics в session translation overlay path без изменения transcript contract — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `chore: trace chunked session translation`
+11. [DONE] Протянуть chunk-level diagnostics в session translation overlay path без изменения transcript contract — scope: `packages/translation/src/translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.ts`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `chore: trace chunked session translation`
 12. [TODO] Git Commit: `chore: trace chunked session translation` (hash: TBD)
 
 ### Stream: Localization materialization
@@ -54,3 +54,12 @@
 16. [TODO] Git Commit: `test: cover chunked translation planning` (hash: TBD)
 17. [TODO] Выполнить таргетные сборки `@codeai-hub/translation`, `@codeai-hub/localization`, `@codeai-hub/core` и зафиксировать результаты verification wave в документации текущего scope — scope: `packages/translation`, `packages/localization`, `packages/core`; ожидаемый commit message: `docs: record chunked translation verification`
 18. [TODO] Git Commit: `docs: record chunked translation verification` (hash: TBD)
+
+## Phase 4 — Release packaging and closeout (owner: Codex, updated: 2026-04-14)
+### Stream: Release prep
+19. [TODO] Подготовить release notes для следующего релиза и обновить активный `todo-plan` под release closeout — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: prepare chunked translation release notes`
+20. [TODO] Git Commit: `docs: prepare chunked translation release notes` (hash: TBD)
+21. [TODO] Выполнить `./scripts/build-all.sh`, поднять версии и зафиксировать runtime manifests / package versions — scope: `package.json`, `package-lock.json`, `assets/*/manifest.json`, `packages/*/package.json`; ожидаемый commit message: `build: prepare chunked translation runtime artifacts`
+22. [TODO] Git Commit: `build: prepare chunked translation runtime artifacts` (hash: TBD)
+23. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarballs и завершить execution cycle архивированием planning/todo документов, обновлением индекса и session report — scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session012.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; ожидаемый commit message: `docs(archive): close chunked translation execution cycle`
+24. [TODO] Git Commit: `docs(archive): close chunked translation execution cycle` (hash: TBD)
