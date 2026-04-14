@@ -29,6 +29,10 @@ import { createDialogApi, type DialogApi } from "./services/dialog-api";
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
+type LocalizationSyncStatus = {
+  readonly busy: boolean;
+  readonly message: string | null;
+};
 
 const vscode = resolveVscodeBridge();
 
@@ -37,6 +41,10 @@ class ProjectManagerApi {
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();
   private lastSettingsPayload: SettingsLoadedPayload | null = null;
+  private localizationSyncStatus: LocalizationSyncStatus = {
+    busy: false,
+    message: null,
+  };
   private providerSnapshot: ProviderSnapshot[] = [];
   private readonly outgoingQueue = new OutgoingMessageQueue();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -48,6 +56,31 @@ class ProjectManagerApi {
 
     window.addEventListener("message", (event) => {
       const message = event.data;
+      if (
+        message &&
+        typeof message === "object" &&
+        "type" in message &&
+        message.type === "settings:localization-sync-status"
+      ) {
+        const payload =
+          "busy" in message && typeof message.busy === "boolean"
+            ? {
+                busy: message.busy,
+                message:
+                  "message" in message && typeof message.message === "string"
+                    ? message.message
+                    : null,
+              }
+            : null;
+        if (payload) {
+          this.localizationSyncStatus = payload;
+          this.notifyCoreListeners({
+            type: "settings:localization-sync-status",
+            payload,
+          });
+        }
+        return;
+      }
       if (
         message &&
         typeof message === "object" &&
@@ -161,6 +194,13 @@ class ProjectManagerApi {
     readonly sessionKind?: "collector" | null;
     readonly runSlug?: string | null;
   }): void {
+    if (this.localizationSyncStatus.busy) {
+      console.warn(
+        "[ProjectManagerApi] Session creation blocked by localization sync",
+        this.localizationSyncStatus
+      );
+      return;
+    }
     this.send({ type: "session:create", payload: params });
   }
   deleteSession(sessionId: string): void {
@@ -196,6 +236,16 @@ class ProjectManagerApi {
     turnOptions?: Record<string, unknown>
   ): void {
     if (!content.trim()) {
+      return;
+    }
+    if (this.localizationSyncStatus.busy) {
+      console.warn(
+        "[ProjectManagerApi] Session message blocked by localization sync",
+        {
+          sessionId,
+          localizationSyncStatus: this.localizationSyncStatus,
+        }
+      );
       return;
     }
     const payloadContent = turnOptions
@@ -236,6 +286,10 @@ class ProjectManagerApi {
   getWsStreamUrl(): string {
     const wsUrl = this.getWsUrl() ?? "ws://127.0.0.1:8080";
     return `${wsUrl}/api/v1/stream`;
+  }
+
+  getLocalizationSyncStatus(): LocalizationSyncStatus {
+    return this.localizationSyncStatus;
   }
 
   async getWorkflowState(

@@ -1,10 +1,11 @@
-import { memo, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type React from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
 import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
+import { api } from "../../api";
 import {
   hasExistingStageSession,
   resolveStageSessionIntent,
@@ -27,6 +28,61 @@ import type { BranchNodeSelection } from "./main-area-utils";
 import {
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
+
+type LocalizationSyncStatus = {
+  readonly busy: boolean;
+  readonly message: string | null;
+};
+
+const isLocalizationSyncStatusPayload = (
+  payload: unknown
+): payload is LocalizationSyncStatus => {
+  if (!(payload && typeof payload === "object" && "busy" in payload)) {
+    return false;
+  }
+
+  return (
+    typeof payload.busy === "boolean" &&
+    (!("message" in payload) ||
+      payload.message === null ||
+      typeof payload.message === "string")
+  );
+};
+
+const useLocalizationSyncStatus = (): LocalizationSyncStatus => {
+  const [status, setStatus] = useState<LocalizationSyncStatus>(
+    () => api.getLocalizationSyncStatus()
+  );
+
+  useEffect(() => {
+    const unsubscribe = api.onCoreEvent((message) => {
+      if (
+        message.type !== "settings:localization-sync-status" ||
+        !isLocalizationSyncStatusPayload(message.payload)
+      ) {
+        return;
+      }
+      setStatus(message.payload);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  return status;
+};
+
+const renderLocalizationSyncBlockedState = (
+  message: string | null
+): React.ReactNode => (
+  <div className="pm-placeholder">
+    <strong>Localization sync in progress.</strong>
+    <br />
+    {message ??
+      "Please wait. Translated interface bundles are still being prepared, so Project Manager remains blocked."}
+  </div>
+);
 
 interface SelectedArtifact {
   readonly workspacePath: string;
@@ -96,6 +152,12 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   shouldShowQuestionnaireEditor,
   workflowStoreLoaded,
 }) => {
+  const localizationSyncStatus = useLocalizationSyncStatus();
+
+  if (localizationSyncStatus.busy) {
+    return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
+  }
+
   if (selectedBranchNode) {
     const kindLabel =
       selectedBranchNode.kind === "product-part"
@@ -273,6 +335,12 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   workspacePath,
   workspaceSlug,
 }) => {
+  const localizationSyncStatus = useLocalizationSyncStatus();
+
+  if (localizationSyncStatus.busy) {
+    return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
+  }
+
   if (showDescriptionHelp) {
     return <DescriptionStepHelp />;
   }

@@ -193,6 +193,19 @@ export class SettingsMessageHandler {
     });
   }
 
+  private async postLocalizationSyncStatus(
+    webview: Webview,
+    payload: {
+      readonly busy: boolean;
+      readonly message: string;
+    }
+  ): Promise<void> {
+    await webview.postMessage({
+      type: "settings:localization-sync-status",
+      ...payload,
+    });
+  }
+
   private async handleSaveRequest(
     rawSettings: unknown,
     webview: Webview
@@ -210,6 +223,11 @@ export class SettingsMessageHandler {
     applyDefaultModelsEnv(this.settingsState);
 
     try {
+      await this.postLocalizationSyncStatus(webview, {
+        busy: true,
+        message:
+          "Localization sync is running. Project Manager and new sessions stay blocked until translated interface bundles are ready.",
+      });
       await persistSettingsSnapshot(this.settingsState);
       syncCodexProviderReasoningSummaryConfig(
         this.settingsState.providers.codex.reasoningSummaryEnabled
@@ -217,12 +235,20 @@ export class SettingsMessageHandler {
         /* ignore sync errors */
       });
       await this.postSavedNotification(webview);
+      await this.postLocalizationSyncStatus(webview, {
+        busy: false,
+        message: "Localization sync completed.",
+      });
     } catch (error) {
       const reason = this.describeError(error);
       window.showErrorMessage(
         `Failed to synchronize localization settings: ${reason}`
       );
       await this.postSaveError(webview, reason);
+      await this.postLocalizationSyncStatus(webview, {
+        busy: false,
+        message: `Localization sync failed: ${reason}`,
+      });
     }
   }
 

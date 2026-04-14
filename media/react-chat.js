@@ -8971,6 +8971,12 @@
   // src/client/ui/src/components/settings/use-settings-state.ts
   var RESET_DELAY_MS = 100;
   var LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY = "codeaihub:settings:localization:user-glossary-draft";
+  var isSettingsSaveErrorMessage = (message) => {
+    if (!(message && typeof message === "object" && "type" in message)) {
+      return false;
+    }
+    return message.type === "settings:save-error";
+  };
   var useSettingsState = () => {
     const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
     const createBootstrapSettings = (snapshot) => {
@@ -9027,51 +9033,65 @@
       updatingTargets: []
     }));
     (0, import_react.useEffect)(() => {
-      vscode_default.postMessage({
-        type: "settings:load"
-      });
       const handleMessage = (event) => {
+        if (isSettingsSaveErrorMessage(event.data)) {
+          setSaving(false);
+          return;
+        }
         if (!isIncomingMessage(event.data)) {
           return;
         }
-        if (event.data.type === "settings:loaded") {
-          const nextSettings = normalizeLoadedLocalizationSettings(
-            mapSettingsSnapshot(event.data.settings)
-          );
-          initialSettingsRef.current = nextSettings;
-          setLocalizationRuntime(event.data.localizationRuntime ?? null);
-          setSettings(nextSettings);
-          setResetting(false);
-          setHasChanges(false);
-        }
-        if (event.data.type === "settings:saved") {
-          const nextSettings = normalizeLoadedLocalizationSettings(
-            mapSettingsSnapshot(event.data.settings)
-          );
-          initialSettingsRef.current = nextSettings;
-          setLocalizationRuntime(event.data.localizationRuntime ?? null);
-          setSettings(nextSettings);
-          setSaving(false);
-          setHasChanges(false);
-        }
-        if (event.data.type === "settings:versions") {
-          const incomingVersions = event.data.versions ?? null;
-          setVersions({
-            data: incomingVersions,
-            loading: false,
-            error: event.data.error ?? null,
-            updatingTargets: []
-          });
-        }
-        if (event.data.type === "settings:core-control-status") {
-          setCoreControl({
-            busy: event.data.busy,
-            message: event.data.message ?? null,
-            phase: event.data.phase
-          });
+        switch (event.data.type) {
+          case "settings:loaded": {
+            const nextSettings = normalizeLoadedLocalizationSettings(
+              mapSettingsSnapshot(event.data.settings)
+            );
+            initialSettingsRef.current = nextSettings;
+            setLocalizationRuntime(event.data.localizationRuntime ?? null);
+            setSettings(nextSettings);
+            setSaving(false);
+            setResetting(false);
+            setHasChanges(false);
+            return;
+          }
+          case "settings:saved": {
+            const nextSettings = normalizeLoadedLocalizationSettings(
+              mapSettingsSnapshot(event.data.settings)
+            );
+            initialSettingsRef.current = nextSettings;
+            setLocalizationRuntime(event.data.localizationRuntime ?? null);
+            setSettings(nextSettings);
+            setSaving(false);
+            setHasChanges(false);
+            return;
+          }
+          case "settings:versions": {
+            const incomingVersions = event.data.versions ?? null;
+            setVersions({
+              data: incomingVersions,
+              loading: false,
+              error: event.data.error ?? null,
+              updatingTargets: []
+            });
+            return;
+          }
+          case "settings:core-control-status": {
+            setCoreControl({
+              busy: event.data.busy,
+              message: event.data.message ?? null,
+              phase: event.data.phase
+            });
+            return;
+          }
+          default: {
+            return;
+          }
         }
       };
       window.addEventListener("message", handleMessage);
+      vscode_default.postMessage({
+        type: "settings:load"
+      });
       return () => {
         window.removeEventListener("message", handleMessage);
       };
@@ -12468,6 +12488,7 @@
     height: "100%",
     display: "flex",
     flexDirection: "column",
+    position: "relative",
     background: settingsColorTokens.surface,
     color: settingsColorTokens.textSecondary
   };
@@ -12499,6 +12520,47 @@
     display: "flex",
     flexDirection: "column",
     gap: settingsSpacingTokens.containerGap
+  };
+  var syncOverlayStyles = {
+    position: "absolute",
+    inset: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "rgba(7, 10, 16, 0.7)",
+    zIndex: 10,
+    padding: settingsSpacingTokens.pagePadding
+  };
+  var syncCardStyles = {
+    maxWidth: "520px",
+    width: "100%",
+    borderRadius: "14px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: "rgba(18, 24, 34, 0.96)",
+    boxShadow: "0 18px 48px rgba(0, 0, 0, 0.35)",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px"
+  };
+  var syncSpinnerStyles = {
+    width: "30px",
+    height: "30px",
+    borderRadius: "999px",
+    border: `3px solid ${settingsColorTokens.borderStrong}`,
+    borderTopColor: settingsColorTokens.actionPrimary,
+    animation: "settings-spin 0.9s linear infinite"
+  };
+  var syncTitleStyles = {
+    margin: 0,
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.titleFontSize,
+    fontWeight: 700
+  };
+  var syncDescriptionStyles = {
+    margin: 0,
+    color: settingsColorTokens.textSecondary,
+    lineHeight: 1.6
   };
   var settingsTabs = [
     { id: "claude", label: "Claude" },
@@ -12543,7 +12605,10 @@
       handleReset,
       handleUpdateProvider
     } = state;
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { "aria-busy": !ready, style: containerStyles4, children: [
+    const localizationSyncTitle = "Synchronizing localization";
+    const localizationSyncDescription = "Please wait. CodeAI Hub is preparing translated interface help and user-facing messages. Project Manager and new sessions stay blocked until synchronization completes.";
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { "aria-busy": saving || !ready, style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("style", { children: "@keyframes settings-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }" }),
       /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(settings_header_default, { onClose }),
       /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         "button",
@@ -12694,7 +12759,12 @@
           resetting,
           saving
         }
-      )
+      ),
+      saving ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { "aria-live": "polite", role: "status", style: syncOverlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: syncCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: syncSpinnerStyles }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: syncTitleStyles, children: localizationSyncTitle }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: syncDescriptionStyles, children: localizationSyncDescription })
+      ] }) }) : null
     ] });
   };
   var settings_view_default = import_react19.default.memo(SettingsView);
