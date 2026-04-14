@@ -7,7 +7,7 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.981
+## Current Release — v1.1.982
 - **Interface localization now translates whole bundles**: settings/help/message bundles are sent as one structured marker-preserving batch per category instead of dozens of per-entry Codex calls, which removes the main cause of multi-minute localization spinner waits.
 - **Codex translation runtime reuses warm bootstrap artifacts**: temp translation-only `CODEX_HOME` instances now reuse cached plugin/bootstrap metadata from the resolved Codex home, avoiding repeated plugin bootstrap during interface localization sync.
 - **Project Manager no longer blanks after localization blocking**: PM busy placeholders keep hook order stable across `busy -> ready`, so the renderer recovers normally after strict localization sync completes.
