@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.979
-- **Universal chunked translation for long user-facing text**: the shared translation package now plans long requests into safe chunks at paragraph/list/sentence/clause boundaries, respects protected Markdown/code/placeholders, and assembles a single result with per-chunk fallback instead of whole-string timeout loss.
-- **Chunk diagnostics in Core**: thinking translation logs now include chunk planning, per-chunk dispatch/completion, elapsed time, and assembly summary under the same `sessionId` / `messageId` / `sourceHash` trace path.
-- **Localization materialization follows the same chunked contract**: long Settings/Help bundle strings now go through the shared chunk planner, and localization verification can distinguish full fallback from `partial_fallback` across unique translation operations.
+## Current Release — v1.1.980
+- **Blocking localization sync before UI resume**: `Save Changes` for localization now waits for Core to rematerialize and activate all required runtime bundles in deterministic priority order, while Project Manager and new session sends stay locked behind a visible sync spinner.
+- **Interface localization no longer competes with live translation**: Settings/Help/User-message bundles now materialize as whole requests with dynamic watchdog timeouts and automatic retries instead of chunk fan-out, so partial English fallback is no longer accepted as a successful interface state.
+- **Serialized live translation recovery**: Core resolves localization settings per dispatch, gates live session translation until the persisted bootstrap matches the saved settings, and runs all live overlay work through one shared queue to prevent model/engine drift and translation races after restart.
 
 ### 1.1.978 (previous)
 - **Codex artifact language no longer falls back to English after PM restart**: Project Manager now reuses the persisted browser localization bootstrap snapshot when live settings cache is not ready, so `Artifacts for the User` stays aligned with the saved runtime language.

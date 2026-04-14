@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.980] - 2026-04-14
+### Fixed
+- **Blocking localization readiness on save**: localization `Save Changes` now waits for Core to rematerialize and activate the required runtime bundles in deterministic priority order before Project Manager resumes interactive work.
+- **Whole-request interface localization**: Settings/Help/User-message bundle materialization no longer uses chunk fan-out; it now relies on dynamic watchdog timeouts plus automatic retries and rejects fallback / `partial_fallback` results for required categories.
+- **Serialized live translation dispatch**: live session translation now resolves current localization settings on each dispatch, stays disabled until the persisted bootstrap matches those settings, and runs through a shared single-worker queue to prevent restart races and overloaded translation bursts.
+- **Hydration drift in UI/runtime model state**: the localization engine selector now preserves unknown persisted engine ids instead of coercing to `Google GTX Free`, and early runtime model updates are buffered until the session snapshot exists so the visible model label matches the real session.
+
 ## [1.1.979] - 2026-04-14
 ### Added
 - **Universal chunk planner in shared translation**: long translation requests now split at safe paragraph/list/sentence/clause boundaries, respect protected Markdown/code/link/placeholder spans, and run through engine-specific conservative chunk budgets before dispatch.
