@@ -30,6 +30,8 @@ export interface LocalizationMaterializationRequest {
 
 export interface LocalizationMaterializationResult {
   readonly bundle: LocalizationBundleRecord;
+  readonly fallbackTranslationCount: number;
+  readonly partialFallbackTranslationCount: number;
   readonly reusedExistingBundle: boolean;
   readonly translatedEntryCount: number;
   readonly uniqueTranslationCount: number;
@@ -47,6 +49,12 @@ interface LocalizationMaterializerOptions {
   readonly sourceDictionaryRegistry: SourceDictionaryRegistry;
   readonly translationFacade?: TranslationFacade;
   readonly userGlossaryStore?: UserGlossaryStore;
+}
+
+interface SourceDictionaryTranslationResult {
+  readonly bundle: LocalizationBundleRecord;
+  readonly fallbackTranslationCount: number;
+  readonly partialFallbackTranslationCount: number;
 }
 
 const normalizeLanguage = (
@@ -186,6 +194,8 @@ export class LocalizationMaterializer {
       ) {
         return {
           bundle: existingBundle,
+          fallbackTranslationCount: 0,
+          partialFallbackTranslationCount: 0,
           reusedExistingBundle: true,
           translatedEntryCount: Object.keys(existingBundle.entries).length,
           uniqueTranslationCount: 0,
@@ -193,8 +203,12 @@ export class LocalizationMaterializer {
       }
     }
 
-    const bundle = skipTranslation
-      ? this.createSourceBundle(sourceDictionary, targetLanguage)
+    const translationResult: SourceDictionaryTranslationResult = skipTranslation
+      ? {
+          bundle: this.createSourceBundle(sourceDictionary, targetLanguage),
+          fallbackTranslationCount: 0,
+          partialFallbackTranslationCount: 0,
+        }
       : await this.translateSourceDictionary(
           effectiveGlossaryCategory,
           glossary,
@@ -203,6 +217,7 @@ export class LocalizationMaterializer {
           targetLanguage,
           engineId
         );
+    const bundle = translationResult.bundle;
 
     if (!skipTranslation) {
       await Promise.all([
@@ -219,6 +234,9 @@ export class LocalizationMaterializer {
 
     return {
       bundle,
+      fallbackTranslationCount: translationResult.fallbackTranslationCount,
+      partialFallbackTranslationCount:
+        translationResult.partialFallbackTranslationCount,
       reusedExistingBundle: false,
       translatedEntryCount: Object.keys(bundle.entries).length,
       uniqueTranslationCount: skipTranslation
@@ -279,7 +297,7 @@ export class LocalizationMaterializer {
     sourceLanguage: string,
     targetLanguage: string,
     engineId: string
-  ): Promise<LocalizationBundleRecord> {
+  ): Promise<SourceDictionaryTranslationResult> {
     if (
       !this.languageCatalogService.supportsLanguage(targetLanguage, engineId)
     ) {
@@ -289,6 +307,8 @@ export class LocalizationMaterializer {
     }
 
     const translationCache = new Map<string, string>();
+    let fallbackTranslationCount = 0;
+    let partialFallbackTranslationCount = 0;
     const translatedEntries: Record<string, string> = {};
 
     for (const [messageId, sourceText] of Object.entries(
@@ -313,11 +333,17 @@ export class LocalizationMaterializer {
             };
         const translationResult = await this.translationFacade.translate({
           category,
+          chunkingMode: "auto",
           engineId,
           sourceLanguage,
           targetLanguage,
           text: protectedText.protectedText,
         });
+        if (translationResult.status !== "translated") {
+          fallbackTranslationCount += 1;
+        } else if (translationResult.errorCode === "partial_fallback") {
+          partialFallbackTranslationCount += 1;
+        }
         translatedText = this.glossaryProtector.restore(
           translationResult.finalText,
           targetLanguage,
@@ -329,9 +355,13 @@ export class LocalizationMaterializer {
     }
 
     return {
-      category: sourceDictionary.category,
-      language: targetLanguage,
-      entries: translatedEntries,
+      bundle: {
+        category: sourceDictionary.category,
+        entries: translatedEntries,
+        language: targetLanguage,
+      },
+      fallbackTranslationCount,
+      partialFallbackTranslationCount,
     };
   }
 }

@@ -1,7 +1,7 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-13
+**Updated:** 2026-04-14
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.881`)
 
@@ -192,6 +192,8 @@ Current browser bootstrap snapshot contract stores:
 Important live behaviors:
 
 - identical source strings are deduplicated within one materialization run;
+- the materializer now opts into explicit shared `chunkingMode = "auto"` so long help/settings strings follow the same engine-aware safe chunk planner as live runtime translation;
+- bundle materialization tracks how many unique translation operations ended in whole-string fallback versus assembled `partial_fallback`, so verification can distinguish "nothing translated" from "some chunks stayed English by design";
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`;

@@ -45,7 +45,7 @@
 12. [TODO] Git Commit: `chore: trace chunked session translation` (hash: TBD)
 
 ### Stream: Localization materialization
-13. [TODO] Подключить `LocalizationMaterializer` к shared chunked translation policy и обновить module docs — scope: `packages/localization/src/localization-materializer.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; ожидаемый commit message: `feat: apply chunked translation to localization materializer`
+13. [DONE] Подключить `LocalizationMaterializer` к shared chunked translation policy и обновить module docs — scope: `packages/localization/src/localization-materializer.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `feat: apply chunked translation to localization materializer`
 14. [TODO] Git Commit: `feat: apply chunked translation to localization materializer` (hash: TBD)
 
 ## Phase 3 — Verification and regression coverage (owner: Codex, updated: 2026-04-14)
