@@ -47,7 +47,7 @@ class RecordingEngine implements TranslationEngine {
     readonly text: string;
   }): Promise<TranslationResult> {
     this.calls.push(request.text);
-    return {
+    return Promise.resolve({
       engine: this.id,
       finalText: `[ru] ${request.text}`,
       originalText: request.text,
@@ -55,7 +55,7 @@ class RecordingEngine implements TranslationEngine {
       status: "translated",
       targetLanguage: request.targetLanguage,
       translatedText: `[ru] ${request.text}`,
-    };
+    });
   }
 }
 

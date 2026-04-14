@@ -31,11 +31,11 @@
 2. [DONE] Git Commit: `fix: disable chunking for reasoning translations` (hash: `d2641771e`)
 
 ### Stream: Release Metadata
-3. [IN_PROGRESS] Обновить release-facing документы на будущую версию `1.1.984` и зафиксировать reasoning no-chunking hotfix в changelog перед build wave. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Commit: `docs: prepare release 1.1.984 notes`
-4. [TODO] Git Commit: `docs: prepare release 1.1.984 notes` (hash: TBD)
+3. [DONE] Обновить release-facing документы на будущую версию `1.1.984` и зафиксировать reasoning no-chunking hotfix в changelog перед build wave. Scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`. Commit: `docs: prepare release 1.1.984 notes`
+4. [DONE] Git Commit: `docs: prepare release 1.1.984 notes` (hash: `63a96c2dd`)
 
 ### Stream: Release Wave And Closeout
-5. [TODO] Выполнить таргетные проверки и `./scripts/build-all.sh`, затем зафиксировать релизную волну версии `1.1.984` (version bumps + manifests) отдельным коммитом перед финальной упаковкой. Scope: release/build wave, `package.json`, `package-lock.json`, `assets/*/manifest.json`. Commit: `build: prepare release 1.1.984 artifacts`
+5. [DONE] Выполнить таргетные проверки и release build wave на версии `1.1.984`, затем зафиксировать релизную волну (version bumps + manifests + synced release artefacts) отдельным коммитом перед финальной упаковкой. Scope: release/build wave, `package.json`, `package-lock.json`, `assets/*/manifest.json`, `doc/tmp/releases/*`. Commit: `build: prepare release 1.1.984 artifacts`
 6. [TODO] Git Commit: `build: prepare release 1.1.984 artifacts` (hash: TBD)
 7. [TODO] На чистом дереве выполнить `./scripts/build-release.sh --use-current-version`, затем заархивировать завершённые planning/todo артефакты текущего scope и обновить навигационный closeout без нового активного execution scope. Scope: `doc/SolidWorks-WorkFlow/Plans/Archive.zip`, `doc/TODO/Archive.zip`, `doc/SolidWorks-WorkFlow/Docs_Index.md`. Commit: `docs: close reasoning no-chunking scope`
 8. [TODO] Git Commit: `docs: close reasoning no-chunking scope` (hash: TBD)
