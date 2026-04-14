@@ -29,27 +29,27 @@
 
 ### Stream: Plan realignment
 3. [DONE] Переформатировать active scope вокруг blocking localization sync, запрета Project Manager launch во время sync, отключения chunking для интерфейсной локализации и dynamic timeout/retry policy — scope: `doc/SolidWorks-WorkFlow/Plans/Localization_Settings_RestartHydration_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: realign localization recovery plan`
-4. [TODO] Git Commit: `docs: realign localization recovery plan` (hash: TBD)
+4. [DONE] Git Commit: `docs: realign localization recovery plan` (hash: `dfccc3137`)
 
 ## Phase 2 — Blocking localization sync implementation (owner: Codex, updated: 2026-04-14)
 ### Stream: Save-path synchronization gate
-5. [TODO] Добавить blocking localization sync contract после `Save Changes`, busy-state в Settings UI и host/webview acknowledgement вместо fire-and-forget save — scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `feat: add blocking localization sync gate`
-6. [TODO] Git Commit: `feat: add blocking localization sync gate` (hash: TBD)
+5. [DONE] Добавить blocking localization sync contract после `Save Changes`, busy-state в Settings UI и host/webview acknowledgement вместо fire-and-forget save — scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `feat: add blocking localization sync gate`
+6. [DONE] Git Commit: `feat: add blocking localization sync gate` (hash: `fc5fe45a7`)
 
 ### Stream: Project Manager launch lock
-7. [TODO] Заблокировать запуск Project Manager и новых translation-triggering flows, пока localization sync не завершён — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/use-description-session-guard.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`; ожидаемый commit message: `feat: block project manager during localization sync`
-8. [TODO] Git Commit: `feat: block project manager during localization sync` (hash: TBD)
+7. [DONE] Заблокировать запуск Project Manager и новых translation-triggering flows, пока localization sync не завершён — scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; ожидаемый commit message: `feat: block project manager during localization sync`
+8. [DONE] Git Commit: `feat: block project manager during localization sync` (hash: `b28f50171`)
 
 ## Phase 3 — Interface localization reliability (owner: Codex, updated: 2026-04-14)
 ### Stream: Interface translation execution policy
-9. [TODO] Убрать chunking из interface/bootstrap localization path и перевести materialization на крупные batched requests с акцентом на completeness, а не latency — scope: `packages/localization/src/localization-materializer.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/translation-contract.ts`; ожидаемый commit message: `feat: disable chunking for interface localization`
-10. [TODO] Git Commit: `feat: disable chunking for interface localization` (hash: TBD)
+9. [DONE] Убрать chunking из interface/bootstrap localization path и перевести materialization на крупные batched requests с акцентом на completeness, а не latency — scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-materializer.test.ts`; ожидаемый commit message: `feat: disable chunking for interface localization`
+10. [DONE] Git Commit: `feat: disable chunking for interface localization` (hash: `fa1897694`)
 
-11. [TODO] Добавить dynamic timeout и automatic retry policy для localization bundle translation; timeout использовать только как watchdog against hangs — scope: `packages/localization/src/localization-materializer.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/translation-request-normalizer.ts`; ожидаемый commit message: `feat: add resilient localization translation retries`
-12. [TODO] Git Commit: `feat: add resilient localization translation retries` (hash: TBD)
+11. [DONE] Добавить dynamic timeout и automatic retry policy для localization bundle translation; timeout использовать только как watchdog against hangs — scope: `packages/localization/src/localization-materializer.ts`, `packages/localization/src/localization-materializer.test.ts`; ожидаемый commit message: `feat: add resilient localization translation retries`
+12. [DONE] Git Commit: `feat: add resilient localization translation retries` (hash: `17d788417`)
 
 ### Stream: Deterministic bundle completion
-13. [TODO] Ввести deterministic category priority (`ui_helper_text` → `messages_for_the_user` → `artifacts_for_the_user` → `ui_labels` → `workflow_terms`) и strict sync-ready completion gate без partial fallback acceptance — scope: `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-materializer.ts`, `src/extension-module/settings/localization-runtime-service.ts`; ожидаемый commit message: `feat: prioritize required localization bundles`
+13. [IN_PROGRESS] Ввести deterministic category priority (`ui_helper_text` → `messages_for_the_user` → `artifacts_for_the_user` → `ui_labels` → `workflow_terms`) и strict sync-ready completion gate без partial fallback acceptance — scope: `packages/localization/src/localization-facade.ts`, `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`; ожидаемый commit message: `feat: prioritize required localization bundles`
 14. [TODO] Git Commit: `feat: prioritize required localization bundles` (hash: TBD)
 
 ## Phase 4 — Live translation stabilization and residual bug triage (owner: Codex, updated: 2026-04-14)

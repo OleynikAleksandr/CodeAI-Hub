@@ -179,10 +179,13 @@ export class SettingsMessageHandler {
     }
   }
 
-  private async postSavedNotification(webview: Webview): Promise<void> {
+  private async postSavedNotification(
+    webview: Webview,
+    payload: SettingsEnvelopePayload
+  ): Promise<void> {
     await webview.postMessage({
       type: "settings:saved",
-      ...(await this.resolveEnvelopePayload()),
+      ...payload,
     });
   }
 
@@ -234,7 +237,10 @@ export class SettingsMessageHandler {
       ).catch(() => {
         /* ignore sync errors */
       });
-      await this.postSavedNotification(webview);
+      await this.postSavedNotification(
+        webview,
+        await this.resolveEnvelopePayload("strict")
+      );
       await this.postLocalizationSyncStatus(webview, {
         busy: false,
         message: "Localization sync completed.",
@@ -268,12 +274,18 @@ export class SettingsMessageHandler {
     }
   }
 
-  private async resolveEnvelopePayload(): Promise<SettingsEnvelopePayload> {
+  private async resolveEnvelopePayload(
+    mode: "best_effort" | "strict" = "best_effort"
+  ): Promise<SettingsEnvelopePayload> {
     return {
       localizationRuntime:
-        await this.localizationRuntimeService.resolveRuntimePayload(
-          this.settingsState
-        ),
+        mode === "strict"
+          ? await this.localizationRuntimeService.synchronizeRuntimePayload(
+              this.settingsState
+            )
+          : await this.localizationRuntimeService.resolveRuntimePayload(
+              this.settingsState
+            ),
       settings: this.settingsState,
     };
   }

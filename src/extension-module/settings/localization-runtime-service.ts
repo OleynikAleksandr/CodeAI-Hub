@@ -21,6 +21,14 @@ export class LocalizationRuntimeService {
     );
   }
 
+  synchronizeRuntimePayload(
+    settings: SettingsSnapshot
+  ): Promise<LocalizationRuntimePayload> {
+    return this.localizationFacade.synchronizeRuntimePayload(
+      this.createRuntimeSnapshot(settings)
+    );
+  }
+
   loadRuntimeBootstrapSnapshot(
     settings: SettingsSnapshot
   ): Promise<LocalizationRuntimeBootstrapSnapshot | null> {

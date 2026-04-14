@@ -2,10 +2,7 @@ import { createHash } from "node:crypto";
 import { GlossaryBundleLoader } from "./glossary-bundle-loader";
 import { DEFAULT_ENGINE_LANGUAGE_CATALOGS } from "./language-catalog";
 import { LanguageCatalogService } from "./language-catalog-service";
-import {
-  type LocalizationBundleRecord,
-  LocalizationBundleStore,
-} from "./localization-bundle-store";
+import { LocalizationBundleStore } from "./localization-bundle-store";
 import {
   DEFAULT_LOCALIZATION_ENGINE_ID,
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
@@ -22,7 +19,6 @@ import {
 } from "./localization-contract";
 import {
   type LocalizationMaterializationRequest,
-  type LocalizationMaterializationResult,
   LocalizationMaterializer,
 } from "./localization-materializer";
 import {
@@ -59,6 +55,10 @@ const normalizeLanguageSelection = (value: string | undefined): string => {
 
 type NormalizableCategorySelections = Readonly<
   Record<string, string | undefined>
+>;
+type ResolvedRuntimeBundles = Record<
+  LocalizationCategoryId,
+  LocalizationResolvedRuntimeBundle
 >;
 
 type ApprovedUserFacingCategoryId =
@@ -117,6 +117,14 @@ const createSourceFallbackBundle = (
 const isSourceSelection = (language: string, sourceLanguage: string): boolean =>
   language === LOCALIZATION_SOURCE_SELECTION ||
   language.toLowerCase() === sourceLanguage.toLowerCase();
+
+const LOCALIZATION_RUNTIME_CATEGORY_PRIORITY = [
+  "user_guidance",
+  "system_feedback",
+  "interactive_templates",
+  "ui_interface",
+  "workflow_terms",
+] as const satisfies readonly LocalizationCategoryId[];
 
 const createRuntimeBootstrapCacheKey = (value: unknown): string =>
   createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -217,38 +225,65 @@ export class LocalizationFacade {
   async resolveRuntimePayload(
     settings: LocalizationRuntimeSettingsSnapshot
   ): Promise<LocalizationRuntimePayload> {
-    const runtimeBootstrapSnapshot =
-      await this.resolveRuntimeBootstrapSnapshot(settings);
-
-    return runtimeBootstrapSnapshot.runtimePayload;
+    return (await this.resolveRuntimeBootstrapSnapshot(settings))
+      .runtimePayload;
   }
 
-  async resolveRuntimeBootstrapSnapshot(
+  async synchronizeRuntimePayload(
     settings: LocalizationRuntimeSettingsSnapshot
+  ): Promise<LocalizationRuntimePayload> {
+    return (await this.synchronizeRuntimeBootstrapSnapshot(settings))
+      .runtimePayload;
+  }
+
+  resolveRuntimeBootstrapSnapshot(
+    settings: LocalizationRuntimeSettingsSnapshot
+  ): Promise<LocalizationRuntimeBootstrapSnapshot> {
+    return this.buildRuntimeBootstrapSnapshot(settings);
+  }
+
+  private synchronizeRuntimeBootstrapSnapshot(
+    settings: LocalizationRuntimeSettingsSnapshot
+  ): Promise<LocalizationRuntimeBootstrapSnapshot> {
+    return this.buildRuntimeBootstrapSnapshot(settings, true);
+  }
+
+  private async buildRuntimeBootstrapSnapshot(
+    settings: LocalizationRuntimeSettingsSnapshot,
+    strict = false
   ): Promise<LocalizationRuntimeBootstrapSnapshot> {
     const normalizedSettings = this.normalizeRuntimeSettings(settings);
     const cacheKey =
       await this.createRuntimeBootstrapCacheKey(normalizedSettings);
-    const persistedSnapshot = await this.runtimeBootstrapStore.load();
+    if (!strict) {
+      const persistedSnapshot = await this.runtimeBootstrapStore.load();
 
-    if (persistedSnapshot?.cacheKey === cacheKey) {
-      return persistedSnapshot;
+      if (persistedSnapshot?.cacheKey === cacheKey) {
+        return persistedSnapshot;
+      }
     }
 
-    const resolvedBundlesByCategory = Object.fromEntries(
-      await Promise.all(
-        LOCALIZATION_CATEGORY_IDS.map(async (category) => [
-          category,
-          await this.resolveRuntimeBundleForCategory(
-            category,
-            normalizedSettings
-          ),
-        ])
-      )
-    ) as Record<LocalizationCategoryId, LocalizationResolvedRuntimeBundle>;
+    const resolvedBundlesByCategory =
+      await this.resolveRuntimeBundlesByPriority((category) =>
+        strict
+          ? this.materializeRequiredRuntimeBundle(category, normalizedSettings)
+          : this.resolveRuntimeBundleForCategory(category, normalizedSettings)
+      );
 
+    return this.persistRuntimeBootstrapSnapshot(
+      cacheKey,
+      normalizedSettings,
+      resolvedBundlesByCategory
+    );
+  }
+
+  private async persistRuntimeBootstrapSnapshot(
+    cacheKey: string,
+    settings: LocalizationRuntimeSettingsSnapshot,
+    resolvedBundlesByCategory: ResolvedRuntimeBundles
+  ): Promise<LocalizationRuntimeBootstrapSnapshot> {
     const runtimePayload = {
-      activeEngineId: normalizedSettings.engineId,
+      activeEngineId: settings.engineId,
       availableEngines: this.listAvailableEngines(),
       resolvedBundlesByCategory,
     } satisfies LocalizationRuntimePayload;
@@ -257,7 +292,7 @@ export class LocalizationFacade {
       generatedAt: new Date().toISOString(),
       runtimePayload,
       schemaVersion: 1,
-      settings: normalizedSettings,
+      settings,
     } satisfies LocalizationRuntimeBootstrapSnapshot;
 
     await this.runtimeBootstrapStore.save(runtimeBootstrapSnapshot);
@@ -265,16 +300,11 @@ export class LocalizationFacade {
     return runtimeBootstrapSnapshot;
   }
 
-  loadMaterializedBundle(
-    category: LocalizationCategoryId,
-    language: string
-  ): Promise<LocalizationBundleRecord | null> {
+  loadMaterializedBundle(category: LocalizationCategoryId, language: string) {
     return this.bundleStore.load(category, language);
   }
 
-  materializeBundle(
-    request: LocalizationMaterializationRequest
-  ): Promise<LocalizationMaterializationResult | null> {
+  materializeBundle(request: LocalizationMaterializationRequest) {
     return this.localizationMaterializer.materialize(request);
   }
 
@@ -354,6 +384,65 @@ export class LocalizationFacade {
         error instanceof Error ? error.message : String(error)
       );
     }
+  }
+
+  private async resolveRuntimeBundlesByPriority(
+    resolveBundle: (
+      category: LocalizationCategoryId
+    ) => Promise<LocalizationResolvedRuntimeBundle>
+  ): Promise<ResolvedRuntimeBundles> {
+    const resolvedBundlesByCategory = {} as ResolvedRuntimeBundles;
+
+    for (const category of LOCALIZATION_RUNTIME_CATEGORY_PRIORITY) {
+      resolvedBundlesByCategory[category] = await resolveBundle(category);
+    }
+
+    return resolvedBundlesByCategory;
+  }
+
+  private async materializeRequiredRuntimeBundle(
+    category: LocalizationCategoryId,
+    settings: LocalizationRuntimeSettingsSnapshot
+  ): Promise<LocalizationResolvedRuntimeBundle> {
+    const requestedLanguage =
+      settings.categories[category] ?? settings.defaultLanguage;
+    const sourceDictionary = this.resolveSourceDictionary(
+      category,
+      this.defaultSourceLanguage
+    );
+
+    if (isSourceSelection(requestedLanguage, this.defaultSourceLanguage)) {
+      return createSourceFallbackBundle(requestedLanguage, sourceDictionary);
+    }
+
+    const materializedBundle = await this.materializeBundle({
+      category,
+      engineId: settings.engineId,
+      force: true,
+      targetLanguage: requestedLanguage,
+      workflowTermsPolicy: settings.workflowTermsPolicy,
+    });
+
+    if (!materializedBundle) {
+      throw new Error(
+        `No localization source dictionary is registered for '${category}'.`
+      );
+    }
+
+    if (
+      materializedBundle.fallbackTranslationCount > 0 ||
+      materializedBundle.partialFallbackTranslationCount > 0
+    ) {
+      throw new Error(
+        `Localization bundle '${category}' is not ready: ${materializedBundle.fallbackTranslationCount} fallback translations and ${materializedBundle.partialFallbackTranslationCount} partial fallback translations remain.`
+      );
+    }
+
+    return {
+      entries: materializedBundle.bundle.entries,
+      language: materializedBundle.bundle.language,
+      source: "materialized",
+    };
   }
 
   private async createRuntimeBootstrapCacheKey(
