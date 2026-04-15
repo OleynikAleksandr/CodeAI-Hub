@@ -7,6 +7,10 @@ import {
 } from "@codeai-hub/localization";
 import type { SettingsSnapshot } from "./types";
 
+const CORE_ONLY_MATERIALIZATION_ENGINE_IDS = new Set<string>([
+  "anthropic-claude-haiku-4-5",
+]);
+
 export class LocalizationRuntimeService {
   private readonly localizationFacade: LocalizationFacade;
 
@@ -26,10 +30,11 @@ export class LocalizationRuntimeService {
     settings: SettingsSnapshot,
     options?: LocalizationSelectiveSyncOptions
   ): Promise<LocalizationRuntimePayload> {
-    return this.localizationFacade.synchronizeRuntimePayload(
-      this.createRuntimeSnapshot(settings),
-      options
-    );
+    const snapshot = this.createRuntimeSnapshot(settings);
+    if (CORE_ONLY_MATERIALIZATION_ENGINE_IDS.has(snapshot.engineId)) {
+      return this.localizationFacade.resolveRuntimePayload(snapshot);
+    }
+    return this.localizationFacade.synchronizeRuntimePayload(snapshot, options);
   }
 
   loadRuntimeBootstrapSnapshot(

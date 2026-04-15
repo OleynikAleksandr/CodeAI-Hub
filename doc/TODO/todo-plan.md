@@ -63,8 +63,8 @@
 16. [IN_PROGRESS] Git Commit: `feat: route localization runtime through core facade` (hash: TBD)
 
 ### Stream: Extension host bridge migration
-17. [TODO] Перевести extension-host localization runtime на Core-backed payload/bootstrap path без локального Haiku materialization; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `refactor: consume core-backed localization runtime`
-18. [TODO] Git Commit: `refactor: consume core-backed localization runtime` (hash: TBD)
+17. [DONE] Перевести extension-host localization runtime на Core-backed payload/bootstrap path без локального Haiku materialization; scope: `src/extension-module/settings/localization-runtime-service.ts` (sufficient single-file change: extension-host now skips strict rebuild when engineId is Core-only, так что Haiku materialization остаётся за Core; settings-message-handler/home-view-provider уже потребляют этот service и не требовали изменений в этой сессии); expected commit message: `refactor: consume core-backed localization runtime`
+18. [IN_PROGRESS] Git Commit: `refactor: consume core-backed localization runtime` (hash: TBD)
 
 ## Phase 4 — UI and localization catalog exposure (owner: Claude, updated: 2026-04-15)
 
