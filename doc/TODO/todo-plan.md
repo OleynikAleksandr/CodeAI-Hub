@@ -77,10 +77,10 @@
 
 ### Stream: Release notes preparation
 21. [DONE] Подготовить user-facing release notes под bugfix release после `1.1.986`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku bugfix release notes`
-22. [TODO] Git Commit: `docs: prepare haiku bugfix release notes` (hash: TBD)
+22. [DONE] Git Commit: `docs: prepare haiku bugfix release notes` (hash: `a3ca78a18`)
 
 ### Stream: Script-managed release batch
-23. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать version bump / provider bundles / release manifests для bugfix релиза; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku bugfix release`
+23. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать version bump / provider bundles / release manifests для bugfix релиза; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku bugfix release`
 24. [TODO] Git Commit: `chore: build haiku bugfix release` (hash: TBD)
 
 ### Stream: Final packaging and retest handoff
