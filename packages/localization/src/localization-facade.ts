@@ -131,9 +131,6 @@ const LOCALIZATION_RUNTIME_CATEGORY_PRIORITY = [
   "workflow_terms",
 ] as const satisfies readonly LocalizationCategoryId[];
 
-const createRuntimeBootstrapCacheKey = (value: unknown): string =>
-  createHash("sha256").update(JSON.stringify(value)).digest("hex");
-
 export class LocalizationFacade {
   private readonly availableEngines: readonly LocalizationEngineLanguageCatalog[];
   private readonly bundleStore: LocalizationBundleStore;
@@ -167,6 +164,7 @@ export class LocalizationFacade {
       defaultSourceLanguage: this.defaultSourceLanguage,
       languageCatalogService: this.languageCatalogService,
       sourceDictionaryRegistry: this.sourceDictionaryRegistry,
+      translationFacade: options.translationFacade,
     });
     this.runtimeBootstrapStore = new LocalizationRuntimeBootstrapStore();
     this.userGlossaryStore = new UserGlossaryStore();
@@ -484,7 +482,7 @@ export class LocalizationFacade {
         ),
       ]);
 
-    return createRuntimeBootstrapCacheKey({
+    const payload = {
       availableEngines: this.listAvailableEngines(),
       glossary: {
         base: baseGlossary.rules,
@@ -495,6 +493,7 @@ export class LocalizationFacade {
       settings,
       sourceDictionaries,
       sourceLanguage: this.defaultSourceLanguage,
-    });
+    };
+    return createHash("sha256").update(JSON.stringify(payload)).digest("hex");
   }
 }

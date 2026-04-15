@@ -20,6 +20,7 @@ import {
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
   type LocalizationCategoryId,
   type LocalizationSourceDictionary,
+  type LocalizationTranslationFacadeContract,
 } from "./localization-contract";
 import { LocalizationMetadataStore } from "./localization-metadata-store";
 import type { SourceDictionaryRegistry } from "./source-dictionary-registry";
@@ -53,7 +54,7 @@ interface LocalizationMaterializerOptions {
   readonly languageCatalogService?: LanguageCatalogService;
   readonly metadataStore?: LocalizationMetadataStore;
   readonly sourceDictionaryRegistry: SourceDictionaryRegistry;
-  readonly translationFacade?: TranslationFacade;
+  readonly translationFacade?: LocalizationTranslationFacadeContract;
   readonly userGlossaryStore?: UserGlossaryStore;
 }
 
@@ -141,7 +142,7 @@ export class LocalizationMaterializer {
   private readonly languageCatalogService: LanguageCatalogService;
   private readonly metadataStore: LocalizationMetadataStore;
   private readonly sourceDictionaryRegistry: SourceDictionaryRegistry;
-  private readonly translationFacade: TranslationFacade;
+  private readonly translationFacade: LocalizationTranslationFacadeContract;
   private readonly userGlossaryStore: UserGlossaryStore;
 
   constructor(options: LocalizationMaterializerOptions) {

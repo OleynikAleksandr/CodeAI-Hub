@@ -40,6 +40,7 @@ export {
   type LocalizationSourceDictionary,
   type LocalizationSourceDictionaryEntries,
   type LocalizationSourceLookupRequest,
+  type LocalizationTranslationFacadeContract,
   type LocalizationWorkflowTermsPolicy,
 } from "./localization-contract";
 export { LocalizationFacade } from "./localization-facade";

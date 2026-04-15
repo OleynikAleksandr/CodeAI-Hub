@@ -60,10 +60,33 @@ export interface LocalizationEngineLanguageCatalog {
   readonly languages: readonly LocalizationLanguageCatalogEntry[];
 }
 
+export interface LocalizationTranslationFacadeContract {
+  translate(request: {
+    readonly category?: string;
+    readonly chunkingMode?: "auto" | "disabled";
+    readonly engineId?: string;
+    readonly providerId?: string;
+    readonly sourceLanguage: string;
+    readonly targetLanguage: string;
+    readonly text: string;
+    readonly timeoutMs?: number;
+  }): Promise<{
+    readonly engine: string;
+    readonly errorCode?: string;
+    readonly finalText: string;
+    readonly originalText: string;
+    readonly sourceLanguage: string;
+    readonly status: "translated" | "fallback" | "skipped";
+    readonly targetLanguage: string;
+    readonly translatedText: string | null;
+  }>;
+}
+
 export interface LocalizationFacadeOptions {
   readonly defaultSourceLanguage?: string;
   readonly engineCatalogs?: readonly LocalizationEngineLanguageCatalog[];
   readonly sourceDictionaries?: readonly LocalizationSourceDictionary[];
+  readonly translationFacade?: LocalizationTranslationFacadeContract;
 }
 
 export interface LocalizationLanguageCatalogServiceOptions {

@@ -50,13 +50,13 @@
 
 ### Stream: Engine profile registry
 11. [DONE] Зарегистрировать chunk profile для `anthropic-claude-haiku-4-5` и обновить facade tests для нового engine catalog; scope: `packages/translation/src/translation-engine-profile-registry.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `feat: register claude haiku translation profile`
-12. [IN_PROGRESS] Git Commit: `feat: register claude haiku translation profile` (hash: TBD)
+12. [DONE] Git Commit: `feat: register claude haiku translation profile` (hash: a5e07349c)
 
 ## Phase 3 — Core-owned localization runtime path (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Localization injection path
-13. [TODO] Открыть public injection path для custom translation facade в localization facade; scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`; expected commit message: `refactor: expose localization translation facade injection`
-14. [TODO] Git Commit: `refactor: expose localization translation facade injection` (hash: TBD)
+13. [DONE] Открыть public injection path для custom translation facade в localization facade; scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`; expected commit message: `refactor: expose localization translation facade injection`
+14. [IN_PROGRESS] Git Commit: `refactor: expose localization translation facade injection` (hash: TBD)
 
 ### Stream: Core localization factory
 15. [TODO] Собрать Core-owned localization facade factory с Haiku-aware translation path и подключить его в Core bridge handlers; scope: `packages/core/src/translation/core-localization-facade-factory.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit message: `feat: route localization runtime through core facade`
