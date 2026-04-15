@@ -212,29 +212,33 @@ This scope should be implemented through small dedicated helpers instead of expa
 
 ### 6.1. Settings save classification
 
-Introduce a small helper in the Settings save path, for example:
+The Settings save path now routes every save through a dedicated classifier:
 
-- `LocalizationSettingsImpactClassifier`
+- `LocalizationSettingsImpactClassifier` lives in `src/extension-module/settings/localization-settings-impact-classifier.ts`.
 
-Responsibilities:
+Current responsibilities:
 
-- compare previous vs next settings;
-- decide whether localization blocking sync is needed;
-- distinguish `engine_changed`, `categories_changed`, and `no_localization_impact`;
-- return the affected approved groups and runtime bundle ids.
+- compare the previous persisted settings snapshot with the requested next snapshot;
+- decide whether blocking localization sync is needed at all;
+- distinguish `engine`, `categories`, and `none` outcomes;
+- return the changed approved groups for the `categories` outcome.
 
-### 6.2. Selective localization strict sync
+The classifier treats changes to `general.localization.engineId` and `general.localization.glossaryEnabled` as `engine`-class impact, changes to any of the four approved category selections (`uiLabels`, `uiHelperText`, `messagesForTheUser`, `artifactsForTheUser`) as `categories` impact, and anything else (provider settings, `responsePolicy`, continuity, core controls) as `none`.
 
-Extend the localization runtime/facade boundary with a selective strict sync path, for example:
+### 6.2. Selective localization strict sync planning
 
-- `LocalizationSelectiveSyncPlanner`
-- or `LocalizationFacade.synchronizeRuntimePayload(settings, options)`
+Selective sync planning is now an extension-module helper that sits between the classifier and the localization facade:
 
-Responsibilities:
+- `LocalizationSelectiveSyncPlanner` lives in `src/extension-module/settings/localization-selective-sync-planner.ts`.
 
-- strict-rebuild only the requested runtime bundles;
-- keep unrelated bundles from the persisted bootstrap snapshot when settings still match for those groups;
-- preserve the existing all-groups strict path for engine-level rebuilds.
+Current responsibilities:
+
+- take a `LocalizationSaveImpact` plus the next settings snapshot and return a `LocalizationSelectiveSyncPlan`;
+- for `engine`-class impact, list every runtime bundle whose owning approved group is not English (`rebuildScope: "all_non_english"`);
+- for `categories`-class impact, list only the runtime bundles owned by the changed approved groups (`rebuildScope: "affected_only"`);
+- preserve the existing `UI Labels -> ui_interface + workflow_terms` rule while keeping the other three approved groups mapped 1:1 onto `user_guidance`, `system_feedback`, and `interactive_templates` respectively.
+
+The planner is a pure projection from settings + impact to runtime-bundle ids. It does not perform any materialization work itself — the selective materialization contract (`LocalizationFacade.synchronizeRuntimePayload(settings, options)` accepting the plan) is introduced in the next stream.
 
 ### 6.3. Thinking visibility eligibility
 

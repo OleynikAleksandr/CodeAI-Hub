@@ -3,6 +3,10 @@ import { type Webview, window, workspace } from "vscode";
 import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
 import { LocalizationRuntimeService } from "../settings/localization-runtime-service";
 import {
+  type LocalizationSelectiveSyncPlan,
+  LocalizationSelectiveSyncPlanner,
+} from "../settings/localization-selective-sync-planner";
+import {
   type LocalizationSaveImpact,
   LocalizationSettingsImpactClassifier,
 } from "../settings/localization-settings-impact-classifier";
@@ -37,11 +41,13 @@ export class SettingsMessageHandler {
   private settingsState: SettingsSnapshot = loadSettingsSnapshot();
   private readonly localizationRuntimeService: LocalizationRuntimeService;
   private readonly impactClassifier: LocalizationSettingsImpactClassifier;
+  private readonly selectiveSyncPlanner: LocalizationSelectiveSyncPlanner;
   private readonly versionService: ProviderVersionService;
 
   constructor(_extensionPath: string) {
     this.localizationRuntimeService = new LocalizationRuntimeService();
     this.impactClassifier = new LocalizationSettingsImpactClassifier();
+    this.selectiveSyncPlanner = new LocalizationSelectiveSyncPlanner();
     this.versionService = new ProviderVersionService();
     applyDefaultModelsEnv(this.settingsState);
   }
@@ -237,6 +243,8 @@ export class SettingsMessageHandler {
     this.settingsState = nextSettings;
     applyDefaultModelsEnv(this.settingsState);
 
+    const plan = this.selectiveSyncPlanner.plan(impact, this.settingsState);
+
     try {
       if (impact.kind === "none") {
         await this.persistAndSyncCodexConfig();
@@ -247,7 +255,7 @@ export class SettingsMessageHandler {
         return;
       }
 
-      await this.runStrictLocalizationSync(webview, impact);
+      await this.runStrictLocalizationSync(webview, impact, plan);
     } catch (error) {
       const reason = this.describeError(error);
       window.showErrorMessage(
@@ -265,7 +273,8 @@ export class SettingsMessageHandler {
 
   private async runStrictLocalizationSync(
     webview: Webview,
-    _impact: LocalizationSaveImpact
+    _impact: LocalizationSaveImpact,
+    _plan: LocalizationSelectiveSyncPlan
   ): Promise<void> {
     await this.postLocalizationSyncStatus(webview, {
       busy: true,
