@@ -43,14 +43,14 @@
 
 ### Stream: Remove extension-side downgrade
 7. [DONE] Сделать Core localization bootstrap endpoint authoritative для Haiku: строить strict snapshot из текущего `settings.json`, а не читать только persisted cache; scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `fix: rebuild localization bootstrap via core`
-8. [TODO] Git Commit: `fix: rebuild localization bootstrap via core` (hash: TBD)
+8. [DONE] Git Commit: `fix: rebuild localization bootstrap via core` (hash: `679688421`)
 
 ### Stream: Extension uses Core-backed Haiku localization
 9. [DONE] Перевести extension-side bootstrap/save для core-only Haiku engine на Core-backed bootstrap path и убрать локальный `resolveRuntimePayload()` downgrade; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `fix: restore core-owned haiku localization sync`
-10. [TODO] Git Commit: `fix: restore core-owned haiku localization sync` (hash: TBD)
+10. [DONE] Git Commit: `fix: restore core-owned haiku localization sync` (hash: `ca0a55809`)
 
 ### Stream: Category regression coverage
-11. [TODO] Добавить regression coverage для сценария `uiLabels=en`, `user_guidance/system_feedback/artifacts=ru`, чтобы helper/help copy не оставалась silently source-English; scope: `packages/localization/src/localization-materializer.test.ts`, `packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit message: `test: cover haiku localization category routing`
+11. [DONE] Добавить regression coverage для сценария `uiLabels=en`, `user_guidance/system_feedback/artifacts=ru`, чтобы helper/help copy не оставалась silently source-English; scope: `packages/localization/src/localization-materializer.test.ts`, `packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit message: `test: cover haiku localization category routing`
 12. [TODO] Git Commit: `test: cover haiku localization category routing` (hash: TBD)
 
 ## Phase 3 — Persistence and diagnostics (owner: Claude, updated: 2026-04-15)
