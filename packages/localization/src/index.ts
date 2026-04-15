@@ -64,6 +64,7 @@ export {
   type LocalizationRuntimeBootstrapSnapshot,
   LocalizationRuntimeBootstrapStore,
 } from "./localization-runtime-bootstrap-store";
+export type { LocalizationSelectiveSyncOptions } from "./localization-selective-sync";
 export {
   BUNDLED_SOURCE_DICTIONARIES,
   SourceDictionaryRegistry,

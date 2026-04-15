@@ -25,6 +25,11 @@ import {
   type LocalizationRuntimeBootstrapSnapshot,
   LocalizationRuntimeBootstrapStore,
 } from "./localization-runtime-bootstrap-store";
+import {
+  type LocalizationSelectiveSyncOptions,
+  resolveAffectedBundleSet,
+  shouldStrictRebuildBundle,
+} from "./localization-selective-sync";
 import { SourceDictionaryRegistry } from "./source-dictionary-registry";
 import { UserGlossaryStore } from "./user-glossary-store";
 
@@ -230,9 +235,10 @@ export class LocalizationFacade {
   }
 
   async synchronizeRuntimePayload(
-    settings: LocalizationRuntimeSettingsSnapshot
+    settings: LocalizationRuntimeSettingsSnapshot,
+    options?: LocalizationSelectiveSyncOptions
   ): Promise<LocalizationRuntimePayload> {
-    return (await this.synchronizeRuntimeBootstrapSnapshot(settings))
+    return (await this.synchronizeRuntimeBootstrapSnapshot(settings, options))
       .runtimePayload;
   }
 
@@ -243,14 +249,16 @@ export class LocalizationFacade {
   }
 
   private synchronizeRuntimeBootstrapSnapshot(
-    settings: LocalizationRuntimeSettingsSnapshot
+    settings: LocalizationRuntimeSettingsSnapshot,
+    options?: LocalizationSelectiveSyncOptions
   ): Promise<LocalizationRuntimeBootstrapSnapshot> {
-    return this.buildRuntimeBootstrapSnapshot(settings, true);
+    return this.buildRuntimeBootstrapSnapshot(settings, true, options);
   }
 
   private async buildRuntimeBootstrapSnapshot(
     settings: LocalizationRuntimeSettingsSnapshot,
-    strict = false
+    strict = false,
+    options?: LocalizationSelectiveSyncOptions
   ): Promise<LocalizationRuntimeBootstrapSnapshot> {
     const normalizedSettings = this.normalizeRuntimeSettings(settings);
     const cacheKey =
@@ -263,13 +271,13 @@ export class LocalizationFacade {
       }
     }
 
+    const affectedBundleSet = resolveAffectedBundleSet(options);
     const resolvedBundlesByCategory =
       await this.resolveRuntimeBundlesByPriority((category) =>
-        strict
+        strict && shouldStrictRebuildBundle(category, affectedBundleSet)
           ? this.materializeRequiredRuntimeBundle(category, normalizedSettings)
           : this.resolveRuntimeBundleForCategory(category, normalizedSettings)
       );
-
     return this.persistRuntimeBootstrapSnapshot(
       cacheKey,
       normalizedSettings,
