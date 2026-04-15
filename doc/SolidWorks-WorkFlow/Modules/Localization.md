@@ -201,6 +201,7 @@ Important live behaviors:
   - `google-gtx`
   - `codex-gpt-5.4-mini`
   - `codex-gpt-5.3-codex-spark`
+  - `anthropic-claude-haiku-4-5` (provider-owned, materialized through Core-backed localization path; extension-host does not locally translate with this engine)
 - the same persisted `translationEngineId` now also feeds Core-owned live thinking overlay translation; Localization still does not own the overlay storage or replay path, but it remains the SSOT for which engine the product selected.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - Settings save-path now classifies every save through `LocalizationSettingsImpactClassifier` (in `src/extension-module/settings/localization-settings-impact-classifier.ts`) before deciding whether to enter the blocking strict sync path. Provider-only saves, `general.responsePolicy` changes, continuity-only changes, and any other setting that does not touch `general.localization.engineId`, the four approved category language selections, or the glossary-enabled flag return `no_localization_impact` and persist through a best-effort envelope without posting the localization busy overlay and without blocking Project Manager/new session sends.

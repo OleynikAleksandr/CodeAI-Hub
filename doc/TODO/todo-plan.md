@@ -74,13 +74,13 @@
 
 ### Stream: Language catalog support
 21. [DONE] Добавить новый engine в localization language catalog и покрыть materializer/runtime тестом; scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/localization-materializer.test.ts`; expected commit message: `feat: add claude haiku localization language catalog`
-22. [IN_PROGRESS] Git Commit: `feat: add claude haiku localization language catalog` (hash: TBD)
+22. [DONE] Git Commit: `feat: add claude haiku localization language catalog` (hash: 47e45c551)
 
 ## Phase 5 — SSOT sync and validation prep (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Module SSOT updates
-23. [TODO] Синхронизировать модульные SSOT-доки под provider-owned Claude Haiku translation path; scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit message: `docs: document claude haiku translation modules`
-24. [TODO] Git Commit: `docs: document claude haiku translation modules` (hash: TBD)
+23. [DONE] Синхронизировать модульные SSOT-доки под provider-owned Claude Haiku translation path; scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit message: `docs: document claude haiku translation modules`
+24. [IN_PROGRESS] Git Commit: `docs: document claude haiku translation modules` (hash: TBD)
 
 ### Stream: System SSOT updates
 25. [TODO] Обновить системный SSOT и индекс документации для активного Haiku translation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update architecture index for haiku translation`

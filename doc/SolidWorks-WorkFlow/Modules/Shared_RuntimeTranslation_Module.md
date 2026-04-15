@@ -80,6 +80,10 @@ Current bundled engines:
 - `codex-gpt-5.4-mini`
 - `codex-gpt-5.3-codex-spark`
 
+Externally-composed provider-owned engines registered by Core (not bundled inside this package):
+
+- `anthropic-claude-haiku-4-5` — provider-owned wrapper around `ClaudeHaikuTranslationService`; the shared package stays engine-neutral and only carries the chunk profile for this engine, while the runtime adapter lives beside the Claude provider. Core builds the translation facade with this engine through `createCoreTranslationFacade(...)` and passes the shared built-in engines plus the Haiku wrapper together.
+
 Implementation notes:
 
 - The facade depends on the engine contract, not on Google-specific code directly.
@@ -92,6 +96,7 @@ Implementation notes:
   - `google-gtx` = `soft 360 / hard 520`
   - `codex-gpt-5.4-mini` = `soft 260 / hard 380`
   - `codex-gpt-5.3-codex-spark` = `soft 180 / hard 260`
+  - `anthropic-claude-haiku-4-5` = `soft 400 / hard 600` (registry placeholder — live localization/reasoning paths currently dispatch without chunking)
 - the isolated Codex translation runtime resolves authentication artifacts from provider home first and falls back to legacy `~/.codex` artifacts when the provider-owned home has not been materialized yet; missing `models_cache.json` is tolerated, but missing auth is still a hard failure.
 - The package stays engine-pluggable so a different backend can be added later without changing consumer contracts.
 
