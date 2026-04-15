@@ -9,6 +9,7 @@ import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 import type { BridgeEvent } from "../types";
+import { SettingsLoadedBroadcaster } from "./settings-loaded-broadcaster";
 import { normalizeClaudeThinkingSettings } from "./settings-request-handler-claude-thinking";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -411,7 +412,7 @@ export class SettingsRequestHandler {
   private readonly config: CoreConfig;
   private readonly localizationFacade: LocalizationFacade;
   private readonly logger: Logger;
-  private readonly broadcaster: (event: BridgeEvent) => void;
+  private readonly settingsLoadedBroadcaster: SettingsLoadedBroadcaster;
 
   constructor(options: {
     readonly config: CoreConfig;
@@ -423,7 +424,11 @@ export class SettingsRequestHandler {
       config: this.config,
     });
     this.logger = options.logger;
-    this.broadcaster = options.broadcaster;
+    this.settingsLoadedBroadcaster = new SettingsLoadedBroadcaster({
+      broadcaster: options.broadcaster,
+      localizationFacade: this.localizationFacade,
+      resolveRuntimeSettings: resolveLocalizationRuntimeSettings,
+    });
   }
 
   async handleLoad(): Promise<void> {
@@ -449,18 +454,7 @@ export class SettingsRequestHandler {
           });
         }
       }
-
-      this.broadcaster({
-        type: "settings:loaded",
-        payload: {
-          localizationRuntime:
-            await this.localizationFacade.resolveRuntimePayload(
-              resolveLocalizationRuntimeSettings(settings)
-            ),
-          settings,
-          error: null,
-        },
-      });
+      await this.settingsLoadedBroadcaster.publish(settings);
     } catch (error: unknown) {
       const code = resolveErrorCode(error);
       const message = toErrorMessage(error);
@@ -482,18 +476,7 @@ export class SettingsRequestHandler {
           });
         }
       }
-
-      this.broadcaster({
-        type: "settings:loaded",
-        payload: {
-          localizationRuntime:
-            await this.localizationFacade.resolveRuntimePayload(
-              resolveLocalizationRuntimeSettings(snapshot)
-            ),
-          settings: snapshot,
-          error: null,
-        },
-      });
+      await this.settingsLoadedBroadcaster.publish(snapshot);
     }
   }
 }

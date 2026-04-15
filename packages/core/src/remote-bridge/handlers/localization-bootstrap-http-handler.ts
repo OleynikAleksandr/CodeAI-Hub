@@ -36,11 +36,15 @@ export const handleLocalizationBootstrapRead = async (
         ? (parsedSettings as Record<string, unknown>)
         : DEFAULT_RUNTIME_SETTINGS_SOURCE;
     const runtimeSettings = resolveLocalizationRuntimeSettings(settings);
-
-    await localizationFacade.synchronizeRuntimePayload(runtimeSettings);
+    const cachedSnapshot =
+      await localizationFacade.loadRuntimeBootstrapSnapshot(runtimeSettings);
+    if (cachedSnapshot) {
+      res.json(cachedSnapshot);
+      return;
+    }
 
     const snapshot =
-      await localizationFacade.loadRuntimeBootstrapSnapshot(runtimeSettings);
+      await localizationFacade.resolveRuntimeBootstrapSnapshot(runtimeSettings);
     if (!snapshot) {
       res.status(HTTP_NOT_FOUND).json({
         error: "Localization bootstrap snapshot is unavailable",
