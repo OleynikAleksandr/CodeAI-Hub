@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.984
+## Current Release — v1.1.985
+- **Incremental localization sync on Save**: provider-only, response-mode, and continuity saves now skip the `Synchronizing localization` overlay entirely; engine or category saves rebuild only the runtime bundles actually affected by the change instead of forcing a full five-bundle rematerialization.
+- **Forward-only thinking visibility**: visible `Thinking / Reasoning` bubbles now carry an immutable `visibilityAtEmission` decision stamped at emission time, so turning `Thinking in dialog` / `Reasoning in dialog` back on inside a long-running session no longer reveals thinking that was hidden when it was emitted, and hidden thinking never enters the translation queue.
+- **Messages for the User explicitly owns visible Thinking / Reasoning**: the localization contract, module SSOT, and Settings helper copy now name visible provider Thinking / Reasoning as part of `Messages for the User`, so language + engine selection follow one explicit ownership decision.
+
+### 1.1.984 (previous)
 - **Reasoning translation no longer re-chunks live thinking by default**: shared runtime translation now keeps each provider-emitted reasoning block intact unless a caller explicitly opts back into chunking.
 - **Lower latency for Codex, Gemini, and Claude thinking overlays**: the Core-owned reasoning overlay path now sends one translation request per visible thinking message instead of `2-5` sequential subrequests for the same message.
 - **Reasoning chunking remains opt-in only**: generic/document translation keeps the existing engine-aware chunk planner, while reasoning can still explicitly request `chunkingMode = auto` for future experimental callers.

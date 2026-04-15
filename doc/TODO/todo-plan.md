@@ -66,9 +66,9 @@
 ## Phase 4 — Regression Coverage And Targeted Validation (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Targeted regression proof
 1. [DONE] Добавить regression coverage для provider-only saves, engine/category selective rebuild и forward-only emission-time thinking visibility — scope: `src/extension-module/settings/localization-settings-impact-classifier.test.ts`, `src/extension-module/settings/localization-selective-sync-planner.test.ts`, `src/client/ui/src/session/thinking-display-policy.test.tsx`; ожидаемый commit message: `test: cover incremental localization sync and thinking visibility`
-2. [DONE] Git Commit: `test: cover incremental localization sync and thinking visibility` (hash: TBD)
-3. [TODO] Закрыть таргетные сборки и type/test verification для затронутых пакетов/клиентов (`@codeai-hub/localization`, `@codeai-hub/core`, UI/PM) и, если validation потребует правок, внести их в узком scope с синхронной документацией — scope: `packages/localization/`, `packages/core/`, `src/client/`; ожидаемый commit message: `fix: close localization incremental sync regressions`
-4. [TODO] Git Commit: `fix: close localization incremental sync regressions` (hash: TBD)
+2. [DONE] Git Commit: `test: cover incremental localization sync and thinking visibility` (hash: cabea4f4a)
+3. [DONE] Закрыть таргетные сборки и type/test verification для затронутых пакетов/клиентов (`@codeai-hub/localization`, `@codeai-hub/core`, UI/PM) — scope: `packages/localization/`, `packages/core/`, `src/client/`; ожидаемый commit message: `fix: close localization incremental sync regressions`. Build chain зелёный на `cabea4f4a`; дополнительных фиксов не потребовалось, задача закрыта без отдельного commit-а.
+4. [DONE] Git Commit: пропущен — validation прошла без правок (валидационный цикл на hash `cabea4f4a`).
 
 ## Phase 5 — Release Build 1.1.985 (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Release assembly and scope closeout

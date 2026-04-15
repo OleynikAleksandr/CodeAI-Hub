@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.985] - 2026-04-15
+### Changed
+- **Incremental settings save sync**: Settings save path classifies every save through `LocalizationSettingsImpactClassifier` and `LocalizationSelectiveSyncPlanner`; provider-only, response-mode, and continuity saves skip the localization overlay, while engine/category saves rebuild only the planned runtime bundle set.
+- **Messages for the User owns visible Thinking / Reasoning**: user-facing localization boundary, Localization module SSOT, and Settings helper copy explicitly classify visible provider Thinking / Reasoning under `Messages for the User`.
+
+### Fixed
+- **Hidden thinking never enters translation**: `SessionTranslationPolicyResolver` resolves per-provider visibility from the active settings snapshot, and `SessionTranslationFacade` short-circuits thinking/reasoning translation when the owning provider's display toggle is off.
+- **Forward-only thinking visibility**: persisted `SessionMessage` records now carry an immutable `visibilityAtEmission` decision; shared Session transcript filters honor it over the current settings flag, so re-enabling `Thinking in dialog` / `Reasoning in dialog` inside a long-running session no longer reveals previously hidden reasoning.
+
 ## [1.1.984] - 2026-04-14
 ### Fixed
 - **Reasoning defaults to one-block translation**: shared translation request normalization now resolves `category = reasoning` to `chunkingMode = "disabled"` unless a caller explicitly opts back into chunking.
