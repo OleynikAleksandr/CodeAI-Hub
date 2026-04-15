@@ -32,13 +32,13 @@
 
 ### Stream: Claude Haiku translation service
 3. [DONE] Реализовать provider-owned `claude-haiku-translation-service` с reuse `SDKInstaller` / `SDKAuthManager` и one-shot query profile (`tools: []`, `maxTurns: 1`, `persistSession: false`); scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`, `packages/Claude_Module/src/index.ts`; expected commit message: `feat: add claude haiku translation service`
-4. [IN_PROGRESS] Git Commit: `feat: add claude haiku translation service` (hash: TBD)
+4. [DONE] Git Commit: `feat: add claude haiku translation service` (hash: a7377c7fb)
 
 ## Phase 2 — Shared translation composition (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Default engine factory extraction
-5. [TODO] Вынести reusable factory/default built-in engine construction path из shared translation facade; scope: `packages/translation/src/default-translation-engine-factory.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`; expected commit message: `refactor: extract default translation engine factory`
-6. [TODO] Git Commit: `refactor: extract default translation engine factory` (hash: TBD)
+5. [DONE] Вынести reusable factory/default built-in engine construction path из shared translation facade; scope: `packages/translation/src/default-translation-engine-factory.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`; expected commit message: `refactor: extract default translation engine factory`
+6. [IN_PROGRESS] Git Commit: `refactor: extract default translation engine factory` (hash: TBD)
 
 ### Stream: Core Claude Haiku engine wiring
 7. [TODO] Добавить Core-обёртку для provider-owned Claude Haiku engine и общую factory для Core translation facade; scope: `packages/core/src/translation/claude-haiku-translation-engine.ts`, `packages/core/src/translation/core-translation-facade-factory.ts`, `packages/core/src/index.ts`; expected commit message: `feat: wire claude haiku translation engine in core`
