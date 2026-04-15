@@ -72,8 +72,8 @@
 
 ## Phase 5 — Release Build 1.1.985 (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Release assembly and scope closeout
-1. [TODO] Подготовить release-facing документы для `1.1.985` и синхронизировать финальные scope docs перед сборкой (`README.md`, `CHANGELOG.md`, релевантные SSOT/Plans/Docs_Index`) — scope: `README.md`, `CHANGELOG.md`, `doc/`; ожидаемый commit message: `docs: prepare release 1.1.985 notes`
-2. [TODO] Git Commit: `docs: prepare release 1.1.985 notes` (hash: TBD)
+1. [DONE] Подготовить release-facing документы для `1.1.985` и синхронизировать финальные scope docs перед сборкой (`README.md`, `CHANGELOG.md`) — scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare release 1.1.985 notes`
+2. [DONE] Git Commit: `docs: prepare release 1.1.985 notes` (hash: 12d7ca195)
 3. [TODO] Выполнить release wave: чистое дерево, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artefacts и устранить release-only blockers в самом узком scope — scope: `scripts/`, `doc/tmp/releases/`, репозиторий release artefacts; ожидаемый commit message: `build: prepare release 1.1.985 artifacts`
 4. [TODO] Git Commit: `build: prepare release 1.1.985 artifacts` (hash: TBD)
 5. [TODO] Закрыть execution scope: архивировать `doc/TODO/todo-plan.md`, провести обязательный Plans closeout review, синхронизировать `Docs_Index`, `doc/Sessions/`, release итоги и оставить чистое дерево — scope: `doc/TODO/`, `doc/SolidWorks-WorkFlow/Plans/`, `doc/Sessions/`; ожидаемый commit message: `docs: close incremental localization sync scope`
