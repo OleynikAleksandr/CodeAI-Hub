@@ -45,8 +45,8 @@
 ### Stream: Messages for the User contract
 1. [DONE] Явно зафиксировать в локализационном контракте и пользовательских пояснениях, что `Messages for the User` включает visible `Thinking / Reasoning` — scope: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `src/client/ui/src/components/settings/localization-settings-card.tsx`; ожидаемый commit message: `docs: classify visible thinking under messages for the user`
 2. [DONE] Git Commit: `docs: classify visible thinking under messages for the user` (hash: TBD)
-3. [TODO] Подтянуть Settings helper copy и busy/sync messaging к новой модели incremental rebuild без ложного обещания полной пересборки интерфейса при любом save — scope: `src/client/ui/src/components/settings/`, `src/client/project-manager/components/layout/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: clarify incremental localization sync messaging`
-4. [TODO] Git Commit: `docs: clarify incremental localization sync messaging` (hash: TBD)
+3. [DONE] Подтянуть Settings helper copy и busy/sync messaging к новой модели incremental rebuild без ложного обещания полной пересборки интерфейса при любом save — scope: `src/client/ui/src/components/settings-view.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: clarify incremental localization sync messaging`
+4. [DONE] Git Commit: `docs: clarify incremental localization sync messaging` (hash: TBD)
 
 ## Phase 3 — Thinking/Reasoning Visibility And Translation Eligibility (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Forward-only thinking visibility

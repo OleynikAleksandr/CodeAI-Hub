@@ -163,7 +163,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
   } = state;
   const localizationSyncTitle = "Synchronizing localization";
   const localizationSyncDescription =
-    "Please wait. CodeAI Hub is preparing translated interface help and user-facing messages. Project Manager and new sessions stay blocked until synchronization completes.";
+    "Please wait. CodeAI Hub is rebuilding the translated interface bundles affected by this change. Project Manager and new sessions stay blocked until the affected bundles are ready.";
 
   return (
     <div aria-busy={saving || !ready} style={containerStyles}>

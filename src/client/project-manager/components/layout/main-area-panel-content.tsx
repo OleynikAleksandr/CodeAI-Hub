@@ -80,7 +80,7 @@ const renderLocalizationSyncBlockedState = (
     <strong>Localization sync in progress.</strong>
     <br />
     {message ??
-      "Please wait. Translated interface bundles are still being prepared, so Project Manager remains blocked."}
+      "Please wait. The translated interface bundles affected by the latest save are still being prepared, so Project Manager remains blocked."}
   </div>
 );
 
