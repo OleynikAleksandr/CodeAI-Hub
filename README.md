@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.986
-- **Anthropic Claude Haiku 4.5 as a translation engine**: Localization settings now expose `Anthropic Claude · Haiku 4.5` alongside `Google GTX Free` and the two Codex models, so UI bundle materialization and live reasoning overlays can both route through Claude Haiku under the same Anthropic subscription that already powers regular Claude turns.
-- **Provider-owned translation path without a separate login**: the new `ClaudeHaikuTranslationService` reuses the existing Claude `SDKInstaller` + `SDKAuthManager` provider-home path (`~/.codeai-hub/providers/claude/home`) and runs a dedicated translation-only query profile (`tools: []`, `maxTurns: 1`, `persistSession: false`, `thinking: { type: "disabled" }`, `model: "claude-haiku-4-5-20251001"`), so translation turns never create native Claude session JSONL and do not pollute provider session history.
-- **Core-backed localization runtime for Haiku**: Core composes the shared translation facade with the new engine through `createCoreTranslationFacade(...)`, and the localization runtime now flows through `createCoreLocalizationFacade(...)`; extension-host no longer attempts to materialize Haiku bundles locally and defers strict sync to Core while still reading the persisted browser bootstrap snapshot from disk.
+## Current Release — v1.1.987
+- **Haiku translation no longer silently degrades to Google GTX**: explicit `anthropic-claude-haiku-4-5` selection is now wired into the live Core translation runtime and fails closed if the provider-owned engine is unavailable, instead of quietly substituting the default engine.
+- **Core-owned Haiku localization path repaired**: `/api/v1/localization/bootstrap` is now the authoritative bootstrap source for the core-only Claude Haiku engine, and extension-host save/bootstrap flows must consume the strict Core-produced snapshot instead of rematerializing helper/help bundles locally.
+- **Provider-native Haiku traces restored for audit/debug**: Claude Haiku translation queries still reuse the same Anthropic subscription and provider-home auth bootstrap as regular Claude turns, but now persist native provider JSONL under the dedicated `translation-runtime-haiku` slug and log requested/resolved runtime metadata for faster forensics.
 
 ### 1.1.985 (previous)
 - **Incremental localization sync on Save**: provider-only, response-mode, and continuity saves skip the `Synchronizing localization` overlay entirely; engine or category saves rebuild only the runtime bundles actually affected by the change instead of forcing a full five-bundle rematerialization.

@@ -71,12 +71,12 @@
 
 ### Stream: System SSOT updates
 19. [DONE] Обновить системный SSOT и индекс навигации под post-release Haiku bugfix scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update haiku bugfix architecture index`
-20. [TODO] Git Commit: `docs: update haiku bugfix architecture index` (hash: TBD)
+20. [DONE] Git Commit: `docs: update haiku bugfix architecture index` (hash: `1c8d68056`)
 
 ## Phase 5 — Release build for retest (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Release notes preparation
-21. [TODO] Подготовить user-facing release notes под bugfix release после `1.1.986`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku bugfix release notes`
+21. [DONE] Подготовить user-facing release notes под bugfix release после `1.1.986`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku bugfix release notes`
 22. [TODO] Git Commit: `docs: prepare haiku bugfix release notes` (hash: TBD)
 
 ### Stream: Script-managed release batch

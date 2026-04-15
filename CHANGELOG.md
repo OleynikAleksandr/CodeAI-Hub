@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.987] - 2026-04-15
+### Fixed
+- **Haiku reasoning translation no longer falls back silently to Google GTX**: the provider-owned Claude Haiku service is now injected into the live Core session-translation runtime, and explicit `anthropic-claude-haiku-4-5` requests fail closed with diagnostics instead of quietly resolving to the default engine.
+- **Core-only Haiku localization path now stays authoritative**: `/api/v1/localization/bootstrap` rebuilds a strict snapshot from current settings for `anthropic-claude-haiku-4-5`, extension-host save/bootstrap flows must consume that Core-produced snapshot, and helper/help/message bundles no longer degrade to locally materialized English fallback content under `ru`.
+- **Provider-native Haiku diagnostics and traces restored**: Claude Haiku translation queries now persist native provider JSONL under the dedicated `translation-runtime-haiku` slug, and session-translation logs record requested/resolved engine metadata so runtime mismatches are visible without indirect log reading.
+
 ## [1.1.986] - 2026-04-15
 ### Added
 - **Anthropic Claude Haiku 4.5 translation engine**: new engine `anthropic-claude-haiku-4-5` is exposed in Localization settings as `Anthropic Claude · Haiku 4.5`. UI bundle materialization and Core-owned live reasoning overlays can now dispatch through Claude Haiku reusing the existing Anthropic subscription and provider-home auth bootstrap.
