@@ -38,11 +38,11 @@
 
 ### Stream: Default engine factory extraction
 5. [DONE] Вынести reusable factory/default built-in engine construction path из shared translation facade; scope: `packages/translation/src/default-translation-engine-factory.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`; expected commit message: `refactor: extract default translation engine factory`
-6. [IN_PROGRESS] Git Commit: `refactor: extract default translation engine factory` (hash: TBD)
+6. [DONE] Git Commit: `refactor: extract default translation engine factory` (hash: 6177041d4)
 
 ### Stream: Core Claude Haiku engine wiring
-7. [TODO] Добавить Core-обёртку для provider-owned Claude Haiku engine и общую factory для Core translation facade; scope: `packages/core/src/translation/claude-haiku-translation-engine.ts`, `packages/core/src/translation/core-translation-facade-factory.ts`, `packages/core/src/index.ts`; expected commit message: `feat: wire claude haiku translation engine in core`
-8. [TODO] Git Commit: `feat: wire claude haiku translation engine in core` (hash: TBD)
+7. [DONE] Добавить Core-обёртку для provider-owned Claude Haiku engine и общую factory для Core translation facade; scope: `packages/core/src/translation/claude-haiku-translation-engine.ts`, `packages/core/src/translation/core-translation-facade-factory.ts` (core index.ts — executable entry, библиотечные экспорты ему не нужны); expected commit message: `feat: wire claude haiku translation engine in core`
+8. [IN_PROGRESS] Git Commit: `feat: wire claude haiku translation engine in core` (hash: TBD)
 
 ### Stream: Session translation migration
 9. [TODO] Перевести `SessionTranslationFacade` на Core-owned translation factory и покрыть путь инъекции тестом; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`; expected commit message: `refactor: route session translation through core factory`
