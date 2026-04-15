@@ -81,8 +81,8 @@
 
 ### Stream: Script-managed release batch
 23. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать version bump / provider bundles / release manifests для bugfix релиза; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku bugfix release`
-24. [TODO] Git Commit: `chore: build haiku bugfix release` (hash: TBD)
+24. [DONE] Git Commit: `chore: build haiku bugfix release` (hash: `e4b208fca`)
 
 ### Stream: Final packaging and retest handoff
-25. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и оформить release handoff для повторного пользовательского теста; scope: root VSIX artifact, `doc/tmp/releases/`, `doc/Sessions/SessionXXX.md`; expected commit message: `docs: record haiku bugfix release handoff`
+25. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и оформить release handoff для повторного пользовательского теста; scope: root VSIX artifact, `doc/tmp/releases/`, `doc/Sessions/SessionXXX.md`; expected commit message: `docs: record haiku bugfix release handoff`
 26. [TODO] Git Commit: `docs: record haiku bugfix release handoff` (hash: TBD)

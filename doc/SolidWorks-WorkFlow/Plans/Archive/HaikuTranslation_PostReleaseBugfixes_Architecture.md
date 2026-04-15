@@ -1,11 +1,12 @@
 # Архитектура: Post-release bugfixes для Claude Haiku translation
 
-**Status:** Accepted
+**Status:** Archived
 **Created:** 2026-04-15
 **Updated:** 2026-04-15
 **Accepted:** 2026-04-15
 **Owner:** Oleksandr + Claude
 **Scope:** Исправление post-release багов релиза `1.1.986` вокруг `anthropic-claude-haiku-4-5`: silent fallback на `google-gtx` в live reasoning translation, неверный localization runtime path для core-only engine, сохранение английского source/fallback content внутри `ru` helper/message bundles, а также пересмотр persistence-policy для native Claude JSONL в translation slug.
+**Archive note:** Решения этого planning-дока реализованы и зафиксированы в release `1.1.987`; канонический итоговый SSOT перенесён в `Modules/Claude.md`, `Modules/Localization.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `System/SystemArchitecture.md`.
 
 **Связанные документы:**
 - `doc/SolidWorks-WorkFlow/Plans/Archive/Localization_TranslationEngine_AnthropicHaiku_Architecture.md`
