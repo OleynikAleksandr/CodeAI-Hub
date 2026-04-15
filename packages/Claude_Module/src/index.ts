@@ -16,6 +16,17 @@ type ClaudeUsageLimitsStreamPayload = ClaudeUsageLimitsStreamPayloadType;
 type ClaudeWorkspaceOptions = ClaudeWorkspaceOptionsType;
 type ModuleReporter = ModuleReporterType;
 
+export {
+  CLAUDE_HAIKU_TRANSLATION_ENGINE_ID,
+  CLAUDE_HAIKU_TRANSLATION_MODEL_ID,
+  CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG,
+  CLAUDE_HAIKU_TRANSLATION_PROVIDER_ID,
+  type ClaudeHaikuTranslationQueryFunction,
+  ClaudeHaikuTranslationService,
+  type ClaudeHaikuTranslationServiceOptions,
+  type ClaudeHaikuTranslationServiceResult,
+} from "./translation/claude-haiku-translation-service";
+export { buildClaudeHaikuTranslatorInstruction } from "./translation/claude-haiku-translator-instruction";
 export type {
   ClaudeInstallerPaths,
   ClaudeModuleOptions,
