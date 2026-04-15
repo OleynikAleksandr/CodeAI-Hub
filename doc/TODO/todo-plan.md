@@ -1,0 +1,72 @@
+# План разработки (Development TODO Plan)
+
+## Context Pack For This Cycle
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Localization_IncrementalSync_And_ThinkingVisibility_Architecture.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
+- Только этот список является источником документов для восстановления контекста текущего execution cycle.
+
+## Правила выполнения (Execution Rules):
+- **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- **TODO Plan** состоит из Phase (Фаз). В каждой Phase некоторое колличество - Stream (стрим), в каждом Стриме - некоторое кол-во подзадач.
+- Каждая подзадача должна затрагивать не более 3 файлов.
+- Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
+- Если по факту разработки оказывается, что конкретная подзазача Stream затрагивает больше 3 файлов - такая задача должна быть разбита на более мелкие и список задач в Стриме переписывается.
+- **Gates (автоматически через Husky hooks):**
+  - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:knip`, `npm run format:fix`
+  - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
+- Ручной прогон этих команд обычно не нужен (только для диагностики).
+- **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
+- **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
+- Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке, чтобы локализовать ошибки без запуска `build-all`.
+- **Real-time Документация:** любое изменение архитектуры/логики требует синхронного обновления и `todo-plan.md`, и релевантной документации из `doc/` **до** коммита, чтобы измененные документы также попали в Git Commit.
+- Phase завершается на чистом дереве: запускаем `./scripts/build-all.sh`, переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+- **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять: после каждой подзадачи обязательный коммит, после каждого коммита его hash и статус задачи тут же заносить сюда.
+- **Планируемый релиз этого scope:** `1.1.985` (текущая версия `1.1.984` + 1). Если в ходе выполнения scope версия изменится по внешним причинам, release stream ниже нужно синхронно обновить.
+
+## Phase 1 — Incremental Settings Save Sync (owner: Oleksandr + Codex, updated: 2026-04-15)
+### Stream: Save impact classification
+1. [TODO] Добавить классификатор влияния настроек на локализацию и убрать blocking localization sync для provider-only / response-policy / continuity save-path — scope: `src/extension-module/message-handlers/`, `src/extension-module/settings/`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `fix: skip localization sync for provider-only settings saves`
+2. [TODO] Git Commit: `fix: skip localization sync for provider-only settings saves` (hash: TBD)
+3. [TODO] Ввести selective strict sync planning для save-path: engine change = rebuild всех неанглийских групп, single-category change = rebuild только затронутого runtime bundle set — scope: `src/extension-module/settings/`, `packages/localization/src/`, `doc/SolidWorks-WorkFlow/Plans/Localization_IncrementalSync_And_ThinkingVisibility_Architecture.md`; ожидаемый commit message: `feat: add selective localization sync planning`
+4. [TODO] Git Commit: `feat: add selective localization sync planning` (hash: TBD)
+5. [TODO] Реализовать selective runtime payload materialization с carry-forward для незатронутых bundles и отдельным правилом `UI Labels -> ui_interface + workflow_terms` — scope: `packages/localization/src/`, `src/extension-module/settings/`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `feat: rebuild only affected localization bundles`
+6. [TODO] Git Commit: `feat: rebuild only affected localization bundles` (hash: TBD)
+
+## Phase 2 — Messaging Ownership And Visible Thinking Gate (owner: Oleksandr + Codex, updated: 2026-04-15)
+### Stream: Messages for the User contract
+1. [TODO] Явно зафиксировать в локализационном контракте и пользовательских пояснениях, что `Messages for the User` включает visible `Thinking / Reasoning` — scope: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `src/client/ui/src/components/settings/`; ожидаемый commit message: `docs: classify visible thinking under messages for the user`
+2. [TODO] Git Commit: `docs: classify visible thinking under messages for the user` (hash: TBD)
+3. [TODO] Подтянуть Settings helper copy и busy/sync messaging к новой модели incremental rebuild без ложного обещания полной пересборки интерфейса при любом save — scope: `src/client/ui/src/components/settings/`, `src/client/project-manager/components/layout/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: clarify incremental localization sync messaging`
+4. [TODO] Git Commit: `docs: clarify incremental localization sync messaging` (hash: TBD)
+
+## Phase 3 — Thinking/Reasoning Visibility And Translation Eligibility (owner: Oleksandr + Codex, updated: 2026-04-15)
+### Stream: Forward-only thinking visibility
+1. [TODO] Ввести emission-time policy для visible thinking/reasoning, чтобы hidden Claude/Gemini thinking не попадал в translation queue и не зависел от replay-time UI filtering; Codex path оставить provider-owned по availability reasoning summaries — scope: `packages/core/src/session-translation/`, `packages/core/src/remote-bridge/handlers/`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; ожидаемый commit message: `fix: gate thinking translation by visible session policy`
+2. [TODO] Git Commit: `fix: gate thinking translation by visible session policy` (hash: TBD)
+3. [TODO] Обновить session/dialog transcript contract так, чтобы re-enable `Thinking in dialog` / `Reasoning in dialog` действовал только вперед и не поднимал старые hidden messages в бесконечной сессии — scope: `src/client/ui/src/session/`, `src/client/project-manager/components/sessions/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `fix: keep hidden thinking forward-only after re-enable`
+4. [TODO] Git Commit: `fix: keep hidden thinking forward-only after re-enable` (hash: TBD)
+5. [TODO] Синхронизировать provider SSOT для Claude/Codex/Gemini с новым правилом: hidden visible-thinking не переводится, а re-enable не backfill-ит старые reasoning/thinking — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; ожидаемый commit message: `docs: sync thinking visibility and translation contract`
+6. [TODO] Git Commit: `docs: sync thinking visibility and translation contract` (hash: TBD)
+
+## Phase 4 — Regression Coverage And Targeted Validation (owner: Oleksandr + Codex, updated: 2026-04-15)
+### Stream: Targeted regression proof
+1. [TODO] Добавить regression coverage для provider-only saves, engine/category selective rebuild, hidden-thinking no-translation и forward-only re-enable semantics — scope: `src/extension-module/`, `packages/localization/src/`, `packages/core/src/session-translation/`; ожидаемый commit message: `test: cover incremental localization sync and thinking visibility`
+2. [TODO] Git Commit: `test: cover incremental localization sync and thinking visibility` (hash: TBD)
+3. [TODO] Закрыть таргетные сборки и type/test verification для затронутых пакетов/клиентов (`@codeai-hub/localization`, `@codeai-hub/core`, UI/PM) и, если validation потребует правок, внести их в узком scope с синхронной документацией — scope: `packages/localization/`, `packages/core/`, `src/client/`; ожидаемый commit message: `fix: close localization incremental sync regressions`
+4. [TODO] Git Commit: `fix: close localization incremental sync regressions` (hash: TBD)
+
+## Phase 5 — Release Build 1.1.985 (owner: Oleksandr + Codex, updated: 2026-04-15)
+### Stream: Release assembly and scope closeout
+1. [TODO] Подготовить release-facing документы для `1.1.985` и синхронизировать финальные scope docs перед сборкой (`README.md`, `CHANGELOG.md`, релевантные SSOT/Plans/Docs_Index`) — scope: `README.md`, `CHANGELOG.md`, `doc/`; ожидаемый commit message: `docs: prepare release 1.1.985 notes`
+2. [TODO] Git Commit: `docs: prepare release 1.1.985 notes` (hash: TBD)
+3. [TODO] Выполнить release wave: чистое дерево, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать release artefacts и устранить release-only blockers в самом узком scope — scope: `scripts/`, `doc/tmp/releases/`, репозиторий release artefacts; ожидаемый commit message: `build: prepare release 1.1.985 artifacts`
+4. [TODO] Git Commit: `build: prepare release 1.1.985 artifacts` (hash: TBD)
+5. [TODO] Закрыть execution scope: архивировать `doc/TODO/todo-plan.md`, провести обязательный Plans closeout review, синхронизировать `Docs_Index`, `doc/Sessions/`, release итоги и оставить чистое дерево — scope: `doc/TODO/`, `doc/SolidWorks-WorkFlow/Plans/`, `doc/Sessions/`; ожидаемый commit message: `docs: close incremental localization sync scope`
+6. [TODO] Git Commit: `docs: close incremental localization sync scope` (hash: TBD)
