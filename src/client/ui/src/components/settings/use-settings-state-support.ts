@@ -108,6 +108,7 @@ export const SUPPORTED_LOCALIZATION_ENGINE_IDS = [
   "google-gtx",
   "codex-gpt-5.4-mini",
   "codex-gpt-5.3-codex-spark",
+  "anthropic-claude-haiku-4-5",
 ] as const;
 const SUPPORTED_LOCALIZATION_ENGINE_ID_SET = new Set<string>(
   SUPPORTED_LOCALIZATION_ENGINE_IDS

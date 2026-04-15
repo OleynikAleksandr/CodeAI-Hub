@@ -129,6 +129,13 @@ const resolveTranslationEngineLabel = (
       "Google GTX Free"
     );
   }
+  if (engineId === "anthropic-claude-haiku-4-5") {
+    return t(
+      "ui_interface",
+      "settings.localization.translation_engine.option.anthropic_claude_haiku_4_5",
+      "Anthropic Claude · Haiku 4.5"
+    );
+  }
   return formatUnknownTranslationEngineLabel(engineId);
 };
 

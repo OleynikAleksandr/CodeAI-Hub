@@ -64,13 +64,13 @@
 
 ### Stream: Extension host bridge migration
 17. [DONE] Перевести extension-host localization runtime на Core-backed payload/bootstrap path без локального Haiku materialization; scope: `src/extension-module/settings/localization-runtime-service.ts` (sufficient single-file change: extension-host now skips strict rebuild when engineId is Core-only, так что Haiku materialization остаётся за Core; settings-message-handler/home-view-provider уже потребляют этот service и не требовали изменений в этой сессии); expected commit message: `refactor: consume core-backed localization runtime`
-18. [IN_PROGRESS] Git Commit: `refactor: consume core-backed localization runtime` (hash: TBD)
+18. [DONE] Git Commit: `refactor: consume core-backed localization runtime` (hash: e92fe3a68)
 
 ## Phase 4 — UI and localization catalog exposure (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Settings UI exposure
-19. [TODO] Показать новый engine в Settings и добавить canonical English label в approved source dictionary; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_labels.json`; expected commit message: `feat: expose claude haiku localization engine in settings`
-20. [TODO] Git Commit: `feat: expose claude haiku localization engine in settings` (hash: TBD)
+19. [DONE] Показать новый engine в Settings и добавить canonical English label в approved source dictionary; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_labels.json`; expected commit message: `feat: expose claude haiku localization engine in settings`
+20. [IN_PROGRESS] Git Commit: `feat: expose claude haiku localization engine in settings` (hash: TBD)
 
 ### Stream: Language catalog support
 21. [TODO] Добавить новый engine в localization language catalog и покрыть materializer/runtime тестом; scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/localization-materializer.test.ts`; expected commit message: `feat: add claude haiku localization language catalog`
