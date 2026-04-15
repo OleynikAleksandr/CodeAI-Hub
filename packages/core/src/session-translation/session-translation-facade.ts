@@ -20,9 +20,12 @@ export interface SessionTranslationFacadeOptions {
   readonly settingsPath: string;
 }
 
+export type SessionTranslationProviderId = "claude" | "codex" | "gemini";
+
 export interface SessionMessageTranslationCandidate
   extends SessionTranslationDispatchCandidate {
   readonly messageId: string;
+  readonly providerId?: SessionTranslationProviderId;
   readonly sessionId: string;
 }
 
@@ -106,6 +109,27 @@ export class SessionTranslationFacade {
     const thinkingCandidate = isThinkingTranslationCandidate(candidate);
     const dispatcherAccepted =
       this.dispatcher.shouldTranslateDialogMessage(candidate);
+    if (
+      thinkingCandidate &&
+      candidate.providerId &&
+      !this.policyResolver.resolveThinkingVisibility(
+        this.settingsPath,
+        candidate.providerId
+      )
+    ) {
+      this.logger.info("Session translation skipped before dispatch", {
+        sessionId: candidate.sessionId,
+        messageId: candidate.messageId,
+        role: candidate.role,
+        tag: candidate.tag,
+        contentLength: candidate.content.length,
+        preview: buildLogPreview(candidate.content),
+        dispatcherAccepted,
+        providerId: candidate.providerId,
+        skipReason: "thinking_visibility_disabled",
+      });
+      return null;
+    }
     if (!dispatcherAccepted) {
       if (thinkingCandidate) {
         this.logger.info("Session translation skipped before dispatch", {

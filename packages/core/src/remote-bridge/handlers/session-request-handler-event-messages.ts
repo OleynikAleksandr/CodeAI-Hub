@@ -1,8 +1,24 @@
 import type { SessionManager, SessionRole } from "../../session-manager";
-import type { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
+import type {
+  SessionTranslationFacade,
+  SessionTranslationProviderId,
+} from "../../session-translation/session-translation-facade";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
+
+const resolveTranslationProviderId = (
+  providerId: string | undefined
+): SessionTranslationProviderId | undefined => {
+  if (
+    providerId === "claude" ||
+    providerId === "codex" ||
+    providerId === "gemini"
+  ) {
+    return providerId;
+  }
+  return undefined;
+};
 
 const MESSAGE_PREVIEW_LENGTH = 160;
 
@@ -244,6 +260,8 @@ export class SessionRequestHandlerEventMessages {
         }
       );
     }
+    const session = this.deps.sessionManager.getSession(sessionId);
+    const providerId = resolveTranslationProviderId(session?.providerId);
     const translated =
       await this.deps.sessionTranslation.translateDialogMessage({
         sessionId,
@@ -251,6 +269,7 @@ export class SessionRequestHandlerEventMessages {
         role: message.role,
         tag: message.tag,
         content: message.content,
+        ...(providerId ? { providerId } : {}),
       });
     if (!translated) {
       return;

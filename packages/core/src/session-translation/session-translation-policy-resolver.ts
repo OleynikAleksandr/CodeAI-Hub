@@ -9,9 +9,17 @@ import {
   type LocalizationWorkflowTermsPolicy,
 } from "@codeai-hub/localization";
 import {
+  loadClaudeProviderSettingsSnapshot,
+  loadCodexSettingsSnapshot,
+  loadGeminiSettingsSnapshot,
   loadMessagesForTheUserLanguage,
   loadTranslationEngineId,
 } from "../config/provider-settings-snapshot";
+
+export type SessionThinkingVisibilityProviderId = "claude" | "codex" | "gemini";
+
+const resolveThinkingVisibilityEnabled = (value: unknown): boolean =>
+  value !== false;
 
 const SOURCE_LANGUAGE = DEFAULT_LOCALIZATION_SOURCE_LANGUAGE;
 const DEFAULT_WORKFLOW_TERMS_POLICY: LocalizationWorkflowTermsPolicy =
@@ -128,6 +136,29 @@ const settingsMatch = (
   );
 
 export class SessionTranslationPolicyResolver {
+  resolveThinkingVisibility(
+    settingsPath: string,
+    providerId: SessionThinkingVisibilityProviderId
+  ): boolean {
+    if (providerId === "claude") {
+      const claude = loadClaudeProviderSettingsSnapshot(settingsPath);
+      return resolveThinkingVisibilityEnabled(
+        claude?.thinkingDisplaySyncEnabled
+      );
+    }
+    if (providerId === "gemini") {
+      const gemini = loadGeminiSettingsSnapshot(settingsPath);
+      return resolveThinkingVisibilityEnabled(
+        gemini?.thinkingDisplaySyncEnabled
+      );
+    }
+    const codex = loadCodexSettingsSnapshot(settingsPath);
+    return (
+      codex?.reasoningSummaryEnabled !== false &&
+      resolveThinkingVisibilityEnabled(codex?.thinkingDisplaySyncEnabled)
+    );
+  }
+
   resolve(settingsPath: string): SessionTranslationPolicy {
     const runtimeSettings = this.createRuntimeSettingsSnapshot(settingsPath);
     const resolvedTargetLanguage = loadMessagesForTheUserLanguage(settingsPath)
