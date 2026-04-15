@@ -1,47 +1,102 @@
 # Архитектура: Anthropic Claude Haiku 4.5 как translation engine
 
-**Status:** Draft
+**Status:** Accepted
 **Created:** 2026-04-15
+**Updated:** 2026-04-15
+**Accepted:** 2026-04-15
 **Owner:** Oleksandr + Claude
-**Scope:** Добавление движка `anthropic-claude-haiku-4-5` в каталог Translation Engine наряду с Google GTX и Codex-моделями. Вызов модели `claude-haiku-4-5-20251001` через `@anthropic-ai/claude-agent-sdk` в подписочном режиме с полной заменой дефолтного Claude Code system preset на минимальный translator-промпт.
+**Scope:** Добавление движка `anthropic-claude-haiku-4-5` в каталог Translation Engine наряду с Google GTX и Codex-моделями. Перевод выполняется через `@anthropic-ai/claude-agent-sdk` в подписочном режиме по тому же provider-home/auth bootstrap path, который уже используется для обычных Claude turn-ов (Opus / Sonnet / Haiku) в workflow, но с translation-only query profile: отдельный translation slug, custom `systemPrompt`, `tools: []`, `maxTurns: 1`, `persistSession: false`.
 
 **Связанные документы:**
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT translation package, engine contract, chunk policy.
-- `Modules/Localization.md` — каталог видимых engines, language catalog, materializer flow.
-- `Modules/Claude.md` — SSOT Claude provider module, subscription auth, provider-home.
-- `System/SystemArchitecture.md` — инвариант 5 (SDK isolation), список engines в §4.
+- `Modules/Localization.md` — каталог видимых engines, language catalog, runtime/bootstrap materializer flow.
+- `Modules/Claude.md` — SSOT Claude provider module, provider-home, auth bootstrap, SDK isolation mode.
+- `System/SystemArchitecture.md` — инвариант 5 (provider-home + SDK isolation), translation execution-mode invariant.
+- `Contracts/UserFacing_Text_Localization_Boundary.md` — правило для UI label source dictionary.
 
 ---
 
 ## 1. Задача
 
-Подключить в Translation Engine четвёртый движок — **Anthropic Claude Haiku 4.5** (`engineId: "anthropic-claude-haiku-4-5"`, label «Anthropic Claude · Haiku 4.5»), выполняющий перевод через модель `claude-haiku-4-5-20251001`. Вызов идёт через тот же `@anthropic-ai/claude-agent-sdk`, который уже используется для основных Opus/Sonnet turn-ов в workflow, через ту же подписочную OAuth аутентификацию и тот же provider-home (`~/.codeai-hub/providers/claude/home/`), но с принципиальным отличием: **дефолтный Claude Code system preset отключается через передачу своей короткой translator-инструкции строкой в `systemPrompt`**. Engine реализует существующий интерфейс `TranslationEngine` и становится выбираемым из UI Settings наравне с Google GTX / Codex Mini / Codex Spark.
+Подключить в Translation Engine четвёртый движок — **Anthropic Claude Haiku 4.5** (`engineId: "anthropic-claude-haiku-4-5"`, label `Anthropic Claude · Haiku 4.5`), выполняющий перевод через модель `claude-haiku-4-5-20251001`.
 
-## 2. Причина
+Ключевое требование реализации:
 
-**Подписка Anthropic уже оплачена.** Пользователь работает по подписке, Opus/Sonnet используются для основных агентских сессий. Запросы Haiku в рамках той же подписки не тарифицируются отдельно — это бесплатная translation-мощность, не нагружающая отдельные бюджеты.
-
-**Haiku 4.5 быстрая и качественная.** Самая свежая low-latency модель Anthropic. Качество перевода выше, чем у коммодити-моделей; задержки существенно ниже, чем у Opus/Sonnet.
-
-**Auth-инфраструктура уже развёрнута.** Claude_Module держит OAuth token, keychain-fallback, SDK installer, isolated provider-home. Добавление ещё одного потребителя SDK — аддитивное изменение.
-
-**Agent SDK умеет заменять системный промпт целиком.** Тип `systemPrompt` в SDK поддерживает строку как полную замену дефолтного `claude_code` preset (килобайты описания tools/cwd/git/memory). Translator обходится 3-5 строками инструкции → экономия input-токенов ≈ 95% на каждом запросе, меньше latency, меньше usage-счётчика подписки.
-
-## 3. Non-Goals
-
-- Не меняем auth-поток основных Opus/Sonnet сессий.
-- Не добавляем Opus/Sonnet как translation engines (избыточно для переводов, дороже по usage).
-- Не вводим новый SDK package и не меняем версию установленного `@anthropic-ai/claude-agent-sdk`.
-- Не меняем контракт `TranslationEngine` и поведение существующих engines (Google GTX / Codex Mini / Codex Spark).
-- Не добавляем API-key fallback — только подписочная OAuth аутентификация.
+- **не вводить отдельный auth flow** для переводчика;
+- использовать **тот же subscription/provider-home path**, по которому уже ходят обычные Claude turn-ы в CodeAI Hub;
+- при этом переводчик должен оставаться **translation-only one-shot profile**:
+  - без tool-layer,
+  - без reasoning,
+  - без session persistence,
+  - без смешивания с обычными workflow Claude sessions.
 
 ---
 
-## 4. Recap существующей системы
+## 2. Причина
 
-### 4.1. Translation Engine contract
+**Подписка Anthropic уже оплачена.** Пользователь уже использует Claude provider в основном workflow. Значит Haiku translation должен использовать ту же auth/bootstrap инфраструктуру, а не заводить отдельный runtime-auth контур.
 
-[packages/translation/src/translation-engine.ts](packages/translation/src/translation-engine.ts):
+**Haiku 4.5 подходит по latency/quality.** Это быстрый и качественный движок для коротких и средних translation turn-ов.
+
+**Claude SDK уже умеет translation-only profile.** Для этой задачи достаточно:
+
+- передать короткий custom `systemPrompt`,
+- отключить tools через `tools: []`,
+- отключить persistence через `persistSession: false`,
+- зафиксировать one-shot execution через `maxTurns: 1`.
+
+Это позволяет получить аддитивный translation path без отдельной логики логина и без засорения provider-home native session JSONL.
+
+---
+
+## 3. Non-Goals
+
+- Не меняем auth flow обычных Opus/Sonnet/Haiku workflow sessions.
+- Не добавляем отдельный Claude API-key path.
+- Не тащим Claude-specific runtime внутрь `@codeai-hub/translation`.
+- Не создаём в этом scope новый shared package вроде `@codeai-hub/claude-runtime`.
+- Не включаем native session persistence для translation turn-ов.
+- Не меняем контракт `TranslationEngine`.
+
+---
+
+## 4. Принятые архитектурные решения
+
+### 4.1. Финальная стратегия реализации
+
+Принят **вариант C**:
+
+- `@codeai-hub/translation` остаётся engine-neutral и transport-only;
+- Claude-specific translation query path живёт **рядом с Claude provider runtime**, а не внутри shared translation package;
+- shared translation consumers получают Claude Haiku через уже существующий hook `engines` / injected `TranslationFacade`, а не через прямую зависимость `translation -> Claude_Module`.
+
+### 4.2. Почему варианты A/B отклонены
+
+- **A) Прямой импорт `Claude_Module` из `packages/translation`** отклонён.
+  Причина: это ломает границу shared translation package и приводит к плохой зависимости вокруг уже существующей связки `Claude_Module -> @codeai-hub/translation`.
+
+- **B) Выделение нового shared `@codeai-hub/claude-runtime` в этом scope** отклонено.
+  Причина: это утяжеляет packaging/release path, не решает чисто проблему extension-host localization path и в текущем scope не нужно, потому что нам не нужен новый auth/runtime, нам нужен reuse существующего provider path.
+
+### 4.3. Финальный принцип для Claude Haiku translation
+
+Если обычные Claude turn-ы уже работают по подписке Anthropic, то и Haiku translation должен работать **без отдельной авторизации**.
+
+Translation path использует:
+
+- тот же Claude provider-home path `CODEAI_CLAUDE_HOME=~/.codeai-hub/providers/claude/home` (канонически: `~/.codeai-hub/providers/claude/home`);
+- тот же auth bootstrap (`SDKInstaller` + `SDKAuthManager`);
+- тот же provider-home preflight/bootstrap path, что и стандартный Claude provider.
+
+Отличается только **query profile**.
+
+---
+
+## 5. Recap существующей системы
+
+### 5.1. Shared Translation Engine contract
+
+`packages/translation/src/translation-engine.ts`:
 
 ```ts
 interface TranslationEngine {
@@ -50,210 +105,321 @@ interface TranslationEngine {
 }
 ```
 
-`TranslationResult` обязан нести `engine`, `originalText`, `translatedText`, `finalText`, `sourceLanguage`, `targetLanguage`, `status` (`translated` / `fallback` / `skipped`), опционально `errorCode`. На любой ошибке engine возвращает fallback (`translatedText: null`, `finalText: originalText`).
+`TranslationFacade` уже умеет принимать кастомный набор `engines`, а значит shared package не обязан знать о каждом provider-specific runtime заранее.
 
-Регистрация — [translation-facade.ts:16-30](packages/translation/src/translation-facade.ts) `createDefaultTranslationEngines()`. Chunk policy — [translation-engine-profile-registry.ts](packages/translation/src/translation-engine-profile-registry.ts). UI каталог — [use-settings-state-support.ts:107-111](src/client/ui/src/components/settings/use-settings-state-support.ts) + label resolver в [localization-settings-card.tsx:107-133](src/client/ui/src/components/settings/localization-settings-card.tsx).
+### 5.2. Claude provider runtime path
 
-### 4.2. Claude Agent SDK подписочный поток
+Сейчас обычные Claude turn-ы используют:
 
-- **Загрузка:** [sdk-installer.ts:80-85](packages/Claude_Module/src/installer/sdk-installer.ts) динамически импортирует `sdk.mjs` из `~/.npm-global/lib/node_modules/@anthropic-ai/claude-agent-sdk/`.
-- **Provider-home:** [claude-provider-home.ts](packages/Claude_Module/src/sdk/claude-provider-home.ts) резолвит `~/.codeai-hub/providers/claude/home/.claude/`, включая `projects/<slug>/`, `.credentials.json`, symlink на `~/Library/Keychains`.
-- **Auth:** [claude-auth-runtime.ts:103-131](packages/Claude_Module/src/auth/claude-auth-runtime.ts) собирает env с `HOME=<provider-home>`, `CLAUDE_USE_CLI_AUTH=true`, `CLAUDE_SUBSCRIPTION_MODE=true`; `ANTHROPIC_API_KEY` и `CLAUDECODE` удаляются. Token — по цепочке env → provider-home credentials → legacy `~/.claude` → Keychain/secret-tool/PowerShell.
-- **Query:** [claude-sdk-manager.ts:249-294](packages/Claude_Module/src/sdk/claude-sdk-manager.ts) `buildQueryOptions()` собирает опции (`cwd`, `projectPath`, `settingSources: []`, `permissionMode: "bypassPermissions"`, `env`, `pathToClaudeCodeExecutable`, опциональные `model` / `thinking` / `effort` / `resume` / `outputFormat`). Поле `systemPrompt` **не передаётся** — идёт дефолтный Claude Code preset.
-- **Result extraction:** `query()` возвращает `AsyncIterable<SDKMessage>`; финальный текст — в `msg.type === "result"` / `subtype === "success"` → `msg.result: string`.
-- **SDK type `systemPrompt`** (из `sdk.d.ts:1434-1480`): `string | { type: 'preset', preset: 'claude_code', append?, excludeDynamicSections? }`. **Строка полностью заменяет дефолтный preset.**
+- provider-home: `~/.codeai-hub/providers/claude/home`;
+- provider projects: `~/.codeai-hub/providers/claude/home/.claude/projects/<workspaceSlug>/`;
+- auth bootstrap через `SDKAuthManager`, который:
+  - поднимает provider-home bridge,
+  - мигрирует legacy state,
+  - проверяет auth,
+  - делает provider-home preflight bootstrap.
 
-### 4.3. Chunking фактическое состояние
+Это уже рабочий и проверенный path. Новый translation engine должен его переиспользовать, а не дублировать.
 
-На практике чанкинг выключен для всех реальных путей:
-- Core session translation — всегда `category: "reasoning"` → default `chunkingMode: "disabled"` ([session-translation-facade.ts:218-225](packages/core/src/session-translation/session-translation-facade.ts)).
-- Localization bundle materializer — передаёт `chunkingMode: "disabled"` явно, один batch с маркерами `__CODEAI_HUB_LOCALIZATION_ENTRY_*__` ([localization-materializer.ts:461](packages/localization/src/localization-materializer.ts)).
-- Категории `generic` / `document` формально имеют default `"auto"`, но фактических вызовов нет.
+### 5.3. Локализационный runtime сейчас создаётся в двух местах
 
-Для Haiku engine chunk-policy в registry формально нужен (контракт), но на практике не активируется — engine всегда получает весь текст одним вызовом.
+Это важное ограничение текущей архитектуры:
+
+- Core path уже строит `LocalizationFacade` для runtime payload / bootstrap snapshot.
+- Extension-host path тоже локально создаёт `LocalizationFacade`.
+
+Для Claude Haiku это критично, потому что extension-host сам по себе не должен создавать отдельный Claude auth/runtime контур. Значит engine-dependent localization materialization для Haiku должна быть приведена к **core-owned execution path**.
+
+### 5.4. Chunking фактическое состояние
+
+На практике chunking уже выключен для реальных путей:
+
+- Core session translation — `category: "reasoning"` → `chunkingMode: "disabled"`.
+- Localization materializer — передаёт `chunkingMode: "disabled"` явно.
+
+Следовательно для Haiku engine chunk policy нужен как контрактный registry entry, но на практике будет формальным placeholder, а не активным execution-path behavior.
 
 ---
 
-## 5. Архитектура решения
+## 6. Архитектура решения
 
-### 5.1. Путь вызова Haiku translator-turn
+### 6.1. Provider-owned Claude translation service
 
-1. `TranslationFacade.translate(req with engineId="anthropic-claude-haiku-4-5")` → `ClaudeHaikuTranslationEngine.translate(normalizedRequest)`.
-2. Engine лениво инициализирует SDK (один раз на процесс): `SDKInstaller.ensureInstalled()` + `loadModule()` → `{ query }`; `ClaudeAuthRuntime.ensureSubscriptionAuth()` + `getAuthEnvironment()`.
-3. Engine строит `query()` options (см. §5.3), передаёт `prompt: request.text`.
-4. Итерирует `AsyncIterable<SDKMessage>` до `{ type: "result", subtype: "success" }`, возвращает `msg.result` как `translatedText`.
-5. Ошибка / timeout / `error_max_turns` → возврат `status: "fallback"`, `finalText: request.text`, `errorCode` по классификации.
+Новый translation service живёт в Claude provider boundary и переиспользует существующий runtime/auth path.
 
-### 5.2. Отключение дефолтного системного промпта
+Логика:
 
-В options передаётся `systemPrompt: <translator-instruction-string>`. Строка — одной формулировкой (см. §6.4), с интерполяцией `{source}` / `{target}` из `request.sourceLanguage` / `request.targetLanguage`. Дефолтный `claude_code` preset при этом **полностью заменяется** — тот факт подтверждён типом `sdk.d.ts`.
+1. Core просит provider-owned Claude translation service выполнить one-shot translation запрос через Haiku.
+2. Service использует те же `SDKInstaller` и `SDKAuthManager`, что обычный Claude provider.
+3. Перед вызовом query выполняются:
+   - `ensureInstalled()`;
+   - `ensureSubscriptionAuth()`;
+   - `ensureProviderHomeSessionBootstrap(...)`.
+4. Затем выполняется отдельный translation-only `query(...)`.
+5. Полученный `result` возвращается как обычный `TranslationResult`.
 
-### 5.3. Минимальные query options для translator-turn
+Следствие:
 
-Обязательные:
-- `env` — из `ClaudeAuthRuntime.getAuthEnvironment()`.
-- `pathToClaudeCodeExecutable` — из `SDKInstaller.getExecutablePath()`.
-- `cwd` — `<provider_home>/.claude/projects/<translation-slug>/cwd` (фиксированный путь).
-- `projectPath` — `<provider_home>/.claude/projects/<translation-slug>`.
+- нет отдельного логина для переводчика;
+- нет отдельного нового auth runtime;
+- если Claude provider уже готов к работе, Haiku translation получает тот же ready-state.
+
+### 6.2. Translation-only query profile
+
+Финальный query profile для Haiku:
+
+- `env` — из существующего Claude auth/runtime path.
+- `pathToClaudeCodeExecutable` — из `SDKInstaller`.
+- `cwd` — технический рабочий каталог под translation project slug.
+- `projectPath` — `~/.codeai-hub/providers/claude/home/.claude/projects/translation-runtime-haiku`.
 - `additionalDirectories: [cwd]`.
-- `settingSources: []` — SDK isolation.
-- `permissionMode: "bypassPermissions"` + `allowDangerouslySkipPermissions: true`.
-- `includePartialMessages: false` — не нужны дельты.
+- `settingSources: []` — SDK isolation mode.
+- `permissionMode: "bypassPermissions"`.
+- `allowDangerouslySkipPermissions: true`.
+- `includePartialMessages: false`.
 - `model: "claude-haiku-4-5-20251001"`.
 - `thinking: { type: "disabled" }`.
 - `systemPrompt: <translator-instruction>`.
+- `tools: []`.
+- `maxTurns: 1`.
+- `persistSession: false`.
 
-Страховочные (решение в §6.6):
-- `allowedTools: []` — блокирует весь tool layer.
-- `maxTurns: 1` если SDK его поддерживает.
+Не передаём:
 
-Не передаём: `resume` (каждый перевод one-shot), `outputFormat` (plain text), `effort` (thinking off).
+- `resume`;
+- `continue`;
+- `outputFormat`;
+- `effort`;
+- `allowedTools` (не использовать для tool blocking);
+- `disallowedTools` (не нужен при `tools: []`).
 
-### 5.4. Изолированный project slug
+### 6.3. Где будут писаться native Claude JSONL
 
-Отдельный slug внутри provider-home (по умолчанию `translation-runtime-haiku`) предотвращает смешивание translation-сессий с workspace-сессиями основного workflow. Создаётся лениво при первом вызове `translate()`. Аналог `translation-runtime-home` у Codex, но без материализации временной копии — provider-home и credentials shared с основным Claude-потоком.
+Финальное решение:
 
-### 5.5. Concurrency
+- translation service использует тот же provider-home path;
+- для логического разделения задаётся отдельный slug `translation-runtime-haiku`;
+- **но native session persistence выключается через `persistSession: false`**.
 
-Session-translation-dispatcher уже держит max 1 concurrent translation ([session-translation-dispatcher.ts:41-62](packages/core/src/session-translation/session-translation-dispatcher.ts)). Haiku engine наследует это ограничение — дополнительной сериализации не требуется. Rate limit от Anthropic (429) → fallback-результат с `errorCode: "rate_limited"`, без retry внутри engine.
+Значит translation turn-ы **не создают** native provider session files:
+
+- не пишут `~/.codeai-hub/providers/claude/home/.claude/projects/translation-runtime-haiku/<sessionId>.jsonl`;
+- не участвуют в resume/replay Claude workflow sessions;
+- не засоряют provider-home session history.
+
+Provider-home при этом остаётся source of truth для:
+
+- auth state,
+- bootstrap artifacts,
+- preflight readiness.
+
+### 6.4. Translator instruction
+
+Финальное решение: использовать **category-aware instruction builder**, а не один сверхкороткий слепой prompt.
+
+Базовая формулировка:
+
+```text
+You are a precise translation engine. Translate the source text from {source} into the language identified by the code {target}. Preserve Markdown structure, file paths, filenames, code identifiers, provider names, model names, product names, URLs, placeholders, and compact canonical technical labels when they are already written exactly. Do not add commentary. Return only the translation.
+```
+
+Для structured localization bundle дополнительно добавляется marker rule:
+
+```text
+Preserve every marker line that starts with __CODEAI_HUB_LOCALIZATION_ENTRY__ exactly. Translate only the text between each START and END marker. Do not remove, rename, reorder, or merge markers.
+```
+
+Это сильнее и безопаснее исходного draft-варианта, потому что сохраняет защиту для product/provider/model labels и не жертвует семантической стабильностью ради экономии нескольких токенов.
+
+### 6.5. Интеграция с shared translation facade
+
+Shared package не должен знать про Claude runtime, но он должен позволять Core собирать единый engine catalog.
+
+Итоговый подход:
+
+- shared translation package экспортирует/централизует reusable factory для default built-in engines;
+- Core добавляет к ним provider-owned `anthropic-claude-haiku-4-5`;
+- один и тот же factory path используется и для:
+  - live thinking/reasoning translation overlay;
+  - localization materialization/runtime payload generation.
+
+### 6.6. Core-owned localization materialization для Haiku
+
+Так как extension-host не должен строить отдельный Claude auth/runtime path, финальное решение для Haiku такое:
+
+- engine-dependent localization materialization и runtime bootstrap resolution идут через **Core-owned path**;
+- extension-host больше не должен сам локально выполнять Haiku translation;
+- extension-host получает runtime payload / bootstrap snapshot из Core bridge.
+
+Это убирает split-brain, где часть системы знала бы про Haiku engine, а часть нет.
 
 ---
 
-## 6. Decision points (решить до todo-plan.md)
+## 7. Финальные решения по decision points
 
-### 6.1. Где живут SDKInstaller и ClaudeAuthRuntime
+### 7.1. Архитектурная стратегия
 
-Translation-package сейчас не зависит от Claude_Module. Haiku engine требует доступа к SDK installer + auth runtime.
+**Принято:** вариант `C` — provider-owned Claude translation service + shared translation injection.
 
-- **A) Прямой импорт из Claude_Module.** Быстро, но тянет в translation-package всю messaging / session / token-usage машинерию Claude_Module. Нарушает принцип "translation package transport-only" (Shared_RuntimeTranslation_Module.md §7).
-- **B) Выделить shared `@codeai-hub/claude-runtime`.** Новый sub-package с тремя файлами: `sdk-installer`, `claude-auth-runtime`, `claude-provider-home`. Claude_Module и translation-package импортируют из него. Требует отдельного Phase 1 (выделение + миграция Claude_Module) и нового `Modules/Claude_Runtime.md`.
+### 7.2. Engine ID
 
-**Рекомендация:** **B**. Чистая граница, масштабируется на будущих потребителей (если кто-то ещё захочет Claude SDK). Дополнительная работа ограничена одной фазой.
+**Принято:** `anthropic-claude-haiku-4-5`
 
-### 6.2. Engine ID
+### 7.3. UI label
 
-- `anthropic-claude-haiku-4-5` — mirror стиля Codex (`codex-gpt-5.3-codex-spark`), включает вендор + family.
-- `claude-haiku-4-5` — совпадает с auth probe alias в Claude_Module, источник путаницы.
+**Принято:** `Anthropic Claude · Haiku 4.5`
 
-**Рекомендация:** `anthropic-claude-haiku-4-5`.
+### 7.4. Model pinning
 
-### 6.3. UI label
+**Принято:** `claude-haiku-4-5-20251001`
 
-- `"Anthropic Claude · Haiku 4.5"` — mirror `"OpenAI Codex · GPT-5.3 Codex Spark"`.
-- `"Claude Haiku 4.5"` — короче, но стилистически расходится.
+### 7.5. Project slug
 
-**Рекомендация:** `"Anthropic Claude · Haiku 4.5"`.
+**Принято:** `translation-runtime-haiku`
 
-### 6.4. System prompt (translator instruction)
+### 7.6. Tools blocking
 
-Черновик:
+**Принято:** `tools: []`
 
-```
-You are a precise translator. Translate the user message from {source} to {target}. Preserve all marker tokens (including __CODEAI_HUB_LOCALIZATION_ENTRY_*__), code blocks, URLs, and placeholders unchanged. Output only the translated text, no preface or commentary.
-```
+Причина: `allowedTools: []` не блокирует tool layer; он только не auto-allow’ит инструменты. Для полного отключения built-in tools нужен `tools: []`.
 
-~350 символов, экономия ≈ 95% input-токенов по сравнению с дефолтным Claude Code preset. Маркерное правило критично для localization-materializer batch-формата.
+### 7.7. Session persistence
 
-Альтернатива — ещё короче, без явного перечисления маркеров, полагаясь на поведенческие способности Haiku. Не рекомендую — explicit требование надёжнее.
+**Принято:** `persistSession: false`
 
-**Рекомендация:** формулировка-черновик выше. Финальная правка — в stream реализации, если manual-test покажет проблемы.
+Причина: translation turn-ы не должны создавать native Claude session JSONL и не должны становиться resumable Claude sessions.
 
-### 6.5. Project slug
+### 7.8. maxTurns
 
-- `translation-runtime-haiku` — mirror `codex-translation-runtime-home`.
+**Принято:** `maxTurns: 1`
 
-**Рекомендация:** `translation-runtime-haiku`.
+### 7.9. Chunk policy
 
-### 6.6. Tools blocking
+**Принято:** `{ softCharacterLimit: 400, hardCharacterLimit: 600, mode: "auto" }`
 
-- `allowedTools: []` — формальный guarantee, что tool-layer не активируется. Одна строка.
-- Ничего не передавать — полагаться на system prompt. Haiku редко самоинициативно дёргает tools.
+Это формальный registry placeholder; фактически текущие live/localization paths идут без chunking.
 
-**Рекомендация:** `allowedTools: []`. Стоимость копеечная, гарантия сильная.
+### 7.10. Auth/bootstrap warmup
 
-### 6.7. Chunk policy значения
-
-- `{ softCharacterLimit: 400, hardCharacterLimit: 600, mode: "auto" }` — формальный placeholder, фактически не активируется (см. §4.3).
-
-**Рекомендация:** soft 400 / hard 600. На практике не проверяется.
+**Принято:** использовать существующий provider bootstrap path (`ensureSubscriptionAuth()` + `ensureProviderHomeSessionBootstrap(...)`), без нового отдельного pre-warm механизма в этом scope.
 
 ---
 
-## 7. Impact map
+## 8. Impact map
 
-**Новые файлы:**
-- `packages/translation/src/claude-haiku-translation-engine.ts` — engine класс.
-- `packages/translation/src/claude-haiku-translator-instruction.ts` — билдер system prompt.
-- (Вариант 6.1-B) `packages/claude-runtime/` — новый sub-package с тремя файлами: `sdk-installer.ts`, `claude-auth-runtime.ts`, `claude-provider-home.ts`, плюс `index.ts` + `package.json`.
-- (Вариант 6.1-B) `doc/SolidWorks-WorkFlow/Modules/Claude_Runtime.md` — новый Module SSOT.
+### 8.1. Новые файлы
 
-**Изменения существующих файлов:**
-- `packages/translation/src/translation-facade.ts` — регистрация engine в `createDefaultTranslationEngines`.
-- `packages/translation/src/translation-engine-profile-registry.ts` — chunk policy для `anthropic-claude-haiku-4-5`.
-- `packages/translation/package.json` — зависимость на `@codeai-hub/claude-module` (A) или `@codeai-hub/claude-runtime` (B).
+- `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts` — provider-owned translation query service на том же Claude auth/runtime path.
+- `packages/Claude_Module/src/translation/claude-haiku-translator-instruction.ts` — category-aware instruction builder.
+- `packages/core/src/translation/claude-haiku-translation-engine.ts` — `TranslationEngine`, использующий provider-owned Claude translation service.
+- `packages/core/src/translation/core-translation-facade-factory.ts` — единая фабрика translation facade для Core с built-in engines + Haiku engine.
+
+### 8.2. Изменения существующих файлов
+
+- `packages/Claude_Module/src/index.ts` — экспорт translation service.
+- `packages/translation/src/*` — экспорт reusable factory/default engine construction path для внешней композиции.
+- `packages/translation/src/translation-engine-profile-registry.ts` — chunk profile для `anthropic-claude-haiku-4-5`.
+- `packages/core/src/session-translation/session-translation-facade.ts` — переход на core-owned translation facade factory.
+- `packages/localization/src/localization-contract.ts` — открыть injection path для custom translation facade / engine-aware factory.
+- `packages/localization/src/localization-facade.ts` — поддержать injected translation facade.
+- `packages/core/src/remote-bridge/handlers/settings-request-handler.ts` — использовать core-owned localization facade с Haiku support.
+- `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts` — читать Core-generated bootstrap snapshot для Haiku-compatible runtime path.
+- `src/extension-module/settings/localization-runtime-service.ts` — перестать локально материализовывать Haiku translation path, перейти на Core-backed payload/snapshot.
+- `src/extension-module/message-handlers/settings-message-handler.ts` — использовать Core-backed localization runtime path.
+- `src/extension-module/home-view-provider.ts` — использовать Core-backed bootstrap snapshot path.
 - `src/client/ui/src/components/settings/use-settings-state-support.ts` — `SUPPORTED_LOCALIZATION_ENGINE_IDS`.
-- `src/client/ui/src/components/settings/localization-settings-card.tsx` — `resolveTranslationEngineLabel` case.
-- `packages/localization/src/language-catalog.ts` — entry для нового engineId (reuse `GOOGLE_GTX_LANGUAGES`).
-- (Вариант B) `packages/Claude_Module/**` — imports переехали на новый пакет во всех точках использования installer/auth/home резолверов.
+- `src/client/ui/src/components/settings/localization-settings-card.tsx` — label resolver case.
+- `packages/localization/src/language-catalog.ts` — entry для нового engineId.
+- `assets/localization/source/en/ui_labels.json` — canonical English label key для нового engine.
 
-**Документация:**
-- `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` — новый engine в bundled set.
-- `doc/SolidWorks-WorkFlow/Modules/Localization.md` — видимый engine в каталоге (§4-5).
-- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — список engines в §4 при необходимости.
-- `doc/SolidWorks-WorkFlow/Docs_Index.md` — добавить `Modules/Claude_Runtime.md` при Варианте B.
+### 8.3. Документация
 
-**Не трогаем:**
-- `packages/core/src/session-translation/*` — facade contract тот же, engine выбирается по id.
-- `packages/localization/src/localization-materializer.ts` — тот же facade API.
-- Существующие engines Google GTX / Codex Mini / Codex Spark.
+- `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` — зафиксировать provider-owned external engine injection path и новый engine.
+- `doc/SolidWorks-WorkFlow/Modules/Localization.md` — описать новый engine и core-owned localization materialization path для Haiku.
+- `doc/SolidWorks-WorkFlow/Modules/Claude.md` — зафиксировать translation-only query profile (`tools: []`, `persistSession: false`, translation slug).
+- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — обновить список engines / инварианты при необходимости.
+- `doc/SolidWorks-WorkFlow/Docs_Index.md` — обновить ссылки при необходимости.
 
----
+### 8.4. Packaging / release impact
 
-## 8. Open questions
+Финальное решение **не требует** нового workspace package и **не требует** отдельного release-bundle типа для `claude-runtime`.
 
-1. **Rate limit awareness.** У Anthropic subscription RPM/TPM лимиты различаются по tier. При материализации bundles (4 approved группы × несколько языков) теоретически возможны 429. Достаточно ли fallback-per-request поведения, или нужен explicit backoff/retry в engine?
-2. **Token refresh.** `ClaudeAuthRuntime.bootstrapOAuthToken()` поддерживает `forceRefresh: true`. На практике при активных Opus/Sonnet сессиях token всегда свежий. Нужен ли explicit pre-warm при старте Core, или полагаемся на shared runtime?
-3. **Keychain prompts (macOS).** Первый доступ к Keychain может триггерить системный запрос авторизации. Для background translator это нежелательно. Решение: требовать, чтобы первая Claude-сессия (Opus/Sonnet) была запущена до первого translate(), или добавить в Core warmup.
-4. **Diagnostic logging.** Codex engines пишут через `TranslationReporter`. Haiku engine использует тот же reporter, или нужен отдельный `claude-translation-logger` с тегированием latency / tokens / model_id?
-5. **Version pinning.** Зафиксировать snapshot `claude-haiku-4-5-20251001` или alias `claude-haiku-4-5`? Snapshot стабильнее; alias облегчает upgrades. Рекомендация — snapshot с явной процедурой bump в release checklist.
+Это важно:
 
----
+- не добавляется новый tarball;
+- не меняется схема provider archives;
+- не появляется новая dependency `packages/translation -> Claude_Module`.
 
-## 9. Phasing suggestion (для todo-plan.md)
-
-Предварительная разбивка. Финальная нарезка — после утверждения этого дока. Каждый stream ≤ 3 файла / пакета, каждая подзадача пара «реализация + Git Commit».
-
-**Phase 1 — Infrastructure readiness.** *(только при Варианте 6.1-B; при A — пропускается)*
-- Stream 1.1: выделить `@codeai-hub/claude-runtime` (SDKInstaller + ClaudeAuthRuntime + claude-provider-home + package.json).
-- Stream 1.2: перевести Claude_Module на новый пакет, таргетный build.
-- Stream 1.3: `Modules/Claude_Runtime.md` + Docs_Index.
-
-**Phase 2 — Haiku engine implementation.**
-- Stream 2.1: `ClaudeHaikuTranslationEngine` + `claude-haiku-translator-instruction` (два файла).
-- Stream 2.2: регистрация в `translation-facade.ts` + chunk policy в `translation-engine-profile-registry.ts` + `package.json` dependency (три файла).
-
-**Phase 3 — UI exposure.**
-- Stream 3.1: `SUPPORTED_LOCALIZATION_ENGINE_IDS` + `resolveTranslationEngineLabel` + `language-catalog` (три файла).
-
-**Phase 4 — Documentation + validation.**
-- Stream 4.1: `Shared_RuntimeTranslation_Module.md` + `Localization.md` (два файла).
-- Stream 4.2: `SystemArchitecture.md` + `Docs_Index.md` при необходимости (два файла).
-- Stream 4.3: manual-test — engine выбирается в Settings, save пересобирает approved bundles через Haiku, живой overlay (reasoning) работает.
-
-**Phase 5 — Release.**
-- `build-all.sh` → `build-release.sh --use-current-version` → VSIX → session report.
+Изменения остаются в текущих Core / Claude module / localization / UI boundaries.
 
 ---
 
-## 10. Что должно быть решено до старта todo-plan.md
+## 9. Follow-up вопросы (не блокируют старт)
 
-1. Вариант 6.1 — sharing strategy (A / B).
-2. Вариант 6.2 — engine ID.
-3. Вариант 6.3 — UI label.
-4. Вариант 6.4 — финальная формулировка translator instruction.
-5. Вариант 6.5 — project slug.
-6. Вариант 6.6 — `allowedTools: []` да / нет.
-7. Вариант 6.7 — chunk policy значения.
-8. Open questions §8 — при необходимости принять решения по auth pre-warm, logger, version pinning.
+1. **Rate limit policy.** Начальная версия опирается на существующий fallback-per-request и на уже имеющийся localization retry loop. Отдельный backoff/retry внутри engine в этот scope не входит.
+2. **Diagnostic logging.** Базовый путь — reuse `TranslationReporter` с дополнительными метаданными (`engineId`, `modelId`, `translationSlug`, `provider=claude`).
+3. **Future opt-in persistence.** Если когда-нибудь понадобится forensics/debug для translation turn-ов, это должно быть отдельным opt-in scope. Базовый accepted design сохраняет `persistSession: false`.
 
-После выбора документ переводится в Status: Accepted и становится `Planning source` для `doc/TODO/todo-plan.md` Context Pack.
+---
+
+## 10. Phasing suggestion (для todo-plan.md)
+
+Каждый stream должен сохранять правило: подзадача ≤ 3 файлов, за каждой подзадачей отдельный `Git Commit` пункт.
+
+**Phase 1 — Claude translation service**
+
+- Stream 1.1: добавить `claude-haiku-translator-instruction.ts` + `claude-haiku-translation-service.ts`.
+- Stream 1.2: экспортировать service из `packages/Claude_Module/src/index.ts` + добавить тесты query options (`tools: []`, `persistSession: false`, `maxTurns: 1`).
+
+**Phase 2 — Shared translation composition**
+
+- Stream 2.1: вынести reusable factory/default engine construction path в `packages/translation`.
+- Stream 2.2: добавить `packages/core/src/translation/claude-haiku-translation-engine.ts` + `core-translation-facade-factory.ts`.
+- Stream 2.3: перевести `SessionTranslationFacade` на core-owned translation factory.
+- Stream 2.4: добавить chunk profile для `anthropic-claude-haiku-4-5`.
+
+**Phase 3 — Localization core-owned path**
+
+- Stream 3.1: открыть injection path в `packages/localization` для custom translation facade.
+- Stream 3.2: собрать Core-owned localization facade с Haiku engine и подключить его в `SettingsRequestHandler`.
+- Stream 3.3: перевести `localization-bootstrap-http-handler.ts` на тот же Core-owned path.
+- Stream 3.4: перевести extension-host `LocalizationRuntimeService` / `SettingsMessageHandler` / `HomeViewProvider` на Core-backed payload/snapshot.
+
+**Phase 4 — UI exposure**
+
+- Stream 4.1: `SUPPORTED_LOCALIZATION_ENGINE_IDS` + `localization-settings-card.tsx` + `ui_labels.json`.
+- Stream 4.2: `language-catalog.ts` + связанные тесты / normalization checks.
+
+**Phase 5 — Documentation + validation**
+
+- Stream 5.1: `Shared_RuntimeTranslation_Module.md` + `Localization.md`.
+- Stream 5.2: `Claude.md` + `SystemArchitecture.md` / `Docs_Index.md` при необходимости.
+- Stream 5.3: manual validation:
+  - engine выбирается в Settings;
+  - save пересобирает approved bundles через Haiku;
+  - live reasoning/thinking overlay использует Haiku;
+  - translation turn-ы не создают native Claude session JSONL.
+
+**Phase 6 — Release**
+
+- `build-all.sh`
+- `build-release.sh --use-current-version`
+- VSIX / tarballs
+- session report
+
+---
+
+## 11. Approved implementation decisions before `todo-plan.md`
+
+1. Архитектурная стратегия: **C** — provider-owned Claude translation service, без зависимости `translation -> Claude_Module`.
+2. Engine ID: `anthropic-claude-haiku-4-5`.
+3. UI label: `Anthropic Claude · Haiku 4.5`.
+4. Model ID: `claude-haiku-4-5-20251001`.
+5. Translation slug: `translation-runtime-haiku`.
+6. Tool isolation: `tools: []`.
+7. One-shot limit: `maxTurns: 1`.
+8. Session persistence: `persistSession: false`.
+9. Chunk policy: `soft 400 / hard 600`.
+10. Native Claude translation session JSONL: **не писать на диск**.
+11. UI label обязан быть добавлен в approved source dictionary `assets/localization/source/en/ui_labels.json`.
+12. `Localization_TranslationEngine_AnthropicHaiku_Architecture.md` может использоваться как `Planning source` для создания `doc/TODO/todo-plan.md`.
