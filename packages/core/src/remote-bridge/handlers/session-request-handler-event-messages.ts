@@ -160,6 +160,18 @@ export class SessionRequestHandlerEventMessages {
     readonly timestamp?: string;
     readonly tag?: string;
   }): void {
+    const emissionThinking = isThinkingDisplayMessage(options);
+    const session = this.deps.sessionManager.getSession(options.sessionId);
+    const providerId = resolveTranslationProviderId(session?.providerId);
+    let visibilityAtEmission: "visible" | "hidden" | undefined;
+    if (emissionThinking && providerId) {
+      visibilityAtEmission =
+        this.deps.sessionTranslation.resolveThinkingVisibilityForProvider(
+          providerId
+        )
+          ? "visible"
+          : "hidden";
+    }
     const message = this.deps.sessionManager.appendMessage(
       options.sessionId,
       options.role,
@@ -168,6 +180,7 @@ export class SessionRequestHandlerEventMessages {
         ...(options.messageId ? { messageId: options.messageId } : {}),
         ...(options.timestamp ? { timestamp: options.timestamp } : {}),
         ...(options.tag ? { tag: options.tag } : {}),
+        ...(visibilityAtEmission ? { visibilityAtEmission } : {}),
       }
     );
     if (!message) {

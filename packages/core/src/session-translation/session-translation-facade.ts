@@ -75,6 +75,15 @@ export class SessionTranslationFacade {
     return this.dispatcher.shouldTranslateDialogMessage(candidate);
   }
 
+  resolveThinkingVisibilityForProvider(
+    providerId: SessionTranslationProviderId
+  ): boolean {
+    return this.policyResolver.resolveThinkingVisibility(
+      this.settingsPath,
+      providerId
+    );
+  }
+
   private createTranslationReporter(
     candidate: SessionMessageTranslationCandidate,
     sourceHash: string

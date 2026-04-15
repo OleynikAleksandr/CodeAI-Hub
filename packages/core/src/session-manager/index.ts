@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 
 export type SessionRole = "user" | "assistant" | "system" | "thinking";
 
+export type SessionMessageEmissionVisibility = "visible" | "hidden";
+
 export interface SessionMessage {
   readonly content: string;
   readonly id: string;
@@ -10,6 +12,7 @@ export interface SessionMessage {
   readonly sessionId: string;
   readonly tag?: string;
   readonly timestamp: string;
+  readonly visibilityAtEmission?: SessionMessageEmissionVisibility;
 }
 
 export interface Session {
@@ -122,6 +125,7 @@ export class SessionManager {
       readonly messageId?: string;
       readonly timestamp?: string;
       readonly tag?: string;
+      readonly visibilityAtEmission?: SessionMessageEmissionVisibility;
     }
   ): SessionMessage | null {
     const session = this.sessions.get(sessionId);
@@ -136,6 +140,9 @@ export class SessionManager {
       sessionId,
       timestamp: options?.timestamp ?? new Date().toISOString(),
       ...(options?.tag ? { tag: options.tag } : {}),
+      ...(options?.visibilityAtEmission
+        ? { visibilityAtEmission: options.visibilityAtEmission }
+        : {}),
     };
 
     session.messages.push(message);
