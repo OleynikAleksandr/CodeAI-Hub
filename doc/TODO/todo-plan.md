@@ -39,46 +39,50 @@
 
 ### Stream: Core localization Haiku wiring
 5. [DONE] Подключить provider-owned Haiku service в Core localization facade и bootstrap handlers; scope: `packages/core/src/translation/core-localization-facade-factory.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit message: `fix: wire haiku service into core localization`
-6. [TODO] Git Commit: `fix: wire haiku service into core localization` (hash: TBD)
+6. [DONE] Git Commit: `fix: wire haiku service into core localization` (hash: `bf7078ad0`)
 
 ### Stream: Remove extension-side downgrade
-7. [TODO] Убрать extension-side `resolveRuntimePayload()` downgrade для core-only Haiku engine и вернуть Core-backed strict sync/bootstrap path; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `fix: restore core-owned haiku localization sync`
-8. [TODO] Git Commit: `fix: restore core-owned haiku localization sync` (hash: TBD)
+7. [DONE] Сделать Core localization bootstrap endpoint authoritative для Haiku: строить strict snapshot из текущего `settings.json`, а не читать только persisted cache; scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`, `packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit message: `fix: rebuild localization bootstrap via core`
+8. [TODO] Git Commit: `fix: rebuild localization bootstrap via core` (hash: TBD)
+
+### Stream: Extension uses Core-backed Haiku localization
+9. [TODO] Перевести extension-side bootstrap/save для core-only Haiku engine на Core-backed bootstrap path и убрать локальный `resolveRuntimePayload()` downgrade; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `fix: restore core-owned haiku localization sync`
+10. [TODO] Git Commit: `fix: restore core-owned haiku localization sync` (hash: TBD)
 
 ### Stream: Category regression coverage
-9. [TODO] Добавить regression coverage для сценария `uiLabels=en`, `user_guidance/system_feedback/artifacts=ru`, чтобы helper/help copy не оставалась silently source-English; scope: `packages/localization/src/localization-materializer.test.ts`, `packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit message: `test: cover haiku localization category routing`
-10. [TODO] Git Commit: `test: cover haiku localization category routing` (hash: TBD)
+11. [TODO] Добавить regression coverage для сценария `uiLabels=en`, `user_guidance/system_feedback/artifacts=ru`, чтобы helper/help copy не оставалась silently source-English; scope: `packages/localization/src/localization-materializer.test.ts`, `packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit message: `test: cover haiku localization category routing`
+12. [TODO] Git Commit: `test: cover haiku localization category routing` (hash: TBD)
 
 ## Phase 3 — Persistence and diagnostics (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Native JSONL persistence
-11. [TODO] Отменить `persistSession: false` для Haiku translation slug и обновить service-level tests под native Claude JSONL persistence; scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`; expected commit message: `fix: persist haiku translation jsonl traces`
-12. [TODO] Git Commit: `fix: persist haiku translation jsonl traces` (hash: TBD)
+13. [TODO] Отменить `persistSession: false` для Haiku translation slug и обновить service-level tests под native Claude JSONL persistence; scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`; expected commit message: `fix: persist haiku translation jsonl traces`
+14. [TODO] Git Commit: `fix: persist haiku translation jsonl traces` (hash: TBD)
 
 ### Stream: Runtime diagnostics hardening
-13. [TODO] Усилить diagnostics так, чтобы requested/resolved engine mismatch и provider-owned execution metadata были явно видны в логах и тестах; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `packages/core/src/translation/claude-haiku-translation-engine.ts`; expected commit message: `fix: add haiku translation runtime diagnostics`
-14. [TODO] Git Commit: `fix: add haiku translation runtime diagnostics` (hash: TBD)
+15. [TODO] Усилить diagnostics так, чтобы requested/resolved engine mismatch и provider-owned execution metadata были явно видны в логах и тестах; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `packages/core/src/translation/claude-haiku-translation-engine.ts`; expected commit message: `fix: add haiku translation runtime diagnostics`
+16. [TODO] Git Commit: `fix: add haiku translation runtime diagnostics` (hash: TBD)
 
 ## Phase 4 — SSOT synchronization (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Module SSOT updates
-15. [TODO] Синхронизировать модульные SSOT-доки под fail-fast localization path и новую persistence policy; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `docs: sync haiku bugfix module ssot`
-16. [TODO] Git Commit: `docs: sync haiku bugfix module ssot` (hash: TBD)
+17. [TODO] Синхронизировать модульные SSOT-доки под fail-fast localization path и новую persistence policy; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `docs: sync haiku bugfix module ssot`
+18. [TODO] Git Commit: `docs: sync haiku bugfix module ssot` (hash: TBD)
 
 ### Stream: System SSOT updates
-17. [TODO] Обновить системный SSOT и индекс навигации под post-release Haiku bugfix scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update haiku bugfix architecture index`
-18. [TODO] Git Commit: `docs: update haiku bugfix architecture index` (hash: TBD)
+19. [TODO] Обновить системный SSOT и индекс навигации под post-release Haiku bugfix scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update haiku bugfix architecture index`
+20. [TODO] Git Commit: `docs: update haiku bugfix architecture index` (hash: TBD)
 
 ## Phase 5 — Release build for retest (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Release notes preparation
-19. [TODO] Подготовить user-facing release notes под bugfix release после `1.1.986`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku bugfix release notes`
-20. [TODO] Git Commit: `docs: prepare haiku bugfix release notes` (hash: TBD)
+21. [TODO] Подготовить user-facing release notes под bugfix release после `1.1.986`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku bugfix release notes`
+22. [TODO] Git Commit: `docs: prepare haiku bugfix release notes` (hash: TBD)
 
 ### Stream: Script-managed release batch
-21. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать version bump / provider bundles / release manifests для bugfix релиза; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku bugfix release`
-22. [TODO] Git Commit: `chore: build haiku bugfix release` (hash: TBD)
+23. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать version bump / provider bundles / release manifests для bugfix релиза; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku bugfix release`
+24. [TODO] Git Commit: `chore: build haiku bugfix release` (hash: TBD)
 
 ### Stream: Final packaging and retest handoff
-23. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и оформить release handoff для повторного пользовательского теста; scope: root VSIX artifact, `doc/tmp/releases/`, `doc/Sessions/SessionXXX.md`; expected commit message: `docs: record haiku bugfix release handoff`
-24. [TODO] Git Commit: `docs: record haiku bugfix release handoff` (hash: TBD)
+25. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и оформить release handoff для повторного пользовательского теста; scope: root VSIX artifact, `doc/tmp/releases/`, `doc/Sessions/SessionXXX.md`; expected commit message: `docs: record haiku bugfix release handoff`
+26. [TODO] Git Commit: `docs: record haiku bugfix release handoff` (hash: TBD)

@@ -149,7 +149,7 @@ const resolveLocalizationCategory = (
   return fallback;
 };
 
-const resolveLocalizationRuntimeSettings = (
+export const resolveLocalizationRuntimeSettings = (
   settings: Record<string, unknown>
 ): LocalizationRuntimeSettingsSnapshot => {
   const general = isRecord(settings.general) ? settings.general : {};
