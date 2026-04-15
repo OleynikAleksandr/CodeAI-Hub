@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { TranslationResult } from "./translation-contract";
 import type { TranslationEngine } from "./translation-engine";
+import { TranslationEngineProfileRegistry } from "./translation-engine-profile-registry";
 import { TranslationFacade } from "./translation-facade";
 
 class FakeChunkEngine implements TranslationEngine {
@@ -160,4 +161,25 @@ test("TranslationFacade still chunks generic requests by default and reasoning c
 
   assert.equal(reasoningResult.status, "translated");
   assert.equal(reasoningEngine.calls.length > 1, true);
+});
+
+test("TranslationEngineProfileRegistry exposes the Claude Haiku chunk policy", () => {
+  const registry = new TranslationEngineProfileRegistry();
+  const policy = registry.resolveChunkPolicy("anthropic-claude-haiku-4-5");
+
+  assert.equal(policy.softCharacterLimit, 400);
+  assert.equal(policy.hardCharacterLimit, 600);
+  assert.equal(policy.mode, "auto");
+});
+
+test("TranslationEngineProfileRegistry honors explicit disabled mode for Claude Haiku", () => {
+  const registry = new TranslationEngineProfileRegistry();
+  const policy = registry.resolveChunkPolicy(
+    "anthropic-claude-haiku-4-5",
+    "disabled"
+  );
+
+  assert.equal(policy.mode, "disabled");
+  assert.equal(policy.softCharacterLimit, 400);
+  assert.equal(policy.hardCharacterLimit, 600);
 });

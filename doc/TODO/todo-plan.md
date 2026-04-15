@@ -46,11 +46,11 @@
 
 ### Stream: Session translation migration
 9. [DONE] Перевести `SessionTranslationFacade` на Core-owned translation factory и покрыть путь инъекции тестом; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`; expected commit message: `refactor: route session translation through core factory`
-10. [IN_PROGRESS] Git Commit: `refactor: route session translation through core factory` (hash: TBD)
+10. [DONE] Git Commit: `refactor: route session translation through core factory` (hash: 3d5ead44f)
 
 ### Stream: Engine profile registry
-11. [TODO] Зарегистрировать chunk profile для `anthropic-claude-haiku-4-5` и обновить facade tests для нового engine catalog; scope: `packages/translation/src/translation-engine-profile-registry.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `feat: register claude haiku translation profile`
-12. [TODO] Git Commit: `feat: register claude haiku translation profile` (hash: TBD)
+11. [DONE] Зарегистрировать chunk profile для `anthropic-claude-haiku-4-5` и обновить facade tests для нового engine catalog; scope: `packages/translation/src/translation-engine-profile-registry.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `feat: register claude haiku translation profile`
+12. [IN_PROGRESS] Git Commit: `feat: register claude haiku translation profile` (hash: TBD)
 
 ## Phase 3 — Core-owned localization runtime path (owner: Claude, updated: 2026-04-15)
 

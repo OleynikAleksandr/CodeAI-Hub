@@ -32,6 +32,14 @@ const DEFAULT_TRANSLATION_ENGINE_PROFILES: readonly TranslationEngineProfile[] =
       },
       engineId: "codex-gpt-5.3-codex-spark",
     },
+    {
+      chunkPolicy: {
+        hardCharacterLimit: 600,
+        mode: "auto",
+        softCharacterLimit: 400,
+      },
+      engineId: "anthropic-claude-haiku-4-5",
+    },
   ] as const;
 
 const cloneChunkPolicy = (
