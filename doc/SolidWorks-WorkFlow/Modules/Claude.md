@@ -57,9 +57,10 @@
 ## Translation-only query profile (Claude Haiku 4.5)
 - `engineId: "anthropic-claude-haiku-4-5"` is exposed as a localization translation engine, and the runtime adapter lives next to the Claude provider: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts` and `claude-haiku-translator-instruction.ts`.
 - The service reuses the same `SDKInstaller` + `SDKAuthManager` path as regular Claude turns, running `ensureInstalled()` → `ensureSubscriptionAuth()` → `ensureProviderHomeSessionBootstrap(...)` before each translation query.
-- Translation-only query profile: `model: "claude-haiku-4-5-20251001"`, `tools: []`, `maxTurns: 1`, `persistSession: false`, `thinking: { type: "disabled" }`, `permissionMode: "bypassPermissions"`, `allowDangerouslySkipPermissions: true`, `includePartialMessages: false`, `settingSources: []`.
-- Dedicated translation project slug is `translation-runtime-haiku`. Native Claude session JSONL are not written on disk for translation turns because `persistSession: false` is enforced; provider-home remains SSOT only for auth/bootstrap state.
+- Translation-only query profile: `model: "claude-haiku-4-5-20251001"`, `tools: []`, `maxTurns: 1`, `persistSession: true`, `thinking: { type: "disabled" }`, `permissionMode: "bypassPermissions"`, `allowDangerouslySkipPermissions: true`, `includePartialMessages: false`, `settingSources: []`.
+- Dedicated translation project slug is `translation-runtime-haiku`. Native Claude session JSONL for translation turns are persisted under `~/.codeai-hub/providers/claude/home/.claude/projects/translation-runtime-haiku/`; this path is intentionally separate from workspace session transcripts, while auth/bootstrap state still comes from the same provider-home.
 - Core wires the provider-owned service into the shared `TranslationFacade` via `packages/core/src/translation/core-translation-facade-factory.ts` and `packages/core/src/translation/claude-haiku-translation-engine.ts`, which adapts `ClaudeHaikuTranslationService` to the engine-neutral `TranslationEngine` contract.
+- Both Core-owned live thinking translation and Core-owned localization materialization must reuse that provider-owned service. Extension-host code must not create a local Claude runtime for Haiku; it reads authoritative Core localization bootstrap instead.
 
 ## Связанные контракты
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

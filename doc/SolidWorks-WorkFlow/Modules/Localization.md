@@ -197,11 +197,12 @@ Important live behaviors:
 - glossary changes invalidate affected bundles through the metadata hash;
 - `targetLanguage = source` or `targetLanguage = en` returns source entries without persistence;
 - current default engine id is `google-gtx`;
+- explicit `translationEngineId` requests are fail-closed: if the selected engine is unavailable in the active runtime, Localization must surface fallback/error state instead of silently substituting `google-gtx`;
 - the current selectable engine set is:
   - `google-gtx`
   - `codex-gpt-5.4-mini`
   - `codex-gpt-5.3-codex-spark`
-  - `anthropic-claude-haiku-4-5` (provider-owned, materialized through Core-backed localization path; extension-host does not locally translate with this engine)
+  - `anthropic-claude-haiku-4-5` (provider-owned, materialized through a strict Core-backed localization path; extension-host does not locally translate with this engine and must not downgrade to a local fallback path)
 - the same persisted `translationEngineId` now also feeds Core-owned live thinking overlay translation; Localization still does not own the overlay storage or replay path, but it remains the SSOT for which engine the product selected.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - Settings save-path now classifies every save through `LocalizationSettingsImpactClassifier` (in `src/extension-module/settings/localization-settings-impact-classifier.ts`) before deciding whether to enter the blocking strict sync path. Provider-only saves, `general.responsePolicy` changes, continuity-only changes, and any other setting that does not touch `general.localization.engineId`, the four approved category language selections, or the glossary-enabled flag return `no_localization_impact` and persist through a best-effort envelope without posting the localization busy overlay and without blocking Project Manager/new session sends.
@@ -238,13 +239,15 @@ Current live browser behavior:
 - the localization package also persists a startup-ready browser bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json`;
 - Settings WebView reads that snapshot through HTML bootstrap injection (`window.__CODEAI_LOCALIZATION_BOOTSTRAP__`) before JS mounts;
 - Project Manager reads the same persisted snapshot through core HTTP endpoint `/api/v1/localization/bootstrap` before `root.render(...)`;
+- for `anthropic-claude-haiku-4-5`, `/api/v1/localization/bootstrap` is authoritative: Core must rebuild a strict snapshot from current normalized `settings.json` before returning it, instead of serving stale persisted cache only;
 - settings webview and Project Manager app root feed that payload into the shared `LocalizationProvider`, so localized surfaces do not resolve bundles independently;
 - Settings `Save Changes` enters a blocking strict localization sync through `LocalizationFacade.synchronizeRuntimePayload(...)` only when the save actually changes localization-impacting fields (engine, approved category selections, or glossary-enabled flag). For those saves the settings surface stays busy and Project Manager/new session sends stay blocked until translated interface bundles are ready. Provider-only, response-policy, and continuity-only saves skip the busy overlay entirely and persist through the best-effort envelope path;
+- when `anthropic-claude-haiku-4-5` is selected, extension-host save/bootstrap flows must fetch the authoritative Core snapshot and verify that the returned settings match the requested runtime settings. Missing or mismatched Core bootstrap is a blocking failure, not a reason to rematerialize helper/messages bundles locally;
 - workflow prompt-pack assembly in Project Manager must treat the persisted browser bootstrap snapshot as a valid fallback source for `Artifacts for the User` language when live `settings:loaded` cache is not ready yet; reconnect/cold-start paths must not silently degrade staged artifact language back to default `en` while persisted localization state still says `ru`;
 - the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;
-- the settings card exposes a constrained `Translation engine` selector with `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, and `OpenAI Codex · GPT-5.3 Codex Spark`, plus language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
+- the settings card exposes a constrained `Translation engine` selector with `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, `OpenAI Codex · GPT-5.3 Codex Spark`, and `Anthropic Claude · Haiku 4.5`, plus language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
 - Project Manager busy/localization blocking surfaces must keep hook order invariant across `busy -> ready` transitions; blocking may hide interactive content, but it must not mount a blank renderer shell after sync completion.
 
 ---

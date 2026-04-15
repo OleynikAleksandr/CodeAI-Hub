@@ -83,6 +83,7 @@ Current bundled engines:
 Externally-composed provider-owned engines registered by Core (not bundled inside this package):
 
 - `anthropic-claude-haiku-4-5` — provider-owned wrapper around `ClaudeHaikuTranslationService`; the shared package stays engine-neutral and only carries the chunk profile for this engine, while the runtime adapter lives beside the Claude provider. Core builds the translation facade with this engine through `createCoreTranslationFacade(...)` and passes the shared built-in engines plus the Haiku wrapper together.
+- explicit selection of a provider-owned engine is fail-closed. If Core or Localization requests `anthropic-claude-haiku-4-5` but the active runtime did not register it, the shared facade must return a fallback result with `errorCode = "no_engine"` instead of silently substituting the default engine.
 
 Implementation notes:
 
@@ -141,6 +142,7 @@ Contract rules:
 - The facade does not emit session messages or mutate provider state.
 - The facade does not infer message roles, tags, or UI placement.
 - when at least one chunk translates successfully, the facade returns one assembled `translated` result for the whole request and uses `errorCode = "partial_fallback"` if some chunks had to stay in source English.
+- when callers explicitly request an unavailable engine, the facade returns a fail-closed fallback result with `errorCode = "no_engine"`; default-engine substitution is allowed only when the caller did not pin `engineId`.
 
 This keeps the module reusable for Gemini, Codex, and non-provider runtime consumers.
 
@@ -167,6 +169,7 @@ Current live overlay rules:
 - successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;
 - history reads merge `localizedContent` from the sidecar only when `messageId + sourceHash` still match, so stale translations are ignored;
 - UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
+- runtime diagnostics for session translation must log both requested and resolved engine metadata. For `anthropic-claude-haiku-4-5`, that metadata includes provider `claude`, model `claude-haiku-4-5-20251001`, project slug `translation-runtime-haiku`, `persistSession: true`, and `runtimePath: "provider-owned"`.
 - providers that stream one reasoning item across multiple visible delta messages must not reuse the same `messageId` for every delta chunk; overlay/replay stores are keyed by `messageId`, so later translations would otherwise overwrite earlier thinking fragments from the same provider item.
 
 ### 5.2 Provider boundary

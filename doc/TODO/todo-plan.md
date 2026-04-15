@@ -61,12 +61,12 @@
 
 ### Stream: Runtime diagnostics hardening
 15. [DONE] Усилить diagnostics так, чтобы requested/resolved engine mismatch и provider-owned execution metadata были явно видны в логах и тестах; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `packages/core/src/translation/claude-haiku-translation-engine.ts`; expected commit message: `fix: add haiku translation runtime diagnostics`
-16. [TODO] Git Commit: `fix: add haiku translation runtime diagnostics` (hash: TBD)
+16. [DONE] Git Commit: `fix: add haiku translation runtime diagnostics` (hash: `ba88a5558`)
 
 ## Phase 4 — SSOT synchronization (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Module SSOT updates
-17. [TODO] Синхронизировать модульные SSOT-доки под fail-fast localization path и новую persistence policy; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `docs: sync haiku bugfix module ssot`
+17. [DONE] Синхронизировать модульные SSOT-доки под fail-fast localization path и новую persistence policy; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `docs: sync haiku bugfix module ssot`
 18. [TODO] Git Commit: `docs: sync haiku bugfix module ssot` (hash: TBD)
 
 ### Stream: System SSOT updates
