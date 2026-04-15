@@ -2,6 +2,7 @@ import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import {
   CLAUDE_HAIKU_TRANSLATION_ENGINE_ID,
   CLAUDE_HAIKU_TRANSLATION_MODEL_ID,
+  CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG,
   CLAUDE_HAIKU_TRANSLATION_PROVIDER_ID,
 } from "@codeai-hub/claude-module";
 import type {
@@ -44,6 +45,35 @@ export interface ClaudeHaikuTranslationEngineOptions {
   readonly reporter?: TranslationReporter;
   readonly service: ClaudeHaikuTranslationService;
 }
+
+export interface TranslationRuntimeMetadata {
+  readonly modelId: string | null;
+  readonly persistSession: boolean | null;
+  readonly projectSlug: string | null;
+  readonly providerId: string | null;
+  readonly runtimePath: "default" | "provider-owned" | null;
+}
+
+export const resolveTranslationRuntimeMetadata = (
+  engineId: string
+): TranslationRuntimeMetadata => {
+  if (engineId === CLAUDE_HAIKU_TRANSLATION_ENGINE_ID) {
+    return {
+      modelId: CLAUDE_HAIKU_TRANSLATION_MODEL_ID,
+      persistSession: true,
+      projectSlug: CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG,
+      providerId: CLAUDE_HAIKU_TRANSLATION_PROVIDER_ID,
+      runtimePath: "provider-owned",
+    };
+  }
+  return {
+    modelId: null,
+    persistSession: null,
+    projectSlug: null,
+    providerId: null,
+    runtimePath: null,
+  };
+};
 
 export class ClaudeHaikuTranslationEngine implements TranslationEngine {
   readonly id = CLAUDE_HAIKU_TRANSLATION_ENGINE_ID;

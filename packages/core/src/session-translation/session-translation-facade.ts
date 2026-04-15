@@ -3,6 +3,7 @@ import type {
   TranslationReporter,
 } from "@codeai-hub/translation";
 import type { Logger } from "../telemetry/logger";
+import { resolveTranslationRuntimeMetadata } from "../translation/claude-haiku-translation-engine";
 import { createCoreTranslationFacade } from "../translation/core-translation-facade-factory";
 import { computeSessionMessageSourceHash } from "./session-message-source-hash";
 import {
@@ -63,6 +64,20 @@ const resolveTranslationTimeoutMs = (content: string): number =>
     TRANSLATION_TIMEOUT_BASE_MS +
       content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
   );
+
+const buildRuntimeMetadataLogFields = (
+  prefix: "requested" | "resolved",
+  engineId: string
+): Record<string, unknown> => {
+  const metadata = resolveTranslationRuntimeMetadata(engineId);
+  return {
+    [`${prefix}EngineModelId`]: metadata.modelId,
+    [`${prefix}EnginePersistSession`]: metadata.persistSession,
+    [`${prefix}EngineProjectSlug`]: metadata.projectSlug,
+    [`${prefix}EngineProviderId`]: metadata.providerId,
+    [`${prefix}EngineRuntimePath`]: metadata.runtimePath,
+  };
+};
 
 const defaultTranslationFacadeFactory: SessionTranslationFacadeFactory = (
   options
@@ -222,6 +237,7 @@ export class SessionTranslationFacade {
         targetLanguage: policy.targetLanguage,
         timeoutMs,
         queueWaitMs: Date.now() - queuedAt,
+        ...buildRuntimeMetadataLogFields("requested", policy.engineId),
         ...this.dispatcher.snapshot(),
       });
 
@@ -251,6 +267,8 @@ export class SessionTranslationFacade {
           timeoutMs,
           status: result.status,
           errorCode: result.errorCode,
+          ...buildRuntimeMetadataLogFields("requested", policy.engineId),
+          ...buildRuntimeMetadataLogFields("resolved", result.engine),
         });
         return null;
       }
@@ -270,6 +288,8 @@ export class SessionTranslationFacade {
             requestedEngineId: policy.engineId,
             resolvedEngineId: result.engine,
             targetLanguage: policy.targetLanguage,
+            ...buildRuntimeMetadataLogFields("requested", policy.engineId),
+            ...buildRuntimeMetadataLogFields("resolved", result.engine),
           }
         );
         return null;
@@ -289,6 +309,8 @@ export class SessionTranslationFacade {
         targetLanguage: policy.targetLanguage,
         timeoutMs,
         queueWaitMs: Date.now() - queuedAt,
+        ...buildRuntimeMetadataLogFields("requested", policy.engineId),
+        ...buildRuntimeMetadataLogFields("resolved", result.engine),
       });
 
       return {

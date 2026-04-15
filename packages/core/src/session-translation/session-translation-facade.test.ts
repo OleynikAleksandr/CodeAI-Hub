@@ -99,6 +99,32 @@ const createBootstrapSnapshot = (): LocalizationRuntimeBootstrapSnapshot => ({
 
 const createSilentLogger = (): Logger => new Logger("error");
 
+interface RecordedLogEntry {
+  readonly context?: Record<string, unknown>;
+  readonly message: string;
+}
+
+const createCapturingLogger = (): {
+  readonly info: RecordedLogEntry[];
+  readonly logger: Logger;
+  readonly warn: RecordedLogEntry[];
+} => {
+  const info: RecordedLogEntry[] = [];
+  const warn: RecordedLogEntry[] = [];
+  return {
+    info,
+    logger: {
+      info: (message: string, context?: Record<string, unknown>) => {
+        info.push({ message, context });
+      },
+      warn: (message: string, context?: Record<string, unknown>) => {
+        warn.push({ message, context });
+      },
+    } as unknown as Logger,
+    warn,
+  };
+};
+
 interface RecordedFactoryCall {
   readonly reporter?: TranslationReporter;
 }
@@ -169,6 +195,88 @@ test("SessionTranslationFacade routes through the injected translation factory",
     assert.equal(typeof recorded[0]?.reporter, "object");
     assert.equal(outcome?.translatedContent, "Привет");
     assert.equal(outcome?.targetLanguage, "ru");
+  } finally {
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
+test("SessionTranslationFacade logs requested and resolved runtime metadata for Haiku mismatches", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  try {
+    const settingsPath = path.join(
+      homeDirectory,
+      ".codeai-hub",
+      "settings",
+      "settings.json"
+    );
+    await mkdir(path.dirname(settingsPath), { recursive: true });
+    await writeFile(
+      settingsPath,
+      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const bootstrapPath =
+      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+    await mkdir(path.dirname(bootstrapPath), { recursive: true });
+    await writeFile(
+      bootstrapPath,
+      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const logger = createCapturingLogger();
+    const facade = new SessionTranslationFacade({
+      logger: logger.logger,
+      settingsPath,
+      translationFacadeFactory: createRecordingFactory([], {
+        engine: "google-gtx",
+        errorCode: "no_engine",
+        finalText: "Hello",
+        originalText: "Hello",
+        sourceLanguage: "en",
+        status: "fallback",
+        targetLanguage: "ru",
+        translatedText: null,
+      }),
+    });
+
+    const outcome = await facade.translateDialogMessage({
+      content: "Hello",
+      messageId: "msg-2",
+      providerId: "claude",
+      role: "thinking",
+      sessionId: "sess-2",
+      tag: "thinking",
+    });
+
+    assert.equal(outcome, null);
+    const mismatchLog = logger.warn.find(
+      (entry) =>
+        entry.message === "Session translation returned non-translated result"
+    );
+    assert.ok(mismatchLog);
+    assert.equal(
+      mismatchLog.context?.requestedEngineId,
+      "anthropic-claude-haiku-4-5"
+    );
+    assert.equal(mismatchLog.context?.resolvedEngineId, "google-gtx");
+    assert.equal(mismatchLog.context?.requestedEngineProviderId, "claude");
+    assert.equal(
+      mismatchLog.context?.requestedEngineModelId,
+      "claude-haiku-4-5-20251001"
+    );
+    assert.equal(
+      mismatchLog.context?.requestedEngineProjectSlug,
+      "translation-runtime-haiku"
+    );
+    assert.equal(mismatchLog.context?.requestedEnginePersistSession, true);
+    assert.equal(
+      mismatchLog.context?.requestedEngineRuntimePath,
+      "provider-owned"
+    );
+    assert.equal(mismatchLog.context?.resolvedEngineProviderId, null);
+    assert.equal(mismatchLog.context?.resolvedEngineRuntimePath, null);
   } finally {
     await rm(homeDirectory, { recursive: true, force: true });
   }

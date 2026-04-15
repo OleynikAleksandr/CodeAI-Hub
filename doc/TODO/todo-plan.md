@@ -57,10 +57,10 @@
 
 ### Stream: Native JSONL persistence
 13. [DONE] Отменить `persistSession: false` для Haiku translation slug и обновить service-level tests под native Claude JSONL persistence; scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`; expected commit message: `fix: persist haiku translation jsonl traces`
-14. [TODO] Git Commit: `fix: persist haiku translation jsonl traces` (hash: TBD)
+14. [DONE] Git Commit: `fix: persist haiku translation jsonl traces` (hash: `db0e2dde3`)
 
 ### Stream: Runtime diagnostics hardening
-15. [TODO] Усилить diagnostics так, чтобы requested/resolved engine mismatch и provider-owned execution metadata были явно видны в логах и тестах; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `packages/core/src/translation/claude-haiku-translation-engine.ts`; expected commit message: `fix: add haiku translation runtime diagnostics`
+15. [DONE] Усилить diagnostics так, чтобы requested/resolved engine mismatch и provider-owned execution metadata были явно видны в логах и тестах; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `packages/core/src/translation/claude-haiku-translation-engine.ts`; expected commit message: `fix: add haiku translation runtime diagnostics`
 16. [TODO] Git Commit: `fix: add haiku translation runtime diagnostics` (hash: TBD)
 
 ## Phase 4 — SSOT synchronization (owner: Claude, updated: 2026-04-15)
