@@ -28,7 +28,7 @@
 ## Phase 1 — Runtime wiring and fail-closed engine resolution (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Live Haiku service injection
-1. [TODO] Подключить provider-owned `claudeHaikuTranslationService` в live session translation path Core; scope: `packages/core/src/translation/core-translation-facade-factory.ts`, `packages/core/src/translation/core-translation-facade-factory.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`; expected commit message: `fix: wire haiku service into live session translation`
+1. [DONE] Подключить provider-owned `claudeHaikuTranslationService` в live session translation path Core через lazy getter на `ClaudeProviderAdapter`; scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit message: `fix: wire haiku service into live session translation`
 2. [TODO] Git Commit: `fix: wire haiku service into live session translation` (hash: TBD)
 
 ### Stream: Reject silent engine substitution

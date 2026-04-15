@@ -1,7 +1,9 @@
 import path from "node:path";
+import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
+import { createCoreTranslationFacade } from "../../translation/core-translation-facade-factory";
 import { SessionContinuityLockService } from "./session-continuity-lock-service";
 import { SessionDescriptionDialogSync } from "./session-description-dialog-sync";
 import { SessionProviderBindingService } from "./session-provider-binding-service";
@@ -42,6 +44,19 @@ export interface SessionRequestHandlerRuntimeCore {
   readonly sessionResolution: SessionRequestHandlerSessionResolution;
   readonly sessionTranslation: SessionTranslationFacade;
 }
+
+interface ClaudeTranslationServiceOwner {
+  readonly getHaikuTranslationService?: () => ClaudeHaikuTranslationService;
+}
+
+export const resolveClaudeHaikuTranslationServiceForRuntime = (
+  options: SessionRequestHandlerRuntimeDependencies
+): ClaudeHaikuTranslationService | undefined => {
+  const adapter = options.providerRegistry.getAdapter("claudeCodeCli") as
+    | ClaudeTranslationServiceOwner
+    | undefined;
+  return adapter?.getHaikuTranslationService?.();
+};
 
 export const createSessionRequestHandlerRuntimeCore = (
   options: SessionRequestHandlerRuntimeDependencies,
@@ -105,12 +120,19 @@ export const createSessionRequestHandlerRuntimeCore = (
     logger: options.logger,
     sessionStorage: options.sessionStorage,
   });
+  const claudeHaikuTranslationService =
+    resolveClaudeHaikuTranslationServiceForRuntime(options);
   const sessionTranslation = new SessionTranslationFacade({
     logger: options.logger,
     settingsPath: path.join(
       path.dirname(options.config.claudeSettingsPath),
       "settings.json"
     ),
+    translationFacadeFactory: ({ reporter }) =>
+      createCoreTranslationFacade({
+        claudeHaikuTranslationService,
+        reporter,
+      }),
   });
   const eventMessages = new SessionRequestHandlerEventMessages({
     broadcaster: options.broadcaster,

@@ -6,17 +6,22 @@ import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
 import { ClaudeSDKManager } from "../sdk/claude-sdk-manager";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
+import { ClaudeHaikuTranslationService } from "../translation/claude-haiku-translation-service";
 import type {
   ClaudeModuleOptions,
   ClaudeUsageLimitsFacadeBridge,
   ClaudeUsageLimitsStreamPayload,
+  ModuleReporter,
 } from "../types";
 
 export type SessionListener = (payload: unknown) => void;
 
 export class ClaudeProviderAdapter {
+  private readonly installer: SDKInstaller;
   private readonly sdkManager: ClaudeSDKManager;
   private readonly authManager: SDKAuthManager;
+  private readonly reporter?: ModuleReporter;
+  private haikuTranslationService: ClaudeHaikuTranslationService | null = null;
   private readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
   private readonly workspacePath: string;
   private readonly listeners = new Map<string, Set<SessionListener>>();
@@ -26,6 +31,7 @@ export class ClaudeProviderAdapter {
   constructor(options: ClaudeModuleOptions) {
     this.usageLimitsFacade = options.usageLimitsFacade;
     const reporter = options.reporter;
+    this.reporter = reporter;
     this.workspacePath = options.workspace.workspacePath;
     const projectPath = this.resolveProjectPath(
       options.workspace.claudeProjectSlug
@@ -33,6 +39,7 @@ export class ClaudeProviderAdapter {
     const installer = new SDKInstaller(options.installerPaths, {
       logger: reporter,
     });
+    this.installer = installer;
     const authManager = new SDKAuthManager({ reporter });
     this.authManager = authManager;
     const sessionManager = new SDKSessionManager();
@@ -50,6 +57,17 @@ export class ClaudeProviderAdapter {
       reporter,
       enableDebugStreams: options.enableDebugStreams,
     });
+  }
+
+  getHaikuTranslationService(): ClaudeHaikuTranslationService {
+    if (!this.haikuTranslationService) {
+      this.haikuTranslationService = new ClaudeHaikuTranslationService({
+        authManager: this.authManager,
+        installer: this.installer,
+        reporter: this.reporter,
+      });
+    }
+    return this.haikuTranslationService;
   }
 
   async initialize(): Promise<void> {
