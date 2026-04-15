@@ -8,8 +8,6 @@ import { WebviewHtmlGenerator } from "../core/webview-module/webview-html-genera
 import type { CoreProcessManager } from "./core/core-process-manager";
 import type { WebviewMessage } from "./home-view-message-router";
 import { HomeViewMessageRouter } from "./home-view-message-router";
-import { LocalizationRuntimeService } from "./settings/localization-runtime-service";
-import { loadSettingsSnapshot } from "./settings/settings-storage";
 
 export class HomeViewProvider implements WebviewViewProvider {
   static readonly viewType = "codeaiHubView";
@@ -17,7 +15,6 @@ export class HomeViewProvider implements WebviewViewProvider {
   private readonly extensionUri: Uri;
   private readonly webviewUIRootPath: string;
   private readonly htmlGenerator: WebviewHtmlGenerator;
-  private readonly localizationRuntimeService: LocalizationRuntimeService;
   private readonly messageRouter: HomeViewMessageRouter;
   private readonly coreConfig?: {
     readonly httpUrl: string;
@@ -40,10 +37,6 @@ export class HomeViewProvider implements WebviewViewProvider {
     this.extensionUri = extensionUri;
     this.webviewUIRootPath = webviewUIRootPath;
     this.htmlGenerator = new WebviewHtmlGenerator();
-    this.localizationRuntimeService = new LocalizationRuntimeService(
-      undefined,
-      () => this.coreConfig?.httpUrl ?? null
-    );
     this.messageRouter = new HomeViewMessageRouter(
       extensionUri.fsPath,
       coreProcessManager
@@ -52,16 +45,16 @@ export class HomeViewProvider implements WebviewViewProvider {
   }
 
   resolveWebviewView(webviewView: WebviewView): void {
-    this.resolveWebviewViewAsync(webviewView).catch((error: unknown) => {
+    try {
+      this.resolveWebviewViewSync(webviewView);
+    } catch (error: unknown) {
       window.showWarningMessage(
         `Failed to initialize settings webview: ${String(error)}`
       );
-    });
+    }
   }
 
-  private async resolveWebviewViewAsync(
-    webviewView: WebviewView
-  ): Promise<void> {
+  private resolveWebviewViewSync(webviewView: WebviewView): void {
     const { webview } = webviewView;
     this.currentView = webviewView;
 
@@ -73,18 +66,13 @@ export class HomeViewProvider implements WebviewViewProvider {
       ],
     };
 
-    const localizationBootstrap =
-      await this.localizationRuntimeService.loadRuntimeBootstrapSnapshot(
-        loadSettingsSnapshot()
-      );
-
     webview.html = this.htmlGenerator.generate(
       webview,
       this.extensionUri,
       this.webviewUIRootPath,
       {
         coreBridgeConfig: this.coreConfig,
-        localizationBootstrap,
+        localizationBootstrap: null,
       }
     );
 

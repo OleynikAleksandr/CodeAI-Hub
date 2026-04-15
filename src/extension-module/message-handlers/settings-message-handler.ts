@@ -139,7 +139,17 @@ export class SettingsMessageHandler {
     applyDefaultModelsEnv(this.settingsState);
     await webview.postMessage({
       type: "settings:loaded",
-      ...(await this.resolveEnvelopePayload()),
+      localizationRuntime: null,
+      settings: this.settingsState,
+    });
+    const localizationRuntime =
+      await this.localizationRuntimeService.resolveRuntimePayload(
+        this.settingsState
+      );
+    await webview.postMessage({
+      type: "settings:loaded",
+      localizationRuntime,
+      settings: this.settingsState,
     });
   }
 
