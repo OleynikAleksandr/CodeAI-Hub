@@ -6,21 +6,16 @@ import {
   type LocalizationSelectiveSyncOptions,
 } from "@codeai-hub/localization";
 import { getDefaultCoreConnectionInfo } from "../core/core-connection-info";
+import {
+  createLocalizationRuntimeSettingsSnapshot,
+  matchesLocalizationRuntimeSettingsSnapshot,
+} from "./localization-runtime-settings-snapshot";
 import type { SettingsSnapshot } from "./types";
 
 const CORE_ONLY_MATERIALIZATION_ENGINE_IDS = new Set<string>([
   "anthropic-claude-haiku-4-5",
 ]);
 const LOCALIZATION_BOOTSTRAP_PATH = "/api/v1/localization/bootstrap";
-
-const matchesRuntimeSettings = (
-  left: LocalizationRuntimeSettingsSnapshot,
-  right: LocalizationRuntimeSettingsSnapshot
-): boolean =>
-  left.defaultLanguage === right.defaultLanguage &&
-  left.engineId === right.engineId &&
-  left.workflowTermsPolicy === right.workflowTermsPolicy &&
-  JSON.stringify(left.categories) === JSON.stringify(right.categories);
 
 export class LocalizationRuntimeService {
   private readonly localizationFacade: LocalizationFacade;
@@ -77,27 +72,8 @@ export class LocalizationRuntimeService {
     return this.localizationFacade.loadRuntimeBootstrapSnapshot(snapshot);
   }
 
-  private createRuntimeSnapshot(
-    settings: SettingsSnapshot
-  ): LocalizationRuntimeSettingsSnapshot {
-    const { localization } = settings.general;
-
-    return {
-      categories: {
-        artifacts_for_the_user: localization.categories.artifactsForTheUser,
-        interactive_templates: localization.categories.artifactsForTheUser,
-        messages_for_the_user: localization.categories.messagesForTheUser,
-        system_feedback: localization.categories.messagesForTheUser,
-        ui_helper_text: localization.categories.uiHelperText,
-        ui_interface: localization.categories.uiLabels,
-        ui_labels: localization.categories.uiLabels,
-        user_guidance: localization.categories.uiHelperText,
-        workflow_terms: localization.categories.uiLabels,
-      } as LocalizationRuntimeSettingsSnapshot["categories"],
-      defaultLanguage: localization.defaultLanguage,
-      engineId: localization.engineId,
-      workflowTermsPolicy: localization.workflowTermsPolicy,
-    };
+  private createRuntimeSnapshot(settings: SettingsSnapshot) {
+    return createLocalizationRuntimeSettingsSnapshot(settings);
   }
 
   private async fetchCoreBootstrapSnapshot(
@@ -135,7 +111,12 @@ export class LocalizationRuntimeService {
 
     const snapshot =
       (await response.json()) as LocalizationRuntimeBootstrapSnapshot;
-    if (!matchesRuntimeSettings(snapshot.settings, runtimeSettings)) {
+    if (
+      !matchesLocalizationRuntimeSettingsSnapshot(
+        snapshot.settings,
+        runtimeSettings
+      )
+    ) {
       if (options?.strict) {
         throw new Error(
           "Core localization bootstrap does not match the current settings snapshot."
