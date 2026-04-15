@@ -5,44 +5,76 @@ import {
   type LocalizationRuntimeSettingsSnapshot,
   type LocalizationSelectiveSyncOptions,
 } from "@codeai-hub/localization";
+import { getDefaultCoreConnectionInfo } from "../core/core-connection-info";
 import type { SettingsSnapshot } from "./types";
 
 const CORE_ONLY_MATERIALIZATION_ENGINE_IDS = new Set<string>([
   "anthropic-claude-haiku-4-5",
 ]);
+const LOCALIZATION_BOOTSTRAP_PATH = "/api/v1/localization/bootstrap";
+
+const matchesRuntimeSettings = (
+  left: LocalizationRuntimeSettingsSnapshot,
+  right: LocalizationRuntimeSettingsSnapshot
+): boolean =>
+  left.defaultLanguage === right.defaultLanguage &&
+  left.engineId === right.engineId &&
+  left.workflowTermsPolicy === right.workflowTermsPolicy &&
+  JSON.stringify(left.categories) === JSON.stringify(right.categories);
 
 export class LocalizationRuntimeService {
   private readonly localizationFacade: LocalizationFacade;
+  private readonly resolveCoreHttpUrl: () => string | null;
 
-  constructor(localizationFacade = new LocalizationFacade()) {
+  constructor(
+    localizationFacade = new LocalizationFacade(),
+    resolveCoreHttpUrl: () => string | null = () =>
+      getDefaultCoreConnectionInfo().httpUrl
+  ) {
     this.localizationFacade = localizationFacade;
+    this.resolveCoreHttpUrl = resolveCoreHttpUrl;
   }
 
-  resolveRuntimePayload(
+  async resolveRuntimePayload(
     settings: SettingsSnapshot
   ): Promise<LocalizationRuntimePayload> {
-    return this.localizationFacade.resolveRuntimePayload(
-      this.createRuntimeSnapshot(settings)
-    );
+    const snapshot = this.createRuntimeSnapshot(settings);
+    if (CORE_ONLY_MATERIALIZATION_ENGINE_IDS.has(snapshot.engineId)) {
+      const coreBootstrap = await this.fetchCoreBootstrapSnapshot(snapshot);
+      if (coreBootstrap) {
+        return coreBootstrap.runtimePayload;
+      }
+    }
+    return this.localizationFacade.resolveRuntimePayload(snapshot);
   }
 
-  synchronizeRuntimePayload(
+  async synchronizeRuntimePayload(
     settings: SettingsSnapshot,
     options?: LocalizationSelectiveSyncOptions
   ): Promise<LocalizationRuntimePayload> {
     const snapshot = this.createRuntimeSnapshot(settings);
     if (CORE_ONLY_MATERIALIZATION_ENGINE_IDS.has(snapshot.engineId)) {
-      return this.localizationFacade.resolveRuntimePayload(snapshot);
+      const coreBootstrap = await this.fetchCoreBootstrapSnapshot(snapshot, {
+        strict: true,
+      });
+      if (!coreBootstrap) {
+        throw new Error(
+          `Core-backed localization bootstrap is unavailable for ${snapshot.engineId}.`
+        );
+      }
+      return coreBootstrap.runtimePayload;
     }
     return this.localizationFacade.synchronizeRuntimePayload(snapshot, options);
   }
 
-  loadRuntimeBootstrapSnapshot(
+  async loadRuntimeBootstrapSnapshot(
     settings: SettingsSnapshot
   ): Promise<LocalizationRuntimeBootstrapSnapshot | null> {
-    return this.localizationFacade.loadRuntimeBootstrapSnapshot(
-      this.createRuntimeSnapshot(settings)
-    );
+    const snapshot = this.createRuntimeSnapshot(settings);
+    if (CORE_ONLY_MATERIALIZATION_ENGINE_IDS.has(snapshot.engineId)) {
+      return await this.fetchCoreBootstrapSnapshot(snapshot);
+    }
+    return this.localizationFacade.loadRuntimeBootstrapSnapshot(snapshot);
   }
 
   private createRuntimeSnapshot(
@@ -66,5 +98,51 @@ export class LocalizationRuntimeService {
       engineId: localization.engineId,
       workflowTermsPolicy: localization.workflowTermsPolicy,
     };
+  }
+
+  private async fetchCoreBootstrapSnapshot(
+    runtimeSettings: LocalizationRuntimeSettingsSnapshot,
+    options?: { readonly strict?: boolean }
+  ): Promise<LocalizationRuntimeBootstrapSnapshot | null> {
+    const httpUrl = this.resolveCoreHttpUrl();
+    if (!httpUrl) {
+      if (options?.strict) {
+        throw new Error("Core HTTP bridge is unavailable.");
+      }
+      return null;
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(`${httpUrl}${LOCALIZATION_BOOTSTRAP_PATH}`);
+    } catch (error) {
+      if (options?.strict) {
+        throw new Error(
+          `Failed to fetch Core localization bootstrap: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+      return null;
+    }
+
+    if (!response.ok) {
+      if (options?.strict) {
+        throw new Error(
+          `Core localization bootstrap request failed with HTTP ${response.status}.`
+        );
+      }
+      return null;
+    }
+
+    const snapshot =
+      (await response.json()) as LocalizationRuntimeBootstrapSnapshot;
+    if (!matchesRuntimeSettings(snapshot.settings, runtimeSettings)) {
+      if (options?.strict) {
+        throw new Error(
+          "Core localization bootstrap does not match the current settings snapshot."
+        );
+      }
+      return null;
+    }
+    return snapshot;
   }
 }

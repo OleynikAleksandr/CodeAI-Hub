@@ -40,7 +40,10 @@ export class HomeViewProvider implements WebviewViewProvider {
     this.extensionUri = extensionUri;
     this.webviewUIRootPath = webviewUIRootPath;
     this.htmlGenerator = new WebviewHtmlGenerator();
-    this.localizationRuntimeService = new LocalizationRuntimeService();
+    this.localizationRuntimeService = new LocalizationRuntimeService(
+      undefined,
+      () => this.coreConfig?.httpUrl ?? null
+    );
     this.messageRouter = new HomeViewMessageRouter(
       extensionUri.fsPath,
       coreProcessManager

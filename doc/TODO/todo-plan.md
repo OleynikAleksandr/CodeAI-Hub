@@ -46,7 +46,7 @@
 8. [TODO] Git Commit: `fix: rebuild localization bootstrap via core` (hash: TBD)
 
 ### Stream: Extension uses Core-backed Haiku localization
-9. [TODO] Перевести extension-side bootstrap/save для core-only Haiku engine на Core-backed bootstrap path и убрать локальный `resolveRuntimePayload()` downgrade; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `fix: restore core-owned haiku localization sync`
+9. [DONE] Перевести extension-side bootstrap/save для core-only Haiku engine на Core-backed bootstrap path и убрать локальный `resolveRuntimePayload()` downgrade; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `fix: restore core-owned haiku localization sync`
 10. [TODO] Git Commit: `fix: restore core-owned haiku localization sync` (hash: TBD)
 
 ### Stream: Category regression coverage
