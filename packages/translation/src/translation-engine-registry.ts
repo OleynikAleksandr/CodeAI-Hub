@@ -18,11 +18,19 @@ export class TranslationEngineRegistry {
     this.engines.set(engine.id, engine);
   }
 
-  resolve(engineId?: string): TranslationEngine | null {
+  resolve(
+    engineId?: string,
+    options?: {
+      readonly allowDefaultFallback?: boolean;
+    }
+  ): TranslationEngine | null {
     if (engineId) {
       const explicit = this.engines.get(engineId);
       if (explicit) {
         return explicit;
+      }
+      if (options?.allowDefaultFallback === false) {
+        return null;
       }
     }
 

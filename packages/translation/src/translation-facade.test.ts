@@ -120,6 +120,50 @@ test("TranslationFacade disables chunking by default for reasoning requests", as
   assert.equal(engine.calls[0], sourceText);
 });
 
+test("TranslationFacade does not silently substitute the default engine when an explicit engine is unavailable", async () => {
+  const defaultEngine = new RecordingEngine();
+  const translation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [defaultEngine],
+  });
+
+  const result = await translation.translate({
+    category: "reasoning",
+    engineId: "anthropic-claude-haiku-4-5",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: "Hello",
+    timeoutMs: 3000,
+  });
+
+  assert.equal(defaultEngine.calls.length, 0);
+  assert.equal(result.status, "fallback");
+  assert.equal(result.engine, "anthropic-claude-haiku-4-5");
+  assert.equal(result.errorCode, "no_engine");
+  assert.equal(result.finalText, "Hello");
+});
+
+test("TranslationFacade still uses the default engine when no explicit engine is requested", async () => {
+  const defaultEngine = new RecordingEngine();
+  const translation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [defaultEngine],
+  });
+
+  const result = await translation.translate({
+    category: "generic",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: "Hello",
+    timeoutMs: 3000,
+  });
+
+  assert.equal(defaultEngine.calls.length, 1);
+  assert.equal(result.status, "translated");
+  assert.equal(result.engine, "fake");
+  assert.equal(result.finalText, "[ru] Hello");
+});
+
 test("TranslationFacade still chunks generic requests by default and reasoning can explicitly opt back in", async () => {
   const genericEngine = new RecordingEngine();
   const genericTranslation = new TranslationFacade({

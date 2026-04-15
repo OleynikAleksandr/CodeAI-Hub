@@ -29,10 +29,10 @@
 
 ### Stream: Live Haiku service injection
 1. [DONE] Подключить provider-owned `claudeHaikuTranslationService` в live session translation path Core через lazy getter на `ClaudeProviderAdapter`; scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit message: `fix: wire haiku service into live session translation`
-2. [TODO] Git Commit: `fix: wire haiku service into live session translation` (hash: TBD)
+2. [DONE] Git Commit: `fix: wire haiku service into live session translation` (hash: `cfd8d5343`)
 
 ### Stream: Reject silent engine substitution
-3. [TODO] Убрать silent fallback на default engine при explicit `anthropic-claude-haiku-4-5` и покрыть это regression tests; scope: `packages/translation/src/translation-engine-registry.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `fix: prevent silent translation engine fallback`
+3. [DONE] Убрать silent fallback на default engine при explicit `anthropic-claude-haiku-4-5` и покрыть это regression tests; scope: `packages/translation/src/translation-engine-registry.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `fix: prevent silent translation engine fallback`
 4. [TODO] Git Commit: `fix: prevent silent translation engine fallback` (hash: TBD)
 
 ## Phase 2 — Core-owned localization repair (owner: Claude, updated: 2026-04-15)

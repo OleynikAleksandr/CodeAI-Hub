@@ -120,14 +120,20 @@ export class TranslationFacade {
   }
 
   async translate(request: TranslationRequest): Promise<TranslationResult> {
+    const explicitEngineRequested =
+      typeof request.engineId === "string" &&
+      request.engineId.trim().length > 0;
     const normalized = normalizeTranslationRequest(request);
     if (!normalized) {
       return createSkippedResult(request);
     }
 
-    const engine = this.registry.resolve(normalized.engineId);
+    const engine = this.registry.resolve(normalized.engineId, {
+      allowDefaultFallback: !explicitEngineRequested,
+    });
     if (!engine) {
       this.reporter?.warn?.("Translation engine unavailable", {
+        explicitEngineRequested,
         engineId: normalized.engineId,
       });
       return createFallbackResult(normalized, normalized.engineId, "no_engine");
