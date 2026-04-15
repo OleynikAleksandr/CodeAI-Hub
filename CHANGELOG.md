@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.988] - 2026-04-15
+### Fixed
+- **Settings and Project Manager startup unblocked**: both UI clients now stop waiting for `/api/v1/localization/bootstrap` before the first React render, removing the blank shell / long apparent hang when Haiku helper/help bundles are still catching up.
+- **Settings now reflects `settings.json` immediately**: load paths broadcast the persisted settings snapshot first and deliver localization runtime in a second pass, so the Settings panel no longer sits on default values while localization resolves.
+- **Localization bootstrap is cache-first**: Core now returns the persisted bootstrap snapshot when it matches the active settings and no longer triggers a strict helper/help bundle rematerialization on every bootstrap GET.
+
 ## [1.1.987] - 2026-04-15
 ### Fixed
 - **Haiku reasoning translation no longer falls back silently to Google GTX**: the provider-owned Claude Haiku service is now injected into the live Core session-translation runtime, and explicit `anthropic-claude-haiku-4-5` requests fail closed with diagnostics instead of quietly resolving to the default engine.
