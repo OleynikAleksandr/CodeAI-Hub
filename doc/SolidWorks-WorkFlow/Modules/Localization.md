@@ -97,7 +97,7 @@ Approved live user-facing text categories:
 
 - `ui_labels`
 - `ui_helper_text`
-- `messages_for_the_user`
+- `messages_for_the_user` (also owns visible provider `Thinking / Reasoning` bubbles shown in the Session dialog; see `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md` §3.3)
 - `artifacts_for_the_user`
 
 Approved non-user-facing text marker:

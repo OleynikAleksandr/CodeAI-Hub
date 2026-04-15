@@ -185,7 +185,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
       description: t(
         "user_guidance",
         "settings.localization.category.messages_for_the_user.description",
-        "Warnings, errors, hints, status updates, and other messages addressed to the user."
+        "Warnings, errors, hints, status updates, visible Thinking and Reasoning bubbles, and other messages addressed to the user."
       ),
     },
     {

@@ -39,12 +39,12 @@
 5. [DONE] Добавить selective-rebuild контракт в LocalizationFacade (carry-forward для незатронутых bundles, force-strict для аффектных) — scope: `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-selective-sync.ts`, `packages/localization/src/index.ts`; ожидаемый commit message: `feat: support selective runtime bundle materialization`
 6. [DONE] Git Commit: `feat: support selective runtime bundle materialization` (hash: 15a5aacc1)
 7. [DONE] Пробросить selective plan из Settings save-path в runtime-service и обновить Localization SSOT под новое поведение — scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `feat: rebuild only affected localization bundles`
-8. [DONE] Git Commit: `feat: rebuild only affected localization bundles` (hash: TBD)
+8. [DONE] Git Commit: `feat: rebuild only affected localization bundles` (hash: 551e74465)
 
 ## Phase 2 — Messaging Ownership And Visible Thinking Gate (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Messages for the User contract
-1. [TODO] Явно зафиксировать в локализационном контракте и пользовательских пояснениях, что `Messages for the User` включает visible `Thinking / Reasoning` — scope: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `src/client/ui/src/components/settings/`; ожидаемый commit message: `docs: classify visible thinking under messages for the user`
-2. [TODO] Git Commit: `docs: classify visible thinking under messages for the user` (hash: TBD)
+1. [DONE] Явно зафиксировать в локализационном контракте и пользовательских пояснениях, что `Messages for the User` включает visible `Thinking / Reasoning` — scope: `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `src/client/ui/src/components/settings/localization-settings-card.tsx`; ожидаемый commit message: `docs: classify visible thinking under messages for the user`
+2. [DONE] Git Commit: `docs: classify visible thinking under messages for the user` (hash: TBD)
 3. [TODO] Подтянуть Settings helper copy и busy/sync messaging к новой модели incremental rebuild без ложного обещания полной пересборки интерфейса при любом save — scope: `src/client/ui/src/components/settings/`, `src/client/project-manager/components/layout/`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: clarify incremental localization sync messaging`
 4. [TODO] Git Commit: `docs: clarify incremental localization sync messaging` (hash: TBD)
 

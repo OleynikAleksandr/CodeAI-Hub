@@ -68,7 +68,10 @@ Use for user-addressed runtime communication such as:
 - empty states;
 - status lines;
 - success/failure notices;
-- larger help panels and runtime guidance blocks.
+- larger help panels and runtime guidance blocks;
+- visible provider `Thinking` / `Reasoning` bubbles shown in the Session dialog.
+
+Visible provider `Thinking` / `Reasoning` is runtime communication addressed to the user through the dialog transcript. Its target language and translation-engine selection follow `Messages for the User`. This is not a new category; the rule records the existing ownership so that new surfaces do not misclassify visible thinking as `UI Helper Text` or as an internal prompt asset. Hidden thinking that is filtered out of the user-visible transcript stays outside the localization pipeline and is not translated.
 
 ### 3.4. `Artifacts for the User`
 
