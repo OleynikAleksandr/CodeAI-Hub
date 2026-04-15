@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.989] - 2026-04-15
+### Fixed
+- **Haiku save-path false mismatch removed**: extension-side strict localization sync now normalizes to the same canonical five-category runtime snapshot that Core returns from `/api/v1/localization/bootstrap`, so selecting `Anthropic Claude · Haiku 4.5` no longer fails with `Core localization bootstrap does not match the current settings snapshot`.
+- **Regression coverage for canonical bootstrap matching**: added unit coverage for the exact Haiku bootstrap snapshot shape that Core emits, preventing future reintroduction of the five-category vs nine-key mirrored comparison bug.
+
 ## [1.1.988] - 2026-04-15
 ### Fixed
 - **Settings and Project Manager startup unblocked**: both UI clients now stop waiting for `/api/v1/localization/bootstrap` before the first React render, removing the blank shell / long apparent hang when Haiku helper/help bundles are still catching up.

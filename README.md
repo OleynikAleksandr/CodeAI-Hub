@@ -7,10 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.988
-- **Settings and Project Manager no longer block first render on localization bootstrap**: both clients now mount immediately instead of waiting for `/api/v1/localization/bootstrap`, eliminating the blank shell/pseudo-hang when Claude Haiku helper bundles are still synchronizing.
-- **Settings sync to `settings.json` immediately**: startup now publishes the persisted settings snapshot first and hydrates localization runtime second, so the Settings UI no longer sits on default values while Haiku localization catches up in the background.
-- **Localization bootstrap endpoint is now cache-first**: Core serves the persisted bootstrap snapshot immediately when it matches the active settings and stops forcing a strict helper/help bundle rematerialization on every GET request.
+## Current Release — v1.1.989
+- **Haiku Settings save no longer fails on a false bootstrap mismatch**: extension-side strict sync now compares the same canonical five-category localization snapshot that Core returns from `/api/v1/localization/bootstrap`, instead of comparing it against a nine-key mirrored shape and rejecting an otherwise valid response.
+- **Core-only localization snapshot matching is now explicit and tested**: the Haiku bootstrap path uses a dedicated runtime-settings helper plus regression coverage for the exact `anthropic-claude-haiku-4-5` save scenario that previously raised `Core localization bootstrap does not match the current settings snapshot`.
+- **Fast-start fixes from `1.1.988` remain intact**: `Settings` and `Project Manager` still render immediately without blocking on localization bootstrap, while the corrected strict sync path now allows Haiku selection to save cleanly.
 
 ### 1.1.985 (previous)
 - **Incremental localization sync on Save**: provider-only, response-mode, and continuity saves skip the `Synchronizing localization` overlay entirely; engine or category saves rebuild only the runtime bundles actually affected by the change instead of forcing a full five-bundle rematerialization.
