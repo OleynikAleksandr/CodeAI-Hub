@@ -7,10 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.985
-- **Incremental localization sync on Save**: provider-only, response-mode, and continuity saves now skip the `Synchronizing localization` overlay entirely; engine or category saves rebuild only the runtime bundles actually affected by the change instead of forcing a full five-bundle rematerialization.
-- **Forward-only thinking visibility**: visible `Thinking / Reasoning` bubbles now carry an immutable `visibilityAtEmission` decision stamped at emission time, so turning `Thinking in dialog` / `Reasoning in dialog` back on inside a long-running session no longer reveals thinking that was hidden when it was emitted, and hidden thinking never enters the translation queue.
-- **Messages for the User explicitly owns visible Thinking / Reasoning**: the localization contract, module SSOT, and Settings helper copy now name visible provider Thinking / Reasoning as part of `Messages for the User`, so language + engine selection follow one explicit ownership decision.
+## Current Release — v1.1.986
+- **Anthropic Claude Haiku 4.5 as a translation engine**: Localization settings now expose `Anthropic Claude · Haiku 4.5` alongside `Google GTX Free` and the two Codex models, so UI bundle materialization and live reasoning overlays can both route through Claude Haiku under the same Anthropic subscription that already powers regular Claude turns.
+- **Provider-owned translation path without a separate login**: the new `ClaudeHaikuTranslationService` reuses the existing Claude `SDKInstaller` + `SDKAuthManager` provider-home path (`~/.codeai-hub/providers/claude/home`) and runs a dedicated translation-only query profile (`tools: []`, `maxTurns: 1`, `persistSession: false`, `thinking: { type: "disabled" }`, `model: "claude-haiku-4-5-20251001"`), so translation turns never create native Claude session JSONL and do not pollute provider session history.
+- **Core-backed localization runtime for Haiku**: Core composes the shared translation facade with the new engine through `createCoreTranslationFacade(...)`, and the localization runtime now flows through `createCoreLocalizationFacade(...)`; extension-host no longer attempts to materialize Haiku bundles locally and defers strict sync to Core while still reading the persisted browser bootstrap snapshot from disk.
+
+### 1.1.985 (previous)
+- **Incremental localization sync on Save**: provider-only, response-mode, and continuity saves skip the `Synchronizing localization` overlay entirely; engine or category saves rebuild only the runtime bundles actually affected by the change instead of forcing a full five-bundle rematerialization.
+- **Forward-only thinking visibility**: visible `Thinking / Reasoning` bubbles carry an immutable `visibilityAtEmission` decision stamped at emission time, so turning `Thinking in dialog` / `Reasoning in dialog` back on inside a long-running session no longer reveals thinking that was hidden when it was emitted, and hidden thinking never enters the translation queue.
+- **Messages for the User explicitly owns visible Thinking / Reasoning**: the localization contract, module SSOT, and Settings helper copy name visible provider Thinking / Reasoning as part of `Messages for the User`, so language + engine selection follow one explicit ownership decision.
 
 ### 1.1.984 (previous)
 - **Reasoning translation no longer re-chunks live thinking by default**: shared runtime translation now keeps each provider-emitted reasoning block intact unless a caller explicitly opts back into chunking.

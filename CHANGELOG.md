@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.986] - 2026-04-15
+### Added
+- **Anthropic Claude Haiku 4.5 translation engine**: new engine `anthropic-claude-haiku-4-5` is exposed in Localization settings as `Anthropic Claude · Haiku 4.5`. UI bundle materialization and Core-owned live reasoning overlays can now dispatch through Claude Haiku reusing the existing Anthropic subscription and provider-home auth bootstrap.
+- **Provider-owned translation service**: `ClaudeHaikuTranslationService` (+ category-aware `buildClaudeHaikuTranslatorInstruction`) lives next to the Claude provider and runs a dedicated translation-only query profile (`tools: []`, `maxTurns: 1`, `persistSession: false`, `thinking: { type: "disabled" }`, `model: "claude-haiku-4-5-20251001"`, project slug `translation-runtime-haiku`). Translation turns do not create native Claude session JSONL.
+- **Core-backed translation and localization factories**: `createCoreTranslationFacade(...)` composes built-in engines with the Haiku wrapper, `createCoreLocalizationFacade(...)` threads that facade into the localization pipeline, `SessionTranslationFacade` now delegates facade construction through this factory, and the shared translation package exports a reusable `createDefaultTranslationEngines(...)`.
+
+### Changed
+- **Extension-host skips local Haiku materialization**: `LocalizationRuntimeService.synchronizeRuntimePayload` falls back to `resolveRuntimePayload` when the active engineId is Core-only, so extension-host does not attempt to run Claude translation locally and keeps reading the persisted bootstrap snapshot from disk.
+- **Translation engine profile registry**: adds a chunk policy entry for `anthropic-claude-haiku-4-5` (`soft 400 / hard 600`, `mode: "auto"`) as a registry placeholder; live localization/reasoning paths continue to dispatch without chunking.
+- **Localization facade injection path**: `LocalizationFacade` now accepts an optional `translationFacade` via `LocalizationTranslationFacadeContract`, and `LocalizationMaterializer` consumes that contract instead of a concrete `TranslationFacade` class.
+
 ## [1.1.985] - 2026-04-15
 ### Changed
 - **Incremental settings save sync**: Settings save path classifies every save through `LocalizationSettingsImpactClassifier` and `LocalizationSelectiveSyncPlanner`; provider-only, response-mode, and continuity saves skip the localization overlay, while engine/category saves rebuild only the planned runtime bundle set.

@@ -84,13 +84,13 @@
 
 ### Stream: System SSOT updates
 25. [DONE] Обновить системный SSOT и индекс документации для активного Haiku translation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update architecture index for haiku translation`
-26. [IN_PROGRESS] Git Commit: `docs: update architecture index for haiku translation` (hash: TBD)
+26. [DONE] Git Commit: `docs: update architecture index for haiku translation` (hash: fca58546a + 15e3e0b90 follow-up for Docs_Index.md)
 
 ## Phase 6 — Release build for user validation (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Release notes preparation
-27. [TODO] Перед release batch обновить будущую версию в user-facing release docs; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku translation release notes`
-28. [TODO] Git Commit: `docs: prepare haiku translation release notes` (hash: TBD)
+27. [DONE] Перед release batch обновить будущую версию в user-facing release docs; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku translation release notes`
+28. [IN_PROGRESS] Git Commit: `docs: prepare haiku translation release notes` (hash: TBD)
 
 ### Stream: Script-managed release batch
 29. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать script-managed version bump / provider bundles / release manifests; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku translation release`
