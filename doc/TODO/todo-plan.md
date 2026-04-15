@@ -42,11 +42,11 @@
 
 ### Stream: Core Claude Haiku engine wiring
 7. [DONE] Добавить Core-обёртку для provider-owned Claude Haiku engine и общую factory для Core translation facade; scope: `packages/core/src/translation/claude-haiku-translation-engine.ts`, `packages/core/src/translation/core-translation-facade-factory.ts` (core index.ts — executable entry, библиотечные экспорты ему не нужны); expected commit message: `feat: wire claude haiku translation engine in core`
-8. [IN_PROGRESS] Git Commit: `feat: wire claude haiku translation engine in core` (hash: TBD)
+8. [DONE] Git Commit: `feat: wire claude haiku translation engine in core` (hash: f4c2f337b)
 
 ### Stream: Session translation migration
-9. [TODO] Перевести `SessionTranslationFacade` на Core-owned translation factory и покрыть путь инъекции тестом; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`; expected commit message: `refactor: route session translation through core factory`
-10. [TODO] Git Commit: `refactor: route session translation through core factory` (hash: TBD)
+9. [DONE] Перевести `SessionTranslationFacade` на Core-owned translation factory и покрыть путь инъекции тестом; scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`; expected commit message: `refactor: route session translation through core factory`
+10. [IN_PROGRESS] Git Commit: `refactor: route session translation through core factory` (hash: TBD)
 
 ### Stream: Engine profile registry
 11. [TODO] Зарегистрировать chunk profile для `anthropic-claude-haiku-4-5` и обновить facade tests для нового engine catalog; scope: `packages/translation/src/translation-engine-profile-registry.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `feat: register claude haiku translation profile`

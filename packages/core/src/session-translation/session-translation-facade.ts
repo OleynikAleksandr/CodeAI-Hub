@@ -1,8 +1,9 @@
-import {
+import type {
   TranslationFacade,
-  type TranslationReporter,
+  TranslationReporter,
 } from "@codeai-hub/translation";
 import type { Logger } from "../telemetry/logger";
+import { createCoreTranslationFacade } from "../translation/core-translation-facade-factory";
 import { computeSessionMessageSourceHash } from "./session-message-source-hash";
 import {
   type SessionTranslationDispatchCandidate,
@@ -15,9 +16,14 @@ const TRANSLATION_TIMEOUT_BASE_MS = 5000;
 const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
 const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
 
+export type SessionTranslationFacadeFactory = (options: {
+  readonly reporter?: TranslationReporter;
+}) => TranslationFacade;
+
 export interface SessionTranslationFacadeOptions {
   readonly logger: Logger;
   readonly settingsPath: string;
+  readonly translationFacadeFactory?: SessionTranslationFacadeFactory;
 }
 
 export type SessionTranslationProviderId = "claude" | "codex" | "gemini";
@@ -58,15 +64,22 @@ const resolveTranslationTimeoutMs = (content: string): number =>
       content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
   );
 
+const defaultTranslationFacadeFactory: SessionTranslationFacadeFactory = (
+  options
+) => createCoreTranslationFacade({ reporter: options.reporter });
+
 export class SessionTranslationFacade {
   private readonly dispatcher = new SessionTranslationDispatcher();
   private readonly logger: Logger;
   private readonly policyResolver = new SessionTranslationPolicyResolver();
   private readonly settingsPath: string;
+  private readonly translationFacadeFactory: SessionTranslationFacadeFactory;
 
   constructor(options: SessionTranslationFacadeOptions) {
     this.logger = options.logger;
     this.settingsPath = options.settingsPath;
+    this.translationFacadeFactory =
+      options.translationFacadeFactory ?? defaultTranslationFacadeFactory;
   }
 
   shouldTranslateDialogMessage(
@@ -212,7 +225,7 @@ export class SessionTranslationFacade {
         ...this.dispatcher.snapshot(),
       });
 
-      const translation = new TranslationFacade({
+      const translation = this.translationFacadeFactory({
         reporter: this.createTranslationReporter(candidate, sourceHash),
       });
       const result = await translation.translate({
