@@ -7523,13 +7523,15 @@
       return null;
     }
     const normalizedContent = role === "assistant" ? extractIdeaCollectorResponse(message.content) ?? message.content : message.content;
+    const visibilityAtEmission = message.visibilityAtEmission === "hidden" || message.visibilityAtEmission === "visible" ? message.visibilityAtEmission : void 0;
     return {
       id: message.id,
       role,
       content: normalizedContent,
       createdAt: toNumberTimestamp(message.timestamp),
       ...typeof message.localizedContent === "string" && message.localizedContent.trim().length > 0 ? { localizedContent: message.localizedContent } : {},
-      ...typeof message.tag === "string" ? { tag: message.tag } : {}
+      ...typeof message.tag === "string" ? { tag: message.tag } : {},
+      ...visibilityAtEmission ? { visibilityAtEmission } : {}
     };
   };
   var generateLocalMessageId = () => {
@@ -11030,7 +11032,7 @@
         description: t(
           "user_guidance",
           "settings.localization.category.messages_for_the_user.description",
-          "Warnings, errors, hints, status updates, and other messages addressed to the user."
+          "Warnings, errors, hints, status updates, visible Thinking and Reasoning bubbles, and other messages addressed to the user."
         )
       },
       {
@@ -12618,7 +12620,7 @@
       handleUpdateProvider
     } = state;
     const localizationSyncTitle = "Synchronizing localization";
-    const localizationSyncDescription = "Please wait. CodeAI Hub is preparing translated interface help and user-facing messages. Project Manager and new sessions stay blocked until synchronization completes.";
+    const localizationSyncDescription = "Please wait. CodeAI Hub is rebuilding the translated interface bundles affected by this change. Project Manager and new sessions stay blocked until the affected bundles are ready.";
     return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { "aria-busy": saving || !ready, style: containerStyles4, children: [
       /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("style", { children: "@keyframes settings-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }" }),
       /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(settings_header_default, { onClose }),
