@@ -80,11 +80,11 @@
 
 ### Stream: Module SSOT updates
 23. [DONE] Синхронизировать модульные SSOT-доки под provider-owned Claude Haiku translation path; scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit message: `docs: document claude haiku translation modules`
-24. [IN_PROGRESS] Git Commit: `docs: document claude haiku translation modules` (hash: TBD)
+24. [DONE] Git Commit: `docs: document claude haiku translation modules` (hash: 7e01e5d24)
 
 ### Stream: System SSOT updates
-25. [TODO] Обновить системный SSOT и индекс документации для активного Haiku translation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update architecture index for haiku translation`
-26. [TODO] Git Commit: `docs: update architecture index for haiku translation` (hash: TBD)
+25. [DONE] Обновить системный SSOT и индекс документации для активного Haiku translation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update architecture index for haiku translation`
+26. [IN_PROGRESS] Git Commit: `docs: update architecture index for haiku translation` (hash: TBD)
 
 ## Phase 6 — Release build for user validation (owner: Claude, updated: 2026-04-15)
 
