@@ -38,10 +38,16 @@ const withCategory = (
 test("classifier returns no impact when only provider settings change", () => {
   const classifier = new LocalizationSettingsImpactClassifier();
   const previous = DEFAULT_SETTINGS_SNAPSHOT;
-  const next = cloneSnapshot(previous);
-  next.providers.claude = {
-    ...next.providers.claude,
-    thinkingDisplaySyncEnabled: false,
+  const base = cloneSnapshot(previous);
+  const next: SettingsSnapshot = {
+    ...base,
+    providers: {
+      ...base.providers,
+      claude: {
+        ...base.providers.claude,
+        thinkingDisplaySyncEnabled: false,
+      },
+    },
   };
 
   const impact = classifier.classify(previous, next);
@@ -53,12 +59,15 @@ test("classifier returns no impact when only provider settings change", () => {
 test("classifier returns engine impact when translation engine id changes", () => {
   const classifier = new LocalizationSettingsImpactClassifier();
   const previous = DEFAULT_SETTINGS_SNAPSHOT;
-  const next = cloneSnapshot(previous);
-  next.general = {
-    ...next.general,
-    localization: {
-      ...next.general.localization,
-      engineId: "codex-gpt-5.4-mini",
+  const base = cloneSnapshot(previous);
+  const next: SettingsSnapshot = {
+    ...base,
+    general: {
+      ...base.general,
+      localization: {
+        ...base.general.localization,
+        engineId: "codex-gpt-5.4-mini",
+      },
     },
   };
 
@@ -70,12 +79,15 @@ test("classifier returns engine impact when translation engine id changes", () =
 test("classifier returns engine impact when glossary enabled flag flips", () => {
   const classifier = new LocalizationSettingsImpactClassifier();
   const previous = DEFAULT_SETTINGS_SNAPSHOT;
-  const next = cloneSnapshot(previous);
-  next.general = {
-    ...next.general,
-    localization: {
-      ...next.general.localization,
-      glossaryEnabled: !previous.general.localization.glossaryEnabled,
+  const base = cloneSnapshot(previous);
+  const next: SettingsSnapshot = {
+    ...base,
+    general: {
+      ...base.general,
+      localization: {
+        ...base.general.localization,
+        glossaryEnabled: !previous.general.localization.glossaryEnabled,
+      },
     },
   };
 
