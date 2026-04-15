@@ -78,6 +78,12 @@ export const sanitizeMessage = (
       ? (extractIdeaCollectorResponse(message.content) ?? message.content)
       : message.content;
 
+  const visibilityAtEmission =
+    message.visibilityAtEmission === "hidden" ||
+    message.visibilityAtEmission === "visible"
+      ? message.visibilityAtEmission
+      : undefined;
+
   return {
     id: message.id,
     role,
@@ -88,6 +94,7 @@ export const sanitizeMessage = (
       ? { localizedContent: message.localizedContent }
       : {}),
     ...(typeof message.tag === "string" ? { tag: message.tag } : {}),
+    ...(visibilityAtEmission ? { visibilityAtEmission } : {}),
   };
 };
 

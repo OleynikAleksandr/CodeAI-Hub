@@ -4,6 +4,7 @@ import type {
 } from "../../../../types/provider";
 import type {
   SessionMessage,
+  SessionMessageEmissionVisibility,
   SessionMessageRole,
   SessionRecord,
 } from "../../../../types/session";
@@ -29,6 +30,7 @@ export interface ServerSessionMessage {
   readonly sessionId?: string;
   readonly tag?: string;
   readonly timestamp?: string;
+  readonly visibilityAtEmission?: SessionMessageEmissionVisibility;
 }
 
 export interface ServerSession {
