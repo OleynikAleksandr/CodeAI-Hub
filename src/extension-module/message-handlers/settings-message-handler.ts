@@ -6,10 +6,7 @@ import {
   type LocalizationSelectiveSyncPlan,
   LocalizationSelectiveSyncPlanner,
 } from "../settings/localization-selective-sync-planner";
-import {
-  type LocalizationSaveImpact,
-  LocalizationSettingsImpactClassifier,
-} from "../settings/localization-settings-impact-classifier";
+import { LocalizationSettingsImpactClassifier } from "../settings/localization-settings-impact-classifier";
 import { ProviderVersionService } from "../settings/provider-version-service";
 import {
   applyDefaultModelsEnv,
@@ -255,7 +252,7 @@ export class SettingsMessageHandler {
         return;
       }
 
-      await this.runStrictLocalizationSync(webview, impact, plan);
+      await this.runStrictLocalizationSync(webview, plan);
     } catch (error) {
       const reason = this.describeError(error);
       window.showErrorMessage(
@@ -273,8 +270,7 @@ export class SettingsMessageHandler {
 
   private async runStrictLocalizationSync(
     webview: Webview,
-    _impact: LocalizationSaveImpact,
-    _plan: LocalizationSelectiveSyncPlan
+    plan: LocalizationSelectiveSyncPlan
   ): Promise<void> {
     await this.postLocalizationSyncStatus(webview, {
       busy: true,
@@ -284,7 +280,7 @@ export class SettingsMessageHandler {
     await this.persistAndSyncCodexConfig();
     await this.postSavedNotification(
       webview,
-      await this.resolveEnvelopePayload("strict")
+      await this.resolveEnvelopePayload("strict", plan)
     );
     await this.postLocalizationSyncStatus(webview, {
       busy: false,
@@ -318,13 +314,17 @@ export class SettingsMessageHandler {
   }
 
   private async resolveEnvelopePayload(
-    mode: "best_effort" | "strict" = "best_effort"
+    mode: "best_effort" | "strict" = "best_effort",
+    plan?: LocalizationSelectiveSyncPlan
   ): Promise<SettingsEnvelopePayload> {
     return {
       localizationRuntime:
         mode === "strict"
           ? await this.localizationRuntimeService.synchronizeRuntimePayload(
-              this.settingsState
+              this.settingsState,
+              plan
+                ? { affectedRuntimeBundleIds: plan.affectedRuntimeBundleIds }
+                : undefined
             )
           : await this.localizationRuntimeService.resolveRuntimePayload(
               this.settingsState

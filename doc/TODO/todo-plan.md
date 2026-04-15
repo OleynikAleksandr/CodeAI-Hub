@@ -37,9 +37,9 @@
 3. [DONE] Ввести selective strict sync planning для save-path: engine change = rebuild всех неанглийских групп, single-category change = rebuild только затронутого runtime bundle set — scope: `src/extension-module/settings/`, `src/extension-module/message-handlers/`, `doc/SolidWorks-WorkFlow/Plans/Localization_IncrementalSync_And_ThinkingVisibility_Architecture.md`; ожидаемый commit message: `feat: add selective localization sync planning`
 4. [DONE] Git Commit: `feat: add selective localization sync planning` (hash: 8aaf692cb)
 5. [DONE] Добавить selective-rebuild контракт в LocalizationFacade (carry-forward для незатронутых bundles, force-strict для аффектных) — scope: `packages/localization/src/localization-facade.ts`, `packages/localization/src/localization-selective-sync.ts`, `packages/localization/src/index.ts`; ожидаемый commit message: `feat: support selective runtime bundle materialization`
-6. [DONE] Git Commit: `feat: support selective runtime bundle materialization` (hash: TBD)
-7. [TODO] Пробросить selective plan из Settings save-path в runtime-service и обновить Localization SSOT под новое поведение — scope: `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `feat: rebuild only affected localization bundles`
-8. [TODO] Git Commit: `feat: rebuild only affected localization bundles` (hash: TBD)
+6. [DONE] Git Commit: `feat: support selective runtime bundle materialization` (hash: 15a5aacc1)
+7. [DONE] Пробросить selective plan из Settings save-path в runtime-service и обновить Localization SSOT под новое поведение — scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `feat: rebuild only affected localization bundles`
+8. [DONE] Git Commit: `feat: rebuild only affected localization bundles` (hash: TBD)
 
 ## Phase 2 — Messaging Ownership And Visible Thinking Gate (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Messages for the User contract

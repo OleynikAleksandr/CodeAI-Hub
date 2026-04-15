@@ -3,6 +3,7 @@ import {
   type LocalizationRuntimeBootstrapSnapshot,
   type LocalizationRuntimePayload,
   type LocalizationRuntimeSettingsSnapshot,
+  type LocalizationSelectiveSyncOptions,
 } from "@codeai-hub/localization";
 import type { SettingsSnapshot } from "./types";
 
@@ -22,10 +23,12 @@ export class LocalizationRuntimeService {
   }
 
   synchronizeRuntimePayload(
-    settings: SettingsSnapshot
+    settings: SettingsSnapshot,
+    options?: LocalizationSelectiveSyncOptions
   ): Promise<LocalizationRuntimePayload> {
     return this.localizationFacade.synchronizeRuntimePayload(
-      this.createRuntimeSnapshot(settings)
+      this.createRuntimeSnapshot(settings),
+      options
     );
   }
 
