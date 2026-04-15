@@ -252,3 +252,69 @@ test("LocalizationMaterializer tracks partial fallback when a batch entry is mis
     "This helper falls back to source."
   );
 });
+
+test("LocalizationMaterializer routes bundle materialization through anthropic-claude-haiku-4-5", async () => {
+  const translationRequests: TranslationRequest[] = [];
+  const sourceDictionaryRegistry = new SourceDictionaryRegistry([
+    {
+      category: "user_guidance",
+      entries: {
+        "help.haiku.entry": "Entry dispatched to Claude Haiku engine",
+      },
+      language: "en",
+    },
+  ]);
+
+  const materializer = new LocalizationMaterializer({
+    bundleStore: {
+      load: async () => null,
+      save: async () => undefined,
+    } as never,
+    glossaryBundleLoader: {
+      loadBaseBundle: async () => ({ rules: [] }),
+      loadLanguageBundle: async () => ({ rules: [] }),
+    } as never,
+    glossaryMergeService: new GlossaryMergeService(),
+    glossaryProtector: new GlossaryProtector(),
+    languageCatalogService: {
+      supportsLanguage: () => true,
+    } as never,
+    metadataStore: {
+      getBundle: async () => null,
+      upsertBundle: async () => undefined,
+    } as never,
+    sourceDictionaryRegistry,
+    translationFacade: {
+      translate: (request: TranslationRequest): Promise<TranslationResult> => {
+        translationRequests.push(request);
+        const translatedBatch = translateStructuredBatch(request.text);
+        return Promise.resolve({
+          engine: request.engineId ?? "anthropic-claude-haiku-4-5",
+          finalText: translatedBatch,
+          originalText: request.text,
+          sourceLanguage: request.sourceLanguage,
+          status: "translated",
+          targetLanguage: request.targetLanguage,
+          translatedText: translatedBatch,
+        });
+      },
+    } as never,
+    userGlossaryStore: {
+      load: async () => ({ preserve: [] }),
+    } as never,
+  });
+
+  const result = await materializer.materialize({
+    category: "user_guidance",
+    engineId: "anthropic-claude-haiku-4-5",
+    targetLanguage: "ru",
+  });
+
+  assert.ok(result);
+  assert.equal(translationRequests.length, 1);
+  assert.equal(translationRequests[0]?.engineId, "anthropic-claude-haiku-4-5");
+  assert.equal(
+    result.bundle.entries["help.haiku.entry"],
+    "[ru] Entry dispatched to Claude Haiku engine"
+  );
+});

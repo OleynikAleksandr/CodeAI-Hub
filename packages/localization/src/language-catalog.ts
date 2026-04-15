@@ -69,4 +69,8 @@ export const DEFAULT_ENGINE_LANGUAGE_CATALOGS: readonly LocalizationEngineLangua
       engineId: "codex-gpt-5.3-codex-spark",
       languages: GOOGLE_GTX_LANGUAGES,
     },
+    {
+      engineId: "anthropic-claude-haiku-4-5",
+      languages: GOOGLE_GTX_LANGUAGES,
+    },
   ];

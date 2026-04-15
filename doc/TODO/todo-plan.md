@@ -70,11 +70,11 @@
 
 ### Stream: Settings UI exposure
 19. [DONE] Показать новый engine в Settings и добавить canonical English label в approved source dictionary; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/localization-settings-card.tsx`, `assets/localization/source/en/ui_labels.json`; expected commit message: `feat: expose claude haiku localization engine in settings`
-20. [IN_PROGRESS] Git Commit: `feat: expose claude haiku localization engine in settings` (hash: TBD)
+20. [DONE] Git Commit: `feat: expose claude haiku localization engine in settings` (hash: 2e73bc699)
 
 ### Stream: Language catalog support
-21. [TODO] Добавить новый engine в localization language catalog и покрыть materializer/runtime тестом; scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/localization-materializer.test.ts`; expected commit message: `feat: add claude haiku localization language catalog`
-22. [TODO] Git Commit: `feat: add claude haiku localization language catalog` (hash: TBD)
+21. [DONE] Добавить новый engine в localization language catalog и покрыть materializer/runtime тестом; scope: `packages/localization/src/language-catalog.ts`, `packages/localization/src/localization-materializer.test.ts`; expected commit message: `feat: add claude haiku localization language catalog`
+22. [IN_PROGRESS] Git Commit: `feat: add claude haiku localization language catalog` (hash: TBD)
 
 ## Phase 5 — SSOT sync and validation prep (owner: Claude, updated: 2026-04-15)
 
