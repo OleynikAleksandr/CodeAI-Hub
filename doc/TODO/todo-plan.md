@@ -27,8 +27,8 @@
 ## Phase 1 — Claude provider-owned translation service (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Translator instruction
-1. [TODO] Добавить category-aware builder для Haiku translator instruction; scope: `packages/Claude_Module/src/translation/claude-haiku-translator-instruction.ts`, `packages/Claude_Module/src/translation/claude-haiku-translator-instruction.test.ts`; expected commit message: `feat: add claude haiku translator instruction builder`
-2. [TODO] Git Commit: `feat: add claude haiku translator instruction builder` (hash: TBD)
+1. [DONE] Добавить category-aware builder для Haiku translator instruction; scope: `packages/Claude_Module/src/translation/claude-haiku-translator-instruction.ts`, `packages/Claude_Module/src/translation/claude-haiku-translator-instruction.test.ts`; expected commit message: `feat: add claude haiku translator instruction builder`
+2. [IN_PROGRESS] Git Commit: `feat: add claude haiku translator instruction builder` (hash: TBD)
 
 ### Stream: Claude Haiku translation service
 3. [TODO] Реализовать provider-owned `claude-haiku-translation-service` с reuse `SDKInstaller` / `SDKAuthManager` и one-shot query profile (`tools: []`, `maxTurns: 1`, `persistSession: false`); scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`, `packages/Claude_Module/src/index.ts`; expected commit message: `feat: add claude haiku translation service`
