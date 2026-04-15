@@ -2,12 +2,9 @@ import type {
   SessionMessage,
   SessionSnapshot,
 } from "../../../../types/session";
+import { shouldHideThinkingMessage } from "./helpers";
 
 const SYSTEM_PROMPT_PREFIXES = ["# System Prompt", "System Prompt —"];
-
-const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
-  message.role === "thinking" ||
-  (message.role === "assistant" && message.tag === "thinking");
 
 const isSystemPromptBootstrapMessage = (message: SessionMessage): boolean => {
   if (message.role !== "user") {
@@ -80,12 +77,11 @@ export const collectChainSegmentMessages = (options: {
     return [];
   }
 
-  const shouldSuppressThinking =
-    !options.showThinkingMessages &&
-    options.segmentIndex < options.lastSegmentIndex;
   const sliced = options.snapshot.messages.slice(startIndex);
-  if (!shouldSuppressThinking) {
-    return sliced;
-  }
-  return sliced.filter((message) => !isThinkingDisplayMessage(message));
+  const currentShowThinking =
+    options.showThinkingMessages ||
+    options.segmentIndex === options.lastSegmentIndex;
+  return sliced.filter(
+    (message) => !shouldHideThinkingMessage({ message, currentShowThinking })
+  );
 };

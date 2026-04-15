@@ -268,6 +268,26 @@ export const mapProviderTheme = (
   }
 };
 
+const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
+  message.role === "thinking" ||
+  (message.role === "assistant" && message.tag === "thinking");
+
+export const shouldHideThinkingMessage = (options: {
+  readonly message: SessionMessage;
+  readonly currentShowThinking: boolean;
+}): boolean => {
+  if (!isThinkingDisplayMessage(options.message)) {
+    return false;
+  }
+  if (options.message.visibilityAtEmission === "hidden") {
+    return true;
+  }
+  if (options.message.visibilityAtEmission === "visible") {
+    return false;
+  }
+  return !options.currentShowThinking;
+};
+
 export const resolveSessionThinkingDisplayEnabled = (options: {
   readonly providerId: ProviderStackId | null;
   readonly settings: Settings | null;

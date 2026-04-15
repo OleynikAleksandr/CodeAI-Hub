@@ -4,6 +4,7 @@ import type {
   SessionRecord,
   SessionSnapshot,
 } from "../../../../types/session";
+import { shouldHideThinkingMessage } from "./helpers";
 import {
   buildVirtualConversationMessages,
   filterContinuityInternalMessages,
@@ -12,9 +13,13 @@ import {
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 
-const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
-  message.role === "thinking" ||
-  (message.role === "assistant" && message.tag === "thinking");
+const applyThinkingVisibilityFilter = (
+  messages: readonly SessionMessage[],
+  currentShowThinking: boolean
+): readonly SessionMessage[] =>
+  messages.filter(
+    (message) => !shouldHideThinkingMessage({ message, currentShowThinking })
+  );
 
 export const useQueuedSend = (options: {
   readonly activeSessionId: string | null;
@@ -85,6 +90,7 @@ export const resolveVirtualConversationMessages = (options: {
   readonly showThinkingMessages?: boolean;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
 }): readonly SessionMessage[] => {
+  const currentShowThinking = options.showThinkingMessages !== false;
   const base =
     options.activeSession &&
     options.activeSessionId &&
@@ -92,12 +98,9 @@ export const resolveVirtualConversationMessages = (options: {
       ? buildVirtualConversationMessages({
           chain: options.continuationChain,
           snapshots: options.snapshots,
-          showThinkingMessages: options.showThinkingMessages !== false,
+          showThinkingMessages: currentShowThinking,
         })
       : (options.activeSession?.messages ?? []);
-  const filtered =
-    options.showThinkingMessages === false && base.length > 0
-      ? base.filter((message) => !isThinkingDisplayMessage(message))
-      : base;
+  const filtered = applyThinkingVisibilityFilter(base, currentShowThinking);
   return filterContinuityInternalMessages(filtered);
 };
