@@ -32,7 +32,7 @@
 
 ## Phase 1 — Incremental Settings Save Sync (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Save impact classification
-1. [TODO] Добавить классификатор влияния настроек на локализацию и убрать blocking localization sync для provider-only / response-policy / continuity save-path — scope: `src/extension-module/message-handlers/`, `src/extension-module/settings/`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `fix: skip localization sync for provider-only settings saves`
+1. [IN_PROGRESS] Добавить классификатор влияния настроек на локализацию и убрать blocking localization sync для provider-only / response-policy / continuity save-path — scope: `src/extension-module/message-handlers/`, `src/extension-module/settings/`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; ожидаемый commit message: `fix: skip localization sync for provider-only settings saves`
 2. [TODO] Git Commit: `fix: skip localization sync for provider-only settings saves` (hash: TBD)
 3. [TODO] Ввести selective strict sync planning для save-path: engine change = rebuild всех неанглийских групп, single-category change = rebuild только затронутого runtime bundle set — scope: `src/extension-module/settings/`, `packages/localization/src/`, `doc/SolidWorks-WorkFlow/Plans/Localization_IncrementalSync_And_ThinkingVisibility_Architecture.md`; ожидаемый commit message: `feat: add selective localization sync planning`
 4. [TODO] Git Commit: `feat: add selective localization sync planning` (hash: TBD)

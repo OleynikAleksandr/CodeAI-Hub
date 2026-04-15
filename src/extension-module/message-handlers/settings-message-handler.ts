@@ -2,6 +2,10 @@ import { UserGlossaryStore } from "@codeai-hub/localization";
 import { type Webview, window, workspace } from "vscode";
 import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
 import { LocalizationRuntimeService } from "../settings/localization-runtime-service";
+import {
+  type LocalizationSaveImpact,
+  LocalizationSettingsImpactClassifier,
+} from "../settings/localization-settings-impact-classifier";
 import { ProviderVersionService } from "../settings/provider-version-service";
 import {
   applyDefaultModelsEnv,
@@ -32,10 +36,12 @@ const STATUS_MESSAGE_TIMEOUT = 2000;
 export class SettingsMessageHandler {
   private settingsState: SettingsSnapshot = loadSettingsSnapshot();
   private readonly localizationRuntimeService: LocalizationRuntimeService;
+  private readonly impactClassifier: LocalizationSettingsImpactClassifier;
   private readonly versionService: ProviderVersionService;
 
   constructor(_extensionPath: string) {
     this.localizationRuntimeService = new LocalizationRuntimeService();
+    this.impactClassifier = new LocalizationSettingsImpactClassifier();
     this.versionService = new ProviderVersionService();
     applyDefaultModelsEnv(this.settingsState);
   }
@@ -222,40 +228,68 @@ export class SettingsMessageHandler {
       return;
     }
 
+    const previousSnapshot = this.settingsState;
+    const impact = this.impactClassifier.classify(
+      previousSnapshot,
+      nextSettings
+    );
+
     this.settingsState = nextSettings;
     applyDefaultModelsEnv(this.settingsState);
 
     try {
-      await this.postLocalizationSyncStatus(webview, {
-        busy: true,
-        message:
-          "Localization sync is running. Project Manager and new sessions stay blocked until translated interface bundles are ready.",
-      });
-      await persistSettingsSnapshot(this.settingsState);
-      syncCodexProviderReasoningSummaryConfig(
-        this.settingsState.providers.codex.reasoningSummaryEnabled
-      ).catch(() => {
-        /* ignore sync errors */
-      });
-      await this.postSavedNotification(
-        webview,
-        await this.resolveEnvelopePayload("strict")
-      );
-      await this.postLocalizationSyncStatus(webview, {
-        busy: false,
-        message: "Localization sync completed.",
-      });
+      if (impact.kind === "none") {
+        await this.persistAndSyncCodexConfig();
+        await this.postSavedNotification(
+          webview,
+          await this.resolveEnvelopePayload()
+        );
+        return;
+      }
+
+      await this.runStrictLocalizationSync(webview, impact);
     } catch (error) {
       const reason = this.describeError(error);
       window.showErrorMessage(
         `Failed to synchronize localization settings: ${reason}`
       );
       await this.postSaveError(webview, reason);
-      await this.postLocalizationSyncStatus(webview, {
-        busy: false,
-        message: `Localization sync failed: ${reason}`,
-      });
+      if (impact.kind !== "none") {
+        await this.postLocalizationSyncStatus(webview, {
+          busy: false,
+          message: `Localization sync failed: ${reason}`,
+        });
+      }
     }
+  }
+
+  private async runStrictLocalizationSync(
+    webview: Webview,
+    _impact: LocalizationSaveImpact
+  ): Promise<void> {
+    await this.postLocalizationSyncStatus(webview, {
+      busy: true,
+      message:
+        "Localization sync is running. Project Manager and new sessions stay blocked until translated interface bundles are ready.",
+    });
+    await this.persistAndSyncCodexConfig();
+    await this.postSavedNotification(
+      webview,
+      await this.resolveEnvelopePayload("strict")
+    );
+    await this.postLocalizationSyncStatus(webview, {
+      busy: false,
+      message: "Localization sync completed.",
+    });
+  }
+
+  private async persistAndSyncCodexConfig(): Promise<void> {
+    await persistSettingsSnapshot(this.settingsState);
+    syncCodexProviderReasoningSummaryConfig(
+      this.settingsState.providers.codex.reasoningSummaryEnabled
+    ).catch(() => {
+      /* ignore sync errors */
+    });
   }
 
   private async handleOpenUserGlossaryFile(): Promise<void> {
