@@ -56,11 +56,11 @@
 
 ### Stream: Localization injection path
 13. [DONE] Открыть public injection path для custom translation facade в localization facade; scope: `packages/localization/src/localization-contract.ts`, `packages/localization/src/localization-facade.ts`, `packages/localization/src/index.ts`; expected commit message: `refactor: expose localization translation facade injection`
-14. [IN_PROGRESS] Git Commit: `refactor: expose localization translation facade injection` (hash: TBD)
+14. [DONE] Git Commit: `refactor: expose localization translation facade injection` (hash: 6efbc7c2d)
 
 ### Stream: Core localization factory
-15. [TODO] Собрать Core-owned localization facade factory с Haiku-aware translation path и подключить его в Core bridge handlers; scope: `packages/core/src/translation/core-localization-facade-factory.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit message: `feat: route localization runtime through core facade`
-16. [TODO] Git Commit: `feat: route localization runtime through core facade` (hash: TBD)
+15. [DONE] Собрать Core-owned localization facade factory с Haiku-aware translation path и подключить его в Core bridge handlers; scope: `packages/core/src/translation/core-localization-facade-factory.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit message: `feat: route localization runtime through core facade`
+16. [IN_PROGRESS] Git Commit: `feat: route localization runtime through core facade` (hash: TBD)
 
 ### Stream: Extension host bridge migration
 17. [TODO] Перевести extension-host localization runtime на Core-backed payload/bootstrap path без локального Haiku materialization; scope: `src/extension-module/settings/localization-runtime-service.ts`, `src/extension-module/message-handlers/settings-message-handler.ts`, `src/extension-module/home-view-provider.ts`; expected commit message: `refactor: consume core-backed localization runtime`

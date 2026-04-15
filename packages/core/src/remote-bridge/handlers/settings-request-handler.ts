@@ -2,11 +2,12 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   LOCALIZATION_SOURCE_SELECTION,
-  LocalizationFacade,
+  type LocalizationFacade,
   type LocalizationRuntimeSettingsSnapshot,
 } from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
+import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 import type { BridgeEvent } from "../types";
 import { normalizeClaudeThinkingSettings } from "./settings-request-handler-claude-thinking";
 
@@ -418,7 +419,7 @@ export class SettingsRequestHandler {
     readonly broadcaster: (event: BridgeEvent) => void;
   }) {
     this.config = options.config;
-    this.localizationFacade = new LocalizationFacade();
+    this.localizationFacade = createCoreLocalizationFacade();
     this.logger = options.logger;
     this.broadcaster = options.broadcaster;
   }

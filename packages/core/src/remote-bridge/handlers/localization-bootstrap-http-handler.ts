@@ -1,5 +1,5 @@
-import { LocalizationFacade } from "@codeai-hub/localization";
 import type { Request, Response } from "express";
+import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 
 const HTTP_NOT_FOUND = 404;
 const HTTP_INTERNAL_ERROR = 500;
@@ -10,7 +10,7 @@ export const handleLocalizationBootstrapRead = async (
 ): Promise<void> => {
   try {
     const snapshot =
-      await new LocalizationFacade().loadRuntimeBootstrapSnapshot();
+      await createCoreLocalizationFacade().loadRuntimeBootstrapSnapshot();
 
     if (!snapshot) {
       res.status(HTTP_NOT_FOUND).json({
