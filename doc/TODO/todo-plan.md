@@ -90,11 +90,11 @@
 
 ### Stream: Release notes preparation
 27. [DONE] Перед release batch обновить будущую версию в user-facing release docs; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare haiku translation release notes`
-28. [IN_PROGRESS] Git Commit: `docs: prepare haiku translation release notes` (hash: TBD)
+28. [DONE] Git Commit: `docs: prepare haiku translation release notes` (hash: fa7e350f8)
 
 ### Stream: Script-managed release batch
-29. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать script-managed version bump / provider bundles / release manifests; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku translation release`
-30. [TODO] Git Commit: `chore: build haiku translation release` (hash: TBD)
+29. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и зафиксировать script-managed version bump / provider bundles / release manifests; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/` artifacts; expected commit message: `chore: build haiku translation release`
+30. [IN_PROGRESS] Git Commit: `chore: build haiku translation release` (hash: TBD)
 
 ### Stream: Final packaging and release handoff
 31. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-<version>.vsix` и оформить финальный release session report для пользовательских тестов; scope: root VSIX artifact, `doc/tmp/releases/`, `doc/Sessions/SessionXXX.md`; expected commit message: `docs: record haiku translation release handoff`

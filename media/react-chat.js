@@ -8838,7 +8838,8 @@
   var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
     "google-gtx",
     "codex-gpt-5.4-mini",
-    "codex-gpt-5.3-codex-spark"
+    "codex-gpt-5.3-codex-spark",
+    "anthropic-claude-haiku-4-5"
   ];
   var SUPPORTED_LOCALIZATION_ENGINE_ID_SET = new Set(
     SUPPORTED_LOCALIZATION_ENGINE_IDS
@@ -10979,6 +10980,13 @@
         "ui_interface",
         "settings.localization.translation_engine.option.google_gtx",
         "Google GTX Free"
+      );
+    }
+    if (engineId === "anthropic-claude-haiku-4-5") {
+      return t(
+        "ui_interface",
+        "settings.localization.translation_engine.option.anthropic_claude_haiku_4_5",
+        "Anthropic Claude \xB7 Haiku 4.5"
       );
     }
     return formatUnknownTranslationEngineLabel(engineId);
