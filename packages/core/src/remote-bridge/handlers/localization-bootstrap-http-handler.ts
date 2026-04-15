@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { loadConfig } from "../../config";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 
 const HTTP_NOT_FOUND = 404;
@@ -9,8 +10,9 @@ export const handleLocalizationBootstrapRead = async (
   res: Response
 ): Promise<void> => {
   try {
-    const snapshot =
-      await createCoreLocalizationFacade().loadRuntimeBootstrapSnapshot();
+    const snapshot = await createCoreLocalizationFacade({
+      config: loadConfig(),
+    }).loadRuntimeBootstrapSnapshot();
 
     if (!snapshot) {
       res.status(HTTP_NOT_FOUND).json({

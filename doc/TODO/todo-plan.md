@@ -33,12 +33,12 @@
 
 ### Stream: Reject silent engine substitution
 3. [DONE] Убрать silent fallback на default engine при explicit `anthropic-claude-haiku-4-5` и покрыть это regression tests; scope: `packages/translation/src/translation-engine-registry.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/translation-facade.test.ts`; expected commit message: `fix: prevent silent translation engine fallback`
-4. [TODO] Git Commit: `fix: prevent silent translation engine fallback` (hash: TBD)
+4. [DONE] Git Commit: `fix: prevent silent translation engine fallback` (hash: `a036a48d5`)
 
 ## Phase 2 — Core-owned localization repair (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Core localization Haiku wiring
-5. [TODO] Подключить provider-owned Haiku service в Core localization facade и bootstrap handlers; scope: `packages/core/src/translation/core-localization-facade-factory.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit message: `fix: wire haiku service into core localization`
+5. [DONE] Подключить provider-owned Haiku service в Core localization facade и bootstrap handlers; scope: `packages/core/src/translation/core-localization-facade-factory.ts`, `packages/core/src/remote-bridge/handlers/settings-request-handler.ts`, `packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit message: `fix: wire haiku service into core localization`
 6. [TODO] Git Commit: `fix: wire haiku service into core localization` (hash: TBD)
 
 ### Stream: Remove extension-side downgrade

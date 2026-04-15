@@ -419,7 +419,9 @@ export class SettingsRequestHandler {
     readonly broadcaster: (event: BridgeEvent) => void;
   }) {
     this.config = options.config;
-    this.localizationFacade = createCoreLocalizationFacade();
+    this.localizationFacade = createCoreLocalizationFacade({
+      config: this.config,
+    });
     this.logger = options.logger;
     this.broadcaster = options.broadcaster;
   }
