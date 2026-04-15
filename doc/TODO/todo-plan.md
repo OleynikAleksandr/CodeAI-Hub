@@ -67,10 +67,10 @@
 
 ### Stream: Module SSOT updates
 17. [DONE] Синхронизировать модульные SSOT-доки под fail-fast localization path и новую persistence policy; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `docs: sync haiku bugfix module ssot`
-18. [TODO] Git Commit: `docs: sync haiku bugfix module ssot` (hash: TBD)
+18. [DONE] Git Commit: `docs: sync haiku bugfix module ssot` (hash: `8a0025ed5`)
 
 ### Stream: System SSOT updates
-19. [TODO] Обновить системный SSOT и индекс навигации под post-release Haiku bugfix scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update haiku bugfix architecture index`
+19. [DONE] Обновить системный SSOT и индекс навигации под post-release Haiku bugfix scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update haiku bugfix architecture index`
 20. [TODO] Git Commit: `docs: update haiku bugfix architecture index` (hash: TBD)
 
 ## Phase 5 — Release build for retest (owner: Claude, updated: 2026-04-15)
