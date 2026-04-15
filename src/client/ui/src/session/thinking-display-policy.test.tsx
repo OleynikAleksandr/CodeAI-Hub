@@ -17,13 +17,15 @@ const createMessage = (
   id: string,
   role: SessionMessage["role"],
   content: string,
-  tag?: string
+  tag?: string,
+  visibilityAtEmission?: SessionMessage["visibilityAtEmission"]
 ): SessionMessage => ({
   id,
   role,
   content,
   createdAt: Number(id),
   ...(tag ? { tag } : {}),
+  ...(visibilityAtEmission ? { visibilityAtEmission } : {}),
 });
 
 const createSession = (
@@ -146,6 +148,50 @@ test("resolveVirtualConversationMessages hides thinking bubbles only when disabl
     hidden.map((message) => message.id),
     ["2"]
   );
+  assert.deepEqual(
+    visible.map((message) => message.id),
+    ["1", "2", "3"]
+  );
+});
+
+test("emission-time hidden thinking stays hidden even when toggle is on", () => {
+  const messages = [
+    createMessage("1", "user", "Prompt"),
+    createMessage("2", "assistant", "Hidden-at-emit", "thinking", "hidden"),
+    createMessage("3", "assistant", "Final answer"),
+  ];
+  const { session, snapshot } = createSession("claudeCodeCli", messages);
+
+  const visible = resolveVirtualConversationMessages({
+    activeSessionId: session.id,
+    activeSession: snapshot,
+    continuationChain: [session],
+    showThinkingMessages: true,
+    snapshots: { [session.id]: snapshot },
+  });
+
+  assert.deepEqual(
+    visible.map((message) => message.id),
+    ["1", "3"]
+  );
+});
+
+test("emission-time visible thinking stays visible even when toggle is off", () => {
+  const messages = [
+    createMessage("1", "user", "Prompt"),
+    createMessage("2", "assistant", "Visible-at-emit", "thinking", "visible"),
+    createMessage("3", "assistant", "Final answer"),
+  ];
+  const { session, snapshot } = createSession("claudeCodeCli", messages);
+
+  const visible = resolveVirtualConversationMessages({
+    activeSessionId: session.id,
+    activeSession: snapshot,
+    continuationChain: [session],
+    showThinkingMessages: false,
+    snapshots: { [session.id]: snapshot },
+  });
+
   assert.deepEqual(
     visible.map((message) => message.id),
     ["1", "2", "3"]

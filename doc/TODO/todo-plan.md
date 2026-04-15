@@ -61,12 +61,12 @@
 9. [DONE] Phase 3.3d: зафиксировать новый инвариант emission-time visibility в базовом SSOT (`SystemArchitecture.md`) — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; ожидаемый commit message: `docs: record emission-time thinking visibility invariant`
 10. [DONE] Git Commit: `docs: record emission-time thinking visibility invariant` (hash: f1cd54c10)
 11. [DONE] Синхронизировать provider SSOT для Claude/Codex/Gemini с новым правилом: hidden visible-thinking не переводится, а re-enable не backfill-ит старые reasoning/thinking — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; ожидаемый commit message: `docs: sync thinking visibility and translation contract`
-12. [DONE] Git Commit: `docs: sync thinking visibility and translation contract` (hash: TBD)
+12. [DONE] Git Commit: `docs: sync thinking visibility and translation contract` (hash: 032323876)
 
 ## Phase 4 — Regression Coverage And Targeted Validation (owner: Oleksandr + Codex, updated: 2026-04-15)
 ### Stream: Targeted regression proof
-1. [TODO] Добавить regression coverage для provider-only saves, engine/category selective rebuild, hidden-thinking no-translation и forward-only re-enable semantics — scope: `src/extension-module/`, `packages/localization/src/`, `packages/core/src/session-translation/`; ожидаемый commit message: `test: cover incremental localization sync and thinking visibility`
-2. [TODO] Git Commit: `test: cover incremental localization sync and thinking visibility` (hash: TBD)
+1. [DONE] Добавить regression coverage для provider-only saves, engine/category selective rebuild и forward-only emission-time thinking visibility — scope: `src/extension-module/settings/localization-settings-impact-classifier.test.ts`, `src/extension-module/settings/localization-selective-sync-planner.test.ts`, `src/client/ui/src/session/thinking-display-policy.test.tsx`; ожидаемый commit message: `test: cover incremental localization sync and thinking visibility`
+2. [DONE] Git Commit: `test: cover incremental localization sync and thinking visibility` (hash: TBD)
 3. [TODO] Закрыть таргетные сборки и type/test verification для затронутых пакетов/клиентов (`@codeai-hub/localization`, `@codeai-hub/core`, UI/PM) и, если validation потребует правок, внести их в узком scope с синхронной документацией — scope: `packages/localization/`, `packages/core/`, `src/client/`; ожидаемый commit message: `fix: close localization incremental sync regressions`
 4. [TODO] Git Commit: `fix: close localization incremental sync regressions` (hash: TBD)
 
