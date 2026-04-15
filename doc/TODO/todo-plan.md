@@ -51,12 +51,12 @@
 
 ### Stream: Category regression coverage
 11. [DONE] Добавить regression coverage для сценария `uiLabels=en`, `user_guidance/system_feedback/artifacts=ru`, чтобы helper/help copy не оставалась silently source-English; scope: `packages/localization/src/localization-materializer.test.ts`, `packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit message: `test: cover haiku localization category routing`
-12. [TODO] Git Commit: `test: cover haiku localization category routing` (hash: TBD)
+12. [DONE] Git Commit: `test: cover haiku localization category routing` (hash: `6d61ed161`)
 
 ## Phase 3 — Persistence and diagnostics (owner: Claude, updated: 2026-04-15)
 
 ### Stream: Native JSONL persistence
-13. [TODO] Отменить `persistSession: false` для Haiku translation slug и обновить service-level tests под native Claude JSONL persistence; scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`; expected commit message: `fix: persist haiku translation jsonl traces`
+13. [DONE] Отменить `persistSession: false` для Haiku translation slug и обновить service-level tests под native Claude JSONL persistence; scope: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`, `packages/Claude_Module/src/translation/claude-haiku-translation-service.test.ts`; expected commit message: `fix: persist haiku translation jsonl traces`
 14. [TODO] Git Commit: `fix: persist haiku translation jsonl traces` (hash: TBD)
 
 ### Stream: Runtime diagnostics hardening

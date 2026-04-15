@@ -156,7 +156,7 @@ test("ClaudeHaikuTranslationService applies translation-only query profile", asy
   assert.equal(options?.model, CLAUDE_HAIKU_TRANSLATION_MODEL_ID);
   assert.deepEqual(options?.tools, []);
   assert.equal(options?.maxTurns, 1);
-  assert.equal(options?.persistSession, false);
+  assert.equal(options?.persistSession, true);
   assert.equal(options?.includePartialMessages, false);
   assert.equal(options?.permissionMode, "bypassPermissions");
   assert.equal(options?.allowDangerouslySkipPermissions, true);

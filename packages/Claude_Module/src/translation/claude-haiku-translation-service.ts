@@ -217,7 +217,7 @@ export class ClaudeHaikuTranslationService {
       model: CLAUDE_HAIKU_TRANSLATION_MODEL_ID,
       pathToClaudeCodeExecutable: this.options.installer.getExecutablePath(),
       permissionMode: "bypassPermissions",
-      persistSession: false,
+      persistSession: true,
       projectPath: resolveClaudeProviderProjectDir(
         CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG
       ),
