@@ -52,6 +52,7 @@
 - Codex reasoning translation now flows through the shared runtime translation module as an async overlay over already-persisted native reasoning text; the old collapsible thinking bootstrap remains only as legacy compatibility for archived raw history.
 - Видимый Codex reasoning обязан следовать языку `Messages for the User`, который Core каждый turn протягивает через applied turn config; если выбран `en`, source provider text остаётся без translation hop.
 - Codex no longer keeps a second display-only gate for reasoning bubbles; upstream `model_reasoning_summary` is the only truth for whether reasoning can reach the client.
+- Codex visibility is decided at emission time together with Claude/Gemini: Core stamps `visibilityAtEmission` on persisted `SessionMessage` records by reading `reasoningSummaryEnabled`, so toggling `Reasoning in dialog` off never leaves hidden reasoning bubbles translatable, and toggling it back on inside a long-running session only exposes newly emitted reasoning — previously hidden bubbles stay hidden.
 - Settings UI must sync the provider-owned `config.toml` immediately on toggle change and again on save/reset so provider-home stays consistent with persisted settings.
 - `models_cache.json` is an upstream remote-model catalog cache, not the stable source of truth for reasoning summaries; it may be refreshed independently of CodeAI Hub releases.
 - Released Codex runtimes must stay self-contained: if `@codeai-hub/translation` is absent from the installed provider bundle, Core health is considered broken.
