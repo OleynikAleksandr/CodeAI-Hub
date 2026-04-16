@@ -1,0 +1,73 @@
+# План разработки (Development TODO Plan)
+
+## Context Pack For This Cycle
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Claude_LiveText_And_Thinking_Visibility_Architecture.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/Plans/Claude_LiveText_And_Thinking_Visibility_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+- Только этот список является источником документов для восстановления контекста текущего execution cycle.
+
+## Правила выполнения (Execution Rules):
+- **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Каждая подзадача должна затрагивать не более 3 файлов (architectural splits из 500-line rule документируются в scope явно).
+- Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
+- После каждого коммита сразу обновлять `doc/TODO/todo-plan.md`: статус, дата, hash.
+- **Gates (автоматически через Husky hooks):**
+  - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:knip`, `npm run format:fix`
+  - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
+- **Таргетные сборки** выполнять вручную перед закрытием затронутого Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
+- **Real-time документация:** любые изменения контрактов live streaming, thinking display и effort levels должны попасть в SSOT в этом же execution cycle.
+- Финальный release-stream выполняется только на чистом дереве: сначала `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`.
+
+## Phase 1 — Live text ingestion (owner: Claude, updated: 2026-04-16)
+
+### Stream: Text buffer + content stream handler
+1. [TODO] Создать `ClaudeTextLiveBuffer` по аналогии с `ClaudeThinkingLiveBuffer` (per-session accumulator, flush-threshold ~80-120 chars, sentence boundary) и regression test для `appendDelta` / `flushRemaining` / `consumeFinal`; scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`; expected commit message: `feat: add claude text live buffer`
+2. [TODO] Git Commit: `feat: add claude text live buffer` (hash: TBD)
+3. [TODO] Расширить handler: переименовать `ClaudeThinkingStreamHandler` → `ClaudeContentStreamHandler`, добавить `handleTextBlockStart/Delta/Stop` рядом с thinking-путём, и `consumeFinalText(sessionKey, finalText)`; scope: `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts` (rename from thinking-stream-handler), `packages/Claude_Module/src/messaging/claude-stream-event-router.ts` (wire new handler), `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts` (regression: live text emission, buffer reset on block start); expected commit message: `feat: stream claude text deltas`
+4. [TODO] Git Commit: `feat: stream claude text deltas` (hash: TBD)
+
+### Stream: Finalization dedupe for text
+5. [TODO] В `emitThinkingChunks`-аналоге для ассистентского text block'а — прогонять assembled text через `consumeFinalText`, эмитить только unseen tail, и пропускать pending buffer для уже-отэмитенного текста (pending остаётся только для локального провайдерного translation pre-tool non-thinking пути); scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts`; expected commit message: `fix: dedupe finalized claude assistant text`
+6. [TODO] Git Commit: `fix: dedupe finalized claude assistant text` (hash: TBD)
+
+## Phase 2 — Thinking display switch (owner: Claude, updated: 2026-04-16)
+
+### Stream: thinking.display = summarized
+7. [TODO] В `resolveThinkingOptions` / `buildQueryOptions` добавить `display: "summarized"` к `thinking: { type: "adaptive" }` (и к `{ type: "enabled" }`, если будет использоваться) при включённом thinking; обновить существующие тесты menager'а; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts` (если есть — иначе добавить точечный unit); expected commit message: `fix: enable summarized thinking display for claude`
+8. [TODO] Git Commit: `fix: enable summarized thinking display for claude` (hash: TBD)
+
+## Phase 3 — xhigh effort end-to-end (owner: Claude, updated: 2026-04-16)
+
+### Stream: Core resolver + types
+9. [TODO] Добавить `"xhigh"` в `CLAUDE_EFFORT_SET` и связанные union types, пропустить через `resolveClaudeThinkingEffort`, покрыть regression тестом; scope: `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/config/provider-defaults-resolver.test.ts`, `src/types/claude-model-registry.ts` (если effort union живёт там — иначе второй файл за scope не идёт); expected commit message: `feat: accept xhigh claude reasoning effort`
+10. [TODO] Git Commit: `feat: accept xhigh claude reasoning effort` (hash: TBD)
+
+### Stream: Settings UI — xhigh option
+11. [TODO] Добавить `xhigh` в Claude thinking effort dropdown с label `x-High` и подписью `Opus only; falls back to High elsewhere`; scope: `src/client/ui/src/components/settings/claude-thinking-state.ts`, `src/client/ui/src/components/settings/claude-thinking-effort-card.tsx` (или эквивалент), локализация (approved dicts: `ui_labels`, `ui_helper_text`); expected commit message: `feat: surface xhigh effort in claude settings`
+12. [TODO] Git Commit: `feat: surface xhigh effort in claude settings` (hash: TBD)
+
+## Phase 4 — Drop version numbers from Claude model aliases (owner: Claude, updated: 2026-04-16)
+
+### Stream: Registry displayName cleanup
+13. [TODO] Снять числовую версию из `CLAUDE_MODEL_ALIASES[].displayName` (Sonnet 4.5 → Sonnet, Opus 4.5 → Opus, Haiku 4.5 → Haiku); проверить, что Settings Claude dropdown и SSOT backfill подхватывают; scope: `src/types/claude-model-registry.ts`, `src/client/ui/src/components/settings/claude-default-model/*.tsx` (label rendering если есть version fallback), регрессионные тесты в `packages/core/src/config/provider-defaults-resolver.test.ts`; expected commit message: `chore: remove version numbers from claude model labels`
+14. [TODO] Git Commit: `chore: remove version numbers from claude model labels` (hash: TBD)
+
+## Phase 5 — SSOT synchronization (owner: Claude, updated: 2026-04-16)
+
+### Stream: Claude live content and effort contracts
+15. [TODO] Обновить `Modules/Claude.md` и `System/SystemArchitecture.md`: live text ingestion invariant, thinking.display=summarized default, xhigh effort уровень, alias-only model labels; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (если изменяется overlay contract для text bubbles); expected commit message: `docs: sync claude live text and effort ssot`
+16. [TODO] Git Commit: `docs: sync claude live text and effort ssot` (hash: TBD)
+
+## Phase 6 — Release build (owner: Claude, updated: 2026-04-16)
+
+### Stream: Release notes
+17. [TODO] Pre-bump README `Current Release` и CHANGELOG под upcoming version (1.1.998); scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare claude live text release notes`
+18. [TODO] Git Commit: `docs: prepare claude live text release notes` (hash: TBD)
+
+### Stream: Script-managed release batch
+19. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bump, provider bundles и release artifacts; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/`; expected commit message: `chore: build 1.1.998 release assets`
+20. [TODO] Git Commit: `chore: build 1.1.998 release assets` (hash: TBD)
