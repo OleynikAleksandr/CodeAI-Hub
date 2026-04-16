@@ -22,11 +22,11 @@
 
 ### Stream 1.1 — Provider-side tag on live bubbles
 1. [DONE] Add `tag: "live"` to `emitClaudeAssistantLiveText` output in `packages/Claude_Module/src/messaging/claude-thinking-dialog-emitter.ts`; extend existing emitter tests in `packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts` to assert the tag is present on live emits; propagate `tag` through Core `appendProviderMessage` in `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts` so it reaches `SessionMessage.tag`. Scope: 3 files.
-2. [DONE] Git Commit: `feat: tag claude live assistant bubbles for ui merge` (hash: TBD)
+2. [DONE] Git Commit: `feat: tag claude live assistant bubbles for ui merge` (hash: 4ff838cca)
 
 ### Stream 1.2 — UI merge function and unit tests
-1. [TODO] Add `mergeLiveAssistantMessages` in `src/client/ui/src/session/dialog-panel-message-utils.ts` (predicate `role === "assistant" && tag === "live"`, newline-join content/localizedContent, preserve first bubble id); unit tests in `src/client/ui/src/session/dialog-panel-message-utils.test.ts` covering: (a) consecutive live merge, (b) non-live assistant breaks group, (c) thinking between live breaks group, (d) localizedContent assembles with partial translation. Scope: 2 files.
-2. [TODO] Git Commit: `feat: merge consecutive claude live assistant bubbles` (hash: TBD)
+1. [DONE] Add `mergeLiveAssistantMessages` in `src/client/ui/src/session/dialog-panel-message-utils.ts` (predicate `role === "assistant" && tag === "live"`, direct concatenation of content/localizedContent because live segments already include their own whitespace/punctuation, preserve first bubble id); new test file `src/client/ui/src/session/dialog-panel-message-utils.test.ts` covers: (a) consecutive live merge, (b) non-live assistant breaks group, (c) thinking between live breaks group, (d) full-localized assembly, (e) partial-localized fallback, (f) composition with `mergeThinkingMessages` (no cross-merge). Scope: 2 files.
+2. [DONE] Git Commit: `feat: merge consecutive claude live assistant bubbles` (hash: TBD)
 
 ### Stream 1.3 — Wire merge pass in DialogPanel
 1. [TODO] In `src/client/ui/src/session/dialog-panel.tsx`, pipe `mergeLiveAssistantMessages` after `mergeThinkingMessages` in `displayMessages` memo; add smoke render test in `src/client/ui/src/session/virtual-conversation.test.tsx` (or new targeted test) verifying the combined pass produces one card for consecutive live fragments. Scope: 2 files.

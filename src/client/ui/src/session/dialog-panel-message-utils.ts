@@ -98,3 +98,50 @@ export const mergeThinkingMessages = (
   }
   return result;
 };
+
+const isLiveAssistantMessage = (message: SessionMessage): boolean =>
+  message.role === "assistant" && message.tag === "live";
+
+/**
+ * Live assistant text deltas arrive as multiple append-only bubbles so the
+ * Core translation overlay can attach localizedContent per segment. Visually
+ * the user expects a single growing card, not one card per sentence. This
+ * merge pass is symmetric to mergeThinkingMessages but uses direct
+ * concatenation (no newline-join) because ClaudeTextLiveBuffer emits
+ * boundary-aligned segments whose trailing punctuation/whitespace already
+ * forms natural reading breaks.
+ */
+const mergeLiveAssistantDisplayMessage = (
+  previous: SessionMessage,
+  next: SessionMessage
+): SessionMessage => {
+  const content = `${previous.content}${next.content}`;
+  const localizedContent = `${resolveDisplayContent(previous)}${resolveDisplayContent(next)}`;
+  return {
+    ...previous,
+    content,
+    ...(localizedContent === content ? {} : { localizedContent }),
+  };
+};
+
+export const mergeLiveAssistantMessages = (
+  source: readonly SessionMessage[]
+): SessionMessage[] => {
+  const result: SessionMessage[] = [];
+  for (const message of source) {
+    if (isLiveAssistantMessage(message)) {
+      const previous = result.at(-1);
+      if (previous && isLiveAssistantMessage(previous)) {
+        result[result.length - 1] = mergeLiveAssistantDisplayMessage(
+          previous,
+          message
+        );
+        continue;
+      }
+      result.push({ ...message });
+      continue;
+    }
+    result.push(message);
+  }
+  return result;
+};
