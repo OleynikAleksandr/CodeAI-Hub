@@ -30,11 +30,11 @@
 
 ### Stream 1.3 — Wire merge pass in DialogPanel
 1. [DONE] In `src/client/ui/src/session/dialog-panel.tsx`, pipe `mergeLiveAssistantMessages` after `mergeThinkingMessages` in `displayMessages` memo and import the new helper. Composition coverage already lives in `dialog-panel-message-utils.test.ts` (Stream 1.2 test 6); no separate DOM render smoke test added. Scope: 1 file.
-2. [DONE] Git Commit: `feat: apply live assistant merge pass in dialog panel` (hash: TBD)
+2. [DONE] Git Commit: `feat: apply live assistant merge pass in dialog panel` (hash: 46c199788)
 
 ### Stream 1.4 — SSOT sync
-1. [TODO] Extend Invariant 25 in `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` with one line: live assistant bubbles carry `tag: "live"` and are merged UI-side by `mergeLiveAssistantMessages` symmetric to `mergeThinkingMessages`; update `doc/SolidWorks-WorkFlow/Modules/Claude.md` with the same note in the dialog-emitter section. Scope: 2 files.
-2. [TODO] Git Commit: `docs: sync ssot for claude live bubble merge` (hash: TBD)
+1. [DONE] Extended Invariant 25 in `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` with the live-bubble UI-merge note and added the new canonical source files to the invariant's canon list; updated `doc/SolidWorks-WorkFlow/Modules/Claude.md` dialog-emitter section with the same note. Scope: 2 files.
+2. [DONE] Git Commit: `docs: sync ssot for claude live bubble merge` (hash: TBD)
 
 ---
 
