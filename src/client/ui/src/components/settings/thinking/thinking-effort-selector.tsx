@@ -77,6 +77,17 @@ const ThinkingEffortSelector: FC<ThinkingEffortSelectorProps> = ({
     CLAUDE_THINKING_EFFORTS.find((entry) => entry.name === effort)?.useCase ??
     "";
 
+  const resolveEffortLabel = (effort: ClaudeThinkingEffort): string => {
+    if (effort === "xhigh") {
+      return t(
+        UI_HELPER_TEXT_CATEGORY,
+        "settings.claude_thinking_settings.effort.xhigh_label",
+        "x-High"
+      );
+    }
+    return effort;
+  };
+
   const handleKeyDown = (
     event: KeyboardEvent<HTMLDivElement>,
     effort: ClaudeThinkingEffort
@@ -130,7 +141,9 @@ const ThinkingEffortSelector: FC<ThinkingEffortSelectorProps> = ({
                 {isSelected ? <div style={radioCircleInnerStyles} /> : null}
               </div>
               <div style={modelInfoStyles}>
-                <div style={modelTitleStyles}>{effort.name}</div>
+                <div style={modelTitleStyles}>
+                  {resolveEffortLabel(effort.name)}
+                </div>
                 <div style={modelDescriptionStyles}>
                   {resolveDescription(effort.name)}
                 </div>
