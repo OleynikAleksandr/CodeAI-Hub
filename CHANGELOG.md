@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.999] - 2026-04-16
+### Fixed
+- **Claude live assistant text no longer renders as one card per sentence**: the Phase 1 live-text ingestion shipped in 1.1.998 still emits each readable fragment as a stable append-only `SessionMessage` (so Core translation overlays can attach `localizedContent` per fragment), but the UI layer now collapses consecutive live fragments into one growing assistant card. The provider tags live emits with `tag: "live"`, Core `appendProviderMessage` forwards the tag into `SessionMessage.tag`, and `mergeLiveAssistantMessages` in `dialog-panel-message-utils.ts` performs the UI merge symmetric to `mergeThinkingMessages`.
+
+### Documentation
+- **System SSOT invariant 25** extended with a one-line note about the `tag: "live"` marker and the UI-side merge contract.
+- **Modules/Claude.md** dialog-emitter section mirrors the same note.
+
 ## [1.1.998] - 2026-04-16
 ### Fixed
 - **Claude visible text is now live**: a new `ClaudeTextLiveBuffer` + `ClaudeContentStreamHandler` ingest `content_block_delta` `text_delta` fragments and emit append-only assistant bubbles at sentence/paragraph boundaries. The previous ~2-minute silence between pre-tool assistant text and `stop_reason="tool_use"` (while Claude streamed large `input_json_delta` for `Write`/`Edit`) is eliminated. Finalization reconciles the assembled text against what was already materialized so nothing is duplicated.

@@ -7,7 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.998
+## Current Release — v1.1.999
+- **Claude live assistant text now collapses into one growing dialog card**: consecutive live text fragments from the same turn merge visually into a single assistant bubble instead of rendering one card per sentence. The provider still emits each live fragment as a stable append-only message so translation overlays keep attaching `localizedContent` per fragment, but the UI layer now runs a merge pass symmetric to the existing thinking merge.
+
+### 1.1.998 (previous)
 - **Claude assistant text now prints live, no more multi-minute silence on `Write`/`Edit`**: visible assistant text is surfaced as Claude streams it, sentence-by-sentence, instead of being held in memory until the tool_use block finishes streaming its payload. The old two-minute pause while Claude generated a large `Write` input is gone.
 - **Claude `Thinking` is now visible on Opus 4.7**: the SDK `thinking.display: "summarized"` flag is now always sent when thinking is enabled, so Claude Opus 4.7 emits plain-text reasoning fragments instead of encrypted-only signatures. Previously thinking on Opus 4.7 was invisible regardless of effort.
 - **New Reasoning effort level — x-High (Opus-only)**: Settings Claude now exposes `x-High` between `High` and `Max`. Documented by the SDK as "Deeper than high (Opus 4.7 only; falls back to High elsewhere)".
