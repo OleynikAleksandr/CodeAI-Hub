@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.995
+## Current Release — v1.1.996
+- **Project Manager `Stop` now uses the correct runtime transport**: the shared session input panel now delegates `session:stop` through the Project Manager transport when it is hosted inside the standalone workflow shell, instead of trying to use the regular chat webview bridge that is not initialized there.
+- **Hung rollover sessions can now be interrupted from the Project Manager input**: when a continuity resume stalls and the UI shows `Agent is resuming your session`, the `Stop` button can again send a real stop request for the active session and unblock the input path.
+- **Regression coverage now locks the Project Manager stop bridge**: the core-bridge stop-session test asserts that the shared `stopSession()` helper forwards to the Project Manager hook when that environment is active.
+
+### 1.1.995 (previous)
 - **Description no longer leaks stale artifacts across workspace switches**: Project Manager now ignores workflow snapshots that belong to the previous workspace while the new workspace handshake is still settling, so the right panel no longer reopens an old `Final_Description.md`.
 - **Description startup recovers the correct pre-submit surface after switching workspace**: when the newly selected workspace only has `questionnaire.md`, the main area now stays aligned with the active workspace and shows the questionnaire editor instead of the false `Description artifact is not available yet` placeholder.
 - **Regression coverage now locks the workspace-snapshot guard**: the main-area workflow-state test asserts that artifact derivation only accepts snapshots whose `workspaceSlug` and `workspacePath` match the current active workspace.

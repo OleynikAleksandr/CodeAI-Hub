@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.996] - 2026-04-16
+### Fixed
+- **Project Manager `Stop` now reaches the correct session transport**: the shared input-panel stop action now delegates to the Project Manager transport when that frontend is active, instead of sending through the regular chat webview bridge that is not initialized inside the standalone workflow shell.
+- **Hung continuity rollovers can now be interrupted from the input bar**: when Project Manager is stuck on `Agent is resuming your session`, the `Stop` button can again send a real `session:stop` request for the active session and release the UI from a transport-level dead button.
+- **Regression coverage locks the Project Manager stop delegation path**: a dedicated core-bridge test now asserts that `stopSession()` forwards to the Project Manager hook when the shared session UI runs outside the regular webview bootstrap.
+
 ## [1.1.995] - 2026-04-16
 ### Fixed
 - **Description no longer reuses stale workflow snapshots during workspace switch**: the Project Manager main area now ignores workflow-store payloads whose `workspaceSlug` and `workspacePath` do not match the current active workspace, preventing the previous workspace from reselecting its `Final_Description.md` during the switch window.
