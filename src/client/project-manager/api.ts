@@ -33,6 +33,9 @@ type LocalizationSyncStatus = {
   readonly busy: boolean;
   readonly message: string | null;
 };
+type ProjectManagerWindow = typeof window & {
+  __CODEAI_PM_STOP_SESSION__?: (sessionId: string) => void;
+};
 
 const vscode = resolveVscodeBridge();
 
@@ -53,6 +56,11 @@ class ProjectManagerApi {
 
   constructor() {
     this.config = resolveBridgeConfig();
+    (window as ProjectManagerWindow).__CODEAI_PM_STOP_SESSION__ = (
+      sessionId: string
+    ) => {
+      this.stopSession(sessionId);
+    };
 
     window.addEventListener("message", (event) => {
       const message = event.data;
@@ -205,6 +213,10 @@ class ProjectManagerApi {
   }
   deleteSession(sessionId: string): void {
     this.send({ type: "session:delete", payload: { sessionId } });
+  }
+
+  stopSession(sessionId: string): void {
+    this.send({ type: "session:stop", payload: { sessionId } });
   }
 
   refreshUsageLimits(params: {

@@ -17,6 +17,7 @@ import type { CoreBridgeConfig, ServerStatusResponse } from "./types";
 const RECONNECT_DELAY_MS = 2000;
 const globalScope = window as typeof window & {
   __CODEAI_CORE_CONFIG?: CoreBridgeConfig;
+  __CODEAI_PM_STOP_SESSION__?: (sessionId: string) => void;
 };
 type CoreConnectionStatus = "connecting" | "ready" | "error";
 type SessionStage = "chat" | "idea" | "spec" | "plan" | "execute";
@@ -218,6 +219,11 @@ const createSession = (providerIds: readonly ProviderStackId[]): void => {
   });
 };
 export const stopSession = (sessionId: string): void => {
+  const projectManagerStopSession = globalScope.__CODEAI_PM_STOP_SESSION__;
+  if (typeof projectManagerStopSession === "function") {
+    projectManagerStopSession(sessionId);
+    return;
+  }
   enqueueMessage({
     type: "session:stop",
     payload: { sessionId },

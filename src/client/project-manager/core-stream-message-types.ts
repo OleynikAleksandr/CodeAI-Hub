@@ -186,8 +186,12 @@ export type OutgoingMessage =
           | {
               readonly text: string;
               readonly turnOptions?: Record<string, unknown>;
-            };
+          };
       };
+    }
+  | {
+      readonly type: "session:stop";
+      readonly payload: { readonly sessionId: string };
     }
   | { readonly type: "session:delete"; readonly payload: { readonly sessionId: string } }
   | {
