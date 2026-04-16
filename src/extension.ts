@@ -26,10 +26,6 @@ import {
 import { recordVsixVersion } from "./extension-module/runtime/runtime-registry";
 import { ProviderAutoUpdateService } from "./extension-module/settings/provider-auto-update-service";
 import {
-  startSettingsFileWatcher,
-  stopSettingsFileWatcher,
-} from "./extension-module/settings/settings-file-watcher";
-import {
   applyDefaultModelsEnv,
   loadSettingsSnapshot,
 } from "./extension-module/settings/settings-storage";
@@ -157,8 +153,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
     remoteName: env.remoteName ?? null,
   });
 
-  startSettingsFileWatcher();
-
   await recordVsixVersion({
     version: extensionVersion,
     extensionPath: context.extensionUri.fsPath,
@@ -206,7 +200,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
 export function deactivate(): void {
   const logger = getExtensionLogger();
   logger.log("extension:deactivate", {});
-  stopSettingsFileWatcher();
   coreKeepAlive?.dispose();
   coreKeepAlive = null;
   coreProcessManager?.dispose();

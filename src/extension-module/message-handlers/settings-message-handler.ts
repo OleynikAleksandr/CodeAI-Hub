@@ -1,6 +1,5 @@
 import { UserGlossaryStore } from "@codeai-hub/localization";
 import { type Webview, window, workspace } from "vscode";
-import { getExtensionLogger } from "../logging/extension-logger";
 import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
 import { LocalizationRuntimeService } from "../settings/localization-runtime-service";
 import {
@@ -233,20 +232,6 @@ export class SettingsMessageHandler {
     rawSettings: unknown,
     webview: Webview
   ): Promise<void> {
-    const rawEffort = (
-      rawSettings as {
-        readonly providers?: {
-          readonly claude?: {
-            readonly thinking?: { readonly effort?: unknown };
-          };
-        };
-      }
-    )?.providers?.claude?.thinking?.effort;
-    // DEBUG 1.2.0: capture what effort value arrives in the save payload vs
-    // what normalization produces. Written to
-    // ~/.codeai-hub/logs/extension/extension.log. Remove once the
-    // stale-persist regression is fixed.
-    getExtensionLogger().debug("settings_debug_save_incoming", { rawEffort });
     const nextSettings = parseSettingsSnapshot(rawSettings);
     if (!nextSettings) {
       const reason =
@@ -255,10 +240,6 @@ export class SettingsMessageHandler {
       await this.postSaveError(webview, reason);
       return;
     }
-    getExtensionLogger().debug("settings_debug_save_normalized", {
-      effort: nextSettings.providers?.claude?.thinking?.effort,
-      previousEffort: this.settingsState.providers?.claude?.thinking?.effort,
-    });
 
     const previousSnapshot = this.settingsState;
     const impact = this.impactClassifier.classify(

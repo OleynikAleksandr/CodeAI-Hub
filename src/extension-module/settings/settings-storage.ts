@@ -1,7 +1,6 @@
 import { existsSync, promises as fs, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
-import { getExtensionLogger } from "../logging/extension-logger";
 import {
   type ClaudeThinkingSettings,
   DEFAULT_CLAUDE_SETTINGS,
@@ -133,35 +132,11 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
     const parsed = JSON.parse(raw) as unknown;
     const normalized = normalizeSnapshotForStorage(parsed);
     if (normalized) {
-      const backfillReasons = {
-        thinkingDisplay: needsThinkingDisplayBackfill(parsed),
-        claudeEffort: needsClaudeThinkingEffortBackfill(parsed),
-        localization: needsLocalizationBackfill(parsed),
-      };
-      const rawEffort = (
-        parsed as {
-          readonly providers?: {
-            readonly claude?: {
-              readonly thinking?: { readonly effort?: unknown };
-            };
-          };
-        }
-      )?.providers?.claude?.thinking?.effort;
-      const normalizedEffort = normalized.providers?.claude?.thinking?.effort;
-      // DEBUG 1.2.0: identify which backfill path triggers a persist.
-      // Written to ~/.codeai-hub/logs/extension/extension.log.
-      // Remove once the stale-persist regression is fixed.
-      getExtensionLogger().debug("settings_debug_load_snapshot", {
-        hadSettingsFile,
-        rawEffort,
-        normalizedEffort,
-        backfillReasons,
-      });
       if (
         hadSettingsFile &&
-        (backfillReasons.thinkingDisplay ||
-          backfillReasons.claudeEffort ||
-          backfillReasons.localization)
+        (needsThinkingDisplayBackfill(parsed) ||
+          needsClaudeThinkingEffortBackfill(parsed) ||
+          needsLocalizationBackfill(parsed))
       ) {
         persistSettingsSnapshot(normalized).catch(() => {
           /* ignore persistence errors */
@@ -203,17 +178,6 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
 export const persistSettingsSnapshot = async (
   snapshot: SettingsSnapshot
 ): Promise<void> => {
-  const effortSnapshot = snapshot.providers?.claude?.thinking?.effort;
-  const thinkingSnapshot = snapshot.providers?.claude?.thinking;
-  const stack = new Error("persist trace").stack ?? "(no stack)";
-  // DEBUG 1.2.0: identify who writes settings.json and with what claude thinking effort.
-  // Written to ~/.codeai-hub/logs/extension/extension.log.
-  // Remove this log once the stale-persist regression is fixed.
-  getExtensionLogger().debug("settings_debug_persist_snapshot", {
-    claudeThinking: thinkingSnapshot,
-    effort: effortSnapshot,
-    stack,
-  });
   try {
     await fs.mkdir(SETTINGS_DIR, { recursive: true });
     await fs.writeFile(
