@@ -18,20 +18,23 @@ export interface ClaudeThinkingEffortDescriptor {
 export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
   {
     alias: "sonnet",
-    displayName: "Sonnet 4.5",
-    description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
+    displayName: "Sonnet",
+    description:
+      "Best for everyday tasks; Anthropic resolves the latest version automatically.",
     status: "active",
   },
   {
     alias: "opus",
-    displayName: "Opus 4.5",
-    description: "Most capable for complex, agentic workloads.",
+    displayName: "Opus",
+    description:
+      "Most capable for complex, agentic workloads; latest version auto-resolved.",
     status: "active",
   },
   {
     alias: "haiku",
-    displayName: "Haiku 4.5",
-    description: "Fastest alias for quick answers and prototyping.",
+    displayName: "Haiku",
+    description:
+      "Fastest alias for quick answers and prototyping; latest version auto-resolved.",
     status: "active",
   },
 ] as const;

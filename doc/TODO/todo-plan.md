@@ -43,12 +43,12 @@
 ## Phase 3 — xhigh effort end-to-end (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Core resolver + types
-9. [TODO] Добавить `"xhigh"` в `CLAUDE_EFFORT_SET` и связанные union types, пропустить через `resolveClaudeThinkingEffort`, покрыть regression тестом; scope: `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/config/provider-defaults-resolver.test.ts`, `src/types/claude-model-registry.ts` (если effort union живёт там — иначе второй файл за scope не идёт); expected commit message: `feat: accept xhigh claude reasoning effort`
-10. [TODO] Git Commit: `feat: accept xhigh claude reasoning effort` (hash: TBD)
+9. [DONE] Добавить `"xhigh"` в Core `CLAUDE_THINKING_EFFORTS` Set + union, расширить LEGACY token anchor table (20000 между high=10000 и max=32000), добавить descriptor в `CLAUDE_THINKING_EFFORTS` registry в `src/types/claude-model-registry.ts`; scope: `packages/core/src/config/provider-defaults-resolver.ts`, `src/types/claude-model-registry.ts`; expected commit message: `feat: accept xhigh claude reasoning effort`
+10. [DONE] Git Commit: `feat: accept xhigh claude reasoning effort` (hash: `9b0e7f187`)
 
 ### Stream: Settings UI — xhigh option
-11. [TODO] Добавить `xhigh` в Claude thinking effort dropdown с label `x-High` и подписью `Opus only; falls back to High elsewhere`; scope: `src/client/ui/src/components/settings/claude-thinking-state.ts`, `src/client/ui/src/components/settings/claude-thinking-effort-card.tsx` (или эквивалент), локализация (approved dicts: `ui_labels`, `ui_helper_text`); expected commit message: `feat: surface xhigh effort in claude settings`
-12. [TODO] Git Commit: `feat: surface xhigh effort in claude settings` (hash: TBD)
+11. [DONE] UI селектор автоматически подхватил новый descriptor; добавлен label resolver `"xhigh"` → `"x-High"` и approved-dict записи в `ui_helper_text.json`; scope: `src/client/ui/src/components/settings/thinking/thinking-effort-selector.tsx`, `assets/localization/source/en/ui_helper_text.json`; expected commit message: `feat: surface xhigh effort in claude settings`
+12. [DONE] Git Commit: `feat: surface xhigh effort in claude settings` (hash: `67bc3e162`)
 
 ## Phase 4 — Drop version numbers from Claude model aliases (owner: Claude, updated: 2026-04-16)
 
