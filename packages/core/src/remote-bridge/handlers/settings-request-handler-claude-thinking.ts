@@ -1,4 +1,17 @@
-const CLAUDE_THINKING_EFFORTS = new Set(["low", "medium", "high", "max"]);
+// NOTE: keep this set aligned with `CLAUDE_THINKING_EFFORTS` in
+// `packages/core/src/config/provider-defaults-resolver.ts` and the UI-side
+// `CLAUDE_THINKING_EFFORT_SET` in `src/types/claude-model-registry.ts`. Any
+// value missing here causes Core `handleLoad` to treat the value as legacy
+// numeric and rewrite settings.json back to the default effort on every
+// PM boot — that is exactly how the 1.1.998 `xhigh` save was silently
+// reverted to `medium`.
+const CLAUDE_THINKING_EFFORTS = new Set([
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+]);
 const DEFAULT_CLAUDE_THINKING_EFFORT = "medium";
 
 const LEGACY_CLAUDE_THINKING_TOKEN_ANCHORS: readonly {
@@ -8,6 +21,7 @@ const LEGACY_CLAUDE_THINKING_TOKEN_ANCHORS: readonly {
   { effort: "low", maxTokens: 2000 },
   { effort: "medium", maxTokens: 4000 },
   { effort: "high", maxTokens: 10_000 },
+  { effort: "xhigh", maxTokens: 20_000 },
   { effort: "max", maxTokens: 32_000 },
 ];
 
