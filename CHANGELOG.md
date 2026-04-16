@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.993] - 2026-04-16
+### Fixed
+- **Google GTX strict sync now survives large localization bundles**: the shared Google translation client no longer forces long marker-preserving runtime bundles through a `GET ...&q=...` URL; large payloads now use `POST application/x-www-form-urlencoded`, preventing full-bundle fallback on categories such as `system_feedback`.
+- **Whole-bundle localization batching remains unchanged for Google-backed runtime sync**: `LocalizationMaterializer` still uses one structured no-chunk batch per runtime bundle, but the transport layer now chooses a payload-safe request method instead of failing closed before translation begins.
+- **Regression coverage locks the transport split**: the translation package now tests both short `GET` requests and large `POST` requests for `google-gtx`, protecting the runtime save path from reintroducing the `83 fallback translations` error.
+
 ## [1.1.992] - 2026-04-16
 ### Fixed
 - **Haiku startup bundle translation now masks `Ultrathink` trigger literals before dispatch**: the Claude Haiku translation-only runtime replaces prompt-triggering literals such as `Ultrathink` with internal placeholders before sending localization/help text to the provider and restores them after translation, preventing provider-native `ultrathink_effort` from reappearing on the first large startup bundle.

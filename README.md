@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.992
+## Current Release — v1.1.993
+- **Google GTX no longer fails strict localization sync on large runtime bundles**: long marker-preserving localization batches such as `system_feedback` now switch from `GET` to `POST application/x-www-form-urlencoded`, avoiding URL-length overflow and preventing full-bundle fallback during Settings save.
+- **The whole-bundle localization contract stays intact for Google**: `LocalizationMaterializer` still sends one structured no-chunk batch per runtime bundle, but `GoogleTranslateClient` now uses transport appropriate for the payload size instead of forcing long bundles through query-string transport.
+- **Regression coverage now locks the Google transport split**: the shared translation package tests both short `GET` requests and large `POST` requests, so future changes cannot silently reintroduce the `83 fallback translations` failure on `system_feedback`.
+
+### 1.1.992 (previous)
 - **Haiku localization startup no longer lets `Ultrathink` re-enable hidden provider effort**: the translation-only runtime now masks trigger literals such as `Ultrathink` before sending the prompt to Claude Haiku and restores them after translation, preventing the first large help bundle from inheriting provider-native `ultrathink_effort` on cold startup.
 - **Runtime bundle sync is no longer fully serial**: localization bootstrap materialization now resolves the runtime-priority bundle set with bounded concurrency `2`, reducing the worst-case startup/save-sync latency on slower engines without changing the strict ready contract.
 - **Reasoning translation throughput is higher under bursty output**: the shared session-translation dispatcher now allows `2` concurrent jobs instead of `1`, so multiple thinking bubbles no longer wait through one global single-file queue.
