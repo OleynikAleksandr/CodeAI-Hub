@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.991
+## Current Release — v1.1.992
+- **Haiku localization startup no longer lets `Ultrathink` re-enable hidden provider effort**: the translation-only runtime now masks trigger literals such as `Ultrathink` before sending the prompt to Claude Haiku and restores them after translation, preventing the first large help bundle from inheriting provider-native `ultrathink_effort` on cold startup.
+- **Runtime bundle sync is no longer fully serial**: localization bootstrap materialization now resolves the runtime-priority bundle set with bounded concurrency `2`, reducing the worst-case startup/save-sync latency on slower engines without changing the strict ready contract.
+- **Reasoning translation throughput is higher under bursty output**: the shared session-translation dispatcher now allows `2` concurrent jobs instead of `1`, so multiple thinking bubbles no longer wait through one global single-file queue.
+
+### 1.1.991 (previous)
 - **Haiku translation runtime now hard-disables thinking at both transport layers**: the provider-owned Claude Haiku translation path keeps `thinking: { type: "disabled" }` and also passes SDK settings `alwaysThinkingEnabled: false`, preventing literal help text such as `Ultrathink` from reactivating hidden Claude reasoning on interface/help bundle syncs.
 - **Translation-only query profile is now locked in by regression coverage**: the Haiku translation service test asserts the explicit SDK `alwaysThinkingEnabled: false` flag together with the existing translate-only prompt and disabled thinking profile.
 - **Claude module SSOT now documents the hard-disable requirement**: the module contract explicitly states that translation-only Haiku queries must not allow prompt-triggered thinking heuristics back in.

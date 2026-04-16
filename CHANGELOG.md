@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.992] - 2026-04-16
+### Fixed
+- **Haiku startup bundle translation now masks `Ultrathink` trigger literals before dispatch**: the Claude Haiku translation-only runtime replaces prompt-triggering literals such as `Ultrathink` with internal placeholders before sending localization/help text to the provider and restores them after translation, preventing provider-native `ultrathink_effort` from reappearing on the first large startup bundle.
+- **Runtime localization bootstrap is no longer strictly one bundle at a time**: `LocalizationFacade` now resolves the runtime-priority bundle set with bounded concurrency `2`, shortening cold-start and strict save-sync latency on slower engines while preserving the existing strict-ready semantics.
+- **Thinking translation no longer bottlenecks on a single global worker**: the session translation dispatcher now runs `2` concurrent jobs, reducing queue-driven delay when Codex/Claude/Gemini emit several visible thinking bubbles in quick succession.
+
 ## [1.1.991] - 2026-04-16
 ### Fixed
 - **Haiku translation-only runtime now hard-disables thinking at the SDK level**: the provider-owned Claude translation path still sends `thinking: { type: "disabled" }`, but now also passes `settings.alwaysThinkingEnabled = false`, so literal help text such as `Ultrathink` can no longer reactivate hidden Claude reasoning during interface/help bundle materialization.
