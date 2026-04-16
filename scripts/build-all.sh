@@ -9,12 +9,17 @@ cd "$REPO_ROOT"
 source "$SCRIPT_DIR/release-utils.sh"
 
 ALLOW_DIRTY=false
+EXPLICIT_VERSION=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --allow-dirty)
       ALLOW_DIRTY=true
       shift
+      ;;
+    --version)
+      EXPLICIT_VERSION="$2"
+      shift 2
       ;;
     *)
       echo "❌ Unknown option: $1" >&2
@@ -231,7 +236,19 @@ for version in "${versions[@]:1}"; do
   max_version="$(compare_versions "$max_version" "$version")"
 done
 
-new_version="$(increment_patch "$max_version")"
+if [[ -n "$EXPLICIT_VERSION" ]]; then
+  if ! [[ "$EXPLICIT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "❌ --version must be semver like 1.2.0 (got: $EXPLICIT_VERSION)" >&2
+    exit 1
+  fi
+  if [[ "$(compare_versions "$max_version" "$EXPLICIT_VERSION")" != "$EXPLICIT_VERSION" ]] && [[ "$EXPLICIT_VERSION" != "$max_version" ]]; then
+    echo "❌ --version $EXPLICIT_VERSION is not greater than current max $max_version" >&2
+    exit 1
+  fi
+  new_version="$EXPLICIT_VERSION"
+else
+  new_version="$(increment_patch "$max_version")"
+fi
 
 echo "🔖 Current max version: $max_version"
 echo "🔖 Preparing new unified version: $new_version"
