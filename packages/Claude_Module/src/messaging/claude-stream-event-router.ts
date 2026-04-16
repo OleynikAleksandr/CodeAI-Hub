@@ -6,6 +6,7 @@ import {
   readClaudeMessageDeltaStopReason,
   readClaudeMessageId,
 } from "./claude-thinking-dialog-emitter";
+import { ClaudeThinkingStreamHandler } from "./claude-thinking-stream-handler";
 import {
   type ClaudeTextTranslationAdapter,
   ClaudeThoughtTranslationAdapter,
@@ -103,13 +104,17 @@ export class ClaudeStreamEventRouter {
   >();
   private readonly thinkingMessageIdBySession = new Map<string, string>();
   private readonly thoughtTranslator: ClaudeTextTranslationAdapter;
+  private readonly thinkingStreamHandler: ClaudeThinkingStreamHandler;
 
   constructor(
     reporter?: ModuleReporter,
-    thoughtTranslator?: ClaudeTextTranslationAdapter
+    thoughtTranslator?: ClaudeTextTranslationAdapter,
+    thinkingStreamHandler?: ClaudeThinkingStreamHandler
   ) {
     this.thoughtTranslator =
       thoughtTranslator ?? new ClaudeThoughtTranslationAdapter(reporter);
+    this.thinkingStreamHandler =
+      thinkingStreamHandler ?? new ClaudeThinkingStreamHandler();
   }
 
   handleAssistantMessage(
@@ -173,6 +178,15 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): Promise<void> {
+    if (this.thinkingStreamHandler.handleBlockStart(session, message)) {
+      return;
+    }
+    if (this.thinkingStreamHandler.handleDelta(session, message)) {
+      return;
+    }
+    if (this.thinkingStreamHandler.handleBlockStop(session, message)) {
+      return;
+    }
     const stopReason = readClaudeMessageDeltaStopReason(message);
     if (stopReason === "tool_use") {
       await this.flushPendingAssistantText(session, "tool_use_preamble");
@@ -187,6 +201,7 @@ export class ClaudeStreamEventRouter {
     if (isClaudeMessageStopEvent(message)) {
       await this.flushPendingAssistantText(session, "regular");
       this.clearThinkingMessage(session);
+      this.thinkingStreamHandler.resetSession(session.sessionId);
     }
   }
 
