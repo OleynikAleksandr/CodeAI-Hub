@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.990
+## Current Release — v1.1.991
+- **Haiku translation runtime now hard-disables thinking at both transport layers**: the provider-owned Claude Haiku translation path keeps `thinking: { type: "disabled" }` and also passes SDK settings `alwaysThinkingEnabled: false`, preventing literal help text such as `Ultrathink` from reactivating hidden Claude reasoning on interface/help bundle syncs.
+- **Translation-only query profile is now locked in by regression coverage**: the Haiku translation service test asserts the explicit SDK `alwaysThinkingEnabled: false` flag together with the existing translate-only prompt and disabled thinking profile.
+- **Claude module SSOT now documents the hard-disable requirement**: the module contract explicitly states that translation-only Haiku queries must not allow prompt-triggered thinking heuristics back in.
+
+### 1.1.990 (previous)
 - **Haiku localization/help sync now stays on an explicit translate-only path**: the provider-owned Claude Haiku runtime wraps every request in a dedicated translation prompt and repeats the marker-preservation rule for whole-bundle `localization_bundle` batches, so helper/help/interface materialization no longer degrades into raw English responses from an under-specified prompt.
 - **Haiku native translation traces are now isolated in the intended runtime bucket**: translation turns keep `persistSession: true`, but the query `cwd` now points at the dedicated `translation-runtime-haiku` project directory while auth/bootstrap still comes from provider-home, restoring predictable native Claude JSONL forensics.
 - **Duplicate reasoning translations no longer self-queue**: Core now reuses one in-flight Haiku translation per `engineId + targetLanguage + sourceHash`, removing redundant live/replay duplicate requests that previously stretched long reasoning overlays behind a single-worker queue.

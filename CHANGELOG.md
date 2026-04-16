@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.991] - 2026-04-16
+### Fixed
+- **Haiku translation-only runtime now hard-disables thinking at the SDK level**: the provider-owned Claude translation path still sends `thinking: { type: "disabled" }`, but now also passes `settings.alwaysThinkingEnabled = false`, so literal help text such as `Ultrathink` can no longer reactivate hidden Claude reasoning during interface/help bundle materialization.
+- **Regression coverage now locks the transport profile**: the Haiku translation service test asserts the SDK `alwaysThinkingEnabled: false` flag together with the existing translate-only prompt and disabled-thinking query profile.
+- **Claude SSOT now records the no-thinking translation contract**: the module documentation explicitly states that translation-only Haiku requests must keep prompt-triggered reasoning heuristics disabled even when the source text contains thinking-related literals.
+
 ## [1.1.990] - 2026-04-16
 ### Fixed
 - **Haiku translation prompts are now explicit and marker-safe**: the provider-owned Claude Haiku runtime no longer sends raw source text as a bare user request; it wraps every translation in a translate-only prompt, repeats the `__CODEAI_HUB_LOCALIZATION_ENTRY__` preservation rule for `localization_bundle`, and keeps helper/help/interface materialization aligned with the existing one-bundle no-chunk path.
