@@ -61,7 +61,7 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
   additionalDirectories: string[];
   allowDangerouslySkipPermissions: boolean;
   cwd: string;
-  effort?: "low" | "medium" | "high" | "max";
+  effort?: "low" | "medium" | "high" | "xhigh" | "max";
   env: NodeJS.ProcessEnv;
   includePartialMessages: boolean;
   model?: string;
@@ -75,6 +75,7 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
   resume?: string;
   settingSources: string[];
   thinking?: {
+    readonly display?: "summarized" | "omitted";
     readonly type: "adaptive" | "disabled";
   };
 }
@@ -308,8 +309,9 @@ export class ClaudeSDKManager {
     snapshot: ClaudeSettingsSnapshot | null,
     turnOptions?: Record<string, unknown>
   ): {
-    readonly effort?: "low" | "medium" | "high" | "max";
+    readonly effort?: "low" | "medium" | "high" | "xhigh" | "max";
     readonly thinking?: {
+      readonly display?: "summarized" | "omitted";
       readonly type: "adaptive" | "disabled";
     };
   } {
@@ -317,7 +319,7 @@ export class ClaudeSDKManager {
     if (appliedThinking) {
       return appliedThinking.thinkingEnabled
         ? {
-            thinking: { type: "adaptive" },
+            thinking: { type: "adaptive", display: "summarized" },
             effort: appliedThinking.reasoningEffort ?? "medium",
           }
         : { thinking: { type: "disabled" } };
@@ -330,7 +332,7 @@ export class ClaudeSDKManager {
       };
     }
     return {
-      thinking: { type: "adaptive" },
+      thinking: { type: "adaptive", display: "summarized" },
       effort: payload.effort,
     };
   }

@@ -32,7 +32,7 @@
 
 ### Stream: Finalization dedupe for text
 5. [DONE] В `handleAssistantMessageInternal` прогонять assembled text через `consumeFinalText`: если весь текст уже materialized через live path — skip pending; если есть tail и live path был — эмитить tail как live-bubble (suffix `text_final_tail`); если live path не было — оставить legacy pending translation path. Structured output helpers вынесены в отдельный файл чтобы удержать router под 500-line rule; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-structured-output-helpers.ts` (new split, forced by 500-line rule), `packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts` (un-skip 3 tests: superset / no-live / divergent); expected commit message: `fix: dedupe finalized claude assistant text`
-6. [DONE] Git Commit: `fix: dedupe finalized claude assistant text` (hash: TBD)
+6. [DONE] Git Commit: `fix: dedupe finalized claude assistant text` (hash: `4d3b8e9db`)
 
 ## Phase 2 — Thinking display switch (owner: Claude, updated: 2026-04-16)
 
