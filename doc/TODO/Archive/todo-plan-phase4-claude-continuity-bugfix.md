@@ -54,5 +54,5 @@
 10. [DONE] Git Commit: `docs: prepare claude continuity bugfix release notes` (hash: `f4aea2684`)
 
 ### Stream: Script-managed release batch
-11. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bump, provider bundles и release artifacts для пользовательского retest; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/`; expected commit message: `chore: build claude continuity bugfix release`
-12. [TODO] Git Commit: `chore: build claude continuity bugfix release` (hash: TBD)
+11. [DONE] На чистом дереве выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bump, provider bundles и release artifacts для пользовательского retest; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/`; expected commit message: `chore: build claude continuity bugfix release` (committed as `chore: build 1.1.997 release assets` to follow established convention)
+12. [DONE] Git Commit: `chore: build 1.1.997 release assets` (hash: `91efa565a`); release VSIX `codeai-hub-1.1.997.vsix`; provider/core/UI/launcher tarballs in `doc/tmp/releases/`
