@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.994
+## Current Release — v1.1.995
+- **Description no longer leaks stale artifacts across workspace switches**: Project Manager now ignores workflow snapshots that belong to the previous workspace while the new workspace handshake is still settling, so the right panel no longer reopens an old `Final_Description.md`.
+- **Description startup recovers the correct pre-submit surface after switching workspace**: when the newly selected workspace only has `questionnaire.md`, the main area now stays aligned with the active workspace and shows the questionnaire editor instead of the false `Description artifact is not available yet` placeholder.
+- **Regression coverage now locks the workspace-snapshot guard**: the main-area workflow-state test asserts that artifact derivation only accepts snapshots whose `workspaceSlug` and `workspacePath` match the current active workspace.
+
+### 1.1.994 (previous)
 - **Translation engine availability now follows the real provider runtime state**: the Settings `Translation engine` selector keeps `Google GTX Free` available by default, but disables OpenAI Codex and Anthropic Claude engines when their backing provider stack is unavailable in live `core:state`.
 - **Provider-owned engines no longer look selectable when access is missing**: unavailable `Codex` and `Claude` translation entries now surface the provider recovery/status message instead of behaving like always-ready engines.
 - **The product now stays honest about what it knows**: CodeAI Hub still does not perform a first-class subscription entitlement check, so the UI now gates by actual provider availability/auth status instead of implying that model access has been verified.

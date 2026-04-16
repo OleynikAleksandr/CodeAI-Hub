@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.995] - 2026-04-16
+### Fixed
+- **Description no longer reuses stale workflow snapshots during workspace switch**: the Project Manager main area now ignores workflow-store payloads whose `workspaceSlug` and `workspacePath` do not match the current active workspace, preventing the previous workspace from reselecting its `Final_Description.md` during the switch window.
+- **Workspace switch restores the correct pre-submit Description surface**: when the newly selected workspace has no `Final_Description.md`, Project Manager now keeps the questionnaire/editor path instead of showing the false `Description artifact is not available yet` placeholder on the right panel.
+- **Regression coverage locks the current-workspace guard**: the main-area workflow-state test now asserts that Description artifact derivation stays gated by the active workspace identity, reducing the chance of cross-workspace regressions returning silently.
+
 ## [1.1.994] - 2026-04-16
 ### Fixed
 - **Translation engine availability now follows real provider status**: the Settings localization engine selector keeps `Google GTX Free` available by default, but disables `OpenAI Codex` and `Anthropic Claude` engines when their backing provider stack is unavailable in live `core:state`.
