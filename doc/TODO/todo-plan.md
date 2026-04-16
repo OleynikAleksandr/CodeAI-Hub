@@ -59,8 +59,8 @@
 ## Phase 5 — SSOT synchronization (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Claude live content and effort contracts
-15. [TODO] Обновить `Modules/Claude.md` и `System/SystemArchitecture.md`: live text ingestion invariant, thinking.display=summarized default, xhigh effort уровень, alias-only model labels; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (если изменяется overlay contract для text bubbles); expected commit message: `docs: sync claude live text and effort ssot`
-16. [TODO] Git Commit: `docs: sync claude live text and effort ssot` (hash: TBD)
+15. [DONE] Обновить `Modules/Claude.md` и `System/SystemArchitecture.md`: live text ingestion, thinking.display=summarized default, xhigh effort уровень, alias-only model labels, новая invariant 26; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `docs: sync claude live text and effort ssot`
+16. [DONE] Git Commit: `docs: sync claude live text and effort ssot` (hash: `e443c60b8`)
 
 ## Phase 6 — Release build (owner: Claude, updated: 2026-04-16)
 

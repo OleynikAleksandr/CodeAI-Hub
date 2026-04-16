@@ -4,6 +4,22 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.998] - 2026-04-16
+### Fixed
+- **Claude visible text is now live**: a new `ClaudeTextLiveBuffer` + `ClaudeContentStreamHandler` ingest `content_block_delta` `text_delta` fragments and emit append-only assistant bubbles at sentence/paragraph boundaries. The previous ~2-minute silence between pre-tool assistant text and `stop_reason="tool_use"` (while Claude streamed large `input_json_delta` for `Write`/`Edit`) is eliminated. Finalization reconciles the assembled text against what was already materialized so nothing is duplicated.
+- **Opus 4.7 plain-text thinking is visible again**: SDK option `thinking.display: "summarized"` is forwarded whenever thinking is enabled. Without it, Opus 4.7 only streams `signature_delta` (encrypted, zero plain-text). Safe no-op on Sonnet/Haiku/older Opus where plain-text thinking was already exposed.
+
+### Added
+- **x-High reasoning effort**: `ClaudeThinkingEffort` union extended with `xhigh` between `high` and `max`. Documented by the Claude Agent SDK as Opus-only "Deeper than high; falls back to High elsewhere". Settings UI renders it with a new radio row and localized label `x-High`.
+
+### Changed
+- **Claude model labels stop shipping hard-coded versions**: `CLAUDE_MODEL_ALIASES[].displayName` is now `Sonnet` / `Opus` / `Haiku`. Descriptions call out that the Anthropic SDK auto-resolves each alias to the latest concrete version at query time (today: `opus → claude-opus-4-7`).
+
+### Documentation
+- **System SSOT invariant 25** rephrased from "Provider live thinking" to "Provider live content" and extended to cover live `text_delta` ingestion too.
+- **System SSOT invariant 26** added: Claude model aliases stay unversioned in UI, effort union is 5-level, `thinking.display = "summarized"` is the Opus-visibility contract.
+- **Modules/Claude.md** updated: new messaging cluster files (`claude-content-stream-handler`, `claude-text-live-buffer`, `claude-structured-output-helpers`), new SDK options, and effort/alias contract.
+
 ## [1.1.997] - 2026-04-16
 ### Fixed
 - **`Stop` is now shutdown-safe for Claude**: pressing `Stop` while Claude is streaming reaches the SDK as a clean interrupt and the resulting `aborted_streaming` terminal reason is treated as the expected outcome of a stopped turn. Late processor / dispatch / processing errors arriving after shutdown are suppressed instead of being emitted into a torn-down session error channel, so core no longer crashes with `ERR_UNHANDLED_ERROR` on the post-`Stop` window.

@@ -7,7 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.997
+## Current Release — v1.1.998
+- **Claude assistant text now prints live, no more multi-minute silence on `Write`/`Edit`**: visible assistant text is surfaced as Claude streams it, sentence-by-sentence, instead of being held in memory until the tool_use block finishes streaming its payload. The old two-minute pause while Claude generated a large `Write` input is gone.
+- **Claude `Thinking` is now visible on Opus 4.7**: the SDK `thinking.display: "summarized"` flag is now always sent when thinking is enabled, so Claude Opus 4.7 emits plain-text reasoning fragments instead of encrypted-only signatures. Previously thinking on Opus 4.7 was invisible regardless of effort.
+- **New Reasoning effort level — x-High (Opus-only)**: Settings Claude now exposes `x-High` between `High` and `Max`. Documented by the SDK as "Deeper than high (Opus 4.7 only; falls back to High elsewhere)".
+- **Model labels no longer show stale version numbers**: Claude model cards display just `Sonnet` / `Opus` / `Haiku` — Anthropic resolves the alias to the latest version at query time, so there's no more `Opus 4.5` label while the provider is actually running `Opus 4.7`.
+
+### 1.1.997 (previous)
 - **`Stop` no longer crashes core during a Claude turn**: pressing `Stop` from Project Manager while Claude is streaming now interrupts the active turn cleanly. Late provider errors that arrive after shutdown are suppressed instead of leaking out as an unhandled error event, so the next user message can continue the same workflow session instead of finding a dead core.
 - **Claude `Thinking` now appears live instead of in one delayed block**: reasoning is materialized into readable thinking bubbles as the model is still streaming, at sentence/paragraph boundaries, so the dialog no longer goes silent during long Claude reasoning. The final assembled thinking block is reconciled against what was already shown, so the same reasoning never appears twice.
 - **Translation overlays follow each live thinking bubble**: each emitted live bubble carries its own stable `messageId`, and Core-owned translation overlays attach to those bubbles individually as soon as translation completes, so localized reasoning text now arrives incrementally too instead of waiting for the whole reasoning block.
