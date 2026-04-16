@@ -1,7 +1,7 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-14
+**Updated:** 2026-04-16
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.881`)
 
@@ -193,6 +193,7 @@ Important live behaviors:
 
 - identical source strings are deduplicated within one materialization run;
 - interface/bootstrap bundle materialization now opts into explicit `chunkingMode = "disabled"` and sends one structured marker-preserving batch request per dictionary bundle instead of per-entry translation or shared semantic chunk planning;
+- `google-gtx` keeps that same structured whole-batch localization path, but long requests now switch from `GET` to `POST application/x-www-form-urlencoded` inside `GoogleTranslateClient` so large runtime bundles such as `system_feedback` do not fail closed on URL-length overflow before translation starts;
 - runtime bootstrap bundle resolution no longer waits for every affected bundle to finish before starting the next one: `LocalizationFacade` resolves the runtime-priority bundle set with bounded concurrency `2`, preserving the same category-keyed payload contract while shortening cold-start/save-sync latency on slower engines such as Claude Haiku;
 - bundle materialization uses dynamic watchdog timeouts plus automatic retry; strict save-sync treats missing/malformed marker segments as entry-level `partial_fallback` and does not report ready until every required entry in the selected bundle set parses successfully;
 - glossary changes invalidate affected bundles through the metadata hash;
