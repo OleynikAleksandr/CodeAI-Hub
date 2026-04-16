@@ -19,6 +19,17 @@ test("use-main-area-workflow-state keeps description-first startup tool and prim
   assert.equal(source.includes("branch?.session?.providerSessionId"), false);
   assert.equal(source.includes("branch?.sessionKind"), false);
   assert.equal(source.includes('label: "questionnaire.md" as const'), true);
+  assert.equal(source.includes("const isCurrentWorkspaceSnapshot"), true);
+  assert.equal(
+    source.includes("params.workspaceSlug === activeWorkspaceSlug"),
+    true,
+    "workflow state hook must ignore stale previous-workspace snapshots during workspace switch"
+  );
+  assert.equal(
+    source.includes("params.workspacePath === params.activeWorkspace.path"),
+    true,
+    "workflow state hook must match the active workspace path before deriving description artifacts"
+  );
   // Sidebar-only: startup tool resolved here, not by MainArea directly
   assert.equal(
     source.includes("params.setActiveTool(resolvedActiveTool)"),

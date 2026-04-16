@@ -50,6 +50,24 @@ const resolveStartupTool = (state: WorkflowStateSnapshot | null): string => {
 const isCanonicalDescriptionPath = (path: string): boolean =>
   /\/description\/Final_Description\.md$/.test(path);
 
+const isCurrentWorkspaceSnapshot = (params: {
+  readonly activeWorkspace?: WorkspaceProject;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): boolean => {
+  if (!params.activeWorkspace?.path) {
+    return false;
+  }
+  const activeWorkspaceSlug = resolveWorkspaceSlug(params.activeWorkspace);
+  if (!activeWorkspaceSlug) {
+    return false;
+  }
+  return (
+    params.workspaceSlug === activeWorkspaceSlug &&
+    params.workspacePath === params.activeWorkspace.path
+  );
+};
+
 export const useMainAreaWorkflowState = (
   params: UseMainAreaWorkflowStateParams
 ): void => {
@@ -89,6 +107,15 @@ export const useMainAreaWorkflowState = (
   useEffect(() => {
     const { snapshot: state, workspaceSlug, workspacePath, loaded } = storeState;
     if (!workspaceSlug || !workspacePath || !loaded) return;
+    if (
+      !isCurrentWorkspaceSnapshot({
+        activeWorkspace: params.activeWorkspace,
+        workspacePath,
+        workspaceSlug,
+      })
+    ) {
+      return;
+    }
     const branch = state?.description;
     const resolvedActiveTool = resolveStartupTool(state);
     if (state && autoResolvedActiveToolRef.current !== workspaceSlug) {
@@ -125,5 +152,5 @@ export const useMainAreaWorkflowState = (
       autoOpenedWorkspaceRef.current = workspaceSlug;
       params.setActiveTool(DESCRIPTION_TOOL);
     }
-  }, [storeState, params.setActiveTool, params.setDescriptionDocument, params.setHasDescriptionSession, params.setQuestionnaireDocument, params.descriptionGuardRef]);
+  }, [storeState, params.activeWorkspace, params.setActiveTool, params.setDescriptionDocument, params.setHasDescriptionSession, params.setQuestionnaireDocument, params.descriptionGuardRef]);
 };
