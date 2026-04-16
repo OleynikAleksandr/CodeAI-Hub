@@ -1,6 +1,10 @@
 import type { CSSProperties, FC } from "react";
-import { memo } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
+import type { ProviderStackDescriptor } from "../../../../../types/provider";
 import { useLocalization } from "../../app-host/use-localization";
+import { isCoreBridgeStatePayload } from "../../app-host/webview-message-types";
+import { getCachedProviders } from "../../core-bridge/core-bridge";
+import { resolveLocalizationEngineAvailability } from "./localization-engine-availability";
 import LocalizationGlossaryEditor from "./localization-glossary-editor";
 import { LocalizationLanguageCombobox } from "./localization-language-combobox";
 import type { LocalizationLanguageOption } from "./localization-language-filter";
@@ -99,6 +103,24 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
+const availabilityHintStyles: CSSProperties = {
+  fontSize: settingsTypographyTokens.bodyFontSize,
+  color: settingsColorTokens.textMuted,
+  lineHeight: 1.5,
+  margin: 0,
+};
+
+const availabilityWarningStyles: CSSProperties = {
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
+  borderRadius: "6px",
+  background: "rgba(190, 145, 75, 0.12)",
+  color: settingsColorTokens.textSecondary,
+  fontSize: settingsTypographyTokens.bodyFontSize,
+  lineHeight: 1.5,
+  margin: 0,
+  padding: "10px 12px",
+};
+
 const formatUnknownTranslationEngineLabel = (engineId: string): string =>
   engineId.startsWith("codex-")
     ? `OpenAI Codex · ${engineId.slice("codex-".length)}`
@@ -146,6 +168,33 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   onGlossaryEnabledChange,
 }) => {
   const { availableEngines, t } = useLocalization();
+  const [providers, setProviders] = useState<
+    readonly ProviderStackDescriptor[]
+  >(() => getCachedProviders());
+
+  useEffect(() => {
+    const handleWindowMessage = (event: MessageEvent<unknown>) => {
+      const message = event.data;
+      if (
+        !message ||
+        typeof message !== "object" ||
+        (message as { type?: unknown }).type !== "core:state"
+      ) {
+        return;
+      }
+      const payload = (message as { payload?: unknown }).payload;
+      if (!isCoreBridgeStatePayload(payload)) {
+        return;
+      }
+      setProviders(payload.providers);
+    };
+
+    window.addEventListener("message", handleWindowMessage);
+    return () => {
+      window.removeEventListener("message", handleWindowMessage);
+    };
+  }, []);
+
   const defaultLanguageLabel = t(
     "ui_interface",
     "settings.localization.default_language.reset_label",
@@ -233,6 +282,19 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
         ...engineOptions,
       ];
   const activeEngine = selectedEngineOption ?? visibleEngineOptions[0];
+  const engineAvailability = useMemo(
+    () =>
+      new Map(
+        visibleEngineOptions.map((engine) => [
+          engine.engineId,
+          resolveLocalizationEngineAvailability({
+            engineId: engine.engineId,
+            providers,
+          }),
+        ])
+      ),
+    [providers, visibleEngineOptions]
+  );
   const languageOptions: readonly LocalizationLanguageOption[] = [
     sourceLanguageOption,
     ...(activeEngine?.languages ?? []).map((language) => ({
@@ -246,6 +308,47 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
     value.toLowerCase() === "en" ? "source" : value;
 
   const activeEngineId = localization.engineId;
+  const activeEngineAvailability = engineAvailability.get(activeEngineId);
+  const unavailableSuffix = t(
+    "ui_interface",
+    "settings.localization.translation_engine.option.unavailable_suffix",
+    "Unavailable"
+  );
+  const genericAvailabilityHint = t(
+    "user_guidance",
+    "settings.localization.translation_engine.availability_hint",
+    "Google GTX works without extra account setup. OpenAI and Anthropic engines require matching provider access in the connected CLI."
+  );
+  const activeEngineUnavailableMessage = (() => {
+    if (!activeEngineAvailability?.disabled) {
+      return null;
+    }
+    const providerId = activeEngineAvailability.providerId;
+    const providerStatusMessage =
+      activeEngineAvailability.provider?.statusMessage?.trim() ?? "";
+    if (providerStatusMessage.length > 0) {
+      return providerStatusMessage;
+    }
+    if (providerId === "codexCli") {
+      return t(
+        "system_feedback",
+        "settings.localization.translation_engine.codex_unavailable_message",
+        "OpenAI translation engines are unavailable. Sign in to Codex CLI and verify your limits or subscription access, then restart Core."
+      );
+    }
+    if (providerId === "claudeCodeCli") {
+      return t(
+        "system_feedback",
+        "settings.localization.translation_engine.claude_unavailable_message",
+        "Anthropic translation engines are unavailable. Sign in to Claude CLI and verify your limits or subscription access, then restart Core."
+      );
+    }
+    return t(
+      "system_feedback",
+      "settings.localization.translation_engine.provider_unavailable_message",
+      "This translation engine is unavailable until its provider access is restored."
+    );
+  })();
 
   const engineSelectStyles: CSSProperties = {
     ...inputStyles,
@@ -292,12 +395,27 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
             style={engineSelectStyles}
             value={activeEngineId}
           >
-            {visibleEngineOptions.map((engine) => (
-              <option key={engine.engineId} value={engine.engineId}>
-                {resolveTranslationEngineLabel(engine.engineId, t)}
-              </option>
-            ))}
+            {visibleEngineOptions.map((engine) => {
+              const availability = engineAvailability.get(engine.engineId);
+              const disabled = availability?.disabled === true;
+              const label = resolveTranslationEngineLabel(engine.engineId, t);
+              return (
+                <option
+                  disabled={disabled}
+                  key={engine.engineId}
+                  value={engine.engineId}
+                >
+                  {disabled ? `${label} (${unavailableSuffix})` : label}
+                </option>
+              );
+            })}
           </select>
+          <p style={availabilityHintStyles}>{genericAvailabilityHint}</p>
+          {activeEngineUnavailableMessage ? (
+            <p style={availabilityWarningStyles}>
+              {activeEngineUnavailableMessage}
+            </p>
+          ) : null}
         </div>
 
         <label style={toggleRowStyles}>

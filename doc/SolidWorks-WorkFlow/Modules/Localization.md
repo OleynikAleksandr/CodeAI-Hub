@@ -250,6 +250,7 @@ Current live browser behavior:
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;
 - the settings card exposes a constrained `Translation engine` selector with `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, `OpenAI Codex · GPT-5.3 Codex Spark`, and `Anthropic Claude · Haiku 4.5`, plus language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
+- the Settings `Translation engine` selector now gates provider-owned engines by live `core:state` provider availability: `Google GTX` stays selectable without account bootstrap, while `OpenAI Codex` and `Anthropic Claude` engines render as unavailable when their backing provider stack is disconnected/degraded and surface the provider recovery/status message instead of pretending a verified subscription check exists.
 - Project Manager busy/localization blocking surfaces must keep hook order invariant across `busy -> ready` transitions; blocking may hide interactive content, but it must not mount a blank renderer shell after sync completion.
 
 ---

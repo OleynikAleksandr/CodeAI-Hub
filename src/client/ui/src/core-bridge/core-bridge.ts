@@ -47,6 +47,8 @@ const reconnectTimerRef: { current: number | undefined } = {
   current: undefined,
 };
 let cachedProviders: ProviderStackDescriptor[] = [...FALLBACK_PROVIDERS];
+export const getCachedProviders = (): readonly ProviderStackDescriptor[] =>
+  cachedProviders;
 const pendingMessages: string[] = [];
 let currentConnectionStatus: CoreConnectionStatus | "idle" = "idle";
 let currentConnectionDetail: string | undefined;

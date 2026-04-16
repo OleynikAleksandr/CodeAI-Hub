@@ -7846,6 +7846,7 @@
     current: void 0
   };
   var cachedProviders = [...FALLBACK_PROVIDERS];
+  var getCachedProviders = () => cachedProviders;
   var pendingMessages = [];
   var currentConnectionStatus = "idle";
   var currentConnectionDetail;
@@ -10590,6 +10591,111 @@
   // src/client/ui/src/components/settings/localization-settings-card.tsx
   var import_react12 = __toESM(require_react());
 
+  // src/client/ui/src/app-host/webview-message-types.ts
+  var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
+  var isCoreBridgeStatePayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return Array.isArray(candidate.sessions) && Array.isArray(candidate.providers);
+  };
+  var isSessionMessagePayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.sessionId !== "string") {
+      return false;
+    }
+    const message = candidate.message;
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const messageCandidate = message;
+    return typeof messageCandidate.id === "string" && typeof messageCandidate.content === "string" && typeof messageCandidate.createdAt === "number";
+  };
+  var isSessionDeletedPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string";
+  };
+  var isCoreRuntimeStatusPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.label === "string";
+  };
+  var isSessionHistoryPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string" && Array.isArray(candidate.messages);
+  };
+  var isSessionStreamPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return typeof candidate.sessionId === "string";
+  };
+  var isUseProjectManagerMessage = (value) => Boolean(
+    value && typeof value === "object" && value.type === "ui:useProjectManager"
+  );
+  var isSessionBindingPayload = (value) => {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    if (typeof candidate.sessionId !== "string") {
+      return false;
+    }
+    const status = candidate.status;
+    if (status !== "pending" && status !== "ready" && status !== "failed") {
+      return false;
+    }
+    const providerSessionId = candidate.providerSessionId;
+    if (providerSessionId !== null && typeof providerSessionId !== "string") {
+      return false;
+    }
+    return true;
+  };
+
+  // src/client/ui/src/components/settings/localization-engine-availability.ts
+  var LOCALIZATION_ENGINE_PROVIDER_MAP = {
+    "anthropic-claude-haiku-4-5": "claudeCodeCli",
+    "codex-gpt-5.3-codex-spark": "codexCli",
+    "codex-gpt-5.4-mini": "codexCli"
+  };
+  var resolveLocalizationEngineProviderId = (engineId) => LOCALIZATION_ENGINE_PROVIDER_MAP[engineId] ?? null;
+  var resolveLocalizationEngineAvailability = (options) => {
+    const providerId = resolveLocalizationEngineProviderId(options.engineId);
+    if (!providerId) {
+      return {
+        disabled: false,
+        provider: null,
+        providerId: null
+      };
+    }
+    const provider = options.providers.find((candidate) => candidate.id === providerId) ?? null;
+    if (!provider) {
+      return {
+        disabled: false,
+        provider: null,
+        providerId
+      };
+    }
+    return {
+      disabled: provider.connected === false,
+      provider,
+      providerId
+    };
+  };
+
   // src/client/ui/src/components/settings/localization-glossary-editor.tsx
   var import_react10 = __toESM(require_react());
   var import_jsx_runtime10 = __toESM(require_jsx_runtime());
@@ -10959,6 +11065,22 @@
     height: "16px",
     marginTop: "2px"
   };
+  var availabilityHintStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var availabilityWarningStyles = {
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    borderRadius: "6px",
+    background: "rgba(190, 145, 75, 0.12)",
+    color: settingsColorTokens.textSecondary,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    lineHeight: 1.5,
+    margin: 0,
+    padding: "10px 12px"
+  };
   var formatUnknownTranslationEngineLabel = (engineId) => engineId.startsWith("codex-") ? `OpenAI Codex \xB7 ${engineId.slice("codex-".length)}` : engineId;
   var resolveTranslationEngineLabel = (engineId, t) => {
     if (engineId === "codex-gpt-5.4-mini") {
@@ -10998,6 +11120,24 @@
     onGlossaryEnabledChange
   }) => {
     const { availableEngines, t } = useLocalization();
+    const [providers, setProviders] = (0, import_react12.useState)(() => getCachedProviders());
+    (0, import_react12.useEffect)(() => {
+      const handleWindowMessage = (event) => {
+        const message = event.data;
+        if (!message || typeof message !== "object" || message.type !== "core:state") {
+          return;
+        }
+        const payload = message.payload;
+        if (!isCoreBridgeStatePayload(payload)) {
+          return;
+        }
+        setProviders(payload.providers);
+      };
+      window.addEventListener("message", handleWindowMessage);
+      return () => {
+        window.removeEventListener("message", handleWindowMessage);
+      };
+    }, []);
     const defaultLanguageLabel = t(
       "ui_interface",
       "settings.localization.default_language.reset_label",
@@ -11076,6 +11216,18 @@
       ...engineOptions
     ];
     const activeEngine = selectedEngineOption ?? visibleEngineOptions[0];
+    const engineAvailability = (0, import_react12.useMemo)(
+      () => new Map(
+        visibleEngineOptions.map((engine) => [
+          engine.engineId,
+          resolveLocalizationEngineAvailability({
+            engineId: engine.engineId,
+            providers
+          })
+        ])
+      ),
+      [providers, visibleEngineOptions]
+    );
     const languageOptions = [
       sourceLanguageOption,
       ...(activeEngine?.languages ?? []).map((language) => ({
@@ -11087,6 +11239,46 @@
     );
     const resolveCategoryValue = (value) => value.toLowerCase() === "en" ? "source" : value;
     const activeEngineId = localization.engineId;
+    const activeEngineAvailability = engineAvailability.get(activeEngineId);
+    const unavailableSuffix = t(
+      "ui_interface",
+      "settings.localization.translation_engine.option.unavailable_suffix",
+      "Unavailable"
+    );
+    const genericAvailabilityHint = t(
+      "user_guidance",
+      "settings.localization.translation_engine.availability_hint",
+      "Google GTX works without extra account setup. OpenAI and Anthropic engines require matching provider access in the connected CLI."
+    );
+    const activeEngineUnavailableMessage = (() => {
+      if (!activeEngineAvailability?.disabled) {
+        return null;
+      }
+      const providerId = activeEngineAvailability.providerId;
+      const providerStatusMessage = activeEngineAvailability.provider?.statusMessage?.trim() ?? "";
+      if (providerStatusMessage.length > 0) {
+        return providerStatusMessage;
+      }
+      if (providerId === "codexCli") {
+        return t(
+          "system_feedback",
+          "settings.localization.translation_engine.codex_unavailable_message",
+          "OpenAI translation engines are unavailable. Sign in to Codex CLI and verify your limits or subscription access, then restart Core."
+        );
+      }
+      if (providerId === "claudeCodeCli") {
+        return t(
+          "system_feedback",
+          "settings.localization.translation_engine.claude_unavailable_message",
+          "Anthropic translation engines are unavailable. Sign in to Claude CLI and verify your limits or subscription access, then restart Core."
+        );
+      }
+      return t(
+        "system_feedback",
+        "settings.localization.translation_engine.provider_unavailable_message",
+        "This translation engine is unavailable until its provider access is restored."
+      );
+    })();
     const engineSelectStyles = {
       ...inputStyles3,
       appearance: "none"
@@ -11124,9 +11316,24 @@
                   onChange: (event) => onEngineIdChange(event.target.value),
                   style: engineSelectStyles,
                   value: activeEngineId,
-                  children: visibleEngineOptions.map((engine) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: engine.engineId, children: resolveTranslationEngineLabel(engine.engineId, t) }, engine.engineId))
+                  children: visibleEngineOptions.map((engine) => {
+                    const availability = engineAvailability.get(engine.engineId);
+                    const disabled = availability?.disabled === true;
+                    const label = resolveTranslationEngineLabel(engine.engineId, t);
+                    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                      "option",
+                      {
+                        disabled,
+                        value: engine.engineId,
+                        children: disabled ? `${label} (${unavailableSuffix})` : label
+                      },
+                      engine.engineId
+                    );
+                  })
                 }
-              )
+              ),
+              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: availabilityHintStyles, children: genericAvailabilityHint }),
+              activeEngineUnavailableMessage ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: availabilityWarningStyles, children: activeEngineUnavailableMessage }) : null
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { style: toggleRowStyles, children: [
               /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
@@ -12819,80 +13026,6 @@
 
   // src/client/ui/src/app-host/webview-message-handler.ts
   var import_react21 = __toESM(require_react());
-
-  // src/client/ui/src/app-host/webview-message-types.ts
-  var isIncomingMessage2 = (value) => Boolean(value && typeof value === "object" && "type" in value);
-  var isCoreBridgeStatePayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return Array.isArray(candidate.sessions) && Array.isArray(candidate.providers);
-  };
-  var isSessionMessagePayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.sessionId !== "string") {
-      return false;
-    }
-    const message = candidate.message;
-    if (!message || typeof message !== "object") {
-      return false;
-    }
-    const messageCandidate = message;
-    return typeof messageCandidate.id === "string" && typeof messageCandidate.content === "string" && typeof messageCandidate.createdAt === "number";
-  };
-  var isSessionDeletedPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.sessionId === "string";
-  };
-  var isCoreRuntimeStatusPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.label === "string";
-  };
-  var isSessionHistoryPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.sessionId === "string" && Array.isArray(candidate.messages);
-  };
-  var isSessionStreamPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    return typeof candidate.sessionId === "string";
-  };
-  var isUseProjectManagerMessage = (value) => Boolean(
-    value && typeof value === "object" && value.type === "ui:useProjectManager"
-  );
-  var isSessionBindingPayload = (value) => {
-    if (!value || typeof value !== "object") {
-      return false;
-    }
-    const candidate = value;
-    if (typeof candidate.sessionId !== "string") {
-      return false;
-    }
-    const status = candidate.status;
-    if (status !== "pending" && status !== "ready" && status !== "failed") {
-      return false;
-    }
-    const providerSessionId = candidate.providerSessionId;
-    if (providerSessionId !== null && typeof providerSessionId !== "string") {
-      return false;
-    }
-    return true;
-  };
 
   // src/client/ui/src/app-host/webview-message-dispatcher.ts
   var handleProviderPickerOpenMessage = (message, onProviderPickerOpen) => {
