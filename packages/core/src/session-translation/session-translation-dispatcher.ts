@@ -10,7 +10,7 @@ export interface SessionTranslationDispatcherSnapshot {
   readonly pendingJobs: number;
 }
 
-const SESSION_TRANSLATION_MAX_CONCURRENT_JOBS = 1;
+const SESSION_TRANSLATION_MAX_CONCURRENT_JOBS = 2;
 
 export class SessionTranslationDispatcher {
   private activeJobs = 0;

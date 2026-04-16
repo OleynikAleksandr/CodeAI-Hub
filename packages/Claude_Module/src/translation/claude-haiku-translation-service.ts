@@ -18,6 +18,28 @@ export const CLAUDE_HAIKU_TRANSLATION_PROVIDER_ID = "claude";
 const HAIKU_TRANSLATION_MAX_TURNS = 1;
 const DEFAULT_TRANSLATION_TIMEOUT_MS = 30_000;
 const STRUCTURED_LOCALIZATION_CATEGORY = "localization_bundle";
+const PROMPT_TRIGGER_LITERAL_MASKS = [
+  {
+    literal: "Ultrathink",
+    placeholder: "__CODEAI_HUB_LITERAL_ULTRATHINK__",
+  },
+] as const;
+
+const maskPromptTriggerLiterals = (text: string): string => {
+  let maskedText = text;
+  for (const mask of PROMPT_TRIGGER_LITERAL_MASKS) {
+    maskedText = maskedText.split(mask.literal).join(mask.placeholder);
+  }
+  return maskedText;
+};
+
+const restorePromptTriggerLiterals = (text: string): string => {
+  let restoredText = text;
+  for (const mask of PROMPT_TRIGGER_LITERAL_MASKS) {
+    restoredText = restoredText.split(mask.placeholder).join(mask.literal);
+  }
+  return restoredText;
+};
 
 export type ClaudeHaikuTranslationQueryFunction = (payload: {
   readonly prompt: string;
@@ -56,7 +78,7 @@ const buildPrompt = (request: TranslationRequest): string =>
     "Return only the translation.",
     "",
     "Source text:",
-    request.text,
+    maskPromptTriggerLiterals(request.text),
   ].join("\n");
 
 const resolveTranslationRuntimeCwd = (): string =>
@@ -200,7 +222,7 @@ export class ClaudeHaikuTranslationService {
       if (!translated) {
         return { errorCode: "empty_translation", text: null };
       }
-      return { text: translated };
+      return { text: restorePromptTriggerLiterals(translated) };
     } catch (error) {
       this.options.reporter?.warn?.(
         `Claude Haiku translation failed: ${error instanceof Error ? error.message : String(error)}`

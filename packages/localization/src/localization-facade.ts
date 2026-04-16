@@ -30,6 +30,7 @@ import {
   resolveAffectedBundleSet,
   shouldStrictRebuildBundle,
 } from "./localization-selective-sync";
+import { resolveWithBoundedConcurrency } from "./runtime-bundle-priority-resolver";
 import { SourceDictionaryRegistry } from "./source-dictionary-registry";
 import { UserGlossaryStore } from "./user-glossary-store";
 
@@ -130,6 +131,8 @@ const LOCALIZATION_RUNTIME_CATEGORY_PRIORITY = [
   "ui_interface",
   "workflow_terms",
 ] as const satisfies readonly LocalizationCategoryId[];
+
+const LOCALIZATION_RUNTIME_BUNDLE_MAX_CONCURRENT_JOBS = 2;
 
 export class LocalizationFacade {
   private readonly availableEngines: readonly LocalizationEngineLanguageCatalog[];
@@ -270,12 +273,14 @@ export class LocalizationFacade {
     }
 
     const affectedBundleSet = resolveAffectedBundleSet(options);
-    const resolvedBundlesByCategory =
-      await this.resolveRuntimeBundlesByPriority((category) =>
+    const resolvedBundlesByCategory = await resolveWithBoundedConcurrency(
+      LOCALIZATION_RUNTIME_CATEGORY_PRIORITY,
+      (category) =>
         strict && shouldStrictRebuildBundle(category, affectedBundleSet)
           ? this.materializeRequiredRuntimeBundle(category, normalizedSettings)
-          : this.resolveRuntimeBundleForCategory(category, normalizedSettings)
-      );
+          : this.resolveRuntimeBundleForCategory(category, normalizedSettings),
+      LOCALIZATION_RUNTIME_BUNDLE_MAX_CONCURRENT_JOBS
+    );
     return this.persistRuntimeBootstrapSnapshot(
       cacheKey,
       normalizedSettings,
@@ -390,20 +395,6 @@ export class LocalizationFacade {
         error instanceof Error ? error.message : String(error)
       );
     }
-  }
-
-  private async resolveRuntimeBundlesByPriority(
-    resolveBundle: (
-      category: LocalizationCategoryId
-    ) => Promise<LocalizationResolvedRuntimeBundle>
-  ): Promise<ResolvedRuntimeBundles> {
-    const resolvedBundlesByCategory = {} as ResolvedRuntimeBundles;
-
-    for (const category of LOCALIZATION_RUNTIME_CATEGORY_PRIORITY) {
-      resolvedBundlesByCategory[category] = await resolveBundle(category);
-    }
-
-    return resolvedBundlesByCategory;
   }
 
   private async materializeRequiredRuntimeBundle(

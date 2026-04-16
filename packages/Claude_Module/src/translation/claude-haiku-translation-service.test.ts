@@ -242,6 +242,46 @@ test("ClaudeHaikuTranslationService includes marker-safe prompt rules for locali
   );
 });
 
+test("ClaudeHaikuTranslationService masks Ultrathink trigger literals in prompts and restores translated output", async () => {
+  const auth = createFakeAuthManager();
+  const installer = createFakeInstaller();
+  const recorded: RecordedQueryCall[] = [];
+  const service = new ClaudeHaikuTranslationService({
+    authManager: auth as never,
+    installer: installer as never,
+    queryLoader: () =>
+      Promise.resolve({
+        query: buildRecordingQuery(
+          [
+            {
+              result:
+                'Используйте "__CODEAI_HUB_LITERAL_ULTRATHINK__" в сообщении.',
+              type: "result",
+            },
+          ],
+          recorded
+        ),
+      }),
+  });
+
+  const result = await service.translate({
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: 'Use "Ultrathink" anywhere in your message.',
+  });
+
+  assert.equal(
+    recorded[0]?.prompt.includes("Ultrathink"),
+    false,
+    "raw Ultrathink literal must not be sent to the Claude translation prompt"
+  );
+  assert.equal(
+    recorded[0]?.prompt.includes("__CODEAI_HUB_LITERAL_ULTRATHINK__"),
+    true
+  );
+  assert.equal(result.text, 'Используйте "Ultrathink" в сообщении.');
+});
+
 test("ClaudeHaikuTranslationService prefers result payload over partial assistant blocks", async () => {
   const auth = createFakeAuthManager();
   const installer = createFakeInstaller();
