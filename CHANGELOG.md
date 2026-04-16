@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.990] - 2026-04-16
+### Fixed
+- **Haiku translation prompts are now explicit and marker-safe**: the provider-owned Claude Haiku runtime no longer sends raw source text as a bare user request; it wraps every translation in a translate-only prompt, repeats the `__CODEAI_HUB_LOCALIZATION_ENTRY__` preservation rule for `localization_bundle`, and keeps helper/help/interface materialization aligned with the existing one-bundle no-chunk path.
+- **Dedicated Haiku translation runtime JSONL are restored under the intended project slug**: translation turns keep `persistSession: true`, but the query runtime now executes from the dedicated `translation-runtime-haiku` project directory while auth/bootstrap still reuse provider-home, so native Claude traces are written into a stable translation-only bucket again.
+- **Live reasoning translation no longer duplicates identical Haiku jobs**: Core reuses one in-flight translation per `engineId + targetLanguage + sourceHash`, preventing live reasoning plus rollout replay from enqueueing the same visible thinking block twice behind the single-worker session-translation dispatcher.
+
 ## [1.1.989] - 2026-04-15
 ### Fixed
 - **Haiku save-path false mismatch removed**: extension-side strict localization sync now normalizes to the same canonical five-category runtime snapshot that Core returns from `/api/v1/localization/bootstrap`, so selecting `Anthropic Claude · Haiku 4.5` no longer fails with `Core localization bootstrap does not match the current settings snapshot`.

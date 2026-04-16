@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.989
+## Current Release — v1.1.990
+- **Haiku localization/help sync now stays on an explicit translate-only path**: the provider-owned Claude Haiku runtime wraps every request in a dedicated translation prompt and repeats the marker-preservation rule for whole-bundle `localization_bundle` batches, so helper/help/interface materialization no longer degrades into raw English responses from an under-specified prompt.
+- **Haiku native translation traces are now isolated in the intended runtime bucket**: translation turns keep `persistSession: true`, but the query `cwd` now points at the dedicated `translation-runtime-haiku` project directory while auth/bootstrap still comes from provider-home, restoring predictable native Claude JSONL forensics.
+- **Duplicate reasoning translations no longer self-queue**: Core now reuses one in-flight Haiku translation per `engineId + targetLanguage + sourceHash`, removing redundant live/replay duplicate requests that previously stretched long reasoning overlays behind a single-worker queue.
+
+### 1.1.989 (previous)
 - **Haiku Settings save no longer fails on a false bootstrap mismatch**: extension-side strict sync now compares the same canonical five-category localization snapshot that Core returns from `/api/v1/localization/bootstrap`, instead of comparing it against a nine-key mirrored shape and rejecting an otherwise valid response.
 - **Core-only localization snapshot matching is now explicit and tested**: the Haiku bootstrap path uses a dedicated runtime-settings helper plus regression coverage for the exact `anthropic-claude-haiku-4-5` save scenario that previously raised `Core localization bootstrap does not match the current settings snapshot`.
 - **Fast-start fixes from `1.1.988` remain intact**: `Settings` and `Project Manager` still render immediately without blocking on localization bootstrap, while the corrected strict sync path now allows Haiku selection to save cleanly.

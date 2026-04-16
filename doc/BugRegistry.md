@@ -47,6 +47,7 @@
 | BUG-2026-03-20-01 | FIXED | Codex/Core/PM | reopen/recovery цикл держит `diagram_modules` dialog в вечном `Agent is working...` после restart Core / PM | 1.1.753 |
 | BUG-2026-03-25-01 | FIXED | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | 1.1.804 |
 | BUG-2026-03-29-01 | OPEN | Core/UI/Gemini | Session Stop semantics shutdown-ит Core вместо остановки turn; stalled Gemini turn оставляет dialog locked | TBD |
+| BUG-2026-04-16-01 | FIXED | Localization/Core/Claude | Haiku слишком медленно переводит runtime bundles и дублирует/обрезает reasoning translation | 1.1.990 |
 
 ---
 
@@ -76,6 +77,43 @@
 - заменить `Stop => /api/v1/shutdown` на session-scoped stop command;
 - реализовать Core-side stop/rebind path без остановки runtime;
 - добавить recoverable stalled-turn handling для Gemini, чтобы зависший turn переводился в unlock/retryable path, а не в бесконечный `working`.
+
+## BUG-2026-04-16-01 — Localization/Core/Claude: Haiku translation path sends under-specified prompts and duplicates reasoning work
+
+**Status:** FIXED
+
+**Symptom:**
+- При выборе `Anthropic Claude · Haiku 4.5` интерфейсы, help и подсказки синхронизировались заметно дольше ожидаемого, хотя bundle materialization уже шёл whole-batch без chunking.
+- Длинные reasoning/thinking блоки переводились частично: короткий фрагмент появлялся на `ru`, а остальная часть оставалась на английском.
+- Translation-sidecar JSONL содержал отдельные посторонние английские ответы вместо прямого перевода исходного текста.
+
+**Root cause (confirmed):**
+- Локализационный путь уже не использовал chunk planner: `LocalizationMaterializer` отправлял один marker-preserving `localization_bundle` batch с `chunkingMode: "disabled"`, поэтому основной latency regression был не в дроблении.
+- `ClaudeHaikuTranslationService` передавал `request.text` как bare user prompt. На длинных help/reasoning payloads Haiku периодически интерпретировал исходный текст как обычный запрос, а не как translation-only task.
+- Translation runtime сохранял `persistSession: true`, но query `cwd` указывал на provider-home вместо dedicated `translation-runtime-haiku`, поэтому native Claude JSONL писались в общий provider bucket и затрудняли диагностику translation-only path.
+- `SessionTranslationFacade` обрабатывал live reasoning и rollout replay как независимые задания; одинаковый `sourceHash` уходил в очередь дважды, а single-worker dispatcher удваивал задержку.
+
+**Fix:**
+- `ClaudeHaikuTranslationService` теперь оборачивает каждый запрос в явный translate-only prompt (`Translate the source text... Return only the translation... Source text:`) и дублирует marker-preservation rule для `localization_bundle`.
+- Translation query runtime переведён на dedicated project cwd `translation-runtime-haiku`, при этом auth/bootstrap по-прежнему поднимаются из provider-home.
+- `SessionTranslationFacade` добавил in-flight dedupe по `engineId + targetLanguage + sourceHash`, поэтому повторный reasoning block reuse-ит уже идущий Haiku перевод вместо нового provider call.
+
+**Commits:**
+- `7ec2d0a48 fix: harden haiku translation runtime`
+
+**Release:** `1.1.990`
+
+**Guards required:**
+- Regression test на translate-only prompt для обычного Haiku перевода.
+- Regression test на marker-safe prompt rules для `localization_bundle`.
+- Regression test на in-flight dedupe reasoning translation по одинаковому `sourceHash`.
+- Таргетные сборки `@codeai-hub/claude-module` и `@codeai-hub/core`.
+
+**Guards delivered:**
+- `node --test packages/Claude_Module/dist/translation/claude-haiku-translation-service.test.js`
+- `node --test packages/core/dist/session-translation/session-translation-facade.test.js`
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `npm run build --workspace=@codeai-hub/core`
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 
