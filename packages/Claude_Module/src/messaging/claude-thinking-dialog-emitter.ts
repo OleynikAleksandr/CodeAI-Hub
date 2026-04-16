@@ -36,7 +36,10 @@ export const emitClaudeThinkingDialog = (
  * pre-tool silence when Claude streams large input_json_delta payloads.
  *
  * Each fragment gets a unique uuid suffix so Core-owned translation overlays
- * can attach localizedContent to each live bubble independently.
+ * can attach localizedContent to each live bubble independently. The
+ * `tag: "live"` marker is forwarded through Core into SessionMessage.tag so
+ * the UI can merge consecutive live fragments into one dialog card, symmetric
+ * to how consecutive thinking bubbles are merged.
  */
 export const emitClaudeAssistantLiveText = (
   session: ActiveSession,
@@ -49,6 +52,7 @@ export const emitClaudeAssistantLiveText = (
   }
   session.eventEmitter.emit("message", {
     type: "assistant",
+    tag: "live",
     content,
     uuid: `${message.uuid ?? crypto.randomUUID()}::${suffix}`,
     claudeSessionId: message.session_id,

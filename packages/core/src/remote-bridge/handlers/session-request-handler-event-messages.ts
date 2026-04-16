@@ -88,11 +88,13 @@ export class SessionRequestHandlerEventMessages {
       return;
     }
     const timestamp = this.extractEventTimestamp(event);
+    const tag = this.extractEventTag(event);
     this.appendAndBroadcastMessage({
       sessionId,
       role,
       content,
       timestamp,
+      ...(tag ? { tag } : {}),
     });
   }
 
@@ -386,5 +388,17 @@ export class SessionRequestHandlerEventMessages {
     }
     const normalized = typed.timestamp.trim();
     return Number.isNaN(Date.parse(normalized)) ? undefined : normalized;
+  }
+
+  private extractEventTag(event: unknown): string | undefined {
+    if (!event || typeof event !== "object") {
+      return undefined;
+    }
+    const typed = event as { readonly tag?: unknown };
+    if (typeof typed.tag !== "string") {
+      return undefined;
+    }
+    const trimmed = typed.tag.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
   }
 }

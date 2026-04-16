@@ -10,6 +10,7 @@ import { ClaudeThinkingLiveBuffer } from "./claude-thinking-live-buffer";
 interface AssistantEmission {
   readonly content: string;
   readonly metadata?: Record<string, unknown>;
+  readonly tag?: string;
   readonly type: "assistant";
   readonly uuid: string;
 }
@@ -129,6 +130,11 @@ test("ClaudeStreamEventRouter emits live assistant text segment when text_delta 
     emissions[0].metadata?.live,
     true,
     "live assistant emission must carry live=true in metadata"
+  );
+  assert.equal(
+    emissions[0].tag,
+    "live",
+    "live assistant emission must carry tag='live' so Core forwards it into SessionMessage.tag for UI merge"
   );
 });
 

@@ -21,8 +21,8 @@
 ## Phase 1 — UI-side merge for consecutive live assistant messages (owner: Codex, updated: 2026-04-16)
 
 ### Stream 1.1 — Provider-side tag on live bubbles
-1. [TODO] Add `tag: "live"` to `emitClaudeAssistantLiveText` output in `packages/Claude_Module/src/messaging/claude-thinking-dialog-emitter.ts`; extend existing emitter tests in `packages/Claude_Module/src/messaging/*.test.ts` to assert the tag is present on live emits. Scope: 2 files.
-2. [TODO] Git Commit: `feat: tag claude live assistant bubbles for ui merge` (hash: TBD)
+1. [DONE] Add `tag: "live"` to `emitClaudeAssistantLiveText` output in `packages/Claude_Module/src/messaging/claude-thinking-dialog-emitter.ts`; extend existing emitter tests in `packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts` to assert the tag is present on live emits; propagate `tag` through Core `appendProviderMessage` in `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts` so it reaches `SessionMessage.tag`. Scope: 3 files.
+2. [DONE] Git Commit: `feat: tag claude live assistant bubbles for ui merge` (hash: TBD)
 
 ### Stream 1.2 — UI merge function and unit tests
 1. [TODO] Add `mergeLiveAssistantMessages` in `src/client/ui/src/session/dialog-panel-message-utils.ts` (predicate `role === "assistant" && tag === "live"`, newline-join content/localizedContent, preserve first bubble id); unit tests in `src/client/ui/src/session/dialog-panel-message-utils.test.ts` covering: (a) consecutive live merge, (b) non-live assistant breaks group, (c) thinking between live breaks group, (d) localizedContent assembles with partial translation. Scope: 2 files.
