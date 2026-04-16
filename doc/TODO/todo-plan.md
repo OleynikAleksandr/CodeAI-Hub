@@ -42,7 +42,7 @@
 
 ### Stream 2.1 — Pre-build version sync
 1. [DONE] Updated `README.md` ("Current Release — v1.1.999" — live assistant bubble merge entry; 1.1.998 section demoted); updated `CHANGELOG.md` with `## [1.1.999] - 2026-04-16` entry under Fixed/Documentation. Scope: 2 files.
-2. [DONE] Git Commit: `docs: prepare 1.1.999 release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.1.999 release notes` (hash: 7d39f6e4c)
 
 ### Stream 2.2 — Build artifacts
 1. [TODO] Run `./scripts/build-all.sh` from repo root. Script bumps versions and rebuilds Claude/Codex/Gemini/core/CEF launcher/UI and produces tarballs in `~/.codeai-hub/releases` + `doc/tmp/releases/`. On failure, fix and re-run `build-all.sh` only. Scope: no manual file edits (script owns version bumps).
