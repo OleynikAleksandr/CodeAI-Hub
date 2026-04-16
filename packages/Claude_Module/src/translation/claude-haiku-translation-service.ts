@@ -241,6 +241,9 @@ export class ClaudeHaikuTranslationService {
       projectPath: resolveClaudeProviderProjectDir(
         CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG
       ),
+      settings: {
+        alwaysThinkingEnabled: false,
+      },
       settingSources: [],
       systemPrompt: payload.systemPrompt,
       thinking: { type: "disabled" },

@@ -164,6 +164,9 @@ test("ClaudeHaikuTranslationService applies translation-only query profile", asy
   assert.equal(options?.permissionMode, "bypassPermissions");
   assert.equal(options?.allowDangerouslySkipPermissions, true);
   assert.deepEqual(options?.settingSources, []);
+  assert.deepEqual(options?.settings, {
+    alwaysThinkingEnabled: false,
+  });
   assert.deepEqual(options?.thinking, { type: "disabled" });
   assert.equal(typeof options?.systemPrompt, "string");
   assert.equal(
