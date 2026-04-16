@@ -5,6 +5,7 @@ import {
   buildMessageClassNames,
   extractSegmentBoundaryLabel,
   isSegmentBoundaryMessage,
+  mergeLiveAssistantMessages,
   mergeThinkingMessages,
   resolveDisplayContent,
   resolveRoleLabel,
@@ -49,7 +50,7 @@ const DialogPanel = ({
   const { t } = useLocalization();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const displayMessages = useMemo(
-    () => mergeThinkingMessages(messages),
+    () => mergeLiveAssistantMessages(mergeThinkingMessages(messages)),
     [messages]
   );
   const [expandedThinking, setExpandedThinking] = useState<

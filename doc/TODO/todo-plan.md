@@ -26,11 +26,11 @@
 
 ### Stream 1.2 — UI merge function and unit tests
 1. [DONE] Add `mergeLiveAssistantMessages` in `src/client/ui/src/session/dialog-panel-message-utils.ts` (predicate `role === "assistant" && tag === "live"`, direct concatenation of content/localizedContent because live segments already include their own whitespace/punctuation, preserve first bubble id); new test file `src/client/ui/src/session/dialog-panel-message-utils.test.ts` covers: (a) consecutive live merge, (b) non-live assistant breaks group, (c) thinking between live breaks group, (d) full-localized assembly, (e) partial-localized fallback, (f) composition with `mergeThinkingMessages` (no cross-merge). Scope: 2 files.
-2. [DONE] Git Commit: `feat: merge consecutive claude live assistant bubbles` (hash: TBD)
+2. [DONE] Git Commit: `feat: merge consecutive claude live assistant bubbles` (hash: 7d05dc0e7)
 
 ### Stream 1.3 — Wire merge pass in DialogPanel
-1. [TODO] In `src/client/ui/src/session/dialog-panel.tsx`, pipe `mergeLiveAssistantMessages` after `mergeThinkingMessages` in `displayMessages` memo; add smoke render test in `src/client/ui/src/session/virtual-conversation.test.tsx` (or new targeted test) verifying the combined pass produces one card for consecutive live fragments. Scope: 2 files.
-2. [TODO] Git Commit: `feat: apply live assistant merge pass in dialog panel` (hash: TBD)
+1. [DONE] In `src/client/ui/src/session/dialog-panel.tsx`, pipe `mergeLiveAssistantMessages` after `mergeThinkingMessages` in `displayMessages` memo and import the new helper. Composition coverage already lives in `dialog-panel-message-utils.test.ts` (Stream 1.2 test 6); no separate DOM render smoke test added. Scope: 1 file.
+2. [DONE] Git Commit: `feat: apply live assistant merge pass in dialog panel` (hash: TBD)
 
 ### Stream 1.4 — SSOT sync
 1. [TODO] Extend Invariant 25 in `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` with one line: live assistant bubbles carry `tag: "live"` and are merged UI-side by `mergeLiveAssistantMessages` symmetric to `mergeThinkingMessages`; update `doc/SolidWorks-WorkFlow/Modules/Claude.md` with the same note in the dialog-emitter section. Scope: 2 files.
