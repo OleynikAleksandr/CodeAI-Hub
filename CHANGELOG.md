@@ -4,6 +4,19 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.997] - 2026-04-16
+### Fixed
+- **`Stop` is now shutdown-safe for Claude**: pressing `Stop` while Claude is streaming reaches the SDK as a clean interrupt and the resulting `aborted_streaming` terminal reason is treated as the expected outcome of a stopped turn. Late processor / dispatch / processing errors arriving after shutdown are suppressed instead of being emitted into a torn-down session error channel, so core no longer crashes with `ERR_UNHANDLED_ERROR` on the post-`Stop` window.
+- **Claude provider error envelope reaches Core symmetrically to Codex**: `ClaudeProviderAdapter` now bridges `session.eventEmitter.on("error", ...)` into the standard provider error envelope, so active stream failures continue to surface to Core without depending on listeners that are about to be removed.
+
+### Added
+- **Live Claude `Thinking` streaming**: reasoning is now surfaced incrementally as Claude streams `thinking_delta` fragments. A new per-session `ClaudeThinkingLiveBuffer` accumulates raw fragments and emits readable segments at sentence/paragraph boundaries (default flush threshold ~240 chars), wrapped in a dedicated `ClaudeThinkingStreamHandler` micro-class. The dialog no longer goes silent during long Claude reasoning.
+- **Live thinking dedupe vs final block**: the final assembled `thinking` block from Claude is now reconciled against what was already materialized live. If the final block is a superset, only the unseen tail is emitted; if it diverges, the canonical block wins and is emitted in full; if no live path ran, the legacy "emit full block" behavior is preserved.
+
+### Documentation
+- **System SSOT now documents two new invariants**: invariant 24 (provider `Stop` is shutdown-safe) and invariant 25 (provider live thinking is incremental and dedup-safe) so future provider work cannot regress the behavior silently.
+- **Claude module SSOT and Shared Runtime Translation module SSOT** updated to reflect the new live-thinking ingestion path, finalization dedupe contract, and the per-bubble overlay translation requirement (multiple stable `messageId`s per turn).
+
 ## [1.1.996] - 2026-04-16
 ### Fixed
 - **Project Manager `Stop` now reaches the correct session transport**: the shared input-panel stop action now delegates to the Project Manager transport when that frontend is active, instead of sending through the regular chat webview bridge that is not initialized inside the standalone workflow shell.

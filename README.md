@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.996
+## Current Release — v1.1.997
+- **`Stop` no longer crashes core during a Claude turn**: pressing `Stop` from Project Manager while Claude is streaming now interrupts the active turn cleanly. Late provider errors that arrive after shutdown are suppressed instead of leaking out as an unhandled error event, so the next user message can continue the same workflow session instead of finding a dead core.
+- **Claude `Thinking` now appears live instead of in one delayed block**: reasoning is materialized into readable thinking bubbles as the model is still streaming, at sentence/paragraph boundaries, so the dialog no longer goes silent during long Claude reasoning. The final assembled thinking block is reconciled against what was already shown, so the same reasoning never appears twice.
+- **Translation overlays follow each live thinking bubble**: each emitted live bubble carries its own stable `messageId`, and Core-owned translation overlays attach to those bubbles individually as soon as translation completes, so localized reasoning text now arrives incrementally too instead of waiting for the whole reasoning block.
+
+### 1.1.996 (previous)
 - **Project Manager `Stop` now uses the correct runtime transport**: the shared session input panel now delegates `session:stop` through the Project Manager transport when it is hosted inside the standalone workflow shell, instead of trying to use the regular chat webview bridge that is not initialized there.
 - **Hung rollover sessions can now be interrupted from the Project Manager input**: when a continuity resume stalls and the UI shows `Agent is resuming your session`, the `Stop` button can again send a real stop request for the active session and unblock the input path.
 - **Regression coverage now locks the Project Manager stop bridge**: the core-bridge stop-session test asserts that the shared `stopSession()` helper forwards to the Project Manager hook when that environment is active.
