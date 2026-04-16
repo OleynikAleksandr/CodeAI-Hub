@@ -14,8 +14,8 @@ It translates short runtime text fragments through an engine-neutral facade and 
 
 Current production use:
 
-- live provider thinking/reasoning is emitted source-first and stored in canonical session history without rewriting the native transcript;
-- Core owns the runtime translation overlay pipeline for persisted thinking messages and broadcasts async `session:message_translation` / `dialog:message_translation` patches when translation completes;
+- live provider thinking/reasoning is emitted source-first and stored in canonical session history without rewriting the native transcript; for Claude this stream is now incremental (live readable segments materialized from `thinking_delta` fragments via `ClaudeThinkingLiveBuffer`), so the overlay pipeline must be ready to translate multiple append-only thinking bubbles per turn, each carrying its own stable `messageId`, instead of waiting for one monolithic final block;
+- Core owns the runtime translation overlay pipeline for persisted thinking messages and broadcasts async `session:message_translation` / `dialog:message_translation` patches when translation completes; one overlay record per emitted bubble — earlier live bubbles are never re-translated when later bubbles arrive;
 - translated text is stored as per-session sidecar overlay records (`*.translations.jsonl`) and is merged into history reads as `localizedContent`, while the source text remains the only canonical transcript;
 - translation failure is non-blocking and falls back to the original text in the visible UI.
 - long user-facing fragments are now planned into engine-aware safe chunks before dispatch, so one timeout no longer forces whole-string fallback by default, but live `reasoning` overlays now keep provider-emitted thinking blocks intact unless a caller explicitly opts back into chunking.

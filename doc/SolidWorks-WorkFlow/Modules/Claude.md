@@ -7,14 +7,16 @@
 - `packages/Claude_Module/`
 
 ## Messaging cluster
-- `src/messaging/message-processor.ts` — thin façade для queue/processResponses orchestration.
-- `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, source-first thinking emission, tool-use preamble translation, and structured output emission.
+- `src/messaging/message-processor.ts` — thin façade для queue/processResponses orchestration; shutdown-aware so late processor/dispatch/processing errors after `session.turnQueue.shutdownRequested` are suppressed instead of being emitted into a torn-down session error channel.
+- `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, source-first thinking emission, tool-use preamble translation, and structured output emission. Delegates the live-thinking ingestion path to `ClaudeThinkingStreamHandler` and reconciles the final assembled thinking block against materialized live segments before emitting into the dialog.
+- `src/messaging/claude-thinking-stream-handler.ts` — micro-class that watches stream events for the thinking content block lifecycle (`content_block_start` thinking → `content_block_delta` thinking_delta → `content_block_stop`), feeds the per-session buffer, and exposes `consumeFinalThinking` for finalization dedupe.
+- `src/messaging/claude-thinking-live-buffer.ts` — per-session accumulator that materializes readable thinking segments from raw `thinking_delta` fragments at sentence/paragraph boundaries (default flush threshold 240 chars) and reconciles the final assembled block against the materialized prefix.
 - `src/messaging/claude-thought-translation-adapter.ts` — Claude-local adapter over the shared translation facade for short pre-tool assistant text shown before `tool_use`.
 - `src/messaging/claude-readable-text-chunker.ts` — Claude-specific chunking helper used by the local pre-tool translation adapter.
 - `src/messaging/claude-message-finish-handler.ts` — lifecycle completion façade (`turn_started` / `turn_completed` / `turn_failed`).
 - `src/messaging/claude-usage-sync.ts`, `src/messaging/claude-token-usage-sync.ts` — usage limits + `/context` token usage synchronization.
 - `src/messaging/claude-stream-event-router.ts` emits Claude thinking into session history as tagged thinking messages; `thinkingDisplaySyncEnabled` only decides whether the shared Session UI renders them as visible Thinking bubbles or filters them out.
-- Visible Claude thinking is now source-first: the provider emits the native upstream wording immediately, and Core owns the asynchronous translation overlay that later patches `localizedContent` for the same `messageId`.
+- Visible Claude thinking is now source-first AND incremental: the provider emits live readable segments while reasoning is still streaming via the `ClaudeThinkingLiveBuffer`, and Core owns the asynchronous translation overlay that later patches `localizedContent` for each emitted bubble. The final assembled thinking block is deduplicated against the materialized prefix so the user never sees the same reasoning twice.
 - Persisted localized thinking for Claude lives in the Core-owned per-session sidecar `*.translations.jsonl`; the canonical Claude/session transcript remains native-only.
 - Short assistant progress text that belongs to a Claude message ending in `stop_reason = "tool_use"` is still localized on the provider-local user-facing path; ordinary final assistant replies ending in `end_turn` remain untouched.
 - Claude thinking settings are now `thinking.enabled/effort`, not `maxTokens`. Legacy snapshots with `maxTokens` are migrated to the nearest effort tier during normalization.
@@ -53,6 +55,9 @@
 - Claude visible thinking localization is eventually consistent: source text must appear immediately, while translation may arrive later as a Core `message_translation` overlay for the same stable `messageId`.
 - Claude visible thinking must follow the selected `Messages for the User` language, but current thought-summary verbosity is still ultimately owned by the upstream Claude SDK / model even after CodeAI Hub starts sending explicit `effort`.
 - Claude pre-tool assistant text can be identified safely by the provider-native boundary `message_delta.delta.stop_reason = "tool_use"`; this path is distinct from final assistant output (`end_turn`) and must not be filtered by text heuristics.
+- `Stop` from `Project Manager` is shutdown-safe at the provider level: the SDK interrupt yields `terminal_reason = "aborted_streaming"` (an expected outcome), and any late processor/dispatch/processing error after `session.turnQueue.shutdownRequested` MUST be suppressed instead of being emitted into a torn-down session error channel. The error channel must never produce `ERR_UNHANDLED_ERROR` for the post-shutdown window.
+- `ClaudeProviderAdapter` bridges `session.eventEmitter.on("error", ...)` symmetrically to the Codex adapter. Active provider stream failures still reach Core through the standard provider error envelope (`{ type: "error", provider: "claude", payload }`), keeping `Stop -> Continue` viable on the same workflow continuity chain.
+- Claude visible thinking is incremental: live readable chunks are emitted while reasoning is still streaming, and the final assembled `thinking` block in the assistant message is reconciled against the materialized prefix (superset → emit only the unseen tail; divergent → emit the full canonical block; no live path → emit the full block as legacy fallback). Buffer state for a session is consumed on the final assembled block and reset on terminal `message_stop` / shutdown.
 
 ## Translation-only query profile (Claude Haiku 4.5)
 - `engineId: "anthropic-claude-haiku-4-5"` is exposed as a localization translation engine, and the runtime adapter lives next to the Claude provider: `packages/Claude_Module/src/translation/claude-haiku-translation-service.ts` and `claude-haiku-translator-instruction.ts`.
