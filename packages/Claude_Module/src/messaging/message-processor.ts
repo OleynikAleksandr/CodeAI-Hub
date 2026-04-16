@@ -96,8 +96,11 @@ export class SDKMessageProcessor {
     }
     const loop = this.consumeTurnQueue(session, hooks)
       .catch((error) => {
+        if (this.isSessionShuttingDown(session)) {
+          return;
+        }
         this.reporter?.error?.("Claude queue processing failed", error);
-        session.eventEmitter.emit("error", { type: "processor", error });
+        this.emitSessionError(session, { type: "processor", error });
       })
       .finally(() => {
         session.processingLoop = undefined;
@@ -160,9 +163,12 @@ export class SDKMessageProcessor {
             },
           });
         } catch (error) {
+          if (this.isSessionShuttingDown(session)) {
+            return;
+          }
           this.finishHandler.emitTurnFailed(session, error, session.sessionId);
           this.reporter?.error?.("Claude turn processing failed", error);
-          session.eventEmitter.emit("error", { type: "dispatch", error });
+          this.emitSessionError(session, { type: "dispatch", error });
         } finally {
           this.sessionManager.clearInFlightTurn(session.sessionId);
           session.queryInstance = undefined;
@@ -237,14 +243,17 @@ export class SDKMessageProcessor {
       }
     } catch (error) {
       const session = this.resolveSession(options.sessionId, promotedSessionId);
-      if (session) {
+      if (session && !this.isSessionShuttingDown(session)) {
         this.finishHandler.emitTurnFailed(
           session,
           error,
           promotedSessionId ?? options.sessionId
         );
       }
-      session?.eventEmitter.emit("error", { type: "processing", error });
+      if (this.isSessionShuttingDown(session)) {
+        return;
+      }
+      this.emitSessionError(session, { type: "processing", error });
       this.reporter?.error?.("Claude stream processing failed", error);
     }
   }
@@ -257,6 +266,23 @@ export class SDKMessageProcessor {
       this.sessionManager.getSession(tempId) ??
       (promotedId ? this.sessionManager.getSession(promotedId) : undefined)
     );
+  }
+
+  private emitSessionError(
+    session: ActiveSession | undefined,
+    payload: {
+      readonly error: unknown;
+      readonly type: "dispatch" | "processing" | "processor";
+    }
+  ): void {
+    if (!session || this.isSessionShuttingDown(session)) {
+      return;
+    }
+    session.eventEmitter.emit("error", payload);
+  }
+
+  private isSessionShuttingDown(session: ActiveSession | undefined): boolean {
+    return Boolean(session?.turnQueue?.shutdownRequested);
   }
 
   private async dispatchMessage(

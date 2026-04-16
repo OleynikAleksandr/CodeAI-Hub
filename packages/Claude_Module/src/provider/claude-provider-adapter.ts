@@ -174,6 +174,13 @@ export class ClaudeProviderAdapter {
     session.eventEmitter.on("message", (payload: unknown) => {
       this.dispatchMessage(session.sessionId, payload);
     });
+    session.eventEmitter.on("error", (payload: unknown) => {
+      this.dispatchMessage(session.sessionId, {
+        type: "error",
+        provider: "claude",
+        payload,
+      });
+    });
     session.eventEmitter.on("sessionIdChanged", (payload) => {
       if (payload?.oldId && payload?.newId) {
         this.reassignListeners(payload.oldId, payload.newId);
