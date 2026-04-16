@@ -200,6 +200,97 @@ test("SessionTranslationFacade routes through the injected translation factory",
   }
 });
 
+test("SessionTranslationFacade reuses an in-flight translation for duplicate reasoning text", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  try {
+    const settingsPath = path.join(
+      homeDirectory,
+      ".codeai-hub",
+      "settings",
+      "settings.json"
+    );
+    await mkdir(path.dirname(settingsPath), { recursive: true });
+    await writeFile(
+      settingsPath,
+      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const bootstrapPath =
+      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+    await mkdir(path.dirname(bootstrapPath), { recursive: true });
+    await writeFile(
+      bootstrapPath,
+      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const logger = createCapturingLogger();
+    let resolveTranslation: ((value: TranslationResult) => void) | undefined;
+    let translateCalls = 0;
+
+    const facade = new SessionTranslationFacade({
+      logger: logger.logger,
+      settingsPath,
+      translationFacadeFactory: () =>
+        ({
+          translate: () => {
+            translateCalls += 1;
+            return new Promise<TranslationResult>((resolve) => {
+              resolveTranslation = resolve;
+            });
+          },
+        }) as unknown as TranslationFacade,
+    });
+
+    const firstPromise = facade.translateDialogMessage({
+      content: "Repeat me",
+      messageId: "msg-1",
+      providerId: "codex",
+      role: "assistant",
+      sessionId: "sess-1",
+      tag: "thinking",
+    });
+    const secondPromise = facade.translateDialogMessage({
+      content: "Repeat me",
+      messageId: "msg-2",
+      providerId: "codex",
+      role: "assistant",
+      sessionId: "sess-1",
+      tag: "thinking",
+    });
+
+    await Promise.resolve();
+    assert.equal(translateCalls, 1);
+    assert.ok(resolveTranslation);
+    resolveTranslation({
+      engine: "anthropic-claude-haiku-4-5",
+      finalText: "Повтори меня",
+      originalText: "Repeat me",
+      sourceLanguage: "en",
+      status: "translated",
+      targetLanguage: "ru",
+      translatedText: "Повтори меня",
+    });
+
+    const [first, second] = await Promise.all([firstPromise, secondPromise]);
+    assert.equal(first?.translatedContent, "Повтори меня");
+    assert.equal(second?.translatedContent, "Повтори меня");
+    assert.equal(first?.messageId, "msg-1");
+    assert.equal(second?.messageId, "msg-2");
+    assert.equal(translateCalls, 1);
+    assert.equal(
+      logger.info.some(
+        (entry) =>
+          entry.message === "Session translation reused in-flight result"
+      ),
+      true
+    );
+  } finally {
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
 test("SessionTranslationFacade logs requested and resolved runtime metadata for Haiku mismatches", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {

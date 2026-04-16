@@ -143,7 +143,7 @@
   - providers now emit source-first thinking/reasoning with stable `messageId`, and Core owns async translation scheduling, persistence, and live bridge patching (`session:message_translation`, `dialog:message_translation`)
   - canonical session/dialog transcript stays native-only; translated text is stored separately in per-session `*.translations.jsonl` overlays and merged back into history as `localizedContent` only when `messageId + sourceHash` still match
   - UI renders `localizedContent ?? content`, so late translation completion upgrades already-visible messages in place without delaying the original thinking stream
-  - live overlay translation now resolves settings per dispatch, serializes execution through one shared worker queue, and refuses to start while the persisted localization bootstrap snapshot does not match current settings
+  - live overlay translation now resolves settings per dispatch, serializes execution through one shared worker queue, deduplicates identical in-flight jobs by `engineId + targetLanguage + sourceHash`, and refuses to start while the persisted localization bootstrap snapshot does not match current settings
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking routing

@@ -126,7 +126,10 @@ test("ClaudeHaikuTranslationService runs ensure/auth/bootstrap before query and 
   assert.equal(auth.calls.authProbe, 1);
   assert.equal(auth.calls.bootstrap, 1);
   assert.equal(recorded.length, 1);
-  assert.equal(recorded[0]?.prompt, "Hello world");
+  assert.equal(
+    recorded[0]?.prompt,
+    "Translate the source text into ru.\nReturn only the translation.\n\nSource text:\nHello world"
+  );
 });
 
 test("ClaudeHaikuTranslationService applies translation-only query profile", async () => {
@@ -170,6 +173,12 @@ test("ClaudeHaikuTranslationService applies translation-only query profile", asy
     true
   );
   assert.equal(options?.pathToClaudeCodeExecutable, "/tmp/claude-cli");
+  assert.equal(typeof options?.cwd, "string");
+  assert.equal(
+    (options?.cwd as string).endsWith(CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG),
+    true
+  );
+  assert.deepEqual(options?.additionalDirectories, [options?.cwd]);
   assert.equal(
     (options?.projectPath as string).endsWith(
       CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG
@@ -191,6 +200,42 @@ test("ClaudeHaikuTranslationService applies translation-only query profile", asy
     "effort" in (options as Record<string, unknown>),
     false,
     "effort must not be passed when thinking is disabled"
+  );
+});
+
+test("ClaudeHaikuTranslationService includes marker-safe prompt rules for localization bundles", async () => {
+  const auth = createFakeAuthManager();
+  const installer = createFakeInstaller();
+  const recorded: RecordedQueryCall[] = [];
+  const service = new ClaudeHaikuTranslationService({
+    authManager: auth as never,
+    installer: installer as never,
+    queryLoader: () =>
+      Promise.resolve({
+        query: buildRecordingQuery(
+          [
+            {
+              result: "__CODEAI_HUB_LOCALIZATION_ENTRY__0__START__",
+              type: "result",
+            },
+          ],
+          recorded
+        ),
+      }),
+  });
+
+  await service.translate({
+    category: "localization_bundle",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: "__CODEAI_HUB_LOCALIZATION_ENTRY__0__START__\nHello\n__CODEAI_HUB_LOCALIZATION_ENTRY__0__END__",
+  });
+
+  assert.equal(
+    recorded[0]?.prompt.includes(
+      "Preserve all __CODEAI_HUB_LOCALIZATION_ENTRY__ marker lines exactly and keep the same order."
+    ),
+    true
   );
 });
 

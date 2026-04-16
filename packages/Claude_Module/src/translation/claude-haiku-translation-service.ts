@@ -1,3 +1,4 @@
+import { mkdir } from "node:fs/promises";
 import type { TranslationRequest } from "@codeai-hub/translation";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
@@ -16,6 +17,7 @@ export const CLAUDE_HAIKU_TRANSLATION_PROVIDER_ID = "claude";
 
 const HAIKU_TRANSLATION_MAX_TURNS = 1;
 const DEFAULT_TRANSLATION_TIMEOUT_MS = 30_000;
+const STRUCTURED_LOCALIZATION_CATEGORY = "localization_bundle";
 
 export type ClaudeHaikuTranslationQueryFunction = (payload: {
   readonly prompt: string;
@@ -42,6 +44,23 @@ interface ClaudeHaikuQueryOptionsPayload {
   readonly cwd: string;
   readonly systemPrompt: string;
 }
+
+const buildPrompt = (request: TranslationRequest): string =>
+  [
+    `Translate the source text into ${request.targetLanguage}.`,
+    ...(request.category === STRUCTURED_LOCALIZATION_CATEGORY
+      ? [
+          "Preserve all __CODEAI_HUB_LOCALIZATION_ENTRY__ marker lines exactly and keep the same order.",
+        ]
+      : []),
+    "Return only the translation.",
+    "",
+    "Source text:",
+    request.text,
+  ].join("\n");
+
+const resolveTranslationRuntimeCwd = (): string =>
+  resolveClaudeProviderProjectDir(CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -158,9 +177,10 @@ export class ClaudeHaikuTranslationService {
   ): Promise<ClaudeHaikuTranslationServiceResult> {
     try {
       await this.initialize();
-      const workspaceCwd = resolveClaudeProviderHome();
+      const workspaceCwd = resolveTranslationRuntimeCwd();
+      await mkdir(workspaceCwd, { recursive: true });
       await this.options.authManager.ensureProviderHomeSessionBootstrap({
-        workspacePath: workspaceCwd,
+        workspacePath: resolveClaudeProviderHome(),
       });
       const systemPrompt = buildClaudeHaikuTranslatorInstruction(request);
       const queryOptions = this.buildQueryOptions({
@@ -172,7 +192,7 @@ export class ClaudeHaikuTranslationService {
       }
       const iterator = this.queryFunction({
         options: queryOptions,
-        prompt: request.text,
+        prompt: buildPrompt(request),
       });
       const timeoutMs =
         translateOptions?.timeoutMs ?? DEFAULT_TRANSLATION_TIMEOUT_MS;
