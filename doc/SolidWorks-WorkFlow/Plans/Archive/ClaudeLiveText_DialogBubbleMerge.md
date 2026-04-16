@@ -4,7 +4,7 @@
 
 ## Problem
 
-After Phase 1 of Session 037, `emitClaudeAssistantLiveText` emits each readable segment as an append-only assistant message with a unique uuid suffix. Multiple segments in one turn → multiple dialog cards. Thinking has the same emit pattern but *looks* merged in UI because `mergeThinkingMessages` in [dialog-panel-message-utils.ts](../../../src/client/ui/src/session/dialog-panel-message-utils.ts) collapses consecutive thinking-display messages. No equivalent pass exists for live assistant text.
+After Phase 1 of Session 037, `emitClaudeAssistantLiveText` emits each readable segment as an append-only assistant message with a unique uuid suffix. Multiple segments in one turn → multiple dialog cards. Thinking has the same emit pattern but *looks* merged in UI because `mergeThinkingMessages` in [dialog-panel-message-utils.ts](../../../../src/client/ui/src/session/dialog-panel-message-utils.ts) collapses consecutive thinking-display messages. No equivalent pass exists for live assistant text.
 
 Provider-side emit is correct and must not change — stable per-segment `messageId`s are required by Invariant 25 so Core translation overlays can attach `localizedContent` to each bubble independently. The fix lives on the UI rendering side.
 
