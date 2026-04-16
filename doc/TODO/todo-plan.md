@@ -65,9 +65,9 @@
 ## Phase 6 — Release build (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Release notes
-17. [TODO] Pre-bump README `Current Release` и CHANGELOG под upcoming version (1.1.998); scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare claude live text release notes`
-18. [TODO] Git Commit: `docs: prepare claude live text release notes` (hash: TBD)
+17. [DONE] Pre-bump README `Current Release` и CHANGELOG под upcoming version 1.1.998; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare claude live text release notes`
+18. [DONE] Git Commit: `docs: prepare claude live text release notes` (hash: `160a8f823`)
 
 ### Stream: Script-managed release batch
-19. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bump, provider bundles и release artifacts; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/`; expected commit message: `chore: build 1.1.998 release assets`
-20. [TODO] Git Commit: `chore: build 1.1.998 release assets` (hash: TBD)
+19. [DONE] На чистом дереве выполнен `./scripts/build-all.sh` (поднял версии до 1.1.998 и собрал tarballs) и `./scripts/build-release.sh --use-current-version` (собрал `codeai-hub-1.1.998.vsix`, 2.2M, 1974 файла); scope: root version manifests, provider bundle outputs, `doc/tmp/releases/`; expected commit message: `chore: build 1.1.998 release assets`
+20. [DONE] Git Commit: `chore: build 1.1.998 release assets` (hash: `30f989ebd`); release VSIX `codeai-hub-1.1.998.vsix`; provider/core/UI/launcher tarballs в `doc/tmp/releases/`
