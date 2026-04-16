@@ -53,8 +53,8 @@
 ## Phase 4 — Drop version numbers from Claude model aliases (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Registry displayName cleanup
-13. [TODO] Снять числовую версию из `CLAUDE_MODEL_ALIASES[].displayName` (Sonnet 4.5 → Sonnet, Opus 4.5 → Opus, Haiku 4.5 → Haiku); проверить, что Settings Claude dropdown и SSOT backfill подхватывают; scope: `src/types/claude-model-registry.ts`, `src/client/ui/src/components/settings/claude-default-model/*.tsx` (label rendering если есть version fallback), регрессионные тесты в `packages/core/src/config/provider-defaults-resolver.test.ts`; expected commit message: `chore: remove version numbers from claude model labels`
-14. [TODO] Git Commit: `chore: remove version numbers from claude model labels` (hash: TBD)
+13. [DONE] Снять числовую версию из `CLAUDE_MODEL_ALIASES[].displayName` (Sonnet 4.5 → Sonnet, Opus 4.5 → Opus, Haiku 4.5 → Haiku); описания обновлены под auto-resolve SDK; `claude-default-model-card.tsx` рендерит `displayName` напрямую — подхвачено без правок; Haiku translation-engine label в `localization-settings-card.tsx` оставлен интактным (это engine id, не alias); scope: `src/types/claude-model-registry.ts`; expected commit message: `chore: remove version numbers from claude model labels`
+14. [DONE] Git Commit: `chore: remove version numbers from claude model labels` (hash: `7cdab45a9`)
 
 ## Phase 5 — SSOT synchronization (owner: Claude, updated: 2026-04-16)
 
