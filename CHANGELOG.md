@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-04-16
+### Diagnostics
+- **Settings.json fs watcher (temporary)**: the 1.2.0 trace proved that `persistSettingsSnapshot` alone cannot explain the stale-persist regression — one persist=xhigh log entry was followed by a silent on-disk rewrite to medium. Add a polling `fs.watchFile` started in extension activate and stopped in deactivate before `disposeExtensionLogger`; every mtime/size change on `~/.codeai-hub/settings/settings.json` is logged as `settings_debug_watcher_change` regardless of writer. Removed once the root cause is fixed.
+
 ## [1.2.0] - 2026-04-16
 ### Diagnostics
 - **Settings storage trace (temporary)**: `loadSettingsSnapshot`, `persistSettingsSnapshot`, and `handleSaveRequest` now emit structured entries into `~/.codeai-hub/logs/extension/extension.log` via `getExtensionLogger()`. Persist trace includes a full stack trace of the caller. Used to identify the regression where launching Project Manager rewrites `claude.thinking.effort` back to `medium` after the user saved `x-High`. Scheduled for removal in a follow-up release once the root cause is fixed.

@@ -7,7 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.0
+## Current Release — v1.2.1
+- **Diagnostic build (continued)**: 1.2.0 persist/load/save trace showed one persist=xhigh entry followed by a silent ~16-second-later on-disk rewrite back to `medium` with no further persist log. This build adds a polling `fs.watchFile` on `~/.codeai-hub/settings/settings.json` (300 ms interval). Any mtime/size change is logged as `settings_debug_watcher_change` with the current `claude.thinking` snapshot, regardless of which process wrote the file. The 1.2.0 persist/load/save trace is kept. Everything is removed once the stale-persist regression is fixed.
+
+### 1.2.0 (previous)
 - **Diagnostic build**: temporary settings-storage trace. Every call to `loadSettingsSnapshot`, `persistSettingsSnapshot`, and `handleSaveRequest` now writes a structured entry (including a stack trace for persist) into `~/.codeai-hub/logs/extension/extension.log`. Used to catch the regression where launching Project Manager rewrites `claude.thinking.effort` back to `medium` after the user saved `x-High`. Will be removed once the root cause is fixed.
 
 ### 1.1.999 (previous)
