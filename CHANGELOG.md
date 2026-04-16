@@ -4,6 +4,12 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.1.994] - 2026-04-16
+### Fixed
+- **Translation engine availability now follows real provider status**: the Settings localization engine selector keeps `Google GTX Free` available by default, but disables `OpenAI Codex` and `Anthropic Claude` engines when their backing provider stack is unavailable in live `core:state`.
+- **Unavailable provider-owned engines now explain themselves instead of looking ready**: disabled translation options surface the provider recovery/status message so users see that CLI access or provider runtime readiness must be restored before those engines can be selected.
+- **The UI no longer implies a non-existent subscription check**: CodeAI Hub still does not have a first-class entitlement signal for OpenAI or Anthropic, so the selector now gates by actual provider availability/auth state rather than pretending model access was explicitly verified.
+
 ## [1.1.993] - 2026-04-16
 ### Fixed
 - **Google GTX strict sync now survives large localization bundles**: the shared Google translation client no longer forces long marker-preserving runtime bundles through a `GET ...&q=...` URL; large payloads now use `POST application/x-www-form-urlencoded`, preventing full-bundle fallback on categories such as `system_feedback`.
