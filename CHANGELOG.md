@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-04-16
+### Fixed
+- **Core `settings:load` no longer reverts Claude `xhigh` back to `medium`**: `packages/core/src/remote-bridge/handlers/settings-request-handler-claude-thinking.ts` carried an independent hardcoded whitelist `Set(["low","medium","high","max"])` — `xhigh` was missing. Every PM / websocket `settings:load` ran through this whitelist, treated `xhigh` as legacy numeric, normalized it to `DEFAULT_CLAUDE_THINKING_EFFORT = "medium"`, flagged `changed=true`, and persisted the rewritten snapshot to disk. Added `xhigh` plus a matching legacy anchor (`maxTokens: 20000`) and a comment pointing at SystemArchitecture §Invariant 27.
+
+### Removed
+- **1.2.0 / 1.2.1 diagnostic instrumentation**: `settings-file-watcher.ts`, persist/load/save debug logging in `settings-storage.ts` and `settings-message-handler.ts`, and the watcher start/stop hooks in `src/extension.ts` are gone.
+
+### Documentation
+- **SystemArchitecture §Invariant 27 added**: `settings.json` is re-normalized by two independent layers (extension-side `parseSettingsSnapshot` + Core `SettingsRequestHandler.handleLoad`). Provider effort/thinking values accepted by one layer but not the other are silently rewritten to the Core default on PM boot. New effort/reasoning/thinking levels must be added to all four canonical files in the same commit: UI model registry, extension-side normalizer, shared defaults resolver, Core remote-bridge handler.
+- **Modules/Claude.md**, **Modules/Codex.md**, **Modules/Gemini.md** each gain a matching invariant bullet so per-provider work sees the cross-boundary rule.
+
 ## [1.2.1] - 2026-04-16
 ### Diagnostics
 - **Settings.json fs watcher (temporary)**: the 1.2.0 trace proved that `persistSettingsSnapshot` alone cannot explain the stale-persist regression — one persist=xhigh log entry was followed by a silent on-disk rewrite to medium. Add a polling `fs.watchFile` started in extension activate and stopped in deactivate before `disposeExtensionLogger`; every mtime/size change on `~/.codeai-hub/settings/settings.json` is logged as `settings_debug_watcher_change` regardless of writer. Removed once the root cause is fixed.

@@ -7,11 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.1
-- **Diagnostic build (continued)**: 1.2.0 persist/load/save trace showed one persist=xhigh entry followed by a silent ~16-second-later on-disk rewrite back to `medium` with no further persist log. This build adds a polling `fs.watchFile` on `~/.codeai-hub/settings/settings.json` (300 ms interval). Any mtime/size change is logged as `settings_debug_watcher_change` with the current `claude.thinking` snapshot, regardless of which process wrote the file. The 1.2.0 persist/load/save trace is kept. Everything is removed once the stale-persist regression is fixed.
+## Current Release — v1.2.2
+- **Claude `x-High` reasoning effort stops reverting to `medium` on Project Manager boot**: Core had its own hardcoded thinking-effort whitelist next to the extension-side normalizer, and `xhigh` had been added to the UI registry and the shared defaults resolver in 1.1.998 but NOT to that Core-only handler. On every `settings:load` from PM, Core silently rewrote `xhigh` back to `medium` and persisted it to disk. `xhigh` is now in the Core whitelist together with its legacy `maxTokens = 20 000` anchor. Diagnostic logging from 1.2.0 / 1.2.1 is removed.
+- **New SSOT invariant**: SystemArchitecture §3 now has Invariant 27 documenting the four-way parity requirement between the UI model registry, the extension-side normalizer, the shared Core defaults resolver, and the Core remote-bridge handler when adding any new effort/reasoning/thinking level. Matching bullets added to Modules/Claude.md, Codex.md, Gemini.md so future provider work catches the cross-boundary rule.
 
-### 1.2.0 (previous)
-- **Diagnostic build**: temporary settings-storage trace. Every call to `loadSettingsSnapshot`, `persistSettingsSnapshot`, and `handleSaveRequest` now writes a structured entry (including a stack trace for persist) into `~/.codeai-hub/logs/extension/extension.log`. Used to catch the regression where launching Project Manager rewrites `claude.thinking.effort` back to `medium` after the user saved `x-High`. Will be removed once the root cause is fixed.
+### 1.2.1 (diagnostic)
+- Temporary build. Added polling `fs.watchFile` on `~/.codeai-hub/settings/settings.json` so any external writer became observable regardless of which process wrote the file. Removed in 1.2.2 once the root cause was identified.
+
+### 1.2.0 (diagnostic)
+- Temporary build. Added persist/load/save trace through `~/.codeai-hub/logs/extension/extension.log`, including a stack trace for `persistSettingsSnapshot`. Removed in 1.2.2.
 
 ### 1.1.999 (previous)
 - **Claude live assistant text now collapses into one growing dialog card**: consecutive live text fragments from the same turn merge visually into a single assistant bubble instead of rendering one card per sentence. The provider still emits each live fragment as a stable append-only message so translation overlays keep attaching `localizedContent` per fragment, but the UI layer now runs a merge pass symmetric to the existing thinking merge.
