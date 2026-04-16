@@ -37,8 +37,8 @@
 ## Phase 2 — Thinking display switch (owner: Claude, updated: 2026-04-16)
 
 ### Stream: thinking.display = summarized
-7. [TODO] В `resolveThinkingOptions` / `buildQueryOptions` добавить `display: "summarized"` к `thinking: { type: "adaptive" }` (и к `{ type: "enabled" }`, если будет использоваться) при включённом thinking; обновить существующие тесты menager'а; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts` (если есть — иначе добавить точечный unit); expected commit message: `fix: enable summarized thinking display for claude`
-8. [TODO] Git Commit: `fix: enable summarized thinking display for claude` (hash: TBD)
+7. [DONE] В `resolveThinkingOptions` / `buildQueryOptions` добавить `display: "summarized"` к `thinking: { type: "adaptive" }` при включённом thinking; расширить `ClaudeQueryOptions` и union effort типы поддержкой `xhigh` (plumbed through для будущих фаз); scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; expected commit message: `fix: enable summarized thinking display for claude`
+8. [DONE] Git Commit: `fix: enable summarized thinking display for claude` (hash: `44293929c`)
 
 ## Phase 3 — xhigh effort end-to-end (owner: Claude, updated: 2026-04-16)
 

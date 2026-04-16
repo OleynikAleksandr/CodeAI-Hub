@@ -1,5 +1,5 @@
 export type ClaudeModelAliasId = "sonnet" | "opus" | "haiku";
-export type ClaudeThinkingEffort = "low" | "medium" | "high" | "max";
+export type ClaudeThinkingEffort = "low" | "medium" | "high" | "xhigh" | "max";
 
 export interface ClaudeModelAliasDescriptor {
   readonly alias: ClaudeModelAliasId;
@@ -59,6 +59,13 @@ export const CLAUDE_THINKING_EFFORTS = [
     name: "high",
     description: "Deeper reasoning for more complex tasks.",
     useCase: "Architecture work, investigations, and larger plans.",
+    default: false,
+  },
+  {
+    name: "xhigh",
+    description:
+      "Deeper-than-high reasoning on Opus; falls back to high on other models.",
+    useCase: "Opus-only extra-deep reasoning when high is not enough.",
     default: false,
   },
   {

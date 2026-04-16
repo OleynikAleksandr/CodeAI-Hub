@@ -1,7 +1,7 @@
 import type { ClaudeSettingsSnapshot } from "./provider-settings-snapshot";
 
 export type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
-export type ClaudeThinkingEffort = "low" | "medium" | "high" | "max";
+export type ClaudeThinkingEffort = "low" | "medium" | "high" | "xhigh" | "max";
 export type CodexSandboxMode =
   | "read-only"
   | "workspace-write"
@@ -27,6 +27,7 @@ const CLAUDE_THINKING_EFFORTS = new Set<ClaudeThinkingEffort>([
   "low",
   "medium",
   "high",
+  "xhigh",
   "max",
 ]);
 const CLAUDE_MODEL_ALIAS_SET = new Set(["default", "sonnet", "opus", "haiku"]);
@@ -41,6 +42,7 @@ const LEGACY_CLAUDE_THINKING_TOKEN_ANCHORS: readonly {
   { effort: "low", maxTokens: 2000 },
   { effort: "medium", maxTokens: 4000 },
   { effort: "high", maxTokens: 10_000 },
+  { effort: "xhigh", maxTokens: 20_000 },
   { effort: "max", maxTokens: 32_000 },
 ];
 
