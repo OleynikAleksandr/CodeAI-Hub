@@ -8279,20 +8279,20 @@
   var CLAUDE_MODEL_ALIASES = [
     {
       alias: "sonnet",
-      displayName: "Sonnet 4.5",
-      description: "Best for everyday tasks (claude-sonnet-4-5-20250929).",
+      displayName: "Sonnet",
+      description: "Best for everyday tasks; Anthropic resolves the latest version automatically.",
       status: "active"
     },
     {
       alias: "opus",
-      displayName: "Opus 4.5",
-      description: "Most capable for complex, agentic workloads.",
+      displayName: "Opus",
+      description: "Most capable for complex, agentic workloads; latest version auto-resolved.",
       status: "active"
     },
     {
       alias: "haiku",
-      displayName: "Haiku 4.5",
-      description: "Fastest alias for quick answers and prototyping.",
+      displayName: "Haiku",
+      description: "Fastest alias for quick answers and prototyping; latest version auto-resolved.",
       status: "active"
     }
   ];
@@ -8317,6 +8317,12 @@
       name: "high",
       description: "Deeper reasoning for more complex tasks.",
       useCase: "Architecture work, investigations, and larger plans.",
+      default: false
+    },
+    {
+      name: "xhigh",
+      description: "Deeper-than-high reasoning on Opus; falls back to high on other models.",
+      useCase: "Opus-only extra-deep reasoning when high is not enough.",
       default: false
     },
     {
@@ -12468,6 +12474,16 @@
       CLAUDE_THINKING_EFFORTS.find((entry) => entry.name === effort)?.description ?? ""
     );
     const resolveUseCase = (effort) => CLAUDE_THINKING_EFFORTS.find((entry) => entry.name === effort)?.useCase ?? "";
+    const resolveEffortLabel = (effort) => {
+      if (effort === "xhigh") {
+        return t(
+          UI_HELPER_TEXT_CATEGORY11,
+          "settings.claude_thinking_settings.effort.xhigh_label",
+          "x-High"
+        );
+      }
+      return effort;
+    };
     const handleKeyDown = (event, effort) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -12517,7 +12533,7 @@
                       }
                     ),
                     /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelTitleStyles, children: effort.name }),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelTitleStyles, children: resolveEffortLabel(effort.name) }),
                       /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelDescriptionStyles, children: resolveDescription(effort.name) }),
                       /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelDescriptionStyles, children: resolveUseCase(effort.name) })
                     ] })
