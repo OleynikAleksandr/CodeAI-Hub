@@ -28,30 +28,30 @@
 ## Phase 1 — Claude Stop/Resume hardening (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Shutdown-safe interrupt handling
-1. [IN_PROGRESS] Финализировать fix падения core после `Stop`: подавить late `aborted_streaming` errors после shutdown и прокинуть active provider errors через Claude adapter listener; scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit message: `fix: harden claude stop interrupt handling`
-2. [TODO] Git Commit: `fix: harden claude stop interrupt handling` (hash: TBD)
+1. [DONE] Финализировать fix падения core после `Stop`: подавить late `aborted_streaming` errors после shutdown и прокинуть active provider errors через Claude adapter listener; scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`, `packages/Claude_Module/src/messaging/message-processor.stop.test.ts` (test split forced by 500-line architecture limit); expected commit message: `fix: harden claude stop interrupt handling`
+2. [DONE] Git Commit: `fix: harden claude stop interrupt handling` (hash: `621c49436`)
 
 ## Phase 2 — Claude live thinking streaming (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Delta ingestion and readable flush
-3. [TODO] Поднять live ingestion `content_block_delta/thinking_delta` через отдельный buffer façade и начать выдавать readable thinking chunks до финального assembled block; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-thinking-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts`; expected commit message: `feat: stream claude thinking deltas`
-4. [TODO] Git Commit: `feat: stream claude thinking deltas` (hash: TBD)
+3. [DONE] Поднять live ingestion `content_block_delta/thinking_delta` через отдельный buffer façade и начать выдавать readable thinking chunks до финального assembled block; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-thinking-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-thinking-stream-handler.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts` (handler split forced by 500-line architecture limit); expected commit message: `feat: stream claude thinking deltas`
+4. [DONE] Git Commit: `feat: stream claude thinking deltas` (hash: `16571bfa8`)
 
 ### Stream: Finalization and dedupe
-5. [TODO] Свести live delta path и финальный `message.content` thinking block без дублей: эмитить только unseen tail и очищать buffer на terminal boundaries; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-thinking-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts`; expected commit message: `fix: dedupe finalized claude thinking`
-6. [TODO] Git Commit: `fix: dedupe finalized claude thinking` (hash: TBD)
+5. [DONE] Свести live delta path и финальный `message.content` thinking block без дублей: эмитить только unseen tail и очищать buffer на terminal boundaries; scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-thinking-stream-handler.ts` (handler exposes `consumeFinalThinking`), `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts`; expected commit message: `fix: dedupe finalized claude thinking`
+6. [DONE] Git Commit: `fix: dedupe finalized claude thinking` (hash: `40b7679e4`)
 
 ## Phase 3 — SSOT synchronization (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Claude thinking and translation contracts
-7. [TODO] Синхронизировать SSOT под shutdown-safe Claude errors и source-first live thinking path с Core-owned translation overlays; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `docs: sync claude live thinking contracts`
-8. [TODO] Git Commit: `docs: sync claude live thinking contracts` (hash: TBD)
+7. [DONE] Синхронизировать SSOT под shutdown-safe Claude errors и source-first live thinking path с Core-owned translation overlays; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `docs: sync claude live thinking contracts`
+8. [DONE] Git Commit: `docs: sync claude live thinking contracts` (hash: `eb6e1812f`)
 
 ## Phase 4 — Bugfix release for retest (owner: Claude, updated: 2026-04-16)
 
 ### Stream: Release notes preparation
-9. [TODO] Подготовить user-facing release notes под bugfix release для `Claude Stop/Resume` и `Claude live thinking`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare claude continuity bugfix release notes`
-10. [TODO] Git Commit: `docs: prepare claude continuity bugfix release notes` (hash: TBD)
+9. [DONE] Подготовить user-facing release notes под bugfix release для `Claude Stop/Resume` и `Claude live thinking`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare claude continuity bugfix release notes`
+10. [DONE] Git Commit: `docs: prepare claude continuity bugfix release notes` (hash: `f4aea2684`)
 
 ### Stream: Script-managed release batch
 11. [TODO] На чистом дереве выполнить `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bump, provider bundles и release artifacts для пользовательского retest; scope: root version manifests, provider bundle outputs, `doc/tmp/releases/`; expected commit message: `chore: build claude continuity bugfix release`
