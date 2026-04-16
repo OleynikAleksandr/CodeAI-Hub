@@ -200,3 +200,117 @@ test("ClaudeStreamEventRouter resets live buffer on message_stop terminal event"
   await router.handleStreamEvent(session, buildMessageStop());
   assert.equal(buffer.hasAccumulatedContent("session-message-stop"), false);
 });
+
+const buildAssistantThinkingMessage = (
+  text: string,
+  uuid: string
+): ClaudeStreamMessage => ({
+  type: "assistant",
+  uuid,
+  message: {
+    id: `msg-${uuid}`,
+    content: [{ type: "thinking", thinking: text } as never],
+  },
+});
+
+test("ClaudeStreamEventRouter emits only the unseen tail when final thinking block supersedes live materialized text", async () => {
+  const buffer = new ClaudeThinkingLiveBuffer();
+  const router = new ClaudeStreamEventRouter(
+    undefined,
+    undefined,
+    new ClaudeThinkingStreamHandler(buffer)
+  );
+  const session = createSession("session-final-superset");
+  const dialogs = collectThinkingDialogs(session);
+
+  await router.handleStreamEvent(
+    session,
+    buildContentBlockStart(0, "thinking")
+  );
+  const livePart =
+    "I am reasoning about the problem and breaking it down into smaller steps. " +
+    "First, the user asked for stop to behave safely without crashing core. " +
+    "Second, the user asked for live thinking to surface incrementally instead of one final block.\n";
+  await router.handleStreamEvent(session, buildThinkingDelta(0, livePart, "1"));
+  await router.handleStreamEvent(session, buildContentBlockStop(0));
+
+  const liveDialogsCount = dialogs.length;
+  assert.equal(liveDialogsCount > 0, true, "live path should have emitted");
+
+  const finalText = `${livePart}Closing summary: both contracts will be honored.`;
+  await router.handleAssistantMessage(
+    session,
+    buildAssistantThinkingMessage(finalText, "final-1")
+  );
+
+  const finalDialogs = dialogs.slice(liveDialogsCount);
+  assert.equal(
+    finalDialogs.length,
+    1,
+    "final emission should be a single tail"
+  );
+  assert.equal(
+    finalDialogs[0].includes("Closing summary"),
+    true,
+    "tail should carry only the unseen suffix"
+  );
+  assert.equal(
+    finalDialogs[0].includes("breaking it down"),
+    false,
+    "tail must not repeat already materialized text"
+  );
+});
+
+test("ClaudeStreamEventRouter falls back to full final thinking block when no delta path ran", async () => {
+  const buffer = new ClaudeThinkingLiveBuffer();
+  const router = new ClaudeStreamEventRouter(
+    undefined,
+    undefined,
+    new ClaudeThinkingStreamHandler(buffer)
+  );
+  const session = createSession("session-final-no-live");
+  const dialogs = collectThinkingDialogs(session);
+
+  const finalText = "This is the entire reasoning the model produced.";
+  await router.handleAssistantMessage(
+    session,
+    buildAssistantThinkingMessage(finalText, "final-2")
+  );
+
+  assert.deepEqual(dialogs, [finalText]);
+});
+
+test("ClaudeStreamEventRouter emits the divergent final thinking block in full when live materialization no longer matches", async () => {
+  const buffer = new ClaudeThinkingLiveBuffer();
+  const router = new ClaudeStreamEventRouter(
+    undefined,
+    undefined,
+    new ClaudeThinkingStreamHandler(buffer)
+  );
+  const session = createSession("session-final-divergent");
+  const dialogs = collectThinkingDialogs(session);
+
+  await router.handleStreamEvent(
+    session,
+    buildContentBlockStart(0, "thinking")
+  );
+  const livePart =
+    "Initial draft of the reasoning that will not match the final assembly. " +
+    "The model later rewrote this entirely before producing the canonical block.\n";
+  await router.handleStreamEvent(
+    session,
+    buildThinkingDelta(0, livePart, "div")
+  );
+  await router.handleStreamEvent(session, buildContentBlockStop(0));
+  const liveDialogsCount = dialogs.length;
+
+  const finalText =
+    "Different canonical reasoning unrelated to the live draft.";
+  await router.handleAssistantMessage(
+    session,
+    buildAssistantThinkingMessage(finalText, "final-3")
+  );
+
+  const finalDialogs = dialogs.slice(liveDialogsCount);
+  assert.deepEqual(finalDialogs, [finalText]);
+});

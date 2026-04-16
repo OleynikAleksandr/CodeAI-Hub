@@ -86,6 +86,16 @@ export class ClaudeThinkingStreamHandler {
     this.buffer.reset(sessionKey);
   }
 
+  /**
+   * Reconcile an incoming final assembled thinking block with what was
+   * already materialized via the delta path. Returns the unseen tail that
+   * still needs to be emitted, `null` if the final block is fully covered
+   * by live chunks, or the full text if the delta path never ran.
+   */
+  consumeFinalThinking(sessionKey: string, finalText: string): string | null {
+    return this.buffer.consumeFinal(sessionKey, finalText);
+  }
+
   private isStreamEvent(
     message: ClaudeStreamMessage,
     eventType: string

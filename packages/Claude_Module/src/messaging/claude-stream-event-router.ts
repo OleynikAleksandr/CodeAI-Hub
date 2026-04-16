@@ -442,7 +442,13 @@ export class ClaudeStreamEventRouter {
           this.thinkingMessageIdBySession.set(session.sessionId, messageId);
         }
         const thinking = (block as { readonly thinking: string }).thinking;
-        emitClaudeThinkingDialog(session, message, thinking, "thinking");
+        const unseenTail = this.thinkingStreamHandler.consumeFinalThinking(
+          session.sessionId,
+          thinking
+        );
+        if (unseenTail) {
+          emitClaudeThinkingDialog(session, message, unseenTail, "thinking");
+        }
       }
     }
   }
