@@ -2,6 +2,13 @@ import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
 import { ClaudeContentStreamHandler } from "./claude-content-stream-handler";
 import {
+  appendQuestionsToSuggestedResponse,
+  extractVariantBArtifacts,
+  normalizeStructuredOutputMessage,
+  partitionVariantBArtifacts,
+} from "./claude-structured-output-helpers";
+import {
+  emitClaudeAssistantLiveText,
   emitClaudeThinkingDialog,
   isClaudeMessageStopEvent,
   readClaudeMessageDeltaStopReason,
@@ -11,23 +18,11 @@ import {
   type ClaudeTextTranslationAdapter,
   ClaudeThoughtTranslationAdapter,
 } from "./claude-thought-translation-adapter";
-import { extractVariantBArtifacts } from "./structured-output-utils";
 import {
   parseWorkflowStructuredOutputFromResultMessage,
   parseWorkflowStructuredOutputFromText,
   type WorkflowStructuredOutput,
 } from "./workflow-structured-output";
-
-const QUESTION_SLOT_PATTERN = /^question\d*$/i;
-type VariantBArtifact =
-  ReturnType<typeof extractVariantBArtifacts> extends (infer Item)[] | null
-    ? Item
-    : never;
-
-interface VariantBPartition {
-  readonly artifacts?: VariantBArtifact[];
-  readonly questions: string[];
-}
 
 interface PendingAssistantText {
   readonly content: string;
@@ -40,55 +35,6 @@ type PendingAssistantTextResolution = "regular" | "tool_use_preamble";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const partitionVariantBArtifacts = (
-  artifacts: VariantBArtifact[] | null
-): VariantBPartition => {
-  if (!Array.isArray(artifacts)) {
-    return { questions: [] };
-  }
-
-  const keep: VariantBArtifact[] = [];
-  const questions: string[] = [];
-  for (const artifact of artifacts) {
-    const slot = artifact.slot.trim();
-    const markdown = artifact.markdown.trim();
-    if (!(slot && markdown)) {
-      continue;
-    }
-    if (QUESTION_SLOT_PATTERN.test(slot)) {
-      questions.push(markdown);
-      continue;
-    }
-    keep.push({ slot, markdown });
-  }
-
-  return {
-    artifacts: keep.length > 0 ? keep : undefined,
-    questions,
-  };
-};
-
-const appendQuestionsToSuggestedResponse = (
-  suggestedResponse: string | null | undefined,
-  questions: string[]
-): string | null => {
-  if (questions.length === 0) {
-    return suggestedResponse ?? null;
-  }
-  const questionsBlock = `Вопросы:\n${questions
-    .map((question, index) => `${index + 1}. ${question}`)
-    .join("\n")}`;
-  if (suggestedResponse && suggestedResponse.trim().length > 0) {
-    return `${suggestedResponse}\n\n${questionsBlock}`;
-  }
-  return questionsBlock;
-};
-
-const readStructuredOutput = (source: Record<string, unknown>) => {
-  const candidate = source.structured_output ?? source.structuredOutput;
-  return isRecord(candidate) ? candidate : null;
-};
 
 export const shouldSkipClaudeSDKMessageLog = (
   message: ClaudeStreamMessage
@@ -140,7 +86,31 @@ export class ClaudeStreamEventRouter {
     if (!assistantText) {
       return;
     }
-    await this.queueAssistantText(session, message, assistantText);
+    // Reconcile the assembled assistant text against whatever was already
+    // materialized via the live text_delta path. Capture materialization
+    // status BEFORE consumeFinalText because that call clears buffer state.
+    const hadLiveMaterialization =
+      this.contentStreamHandler.hasMaterializedText(session.sessionId);
+    const unseenText = this.contentStreamHandler.consumeFinalText(
+      session.sessionId,
+      assistantText
+    );
+    if (!unseenText) {
+      return;
+    }
+    if (hadLiveMaterialization) {
+      // Live path already surfaced source fragments; emit the unseen tail (or
+      // divergent canonical block) as a live bubble to avoid dual-emit through
+      // the pending buffer path which is meant for legacy (non-live) flows.
+      emitClaudeAssistantLiveText(
+        session,
+        message,
+        unseenText,
+        "text_final_tail"
+      );
+      return;
+    }
+    await this.queueAssistantText(session, message, unseenText);
   }
 
   handleResultMessage(
@@ -157,7 +127,7 @@ export class ClaudeStreamEventRouter {
     await this.flushPendingAssistantText(session, "regular");
     this.clearThinkingMessage(session);
     await this.emitThinkingChunks(session, message);
-    const normalizedMessage = this.normalizeStructuredOutputMessage(message);
+    const normalizedMessage = normalizeStructuredOutputMessage(message);
     const structured =
       parseWorkflowStructuredOutputFromResultMessage(normalizedMessage);
     if (!structured) {
@@ -203,42 +173,6 @@ export class ClaudeStreamEventRouter {
       this.clearThinkingMessage(session);
       this.contentStreamHandler.resetSession(session.sessionId);
     }
-  }
-
-  private normalizeStructuredOutputMessage(
-    message: ClaudeStreamMessage
-  ): ClaudeStreamMessage {
-    const raw = message as Record<string, unknown>;
-    const direct = readStructuredOutput(raw);
-    if (direct) {
-      return message;
-    }
-
-    const payload = isRecord(raw.payload) ? raw.payload : null;
-    const payloadStructured = payload ? readStructuredOutput(payload) : null;
-    if (payloadStructured) {
-      return { ...message, structured_output: payloadStructured };
-    }
-
-    const result = isRecord(raw.result) ? raw.result : null;
-    if (!result) {
-      return message;
-    }
-
-    const resultStructured = readStructuredOutput(result);
-    if (resultStructured) {
-      return { ...message, structured_output: resultStructured };
-    }
-
-    const resultPayload = isRecord(result.payload) ? result.payload : null;
-    const resultPayloadStructured = resultPayload
-      ? readStructuredOutput(resultPayload)
-      : null;
-    if (resultPayloadStructured) {
-      return { ...message, structured_output: resultPayloadStructured };
-    }
-
-    return message;
   }
 
   private emitAssistantText(

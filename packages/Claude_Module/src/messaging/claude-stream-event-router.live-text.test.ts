@@ -181,7 +181,7 @@ test("ClaudeStreamEventRouter ignores non-text_delta fragments on a text block",
   assert.equal(buffer.hasAccumulatedContent("session-text-noise"), false);
 });
 
-test.skip("ClaudeStreamEventRouter emits only unseen tail when final assistant text supersedes live materialized text", async () => {
+test("ClaudeStreamEventRouter emits only unseen tail when final assistant text supersedes live materialized text", async () => {
   const buffer = new ClaudeTextLiveBuffer();
   const handler = new ClaudeContentStreamHandler(
     new ClaudeThinkingLiveBuffer(),
@@ -220,7 +220,7 @@ test.skip("ClaudeStreamEventRouter emits only unseen tail when final assistant t
   );
 });
 
-test.skip("ClaudeStreamEventRouter falls back to full assembled text when no live delta path ran", async () => {
+test("ClaudeStreamEventRouter falls back to full assembled text when no live delta path ran", async () => {
   const buffer = new ClaudeTextLiveBuffer();
   const handler = new ClaudeContentStreamHandler(
     new ClaudeThinkingLiveBuffer(),
@@ -235,12 +235,18 @@ test.skip("ClaudeStreamEventRouter falls back to full assembled text when no liv
     session,
     buildAssistantTextMessage(finalText, "final-text-2")
   );
+  // Legacy path pends the text until a terminal message_stop arrives.
+  await router.handleStreamEvent(session, {
+    type: "stream_event",
+    uuid: "legacy-stop",
+    event: { type: "message_stop" },
+  });
 
   assert.equal(emissions.length, 1);
   assert.equal(emissions[0].content, finalText);
 });
 
-test.skip("ClaudeStreamEventRouter emits full canonical text when assembled diverges from live draft", async () => {
+test("ClaudeStreamEventRouter emits full canonical text when assembled diverges from live draft", async () => {
   const buffer = new ClaudeTextLiveBuffer();
   const handler = new ClaudeContentStreamHandler(
     new ClaudeThinkingLiveBuffer(),
