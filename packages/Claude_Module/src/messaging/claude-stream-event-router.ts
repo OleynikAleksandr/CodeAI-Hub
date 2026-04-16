@@ -1,12 +1,12 @@
 import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage, ModuleReporter } from "../types";
+import { ClaudeContentStreamHandler } from "./claude-content-stream-handler";
 import {
   emitClaudeThinkingDialog,
   isClaudeMessageStopEvent,
   readClaudeMessageDeltaStopReason,
   readClaudeMessageId,
 } from "./claude-thinking-dialog-emitter";
-import { ClaudeThinkingStreamHandler } from "./claude-thinking-stream-handler";
 import {
   type ClaudeTextTranslationAdapter,
   ClaudeThoughtTranslationAdapter,
@@ -104,17 +104,17 @@ export class ClaudeStreamEventRouter {
   >();
   private readonly thinkingMessageIdBySession = new Map<string, string>();
   private readonly thoughtTranslator: ClaudeTextTranslationAdapter;
-  private readonly thinkingStreamHandler: ClaudeThinkingStreamHandler;
+  private readonly contentStreamHandler: ClaudeContentStreamHandler;
 
   constructor(
     reporter?: ModuleReporter,
     thoughtTranslator?: ClaudeTextTranslationAdapter,
-    thinkingStreamHandler?: ClaudeThinkingStreamHandler
+    contentStreamHandler?: ClaudeContentStreamHandler
   ) {
     this.thoughtTranslator =
       thoughtTranslator ?? new ClaudeThoughtTranslationAdapter(reporter);
-    this.thinkingStreamHandler =
-      thinkingStreamHandler ?? new ClaudeThinkingStreamHandler();
+    this.contentStreamHandler =
+      contentStreamHandler ?? new ClaudeContentStreamHandler();
   }
 
   handleAssistantMessage(
@@ -178,13 +178,13 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): Promise<void> {
-    if (this.thinkingStreamHandler.handleBlockStart(session, message)) {
+    if (this.contentStreamHandler.handleBlockStart(session, message)) {
       return;
     }
-    if (this.thinkingStreamHandler.handleDelta(session, message)) {
+    if (this.contentStreamHandler.handleDelta(session, message)) {
       return;
     }
-    if (this.thinkingStreamHandler.handleBlockStop(session, message)) {
+    if (this.contentStreamHandler.handleBlockStop(session, message)) {
       return;
     }
     const stopReason = readClaudeMessageDeltaStopReason(message);
@@ -201,7 +201,7 @@ export class ClaudeStreamEventRouter {
     if (isClaudeMessageStopEvent(message)) {
       await this.flushPendingAssistantText(session, "regular");
       this.clearThinkingMessage(session);
-      this.thinkingStreamHandler.resetSession(session.sessionId);
+      this.contentStreamHandler.resetSession(session.sessionId);
     }
   }
 
@@ -442,7 +442,7 @@ export class ClaudeStreamEventRouter {
           this.thinkingMessageIdBySession.set(session.sessionId, messageId);
         }
         const thinking = (block as { readonly thinking: string }).thinking;
-        const unseenTail = this.thinkingStreamHandler.consumeFinalThinking(
+        const unseenTail = this.contentStreamHandler.consumeFinalThinking(
           session.sessionId,
           thinking
         );

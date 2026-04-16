@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage } from "../types";
+import { ClaudeContentStreamHandler } from "./claude-content-stream-handler";
 import { ClaudeStreamEventRouter } from "./claude-stream-event-router";
 import { ClaudeThinkingLiveBuffer } from "./claude-thinking-live-buffer";
-import { ClaudeThinkingStreamHandler } from "./claude-thinking-stream-handler";
 
 interface DialogMessageEvent {
   readonly content: string;
@@ -99,7 +99,7 @@ test("ClaudeStreamEventRouter emits readable thinking segment after delta accumu
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-delta-flush");
   const dialogs = collectThinkingDialogs(session);
@@ -132,7 +132,7 @@ test("ClaudeStreamEventRouter flushes the remaining thinking tail on content_blo
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-tail-flush");
   const dialogs = collectThinkingDialogs(session);
@@ -156,7 +156,7 @@ test("ClaudeStreamEventRouter ignores content_block_delta when block type is not
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-non-thinking");
   const dialogs = collectThinkingDialogs(session);
@@ -182,7 +182,7 @@ test("ClaudeStreamEventRouter resets live buffer on message_stop terminal event"
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-message-stop");
   collectThinkingDialogs(session);
@@ -218,7 +218,7 @@ test("ClaudeStreamEventRouter emits only the unseen tail when final thinking blo
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-final-superset");
   const dialogs = collectThinkingDialogs(session);
@@ -266,7 +266,7 @@ test("ClaudeStreamEventRouter falls back to full final thinking block when no de
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-final-no-live");
   const dialogs = collectThinkingDialogs(session);
@@ -285,7 +285,7 @@ test("ClaudeStreamEventRouter emits the divergent final thinking block in full w
   const router = new ClaudeStreamEventRouter(
     undefined,
     undefined,
-    new ClaudeThinkingStreamHandler(buffer)
+    new ClaudeContentStreamHandler(buffer)
   );
   const session = createSession("session-final-divergent");
   const dialogs = collectThinkingDialogs(session);

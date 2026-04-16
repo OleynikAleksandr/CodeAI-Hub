@@ -29,6 +29,39 @@ export const emitClaudeThinkingDialog = (
   }
 };
 
+/**
+ * Emit a live fragment of visible assistant text as an append-only assistant
+ * message. Used by the content stream handler to surface text_delta progress
+ * before the final assembled assistant message arrives, eliminating the
+ * pre-tool silence when Claude streams large input_json_delta payloads.
+ *
+ * Each fragment gets a unique uuid suffix so Core-owned translation overlays
+ * can attach localizedContent to each live bubble independently.
+ */
+export const emitClaudeAssistantLiveText = (
+  session: ActiveSession,
+  message: ClaudeStreamMessage,
+  content: string,
+  suffix: string
+): void => {
+  if (content.length === 0) {
+    return;
+  }
+  session.eventEmitter.emit("message", {
+    type: "assistant",
+    content,
+    uuid: `${message.uuid ?? crypto.randomUUID()}::${suffix}`,
+    claudeSessionId: message.session_id,
+    data: message,
+    metadata: {
+      uuid: message.uuid,
+      session_id: message.session_id,
+      model: message.message?.model,
+      live: true,
+    },
+  });
+};
+
 export const readClaudeMessageId = (
   message: ClaudeStreamMessage
 ): string | null =>
