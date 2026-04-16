@@ -7,7 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.1.999
+## Current Release — v1.2.0
+- **Diagnostic build**: temporary settings-storage trace. Every call to `loadSettingsSnapshot`, `persistSettingsSnapshot`, and `handleSaveRequest` now writes a structured entry (including a stack trace for persist) into `~/.codeai-hub/logs/extension/extension.log`. Used to catch the regression where launching Project Manager rewrites `claude.thinking.effort` back to `medium` after the user saved `x-High`. Will be removed once the root cause is fixed.
+
+### 1.1.999 (previous)
 - **Claude live assistant text now collapses into one growing dialog card**: consecutive live text fragments from the same turn merge visually into a single assistant bubble instead of rendering one card per sentence. The provider still emits each live fragment as a stable append-only message so translation overlays keep attaching `localizedContent` per fragment, but the UI layer now runs a merge pass symmetric to the existing thinking merge.
 
 ### 1.1.998 (previous)

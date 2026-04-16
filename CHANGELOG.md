@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-04-16
+### Diagnostics
+- **Settings storage trace (temporary)**: `loadSettingsSnapshot`, `persistSettingsSnapshot`, and `handleSaveRequest` now emit structured entries into `~/.codeai-hub/logs/extension/extension.log` via `getExtensionLogger()`. Persist trace includes a full stack trace of the caller. Used to identify the regression where launching Project Manager rewrites `claude.thinking.effort` back to `medium` after the user saved `x-High`. Scheduled for removal in a follow-up release once the root cause is fixed.
+
 ## [1.1.999] - 2026-04-16
 ### Fixed
 - **Claude live assistant text no longer renders as one card per sentence**: the Phase 1 live-text ingestion shipped in 1.1.998 still emits each readable fragment as a stable append-only `SessionMessage` (so Core translation overlays can attach `localizedContent` per fragment), but the UI layer now collapses consecutive live fragments into one growing assistant card. The provider tags live emits with `tag: "live"`, Core `appendProviderMessage` forwards the tag into `SessionMessage.tag`, and `mergeLiveAssistantMessages` in `dialog-panel-message-utils.ts` performs the UI merge symmetric to `mergeThinkingMessages`.
