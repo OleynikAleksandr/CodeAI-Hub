@@ -51,13 +51,6 @@ export const createSessionRequestHandlerRuntimeCallbacks = (
       .getSessionManager()
       .getSession(turnStateOptions.sessionId);
     const providerId = session?.providerId ?? null;
-    const callSite = new Error("stopdiag_emit_call_site").stack ?? "";
-    dependencies.getLogger().info("stopdiag_emit_turn_state", {
-      sessionId: turnStateOptions.sessionId,
-      state: turnStateOptions.state,
-      providerId,
-      stack: callSite.split("\n").slice(1, 8).join(" | "),
-    });
     if (session) {
       dependencies.getWorkspaceRuntime()?.notifyTurnStateChanged(
         {

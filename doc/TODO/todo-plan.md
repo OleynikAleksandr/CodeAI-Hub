@@ -77,7 +77,7 @@ Fix: (1) обновлять `session.binding` в `onSessionBinding` того ж�
 26. [TODO] Git Commit: `fix: adopt post-stop rebind session in PM dialog controller` (hash: TBD)
 
 ### Stream 10: Remove Core stopdiag_ instrumentation
-27. [TODO] Remove all `stopdiag_` logs from `stop-action.ts`, `stop-rebind.ts`, `message-dispatch.ts`, `runtime-callbacks.ts`, `provider-event-router.ts` — scope: 5 files; commit message: `chore: remove 1.2.3 stopdiag core instrumentation`
+27. [IN_PROGRESS] Remove all `stopdiag_` logs from `stop-action.ts`, `stop-rebind.ts`, `message-dispatch.ts`, `runtime-callbacks.ts`, `provider-event-router.ts` — scope: 5 files; commit message: `chore: remove 1.2.3 stopdiag core instrumentation`
 28. [TODO] Git Commit: `chore: remove 1.2.3 stopdiag core instrumentation` (hash: TBD)
 
 ### Stream 11: Remove PM pmdiag_ + appender
