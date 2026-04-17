@@ -302,6 +302,27 @@ export const useProjectManagerSessionStream = (params: {
           isRecord(payload.snapshot) &&
           isRecord(payload.snapshot.sessions)
         ) {
+          const sessionsSummary = Object.entries(payload.snapshot.sessions).map(
+            ([sessionId, session]) => ({
+              sessionId,
+              turnState: session.turnState,
+              continuityLockActive: session.continuityLockActive,
+              continuityLockReason: session.continuityLockReason ?? null,
+              providerSessionId: session.providerSessionId ?? null,
+              resumeMode: session.resumeMode,
+              finalTurnCompleted: session.finalTurnCompleted,
+            })
+          );
+          api.logDiagnostic({
+            channel: "stop-lock-diag",
+            event: "pmdiag_workspace_snapshot_apply",
+            context: {
+              selectionId: payload.selectionId,
+              sequence: payload.sequence,
+              sessionsCount: sessionsSummary.length,
+              sessions: sessionsSummary,
+            },
+          });
           params.onWorkspaceSnapshot?.(payload);
         }
         return;

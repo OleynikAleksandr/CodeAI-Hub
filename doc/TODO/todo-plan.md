@@ -41,3 +41,23 @@
 ### Stream 5: Build release
 13. [DONE] Run `./scripts/build-all.sh --version 1.2.3` then `./scripts/build-release.sh --use-current-version`; tarballs auto-copied to `doc/tmp/releases/` (ignored by git) — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.3 for diagnostic release`
 14. [DONE] Git Commit: `chore: bump version to 1.2.3 for diagnostic release` (hash: 057adca0a)
+
+## Phase 2 — 1.2.4 PM-side Diagnostic (owner: codeai-bot, updated: 2026-04-17)
+
+Core 1.2.3 трассы доказали: `emit_turn_state state="running"` эмитится **корректно** и без перекрытия `idle` на новом sessionId `56bc4d74`. Три изначальные гипотезы (stale abort, sendMessage throw, pending binding) — все опровергнуты. Реальный источник: **PM не переключает `activeSessionId` после re-create** (rebind через `stop-rebind` path НЕ использован — `stopInvalidated=false`), поэтому UI смотрит status старой мёртвой session `9b300456` (idle), а running idёт на новую `56bc4d74`.
+
+Phase 2 добавляет PM-side диагностику через `api.logDiagnostic({...})` → websocket → Core `remote-bridge-message-router` → `core.log` (уже работающий mechanism). Не трогает Core diag из Phase 1 — они продолжают писать.
+
+### Stream 6: PM api + snapshot apply tracing
+15. [IN_PROGRESS] Add `pmdiag_` logs to `src/client/project-manager/api.ts` (stopSession/sendSessionMessage) and `src/client/project-manager/components/sessions/session-stream.ts` (applyWorkspaceSnapshotToSnapshots per-session state) — scope: 2 files; commit message: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4`
+16. [TODO] Git Commit: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4` (hash: TBD)
+
+### Stream 7: activeSessionId tracker
+17. [TODO] Add `pmdiag_active_*` logs around `setActiveSessionId` in `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` and `project-manager-dialog-session-view.tsx` — scope: 2 files; commit message: `chore: add pmdiag activeSessionId tracker logs for 1.2.4`
+18. [TODO] Git Commit: `chore: add pmdiag activeSessionId tracker logs for 1.2.4` (hash: TBD)
+
+### Stream 8: Release notes + build
+19. [TODO] Update `README.md` and `CHANGELOG.md` to target 1.2.4 diag release — scope: 2 files; commit message: `docs: prepare 1.2.4 PM-side diagnostic release notes`
+20. [TODO] Git Commit: `docs: prepare 1.2.4 PM-side diagnostic release notes` (hash: TBD)
+21. [TODO] Run `./scripts/build-all.sh --version 1.2.4` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.4 for PM diagnostic release`
+22. [TODO] Git Commit: `chore: bump version to 1.2.4 for PM diagnostic release` (hash: TBD)

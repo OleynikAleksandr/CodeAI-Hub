@@ -216,6 +216,11 @@ class ProjectManagerApi {
   }
 
   stopSession(sessionId: string): void {
+    this.logDiagnostic({
+      channel: "stop-lock-diag",
+      event: "pmdiag_api_stop_session",
+      context: { sessionId },
+    });
     this.send({ type: "session:stop", payload: { sessionId } });
   }
 
@@ -260,6 +265,16 @@ class ProjectManagerApi {
       );
       return;
     }
+    this.logDiagnostic({
+      channel: "stop-lock-diag",
+      event: "pmdiag_api_send_session_message",
+      context: {
+        sessionId,
+        contentPreview: content.slice(0, 80),
+        contentLength: content.length,
+        hasTurnOptions: turnOptions !== undefined,
+      },
+    });
     const payloadContent = turnOptions
       ? { text: content, turnOptions }
       : content;
