@@ -28,29 +28,29 @@
 
 ### Stream 1: README/CHANGELOG pre-bump
 1. [DONE] Обновить README.md и CHANGELOG.md на будущую версию 1.2.7 — scope: 2 файла; ожидаемый commit: `docs: prepare 1.2.7 release notes for Gemini Stop abort + resume`
-2. [DONE] Git Commit: `docs: prepare 1.2.7 release notes for Gemini Stop abort + resume` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.7 release notes for Gemini Stop abort + resume` (hash: 09be911fc)
 
 ### Stream 2: Gemini module — remove resetChat on Stop
-1. [TODO] Удалить `session.client.resetChat()` из `gemini-session-lifecycle.ts` `closeSession`; оставить только abort + removeSession — scope: 1 файл; ожидаемый commit: `fix: drop resetChat on Gemini Stop to preserve provider chat history`
-2. [TODO] Git Commit: `fix: drop resetChat on Gemini Stop to preserve provider chat history` (hash: TBD)
+1. [DONE] Удалить `session.client.resetChat()` из `gemini-session-lifecycle.ts` `closeSession`; оставить только abort + removeSession (дополнительно: убрать async у синхронизированного closeSession в lifecycle/manager, adapter сохранил Promise<void>) — scope: 3 файла; ожидаемый commit: `fix: drop resetChat on Gemini Stop to preserve provider chat history`
+2. [DONE] Git Commit: `fix: drop resetChat on Gemini Stop to preserve provider chat history` (hash: 133d3ff0a)
 
 ### Stream 3: Core — preserve pre-stop providerSessionId + resume capability
-1. [TODO] Добавить capability `requiresPostStopResume` в `provider-descriptor-factory.ts` (geminiCli=true); расширить `ProviderRegistry` / descriptor type — scope: 2 файла; ожидаемый commit: `feat(core): add requiresPostStopResume provider capability`
-2. [TODO] Git Commit: `feat(core): add requiresPostStopResume provider capability` (hash: TBD)
-3. [TODO] В `session-provider-binding-service.ts` перед `invalidateProviderBinding` запомнить pre-stop `providerSessionId` в Map; expose `getPreStopProviderSessionId(sessionId)` + `clearPreStopProviderSessionId(sessionId)` — scope: 1 файл; ожидаемый commit: `feat(core): remember pre-stop providerSessionId on binding invalidate`
-4. [TODO] Git Commit: `feat(core): remember pre-stop providerSessionId on binding invalidate` (hash: TBD)
-5. [TODO] В `session-request-handler-stop-rebind.ts` передавать pre-stop providerSessionId в `resolveProviderSessionId` для провайдеров с `requiresPostStopResume`; очистить preStop map после успешного rebind — scope: 1 файл; ожидаемый commit: `fix(core): resume provider session on post-stop rebind for Gemini`
-6. [TODO] Git Commit: `fix(core): resume provider session on post-stop rebind for Gemini` (hash: TBD)
+1. [DONE] Добавить capability `requiresPostStopResume` в `provider-descriptor-factory.ts` (geminiCli=true); расширить `ProviderCapabilities` — scope: 2 файла; ожидаемый commit: `feat(core): add requiresPostStopResume provider capability`
+2. [DONE] Git Commit: `feat(core): add requiresPostStopResume provider capability` (hash: 89278cdb1)
+3. [DONE] В `session-provider-binding-service.ts` перед `invalidateProviderBinding` запомнить pre-stop `providerSessionId` в Map; expose `getPreStopProviderSessionId(sessionId)` + `clearPreStopProviderSessionId(sessionId)` — scope: 1 файл; ожидаемый commit: `feat(core): remember pre-stop providerSessionId on binding invalidate`
+4. [DONE] Git Commit: `feat(core): remember pre-stop providerSessionId on binding invalidate` (hash: b8855858b)
+5. [DONE] В `session-request-handler-stop-rebind.ts` передавать pre-stop providerSessionId в `resolveProviderSessionId` для провайдеров с `requiresPostStopResume`; добавить `ProviderRegistry.getDescriptor`; очистить preStop map после rebind — scope: 3 файла; ожидаемый commit: `fix(core): resume provider session on post-stop rebind for Gemini`
+6. [DONE] Git Commit: `fix(core): resume provider session on post-stop rebind for Gemini` (hash: ce7e677b7)
 
 ### Stream 4: Tests
-1. [TODO] Добавить test в `gemini-session-manager.test.ts` / новый `gemini-session-manager.stop-resume.test.ts`: create → send → stop → send повторно, проверить, что `resetChat` не звалась — scope: 1-2 файла; ожидаемый commit: `test: verify Gemini Stop preserves chat and rebind resumes`
-2. [TODO] Git Commit: `test: verify Gemini Stop preserves chat and rebind resumes` (hash: TBD)
+1. [DONE] Добавить self-contained test `gemini-session-manager.stop-resume.test.ts`: (a) closeSession не зовёт resetChat, (b) resumeSession прокидывает providerSessionId в argv.resume — scope: 1 файл; ожидаемый commit: `test: verify Gemini Stop preserves chat and rebind resumes`
+2. [DONE] Git Commit: `test: verify Gemini Stop preserves chat and rebind resumes` (hash: b67652dec)
 
 ### Stream 5: SSOT docs + planning archive
-1. [TODO] Обновить Invariant 24 в `SystemArchitecture.md` (добавить абзац про Gemini и requiresPostStopResume); обновить `Modules/Gemini.md` (Stop Abort + Resume) — scope: 2 файла; ожидаемый commit: `docs: promote Gemini post-stop resume contract`
-2. [TODO] Git Commit: `docs: promote Gemini post-stop resume contract` (hash: TBD)
-3. [TODO] Архивировать planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/`; обновить `Docs_Index.md` — scope: 2 файла; ожидаемый commit: `docs: archive 1.2.7 Gemini Stop planning doc`
-4. [TODO] Git Commit: `docs: archive 1.2.7 Gemini Stop planning doc` (hash: TBD)
+1. [DONE] Обновить Invariant 24 в `SystemArchitecture.md` (добавить абзац про Gemini и requiresPostStopResume); обновить `Modules/Gemini.md` (Stop Abort + Resume) — scope: 2 файла; ожидаемый commit: `docs: promote Gemini post-stop resume contract`
+2. [DONE] Git Commit: `docs: promote Gemini post-stop resume contract` (hash: 70711cc6e)
+3. [DONE] Архивировать planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/`; обновить `Docs_Index.md` — scope: 2 файла; ожидаемый commit: `docs: archive 1.2.7 Gemini Stop planning doc`
+4. [DONE] Git Commit: `docs: archive 1.2.7 Gemini Stop planning doc` (hash: 0c28124ae)
 
 ### Stream 6: Release build 1.2.7
 1. [TODO] Verify чистое дерево, запустить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`; скопировать tarballs в `doc/tmp/releases/`.
