@@ -51,6 +51,7 @@ export const useProjectManagerDialogSessionController = (
   const restoreRequestInFlightRef = useRef(new Map<string, number>());
   const pendingIntentRef = useRef<DialogOpenIntent | null>(null);
   const dialogIdRef = useRef<string | null>(null);
+  const lastProviderSessionIdRef = useRef<string | null>(null);
 
   const { settings, reload } = useProjectManagerSettings();
   const settingsRef = useRef(settings);
@@ -131,6 +132,7 @@ export const useProjectManagerDialogSessionController = (
     pendingIntentRef.current = intent;
     dialogIdRef.current = null;
     sessionRef.current = null;
+    lastProviderSessionIdRef.current = null;
     loadedDialogIdsRef.current.clear();
     dialogCursorRef.current.clear();
     pendingHistoryCursorRef.current.clear();
@@ -180,6 +182,24 @@ export const useProjectManagerDialogSessionController = (
 
   useProjectManagerSessionStream({
     onSessionBinding: (payload) => {
+      setSession((current) => {
+        if (!current || current.id !== payload.sessionId) {
+          return current;
+        }
+        if (
+          current.binding.providerSessionId &&
+          payload.providerSessionId === null
+        ) {
+          lastProviderSessionIdRef.current = current.binding.providerSessionId;
+        }
+        return {
+          ...current,
+          binding: {
+            providerSessionId: payload.providerSessionId,
+            status: payload.status,
+          },
+        };
+      });
       setSnapshots((previous) => {
         const current = previous[payload.sessionId];
         if (!current) {
@@ -219,8 +239,17 @@ export const useProjectManagerDialogSessionController = (
           current.binding.status !== "ready" &&
           currentProviderSessionId !== null &&
           currentProviderSessionId === createdProviderSessionId;
+        const isPostStopRebindSwap =
+          current.binding.status !== "ready" &&
+          currentProviderSessionId === null &&
+          createdProviderSessionId !== null &&
+          lastProviderSessionIdRef.current !== null &&
+          lastProviderSessionIdRef.current === createdProviderSessionId;
         const shouldAdopt =
-          isSameSession || isRolloverChild || isRestoreMaterialization;
+          isSameSession ||
+          isRolloverChild ||
+          isRestoreMaterialization ||
+          isPostStopRebindSwap;
         if (
           !(
             isSameWorkspace &&
@@ -257,7 +286,10 @@ export const useProjectManagerDialogSessionController = (
               todos: carriedTodos,
             },
           };
-          if (isRestoreMaterialization && current.id !== created.id) {
+          if (
+            (isRestoreMaterialization || isPostStopRebindSwap) &&
+            current.id !== created.id
+          ) {
             const { [current.id]: _discarded, ...withoutPlaceholder } = next;
             next = withoutPlaceholder;
           }
@@ -268,6 +300,9 @@ export const useProjectManagerDialogSessionController = (
           return next;
         });
 
+        if (isPostStopRebindSwap) {
+          lastProviderSessionIdRef.current = null;
+        }
         sessionRef.current = created;
         return created;
       });
