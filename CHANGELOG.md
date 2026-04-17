@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.7] - 2026-04-17
+### Fixed
+- **Gemini `Stop` no longer wipes provider chat history**: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` `closeSession` no longer calls `session.client.resetChat()`. That call materialized a new empty `GeminiChat` against the same `Config.sessionId` and wrote a new empty chat file under `~/.gemini/tmp/<projectSlug>/chats/`, orphaning the prior chat file. The abort path is now `abortController.abort()` + `sessionStore.removeSession()` only, so the pre-stop provider chat file stays intact.
+- **Core-side post-stop Gemini rebind resumes by provider session id**: Core's `SessionProviderBindingService.invalidateProviderBinding` now remembers the live `providerSessionId` in a pre-stop map before setting the binding to `null`, and `SessionRequestHandlerStopRebind.performRebind` threads that id into `resolveProviderSessionId`'s `requestedProviderSessionId` for providers with the new `requiresPostStopResume` capability. `GeminiProviderAdapter.resumeSession` forwards it to Gemini CLI Core `argv.resume`, which loads the prior chat file with full Description Agent system instructions and prior dialog. Claude/Codex paths are unchanged (their post-stop continuity is already owned provider-natively).
+
+### Contracts
+- **Invariant 24** extended: `Provider Stop` is now also required not to discard provider-native chat history. For providers declaring `requiresPostStopResume`, Core must persist the pre-stop provider session id and resume against it on rebind.
+
 ## [1.2.6] - 2026-04-17
 ### Fixed
 - **Codex `Stop` aborts the active subprocess instead of waiting for `turn_completed`**: `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` registers the `ChildProcess` spawned by `streamCodexExec` in a module-scoped Map keyed by `threadId` and exports `killActiveCodexProcess(threadId)` which issues `SIGTERM`. `packages/Codex_Module/src/session/session-manager.ts` `closeSession` calls this hook before `lifecycle.closeSession` and the `processingLoop` await, so the underlying `codex exec` stdout closes promptly, the readline `for await` unblocks, the existing `finally` cleans up, and the processing loop resolves. Previously Stop only resolved the outer message generator; the child kept running until Codex naturally finished the turn.
