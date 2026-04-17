@@ -14,6 +14,22 @@ import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-h
 import { SessionRequestHandlerProviderSend } from "./session-request-handler-provider-send";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 
+const PROVIDER_STALE_BINDING_ERROR_CODE = "GEMINI_SESSION_STALE_BINDING";
+
+const extractStaleProviderSessionId = (error: unknown): string | null => {
+  if (!(error instanceof Error)) {
+    return null;
+  }
+  if ((error as { code?: string }).code !== PROVIDER_STALE_BINDING_ERROR_CODE) {
+    return null;
+  }
+  const candidate = (error as { providerSessionId?: string }).providerSessionId;
+  if (typeof candidate === "string" && candidate.trim().length > 0) {
+    return candidate.trim();
+  }
+  return null;
+};
+
 interface SessionRequestHandlerMessageDispatchDependencies {
   readonly appliedTurnConfig: SessionRequestHandlerAppliedTurnConfig;
   readonly broadcaster: (event: BridgeEvent) => void;
@@ -35,9 +51,19 @@ interface SessionRequestHandlerMessageDispatchDependencies {
   readonly trackPendingUserIntent: (sessionId: string, content: string) => void;
 }
 
+export interface StaleBindingRecoveryHooks {
+  readonly ensureSessionReadyForSend: (session: Session) => Promise<boolean>;
+  readonly invalidateProviderBinding: (sessionId: string) => void;
+}
+
 export class SessionRequestHandlerMessageDispatch {
   private readonly deps: SessionRequestHandlerMessageDispatchDependencies;
   private readonly providerSend: SessionRequestHandlerProviderSend;
+  private staleBindingRecoveryHooks: StaleBindingRecoveryHooks | null = null;
+
+  setStaleBindingRecoveryHooks(hooks: StaleBindingRecoveryHooks): void {
+    this.staleBindingRecoveryHooks = hooks;
+  }
 
   constructor(deps: SessionRequestHandlerMessageDispatchDependencies) {
     this.deps = deps;
@@ -158,6 +184,19 @@ export class SessionRequestHandlerMessageDispatch {
         sessionId,
       });
     } catch (error) {
+      const staleProviderSessionId = extractStaleProviderSessionId(error);
+      if (staleProviderSessionId) {
+        const retried = await this.retryAfterStaleBinding({
+          content,
+          session,
+          sessionId,
+          staleProviderSessionId,
+          turnOptions,
+        });
+        if (retried) {
+          return;
+        }
+      }
       this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
       this.deps.logger.warn("Provider sendMessage failed", {
         sessionId,
@@ -170,6 +209,90 @@ export class SessionRequestHandlerMessageDispatch {
         error,
         sessionId
       );
+    }
+  }
+
+  private async retryAfterStaleBinding(options: {
+    readonly content: string;
+    readonly session: Session;
+    readonly sessionId: string;
+    readonly staleProviderSessionId: string;
+    readonly turnOptions?: Record<string, unknown>;
+  }): Promise<boolean> {
+    const { content, session, sessionId, staleProviderSessionId, turnOptions } =
+      options;
+    const hooks = this.staleBindingRecoveryHooks;
+    if (!hooks) {
+      this.deps.logger.warn(
+        "Stale-binding retry unavailable: recovery hooks not wired",
+        { sessionId, staleProviderSessionId }
+      );
+      return false;
+    }
+    this.deps.logger.warn(
+      "Stale provider session detected during send; invalidating binding and retrying once",
+      {
+        sessionId,
+        staleProviderSessionId,
+        providerId: session.providerId,
+      }
+    );
+    hooks.invalidateProviderBinding(sessionId);
+    const ready = await hooks.ensureSessionReadyForSend(session);
+    if (!ready) {
+      this.deps.logger.warn(
+        "Stale-binding rebind did not complete; surfacing original error",
+        { sessionId, staleProviderSessionId }
+      );
+      return false;
+    }
+    const retryResolved = this.resolveBoundProviderChannel(sessionId);
+    if (!retryResolved) {
+      this.deps.logger.warn(
+        "Stale-binding retry aborted: no bound provider channel after rebind",
+        { sessionId }
+      );
+      return false;
+    }
+    try {
+      await this.deps.continuity.ensureTrackedOnOutboundMessage({
+        sessionId,
+        providerSessionId: retryResolved.binding.providerSessionId,
+      });
+      const providerTurnOptions = this.attachProviderTurnOptions(
+        sessionId,
+        retryResolved.binding.providerId,
+        stripInternalWorkflowTurnOptions(turnOptions)
+      );
+      await this.providerSend.dispatch({
+        adapter: retryResolved.adapter,
+        content,
+        providerId: retryResolved.binding.providerId,
+        providerSessionId: retryResolved.binding.providerSessionId,
+        providerTurnOptions,
+        sessionId,
+      });
+      return true;
+    } catch (retryError) {
+      this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
+      this.deps.logger.warn(
+        "Stale-binding retry failed; surfacing provider failure",
+        {
+          sessionId,
+          providerId: retryResolved.binding.providerId,
+          providerSessionId: retryResolved.binding.providerSessionId,
+          error:
+            retryError instanceof Error
+              ? retryError.message
+              : String(retryError),
+        }
+      );
+      this.deps.handleProviderFailure(
+        retryResolved.binding.providerId,
+        retryError,
+        sessionId
+      );
+      return true;
     }
   }
 

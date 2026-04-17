@@ -195,6 +195,12 @@ export class SessionRequestHandler {
           providerSessionId
         ),
     });
+    this.messageDispatch.setStaleBindingRecoveryHooks({
+      ensureSessionReadyForSend: (session) =>
+        this.stopRebind.ensureSessionReadyForSend(session),
+      invalidateProviderBinding: (sessionId) =>
+        this.providerBindingService.invalidateProviderBinding(sessionId),
+    });
     this.sessionActions = new SessionRequestHandlerSessionActions({
       appliedTurnConfig: this.appliedTurnConfig,
       broadcaster: this.broadcaster,
