@@ -194,3 +194,116 @@ test("Gemini [Thought:] marker with empty post-marker emits only thinking bubble
   assert.equal(messages[0]?.tag, "thinking");
   assert.equal(messages[0]?.content, "Финализация шага: всё готово.");
 });
+
+const TOOL_CALL_EVENT = {
+  type: "tool_call_request",
+  value: {
+    callId: "call-1",
+    name: "read_file",
+    args: { path: "questionnaire.md" },
+  },
+} as const;
+
+test("Gemini pre-tool English text with ru target routes through thinking overlay", async () => {
+  const preToolText =
+    "I will read the questionnaire and the template to understand the product idea.";
+  const translations = new Map<string, string>([
+    [preToolText, "Я прочитаю анкету и шаблон, чтобы понять идею продукта."],
+  ]);
+  const translatorCalls: ThoughtLike[] = [];
+  const processor = new GeminiMessageProcessor({
+    modules: createModules(),
+    thoughtTranslator: createTranslator(translations, translatorCalls),
+  });
+  const session = createSession();
+  session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
+  const accumulator = processor.createAccumulator("prompt-pre-tool-a");
+  const messages = captureMessages(session);
+
+  processor.handleEvent(
+    session,
+    { type: "content", value: preToolText } as never,
+    accumulator
+  );
+  processor.handleEvent(session, TOOL_CALL_EVENT as never, accumulator);
+  processor.handleEvent(
+    session,
+    { type: "finished", value: {} } as never,
+    accumulator
+  );
+  await processor.drain(accumulator);
+
+  assert.equal(translatorCalls.length, 1);
+  assert.equal(translatorCalls[0]?.description, preToolText);
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0]?.tag, "thinking");
+  assert.equal(
+    messages[0]?.content,
+    "Я прочитаю анкету и шаблон, чтобы понять идею продукта."
+  );
+});
+
+test("Gemini pre-tool Russian text with ru target stays as assistant bubble", async () => {
+  const translatorCalls: ThoughtLike[] = [];
+  const processor = new GeminiMessageProcessor({
+    modules: createModules(),
+    thoughtTranslator: createTranslator(new Map(), translatorCalls),
+  });
+  const session = createSession();
+  session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
+  const accumulator = processor.createAccumulator("prompt-pre-tool-b");
+  const messages = captureMessages(session);
+
+  processor.handleEvent(
+    session,
+    { type: "content", value: "Прочитаю анкету и шаблон." } as never,
+    accumulator
+  );
+  processor.handleEvent(session, TOOL_CALL_EVENT as never, accumulator);
+  processor.handleEvent(
+    session,
+    { type: "finished", value: {} } as never,
+    accumulator
+  );
+  await processor.drain(accumulator);
+
+  assert.equal(translatorCalls.length, 0);
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0]?.tag, undefined);
+  assert.equal(messages[0]?.role, "assistant");
+  assert.equal(messages[0]?.content, "Прочитаю анкету и шаблон.");
+});
+
+test("Gemini pre-tool English text with en target keeps assistant bubble (heuristic off)", async () => {
+  const translatorCalls: ThoughtLike[] = [];
+  const processor = new GeminiMessageProcessor({
+    modules: createModules(),
+    thoughtTranslator: createTranslator(new Map(), translatorCalls),
+  });
+  const session = createSession();
+  session.runtimeTurnConfig.messagesForTheUserLanguage = "en";
+  const accumulator = processor.createAccumulator("prompt-pre-tool-c");
+  const messages = captureMessages(session);
+
+  processor.handleEvent(
+    session,
+    {
+      type: "content",
+      value: "I will read the questionnaire.",
+    } as never,
+    accumulator
+  );
+  processor.handleEvent(session, TOOL_CALL_EVENT as never, accumulator);
+  processor.handleEvent(
+    session,
+    { type: "finished", value: {} } as never,
+    accumulator
+  );
+  await processor.drain(accumulator);
+
+  assert.equal(translatorCalls.length, 0);
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0]?.tag, undefined);
+  assert.equal(messages[0]?.role, "assistant");
+  assert.equal(messages[0]?.content, "I will read the questionnaire.");
+});
