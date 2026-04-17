@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.15] - 2026-04-17
+### Fixed
+- **Client-side label fallback flicker.** Companion fix to 1.2.13 (which addressed only the Core-side broadcast path). `src/client/ui/src/session/model-info-builder.ts` `resolveModelReasoning` for Gemini/Codex branches was returning the raw thinking/reasoning level from settings without the provider-specific prefix, so the initial client render produced `(high)` / `(medium)` while `parseEffectiveModelId` on effective ids produced `(thinking high)` / `(reasoning medium)`. First render matched settings, then Core's `session:model:update` replaced it — user saw a one-frame flicker most visible on temp-session start. Fallback now wraps the level as `thinking ${level}` / `reasoning ${level}`. Both paths now produce identical labels.
+
+### Contracts
+- **Invariant 14** (Effective model identity SSOT) client-side extension: client `ModelInfo` builder fallback path to settings MUST wrap raw level values in the same provider-specific prefix that Core emits in effective modelIds (`thinking ` for Gemini, `reasoning ` for Codex; Claude keeps its own `thinking off` convention).
+
 ## [1.2.14] - 2026-04-17
 ### Fixed
 - **Gemini post-tool stalled-turn watchdog bumped 120s → 240s** in `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` (`DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS`). 1.2.13 retest on Gemini 3.1 Pro + `thinkingLevel=high` showed the post-tool leg killed at exactly 120s after a two-tool-call initial turn — Gemini was still in silent deep-reasoning phase when the watchdog fired. The 1.2.11 asymmetry (initial 240s, post-tool 120s) was based on an incorrect assumption that follow-up legs always respond faster than initial reasoning. Both legs are now 240s. Per-session overrides preserved.
