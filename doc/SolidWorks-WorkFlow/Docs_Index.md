@@ -58,6 +58,9 @@
 - `Contracts/UserFacing_Text_Localization_Boundary.md` — SSOT text-ownership contract for `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, and English-only `Internal Agent Instructions`.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
+### Checklists (periodic workflows)
+- `Checklists/PeriodicAudit.md` — чек-лист периодического аудита кодовой базы (раз в 3-5 релизов): dead code + broken docs links через параллельных sub-agent'ов, jscpd классификация top-20 клонов по 6 категориям (LEGIT-PROVIDER / LEGIT-BOUNDARY / LEGIT-SIMILAR-BUT-DIVERGING / EXTRACT-EASY / EXTRACT-COMPLEX / WITHIN-FILE-BUG), trzy-проход grep для локализационных ключей перед deletion, execution через отдельный cycle с planning-doc + todo-plan. Precedent: 1.2.10 Audit Cleanup.
+
 ### Contracts (compat / legacy filenames)
 - `Contracts/DescriptionNode_ReviewSession.md` — legacy filename; redirect/compat note для узла `description`, без restart/reviewer semantics как активной возможности продукта.
 - Остальные compat-redirect stubs из `Contracts/` (`Description_LegacyCleanup_Architecture`, `ProjectManager_VirtualSimulation_ColdStartRecovery`, `ProviderSessionHome_IsolationAndRecovery`, `ProviderSessionHome_SnapshotEngine_Design`, `StandaloneReviewer_Module`) удалены в рамках Phase 2 cleanup (Session025, 2026-04-09); исторические planning-доки, где они существуют, лежат в `Plans/Archive/`.
