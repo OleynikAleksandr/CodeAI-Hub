@@ -6,6 +6,8 @@ import type { ActiveSession } from "../session/types";
 import type { GeminiSessionEvent } from "../types";
 import type { ThoughtTranslatorService } from "./thought-translator-service";
 
+const INLINE_THOUGHT_MARKER_REGEX = /\[Thought:\s*(true|false)\]/;
+
 export interface TurnAccumulator {
   citations: string[];
   currentAssistantChunks: string[];
@@ -136,8 +138,16 @@ export class GeminiAssistantEventNormalizer {
         ? (value as { usageMetadata?: UsageMetadata }).usageMetadata
         : undefined;
 
-    const assistantSegment = accumulator.currentAssistantChunks.join("");
+    const rawSegment = accumulator.currentAssistantChunks.join("");
     accumulator.currentAssistantChunks.length = 0;
+
+    const { preMarker, postMarker, hasMarker } =
+      this.splitInlineThoughtMarker(rawSegment);
+    if (hasMarker && preMarker.trim().length > 0) {
+      this.emitInlineThoughtAsThinking(session, preMarker, accumulator);
+    }
+    const assistantSegment = hasMarker ? postMarker : rawSegment;
+
     const pendingTranslations = [...accumulator.pendingTranslations];
     accumulator.pendingTranslations.length = 0;
     if (pendingTranslations.length === 0) {
@@ -158,6 +168,59 @@ export class GeminiAssistantEventNormalizer {
         });
       });
     return [];
+  }
+
+  private splitInlineThoughtMarker(text: string): {
+    readonly preMarker: string;
+    readonly postMarker: string;
+    readonly hasMarker: boolean;
+  } {
+    const match = text.match(INLINE_THOUGHT_MARKER_REGEX);
+    if (!match || match.index === undefined) {
+      return { preMarker: text, postMarker: "", hasMarker: false };
+    }
+    const preMarker = text.slice(0, match.index);
+    const postMarker = text.slice(match.index + match[0].length);
+    return { preMarker, postMarker, hasMarker: true };
+  }
+
+  private emitInlineThoughtAsThinking(
+    session: ActiveSession,
+    text: string,
+    accumulator: TurnAccumulator
+  ): void {
+    const trimmed = text.trim();
+    if (trimmed.length === 0) {
+      return;
+    }
+
+    const synthetic = { description: trimmed, subject: "" };
+    if (this.thoughtTranslator) {
+      const pending = this.thoughtTranslator
+        .translateThought(
+          synthetic,
+          session.runtimeTurnConfig.messagesForTheUserLanguage,
+          session.runtimeTurnConfig.translationEngineId
+        )
+        .then((translated: string | null) => {
+          this.emitDialogMessage(session, "assistant", translated ?? trimmed, {
+            seed: accumulator.promptId,
+            tag: "thinking",
+          });
+        })
+        .catch(() => {
+          this.emitDialogMessage(session, "assistant", trimmed, {
+            seed: accumulator.promptId,
+            tag: "thinking",
+          });
+        });
+      accumulator.pendingTranslations.push(pending);
+    } else {
+      this.emitDialogMessage(session, "assistant", trimmed, {
+        seed: accumulator.promptId,
+        tag: "thinking",
+      });
+    }
   }
 
   async drainPendingDialogMessages(
