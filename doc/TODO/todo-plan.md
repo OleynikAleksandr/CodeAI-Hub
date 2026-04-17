@@ -29,7 +29,7 @@
 6. [TODO] Git Commit: `fix: debounce PM stop button while close is in flight` (hash: TBD)
 
 ### Stream 3: Core handleStop re-entry guard
-7. [TODO] Early-return in `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.ts` when `hasStopInvalidatedBinding(sessionId)` is already true — scope: 1 file; commit message: `fix: guard handleStop re-entry when binding already invalidated`
+7. [IN_PROGRESS] Early-return in `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.ts` when `hasStopInvalidatedBinding(sessionId)` is already true — scope: 1 file; commit message: `fix: guard handleStop re-entry when binding already invalidated`
 8. [TODO] Git Commit: `fix: guard handleStop re-entry when binding already invalidated` (hash: TBD)
 
 ### Stream 4: Docs + build

@@ -35,6 +35,17 @@ export class SessionRequestHandlerStopAction {
       return;
     }
 
+    if (this.deps.sessionManager.hasStopInvalidatedBinding(sessionId)) {
+      this.deps.logger.info(
+        "Session stop ignored — binding already invalidated",
+        {
+          sessionId,
+          providerId: session.providerId,
+        }
+      );
+      return;
+    }
+
     const binding = this.deps.providerSessions.get(sessionId);
     if (binding) {
       const adapter = this.deps.providerRegistry.getAdapter(binding.providerId);
