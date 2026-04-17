@@ -73,23 +73,23 @@ Phase 2 добавляет PM-side диагностику через `api.logDia
 Fix: (1) обновлять `session.binding` в `onSessionBinding` того же контроллера; (2) запоминать old `providerSessionId` перед его reset to null; (3) расширить `shouldAdopt` в `onSessionCreated` веткой post-stop rebind (status !== "ready" + last providerSessionId match).
 
 ### Stream 9: PM dialog session controller fix
-25. [IN_PROGRESS] Fix `useProjectManagerDialogSessionController` adoption path + track `lastProviderSessionIdRef` in `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` — scope: 1 file; commit message: `fix: adopt post-stop rebind session in PM dialog controller`
-26. [TODO] Git Commit: `fix: adopt post-stop rebind session in PM dialog controller` (hash: TBD)
+25. [DONE] Fix `useProjectManagerDialogSessionController` adoption path + track `lastProviderSessionIdRef` in `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` — scope: 1 file; commit message: `fix: adopt post-stop rebind session in PM dialog controller`
+26. [DONE] Git Commit: `fix: adopt post-stop rebind session in PM dialog controller` (hash: 7370e2f24)
 
 ### Stream 10: Remove Core stopdiag_ instrumentation
-27. [IN_PROGRESS] Remove all `stopdiag_` logs from `stop-action.ts`, `stop-rebind.ts`, `message-dispatch.ts`, `runtime-callbacks.ts`, `provider-event-router.ts` — scope: 5 files; commit message: `chore: remove 1.2.3 stopdiag core instrumentation`
-28. [TODO] Git Commit: `chore: remove 1.2.3 stopdiag core instrumentation` (hash: TBD)
+27. [DONE] Remove all `stopdiag_` logs from `stop-action.ts`, `stop-rebind.ts`, `message-dispatch.ts`, `runtime-callbacks.ts`, `provider-event-router.ts` — scope: 5 files; commit message: `chore: remove 1.2.3 stopdiag core instrumentation`
+28. [DONE] Git Commit: `chore: remove 1.2.3 stopdiag core instrumentation` (hash: b781156f0)
 
 ### Stream 11: Remove PM pmdiag_ + appender
-29. [IN_PROGRESS] Remove `pmdiag_` logs from `api.ts`, `session-stream.ts`, `project-manager-runtime-session-view.tsx`, `project-manager-dialog-session-view.tsx`; revert `remote-bridge-message-router.ts` pm:diag:log handler to `logger.info` (drop appender) — scope: 5 files; commit message: `chore: remove 1.2.4 pmdiag instrumentation`
-30. [TODO] Git Commit: `chore: remove 1.2.4 pmdiag instrumentation` (hash: TBD)
+29. [DONE] Remove `pmdiag_` logs from `api.ts`, `session-stream.ts`, `project-manager-runtime-session-view.tsx`, `project-manager-dialog-session-view.tsx`; revert `remote-bridge-message-router.ts` pm:diag:log handler to `logger.info` (drop appender) — scope: 5 files; commit message: `chore: remove 1.2.4 pmdiag instrumentation`
+30. [DONE] Git Commit: `chore: remove 1.2.4 pmdiag instrumentation` (hash: 5dd0e68fa)
 
 ### Stream 12: Release notes + build
-31. [IN_PROGRESS] Update `README.md` and `CHANGELOG.md` to target 1.2.5 fix release — scope: 2 files; commit message: `docs: prepare 1.2.5 fix release notes`
-32. [TODO] Git Commit: `docs: prepare 1.2.5 fix release notes` (hash: TBD)
-33. [TODO] Run `./scripts/build-all.sh --version 1.2.5` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.5 for fix release`
-34. [TODO] Git Commit: `chore: bump version to 1.2.5 for fix release` (hash: TBD)
+31. [DONE] Update `README.md` and `CHANGELOG.md` to target 1.2.5 fix release — scope: 2 files; commit message: `docs: prepare 1.2.5 fix release notes`
+32. [DONE] Git Commit: `docs: prepare 1.2.5 fix release notes` (hash: fd7a59307)
+33. [DONE] Run `./scripts/build-all.sh --version 1.2.5` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.5 for fix release`
+34. [DONE] Git Commit: `chore: bump version to 1.2.5 for fix release` (hash: 47c912523)
 
 ### Stream 13: Planning doc closeout
-35. [IN_PROGRESS] Promote Invariant about post-stop rebind session adoption to `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` and archive `doc/SolidWorks-WorkFlow/Plans/StopResume_LockRegression_Diagnostic_1.2.3.md` to `doc/SolidWorks-WorkFlow/Plans/Archive/` — scope: 3 files (SystemArchitecture update + archive move + Docs_Index update); commit message: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan`
-36. [TODO] Git Commit: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan` (hash: TBD)
+35. [DONE] Promote Invariant about post-stop rebind session adoption to `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` and archive `doc/SolidWorks-WorkFlow/Plans/StopResume_LockRegression_Diagnostic_1.2.3.md` to `doc/SolidWorks-WorkFlow/Plans/Archive/` — scope: 3 files (SystemArchitecture update + archive move + Docs_Index update); commit message: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan`
+36. [DONE] Git Commit: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan` (hash: e1a44e52e)
