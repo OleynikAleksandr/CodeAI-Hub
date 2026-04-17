@@ -34,33 +34,33 @@
 
 ### Stream 3: Direction B dry-run — localization keys partial-usage verification
 1. [DONE] Script `/tmp/audit-loc-keys.py` проходит по всем 278 ключам из 4 approved dicts (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`, `artifacts_for_the_user.json`). Для каждого ключа три этапа: (a) exact match через `rg -F`, (b) parent-prefix match, (c) last-segment match. Исключаем `assets/localization/`, `dist/`, `**/*.json`, `doc/`, `node_modules`. **Результат: 204 alive, 67 suspicious, 7 certainly-dead.** Agent'ская исходная оценка "99 unused" включала dynamic-usage false positives; реальный actionable scope — только 7 ключей. Отчёт: `doc/SolidWorks-WorkFlow/Plans/Audit_Cleanup_1.2.10_DryRun_LocKeys.md`. — scope: 1 файл (новый md); ожидаемый commit: `docs: record 1.2.10 localization cleanup dry-run report`
-2. [DONE] Git Commit: `docs: record 1.2.10 localization cleanup dry-run report` (hash: TBD)
+2. [DONE] Git Commit: `docs: record 1.2.10 localization cleanup dry-run report` (hash: 8315cbcb8)
 
 ### Stream 4: Direction B actual deletion — approved dicts cleanup
-1. [TODO] По результатам Stream 3 dry-run удалить все certainly-dead ключи из 4 approved source-файлов. Прогнать webview targeted build (`npm run build:webview`) + визуально проверить PM/Settings UI (через `Launch Web Client` если доступно) на отсутствие регрессий по отображению текстов. — scope: до 4 файлов (4 json); ожидаемый commit: `chore(loc): remove confirmed-dead localization keys from approved dicts`
-2. [TODO] Git Commit: `chore(loc): remove confirmed-dead localization keys from approved dicts` (hash: TBD)
+1. [DONE] Удалили 7 certainly-dead ключей: 2 в `ui_labels.json` (`workflow_terms_policy.keep_english_label/translate_label`) + 5 в `ui_helper_text.json` (`do_not_translate_terms.validation.latin_letter/reserved_sequence/too_long` + `workflow_terms_policy.keep_english_description/translate_description`). Paranoid prefix-check не нашёл traces ни в одном non-legacy файле. `npm run build:webview` прошёл зелёным после удаления. 67 suspicious keys оставлены как есть. — scope: 2 файла; ожидаемый commit: `chore(loc): remove 7 certainly-dead localization keys from approved dicts`
+2. [DONE] Git Commit: `chore(loc): remove 7 certainly-dead localization keys from approved dicts` (hash: 98a662b1d)
 
 ### Stream 5: Direction C1 — useBootstrapSettings extract
-1. [TODO] Создать `src/client/shared/hooks/use-bootstrap-settings.ts` (новый файл) с общей логикой bootstrap settings builder. Переключить `src/client/project-manager/components/settings/use-project-manager-settings.ts` и `src/client/ui/src/components/settings/use-settings-state.ts` на импорт из нового helper-а; удалить локальные копии. — scope: 3 файла; ожидаемый commit: `refactor(client): extract useBootstrapSettings to shared hook`
-2. [TODO] Git Commit: `refactor(client): extract useBootstrapSettings to shared hook` (hash: TBD)
+1. [DONE] `src/client/shared/hooks/use-bootstrap-settings.ts` создан; `use-project-manager-settings.ts` и `use-settings-state.ts` импортируют из нового helper; локальные копии удалены. `check:dup` 67→66 clones, 2.06% → 1.98% (на `src/`). — scope: 3 файла
+2. [DONE] Git Commit: `refactor(client): extract useBootstrapSettings to shared hook` (hash: a41f14422)
 
 ### Stream 6: Direction C2 — workspace-file-service DRY
-1. [TODO] В `packages/core/src/remote-bridge/handlers/workspace-file-service.ts`: ввести локальную фабрику `createWorkspaceFileHandler(parsePayload, handler)` которая генерирует request-handler; переиспользовать её для workspace-file-read и workspace-file-write. — scope: 1 файл; ожидаемый commit: `refactor(core): DRY workspace-file-service handlers via createWorkspaceFileHandler factory`
-2. [TODO] Git Commit: `refactor(core): DRY workspace-file-service handlers via createWorkspaceFileHandler factory` (hash: TBD)
+1. [DONE] `createWorkspaceFileHandler<TPayload>({ parsePayload, execute, errorLogMessage, errorResponse })` фабрика инлайн в `workspace-file-service.ts`; `handleWorkspaceFileRead` и `handleWorkspaceFileWrite` теперь — тонкие вызовы фабрики. Signature callers не меняется. `npm run build --workspace packages/core` clean. — scope: 1 файл
+2. [DONE] Git Commit: `refactor(core): DRY workspace-file-service handlers via createWorkspaceFileHandler factory` (hash: 23fd8a874)
 
 ### Stream 7: Direction C3 — schema-utils consolidation
-1. [TODO] В `src/client/ui/src/services/idea-collector-schema-utils.ts` удалить локальные копии `pruneSchemaKeys`/`sanitizeSchemaProperties`/`sanitizeSchemaItems`/`sanitizeSchemaKeywords` и `schema-strictifier`-логики; импортировать из `@codeai-hub/agents-shared` (либо через правильный package-alias, либо через relative путь если пакет не экспортирует). Проверить что types совпадают и нет missing re-exports в `packages/agents/shared/src/schema-utils/index.ts`. — scope: ≤3 файла; ожидаемый commit: `refactor(client): consolidate schema-utils imports from agents/shared`
-2. [TODO] Git Commit: `refactor(client): consolidate schema-utils imports from agents/shared` (hash: TBD)
+1. [DONE] `idea-collector-schema-utils.ts` с 181 до 44 строк: импорт `isRecord`+`normalizeSchema` из `packages/agents/shared/src/schema-utils`; локальный `injectTemplateIntoSchema` сохранён (client-specific hardcoded path). `normalizeIdeaCollectorSchema(schema, template)` API неизменно. `check:dup` 66→65 clones, 1.98% → 1.97%. — scope: 1 файл
+2. [DONE] Git Commit: `refactor(client): consolidate schema-utils imports from agents/shared` (hash: 6e9368b54)
 
 ### Stream 8: Direction D — PeriodicAudit checklist
-1. [TODO] Создать `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` — чек-лист периодического аудита: когда запускать (каждые 3-5 релизов), какие sub-agents использовать (dead code + broken links + duplication), формат отчёта, как принимать решения (extract vs legit), ссылка на текущий 1.2.10 как reference precedent. Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md` — добавить entry о новом checklist'е. — scope: 2 файла; ожидаемый commit: `docs: add PeriodicAudit checklist for recurring codebase hygiene`
-2. [TODO] Git Commit: `docs: add PeriodicAudit checklist for recurring codebase hygiene` (hash: TBD)
+1. [DONE] Новый `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` (95 строк): cadence, sub-agent workflow, 6-категорийный rubric, three-pass grep протокол для loc keys, scope-approval flow, out-of-scope, track record с 1.2.10 precedent. `Docs_Index.md` получил новую секцию "Checklists". — scope: 2 файла
+2. [DONE] Git Commit: `docs: add PeriodicAudit checklist for recurring codebase hygiene` (hash: 3e1f13a85)
 
 ### Stream 9: SSOT promotion + planning archive
-1. [TODO] В `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` добавить Invariant о "Acceptable parallel-scaffolding duplication" — ~200 клонов в parallel provider modules (Claude/Codex/Gemini) + client↔core boundary mirrors считаются acceptable, рефакторить такие клоны НЕ следует (потеря модульной изоляции > gain по LOC). Fix правила применимы только к within-module / cross-domain клонам. — scope: 1 файл; ожидаемый commit: `docs: promote acceptable-duplication invariant to SSOT`
-2. [TODO] Git Commit: `docs: promote acceptable-duplication invariant to SSOT` (hash: TBD)
-3. [TODO] Planning-doc `Audit_Cleanup_1.2.10.md` из `Plans/` → `Plans/Archive/`; обновить `Docs_Index.md` entry. — scope: 2 файла; ожидаемый commit: `docs: archive 1.2.10 audit cleanup planning doc`
-4. [TODO] Git Commit: `docs: archive 1.2.10 audit cleanup planning doc` (hash: TBD)
+1. [DONE] SystemArchitecture Invariant 29 `Acceptable parallel-scaffolding duplication` добавлен. Детализирует три LEGIT категории (PROVIDER/BOUNDARY/SIMILAR-BUT-DIVERGING) + fix-правила только для EXTRACT-*/WITHIN-FILE-BUG. — scope: 1 файл
+2. [DONE] Git Commit: `docs: promote acceptable-duplication invariant to SSOT` (hash: aeccdc602)
+3. [DONE] Planning-doc `Audit_Cleanup_1.2.10.md` + dry-run appendix `Audit_Cleanup_1.2.10_DryRun_LocKeys.md` перенесены в `Plans/Archive/`; `Docs_Index.md` получил 2 новые архивные entries. — scope: 3 файла (2 rename + index)
+4. [DONE] Git Commit: `docs: archive 1.2.10 audit cleanup planning doc + dry-run appendix` (hash: b533a01db)
 
 ### Stream 10: Release build 1.2.10
 1. [TODO] Verify чистое дерево, запустить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`; VSIX `codeai-hub-1.2.10.vsix` в корне + tarballs в `doc/tmp/releases/` и `~/.codeai-hub/releases/`.
