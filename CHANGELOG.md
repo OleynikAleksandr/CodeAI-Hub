@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.12] - 2026-04-17
+### Fixed
+- **Core daemon no longer crashes on Gemini cli-core self-abort.** `@google/gemini-cli-core` `GeminiClient.processTurn` calls `controller.abort()` internally when its own loop-detection fires (observed in 1.2.11 retest with Gemini 3.1 Pro + `thinkingLevel=high`). The resulting node-fetch AbortError lives in a background Promise chain that is NOT owned by our `runTurn` try/catch, so it bubbles as uncaughtException and kills the daemon. `packages/core/src/index.ts` now installs a `process.on("uncaughtException", handler)` that inspects the error and selectively swallows `AbortError` only when `error.stack` contains `@google/gemini-cli-core`. All other uncaughtExceptions still crash the process — crash-safety for real bugs is preserved.
+- **Gemini mis-routed thinking content rerouted to thinking overlay.** On `thinkingLevel=high` with large Description Agent prompts, Gemini 3.1 Pro streams its internal meta-prompt through `Content` events instead of `Thought` events. `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` now has a `hasMisroutedThinkingPrefix(text)` detector that checks the finalised assistant segment against known leaks (`sthought`, `CRITICAL INSTRUCTION`, `Related tools:`, `Plan:\n`, `Drafting the content`). When matched, the whole segment is rerouted through the existing `thought-translator-service` overlay path (same helper as the 1.2.9 `[Thought: true]` splitter), so the user never sees an English meta-prompt in the assistant dialog. Detector runs after Bug A splitter and Bug B pre-tool heuristic from 1.2.9.
+
+### Contracts
+- **Invariant 7** (Provider dialog segment preservation) Gemini branch extended: mis-routed thinking prefixes in `Content` event streams must be rerouted through the thought-translator overlay.
+- **Invariant 30** (new): Core has a process-level `uncaughtException` handler that selectively suppresses `AbortError` from embedded provider SDK stacks (currently `@google/gemini-cli-core`). Embedded SDKs run background Promise chains parallel to our turn runner, and their internal aborts cannot be captured by per-turn try/catch. Any future provider SDK with similar background abort behaviour should be added to the allowlist explicitly.
+
 ## [1.2.11] - 2026-04-17
 ### Fixed
 - **Gemini initial-leg stalled-turn watchdog bumped 60s → 240s** (`packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` `DEFAULT_STALLED_TURN_WATCHDOG_MS`). Fixes 1.2.10 retest regression where Gemini 3.1 Pro Preview + `thinkingLevel=high` on the Description step produced 60s silence on the stream channel during deep reasoning and got killed by our watchdog. Post-tool watchdog (`DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS = 120_000`) unchanged. Single-constant bump; to be validated in retest and narrowed later if 240s proves too generous.
