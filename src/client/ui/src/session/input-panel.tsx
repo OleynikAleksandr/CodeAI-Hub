@@ -36,6 +36,7 @@ const InputPanel = ({
   onSubmit,
 }: InputPanelProps) => {
   const [optimisticStopActive, setOptimisticStopActive] = useState(false);
+  const [stopInFlight, setStopInFlight] = useState(false);
   const inputLocked =
     connectionState !== "idle" ||
     continuityLockActive ||
@@ -91,6 +92,12 @@ const InputPanel = ({
     isQueued,
     optimisticStopActive,
   ]);
+
+  useEffect(() => {
+    if (stopInFlight && !agentBusy) {
+      setStopInFlight(false);
+    }
+  }, [agentBusy, stopInFlight]);
 
   useEffect(() => {
     const form = formRef.current;
@@ -190,14 +197,18 @@ const InputPanel = ({
 
   const handleActionClick = useCallback(() => {
     if (stopActive) {
+      if (stopInFlight) {
+        return;
+      }
       if (sessionId) {
+        setStopInFlight(true);
         stopSession(sessionId);
       }
       return;
     }
 
     sendMessage();
-  }, [sendMessage, sessionId, stopActive]);
+  }, [sendMessage, sessionId, stopActive, stopInFlight]);
 
   return (
     <form
@@ -241,6 +252,7 @@ const InputPanel = ({
         <InputPlayStopButton
           onClick={handleActionClick}
           stopActive={stopActive}
+          stopPending={stopInFlight}
         />
       </div>
 

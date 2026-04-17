@@ -25,7 +25,7 @@
 4. [TODO] Git Commit: `fix: abort active codex subprocess on adapter.closeSession` (hash: TBD)
 
 ### Stream 2: PM Stop-button debounce
-5. [TODO] Add `stopInFlight` state to `src/client/ui/src/session/input-panel.tsx`: set on Stop click, reset when `agentBusy` transitions to false; disable StopButton while in-flight — scope: 1 file; commit message: `fix: debounce PM stop button while close is in flight`
+5. [IN_PROGRESS] Add `stopInFlight` state to `src/client/ui/src/session/input-panel.tsx`: set on Stop click, reset when `agentBusy` transitions to false; disable StopButton while in-flight — scope: 1 file; commit message: `fix: debounce PM stop button while close is in flight`
 6. [TODO] Git Commit: `fix: debounce PM stop button while close is in flight` (hash: TBD)
 
 ### Stream 3: Core handleStop re-entry guard

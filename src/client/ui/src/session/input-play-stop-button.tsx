@@ -3,14 +3,18 @@ import { memo } from "react";
 interface InputPlayStopButtonProps {
   readonly onClick: () => void;
   readonly stopActive: boolean;
+  readonly stopPending?: boolean;
 }
 
 const InputPlayStopButton = ({
   stopActive,
+  stopPending = false,
   onClick,
 }: InputPlayStopButtonProps) => {
   const showStop = stopActive;
-  const label = showStop ? "Stop current turn" : "Send message (Enter)";
+  const resolveStopLabel = () =>
+    stopPending ? "Stopping current turn…" : "Stop current turn";
+  const label = showStop ? resolveStopLabel() : "Send message (Enter)";
   const iconModifierClass = showStop
     ? "session-input__action-icon--stop"
     : "session-input__action-icon--play";
@@ -27,9 +31,11 @@ const InputPlayStopButton = ({
         className={[
           "session-input__action-button",
           showStop ? "session-input__action-button--stop" : "",
+          stopPending ? "session-input__action-button--stop-pending" : "",
         ]
           .filter(Boolean)
           .join(" ")}
+        disabled={stopPending}
         onClick={onClick}
         title={label}
         type="button"
