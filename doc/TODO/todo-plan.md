@@ -25,7 +25,7 @@
 4. [TODO] Git Commit: `chore: add stopdiag logs to session stop-rebind for 1.2.3` (hash: TBD)
 
 ### Stream 2: Dispatch + emit tracing
-5. [TODO] Add `stopdiag_dispatch_*` logs to `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session message-dispatch for 1.2.3`
+5. [IN_PROGRESS] Add `stopdiag_dispatch_*` logs to `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session message-dispatch for 1.2.3`
 6. [TODO] Git Commit: `chore: add stopdiag logs to session message-dispatch for 1.2.3` (hash: TBD)
 7. [TODO] Add `stopdiag_emit_*` with stack capture to `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-callbacks.ts` — scope: 1 file; commit message: `chore: add stopdiag stack-capturing emit logs for 1.2.3`
 8. [TODO] Git Commit: `chore: add stopdiag stack-capturing emit logs for 1.2.3` (hash: TBD)

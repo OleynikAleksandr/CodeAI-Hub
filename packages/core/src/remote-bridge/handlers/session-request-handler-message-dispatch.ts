@@ -113,17 +113,29 @@ export class SessionRequestHandlerMessageDispatch {
   }): Promise<void> {
     const { content, hiddenUserMessage, session, sessionId, turnOptions } =
       options;
+    this.deps.logger.info("stopdiag_dispatch_begin", {
+      sessionId,
+      providerId: session.providerId,
+      hiddenUserMessage,
+      providerSessionStatus: session.providerSessionStatus,
+      providerSessionId: session.providerSessionId ?? null,
+    });
     if (
       !(
         hiddenUserMessage ||
         (await this.appendVisibleUserMessage(session, sessionId, content))
       )
     ) {
+      this.deps.logger.info("stopdiag_dispatch_append_skipped", { sessionId });
       return;
     }
 
     const resolved = this.resolveBoundProviderChannel(sessionId);
     if (!resolved) {
+      this.deps.logger.info("stopdiag_dispatch_no_binding", {
+        sessionId,
+        providerId: session.providerId,
+      });
       this.deps.trackPendingUserIntent(sessionId, content);
       this.deps.broadcaster({
         type: "session:error",
@@ -138,7 +150,17 @@ export class SessionRequestHandlerMessageDispatch {
       return;
     }
 
+    this.deps.logger.info("stopdiag_dispatch_resolve_binding", {
+      sessionId,
+      providerId: resolved.binding.providerId,
+      providerSessionId: resolved.binding.providerSessionId,
+    });
+
     this.deps.emitTurnStateEvent({ sessionId, state: "running" });
+    this.deps.logger.info("stopdiag_dispatch_emit_running", {
+      sessionId,
+      providerSessionId: resolved.binding.providerSessionId,
+    });
     try {
       await this.deps.continuity.ensureTrackedOnOutboundMessage({
         sessionId,
@@ -157,7 +179,17 @@ export class SessionRequestHandlerMessageDispatch {
         providerTurnOptions,
         sessionId,
       });
+      this.deps.logger.info("stopdiag_dispatch_send_done", {
+        sessionId,
+        providerSessionId: resolved.binding.providerSessionId,
+      });
     } catch (error) {
+      this.deps.logger.info("stopdiag_dispatch_send_error", {
+        sessionId,
+        providerId: resolved.binding.providerId,
+        providerSessionId: resolved.binding.providerSessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
       this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
       this.deps.logger.warn("Provider sendMessage failed", {
         sessionId,
