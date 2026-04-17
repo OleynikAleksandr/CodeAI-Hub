@@ -8,7 +8,7 @@ export class GeminiSessionLifecycle {
     GeminiSessionEvent["type"]
   >(["assistant"]);
   private static readonly DEFAULT_STALLED_TURN_WATCHDOG_MS = 240_000;
-  private static readonly DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS = 120_000;
+  private static readonly DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS = 240_000;
   private static readonly STALLED_TURN_ERROR_PREFIX =
     "Gemini stream stalled after ";
 
