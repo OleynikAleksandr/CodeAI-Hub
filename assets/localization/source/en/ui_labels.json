@@ -36,8 +36,6 @@
   "settings.localization.category.system_feedback.label": "System Feedback",
   "settings.localization.category.interactive_templates.label": "Interactive Templates",
   "settings.localization.workflow_terms_policy.label": "Workflow terms policy",
-  "settings.localization.workflow_terms_policy.keep_english_label": "Keep English",
-  "settings.localization.workflow_terms_policy.translate_label": "Translate",
   "pm.sidebar.workspace.label": "Workspace",
   "pm.sidebar.workspace.empty_label": "No workspaces yet",
   "pm.sidebar.workspace.select_label": "Select workspace",
