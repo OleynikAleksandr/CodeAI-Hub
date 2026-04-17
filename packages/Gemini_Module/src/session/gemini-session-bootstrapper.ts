@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { EventEmitter } from "node:events";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client";
-import type { GeminiCliModules } from "../runtime/cli-types";
+import type {
+  GeminiCliModules,
+  GeminiConversationRecord,
+} from "../runtime/cli-types";
 import type { ModuleReporter } from "../types";
 import { GeminiSessionSettingsResolver } from "./gemini-session-settings-resolver";
 import type {
@@ -83,6 +88,15 @@ export class GeminiSessionBootstrapper {
       thinkingLevel: resolvedSettings.resolvedThinkingLevel,
     };
     this.monkeyPatchGeminiClient(client, runtimeTurnConfig, options.reporter);
+
+    if (requestedResumeSessionId) {
+      await this.hydrateResumedChat(
+        config,
+        client,
+        requestedResumeSessionId,
+        options.reporter
+      );
+    }
 
     return {
       providerSessionId: config.getSessionId() ?? null,
@@ -229,5 +243,144 @@ export class GeminiSessionBootstrapper {
         delete process.env[key];
       }
     }
+  }
+
+  private async hydrateResumedChat(
+    config: Awaited<ReturnType<GeminiCliModules["config"]["loadCliConfig"]>>,
+    client: PatchableGeminiClient,
+    resumeSessionId: string,
+    reporter?: ModuleReporter
+  ): Promise<void> {
+    const convert = this.modules.sessionUtils?.convertSessionToClientHistory;
+    if (!convert) {
+      reporter?.warn?.(
+        "Gemini convertSessionToClientHistory unavailable; continuing without resume hydration",
+        { resumeSessionId }
+      );
+      return;
+    }
+
+    const storage = (
+      config as unknown as { storage?: { getProjectTempDir?: () => string } }
+    ).storage;
+    const projectTempDir = storage?.getProjectTempDir?.();
+    if (!projectTempDir) {
+      reporter?.warn?.(
+        "Gemini project temp dir unavailable; continuing without resume hydration",
+        { resumeSessionId }
+      );
+      return;
+    }
+
+    const chatsDir = path.join(projectTempDir, "chats");
+    let loaded: {
+      sessionPath: string;
+      conversation: GeminiConversationRecord;
+    } | null;
+    try {
+      loaded = await this.findChatFileForSession(chatsDir, resumeSessionId);
+    } catch (error) {
+      reporter?.warn?.(
+        "Gemini resume hydration failed while scanning chat files",
+        {
+          resumeSessionId,
+          chatsDir,
+          error: error instanceof Error ? error.message : String(error),
+        }
+      );
+      return;
+    }
+
+    if (!loaded) {
+      reporter?.warn?.(
+        "Gemini chat file for resume session not found; continuing without prior history",
+        { resumeSessionId, chatsDir }
+      );
+      return;
+    }
+
+    try {
+      const { sessionPath, conversation } = loaded;
+      (
+        config as unknown as { setSessionId: (id: string) => void }
+      ).setSessionId(conversation.sessionId);
+      const history = convert(conversation.messages);
+      const resumableClient = client as unknown as {
+        resumeChat?: (
+          history: unknown,
+          resumedSessionData: {
+            readonly conversation: GeminiConversationRecord;
+            readonly filePath: string;
+          }
+        ) => Promise<void>;
+      };
+      if (typeof resumableClient.resumeChat !== "function") {
+        reporter?.warn?.(
+          "Gemini client.resumeChat unavailable; continuing without resume hydration",
+          { resumeSessionId }
+        );
+        return;
+      }
+      await resumableClient.resumeChat(history, {
+        conversation,
+        filePath: sessionPath,
+      });
+      reporter?.info?.("Gemini resume hydration complete", {
+        resumeSessionId,
+        messageCount: conversation.messages.length,
+        sessionPath,
+      });
+    } catch (error) {
+      reporter?.warn?.("Gemini resume hydration failed; continuing fresh", {
+        resumeSessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  private async findChatFileForSession(
+    chatsDir: string,
+    resumeSessionId: string
+  ): Promise<{
+    sessionPath: string;
+    conversation: GeminiConversationRecord;
+  } | null> {
+    const shortId = resumeSessionId.slice(0, 8);
+    let entries: string[];
+    try {
+      entries = await fs.readdir(chatsDir);
+    } catch {
+      return null;
+    }
+    const candidates = entries.filter(
+      (name) => name.startsWith("session-") && name.endsWith(`-${shortId}.json`)
+    );
+    let best: {
+      sessionPath: string;
+      conversation: GeminiConversationRecord;
+      messageCount: number;
+    } | null = null;
+    for (const name of candidates) {
+      const sessionPath = path.join(chatsDir, name);
+      try {
+        const raw = await fs.readFile(sessionPath, "utf8");
+        const parsed = JSON.parse(raw) as GeminiConversationRecord | null;
+        if (!parsed || parsed.sessionId !== resumeSessionId) {
+          continue;
+        }
+        const messageCount = Array.isArray(parsed.messages)
+          ? parsed.messages.length
+          : 0;
+        if (!best || messageCount > best.messageCount) {
+          best = { sessionPath, conversation: parsed, messageCount };
+        }
+      } catch {
+        // Skip malformed files; we only need one valid match.
+      }
+    }
+    if (!best) {
+      return null;
+    }
+    return { sessionPath: best.sessionPath, conversation: best.conversation };
   }
 }
