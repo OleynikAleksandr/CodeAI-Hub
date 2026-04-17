@@ -22,6 +22,21 @@ const CYRILLIC_TARGET_LANGUAGES: ReadonlySet<string> = new Set([
 ]);
 const CYRILLIC_CHAR_REGEX = /[\u0400-\u052F]/;
 
+const MISROUTED_THINKING_PREFIXES: readonly string[] = [
+  "sthought",
+  "CRITICAL INSTRUCTION",
+  "Related tools:",
+  "Plan:\n",
+  "Drafting the content",
+];
+
+const hasMisroutedThinkingPrefix = (text: string): boolean => {
+  const trimmed = text.trimStart();
+  return MISROUTED_THINKING_PREFIXES.some((prefix) =>
+    trimmed.startsWith(prefix)
+  );
+};
+
 export interface TurnAccumulator {
   citations: string[];
   currentAssistantChunks: string[];
@@ -183,6 +198,14 @@ export class GeminiAssistantEventNormalizer {
       } else {
         assistantSegment = preToolSnapshot + assistantSegment;
       }
+    }
+
+    if (
+      assistantSegment.trim().length > 0 &&
+      hasMisroutedThinkingPrefix(assistantSegment)
+    ) {
+      this.emitInlineThoughtAsThinking(session, assistantSegment, accumulator);
+      assistantSegment = "";
     }
 
     const pendingTranslations = [...accumulator.pendingTranslations];
