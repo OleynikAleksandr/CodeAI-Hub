@@ -57,7 +57,7 @@ Phase 2 добавляет PM-side диагностику через `api.logDia
 18. [TODO] Git Commit: `chore: add pmdiag activeSessionId tracker logs for 1.2.4` (hash: TBD)
 
 ### Stream 8: Release notes + build
-19. [TODO] Update `README.md` and `CHANGELOG.md` to target 1.2.4 diag release — scope: 2 files; commit message: `docs: prepare 1.2.4 PM-side diagnostic release notes`
+19. [IN_PROGRESS] Update `README.md` and `CHANGELOG.md` to target 1.2.4 diag release — scope: 2 files; commit message: `docs: prepare 1.2.4 PM-side diagnostic release notes`
 20. [TODO] Git Commit: `docs: prepare 1.2.4 PM-side diagnostic release notes` (hash: TBD)
 21. [TODO] Run `./scripts/build-all.sh --version 1.2.4` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.4 for PM diagnostic release`
 22. [TODO] Git Commit: `chore: bump version to 1.2.4 for PM diagnostic release` (hash: TBD)

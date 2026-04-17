@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-04-17
+### Diagnostics
+- **PM-side Stop → Continue trace (temporary)**: the 1.2.3 Claude retest proved Core emits `turn_state=running` correctly for the new sessionId that carries the post-Stop turn; PM keeps the old sessionId active in UI state, so the running snapshot lands on a session the input panel is not reading. New logs are routed to a dedicated file `~/.codeai-hub/logs/project-manager/project-manager.log` via the PM `logDiagnostic` transport and a local appender in the Core remote-bridge handler (path overridable via `CODEAI_PROJECT_MANAGER_LOG_FILE`):
+  - `src/client/project-manager/api.ts` — `pmdiag_api_stop_session` on every Stop click, `pmdiag_api_send_session_message` on every outbound user message, both with the `sessionId` the UI actually resolved.
+  - `src/client/project-manager/components/sessions/session-stream.ts` — `pmdiag_workspace_snapshot_apply` on every `workspace:snapshot` push, with a per-session summary (`turnState`, `continuityLockActive`, `continuityLockReason`, `providerSessionId`, `resumeMode`, `finalTurnCompleted`).
+  - `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` — `pmdiag_active_session_changed` on every `setActiveSessionId` transition with `from`, `to`, `workspacePath`, and a truncated call-site stack (7 frames) so the caller site is identifiable.
+  - `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` — `pmdiag_dialog_active_session_changed` when the dialog controller swaps `session.id`, with `providerId` / `stage` / `providerSessionId` from the current intent.
+- **Core logging split**: `pm:diag:log` messages no longer flow into `core.log` via `logger.info` — the remote-bridge handler in `packages/core/src/remote-bridge/remote-bridge-message-router.ts` now writes PM entries through a dedicated appender to `~/.codeai-hub/logs/project-manager/project-manager.log`. Core stays the authoritative writer, PM stays the author, but the two tiers are separated on disk.
+- **Codex observation (from 1.2.3 trace)**: `Codex adapter.closeSession` does not abort the active turn; Stop clicks accumulate in Core and only drain when Codex emits `turn_completed` naturally. This is a separate baseline bug from the Claude Stop → Continue input lock; fix planned for 1.2.5 alongside a PM input-panel Stop debounce.
+- Scheduled for removal in 1.2.5 together with the 1.2.3 Core `stopdiag_` logs once the PM-side fix lands.
+
 ## [1.2.3] - 2026-04-17
 ### Diagnostics
 - **Stop → Continue input lock trace (temporary)**: after a Claude turn is interrupted via `Stop` and the user sends a follow-up message, the reply streams but the input panel stays unlocked — no `Agents is working, please wait...` wait-copy and no disabled fieldset. Core-only structured logs prefixed `stopdiag_` are emitted to `~/.codeai-hub/logs/core/core.log` from:
