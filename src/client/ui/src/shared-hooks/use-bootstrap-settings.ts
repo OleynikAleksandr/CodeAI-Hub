@@ -1,9 +1,9 @@
-import type { BrowserLocalizationBootstrapSnapshot } from "../../ui/src/app-host/localization-runtime-contract";
+import type { BrowserLocalizationBootstrapSnapshot } from "../app-host/localization-runtime-contract";
 import {
   createDefaultSettings,
   type Settings,
-} from "../../ui/src/components/settings/settings-state-model";
-import { normalizeLoadedLocalizationSettings } from "../../ui/src/components/settings/use-settings-state-support";
+} from "../components/settings/settings-state-model";
+import { normalizeLoadedLocalizationSettings } from "../components/settings/use-settings-state-support";
 
 export const createBootstrapSettings = (
   snapshot: BrowserLocalizationBootstrapSnapshot

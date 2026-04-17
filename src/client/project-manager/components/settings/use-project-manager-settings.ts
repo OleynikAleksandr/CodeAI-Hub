@@ -8,7 +8,7 @@ import {
   type RawSettingsSnapshot,
   type Settings,
 } from "../../../ui/src/components/settings/settings-state-model";
-import { createBootstrapSettings } from "../../../shared/hooks/use-bootstrap-settings";
+import { createBootstrapSettings } from "../../../ui/src/shared-hooks/use-bootstrap-settings";
 import type { SettingsLoadedPayload } from "../../core-stream-message-types";
 
 type IncomingMessage = {

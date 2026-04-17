@@ -7,9 +7,9 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
-import { createBootstrapSettings } from "../../../../shared/hooks/use-bootstrap-settings";
 import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import { readBrowserLocalizationBootstrapSnapshot } from "../../app-host/localization-runtime-contract";
+import { createBootstrapSettings } from "../../shared-hooks/use-bootstrap-settings";
 import vscode from "../../vscode";
 import {
   updateClaudeContinuityRemainingPercentThreshold,
