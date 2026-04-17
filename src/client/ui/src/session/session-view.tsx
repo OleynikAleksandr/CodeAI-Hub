@@ -13,7 +13,6 @@ import {
   useQueuedSend,
 } from "./session-view-helpers";
 import StatusPanel from "./status-panel";
-import { SwitchRecoveryBanner } from "./switch-recovery-banner";
 import {
   buildTokenDebugSummary,
   resolveActiveSessionSnapshot,
@@ -59,68 +58,17 @@ interface SessionViewProps {
   readonly coreConnectionStatus: "connecting" | "ready" | "error";
   readonly emptyStatePending?: boolean;
   readonly onCloseSession: (sessionId: string) => void;
-  readonly onDismissSwitchOffer?: () => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
-  readonly onRetryInPlace?: () => void;
   readonly onSelectSession: (sessionId: string) => void;
-  readonly onSelectSwitchTarget?: (target: SwitchTargetProp) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly sessions: readonly SessionRecord[];
   readonly showEmptyState: boolean;
   readonly showThinkingMessages?: boolean;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
-  readonly switchOffer?: SwitchOfferProp | null;
   readonly tokenDebugSummaryOverride?: string;
 }
-
-interface SwitchOfferProp {
-  readonly alternativeTargets: readonly SwitchTargetProp[];
-  readonly canRetryInPlace: boolean;
-  readonly reason: string;
-  readonly recommendedTarget: SwitchTargetProp | null;
-}
-
-interface SwitchTargetProp {
-  readonly mode: "retry_in_place" | "switch_model" | "switch_provider";
-  readonly modelId: string | null;
-  readonly providerId: string;
-}
-
-const SwitchOfferBanner = ({
-  offer,
-  onDismiss,
-  onRetry,
-  onSelect,
-}: {
-  readonly offer: SwitchOfferProp;
-  readonly onDismiss?: () => void;
-  readonly onRetry?: () => void;
-  readonly onSelect?: (target: SwitchTargetProp) => void;
-}) => (
-  <SwitchRecoveryBanner
-    alternativeTargets={offer.alternativeTargets.map((t) => ({
-      ...t,
-      label: t.providerId,
-    }))}
-    canRetryInPlace={offer.canRetryInPlace}
-    onDismiss={onDismiss}
-    onRetryInPlace={offer.canRetryInPlace ? onRetry : undefined}
-    onSelectTarget={(t) =>
-      onSelect?.({ providerId: t.providerId, modelId: t.modelId, mode: t.mode })
-    }
-    reason={offer.reason}
-    recommendedTarget={
-      offer.recommendedTarget
-        ? {
-            ...offer.recommendedTarget,
-            label: offer.recommendedTarget.providerId,
-          }
-        : null
-    }
-  />
-);
 
 const resolveContinuityErrorCopy = (
   activeSession: SessionSnapshot | null
@@ -146,10 +94,6 @@ const SessionViewBody = ({
   onRefreshUsageLimits,
   onSendMessage,
   showThinkingMessages,
-  switchOffer,
-  onDismissSwitchOffer,
-  onRetryInPlace,
-  onSelectSwitchTarget,
 }: SessionViewProps) => {
   const allSessions = allSessionsProp ?? sessions;
   const activeSession = resolveActiveSessionSnapshot({
@@ -253,14 +197,6 @@ const SessionViewBody = ({
           />
         </div>
         <div className="session-app__rails">
-          {switchOffer ? (
-            <SwitchOfferBanner
-              offer={switchOffer}
-              onDismiss={onDismissSwitchOffer}
-              onRetry={onRetryInPlace}
-              onSelect={onSelectSwitchTarget}
-            />
-          ) : null}
           {terminalNoResume ? (
             <div className="session-input__hint">
               This session is complete and read-only.
