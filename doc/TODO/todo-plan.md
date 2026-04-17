@@ -81,7 +81,7 @@ Fix: (1) обновлять `session.binding` в `onSessionBinding` того ж�
 28. [TODO] Git Commit: `chore: remove 1.2.3 stopdiag core instrumentation` (hash: TBD)
 
 ### Stream 11: Remove PM pmdiag_ + appender
-29. [TODO] Remove `pmdiag_` logs from `api.ts`, `session-stream.ts`, `project-manager-runtime-session-view.tsx`, `project-manager-dialog-session-view.tsx`; revert `remote-bridge-message-router.ts` pm:diag:log handler to `logger.info` (drop appender) — scope: 5 files; commit message: `chore: remove 1.2.4 pmdiag instrumentation`
+29. [IN_PROGRESS] Remove `pmdiag_` logs from `api.ts`, `session-stream.ts`, `project-manager-runtime-session-view.tsx`, `project-manager-dialog-session-view.tsx`; revert `remote-bridge-message-router.ts` pm:diag:log handler to `logger.info` (drop appender) — scope: 5 files; commit message: `chore: remove 1.2.4 pmdiag instrumentation`
 30. [TODO] Git Commit: `chore: remove 1.2.4 pmdiag instrumentation` (hash: TBD)
 
 ### Stream 12: Release notes + build

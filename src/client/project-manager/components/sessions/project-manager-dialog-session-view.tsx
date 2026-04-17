@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import { api } from "../../api";
 import SessionView from "../../../ui/src/session/session-view";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
@@ -28,29 +28,6 @@ const ProjectManagerDialogSessionView = (props: {
   const { switchOffer, dismissSwitchOffer, acceptRetryInPlace, acceptSwitchTarget } =
     useDialogSwitchOffer(session?.id ?? null);
   useRuntimeModelSync(session?.id ?? null, setSnapshots);
-  const previousSessionIdRef = useRef<string | null>(null);
-  useEffect(() => {
-    const currentSessionId = session?.id ?? null;
-    if (previousSessionIdRef.current !== currentSessionId) {
-      api.logDiagnostic({
-        channel: "stop-lock-diag",
-        event: "pmdiag_dialog_active_session_changed",
-        context: {
-          from: previousSessionIdRef.current,
-          to: currentSessionId,
-          providerId: props.intent?.providerId ?? null,
-          stage: props.intent?.stage ?? null,
-          providerSessionId: props.intent?.providerSessionId ?? null,
-        },
-      });
-      previousSessionIdRef.current = currentSessionId;
-    }
-  }, [
-    session?.id,
-    props.intent?.providerId,
-    props.intent?.stage,
-    props.intent?.providerSessionId,
-  ]);
   const handleRefreshUsageLimits = useCallback(
     (request: UsageLimitsRefreshRequest) => {
       api.refreshUsageLimits(request);
