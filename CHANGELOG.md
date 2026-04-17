@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.13] - 2026-04-17
+### Fixed
+- **SESSION UI model label flicker between `(thinking high)` and `(high)`.** Cosmetic only — real applied thinkingLevel was always correct. Root cause: `broadcastRuntimeModelUpdate` in `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts` was forwarding raw `data.model` from the provider SDK's `model_info` event (e.g. `"gemini-3.1-pro-preview"`) without the effective-identity suffix, while `session-request-handler-message-dispatch.ts` was broadcasting the same event with the full effective id (`"gemini-3.1-pro-preview thinking:high"`). UI renderer in `src/client/ui/src/session/model-info-builder.ts` matched/fell-back differently on the two shapes. Core now enriches the SDK-path broadcast through `SessionRequestHandlerAppliedTurnConfig.resolveEffectiveModelId(providerId, targetModelId)`, which reuses the same `buildProviderEffectiveModelId` helper the dispatch path already uses. Both paths now emit identical effective ids and the UI label stops flickering.
+
+### Contracts
+- **Invariant 26** (Effective model identity SSOT) extended: any `session:model:update` broadcast MUST carry the effective modelId (with thinking/reasoning suffix), never a raw base id from the provider SDK. Raw `data.model` values arriving from SDK `model_info` events must be enriched via `AppliedTurnConfig.resolveEffectiveModelId` before broadcast.
+
 ## [1.2.12] - 2026-04-17
 ### Fixed
 - **Core daemon no longer crashes on Gemini cli-core self-abort.** `@google/gemini-cli-core` `GeminiClient.processTurn` calls `controller.abort()` internally when its own loop-detection fires (observed in 1.2.11 retest with Gemini 3.1 Pro + `thinkingLevel=high`). The resulting node-fetch AbortError lives in a background Promise chain that is NOT owned by our `runTurn` try/catch, so it bubbles as uncaughtException and kills the daemon. `packages/core/src/index.ts` now installs a `process.on("uncaughtException", handler)` that inspects the error and selectively swallows `AbortError` only when `error.stack` contains `@google/gemini-cli-core`. All other uncaughtExceptions still crash the process — crash-safety for real bugs is preserved.
