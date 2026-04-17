@@ -60,6 +60,10 @@ interface SessionProviderEventRouterDependencies {
   ) => void;
   readonly logger: Logger;
   readonly markPostTurnContextDecisionPending: (sessionId: string) => void;
+  readonly resolveEffectiveModelId?: (options: {
+    readonly providerId: string;
+    readonly targetModelId: string;
+  }) => string | undefined;
   readonly sessionManager: SessionManager;
   readonly updateBindingWithResolvedId: (
     sessionId: string,
@@ -223,12 +227,18 @@ export class SessionProviderEventRouter {
     if (!session) {
       return;
     }
+    const rawModelId = modelId.trim();
+    const effectiveModelId =
+      this.deps.resolveEffectiveModelId?.({
+        providerId: session.providerId,
+        targetModelId: rawModelId,
+      }) ?? rawModelId;
     this.deps.broadcaster({
       type: "session:model:update",
       payload: {
         sessionId,
         providerId: session.providerId,
-        modelId: modelId.trim(),
+        modelId: effectiveModelId,
       },
     });
   }

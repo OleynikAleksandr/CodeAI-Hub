@@ -32,6 +32,13 @@ export class SessionRequestHandlerAppliedTurnConfig {
     );
   }
 
+  resolveEffectiveModelId(
+    providerId: string,
+    targetModelId?: string
+  ): string | undefined {
+    return this.resolveForProvider(providerId, targetModelId)?.effectiveModelId;
+  }
+
   private resolveForProvider(
     providerId: string,
     targetModelId?: string

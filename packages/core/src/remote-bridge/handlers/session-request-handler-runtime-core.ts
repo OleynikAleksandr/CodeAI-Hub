@@ -161,6 +161,9 @@ export const createSessionRequestHandlerRuntimeCore = (
         providerSessionId
       ),
   });
+  const appliedTurnConfig = new SessionRequestHandlerAppliedTurnConfig(
+    options.config
+  );
   const providerEventRouter = new SessionProviderEventRouter({
     sessionManager: options.sessionManager,
     broadcaster: options.broadcaster,
@@ -188,6 +191,8 @@ export const createSessionRequestHandlerRuntimeCore = (
       eventMessages.appendProviderMessage(sessionId, role, event),
     appendDialogMessage: (sessionId, payload) =>
       eventMessages.appendDialogMessage(sessionId, payload),
+    resolveEffectiveModelId: ({ providerId, targetModelId }) =>
+      appliedTurnConfig.resolveEffectiveModelId(providerId, targetModelId),
   });
   const providerFailureRecovery = new SessionProviderFailureRecovery({
     providerRegistry: options.providerRegistry,
@@ -205,9 +210,6 @@ export const createSessionRequestHandlerRuntimeCore = (
     expirePendingUserIntent: (sessionId) =>
       retryState.expirePendingUserIntent(sessionId),
   });
-  const appliedTurnConfig = new SessionRequestHandlerAppliedTurnConfig(
-    options.config
-  );
   messageDispatch = new SessionRequestHandlerMessageDispatch({
     appliedTurnConfig,
     sessionManager: options.sessionManager,
