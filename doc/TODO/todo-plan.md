@@ -85,7 +85,7 @@ Fix: (1) обновлять `session.binding` в `onSessionBinding` того ж�
 30. [TODO] Git Commit: `chore: remove 1.2.4 pmdiag instrumentation` (hash: TBD)
 
 ### Stream 12: Release notes + build
-31. [TODO] Update `README.md` and `CHANGELOG.md` to target 1.2.5 fix release — scope: 2 files; commit message: `docs: prepare 1.2.5 fix release notes`
+31. [IN_PROGRESS] Update `README.md` and `CHANGELOG.md` to target 1.2.5 fix release — scope: 2 files; commit message: `docs: prepare 1.2.5 fix release notes`
 32. [TODO] Git Commit: `docs: prepare 1.2.5 fix release notes` (hash: TBD)
 33. [TODO] Run `./scripts/build-all.sh --version 1.2.5` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.5 for fix release`
 34. [TODO] Git Commit: `chore: bump version to 1.2.5 for fix release` (hash: TBD)

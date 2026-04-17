@@ -4,6 +4,20 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.5] - 2026-04-17
+### Fixed
+- **Stop → Continue input lock no longer sticks**: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` now (1) mirrors `onSessionBinding` into the `SessionRecord.binding` in addition to the snapshot-level binding, (2) remembers the last known `providerSessionId` in `lastProviderSessionIdRef` the moment the binding flips to `null`, and (3) accepts a new session in `onSessionCreated` via an `isPostStopRebindSwap` branch when the created session carries the remembered `providerSessionId`. Placeholder cleanup and ref reset cover the new adoption path. The UI now switches `activeSessionId` onto the new session the moment Core creates it, so the next user message correctly locks the input panel and surfaces the `Agents is working, please wait...` wait-copy.
+
+### Removed
+- **1.2.3 Core `stopdiag_` instrumentation** gone from `stop-action.ts`, `stop-rebind.ts`, `message-dispatch.ts`, `runtime-callbacks.ts` (emit stack-capture), `provider-event-router.ts`.
+- **1.2.4 PM `pmdiag_` instrumentation** gone from PM `api.ts`, `session-stream.ts`, `project-manager-runtime-session-view.tsx`, `project-manager-dialog-session-view.tsx`.
+- **`pm:diag:log` → project-manager.log appender** reverted: the Core remote-bridge handler again routes PM diagnostic entries through `logger.info` into `core.log`. The dedicated `~/.codeai-hub/logs/project-manager/project-manager.log` file and its `CODEAI_PROJECT_MANAGER_LOG_FILE` env override are no longer written.
+
+### Outstanding (planned for 1.2.6)
+- **Codex `adapter.closeSession` abort**: the 1.2.3 Codex trace showed that Stop clicks stack in Core until Codex naturally emits `turn_completed`. Closing must abort the active turn instead of waiting.
+- **PM Stop-button debounce**: while a `session:stop` is in flight, `InputPlayStopButton` should not re-fire on subsequent clicks.
+- **Gemini Stop → Continue retest** — not covered by 1.2.3 / 1.2.4 retests yet.
+
 ## [1.2.4] - 2026-04-17
 ### Diagnostics
 - **PM-side Stop → Continue trace (temporary)**: the 1.2.3 Claude retest proved Core emits `turn_state=running` correctly for the new sessionId that carries the post-Stop turn; PM keeps the old sessionId active in UI state, so the running snapshot lands on a session the input panel is not reading. New logs are routed to a dedicated file `~/.codeai-hub/logs/project-manager/project-manager.log` via the PM `logDiagnostic` transport and a local appender in the Core remote-bridge handler (path overridable via `CODEAI_PROJECT_MANAGER_LOG_FILE`):
