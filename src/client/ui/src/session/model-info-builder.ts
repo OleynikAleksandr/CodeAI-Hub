@@ -93,9 +93,12 @@ const resolveModelReasoning = (
       : "thinking off";
   }
   if (providerKey === "codex") {
-    return settings.providers.codex.reasoningByModel[modelId];
+    const codexReasoning = settings.providers.codex.reasoningByModel[modelId];
+    return codexReasoning ? `reasoning ${codexReasoning}` : undefined;
   }
-  return settings.providers.gemini.thinkingLevelByModel[modelId];
+  const geminiThinking =
+    settings.providers.gemini.thinkingLevelByModel[modelId];
+  return geminiThinking ? `thinking ${geminiThinking}` : undefined;
 };
 
 export const buildModelInfo = (
