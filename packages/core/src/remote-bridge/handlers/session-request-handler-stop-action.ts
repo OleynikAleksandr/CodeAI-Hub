@@ -35,11 +35,24 @@ export class SessionRequestHandlerStopAction {
       return;
     }
 
+    this.deps.logger.info("stopdiag_stop_begin", {
+      sessionId,
+      providerId: session.providerId,
+      stage: session.stage ?? null,
+      providerSessionStatus: session.providerSessionStatus,
+      providerSessionId: session.providerSessionId ?? null,
+    });
+
     const binding = this.deps.providerSessions.get(sessionId);
     if (binding) {
       const adapter = this.deps.providerRegistry.getAdapter(binding.providerId);
       try {
         await adapter?.closeSession(binding.providerSessionId);
+        this.deps.logger.info("stopdiag_stop_close_done", {
+          sessionId,
+          providerId: binding.providerId,
+          providerSessionId: binding.providerSessionId,
+        });
       } catch (error: unknown) {
         this.deps.logger.warn("Session stop failed to close provider session", {
           sessionId,
@@ -47,11 +60,25 @@ export class SessionRequestHandlerStopAction {
           providerSessionId: binding.providerSessionId,
           error: error instanceof Error ? error.message : String(error),
         });
+        this.deps.logger.info("stopdiag_stop_close_error", {
+          sessionId,
+          providerId: binding.providerId,
+          providerSessionId: binding.providerSessionId,
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
+    } else {
+      this.deps.logger.info("stopdiag_stop_no_binding", { sessionId });
     }
 
     const lifecycleState =
       this.deps.resumeLifecycle.getSessionResumeLifecycleState(session);
+    this.deps.logger.info("stopdiag_stop_lifecycle_pre", {
+      sessionId,
+      mode: lifecycleState.mode,
+      finalTurnCompleted: lifecycleState.finalTurnCompleted,
+      terminalLockReason: lifecycleState.terminalLockReason ?? null,
+    });
     if (lifecycleState.mode !== "no_resume") {
       this.deps.resumeLifecycle.updateSessionResumeLifecycleState(session, {
         finalTurnCompleted: false,
@@ -65,14 +92,28 @@ export class SessionRequestHandlerStopAction {
         sessionId,
         reason: "resume_failed",
       });
+      this.deps.logger.info("stopdiag_stop_finalize_flow_lock", {
+        sessionId,
+        reason: "resume_failed",
+      });
     } else if (lifecycleState.mode !== "no_resume") {
       this.deps.continuityLockService.emitResumeInPlaceNoRolloverUnlock(
         session
       );
+      this.deps.logger.info("stopdiag_stop_emit_no_rollover_unlock", {
+        sessionId,
+      });
     }
 
     this.deps.providerBindingService.invalidateProviderBinding(sessionId);
+    this.deps.logger.info("stopdiag_stop_invalidate_done", {
+      sessionId,
+      providerSessionStatusAfter: session.providerSessionStatus,
+    });
     this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
+    this.deps.logger.info("stopdiag_stop_emit_idle", {
+      sessionId,
+    });
     this.deps.logger.info(
       "Session stop invalidated provider binding without shutting down core",
       {
