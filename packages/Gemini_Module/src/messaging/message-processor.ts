@@ -36,7 +36,9 @@ export class GeminiMessageProcessor {
       modules: options.modules,
       reporter: options.reporter,
       assistantNormalizer: this.assistantNormalizer,
-      systemNormalizer: new GeminiSystemEventNormalizer(),
+      systemNormalizer: new GeminiSystemEventNormalizer(
+        this.assistantNormalizer
+      ),
     });
   }
 

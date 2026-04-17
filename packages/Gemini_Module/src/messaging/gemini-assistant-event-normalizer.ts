@@ -7,12 +7,27 @@ import type { GeminiSessionEvent } from "../types";
 import type { ThoughtTranslatorService } from "./thought-translator-service";
 
 const INLINE_THOUGHT_MARKER_REGEX = /\[Thought:\s*(true|false)\]/;
+const CYRILLIC_TARGET_LANGUAGES: ReadonlySet<string> = new Set([
+  "ab",
+  "be",
+  "bg",
+  "kk",
+  "ky",
+  "mk",
+  "mn",
+  "ru",
+  "sr",
+  "tg",
+  "uk",
+]);
+const CYRILLIC_CHAR_REGEX = /[\u0400-\u052F]/;
 
 export interface TurnAccumulator {
   citations: string[];
   currentAssistantChunks: string[];
   pendingDialogMessageFlush: Promise<void>;
   pendingTranslations: Promise<void>[];
+  preToolAssistantSegment: string | null;
   readonly promptId: string;
   responseChunks: string[];
   toolRequests: ToolCallRequestInfo[];
@@ -35,7 +50,17 @@ export class GeminiAssistantEventNormalizer {
       toolRequests: [],
       pendingDialogMessageFlush: Promise.resolve(),
       pendingTranslations: [],
+      preToolAssistantSegment: null,
     };
+  }
+
+  snapshotPreToolAssistantSegment(accumulator: TurnAccumulator): void {
+    if (accumulator.preToolAssistantSegment !== null) {
+      return;
+    }
+    const snapshot = accumulator.currentAssistantChunks.join("");
+    accumulator.preToolAssistantSegment = snapshot;
+    accumulator.currentAssistantChunks.length = 0;
   }
 
   finalize(accumulator: TurnAccumulator): {
@@ -140,13 +165,25 @@ export class GeminiAssistantEventNormalizer {
 
     const rawSegment = accumulator.currentAssistantChunks.join("");
     accumulator.currentAssistantChunks.length = 0;
+    const preToolSnapshot = accumulator.preToolAssistantSegment;
+    accumulator.preToolAssistantSegment = null;
 
     const { preMarker, postMarker, hasMarker } =
       this.splitInlineThoughtMarker(rawSegment);
     if (hasMarker && preMarker.trim().length > 0) {
       this.emitInlineThoughtAsThinking(session, preMarker, accumulator);
     }
-    const assistantSegment = hasMarker ? postMarker : rawSegment;
+    let assistantSegment = hasMarker ? postMarker : rawSegment;
+
+    if (preToolSnapshot !== null && preToolSnapshot.trim().length > 0) {
+      const targetLanguage =
+        session.runtimeTurnConfig.messagesForTheUserLanguage;
+      if (this.shouldReclassifyAsThinking(preToolSnapshot, targetLanguage)) {
+        this.emitInlineThoughtAsThinking(session, preToolSnapshot, accumulator);
+      } else {
+        assistantSegment = preToolSnapshot + assistantSegment;
+      }
+    }
 
     const pendingTranslations = [...accumulator.pendingTranslations];
     accumulator.pendingTranslations.length = 0;
@@ -268,5 +305,16 @@ export class GeminiAssistantEventNormalizer {
         "description" in value &&
         "subject" in value
     );
+  }
+
+  private shouldReclassifyAsThinking(
+    text: string,
+    targetLanguage?: string
+  ): boolean {
+    const normalized = targetLanguage?.trim().toLowerCase();
+    if (!(normalized && CYRILLIC_TARGET_LANGUAGES.has(normalized))) {
+      return false;
+    }
+    return !CYRILLIC_CHAR_REGEX.test(text);
   }
 }

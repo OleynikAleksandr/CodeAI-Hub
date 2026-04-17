@@ -1,9 +1,18 @@
 import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
 import type { ActiveSession } from "../session/types";
 import type { GeminiSessionEvent } from "../types";
-import type { TurnAccumulator } from "./gemini-assistant-event-normalizer";
+import type {
+  GeminiAssistantEventNormalizer,
+  TurnAccumulator,
+} from "./gemini-assistant-event-normalizer";
 
 export class GeminiSystemEventNormalizer {
+  private readonly assistantEventNormalizer?: GeminiAssistantEventNormalizer;
+
+  constructor(assistantEventNormalizer?: GeminiAssistantEventNormalizer) {
+    this.assistantEventNormalizer = assistantEventNormalizer;
+  }
+
   handleCitationEvent(
     value: unknown,
     accumulator: TurnAccumulator
@@ -23,6 +32,7 @@ export class GeminiSystemEventNormalizer {
       return [];
     }
 
+    this.assistantEventNormalizer?.snapshotPreToolAssistantSegment(accumulator);
     accumulator.toolRequests.push(value);
     session.logger?.logEvent({
       type: "tool_call_request",
