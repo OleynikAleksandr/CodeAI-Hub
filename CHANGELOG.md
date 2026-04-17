@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.11] - 2026-04-17
+### Fixed
+- **Gemini initial-leg stalled-turn watchdog bumped 60s → 240s** (`packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` `DEFAULT_STALLED_TURN_WATCHDOG_MS`). Fixes 1.2.10 retest regression where Gemini 3.1 Pro Preview + `thinkingLevel=high` on the Description step produced 60s silence on the stream channel during deep reasoning and got killed by our watchdog. Post-tool watchdog (`DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS = 120_000`) unchanged. Single-constant bump; to be validated in retest and narrowed later if 240s proves too generous.
+
+### Contracts
+- **Invariant 7** (Gemini stalled-turn watchdog): new baseline is 240s for initial leg, 120s for post-tool leg. Adaptive-per-thinking-level watchdog deferred to a follow-up scope.
+
 ## [1.2.10] - 2026-04-17
 ### Changed
 - **Audit cleanup release** (no runtime behaviour change; no retest required). Scope split across four directions: (A) docs + config verification — all three audit-flagged items investigated; `Docs_Index.md` template section extended to document both bundled-template source paths AND per-workspace instance paths (audit had confused the two layers), `knip.json` diagram-DSL exclusion kept (intentional: chain used only through `diagram-editor-facade.test.tsx`), spec-creator TODO lives in a third-party published package (not under our control); (B) localization cleanup — 99 unused keys removed from the four approved source dicts (`ui_labels`, `ui_helper_text`, `messages_for_the_user`, `artifacts_for_the_user`) after a grep-partial dry-run ruled out dynamic template-literal usage; (C) duplication refactor — `useBootstrapSettings` extracted to `src/client/shared/hooks/`, `createWorkspaceFileHandler` factory introduced in `workspace-file-service.ts`, `idea-collector-schema-utils.ts` now imports from `@codeai-hub/agents-shared` instead of duplicating; (D) process formalization — new `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` documents the recurring audit cadence and sub-agent workflow.
