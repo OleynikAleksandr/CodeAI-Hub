@@ -161,8 +161,12 @@ export class SessionRequestHandler {
     this.stopRebind = new SessionRequestHandlerStopRebind({
       broadcastSessionBinding: (sessionId) =>
         this.providerBindingService.broadcastSessionBinding(sessionId),
+      clearPreStopProviderSessionId: (sessionId) =>
+        this.providerBindingService.clearPreStopProviderSessionId(sessionId),
       continuity: this.continuity,
       continuityRootBySessionId: this.continuityRootBySessionId,
+      getPreStopProviderSessionId: (sessionId) =>
+        this.providerBindingService.getPreStopProviderSessionId(sessionId),
       handleProviderEvent: (sessionId, event) =>
         this.providerEventRouter.handleProviderEvent(sessionId, event),
       logger: this.logger,

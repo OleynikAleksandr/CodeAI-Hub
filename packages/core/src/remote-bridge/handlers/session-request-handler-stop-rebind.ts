@@ -10,8 +10,10 @@ type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
 interface SessionRequestHandlerStopRebindOptions {
   readonly broadcastSessionBinding: (sessionId: string) => void;
+  readonly clearPreStopProviderSessionId: (sessionId: string) => void;
   readonly continuity: SessionContinuityFacade;
   readonly continuityRootBySessionId: Map<string, string>;
+  readonly getPreStopProviderSessionId: (sessionId: string) => string | null;
   readonly handleProviderEvent: (sessionId: string, event: unknown) => void;
   readonly logger: Logger;
   readonly maybeBackfillDescriptionDialogHistory: (options: {
@@ -81,19 +83,31 @@ export class SessionRequestHandlerStopRebind {
       return false;
     }
 
+    const descriptor = this.deps.providerRegistry.getDescriptor(
+      session.providerId
+    );
+    const requiresPostStopResume =
+      descriptor?.capabilities?.requiresPostStopResume === true;
+    const preStopProviderSessionId = requiresPostStopResume
+      ? this.deps.getPreStopProviderSessionId(session.id)
+      : null;
+
     this.deps.logger.info("Rebinding stop-invalidated session before send", {
       sessionId: session.id,
       providerId: session.providerId,
       stage: session.stage ?? null,
+      requiresPostStopResume,
+      hasPreStopProviderSessionId: preStopProviderSessionId !== null,
     });
 
     const providerSessionResolution = await resolveProviderSessionId({
       adapter,
       providerId: session.providerId,
-      requestedProviderSessionId: null,
+      requestedProviderSessionId: preStopProviderSessionId,
       workspacePath: session.workspacePath,
     });
     if ("error" in providerSessionResolution) {
+      this.deps.clearPreStopProviderSessionId(session.id);
       this.deps.onProviderFailure(
         session.providerId,
         new Error(providerSessionResolution.error),
@@ -126,9 +140,11 @@ export class SessionRequestHandlerStopRebind {
         session,
         supportsImmediateBinding,
       });
+      this.deps.clearPreStopProviderSessionId(session.id);
       this.deps.broadcastSessionBinding(session.id);
       return true;
     } catch (error) {
+      this.deps.clearPreStopProviderSessionId(session.id);
       this.deps.sessionManager.invalidateProviderBinding(session.id);
       this.deps.broadcastSessionBinding(session.id);
       try {

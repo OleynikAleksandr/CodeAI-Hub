@@ -157,6 +157,10 @@ export class ProviderRegistry {
       ?.adapter;
   }
 
+  getDescriptor(providerId: string): ProviderDescriptor | undefined {
+    return this.providers.find((provider) => provider.id === providerId);
+  }
+
   handleRuntimeFailure(providerId: string, error: unknown): void {
     const descriptor = this.providers.find(
       (provider) => provider.id === providerId
