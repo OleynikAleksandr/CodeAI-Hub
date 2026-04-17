@@ -287,7 +287,7 @@ export class GeminiSessionManager {
     }
   }
 
-  async closeSession(sessionId: string): Promise<void> {
-    await this.sessionLifecycle.closeSession(this.sessionStore, sessionId);
+  closeSession(sessionId: string): void {
+    this.sessionLifecycle.closeSession(this.sessionStore, sessionId);
   }
 }

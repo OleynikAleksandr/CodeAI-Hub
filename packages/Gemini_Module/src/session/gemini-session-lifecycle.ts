@@ -96,10 +96,7 @@ export class GeminiSessionLifecycle {
     owner.pendingTranslationEngineIdOverride = undefined;
   }
 
-  async closeSession(
-    sessionStore: GeminiSessionStore,
-    sessionId: string
-  ): Promise<void> {
+  closeSession(sessionStore: GeminiSessionStore, sessionId: string): void {
     const trackedSession = sessionStore.findTrackedSession(sessionId);
     if (!trackedSession) {
       return;
@@ -109,13 +106,11 @@ export class GeminiSessionLifecycle {
     session.status = "closing";
     session.abortController?.abort();
 
-    try {
-      await session.client.resetChat();
-    } catch (error) {
-      session.reporter?.warn?.("Failed to reset Gemini chat", {
-        message: error instanceof Error ? error.message : String(error),
-      });
-    }
+    // Do NOT call session.client.resetChat() here: it writes a new empty
+    // chat file under ~/.gemini/tmp/<projectSlug>/chats/ against the same
+    // Config.sessionId, orphaning prior history. Post-Stop continuity relies
+    // on Gemini CLI --resume <providerSessionId> reading that history back.
+    // See SystemArchitecture.md Invariant 24 (Gemini branch).
 
     session.logger?.end();
     session.status = "closed";

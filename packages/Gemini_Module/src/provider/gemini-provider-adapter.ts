@@ -218,10 +218,11 @@ export class GeminiProviderAdapter {
     });
   }
 
-  async closeSession(sessionId: string): Promise<void> {
+  closeSession(sessionId: string): Promise<void> {
     const manager = this.requireSessionManager();
-    await manager.closeSession(sessionId);
+    manager.closeSession(sessionId);
     this.listeners.delete(sessionId);
+    return Promise.resolve();
   }
 
   async sendMessage(
