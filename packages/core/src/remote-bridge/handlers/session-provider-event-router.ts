@@ -96,6 +96,10 @@ export class SessionProviderEventRouter {
     }
 
     const typedEvent = event as ProviderEventEnvelope;
+    this.deps.logger.info("stopdiag_router_typed_event", {
+      sessionId,
+      eventType: typedEvent.type ?? "unknown",
+    });
     if (typedEvent.type === "turn_completed") {
       this.deps.markPostTurnContextDecisionPending(sessionId);
     }
@@ -142,6 +146,10 @@ export class SessionProviderEventRouter {
     sessionId: string,
     event: ProviderEventEnvelope
   ): void {
+    this.deps.logger.info("stopdiag_router_handle_typed", {
+      sessionId,
+      eventType: event.type,
+    });
     switch (event.type) {
       case "sessionIdChanged":
         this.handleSessionIdChangedEvent(sessionId, event.payload);
@@ -153,6 +161,13 @@ export class SessionProviderEventRouter {
         this.deps.emitTurnStateEvent({ sessionId, state: "running" });
         break;
       case "turn_failed":
+        this.deps.logger.info("stopdiag_router_turn_failed", {
+          sessionId,
+          payload:
+            typeof event.payload === "object"
+              ? undefined
+              : String(event.payload),
+        });
         this.deps.clearPostTurnContextDecision(sessionId);
         this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
         this.deps.finalizeFlowNodeContinuityLockOnBootstrapGate({

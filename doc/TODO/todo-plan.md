@@ -31,7 +31,7 @@
 8. [TODO] Git Commit: `chore: add stopdiag stack-capturing emit logs for 1.2.3` (hash: TBD)
 
 ### Stream 3: Provider event router tracing
-9. [TODO] Add `stopdiag_router_*` logs to `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session provider-event-router for 1.2.3`
+9. [IN_PROGRESS] Add `stopdiag_router_*` logs to `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session provider-event-router for 1.2.3`
 10. [TODO] Git Commit: `chore: add stopdiag logs to session provider-event-router for 1.2.3` (hash: TBD)
 
 ### Stream 4: Release notes prep
