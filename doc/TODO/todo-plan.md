@@ -31,34 +31,40 @@
 
 ### Stream 1: README/CHANGELOG pre-bump + planning doc
 1. [DONE] Обновить README.md и CHANGELOG.md на будущую версию 1.2.8; planning-doc `Gemini_Real_Resume_And_PM_StaleSeed_Guard_1.2.8.md` в `Plans/` — scope: 3 файла; ожидаемый commit: `docs: prepare 1.2.8 release notes for Gemini real resume + stale-seed guard`
-2. [DONE] Git Commit: `docs: prepare 1.2.8 release notes for Gemini real resume + stale-seed guard` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.8 release notes for Gemini real resume + stale-seed guard` (hash: 960fc03f6)
 
 ### Stream 2: Real Gemini resume wiring
-1. [TODO] Расширить `GeminiCliModules` + cli-bridge-module-loader для динамического import `@google/gemini-cli-core/dist/src/utils/sessionUtils.js` → `convertSessionToClientHistory` — scope: 2 файла; ожидаемый commit: `feat(gemini): expose convertSessionToClientHistory via cli-bridge module loader`
-2. [TODO] Git Commit: `feat(gemini): expose convertSessionToClientHistory via cli-bridge module loader` (hash: TBD)
-3. [TODO] В `gemini-session-bootstrapper.ts` реализовать full resume pipeline (scan chats dir → read JSON → pick full-sessionId match → setSessionId → convert → client.resumeChat); graceful degrade на missing file — scope: 1 файл; ожидаемый commit: `fix(gemini): wire real resume via client.resumeChat in bootstrapper`
-4. [TODO] Git Commit: `fix(gemini): wire real resume via client.resumeChat in bootstrapper` (hash: TBD)
+1. [DONE] Расширить `GeminiCliModules` + cli-bridge-module-loader для динамического import `@google/gemini-cli-core/dist/src/utils/sessionUtils.js` → `convertSessionToClientHistory` (nullable, локальный subset-type чтобы не падать на workspace cli-core@0.16) — scope: 2 файла; ожидаемый commit: `feat(gemini): expose convertSessionToClientHistory via cli-bridge module loader`
+2. [DONE] Git Commit: `feat(gemini): expose convertSessionToClientHistory via cli-bridge module loader` (hash: 94903dfd0)
+3. [DONE] В `gemini-session-bootstrapper.ts` реализовать full resume pipeline (scan chats dir → read JSON → pick full-sessionId match → setSessionId → convert → client.resumeChat); graceful degrade — scope: 1 файл; ожидаемый commit: `fix(gemini): wire real resume via client.resumeChat in bootstrapper`
+4. [DONE] Git Commit: `fix(gemini): wire real resume via client.resumeChat in bootstrapper` (hash: 4c148c69f)
 
 ### Stream 3: Tests for real resume wiring
-1. [TODO] Extend `gemini-session-manager.stop-resume.test.ts`: mock modules.sessionUtils + spy on `client.resumeChat`; verify resumeChat invoked with expected resumedSessionData shape and `argv.resume` still forwarded — scope: 1 файл; ожидаемый commit: `test: verify real resume pipeline invokes client.resumeChat with hydrated history`
-2. [TODO] Git Commit: `test: verify real resume pipeline invokes client.resumeChat with hydrated history` (hash: TBD)
+1. [DONE] Extend `gemini-session-manager.stop-resume.test.ts`: 4 сценария — resetChat не зовётся, argv.resume пробрасывается, `client.resumeChat` invoked с правильным resumedSessionData на реальном tmpdir с двумя chat-файлами, missing file → degrade graceful — scope: 1 файл; ожидаемый commit: `test: verify real resume pipeline invokes client.resumeChat with hydrated history`
+2. [DONE] Git Commit: `test: verify real resume pipeline invokes client.resumeChat with hydrated history` (hash: 7500864c9)
 
 ### Stream 4: PM stale-seed guard
-1. [TODO] В `GeminiProviderAdapter.sendMessage` catch `Gemini session … not found. Available:` → throw `SessionStaleBindingError` с providerSessionId; экспортировать класс из провайдерного модуля — scope: 2 файла; ожидаемый commit: `feat(gemini): throw SessionStaleBindingError on stale provider session`
-2. [TODO] Git Commit: `feat(gemini): throw SessionStaleBindingError on stale provider session` (hash: TBD)
-3. [TODO] В `session-request-handler-provider-send.ts` (или message-dispatch) catch `SessionStaleBindingError` → seed preStop map + `invalidateProviderBinding` + re-run `ensureSessionReadyForSend` + retry send once; guard против двойного retry — scope: 2 файла; ожидаемый commit: `fix(core): auto-recover from provider stale-seed binding with one-shot rebind retry`
-4. [TODO] Git Commit: `fix(core): auto-recover from provider stale-seed binding with one-shot rebind retry` (hash: TBD)
+1. [DONE] Новый `gemini-session-stale-binding-error.ts` + catch `... not found. Available:` в `GeminiProviderAdapter.sendMessage` → throw `SessionStaleBindingError`; экспортировать из index — scope: 3 файла; ожидаемый commit: `feat(gemini): throw SessionStaleBindingError on stale provider session`
+2. [DONE] Git Commit: `feat(gemini): throw SessionStaleBindingError on stale provider session` (hash: 5dd879c69)
+3. [DONE] В `SessionRequestHandlerMessageDispatch.dispatchUserMessage` catch error.code=GEMINI_SESSION_STALE_BINDING → `invalidateProviderBinding` (captures preStop) → `ensureSessionReadyForSend` → re-resolve → retry send one-shot; hooks wired post-construction из `session-request-handler.ts` — scope: 2 файла; ожидаемый commit: `fix(core): auto-recover from provider stale-seed binding with one-shot rebind retry`
+4. [DONE] Git Commit: `fix(core): auto-recover from provider stale-seed binding with one-shot rebind retry` (hash: 2ba939b5c)
 
 ### Stream 5: Remove SwitchRecoveryBanner
-1. [TODO] Удалить `switch-recovery-banner.tsx`, `use-dialog-switch-offer.ts`, `dialog-switch-types.ts` и соответствующие CSS/i18n; убрать imports из `session-view.tsx` — scope: 3 файла + cleanup import; ожидаемый commit: `chore: remove legacy SwitchRecoveryBanner and dialog-switch-offer hook`
-2. [TODO] Git Commit: `chore: remove legacy SwitchRecoveryBanner and dialog-switch-offer hook` (hash: TBD)
+1. [DONE] Удалить `switch-recovery-banner.tsx`, `use-dialog-switch-offer.ts`, `dialog-switch-types.ts`; cleanup в `session-view.tsx`, `project-manager-dialog-session-view.tsx`, `core-stream-message-types.ts`, `dialog-api.ts` — scope: 7 файлов (3 delete + 4 edit); ожидаемый commit: `chore: remove legacy SwitchRecoveryBanner and dialog-switch-offer hook`
+2. [DONE] Git Commit: `chore: remove legacy SwitchRecoveryBanner and dialog-switch-offer hook` (hash: 56438bbfa)
 
-### Stream 6: SSOT docs + planning archive
-1. [TODO] Invariant 24 в SystemArchitecture.md дополнить требованием "providers must publish recognizable stale-binding surface"; `Modules/Gemini.md` — bullet про real resume wiring и SessionStaleBindingError — scope: 2 файла; ожидаемый commit: `docs: promote Gemini real resume + stale-seed guard contract`
-2. [TODO] Git Commit: `docs: promote Gemini real resume + stale-seed guard contract` (hash: TBD)
-3. [TODO] Planning-doc → `Plans/Archive/`; обновить `Docs_Index.md` — scope: 2 файла; ожидаемый commit: `docs: archive 1.2.8 Gemini real resume planning doc`
-4. [TODO] Git Commit: `docs: archive 1.2.8 Gemini real resume planning doc` (hash: TBD)
+(также committed: `chore(gemini-tests): annotate convertSessionToClientHistory mock parameter for strict build` hash: 641f11ebf — тест-type fix из Stream 3)
 
-### Stream 7: Release build 1.2.8
-1. [TODO] Verify чистое дерево, запустить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
-2. [TODO] Git Commit: `chore: bump version to 1.2.8 for Gemini real resume + stale-seed guard release` (hash: TBD)
+### Stream 6: Nest Gemini CLI install under providers/gemini/cli
+1. [DONE] Изменить `GEMINI_INSTALLER_PATHS.macOS/linux/windows` в `provider-installer-paths.ts` на full-module-path, чтобы `computePrefix` через существующий marker-based stripping резолвился в `~/.codeai-hub/providers/gemini/cli` — scope: 1 файл; ожидаемый commit: `fix(core): nest Gemini CLI install under providers/gemini/cli`
+2. [DONE] Git Commit: `fix(core): nest Gemini CLI install under providers/gemini/cli` (hash: 9f4283f61)
+
+### Stream 7: SSOT docs + planning archive
+1. [DONE] Invariant 24 в SystemArchitecture.md дополнить тремя абзацами (real resume, stale-seed, install layout); `Modules/Gemini.md` — три дополнительных bullet'а поверх 1.2.7 — scope: 2 файла; ожидаемый commit: `docs: promote Gemini real resume + stale-seed guard + install layout contract`
+2. [DONE] Git Commit: `docs: promote Gemini real resume + stale-seed guard + install layout contract` (hash: e37a724b6)
+3. [DONE] Planning-doc → `Plans/Archive/`; обновить `Docs_Index.md` — scope: 2 файла; ожидаемый commit: `docs: archive 1.2.8 Gemini real resume planning doc`
+4. [DONE] Git Commit: `docs: archive 1.2.8 Gemini real resume planning doc` (hash: d8a9138ba)
+
+### Stream 8: Release build 1.2.8
+1. [TODO] User manually wipes `~/.codeai-hub/` before build; verify чистое дерево, запустить `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`.
+2. [TODO] Git Commit: `chore: bump version to 1.2.8 for Gemini real resume + stale-seed guard + install layout release` (hash: TBD)
