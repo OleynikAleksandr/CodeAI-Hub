@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.9] - 2026-04-17
+### Fixed
+- **Gemini inline `[Thought: true]` marker now splits into a thinking bubble + final assistant reply**: post-tool follow-up turns sometimes arrive as a single `content` stream containing an English thought-like summary, the literal token `[Thought: true]`, and the final target-language answer — without any `ptype: "thought"` events. `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` `handleFinishedEvent` now regex-splits the assembled segment on `/\[Thought:\s*(true|false)\]/`. The pre-marker half is routed through the existing `thought-translator-service` overlay path (same one native `ptype: "thought"` events use), the post-marker half becomes the assistant bubble, and the literal token itself is dropped from dialog.
+- **Gemini pre-tool non-target-language progress text reroutes to thinking overlay**: `TurnAccumulator` now snapshots the assembled assistant text at the first `tool_call_request` event of each turn into `preToolAssistantSegment`. At `handleFinishedEvent`, if Messages-for-the-User target is in the Cyrillic family (`ru` / `uk` / `bg` / `sr` / `mk` / `be` / `ky` / `kk` / `mn` / `tg` / `ab`) and the snapshotted pre-tool text contains zero Cyrillic characters (U+0400..U+052F), the segment is rerouted through `thought-translator-service` as a thinking bubble and excluded from the final assistant bubble. Target `en` disables the heuristic entirely. In-target-language pre-tool text keeps current behaviour (prepended to the assistant bubble unchanged).
+
+### Contracts
+- **Invariant 7** (Provider dialog segment preservation) — Gemini branch now documents that inline `[Thought: true]` markers and non-target-language pre-tool progress text are not part of the final assistant bubble; both surface through the thought-translator overlay path.
+
 ## [1.2.8] - 2026-04-17
 ### Fixed
 - **Gemini post-stop resume now actually loads the prior chat**: `packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts` now runs the full resume pipeline inside our embed path (1.2.7's `argv.resume` was a no-op because only the `gemini` main binary consumes that flag). The bootstrap scans `config.storage.getProjectTempDir()/chats` for `session-*-<uuid-first-8>.json`, picks the file whose full `sessionId` matches and has the most messages (defensive against pre-1.2.8 mess with two files for one UUID), calls `config.setSessionId(...)`, converts `messages` via the newly exposed `convertSessionToClientHistory` from `@google/gemini-cli-core`, and finishes with `await client.resumeChat(history, { conversation, filePath })`. The existing chat file is reused by `ChatRecordingService.initialize(resumedSessionData)` instead of a new empty one being created.
