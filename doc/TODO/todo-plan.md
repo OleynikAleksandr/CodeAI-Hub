@@ -49,19 +49,19 @@ Core 1.2.3 трассы доказали: `emit_turn_state state="running"` эм
 Phase 2 добавляет PM-side диагностику через `api.logDiagnostic({...})` → websocket → Core `remote-bridge-message-router` → `core.log` (уже работающий mechanism). Не трогает Core diag из Phase 1 — они продолжают писать.
 
 ### Stream 6: PM api + snapshot apply tracing
-15. [IN_PROGRESS] Add `pmdiag_` logs to `src/client/project-manager/api.ts` (stopSession/sendSessionMessage) and `src/client/project-manager/components/sessions/session-stream.ts` (applyWorkspaceSnapshotToSnapshots per-session state) — scope: 2 files; commit message: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4`
-16. [TODO] Git Commit: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4` (hash: TBD)
+15. [DONE] Add `pmdiag_` logs to `src/client/project-manager/api.ts` (stopSession/sendSessionMessage) and `src/client/project-manager/components/sessions/session-stream.ts` (applyWorkspaceSnapshotToSnapshots per-session state) — scope: 2 files; commit message: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4`
+16. [DONE] Git Commit: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4` (hash: a4425d09f)
 
 ### Stream 7: activeSessionId tracker
-17. [IN_PROGRESS] Add `pmdiag_active_*` logs around `setActiveSessionId` in `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` and `project-manager-dialog-session-view.tsx` — scope: 2 files; commit message: `chore: add pmdiag activeSessionId tracker logs for 1.2.4`
-18. [TODO] Git Commit: `chore: add pmdiag activeSessionId tracker logs for 1.2.4` (hash: TBD)
+17. [DONE] Add `pmdiag_active_*` logs around `setActiveSessionId` in `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` and `project-manager-dialog-session-view.tsx` — scope: 2 files; commit message: `chore: add pmdiag activeSessionId tracker logs for 1.2.4`
+18. [DONE] Git Commit: `chore: add pmdiag activeSessionId tracker logs for 1.2.4` (hash: f0e7d7a6a)
 
 ### Stream 8: Release notes + build
-19. [IN_PROGRESS] Update `README.md` and `CHANGELOG.md` to target 1.2.4 diag release — scope: 2 files; commit message: `docs: prepare 1.2.4 PM-side diagnostic release notes`
-20. [TODO] Git Commit: `docs: prepare 1.2.4 PM-side diagnostic release notes` (hash: TBD)
-21. [TODO] Run `./scripts/build-all.sh --version 1.2.4` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.4 for PM diagnostic release`
-22. [TODO] Git Commit: `chore: bump version to 1.2.4 for PM diagnostic release` (hash: TBD)
+19. [DONE] Update `README.md` and `CHANGELOG.md` to target 1.2.4 diag release — scope: 2 files; commit message: `docs: prepare 1.2.4 PM-side diagnostic release notes`
+20. [DONE] Git Commit: `docs: prepare 1.2.4 PM-side diagnostic release notes` (hash: f98adf205)
+21. [DONE] Run `./scripts/build-all.sh --version 1.2.4` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.4 for PM diagnostic release`
+22. [DONE] Git Commit: `chore: bump version to 1.2.4 for PM diagnostic release` (hash: f04b0802b)
 
 ### Stream 6b: Split PM diag into its own log file
-23. [IN_PROGRESS] Route `pm:diag:log` to `~/.codeai-hub/logs/project-manager/project-manager.log` via a local appender in `packages/core/src/remote-bridge/remote-bridge-message-router.ts` instead of mixing with core.log — scope: 1 file; commit message: `chore: write pm:diag:log to project-manager.log instead of core.log`
-24. [TODO] Git Commit: `chore: write pm:diag:log to project-manager.log instead of core.log` (hash: TBD)
+23. [DONE] Route `pm:diag:log` to `~/.codeai-hub/logs/project-manager/project-manager.log` via a local appender in `packages/core/src/remote-bridge/remote-bridge-message-router.ts` instead of mixing with core.log — scope: 1 file; commit message: `chore: write pm:diag:log to project-manager.log instead of core.log`
+24. [DONE] Git Commit: `chore: write pm:diag:log to project-manager.log instead of core.log` (hash: f9b7aa58d)
