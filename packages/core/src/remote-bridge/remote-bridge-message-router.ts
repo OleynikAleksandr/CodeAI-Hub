@@ -1,4 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { appendFileSync, mkdirSync } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
 import type { SessionManager } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
@@ -14,6 +17,34 @@ import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
+
+const PM_LOG_FILE =
+  process.env.CODEAI_PROJECT_MANAGER_LOG_FILE ??
+  path.join(
+    homedir(),
+    ".codeai-hub",
+    "logs",
+    "project-manager",
+    "project-manager.log"
+  );
+let pmLogFileReady = false;
+
+const appendProjectManagerLog = (entry: Record<string, unknown>): void => {
+  try {
+    if (!pmLogFileReady) {
+      mkdirSync(path.dirname(PM_LOG_FILE), { recursive: true });
+      pmLogFileReady = true;
+    }
+    const line = JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: "info",
+      ...entry,
+    });
+    appendFileSync(PM_LOG_FILE, `${line}\n`, "utf8");
+  } catch {
+    // best-effort diagnostic sink — never crash Core on log write failure
+  }
+};
 
 interface RemoteBridgeMessageRouterDependencies {
   readonly dialogHistoryService: DialogHistoryService;
@@ -73,9 +104,10 @@ export class RemoteBridgeMessageRouter {
     }
     switch (incoming.type) {
       case "pm:diag:log":
-        this.deps.logger.info("Project Manager diagnostic log", {
-          channel: incoming.payload.channel,
+        appendProjectManagerLog({
+          message: "Project Manager diagnostic log",
           clientId,
+          channel: incoming.payload.channel,
           event: incoming.payload.event,
           ...(incoming.payload.context
             ? { context: incoming.payload.context }

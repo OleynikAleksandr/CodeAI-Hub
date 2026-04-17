@@ -61,3 +61,7 @@ Phase 2 добавляет PM-side диагностику через `api.logDia
 20. [TODO] Git Commit: `docs: prepare 1.2.4 PM-side diagnostic release notes` (hash: TBD)
 21. [TODO] Run `./scripts/build-all.sh --version 1.2.4` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.4 for PM diagnostic release`
 22. [TODO] Git Commit: `chore: bump version to 1.2.4 for PM diagnostic release` (hash: TBD)
+
+### Stream 6b: Split PM diag into its own log file
+23. [IN_PROGRESS] Route `pm:diag:log` to `~/.codeai-hub/logs/project-manager/project-manager.log` via a local appender in `packages/core/src/remote-bridge/remote-bridge-message-router.ts` instead of mixing with core.log — scope: 1 file; commit message: `chore: write pm:diag:log to project-manager.log instead of core.log`
+24. [TODO] Git Commit: `chore: write pm:diag:log to project-manager.log instead of core.log` (hash: TBD)
