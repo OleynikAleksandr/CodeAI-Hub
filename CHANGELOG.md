@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.14] - 2026-04-17
+### Fixed
+- **Gemini post-tool stalled-turn watchdog bumped 120s → 240s** in `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` (`DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS`). 1.2.13 retest on Gemini 3.1 Pro + `thinkingLevel=high` showed the post-tool leg killed at exactly 120s after a two-tool-call initial turn — Gemini was still in silent deep-reasoning phase when the watchdog fired. The 1.2.11 asymmetry (initial 240s, post-tool 120s) was based on an incorrect assumption that follow-up legs always respond faster than initial reasoning. Both legs are now 240s. Per-session overrides preserved.
+
+### Contracts
+- **Invariant 7** (Gemini stalled-turn watchdog) updated: `DEFAULT_POST_TOOL_STALLED_TURN_WATCHDOG_MS = 240_000` now symmetric with `DEFAULT_STALLED_TURN_WATCHDOG_MS = 240_000`. Adaptive-per-thinking-level watchdog remains planned as a future follow-up only if 240s/240s proves too generous or too tight.
+
 ## [1.2.13] - 2026-04-17
 ### Fixed
 - **SESSION UI model label flicker between `(thinking high)` and `(high)`.** Cosmetic only — real applied thinkingLevel was always correct. Root cause: `broadcastRuntimeModelUpdate` in `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts` was forwarding raw `data.model` from the provider SDK's `model_info` event (e.g. `"gemini-3.1-pro-preview"`) without the effective-identity suffix, while `session-request-handler-message-dispatch.ts` was broadcasting the same event with the full effective id (`"gemini-3.1-pro-preview thinking:high"`). UI renderer in `src/client/ui/src/session/model-info-builder.ts` matched/fell-back differently on the two shapes. Core now enriches the SDK-path broadcast through `SessionRequestHandlerAppliedTurnConfig.resolveEffectiveModelId(providerId, targetModelId)`, which reuses the same `buildProviderEffectiveModelId` helper the dispatch path already uses. Both paths now emit identical effective ids and the UI label stops flickering.
