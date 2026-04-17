@@ -19,9 +19,9 @@
 ## Phase 1 — 1.2.6 Codex Stop Abort (owner: codeai-bot, updated: 2026-04-17)
 
 ### Stream 1: Codex subprocess abort
-1. [TODO] Add module-scoped `activeCodexChildProcessesByThreadId` Map + exported `killActiveCodexProcess(threadId)` to `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`; register/unregister child inside `streamCodexExec` — scope: 1 file; commit message: `feat: expose active codex subprocess kill handle from sdk patches`
+1. [IN_PROGRESS] Add module-scoped `activeCodexChildProcessesByThreadId` Map + exported `killActiveCodexProcess(threadId)` to `packages/Codex_Module/src/sdk/codex-sdk-patches.ts`; register/unregister child inside `streamCodexExec` — scope: 1 file; commit message: `feat: expose active codex subprocess kill handle from sdk patches`
 2. [TODO] Git Commit: `feat: expose active codex subprocess kill handle from sdk patches` (hash: TBD)
-3. [TODO] Wire `killActiveCodexProcess` into `packages/Codex_Module/src/session/session-manager.ts` `closeSession` before awaiting lifecycle/processing loop — scope: 1 file; commit message: `fix: abort active codex subprocess on adapter.closeSession`
+3. [IN_PROGRESS] Wire `killActiveCodexProcess` into `packages/Codex_Module/src/session/session-manager.ts` `closeSession` before awaiting lifecycle/processing loop — scope: 1 file; commit message: `fix: abort active codex subprocess on adapter.closeSession`
 4. [TODO] Git Commit: `fix: abort active codex subprocess on adapter.closeSession` (hash: TBD)
 
 ### Stream 2: PM Stop-button debounce

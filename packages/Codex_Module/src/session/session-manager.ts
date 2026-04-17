@@ -1,3 +1,4 @@
+import { killActiveCodexProcess } from "../sdk/codex-sdk-patches";
 import { CodexSessionLifecycle } from "./session-lifecycle";
 import { CodexSessionRegistry } from "./session-registry";
 import type {
@@ -83,6 +84,7 @@ export class CodexSessionManager {
     if (!session) {
       return;
     }
+    killActiveCodexProcess(session.codexThreadId);
     await this.lifecycle.closeSession(session.messageController);
     if (session.processingLoop) {
       try {

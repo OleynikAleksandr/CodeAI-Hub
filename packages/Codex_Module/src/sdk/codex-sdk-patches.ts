@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -197,6 +197,24 @@ const buildExecEnv = (args: PatchedExecArgs): NodeJS.ProcessEnv => {
   return env;
 };
 
+const activeCodexChildProcessesByThreadId = new Map<string, ChildProcess>();
+
+export const killActiveCodexProcess = (threadId: string | null): boolean => {
+  if (!threadId) {
+    return false;
+  }
+  const child = activeCodexChildProcessesByThreadId.get(threadId);
+  if (!child || child.killed) {
+    return false;
+  }
+  try {
+    child.kill("SIGTERM");
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const streamCodexExec = async function* (
   executablePath: string,
   commandArgs: string[],
@@ -226,13 +244,17 @@ const streamCodexExec = async function* (
     input: child.stdout,
     crlfDelay: Number.POSITIVE_INFINITY,
   });
+  const registeredThreadId = args.threadId ?? null;
+  if (registeredThreadId) {
+    activeCodexChildProcessesByThreadId.set(registeredThreadId, child);
+  }
   try {
     for await (const line of rl) {
       yield line;
     }
     const exitCode = new Promise<void>((resolve, reject) => {
       child.once("exit", (code) => {
-        if (code === 0) {
+        if (code === 0 || code === null) {
           resolve();
           return;
         }
@@ -249,6 +271,12 @@ const streamCodexExec = async function* (
     }
     await exitCode;
   } finally {
+    if (
+      registeredThreadId &&
+      activeCodexChildProcessesByThreadId.get(registeredThreadId) === child
+    ) {
+      activeCodexChildProcessesByThreadId.delete(registeredThreadId);
+    }
     rl.close();
     child.removeAllListeners();
     try {
