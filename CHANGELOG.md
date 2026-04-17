@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-04-17
+### Diagnostics
+- **Stop → Continue input lock trace (temporary)**: after a Claude turn is interrupted via `Stop` and the user sends a follow-up message, the reply streams but the input panel stays unlocked — no `Agents is working, please wait...` wait-copy and no disabled fieldset. Core-only structured logs prefixed `stopdiag_` are emitted to `~/.codeai-hub/logs/core/core.log` from:
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.ts` — `stop_begin`, `stop_close_done/error`, `stop_lifecycle_pre`, `stop_finalize_flow_lock`, `stop_emit_no_rollover_unlock`, `stop_invalidate_done`, `stop_emit_idle`.
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-stop-rebind.ts` — `rebind_gate`, `rebind_await_existing`, `rebind_no_adapter`, `rebind_begin`, `rebind_resolve_error`, `rebind_create_done` (with `supportsImmediateBinding`), `rebind_seed_done`, `rebind_attach_done/error`.
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` — `dispatch_begin`, `dispatch_append_skipped`, `dispatch_no_binding`, `dispatch_resolve_binding`, `dispatch_emit_running`, `dispatch_send_done`, `dispatch_send_error`.
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-callbacks.ts` — `emit_turn_state` on every `emitTurnStateEvent` with a truncated `new Error().stack` so every caller is pinpointed to its source.
+  - `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts` — `router_typed_event`, `router_handle_typed`, `router_turn_failed`.
+- Scheduled for removal in 1.2.4 once the fix lands.
+
 ## [1.2.2] - 2026-04-16
 ### Fixed
 - **Core `settings:load` no longer reverts Claude `xhigh` back to `medium`**: `packages/core/src/remote-bridge/handlers/settings-request-handler-claude-thinking.ts` carried an independent hardcoded whitelist `Set(["low","medium","high","max"])` — `xhigh` was missing. Every PM / websocket `settings:load` ran through this whitelist, treated `xhigh` as legacy numeric, normalized it to `DEFAULT_CLAUDE_THINKING_EFFORT = "medium"`, flagged `changed=true`, and persisted the rewritten snapshot to disk. Added `xhigh` plus a matching legacy anchor (`maxTokens: 20000`) and a comment pointing at SystemArchitecture §Invariant 27.

@@ -7,7 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.2
+## Current Release — v1.2.3 (diagnostic)
+- **Stop → Continue input lock regression — diagnostic trace**: after `Stop` during an in-flight Claude turn and a subsequent `Continue` message, the reply streams correctly but the input panel stays unlocked (no `Agents is working, please wait...` wait-copy, no disabled fieldset). Static analysis narrowed the cause to one of three candidates: stale `turn_failed` from `adapter.closeSession` abort reaching the event router before dispatch emits `running`, `providerSessionStatus=pending` after rebind blocking the `running` snapshot, or `adapter.sendMessage` throwing and emitting `idle` through the catch path. This release adds Core-only trace logs prefixed `stopdiag_` to `~/.codeai-hub/logs/core/core.log` on: stop-action lifecycle, stop-rebind gate/create/seed/attach, message-dispatch resolve/emit-running/send-done/error, every `emitTurnStateEvent` call with caller stack trace, and every typed provider event. No behavior changes; scheduled for removal in 1.2.4 once the fix lands.
+
+### 1.2.2 (previous)
 - **Claude `x-High` reasoning effort stops reverting to `medium` on Project Manager boot**: Core had its own hardcoded thinking-effort whitelist next to the extension-side normalizer, and `xhigh` had been added to the UI registry and the shared defaults resolver in 1.1.998 but NOT to that Core-only handler. On every `settings:load` from PM, Core silently rewrote `xhigh` back to `medium` and persisted it to disk. `xhigh` is now in the Core whitelist together with its legacy `maxTokens = 20 000` anchor. Diagnostic logging from 1.2.0 / 1.2.1 is removed.
 - **New SSOT invariant**: SystemArchitecture §3 now has Invariant 27 documenting the four-way parity requirement between the UI model registry, the extension-side normalizer, the shared Core defaults resolver, and the Core remote-bridge handler when adding any new effort/reasoning/thinking level. Matching bullets added to Modules/Claude.md, Codex.md, Gemini.md so future provider work catches the cross-boundary rule.
 
