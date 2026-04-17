@@ -99,7 +99,9 @@ const createStopResumeModules = (
       },
     },
     sessionUtils: {
-      convertSessionToClientHistory: (messages) => {
+      convertSessionToClientHistory: (
+        messages: readonly { readonly type: string }[]
+      ) => {
         spy.convertHistoryCalls.push(messages);
         return messages.map((msg) => ({
           role: msg.type === "user" ? "user" : "model",
