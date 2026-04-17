@@ -35,9 +35,9 @@
 10. [DONE] Git Commit: `chore: add stopdiag logs to session provider-event-router for 1.2.3` (hash: 5ba8fad30)
 
 ### Stream 4: Release notes prep
-11. [IN_PROGRESS] Update `README.md` and `CHANGELOG.md` to target 1.2.3 diagnostic release — scope: 2 files; commit message: `docs: prepare 1.2.3 diagnostic release notes`
-12. [TODO] Git Commit: `docs: prepare 1.2.3 diagnostic release notes` (hash: TBD)
+11. [DONE] Update `README.md` and `CHANGELOG.md` to target 1.2.3 diagnostic release — scope: 2 files; commit message: `docs: prepare 1.2.3 diagnostic release notes`
+12. [DONE] Git Commit: `docs: prepare 1.2.3 diagnostic release notes` (hash: 9094331c3)
 
 ### Stream 5: Build release
-13. [TODO] Run `./scripts/build-all.sh --version 1.2.3` then `./scripts/build-release.sh --use-current-version`; copy tarballs to `doc/tmp/releases/` — scope: build artifacts + version bumps; commit message: `chore: build 1.2.3 diagnostic release assets`
-14. [TODO] Git Commit: `chore: build 1.2.3 diagnostic release assets` (hash: TBD)
+13. [DONE] Run `./scripts/build-all.sh --version 1.2.3` then `./scripts/build-release.sh --use-current-version`; tarballs auto-copied to `doc/tmp/releases/` (ignored by git) — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.3 for diagnostic release`
+14. [DONE] Git Commit: `chore: bump version to 1.2.3 for diagnostic release` (hash: 057adca0a)
