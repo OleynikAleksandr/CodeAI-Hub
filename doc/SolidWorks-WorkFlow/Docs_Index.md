@@ -76,10 +76,14 @@
 
 ## 2) Runtime templates (Description)
 
-Каноничные bundled-шаблоны для шага `Description`:
+Каноничные bundled-шаблоны для шага `Description` (source-пути внутри `BUNDLED_TEMPLATE_SOURCES` в `packages/core/src/templates/bundled-templates.ts`; материализуются `template-sync-service` в `~/.codeai-hub/templates/description/` при старте):
 - `.codeai-hub/templates/description/questionnaire-template.md` — анкета pre-submit.
 - `.codeai-hub/templates/description/description-template.md` — user-facing Help (pre-submit и post-submit).
 - `.codeai-hub/templates/description/description-collector-prompt.md` — инструкции Description Agent (file-first).
+
+Per-workspace instances шага `Description` (создаются при открытии workflow, не bundled):
+- `.codeai-hub/codeai-hub/description/questionnaire.md` — копия анкеты для конкретного workspace.
+- `.codeai-hub/codeai-hub/description/description-step.json` — state шага (paths, timestamps, workspaceSlug).
 
 ## 3) Правило миграции
 
