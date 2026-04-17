@@ -98,118 +98,119 @@ const parseWorkspaceFileWritePayload = (
   };
 };
 
-export const handleWorkspaceFileRead = async (
-  req: Request,
-  res: Response,
-  sessionManager: SessionManager,
-  logger: Logger
-): Promise<void> => {
-  const parsedPayload = parseWorkspaceFilePayload(req.body as unknown);
-  if (!parsedPayload.ok) {
-    res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
-    return;
-  }
+interface WorkspaceFileHandlerContext<TPayload> {
+  readonly absolutePath: string;
+  readonly logger: Logger;
+  readonly payload: TPayload;
+  readonly req: Request;
+  readonly res: Response;
+  readonly session: { readonly id: string };
+}
 
-  const session = sessionManager.getSession(parsedPayload.value.sessionId);
-  if (!session) {
-    res.status(HTTP_NOT_FOUND).json({
-      error: `Session ${parsedPayload.value.sessionId} not found`,
-    });
-    return;
-  }
+type ParsePayloadResult<TPayload> =
+  | { readonly ok: true; readonly value: TPayload }
+  | { readonly ok: false; readonly error: string };
 
-  if (
-    !isWorkspacePathAllowlisted({
-      relativePath: parsedPayload.value.path,
-      workspaceSlug: session.initiativeSlug,
-    })
-  ) {
-    res.status(HTTP_BAD_REQUEST).json({ error: "Path is not allowlisted" });
-    return;
-  }
+interface WorkspaceFileHandlerOptions<TPayload> {
+  readonly errorLogMessage: string;
+  readonly errorResponse: string;
+  readonly execute: (
+    ctx: WorkspaceFileHandlerContext<TPayload>
+  ) => Promise<void>;
+  readonly parsePayload: (body: unknown) => ParsePayloadResult<TPayload>;
+}
 
-  const workspaceRoot = path.resolve(session.workspacePath);
-  const absolutePath = resolveWorkspaceFilePath(
-    workspaceRoot,
-    parsedPayload.value.path
-  );
-  if (!absolutePath) {
-    res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe path" });
-    return;
-  }
+const createWorkspaceFileHandler =
+  <TPayload extends { readonly path: string; readonly sessionId: string }>(
+    options: WorkspaceFileHandlerOptions<TPayload>
+  ) =>
+  async (
+    req: Request,
+    res: Response,
+    sessionManager: SessionManager,
+    logger: Logger
+  ): Promise<void> => {
+    const parsed = options.parsePayload(req.body as unknown);
+    if (!parsed.ok) {
+      res.status(HTTP_BAD_REQUEST).json({ error: parsed.error });
+      return;
+    }
 
-  try {
-    const maxBytes = parsedPayload.value.maxBytes ?? DEFAULT_MAX_BYTES;
-    const { buffer, truncated } = await readFileHead(absolutePath, maxBytes);
-    const content = buffer.toString("utf8");
-    res.json({
-      path: parsedPayload.value.path,
-      truncated,
-      maxBytes,
-      content,
-    });
-  } catch (error) {
-    logger.error("Failed to read workspace file", error as Error, {
-      sessionId: session.id,
-      path: parsedPayload.value.path,
-    });
-    res.status(HTTP_INTERNAL_ERROR).json({ error: "Unable to read file" });
-  }
-};
+    const session = sessionManager.getSession(parsed.value.sessionId);
+    if (!session) {
+      res.status(HTTP_NOT_FOUND).json({
+        error: `Session ${parsed.value.sessionId} not found`,
+      });
+      return;
+    }
 
-export const handleWorkspaceFileWrite = async (
-  req: Request,
-  res: Response,
-  sessionManager: SessionManager,
-  logger: Logger
-): Promise<void> => {
-  const parsedPayload = parseWorkspaceFileWritePayload(req.body as unknown);
-  if (!parsedPayload.ok) {
-    res.status(HTTP_BAD_REQUEST).json({ error: parsedPayload.error });
-    return;
-  }
+    if (
+      !isWorkspacePathAllowlisted({
+        relativePath: parsed.value.path,
+        workspaceSlug: session.initiativeSlug,
+      })
+    ) {
+      res.status(HTTP_BAD_REQUEST).json({ error: "Path is not allowlisted" });
+      return;
+    }
 
-  const session = sessionManager.getSession(parsedPayload.value.sessionId);
-  if (!session) {
-    res.status(HTTP_NOT_FOUND).json({
-      error: `Session ${parsedPayload.value.sessionId} not found`,
-    });
-    return;
-  }
+    const workspaceRoot = path.resolve(session.workspacePath);
+    const absolutePath = resolveWorkspaceFilePath(
+      workspaceRoot,
+      parsed.value.path
+    );
+    if (!absolutePath) {
+      res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe path" });
+      return;
+    }
 
-  if (
-    !isWorkspacePathAllowlisted({
-      relativePath: parsedPayload.value.path,
-      workspaceSlug: session.initiativeSlug,
-    })
-  ) {
-    res.status(HTTP_BAD_REQUEST).json({ error: "Path is not allowlisted" });
-    return;
-  }
+    try {
+      await options.execute({
+        absolutePath,
+        logger,
+        payload: parsed.value,
+        req,
+        res,
+        session: { id: session.id },
+      });
+    } catch (error) {
+      logger.error(options.errorLogMessage, error as Error, {
+        sessionId: session.id,
+        path: parsed.value.path,
+      });
+      res.status(HTTP_INTERNAL_ERROR).json({ error: options.errorResponse });
+    }
+  };
 
-  const workspaceRoot = path.resolve(session.workspacePath);
-  const absolutePath = resolveWorkspaceFilePath(
-    workspaceRoot,
-    parsedPayload.value.path
-  );
-  if (!absolutePath) {
-    res.status(HTTP_BAD_REQUEST).json({ error: "Unsafe path" });
-    return;
-  }
+export const handleWorkspaceFileRead =
+  createWorkspaceFileHandler<WorkspaceFilePayload>({
+    errorLogMessage: "Failed to read workspace file",
+    errorResponse: "Unable to read file",
+    parsePayload: parseWorkspaceFilePayload,
+    execute: async ({ absolutePath, payload, res }) => {
+      const maxBytes = payload.maxBytes ?? DEFAULT_MAX_BYTES;
+      const { buffer, truncated } = await readFileHead(absolutePath, maxBytes);
+      const content = buffer.toString("utf8");
+      res.json({
+        path: payload.path,
+        truncated,
+        maxBytes,
+        content,
+      });
+    },
+  });
 
-  try {
-    const content = parsedPayload.value.content.endsWith("\n")
-      ? parsedPayload.value.content
-      : `${parsedPayload.value.content}\n`;
-    await mkdir(path.dirname(absolutePath), { recursive: true });
-    await writeFile(absolutePath, content, { encoding: "utf8" });
-
-    res.json({ path: parsedPayload.value.path });
-  } catch (error) {
-    logger.error("Failed to write workspace file", error as Error, {
-      sessionId: session.id,
-      path: parsedPayload.value.path,
-    });
-    res.status(HTTP_INTERNAL_ERROR).json({ error: "Unable to write file" });
-  }
-};
+export const handleWorkspaceFileWrite =
+  createWorkspaceFileHandler<WorkspaceFileWritePayload>({
+    errorLogMessage: "Failed to write workspace file",
+    errorResponse: "Unable to write file",
+    parsePayload: parseWorkspaceFileWritePayload,
+    execute: async ({ absolutePath, payload, res }) => {
+      const content = payload.content.endsWith("\n")
+        ? payload.content
+        : `${payload.content}\n`;
+      await mkdir(path.dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, content, { encoding: "utf8" });
+      res.json({ path: payload.path });
+    },
+  });
