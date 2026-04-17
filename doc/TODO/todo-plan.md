@@ -19,9 +19,9 @@
 ## Phase 1 — 1.2.3 Diagnostic Release (owner: codeai-bot, updated: 2026-04-17)
 
 ### Stream 1: Stop path tracing
-1. [TODO] Add `stopdiag_stop_*` logs to `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session stop-action for 1.2.3`
-2. [TODO] Git Commit: `chore: add stopdiag logs to session stop-action for 1.2.3` (hash: TBD)
-3. [TODO] Add `stopdiag_rebind_*` logs to `packages/core/src/remote-bridge/handlers/session-request-handler-stop-rebind.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session stop-rebind for 1.2.3`
+1. [DONE] Add `stopdiag_stop_*` logs to `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session stop-action for 1.2.3`
+2. [DONE] Git Commit: `chore: add stopdiag logs to session stop-action for 1.2.3` (hash: e1205614d)
+3. [IN_PROGRESS] Add `stopdiag_rebind_*` logs to `packages/core/src/remote-bridge/handlers/session-request-handler-stop-rebind.ts` — scope: 1 file; commit message: `chore: add stopdiag logs to session stop-rebind for 1.2.3`
 4. [TODO] Git Commit: `chore: add stopdiag logs to session stop-rebind for 1.2.3` (hash: TBD)
 
 ### Stream 2: Dispatch + emit tracing

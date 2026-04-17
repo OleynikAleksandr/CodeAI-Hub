@@ -54,12 +54,25 @@ export class SessionRequestHandlerStopRebind {
   }
 
   async ensureSessionReadyForSend(session: Session): Promise<boolean> {
-    if (!this.deps.sessionManager.hasStopInvalidatedBinding(session.id)) {
+    const alreadyReady = !this.deps.sessionManager.hasStopInvalidatedBinding(
+      session.id
+    );
+    this.deps.logger.info("stopdiag_rebind_gate", {
+      sessionId: session.id,
+      providerId: session.providerId,
+      stopInvalidated: !alreadyReady,
+      providerSessionStatus: session.providerSessionStatus,
+      providerSessionId: session.providerSessionId ?? null,
+    });
+    if (alreadyReady) {
       return true;
     }
 
     const pendingRebind = this.pendingRebinds.get(session.id);
     if (pendingRebind) {
+      this.deps.logger.info("stopdiag_rebind_await_existing", {
+        sessionId: session.id,
+      });
       return await pendingRebind;
     }
 
@@ -73,6 +86,10 @@ export class SessionRequestHandlerStopRebind {
   private async performRebind(session: Session): Promise<boolean> {
     const adapter = this.deps.providerRegistry.getAdapter(session.providerId);
     if (!adapter) {
+      this.deps.logger.info("stopdiag_rebind_no_adapter", {
+        sessionId: session.id,
+        providerId: session.providerId,
+      });
       this.deps.onProviderFailure(
         session.providerId,
         new Error(`Provider ${session.providerId} unavailable`),
@@ -81,10 +98,12 @@ export class SessionRequestHandlerStopRebind {
       return false;
     }
 
-    this.deps.logger.info("Rebinding stop-invalidated session before send", {
+    this.deps.logger.info("stopdiag_rebind_begin", {
       sessionId: session.id,
       providerId: session.providerId,
       stage: session.stage ?? null,
+      continuityRoot:
+        this.deps.continuityRootBySessionId.get(session.id) ?? session.id,
     });
 
     const providerSessionResolution = await resolveProviderSessionId({
@@ -94,6 +113,11 @@ export class SessionRequestHandlerStopRebind {
       workspacePath: session.workspacePath,
     });
     if ("error" in providerSessionResolution) {
+      this.deps.logger.info("stopdiag_rebind_resolve_error", {
+        sessionId: session.id,
+        providerId: session.providerId,
+        error: providerSessionResolution.error,
+      });
       this.deps.onProviderFailure(
         session.providerId,
         new Error(providerSessionResolution.error),
@@ -104,6 +128,13 @@ export class SessionRequestHandlerStopRebind {
 
     const { providerSessionId, supportsImmediateBinding } =
       providerSessionResolution;
+
+    this.deps.logger.info("stopdiag_rebind_create_done", {
+      sessionId: session.id,
+      providerId: session.providerId,
+      providerSessionId,
+      supportsImmediateBinding,
+    });
 
     if (supportsImmediateBinding) {
       this.deps.sessionManager.updateProviderSessionId(
@@ -116,6 +147,12 @@ export class SessionRequestHandlerStopRebind {
         providerSessionId
       );
     }
+    this.deps.logger.info("stopdiag_rebind_seed_done", {
+      sessionId: session.id,
+      providerSessionId,
+      supportsImmediateBinding,
+      providerSessionStatusAfter: session.providerSessionStatus,
+    });
 
     try {
       await this.attachReboundProviderSession({
@@ -127,8 +164,18 @@ export class SessionRequestHandlerStopRebind {
         supportsImmediateBinding,
       });
       this.deps.broadcastSessionBinding(session.id);
+      this.deps.logger.info("stopdiag_rebind_attach_done", {
+        sessionId: session.id,
+        providerSessionId,
+        providerSessionStatusAfter: session.providerSessionStatus,
+      });
       return true;
     } catch (error) {
+      this.deps.logger.info("stopdiag_rebind_attach_error", {
+        sessionId: session.id,
+        providerSessionId,
+        error: error instanceof Error ? error.message : String(error),
+      });
       this.deps.sessionManager.invalidateProviderBinding(session.id);
       this.deps.broadcastSessionBinding(session.id);
       try {
