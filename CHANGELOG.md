@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.8] - 2026-04-17
+### Fixed
+- **Gemini post-stop resume now actually loads the prior chat**: `packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts` now runs the full resume pipeline inside our embed path (1.2.7's `argv.resume` was a no-op because only the `gemini` main binary consumes that flag). The bootstrap scans `config.storage.getProjectTempDir()/chats` for `session-*-<uuid-first-8>.json`, picks the file whose full `sessionId` matches and has the most messages (defensive against pre-1.2.8 mess with two files for one UUID), calls `config.setSessionId(...)`, converts `messages` via the newly exposed `convertSessionToClientHistory` from `@google/gemini-cli-core`, and finishes with `await client.resumeChat(history, { conversation, filePath })`. The existing chat file is reused by `ChatRecordingService.initialize(resumedSessionData)` instead of a new empty one being created.
+- **Stale-seed send recovery**: when `GeminiProviderAdapter.sendMessage` catches `Gemini session <id> not found. Available: [] Aliases: []` it throws a tagged `SessionStaleBindingError`. `packages/core/src/remote-bridge/handlers/session-request-handler-provider-send.ts` catches that error, invalidates the binding, seeds the pre-stop `providerSessionId`, re-runs `ensureSessionReadyForSend` (post-stop resume path), and retries the send once. Only one auto-retry per turn; a second failure surfaces as an ordinary provider error. Covers the case where Project Manager dialog bootstrap creates a new Core session with a dead provider session id + `providerSessionStatus: "ready"` and the user send bypasses `hasStopInvalidatedBinding`.
+
+### Removed
+- **Legacy `SwitchRecoveryBanner`**: `src/client/ui/src/session/switch-recovery-banner.tsx`, `src/client/project-manager/components/sessions/use-dialog-switch-offer.ts`, `src/client/project-manager/dialog-switch-types.ts`, related CSS and localization keys. Recovery is now silent end-to-end through 1.2.7 post-stop resume + 1.2.8 stale-seed guard.
+
+### Contracts
+- **Invariant 24** extended further: providers with `requiresPostStopResume` must publish a recognizable "session not found" surface so that Core can auto-heal mid-send stale-seed cases without prompting the user.
+
 ## [1.2.7] - 2026-04-17
 ### Fixed
 - **Gemini `Stop` no longer wipes provider chat history**: `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` `closeSession` no longer calls `session.client.resetChat()`. That call materialized a new empty `GeminiChat` against the same `Config.sessionId` and wrote a new empty chat file under `~/.gemini/tmp/<projectSlug>/chats/`, orphaning the prior chat file. The abort path is now `abortController.abort()` + `sessionStore.removeSession()` only, so the pre-stop provider chat file stays intact.
