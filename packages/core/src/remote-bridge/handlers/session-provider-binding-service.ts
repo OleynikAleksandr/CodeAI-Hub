@@ -28,9 +28,21 @@ interface SessionProviderBindingServiceDependencies {
 
 export class SessionProviderBindingService {
   private readonly deps: SessionProviderBindingServiceDependencies;
+  private readonly preStopProviderSessionIdBySession = new Map<
+    string,
+    string
+  >();
 
   constructor(deps: SessionProviderBindingServiceDependencies) {
     this.deps = deps;
+  }
+
+  getPreStopProviderSessionId(sessionId: string): string | null {
+    return this.preStopProviderSessionIdBySession.get(sessionId) ?? null;
+  }
+
+  clearPreStopProviderSessionId(sessionId: string): void {
+    this.preStopProviderSessionIdBySession.delete(sessionId);
   }
 
   updateProviderBinding(sessionId: string, providerSessionId?: string): void {
@@ -78,6 +90,15 @@ export class SessionProviderBindingService {
   }
 
   invalidateProviderBinding(sessionId: string): void {
+    const session = this.deps.sessionManager.getSession(sessionId);
+    const preStopProviderSessionId = session?.providerSessionId?.trim();
+    if (preStopProviderSessionId && preStopProviderSessionId.length > 0) {
+      this.preStopProviderSessionIdBySession.set(
+        sessionId,
+        preStopProviderSessionId
+      );
+    }
+
     const binding = this.deps.providerSessions.get(sessionId);
     if (binding) {
       binding.unsubscribe();
