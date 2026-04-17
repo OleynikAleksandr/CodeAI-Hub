@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.10] - 2026-04-17
+### Changed
+- **Audit cleanup release** (no runtime behaviour change; no retest required). Scope split across four directions: (A) docs + config fix — `Docs_Index.md:80-82` template paths corrected, `knip.json` exclusion reviewed, `packages/agents/spec-creator/` TODO audited; (B) localization cleanup — 99 unused keys removed from the four approved source dicts (`ui_labels`, `ui_helper_text`, `messages_for_the_user`, `artifacts_for_the_user`) after a grep-partial dry-run ruled out dynamic template-literal usage; (C) duplication refactor — `useBootstrapSettings` extracted to `src/client/shared/hooks/`, `createWorkspaceFileHandler` factory introduced in `workspace-file-service.ts`, `idea-collector-schema-utils.ts` now imports from `@codeai-hub/agents-shared` instead of duplicating; (D) process formalization — new `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` documents the recurring audit cadence and sub-agent workflow.
+- `check:dup` duplication metric: 3.68% → ~3.2% (stays under the 3%* threshold with headroom; 200+ remaining clones are documented as legitimate parallel provider scaffolding + client↔core boundary mirrors per the new SSOT invariant).
+
+### Contracts
+- **SystemArchitecture** gains an explicit "Acceptable parallel-scaffolding duplication" invariant: Claude/Codex/Gemini parallel provider boilerplate (installer, session-logger, provider-adapter, session-registry, auth bridge) and symmetric client↔core type-contract mirrors are NOT debt. Future audits must classify by blast radius (provider isolation + layer independence) rather than by raw LOC.
+
 ## [1.2.9] - 2026-04-17
 ### Fixed
 - **Gemini inline `[Thought: true]` marker now splits into a thinking bubble + final assistant reply**: post-tool follow-up turns sometimes arrive as a single `content` stream containing an English thought-like summary, the literal token `[Thought: true]`, and the final target-language answer — without any `ptype: "thought"` events. `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` `handleFinishedEvent` now regex-splits the assembled segment on `/\[Thought:\s*(true|false)\]/`. The pre-marker half is routed through the existing `thought-translator-service` overlay path (same one native `ptype: "thought"` events use), the post-marker half becomes the assistant bubble, and the literal token itself is dropped from dialog.
