@@ -147,6 +147,7 @@ const buildClaudeDescriptor = (
   const descriptor: MutableProviderDescriptor = {
     capabilities: {
       modelSync: resolveProviderModelSyncCapabilities("claudeCodeCli"),
+      requiresPostStopResume: false,
     },
     id: "claudeCodeCli",
     name: "Claude",
@@ -168,6 +169,7 @@ const buildCodexDescriptor = (
   const descriptor: MutableProviderDescriptor = {
     capabilities: {
       modelSync: resolveProviderModelSyncCapabilities("codexCli"),
+      requiresPostStopResume: false,
     },
     id: "codexCli",
     name: "Codex",
@@ -186,6 +188,7 @@ const buildCodexDescriptor = (
 const buildGeminiDescriptor = (): ProviderDescriptor => ({
   capabilities: {
     modelSync: resolveProviderModelSyncCapabilities("geminiCli"),
+    requiresPostStopResume: true,
   },
   id: "geminiCli",
   name: "Gemini",

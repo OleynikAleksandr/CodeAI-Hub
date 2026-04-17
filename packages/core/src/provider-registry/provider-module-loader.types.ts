@@ -69,6 +69,7 @@ export interface Provider {
 
 export interface ProviderCapabilities {
   readonly modelSync: ProviderModelSyncCapabilities;
+  readonly requiresPostStopResume: boolean;
 }
 
 export type ProviderAppliedConfigIdentityKey = "effective_model_id";
