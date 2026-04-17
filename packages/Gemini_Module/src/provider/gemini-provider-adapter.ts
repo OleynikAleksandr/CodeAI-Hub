@@ -12,6 +12,10 @@ import type {
 } from "../types";
 import { areGeminiUsageLimitsPayloadEqual } from "../types";
 import { applyGeminiTurnRuntimeConfig } from "./gemini-applied-turn-config";
+import {
+  extractStaleProviderSessionId,
+  GeminiSessionStaleBindingError,
+} from "./gemini-session-stale-binding-error";
 
 export type SessionListener = (payload: unknown) => void;
 
@@ -247,6 +251,21 @@ export class GeminiProviderAdapter {
           message: error instanceof Error ? error.message : String(error),
         });
         return;
+      }
+      const staleProviderSessionId = extractStaleProviderSessionId(error);
+      if (staleProviderSessionId) {
+        this.options.reporter?.warn?.(
+          "Gemini send detected stale provider session binding",
+          {
+            sessionId,
+            staleProviderSessionId,
+            message: error instanceof Error ? error.message : String(error),
+          }
+        );
+        throw new GeminiSessionStaleBindingError(
+          staleProviderSessionId,
+          error instanceof Error ? error.message : String(error)
+        );
       }
       this.options.reporter?.error?.(
         "Failed to send message to Gemini provider",
