@@ -25,8 +25,17 @@ export const CODEX_INSTALLER_PATHS: CodexInstallerPaths = {
   windows: `${NPM_GLOBAL_MODULES_ROOT_WINDOWS}\\@openai\\codex-sdk\\`,
 };
 
+// The Gemini installer's `computePrefix` expects a node module-style path
+// (`<prefix>/lib/node_modules/<pkg>/`). Passing `<prefix>/lib/node_modules/@google/gemini-cli/`
+// makes `computePrefix` strip the `/node_modules/...` tail and the `/lib`
+// suffix, landing `npmPrefix` on the intended `~/.codeai-hub/providers/gemini/cli`.
+// Previously the path was just `~/.codeai-hub/providers/gemini/cli/`; with no
+// `node_modules` marker `computePrefix` fell back to `path.resolve(dir, "..", "..")`
+// and walked two levels up to `~/.codeai-hub/providers/`, which scattered
+// `bin/` and `lib/` next to `gemini/` / `claude/` / `codex/` instead of
+// nesting them inside `gemini/`.
 export const GEMINI_INSTALLER_PATHS: GeminiInstallerPaths = {
-  macOS: `${PROVIDERS_HOME_UNIX}/gemini/cli/`,
-  linux: `${PROVIDERS_HOME_UNIX}/gemini/cli/`,
-  windows: `${PROVIDERS_HOME_WINDOWS}\\gemini\\cli\\`,
+  macOS: `${PROVIDERS_HOME_UNIX}/gemini/cli/lib/node_modules/@google/gemini-cli/`,
+  linux: `${PROVIDERS_HOME_UNIX}/gemini/cli/lib/node_modules/@google/gemini-cli/`,
+  windows: `${PROVIDERS_HOME_WINDOWS}\\gemini\\cli\\lib\\node_modules\\@google\\gemini-cli\\`,
 };
