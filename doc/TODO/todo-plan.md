@@ -33,7 +33,7 @@
 8. [TODO] Git Commit: `fix: guard handleStop re-entry when binding already invalidated` (hash: TBD)
 
 ### Stream 4: Docs + build
-9. [TODO] Update `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariant 24 extended with Codex subprocess kill), `doc/SolidWorks-WorkFlow/Modules/Codex.md` — scope: 3 files (batch A: README + CHANGELOG + SystemArchitecture); commit message: `docs: prepare 1.2.6 release notes and codex stop invariant`
+9. [IN_PROGRESS] Update `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariant 24 extended with Codex subprocess kill), `doc/SolidWorks-WorkFlow/Modules/Codex.md` — scope: 3 files (batch A: README + CHANGELOG + SystemArchitecture); commit message: `docs: prepare 1.2.6 release notes and codex stop invariant`
 10. [TODO] Git Commit: `docs: prepare 1.2.6 release notes and codex stop invariant` (hash: TBD)
 11. [TODO] Run `./scripts/build-all.sh --version 1.2.6` then `./scripts/build-release.sh --use-current-version` — scope: build artifacts + version bumps; commit message: `chore: bump version to 1.2.6 for codex stop fix release`
 12. [TODO] Git Commit: `chore: bump version to 1.2.6 for codex stop fix release` (hash: TBD)

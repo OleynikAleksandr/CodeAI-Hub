@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.6] - 2026-04-17
+### Fixed
+- **Codex `Stop` aborts the active subprocess instead of waiting for `turn_completed`**: `packages/Codex_Module/src/sdk/codex-sdk-patches.ts` registers the `ChildProcess` spawned by `streamCodexExec` in a module-scoped Map keyed by `threadId` and exports `killActiveCodexProcess(threadId)` which issues `SIGTERM`. `packages/Codex_Module/src/session/session-manager.ts` `closeSession` calls this hook before `lifecycle.closeSession` and the `processingLoop` await, so the underlying `codex exec` stdout closes promptly, the readline `for await` unblocks, the existing `finally` cleans up, and the processing loop resolves. Previously Stop only resolved the outer message generator; the child kept running until Codex naturally finished the turn.
+- **PM Stop-button no longer stacks clicks**: `src/client/ui/src/session/input-panel.tsx` tracks a new `stopInFlight` state that flips true on a Stop click and resets when `agentBusy` flips to false. While in-flight the handler short-circuits before calling `stopSession`. `src/client/ui/src/session/input-play-stop-button.tsx` gains a `stopPending` prop that disables the button and switches the aria-label to `Stopping current turn…`.
+- **Core `handleStop` re-entry guard**: `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.ts` early-returns when `hasStopInvalidatedBinding(sessionId)` is already true, preventing a duplicate cleanup path when the PM debounce is bypassed.
+
+### Out of scope (still planned)
+- **Gemini Stop → Continue retest** — not yet run, will be covered in a follow-up once the user validates 1.2.6.
+
 ## [1.2.5] - 2026-04-17
 ### Fixed
 - **Stop → Continue input lock no longer sticks**: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` now (1) mirrors `onSessionBinding` into the `SessionRecord.binding` in addition to the snapshot-level binding, (2) remembers the last known `providerSessionId` in `lastProviderSessionIdRef` the moment the binding flips to `null`, and (3) accepts a new session in `onSessionCreated` via an `isPostStopRebindSwap` branch when the created session carries the remembered `providerSessionId`. Placeholder cleanup and ref reset cover the new adoption path. The UI now switches `activeSessionId` onto the new session the moment Core creates it, so the next user message correctly locks the input panel and surfaces the `Agents is working, please wait...` wait-copy.
