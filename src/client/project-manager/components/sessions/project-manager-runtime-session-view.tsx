@@ -46,7 +46,35 @@ const ProjectManagerRuntimeSessionView = ({
   const { settings, reload } = useProjectManagerSettings();
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [activeSessionId, rawSetActiveSessionId] = useState<string | null>(null);
+  const setActiveSessionId = useCallback<
+    React.Dispatch<React.SetStateAction<string | null>>
+  >(
+    (updater) => {
+      rawSetActiveSessionId((previous) => {
+        const next =
+          typeof updater === "function"
+            ? (updater as (p: string | null) => string | null)(previous)
+            : updater;
+        if (previous !== next) {
+          const stack =
+            new Error("pmdiag_active_session_call_site").stack ?? "";
+          api.logDiagnostic({
+            channel: "stop-lock-diag",
+            event: "pmdiag_active_session_changed",
+            context: {
+              from: previous,
+              to: next,
+              workspacePath: workspacePath ?? null,
+              stack: stack.split("\n").slice(1, 8).join(" | "),
+            },
+          });
+        }
+        return next;
+      });
+    },
+    [workspacePath]
+  );
   const [sessionScopeStage, setSessionScopeStage] = useState<string | null>(
     startupStage
   );

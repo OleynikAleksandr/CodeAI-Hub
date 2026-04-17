@@ -53,7 +53,7 @@ Phase 2 добавляет PM-side диагностику через `api.logDia
 16. [TODO] Git Commit: `chore: add pmdiag logs to PM api + snapshot apply for 1.2.4` (hash: TBD)
 
 ### Stream 7: activeSessionId tracker
-17. [TODO] Add `pmdiag_active_*` logs around `setActiveSessionId` in `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` and `project-manager-dialog-session-view.tsx` — scope: 2 files; commit message: `chore: add pmdiag activeSessionId tracker logs for 1.2.4`
+17. [IN_PROGRESS] Add `pmdiag_active_*` logs around `setActiveSessionId` in `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` and `project-manager-dialog-session-view.tsx` — scope: 2 files; commit message: `chore: add pmdiag activeSessionId tracker logs for 1.2.4`
 18. [TODO] Git Commit: `chore: add pmdiag activeSessionId tracker logs for 1.2.4` (hash: TBD)
 
 ### Stream 8: Release notes + build
