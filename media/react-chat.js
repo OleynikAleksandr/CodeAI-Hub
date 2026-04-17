@@ -7316,6 +7316,9 @@
   // src/client/ui/src/components/settings/use-settings-state.ts
   var import_react = __toESM(require_react());
 
+  // src/client/ui/src/app-host/localization-runtime-contract.ts
+  var readBrowserLocalizationBootstrapSnapshot = () => window.__CODEAI_LOCALIZATION_BOOTSTRAP__ ?? null;
+
   // src/types/claude-model-registry.ts
   var CLAUDE_MODEL_ALIASES = [
     {
@@ -8019,7 +8022,7 @@
     };
   };
 
-  // src/client/shared/hooks/use-bootstrap-settings.ts
+  // src/client/ui/src/shared-hooks/use-bootstrap-settings.ts
   var createBootstrapSettings = (snapshot) => {
     const defaultSettings = createDefaultSettings();
     if (!snapshot) {
@@ -8050,9 +8053,6 @@
       }
     });
   };
-
-  // src/client/ui/src/app-host/localization-runtime-contract.ts
-  var readBrowserLocalizationBootstrapSnapshot = () => window.__CODEAI_LOCALIZATION_BOOTSTRAP__ ?? null;
 
   // src/types/provider.ts
   var PROVIDER_TITLE_MAP = {
