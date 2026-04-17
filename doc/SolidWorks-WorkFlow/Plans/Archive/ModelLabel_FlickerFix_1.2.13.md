@@ -8,7 +8,7 @@
 
 Два разных пути broadcast'a `session:model:update`:
 
-- **Путь A — raw SDK `model_info` event.** [`packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`](packages/core/src/remote-bridge/handlers/session-provider-event-router.ts) `broadcastRuntimeModelUpdate` форвардит `data.model` от Gemini SDK как-есть: `"gemini-3.1-pro-preview"` (без эффективного thinking suffix). UI клиент (`src/client/ui/src/session/model-info-builder.ts` `parseEffectiveModelId` + `resolveModelReasoning`) не находит regex match → fallback на `settings.providers.gemini.thinkingLevelByModel[modelId]` → получает строку `"high"` → label "(high)".
+- **Путь A — raw SDK `model_info` event.** `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts` `broadcastRuntimeModelUpdate` форвардит `data.model` от Gemini SDK как-есть: `"gemini-3.1-pro-preview"` (без эффективного thinking suffix). UI клиент (`src/client/ui/src/session/model-info-builder.ts` `parseEffectiveModelId` + `resolveModelReasoning`) не находит regex match → fallback на `settings.providers.gemini.thinkingLevelByModel[modelId]` → получает строку `"high"` → label "(high)".
 
 - **Путь B — applied turn config update.** `session-request-handler-message-dispatch.ts:388` шлёт `turnConfig.effectiveModelId` = `"gemini-3.1-pro-preview thinking:high"` (через `buildProviderEffectiveModelId`). UI парсит суффикс `thinking:high` → label "(thinking high)".
 

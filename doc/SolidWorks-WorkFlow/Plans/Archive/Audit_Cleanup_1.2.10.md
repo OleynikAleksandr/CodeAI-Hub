@@ -31,9 +31,9 @@ Scope ограничен **approved dicts** (по memory `feedback-localization-
 ### C. Duplication refactor (M, scope-bounded)
 Анализ top-20 клонов проведён (233 клона, 3.68% duplicated lines). **17/20 — legitimate** (parallel provider scaffolding + boundary mirrors + diverging domains). **3 конкретных рефактора утверждены:**
 
-- **C1.** Extract `useBootstrapSettings` → новый `src/client/shared/hooks/use-bootstrap-settings.ts`. Убирает клон между [use-project-manager-settings.ts:30-67](src/client/project-manager/components/settings/use-project-manager-settings.ts) и [use-settings-state.ts:74-111](src/client/ui/src/components/settings/use-settings-state.ts). Scope: 3 файла.
-- **C2.** DRY через локальную фабрику `createWorkspaceFileHandler(parsePayload)` в [workspace-file-service.ts](packages/core/src/remote-bridge/handlers/workspace-file-service.ts). Убирает within-file клон между строками 107-142 и 166-201. Scope: 1 файл.
-- **C3.** Schema-utils консолидация: [idea-collector-schema-utils.ts](src/client/ui/src/services/idea-collector-schema-utils.ts) импортирует из уже существующих [agents/shared/src/schema-utils/schema-normalizer.ts](packages/agents/shared/src/schema-utils/schema-normalizer.ts) + [schema-strictifier.ts](packages/agents/shared/src/schema-utils/schema-strictifier.ts); локальный дубль удаляется. Scope: ≤3 файла.
+- **C1.** Extract `useBootstrapSettings` → новый `src/client/shared/hooks/use-bootstrap-settings.ts`. Убирает клон между `use-project-manager-settings.ts:30-67` и `use-settings-state.ts:74-111`. Scope: 3 файла.
+- **C2.** DRY через локальную фабрику `createWorkspaceFileHandler(parsePayload)` в `workspace-file-service.ts`. Убирает within-file клон между строками 107-142 и 166-201. Scope: 1 файл.
+- **C3.** Schema-utils консолидация: `idea-collector-schema-utils.ts` импортирует из уже существующих `agents/shared/src/schema-utils/schema-normalizer.ts` + `schema-strictifier.ts`; локальный дубль удаляется. Scope: ≤3 файла.
 
 **Target после C1-C3:** `check:dup` с 3.68% → ~3.2%. Остаток (200+ LEGIT клонов) документируется в SSOT как acceptable parallel provider scaffolding + boundary mirrors. Порог гейта `check:dup` не меняем (остаётся 3%).
 

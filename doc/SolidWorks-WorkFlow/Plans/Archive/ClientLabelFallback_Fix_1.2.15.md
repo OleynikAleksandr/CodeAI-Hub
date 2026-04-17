@@ -4,7 +4,7 @@
 
 1.2.13 починил мерцание model label в SESSION status panel **только для Core-side пути** (через `broadcastRuntimeModelUpdate`). Но клиент формирует `ModelInfo` ещё и **локально, прямо из settings** — при initial render сессии до того, как первый `session:model:update` от Core прилетел. В этом fallback-пути label получался неконсистентный.
 
-В [`src/client/ui/src/session/model-info-builder.ts`](src/client/ui/src/session/model-info-builder.ts:98) `resolveModelReasoning` возвращает для Gemini `settings.providers.gemini.thinkingLevelByModel[modelId]` — просто `"high"` строку без prefix'а. А когда label берётся через `parseEffectiveModelId(modelId)` на effective id с суффиксом `thinking:high`, возвращается `"thinking high"` (с prefix'ом). Две формы label'а:
+В `src/client/ui/src/session/model-info-builder.ts` `resolveModelReasoning` возвращает для Gemini `settings.providers.gemini.thinkingLevelByModel[modelId]` — просто `"high"` строку без prefix'а. А когда label берётся через `parseEffectiveModelId(modelId)` на effective id с суффиксом `thinking:high`, возвращается `"thinking high"` (с prefix'ом). Две формы label'а:
 - Через effective id: `Gemini 3.1 Pro Preview (thinking high)` ✓
 - Через settings fallback: `Gemini 3.1 Pro Preview (high)` ✗
 

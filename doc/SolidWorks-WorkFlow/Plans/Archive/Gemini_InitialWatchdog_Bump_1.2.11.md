@@ -4,7 +4,7 @@
 
 В 1.2.10 retest на Gemini 3.1 Pro Preview + `thinkingLevel=high` первый turn на Description шаге упал через 60с с `Gemini stream stalled after 60s without progress.` Переключение `thinkingLevel=low` решило проблему.
 
-Root cause — жёсткий `DEFAULT_STALLED_TURN_WATCHDOG_MS = 60_000` в [`packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`](packages/Gemini_Module/src/session/gemini-session-lifecycle.ts). Для `high` thinking на больших prompt'ах (Description Agent system-instruction + questionnaire) Gemini SDK уходит в deep-reasoning фазу с молчанием на stream канале > 60с перед первым `content`/`thought` event'ом. Watchdog их режет как stalled.
+Root cause — жёсткий `DEFAULT_STALLED_TURN_WATCHDOG_MS = 60_000` в `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`. Для `high` thinking на больших prompt'ах (Description Agent system-instruction + questionnaire) Gemini SDK уходит в deep-reasoning фазу с молчанием на stream канале > 60с перед первым `content`/`thought` event'ом. Watchdog их режет как stalled.
 
 Pre-existing baseline bug, не регрессия 1.2.10.
 
