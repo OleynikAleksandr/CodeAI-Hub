@@ -363,6 +363,7 @@ export const loadGeminiModules = async (
     toolScheduler,
     turn,
     thoughtUtils,
+    sessionUtils,
   ] = await Promise.all([
     tryFindAndLoadModule<
       typeof import("@google/gemini-cli/dist/src/config/config")
@@ -395,6 +396,13 @@ export const loadGeminiModules = async (
       ["dist", "src", "utils", "thoughtUtils.js"],
       ["dist", "utils", "thoughtUtils.js"],
     ]),
+    tryFindAndLoadModule<NonNullable<GeminiCliModules["sessionUtils"]>>(
+      cliCoreRoot,
+      [
+        ["dist", "src", "utils", "sessionUtils.js"],
+        ["dist", "utils", "sessionUtils.js"],
+      ]
+    ),
   ]);
 
   const [config, settings] = await Promise.all([
@@ -413,6 +421,7 @@ export const loadGeminiModules = async (
     toolScheduler,
     turn,
     thoughtUtils,
+    sessionUtils: sessionUtils.module,
   };
 };
 
