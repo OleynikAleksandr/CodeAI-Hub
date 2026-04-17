@@ -91,5 +91,5 @@ Fix: (1) обновлять `session.binding` в `onSessionBinding` того ж�
 34. [TODO] Git Commit: `chore: bump version to 1.2.5 for fix release` (hash: TBD)
 
 ### Stream 13: Planning doc closeout
-35. [TODO] Promote Invariant about post-stop rebind session adoption to `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` and archive `doc/SolidWorks-WorkFlow/Plans/StopResume_LockRegression_Diagnostic_1.2.3.md` to `doc/SolidWorks-WorkFlow/Plans/Archive/` — scope: 3 files (SystemArchitecture update + archive move + Docs_Index update); commit message: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan`
+35. [IN_PROGRESS] Promote Invariant about post-stop rebind session adoption to `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` and archive `doc/SolidWorks-WorkFlow/Plans/StopResume_LockRegression_Diagnostic_1.2.3.md` to `doc/SolidWorks-WorkFlow/Plans/Archive/` — scope: 3 files (SystemArchitecture update + archive move + Docs_Index update); commit message: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan`
 36. [TODO] Git Commit: `docs: promote post-stop session adoption invariant, archive 1.2.3 diag plan` (hash: TBD)
