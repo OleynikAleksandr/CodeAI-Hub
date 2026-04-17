@@ -7316,6 +7316,741 @@
   // src/client/ui/src/components/settings/use-settings-state.ts
   var import_react = __toESM(require_react());
 
+  // src/types/claude-model-registry.ts
+  var CLAUDE_MODEL_ALIASES = [
+    {
+      alias: "sonnet",
+      displayName: "Sonnet",
+      description: "Best for everyday tasks; Anthropic resolves the latest version automatically.",
+      status: "active"
+    },
+    {
+      alias: "opus",
+      displayName: "Opus",
+      description: "Most capable for complex, agentic workloads; latest version auto-resolved.",
+      status: "active"
+    },
+    {
+      alias: "haiku",
+      displayName: "Haiku",
+      description: "Fastest alias for quick answers and prototyping; latest version auto-resolved.",
+      status: "active"
+    }
+  ];
+  var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
+    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
+  ]);
+  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
+  var CLAUDE_THINKING_EFFORTS = [
+    {
+      name: "low",
+      description: "Lighter reasoning for faster Claude turns.",
+      useCase: "Simple prompts and quick follow-ups.",
+      default: false
+    },
+    {
+      name: "medium",
+      description: "Balanced reasoning depth for everyday work.",
+      useCase: "Default choice for most sessions.",
+      default: true
+    },
+    {
+      name: "high",
+      description: "Deeper reasoning for more complex tasks.",
+      useCase: "Architecture work, investigations, and larger plans.",
+      default: false
+    },
+    {
+      name: "xhigh",
+      description: "Deeper-than-high reasoning on Opus; falls back to high on other models.",
+      useCase: "Opus-only extra-deep reasoning when high is not enough.",
+      default: false
+    },
+    {
+      name: "max",
+      description: "Maximum reasoning effort currently exposed by Claude.",
+      useCase: "Hardest tasks where latency matters less than depth.",
+      default: false
+    }
+  ];
+  var CLAUDE_THINKING_EFFORT_SET = new Set(
+    CLAUDE_THINKING_EFFORTS.map((effort) => effort.name)
+  );
+  var DEFAULT_CLAUDE_THINKING_EFFORT = "medium";
+
+  // src/types/codex-model-registry.ts
+  var CODEX_SETTINGS_MODELS = [
+    {
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "flagship"
+    },
+    {
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    },
+    {
+      id: "gpt-5.4-mini",
+      displayName: "GPT-5.4 Mini",
+      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "mini"
+    }
+  ];
+  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
+  var CODEX_REASONING_LEVELS = [
+    {
+      name: "low",
+      description: "Fast responses with lighter reasoning",
+      useCase: "Quick tasks, simple queries",
+      default: false
+    },
+    {
+      name: "medium",
+      description: "Balances speed and reasoning depth for everyday tasks",
+      useCase: "Most development tasks",
+      default: true
+    },
+    {
+      name: "high",
+      description: "Greater reasoning depth for complex problems",
+      useCase: "Complex refactoring, architecture decisions",
+      default: false
+    },
+    {
+      name: "xhigh",
+      description: "Extra high reasoning depth for complex problems",
+      useCase: "Very complex problems requiring deep analysis",
+      default: false
+    }
+  ];
+  var DEFAULT_CODEX_REASONING_LEVEL = "medium";
+
+  // src/client/ui/src/components/settings/claude-thinking-state.ts
+  var LEGACY_THINKING_TOKEN_ANCHORS = [
+    { effort: "low", maxTokens: 2e3 },
+    { effort: "medium", maxTokens: 4e3 },
+    { effort: "high", maxTokens: 1e4 },
+    { effort: "max", maxTokens: 32e3 }
+  ];
+  var resolveLegacyThinkingEffort = (value) => {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) {
+      return DEFAULT_CLAUDE_THINKING_EFFORT;
+    }
+    return LEGACY_THINKING_TOKEN_ANCHORS.reduce(
+      (closest, candidate) => Math.abs(candidate.maxTokens - numericValue) < Math.abs(closest.maxTokens - numericValue) ? candidate : closest,
+      LEGACY_THINKING_TOKEN_ANCHORS[0]
+    ).effort;
+  };
+  var mapClaudeThinkingEffort = (value) => typeof value === "string" && CLAUDE_THINKING_EFFORT_SET.has(value) ? value : resolveLegacyThinkingEffort(value);
+  var mapClaudeThinkingSettings = (value) => ({
+    effort: mapClaudeThinkingEffort(value?.effort ?? value?.maxTokens),
+    enabled: Boolean(value?.enabled)
+  });
+  var areClaudeThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.effort === right.effort;
+
+  // src/types/gemini-model-registry.ts
+  var GEMINI_RECOMMENDED_MODELS = [
+    {
+      id: "gemini-3.1-pro-preview",
+      displayName: "Gemini 3.1 Pro",
+      description: "Most advanced reasoning Gemini model (1M context).",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["low", "high"]
+    },
+    {
+      id: "gemini-3-flash-preview",
+      displayName: "Gemini 3 Flash",
+      description: "Pro-grade reasoning with Flash-level latency and cost.",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
+    },
+    {
+      id: "gemini-3.1-flash-lite-preview",
+      displayName: "Gemini 3.1 Flash Lite",
+      description: "Lightweight model with fast responses and low cost.",
+      status: "preview",
+      family: "gemini-3",
+      supportedThinkingLevels: ["off", "minimal", "low"]
+    }
+  ];
+  var GEMINI_MODEL_ID_SET = new Set(
+    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
+  );
+  var DEFAULT_GEMINI_MODEL_ID = "gemini-3.1-pro-preview";
+  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
+  var GEMINI_THINKING_LEVELS = [
+    {
+      name: "off",
+      description: "Disable model's internal thinking process.",
+      useCase: "Basic tasks, fastest response."
+    },
+    {
+      name: "minimal",
+      description: "Absolute minimum reasoning tokens.",
+      useCase: "Low-complexity tasks, very low latency."
+    },
+    {
+      name: "low",
+      description: "Balanced reasoning for simpler tasks.",
+      useCase: "General coding and quick queries."
+    },
+    {
+      name: "medium",
+      description: "Advanced reasoning for moderate complexity.",
+      useCase: "Standard development and problem solving."
+    },
+    {
+      name: "high",
+      description: "Maximum reasoning depth.",
+      useCase: "Complex refactoring and PhD-level research."
+    }
+  ];
+
+  // src/client/ui/src/components/settings/gemini-mapping.ts
+  var GEMINI_THINKING_LEVEL_SET = new Set(
+    GEMINI_THINKING_LEVELS.map((level) => level.name)
+  );
+  var DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 3e5;
+  var MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e4;
+  var MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e6;
+  var DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+  var MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+  var MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+  var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
+    accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
+    return accumulator;
+  }, {});
+  var isRecord = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
+  var clampContinuityRemainingPercentThreshold = (value) => Math.min(
+    MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+    Math.max(MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
+  );
+  var clampContextWindowTokenLimit = (value) => Math.min(
+    MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
+    Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
+  );
+  var mapGeminiSessionContinuitySettings = (value) => {
+    if (!isRecord(value)) {
+      return {
+        contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
+        remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
+      };
+    }
+    const numericLimit = Number(value.contextWindowTokenLimit);
+    const contextWindowTokenLimit = Number.isFinite(numericLimit) ? clampContextWindowTokenLimit(numericLimit) : DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT;
+    const numericThreshold = Number(value.remainingPercentThreshold);
+    const remainingPercentThreshold = Number.isFinite(numericThreshold) ? clampContinuityRemainingPercentThreshold(numericThreshold) : DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
+    return { contextWindowTokenLimit, remainingPercentThreshold };
+  };
+  var mapGeminiThinkingLevelByModel = (value) => {
+    const nextThinkingLevelByModel = {
+      ...DEFAULT_GEMINI_THINKING_BY_MODEL
+    };
+    if (!isRecord(value)) {
+      return nextThinkingLevelByModel;
+    }
+    for (const [modelId, level] of Object.entries(value)) {
+      if (typeof level === "string" && GEMINI_THINKING_LEVEL_SET.has(level)) {
+        nextThinkingLevelByModel[modelId] = level;
+      }
+    }
+    return nextThinkingLevelByModel;
+  };
+  var mapGeminiSettings = (value, mapAutoUpdate) => ({
+    autoUpdate: mapAutoUpdate(value?.autoUpdate),
+    defaultModel: resolveGeminiModelId(value?.defaultModel),
+    thinkingLevelByModel: mapGeminiThinkingLevelByModel(
+      value?.thinkingLevelByModel
+    ),
+    sessionContinuity: mapGeminiSessionContinuitySettings(
+      value?.sessionContinuity
+    )
+  });
+  var areGeminiThinkingLevelByModelEqual = (left, right) => {
+    const leftEntries = Object.entries(left);
+    if (leftEntries.length !== Object.keys(right).length) {
+      return false;
+    }
+    return leftEntries.every(([modelId, level]) => right[modelId] === level);
+  };
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
+  var RESPONSE_MODE_OPTIONS = [
+    {
+      id: "strict",
+      label: "Strict",
+      description: "Force a JSON-shaped final answer using the editable strict schema."
+    },
+    {
+      id: "hybrid",
+      label: "Hybrid",
+      description: "Allow free commentary during the turn and keep structure only for terminal output."
+    },
+    {
+      id: "debug_raw",
+      label: "Debug/Raw",
+      description: "Diagnostic mode for new models: avoid hard schema pressure on live turns."
+    }
+  ];
+
+  // src/client/ui/src/components/settings/general-response-mode/response-mode-state.ts
+  var DEFAULT_STRICT_OUTPUT_SCHEMA = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      answer: {
+        type: "string",
+        description: "Final answer for the user. Markdown allowed."
+      }
+    },
+    required: ["answer"]
+  };
+  var DEFAULT_STRICT_OUTPUT_SCHEMA_TEXT = `${JSON.stringify(
+    DEFAULT_STRICT_OUTPUT_SCHEMA,
+    null,
+    2
+  )}
+`;
+  var DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT = [
+    "You must respond with a JSON object that matches the provided schema.",
+    "Populate the field:",
+    "- answer: the user-facing answer.",
+    "Return only JSON, no extra text.",
+    "",
+    "User request:"
+  ].join("\n");
+  var DEFAULT_GENERAL_RESPONSE_POLICY = {
+    mode: "hybrid",
+    strictOutput: {
+      schemaText: DEFAULT_STRICT_OUTPUT_SCHEMA_TEXT,
+      instructionText: DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT
+    }
+  };
+  var RESPONSE_MODE_IDS = new Set(
+    RESPONSE_MODE_OPTIONS.map((option) => option.id)
+  );
+  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var normalizeText = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value : fallback;
+  var normalizeSchemaText = (value) => {
+    const next = normalizeText(
+      value,
+      DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText
+    );
+    try {
+      const parsed = JSON.parse(next);
+      if (!isRecord2(parsed)) {
+        return DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText;
+      }
+      return `${JSON.stringify(parsed, null, 2)}
+`;
+    } catch {
+      return DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText;
+    }
+  };
+  var mapGeneralResponsePolicy = (value) => ({
+    mode: typeof value?.mode === "string" && RESPONSE_MODE_IDS.has(value.mode) ? value.mode : DEFAULT_GENERAL_RESPONSE_POLICY.mode,
+    strictOutput: {
+      schemaText: normalizeSchemaText(value?.strictOutput?.schemaText),
+      instructionText: normalizeText(
+        value?.strictOutput?.instructionText,
+        DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.instructionText
+      )
+    }
+  });
+  var areGeneralResponsePolicyEqual = (left, right) => left.mode === right.mode && left.strictOutput.schemaText === right.strictOutput.schemaText && left.strictOutput.instructionText === right.strictOutput.instructionText;
+
+  // src/client/ui/src/components/settings/settings-state-model.ts
+  var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
+  var DEFAULT_AUTO_UPDATE_ENABLED = true;
+  var DEFAULT_CORE_RESTART_ENABLED = true;
+  var DEFAULT_LOCALIZATION_LANGUAGE = "en";
+  var DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+  var LEGACY_SOURCE_LANGUAGE = "source";
+  var DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
+  var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
+  var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
+  var CODEX_MODEL_IDS = new Set(
+    CODEX_SETTINGS_MODELS.map((model) => model.id)
+  );
+  var CODEX_REASONING_LEVEL_SET = new Set(
+    CODEX_REASONING_LEVELS.map((level) => level.name)
+  );
+  var DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce((accumulator, model) => {
+    accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
+    return accumulator;
+  }, {});
+  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var mapLocalizationString = (value, fallback) => {
+    const normalized = typeof value === "string" ? value.trim() : "";
+    if (normalized.length === 0) {
+      return fallback;
+    }
+    return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE ? DEFAULT_LOCALIZATION_LANGUAGE : normalized;
+  };
+  var createLocalizationCategorySettings = (approved) => ({
+    ...approved,
+    interactiveTemplates: approved.artifactsForTheUser,
+    systemFeedback: approved.messagesForTheUser,
+    uiInterface: approved.uiLabels,
+    userGuidance: approved.uiHelperText,
+    workflowTerms: approved.uiLabels
+  });
+  var resolveLocalizationCategory = (value, candidateKeys, fallback) => {
+    for (const key of candidateKeys) {
+      const resolved = mapLocalizationString(value?.[key], "");
+      if (resolved.length > 0) {
+        return resolved;
+      }
+    }
+    return fallback;
+  };
+  var deriveWorkflowTermsPolicy = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE ? "keep_english" : "translate";
+  var mapThinkingDisplaySyncEnabled = (value) => typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
+  var mapCodexReasoningSummaryEnabled = (value, legacyValue) => {
+    if (typeof value === "boolean") {
+      return value;
+    }
+    return mapThinkingDisplaySyncEnabled(legacyValue);
+  };
+  var mapAutoUpdateSettings = (value) => ({
+    enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
+  });
+  var mapLocalizationCategories = (value, defaultLanguage) => createLocalizationCategorySettings({
+    artifactsForTheUser: resolveLocalizationCategory(
+      value,
+      ["artifactsForTheUser", "interactiveTemplates"],
+      defaultLanguage
+    ),
+    messagesForTheUser: resolveLocalizationCategory(
+      value,
+      ["messagesForTheUser", "systemFeedback"],
+      defaultLanguage
+    ),
+    uiHelperText: resolveLocalizationCategory(
+      value,
+      ["uiHelperText", "userGuidance"],
+      defaultLanguage
+    ),
+    uiLabels: resolveLocalizationCategory(
+      value,
+      ["uiLabels", "uiInterface", "workflowTerms"],
+      defaultLanguage
+    )
+  });
+  var mapLocalizationSettings = (value) => {
+    const legacyDefaultLanguage = mapLocalizationString(
+      value?.defaultLanguage,
+      DEFAULT_LOCALIZATION_LANGUAGE
+    );
+    const categories = mapLocalizationCategories(
+      value?.categories,
+      legacyDefaultLanguage
+    );
+    return {
+      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
+      categories,
+      workflowTermsPolicy: deriveWorkflowTermsPolicy(
+        categories.uiLabels ?? categories.uiInterface
+      ),
+      engineId: mapLocalizationString(
+        value?.engineId,
+        DEFAULT_LOCALIZATION_ENGINE_ID
+      ),
+      glossaryEnabled: typeof value?.glossaryEnabled === "boolean" ? value.glossaryEnabled : true
+    };
+  };
+  var mapGeneralSettings = (value) => ({
+    coreControls: {
+      allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
+    },
+    localization: mapLocalizationSettings(value?.localization),
+    responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy)
+  });
+  var mapContinuity = (value) => {
+    const numericValue = Number(
+      isRecord3(value) ? value.remainingPercentThreshold : void 0
+    );
+    const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
+      MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+      Math.max(
+        MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
+        numericValue
+      )
+    ) : DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
+    return { remainingPercentThreshold };
+  };
+  var mapClaudeSettings = (value) => ({
+    thinking: mapClaudeThinkingSettings(value?.thinking),
+    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+    defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
+    sessionContinuity: mapContinuity(value?.sessionContinuity),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var mapGeminiSettingsWithDisplaySync = (value) => ({
+    ...mapGeminiSettings(value, mapAutoUpdateSettings),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
+  var resolveClaudeDefaultModel = (value) => {
+    if (typeof value !== "string") {
+      return DEFAULT_CLAUDE_MODEL_ALIAS;
+    }
+    const alias = value;
+    return CLAUDE_MODEL_ALIAS_SET.has(alias) ? alias : DEFAULT_CLAUDE_MODEL_ALIAS;
+  };
+  var mapCodexReasoningByModel = (value) => {
+    const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
+    if (!isRecord3(value)) {
+      return nextReasoningByModel;
+    }
+    for (const [modelId, reasoning] of Object.entries(value)) {
+      if (typeof reasoning === "string" && CODEX_MODEL_IDS.has(modelId) && CODEX_REASONING_LEVEL_SET.has(reasoning)) {
+        nextReasoningByModel[modelId] = reasoning;
+      }
+    }
+    return nextReasoningByModel;
+  };
+  var mapCodexSettings = (value) => ({
+    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+    defaultModel: resolveCodexModelId(value?.defaultModel),
+    reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
+    reasoningSummaryEnabled: mapCodexReasoningSummaryEnabled(
+      value?.reasoningSummaryEnabled,
+      value?.thinkingDisplaySyncEnabled
+    ),
+    sessionContinuity: mapContinuity(value?.sessionContinuity),
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var mapSettingsSnapshot = (value) => ({
+    general: mapGeneralSettings(value?.general),
+    providers: {
+      claude: mapClaudeSettings(value?.providers?.claude),
+      codex: mapCodexSettings(value?.providers?.codex),
+      gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini)
+    }
+  });
+  var createDefaultSettings = () => mapSettingsSnapshot(void 0);
+  var areAutoUpdateSettingsEqual = (left, right) => left.enabled === right.enabled;
+  var areReasoningByModelEqual = (left, right) => {
+    const leftEntries = Object.entries(left);
+    if (leftEntries.length !== Object.keys(right).length) {
+      return false;
+    }
+    return leftEntries.every(
+      ([modelId, reasoning]) => right[modelId] === reasoning
+    );
+  };
+  var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
+  var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
+  var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.glossaryEnabled === right.glossaryEnabled;
+  var areClaudeSettingsEqual = (left, right) => areClaudeThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.reasoningSummaryEnabled === right.reasoningSummaryEnabled && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
+    left.thinkingLevelByModel,
+    right.thinkingLevelByModel
+  ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
+  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
+
+  // src/client/ui/src/components/settings/use-settings-state-support.ts
+  var isIncomingMessage = (message) => {
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const candidate = message;
+    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status";
+  };
+  var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
+  var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
+  var LEGACY_SOURCE_LANGUAGE2 = "source";
+  var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
+  var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
+  var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
+    "google-gtx",
+    "codex-gpt-5.4-mini",
+    "codex-gpt-5.3-codex-spark",
+    "anthropic-claude-haiku-4-5"
+  ];
+  var SUPPORTED_LOCALIZATION_ENGINE_ID_SET = new Set(
+    SUPPORTED_LOCALIZATION_ENGINE_IDS
+  );
+  var normalizeLocalizationSelection = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return DEFAULT_LOCALIZATION_LANGUAGE2;
+    }
+    return trimmed.toLowerCase() === LEGACY_SOURCE_LANGUAGE2 ? DEFAULT_LOCALIZATION_LANGUAGE2 : trimmed;
+  };
+  var normalizeLocalizationEngineId = (value) => {
+    const trimmed = value.trim();
+    if (!(trimmed.length > 0)) {
+      return DEFAULT_LOCALIZATION_ENGINE_ID2;
+    }
+    return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed) ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
+  };
+  var deriveWorkflowTermsPolicy2 = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE2 ? "keep_english" : "translate";
+  var resolveLocalizationCategory2 = (categories, candidateKeys, fallback) => {
+    for (const key of candidateKeys) {
+      const resolved = normalizeLocalizationSelection(
+        categories[key] ?? ""
+      );
+      if (resolved.length > 0) {
+        return resolved;
+      }
+    }
+    return fallback;
+  };
+  var resolveApprovedLocalizationCategories = (categories) => {
+    const fallback = DEFAULT_LOCALIZATION_LANGUAGE2;
+    return {
+      artifactsForTheUser: resolveLocalizationCategory2(
+        categories,
+        ["artifactsForTheUser", "interactiveTemplates"],
+        fallback
+      ),
+      messagesForTheUser: resolveLocalizationCategory2(
+        categories,
+        ["messagesForTheUser", "systemFeedback"],
+        fallback
+      ),
+      uiHelperText: resolveLocalizationCategory2(
+        categories,
+        ["uiHelperText", "userGuidance"],
+        fallback
+      ),
+      uiLabels: resolveLocalizationCategory2(
+        categories,
+        ["uiLabels", "uiInterface", "workflowTerms"],
+        fallback
+      )
+    };
+  };
+  var createMirroredLocalizationCategories = (approved) => ({
+    artifactsForTheUser: approved.artifactsForTheUser,
+    interactiveTemplates: approved.artifactsForTheUser,
+    messagesForTheUser: approved.messagesForTheUser,
+    systemFeedback: approved.messagesForTheUser,
+    uiHelperText: approved.uiHelperText,
+    uiInterface: approved.uiLabels,
+    uiLabels: approved.uiLabels,
+    userGuidance: approved.uiHelperText,
+    workflowTerms: approved.uiLabels
+  });
+  var normalizeLocalizationState = (localization) => {
+    const approvedCategories = resolveApprovedLocalizationCategories(
+      localization.categories
+    );
+    return {
+      ...localization,
+      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE2,
+      categories: createMirroredLocalizationCategories(approvedCategories),
+      workflowTermsPolicy: deriveWorkflowTermsPolicy2(approvedCategories.uiLabels)
+    };
+  };
+  var normalizeLoadedLocalizationSettings = (settings) => ({
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: normalizeLocalizationState(settings.general.localization)
+    }
+  });
+  var updateLocalizationCategorySelection = (settings, category, language) => {
+    const approvedCategories = resolveApprovedLocalizationCategories(
+      settings.general.localization.categories
+    );
+    const normalizedLanguage = normalizeLocalizationSelection(language);
+    if (category === "interactiveTemplates") {
+      approvedCategories.artifactsForTheUser = normalizedLanguage;
+    }
+    if (category === "systemFeedback") {
+      approvedCategories.messagesForTheUser = normalizedLanguage;
+    }
+    if (category === "userGuidance") {
+      approvedCategories.uiHelperText = normalizedLanguage;
+    }
+    if (category === "uiInterface" || category === "workflowTerms") {
+      approvedCategories.uiLabels = normalizedLanguage;
+    }
+    return {
+      ...settings,
+      general: {
+        ...settings.general,
+        localization: normalizeLocalizationState({
+          ...settings.general.localization,
+          categories: createMirroredLocalizationCategories(approvedCategories)
+        })
+      }
+    };
+  };
+  var updateLocalizationDefaultLanguageSelection = (settings, language) => {
+    const normalizedLanguage = normalizeLocalizationSelection(language);
+    return {
+      ...settings,
+      general: {
+        ...settings.general,
+        localization: normalizeLocalizationState({
+          ...settings.general.localization,
+          categories: createMirroredLocalizationCategories({
+            artifactsForTheUser: normalizedLanguage,
+            messagesForTheUser: normalizedLanguage,
+            uiHelperText: normalizedLanguage,
+            uiLabels: normalizedLanguage
+          })
+        })
+      }
+    };
+  };
+
+  // src/client/shared/hooks/use-bootstrap-settings.ts
+  var createBootstrapSettings = (snapshot) => {
+    const defaultSettings = createDefaultSettings();
+    if (!snapshot) {
+      return defaultSettings;
+    }
+    return normalizeLoadedLocalizationSettings({
+      ...defaultSettings,
+      general: {
+        ...defaultSettings.general,
+        localization: {
+          ...defaultSettings.general.localization,
+          categories: {
+            ...defaultSettings.general.localization.categories,
+            artifactsForTheUser: snapshot.settings.categories.interactive_templates,
+            interactiveTemplates: snapshot.settings.categories.interactive_templates,
+            messagesForTheUser: snapshot.settings.categories.system_feedback,
+            systemFeedback: snapshot.settings.categories.system_feedback,
+            uiHelperText: snapshot.settings.categories.user_guidance,
+            uiInterface: snapshot.settings.categories.ui_interface,
+            uiLabels: snapshot.settings.categories.ui_interface,
+            userGuidance: snapshot.settings.categories.user_guidance,
+            workflowTerms: snapshot.settings.categories.workflow_terms
+          },
+          defaultLanguage: snapshot.settings.defaultLanguage,
+          engineId: snapshot.settings.engineId,
+          workflowTermsPolicy: snapshot.settings.workflowTermsPolicy
+        }
+      }
+    });
+  };
+
   // src/client/ui/src/app-host/localization-runtime-contract.ts
   var readBrowserLocalizationBootstrapSnapshot = () => window.__CODEAI_LOCALIZATION_BOOTSTRAP__ ?? null;
 
@@ -7491,7 +8226,7 @@
   };
 
   // src/client/ui/src/core-bridge/normalizers.ts
-  var isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  var isRecord4 = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
   var toNumberTimestamp = (value) => {
     const parsed = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
@@ -7602,10 +8337,10 @@
     };
   };
   var sanitizeSessionMessagePayload = (payload) => {
-    if (!isRecord(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord4(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
-    const messageSource = isRecord(payload.message) ? {
+    const messageSource = isRecord4(payload.message) ? {
       sessionId: payload.sessionId,
       ...payload.message
     } : payload;
@@ -7616,7 +8351,7 @@
     return { sessionId: payload.sessionId, message: normalized };
   };
   var sanitizeSessionBindingPayload = (payload) => {
-    if (!isRecord(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord4(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerSessionId = payload.providerSessionId === null || typeof payload.providerSessionId === "string" ? payload.providerSessionId : null;
@@ -7627,7 +8362,7 @@
     };
   };
   var sanitizeSessionErrorPayload = (payload) => {
-    if (!isRecord(payload) || typeof payload.sessionId !== "string") {
+    if (!isRecord4(payload) || typeof payload.sessionId !== "string") {
       return null;
     }
     const providerLabel = typeof payload.providerId === "string" && payload.providerId.trim().length > 0 ? `[${payload.providerId.trim()}] ` : "";
@@ -8275,709 +9010,6 @@
     }
   });
 
-  // src/types/claude-model-registry.ts
-  var CLAUDE_MODEL_ALIASES = [
-    {
-      alias: "sonnet",
-      displayName: "Sonnet",
-      description: "Best for everyday tasks; Anthropic resolves the latest version automatically.",
-      status: "active"
-    },
-    {
-      alias: "opus",
-      displayName: "Opus",
-      description: "Most capable for complex, agentic workloads; latest version auto-resolved.",
-      status: "active"
-    },
-    {
-      alias: "haiku",
-      displayName: "Haiku",
-      description: "Fastest alias for quick answers and prototyping; latest version auto-resolved.",
-      status: "active"
-    }
-  ];
-  var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
-    ...CLAUDE_MODEL_ALIASES.map((model) => model.alias)
-  ]);
-  var DEFAULT_CLAUDE_MODEL_ALIAS = "sonnet";
-  var CLAUDE_THINKING_EFFORTS = [
-    {
-      name: "low",
-      description: "Lighter reasoning for faster Claude turns.",
-      useCase: "Simple prompts and quick follow-ups.",
-      default: false
-    },
-    {
-      name: "medium",
-      description: "Balanced reasoning depth for everyday work.",
-      useCase: "Default choice for most sessions.",
-      default: true
-    },
-    {
-      name: "high",
-      description: "Deeper reasoning for more complex tasks.",
-      useCase: "Architecture work, investigations, and larger plans.",
-      default: false
-    },
-    {
-      name: "xhigh",
-      description: "Deeper-than-high reasoning on Opus; falls back to high on other models.",
-      useCase: "Opus-only extra-deep reasoning when high is not enough.",
-      default: false
-    },
-    {
-      name: "max",
-      description: "Maximum reasoning effort currently exposed by Claude.",
-      useCase: "Hardest tasks where latency matters less than depth.",
-      default: false
-    }
-  ];
-  var CLAUDE_THINKING_EFFORT_SET = new Set(
-    CLAUDE_THINKING_EFFORTS.map((effort) => effort.name)
-  );
-  var DEFAULT_CLAUDE_THINKING_EFFORT = "medium";
-
-  // src/types/codex-model-registry.ts
-  var CODEX_SETTINGS_MODELS = [
-    {
-      id: "gpt-5.3-codex",
-      displayName: "GPT-5.3-Codex",
-      description: "Most advanced agentic coding model for real-world engineering",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "flagship"
-    },
-    {
-      id: "gpt-5.4",
-      displayName: "GPT-5.4",
-      description: "Best general agentic model for tasks across industries",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "general"
-    },
-    {
-      id: "gpt-5.4-mini",
-      displayName: "GPT-5.4 Mini",
-      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "mini"
-    }
-  ];
-  var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
-  var CODEX_REASONING_LEVELS = [
-    {
-      name: "low",
-      description: "Fast responses with lighter reasoning",
-      useCase: "Quick tasks, simple queries",
-      default: false
-    },
-    {
-      name: "medium",
-      description: "Balances speed and reasoning depth for everyday tasks",
-      useCase: "Most development tasks",
-      default: true
-    },
-    {
-      name: "high",
-      description: "Greater reasoning depth for complex problems",
-      useCase: "Complex refactoring, architecture decisions",
-      default: false
-    },
-    {
-      name: "xhigh",
-      description: "Extra high reasoning depth for complex problems",
-      useCase: "Very complex problems requiring deep analysis",
-      default: false
-    }
-  ];
-  var DEFAULT_CODEX_REASONING_LEVEL = "medium";
-
-  // src/client/ui/src/components/settings/claude-thinking-state.ts
-  var LEGACY_THINKING_TOKEN_ANCHORS = [
-    { effort: "low", maxTokens: 2e3 },
-    { effort: "medium", maxTokens: 4e3 },
-    { effort: "high", maxTokens: 1e4 },
-    { effort: "max", maxTokens: 32e3 }
-  ];
-  var resolveLegacyThinkingEffort = (value) => {
-    const numericValue = Number(value);
-    if (!Number.isFinite(numericValue)) {
-      return DEFAULT_CLAUDE_THINKING_EFFORT;
-    }
-    return LEGACY_THINKING_TOKEN_ANCHORS.reduce(
-      (closest, candidate) => Math.abs(candidate.maxTokens - numericValue) < Math.abs(closest.maxTokens - numericValue) ? candidate : closest,
-      LEGACY_THINKING_TOKEN_ANCHORS[0]
-    ).effort;
-  };
-  var mapClaudeThinkingEffort = (value) => typeof value === "string" && CLAUDE_THINKING_EFFORT_SET.has(value) ? value : resolveLegacyThinkingEffort(value);
-  var mapClaudeThinkingSettings = (value) => ({
-    effort: mapClaudeThinkingEffort(value?.effort ?? value?.maxTokens),
-    enabled: Boolean(value?.enabled)
-  });
-  var areClaudeThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.effort === right.effort;
-
-  // src/types/gemini-model-registry.ts
-  var GEMINI_RECOMMENDED_MODELS = [
-    {
-      id: "gemini-3.1-pro-preview",
-      displayName: "Gemini 3.1 Pro",
-      description: "Most advanced reasoning Gemini model (1M context).",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["low", "high"]
-    },
-    {
-      id: "gemini-3-flash-preview",
-      displayName: "Gemini 3 Flash",
-      description: "Pro-grade reasoning with Flash-level latency and cost.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["minimal", "low", "medium", "high"]
-    },
-    {
-      id: "gemini-3.1-flash-lite-preview",
-      displayName: "Gemini 3.1 Flash Lite",
-      description: "Lightweight model with fast responses and low cost.",
-      status: "preview",
-      family: "gemini-3",
-      supportedThinkingLevels: ["off", "minimal", "low"]
-    }
-  ];
-  var GEMINI_MODEL_ID_SET = new Set(
-    GEMINI_RECOMMENDED_MODELS.map((model) => model.id)
-  );
-  var DEFAULT_GEMINI_MODEL_ID = "gemini-3.1-pro-preview";
-  var DEFAULT_GEMINI_THINKING_LEVEL = "low";
-  var GEMINI_THINKING_LEVELS = [
-    {
-      name: "off",
-      description: "Disable model's internal thinking process.",
-      useCase: "Basic tasks, fastest response."
-    },
-    {
-      name: "minimal",
-      description: "Absolute minimum reasoning tokens.",
-      useCase: "Low-complexity tasks, very low latency."
-    },
-    {
-      name: "low",
-      description: "Balanced reasoning for simpler tasks.",
-      useCase: "General coding and quick queries."
-    },
-    {
-      name: "medium",
-      description: "Advanced reasoning for moderate complexity.",
-      useCase: "Standard development and problem solving."
-    },
-    {
-      name: "high",
-      description: "Maximum reasoning depth.",
-      useCase: "Complex refactoring and PhD-level research."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/gemini-mapping.ts
-  var GEMINI_THINKING_LEVEL_SET = new Set(
-    GEMINI_THINKING_LEVELS.map((level) => level.name)
-  );
-  var DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 3e5;
-  var MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e4;
-  var MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1e6;
-  var DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
-  var MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-  var MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-  var DEFAULT_GEMINI_THINKING_BY_MODEL = GEMINI_RECOMMENDED_MODELS.reduce((accumulator, model) => {
-    accumulator[model.id] = DEFAULT_GEMINI_THINKING_LEVEL;
-    return accumulator;
-  }, {});
-  var isRecord2 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-  var resolveGeminiModelId = (value) => typeof value === "string" && GEMINI_MODEL_ID_SET.has(value) ? value : DEFAULT_GEMINI_MODEL_ID;
-  var clampContinuityRemainingPercentThreshold = (value) => Math.min(
-    MAX_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-    Math.max(MIN_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD, value)
-  );
-  var clampContextWindowTokenLimit = (value) => Math.min(
-    MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
-    Math.max(MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT, value)
-  );
-  var mapGeminiSessionContinuitySettings = (value) => {
-    if (!isRecord2(value)) {
-      return {
-        contextWindowTokenLimit: DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT,
-        remainingPercentThreshold: DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD
-      };
-    }
-    const numericLimit = Number(value.contextWindowTokenLimit);
-    const contextWindowTokenLimit = Number.isFinite(numericLimit) ? clampContextWindowTokenLimit(numericLimit) : DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT;
-    const numericThreshold = Number(value.remainingPercentThreshold);
-    const remainingPercentThreshold = Number.isFinite(numericThreshold) ? clampContinuityRemainingPercentThreshold(numericThreshold) : DEFAULT_GEMINI_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
-    return { contextWindowTokenLimit, remainingPercentThreshold };
-  };
-  var mapGeminiThinkingLevelByModel = (value) => {
-    const nextThinkingLevelByModel = {
-      ...DEFAULT_GEMINI_THINKING_BY_MODEL
-    };
-    if (!isRecord2(value)) {
-      return nextThinkingLevelByModel;
-    }
-    for (const [modelId, level] of Object.entries(value)) {
-      if (typeof level === "string" && GEMINI_THINKING_LEVEL_SET.has(level)) {
-        nextThinkingLevelByModel[modelId] = level;
-      }
-    }
-    return nextThinkingLevelByModel;
-  };
-  var mapGeminiSettings = (value, mapAutoUpdate) => ({
-    autoUpdate: mapAutoUpdate(value?.autoUpdate),
-    defaultModel: resolveGeminiModelId(value?.defaultModel),
-    thinkingLevelByModel: mapGeminiThinkingLevelByModel(
-      value?.thinkingLevelByModel
-    ),
-    sessionContinuity: mapGeminiSessionContinuitySettings(
-      value?.sessionContinuity
-    )
-  });
-  var areGeminiThinkingLevelByModelEqual = (left, right) => {
-    const leftEntries = Object.entries(left);
-    if (leftEntries.length !== Object.keys(right).length) {
-      return false;
-    }
-    return leftEntries.every(([modelId, level]) => right[modelId] === level);
-  };
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-copy.ts
-  var RESPONSE_MODE_OPTIONS = [
-    {
-      id: "strict",
-      label: "Strict",
-      description: "Force a JSON-shaped final answer using the editable strict schema."
-    },
-    {
-      id: "hybrid",
-      label: "Hybrid",
-      description: "Allow free commentary during the turn and keep structure only for terminal output."
-    },
-    {
-      id: "debug_raw",
-      label: "Debug/Raw",
-      description: "Diagnostic mode for new models: avoid hard schema pressure on live turns."
-    }
-  ];
-
-  // src/client/ui/src/components/settings/general-response-mode/response-mode-state.ts
-  var DEFAULT_STRICT_OUTPUT_SCHEMA = {
-    type: "object",
-    additionalProperties: false,
-    properties: {
-      answer: {
-        type: "string",
-        description: "Final answer for the user. Markdown allowed."
-      }
-    },
-    required: ["answer"]
-  };
-  var DEFAULT_STRICT_OUTPUT_SCHEMA_TEXT = `${JSON.stringify(
-    DEFAULT_STRICT_OUTPUT_SCHEMA,
-    null,
-    2
-  )}
-`;
-  var DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT = [
-    "You must respond with a JSON object that matches the provided schema.",
-    "Populate the field:",
-    "- answer: the user-facing answer.",
-    "Return only JSON, no extra text.",
-    "",
-    "User request:"
-  ].join("\n");
-  var DEFAULT_GENERAL_RESPONSE_POLICY = {
-    mode: "hybrid",
-    strictOutput: {
-      schemaText: DEFAULT_STRICT_OUTPUT_SCHEMA_TEXT,
-      instructionText: DEFAULT_STRICT_OUTPUT_INSTRUCTION_TEXT
-    }
-  };
-  var RESPONSE_MODE_IDS = new Set(
-    RESPONSE_MODE_OPTIONS.map((option) => option.id)
-  );
-  var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-  var normalizeText = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value : fallback;
-  var normalizeSchemaText = (value) => {
-    const next = normalizeText(
-      value,
-      DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText
-    );
-    try {
-      const parsed = JSON.parse(next);
-      if (!isRecord3(parsed)) {
-        return DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText;
-      }
-      return `${JSON.stringify(parsed, null, 2)}
-`;
-    } catch {
-      return DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.schemaText;
-    }
-  };
-  var mapGeneralResponsePolicy = (value) => ({
-    mode: typeof value?.mode === "string" && RESPONSE_MODE_IDS.has(value.mode) ? value.mode : DEFAULT_GENERAL_RESPONSE_POLICY.mode,
-    strictOutput: {
-      schemaText: normalizeSchemaText(value?.strictOutput?.schemaText),
-      instructionText: normalizeText(
-        value?.strictOutput?.instructionText,
-        DEFAULT_GENERAL_RESPONSE_POLICY.strictOutput.instructionText
-      )
-    }
-  });
-  var areGeneralResponsePolicyEqual = (left, right) => left.mode === right.mode && left.strictOutput.schemaText === right.strictOutput.schemaText && left.strictOutput.instructionText === right.strictOutput.instructionText;
-
-  // src/client/ui/src/components/settings/settings-state-model.ts
-  var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
-  var DEFAULT_AUTO_UPDATE_ENABLED = true;
-  var DEFAULT_CORE_RESTART_ENABLED = true;
-  var DEFAULT_LOCALIZATION_LANGUAGE = "en";
-  var DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
-  var LEGACY_SOURCE_LANGUAGE = "source";
-  var DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 30;
-  var MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 5;
-  var MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD = 80;
-  var CODEX_MODEL_IDS = new Set(
-    CODEX_SETTINGS_MODELS.map((model) => model.id)
-  );
-  var CODEX_REASONING_LEVEL_SET = new Set(
-    CODEX_REASONING_LEVELS.map((level) => level.name)
-  );
-  var DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce((accumulator, model) => {
-    accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
-    return accumulator;
-  }, {});
-  var isRecord4 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
-  var mapLocalizationString = (value, fallback) => {
-    const normalized = typeof value === "string" ? value.trim() : "";
-    if (normalized.length === 0) {
-      return fallback;
-    }
-    return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE ? DEFAULT_LOCALIZATION_LANGUAGE : normalized;
-  };
-  var createLocalizationCategorySettings = (approved) => ({
-    ...approved,
-    interactiveTemplates: approved.artifactsForTheUser,
-    systemFeedback: approved.messagesForTheUser,
-    uiInterface: approved.uiLabels,
-    userGuidance: approved.uiHelperText,
-    workflowTerms: approved.uiLabels
-  });
-  var resolveLocalizationCategory = (value, candidateKeys, fallback) => {
-    for (const key of candidateKeys) {
-      const resolved = mapLocalizationString(value?.[key], "");
-      if (resolved.length > 0) {
-        return resolved;
-      }
-    }
-    return fallback;
-  };
-  var deriveWorkflowTermsPolicy = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE ? "keep_english" : "translate";
-  var mapThinkingDisplaySyncEnabled = (value) => typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
-  var mapCodexReasoningSummaryEnabled = (value, legacyValue) => {
-    if (typeof value === "boolean") {
-      return value;
-    }
-    return mapThinkingDisplaySyncEnabled(legacyValue);
-  };
-  var mapAutoUpdateSettings = (value) => ({
-    enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
-  });
-  var mapLocalizationCategories = (value, defaultLanguage) => createLocalizationCategorySettings({
-    artifactsForTheUser: resolveLocalizationCategory(
-      value,
-      ["artifactsForTheUser", "interactiveTemplates"],
-      defaultLanguage
-    ),
-    messagesForTheUser: resolveLocalizationCategory(
-      value,
-      ["messagesForTheUser", "systemFeedback"],
-      defaultLanguage
-    ),
-    uiHelperText: resolveLocalizationCategory(
-      value,
-      ["uiHelperText", "userGuidance"],
-      defaultLanguage
-    ),
-    uiLabels: resolveLocalizationCategory(
-      value,
-      ["uiLabels", "uiInterface", "workflowTerms"],
-      defaultLanguage
-    )
-  });
-  var mapLocalizationSettings = (value) => {
-    const legacyDefaultLanguage = mapLocalizationString(
-      value?.defaultLanguage,
-      DEFAULT_LOCALIZATION_LANGUAGE
-    );
-    const categories = mapLocalizationCategories(
-      value?.categories,
-      legacyDefaultLanguage
-    );
-    return {
-      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
-      categories,
-      workflowTermsPolicy: deriveWorkflowTermsPolicy(
-        categories.uiLabels ?? categories.uiInterface
-      ),
-      engineId: mapLocalizationString(
-        value?.engineId,
-        DEFAULT_LOCALIZATION_ENGINE_ID
-      ),
-      glossaryEnabled: typeof value?.glossaryEnabled === "boolean" ? value.glossaryEnabled : true
-    };
-  };
-  var mapGeneralSettings = (value) => ({
-    coreControls: {
-      allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
-    },
-    localization: mapLocalizationSettings(value?.localization),
-    responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy)
-  });
-  var mapContinuity = (value) => {
-    const numericValue = Number(
-      isRecord4(value) ? value.remainingPercentThreshold : void 0
-    );
-    const remainingPercentThreshold = Number.isFinite(numericValue) ? Math.min(
-      MAX_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-      Math.max(
-        MIN_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD,
-        numericValue
-      )
-    ) : DEFAULT_CLAUDE_CONTINUITY_REMAINING_PERCENT_THRESHOLD;
-    return { remainingPercentThreshold };
-  };
-  var mapClaudeSettings = (value) => ({
-    thinking: mapClaudeThinkingSettings(value?.thinking),
-    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: resolveClaudeDefaultModel(value?.defaultModel),
-    sessionContinuity: mapContinuity(value?.sessionContinuity),
-    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-      value?.thinkingDisplaySyncEnabled
-    )
-  });
-  var mapGeminiSettingsWithDisplaySync = (value) => ({
-    ...mapGeminiSettings(value, mapAutoUpdateSettings),
-    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-      value?.thinkingDisplaySyncEnabled
-    )
-  });
-  var resolveCodexModelId = (value) => typeof value === "string" && CODEX_MODEL_IDS.has(value) ? value : DEFAULT_CODEX_MODEL_ID;
-  var resolveClaudeDefaultModel = (value) => {
-    if (typeof value !== "string") {
-      return DEFAULT_CLAUDE_MODEL_ALIAS;
-    }
-    const alias = value;
-    return CLAUDE_MODEL_ALIAS_SET.has(alias) ? alias : DEFAULT_CLAUDE_MODEL_ALIAS;
-  };
-  var mapCodexReasoningByModel = (value) => {
-    const nextReasoningByModel = { ...DEFAULT_CODEX_REASONING_BY_MODEL };
-    if (!isRecord4(value)) {
-      return nextReasoningByModel;
-    }
-    for (const [modelId, reasoning] of Object.entries(value)) {
-      if (typeof reasoning === "string" && CODEX_MODEL_IDS.has(modelId) && CODEX_REASONING_LEVEL_SET.has(reasoning)) {
-        nextReasoningByModel[modelId] = reasoning;
-      }
-    }
-    return nextReasoningByModel;
-  };
-  var mapCodexSettings = (value) => ({
-    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: resolveCodexModelId(value?.defaultModel),
-    reasoningByModel: mapCodexReasoningByModel(value?.reasoningByModel),
-    reasoningSummaryEnabled: mapCodexReasoningSummaryEnabled(
-      value?.reasoningSummaryEnabled,
-      value?.thinkingDisplaySyncEnabled
-    ),
-    sessionContinuity: mapContinuity(value?.sessionContinuity),
-    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-      value?.thinkingDisplaySyncEnabled
-    )
-  });
-  var mapSettingsSnapshot = (value) => ({
-    general: mapGeneralSettings(value?.general),
-    providers: {
-      claude: mapClaudeSettings(value?.providers?.claude),
-      codex: mapCodexSettings(value?.providers?.codex),
-      gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini)
-    }
-  });
-  var createDefaultSettings = () => mapSettingsSnapshot(void 0);
-  var areAutoUpdateSettingsEqual = (left, right) => left.enabled === right.enabled;
-  var areReasoningByModelEqual = (left, right) => {
-    const leftEntries = Object.entries(left);
-    if (leftEntries.length !== Object.keys(right).length) {
-      return false;
-    }
-    return leftEntries.every(
-      ([modelId, reasoning]) => right[modelId] === reasoning
-    );
-  };
-  var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
-  var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
-  var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.glossaryEnabled === right.glossaryEnabled;
-  var areClaudeSettingsEqual = (left, right) => areClaudeThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.reasoningSummaryEnabled === right.reasoningSummaryEnabled && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
-    left.thinkingLevelByModel,
-    right.thinkingLevelByModel
-  ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
-
-  // src/client/ui/src/components/settings/use-settings-state-support.ts
-  var isIncomingMessage = (message) => {
-    if (!message || typeof message !== "object") {
-      return false;
-    }
-    const candidate = message;
-    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status";
-  };
-  var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
-  var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
-  var LEGACY_SOURCE_LANGUAGE2 = "source";
-  var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
-  var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
-  var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
-    "google-gtx",
-    "codex-gpt-5.4-mini",
-    "codex-gpt-5.3-codex-spark",
-    "anthropic-claude-haiku-4-5"
-  ];
-  var SUPPORTED_LOCALIZATION_ENGINE_ID_SET = new Set(
-    SUPPORTED_LOCALIZATION_ENGINE_IDS
-  );
-  var normalizeLocalizationSelection = (value) => {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      return DEFAULT_LOCALIZATION_LANGUAGE2;
-    }
-    return trimmed.toLowerCase() === LEGACY_SOURCE_LANGUAGE2 ? DEFAULT_LOCALIZATION_LANGUAGE2 : trimmed;
-  };
-  var normalizeLocalizationEngineId = (value) => {
-    const trimmed = value.trim();
-    if (!(trimmed.length > 0)) {
-      return DEFAULT_LOCALIZATION_ENGINE_ID2;
-    }
-    return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed) ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
-  };
-  var deriveWorkflowTermsPolicy2 = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE2 ? "keep_english" : "translate";
-  var resolveLocalizationCategory2 = (categories, candidateKeys, fallback) => {
-    for (const key of candidateKeys) {
-      const resolved = normalizeLocalizationSelection(
-        categories[key] ?? ""
-      );
-      if (resolved.length > 0) {
-        return resolved;
-      }
-    }
-    return fallback;
-  };
-  var resolveApprovedLocalizationCategories = (categories) => {
-    const fallback = DEFAULT_LOCALIZATION_LANGUAGE2;
-    return {
-      artifactsForTheUser: resolveLocalizationCategory2(
-        categories,
-        ["artifactsForTheUser", "interactiveTemplates"],
-        fallback
-      ),
-      messagesForTheUser: resolveLocalizationCategory2(
-        categories,
-        ["messagesForTheUser", "systemFeedback"],
-        fallback
-      ),
-      uiHelperText: resolveLocalizationCategory2(
-        categories,
-        ["uiHelperText", "userGuidance"],
-        fallback
-      ),
-      uiLabels: resolveLocalizationCategory2(
-        categories,
-        ["uiLabels", "uiInterface", "workflowTerms"],
-        fallback
-      )
-    };
-  };
-  var createMirroredLocalizationCategories = (approved) => ({
-    artifactsForTheUser: approved.artifactsForTheUser,
-    interactiveTemplates: approved.artifactsForTheUser,
-    messagesForTheUser: approved.messagesForTheUser,
-    systemFeedback: approved.messagesForTheUser,
-    uiHelperText: approved.uiHelperText,
-    uiInterface: approved.uiLabels,
-    uiLabels: approved.uiLabels,
-    userGuidance: approved.uiHelperText,
-    workflowTerms: approved.uiLabels
-  });
-  var normalizeLocalizationState = (localization) => {
-    const approvedCategories = resolveApprovedLocalizationCategories(
-      localization.categories
-    );
-    return {
-      ...localization,
-      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE2,
-      categories: createMirroredLocalizationCategories(approvedCategories),
-      workflowTermsPolicy: deriveWorkflowTermsPolicy2(approvedCategories.uiLabels)
-    };
-  };
-  var normalizeLoadedLocalizationSettings = (settings) => ({
-    ...settings,
-    general: {
-      ...settings.general,
-      localization: normalizeLocalizationState(settings.general.localization)
-    }
-  });
-  var updateLocalizationCategorySelection = (settings, category, language) => {
-    const approvedCategories = resolveApprovedLocalizationCategories(
-      settings.general.localization.categories
-    );
-    const normalizedLanguage = normalizeLocalizationSelection(language);
-    if (category === "interactiveTemplates") {
-      approvedCategories.artifactsForTheUser = normalizedLanguage;
-    }
-    if (category === "systemFeedback") {
-      approvedCategories.messagesForTheUser = normalizedLanguage;
-    }
-    if (category === "userGuidance") {
-      approvedCategories.uiHelperText = normalizedLanguage;
-    }
-    if (category === "uiInterface" || category === "workflowTerms") {
-      approvedCategories.uiLabels = normalizedLanguage;
-    }
-    return {
-      ...settings,
-      general: {
-        ...settings.general,
-        localization: normalizeLocalizationState({
-          ...settings.general.localization,
-          categories: createMirroredLocalizationCategories(approvedCategories)
-        })
-      }
-    };
-  };
-  var updateLocalizationDefaultLanguageSelection = (settings, language) => {
-    const normalizedLanguage = normalizeLocalizationSelection(language);
-    return {
-      ...settings,
-      general: {
-        ...settings.general,
-        localization: normalizeLocalizationState({
-          ...settings.general.localization,
-          categories: createMirroredLocalizationCategories({
-            artifactsForTheUser: normalizedLanguage,
-            messagesForTheUser: normalizedLanguage,
-            uiHelperText: normalizedLanguage,
-            uiLabels: normalizedLanguage
-          })
-        })
-      }
-    };
-  };
-
   // src/client/ui/src/components/settings/use-settings-state.ts
   var RESET_DELAY_MS = 100;
   var LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY = "codeaihub:settings:localization:user-glossary-draft";
@@ -8989,36 +9021,6 @@
   };
   var useSettingsState = () => {
     const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
-    const createBootstrapSettings = (snapshot) => {
-      const defaultSettings = createDefaultSettings();
-      if (!snapshot) {
-        return defaultSettings;
-      }
-      return normalizeLoadedLocalizationSettings({
-        ...defaultSettings,
-        general: {
-          ...defaultSettings.general,
-          localization: {
-            ...defaultSettings.general.localization,
-            categories: {
-              ...defaultSettings.general.localization.categories,
-              artifactsForTheUser: snapshot.settings.categories.interactive_templates,
-              interactiveTemplates: snapshot.settings.categories.interactive_templates,
-              messagesForTheUser: snapshot.settings.categories.system_feedback,
-              systemFeedback: snapshot.settings.categories.system_feedback,
-              uiHelperText: snapshot.settings.categories.user_guidance,
-              uiInterface: snapshot.settings.categories.ui_interface,
-              uiLabels: snapshot.settings.categories.ui_interface,
-              userGuidance: snapshot.settings.categories.user_guidance,
-              workflowTerms: snapshot.settings.categories.workflow_terms
-            },
-            defaultLanguage: snapshot.settings.defaultLanguage,
-            engineId: snapshot.settings.engineId,
-            workflowTermsPolicy: snapshot.settings.workflowTermsPolicy
-          }
-        }
-      });
-    };
     const initialSettingsRef = (0, import_react.useRef)(
       createBootstrapSettings(bootstrapSnapshot)
     );
