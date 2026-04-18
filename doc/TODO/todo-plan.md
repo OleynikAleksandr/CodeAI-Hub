@@ -44,10 +44,10 @@
 
 ### Stream 7: Build verification follow-up
 1. [DONE] Исправить type-contract `resolvePendingAssistantText` после target build failure `TS2322`, сохранив новый pre-tool thinking routing. — scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`; commit: `fix(claude): restore pending text promise contract`
-2. [IN_PROGRESS] Git Commit: `fix(claude): restore pending text promise contract` (hash: TBD)
+2. [DONE] Git Commit: `fix(claude): restore pending text promise contract` (hash: `5edc5be05`)
 
 ### Stream 8: Release build 1.2.17
-1. [TODO] Прогнать таргетные тесты/сборки, затем `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.17 for Claude pre-tool thinking fix release`
-2. [TODO] Git Commit: `chore: bump version to 1.2.17 for Claude pre-tool thinking fix release` (hash: TBD)
+1. [IN_PROGRESS] Прогнать таргетные тесты/сборки, затем `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.17 for Claude pre-tool thinking fix release`
+2. [IN_PROGRESS] Git Commit: `chore: bump version to 1.2.17 for Claude pre-tool thinking fix release` (hash: TBD)
 3. [TODO] Архивировать `todo-plan.md`, вернуть placeholder `Execution Scope Status: EMPTY`, создать новый session report. — scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-1.2.17-claude-pre-tool-thinking.md`, `doc/Sessions/Session045.md`; commit: `docs: close 1.2.17 todo-plan after build`
 4. [TODO] Git Commit: `docs: close 1.2.17 todo-plan after build` (hash: TBD)
