@@ -48,7 +48,7 @@
 | BUG-2026-03-25-01 | FIXED | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | 1.1.804 |
 | BUG-2026-03-29-01 | OPEN | Core/UI/Gemini | Session Stop semantics shutdown-ит Core вместо остановки turn; stalled Gemini turn оставляет dialog locked | TBD |
 | BUG-2026-04-16-01 | FIXED | Localization/Core/Claude | Haiku слишком медленно переводит runtime bundles и дублирует/обрезает reasoning translation | 1.1.990 |
-| BUG-2026-04-18-01 | OPEN | Claude/Core/PM | Claude turn завершён, но session залипает в `Agent is resuming...` из-за post-turn `/context` probe failure | TBD |
+| BUG-2026-04-18-01 | FIXED | Claude/Core/PM | Claude turn завершён, но session залипает в `Agent is resuming...` из-за post-turn `/context` probe failure | 1.2.16 |
 
 ---
 
@@ -146,7 +146,7 @@
 - Add an explicit provider-side completion signal that post-turn token usage is unavailable when the probe fails.
 - Teach Core continuity arbitration to resolve `no_rollover` on that explicit signal instead of waiting forever in `context_check_pending`.
 
-**Fix (implemented, awaiting user retest):**
+**Fix (implemented):**
 - `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts` now distinguishes Unix native Claude bundles from JS entrypoints: native executables run directly, while `process.execPath` is used only for real `.js/.cjs/.mjs` entrypoints.
 - `packages/Claude_Module/src/messaging/claude-token-usage-sync.ts`, `claude-usage-sync.ts`, and `claude-message-finish-handler.ts` now propagate explicit `postTurnTokenUsageUnavailable: true` in `turn_completed` when a completed Claude turn cannot produce a trailing `/context` usage snapshot.
 - `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts` now resolves `context_check_pending` to `no_rollover` only on that explicit provider signal, keeping the existing invariant that missing usage by itself is not enough.
@@ -158,7 +158,7 @@
 - `e89f63eb6 docs: document Claude post-turn usage unavailable continuity contract`
 - `769844013 chore: bump version to 1.2.16 for Claude continuity fix release`
 
-**Release candidate:**
+**Release:**
 - `1.2.16`
 - VSIX built: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.16.vsix`
 
@@ -170,9 +170,9 @@
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 
-**Validation target:**
-- Release candidate `1.2.16`.
-- User retest required before moving the bug to `FIXED`.
+**Retest result (2026-04-18):**
+- Пользователь подтвердил, что на релизе `1.2.16` первый turn проходит корректно у всех трёх провайдеров, без stuck-state и без ложного `Agent is resuming...`.
+- Баг закрыт как `FIXED`; дальнейшее наблюдение переносится в новый scope только если регрессия проявится на более поздних turn'ах.
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 
