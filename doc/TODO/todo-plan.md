@@ -27,15 +27,15 @@
 2. [DONE] Git Commit: `docs: prepare 1.2.16 release notes for Claude context probe fix` (hash: `4d44528fa`)
 
 ### Stream 3: Claude probe runner fix
-1. [IN_PROGRESS] Исправить Unix runner selection для Claude `/context` probe и добавить unit guard. — scope: `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-probe.test.ts`; commit: `fix(claude): run context usage probe with native binary on unix`
-2. [TODO] Git Commit: `fix(claude): run context usage probe with native binary on unix` (hash: TBD)
+1. [DONE] Исправить Unix runner selection для Claude `/context` probe и добавить unit guard. — scope: `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-probe.test.ts`; commit: `fix(claude): run context usage probe with native binary on unix`
+2. [DONE] Git Commit: `fix(claude): run context usage probe with native binary on unix` (hash: `9f06e5e35`)
 
 ### Stream 4: Claude post-turn unavailable signal
-1. [TODO] Протащить explicit `postTurnTokenUsageUnavailable` из Claude usage-sync в `turn_completed` event. — scope: `packages/Claude_Module/src/messaging/claude-token-usage-sync.ts`, `packages/Claude_Module/src/messaging/claude-usage-sync.ts`, `packages/Claude_Module/src/messaging/claude-message-finish-handler.ts`; commit: `fix(claude): mark post-turn token usage as unavailable on probe failure`
-2. [TODO] Git Commit: `fix(claude): mark post-turn token usage as unavailable on probe failure` (hash: TBD)
+1. [DONE] Протащить explicit `postTurnTokenUsageUnavailable` из Claude usage-sync в `turn_completed` event. — scope: `packages/Claude_Module/src/messaging/claude-token-usage-sync.ts`, `packages/Claude_Module/src/messaging/claude-usage-sync.ts`, `packages/Claude_Module/src/messaging/claude-message-finish-handler.ts`; commit: `fix(claude): mark post-turn token usage as unavailable on probe failure`
+2. [DONE] Git Commit: `fix(claude): mark post-turn token usage as unavailable on probe failure` (hash: `ba50e58c5`)
 
 ### Stream 5: Core continuity fallback
-1. [TODO] Научить Core снимать `context_check_pending` по explicit provider signal и покрыть regression test'ом. — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`; commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable`
+1. [IN_PROGRESS] Научить Core снимать `context_check_pending` по explicit provider signal и покрыть regression test'ом. — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`; commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable`
 2. [TODO] Git Commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable` (hash: TBD)
 
 ### Stream 6: SSOT sync

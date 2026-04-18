@@ -17,6 +17,7 @@ interface ProviderEventEnvelope {
 
 interface FlowNodePostTurnContextDecisionOptions {
   readonly deferPostTurnCompletion: boolean;
+  readonly postTurnTokenUsageUnavailable: boolean;
   readonly session: Session;
   readonly sessionId: string;
   readonly usage: TokenUsageSnapshot | null;
@@ -33,6 +34,9 @@ interface SessionRequestHandlerTurnArbitrationDependencies {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const hasExplicitPostTurnTokenUsageUnavailable = (event: unknown): boolean =>
+  isRecord(event) && event.postTurnTokenUsageUnavailable === true;
 
 export class SessionRequestHandlerTurnArbitration {
   private readonly deps: SessionRequestHandlerTurnArbitrationDependencies;
@@ -61,6 +65,8 @@ export class SessionRequestHandlerTurnArbitration {
       ? (options.event as ProviderEventEnvelope)
       : null;
     const shouldDeferPostTurnCompletion = typedEvent?.type === "turn_completed";
+    const postTurnTokenUsageUnavailable =
+      hasExplicitPostTurnTokenUsageUnavailable(options.event);
     const usage = extractTokenUsage(options.event);
     this.deps.continuityRolloverOrchestrator.recordTokenUsageSnapshot(
       options.sessionId,
@@ -81,6 +87,7 @@ export class SessionRequestHandlerTurnArbitration {
       session,
       sessionId: options.sessionId,
       usage,
+      postTurnTokenUsageUnavailable,
       deferPostTurnCompletion: shouldDeferPostTurnCompletion,
       resolveLiveContinuityRemainingPercentThreshold:
         options.resolveLiveContinuityRemainingPercentThreshold,
@@ -158,6 +165,9 @@ export class SessionRequestHandlerTurnArbitration {
         options.sessionId
       );
     if (!usage) {
+      if (options.postTurnTokenUsageUnavailable) {
+        recordNoRolloverDecision();
+      }
       return;
     }
 

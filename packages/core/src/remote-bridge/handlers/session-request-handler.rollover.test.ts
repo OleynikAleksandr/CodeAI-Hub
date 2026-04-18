@@ -180,6 +180,29 @@ test("SessionRequestHandler resolves delayed no-rollover on the production token
   assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
 });
 
+test("SessionRequestHandler resolves explicit post-turn usage unavailable to no-rollover", async () => {
+  const harness = createHarness();
+  const session = createDescriptionSession(
+    harness,
+    "/tmp/core-post-turn-usage-unavailable",
+    "provider-session-post-turn-usage-unavailable"
+  );
+  setLifecycle(harness, session.id, "resume_in_place");
+  useProductionFlowNodeHandler(harness);
+  internals(harness.handler).resolveLiveContinuityRemainingPercentThreshold =
+    async () => 30;
+
+  emitProviderEvent(harness, session.id, {
+    type: "turn_completed",
+    postTurnTokenUsageUnavailable: true,
+  });
+  await flushAsyncWork();
+  assert.equal(countContextCheckPendingLockEvents(harness.events), 1);
+  assert.equal(countIdleTurnStateEvents(harness.events), 1);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
+  assert.equal(harness.runtimeLockUpdates.at(-1)?.reason, "no_rollover_needed");
+});
+
 test("SessionRequestHandler starts rollover only after turn_completed and clears cached snapshots on the next turn", async () => {
   const harness = createHarness();
   const session = createDescriptionSession(
