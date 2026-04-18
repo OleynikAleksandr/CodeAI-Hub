@@ -9,8 +9,36 @@ import { ClaudeThinkingLiveBuffer } from "./claude-thinking-live-buffer";
 
 type ActiveBlockKind = "thinking" | "text" | "other";
 
+const CYRILLIC_LANGUAGE_CODES = new Set([
+  "ab",
+  "be",
+  "bg",
+  "kk",
+  "ky",
+  "mk",
+  "mn",
+  "ru",
+  "sr",
+  "tg",
+  "uk",
+]);
+const CYRILLIC_CHAR_REGEX = /[\u0400-\u052F]/u;
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const shouldHoldLocalizedPreToolText = (
+  targetLanguage: string | undefined,
+  text: string
+): boolean => {
+  const normalizedLanguage = targetLanguage?.trim().toLowerCase();
+  if (
+    !(normalizedLanguage && CYRILLIC_LANGUAGE_CODES.has(normalizedLanguage))
+  ) {
+    return false;
+  }
+  return !CYRILLIC_CHAR_REGEX.test(text);
+};
 
 /**
  * Owns the live content ingestion path for the Claude provider:
@@ -32,6 +60,7 @@ export class ClaudeContentStreamHandler {
     string,
     ActiveBlockKind
   >();
+  private readonly suppressedTextBySession = new Map<string, string>();
 
   constructor(
     thinkingBuffer?: ClaudeThinkingLiveBuffer,
@@ -58,6 +87,7 @@ export class ClaudeContentStreamHandler {
     }
     if (kind === "text") {
       this.textBuffer.reset(session.sessionId);
+      this.suppressedTextBySession.delete(session.sessionId);
       this.activeBlockKindBySession.set(session.sessionId, "text");
       return true;
     }
@@ -71,31 +101,10 @@ export class ClaudeContentStreamHandler {
     }
     const event = message.event as Record<string, unknown>;
     const delta = isRecord(event.delta) ? event.delta : null;
-    const dtype = delta?.type;
-    if (dtype === "thinking_delta") {
-      const text = typeof delta?.thinking === "string" ? delta.thinking : null;
-      if (text) {
-        const segment = this.thinkingBuffer.appendDelta(
-          session.sessionId,
-          text
-        );
-        if (segment) {
-          emitClaudeThinkingDialog(session, message, segment, "thinking_live");
-        }
-      }
-      return true;
-    }
-    if (dtype === "text_delta") {
-      const text = typeof delta?.text === "string" ? delta.text : null;
-      if (text) {
-        const segment = this.textBuffer.appendDelta(session.sessionId, text);
-        if (segment) {
-          emitClaudeAssistantLiveText(session, message, segment, "text_live");
-        }
-      }
-      return true;
-    }
-    return false;
+    return (
+      this.handleThinkingDelta(session, message, delta) ||
+      this.handleTextDelta(session, message, delta)
+    );
   }
 
   handleBlockStop(
@@ -124,6 +133,12 @@ export class ClaudeContentStreamHandler {
     }
     if (
       kind === "text" &&
+      this.suppressedTextBySession.has(session.sessionId)
+    ) {
+      return true;
+    }
+    if (
+      kind === "text" &&
       this.textBuffer.hasAccumulatedContent(session.sessionId)
     ) {
       const remaining = this.textBuffer.flushRemaining(session.sessionId);
@@ -143,6 +158,7 @@ export class ClaudeContentStreamHandler {
   resetSession(sessionKey: string): void {
     this.thinkingBuffer.reset(sessionKey);
     this.textBuffer.reset(sessionKey);
+    this.suppressedTextBySession.delete(sessionKey);
     this.activeBlockKindBySession.delete(sessionKey);
   }
 
@@ -175,6 +191,12 @@ export class ClaudeContentStreamHandler {
     return this.textBuffer.hasMaterializedContent(sessionKey);
   }
 
+  consumeSuppressedText(sessionKey: string): string | null {
+    const suppressed = this.suppressedTextBySession.get(sessionKey);
+    this.suppressedTextBySession.delete(sessionKey);
+    return suppressed && suppressed.trim().length > 0 ? suppressed : null;
+  }
+
   private isStreamEvent(
     message: ClaudeStreamMessage,
     eventType: string
@@ -183,5 +205,94 @@ export class ClaudeContentStreamHandler {
       return false;
     }
     return message.event.type === eventType;
+  }
+
+  private handleThinkingDelta(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    delta: Record<string, unknown> | null
+  ): boolean {
+    if (delta?.type !== "thinking_delta") {
+      return false;
+    }
+    const text = typeof delta.thinking === "string" ? delta.thinking : null;
+    if (!text) {
+      return true;
+    }
+    const segment = this.thinkingBuffer.appendDelta(session.sessionId, text);
+    if (segment) {
+      emitClaudeThinkingDialog(session, message, segment, "thinking_live");
+    }
+    return true;
+  }
+
+  private handleTextDelta(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    delta: Record<string, unknown> | null
+  ): boolean {
+    if (delta?.type !== "text_delta") {
+      return false;
+    }
+    const text = typeof delta.text === "string" ? delta.text : null;
+    if (!text) {
+      return true;
+    }
+    const sessionKey = session.sessionId;
+    const suppressed = this.suppressedTextBySession.get(sessionKey);
+    if (suppressed !== undefined) {
+      return this.handleSuppressedTextDelta(
+        session,
+        message,
+        sessionKey,
+        suppressed,
+        text
+      );
+    }
+    if (this.shouldSuppressTextDelta(session, text)) {
+      this.suppressedTextBySession.set(sessionKey, text);
+      return true;
+    }
+    this.emitLiveTextSegment(session, message, sessionKey, text);
+    return true;
+  }
+
+  private handleSuppressedTextDelta(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    sessionKey: string,
+    suppressed: string,
+    text: string
+  ): boolean {
+    const combined = `${suppressed}${text}`;
+    if (this.shouldSuppressTextDelta(session, combined)) {
+      this.suppressedTextBySession.set(sessionKey, combined);
+      return true;
+    }
+    this.suppressedTextBySession.delete(sessionKey);
+    this.emitLiveTextSegment(session, message, sessionKey, combined);
+    return true;
+  }
+
+  private shouldSuppressTextDelta(
+    session: ActiveSession,
+    text: string
+  ): boolean {
+    return shouldHoldLocalizedPreToolText(
+      session.runtimeTurnConfig.messagesForTheUserLanguage,
+      text
+    );
+  }
+
+  private emitLiveTextSegment(
+    session: ActiveSession,
+    message: ClaudeStreamMessage,
+    sessionKey: string,
+    text: string
+  ): void {
+    const segment = this.textBuffer.appendDelta(sessionKey, text);
+    if (segment) {
+      emitClaudeAssistantLiveText(session, message, segment, "text_live");
+    }
   }
 }

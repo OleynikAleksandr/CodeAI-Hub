@@ -23,12 +23,12 @@
 2. [DONE] Git Commit: `docs: register 1.2.17 Claude live pre-tool thinking bug` (hash: `4c34f3e07`)
 
 ### Stream 2: Release notes pre-bump
-1. [IN_PROGRESS] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.17`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix`
-2. [TODO] Git Commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.17`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix`
+2. [DONE] Git Commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix` (hash: `2ba51e7b3`)
 
 ### Stream 3: Claude pre-tool routing fix
-1. [TODO] Подавить premature assistant/live emission для localized Claude pre-tool text и выпускать `tool_use` preamble через thinking path. — scope: `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`; commit: `fix(claude): route localized pre-tool live text through thinking`
-2. [TODO] Git Commit: `fix(claude): route localized pre-tool live text through thinking` (hash: TBD)
+1. [DONE] Подавить premature assistant/live emission для localized Claude pre-tool text и выпускать `tool_use` preamble через thinking path. — scope: `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`; commit: `fix(claude): route localized pre-tool live text through thinking`
+2. [IN_PROGRESS] Git Commit: `fix(claude): route localized pre-tool live text through thinking` (hash: TBD)
 
 ### Stream 4: Regression guards
 1. [TODO] Добавить regression tests на `tool_use` preamble vs `end_turn` assistant text. — scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts`, `packages/Claude_Module/src/messaging/message-processor.translation.test.ts`; commit: `test(claude): guard pre-tool live text thinking classification`

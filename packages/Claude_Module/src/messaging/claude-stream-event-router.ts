@@ -159,17 +159,21 @@ export class ClaudeStreamEventRouter {
     }
     const stopReason = readClaudeMessageDeltaStopReason(message);
     if (stopReason === "tool_use") {
-      await this.flushPendingAssistantText(session, "tool_use_preamble");
+      await this.flushPendingAssistantText(
+        session,
+        "tool_use_preamble",
+        message
+      );
       this.clearThinkingMessage(session);
       return;
     }
     if (stopReason) {
-      await this.flushPendingAssistantText(session, "regular");
+      await this.flushPendingAssistantText(session, "regular", message);
       this.clearThinkingMessage(session);
       return;
     }
     if (isClaudeMessageStopEvent(message)) {
-      await this.flushPendingAssistantText(session, "regular");
+      await this.flushPendingAssistantText(session, "regular", message);
       this.clearThinkingMessage(session);
       this.contentStreamHandler.resetSession(session.sessionId);
     }
@@ -234,14 +238,35 @@ export class ClaudeStreamEventRouter {
 
   private async flushPendingAssistantText(
     session: ActiveSession,
-    resolution: PendingAssistantTextResolution
+    resolution: PendingAssistantTextResolution,
+    fallbackMessage?: ClaudeStreamMessage
   ): Promise<void> {
     const sessionKey = session.sessionId;
     const pending = this.pendingAssistantTextBySession.get(sessionKey);
     if (!pending) {
+      const suppressed =
+        this.contentStreamHandler.consumeSuppressedText(sessionKey);
+      if (!(suppressed && fallbackMessage)) {
+        return;
+      }
+      if (resolution === "tool_use_preamble") {
+        const translated = await this.translateThinkingContent(
+          session,
+          suppressed
+        );
+        emitClaudeThinkingDialog(
+          session,
+          fallbackMessage,
+          translated,
+          "thinking_text_fallback"
+        );
+        return;
+      }
+      this.emitAssistantText(session, fallbackMessage, suppressed);
       return;
     }
     this.pendingAssistantTextBySession.delete(sessionKey);
+    this.contentStreamHandler.consumeSuppressedText(sessionKey);
 
     const content = await this.resolvePendingAssistantText(
       session,
@@ -253,16 +278,12 @@ export class ClaudeStreamEventRouter {
     }
 
     if (resolution === "tool_use_preamble") {
-      if (pending.semanticRole === "thinking") {
-        emitClaudeThinkingDialog(
-          session,
-          pending.message,
-          content,
-          "thinking_text"
-        );
-        return;
-      }
-      this.emitAssistantText(session, pending.message, content);
+      emitClaudeThinkingDialog(
+        session,
+        pending.message,
+        content,
+        "thinking_text"
+      );
       return;
     }
 
@@ -282,7 +303,7 @@ export class ClaudeStreamEventRouter {
     }
   }
 
-  private async resolvePendingAssistantText(
+  private resolvePendingAssistantText(
     session: ActiveSession,
     pending: PendingAssistantText,
     resolution: PendingAssistantTextResolution
@@ -290,17 +311,7 @@ export class ClaudeStreamEventRouter {
     if (resolution !== "tool_use_preamble") {
       return pending.content;
     }
-
-    if (pending.semanticRole === "thinking") {
-      return pending.content;
-    }
-
-    const translated = await this.thoughtTranslator.translateUserFacingText(
-      pending.content,
-      session.runtimeTurnConfig.messagesForTheUserLanguage,
-      session.runtimeTurnConfig.translationEngineId
-    );
-    return translated ?? pending.content;
+    return this.translateThinkingContent(session, pending.content);
   }
 
   private emitStructuredOutput(
@@ -355,10 +366,10 @@ export class ClaudeStreamEventRouter {
     return suggestedResponse;
   }
 
-  private emitThinkingChunks(
+  private async emitThinkingChunks(
     session: ActiveSession,
     message: ClaudeStreamMessage
-  ): void {
+  ): Promise<void> {
     const content = message.message?.content;
     if (!Array.isArray(content)) {
       return;
@@ -381,10 +392,26 @@ export class ClaudeStreamEventRouter {
           thinking
         );
         if (unseenTail) {
-          emitClaudeThinkingDialog(session, message, unseenTail, "thinking");
+          const translated = await this.translateThinkingContent(
+            session,
+            unseenTail
+          );
+          emitClaudeThinkingDialog(session, message, translated, "thinking");
         }
       }
     }
+  }
+
+  private async translateThinkingContent(
+    session: ActiveSession,
+    content: string
+  ): Promise<string> {
+    const translated = await this.thoughtTranslator.translateReasoning(
+      content,
+      session.runtimeTurnConfig.messagesForTheUserLanguage,
+      session.runtimeTurnConfig.translationEngineId
+    );
+    return translated ?? content;
   }
 
   private extractAssistantText(message: ClaudeStreamMessage): string | null {
