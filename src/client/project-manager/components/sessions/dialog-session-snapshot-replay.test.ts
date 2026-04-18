@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import type { SessionSnapshot } from "../../../../types/session";
+import { mergeHistoryIntoSnapshots, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { appendDedupedSessionMessageToSnapshots, appendOptimisticUserMessage } from "./session-message-dedupe";
 
 const CONTROLLER_SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -20,6 +23,29 @@ const RUNTIME_RESOLVER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/dialog-runtime-session-resolver.ts"
 );
+const DEDUPE_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/session-message-dedupe.ts"
+);
+
+const createSnapshot = (): SessionSnapshot => ({
+  messages: [],
+  todos: [],
+  draft: "",
+  binding: {
+    providerSessionId: null,
+    status: "pending",
+  },
+  status: {
+    providerSummary: "Codex",
+    tokenUsage: {
+      used: 0,
+      limit: 200_000,
+    },
+    connectionState: "idle",
+    updatedAt: Date.now(),
+  },
+});
 
 test("dialog session controller caches workspace snapshots for replay", async () => {
   const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
@@ -184,6 +210,126 @@ test("dialog controller retries stalled cold-open history request after timeout"
     source.includes("requestDialogHistory(activeIntent, dialogId, 0, { force: true });"),
     true,
     "watchdog must issue a forced full-history retry for stalled cold-open"
+  );
+});
+
+test("dialog snapshot replay reconciles optimistic stop-resend user bubble with canonical tail history", () => {
+  const sessionId = "dialog-session";
+  const optimisticSnapshots = appendOptimisticUserMessage(
+    { [sessionId]: createSnapshot() } satisfies SessionSnapshots,
+    sessionId,
+    "Retry this turn"
+  );
+  const optimisticMessage = optimisticSnapshots[sessionId]?.messages[0];
+  assert.ok(optimisticMessage);
+  assert.equal(optimisticSnapshots[sessionId]?.messages.length, 1);
+  assert.equal(optimisticMessage.id.startsWith("optimistic-"), true);
+
+  const reconciled = appendDedupedSessionMessageToSnapshots(optimisticSnapshots, {
+    sessionId,
+    message: {
+      id: "canonical-user-1",
+      role: "user",
+      content: "Retry this turn",
+      createdAt: optimisticMessage.createdAt + 250,
+    },
+  });
+
+  assert.deepEqual(reconciled[sessionId]?.messages, [
+    {
+      id: "canonical-user-1",
+      role: "user",
+      content: "Retry this turn",
+      createdAt: optimisticMessage.createdAt + 250,
+    },
+  ]);
+
+  const repeatedTailMerge = appendDedupedSessionMessageToSnapshots(reconciled, {
+    sessionId,
+    message: {
+      id: "canonical-user-1",
+      role: "user",
+      content: "Retry this turn",
+      createdAt: optimisticMessage.createdAt + 250,
+    },
+  });
+
+  assert.equal(repeatedTailMerge[sessionId]?.messages.length, 1);
+  assert.equal(repeatedTailMerge[sessionId]?.messages[0]?.id, "canonical-user-1");
+});
+
+test("dialog snapshot replay rebuilds from canonical history without reviving optimistic duplicate after workspace switch", () => {
+  const sessionId = "dialog-session";
+  const optimisticSnapshots = appendOptimisticUserMessage(
+    { [sessionId]: createSnapshot() } satisfies SessionSnapshots,
+    sessionId,
+    "Retry this turn"
+  );
+  const optimisticMessage = optimisticSnapshots[sessionId]?.messages[0];
+  assert.ok(optimisticMessage);
+
+  const canonicalHistory = [
+    {
+      id: "canonical-user-1",
+      role: "user" as const,
+      content: "Retry this turn",
+      createdAt: optimisticMessage.createdAt + 500,
+    },
+    {
+      id: "canonical-assistant-1",
+      role: "assistant" as const,
+      content: "Done",
+      createdAt: optimisticMessage.createdAt + 1_000,
+    },
+  ];
+
+  const rebuilt = mergeHistoryIntoSnapshots(
+    { [sessionId]: createSnapshot() } satisfies SessionSnapshots,
+    {
+      sessionId,
+      messages: canonicalHistory,
+    }
+  );
+
+  assert.deepEqual(rebuilt[sessionId]?.messages, canonicalHistory);
+  assert.equal(
+    rebuilt[sessionId]?.messages.some((message) =>
+      message.id.startsWith("optimistic-")
+    ),
+    false
+  );
+});
+
+test("dialog tail replay keeps optimistic reconciliation separate from full-history rebuild path", async () => {
+  const [coreEventsSource, dedupeSource] = await Promise.all([
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+    readFile(DEDUPE_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    coreEventsSource.includes("const isTail = requestedCursor > 0;"),
+    true,
+    "dialog history handler must continue to distinguish tail refresh from full rebuild"
+  );
+  assert.equal(
+    coreEventsSource.includes("mergeHistoryIntoSnapshots(previous, {"),
+    true,
+    "full rebuild path must continue to replace from canonical history"
+  );
+  assert.equal(
+    coreEventsSource.includes("updated = appendDedupedSessionMessageToSnapshots(updated, {"),
+    true,
+    "tail refresh path must continue to flow through dedupe reconciliation"
+  );
+  assert.equal(
+    dedupeSource.includes("const optimisticCandidateIndex = findOptimisticUserCandidateIndex("),
+    true,
+    "dedupe layer must look for optimistic user placeholder before appending canonical tail"
+  );
+  assert.equal(
+    dedupeSource.includes("messages[optimisticCandidateIndex] = payload.message;"),
+    true,
+    "dedupe layer must replace optimistic stop-resend bubble with canonical message"
   );
 });
 

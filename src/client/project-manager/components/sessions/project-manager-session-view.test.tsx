@@ -63,19 +63,18 @@ test("project-manager-session-view restores dialog mode only from live PM intent
   assert.equal(source.includes("initialDialogIntent"), true);
 });
 
-test("project-manager-dialog-session-view wires usage limits refresh into SessionView", async () => {
+test("project-manager-dialog-session-view keeps runtime model sync and dialog send wiring local", async () => {
   const source = await readFile(DIALOG_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("useRuntimeModelSync(session?.id ?? null, setSnapshots);"),
     true
   );
+  assert.equal(source.includes("api.refreshUsageLimits("), false);
   assert.equal(
-    source.includes("const handleRefreshUsageLimits = useCallback("),
+    source.includes("onSendMessage={(_sessionId, content) => sendMessage(content)}"),
     true
   );
-  assert.equal(source.includes("api.refreshUsageLimits(request);"), true);
-  assert.equal(source.includes("onRefreshUsageLimits={handleRefreshUsageLimits}"), true);
   assert.equal(source.includes("activeSessionId={session.id}"), true);
 });
 
@@ -105,6 +104,52 @@ test("project-manager-runtime-session-view keeps session empty-state sync on liv
   );
   assert.equal(
     source.includes("setSessionScopeStage(stage);"),
+    true
+  );
+});
+
+test("project-manager-runtime-session-view rebuilds snapshots from fresh session state after workspace switch", async () => {
+  const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("const nextSnapshots: SessionSnapshots = {};"),
+    true
+  );
+  assert.equal(
+    source.includes("nextSnapshots[session.id] = createInitialSnapshot("),
+    true
+  );
+  assert.equal(
+    source.includes("applyWorkspaceSnapshotToSnapshots(nextSnapshots,"),
+    true
+  );
+  assert.equal(
+    source.includes("snapshotState.currentSnapshot?.workspaceRoot === workspacePath"),
+    true
+  );
+});
+
+test("project-manager-runtime-session-view hydrates canonical history instead of replaying optimistic dialog placeholders", async () => {
+  const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("const normalized = normalizeSessionHistoryMessages(payload.messages);"),
+    true
+  );
+  assert.equal(
+    source.includes("loadedHistorySessionIdsRef.current.add(payload.sessionId);"),
+    true
+  );
+  assert.equal(
+    source.includes("mergeHistoryIntoSnapshots(previous, {"),
+    true
+  );
+  assert.equal(
+    source.includes("loadSessionHistories(config, [session], (payload) => {"),
+    true
+  );
+  assert.equal(
+    source.includes("if (loadedHistorySessionIdsRef.current.has(session.id)) {"),
     true
   );
 });
