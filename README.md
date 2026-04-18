@@ -7,7 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.15
+## Current Release — v1.2.16
+- **Claude no longer gets stuck in false `Agent is resuming...` after a completed turn.** A Claude `Description` turn could finish normally, persist the full final reply into native/SDK/unified logs, and still leave the Session UI blocked in `Agent is resuming your session... Please wait.` The immediate bug was the Unix post-turn `/context` probe runner in [`packages/Claude_Module/src/sdk/claude-context-usage-probe.ts`](packages/Claude_Module/src/sdk/claude-context-usage-probe.ts): on macOS/Linux it executed `node <executablePath> ...`, but the installed `claude` command can resolve to a native bundle (`claude.exe` inside the package), so the probe crashed with `ERR_UNKNOWN_FILE_EXTENSION`. The release fixes the runner selection to execute native Claude binaries directly on Unix and also hardens Core continuity arbitration: if a provider explicitly reports that post-turn token usage is unavailable, Core resolves the turn to `no_rollover` instead of leaving the session in endless `context_check_pending`.
+
+### 1.2.15 (previous)
 - **Model label flicker eliminated completely.** 1.2.13 fixed the Core-side broadcast path (raw SDK `model_info` → effective id), but there was still a second flicker path: the **client-side initial render** goes through `resolveModelReasoning` in [`src/client/ui/src/session/model-info-builder.ts`](src/client/ui/src/session/model-info-builder.ts), which for Gemini and Codex returned the raw level string from settings (`"high"` / `"medium"`) instead of the prefixed form (`"thinking high"` / `"reasoning medium"`). At first render the label briefly appeared as `Gemini 3.1 Pro Preview (high)`, then Core's `session:model:update` replaced it with the effective `(thinking high)` — user saw a one-frame flicker, most visible on temp-session start. Both fallback branches now wrap the level in the appropriate provider prefix, matching the form `parseEffectiveModelId` produces. Claude branch is unchanged (separate convention with `"thinking off"` / raw effort). UI label is now stable from the very first render.
 
 ### 1.2.14 (previous)

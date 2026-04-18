@@ -19,11 +19,11 @@
 ## Phase 1 — Claude Context Probe + Continuity Unlock 1.2.16 (owner: Codex, updated: 2026-04-18)
 
 ### Stream 1: Scope registration
-1. [TODO] Зарегистрировать `BUG-2026-04-18-01` в `doc/BugRegistry.md`, создать planning-doc и активный `todo-plan.md`. — scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/Claude_ContextProbe_ContinuityFix_1.2.16.md`, `doc/TODO/todo-plan.md`; commit: `docs: register 1.2.16 Claude context probe continuity bug`
-2. [TODO] Git Commit: `docs: register 1.2.16 Claude context probe continuity bug` (hash: TBD)
+1. [DONE] Зарегистрировать `BUG-2026-04-18-01` в `doc/BugRegistry.md`, создать planning-doc и активный `todo-plan.md`. — scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/Claude_ContextProbe_ContinuityFix_1.2.16.md`, `doc/TODO/todo-plan.md`; commit: `docs: register 1.2.16 Claude context probe continuity bug`
+2. [DONE] Git Commit: `docs: register 1.2.16 Claude context probe continuity bug` (hash: `99145e688`)
 
 ### Stream 2: Release notes pre-bump
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.16`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.16 release notes for Claude context probe fix`
+1. [IN_PROGRESS] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.16`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.16 release notes for Claude context probe fix`
 2. [TODO] Git Commit: `docs: prepare 1.2.16 release notes for Claude context probe fix` (hash: TBD)
 
 ### Stream 3: Claude probe runner fix

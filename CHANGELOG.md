@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.16] - 2026-04-18
+### Fixed
+- **Claude false `resuming` continuity lock after a successful final reply.** A Claude turn could complete normally, persist the final assistant response, and then fail during post-turn `/context` usage refresh because the Unix probe path launched `node <executablePath> ...` even when `claude` resolved to a native bundled executable. `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts` now executes native Claude binaries directly on Unix and uses `process.execPath` only for real JS entrypoints.
+- **Core continuity arbitration now has an explicit provider-side fallback for missing trailing usage snapshots.** When an eligible flow-node session reaches `turn_completed` without a usable usage snapshot, Core still does not auto-assume `no_rollover`. But if the provider explicitly marks post-turn usage as unavailable, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts` now resolves the turn to `no_rollover` instead of leaving the session stuck in `context_check_pending`.
+
+### Contracts
+- **Claude post-turn usage-unavailable signal.** Claude completion flow may emit an explicit `postTurnTokenUsageUnavailable` signal when `/context` usage probing fails after a completed turn.
+- **Continuity arbitration invariant.** Shared Core continuity logic may fall back to `no_rollover` only on an explicit provider signal that trailing usage is unavailable; absence of usage alone is still not enough.
+
 ## [1.2.15] - 2026-04-17
 ### Fixed
 - **Client-side label fallback flicker.** Companion fix to 1.2.13 (which addressed only the Core-side broadcast path). `src/client/ui/src/session/model-info-builder.ts` `resolveModelReasoning` for Gemini/Codex branches was returning the raw thinking/reasoning level from settings without the provider-specific prefix, so the initial client render produced `(high)` / `(medium)` while `parseEffectiveModelId` on effective ids produced `(thinking high)` / `(reasoning medium)`. First render matched settings, then Core's `session:model:update` replaced it — user saw a one-frame flicker most visible on temp-session start. Fallback now wraps the level as `thinking ${level}` / `reasoning ${level}`. Both paths now produce identical labels.
