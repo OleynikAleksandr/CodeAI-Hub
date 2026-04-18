@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
+import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
