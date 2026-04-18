@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Claude_LivePreToolThinking_1.2.17.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_LivePreToolThinking_1.2.17.md`
 - **Read this context before implementation:**
   - `doc/BugRegistry.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
@@ -36,11 +36,11 @@
 
 ### Stream 5: SSOT sync
 1. [DONE] Обновить Claude/System SSOT под новый pre-tool thinking contract. — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; commit: `docs: document Claude pre-tool live text thinking contract`
-2. [IN_PROGRESS] Git Commit: `docs: document Claude pre-tool live text thinking contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: document Claude pre-tool live text thinking contract` (hash: `f4bfae675`)
 
 ### Stream 6: Planning archive
-1. [TODO] После завершения реализации перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md`. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_LivePreToolThinking_1.2.17.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.17 Claude pre-tool thinking plan`
-2. [TODO] Git Commit: `docs: archive 1.2.17 Claude pre-tool thinking plan` (hash: TBD)
+1. [DONE] После завершения реализации перенести planning-doc в `Plans/Archive/`, обновить `Docs_Index.md` и перепривязать active `todo-plan.md` на archive-path planning source. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_LivePreToolThinking_1.2.17.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; commit: `docs: archive 1.2.17 Claude pre-tool thinking plan`
+2. [IN_PROGRESS] Git Commit: `docs: archive 1.2.17 Claude pre-tool thinking plan` (hash: TBD)
 
 ### Stream 7: Release build 1.2.17
 1. [TODO] Прогнать таргетные тесты/сборки, затем `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.17 for Claude pre-tool thinking fix release`
