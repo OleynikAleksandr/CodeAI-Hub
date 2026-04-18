@@ -19,11 +19,11 @@
 ## Phase 1 — Claude live pre-tool thinking fix 1.2.17 (owner: Codex, updated: 2026-04-18)
 
 ### Stream 1: Scope registration
-1. [IN_PROGRESS] Зарегистрировать `BUG-2026-04-18-02`, создать planning-doc и активный `todo-plan.md`. — scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/Claude_LivePreToolThinking_1.2.17.md`, `doc/TODO/todo-plan.md`; commit: `docs: register 1.2.17 Claude live pre-tool thinking bug`
-2. [TODO] Git Commit: `docs: register 1.2.17 Claude live pre-tool thinking bug` (hash: TBD)
+1. [DONE] Зарегистрировать `BUG-2026-04-18-02`, создать planning-doc и активный `todo-plan.md`. — scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/Claude_LivePreToolThinking_1.2.17.md`, `doc/TODO/todo-plan.md`; commit: `docs: register 1.2.17 Claude live pre-tool thinking bug`
+2. [DONE] Git Commit: `docs: register 1.2.17 Claude live pre-tool thinking bug` (hash: `4c34f3e07`)
 
 ### Stream 2: Release notes pre-bump
-1. [TODO] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.17`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix`
+1. [IN_PROGRESS] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.17`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix`
 2. [TODO] Git Commit: `docs: prepare 1.2.17 release notes for Claude pre-tool thinking fix` (hash: TBD)
 
 ### Stream 3: Claude pre-tool routing fix

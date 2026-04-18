@@ -7,7 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.16
+## Current Release — v1.2.17
+- **Claude pre-tool progress text no longer leaks into the dialog as a normal assistant bubble.** In localized Claude workflow turns, a pre-tool fragment such as `I've read the Final_Description.md... Let me create the directory...` could appear between two `Claude · Thinking` bubbles as an ordinary assistant/live message. This was wrong in two ways: the fragment was progress/thinking-like text before a `tool_use`, not a real final answer, and because it materialized as assistant/live it skipped the thinking translation path and stayed in English. The 1.2.17 fix hardens the Claude messaging path so localized pre-tool text no longer escapes through the assistant/live branch when the message resolves to `tool_use`; instead it follows the thinking contract, while ordinary `end_turn` assistant text stays on the normal assistant path.
+
+### 1.2.16 (previous)
 - **Claude no longer gets stuck in false `Agent is resuming...` after a completed turn.** A Claude `Description` turn could finish normally, persist the full final reply into native/SDK/unified logs, and still leave the Session UI blocked in `Agent is resuming your session... Please wait.` The immediate bug was the Unix post-turn `/context` probe runner in [`packages/Claude_Module/src/sdk/claude-context-usage-probe.ts`](packages/Claude_Module/src/sdk/claude-context-usage-probe.ts): on macOS/Linux it executed `node <executablePath> ...`, but the installed `claude` command can resolve to a native bundle (`claude.exe` inside the package), so the probe crashed with `ERR_UNKNOWN_FILE_EXTENSION`. The release fixes the runner selection to execute native Claude binaries directly on Unix and also hardens Core continuity arbitration: if a provider explicitly reports that post-turn token usage is unavailable, Core resolves the turn to `no_rollover` instead of leaving the session in endless `context_check_pending`.
 
 ### 1.2.15 (previous)

@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.17] - 2026-04-18
+### Fixed
+- **Claude localized pre-tool text no longer leaks as assistant/live output before `tool_use`.** In localized workflow turns, Claude could emit an English pre-tool progress fragment such as `I've read the Final_Description.md... Let me create the directory...` and our live text path persisted it as an ordinary assistant/live message between two `Thinking` bubbles. The fragment was therefore shown as a normal answer and skipped the thinking translation overlay. The Claude messaging path now holds localized pre-tool text off the assistant/live branch until the message outcome is known and routes `tool_use` preambles through the thinking contract instead of through the ordinary assistant path.
+
+### Contracts
+- **Claude pre-tool text classification.** Claude text that belongs to a message resolving to `tool_use` must not surface as a visible assistant/live bubble in localized sessions; it follows the thinking rendering/translation path instead. Ordinary `end_turn` assistant text keeps the existing assistant contract.
+
 ## [1.2.16] - 2026-04-18
 ### Fixed
 - **Claude false `resuming` continuity lock after a successful final reply.** A Claude turn could complete normally, persist the final assistant response, and then fail during post-turn `/context` usage refresh because the Unix probe path launched `node <executablePath> ...` even when `claude` resolved to a native bundled executable. `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts` now executes native Claude binaries directly on Unix and uses `process.execPath` only for real JS entrypoints.
