@@ -8,6 +8,7 @@ import {
 const createSnapshot = (options?: {
   readonly providerScopeKey?: string;
   readonly providerSummary?: string;
+  readonly tokenUsage?: SessionSnapshot["status"]["tokenUsage"];
   readonly updatedAt?: number;
   readonly usageLimits?: SessionSnapshot["status"]["usageLimits"];
 }): SessionSnapshot => ({
@@ -23,7 +24,7 @@ const createSnapshot = (options?: {
     ...(options?.providerScopeKey
       ? { providerScopeKey: options.providerScopeKey }
       : {}),
-    tokenUsage: { used: 0, limit: 200_000 },
+    tokenUsage: options?.tokenUsage ?? { used: 0, limit: 200_000 },
     connectionState: "running",
     continuityLock: {
       active: true,
@@ -185,4 +186,46 @@ test("updateSnapshotsWithUsageLimits keeps cached usage snapshot stable for iden
   });
 
   assert.equal(next, snapshots);
+});
+
+test("updateSnapshotsWithUsageLimits keeps tokenUsage untouched when replaying cached usage limits", () => {
+  const snapshots = {
+    s1: createSnapshot({
+      providerSummary: "Codex",
+      providerScopeKey: "codex:global",
+      tokenUsage: { used: 512, limit: 2_000 },
+    }),
+    s2: createSnapshot({
+      providerSummary: "Codex",
+      providerScopeKey: "codex:global",
+      tokenUsage: { used: 128, limit: 1_000 },
+    }),
+  };
+
+  const next = updateSnapshotsWithUsageLimits(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      providerSessionId: "provider-session-replay",
+      data: {
+        kind: "usage_limits",
+        providerScopeKey: "codex:provider-session-replay",
+        usageLimits: {
+          currentSession: {
+            percentUsed: 33,
+            resetsAt: "2026-04-18T12:00:00.000Z",
+          },
+        },
+      },
+    },
+  });
+
+  assert.equal(next.s1.status.usageLimits?.currentSession?.percentUsed, 33);
+  assert.equal(next.s2.status.usageLimits?.currentSession?.percentUsed, 33);
+  assert.deepEqual(next.s1.status.tokenUsage, { used: 512, limit: 2_000 });
+  assert.deepEqual(next.s2.status.tokenUsage, { used: 128, limit: 1_000 });
+  assert.equal(next.s1.status.connectionState, "running");
+  assert.equal(next.s2.status.connectionState, "running");
+  assert.equal(next.s1.status.continuityLock?.active, true);
+  assert.equal(next.s2.status.continuityLock?.active, true);
 });

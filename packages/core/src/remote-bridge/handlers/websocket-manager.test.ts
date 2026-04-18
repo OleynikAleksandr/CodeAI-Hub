@@ -60,6 +60,32 @@ const waitFor = async <T>(
   throw new Error("Timed out while waiting for async condition.");
 };
 
+const findSessionStreamMessage = (
+  messages: readonly unknown[],
+  sessionId: string,
+  kind: "token_usage" | "usage_limits"
+): unknown | null =>
+  messages.find((message) => {
+    if (!message || typeof message !== "object") {
+      return false;
+    }
+    const payload =
+      "payload" in message &&
+      message.payload &&
+      typeof message.payload === "object"
+        ? (message.payload as Record<string, unknown>)
+        : null;
+    const event =
+      payload?.event && typeof payload.event === "object"
+        ? (payload.event as Record<string, unknown>)
+        : null;
+    const data =
+      event?.data && typeof event.data === "object"
+        ? (event.data as Record<string, unknown>)
+        : null;
+    return payload?.sessionId === sessionId && data?.kind === kind;
+  }) ?? null;
+
 const handleIncomingMessage = async (): Promise<void> => {
   // No-op: this test drives the manager directly instead of client requests.
 };
@@ -242,6 +268,180 @@ test("WebSocketManager replays usage limits after workspace scope changes", asyn
   } finally {
     if (socket) {
       await closeSocket(socket);
+    }
+    manager.stop();
+    await closeServer(httpServer);
+  }
+});
+
+test("WebSocketManager replays cached token usage and normalizes legacy usage limits after reconnect", async () => {
+  const httpServer = http.createServer();
+  const connectedClientIds: string[] = [];
+  const manager = new WebSocketManager({
+    httpServer,
+    logger: new Logger("error"),
+    onIncomingMessage: handleIncomingMessage,
+    onClientConnected: (connectedId) => {
+      connectedClientIds.push(connectedId);
+    },
+    onClientDisconnected: handleClientDisconnected,
+    getInitialState: () => ({ sessions: [], providers: [] }),
+    getLatestStatus: () => null,
+  });
+
+  let firstSocket: WebSocket | null = null;
+  let secondSocket: WebSocket | null = null;
+  try {
+    manager.start();
+    const port = await listen(httpServer);
+    firstSocket = new WebSocket(`ws://127.0.0.1:${port}/api/v1/stream`);
+    await once(firstSocket, "open");
+
+    const workspace = "/tmp/codeai-hub-workspace-reconnect";
+    const sessionId = "session-reconnect";
+
+    manager.broadcast({
+      type: "session:created",
+      payload: {
+        id: sessionId,
+        providerId: "codexCli",
+        workspacePath: workspace,
+        initiativeSlug: null,
+        stage: "description",
+        runSlug: null,
+        continuationParentId: null,
+        continuationIndex: 0,
+        title: "Reconnect Session",
+        createdAt: "2026-04-18T08:00:00.000Z",
+        updatedAt: "2026-04-18T08:00:00.000Z",
+        providerSessionId: "provider-session-reconnect",
+        providerSessionStatus: "ready",
+      },
+    });
+    manager.broadcast({
+      type: "session:stream",
+      payload: {
+        sessionId,
+        event: {
+          type: "stream_event",
+          providerSessionId: "provider-session-reconnect",
+          tokenUsage: {
+            used: 144,
+            limit: 200_000,
+          },
+          data: {
+            kind: "token_usage",
+            used: 144,
+            limit: 200_000,
+          },
+          uuid: "live::token_usage",
+          timestamp: "2026-04-18T08:00:01.000Z",
+        },
+      },
+    });
+    manager.broadcast({
+      type: "session:stream",
+      payload: {
+        sessionId,
+        event: {
+          providerSessionId: "provider-session-reconnect",
+          usageLimits: {
+            currentSession: {
+              percentUsed: 22,
+              resetsAt: "2026-04-18T12:00:00.000Z",
+            },
+          },
+          data: {
+            kind: "usage_limits",
+            providerScopeKey: "codex:provider-session-reconnect",
+            usageLimits: {
+              currentSession: {
+                percentUsed: 22,
+                resetsAt: "2026-04-18T12:00:00.000Z",
+              },
+            },
+          },
+          timestamp: "2026-04-18T08:00:02.000Z",
+        },
+      },
+    });
+
+    await closeSocket(firstSocket);
+    firstSocket = null;
+
+    secondSocket = new WebSocket(`ws://127.0.0.1:${port}/api/v1/stream`);
+    const reconnectMessages: unknown[] = [];
+    secondSocket.on("message", (payload) => {
+      reconnectMessages.push(JSON.parse(payload.toString()));
+    });
+    await once(secondSocket, "open");
+    await waitFor(() => connectedClientIds[1] ?? null);
+
+    const replayedTokenUsage = await waitFor(() =>
+      findSessionStreamMessage(reconnectMessages, sessionId, "token_usage")
+    );
+    const replayedUsageLimits = await waitFor(() =>
+      findSessionStreamMessage(reconnectMessages, sessionId, "usage_limits")
+    );
+
+    const tokenPayload = (
+      replayedTokenUsage as {
+        readonly payload: {
+          readonly event: {
+            readonly data: {
+              readonly kind: "token_usage";
+              readonly limit: number;
+              readonly used: number;
+            };
+            readonly type: string;
+            readonly uuid: string;
+          };
+        };
+      }
+    ).payload;
+    const usagePayload = (
+      replayedUsageLimits as {
+        readonly payload: {
+          readonly event: {
+            readonly data: {
+              readonly kind: "usage_limits";
+              readonly providerScopeKey: string;
+              readonly usageLimits: {
+                readonly currentSession?: {
+                  readonly percentUsed: number;
+                } | null;
+              };
+            };
+            readonly providerSessionId: string;
+            readonly type: string;
+          };
+        };
+      }
+    ).payload;
+
+    assert.equal(tokenPayload.event.type, "stream_event");
+    assert.equal(tokenPayload.event.uuid, "replay::token_usage");
+    assert.equal(tokenPayload.event.data.used, 144);
+    assert.equal(tokenPayload.event.data.limit, 200_000);
+    assert.equal(usagePayload.event.type, "stream_event");
+    assert.equal(
+      usagePayload.event.providerSessionId,
+      "provider-session-reconnect"
+    );
+    assert.equal(
+      usagePayload.event.data.providerScopeKey,
+      "codex:provider-session-reconnect"
+    );
+    assert.equal(
+      usagePayload.event.data.usageLimits.currentSession?.percentUsed,
+      22
+    );
+  } finally {
+    if (firstSocket) {
+      await closeSocket(firstSocket);
+    }
+    if (secondSocket) {
+      await closeSocket(secondSocket);
     }
     manager.stop();
     await closeServer(httpServer);
