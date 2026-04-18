@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Claude_ContextProbe_ContinuityFix_1.2.16.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_ContextProbe_ContinuityFix_1.2.16.md`
 - **Read this context before implementation:**
   - `doc/BugRegistry.md`
   - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
@@ -35,15 +35,15 @@
 2. [DONE] Git Commit: `fix(claude): mark post-turn token usage as unavailable on probe failure` (hash: `ba50e58c5`)
 
 ### Stream 5: Core continuity fallback
-1. [IN_PROGRESS] Научить Core снимать `context_check_pending` по explicit provider signal и покрыть regression test'ом. — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`; commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable`
-2. [TODO] Git Commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable` (hash: TBD)
+1. [DONE] Научить Core снимать `context_check_pending` по explicit provider signal и покрыть regression test'ом. — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`; commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable`
+2. [DONE] Git Commit: `fix(core): unlock continuity when provider marks post-turn usage unavailable` (hash: `e90615eb2`)
 
 ### Stream 6: SSOT sync
-1. [TODO] Обновить SSOT/contract docs под новый Claude continuity fallback contract. — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; commit: `docs: document Claude post-turn usage unavailable continuity contract`
-2. [TODO] Git Commit: `docs: document Claude post-turn usage unavailable continuity contract` (hash: TBD)
+1. [DONE] Обновить SSOT/contract docs под новый Claude continuity fallback contract. — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; commit: `docs: document Claude post-turn usage unavailable continuity contract`
+2. [DONE] Git Commit: `docs: document Claude post-turn usage unavailable continuity contract` (hash: `e89f63eb6`)
 
 ### Stream 7: Planning archive
-1. [TODO] После завершения реализации перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md`. — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_ContextProbe_ContinuityFix_1.2.16.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.16 Claude continuity planning doc`
+1. [IN_PROGRESS] После завершения реализации перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md`. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_ContextProbe_ContinuityFix_1.2.16.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.16 Claude continuity planning doc`
 2. [TODO] Git Commit: `docs: archive 1.2.16 Claude continuity planning doc` (hash: TBD)
 
 ### Stream 8: Release build 1.2.16
