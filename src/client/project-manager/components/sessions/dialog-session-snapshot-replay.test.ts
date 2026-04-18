@@ -96,7 +96,7 @@ const ensureBrowserLikeGlobals = (): void => {
         this.detail = init?.detail as T;
       }
     }
-    globalScope.CustomEvent = TestCustomEvent as typeof CustomEvent;
+    globalScope.CustomEvent = TestCustomEvent as unknown as typeof CustomEvent;
   }
 };
 
