@@ -32,11 +32,11 @@
 
 ### Stream 4: Regression guards
 1. [DONE] Добавить regression tests на `tool_use` preamble vs `end_turn` assistant text. — scope: `packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts`, `packages/Claude_Module/src/messaging/message-processor.translation.test.ts`, `packages/Claude_Module/src/messaging/message-processor.pretool-thinking.translation.test.ts`; commit: `test(claude): guard pre-tool live text thinking classification`
-2. [IN_PROGRESS] Git Commit: `test(claude): guard pre-tool live text thinking classification` (hash: TBD)
+2. [DONE] Git Commit: `test(claude): guard pre-tool live text thinking classification` (hash: `f43eca975`)
 
 ### Stream 5: SSOT sync
-1. [TODO] Обновить Claude/System SSOT под новый pre-tool thinking contract. — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; commit: `docs: document Claude pre-tool live text thinking contract`
-2. [TODO] Git Commit: `docs: document Claude pre-tool live text thinking contract` (hash: TBD)
+1. [DONE] Обновить Claude/System SSOT под новый pre-tool thinking contract. — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; commit: `docs: document Claude pre-tool live text thinking contract`
+2. [IN_PROGRESS] Git Commit: `docs: document Claude pre-tool live text thinking contract` (hash: TBD)
 
 ### Stream 6: Planning archive
 1. [TODO] После завершения реализации перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md`. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_LivePreToolThinking_1.2.17.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.17 Claude pre-tool thinking plan`
