@@ -1,4 +1,6 @@
 import { spawn } from "node:child_process";
+import { realpathSync } from "node:fs";
+import path from "node:path";
 
 interface ExecFailure {
   readonly code?: unknown;
@@ -19,16 +21,42 @@ export interface ContextUsageProbeResult {
 }
 
 const isWindows = process.platform === "win32";
+const JAVASCRIPT_ENTRYPOINT_EXTENSIONS = new Set([".cjs", ".js", ".mjs"]);
 
 const CONTEXT_READ_TIMEOUT_MS = 120_000;
 const PROCESS_KILL_GRACE_MS = 2000;
 const MAX_TAIL_CHARS = 4000;
 
-const resolveClaudeRunner = (payload: {
-  readonly executablePath: string;
-  readonly args: readonly string[];
-}): { readonly runner: string; readonly args: string[] } => {
-  if (isWindows) {
+const resolveExecutablePathForRunnerSelection = (
+  executablePath: string
+): string => {
+  try {
+    return realpathSync(executablePath);
+  } catch {
+    return executablePath;
+  }
+};
+
+const shouldUseNodeRunner = (
+  executablePath: string,
+  platform = process.platform
+): boolean => {
+  if (platform === "win32") {
+    return false;
+  }
+  const resolvedPath = resolveExecutablePathForRunnerSelection(executablePath);
+  const extension = path.extname(resolvedPath).toLowerCase();
+  return JAVASCRIPT_ENTRYPOINT_EXTENSIONS.has(extension);
+};
+
+export const resolveClaudeRunner = (
+  payload: {
+    readonly executablePath: string;
+    readonly args: readonly string[];
+  },
+  platform = process.platform
+): { readonly runner: string; readonly args: string[] } => {
+  if (!shouldUseNodeRunner(payload.executablePath, platform)) {
     return { runner: payload.executablePath, args: [...payload.args] };
   }
   return {
@@ -88,10 +116,13 @@ export const runClaudeContextUsageProbe = (options: {
   readonly cwd: string;
   readonly env: NodeJS.ProcessEnv;
 }): Promise<ContextUsageProbeResult> => {
-  const resolved = resolveClaudeRunner({
-    executablePath: options.executablePath,
-    args: options.args,
-  });
+  const resolved = resolveClaudeRunner(
+    {
+      executablePath: options.executablePath,
+      args: options.args,
+    },
+    isWindows ? "win32" : process.platform
+  );
 
   const start = process.hrtime.bigint();
 

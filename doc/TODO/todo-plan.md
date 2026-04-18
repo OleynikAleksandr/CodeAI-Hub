@@ -23,11 +23,11 @@
 2. [DONE] Git Commit: `docs: register 1.2.16 Claude context probe continuity bug` (hash: `99145e688`)
 
 ### Stream 2: Release notes pre-bump
-1. [IN_PROGRESS] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.16`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.16 release notes for Claude context probe fix`
-2. [TODO] Git Commit: `docs: prepare 1.2.16 release notes for Claude context probe fix` (hash: TBD)
+1. [DONE] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.16`. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.16 release notes for Claude context probe fix`
+2. [DONE] Git Commit: `docs: prepare 1.2.16 release notes for Claude context probe fix` (hash: `4d44528fa`)
 
 ### Stream 3: Claude probe runner fix
-1. [TODO] Исправить Unix runner selection для Claude `/context` probe и добавить unit guard. — scope: `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-probe.test.ts`; commit: `fix(claude): run context usage probe with native binary on unix`
+1. [IN_PROGRESS] Исправить Unix runner selection для Claude `/context` probe и добавить unit guard. — scope: `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts`, `packages/Claude_Module/src/sdk/claude-context-usage-probe.test.ts`; commit: `fix(claude): run context usage probe with native binary on unix`
 2. [TODO] Git Commit: `fix(claude): run context usage probe with native binary on unix` (hash: TBD)
 
 ### Stream 4: Claude post-turn unavailable signal
