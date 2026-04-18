@@ -43,11 +43,11 @@
 2. [DONE] Git Commit: `docs: document Claude post-turn usage unavailable continuity contract` (hash: `e89f63eb6`)
 
 ### Stream 7: Planning archive
-1. [IN_PROGRESS] После завершения реализации перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md`. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_ContextProbe_ContinuityFix_1.2.16.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.16 Claude continuity planning doc`
-2. [TODO] Git Commit: `docs: archive 1.2.16 Claude continuity planning doc` (hash: TBD)
+1. [DONE] После завершения реализации перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md`. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_ContextProbe_ContinuityFix_1.2.16.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.16 Claude continuity planning doc`
+2. [DONE] Git Commit: `docs: archive 1.2.16 Claude continuity planning doc` (hash: `53602f016`)
 
 ### Stream 8: Release build 1.2.16
-1. [TODO] Прогнать таргетные тесты/сборки и затем `./scripts/build-all.sh`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.16 for Claude continuity fix release`
+1. [DONE] Прогнать таргетные тесты/сборки и затем `./scripts/build-all.sh`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.16 for Claude continuity fix release`
 2. [TODO] Git Commit: `chore: bump version to 1.2.16 for Claude continuity fix release` (hash: TBD)
 3. [TODO] Архивировать `todo-plan.md`, вернуть placeholder `Execution Scope Status: EMPTY`. — scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-1.2.16-claude-context-probe-fix.md`; commit: `docs: close 1.2.16 todo-plan after build`
 4. [TODO] Git Commit: `docs: close 1.2.16 todo-plan after build` (hash: TBD)
