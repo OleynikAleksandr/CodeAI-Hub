@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.18] - 2026-04-18
+### Fixed
+- **Claude final live text finalization is now order-safe.** Late `content_block_stop` events can no longer append an orphan tail after the canonical final assistant text has already been materialized. The live buffer tracks the finalized text per session and emits only unseen canonical tail content.
+- **Codex terminal assistant emission is now single-owner.** When rollout produces equivalent `final_answer` and `task_complete` terminal payloads for the same turn, the first authoritative terminal answer wins and the fallback duplicate is suppressed even in the observed missing-`turn_id` case.
+- **Project Manager canonical history now reconciles optimistic `Stop` → resend user bubbles.** When the user stops a turn and immediately resends the same message, the canonical history entry replaces the recent optimistic placeholder instead of rendering side-by-side as a duplicate user bubble.
+- **Usage telemetry is replay-first and lifecycle-owned.** Codex and Gemini now deliver fresh usage telemetry on turn completion, Core replays cached `usage_limits` on reopen/reconnect before considering a provider refresh, and the ready-binding bootstrap refresh is allowed only once per binding lifecycle instead of re-triggering on every idle dialog reopen.
+- **Idle dialog restore and background polling churn are reduced.** Session usage refresh ownership moved out of the PM UI, idle dialog restore no longer self-refreshes usage limits, and workflow/artifact/diagram polling now uses a visibility-aware budget (`foreground`, `background`, `hidden`) instead of one constant cadence.
+
+### Contracts
+- **Single terminal assistant emission.** Claude live finalization, Codex rollout terminal delivery, and PM canonical history now follow a one-owner dedupe contract: final assistant text and canonical user history replace optimistic/intermediate material instead of appending parallel duplicates.
+- **Display-only usage UI with replay-first delivery.** `Session ID + Usage Limits` is a passive surface; authoritative usage telemetry belongs to provider turn-completion delivery plus Core websocket replay/bootstrap rules, while PM observers only render the latest snapshot and adjust polling cadence to window visibility.
+
 ## [1.2.17] - 2026-04-18
 ### Fixed
 - **Claude localized pre-tool text no longer leaks as assistant/live output before `tool_use`.** In localized workflow turns, Claude could emit an English pre-tool progress fragment such as `I've read the Final_Description.md... Let me create the directory...` and our live text path persisted it as an ordinary assistant/live message between two `Thinking` bubbles. The fragment was therefore shown as a normal answer and skipped the thinking translation overlay. The Claude messaging path now holds localized pre-tool text off the assistant/live branch until the message outcome is known and routes `tool_use` preambles through the thinking contract instead of through the ordinary assistant path.
