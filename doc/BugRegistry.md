@@ -146,6 +146,30 @@
 - Add an explicit provider-side completion signal that post-turn token usage is unavailable when the probe fails.
 - Teach Core continuity arbitration to resolve `no_rollover` on that explicit signal instead of waiting forever in `context_check_pending`.
 
+**Fix (implemented, awaiting user retest):**
+- `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts` now distinguishes Unix native Claude bundles from JS entrypoints: native executables run directly, while `process.execPath` is used only for real `.js/.cjs/.mjs` entrypoints.
+- `packages/Claude_Module/src/messaging/claude-token-usage-sync.ts`, `claude-usage-sync.ts`, and `claude-message-finish-handler.ts` now propagate explicit `postTurnTokenUsageUnavailable: true` in `turn_completed` when a completed Claude turn cannot produce a trailing `/context` usage snapshot.
+- `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts` now resolves `context_check_pending` to `no_rollover` only on that explicit provider signal, keeping the existing invariant that missing usage by itself is not enough.
+
+**Commits:**
+- `9f06e5e35 fix(claude): run context usage probe with native binary on unix`
+- `ba50e58c5 fix(claude): mark post-turn token usage as unavailable on probe failure`
+- `e90615eb2 fix(core): unlock continuity when provider marks post-turn usage unavailable`
+- `e89f63eb6 docs: document Claude post-turn usage unavailable continuity contract`
+- `769844013 chore: bump version to 1.2.16 for Claude continuity fix release`
+
+**Release candidate:**
+- `1.2.16`
+- VSIX built: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.16.vsix`
+
+**Guards delivered:**
+- `node --test --import tsx packages/Claude_Module/src/sdk/claude-context-usage-probe.test.ts`
+- `node --test --import tsx --test-name-pattern "explicit post-turn usage unavailable|delayed no-rollover on the production token-usage path" packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
+
 **Validation target:**
 - Release candidate `1.2.16`.
 - User retest required before moving the bug to `FIXED`.

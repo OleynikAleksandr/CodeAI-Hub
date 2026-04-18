@@ -47,7 +47,7 @@
 2. [DONE] Git Commit: `docs: archive 1.2.16 Claude continuity planning doc` (hash: `53602f016`)
 
 ### Stream 8: Release build 1.2.16
-1. [DONE] Прогнать таргетные тесты/сборки и затем `./scripts/build-all.sh`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.16 for Claude continuity fix release`
-2. [TODO] Git Commit: `chore: bump version to 1.2.16 for Claude continuity fix release` (hash: TBD)
+1. [DONE] Прогнать таргетные тесты/сборки, затем `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`. — scope: release/build artifacts; commit: `chore: bump version to 1.2.16 for Claude continuity fix release`
+2. [DONE] Git Commit: `chore: bump version to 1.2.16 for Claude continuity fix release` (hash: `769844013`)
 3. [TODO] Архивировать `todo-plan.md`, вернуть placeholder `Execution Scope Status: EMPTY`. — scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-1.2.16-claude-context-probe-fix.md`; commit: `docs: close 1.2.16 todo-plan after build`
 4. [TODO] Git Commit: `docs: close 1.2.16 todo-plan after build` (hash: TBD)
