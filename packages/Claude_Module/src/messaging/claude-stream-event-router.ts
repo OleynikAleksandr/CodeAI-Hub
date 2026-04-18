@@ -81,6 +81,7 @@ export class ClaudeStreamEventRouter {
     session: ActiveSession,
     message: ClaudeStreamMessage
   ): Promise<void> {
+    const sessionKey = session.sessionId;
     await this.emitThinkingChunks(session, message);
     const assistantText = this.extractAssistantText(message);
     if (!assistantText) {
@@ -88,13 +89,17 @@ export class ClaudeStreamEventRouter {
     }
     // Reconcile the assembled assistant text against whatever was already
     // materialized via the live text_delta path. Capture materialization
-    // status BEFORE consumeFinalText because that call clears buffer state.
+    // status BEFORE consumeFinalText so the router can keep a single owner
+    // for terminal emission even when the assembled assistant arrives early.
     const hadLiveMaterialization =
-      this.contentStreamHandler.hasMaterializedText(session.sessionId);
+      this.contentStreamHandler.hasMaterializedText(sessionKey);
     const unseenText = this.contentStreamHandler.consumeFinalText(
-      session.sessionId,
+      sessionKey,
       assistantText
     );
+    if (hadLiveMaterialization) {
+      this.pendingAssistantTextBySession.delete(sessionKey);
+    }
     if (!unseenText) {
       return;
     }
@@ -213,7 +218,9 @@ export class ClaudeStreamEventRouter {
 
     if (pending?.messageId && messageId && pending.messageId === messageId) {
       this.pendingAssistantTextBySession.set(sessionKey, {
-        content: `${pending.content}\n\n${content}`,
+        // Claude assistant events for the same message id are snapshot-like:
+        // the latest assembled text is the canonical owner for terminal flush.
+        content,
         message,
         messageId,
         semanticRole:

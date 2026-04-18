@@ -18,6 +18,7 @@ const MIN_FLUSH_CHARS = 96;
 const SENTENCE_BOUNDARY_REGEX = /[.!?…\n]/g;
 
 interface LiveTextState {
+  finalizedText: string | null;
   materializedLength: number;
   nativeAccumulated: string;
 }
@@ -36,7 +37,11 @@ export class ClaudeTextLiveBuffer {
     }
     let state = this.stateBySession.get(sessionKey);
     if (!state) {
-      state = { materializedLength: 0, nativeAccumulated: "" };
+      state = {
+        finalizedText: null,
+        materializedLength: 0,
+        nativeAccumulated: "",
+      };
       this.stateBySession.set(sessionKey, state);
     }
     state.nativeAccumulated += deltaText;
@@ -53,6 +58,9 @@ export class ClaudeTextLiveBuffer {
     if (!state) {
       return null;
     }
+    if (state.finalizedText !== null) {
+      return null;
+    }
     const remaining = state.nativeAccumulated.slice(state.materializedLength);
     if (remaining.trim().length === 0) {
       return null;
@@ -64,20 +72,26 @@ export class ClaudeTextLiveBuffer {
   /**
    * Compare the final assembled text block against what was materialized
    * via deltas. Returns the unseen tail (or full text if no delta path was
-   * used). Buffer state for the session is cleared after this call.
+   * used). Keeps canonical finalized ownership so a late `content_block_stop`
+   * cannot emit a second tail for the same text block.
    */
   consumeFinal(sessionKey: string, finalText: string): string | null {
     const state = this.stateBySession.get(sessionKey);
-    if (!state || state.materializedLength === 0) {
-      this.stateBySession.delete(sessionKey);
+    if (!state) {
+      return finalText.trim().length > 0 ? finalText : null;
+    }
+    state.finalizedText = finalText;
+    if (state.materializedLength === 0) {
       return finalText.trim().length > 0 ? finalText : null;
     }
     const materialized = state.nativeAccumulated.slice(
       0,
       state.materializedLength
     );
-    this.stateBySession.delete(sessionKey);
-    if (finalText.startsWith(materialized)) {
+    if (!finalText.startsWith(materialized)) {
+      return finalText;
+    }
+    if (finalText.startsWith(state.nativeAccumulated)) {
       const tail = finalText.slice(state.materializedLength);
       return tail.trim().length > 0 ? tail : null;
     }
