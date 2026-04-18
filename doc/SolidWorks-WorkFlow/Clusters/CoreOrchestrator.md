@@ -34,5 +34,8 @@ Core Orchestrator — автономное ядро, которое:
 - **Post-turn continuity arbitration**: threshold breach на `token_usage` не имеет права сам по себе запускать flow-node rollover во время активного one-shot turn; до `turn_completed` Core только кеширует usage snapshot.
 - **Provider-order tolerance**: `Gemini` может дать `token_usage` раньше `turn_completed`, а `Claude/Codex` наоборот; Core обязан завершать одно и то же continuity-решение независимо от порядка событий.
 - **Turn-scoped usage cache**: cached usage snapshot очищается при старте нового outbound turn-а и после финального решения post-turn arbitration, чтобы usage прошлого turn-а не протекал в следующий.
+- **Replay-first usage telemetry**: `usage_limits` для ready session сначала реплеится из cached stream snapshot и только потом, при допустимом lifecycle trigger, может инициировать provider refresh; idle session без lifecycle trigger не должна дёргать provider ради usage reread.
+- **One-shot ready-binding bootstrap**: automatic usage bootstrap разрешён только один раз на конкретный ready-binding lifecycle (`providerId + providerSessionId`); повторные reopen/rebind того же lifecycle обязаны переиспользовать replay cache вместо нового provider read.
+- **Turn completion owns fresh usage delivery**: `turn_completed` остаётся единственной unconditional automatic boundary для свежего usage telemetry; provider completion path обязан доставить terminal `usageLimits`/`tokenUsage` сам, а websocket layer — переиграть последние `token_usage` и `usage_limits` после connect/scope switch, включая legacy `usage_limits` payload через normalizing `stream_event`.
 
 Канон: `doc/SolidWorks-WorkFlow/Contracts/*`.

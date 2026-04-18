@@ -74,7 +74,14 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - `pm:dialog:open` / startup intent обязаны нести explicit `providerId` выбранного шага;
   - dialog bootstrap snapshot должен seed-ить provider/model labels из этого intent, даже если dialog index payload ещё не дал нормализованный provider;
   - нижняя status/model panel затем converge-ится через обычный `useRuntimeModelSync()` / `session:model:update`;
-  - header usage-limits refresh по-прежнему стартует только после `binding.status = "ready"`, но уже для runtime session/provider identity нового шага, а не предыдущего trunk provider.
+  - Session header (`SessionIdBar`) остаётся display-only поверх уже доставленного snapshot/replay telemetry и не владеет automatic `usageLimits` refresh на mount/rebind; ownership refresh trigger'ов принадлежит Core/provider lifecycle.
+- Для idle completed dialogs PM не должен сам поднимать новый restore/bootstrap cycle только из-за повторного `dialog:list:result`, `dialog:message` или remount панели:
+  - если latest workspace snapshot подтверждает, что live runtime session для dialog сейчас отсутствует, PM может держать bootstrap-ready session record и existing history, но не должен форсировать synthetic restore;
+  - reread `dialog:history` остаётся допустимым для initial open, explicit send tail refresh и `core:state` recovery после restart.
+- PM background observers обязаны соблюдать visibility-aware polling budget:
+  - `workflow-state-store` — singleton внутри browser runtime, чтобы `MainArea` и соседние subscribers не плодили независимые workflow polling loops;
+  - для workflow state/events normal cadence разрешена только в `foreground`, `background` замедляется до `30s`, `hidden` паркует polling до возврата окна и делает immediate catch-up при возврате в `foreground`;
+  - artifact availability и diagram progress probes используют тот же `foreground/background/hidden` режим и не должны продолжать frequent polling у скрытого окна.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.
 
