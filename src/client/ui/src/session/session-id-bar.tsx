@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect } from "react";
+import type { CSSProperties } from "react";
 import type {
   SessionBindingInfo,
   SessionStatusInfo,
@@ -145,45 +145,7 @@ const LimitRow = ({ row }: { readonly row: LimitRowData }) => (
   </div>
 );
 
-const resolveRawProviderId = (status: SessionStatusInfo): string | null => {
-  const raw = status.models?.[0]?.providerId;
-  if (typeof raw !== "string") {
-    return null;
-  }
-  switch (raw) {
-    case "claudeCodeCli":
-      return "claudeCodeCli";
-    case "codexCli":
-      return "codexCli";
-    case "geminiCli":
-      return "geminiCli";
-    default:
-      return raw;
-  }
-};
-
-const SessionIdBar = ({
-  binding,
-  onRefreshUsageLimits,
-  sessionId,
-  status,
-}: SessionIdBarProps) => {
-  const rawProviderId = resolveRawProviderId(status);
-  useEffect(() => {
-    if (binding.status === "ready" && rawProviderId && onRefreshUsageLimits) {
-      onRefreshUsageLimits({
-        sessionId,
-        providerId: rawProviderId,
-        providerSessionId: binding.providerSessionId,
-      });
-    }
-  }, [
-    binding.status,
-    binding.providerSessionId,
-    onRefreshUsageLimits,
-    rawProviderId,
-    sessionId,
-  ]);
+const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
   const resolvedUsageLimits = status.usageLimits ?? null;
   const resolvedUsageLimitLabels =
     status.usageLimitLabels ?? buildFallbackLabels(status, binding);

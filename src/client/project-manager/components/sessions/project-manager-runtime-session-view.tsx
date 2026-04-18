@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
-import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
@@ -9,7 +8,6 @@ import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapsh
 import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
-import type { UsageLimitsRefreshRequest } from "../../../ui/src/session/session-id-bar";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { resolveProjectManagerCoreConfig, useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { useSessionResumeIntent } from "./session-resume-intent";
@@ -318,12 +316,6 @@ const ProjectManagerRuntimeSessionView = ({
   }, [startupStage, workspacePath]);
   useSettingsModelsSync(sessions, settings, setSnapshots);
   useRuntimeModelSync(activeSessionId, setSnapshots);
-  const handleRefreshUsageLimits = useCallback(
-    (request: UsageLimitsRefreshRequest) => {
-      api.refreshUsageLimits(request);
-    },
-    []
-  );
   useSessionResumeIntent({
     sessionsRef,
     focusSession: (sessionId) => {
@@ -352,7 +344,6 @@ const ProjectManagerRuntimeSessionView = ({
       coreConnectionStatus={connection.status}
       onCloseSession={hideSession}
       onFileLinkActivate={onFileLinkActivate}
-      onRefreshUsageLimits={handleRefreshUsageLimits}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
       emptyStatePending={emptyStatePending}
