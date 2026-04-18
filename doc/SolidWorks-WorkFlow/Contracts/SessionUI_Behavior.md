@@ -37,6 +37,18 @@
 - История/диалог отображаются по `dialogId`.
 - Status/usage/input-state следуют активному `sessionId`.
 
+### 2.3 Usage telemetry — lifecycle-owned, UI display-only
+
+- `SessionIdBar` и остальные session status surfaces только отображают последний известный `usageLimits` / `tokenUsage` snapshot для активного `sessionId`.
+- UI mount/remount и переход `binding.status` в `ready` не имеют права сами инициировать automatic provider refresh.
+- На `session_opened` / `dialog_opened` / `binding_ready` / reconnect UI сначала получает replay last-known snapshot; bootstrap refresh допустим только как one-shot fallback, если cache отсутствует.
+- Каноническая граница свежего usage update — `turn_completed`: provider/core доставляют terminal usage snapshot в turn-completion flow или примыкающем `session:stream`, а UI только применяет его.
+
+### 2.4 Message materialization uniqueness
+
+- Optimistic user bubble — временный placeholder. После первого canonical echo из `dialog:history` UI обязан заменить placeholder на canonical message, а не показывать второй user bubble.
+- Эквивалентные terminal assistant payload-ы одного logical turn могут материализоваться в истории только один раз, даже если provider/runtime прислал несколько terminal signals.
+
 ---
 
 ## 3) Типы сессий
@@ -170,6 +182,18 @@ Scope: в первую очередь для resume-сессий.
 8. **Stop unlocks stuck session**
    - При stuck-сессии без terminal event нажать `Stop`.
    - Ввод снова доступен для следующего send без рестарта Core.
+
+9. **Session remount replays usage without mount refresh**
+   - Перемонтировать Session UI при `binding.status="ready"`.
+   - UI показывает cached `usageLimits` / `tokenUsage` без нового automatic provider refresh.
+
+10. **Stop + fast resend does not leave duplicate user bubble**
+   - Остановить turn, сразу отправить follow-up сообщение.
+   - После прихода canonical tail history в диалоге остаётся один user bubble для этого сообщения.
+
+11. **Equivalent terminal signals emit one final assistant bubble**
+   - Получить terminal пару с одинаковым assistant payload.
+   - В истории materialize-ится один final assistant answer.
 
 ---
 

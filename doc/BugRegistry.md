@@ -50,6 +50,10 @@
 | BUG-2026-04-16-01 | FIXED | Localization/Core/Claude | Haiku слишком медленно переводит runtime bundles и дублирует/обрезает reasoning translation | 1.1.990 |
 | BUG-2026-04-18-01 | FIXED | Claude/Core/PM | Claude turn завершён, но session залипает в `Agent is resuming...` из-за post-turn `/context` probe failure | 1.2.16 |
 | BUG-2026-04-18-02 | OPEN | Claude/UI/Translation | Claude pre-tool live text попадает в assistant bubble вместо `Thinking` и обходит перевод | TBD |
+| BUG-2026-04-18-03 | OPEN | Claude Runtime | Claude final answer может оставлять orphan suffix assistant bubble (`ell.`) после нормального завершения turn | TBD |
+| BUG-2026-04-18-04 | OPEN | PM/UI/Codex | после `Stop` + fast resend в dialog UI временно дублируется user bubble | TBD |
+| BUG-2026-04-18-05 | OPEN | Codex Runtime | final assistant answer дублируется через rollout pair `final_answer` + `task_complete` | TBD |
+| BUG-2026-04-18-06 | OPEN | PM/Core | multi-workspace PM создаёт repeated refresh/bootstrap/polling churn и деградирует отзывчивость системы | TBD |
 
 ---
 
@@ -210,6 +214,177 @@
   - localized Claude pre-tool text must not appear as assistant/live in a `tool_use` turn;
   - the same content must instead surface as `thinking`;
   - ordinary Claude `end_turn` assistant text must stay assistant text.
+
+## BUG-2026-04-18-03 — Claude Runtime: final live text finalization can emit orphan suffix after completed answer
+
+**Status:** OPEN
+
+**Symptom:**
+- После уже завершённого корректного Claude final answer unified session может получить отдельную лишнюю assistant bubble, например `ell.`.
+- Native Claude session и SDK trace остаются чистыми, значит corruption появляется только в CodeAI Hub post-SDK routing/finalization path.
+
+**Confirmed evidence:**
+- Unified session JSONL: `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-claude/claudeCodeCli/claude-15c2c78b-f135-44fe-870a-a6f537108383-description.jsonl`
+  - line `58`: корректный финальный ответ;
+  - line `59`: отдельный stray suffix `ell.`
+- SDK trace: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-882b9a4c-5093-483c-9074-ea401dc5b9f4.jsonl` — duplicate suffix отсутствует.
+- Native Claude session: `/Users/oleksandroliinyk/.codeai-hub/providers/claude/home/.claude/projects/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-claude/882b9a4c-5093-483c-9074-ea401dc5b9f4.jsonl` — duplicate suffix отсутствует.
+- Наблюдавшийся event order: `assistant(full text) -> content_block_stop -> message_delta(end_turn) -> message_stop`.
+
+**Root cause (confirmed):**
+- Claude live text path и regular assistant flush до сих пор допускают dual finalization одного и того же text block.
+- Current dedupe опирается на emitted length вместо canonical accumulated text ownership, поэтому stale suffix может пережить reconcile и быть выпущен вторым ordinary assistant path.
+
+**Accepted fix direction (2026-04-18):**
+- Ввести single-owner finalization для каждого Claude text block.
+- Сверять final state по canonical accumulated text, а не только по emitted length.
+- Блокировать любой второй ordinary assistant flush после canonical finalization блока.
+
+**Implementation state (2026-04-18):**
+- `claude-text-live-buffer.ts` теперь держит per-session canonical `finalizedText`, поэтому поздний `content_block_stop` больше не может выпустить второй tail после того, как assembled assistant text уже стал owner terminal materialization.
+- `claude-stream-event-router.ts` очищает stale pending assistant state после live finalization и рассматривает assembled snapshots с тем же `messageId` как canonical replacement, а не append-path.
+
+**Commits delivered:**
+- `336cfadfc fix(claude): make final live text finalization order-safe`
+- `0633a9ea5 test(claude): guard order-safe live text finalization`
+
+**Guards delivered:**
+- `packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts`
+- `packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`
+
+**Planning source:**
+- `doc/SolidWorks-WorkFlow/Plans/Claude_LiveText_OrderSafe_Finalization.md`
+
+## BUG-2026-04-18-04 — PM/UI/Codex: after `Stop` + fast resend transient duplicate user bubble appears in dialog
+
+**Status:** OPEN
+
+**Symptom:**
+- После `Stop` и немедленного повторного `send` второе пользовательское сообщение временно видно в dialog panel дважды.
+- После workspace switch / full rebuild duplicate исчезает, значит persisted truth остаётся корректной.
+
+**Confirmed evidence:**
+- Screenshot: `/Users/oleksandroliinyk/Desktop/Screenshot 2026-04-18 at 12.00.48.png`
+- Unified session JSONL: `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/codexCli/codex-cce9d786-f8f6-430d-b276-39e341cda0e3-description.jsonl`
+  - line `19`: первое user message;
+  - line `20`: одно canonical follow-up message;
+  - второго persisted экземпляра follow-up message нет.
+
+**Root cause (confirmed):**
+- PM send path добавляет optimistic user bubble с synthetic `id`/`createdAt`.
+- Tail `dialog:history` merge затем append-ит canonical copy поверх optimistic one, потому что current dedupe не умеет reconcile optimistic и canonical сообщения при одинаковом content и разном `(id, createdAt)`.
+
+**Accepted fix direction (2026-04-18):**
+- Ввести optimistic-to-canonical reconciliation на границе `dialog:send:ack` / tail history merge.
+- Stop/resend path не должен оставлять видимые optimistic duplicates и не должен зависеть от workspace reload для самоисцеления.
+
+**Implementation state (2026-04-18):**
+- `session-message-dedupe.ts` теперь ищет recent `optimistic-*` user placeholder по `role=user`, `content` и bounded time window, а затем заменяет его первым canonical history message вместо append второго bubble.
+- Tail replay по-прежнему идёт через dedupe-layer, а full-history rebuild остаётся canonical-only и не возрождает optimistic placeholders после workspace switch/reload.
+
+**Commits delivered:**
+- `8d95ac49c fix(pm): reconcile optimistic stop-resend user messages`
+- `34cd74baf test(pm): guard optimistic stop-resend reconciliation`
+
+**Guards delivered:**
+- `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`
+
+**Planning source:**
+- `doc/SolidWorks-WorkFlow/Plans/Codex_Dialog_Duplication_StopResend_And_FinalAnswer.md`
+
+## BUG-2026-04-18-05 — Codex Runtime: final assistant answer is emitted twice by rollout terminal pair
+
+**Status:** OPEN
+
+**Symptom:**
+- Финальный assistant answer Codex отображается дважды и duplicate сохраняется после workspace switch и повторной hydration.
+- Duplicate попадает в unified session truth, а не живёт только в live UI state.
+
+**Confirmed evidence:**
+- Screenshot: `/Users/oleksandroliinyk/Desktop/Screenshot 2026-04-18 at 12.10.34.png`
+- Unified session JSONL содержит два одинаковых финальных assistant message: lines `51` и `52`.
+- Native rollout JSONL: `/Users/oleksandroliinyk/.codeai-hub/providers/codex/home/sessions/2026/04/18/rollout-2026-04-18T11-43-20-019d9ff9-2b0b-7651-8d8c-22945eb1e235.jsonl`
+  - `agent_message phase="final_answer"` at line `99`;
+  - `task_complete last_agent_message=...` с тем же текстом at line `102`.
+
+**Root cause (confirmed):**
+- `codex-rollout-live-sync.ts` допускает second terminal emit, когда `final_answer` semantic duplicate не содержит `turn_id`, а fallback dedupe опирается только на `turnId`.
+- В observed production case `final_answer` emits assistant text, но не mark-ит final turn, после чего `task_complete` проходит как fallback и материализует тот же ответ повторно.
+
+**Accepted fix direction (2026-04-18):**
+- Зафиксировать single terminal assistant emission across rollout events.
+- Dedupe должен работать даже без `turn_id`, опираясь на normalized terminal payload identity, а `task_complete.last_agent_message` должен оставаться fallback-only path.
+
+**Implementation state (2026-04-18):**
+- `codex-rollout-event-parser.ts` теперь строит стабильный terminal payload fingerprint для final assistant content.
+- `codex-rollout-live-sync.ts` запоминает `final_answer` как authoritative terminal emission и suppress-ит equivalent `task_complete` в bounded terminal window даже в observed case без `turn_id`, при этом fallback-only `task_complete` path сохранён.
+
+**Commits delivered:**
+- `b243c09a9 fix(codex): dedupe rollout final answer emission`
+- `2cd5130a5 test(codex): guard rollout final answer dedupe`
+
+**Guards delivered:**
+- `packages/Codex_Module/src/rollout/codex-rollout-event-parser.test.ts`
+- `packages/Codex_Module/src/rollout/codex-rollout-live-sync.test.ts`
+- `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`
+
+**Planning source:**
+- `doc/SolidWorks-WorkFlow/Plans/Codex_Dialog_Duplication_StopResend_And_FinalAnswer.md`
+
+## BUG-2026-04-18-06 — PM/Core: multi-workspace background churn repeatedly refreshes idle sessions and degrades responsiveness
+
+**Status:** OPEN
+
+**Symptom:**
+- При нескольких одновременно открытых workspace/dialog session Project Manager и Core создают достаточно тяжёлый background churn, чтобы начать заметно тормозить macOS/Finder.
+- Повторные bootstrap/history/list/usage refresh происходят даже по уже completed idle sessions.
+
+**Confirmed evidence:**
+- Core log: `/Users/oleksandroliinyk/.codeai-hub/logs/core/core.log`
+  - `activeClients` поднимался до `3`;
+  - `pm.refreshUsageLimits.requested`: `24`;
+  - `pm.dialog.bootstrap.resolved`: `13`;
+  - повторялись одни и те же runtime session id.
+- Current UI ownership:
+  - `src/client/ui/src/session/session-id-bar.tsx` инициирует `onRefreshUsageLimits(...)` на mount при `binding.status === "ready"`;
+  - dialog controller path повторно запускает `dialog:list` / `dialog:history` / bootstrap flows.
+
+**Root cause (confirmed):**
+- Ownership refresh перевёрнут: usage telemetry инициируется UI mount lifecycle, а не session/provider lifecycle.
+- Idle dialogs и hidden workspace panels продолжают создавать rereads/polling loops вместо жёсткого event-driven contract.
+
+**Accepted fix direction (2026-04-18):**
+- Перевести `usageLimits` и `tokenUsage` на event-driven ownership (`session open/bootstrap`, `turn_completed`, reconnect/replay).
+- Убрать mount-driven automatic usage refresh и подавить idle dialog/bootstrap churn.
+- Сделать workflow/artifact polling visibility-aware для multi-workspace use case.
+
+**Implementation state (2026-04-18):**
+- Session UI surfaces больше не владеют automatic usage refresh на mount/remount; они работают как display-only consumers streamed/cached telemetry.
+- PM dialog restore path подавляет self-refresh churn, когда workspace snapshot уже доказывает, что dialog idle и не имеет live runtime segment.
+- Workflow, workflow-events, artifact и diagram polling стали visibility-aware для background/hidden clients.
+- Core reopen/reconnect path стал replay-first для `usageLimits`: cached snapshot replay-ится сразу, bootstrap refresh выполняется не более одного раза на ready-binding lifecycle, а idle session не ходит в provider refresh без явного lifecycle trigger.
+- Provider turn-completion paths теперь доставляют usage telemetry в `turn_completed` flow, а не зависят от UI-owned refresh.
+
+**Commits delivered:**
+- `d642f51e1 refactor(pm): remove mount-driven usage refresh ownership`
+- `0ba4b9eee fix(pm): repair usage refresh refactor typecheck`
+- `c845a5c24 test(pm): guard display-only usage ownership`
+- `537837d91 fix(pm): suppress idle dialog refresh churn`
+- `2cd698b57 fix(pm): throttle workflow polling for background clients`
+- `2cfb18b9a fix(pm): throttle background artifact polling`
+- `0c538fe70 fix(core): make usage telemetry replay-first on reopen`
+- `b2f58abb4 fix(providers): deliver usage telemetry on turn completion`
+
+**Guards delivered so far:**
+- `src/client/project-manager/components/sessions/usage-limits-stream.test.ts`
+- `src/client/project-manager/components/sessions/token-usage-stream.test.ts`
+- `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`
+- `src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`
+- `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.test.ts`
+
+**Planning source:**
+- `doc/SolidWorks-WorkFlow/Plans/ProjectManager_MultiWorkspace_Performance_And_EventDriven_UsageRefresh.md`
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 
