@@ -15,6 +15,10 @@ const RUNTIME_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
 );
+const SESSION_ID_BAR_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/ui/src/session/session-id-bar.tsx"
+);
 
 test("project-manager-session-view keeps cross-workspace session-created focus guard", async () => {
   const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
@@ -50,6 +54,8 @@ test("project-manager-runtime-session-view keeps runtime and settings model sync
     source.includes("useRuntimeModelSync(activeSessionId, setSnapshots);"),
     true
   );
+  assert.equal(source.includes("api.refreshUsageLimits("), false);
+  assert.equal(source.includes("onRefreshUsageLimits={"), false);
 });
 
 test("project-manager-session-view restores dialog mode only from live PM intents", async () => {
@@ -71,6 +77,7 @@ test("project-manager-dialog-session-view keeps runtime model sync and dialog se
     true
   );
   assert.equal(source.includes("api.refreshUsageLimits("), false);
+  assert.equal(source.includes("onRefreshUsageLimits={"), false);
   assert.equal(
     source.includes("onSendMessage={(_sessionId, content) => sendMessage(content)}"),
     true
@@ -150,6 +157,23 @@ test("project-manager-runtime-session-view hydrates canonical history instead of
   );
   assert.equal(
     source.includes("if (loadedHistorySessionIdsRef.current.has(session.id)) {"),
+    true
+  );
+});
+
+test("session-id-bar stays display-only for usage limits after PM remount", async () => {
+  const source = await readFile(SESSION_ID_BAR_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("useEffect"), false);
+  assert.equal(source.includes("onRefreshUsageLimits({"), false);
+  assert.equal(
+    source.includes("const resolvedUsageLimits = status.usageLimits ?? null;"),
+    true
+  );
+  assert.equal(
+    source.includes(
+      "status.usageLimitLabels ?? buildFallbackLabels(status, binding);"
+    ),
     true
   );
 });

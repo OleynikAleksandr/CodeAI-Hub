@@ -155,3 +155,34 @@ test("updateSnapshotsWithUsageLimits normalizes same-provider sessions to a glob
   assert.equal(next.s3.status.usageLimits, undefined);
   assert.equal(next.s3.status.providerScopeKey, "claude:global");
 });
+
+test("updateSnapshotsWithUsageLimits keeps cached usage snapshot stable for identical replayed payload", () => {
+  const usageLimits = {
+    currentSession: {
+      percentUsed: 18,
+      resetsAt: "2026-02-13T10:00:00.000Z",
+    },
+    currentWeekAllModels: {
+      percentUsed: 52,
+      resetsAt: "2026-02-17T10:00:00.000Z",
+    },
+    currentWeekSonnetOnly: null,
+  } satisfies NonNullable<SessionSnapshot["status"]["usageLimits"]>;
+  const snapshots = {
+    s1: createSnapshot({
+      providerSummary: "Codex",
+      providerScopeKey: "codex:global",
+      usageLimits,
+    }),
+  };
+
+  const next = updateSnapshotsWithUsageLimits(snapshots, {
+    sessionId: "s1",
+    event: {
+      providerScopeKey: "codex:session-123",
+      usageLimits,
+    },
+  });
+
+  assert.equal(next, snapshots);
+});

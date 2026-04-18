@@ -206,3 +206,25 @@ test("updateSnapshotsWithTokenUsage falls back to providerSessionId field when t
   assert.equal(next.root.status.tokenUsage.used, 64);
   assert.equal(next.root.status.tokenUsage.limit, 128);
 });
+
+test("updateSnapshotsWithTokenUsage ignores usage-limits-only payloads so cached token snapshots stay display-only", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "usage_limits",
+        usageLimits: {
+          currentSession: {
+            percentUsed: 41,
+            resetsAt: "2026-02-13T10:00:00.000Z",
+          },
+        },
+      },
+    },
+  });
+
+  assert.equal(next, snapshots);
+});
