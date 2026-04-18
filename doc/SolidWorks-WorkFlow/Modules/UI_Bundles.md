@@ -1,9 +1,9 @@
 # UI Bundles (Webview + Project Manager) — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-04
+**Updated:** 2026-04-18
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.1.881`)
+**Validated on:** `main` (2026-04-18)
 
 ## Назначение
 UI бандлы, доставляемые как tarball’ы и устанавливаемые в `~/.codeai-hub/packages/ui/**`.
@@ -36,6 +36,12 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 - Without a VS Code webview bridge, the UI bundle prefers the launcher bridge handoff for supported PM dialog file links.
 - In standalone mode, the resulting Visual Studio Code external-open confirmation prompt may still appear; the UI contract only guarantees that the handoff target is a real path, not that the host suppresses the safeguard prompt.
 - Raw `vscode://file/...` URI navigation remains only as a last-resort fallback when neither the webview bridge nor the launcher bridge exists.
+
+## Project Manager Session UI Contracts
+- `src/client/project-manager/components/sessions/session-message-dedupe.ts` owns optimistic user-message reconciliation for PM dialog history. When `Stop` + fast resend leaves a recent optimistic user bubble in the local snapshot, the first canonical user message with the same content arriving within the reconciliation window replaces that optimistic placeholder instead of being appended as a duplicate.
+- The same dedupe helper also treats recent `role + createdAt + content` identity as replay-safe for PM session snapshots, so reconnect/history rebuild does not keep appending visually identical user/assistant entries with new ids.
+- `src/client/ui/src/session/session-id-bar.tsx` is display-only for `usageLimits`: it renders the current `status.usageLimits` / `usageLimitLabels` snapshot and no longer triggers provider refresh on mount or rebind.
+- `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` and `project-manager-runtime-session-view.tsx` no longer wire `api.refreshUsageLimits(...)` into `SessionView`. Automatic usage refresh ownership is intentionally outside the bundle mount lifecycle; the PM/UI layer only displays telemetry already delivered by runtime snapshots or stream events.
 
 ## Related Docs
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`

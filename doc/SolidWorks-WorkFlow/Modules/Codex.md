@@ -21,7 +21,7 @@
 - `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts` — focused façade над structured-output prompt/schema preparation и finalize path.
 - `packages/Codex_Module/src/messaging/structured-output-parser.ts`, `structured-output-state.ts` — JSON/parsing rules, passthrough delta/output hash, extractor/session state storage.
 - `packages/Codex_Module/src/messaging/codex-usage-sync.ts`, `codex-token-usage-sync.ts` — usage-limits/token usage refresh; runtime `token_count` signals мержатся в shared usage-limits stream payload.
-- `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `codex-rollout-event-parser.ts`, `codex-rollout-dedupe.ts`, `codex-rollout-tail-state.ts`, `codex-rollout-live-sync.ts` — rollout-backed dialog ingestion cluster; live tailing, replay, segment normalization, stable dedupe, and terminal fallback now live here.
+- `packages/Codex_Module/src/rollout/codex-rollout-reader.ts`, `codex-rollout-event-parser.ts`, `codex-rollout-dedupe.ts`, `codex-rollout-tail-state.ts`, `codex-rollout-live-sync.ts` — rollout-backed dialog ingestion cluster; live tailing, replay, segment normalization, stable dedupe, and terminal fallback now live here. Terminal assistant dedupe between `agent_message.phase=final_answer` and `task_complete` is owned by `codex-rollout-live-sync.ts`, while `codex-rollout-event-parser.ts` exposes payload-stable terminal ids so matching terminal payloads can still be suppressed when one side is missing `turn_id`.
 
 ## Reasoning translation and thinking display
 - `packages/Codex_Module/src/messaging/codex-reasoning-streams.ts` аккумулирует SDK reasoning deltas по `item.id` и остаётся source-of-truth для промежуточного reasoning state.
@@ -41,6 +41,7 @@
 - Lifecycle обязателен: `turn_started` → `turn_completed|turn_failed`.
 - Internal turns не должны эмитить user-facing `assistant` / `stream_event` / lifecycle events; suppression централизован в messaging emitter helper.
 - Provider-native raw rollout JSONL в `CODEX_HOME/sessions/**/rollout-*.jsonl` является единственным semantic source of truth для Codex user-visible output: `agent_reasoning` -> `thinking`, `agent_message.phase=commentary` -> assistant progress/commentary, `agent_message.phase=final_answer` -> terminal assistant answer.
+- Codex rollout terminal emission must be single-owner: if the same final assistant payload is observed first as `agent_message.phase=final_answer` and then repeated by `task_complete`, the UI emits exactly one terminal assistant bubble. `task_complete` remains only a fallback path for turns where a matching `final_answer` was not already emitted or cannot be matched by payload hash / timestamp window / `turn_id`.
 - Если rollout `final_answer` приходит plain text under `outputSchema`, `codex-rollout-live-sync.ts` обязан emit-ить safe raw-text assistant fallback, когда structured parser не смог извлечь `assistantText`; otherwise valid provider final answers silently disappear from UI.
 - Commentary-phase `agent_message` для structured output остаётся скрытым, чтобы финальный ответ не дублировался в UI.
 - Structured-output passthrough (`hybrid` / `debug_raw`) обязан переживать `sessionId` promotion без потери accumulated state.
