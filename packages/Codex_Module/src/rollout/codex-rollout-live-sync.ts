@@ -11,6 +11,7 @@ import { CodexRolloutDedupe } from "./codex-rollout-dedupe";
 import {
   type CodexRolloutParsedEvent,
   createCodexRolloutSegmentId,
+  createCodexRolloutTerminalPayloadId,
   parseCodexRolloutEvents,
 } from "./codex-rollout-event-parser";
 import { CodexRolloutReader } from "./codex-rollout-reader";
@@ -18,6 +19,7 @@ import { CodexRolloutTailState } from "./codex-rollout-tail-state";
 
 const TERMINAL_DRAIN_ATTEMPTS = 3;
 const TERMINAL_DRAIN_DELAY_MS = 75;
+const TERMINAL_FALLBACK_DEDUPE_WINDOW_MS = 5000;
 const STRUCTURED_PAYLOAD_START = new Set(["{", "["]);
 
 const sleep = (delayMs: number): Promise<void> =>
@@ -48,6 +50,12 @@ interface CodexRolloutSyncResult {
   readonly advanced: boolean;
 }
 
+interface CodexRolloutPendingFinalAssistant {
+  readonly payloadId: string;
+  readonly timestampMs: number | null;
+  readonly turnId: string | null;
+}
+
 export class CodexRolloutLiveSync {
   private readonly dedupeBySession = new WeakMap<
     ActiveSession,
@@ -56,6 +64,10 @@ export class CodexRolloutLiveSync {
   private readonly emittedFinalTurns = new WeakMap<
     ActiveSession,
     Set<string>
+  >();
+  private readonly pendingFinalAssistants = new WeakMap<
+    ActiveSession,
+    CodexRolloutPendingFinalAssistant
   >();
   private readonly emitter: CodexSessionEventEmitter;
   private readonly reader: CodexRolloutReader;
@@ -124,6 +136,7 @@ export class CodexRolloutLiveSync {
     }
 
     if (event.kind === "thinking") {
+      this.clearPendingFinalAssistant(session);
       if (session.runtimeTurnConfig?.thinkingDisplaySyncEnabled === false) {
         return;
       }
@@ -138,6 +151,7 @@ export class CodexRolloutLiveSync {
     }
 
     if (event.kind === "commentary") {
+      this.clearPendingFinalAssistant(session);
       if (this.structuredOutput.shouldSuppressCommentary(session.sessionId)) {
         return;
       }
@@ -155,10 +169,16 @@ export class CodexRolloutLiveSync {
       return;
     }
 
-    if (
-      event.kind === "task_complete" &&
-      !(event.turnId && this.hasFinalTurn(session, event.turnId))
-    ) {
+    if (event.kind !== "task_complete") {
+      return;
+    }
+
+    if (this.shouldSuppressTaskComplete(session, event)) {
+      return;
+    }
+
+    if (!(event.turnId && this.hasFinalTurn(session, event.turnId))) {
+      this.clearPendingFinalAssistant(session);
       this.emitFinalAssistant(session, event);
     }
   }
@@ -212,6 +232,11 @@ export class CodexRolloutLiveSync {
       uuid: itemId,
       timestamp: event.timestamp ?? new Date().toISOString(),
     });
+    if (event.kind === "final_answer") {
+      this.rememberPendingFinalAssistant(session, event);
+      return;
+    }
+    this.clearPendingFinalAssistant(session);
   }
 
   private emitStructuredOutput(
@@ -275,6 +300,59 @@ export class CodexRolloutLiveSync {
     return this.getFinalTurns(session).has(turnId);
   }
 
+  private rememberPendingFinalAssistant(
+    session: ActiveSession,
+    event: CodexRolloutParsedEvent
+  ): void {
+    this.pendingFinalAssistants.set(session, {
+      payloadId: createCodexRolloutTerminalPayloadId(event.content),
+      timestampMs: this.parseTimestamp(event.timestamp),
+      turnId: event.turnId,
+    });
+  }
+
+  private clearPendingFinalAssistant(session: ActiveSession): void {
+    this.pendingFinalAssistants.delete(session);
+  }
+
+  private shouldSuppressTaskComplete(
+    session: ActiveSession,
+    event: CodexRolloutParsedEvent
+  ): boolean {
+    const pending = this.pendingFinalAssistants.get(session);
+    if (!pending) {
+      return false;
+    }
+
+    const taskCompleteTimestamp = this.parseTimestamp(event.timestamp);
+    const withinWindow =
+      pending.timestampMs === null ||
+      taskCompleteTimestamp === null ||
+      (taskCompleteTimestamp >= pending.timestampMs &&
+        taskCompleteTimestamp - pending.timestampMs <=
+          TERMINAL_FALLBACK_DEDUPE_WINDOW_MS);
+    if (!withinWindow) {
+      this.clearPendingFinalAssistant(session);
+      return false;
+    }
+
+    const matchesPayload =
+      pending.payloadId === createCodexRolloutTerminalPayloadId(event.content);
+    const matchesTurn =
+      pending.turnId === null ||
+      event.turnId === null ||
+      pending.turnId === event.turnId;
+    if (!(matchesPayload && matchesTurn)) {
+      return false;
+    }
+
+    if (event.turnId) {
+      this.getFinalTurns(session).add(event.turnId);
+    }
+    this.clearPendingFinalAssistant(session);
+    return true;
+  }
+
   private shouldEmitStructuredOutput(
     session: ActiveSession,
     dedupeId: string
@@ -289,5 +367,13 @@ export class CodexRolloutLiveSync {
 
   private buildSegmentId(event: CodexRolloutParsedEvent): string {
     return `${PROVIDER}:rollout:${createCodexRolloutSegmentId(event)}`;
+  }
+
+  private parseTimestamp(timestamp: string | null): number | null {
+    if (!timestamp) {
+      return null;
+    }
+    const value = Date.parse(timestamp);
+    return Number.isFinite(value) ? value : null;
   }
 }

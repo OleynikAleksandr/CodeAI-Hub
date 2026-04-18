@@ -36,6 +36,9 @@ export interface CodexRolloutParsedEvent {
 
 const SEGMENT_ID_SEPARATOR = "\u001F";
 
+export const createCodexRolloutTerminalPayloadId = (content: string): string =>
+  createHash("sha256").update(content).digest("hex");
+
 export const createCodexRolloutSegmentId = (
   event: CodexRolloutParsedEvent
 ): string =>
