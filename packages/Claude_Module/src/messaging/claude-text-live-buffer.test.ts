@@ -70,6 +70,24 @@ test("ClaudeTextLiveBuffer consumeFinal returns only unseen tail when final is s
   );
 });
 
+test("ClaudeTextLiveBuffer suppresses orphan tail flush after early finalization", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const livePrefix =
+    "This is the first sentence describing the setup in detail so the live buffer crosses threshold. ";
+  const trailingDraft = "This affects shell";
+
+  const firstSegment = buffer.appendDelta("s", livePrefix);
+  assert.equal(firstSegment, livePrefix.trimEnd());
+
+  const secondSegment = buffer.appendDelta("s", trailingDraft);
+  assert.equal(secondSegment, null);
+
+  const finalTail = buffer.consumeFinal("s", `${livePrefix}${trailingDraft}.`);
+  assert.equal(finalTail, " This affects shell.");
+  assert.notEqual(finalTail, "ell.");
+  assert.equal(buffer.flushRemaining("s"), null);
+});
+
 test("ClaudeTextLiveBuffer consumeFinal returns full final when diverging from live draft", () => {
   const buffer = new ClaudeTextLiveBuffer();
   buffer.appendDelta(

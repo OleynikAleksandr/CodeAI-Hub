@@ -323,6 +323,72 @@ test("ClaudeStreamEventRouter emits full canonical text when assembled diverges 
   assert.equal(finalEmissions[0].content, finalText);
 });
 
+test("ClaudeStreamEventRouter keeps observed production order single-owner and does not emit orphan ell suffix", async () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const handler = new ClaudeContentStreamHandler(
+    new ClaudeThinkingLiveBuffer(),
+    buffer
+  );
+  const router = new ClaudeStreamEventRouter(undefined, undefined, handler);
+  const session = createSession("session-observed-order");
+  const emissions = collectAssistantEmissions(session);
+  const livePrefix =
+    "This is the first sentence describing the setup in detail so the live buffer crosses threshold. ";
+  const trailingDraft = "This affects shell";
+  const finalText = `${livePrefix}${trailingDraft}.`;
+
+  await router.handleStreamEvent(session, buildTextBlockStart(0));
+  await router.handleStreamEvent(
+    session,
+    buildTextDelta(0, livePrefix, "obs-1")
+  );
+  assert.equal(emissions.length, 1, "live prefix should materialize once");
+
+  await router.handleStreamEvent(
+    session,
+    buildTextDelta(0, trailingDraft, "obs-2")
+  );
+  assert.equal(
+    emissions.length,
+    1,
+    "short trailing draft must stay buffered before finalization"
+  );
+
+  await router.handleAssistantMessage(
+    session,
+    buildAssistantTextMessage(finalText, "final-text-observed-order")
+  );
+  assert.equal(
+    emissions.length,
+    2,
+    "assistant-first observed order should emit exactly one final tail"
+  );
+  assert.equal(emissions[1].content, " This affects shell.");
+  assert.notEqual(emissions[1].content, "ell.");
+
+  await router.handleStreamEvent(session, buildContentBlockStop(0));
+  await router.handleStreamEvent(session, buildMessageDelta("end_turn"));
+  await router.handleStreamEvent(session, {
+    type: "stream_event",
+    uuid: "message-stop-observed-order",
+    event: { type: "message_stop" },
+  });
+
+  assert.equal(
+    emissions.length,
+    2,
+    "terminal events after early assistant finalization must not emit duplicates"
+  );
+  assert.equal(
+    emissions.map((emission) => emission.content).join(""),
+    finalText
+  );
+  assert.equal(
+    emissions.filter((emission) => emission.content === "ell.").length,
+    0
+  );
+});
+
 test("ClaudeStreamEventRouter suppresses localized live pre-tool text until it can emit it as thinking", async () => {
   const handler = new ClaudeContentStreamHandler(
     new ClaudeThinkingLiveBuffer(),
