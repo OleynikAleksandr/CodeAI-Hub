@@ -16,6 +16,11 @@ export interface TokenUsageSnapshot {
   readonly used: number;
 }
 
+export interface TokenUsageReadResult {
+  readonly postTurnTokenUsageUnavailable: boolean;
+  readonly tokenUsage: TokenUsageSnapshot | null;
+}
+
 interface ClaudeTokenUsageSyncOptions {
   readonly reporter?: ModuleReporter;
 }
@@ -34,7 +39,7 @@ export class ClaudeTokenUsageSync {
   private contextUsageReader: ClaudeContextUsageReader | null = null;
   private readonly contextUsageInFlight = new Map<
     string,
-    Promise<TokenUsageSnapshot | null>
+    Promise<TokenUsageReadResult>
   >();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
   private readonly reporter?: ModuleReporter;
@@ -57,15 +62,21 @@ export class ClaudeTokenUsageSync {
     session: ActiveSession,
     claudeSessionId: string | null | undefined,
     options: { readonly force?: boolean } = {}
-  ): Promise<TokenUsageSnapshot | null> {
+  ): Promise<TokenUsageReadResult> {
     const reader = this.contextUsageReader;
     if (!reader) {
-      return null;
+      return {
+        tokenUsage: null,
+        postTurnTokenUsageUnavailable: true,
+      };
     }
 
     const resolvedId = resolveClaudeProviderSessionId(session, claudeSessionId);
     if (!resolvedId) {
-      return null;
+      return {
+        tokenUsage: null,
+        postTurnTokenUsageUnavailable: true,
+      };
     }
 
     const now = Date.now();
@@ -75,23 +86,32 @@ export class ClaudeTokenUsageSync {
       lastAttempt &&
       now - lastAttempt < MIN_REFRESH_INTERVAL_MS
     ) {
-      return null;
+      return {
+        tokenUsage: null,
+        postTurnTokenUsageUnavailable: false,
+      };
     }
     this.contextUsageLastAttemptAt.set(resolvedId, now);
 
     const inFlight = this.contextUsageInFlight.get(resolvedId);
     if (inFlight) {
       if (options.force) {
-        await inFlight;
+        return await inFlight;
       }
-      return this.tokenUsageCache.get(resolvedId) ?? null;
+      return {
+        tokenUsage: this.tokenUsageCache.get(resolvedId) ?? null,
+        postTurnTokenUsageUnavailable: false,
+      };
     }
 
     const refreshPromise = reader
       .read({ sessionId: resolvedId, cwd: session.workspacePath })
       .then((snapshot) => {
         if (!snapshot) {
-          return null;
+          return {
+            tokenUsage: null,
+            postTurnTokenUsageUnavailable: true,
+          } satisfies TokenUsageReadResult;
         }
 
         const nextUsage = {
@@ -104,7 +124,10 @@ export class ClaudeTokenUsageSync {
           previous.used === nextUsage.used &&
           previous.limit === nextUsage.limit
         ) {
-          return previous;
+          return {
+            tokenUsage: previous,
+            postTurnTokenUsageUnavailable: false,
+          } satisfies TokenUsageReadResult;
         }
 
         this.tokenUsageCache.set(resolvedId, nextUsage);
@@ -122,7 +145,10 @@ export class ClaudeTokenUsageSync {
           uuid: `${crypto.randomUUID()}::token_usage`,
           timestamp: new Date().toISOString(),
         });
-        return nextUsage;
+        return {
+          tokenUsage: nextUsage,
+          postTurnTokenUsageUnavailable: false,
+        } satisfies TokenUsageReadResult;
       })
       .catch((error) => {
         this.reporter?.warn?.(
@@ -130,7 +156,10 @@ export class ClaudeTokenUsageSync {
             error instanceof Error ? error.message : String(error)
           }`
         );
-        return null;
+        return {
+          tokenUsage: this.tokenUsageCache.get(resolvedId) ?? null,
+          postTurnTokenUsageUnavailable: !this.tokenUsageCache.has(resolvedId),
+        } satisfies TokenUsageReadResult;
       })
       .finally(() => {
         this.contextUsageInFlight.delete(resolvedId);

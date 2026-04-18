@@ -82,7 +82,7 @@ export class ClaudeMessageFinishHandler {
     session: ActiveSession,
     claudeSessionId: string | null | undefined
   ): Promise<void> {
-    const { tokenUsage, usageLimits } =
+    const { postTurnTokenUsageUnavailable, tokenUsage, usageLimits } =
       await this.usageSync.readCompletionPayload(session, claudeSessionId);
     const queueState = session.turnQueue;
     if (!queueState || queueState.internalTurn || queueState.lifecycle.ended) {
@@ -100,6 +100,9 @@ export class ClaudeMessageFinishHandler {
       provider: "claude",
       sessionId: session.sessionId,
       claudeSessionId: resolvedSessionId,
+      ...(postTurnTokenUsageUnavailable
+        ? { postTurnTokenUsageUnavailable: true }
+        : {}),
       ...(tokenUsage ? { tokenUsage, usage: tokenUsage } : {}),
       ...(usageLimits ? { usageLimits } : {}),
       uuid: `${crypto.randomUUID()}::turn_completed`,

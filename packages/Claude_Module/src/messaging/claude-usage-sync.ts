@@ -10,6 +10,7 @@ import type {
 } from "../types";
 import type {
   ContextUsageReaderConfig as ClaudeContextUsageReaderConfig,
+  TokenUsageReadResult as ClaudeTokenUsageReadResult,
   TokenUsageSnapshot as ClaudeTokenUsageSnapshot,
 } from "./claude-token-usage-sync";
 import {
@@ -22,6 +23,7 @@ const CLAUDE_RUNTIME_RATE_LIMIT_INFO_ENV_KEY =
 
 export type {
   ContextUsageReaderConfig,
+  TokenUsageReadResult,
   TokenUsageSnapshot,
 } from "./claude-token-usage-sync";
 
@@ -124,20 +126,25 @@ export class ClaudeUsageSync {
     session: ActiveSession,
     claudeSessionId: string | null | undefined
   ): Promise<{
+    readonly postTurnTokenUsageUnavailable: boolean;
     readonly tokenUsage?: ClaudeTokenUsageSnapshot | null;
     readonly usageLimits?: ClaudeUsageLimits;
   }> {
-    const tokenUsage = await this.tokenUsageSync.readTokenUsage(
-      session,
-      claudeSessionId,
-      { force: true }
-    );
+    const tokenUsageResult: ClaudeTokenUsageReadResult =
+      await this.tokenUsageSync.readTokenUsage(session, claudeSessionId, {
+        force: true,
+      });
     const usageLimits = await this.refreshUsageLimitsFromUsage(
       session,
       claudeSessionId,
       { force: true }
     );
-    return { tokenUsage, usageLimits };
+    return {
+      tokenUsage: tokenUsageResult.tokenUsage,
+      usageLimits,
+      postTurnTokenUsageUnavailable:
+        tokenUsageResult.postTurnTokenUsageUnavailable,
+    };
   }
 
   async handleRateLimitEvent(
