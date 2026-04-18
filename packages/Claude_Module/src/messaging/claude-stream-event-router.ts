@@ -309,7 +309,7 @@ export class ClaudeStreamEventRouter {
     resolution: PendingAssistantTextResolution
   ): Promise<string | null> {
     if (resolution !== "tool_use_preamble") {
-      return pending.content;
+      return Promise.resolve(pending.content);
     }
     return this.translateThinkingContent(session, pending.content);
   }
