@@ -1,4 +1,7 @@
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
+const BACKGROUND_POLL_MS = 30_000;
+
+type WorkflowEventsPollingMode = "foreground" | "background" | "hidden";
 
 export type WorkflowEvent = {
   readonly type: string;
@@ -67,15 +70,65 @@ export const startWorkflowEventPolling = (params: {
   readonly workspaceSlug: string;
   readonly onEvents: (events: readonly WorkflowEvent[]) => void;
   readonly intervalMs?: number;
+  readonly getForegroundIntervalMs?: () => number;
 }): (() => void) => {
   let stopped = false;
   let cursor: string | null = null;
-  const intervalMs = params.intervalMs ?? 10_000;
+  let timer = 0;
+  let pollInFlight = false;
+  let pendingImmediatePoll = false;
+  let pollingMode: WorkflowEventsPollingMode = "foreground";
 
-  const fetchEvents = async () => {
-    if (stopped) {
+  const resolvePollingMode = (): WorkflowEventsPollingMode => {
+    if (typeof document === "undefined") {
+      return "foreground";
+    }
+    if (document.visibilityState !== "visible") {
+      return "hidden";
+    }
+    return document.hasFocus() ? "foreground" : "background";
+  };
+
+  const resolveIntervalMs = (): number | null => {
+    if (pollingMode === "hidden") {
+      return null;
+    }
+    if (pollingMode === "background") {
+      return BACKGROUND_POLL_MS;
+    }
+    return params.getForegroundIntervalMs?.() ?? params.intervalMs ?? 10_000;
+  };
+
+  const scheduleNextPoll = () => {
+    window.clearTimeout(timer);
+    timer = 0;
+    const intervalMs = resolveIntervalMs();
+    if (stopped || intervalMs === null) {
       return;
     }
+    timer = window.setTimeout(() => {
+      void fetchEvents();
+    }, intervalMs);
+  };
+
+  const requestImmediatePoll = () => {
+    window.clearTimeout(timer);
+    timer = 0;
+    if (stopped || resolveIntervalMs() === null) {
+      return;
+    }
+    if (pollInFlight) {
+      pendingImmediatePoll = true;
+      return;
+    }
+    void fetchEvents();
+  };
+
+  const fetchEvents = async () => {
+    if (stopped || resolveIntervalMs() === null) {
+      return;
+    }
+    pollInFlight = true;
     const query = cursor
       ? `?workspaceSlug=${encodeURIComponent(params.workspaceSlug)}&since=${encodeURIComponent(
           cursor
@@ -98,14 +151,50 @@ export const startWorkflowEventPolling = (params: {
       cursor = parsed.nextCursor ?? cursor;
     } catch {
       // Ignore polling errors; next tick will retry.
+    } finally {
+      pollInFlight = false;
+      if (stopped) {
+        return;
+      }
+      if (pendingImmediatePoll && resolveIntervalMs() !== null) {
+        pendingImmediatePoll = false;
+        void fetchEvents();
+        return;
+      }
+      pendingImmediatePoll = false;
+      scheduleNextPoll();
     }
   };
 
-  fetchEvents();
-  const timer = window.setInterval(fetchEvents, intervalMs);
+  const handleActivityChange = () => {
+    const nextMode = resolvePollingMode();
+    if (nextMode === pollingMode) {
+      return;
+    }
+    pollingMode = nextMode;
+    if (pollingMode === "foreground") {
+      requestImmediatePoll();
+      return;
+    }
+    pendingImmediatePoll = false;
+    scheduleNextPoll();
+  };
+
+  pollingMode = resolvePollingMode();
+  if (resolveIntervalMs() !== null) {
+    requestImmediatePoll();
+  }
+  window.addEventListener("focus", handleActivityChange);
+  window.addEventListener("blur", handleActivityChange);
+  document.addEventListener("visibilitychange", handleActivityChange);
 
   return () => {
     stopped = true;
-    window.clearInterval(timer);
+    pendingImmediatePoll = false;
+    window.clearTimeout(timer);
+    timer = 0;
+    window.removeEventListener("focus", handleActivityChange);
+    window.removeEventListener("blur", handleActivityChange);
+    document.removeEventListener("visibilitychange", handleActivityChange);
   };
 };

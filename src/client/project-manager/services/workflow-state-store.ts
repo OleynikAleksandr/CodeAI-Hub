@@ -4,6 +4,9 @@ import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 const FAST_POLL_MS = 3_000;
 const SLOW_POLL_MS = 10_000;
+const BACKGROUND_POLL_MS = 30_000;
+
+export type WorkflowStatePollingMode = "foreground" | "background" | "hidden";
 
 type WorkflowStateStoreState = {
   readonly workspaceSlug: string | null;
@@ -28,7 +31,11 @@ class WorkflowStateStore {
   private state: WorkflowStateStoreState = INITIAL_STATE;
   private readonly listeners = new Set<() => void>();
   private timer = 0;
-  private cancelled = false;
+  private pollingGeneration = 0;
+  private pollInFlight = false;
+  private fastPolling = true;
+  private pendingImmediatePoll = false;
+  private pollingMode: WorkflowStatePollingMode = "foreground";
 
   getState(): WorkflowStateStoreState {
     return this.state;
@@ -57,6 +64,23 @@ class WorkflowStateStore {
     this.startPolling(workspaceSlug, workspacePath);
   }
 
+  setVisibilityMode(mode: WorkflowStatePollingMode): void {
+    if (this.pollingMode === mode) {
+      return;
+    }
+    this.pollingMode = mode;
+    const { workspaceSlug, workspacePath } = this.state;
+    if (!(workspaceSlug && workspacePath)) {
+      return;
+    }
+    if (mode === "foreground") {
+      this.requestImmediatePoll();
+      return;
+    }
+    this.pendingImmediatePoll = false;
+    this.scheduleNextPoll(this.pollingGeneration, workspaceSlug, workspacePath);
+  }
+
   /** Stop polling and clear state. */
   deactivate(): void {
     this.stopPolling();
@@ -67,11 +91,90 @@ class WorkflowStateStore {
   }
 
   private startPolling(slug: string, wPath: string): void {
-    this.cancelled = false;
-    let fast = true;
-    const poll = async () => {
-      const snapshot = await api.getWorkflowState(slug, wPath);
-      if (this.cancelled || this.state.workspaceSlug !== slug) return;
+    this.fastPolling = true;
+    if (this.pollingMode === "hidden") {
+      return;
+    }
+    this.requestImmediatePoll();
+  }
+
+  private stopPolling(): void {
+    this.pollingGeneration += 1;
+    this.pollInFlight = false;
+    this.pendingImmediatePoll = false;
+    this.fastPolling = true;
+    window.clearTimeout(this.timer);
+    this.timer = 0;
+  }
+
+  private resolveIntervalMs(): number | null {
+    if (this.pollingMode === "hidden") {
+      return null;
+    }
+    if (this.pollingMode === "background") {
+      return BACKGROUND_POLL_MS;
+    }
+    return this.fastPolling ? FAST_POLL_MS : SLOW_POLL_MS;
+  }
+
+  private scheduleNextPoll(
+    generation: number,
+    workspaceSlug: string,
+    workspacePath: string
+  ): void {
+    window.clearTimeout(this.timer);
+    this.timer = 0;
+    if (
+      generation !== this.pollingGeneration ||
+      this.state.workspaceSlug !== workspaceSlug ||
+      this.state.workspacePath !== workspacePath
+    ) {
+      return;
+    }
+    const intervalMs = this.resolveIntervalMs();
+    if (intervalMs === null) {
+      return;
+    }
+    this.timer = window.setTimeout(() => {
+      void this.poll(generation, workspaceSlug, workspacePath);
+    }, intervalMs);
+  }
+
+  private requestImmediatePoll(): void {
+    const { workspaceSlug, workspacePath } = this.state;
+    if (!(workspaceSlug && workspacePath)) {
+      return;
+    }
+    window.clearTimeout(this.timer);
+    this.timer = 0;
+    if (this.pollingMode === "hidden") {
+      return;
+    }
+    if (this.pollInFlight) {
+      this.pendingImmediatePoll = true;
+      return;
+    }
+    void this.poll(this.pollingGeneration, workspaceSlug, workspacePath);
+  }
+
+  private async poll(
+    generation: number,
+    workspaceSlug: string,
+    workspacePath: string
+  ): Promise<void> {
+    if (this.pollingMode === "hidden" || generation !== this.pollingGeneration) {
+      return;
+    }
+    this.pollInFlight = true;
+    try {
+      const snapshot = await api.getWorkflowState(workspaceSlug, workspacePath);
+      if (
+        generation !== this.pollingGeneration ||
+        this.state.workspaceSlug !== workspaceSlug ||
+        this.state.workspacePath !== workspacePath
+      ) {
+        return;
+      }
       // Skip emit if snapshot data has not changed — prevents
       // unnecessary re-renders in all subscribers every poll cycle.
       // Compare updatedAt AND continuity chain count — chains may
@@ -83,22 +186,38 @@ class WorkflowStateStore {
         !snapshot ||
         prev.updatedAt !== snapshot.updatedAt ||
         prev.continuity.chains.length !== snapshot.continuity.chains.length;
-      this.state = { workspaceSlug: slug, workspacePath: wPath, snapshot, loaded: true };
-      if (changed) this.emit();
-      if (fast && snapshot) {
-        fast = false;
-        window.clearInterval(this.timer);
-        this.timer = window.setInterval(poll, SLOW_POLL_MS);
+      this.state = {
+        workspaceSlug,
+        workspacePath,
+        snapshot,
+        loaded: true,
+      };
+      if (changed) {
+        this.emit();
       }
-    };
-    poll();
-    this.timer = window.setInterval(poll, FAST_POLL_MS);
-  }
-
-  private stopPolling(): void {
-    this.cancelled = true;
-    window.clearInterval(this.timer);
-    this.timer = 0;
+      if (this.fastPolling && snapshot) {
+        this.fastPolling = false;
+      }
+    } catch {
+      // Ignore polling errors; next scheduled tick will retry.
+    } finally {
+      if (generation !== this.pollingGeneration) {
+        this.pollInFlight = false;
+        return;
+      }
+      this.pollInFlight = false;
+      if (
+        this.pendingImmediatePoll &&
+        this.state.workspaceSlug === workspaceSlug &&
+        this.state.workspacePath === workspacePath
+      ) {
+        this.pendingImmediatePoll = false;
+        void this.poll(generation, workspaceSlug, workspacePath);
+        return;
+      }
+      this.pendingImmediatePoll = false;
+      this.scheduleNextPoll(generation, workspaceSlug, workspacePath);
+    }
   }
 
   private emit(): void {

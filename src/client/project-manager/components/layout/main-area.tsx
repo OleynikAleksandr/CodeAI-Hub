@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { useDescriptionSessionGuard } from "./use-description-session-guard";
@@ -12,7 +12,11 @@ import {
   type ArtifactHeaderMode,
 } from "./stage-artifact-mode";
 import { useMainAreaWorkflowState } from "./use-main-area-workflow-state";
-import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
+import {
+  type WorkflowStatePollingMode,
+  useWorkflowStateSnapshot,
+  workflowStateStore,
+} from "../../services/workflow-state-store";
 import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
@@ -20,6 +24,16 @@ import { StatusBar } from "./status-bar";
 import {
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
+
+const resolveWorkflowPollingMode = (): WorkflowStatePollingMode => {
+  if (typeof document === "undefined") {
+    return "foreground";
+  }
+  if (document.visibilityState !== "visible") {
+    return "hidden";
+  }
+  return document.hasFocus() ? "foreground" : "background";
+};
 
 interface MainAreaProps {
   sizes: [number, number];
@@ -62,8 +76,34 @@ export const MainArea: React.FC<MainAreaProps> = ({
     useState<BranchNodeSelection | null>(null);
   const [artifactHeaderMode, setArtifactHeaderMode] =
     useState<ArtifactHeaderMode>("artifacts");
+  const [workflowPollingMode, setWorkflowPollingMode] =
+    useState<WorkflowStatePollingMode>(() => resolveWorkflowPollingMode());
+  const selectedArtifactRef = useRef<typeof selectedArtifact>(null);
   const { guardRef: descriptionGuardRef, activateGuard, resetGuard } =
     useDescriptionSessionGuard(hasDescriptionSession);
+
+  useEffect(() => {
+    selectedArtifactRef.current = selectedArtifact;
+  }, [selectedArtifact]);
+
+  useEffect(() => {
+    const syncWorkflowPollingMode = () => {
+      setWorkflowPollingMode(resolveWorkflowPollingMode());
+    };
+    syncWorkflowPollingMode();
+    window.addEventListener("focus", syncWorkflowPollingMode);
+    window.addEventListener("blur", syncWorkflowPollingMode);
+    document.addEventListener("visibilitychange", syncWorkflowPollingMode);
+    return () => {
+      window.removeEventListener("focus", syncWorkflowPollingMode);
+      window.removeEventListener("blur", syncWorkflowPollingMode);
+      document.removeEventListener("visibilitychange", syncWorkflowPollingMode);
+    };
+  }, []);
+
+  useEffect(() => {
+    workflowStateStore.setVisibilityMode(workflowPollingMode);
+  }, [workflowPollingMode]);
 
   useEffect(() => {
     const onSelected = (event: Event) => {
@@ -137,11 +177,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
       if (events.length > 0) {
         setPreferredSessionId((current) => current ?? null);
       }
-      if (!selectedArtifact) return;
-      const normalizedSelectedPath = selectedArtifact.path.replace(/\\/g, "/");
+      const currentSelectedArtifact = selectedArtifactRef.current;
+      if (!currentSelectedArtifact) return;
+      const normalizedSelectedPath = currentSelectedArtifact.path.replace(/\\/g, "/");
       const needsRefresh = events.some((event) => {
         if (event.type !== "workflow.artifact.written") return false;
-        if (event.workspaceSlug !== selectedArtifact.workspaceSlug) return false;
+        if (event.workspaceSlug !== currentSelectedArtifact.workspaceSlug) return false;
         if (!event.filePath) return true;
         return normalizedSelectedPath.endsWith(event.filePath.replace(/\\/g, "/"));
       });
@@ -149,7 +190,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
         setArtifactRefreshKey((current) => current + 1);
       }
     },
-    [selectedArtifact]
+    []
   );
 
   const handleDescriptionSessionCreated = useCallback((sessionId: string) => {
@@ -174,7 +215,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
       httpUrl,
       workspaceSlug,
       onEvents: handleWorkflowEvents,
-      intervalMs: selectedArtifact ? 2_000 : 10_000,
+      getForegroundIntervalMs: () => (selectedArtifactRef.current ? 2_000 : 10_000),
     });
     return () => {
       unsubscribe();
@@ -185,7 +226,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
     activeWorkspace?.slug,
     activeWorkspace?.name,
     handleWorkflowEvents,
-    selectedArtifact,
   ]);
 
   useMainAreaWorkflowState({
