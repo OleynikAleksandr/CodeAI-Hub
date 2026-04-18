@@ -80,6 +80,29 @@ const sanitizeDialogMessageTranslationPayload = (
   };
 };
 
+export const shouldSuppressIdleDialogRestoreRefresh = (options: {
+  readonly latestSnapshot: WorkspaceSnapshotPushPayload | null;
+  readonly workspacePath: string;
+  readonly dialogId: string;
+  readonly providerSessionId: string | null;
+  readonly preferredSessionId: string;
+}): boolean => {
+  if (
+    !options.latestSnapshot ||
+    options.latestSnapshot.workspaceRoot !== options.workspacePath ||
+    !options.providerSessionId
+  ) {
+    return false;
+  }
+
+  return !resolveRuntimeSessionFromWorkspaceSnapshot({
+    payload: options.latestSnapshot,
+    preferredSessionId: options.preferredSessionId,
+    dialogId: options.dialogId,
+    providerSessionId: options.providerSessionId,
+  }).hasRuntimeSession;
+};
+
 export const useProjectManagerDialogCoreEvents = (options: {
   readonly applyMessageTranslation: (
     payload: CoreBridgeSessionMessageTranslationPayload
@@ -146,6 +169,14 @@ export const useProjectManagerDialogCoreEvents = (options: {
           dialogId: match.dialogId,
           providerSessionId: match.providerSessionId,
         });
+        const shouldKeepIdleDialogBootstrapReady =
+          shouldSuppressIdleDialogRestoreRefresh({
+            latestSnapshot,
+            workspacePath: intent.workspacePath,
+            dialogId: match.dialogId,
+            providerSessionId: match.providerSessionId,
+            preferredSessionId: preferredRuntimeSessionId,
+          });
         const bootstrapSession = buildDialogSessionRecord({
           runtimeSessionId: runtimeSession.runtimeSessionId,
           dialogId: match.dialogId,
@@ -153,7 +184,8 @@ export const useProjectManagerDialogCoreEvents = (options: {
           providerSessionId: match.providerSessionId,
           intent,
         });
-        const nextSession = runtimeSession.hasRuntimeSession
+        const nextSession =
+          runtimeSession.hasRuntimeSession || shouldKeepIdleDialogBootstrapReady
           ? bootstrapSession
           : {
               ...bootstrapSession,
@@ -168,6 +200,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
           providerSessionId: match.providerSessionId,
         });
         const shouldRequestRestore =
+          !shouldKeepIdleDialogBootstrapReady &&
           match.providerSessionId &&
           shouldCreateRuntimeRestore({
             requests: options.restoreRequestInFlightRef.current,
@@ -332,6 +365,20 @@ export const useProjectManagerDialogCoreEvents = (options: {
         }
         const intent = options.pendingIntentRef.current;
         if (!intent) {
+          return;
+        }
+        const incomingSessionId = readDialogString(payload?.sessionId);
+        if (
+          currentSession.id === currentDialogId &&
+          currentSession.binding.status === "ready" &&
+          shouldSuppressIdleDialogRestoreRefresh({
+            latestSnapshot: options.latestWorkspaceSnapshotRef.current,
+            workspacePath: intent.workspacePath,
+            dialogId: currentDialogId,
+            providerSessionId: currentSession.binding.providerSessionId,
+            preferredSessionId: incomingSessionId ?? currentSession.id,
+          })
+        ) {
           return;
         }
         const cursor = options.dialogCursorRef.current.get(incomingDialogId) ?? 0;

@@ -16,7 +16,10 @@ import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } fro
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
 import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
 import { appendOptimisticUserMessage } from "./session-message-dedupe";
-import { useProjectManagerDialogCoreEvents } from "./use-project-manager-dialog-core-events";
+import {
+  shouldSuppressIdleDialogRestoreRefresh,
+  useProjectManagerDialogCoreEvents,
+} from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
 
 export type ProjectManagerDialogSessionController = {
@@ -325,6 +328,44 @@ export const useProjectManagerDialogSessionController = (
       const intent = pendingIntentRef.current;
       if (intent && payload.workspaceRoot === intent.workspacePath) {
         latestWorkspaceSnapshotRef.current = payload;
+        const currentDialogId = dialogIdRef.current;
+        const currentSession = sessionRef.current;
+        if (
+          currentDialogId &&
+          currentSession &&
+          currentSession.id === currentDialogId &&
+          currentSession.binding.status !== "ready" &&
+          shouldSuppressIdleDialogRestoreRefresh({
+            latestSnapshot: payload,
+            workspacePath: intent.workspacePath,
+            dialogId: currentDialogId,
+            providerSessionId: currentSession.binding.providerSessionId,
+            preferredSessionId: currentSession.id,
+          })
+        ) {
+          const readySession: SessionRecord = {
+            ...currentSession,
+            binding: {
+              ...currentSession.binding,
+              status: "ready",
+            },
+          };
+          sessionRef.current = readySession;
+          setSession(readySession);
+          setSnapshots((previous) => {
+            const snapshot = previous[currentSession.id];
+            if (!snapshot) {
+              return previous;
+            }
+            return {
+              ...previous,
+              [currentSession.id]: {
+                ...snapshot,
+                binding: readySession.binding,
+              },
+            };
+          });
+        }
       }
       setSnapshots((previous) => applyWorkspaceSnapshotToSnapshots(previous, payload));
     },

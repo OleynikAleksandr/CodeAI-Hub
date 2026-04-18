@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
+import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { mergeHistoryIntoSnapshots, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { appendDedupedSessionMessageToSnapshots, appendOptimisticUserMessage } from "./session-message-dedupe";
 
@@ -28,6 +29,11 @@ const DEDUPE_SOURCE_PATH = path.resolve(
   "src/client/project-manager/components/sessions/session-message-dedupe.ts"
 );
 
+type ShouldSuppressIdleDialogRestoreRefresh = typeof import("./use-project-manager-dialog-core-events")["shouldSuppressIdleDialogRestoreRefresh"];
+
+const assertIncludes = (source: string, pattern: string, message: string): void =>
+  assert.equal(source.includes(pattern), true, message);
+
 const createSnapshot = (): SessionSnapshot => ({
   messages: [],
   todos: [],
@@ -47,26 +53,76 @@ const createSnapshot = (): SessionSnapshot => ({
   },
 });
 
+const createWorkspaceSnapshotPayload = (params: {
+  readonly workspaceRoot?: string;
+  readonly sessions: WorkspaceSnapshotPushPayload["snapshot"]["sessions"];
+}): WorkspaceSnapshotPushPayload => ({
+  workspaceRoot: params.workspaceRoot ?? "/workspace",
+  selectionId: "selection-1",
+  sequence: 1,
+  generatedAt: "2026-01-01T00:00:00.000Z",
+  snapshot: {
+    workspaceRoot: params.workspaceRoot ?? "/workspace",
+    loadState: "ready",
+    workflow: { nodes: {} },
+    sessions: params.sessions,
+    artifacts: { currentByNodeId: {} },
+  },
+});
+
+const ensureBrowserLikeGlobals = (): void => {
+  const globalScope = globalThis as typeof globalThis & {
+    CustomEvent?: typeof CustomEvent;
+    window?: Window & typeof globalThis;
+  };
+  if (!globalScope.window) {
+    globalScope.window = globalScope as Window & typeof globalThis;
+  }
+  if (typeof globalScope.window.addEventListener !== "function") {
+    globalScope.window.addEventListener = () => {};
+  }
+  if (typeof globalScope.window.removeEventListener !== "function") {
+    globalScope.window.removeEventListener = () => {};
+  }
+  if (typeof globalScope.window.dispatchEvent !== "function") {
+    globalScope.window.dispatchEvent = () => true;
+  }
+  if (typeof globalScope.CustomEvent !== "function") {
+    class TestCustomEvent<T = unknown> extends Event {
+      readonly detail: T;
+
+      constructor(type: string, init?: CustomEventInit<T>) {
+        super(type, init);
+        this.detail = init?.detail as T;
+      }
+    }
+    globalScope.CustomEvent = TestCustomEvent as typeof CustomEvent;
+  }
+};
+
+let shouldSuppressIdleDialogRestoreRefreshLoader:
+  Promise<ShouldSuppressIdleDialogRestoreRefresh> | null = null;
+const loadShouldSuppressIdleDialogRestoreRefresh =
+  async (): Promise<ShouldSuppressIdleDialogRestoreRefresh> => {
+    ensureBrowserLikeGlobals();
+    if (!shouldSuppressIdleDialogRestoreRefreshLoader) {
+      shouldSuppressIdleDialogRestoreRefreshLoader = import(
+        "./use-project-manager-dialog-core-events"
+      ).then((module) => module.shouldSuppressIdleDialogRestoreRefresh);
+    }
+    return shouldSuppressIdleDialogRestoreRefreshLoader;
+  };
+
 test("dialog session controller caches workspace snapshots for replay", async () => {
   const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
 
-  assert.equal(
-    source.includes(
-      "const latestWorkspaceSnapshotRef = useRef<WorkspaceSnapshotPushPayload | null>("
-    ),
-    true,
+  assertIncludes(
+    source,
+    "const latestWorkspaceSnapshotRef = useRef<WorkspaceSnapshotPushPayload | null>(",
     "controller must keep last workspace snapshot to avoid race with dialog:list:result/session:created"
   );
-  assert.equal(
-    source.includes("latestWorkspaceSnapshotRef.current = payload;"),
-    true,
-    "controller must record latest workspace snapshot payload"
-  );
-  assert.equal(
-    source.includes("latestWorkspaceSnapshotRef,"),
-    true,
-    "controller must pass latest snapshot ref into dialog core events"
-  );
+  assertIncludes(source, "latestWorkspaceSnapshotRef.current = payload;", "controller must record latest workspace snapshot payload");
+  assertIncludes(source, "latestWorkspaceSnapshotRef,", "controller must pass latest snapshot ref into dialog core events");
 });
 
 test("dialog core events replay workspace snapshot after creating base snapshot", async () => {
@@ -76,33 +132,11 @@ test("dialog core events replay workspace snapshot after creating base snapshot"
     readFile(RUNTIME_RESOLVER_SOURCE_PATH, "utf8"),
   ]);
 
-  assert.equal(
-    source.includes("createDialogBootstrapSnapshots"),
-    true,
-    "dialog core events must delegate bootstrap snapshot creation to helper"
-  );
-  assert.equal(
-    bootstrapSource.includes("applyWorkspaceSnapshotToSnapshots"),
-    true,
-    "bootstrap helper must replay lock state from workspace snapshot"
-  );
-  assert.equal(
-    source.includes("resolveRuntimeSessionFromWorkspaceSnapshot"),
-    true,
-    "dialog core events must resolve runtime sessionId against latest workspace snapshot"
-  );
-  assert.equal(
-    source.includes(
-      "resolveProviderId(match.providerId) ?? resolveProviderId(intent.providerId);"
-    ),
-    true,
-    "dialog bootstrap must fall back to explicit dialog intent provider when list payload lacks a normalized provider id"
-  );
-  assert.equal(
-    resolverSource.includes("session.providerSessionId === options.providerSessionId"),
-    true,
-    "runtime session fallback must support providerSessionId identity when session ids drift"
-  );
+  assertIncludes(source, "createDialogBootstrapSnapshots", "dialog core events must delegate bootstrap snapshot creation to helper");
+  assertIncludes(bootstrapSource, "applyWorkspaceSnapshotToSnapshots", "bootstrap helper must replay lock state from workspace snapshot");
+  assertIncludes(source, "resolveRuntimeSessionFromWorkspaceSnapshot", "dialog core events must resolve runtime sessionId against latest workspace snapshot");
+  assertIncludes(source, "resolveProviderId(match.providerId) ?? resolveProviderId(intent.providerId);", "dialog bootstrap must fall back to explicit dialog intent provider when list payload lacks a normalized provider id");
+  assertIncludes(resolverSource, "session.providerSessionId === options.providerSessionId", "runtime session fallback must support providerSessionId identity when session ids drift");
 });
 
 test("dialog core events dedupe resumed dialog runtime restore requests", async () => {
@@ -111,36 +145,12 @@ test("dialog core events dedupe resumed dialog runtime restore requests", async 
     readFile(BOOTSTRAP_SOURCE_PATH, "utf8"),
   ]);
 
-  assert.equal(
-    source.includes("buildDialogRestoreRequestKey"),
-    true,
-    "dialog open must build a restore request key per continuity entry"
-  );
-  assert.equal(
-    source.includes("shouldCreateRuntimeRestore"),
-    true,
-    "dialog open must consult restore dedupe helper before createSession"
-  );
-  assert.equal(
-    source.includes("providerId: providerId ?? intent.providerId,"),
-    true,
-    "runtime restore must reuse the seeded provider identity instead of re-reading stale dialog list values"
-  );
-  assert.equal(
-    source.includes("options.restoreRequestInFlightRef.current"),
-    true,
-    "dialog open must track in-flight restore requests in a stable ref"
-  );
-  assert.equal(
-    bootstrapSource.includes("RUNTIME_RESTORE_IN_FLIGHT_TTL_MS = 30_000"),
-    true,
-    "restore dedupe helper must expire stale requests after bounded TTL"
-  );
-  assert.equal(
-    bootstrapSource.includes("options.requests.has(options.restoreKey)"),
-    true,
-    "restore dedupe helper must suppress duplicate restore requests for the same dialog continuity entry"
-  );
+  assertIncludes(source, "buildDialogRestoreRequestKey", "dialog open must build a restore request key per continuity entry");
+  assertIncludes(source, "shouldCreateRuntimeRestore", "dialog open must consult restore dedupe helper before createSession");
+  assertIncludes(source, "providerId: providerId ?? intent.providerId,", "runtime restore must reuse the seeded provider identity instead of re-reading stale dialog list values");
+  assertIncludes(source, "options.restoreRequestInFlightRef.current", "dialog open must track in-flight restore requests in a stable ref");
+  assertIncludes(bootstrapSource, "RUNTIME_RESTORE_IN_FLIGHT_TTL_MS = 30_000", "restore dedupe helper must expire stale requests after bounded TTL");
+  assertIncludes(bootstrapSource, "options.requests.has(options.restoreKey)", "restore dedupe helper must suppress duplicate restore requests for the same dialog continuity entry");
 });
 
 test("dialog first-open hydration binds session identity before requesting history", async () => {
@@ -149,11 +159,7 @@ test("dialog first-open hydration binds session identity before requesting histo
     readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
   ]);
 
-  assert.equal(
-    controllerSource.includes("sessionRef.current = null;"),
-    true,
-    "controller must clear session ref on intent switch to avoid stale first-open routing"
-  );
+  assertIncludes(controllerSource, "sessionRef.current = null;", "controller must clear session ref on intent switch to avoid stale first-open routing");
 
   const sessionRefBindIndex = coreEventsSource.indexOf(
     "options.sessionRef.current = nextSession;"
@@ -171,46 +177,62 @@ test("dialog first-open hydration binds session identity before requesting histo
 test("dialog controller keeps restore dedupe state across cold-open retries", async () => {
   const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
 
-  assert.equal(
-    source.includes("const restoreRequestInFlightRef = useRef(new Map<string, number>())"),
-    true,
-    "controller must keep restore request dedupe state across repeated dialog:list results"
-  );
-  assert.equal(
-    source.includes("restoreRequestInFlightRef.current.clear();"),
-    true,
-    "controller must clear restore dedupe state when dialog intent changes"
-  );
-  assert.equal(
-    source.includes("restoreRequestInFlightRef,"),
-    true,
-    "controller must pass restore dedupe ref into dialog core events"
-  );
+  assertIncludes(source, "const restoreRequestInFlightRef = useRef(new Map<string, number>())", "controller must keep restore request dedupe state across repeated dialog:list results");
+  assertIncludes(source, "restoreRequestInFlightRef.current.clear();", "controller must clear restore dedupe state when dialog intent changes");
+  assertIncludes(source, "restoreRequestInFlightRef,", "controller must pass restore dedupe ref into dialog core events");
 });
 
 test("dialog controller retries stalled cold-open history request after timeout", async () => {
   const source = await readFile(CONTROLLER_SOURCE_PATH, "utf8");
 
-  assert.equal(
-    source.includes("window.setTimeout(() => {"),
-    true,
-    "controller must schedule watchdog timeout for cold-open history"
-  );
-  assert.equal(
-    source.includes("pendingHistoryCursorRef.current.has(dialogId)"),
-    true,
-    "watchdog must verify request is still pending before retry"
-  );
-  assert.equal(
-    source.includes("loadedDialogIdsRef.current.delete(dialogId);"),
-    true,
-    "watchdog must clear loaded marker before forced retry"
-  );
-  assert.equal(
-    source.includes("requestDialogHistory(activeIntent, dialogId, 0, { force: true });"),
-    true,
-    "watchdog must issue a forced full-history retry for stalled cold-open"
-  );
+  assertIncludes(source, "window.setTimeout(() => {", "controller must schedule watchdog timeout for cold-open history");
+  assertIncludes(source, "pendingHistoryCursorRef.current.has(dialogId)", "watchdog must verify request is still pending before retry");
+  assertIncludes(source, "loadedDialogIdsRef.current.delete(dialogId);", "watchdog must clear loaded marker before forced retry");
+  assertIncludes(source, "requestDialogHistory(activeIntent, dialogId, 0, { force: true });", "watchdog must issue a forced full-history retry for stalled cold-open");
+});
+
+test("dialog restore refresh suppression treats snapshot-confirmed idle dialog as terminally hydrated", async () => {
+  const shouldSuppressIdleDialogRestoreRefresh =
+    await loadShouldSuppressIdleDialogRestoreRefresh();
+  const missingRuntime = shouldSuppressIdleDialogRestoreRefresh({
+    latestSnapshot: createWorkspaceSnapshotPayload({
+      sessions: {},
+    }),
+    workspacePath: "/workspace",
+    dialogId: "dialog-1",
+    providerSessionId: "provider-session-1",
+    preferredSessionId: "runtime-1",
+  });
+  const liveRuntime = shouldSuppressIdleDialogRestoreRefresh({
+    latestSnapshot: createWorkspaceSnapshotPayload({
+      sessions: {
+        "runtime-1": {
+          nodeId: "node-1",
+          providerSessionId: "provider-session-1",
+          turnState: "running",
+          continuityLockActive: false,
+        },
+      },
+    }),
+    workspacePath: "/workspace",
+    dialogId: "dialog-1",
+    providerSessionId: "provider-session-1",
+    preferredSessionId: "runtime-1",
+  });
+  const foreignWorkspace = shouldSuppressIdleDialogRestoreRefresh({
+    latestSnapshot: createWorkspaceSnapshotPayload({
+      workspaceRoot: "/other-workspace",
+      sessions: {},
+    }),
+    workspacePath: "/workspace",
+    dialogId: "dialog-1",
+    providerSessionId: "provider-session-1",
+    preferredSessionId: "runtime-1",
+  });
+
+  assert.equal(missingRuntime, true);
+  assert.equal(liveRuntime, false);
+  assert.equal(foreignWorkspace, false);
 });
 
 test("dialog snapshot replay reconciles optimistic stop-resend user bubble with canonical tail history", () => {
@@ -330,6 +352,46 @@ test("dialog tail replay keeps optimistic reconciliation separate from full-hist
     dedupeSource.includes("messages[optimisticCandidateIndex] = payload.message;"),
     true,
     "dedupe layer must replace optimistic stop-resend bubble with canonical message"
+  );
+});
+
+test("dialog restore path keeps snapshot-confirmed idle dialogs ready and suppresses self-refresh churn", async () => {
+  const [controllerSource, coreEventsSource] = await Promise.all([
+    readFile(CONTROLLER_SOURCE_PATH, "utf8"),
+    readFile(CORE_EVENTS_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    coreEventsSource.includes("const shouldKeepIdleDialogBootstrapReady ="),
+    true,
+    "dialog bootstrap must recognize snapshot-confirmed idle dialogs before creating restore placeholders"
+  );
+  assert.equal(
+    coreEventsSource.includes(
+      "!shouldKeepIdleDialogBootstrapReady &&\n          match.providerSessionId &&"
+    ),
+    true,
+    "dialog restore must skip createSession when workspace snapshot already proves there is no live runtime"
+  );
+  assert.equal(
+    coreEventsSource.includes("currentSession.binding.status === \"ready\" &&"),
+    true,
+    "dialog message reread path must suppress self-refresh only for ready idle bootstrap dialogs"
+  );
+  assert.equal(
+    coreEventsSource.includes("shouldSuppressIdleDialogRestoreRefresh({"),
+    true,
+    "dialog core events must reuse idle-runtime suppression helper for restore and reread gating"
+  );
+  assert.equal(
+    controllerSource.includes("currentSession.binding.status !== \"ready\" &&"),
+    true,
+    "controller must only auto-promote unresolved placeholders when snapshot later confirms there is no runtime session"
+  );
+  assert.equal(
+    controllerSource.includes("status: \"ready\","),
+    true,
+    "controller must convert stale pending placeholder to ready when idle dialog snapshot catches up"
   );
 });
 
