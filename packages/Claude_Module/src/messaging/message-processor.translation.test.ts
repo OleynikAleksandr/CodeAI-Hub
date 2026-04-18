@@ -150,8 +150,9 @@ test("SDKMessageProcessor translates Claude thinking bubbles to user language", 
   );
 });
 
-test("SDKMessageProcessor translates Claude pre-tool assistant text to user language", async () => {
-  const translationCalls: string[] = [];
+test("SDKMessageProcessor routes Claude pre-tool assistant text through thinking translation", async () => {
+  const reasoningCalls: string[] = [];
+  const userFacingCalls: string[] = [];
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
     "/tmp/claude-test-pretool-translation",
@@ -161,10 +162,13 @@ test("SDKMessageProcessor translates Claude pre-tool assistant text to user lang
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test-pretool-translation",
     thoughtTranslator: {
-      translateReasoning: () => Promise.resolve(null),
-      translateUserFacingText: (text: string, targetLanguage?: string) => {
-        translationCalls.push(`${targetLanguage ?? ""}:${text}`);
+      translateReasoning: (text: string, targetLanguage?: string) => {
+        reasoningCalls.push(`${targetLanguage ?? ""}:${text}`);
         return Promise.resolve("Сейчас проверю, существует ли целевой файл");
+      },
+      translateUserFacingText: (text: string, targetLanguage?: string) => {
+        userFacingCalls.push(`${targetLanguage ?? ""}:${text}`);
+        return Promise.resolve("Этого перевода быть не должно");
       },
     },
   });
@@ -207,16 +211,27 @@ test("SDKMessageProcessor translates Claude pre-tool assistant text to user lang
 
   await waitForQueueDrain(session);
 
-  assert.deepEqual(translationCalls, [
+  assert.deepEqual(reasoningCalls, [
     "ru:Now let me check if the target file already exists:",
   ]);
+  assert.deepEqual(userFacingCalls, []);
+  assert.equal(
+    events.some(
+      (event) =>
+        event.type === "dialog_message" &&
+        event.role === "assistant" &&
+        event.tag === "thinking" &&
+        event.content === "Сейчас проверю, существует ли целевой файл"
+    ),
+    true
+  );
   assert.equal(
     events.some(
       (event) =>
         event.type === "assistant" &&
-        event.content === "Сейчас проверю, существует ли целевой файл"
+        event.content === "Этого перевода быть не должно"
     ),
-    true
+    false
   );
 });
 

@@ -15,15 +15,36 @@ interface AssistantEmission {
   readonly uuid: string;
 }
 
+interface ThinkingEmission {
+  readonly content: string;
+  readonly role: "assistant";
+  readonly tag: "thinking";
+  readonly type: "dialog_message";
+  readonly uuid: string;
+}
+
 const isLiveAssistant = (value: unknown): value is AssistantEmission =>
   typeof value === "object" &&
   value !== null &&
   (value as { type?: unknown }).type === "assistant";
 
-const createSession = (sessionId: string): ActiveSession => {
+const isThinkingEmission = (value: unknown): value is ThinkingEmission =>
+  typeof value === "object" &&
+  value !== null &&
+  (value as { type?: unknown }).type === "dialog_message" &&
+  (value as { role?: unknown }).role === "assistant" &&
+  (value as { tag?: unknown }).tag === "thinking";
+
+const createSession = (
+  sessionId: string,
+  targetLanguage?: string
+): ActiveSession => {
   const listeners = new Map<string, Array<(payload: unknown) => void>>();
   return {
     sessionId,
+    runtimeTurnConfig: {
+      messagesForTheUserLanguage: targetLanguage,
+    },
     eventEmitter: {
       emit: (event: string, payload: unknown) => {
         const handlers = listeners.get(event) ?? [];
@@ -46,6 +67,18 @@ const collectAssistantEmissions = (
   const emissions: AssistantEmission[] = [];
   session.eventEmitter.on("message", (payload: unknown) => {
     if (isLiveAssistant(payload)) {
+      emissions.push(payload);
+    }
+  });
+  return emissions;
+};
+
+const collectThinkingEmissions = (
+  session: ActiveSession
+): ThinkingEmission[] => {
+  const emissions: ThinkingEmission[] = [];
+  session.eventEmitter.on("message", (payload: unknown) => {
+    if (isThinkingEmission(payload)) {
       emissions.push(payload);
     }
   });
@@ -80,6 +113,15 @@ const buildContentBlockStop = (index: number): ClaudeStreamMessage => ({
   type: "stream_event",
   uuid: `stop-${index}`,
   event: { type: "content_block_stop", index },
+});
+
+const buildMessageDelta = (stopReason: string): ClaudeStreamMessage => ({
+  type: "stream_event",
+  uuid: `message-delta-${stopReason}`,
+  event: {
+    type: "message_delta",
+    delta: { stop_reason: stopReason },
+  },
 });
 
 const buildAssistantTextMessage = (
@@ -279,4 +321,51 @@ test("ClaudeStreamEventRouter emits full canonical text when assembled diverges 
   const finalEmissions = emissions.slice(liveCount);
   assert.equal(finalEmissions.length, 1);
   assert.equal(finalEmissions[0].content, finalText);
+});
+
+test("ClaudeStreamEventRouter suppresses localized live pre-tool text until it can emit it as thinking", async () => {
+  const handler = new ClaudeContentStreamHandler(
+    new ClaudeThinkingLiveBuffer(),
+    new ClaudeTextLiveBuffer()
+  );
+  const router = new ClaudeStreamEventRouter(
+    undefined,
+    {
+      translateReasoning: (text: string) => Promise.resolve(text),
+      translateUserFacingText: () => Promise.resolve(null),
+    },
+    handler
+  );
+  const session = createSession("session-localized-tool-use", "ru");
+  const assistantEmissions = collectAssistantEmissions(session);
+  const thinkingEmissions = collectThinkingEmissions(session);
+  const preToolText =
+    "I've read the Final_Description.md. The workspace has description/ and continuity/ set up, but virtual_simulation/ directory does not exist yet and there's no existing virtual-simulation.md. Let me create the directory and the first draft of the document.";
+
+  await router.handleStreamEvent(session, buildTextBlockStart(0));
+  await router.handleStreamEvent(
+    session,
+    buildTextDelta(0, preToolText, "localized-pretool")
+  );
+  assert.equal(
+    assistantEmissions.length,
+    0,
+    "localized pre-tool text must not materialize as assistant/live before classification"
+  );
+
+  await router.handleStreamEvent(session, buildContentBlockStop(0));
+  assert.equal(
+    assistantEmissions.length,
+    0,
+    "content_block_stop must keep suppressed pre-tool text off the assistant path"
+  );
+
+  await router.handleStreamEvent(session, buildMessageDelta("tool_use"));
+  assert.equal(
+    assistantEmissions.length,
+    0,
+    "tool_use preamble must not produce assistant bubbles"
+  );
+  assert.equal(thinkingEmissions.length, 1);
+  assert.equal(thinkingEmissions[0].content, preToolText);
 });
