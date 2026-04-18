@@ -48,6 +48,7 @@
 | BUG-2026-03-25-01 | FIXED | Core/Gemini/PM | Provider error → binding lost → UI deadlock → Core crash → workspace vanishes | 1.1.804 |
 | BUG-2026-03-29-01 | OPEN | Core/UI/Gemini | Session Stop semantics shutdown-ит Core вместо остановки turn; stalled Gemini turn оставляет dialog locked | TBD |
 | BUG-2026-04-16-01 | FIXED | Localization/Core/Claude | Haiku слишком медленно переводит runtime bundles и дублирует/обрезает reasoning translation | 1.1.990 |
+| BUG-2026-04-18-01 | OPEN | Claude/Core/PM | Claude turn завершён, но session залипает в `Agent is resuming...` из-за post-turn `/context` probe failure | TBD |
 
 ---
 
@@ -114,6 +115,40 @@
 - `node --test packages/core/dist/session-translation/session-translation-facade.test.js`
 - `npm run build --workspace=@codeai-hub/claude-module`
 - `npm run build --workspace=@codeai-hub/core`
+
+## BUG-2026-04-18-01 — Claude/Core/PM: post-turn `/context` probe failure leaves session stuck in false `resuming`
+
+**Status:** OPEN
+
+**Symptom:**
+- Claude отдаёт полный финальный ответ пользователю, но input остаётся заблокированным с copy `Agent is resuming your session… Please wait.`
+- В UI это выглядит как resume/continuity stuck, хотя фактического `restoreRequested` нет.
+- Повторные `refreshUsageLimits` происходят уже после завершённого turn-а.
+
+**Confirmed evidence:**
+- Native Claude project JSONL: `/Users/oleksandroliinyk/.codeai-hub/providers/claude/home/.claude/projects/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-claude/99d69c3e-eeab-4534-a80c-f02d0de14c99.jsonl` — normal final assistant reply with `end_turn`.
+- SDK log: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-99d69c3e-eeab-4534-a80c-f02d0de14c99.jsonl` — `sdk:result subtype=success`, `terminal_reason=completed`.
+- Unified session JSONL: `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-claude/claudeCodeCli/claude-5598fd12-aab0-4364-8370-d9b39b820c75-description.jsonl` — full final live response persisted.
+- Core log: `/Users/oleksandroliinyk/.codeai-hub/logs/core/core.log` — immediately after completion, `[claude] Claude /context token read failed ... ERR_UNKNOWN_FILE_EXTENSION ".exe"`, then PM bootstrap/usage refresh continues with `restoreRequested: false`.
+
+**Root cause (confirmed):**
+- `packages/Claude_Module/src/sdk/claude-context-usage-probe.ts` on Unix runs the Claude `/context` probe via `node <executablePath> ...`.
+- In the current install layout `~/.npm-global/bin/claude` resolves to the native Claude binary bundle (`claude.exe` inside the package), not a JS entrypoint, so `node` fails with `ERR_UNKNOWN_FILE_EXTENSION`.
+- Claude turn completion itself succeeds, but post-turn token usage synchronization fails, and Core leaves the session in `context_check_pending` without reaching a final unlock decision.
+
+**Cross-provider assessment:**
+- **Codex:** same immediate bug not confirmed. It does not use the same Unix `node <native binary>` `/context` probe path; usage for continuity arbitration comes from turn/runtime events.
+- **Gemini:** same immediate bug not confirmed. It emits `token_usage` during/at the end of the turn and does not rely on the Claude-specific probe path.
+- **Systemic risk remains:** the shared post-turn continuity arbitration can still stall for any provider if an eligible flow-node session reaches `turn_completed` without a usable usage snapshot and without an explicit provider signal that the snapshot is unavailable. This risk is architectural and should be covered by the fix.
+
+**Accepted fix direction (2026-04-18):**
+- Fix Claude Unix probe runner selection so `/context` executes the native binary directly when appropriate.
+- Add an explicit provider-side completion signal that post-turn token usage is unavailable when the probe fails.
+- Teach Core continuity arbitration to resolve `no_rollover` on that explicit signal instead of waiting forever in `context_check_pending`.
+
+**Validation target:**
+- Release candidate `1.2.16`.
+- User retest required before moving the bug to `FIXED`.
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 
