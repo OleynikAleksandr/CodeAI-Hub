@@ -26,6 +26,11 @@ const isTurnCompletedPayload = (payload: unknown): boolean =>
   isRecord(payload) && payload.type === "turn_completed";
 const RECOVERABLE_TURN_FAILURE_CODE = "GEMINI_RECOVERABLE_TURN_FAILURE";
 
+interface GeminiTerminalUsageTelemetry {
+  readonly turnCompletedPayload: unknown;
+  readonly usageLimitsStreamEvent: unknown | null;
+}
+
 export class GeminiProviderAdapter {
   private readonly installer: GeminiInstaller;
   private sessionManager: GeminiSessionManager | null = null;
@@ -114,10 +119,22 @@ export class GeminiProviderAdapter {
     const { sessionId, session } = sessionResult;
     let currentSessionId = sessionId;
     const forwardMessage = async (payload: unknown): Promise<void> => {
-      this.dispatchMessage(currentSessionId, payload);
       if (isTurnCompletedPayload(payload)) {
-        await this.refreshUsageLimitsAfterTurn(session, currentSessionId);
+        const telemetry = await this.readTurnCompletionUsageTelemetry(
+          session,
+          currentSessionId,
+          payload
+        );
+        this.dispatchMessage(currentSessionId, telemetry.turnCompletedPayload);
+        if (telemetry.usageLimitsStreamEvent) {
+          this.dispatchMessage(
+            currentSessionId,
+            telemetry.usageLimitsStreamEvent
+          );
+        }
+        return;
       }
+      this.dispatchMessage(currentSessionId, payload);
     };
     const forwardError = (payload: unknown): void => {
       this.dispatchMessage(currentSessionId, payload);
@@ -139,20 +156,38 @@ export class GeminiProviderAdapter {
         });
       }
     });
-    this.refreshUsageLimitsAfterTurn(session, sessionId).catch(() => {
+    this.refreshUsageLimitsOnBind(session, sessionId).catch(() => {
       // Proactive refresh is best-effort; failures are non-blocking.
     });
     return sessionId;
   }
 
-  private async refreshUsageLimitsAfterTurn(
+  private async refreshUsageLimitsOnBind(
     session: ActiveSession,
     runtimeSessionId: string
   ): Promise<void> {
+    const telemetry = await this.readTurnCompletionUsageTelemetry(
+      session,
+      runtimeSessionId,
+      null
+    );
+    if (telemetry.usageLimitsStreamEvent) {
+      this.dispatchMessage(runtimeSessionId, telemetry.usageLimitsStreamEvent);
+    }
+  }
+
+  private async readTurnCompletionUsageTelemetry(
+    session: ActiveSession,
+    runtimeSessionId: string,
+    payload: unknown
+  ): Promise<GeminiTerminalUsageTelemetry> {
     const facade = this.usageLimitsFacade;
     const providerSessionId = session.sessionId.trim();
     if (!(facade && providerSessionId)) {
-      return;
+      return {
+        turnCompletedPayload: payload,
+        usageLimitsStreamEvent: null,
+      };
     }
 
     const previousPayload = facade.getCachedStreamPayload({
@@ -172,24 +207,44 @@ export class GeminiProviderAdapter {
         );
         return null;
       });
+    const resolvedPayload = nextPayload ?? previousPayload;
+    const turnCompletedPayload =
+      resolvedPayload?.usageLimits && isRecord(payload)
+        ? {
+            ...payload,
+            providerScopeKey:
+              resolvedPayload.providerScopeKey ||
+              (typeof payload.providerScopeKey === "string"
+                ? payload.providerScopeKey
+                : undefined),
+            usageLimits: resolvedPayload.usageLimits,
+          }
+        : payload;
+
     if (
       !nextPayload?.usageLimits ||
       areGeminiUsageLimitsPayloadEqual(previousPayload, nextPayload)
     ) {
-      return;
+      return {
+        turnCompletedPayload,
+        usageLimitsStreamEvent: null,
+      };
     }
 
-    this.dispatchMessage(runtimeSessionId, {
-      type: "stream_event",
-      provider: "gemini",
-      sessionId: runtimeSessionId,
-      providerSessionId,
-      providerScopeKey: nextPayload.providerScopeKey,
-      usageLimits: nextPayload.usageLimits,
-      data: nextPayload.data,
-      uuid: `${crypto.randomUUID()}::usage_limits`,
-      timestamp: new Date().toISOString(),
-    });
+    return {
+      turnCompletedPayload,
+      usageLimitsStreamEvent: {
+        type: "stream_event",
+        provider: "gemini",
+        sessionId: runtimeSessionId,
+        providerSessionId,
+        providerScopeKey: nextPayload.providerScopeKey,
+        usageLimits: nextPayload.usageLimits,
+        data: nextPayload.data,
+        uuid: `${crypto.randomUUID()}::usage_limits`,
+        timestamp: new Date().toISOString(),
+      },
+    };
   }
 
   async refreshUsageLimits(params: {
