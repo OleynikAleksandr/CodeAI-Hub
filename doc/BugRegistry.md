@@ -49,6 +49,7 @@
 | BUG-2026-03-29-01 | OPEN | Core/UI/Gemini | Session Stop semantics shutdown-ит Core вместо остановки turn; stalled Gemini turn оставляет dialog locked | TBD |
 | BUG-2026-04-16-01 | FIXED | Localization/Core/Claude | Haiku слишком медленно переводит runtime bundles и дублирует/обрезает reasoning translation | 1.1.990 |
 | BUG-2026-04-18-01 | FIXED | Claude/Core/PM | Claude turn завершён, но session залипает в `Agent is resuming...` из-за post-turn `/context` probe failure | 1.2.16 |
+| BUG-2026-04-18-02 | OPEN | Claude/UI/Translation | Claude pre-tool live text попадает в assistant bubble вместо `Thinking` и обходит перевод | TBD |
 
 ---
 
@@ -173,6 +174,42 @@
 **Retest result (2026-04-18):**
 - Пользователь подтвердил, что на релизе `1.2.16` первый turn проходит корректно у всех трёх провайдеров, без stuck-state и без ложного `Agent is resuming...`.
 - Баг закрыт как `FIXED`; дальнейшее наблюдение переносится в новый scope только если регрессия проявится на более поздних turn'ах.
+
+## BUG-2026-04-18-02 — Claude/UI/Translation: pre-tool live text must not surface as assistant bubble
+
+**Status:** OPEN
+
+**Symptom:**
+- Во время Claude workflow-turn в локализованной (`ru`) сессии между двумя `Claude · Thinking` bubble появляется отдельный английский assistant/live fragment, например: `I've read the Final_Description.md... Let me create the directory and the first draft of the document.`
+- Этот fragment выглядит как обычный ответ агента, хотя по смыслу является pre-tool progress text перед `tool_use`.
+- После этого fragment не попадает в thinking translation path и остаётся на английском.
+
+**Confirmed evidence:**
+- Unified session JSONL: `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/claudeCodeCli/claude-9f32ecf5-7bc3-4581-b8fa-acc3996e72c2-virtual-simulation.jsonl`
+  - thinking immediately before leak: lines `64`
+  - leaked assistant/live fragment: lines `65-66`
+  - next thinking bubble: line `67`
+- Native Claude project JSONL: `/Users/oleksandroliinyk/.codeai-hub/providers/claude/home/.claude/projects/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/34711f5f-291d-493d-9a76-3fa9f935c797.jsonl`
+  - corresponding Claude message `msg_01QQVEMqcnPsHDkLP43EW3ds` contains a `thinking` block and then a `text` block before `tool_use`, but the leaked fragment is not a final user-facing answer.
+- SDK trace: `/Users/oleksandroliinyk/.codeai-hub/logs/claude/sdk-claude-34711f5f-291d-493d-9a76-3fa9f935c797.jsonl`
+  - `content_block_start` thinking + assistant thinking payload: lines `69-71`
+  - `content_block_start` text + assistant text payload with leaked English fragment: lines `73-74`
+  - immediate `content_block_start` tool_use follows right after: line `76`
+
+**Root cause (confirmed):**
+- Claude live `text_delta` path in `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts` emits visible assistant/live fragments immediately via `emitClaudeAssistantLiveText(...)` before the router knows whether the message will resolve to `end_turn` or `tool_use`.
+- Legacy Claude `tool_use_preamble` handling in `packages/Claude_Module/src/messaging/claude-stream-event-router.ts` can already reclassify queued same-message text as `thinking`, but only when the text stayed on the pending path.
+- Once live text has already materialized as assistant/live, that older `tool_use_preamble` branch is bypassed, so the fragment survives as an assistant bubble and also skips the thinking translation overlay.
+- Core overlay translation is intentionally restricted to `thinking` display messages, so leaked assistant/live preambles do not get localized afterward.
+
+**Accepted fix direction (2026-04-18):**
+- Claude text that belongs to a message resolving to `tool_use` must not surface as a visible assistant/live bubble.
+- Pre-tool text must resolve through the `thinking` path so it inherits the same rendering and translation contract as other `Claude · Thinking` content.
+- End-turn assistant text must remain on the normal assistant path; the fix must not globally convert all Claude text into thinking.
+- Minimum regression guards:
+  - localized Claude pre-tool text must not appear as assistant/live in a `tool_use` turn;
+  - the same content must instead surface as `thinking`;
+  - ordinary Claude `end_turn` assistant text must stay assistant text.
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 
