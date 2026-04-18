@@ -127,6 +127,48 @@ test("codex rollout event parser ignores unsupported phases, empty content, and 
   );
 });
 
+test("codex rollout event parser preserves observed final-answer pairs when the final answer omits turn_id", () => {
+  const events = parseCodexRolloutEvents([
+    {
+      timestamp: "2026-04-18T10:43:20.019Z",
+      type: "event_msg",
+      payload: {
+        type: "agent_message",
+        message: "Updated Final_Description.md.",
+        phase: "final_answer",
+      },
+    },
+    {
+      timestamp: "2026-04-18T10:43:20.521Z",
+      type: "event_msg",
+      payload: {
+        type: "task_complete",
+        last_agent_message: "Updated Final_Description.md.",
+        turn_id: "turn-observed",
+      },
+    },
+  ]);
+
+  assert.deepEqual(events, [
+    {
+      content: "Updated Final_Description.md.",
+      kind: "final_answer",
+      payloadType: "agent_message",
+      phase: "final_answer",
+      timestamp: "2026-04-18T10:43:20.019Z",
+      turnId: null,
+    },
+    {
+      content: "Updated Final_Description.md.",
+      kind: "task_complete",
+      payloadType: "task_complete",
+      phase: null,
+      timestamp: "2026-04-18T10:43:20.521Z",
+      turnId: "turn-observed",
+    },
+  ]);
+});
+
 test("codex rollout segment ids stay stable and dedupe suppresses repeated segments", () => {
   const [event] = parseCodexRolloutEvents([
     {

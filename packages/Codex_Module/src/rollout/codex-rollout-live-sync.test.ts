@@ -115,6 +115,110 @@ test("CodexRolloutLiveSync falls back to plain-text final answers when outputSch
   );
 });
 
+test("CodexRolloutLiveSync suppresses task_complete duplicates when final_answer omits turn_id", async () => {
+  const events: unknown[] = [];
+  const structuredOutput = new StructuredOutputStreamController();
+  const session = createSession();
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+
+  structuredOutput.prepareTurn(
+    session.sessionId,
+    {} as never,
+    DEFAULT_CODEX_RESPONSE_POLICY
+  );
+  structuredOutput.startTurn(session.sessionId);
+
+  const liveSync = new CodexRolloutLiveSync(
+    structuredOutput,
+    new CodexSessionEventEmitter()
+  ) as unknown as {
+    emitParsedEvent: (
+      activeSession: ActiveSession,
+      event: {
+        readonly content: string;
+        readonly kind: "final_answer" | "task_complete";
+        readonly payloadType: "agent_message" | "task_complete";
+        readonly phase: "final_answer" | null;
+        readonly timestamp: string | null;
+        readonly turnId: string | null;
+      }
+    ) => Promise<void>;
+  };
+
+  const finalAnswer = "Updated Final_Description.md.";
+  await liveSync.emitParsedEvent(session, {
+    content: finalAnswer,
+    kind: "final_answer",
+    payloadType: "agent_message",
+    phase: "final_answer",
+    timestamp: "2026-04-18T10:43:20.019Z",
+    turnId: null,
+  });
+  await liveSync.emitParsedEvent(session, {
+    content: finalAnswer,
+    kind: "task_complete",
+    payloadType: "task_complete",
+    phase: null,
+    timestamp: "2026-04-18T10:43:20.521Z",
+    turnId: "turn-observed",
+  });
+
+  assert.deepEqual(collectAssistantMessages(events), [finalAnswer]);
+});
+
+test("CodexRolloutLiveSync keeps fallback-only task_complete finalization", async () => {
+  const events: unknown[] = [];
+  const structuredOutput = new StructuredOutputStreamController();
+  const session = createSession();
+  session.eventEmitter.on("message", (payload) => {
+    events.push(payload);
+  });
+
+  structuredOutput.prepareTurn(
+    session.sessionId,
+    {} as never,
+    DEFAULT_CODEX_RESPONSE_POLICY
+  );
+  structuredOutput.startTurn(session.sessionId);
+
+  const liveSync = new CodexRolloutLiveSync(
+    structuredOutput,
+    new CodexSessionEventEmitter()
+  ) as unknown as {
+    emitParsedEvent: (
+      activeSession: ActiveSession,
+      event: {
+        readonly content: string;
+        readonly kind: "task_complete";
+        readonly payloadType: "task_complete";
+        readonly phase: null;
+        readonly timestamp: string | null;
+        readonly turnId: string | null;
+      }
+    ) => Promise<void>;
+  };
+
+  const finalAnswer =
+    "Captured the next validation steps from the fallback-only task completion.";
+  await liveSync.emitParsedEvent(session, {
+    content: finalAnswer,
+    kind: "task_complete",
+    payloadType: "task_complete",
+    phase: null,
+    timestamp: "2026-04-18T10:43:21.021Z",
+    turnId: "turn-fallback-only",
+  });
+
+  assert.deepEqual(collectAssistantMessages(events), [finalAnswer]);
+});
+
+const collectAssistantMessages = (events: readonly unknown[]): string[] =>
+  events
+    .filter((event) => (event as { type?: string }).type === "assistant")
+    .map((event) => (event as { content?: string }).content ?? "");
+
 const createSession = (): ActiveSession => ({
   codexThreadId: "codex-thread",
   createdAt: Date.now(),

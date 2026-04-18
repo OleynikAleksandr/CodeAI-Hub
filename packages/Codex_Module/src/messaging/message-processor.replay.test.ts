@@ -101,6 +101,76 @@ test("codex rollout replay suppresses duplicates in-session and rebuilds determi
   });
 });
 
+test("codex rollout replay suppresses observed final-answer pairs when final_answer omits turn_id", async () => {
+  const codexHome = await mkdtemp(path.join(os.tmpdir(), "codex-replay-"));
+  const providerSessionId = "019d9ff9-2b0b-7651-8d8c-22945eb1e235";
+  const rolloutPath = await buildRolloutPath(codexHome, providerSessionId);
+  const commentary = "Inspecting the rollout before replay hydration.";
+  const finalAnswer = "Updated Final_Description.md.";
+
+  await writeFile(
+    rolloutPath,
+    [
+      JSON.stringify({
+        timestamp: "2026-04-18T10:43:20.010Z",
+        type: "event_msg",
+        payload: {
+          type: "agent_message",
+          message: commentary,
+          phase: "commentary",
+          turn_id: "turn-observed",
+        },
+      }),
+      JSON.stringify({
+        timestamp: "2026-04-18T10:43:20.019Z",
+        type: "event_msg",
+        payload: {
+          type: "agent_message",
+          message: finalAnswer,
+          phase: "final_answer",
+        },
+      }),
+      JSON.stringify({
+        timestamp: "2026-04-18T10:43:20.521Z",
+        type: "event_msg",
+        payload: {
+          type: "task_complete",
+          last_agent_message: finalAnswer,
+          turn_id: "turn-observed",
+        },
+      }),
+    ].join("\n"),
+    "utf8"
+  );
+
+  const firstPass = createReplayHarness({ codexHome, providerSessionId });
+  await firstPass.liveSync.sync(firstPass.session);
+  assert.deepEqual(collectVisibleSummary(firstPass.events), {
+    assistant: [finalAnswer],
+    commentary: [commentary],
+    thinking: [],
+  });
+
+  firstPass.session.rolloutTailState?.advance({
+    filePath: rolloutPath,
+    nextLine: 0,
+  });
+  await firstPass.liveSync.sync(firstPass.session);
+  assert.deepEqual(collectVisibleSummary(firstPass.events), {
+    assistant: [finalAnswer],
+    commentary: [commentary],
+    thinking: [],
+  });
+
+  const coldStart = createReplayHarness({ codexHome, providerSessionId });
+  await coldStart.liveSync.sync(coldStart.session);
+  assert.deepEqual(collectVisibleSummary(coldStart.events), {
+    assistant: [finalAnswer],
+    commentary: [commentary],
+    thinking: [],
+  });
+});
+
 const createReplayHarness = (payload: {
   readonly codexHome: string;
   readonly providerSessionId: string;
