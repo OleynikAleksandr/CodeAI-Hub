@@ -14,7 +14,14 @@ import type {
   DescriptionDialogResolution as DescriptionDialogResolutionModel,
   SessionDescriptionDialogSync,
 } from "./session-description-dialog-sync";
-import type { SessionProviderBindingService } from "./session-provider-binding-service";
+import {
+  normalizeUsageLimitsStreamEvent,
+  resolveCachedUsageLimitsStreamEvent,
+  resolveRuntimeTurnState,
+  type SessionProviderBindingService,
+  shouldDispatchUsageLimitsRefresh,
+  type UsageTelemetryLifecycleTrigger,
+} from "./session-provider-binding-service";
 import type { SessionProviderEventRouter } from "./session-provider-event-router";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
@@ -241,6 +248,30 @@ export class SessionRequestHandler {
       providerFailureRecovery: this.providerFailureRecovery,
       providerRegistry: this.providerRegistry,
     });
+    this.providerBindingService.registerBindingBroadcastListener(
+      (sessionId) => {
+        const session =
+          this.providerBindingService.consumeUsageTelemetryBindingBootstrap(
+            sessionId
+          );
+        if (!session) {
+          return;
+        }
+
+        this.handleRefreshUsageLimits({
+          providerId: session.providerId,
+          providerSessionId: session.providerSessionId ?? null,
+          sessionId,
+          lifecycleTrigger: "binding_ready",
+        }).catch((error: unknown) => {
+          this.logger.warn("Usage telemetry bootstrap on binding failed", {
+            error: error instanceof Error ? error.message : String(error),
+            lifecycleTrigger: "binding_ready",
+            sessionId,
+          });
+        });
+      }
+    );
   }
 
   protected normalizeContinuityStageId(value: string | null): string {
@@ -319,6 +350,7 @@ export class SessionRequestHandler {
 
   async handleDelete(sessionId: string): Promise<void> {
     await this.sessionActions.handleDelete(sessionId);
+    this.providerBindingService.clearUsageTelemetryLifecycle(sessionId);
   }
 
   async handleStop(sessionId: string): Promise<void> {
@@ -326,6 +358,7 @@ export class SessionRequestHandler {
   }
 
   async handleRefreshUsageLimits(params: {
+    readonly lifecycleTrigger?: UsageTelemetryLifecycleTrigger | null;
     readonly providerId: string;
     readonly providerSessionId: string | null;
     readonly sessionId: string;
@@ -338,25 +371,74 @@ export class SessionRequestHandler {
       this.providerSessions.get(params.sessionId)?.providerSessionId ||
       session?.providerSessionId ||
       null;
+    const lifecycleTrigger = params.lifecycleTrigger ?? null;
+    const runtimeTurnState = session
+      ? resolveRuntimeTurnState({
+          session,
+          workspaceRuntime: this.workspaceRuntime,
+        })
+      : null;
+    const cachedReplayEvent = boundProviderSessionId
+      ? resolveCachedUsageLimitsStreamEvent({
+          adapter,
+          providerSessionId: boundProviderSessionId,
+        })
+      : null;
+    const shouldDispatchRefresh = shouldDispatchUsageLimitsRefresh({
+      cachedReplayAvailable: Boolean(cachedReplayEvent),
+      lifecycleTrigger,
+      runtimeTurnState,
+    });
     this.logger.info("Usage limits refresh request received", {
       adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
       boundProviderSessionId,
+      cachedReplayAvailable: Boolean(cachedReplayEvent),
+      lifecycleTrigger,
       requestedProviderId: params.providerId,
       requestedProviderSessionId: params.providerSessionId,
       resolvedProviderId,
+      runtimeTurnState,
       runtimeSessionFound: Boolean(session),
       sessionId: params.sessionId,
       workspacePath: session?.workspacePath ?? null,
     });
+    if (session && cachedReplayEvent) {
+      this.broadcaster({
+        type: "session:stream",
+        payload: {
+          sessionId: params.sessionId,
+          event: cachedReplayEvent,
+        },
+      });
+      if (!shouldDispatchRefresh) {
+        this.logger.info("Usage limits replayed from cached snapshot", {
+          boundProviderSessionId,
+          lifecycleTrigger,
+          resolvedProviderId,
+          runtimeTurnState,
+          sessionId: params.sessionId,
+          workspacePath: session.workspacePath,
+        });
+        return;
+      }
+    }
     if (
       session &&
       boundProviderSessionId &&
-      typeof adapter?.refreshUsageLimits === "function"
+      typeof adapter?.refreshUsageLimits === "function" &&
+      shouldDispatchRefresh
     ) {
       const broadcast = (event: unknown): void => {
+        const normalizedEvent = normalizeUsageLimitsStreamEvent({
+          event,
+          providerSessionId: boundProviderSessionId,
+        });
+        if (!normalizedEvent) {
+          return;
+        }
         this.broadcaster({
           type: "session:stream",
-          payload: { sessionId: params.sessionId, event },
+          payload: { sessionId: params.sessionId, event: normalizedEvent },
         });
       };
       await adapter.refreshUsageLimits({
@@ -367,6 +449,7 @@ export class SessionRequestHandler {
       });
       this.logger.info("Usage limits refresh dispatched to adapter", {
         providerSessionId: boundProviderSessionId,
+        lifecycleTrigger,
         resolvedProviderId,
         sessionId: params.sessionId,
         workspacePath: session.workspacePath,
@@ -376,9 +459,12 @@ export class SessionRequestHandler {
     this.logger.warn("Usage limits refresh skipped", {
       adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
       boundProviderSessionId,
+      cachedReplayAvailable: Boolean(cachedReplayEvent),
+      lifecycleTrigger,
       requestedProviderId: params.providerId,
       requestedProviderSessionId: params.providerSessionId,
       resolvedProviderId,
+      runtimeTurnState,
       runtimeSessionFound: Boolean(session),
       sessionId: params.sessionId,
     });

@@ -39,16 +39,23 @@ const extractUsageLimitsReplayEvent = (event: unknown): unknown | null => {
     return null;
   }
 
-  if (event.type !== "stream_event") {
-    return null;
-  }
-
   const data = isRecord(event.data) ? event.data : null;
   if (!data || data.kind !== "usage_limits") {
     return null;
   }
 
-  return event;
+  if (event.type === "stream_event") {
+    return event;
+  }
+
+  return {
+    ...event,
+    type: "stream_event",
+    timestamp:
+      typeof event.timestamp === "string"
+        ? event.timestamp
+        : new Date().toISOString(),
+  };
 };
 
 export interface WebSocketManagerDependencies {
