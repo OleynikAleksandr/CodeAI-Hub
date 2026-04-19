@@ -33,7 +33,7 @@
 2. [DONE] Git Commit: `chore: direction A audit verification — document bundled vs per-workspace template layers` (hash: 237fa47b8)
 
 ### Stream 3: Direction B dry-run — localization keys partial-usage verification
-1. [DONE] Script `/tmp/audit-loc-keys.py` проходит по всем 278 ключам из 4 approved dicts (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`, `artifacts_for_the_user.json`). Для каждого ключа три этапа: (a) exact match через `rg -F`, (b) parent-prefix match, (c) last-segment match. Исключаем `assets/localization/`, `dist/`, `**/*.json`, `doc/`, `node_modules`. **Результат: 204 alive, 67 suspicious, 7 certainly-dead.** Agent'ская исходная оценка "99 unused" включала dynamic-usage false positives; реальный actionable scope — только 7 ключей. Отчёт: `doc/SolidWorks-WorkFlow/Plans/Audit_Cleanup_1.2.10_DryRun_LocKeys.md`. — scope: 1 файл (новый md); ожидаемый commit: `docs: record 1.2.10 localization cleanup dry-run report`
+1. [DONE] Script `/tmp/audit-loc-keys.py` проходит по всем 278 ключам из 4 approved dicts (`ui_labels.json`, `ui_helper_text.json`, `messages_for_the_user.json`, `artifacts_for_the_user.json`). Для каждого ключа три этапа: (a) exact match через `rg -F`, (b) parent-prefix match, (c) last-segment match. Исключаем `assets/localization/`, `dist/`, `**/*.json`, `doc/`, `node_modules`. **Результат: 204 alive, 67 suspicious, 7 certainly-dead.** Исходная оценка "99 unused" включала dynamic-usage false positives; реальный actionable scope — только 7 ключей. Отчёт: `doc/SolidWorks-WorkFlow/Plans/Audit_Cleanup_1.2.10_DryRun_LocKeys.md`. — scope: 1 файл (новый md); ожидаемый commit: `docs: record 1.2.10 localization cleanup dry-run report`
 2. [DONE] Git Commit: `docs: record 1.2.10 localization cleanup dry-run report` (hash: 8315cbcb8)
 
 ### Stream 4: Direction B actual deletion — approved dicts cleanup
@@ -53,7 +53,7 @@
 2. [DONE] Git Commit: `refactor(client): consolidate schema-utils imports from agents/shared` (hash: 6e9368b54)
 
 ### Stream 8: Direction D — PeriodicAudit checklist
-1. [DONE] Новый `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` (95 строк): cadence, sub-agent workflow, 6-категорийный rubric, three-pass grep протокол для loc keys, scope-approval flow, out-of-scope, track record с 1.2.10 precedent. `Docs_Index.md` получил новую секцию "Checklists". — scope: 2 файла
+1. [DONE] Новый `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` (95 строк): cadence, parallel audit-pass workflow, 6-категорийный rubric, three-pass grep протокол для loc keys, scope-approval flow, out-of-scope, track record с 1.2.10 precedent. `Docs_Index.md` получил новую секцию "Checklists". — scope: 2 файла
 2. [DONE] Git Commit: `docs: add PeriodicAudit checklist for recurring codebase hygiene` (hash: 3e1f13a85)
 
 ### Stream 9: SSOT promotion + planning archive

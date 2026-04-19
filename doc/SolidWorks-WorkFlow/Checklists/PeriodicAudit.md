@@ -22,15 +22,15 @@ npm run check:dup
 
 Все три должны проходить. Запомни текущий `check:dup` процент — будешь сравнивать.
 
-## Шаг 2. Запуск sub-agent'ов параллельно
+## Шаг 2. Параллельные audit passes
 
-Два `Explore` агента в одном сообщении (параллель):
+Две независимые параллельные проверки одного audit-cycle:
 
 1. **Dead-code audit.** Ищет: unused exports которые knip пропускает, orphaned files, stale TODO/FIXME, dead CSS selectors, unused локализационные ключи, dead branches. Отдельное внимание — residue от недавних cleanup-коммитов (удалённые компоненты, feature-flag'ы).
 
 2. **Broken doc links audit.** Ищет: broken markdown ссылки (formatted + backtick mentions), stale references на удалённые артефакты, неверные пути в `Docs_Index.md`, orphaned docs без записи в index. Сессионный архив `doc/Sessions/Session*.md` **не аудируем** (исторический слой).
 
-Промпты агентов должны требовать компактный структурированный отчёт с file:line, категорией и severity. До ~600 слов.
+Формат каждой проверки должен требовать компактный структурированный отчёт с `file:line`, категорией и severity. До ~600 слов.
 
 ## Шаг 3. Дубликаты — детальная классификация
 
@@ -73,7 +73,7 @@ npx jscpd --threshold 0 --silent --reporters json --output /tmp/jscpd-audit src 
 
 ## Шаг 6. Execution cycle (если одобрено)
 
-Следуем стандартному мастер-процессу из `.claude/CLAUDE.md`:
+Следуем стандартному мастер-процессу из `AGENTS.md`:
 
 1. Planning-doc в `doc/SolidWorks-WorkFlow/Plans/Audit_Cleanup_<version>.md`.
 2. `doc/TODO/todo-plan.md` — 10+ streams: release notes, каждое направление отдельным стримом, SSOT promotion + archive, release build.

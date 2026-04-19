@@ -50,16 +50,16 @@
 | BUG-2026-04-16-01 | FIXED | Localization/Core/Claude | Haiku слишком медленно переводит runtime bundles и дублирует/обрезает reasoning translation | 1.1.990 |
 | BUG-2026-04-18-01 | FIXED | Claude/Core/PM | Claude turn завершён, но session залипает в `Agent is resuming...` из-за post-turn `/context` probe failure | 1.2.16 |
 | BUG-2026-04-18-02 | OPEN | Claude/UI/Translation | Claude pre-tool live text попадает в assistant bubble вместо `Thinking` и обходит перевод | TBD |
-| BUG-2026-04-18-03 | OPEN | Claude Runtime | Claude final answer может оставлять orphan suffix assistant bubble (`ell.`) после нормального завершения turn | TBD |
-| BUG-2026-04-18-04 | OPEN | PM/UI/Codex | после `Stop` + fast resend в dialog UI временно дублируется user bubble | TBD |
-| BUG-2026-04-18-05 | OPEN | Codex Runtime | final assistant answer дублируется через rollout pair `final_answer` + `task_complete` | TBD |
-| BUG-2026-04-18-06 | OPEN | PM/Core | multi-workspace PM создаёт repeated refresh/bootstrap/polling churn и деградирует отзывчивость системы | TBD |
+| BUG-2026-04-18-03 | FIXED | Claude Runtime | Claude final answer может оставлять orphan suffix assistant bubble (`ell.`) после нормального завершения turn | 1.2.19 |
+| BUG-2026-04-18-04 | FIXED | PM/UI/Codex | после `Stop` + fast resend в dialog UI временно дублируется user bubble | 1.2.19 |
+| BUG-2026-04-18-05 | FIXED | Codex Runtime | final assistant answer дублируется через rollout pair `final_answer` + `task_complete` | 1.2.19 |
+| BUG-2026-04-18-06 | FIXED | PM/Core | multi-workspace PM создаёт repeated refresh/bootstrap/polling churn и деградирует отзывчивость системы | 1.2.19 |
 
 ---
 
 ## BUG-2026-03-29-01 — Core/UI/Gemini: Session Stop must cancel turn, not shutdown independent Core
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - Во время Gemini one-shot turn сессия может зависнуть после системного события `model_info`: пользовательский input остаётся в `Agent is working... Please wait.`, а новых `assistant` / `turn_completed` событий не приходит.
@@ -123,7 +123,7 @@
 
 ## BUG-2026-04-18-01 — Claude/Core/PM: post-turn `/context` probe failure leaves session stuck in false `resuming`
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - Claude отдаёт полный финальный ответ пользователю, но input остаётся заблокированным с copy `Agent is resuming your session… Please wait.`
@@ -181,7 +181,7 @@
 
 ## BUG-2026-04-18-02 — Claude/UI/Translation: pre-tool live text must not surface as assistant bubble
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - Во время Claude workflow-turn в локализованной (`ru`) сессии между двумя `Claude · Thinking` bubble появляется отдельный английский assistant/live fragment, например: `I've read the Final_Description.md... Let me create the directory and the first draft of the document.`
@@ -217,7 +217,7 @@
 
 ## BUG-2026-04-18-03 — Claude Runtime: final live text finalization can emit orphan suffix after completed answer
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - После уже завершённого корректного Claude final answer unified session может получить отдельную лишнюю assistant bubble, например `ell.`.
@@ -253,11 +253,11 @@
 - `packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`
 
 **Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/Claude_LiveText_OrderSafe_Finalization.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_LiveText_OrderSafe_Finalization_1.2.19.md`
 
 ## BUG-2026-04-18-04 — PM/UI/Codex: after `Stop` + fast resend transient duplicate user bubble appears in dialog
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - После `Stop` и немедленного повторного `send` второе пользовательское сообщение временно видно в dialog panel дважды.
@@ -291,7 +291,7 @@
 - `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`
 
 **Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/Codex_Dialog_Duplication_StopResend_And_FinalAnswer.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Dialog_Duplication_StopResend_And_FinalAnswer_1.2.19.md`
 
 ## BUG-2026-04-18-05 — Codex Runtime: final assistant answer is emitted twice by rollout terminal pair
 
@@ -330,7 +330,7 @@
 - `packages/Codex_Module/src/messaging/message-processor.replay.test.ts`
 
 **Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/Codex_Dialog_Duplication_StopResend_And_FinalAnswer.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Dialog_Duplication_StopResend_And_FinalAnswer_1.2.19.md`
 
 ## BUG-2026-04-18-06 — PM/Core: multi-workspace background churn repeatedly refreshes idle sessions and degrades responsiveness
 
@@ -384,7 +384,7 @@
 - `src/client/project-manager/components/layout/use-diagram-modules-artifact-availability.test.ts`
 
 **Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/ProjectManager_MultiWorkspace_Performance_And_EventDriven_UsageRefresh.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_MultiWorkspace_Performance_And_EventDriven_UsageRefresh_1.2.19.md`
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 

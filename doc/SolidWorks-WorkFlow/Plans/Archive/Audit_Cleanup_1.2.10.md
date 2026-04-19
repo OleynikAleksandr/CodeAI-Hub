@@ -2,7 +2,7 @@
 
 ## 1. Problem
 
-После Session043 (1.2.9 release) проведён аудит кодовой базы двумя саб-агентами + baseline-гейтами. Гейты зелёные, но накоплен технический долг, который `knip` / `check:links` / `jscpd` не ловят:
+После Session043 (1.2.9 release) проведён аудит кодовой базы двумя параллельными audit-pass + baseline-гейтами. Гейты зелёные, но накоплен технический долг, который `knip` / `check:links` / `jscpd` не ловят:
 
 - **99 unused localization keys** в `assets/localization/source/en/*.json` (из 449 всего — 22%). Основные скопления: `pm.description.questionnaire.*` (~27), `pm.confirmation_card.title.*` (~10), settings descriptions (~17 в `ui_helper_text.json`+`ui_labels.json`). Часть — следы удалённых компонентов (`SwitchRecoveryBanner`), часть — "на будущее", часть — переделанный questionnaire.
 - **3 stale path** в `doc/SolidWorks-WorkFlow/Docs_Index.md:80-82` на несуществующие templates (`templates/description/questionnaire-template.md` и др). Ломает scope discovery для следующих сессий.
@@ -40,7 +40,7 @@ Scope ограничен **approved dicts** (по memory `feedback-localization-
 **EXTRACT-COMPLEX кандидат #17** (token-usage init между `Codex_Module` и `core`) — откладываем, отдельный scope. Требует рефактор интерфейса usage-limits cross-package.
 
 ### D. Process formalization (S)
-- Добавить `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` — чек-лист периодического аудита (dead code, broken links, dup clones, stale TODOs) с указанием когда запускать (каждые 3-5 релизов) и какие sub-agents использовать.
+- Добавить `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md` — чек-лист периодического аудита (dead code, broken links, dup clones, stale TODOs) с указанием когда запускать (каждые 3-5 релизов) и как раскладывать независимые audit-pass внутри отдельного cycle.
 - Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md` — добавить ссылку на новый checklist.
 
 ## 3. Structure
