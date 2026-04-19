@@ -206,7 +206,7 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 Ответственность runtime слоя:
 - превратить persisted `responsePolicy` + Core-applied turn config в outbound `turn/start` envelope;
 - решить, когда пробрасывать `outputSchema` в app-server turn;
-- превратить `item/reasoning/summaryTextDelta` / `item/reasoning/textDelta` в readable append-only `thinking` segments, а `item/completed` использовать только как flush/fallback reconciliation;
+- копить `item/reasoning/summaryTextDelta` / `item/reasoning/textDelta` только как provider-local fallback state и materialize-ить user-facing reasoning лишь на `item/completed`, приоритизируя `item.summary[]` над accumulated summary/content/text;
 - сохранить тот же внешний provider contract `codexCli` при смене внутреннего transport;
 - выставить diagnostics/raw passthrough policy без возврата к legacy rollout-tail path.
 
@@ -225,14 +225,14 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 
 - Commentary не должен попадать под требование `only JSON`.
 - Structured output относится только к terminal result.
-- Если app-server присылает reasoning deltas, provider обязан материализовать их в incremental readable `thinking` segments до `item/completed`, а не схлопывать весь reasoning в один поздний block.
+- Если app-server присылает reasoning deltas, provider не должен публиковать их как user-facing live fragments; видимое reasoning materialize-ится из completed summary blocks на `item/completed`, а deltas остаются fallback/input layer.
 - Если provider не прислал commentary, UI может использовать tool/file progress как деградационный fallback.
 
 ### 8.3 Debug/Raw
 
 - Нет жёсткого schema pressure на live turn.
 - Raw provider output сохраняется максимально полно.
-- Debug/Raw не отменяет readable chunking: если reasoning deltas уже пришли, provider обязан показать их по мере накопления, а не ждать terminal assembly.
+- Debug/Raw не отменяет final-summary reasoning contract: reasoning deltas и transport log сохраняются полностью для диагностики, но user-facing reasoning всё равно ждёт terminal assembly на `item/completed`.
 - Этот режим используется как основной investigative mode для новых моделей.
 
 ---

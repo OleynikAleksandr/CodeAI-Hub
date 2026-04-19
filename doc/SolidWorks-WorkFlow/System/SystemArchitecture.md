@@ -223,10 +223,11 @@
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` now emits `session:model:update` from the outbound applied turn-config itself for regular new turns, so PM label sync does not depend on a provider-specific `model_info` or `system` event being emitted afterward and does not reconstruct identity from split fields on the UI side
 - Codex response policy outbound bridge: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`
 - Codex visible thinking / reasoning summaries: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/core/src/session-translation/`
-  - reasoning summaries are emitted source-first from app-server notifications and translated asynchronously through the Core overlay pipeline;
+  - reasoning summaries are emitted source-first from app-server completed summary blocks and translated asynchronously through the Core overlay pipeline;
   - Core threads `messagesForTheUserLanguage` from the shared settings snapshot into the overlay translator, so visible reasoning follows the selected `Messages for the User` language while the native transcript remains unchanged;
   - visible output still uses `role: "assistant"` with `tag: "thinking"` whenever upstream Codex actually sends reasoning summaries;
-  - live app-server turns resolve `summary = "detailed" | "none"` from the shared settings snapshot; `detailed` is the baseline required for incremental reasoning deltas, while `none` suppresses the reasoning stream entirely;
+  - live app-server turns resolve `summary = "detailed" | "none"` from the shared settings snapshot; `detailed` is the baseline required for completed reasoning summary blocks, while `none` suppresses the reasoning stream entirely;
+  - app-server `summaryTextDelta` / `textDelta` remain provider diagnostics and fallback inputs, but provider normalization no longer emits user-facing live token/sentence fragments; visible reasoning is materialized only on `item/completed`, using `item.summary[]` first and accumulated summary/content/text only as fallback;
   - provider-home `model_reasoning_summary = "none"` remains persisted compatibility state, but it is no longer sufficient by itself to describe the live turn behavior;
   - the provider settings toggle updates provider-home `config.toml` immediately and saved settings remain the restart-proof source of truth for future Codex materialization;
   - app-server transport diagnostics are append-safe/rotate-safe per process start and remain diagnostic-only; they complement, but do not replace, normalized dialog/session history or provider-home artifacts;

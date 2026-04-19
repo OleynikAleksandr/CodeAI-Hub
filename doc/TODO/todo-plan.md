@@ -37,12 +37,12 @@
 4. [DONE] Git Commit: `test: cover codex final-summary reasoning emission` (hash: `56ba75619`)
 
 ### Stream: Session UI Heading Rhythm Retest
-1. [IN_PROGRESS] После provider-side фикса перепроверить standalone bold heading rhythm в Session UI и, если зазор после bold-only heading paragraph всё ещё инвертирован, внести минимальную CSS-коррекцию только для этого паттерна. scope: `media/session-view.css`, `doc/SolidWorks-WorkFlow/Plans/Codex_FinalSummary_Reasoning_Rendering_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(ui): tune standalone reasoning heading spacing`
-2. [TODO] Git Commit: `fix(ui): tune standalone reasoning heading spacing` (hash: TBD)
+1. [DONE] После provider-side фикса перепроверить standalone bold heading rhythm в Session UI и, если зазор после bold-only heading paragraph всё ещё инвертирован, внести минимальную CSS-коррекцию только для этого паттерна. scope: `media/session-view.css`, `doc/SolidWorks-WorkFlow/Plans/Codex_FinalSummary_Reasoning_Rendering_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `fix(ui): tune standalone reasoning heading spacing`
+2. [DONE] Git Commit: `fix(ui): tune standalone reasoning heading spacing` (hash: `082e41720`)
 
 ## Phase 2 — SSOT Sync And Verification (owner: Codex, updated: 2026-04-19)
 ### Stream: Contract Documentation
-1. [TODO] Синхронизировать SSOT после реализации: убрать из канона live readable chunking как user-facing reasoning contract и описать final-summary block emission как новый Codex reasoning baseline. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex final-summary reasoning contract`
+1. [IN_PROGRESS] Синхронизировать SSOT после реализации: убрать из канона live readable chunking как user-facing reasoning contract и описать final-summary block emission как новый Codex reasoning baseline. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync codex final-summary reasoning contract`
 2. [TODO] Git Commit: `docs: sync codex final-summary reasoning contract` (hash: TBD)
 
 ### Stream: Targeted Verification
