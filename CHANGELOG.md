@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.20] - 2026-04-19
+### Changed
+- **Neutral packaging refresh for the duplication and PM refresh line.** `1.2.20` carries forward the runtime fix-set introduced in `1.2.19` and finalizes the archived planning/docs closeout without changing runtime behavior.
+
+### Contracts
+- **Runtime contracts are unchanged from `1.2.19`.** Single terminal assistant emission, replay-first usage ownership, and visibility-aware polling remain the governing contracts for this release line.
+
 ## [1.2.19] - 2026-04-19
 ### Fixed
 - **Official release closeout for the duplication and PM refresh fix-set.** Claude order-safe finalization, Codex terminal-answer dedupe, Project Manager `Stop` → resend reconciliation, replay-first usage telemetry delivery, and visibility-aware polling budget are now shipped together as the public `1.2.19` line.
