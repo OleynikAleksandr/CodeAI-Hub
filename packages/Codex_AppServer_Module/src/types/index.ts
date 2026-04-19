@@ -5,6 +5,11 @@ export interface CodexInstallerPaths {
 }
 
 export type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
+export type CodexReasoningSummaryMode =
+  | "auto"
+  | "concise"
+  | "detailed"
+  | "none";
 export type CodexResponseMode = "strict" | "hybrid" | "debug_raw";
 export type CodexSandboxMode = string;
 export type CodexApprovalMode = string;

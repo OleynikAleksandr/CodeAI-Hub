@@ -1,6 +1,10 @@
+import { readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
 import {
   CODEX_APPLIED_TURN_CONFIG_KEY,
   type CodexModuleOptions,
+  type CodexReasoningSummaryMode,
   type CodexTurnOptions,
   type CodexUsageLimitsStreamPayload,
 } from "../types";
@@ -10,13 +14,52 @@ import {
 } from "./codex-app-server-event-router";
 import { CodexAppServerProcess } from "./process/codex-app-server-process";
 
-const DEFAULT_REASONING_SUMMARY = "auto";
+const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
+const DEFAULT_REASONING_SUMMARY_ENABLED = true;
+const DEFAULT_SETTINGS_PATH = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const asString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const resolveSettingsPath = (): string =>
+  asString(process.env.CODEX_SETTINGS_PATH) ??
+  asString(process.env.CLAUDE_SETTINGS_PATH) ??
+  DEFAULT_SETTINGS_PATH;
+
+const resolveReasoningSummaryEnabled = (): boolean => {
+  try {
+    const parsed = JSON.parse(
+      readFileSync(resolveSettingsPath(), "utf8")
+    ) as unknown;
+    if (!(isRecord(parsed) && isRecord(parsed.providers))) {
+      return DEFAULT_REASONING_SUMMARY_ENABLED;
+    }
+    const codex = parsed.providers.codex;
+    if (!isRecord(codex)) {
+      return DEFAULT_REASONING_SUMMARY_ENABLED;
+    }
+    if (typeof codex.reasoningSummaryEnabled === "boolean") {
+      return codex.reasoningSummaryEnabled;
+    }
+    if (typeof codex.thinkingDisplaySyncEnabled === "boolean") {
+      return codex.thinkingDisplaySyncEnabled;
+    }
+    return DEFAULT_REASONING_SUMMARY_ENABLED;
+  } catch {
+    return DEFAULT_REASONING_SUMMARY_ENABLED;
+  }
+};
+
+const resolveTurnReasoningSummaryMode = (): CodexReasoningSummaryMode =>
+  resolveReasoningSummaryEnabled() ? DEFAULT_REASONING_SUMMARY : "none";
 
 export class CodexAppServerFacade {
   private readonly eventRouter: CodexAppServerEventRouter;
@@ -52,7 +95,6 @@ export class CodexAppServerFacade {
         approvalPolicy: this.workspace.defaultApprovalMode,
         sandbox: this.workspace.defaultSandboxMode,
         model: this.workspace.defaultModel,
-        experimentalRawEvents: false,
         persistExtendedHistory: true,
       }
     );
@@ -141,7 +183,7 @@ export class CodexAppServerFacade {
         cwd: state.workspacePath,
         model: modelId,
         effort: reasoningEffort,
-        summary: DEFAULT_REASONING_SUMMARY,
+        summary: resolveTurnReasoningSummaryMode(),
         ...(outputSchema === undefined ? {} : { outputSchema }),
       }
     );

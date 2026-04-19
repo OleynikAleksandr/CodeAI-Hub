@@ -31,14 +31,14 @@
 
 ## Phase 0 — Execution Cycle Bootstrap (owner: Codex, updated: 2026-04-19)
 ### Stream: Planning Activation
-1. [IN_PROGRESS] Открыть новый execution cycle: добавить active planning-doc в `doc/SolidWorks-WorkFlow/Plans/`, зарегистрировать его в `doc/SolidWorks-WorkFlow/Docs_Index.md` и заменить placeholder active планом выполнения в `doc/TODO/todo-plan.md`. scope: `doc/SolidWorks-WorkFlow/Plans/Codex_AppServer_LiveReasoning_And_SDK_Log_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open codex app-server reasoning-log execution cycle`
-2. [TODO] Git Commit: `docs: open codex app-server reasoning-log execution cycle` (hash: TBD)
+1. [DONE] Открыть новый execution cycle: добавить active planning-doc в `doc/SolidWorks-WorkFlow/Plans/`, зарегистрировать его в `doc/SolidWorks-WorkFlow/Docs_Index.md` и заменить placeholder active планом выполнения в `doc/TODO/todo-plan.md`. scope: `doc/SolidWorks-WorkFlow/Plans/Codex_AppServer_LiveReasoning_And_SDK_Log_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open codex app-server reasoning-log execution cycle`
+2. [DONE] Git Commit: `docs: open codex app-server reasoning-log execution cycle` (hash: `75a1301f8`)
 
 ## Phase 1 — Codex App-Server Live Reasoning Repair (owner: Codex, updated: 2026-04-19)
 ### Stream: Reasoning Policy Baseline
-1. [TODO] Настроить live-capable reasoning summary policy в `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` и при необходимости `packages/Codex_AppServer_Module/src/types/index.ts`; убрать stale `experimentalRawEvents`, не меняя outward provider contract. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; expected commit: `fix: enable codex app-server live reasoning policy`
+1. [DONE] Настроить live-capable reasoning summary policy в `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` и при необходимости `packages/Codex_AppServer_Module/src/types/index.ts`; убрать stale `experimentalRawEvents`, не меняя outward provider contract. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; expected commit: `fix: enable codex app-server live reasoning policy`
 2. [TODO] Git Commit: `fix: enable codex app-server live reasoning policy` (hash: TBD)
-3. [TODO] Синхронизировать Codex SSOT под новый reasoning policy contract в `doc/SolidWorks-WorkFlow/Modules/Codex.md` и `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: sync codex live reasoning policy ssot`
+3. [IN_PROGRESS] Синхронизировать Codex SSOT под новый reasoning policy contract в `doc/SolidWorks-WorkFlow/Modules/Codex.md` и `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: sync codex live reasoning policy ssot`
 4. [TODO] Git Commit: `docs: sync codex live reasoning policy ssot` (hash: TBD)
 
 ### Stream: Incremental Reasoning Router
