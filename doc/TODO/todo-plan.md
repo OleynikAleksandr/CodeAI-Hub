@@ -40,11 +40,11 @@
 
 ### Stream: Provider-neutral immediate binding
 3. [DONE] Вынести immediate binding из hardcoded provider-id logic в provider capability; scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/remote-bridge/handlers/session-provider-session-resolver.ts`; ожидаемый commit message: `refactor: generalize provider immediate binding`
-4. [TODO] Git Commit: `refactor: generalize provider immediate binding` (hash: TBD)
+4. [DONE] Git Commit: `refactor: generalize provider immediate binding` (hash: `53c4aa934`)
 
 ## Phase 2 — Parallel module scaffold (owner: Codex, updated: 2026-04-19)
 ### Stream: Package skeleton
-5. [TODO] Создать сборочный scaffold нового пакета app-server; scope: `packages/Codex_AppServer_Module/package.json`, `packages/Codex_AppServer_Module/tsconfig.json`, `packages/Codex_AppServer_Module/src/index.ts`; ожидаемый commit message: `feat: scaffold codex app-server module`
+5. [DONE] Создать сборочный scaffold нового пакета app-server; scope: `packages/Codex_AppServer_Module/package.json`, `packages/Codex_AppServer_Module/tsconfig.json`, `packages/Codex_AppServer_Module/src/index.ts`; ожидаемый commit message: `feat: scaffold codex app-server module`
 6. [TODO] Git Commit: `feat: scaffold codex app-server module` (hash: TBD)
 
 ### Stream: Public adapter baseline
