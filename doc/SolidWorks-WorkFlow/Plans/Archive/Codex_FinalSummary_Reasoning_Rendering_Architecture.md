@@ -1,7 +1,7 @@
 # Codex Final Summary Reasoning Rendering Architecture
 
 **Date:** 2026-04-19
-**Status:** Proposed
+**Status:** Completed
 **Scope:** bugfix for Codex reasoning rendering contract and standalone bold heading rhythm in Session UI
 
 ---
