@@ -52,32 +52,28 @@
 8. [TODO] Git Commit: `feat: add codex app-server adapter baseline` (hash: TBD)
 
 ## Phase 3 — Transport runtime (owner: Codex, updated: 2026-04-19)
-### Stream: App-server process and protocol
-9. [TODO] Реализовать запуск процесса, initialize handshake и JSON-RPC client; scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/protocol/json-rpc-client.ts`, `packages/Codex_AppServer_Module/src/app-server/protocol/notification-dispatcher.ts`; ожидаемый commit message: `feat: add codex app-server transport core`
+### Stream: App-server runtime core
+9. [DONE] Реализовать long-lived app-server runtime: process lifecycle, JSONL request/notification handling, thread/turn calls, финальный dialog mapping, token usage / usage limits stream events и provider-adapter binding; scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; ожидаемый commit message: `feat: add codex app-server transport core`
 10. [TODO] Git Commit: `feat: add codex app-server transport core` (hash: TBD)
 
-### Stream: Thread and turn flow
-11. [TODO] Подключить session registry и thread/turn operations; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/app-server/session/app-server-session-registry.ts`, `packages/Codex_AppServer_Module/src/app-server/turn/app-server-turn-runner.ts`; ожидаемый commit message: `feat: wire codex app-server thread flow`
-12. [TODO] Git Commit: `feat: wire codex app-server thread flow` (hash: TBD)
+### Stream: Core package switch
+11. [IN_PROGRESS] Переключить Core import/bundled dependency seam на новый app-server package без смены provider contract `codexCli`; scope: `packages/core/package.json`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-installer-paths.ts`; ожидаемый commit message: `build: wire core to codex app-server package`
+12. [TODO] Git Commit: `build: wire core to codex app-server package` (hash: TBD)
 
 ## Phase 4 — Event normalization and telemetry (owner: Codex, updated: 2026-04-19)
 ### Stream: Live event mapping
-13. [TODO] Нормализовать assistant/reasoning deltas в существующие provider events; scope: `packages/Codex_AppServer_Module/src/app-server/events/app-server-event-normalizer.ts`, `packages/Codex_AppServer_Module/src/app-server/events/assistant-message-buffer.ts`, `packages/Codex_AppServer_Module/src/app-server/events/reasoning-buffer.ts`; ожидаемый commit message: `feat: normalize codex app-server live events`
-14. [TODO] Git Commit: `feat: normalize codex app-server live events` (hash: TBD)
+13. [TODO] Дожать bundler/runtime loader и release-packaging seam до нового модуля; scope: `packages/core/src/provider-registry/provider-module-loader.ts`, `scripts/build-core.sh`, `scripts/build-codex-module.sh`; ожидаемый commit message: `build: switch codex packaging to app-server module`
+14. [TODO] Git Commit: `build: switch codex packaging to app-server module` (hash: TBD)
 
 ### Stream: Replay and usage sync
-15. [TODO] Добавить history, telemetry и raw diagnostics layer; scope: `packages/Codex_AppServer_Module/src/app-server/history/thread-history-reader.ts`, `packages/Codex_AppServer_Module/src/app-server/usage/usage-sync.ts`, `packages/Codex_AppServer_Module/src/app-server/diagnostics/raw-jsonrpc-log-store.ts`; ожидаемый commit message: `feat: add codex app-server replay telemetry`
-16. [TODO] Git Commit: `feat: add codex app-server replay telemetry` (hash: TBD)
+15. [TODO] Синхронизировать release/build orchestration и version bump path для нового workspace package; scope: `scripts/build-release.sh`, `scripts/build-all.sh`, `package-lock.json`; ожидаемый commit message: `build: align codex app-server release pipeline`
+16. [TODO] Git Commit: `build: align codex app-server release pipeline` (hash: TBD)
 
 ## Phase 5 — Release switch and validation (owner: Codex, updated: 2026-04-19)
-### Stream: Build seam switch
-17. [TODO] Переключить workspace/build pipeline на новый Codex implementation; scope: `packages/core/package.json`, `scripts/build-codex-module.sh`, `scripts/build-core.sh`; ожидаемый commit message: `build: switch codex module packaging`
-18. [TODO] Git Commit: `build: switch codex module packaging` (hash: TBD)
-
 ### Stream: Runtime docs and release notes
-19. [TODO] Синхронизировать архитектурные и release-доки под app-server line и будущую версию `1.2.22`; scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; ожидаемый commit message: `docs: prepare 1.2.22 codex app-server release`
-20. [TODO] Git Commit: `docs: prepare 1.2.22 codex app-server release` (hash: TBD)
+17. [TODO] Синхронизировать архитектурные и release-доки под app-server line и будущую версию `1.2.22`; scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; ожидаемый commit message: `docs: prepare 1.2.22 codex app-server release`
+18. [TODO] Git Commit: `docs: prepare 1.2.22 codex app-server release` (hash: TBD)
 
 ### Stream: Release build
-21. [TODO] Выполнить таргетные сборки затронутых пакетов, затем `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать release-line `1.2.22` и обновить `todo-plan.md`; scope: `packages/Codex_AppServer_Module`, `packages/core`, `release manifests/versioned artifacts`; ожидаемый commit message: `build: release 1.2.22`
-22. [TODO] Git Commit: `build: release 1.2.22` (hash: TBD)
+19. [TODO] Выполнить таргетные сборки затронутых пакетов, затем `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать release-line `1.2.22` и обновить `todo-plan.md`; scope: `packages/Codex_AppServer_Module`, `packages/core`, `release manifests/versioned artifacts`; ожидаемый commit message: `build: release 1.2.22`
+20. [TODO] Git Commit: `build: release 1.2.22` (hash: TBD)

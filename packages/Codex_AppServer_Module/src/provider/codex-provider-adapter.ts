@@ -1,44 +1,72 @@
-import type { CodexModuleOptions, CodexTurnOptions } from "../types";
-
-const SCAFFOLD_ERROR_MESSAGE =
-  "Codex app-server adapter scaffold is not implemented yet.";
+import { CodexAppServerFacade } from "../app-server/codex-app-server-facade";
+import type {
+  CodexModuleOptions,
+  CodexTurnOptions,
+  CodexUsageLimitsStreamPayload,
+} from "../types";
 
 export class CodexProviderAdapter {
-  private readonly options: CodexModuleOptions;
+  readonly usageLimitsFacade?: CodexModuleOptions["usageLimitsFacade"];
+  private readonly facade: CodexAppServerFacade;
 
   constructor(options: CodexModuleOptions) {
-    this.options = options;
+    this.usageLimitsFacade = options.usageLimitsFacade;
+    this.facade = new CodexAppServerFacade(options);
   }
 
   initialize(): Promise<void> {
-    return Promise.resolve();
+    return this.facade.initialize();
   }
 
-  createSession(_workspacePath?: string): Promise<string> {
-    return Promise.reject(new Error(SCAFFOLD_ERROR_MESSAGE));
+  createSession(workspacePath?: string): Promise<string> {
+    return this.facade.createSession(workspacePath);
   }
 
-  resumeSession(_sessionId: string, _workspacePath?: string): Promise<string> {
-    return Promise.reject(new Error(SCAFFOLD_ERROR_MESSAGE));
+  resumeSession(sessionId: string, workspacePath?: string): Promise<string> {
+    return this.facade.resumeSession(sessionId, workspacePath);
   }
 
-  closeSession(_sessionId: string): Promise<void> {
-    return Promise.resolve();
+  closeSession(sessionId: string): Promise<void> {
+    return this.facade.closeSession(sessionId);
   }
 
   sendMessage(
-    _sessionId: string,
-    _content: string,
-    _turnOptions?: CodexTurnOptions
+    sessionId: string,
+    content: string,
+    turnOptions?: CodexTurnOptions
   ): Promise<void> {
-    return Promise.reject(new Error(SCAFFOLD_ERROR_MESSAGE));
+    return this.facade.sendMessage(sessionId, content, turnOptions);
   }
 
   subscribe(
-    _sessionId: string,
-    _listener: (payload: unknown) => void
+    sessionId: string,
+    listener: (payload: unknown) => void
   ): () => void {
-    const reporter = this.options.reporter;
-    return () => reporter?.info?.("Codex app-server scaffold unsubscribe noop");
+    return this.facade.subscribe(sessionId, listener);
+  }
+
+  refreshUsageLimits(params: {
+    readonly broadcast: (event: unknown) => void;
+    readonly providerSessionId: string;
+    readonly runtimeSessionId: string;
+    readonly workspacePath: string;
+  }): void {
+    this.facade
+      .refreshUsageLimits()
+      .then((payload: CodexUsageLimitsStreamPayload | null) => {
+        if (!payload) {
+          return;
+        }
+        params.broadcast({
+          providerScopeKey: payload.providerScopeKey,
+          usageLimits: payload.usageLimits,
+          data: payload.data,
+          uuid: `${crypto.randomUUID()}::usage_limits`,
+          timestamp: new Date().toISOString(),
+        });
+      })
+      .catch(() => {
+        // Best-effort refresh only.
+      });
   }
 }
