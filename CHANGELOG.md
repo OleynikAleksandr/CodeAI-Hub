@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.22] - 2026-04-19
+### Changed
+- **Codex provider runtime switches to the new app-server transport module.** Core keeps the same external provider contract (`codexCli`, provider slot `~/.codeai-hub/providers/codex`, same installer artefact name `codex-module-<version>.tar.bz2`), but the bundled/runtime adapter path now resolves to `@codeai-hub/codex-app-server-module` instead of the legacy SDK-stream package.
+- **Core/provider packaging and version orchestration follow the new workspace package.** `build-core.sh`, `build-codex-module.sh`, `build-all.sh`, and release packaging now build/package/version `packages/Codex_AppServer_Module`, remove the old Codex workspace from the staged Core dependency graph, and keep VSIX/provider artefacts aligned to the app-server line.
+
+### Contracts
+- **Codex contract stays externally stable while the transport changes internally.** The provider id remains `codexCli`, the provider home remains `~/.codeai-hub/providers/codex/home`, and the release artefact contract remains `codex-module-<version>.tar.bz2`; only the internal transport/runtime implementation changes from legacy SDK rollout streaming to `codex app-server`.
+
 ## [1.2.21] - 2026-04-19
 ### Fixed
 - **Strict localization sync now retries isolated missing structured bundle entries before failing Save.** When a provider-owned translation engine returns a marker-preserving runtime bundle with one missing segment, `LocalizationMaterializer` now retries only the missing entry and stitches it back into the bundle instead of persisting a partial-fallback bundle and rejecting synchronization.
