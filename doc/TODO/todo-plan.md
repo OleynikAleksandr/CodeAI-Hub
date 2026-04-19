@@ -39,16 +39,16 @@
 1. [DONE] Настроить live-capable reasoning summary policy в `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` и при необходимости `packages/Codex_AppServer_Module/src/types/index.ts`; убрать stale `experimentalRawEvents`, не меняя outward provider contract. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; expected commit: `fix: enable codex app-server live reasoning policy`
 2. [DONE] Git Commit: `fix: enable codex app-server live reasoning policy` (hash: `86e37e27d`)
 3. [DONE] Синхронизировать Codex SSOT под новый reasoning policy contract в `doc/SolidWorks-WorkFlow/Modules/Codex.md` и `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: sync codex live reasoning policy ssot`
-4. [TODO] Git Commit: `docs: sync codex live reasoning policy ssot` (hash: TBD)
+4. [DONE] Git Commit: `docs: sync codex live reasoning policy ssot` (hash: `b325a3d32`)
 
 ### Stream: Incremental Reasoning Router
 1. [DONE] Добавить инкрементальный `thinking` emission из `item/reasoning/summaryTextDelta` и `item/reasoning/textDelta`, сохранив `item/completed` как flush/fallback path; при необходимости вынести live-buffer/helper в отдельный micro-class. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/*reasoning*.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; expected commit: `fix: stream codex reasoning deltas incrementally`
 2. [DONE] Git Commit: `fix: stream codex reasoning deltas incrementally` (hash: `b6414dca9`)
 3. [DONE] Синхронизировать Codex docs под новый delta-driven reasoning contract и emission-time behavior. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex reasoning delta contract`
-4. [TODO] Git Commit: `docs: sync codex reasoning delta contract` (hash: TBD)
+4. [DONE] Git Commit: `docs: sync codex reasoning delta contract` (hash: `91c978426`)
 
 ### Stream: SDK Log Restore
-1. [IN_PROGRESS] Вернуть file-backed app-server session logger в `~/.codeai-hub/logs/codex` через новый logging helper и wiring в process layer без изменения публичного adapter surface. scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/*logger*.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; expected commit: `feat: restore codex app-server sdk log`
+1. [DONE] Вернуть file-backed app-server session logger в `~/.codeai-hub/logs/codex` через новый logging helper и wiring в process layer без изменения публичного adapter surface. scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/*logger*.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; expected commit: `feat: restore codex app-server sdk log`
 2. [TODO] Git Commit: `feat: restore codex app-server sdk log` (hash: TBD)
 3. [TODO] Синхронизировать diagnostics/logging documentation для новой app-server линии. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex app-server logging diagnostics`
 4. [TODO] Git Commit: `docs: sync codex app-server logging diagnostics` (hash: TBD)
