@@ -1,12 +1,16 @@
-# Translation Latin/Cyrillic Spacing Architecture
+# Translation And Thinking Text Formatting Architecture
 
 **Date:** 2026-04-19
 **Status:** Proposed
-**Scope:** bugfix for translated provider overlays and shared translation outputs
+**Scope:** bugfix for translated provider overlays and shared thinking display formatting
 
 ---
 
 ## 1. Problem
+
+В текущем runtime/translation path наблюдаются две связанные formatting-проблемы.
+
+### 1.1. Script spacing loss in translated overlays
 
 В translated user-facing text периодически пропадает пробел на границе латиницы и кириллицы.
 
@@ -21,6 +25,18 @@
 
 Проблема не привязана к одному провайдеру. Она возникает на слое translated output, поэтому потенциально затрагивает Claude, Codex и Gemini одинаково.
 
+### 1.2. Paragraph boundary loss before standalone bold section titles in thinking blocks
+
+В thinking/reasoning блоках section-like markdown titles иногда прилипают к предыдущему предложению, вместо того чтобы начинаться с нового абзаца.
+
+Типовой observed пример:
+- `... storage for local project data.**Clarifying Project Manager term**`
+
+Пользовательский эффект:
+- заголовок визуально оказывается в той же строке, что и предыдущий абзац;
+- структура reasoning block читается хуже;
+- проблема особенно заметна в live thinking у Codex, но shared guard нужен не только для одного провайдера.
+
 ---
 
 ## 2. Root Cause Hypothesis
@@ -32,7 +48,15 @@
 - Core overlay сохраняет такой текст как есть в `localizedContent`;
 - UI уже не должен «догадываться» и чинить текст локально, потому что это привело бы к provider/UI drift.
 
-Значит, правильный слой фикса — shared translation module, после получения `translatedText`, но до возврата финального `TranslationResult`.
+Для second formatting issue корень на observed Codex path такой:
+- reasoning summary parts от `codex app-server` приходят отдельными section blocks;
+- текущий runtime/display path может потерять paragraph boundary между соседними blocks;
+- в shared Core/UI path нет общего guard'а, который восстанавливает standalone bold section titles как отдельные абзацы.
+
+Значит, правильный слой фикса — shared text-format normalizer, который:
+- применяется в `packages/translation` к translated output;
+- повторно используется в Core для thinking display content и localized overlays;
+- не перекладывает repair в UI-only слой.
 
 ---
 
@@ -55,9 +79,11 @@
 
 ### 4.1. Placement
 
-Добавляется shared post-processor в `packages/translation/`.
+Добавляется shared text-format post-processor в `packages/translation/`.
 
-Он становится единым canonical path для translation outputs всех провайдеров и всех translation engines.
+Он становится canonical path:
+- для translation outputs всех провайдеров и всех translation engines;
+- для Core-side normalization thinking content, который отображается пользователю.
 
 ### 4.2. Segmentation model
 
@@ -69,7 +95,7 @@
 - fenced code blocks ```...```
 - inline code `` `...` ``
 
-В `normal` сегментах применяется spacing normalization.
+В `normal` сегментах применяется shared text normalization.
 
 ### 4.3. Normalization rule
 
@@ -81,12 +107,28 @@
 - повторный прогон не должен создавать двойные пробелы;
 - если пробел уже есть, текст не меняется.
 
-### 4.4. Integration point
+### 4.4. Standalone bold section boundary rule
 
-`TranslationFacade` после получения translated result от engine прогоняет `translatedText` через shared spacing normalizer и только затем собирает `TranslationResult.finalText`.
+Для `normal` сегментов также вводится paragraph-normalization вокруг standalone bold section titles.
+
+Целевой результат:
+- `... data.**Clarifying Project Manager term**\n\nI need ...`
+  превращается в
+- `... data.\n\n**Clarifying Project Manager term**\n\nI need ...`
+
+Нормализатор должен чинить только markdown-паттерны, которые выглядят как section title, а не как обычный inline emphasis внутри предложения.
+
+### 4.5. Integration points
+
+`TranslationFacade` после получения translated result от engine прогоняет `translatedText` через shared text normalizer и только затем собирает `TranslationResult.finalText`.
+
+Core thinking path использует тот же helper:
+- при append/display thinking content;
+- при projection `localizedContent` из translation overlays.
 
 Это гарантирует:
 - единый результат для Claude/Codex/Gemini overlays;
+- единый формат и для source thinking text, и для translated overlays;
 - отсутствие UI-side patching;
 - одинаковое поведение для Google GTX и Codex translation engine.
 
@@ -94,14 +136,24 @@
 
 ## 5. File-Level Plan
 
-### Stream A — Shared normalizer
-- `packages/translation/src/translation-script-spacing-normalizer.ts`
+### Stream A — Shared translation text normalizer
+- `packages/translation/src/translation-text-format-normalizer.ts`
 - `packages/translation/src/translation-facade.ts`
+- `packages/translation/src/index.ts`
+
+### Stream B — Translation regression guards
 - `packages/translation/src/translation-facade.test.ts`
 
-### Stream B — Bug/documentation sync
+### Stream C — Core thinking display integration
+- `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`
+- `packages/core/src/session-translation/session-message-localization-projector.ts`
+
+### Stream D — Core regression guards
+- `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`
+- `packages/core/src/session-translation/session-message-localization-projector.test.ts`
+
+### Stream E — Bug/documentation sync
 - `doc/BugRegistry.md`
-- `doc/SolidWorks-WorkFlow/Modules/Codex.md` only if translation contract wording needs explicit note
 - `doc/TODO/todo-plan.md`
 
 Release docs and packaging follow only after targeted verification.
@@ -116,6 +168,8 @@ Release docs and packaging follow only after targeted verification.
 - unit test: `lsилиsed` -> `ls или sed`
 - unit test: inline code `` `lsилиsed` `` остаётся без изменений
 - unit test: fenced code block остаётся без изменений
+- unit test: `...data.**Clarifying ...**\n\nI need...` нормализуется в отдельный section title block
+- unit test: localized overlay с таким же паттерном проходит через тот же paragraph-normalization
 - targeted build: `npm run build --workspace @codeai-hub/translation`
 - downstream confidence build: `npm run build --workspace @codeai-hub/core`
 
@@ -123,6 +177,9 @@ Release docs and packaging follow only after targeted verification.
 
 ## 7. Outcome Contract
 
-После фикса translated user-facing prose обязана иметь корректный пробел на границе латиницы и кириллицы вне protected code spans.
+После фикса:
+- translated user-facing prose обязана иметь корректный пробел на границе латиницы и кириллицы вне protected code spans;
+- thinking/reasoning display content обязано сохранять paragraph boundary перед standalone bold section titles;
+- тот же paragraph contract должен применяться и к translated overlays.
 
 UI, Core session overlay и provider modules не должны иметь собственных локальных «spacing hacks» для этого кейса.

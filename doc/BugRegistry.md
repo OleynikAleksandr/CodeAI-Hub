@@ -54,6 +54,8 @@
 | BUG-2026-04-18-04 | FIXED | PM/UI/Codex | после `Stop` + fast resend в dialog UI временно дублируется user bubble | 1.2.19 |
 | BUG-2026-04-18-05 | FIXED | Codex Runtime | final assistant answer дублируется через rollout pair `final_answer` + `task_complete` | 1.2.19 |
 | BUG-2026-04-18-06 | FIXED | PM/Core | multi-workspace PM создаёт repeated refresh/bootstrap/polling churn и деградирует отзывчивость системы | 1.2.19 |
+| BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
+| BUG-2026-04-19-02 | OPEN | Thinking/Core/UI | reasoning section titles теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 
 ---
 
@@ -385,6 +387,62 @@
 
 **Planning source:**
 - `doc/SolidWorks-WorkFlow/Plans/Archive/ProjectManager_MultiWorkspace_Performance_And_EventDriven_UsageRefresh_1.2.19.md`
+
+## BUG-2026-04-19-01 — Translation/Core/UI: translated overlays lose spacing on latin/cyrillic boundaries
+
+**Status:** OPEN
+
+**Symptom:**
+- После перевода reasoning/help/live overlays в `ru` часть mixed-script фрагментов приходит без пробелов между английскими терминами и русскими словами.
+- Типовые пользовательские примеры: `parallelдля`, `вродеpwd`, `lsилиsed`.
+- Дефект носит shared характер: источник перевода может отличаться, но итоговый текст проходит через общий translation/runtime path и отображается в UI одинаково.
+
+**Observed scope:**
+- Пользователь подтвердил дефект на reasoning overlays в релизе `1.2.23`.
+- По архитектуре риск затрагивает все provider translation overlays, потому что post-translation normalization сейчас централизованно не вставляет пробелы на границе `latin <-> cyrillic`.
+
+**Root cause hypothesis (confirmed at integration level):**
+- Shared translation path возвращает `translatedText` почти как отдал движок перевода, без дополнительного пост-процессинга mixed-script границ.
+- Когда переводчик склеивает английский token и соседнее русское слово, текущий pipeline не нормализует такие последовательности перед записью в session/UI surfaces.
+- Наивный regex по всей строке опасен, потому что может испортить inline code, fenced code blocks, markdown-sensitive spans, URL/path-like фрагменты и идентификаторы.
+
+**Accepted fix direction (2026-04-19):**
+- Чинить дефект централизованно в `packages/translation`, а не в отдельных provider modules и не в UI.
+- Добавить shared post-processor для обычных текстовых сегментов, который вставляет пробелы на обеих границах:
+  - `latin -> cyrillic`
+  - `cyrillic -> latin`
+- Protected spans (`inline code`, fenced code blocks и другие code-sensitive сегменты) не должны модифицироваться этим нормализатором.
+- После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
+
+## BUG-2026-04-19-02 — Thinking/Core/UI: reasoning section titles lose paragraph boundaries
+
+**Status:** OPEN
+
+**Symptom:**
+- В thinking/reasoning blocks markdown-like section titles вида `**Clarifying ...**` местами прилипают к предыдущему предложению, вместо начала нового абзаца.
+- Пользовательский эффект хорошо виден на длинных Codex reasoning blocks, где часть bold section titles отображается как inline continuation предыдущей строки.
+- Типовой observed fragment: `... storage for local project data.**Clarifying Project Manager term**`
+
+**Confirmed evidence:**
+- Screenshot from user test session: `/Users/oleksandroliinyk/Desktop/Screenshot 2026-04-19 at 17.53.31.png`
+- Unified session JSONL:
+  - `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/codexCli/codex-faafc9fd-6a00-4624-a337-7e6c7e06045c-description.jsonl`
+  - message `rs_06f9a081edb5b1720169e4fa45100081918ce074aada82c1e2::live::f707618a-97e0-4c69-b818-3c71e4ce7d40` persisted exactly as `...data.**Clarifying Project Manager term**`
+  - message `rs_06f9a081edb5b1720169e4fa45100081918ce074aada82c1e2::live::dc3f3794-c7f1-4932-a07d-26df41fe87b1` persisted as `...client.**Planning propagation scenarios**`
+- App-server transport log:
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/codex/sdk-codex-app-server-2026-04-19T15-40-59-874Z-d670bf64-519e-4a69-9189-d809db0e5e5f.jsonl`
+  - new summary parts arrive as separate blocks, for example `**Clarifying Project Manager term**\n\nI` and `**Planning propagation scenarios**\n\nI'm`
+
+**Root cause hypothesis (confirmed at integration level):**
+- Observed Codex app-server reasoning arrives in multiple summary parts, but current runtime/display path can lose paragraph boundary between adjacent blocks when the next part starts with a standalone bold section title.
+- Shared Core/UI path does not have a generic formatting guard that repairs these block boundaries before persisting/broadcasting thinking content or projecting translated overlays.
+- Значит, даже если provider transport уже знает про новый section block, user-facing reasoning bubble всё равно может получить glued markdown.
+
+**Accepted fix direction (2026-04-19):**
+- Добавить shared text-format normalizer, который восстанавливает paragraph boundary вокруг standalone bold section titles в обычных текстовых сегментах.
+- Применить его не только к translation outputs, но и к Core-side thinking display content, чтобы guard работал для всех providers, а не только для текущего Codex case.
+- Protected code spans не должны затрагиваться.
+- После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 

@@ -32,25 +32,31 @@
 ## Phase 0 — Execution Cycle Bootstrap (owner: Codex, updated: 2026-04-19)
 ### Stream: Planning Activation
 1. [DONE] Открыть новый execution cycle: добавить active planning-doc в `doc/SolidWorks-WorkFlow/Plans/`, зарегистрировать его в `doc/SolidWorks-WorkFlow/Docs_Index.md` и заменить placeholder active планом выполнения в `doc/TODO/todo-plan.md`. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open translation spacing execution cycle`
-2. [TODO] Git Commit: `docs: open translation spacing execution cycle` (hash: TBD)
-3. [TODO] Добавить `OPEN` запись в `doc/BugRegistry.md` для spacing-багa на границе latin/cyrillic и зафиксировать её как текущий bug scope. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: register translation spacing bug`
-4. [TODO] Git Commit: `docs: register translation spacing bug` (hash: TBD)
+2. [DONE] Git Commit: `docs: open translation spacing execution cycle` (hash: `bdd7105e1`)
+3. [DONE] Обновить active planning-doc и добавить `OPEN` записи в `doc/BugRegistry.md` для shared text-format scope: spacing-багa на границе latin/cyrillic и paragraph-boundary бага у standalone bold section titles в thinking blocks. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: register translation text formatting bugs`
+4. [TODO] Git Commit: `docs: register translation text formatting bugs` (hash: TBD)
 
-## Phase 1 — Shared Translation Spacing Repair (owner: Codex, updated: 2026-04-19)
-### Stream: Shared Normalizer
-1. [TODO] Добавить shared post-processor для spacing между latin/cyrillic вне protected code spans и подключить его в `TranslationFacade` перед финальным `TranslationResult`. scope: `packages/translation/src/translation-script-spacing-normalizer.ts`, `packages/translation/src/translation-facade.ts`; expected commit: `fix: normalize translation spacing between latin and cyrillic`
-2. [TODO] Git Commit: `fix: normalize translation spacing between latin and cyrillic` (hash: TBD)
-3. [TODO] Добавить regression tests для plain text, inline code и fenced code block кейсов. scope: `packages/translation/src/translation-facade.test.ts`; expected commit: `test: cover translation latin cyrillic spacing`
-4. [TODO] Git Commit: `test: cover translation latin cyrillic spacing` (hash: TBD)
+## Phase 1 — Shared Text Formatting Repair (owner: Codex, updated: 2026-04-19)
+### Stream: Translation Text Normalizer
+1. [TODO] Добавить shared text-format normalizer с protected code spans, script-spacing repair и standalone bold section boundary repair, экспортировать его из translation package и подключить в `TranslationFacade`. scope: `packages/translation/src/translation-text-format-normalizer.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`; expected commit: `fix: normalize translation text formatting`
+2. [TODO] Git Commit: `fix: normalize translation text formatting` (hash: TBD)
+3. [TODO] Добавить regression tests для spacing, protected code spans и standalone bold section title paragraph boundaries на translation path. scope: `packages/translation/src/translation-facade.test.ts`; expected commit: `test: cover translation text formatting`
+4. [TODO] Git Commit: `test: cover translation text formatting` (hash: TBD)
+
+### Stream: Thinking Display Formatting
+1. [TODO] Применить shared normalizer к Core thinking display content и localized overlays, чтобы paragraph-boundary repair работал для всех providers на user-facing surface. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/session-translation/session-message-localization-projector.ts`; expected commit: `fix: normalize thinking display formatting`
+2. [TODO] Git Commit: `fix: normalize thinking display formatting` (hash: TBD)
+3. [TODO] Добавить regression tests для Core thinking source content и localized overlays с glued standalone bold section titles. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`, `packages/core/src/session-translation/session-message-localization-projector.test.ts`; expected commit: `test: cover thinking display formatting`
+4. [TODO] Git Commit: `test: cover thinking display formatting` (hash: TBD)
 
 ### Stream: Bug Notes Sync
-1. [TODO] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards), не переводя баг в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync translation spacing bug notes`
-2. [TODO] Git Commit: `docs: sync translation spacing bug notes` (hash: TBD)
+1. [TODO] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для обоих formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
+2. [TODO] Git Commit: `docs: sync text formatting bug notes` (hash: TBD)
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетные проверки translation path: unit tests, `npm run build --workspace @codeai-hub/translation`, при необходимости `npm run build --workspace @codeai-hub/core`, и зафиксировать результаты в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify translation spacing normalization`
-2. [TODO] Git Commit: `test: verify translation spacing normalization` (hash: TBD)
+1. [TODO] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, и зафиксировать результаты в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
+2. [TODO] Git Commit: `test: verify text formatting normalization` (hash: TBD)
 
 ### Stream: Release Notes And New Release Build
 1. [TODO] Подготовить будущую release line `1.2.24`: обновить `README.md`, `CHANGELOG.md` и связанные архитектурные документы под shared translation spacing fix до запуска release scripts. scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: prepare 1.2.24 release notes`
