@@ -2,7 +2,7 @@ import type {
   ClaudeModuleOptions,
   ModuleReporter,
 } from "@codeai-hub/claude-module";
-import type { CodexModuleOptions } from "@codeai-hub/codex-module";
+import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { GeminiInstallerPaths } from "./provider-installer-paths";
 
 export interface GeminiModuleOptions {

@@ -28,7 +28,6 @@
   "dependencies": {
     "@codeai-hub/codex-app-server-module": "file:../Codex_AppServer_Module",
     "@codeai-hub/claude-module": "file:../Claude_Module",
-    "@codeai-hub/codex-module": "file:../Codex_Module",
     "@codeai-hub/initiatives": "file:../initiatives",
     "@codeai-hub/localization": "file:../localization",
     "@codeai-hub/unified-session": "file:../unified-session",

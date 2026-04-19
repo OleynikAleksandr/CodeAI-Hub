@@ -1,5 +1,5 @@
 import type { ClaudeInstallerPaths } from "@codeai-hub/claude-module";
-import type { CodexInstallerPaths } from "@codeai-hub/codex-module";
+import type { CodexInstallerPaths } from "@codeai-hub/codex-app-server-module";
 
 const NPM_GLOBAL_MODULES_ROOT_UNIX = "~/.npm-global/lib/node_modules";
 const NPM_GLOBAL_MODULES_ROOT_WINDOWS =
