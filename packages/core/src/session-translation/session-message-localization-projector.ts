@@ -1,3 +1,4 @@
+import { normalizeTranslationTextFormatting } from "@codeai-hub/translation";
 import type { AppendMessageTranslationOptions } from "@codeai-hub/unified-session";
 import { computeSessionMessageSourceHash } from "./session-message-source-hash";
 
@@ -23,7 +24,9 @@ export class SessionMessageLocalizationProjector {
       return null;
     }
 
-    const localizedContent = translation.translatedContent.trim();
+    const localizedContent = normalizeTranslationTextFormatting(
+      translation.translatedContent.trim()
+    );
     return localizedContent.length > 0 ? localizedContent : null;
   }
 }

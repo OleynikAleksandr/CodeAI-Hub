@@ -1,3 +1,4 @@
+import { normalizeTranslationTextFormatting } from "@codeai-hub/translation";
 import type { SessionManager, SessionRole } from "../../session-manager";
 import type {
   SessionTranslationFacade,
@@ -163,6 +164,9 @@ export class SessionRequestHandlerEventMessages {
     readonly tag?: string;
   }): void {
     const emissionThinking = isThinkingDisplayMessage(options);
+    const content = emissionThinking
+      ? normalizeTranslationTextFormatting(options.content)
+      : options.content;
     const session = this.deps.sessionManager.getSession(options.sessionId);
     const providerId = resolveTranslationProviderId(session?.providerId);
     let visibilityAtEmission: "visible" | "hidden" | undefined;
@@ -177,7 +181,7 @@ export class SessionRequestHandlerEventMessages {
     const message = this.deps.sessionManager.appendMessage(
       options.sessionId,
       options.role,
-      options.content,
+      content,
       {
         ...(options.messageId ? { messageId: options.messageId } : {}),
         ...(options.timestamp ? { timestamp: options.timestamp } : {}),
