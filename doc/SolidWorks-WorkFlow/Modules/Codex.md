@@ -37,7 +37,8 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - `turn/completed` → `turn_completed | turn_failed`
 - `error` → `stream_error`
 - `item/agentMessage/delta` + `item/completed` materialize-ят user-facing `dialog_message`
-- `item/reasoning/summaryPartAdded` / `item/reasoning/summaryTextDelta` materialize-ят reasoning bubble как `role: "assistant"` + `tag: "thinking"`
+- `item/reasoning/summaryPartAdded` / `item/reasoning/summaryTextDelta` / optional `item/reasoning/textDelta` feed a readable live buffer that emits append-only `thinking` segments before `item/completed`
+- `item/completed` for reasoning is flush/fallback reconciliation path: it only emits the unseen tail or fallback summary/content if live deltas were absent
 - `thread/tokenUsage/updated` и usage-limits snapshots materialize-ятся как `stream_event`
 - Runtime model updates materialize-ятся как `system` event с фактическим model id
 
@@ -50,6 +51,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Upstream truth для видимого Codex reasoning теперь — reasoning summary notifications app-server-а, а не legacy rollout tail и не SDK-local display gate.
 - Видимый reasoning остаётся source-first: сначала persist/broadcast native text, затем Core-owned translation overlay может прислать `localizedContent`.
 - User-facing toggle `Reasoning in dialog` управляет тем, уходит ли turn-level `summary` как `detailed` или как `none`; provider-home `model_reasoning_summary` остаётся persisted companion state, но не является единственным runtime source-of-truth для live app-server turns.
+- Live reasoning emission использует readable chunking поверх delta notifications; provider layer не имеет права прокидывать в UI token-level fragments как отдельные bubbles.
 - Видимость reasoning по-прежнему решается в момент emission через `visibilityAtEmission`; скрытые reasoning bubbles не должны попадать в translation queue и не должны внезапно проявляться после обратного включения toggle.
 
 ## Инварианты

@@ -154,6 +154,8 @@
 Повторный `resume` на том же `thread_id` не должен затирать существующий JSONL-лог.  
 SDK/diagnostic log обязан быть append-safe или rotate-safe.
 
+Для active app-server линии это означает отдельный CodeAI Hub transport log в `~/.codeai-hub/logs/codex`, который пишет JSON-RPC requests/responses/notifications, protocol log records и stderr process lines. Этот лог не заменяет provider-home artifacts, а дополняет их.
+
 ---
 
 ## 7) Module Boundary and Facades
@@ -204,6 +206,7 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 Ответственность runtime слоя:
 - превратить persisted `responsePolicy` + Core-applied turn config в outbound `turn/start` envelope;
 - решить, когда пробрасывать `outputSchema` в app-server turn;
+- превратить `item/reasoning/summaryTextDelta` / `item/reasoning/textDelta` в readable append-only `thinking` segments, а `item/completed` использовать только как flush/fallback reconciliation;
 - сохранить тот же внешний provider contract `codexCli` при смене внутреннего transport;
 - выставить diagnostics/raw passthrough policy без возврата к legacy rollout-tail path.
 
@@ -222,12 +225,14 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 
 - Commentary не должен попадать под требование `only JSON`.
 - Structured output относится только к terminal result.
+- Если app-server присылает reasoning deltas, provider обязан материализовать их в incremental readable `thinking` segments до `item/completed`, а не схлопывать весь reasoning в один поздний block.
 - Если provider не прислал commentary, UI может использовать tool/file progress как деградационный fallback.
 
 ### 8.3 Debug/Raw
 
 - Нет жёсткого schema pressure на live turn.
 - Raw provider output сохраняется максимально полно.
+- Debug/Raw не отменяет readable chunking: если reasoning deltas уже пришли, provider обязан показать их по мере накопления, а не ждать terminal assembly.
 - Этот режим используется как основной investigative mode для новых моделей.
 
 ---
