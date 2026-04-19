@@ -22,13 +22,13 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - `CODEX_HOME=~/.codeai-hub/providers/codex/home`
 - Provider-owned `auth.json` и `config.toml` materialize-ятся в provider-home; при bootstrap разрешено copy-migrate отсутствующие файлы из legacy `~/.codex/`.
 - `config.toml` в provider-home не должен оставаться symlink-ом на user config.
-- `reasoningSummaryEnabled` из `settings.json` синхронизируется в provider-home как `model_reasoning_summary = "auto" | "none"`.
+- `reasoningSummaryEnabled` из `settings.json` синхронизируется в provider-home как persisted compatibility state `model_reasoning_summary = "auto" | "none"`, но live app-server send-path дополнительно резолвит turn-level summary policy из того же shared settings snapshot в `summary = "detailed" | "none"`; это нужно потому, что `turn/start.summary = "detailed"` может переехать поверх provider-home `model_reasoning_summary = "none"`.
 
 ## Transport cluster
 - Runtime transport — это long-lived `codex app-server`, поднятый через `child_process.spawn(..., ["app-server"])`.
 - Handshake обязан идти через `initialize` с `capabilities.experimentalApi = true`; без этого нельзя использовать `persistExtendedHistory`.
 - Session creation/resume идут через `thread/start` и `thread/resume`; app-server сразу возвращает реальный `threadId`, поэтому Codex теперь поддерживает immediate binding и не требует legacy temp-session flow.
-- Turn execution идёт через `turn/start` с `input[{ type: "text", text, text_elements: [] }]`, `model`, `effort`, optional `outputSchema` и `summary = "auto"`.
+- Turn execution идёт через `turn/start` с `input[{ type: "text", text, text_elements: [] }]`, `model`, `effort`, optional `outputSchema` и turn-level `summary = "detailed" | "none"`, который читается из shared settings snapshot; `detailed` является live-capable baseline для reasoning stream, а `none` сохраняет user toggle `Reasoning in dialog`.
 - Stop/cancel path идёт через `turn/interrupt(threadId, turnId)`; если последняя logical session закрыта, CodeAI Hub останавливает сам `codex app-server` process.
 - Usage limits читаются через `account/rateLimits/read` и live notifications `account/rateLimits/updated`; token usage приходит через `thread/tokenUsage/updated`.
 
@@ -49,7 +49,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 ## Reasoning, visibility и translation
 - Upstream truth для видимого Codex reasoning теперь — reasoning summary notifications app-server-а, а не legacy rollout tail и не SDK-local display gate.
 - Видимый reasoning остаётся source-first: сначала persist/broadcast native text, затем Core-owned translation overlay может прислать `localizedContent`.
-- User-facing toggle `Reasoning in dialog` управляет только тем, разрешено ли reasoning summary reach client/provider-home config; при `model_reasoning_summary = "none"` reasoning payload просто не существует.
+- User-facing toggle `Reasoning in dialog` управляет тем, уходит ли turn-level `summary` как `detailed` или как `none`; provider-home `model_reasoning_summary` остаётся persisted companion state, но не является единственным runtime source-of-truth для live app-server turns.
 - Видимость reasoning по-прежнему решается в момент emission через `visibilityAtEmission`; скрытые reasoning bubbles не должны попадать в translation queue и не должны внезапно проявляться после обратного включения toggle.
 
 ## Инварианты
