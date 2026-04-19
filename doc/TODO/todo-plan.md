@@ -42,9 +42,9 @@
 
 ## Phase 2 — SSOT Sync And Verification (owner: Codex, updated: 2026-04-19)
 ### Stream: Contract Documentation
-1. [IN_PROGRESS] Синхронизировать SSOT после реализации: убрать из канона live readable chunking как user-facing reasoning contract и описать final-summary block emission как новый Codex reasoning baseline. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync codex final-summary reasoning contract`
-2. [TODO] Git Commit: `docs: sync codex final-summary reasoning contract` (hash: TBD)
+1. [DONE] Синхронизировать SSOT после реализации: убрать из канона live readable chunking как user-facing reasoning contract и описать final-summary block emission как новый Codex reasoning baseline. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync codex final-summary reasoning contract`
+2. [DONE] Git Commit: `docs: sync codex final-summary reasoning contract` (hash: `be8f239c8`)
 
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетную верификацию: build Codex app-server module, downstream confidence build для Core/Webview и manual smoke reasoning formatting на release-like сеансе; результаты зафиксировать в closeout docs. scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify codex final-summary reasoning rendering`
+1. [DONE] Прогнать таргетную automated verification: `npm run build --workspace @codeai-hub/codex-app-server-module`, direct compiled `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`, затем downstream confidence builds `npm run build --workspace @codeai-hub/core` и `npm run build:webview` в корректном последовательном порядке; live provider smoke на release-like сеансе остаётся на пользовательский retest. scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify codex final-summary reasoning rendering`
 2. [TODO] Git Commit: `test: verify codex final-summary reasoning rendering` (hash: TBD)
