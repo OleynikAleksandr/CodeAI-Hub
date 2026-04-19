@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.2.23",
-    "package": "codex-module-1.2.23.tar.bz2",
-    "size": 33820,
-    "sha1": "c2aadedc71b661b3818053219574e0fae2099bba"
+    "version": "1.2.24",
+    "package": "codex-module-1.2.24.tar.bz2",
+    "size": 35243,
+    "sha1": "d93755e49bf1d115958b740b17f5b010396cc717"
   }
 }
