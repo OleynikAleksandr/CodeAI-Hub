@@ -253,6 +253,104 @@ test("LocalizationMaterializer tracks partial fallback when a batch entry is mis
   );
 });
 
+test("LocalizationMaterializer retries a missing batch entry individually before failing strict readiness", async () => {
+  const translationRequests: TranslationRequest[] = [];
+  const sourceDictionaryRegistry = new SourceDictionaryRegistry([
+    {
+      category: "user_guidance",
+      entries: {
+        "help.present": "This helper survives parsing.",
+        "help.recovered": "This helper recovers on retry.",
+      },
+      language: "en",
+    },
+  ]);
+
+  const materializer = new LocalizationMaterializer({
+    bundleStore: {
+      load: async () => null,
+      save: async () => undefined,
+    } as never,
+    glossaryBundleLoader: {
+      loadBaseBundle: async () => ({ rules: [] }),
+      loadLanguageBundle: async () => ({ rules: [] }),
+    } as never,
+    glossaryMergeService: new GlossaryMergeService(),
+    glossaryProtector: new GlossaryProtector(),
+    languageCatalogService: {
+      supportsLanguage: () => true,
+    } as never,
+    metadataStore: {
+      getBundle: async () => null,
+      upsertBundle: async () => undefined,
+    } as never,
+    sourceDictionaryRegistry,
+    translationFacade: {
+      translate: (request: TranslationRequest): Promise<TranslationResult> => {
+        translationRequests.push(request);
+        if (
+          request.text.includes("__CODEAI_HUB_LOCALIZATION_ENTRY__0__START__")
+        ) {
+          return Promise.resolve({
+            engine: request.engineId ?? "fake-engine",
+            errorCode: "partial_fallback",
+            finalText: [
+              "__CODEAI_HUB_LOCALIZATION_ENTRY__0__START__",
+              "[ru] This helper survives parsing.",
+              "__CODEAI_HUB_LOCALIZATION_ENTRY__0__END__",
+            ].join("\n"),
+            originalText: request.text,
+            sourceLanguage: request.sourceLanguage,
+            status: "translated",
+            targetLanguage: request.targetLanguage,
+            translatedText: [
+              "__CODEAI_HUB_LOCALIZATION_ENTRY__0__START__",
+              "[ru] This helper survives parsing.",
+              "__CODEAI_HUB_LOCALIZATION_ENTRY__0__END__",
+            ].join("\n"),
+          });
+        }
+
+        return Promise.resolve({
+          engine: request.engineId ?? "fake-engine",
+          finalText: "[ru] This helper recovers on retry.",
+          originalText: request.text,
+          sourceLanguage: request.sourceLanguage,
+          status: "translated",
+          targetLanguage: request.targetLanguage,
+          translatedText: "[ru] This helper recovers on retry.",
+        });
+      },
+    } as never,
+    userGlossaryStore: {
+      load: async () => ({ preserve: [] }),
+    } as never,
+  });
+
+  const result = await materializer.materialize({
+    category: "user_guidance",
+    engineId: "codex-gpt-5.3-codex-spark",
+    targetLanguage: "ru",
+  });
+
+  assert.ok(result);
+  assert.equal(translationRequests.length, 4);
+  assert.equal(
+    translationRequests.at(-1)?.text,
+    "This helper recovers on retry."
+  );
+  assert.equal(result.fallbackTranslationCount, 0);
+  assert.equal(result.partialFallbackTranslationCount, 0);
+  assert.equal(
+    result.bundle.entries["help.present"],
+    "[ru] This helper survives parsing."
+  );
+  assert.equal(
+    result.bundle.entries["help.recovered"],
+    "[ru] This helper recovers on retry."
+  );
+});
+
 test("LocalizationMaterializer routes bundle materialization through anthropic-claude-haiku-4-5", async () => {
   const translationRequests: TranslationRequest[] = [];
   const sourceDictionaryRegistry = new SourceDictionaryRegistry([

@@ -24,6 +24,12 @@ import {
 } from "./localization-contract";
 import { LocalizationMetadataStore } from "./localization-metadata-store";
 import type { SourceDictionaryRegistry } from "./source-dictionary-registry";
+import {
+  buildStructuredBatchText,
+  recoverMissingStructuredEntry,
+  resolveStructuredBatchTranslations,
+  type StructuredBatchEntry,
+} from "./structured-batch-entry-recovery";
 import { UserGlossaryStore } from "./user-glossary-store";
 
 export interface LocalizationMaterializationRequest {
@@ -64,14 +70,6 @@ interface SourceDictionaryTranslationResult {
   readonly partialFallbackTranslationCount: number;
 }
 
-interface StructuredBatchEntry {
-  readonly entryId: number;
-  readonly messageIds: string[];
-  readonly protectedText: string;
-  readonly sourceText: string;
-  readonly tokens: readonly ProtectedGlossaryToken[];
-}
-
 const normalizeLanguage = (value: string | undefined, fallback: string) =>
   value?.trim() || fallback;
 
@@ -80,8 +78,6 @@ const LOCALIZATION_TRANSLATION_TIMEOUT_BASE_MS = 6000;
 const LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS = 180_000;
 const LOCALIZATION_TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 18;
 const LOCALIZATION_BATCH_TRANSLATION_CATEGORY = "localization_bundle";
-const LOCALIZATION_BATCH_MARKER_PREFIX = "__CODEAI_HUB_LOCALIZATION_ENTRY__";
-
 const resolveLocalizationTranslationTimeoutMs = (text: string): number =>
   Math.min(
     LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS,
@@ -103,12 +99,6 @@ const resolveEffectiveGlossaryCategory = (
   category: LocalizationCategoryId
 ): LocalizationCategoryId =>
   category === "ui_interface" ? "workflow_terms" : category;
-
-const createBatchMarker = (entryId: number, boundary: "END" | "START") =>
-  `${LOCALIZATION_BATCH_MARKER_PREFIX}${entryId}__${boundary}__`;
-
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const createCompositeSourceHash = (
   sourceDictionary: LocalizationSourceDictionary,
@@ -379,12 +369,7 @@ export class LocalizationMaterializer {
       };
     }
 
-    const batchText = structuredBatchEntries
-      .map(
-        (entry) =>
-          `${createBatchMarker(entry.entryId, "START")}\n${entry.protectedText}\n${createBatchMarker(entry.entryId, "END")}`
-      )
-      .join("\n\n");
+    const batchText = buildStructuredBatchText(structuredBatchEntries);
     const translationResult = await this.translateProtectedTextWithRetry({
       category: LOCALIZATION_BATCH_TRANSLATION_CATEGORY,
       engineId,
@@ -401,30 +386,32 @@ export class LocalizationMaterializer {
     }
 
     const fallbackTranslationCount = 0;
-    let partialFallbackTranslationCount =
-      translationResult.errorCode === "partial_fallback" ? 1 : 0;
-    const translatedEntries: Record<string, string> = {};
-    for (const entry of structuredBatchEntries) {
-      const match = new RegExp(
-        `${escapeRegExp(createBatchMarker(entry.entryId, "START"))}\\s*([\\s\\S]*?)\\s*${escapeRegExp(createBatchMarker(entry.entryId, "END"))}`
-      ).exec(translationResult.finalText);
-      const restoredText = match
-        ? this.glossaryProtector.restore(
-            match[1]?.trim() ?? "",
+    const { partialFallbackTranslationCount, translatedEntries } =
+      await resolveStructuredBatchTranslations({
+        batchReportedPartialFallback:
+          translationResult.errorCode === "partial_fallback",
+        entries: structuredBatchEntries,
+        finalText: translationResult.finalText,
+        glossaryProtector: this.glossaryProtector,
+        retryMissingEntry: (entry) =>
+          recoverMissingStructuredEntry({
+            entry,
+            glossaryProtector: this.glossaryProtector,
             targetLanguage,
-            entry.tokens
-          )
-        : "";
-      const translatedText = hasUsableLocalizedText(restoredText)
-        ? restoredText
-        : entry.sourceText;
-      if (!hasUsableLocalizedText(restoredText)) {
-        partialFallbackTranslationCount += 1;
-      }
-      for (const messageId of entry.messageIds) {
-        translatedEntries[messageId] = translatedText;
-      }
-    }
+            translateEntry: () =>
+              this.translateProtectedTextWithRetry({
+                category: LOCALIZATION_BATCH_TRANSLATION_CATEGORY,
+                engineId,
+                protectedText: {
+                  protectedText: entry.protectedText,
+                  tokens: entry.tokens,
+                },
+                sourceLanguage,
+                targetLanguage,
+              }),
+          }),
+        targetLanguage,
+      });
 
     return {
       bundle: {
