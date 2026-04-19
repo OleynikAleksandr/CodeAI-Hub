@@ -55,7 +55,7 @@
 | BUG-2026-04-18-05 | FIXED | Codex Runtime | final assistant answer дублируется через rollout pair `final_answer` + `task_complete` | 1.2.19 |
 | BUG-2026-04-18-06 | FIXED | PM/Core | multi-workspace PM создаёт repeated refresh/bootstrap/polling churn и деградирует отзывчивость системы | 1.2.19 |
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
-| BUG-2026-04-19-02 | OPEN | Thinking/Core/UI | reasoning section titles теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
+| BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
 
 ---
@@ -415,13 +415,25 @@
 - Protected spans (`inline code`, fenced code blocks и другие code-sensitive сегменты) не должны модифицироваться этим нормализатором.
 - После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
 
-## BUG-2026-04-19-02 — Thinking/Core/UI: reasoning section titles lose paragraph boundaries
+**Fix implemented (awaiting user verification):**
+- В `packages/translation` добавлен shared helper `translation-text-format-normalizer`, который сегментирует текст на `protected` и `normal` spans и вставляет пробелы на границах `latin <-> cyrillic` только в обычных текстовых сегментах.
+- `TranslationFacade` теперь прогоняет через этот normalizer все translated outputs до возврата результата в Core/UI path.
+
+**Commits delivered (pending release verification):**
+- `9b8bdd9af fix: normalize translation text formatting`
+- `1e360a8d6 test: cover translation text formatting`
+
+**Guards delivered (pending release verification):**
+- `node --test --import tsx packages/translation/src/translation-facade.test.ts`
+- `npm run build --workspace @codeai-hub/translation`
+
+## BUG-2026-04-19-02 — Core/UI/Translation: session message section titles lose paragraph boundaries
 
 **Status:** OPEN
 
 **Symptom:**
-- В thinking/reasoning blocks markdown-like section titles вида `**Clarifying ...**` местами прилипают к предыдущему предложению, вместо начала нового абзаца.
-- Пользовательский эффект хорошо виден на длинных Codex reasoning blocks, где часть bold section titles отображается как inline continuation предыдущей строки.
+- В session messages markdown-like section titles вида `**Clarifying ...**` местами прилипают к предыдущему предложению, вместо начала нового абзаца.
+- Пользовательский эффект хорошо виден на длинных Codex reasoning blocks, но по уточнению пользователя тот же дефект воспроизводится и в обычных assistant replies.
 - Типовой observed fragment: `... storage for local project data.**Clarifying Project Manager term**`
 
 **Confirmed evidence:**
@@ -436,14 +448,27 @@
 
 **Root cause hypothesis (confirmed at integration level):**
 - Observed Codex app-server reasoning arrives in multiple summary parts, but current runtime/display path can lose paragraph boundary between adjacent blocks when the next part starts with a standalone bold section title.
-- Shared Core/UI path does not have a generic formatting guard that repairs these block boundaries before persisting/broadcasting thinking content or projecting translated overlays.
-- Значит, даже если provider transport уже знает про новый section block, user-facing reasoning bubble всё равно может получить glued markdown.
+- Shared Core/UI path does not have a generic formatting guard that repairs these block boundaries before persisting/broadcasting assistant/thinking content or projecting translated overlays.
+- Значит, даже если provider transport already sends structured blocks, user-facing session bubble всё равно может получить glued markdown.
 
 **Accepted fix direction (2026-04-19):**
 - Добавить shared text-format normalizer, который восстанавливает paragraph boundary вокруг standalone bold section titles в обычных текстовых сегментах.
-- Применить его не только к translation outputs, но и к Core-side thinking display content, чтобы guard работал для всех providers, а не только для текущего Codex case.
+- Применить его не только к translation outputs, но и к Core-side assistant/thinking display content, чтобы guard работал для всех providers, а не только для текущего Codex case.
 - Protected code spans не должны затрагиваться.
 - После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
+
+**Fix implemented (awaiting user verification):**
+- Shared text-format normalizer теперь восстанавливает paragraph boundary вокруг section-like standalone bold titles.
+- Core path применяет его к translated overlays, live thinking и обычным assistant messages до persist/broadcast, поэтому одинаковый guard действует и на reasoning bubbles, и на обычные ответы агента.
+
+**Commits delivered (pending release verification):**
+- `a507b396c fix: normalize thinking display formatting`
+- `ac1e9d1db fix: broaden session message formatting normalization`
+- `2b0adf0e0 test: cover thinking display formatting`
+
+**Guards delivered (pending release verification):**
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts packages/core/src/session-translation/session-message-localization-projector.test.ts`
+- `npm run build --workspace @codeai-hub/core`
 
 ## BUG-2026-04-19-03 — UI/Markdown: ordinary assistant nested lists inflate vertical spacing
 
@@ -472,6 +497,16 @@
 - Чинить nested list spacing в session markdown renderer/CSS.
 - Collapse structural whitespace внутри nested `ul/ol/li`, не меняя raw stored message content.
 - После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
+
+**Fix implemented (awaiting user verification):**
+- `session-view.css` больше не применяет `white-space: pre-wrap` к самому `li`; `pre-wrap` оставлен только на `p`, а nested list blocks внутри `li` получили небольшой controlled top margin.
+- Это collapse-ит structural whitespace markdown-дерева на render layer, не переписывая raw assistant message content.
+
+**Commits delivered (pending release verification):**
+- `f8f3feff1 fix(ui): collapse nested markdown list spacing`
+
+**Guards delivered (pending release verification):**
+- `npm run build:webview`
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working
 

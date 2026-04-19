@@ -50,15 +50,15 @@
 2. [DONE] Git Commit: `fix: normalize thinking display formatting` (hash: `a507b396c`)
 3. [DONE] Расширить Core-side paragraph-boundary normalization с `thinking` на обычные assistant messages и синхронизировать active planning wording с пользовательским уточнением, что дефект воспроизводится не только в reasoning. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `fix: broaden session message formatting normalization`
 4. [DONE] Git Commit: `fix: broaden session message formatting normalization` (hash: `ac1e9d1db`)
-5. [IN_PROGRESS] Добавить regression tests для Core assistant/thinking source content и localized overlays с glued standalone bold section titles. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`, `packages/core/src/session-translation/session-message-localization-projector.test.ts`; expected commit: `test: cover thinking display formatting`
-6. [TODO] Git Commit: `test: cover thinking display formatting` (hash: TBD)
+5. [DONE] Добавить regression tests для Core assistant/thinking source content и localized overlays с glued standalone bold section titles. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`, `packages/core/src/session-translation/session-message-localization-projector.test.ts`; expected commit: `test: cover thinking display formatting`
+6. [DONE] Git Commit: `test: cover thinking display formatting` (hash: `2b0adf0e0`)
 
 ### Stream: Session Markdown List Spacing
-1. [IN_PROGRESS] Убрать inflated blank spacing в nested markdown lists обычных assistant messages, не меняя raw stored message content и не трогая thinking/translation path. scope: `media/session-view.css`; expected commit: `fix(ui): collapse nested markdown list spacing`
-2. [TODO] Git Commit: `fix(ui): collapse nested markdown list spacing` (hash: TBD)
+1. [DONE] Убрать inflated blank spacing в nested markdown lists обычных assistant messages, не меняя raw stored message content и не трогая thinking/translation path. scope: `media/session-view.css`; expected commit: `fix(ui): collapse nested markdown list spacing`
+2. [DONE] Git Commit: `fix(ui): collapse nested markdown list spacing` (hash: `f8f3feff1`)
 
 ### Stream: Bug Notes Sync
-1. [TODO] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для всех трёх formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
+1. [IN_PROGRESS] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для всех трёх formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
 2. [TODO] Git Commit: `docs: sync text formatting bug notes` (hash: TBD)
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
