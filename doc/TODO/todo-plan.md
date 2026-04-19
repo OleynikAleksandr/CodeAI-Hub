@@ -2,7 +2,7 @@
 
 ## Execution Scope Status: EMPTY
 - Активный execution scope отсутствует.
-- Последний закрытый цикл: релиз `1.2.20`, который нейтрально закрепляет shipped scope duplication/finalization и PM telemetry/polling refresh.
+- Последний закрытый цикл: релиз `1.2.21`, который фиксирует strict localization sync для provider-owned structured bundle translation и сохраняет прежние runtime contracts release-line `1.2.20`.
 - Следующая сессия обязана начать с базового SSOT:
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
