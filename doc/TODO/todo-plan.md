@@ -51,9 +51,9 @@
 
 ## Phase 3 — Release Build 1.2.25 (owner: Codex, updated: 2026-04-19)
 ### Stream: Release Notes Preparation
-1. [IN_PROGRESS] Подготовить release docs под будущую версию `1.2.25`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.25 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.25 release notes` (hash: TBD)
+1. [DONE] Подготовить release docs под будущую версию `1.2.25`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.25 release notes`
+2. [DONE] Git Commit: `docs: prepare 1.2.25 release notes` (hash: `6368f438c`)
 
 ### Stream: Release Build
-1. [TODO] Выполнить release checklist для `1.2.25`: убедиться в чистом дереве после release-notes коммита, затем запустить `./scripts/build-all.sh`, после этого `./scripts/build-release.sh --use-current-version`, проверить artefacts и зафиксировать результаты в `todo-plan.md`. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.25`
+1. [IN_PROGRESS] Выполнить release checklist для `1.2.25`: `build-all.sh` уже поднял unified version и собрал tarball-артефакты, следующий шаг — зафиксировать version/manifest updates, затем на чистом дереве запустить `./scripts/build-release.sh --use-current-version`, проверить VSIX и финализировать результаты в `todo-plan.md`. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.25`
 2. [TODO] Git Commit: `build: release 1.2.25` (hash: TBD)
