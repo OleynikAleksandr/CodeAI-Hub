@@ -47,4 +47,13 @@
 
 ### Stream: Targeted Verification
 1. [DONE] Прогнать таргетную automated verification: `npm run build --workspace @codeai-hub/codex-app-server-module`, direct compiled `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`, затем downstream confidence builds `npm run build --workspace @codeai-hub/core` и `npm run build:webview` в корректном последовательном порядке; live provider smoke на release-like сеансе остаётся на пользовательский retest. scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify codex final-summary reasoning rendering`
-2. [TODO] Git Commit: `test: verify codex final-summary reasoning rendering` (hash: TBD)
+2. [DONE] Git Commit: `test: verify codex final-summary reasoning rendering` (hash: `f12e243dc`)
+
+## Phase 3 — Release Build 1.2.25 (owner: Codex, updated: 2026-04-19)
+### Stream: Release Notes Preparation
+1. [IN_PROGRESS] Подготовить release docs под будущую версию `1.2.25`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.25 release notes`
+2. [TODO] Git Commit: `docs: prepare 1.2.25 release notes` (hash: TBD)
+
+### Stream: Release Build
+1. [TODO] Выполнить release checklist для `1.2.25`: убедиться в чистом дереве после release-notes коммита, затем запустить `./scripts/build-all.sh`, после этого `./scripts/build-release.sh --use-current-version`, проверить artefacts и зафиксировать результаты в `todo-plan.md`. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.25`
+2. [TODO] Git Commit: `build: release 1.2.25` (hash: TBD)

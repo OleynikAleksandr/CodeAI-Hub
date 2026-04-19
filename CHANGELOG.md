@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.25] - 2026-04-19
+### Fixed
+- **Codex reasoning no longer splits semantic sections across live `thinking` bubbles.** The app-server line now waits for `item/completed` and emits user-facing reasoning from completed summary blocks instead of readable live fragments built from `summaryTextDelta` / `textDelta`, so heading/body pairs such as `**Exploring model synchronization**` and `**Crafting concise questions**` stay intact.
+- **Standalone bold reasoning headings now keep the correct spacing after the heading line.** Session dialog CSS now suppresses the extra gap after bold-only paragraph headings while preserving the normal gap before them, so heading paragraphs read as the title of the following text block.
+
+### Tests
+- **Codex completed-summary reasoning emission is now regression-covered.** `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts` covers completion-only reasoning emission, accumulated summary fallback when `item.summary[]` is absent, and raw-text fallback when only `textDelta` exists.
+
+### Contracts
+- **Codex reasoning contract is now completion-first on the app-server line.** User-facing reasoning waits for completed summary blocks on `item/completed`; live deltas remain provider-local fallback/diagnostic inputs and no longer define the visible dialog stream.
+
 ## [1.2.24] - 2026-04-19
 ### Fixed
 - **Translation overlays now normalize missing spaces on `latin <-> cyrillic` boundaries.** Shared translation post-processing repairs mixed-script prose such as `parallelдля`, `вродеpwd`, and `lsилиsed` before the text reaches dialog overlays, while protected `inline code` and fenced code blocks remain untouched.

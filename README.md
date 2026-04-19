@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.24
+## Current Release — v1.2.25
+- **Codex reasoning now renders from completed summary blocks instead of live readable fragments.** The app-server line no longer materializes `thinking` bubbles from `summaryTextDelta` / `textDelta`; user-facing reasoning waits for `item/completed` and emits one block per completed summary section, preserving heading/body boundaries such as `**Crafting concise questions**`.
+- **Standalone bold reasoning headings now keep the correct vertical rhythm in Session UI.** Bold-only paragraph headings keep the gap before the heading while the extra gap after the heading is suppressed, so section titles read as the start of the following paragraph rather than as isolated floating lines.
+- **Codex reasoning contract and regression coverage are now aligned.** The app-server module includes dedicated regression tests for completed-summary emission, fallback behavior without `item.summary[]`, and raw-text fallback when structured reasoning fields are absent.
+
+### 1.2.24 (previous)
 - **Mixed-language translation overlays now preserve word boundaries automatically.** Shared translation normalization inserts the missing space on `latin <-> cyrillic` boundaries in ordinary prose, so overlays no longer collapse into fragments like `parallelдля`, `вродеpwd`, or `lsилиsed` while protected code spans stay untouched.
 - **Session messages now keep section-like bold titles on their own paragraph.** The same shared formatter repairs glued patterns such as `...data.**Clarifying ...**` before assistant/thinking content is persisted and before translated overlays are projected, so both ordinary replies and reasoning bubbles keep readable section structure.
 - **Nested markdown lists no longer inflate into empty vertical gaps in dialog UI.** Session markdown rendering now collapses structural whitespace on the `li` layer instead of preserving markdown indentation/newline artefacts as visible empty blocks.
