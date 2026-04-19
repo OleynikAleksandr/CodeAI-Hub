@@ -63,11 +63,11 @@
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
 ### Stream: Targeted Verification
-1. [IN_PROGRESS] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`; interactive UI smoke-check ordinary assistant nested list spacing перенести на пользовательскую release-проверку и зафиксировать это в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
-2. [TODO] Git Commit: `test: verify text formatting normalization` (hash: TBD)
+1. [DONE] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`; interactive UI smoke-check ordinary assistant nested list spacing перенести на пользовательскую release-проверку и зафиксировать это в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
+2. [DONE] Git Commit: `test: verify text formatting normalization` (hash: `4279fef5b`)
 
 ### Stream: Release Notes And New Release Build
-1. [TODO] Подготовить будущую release line `1.2.24`: обновить `README.md`, `CHANGELOG.md` и связанные архитектурные документы под shared translation spacing fix до запуска release scripts. scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: prepare 1.2.24 release notes`
+1. [IN_PROGRESS] Подготовить будущую release line `1.2.24`: обновить `README.md` и `CHANGELOG.md` под shared text-format fix set; дополнительных contract-delta beyond active planning-doc / BugRegistry для этого scope не требуется. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.24 release notes`
 2. [TODO] Git Commit: `docs: prepare 1.2.24 release notes` (hash: TBD)
 3. [TODO] Выполнить release checklist: чистое дерево, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить release artefacts, заархивировать completed plan, закрыть planning-doc, подготовить новый session report и вернуть active `todo-plan.md` в placeholder. scope: release pipeline / generated manifests / closeout docs; expected commit: `build: release 1.2.24`
 4. [TODO] Git Commit: `build: release 1.2.24` (hash: TBD)

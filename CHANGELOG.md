@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.24] - 2026-04-19
+### Fixed
+- **Translation overlays now normalize missing spaces on `latin <-> cyrillic` boundaries.** Shared translation post-processing repairs mixed-script prose such as `parallelдля`, `вродеpwd`, and `lsилиsed` before the text reaches dialog overlays, while protected `inline code` and fenced code blocks remain untouched.
+- **Assistant and thinking messages now preserve paragraph boundaries before standalone bold section titles.** Shared text formatting repair turns glued patterns such as `...data.**Clarifying ...**` into readable section blocks on both the source message path and the localized overlay path.
+- **Nested markdown lists no longer render with inflated blank gaps in ordinary assistant replies.** Session dialog CSS now collapses structural whitespace at the `li` layer instead of surfacing markdown indentation/newline artefacts as empty vertical blocks.
+
+### Contracts
+- **Shared text-format normalization is now layered, not UI-provider-specific.** Mixed-script spacing and standalone bold section-title repair are owned by the shared translation/core formatting path, while nested-list whitespace collapse stays owned by the session markdown renderer.
+
 ## [1.2.23] - 2026-04-19
 ### Fixed
 - **Codex app-server reasoning is now emitted incrementally from the real-time stream.** `item/reasoning/summaryTextDelta` and optional `item/reasoning/textDelta` now materialize readable append-only `thinking` bubbles while the turn is still running, and `item/completed` only flushes the unseen tail or acts as fallback when deltas are absent.
