@@ -36,10 +36,10 @@
 ## Phase 1 — Запуск execution cycle (owner: Codex, updated: 2026-04-19)
 ### Stream: Документарный старт
 1. [DONE] Зафиксировать approved planning-doc, обновление `Docs_Index` и новый active `todo-plan.md`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_AppServer_Module_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: open codex app-server execution cycle`
-2. [TODO] Git Commit: `docs: open codex app-server execution cycle` (hash: TBD)
+2. [DONE] Git Commit: `docs: open codex app-server execution cycle` (hash: `758fc7b07`)
 
 ### Stream: Provider-neutral immediate binding
-3. [TODO] Вынести immediate binding из hardcoded provider-id logic в provider capability; scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/remote-bridge/handlers/session-provider-session-resolver.ts`; ожидаемый commit message: `refactor: generalize provider immediate binding`
+3. [DONE] Вынести immediate binding из hardcoded provider-id logic в provider capability; scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-descriptor-factory.ts`, `packages/core/src/remote-bridge/handlers/session-provider-session-resolver.ts`; ожидаемый commit message: `refactor: generalize provider immediate binding`
 4. [TODO] Git Commit: `refactor: generalize provider immediate binding` (hash: TBD)
 
 ## Phase 2 — Parallel module scaffold (owner: Codex, updated: 2026-04-19)

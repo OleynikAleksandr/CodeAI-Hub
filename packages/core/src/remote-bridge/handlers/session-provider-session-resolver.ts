@@ -1,4 +1,5 @@
 import type { ProviderRegistry } from "../../provider-registry";
+import { resolveProviderImmediateBindingCapability } from "../../provider-registry/provider-descriptor-factory";
 
 type ProviderAdapter = NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
 
@@ -58,7 +59,8 @@ export const resolveProviderSessionId = async (options: {
       providerSessionId,
       didResume: false,
       supportsImmediateBinding:
-        providerId === "geminiCli" && providerSessionId.length > 0,
+        resolveProviderImmediateBindingCapability(providerId) &&
+        providerSessionId.length > 0,
     };
   } catch (error) {
     return {

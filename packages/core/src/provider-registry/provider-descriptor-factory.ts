@@ -93,6 +93,18 @@ export const resolveProviderModelSyncCapabilities = (
   PROVIDER_MODEL_SYNC_CAPABILITIES[providerId] ??
   DEFAULT_PROVIDER_MODEL_SYNC_CAPABILITIES;
 
+const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
+  Record<string, boolean>
+> = {
+  claudeCodeCli: false,
+  codexCli: false,
+  geminiCli: true,
+};
+
+export const resolveProviderImmediateBindingCapability = (
+  providerId: string
+): boolean => PROVIDER_IMMEDIATE_BINDING_CAPABILITIES[providerId] === true;
+
 export const createClaudeAdapterInstance = (
   options: Pick<
     ProviderDescriptorFactoryOptions,
@@ -148,6 +160,8 @@ const buildClaudeDescriptor = (
     capabilities: {
       modelSync: resolveProviderModelSyncCapabilities("claudeCodeCli"),
       requiresPostStopResume: false,
+      supportsImmediateBinding:
+        resolveProviderImmediateBindingCapability("claudeCodeCli"),
     },
     id: "claudeCodeCli",
     name: "Claude",
@@ -170,6 +184,8 @@ const buildCodexDescriptor = (
     capabilities: {
       modelSync: resolveProviderModelSyncCapabilities("codexCli"),
       requiresPostStopResume: false,
+      supportsImmediateBinding:
+        resolveProviderImmediateBindingCapability("codexCli"),
     },
     id: "codexCli",
     name: "Codex",
@@ -189,6 +205,8 @@ const buildGeminiDescriptor = (): ProviderDescriptor => ({
   capabilities: {
     modelSync: resolveProviderModelSyncCapabilities("geminiCli"),
     requiresPostStopResume: true,
+    supportsImmediateBinding:
+      resolveProviderImmediateBindingCapability("geminiCli"),
   },
   id: "geminiCli",
   name: "Gemini",
