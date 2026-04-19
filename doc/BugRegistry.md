@@ -56,6 +56,7 @@
 | BUG-2026-04-18-06 | FIXED | PM/Core | multi-workspace PM создаёт repeated refresh/bootstrap/polling churn и деградирует отзывчивость системы | 1.2.19 |
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
 | BUG-2026-04-19-02 | OPEN | Thinking/Core/UI | reasoning section titles теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
+| BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
 
 ---
 
@@ -442,6 +443,34 @@
 - Добавить shared text-format normalizer, который восстанавливает paragraph boundary вокруг standalone bold section titles в обычных текстовых сегментах.
 - Применить его не только к translation outputs, но и к Core-side thinking display content, чтобы guard работал для всех providers, а не только для текущего Codex case.
 - Protected code spans не должны затрагиваться.
+- После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
+
+## BUG-2026-04-19-03 — UI/Markdown: ordinary assistant nested lists inflate vertical spacing
+
+**Status:** OPEN
+
+**Symptom:**
+- В обычных assistant replies nested markdown list может визуально разъезжаться на пустые блоки между подпунктами и перед возвратом к следующему пункту верхнего уровня.
+- Пользовательский кейс: блок про `проектные артефакты` и `артефакты всего приложения` в обычном ответе агента содержит большие пустые интервалы, хотя source message компактный.
+
+**Confirmed evidence:**
+- Screenshot from user test session: `/Users/oleksandroliinyk/Desktop/Screenshot 2026-04-19 at 18.01.30.png`
+- Unified session JSONL:
+  - `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4/codexCli/codex-faafc9fd-6a00-4624-a337-7e6c7e06045c-description.jsonl`
+  - message `msg_06f9a081edb5b1720169e4fc271df48191a7ce3c0e8008b39f` stores a compact nested list:
+    - `- два слоя артефактов ...`
+    - `  - проектные артефакты;`
+    - `  - артефакты всего приложения.`
+- Значит, inflated spacing появляется уже после persistence, на markdown/render layer.
+
+**Root cause hypothesis (confirmed at integration level):**
+- Ordinary assistant source markdown уже корректен, поэтому upstream content normalization здесь не нужна.
+- Session dialog markdown renderer/CSS сейчас слишком агрессивно сохраняет structural whitespace внутри `li`, из-за чего indentation/newline nodes nested list layout превращаются в видимые пустые интервалы.
+- Следовательно, фикс должен жить в UI markdown render/CSS contract, а не в provider/core message rewriting.
+
+**Accepted fix direction (2026-04-19):**
+- Чинить nested list spacing в session markdown renderer/CSS.
+- Collapse structural whitespace внутри nested `ul/ol/li`, не меняя raw stored message content.
 - После реализации баг остаётся `OPEN` до пользовательской проверки нового релиза; только затем запись переводится в `FIXED` и дополняется release/commit/guard данными.
 
 ## BUG-2026-03-20-01 — Codex/Core/PM: reopen/recovery loop keeps `diagram_modules` stuck in perpetual working

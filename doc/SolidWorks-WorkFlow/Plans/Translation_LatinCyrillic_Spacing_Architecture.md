@@ -37,6 +37,16 @@
 - структура reasoning block читается хуже;
 - проблема особенно заметна в live thinking у Codex, но shared guard нужен не только для одного провайдера.
 
+### 1.3. Inflated blank spacing inside nested markdown lists in ordinary assistant messages
+
+В обычных assistant replies nested markdown lists местами рендерятся с лишними пустыми вертикальными интервалами между подпунктами и перед возвратом к следующему пункту верхнего уровня.
+
+Observed пример:
+- исходный assistant message содержит компактный nested list без пустых строк;
+- в UI список `проектные артефакты / артефакты всего приложения` визуально разъезжается на большие пустые блоки.
+
+Это уже не thinking-path и не translation-path. Корректный текст приходит в session JSONL, а дефект появляется именно на markdown/render layer.
+
 ---
 
 ## 2. Root Cause Hypothesis
@@ -53,10 +63,17 @@
 - текущий runtime/display path может потерять paragraph boundary между соседними blocks;
 - в shared Core/UI path нет общего guard'а, который восстанавливает standalone bold section titles как отдельные абзацы.
 
+Для ordinary assistant nested lists observed root cause другой:
+- raw assistant markdown уже корректен и не содержит лишних пустых строк;
+- session dialog renderer применяет style rules, которые сохраняют structural whitespace внутри `li` слишком агрессивно;
+- в результате nested list layout раздувается уже на UI layer.
+
 Значит, правильный слой фикса — shared text-format normalizer, который:
 - применяется в `packages/translation` к translated output;
 - повторно используется в Core для thinking display content и localized overlays;
 - не перекладывает repair в UI-only слой.
+
+Для nested markdown list spacing фикс должен жить именно в UI renderer/CSS layer, потому что upstream content уже корректен.
 
 ---
 
@@ -132,6 +149,15 @@ Core thinking path использует тот же helper:
 - отсутствие UI-side patching;
 - одинаковое поведение для Google GTX и Codex translation engine.
 
+### 4.6. Ordinary assistant markdown list rendering
+
+Для ordinary assistant messages upstream markdown не переписывается и не нормализуется через text post-processor.
+
+Вместо этого session markdown renderer/CSS должен:
+- collapse structural whitespace внутри nested lists;
+- не создавать artificial blank blocks между подпунктами;
+- не ломать обычные paragraph breaks вне списков.
+
 ---
 
 ## 5. File-Level Plan
@@ -152,7 +178,10 @@ Core thinking path использует тот же helper:
 - `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`
 - `packages/core/src/session-translation/session-message-localization-projector.test.ts`
 
-### Stream E — Bug/documentation sync
+### Stream E — Session markdown list rendering
+- `media/session-view.css`
+
+### Stream F — Bug/documentation sync
 - `doc/BugRegistry.md`
 - `doc/TODO/todo-plan.md`
 
@@ -172,6 +201,7 @@ Release docs and packaging follow only after targeted verification.
 - unit test: localized overlay с таким же паттерном проходит через тот же paragraph-normalization
 - targeted build: `npm run build --workspace @codeai-hub/translation`
 - downstream confidence build: `npm run build --workspace @codeai-hub/core`
+- UI verification: nested markdown list в ordinary assistant bubble больше не раздувается пустыми блоками
 
 ---
 
@@ -181,5 +211,6 @@ Release docs and packaging follow only after targeted verification.
 - translated user-facing prose обязана иметь корректный пробел на границе латиницы и кириллицы вне protected code spans;
 - thinking/reasoning display content обязано сохранять paragraph boundary перед standalone bold section titles;
 - тот же paragraph contract должен применяться и к translated overlays.
+- ordinary assistant markdown lists не должны получать artificial empty spacing между nested list items.
 
 UI, Core session overlay и provider modules не должны иметь собственных локальных «spacing hacks» для этого кейса.

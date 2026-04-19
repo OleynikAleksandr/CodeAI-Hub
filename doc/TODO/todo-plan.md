@@ -34,7 +34,9 @@
 1. [DONE] Открыть новый execution cycle: добавить active planning-doc в `doc/SolidWorks-WorkFlow/Plans/`, зарегистрировать его в `doc/SolidWorks-WorkFlow/Docs_Index.md` и заменить placeholder active планом выполнения в `doc/TODO/todo-plan.md`. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open translation spacing execution cycle`
 2. [DONE] Git Commit: `docs: open translation spacing execution cycle` (hash: `bdd7105e1`)
 3. [DONE] Обновить active planning-doc и добавить `OPEN` записи в `doc/BugRegistry.md` для shared text-format scope: spacing-багa на границе latin/cyrillic и paragraph-boundary бага у standalone bold section titles в thinking blocks. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: register translation text formatting bugs`
-4. [TODO] Git Commit: `docs: register translation text formatting bugs` (hash: TBD)
+4. [DONE] Git Commit: `docs: register translation text formatting bugs` (hash: `ccf0f3a6a`)
+5. [DONE] Расширить active planning-doc и `doc/BugRegistry.md` ordinary-assistant markdown list spacing багом, так как raw content уже корректен и дефект локализован в UI render layer. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: add markdown list spacing bug scope`
+6. [TODO] Git Commit: `docs: add markdown list spacing bug scope` (hash: TBD)
 
 ## Phase 1 — Shared Text Formatting Repair (owner: Codex, updated: 2026-04-19)
 ### Stream: Translation Text Normalizer
@@ -49,13 +51,17 @@
 3. [TODO] Добавить regression tests для Core thinking source content и localized overlays с glued standalone bold section titles. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`, `packages/core/src/session-translation/session-message-localization-projector.test.ts`; expected commit: `test: cover thinking display formatting`
 4. [TODO] Git Commit: `test: cover thinking display formatting` (hash: TBD)
 
+### Stream: Session Markdown List Spacing
+1. [TODO] Убрать inflated blank spacing в nested markdown lists обычных assistant messages, не меняя raw stored message content и не трогая thinking/translation path. scope: `media/session-view.css`; expected commit: `fix(ui): collapse nested markdown list spacing`
+2. [TODO] Git Commit: `fix(ui): collapse nested markdown list spacing` (hash: TBD)
+
 ### Stream: Bug Notes Sync
-1. [TODO] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для обоих formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
+1. [TODO] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для всех трёх formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
 2. [TODO] Git Commit: `docs: sync text formatting bug notes` (hash: TBD)
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, и зафиксировать результаты в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
+1. [TODO] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, плюс manual smoke-check ordinary assistant nested list spacing, и зафиксировать результаты в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
 2. [TODO] Git Commit: `test: verify text formatting normalization` (hash: TBD)
 
 ### Stream: Release Notes And New Release Build
