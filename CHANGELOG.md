@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.21] - 2026-04-19
+### Fixed
+- **Strict localization sync now retries isolated missing structured bundle entries before failing Save.** When a provider-owned translation engine returns a marker-preserving runtime bundle with one missing segment, `LocalizationMaterializer` now retries only the missing entry and stitches it back into the bundle instead of persisting a partial-fallback bundle and rejecting synchronization.
+
+### Contracts
+- **Whole-bundle localization stays strict, but single-entry recovery is now part of the contract.** Runtime localization bundles still materialize as one structured batch and still fail if unresolved fallback entries remain after recovery, but a single dropped batch segment is no longer treated as an automatic hard failure when it can be recovered deterministically.
+
 ## [1.2.20] - 2026-04-19
 ### Changed
 - **Neutral packaging refresh for the duplication and PM refresh line.** `1.2.20` carries forward the runtime fix-set introduced in `1.2.19` and finalizes the archived planning/docs closeout without changing runtime behavior.
