@@ -60,10 +60,10 @@
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
 ### Stream: Targeted Verification
 1. [DONE] Прогнать таргетные проверки app-server линии: smoke probe reasoning delta flow, `npm run build --workspace @codeai-hub/codex-app-server-module`, при необходимости `npm run build --workspace @codeai-hub/core`, и зафиксировать результаты в closeout docs. Результат: clean rebuild пакета проходит; stale `dist` test artefacts больше не остаются; живой smoke через `CodexAppServerFacade` на `gpt-5.4` завершился успешно (`thinkingMessages=3`, `assistantMessages=1`, log file `~/.codeai-hub/logs/codex/sdk-codex-app-server-2026-04-19T15-30-53-834Z-994b06cf-862d-43e3-b7d6-bd2b7e74d11f.jsonl`, `item/reasoning/*Delta` entries: `97`). scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify codex app-server live reasoning path`
-2. [TODO] Git Commit: `test: verify codex app-server live reasoning path` (hash: TBD)
+2. [DONE] Git Commit: `test: verify codex app-server live reasoning path` (hash: `b4e3ccb1a`)
 
 ### Stream: Release Notes And New Release Build
-1. [TODO] Подготовить будущую release line `1.2.23`: обновить `README.md`, `CHANGELOG.md` и связанные архитектурные документы под новый app-server behavior до запуска release scripts. scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: prepare 1.2.23 release notes`
+1. [DONE] Подготовить будущую release line `1.2.23`: обновить `README.md`, `CHANGELOG.md` и связанные архитектурные документы под новый app-server behavior до запуска release scripts. scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: prepare 1.2.23 release notes`
 2. [TODO] Git Commit: `docs: prepare 1.2.23 release notes` (hash: TBD)
 3. [TODO] Выполнить release checklist: чистое дерево, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить release artefacts, заархивировать completed plan, закрыть planning-doc, подготовить новый session report и вернуть active `todo-plan.md` в placeholder. scope: release pipeline / generated manifests / closeout docs; expected commit: `build: release 1.2.23`
 4. [TODO] Git Commit: `build: release 1.2.23` (hash: TBD)

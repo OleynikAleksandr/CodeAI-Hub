@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.23] - 2026-04-19
+### Fixed
+- **Codex app-server reasoning is now emitted incrementally from the real-time stream.** `item/reasoning/summaryTextDelta` and optional `item/reasoning/textDelta` now materialize readable append-only `thinking` bubbles while the turn is still running, and `item/completed` only flushes the unseen tail or acts as fallback when deltas are absent.
+- **Codex app-server transport diagnostics are restored under `~/.codeai-hub/logs/codex`.** The active process bridge now writes rotate-safe JSONL `sdk-codex-app-server-*.jsonl` files containing JSON-RPC requests/responses/notifications, protocol log records, stderr, and malformed stdout lines, complementing the existing session `*-description.jsonl` and provider-home rollout/history artifacts.
+
+### Changed
+- **Codex app-server package builds now start from a clean `dist/`.** `packages/Codex_AppServer_Module` removes stale compiled outputs before `tsc`, preventing deleted `*.test.*` artefacts from leaking into `codex-module-<version>.tar.bz2` and the final VSIX.
+
+### Contracts
+- **Codex live reasoning contract is now delta-first on the app-server line.** User-facing incremental reasoning comes from app-server `summaryTextDelta` / `textDelta` notifications, while `summary = "detailed" | "none"` remains governed by the shared settings snapshot and `Reasoning in dialog` toggle.
+- **Codex diagnostics are now explicitly three-layered.** The active release line keeps separate CodeAI Hub transport JSONL (`logs/codex`), session-local normalized `description.jsonl`, and provider-native provider-home artifacts instead of collapsing everything into one raw-log surface.
+
 ## [1.2.22] - 2026-04-19
 ### Changed
 - **Codex provider runtime switches to the new app-server transport module.** Core keeps the same external provider contract (`codexCli`, provider slot `~/.codeai-hub/providers/codex`, same installer artefact name `codex-module-<version>.tar.bz2`), but the bundled/runtime adapter path now resolves to `@codeai-hub/codex-app-server-module` instead of the legacy SDK-stream package.
