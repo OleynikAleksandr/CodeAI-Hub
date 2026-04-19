@@ -58,12 +58,12 @@
 2. [DONE] Git Commit: `fix(ui): collapse nested markdown list spacing` (hash: `f8f3feff1`)
 
 ### Stream: Bug Notes Sync
-1. [IN_PROGRESS] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для всех трёх formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
-2. [TODO] Git Commit: `docs: sync text formatting bug notes` (hash: TBD)
+1. [DONE] Обновить `doc/BugRegistry.md` implementation notes (root cause / fix / guards) для всех трёх formatting-багов, не переводя их в `FIXED` до пользовательской проверки нового релиза. scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync text formatting bug notes`
+2. [DONE] Git Commit: `docs: sync text formatting bug notes` (hash: `3acbbb570`)
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, плюс manual smoke-check ordinary assistant nested list spacing, и зафиксировать результаты в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
+1. [IN_PROGRESS] Прогнать таргетные проверки text-format path: relevant unit tests, `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`; interactive UI smoke-check ordinary assistant nested list spacing перенести на пользовательскую release-проверку и зафиксировать это в closeout docs. scope: `@codeai-hub/translation`, `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit: `test: verify text formatting normalization`
 2. [TODO] Git Commit: `test: verify text formatting normalization` (hash: TBD)
 
 ### Stream: Release Notes And New Release Build
