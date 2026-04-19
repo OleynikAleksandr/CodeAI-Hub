@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR/..")"
 source "$SCRIPT_DIR/release-utils.sh"
 
-MODULE_DIR="$REPO_ROOT/packages/Codex_Module"
+MODULE_DIR="$REPO_ROOT/packages/Codex_AppServer_Module"
 INSTALL_ROOT="$HOME/.codeai-hub/providers/codex"
 RELEASE_ROOT="$HOME/.codeai-hub/releases"
 MANIFEST_PATH="$REPO_ROOT/assets/providers/codex/manifest.json"
@@ -53,7 +53,7 @@ else
   MODULE_VERSION="$CUSTOM_VERSION"
 fi
 
-echo "📦 Building Codex module v$MODULE_VERSION"
+echo "📦 Building Codex app-server module v$MODULE_VERSION"
 
 cd "$REPO_ROOT"
 echo "📦 Building shared translation package..."
