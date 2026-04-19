@@ -54,7 +54,7 @@
 6. [TODO] Git Commit: `test: cover thinking display formatting` (hash: TBD)
 
 ### Stream: Session Markdown List Spacing
-1. [TODO] Убрать inflated blank spacing в nested markdown lists обычных assistant messages, не меняя raw stored message content и не трогая thinking/translation path. scope: `media/session-view.css`; expected commit: `fix(ui): collapse nested markdown list spacing`
+1. [IN_PROGRESS] Убрать inflated blank spacing в nested markdown lists обычных assistant messages, не меняя raw stored message content и не трогая thinking/translation path. scope: `media/session-view.css`; expected commit: `fix(ui): collapse nested markdown list spacing`
 2. [TODO] Git Commit: `fix(ui): collapse nested markdown list spacing` (hash: TBD)
 
 ### Stream: Bug Notes Sync

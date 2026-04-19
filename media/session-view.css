@@ -651,8 +651,7 @@
 .session-dialog__content ol + * {
   margin-top: 6px;
 }
-.session-dialog__content p,
-.session-dialog__content li {
+.session-dialog__content p {
   white-space: pre-wrap;
 }
 .session-dialog__content ul,
@@ -660,8 +659,15 @@
   padding-left: 16px;
   list-style-position: inside;
 }
+.session-dialog__content li {
+  white-space: normal;
+}
 .session-dialog__content li + li {
   margin-top: 2px;
+}
+.session-dialog__content li > ul,
+.session-dialog__content li > ol {
+  margin-top: 4px;
 }
 .session-dialog__content strong {
   font-weight: 600;
