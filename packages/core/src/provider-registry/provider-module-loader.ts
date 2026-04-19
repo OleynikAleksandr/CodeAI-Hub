@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import type { CodexProviderAdapter as BundledCodexProviderAdapter } from "@codeai-hub/codex-app-server-module";
 import type { Logger } from "../telemetry/logger";
 import type {
   ClaudeAdapterCtor,
@@ -163,10 +164,10 @@ export const loadCodexAdapterCtor = (
       });
     }
   }
-  const bundled = dynamicRequire("@codeai-hub/codex-module") as {
-    readonly CodexProviderAdapter: CodexAdapterCtor;
+  const bundled = dynamicRequire("@codeai-hub/codex-app-server-module") as {
+    readonly CodexProviderAdapter: typeof BundledCodexProviderAdapter;
   };
-  return bundled.CodexProviderAdapter;
+  return bundled.CodexProviderAdapter as CodexAdapterCtor;
 };
 
 export const loadGeminiAdapterCtor = async (

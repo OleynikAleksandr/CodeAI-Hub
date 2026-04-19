@@ -54,10 +54,10 @@
 ## Phase 3 — Transport runtime (owner: Codex, updated: 2026-04-19)
 ### Stream: App-server runtime core
 9. [DONE] Реализовать long-lived app-server runtime: process lifecycle, JSONL request/notification handling, thread/turn calls, финальный dialog mapping, token usage / usage limits stream events и provider-adapter binding; scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; ожидаемый commit message: `feat: add codex app-server transport core`
-10. [TODO] Git Commit: `feat: add codex app-server transport core` (hash: TBD)
+10. [DONE] Git Commit: `feat: add codex app-server transport core` (hash: `b7fb5be51`)
 
 ### Stream: Core package switch
-11. [IN_PROGRESS] Переключить Core import/bundled dependency seam на новый app-server package без смены provider contract `codexCli`; scope: `packages/core/package.json`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-registry/provider-installer-paths.ts`; ожидаемый commit message: `build: wire core to codex app-server package`
+11. [DONE] Переключить Core import/bundled dependency seam на новый app-server package без смены provider contract `codexCli`; scope: `packages/core/package.json`, `packages/core/src/provider-registry/provider-module-loader.ts`, `package-lock.json`; ожидаемый commit message: `build: wire core to codex app-server package`
 12. [TODO] Git Commit: `build: wire core to codex app-server package` (hash: TBD)
 
 ## Phase 4 — Event normalization and telemetry (owner: Codex, updated: 2026-04-19)
