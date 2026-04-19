@@ -45,10 +45,10 @@
 ## Phase 2 — Parallel module scaffold (owner: Codex, updated: 2026-04-19)
 ### Stream: Package skeleton
 5. [DONE] Создать сборочный scaffold нового пакета app-server; scope: `packages/Codex_AppServer_Module/package.json`, `packages/Codex_AppServer_Module/tsconfig.json`, `packages/Codex_AppServer_Module/src/index.ts`; ожидаемый commit message: `feat: scaffold codex app-server module`
-6. [TODO] Git Commit: `feat: scaffold codex app-server module` (hash: TBD)
+6. [DONE] Git Commit: `feat: scaffold codex app-server module` (hash: `e97122bc5`)
 
 ### Stream: Public adapter baseline
-7. [TODO] Добавить совместимый adapter/options surface для Core; scope: `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_AppServer_Module/src/options/codex-module-options.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; ожидаемый commit message: `feat: add codex app-server adapter baseline`
+7. [DONE] Добавить совместимый adapter/options surface для Core; scope: `packages/Codex_AppServer_Module/src/index.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; ожидаемый commit message: `feat: add codex app-server adapter baseline`
 8. [TODO] Git Commit: `feat: add codex app-server adapter baseline` (hash: TBD)
 
 ## Phase 3 — Transport runtime (owner: Codex, updated: 2026-04-19)
