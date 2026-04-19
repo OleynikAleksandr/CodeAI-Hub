@@ -651,6 +651,9 @@
 .session-dialog__content ol + * {
   margin-top: 6px;
 }
+.session-dialog__content p:has(> strong:only-child) + * {
+  margin-top: 0;
+}
 .session-dialog__content p {
   white-space: pre-wrap;
 }

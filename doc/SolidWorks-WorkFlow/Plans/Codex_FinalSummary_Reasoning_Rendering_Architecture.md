@@ -107,6 +107,10 @@ After provider-side final-summary emission is in place, standalone bold heading 
 
 If the visual rhythm is still inverted, a minimal render-layer correction is allowed, but only for the standalone-heading pattern. The provider-side block-emission contract must remain the primary fix.
 
+Accepted minimal form:
+- keep the regular paragraph gap before a standalone bold-only heading paragraph;
+- suppress the extra gap on the immediately following sibling, e.g. selector shape equivalent to `p:has(> strong:only-child) + *`.
+
 ### 2.6. Accepted tradeoff
 
 This design intentionally removes progressive live reasoning animation for Codex.
