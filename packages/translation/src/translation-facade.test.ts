@@ -60,6 +60,26 @@ class RecordingEngine implements TranslationEngine {
   }
 }
 
+class PassthroughEngine implements TranslationEngine {
+  readonly id = "fake";
+
+  translate(request: {
+    readonly sourceLanguage: string;
+    readonly targetLanguage: string;
+    readonly text: string;
+  }): Promise<TranslationResult> {
+    return Promise.resolve({
+      engine: this.id,
+      finalText: request.text,
+      originalText: request.text,
+      sourceLanguage: request.sourceLanguage,
+      status: "translated",
+      targetLanguage: request.targetLanguage,
+      translatedText: request.text,
+    });
+  }
+}
+
 test("TranslationFacade assembles translated and fallback chunks into one translated result", async () => {
   const translation = new TranslationFacade({
     defaultEngineId: "fake",
@@ -205,6 +225,81 @@ test("TranslationFacade still chunks generic requests by default and reasoning c
 
   assert.equal(reasoningResult.status, "translated");
   assert.equal(reasoningEngine.calls.length > 1, true);
+});
+
+test("TranslationFacade normalizes latin/cyrillic spacing outside protected code spans", async () => {
+  const engine = new RecordingEngine();
+  const translation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [engine],
+  });
+
+  const result = await translation.translate({
+    category: "generic",
+    engineId: "fake",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: [
+      "parallelдля",
+      "вродеpwd",
+      "lsилиsed",
+      "`lsилиsed`",
+      "```text\nвродеpwd\n```",
+    ].join(" "),
+    timeoutMs: 3000,
+  });
+
+  assert.equal(result.status, "translated");
+  assert.equal(
+    result.finalText,
+    "[ru] parallel для вроде pwd ls или sed `lsилиsed` ```text\nвродеpwd\n```"
+  );
+});
+
+test("TranslationFacade restores paragraph boundaries around standalone bold section titles", async () => {
+  const engine = new RecordingEngine();
+  const translation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [engine],
+  });
+
+  const result = await translation.translate({
+    category: "reasoning",
+    engineId: "fake",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: "Context.**Clarifying Project Manager term**\n\nI need details.",
+    timeoutMs: 3000,
+  });
+
+  assert.equal(result.status, "translated");
+  assert.equal(
+    result.finalText,
+    "[ru] Context.\n\n**Clarifying Project Manager term**\n\nI need details."
+  );
+});
+
+test("TranslationFacade turns block-start standalone bold section titles into their own paragraph", async () => {
+  const engine = new PassthroughEngine();
+  const translation = new TranslationFacade({
+    defaultEngineId: "fake",
+    engines: [engine],
+  });
+
+  const result = await translation.translate({
+    category: "reasoning",
+    engineId: "fake",
+    sourceLanguage: "en",
+    targetLanguage: "ru",
+    text: "**Clarifying Project Manager term** I need details.",
+    timeoutMs: 3000,
+  });
+
+  assert.equal(result.status, "translated");
+  assert.equal(
+    result.finalText,
+    "**Clarifying Project Manager term**\n\nI need details."
+  );
 });
 
 test("TranslationEngineProfileRegistry exposes the Claude Haiku chunk policy", () => {
