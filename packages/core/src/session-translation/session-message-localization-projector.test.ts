@@ -53,3 +53,34 @@ test("SessionMessageLocalizationProjector ignores stale translations with mismat
 
   assert.equal(localizedContent, null);
 });
+
+test("SessionMessageLocalizationProjector normalizes localized content formatting before projection", () => {
+  const projector = new SessionMessageLocalizationProjector();
+  const content =
+    "Context.**Clarifying Project Manager term**\n\nI need details.";
+
+  const localizedContent = projector.resolveLocalizedContent({
+    message: {
+      id: "message-1",
+      content,
+    },
+    translations: new Map([
+      [
+        "message-1",
+        {
+          messageId: "message-1",
+          sourceHash: computeSessionMessageSourceHash(content),
+          targetLanguage: "ru",
+          timestamp: "2026-04-13T08:06:44.725Z",
+          translatedContent:
+            "Контекст.**Уточнение термина Project Manager**\n\nНужны детали.",
+        },
+      ],
+    ]),
+  });
+
+  assert.equal(
+    localizedContent,
+    "Контекст.\n\n**Уточнение термина Project Manager**\n\nНужны детали."
+  );
+});
