@@ -36,20 +36,22 @@
 3. [DONE] Обновить active planning-doc и добавить `OPEN` записи в `doc/BugRegistry.md` для shared text-format scope: spacing-багa на границе latin/cyrillic и paragraph-boundary бага у standalone bold section titles в thinking blocks. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: register translation text formatting bugs`
 4. [DONE] Git Commit: `docs: register translation text formatting bugs` (hash: `ccf0f3a6a`)
 5. [DONE] Расширить active planning-doc и `doc/BugRegistry.md` ordinary-assistant markdown list spacing багом, так как raw content уже корректен и дефект локализован в UI render layer. scope: `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: add markdown list spacing bug scope`
-6. [TODO] Git Commit: `docs: add markdown list spacing bug scope` (hash: TBD)
+6. [DONE] Git Commit: `docs: add markdown list spacing bug scope` (hash: `69b3c933b`)
 
 ## Phase 1 — Shared Text Formatting Repair (owner: Codex, updated: 2026-04-19)
 ### Stream: Translation Text Normalizer
-1. [TODO] Добавить shared text-format normalizer с protected code spans, script-spacing repair и standalone bold section boundary repair, экспортировать его из translation package и подключить в `TranslationFacade`. scope: `packages/translation/src/translation-text-format-normalizer.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`; expected commit: `fix: normalize translation text formatting`
-2. [TODO] Git Commit: `fix: normalize translation text formatting` (hash: TBD)
-3. [TODO] Добавить regression tests для spacing, protected code spans и standalone bold section title paragraph boundaries на translation path. scope: `packages/translation/src/translation-facade.test.ts`; expected commit: `test: cover translation text formatting`
-4. [TODO] Git Commit: `test: cover translation text formatting` (hash: TBD)
+1. [DONE] Добавить shared text-format normalizer с protected code spans, script-spacing repair и standalone bold section boundary repair, экспортировать его из translation package и подключить в `TranslationFacade`. scope: `packages/translation/src/translation-text-format-normalizer.ts`, `packages/translation/src/translation-facade.ts`, `packages/translation/src/index.ts`; expected commit: `fix: normalize translation text formatting`
+2. [DONE] Git Commit: `fix: normalize translation text formatting` (hash: `9b8bdd9af`)
+3. [DONE] Добавить regression tests для spacing, protected code spans и standalone bold section title paragraph boundaries на translation path. scope: `packages/translation/src/translation-facade.test.ts`; expected commit: `test: cover translation text formatting`
+4. [DONE] Git Commit: `test: cover translation text formatting` (hash: `1e360a8d6`)
 
-### Stream: Thinking Display Formatting
-1. [TODO] Применить shared normalizer к Core thinking display content и localized overlays, чтобы paragraph-boundary repair работал для всех providers на user-facing surface. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/session-translation/session-message-localization-projector.ts`; expected commit: `fix: normalize thinking display formatting`
-2. [TODO] Git Commit: `fix: normalize thinking display formatting` (hash: TBD)
-3. [TODO] Добавить regression tests для Core thinking source content и localized overlays с glued standalone bold section titles. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`, `packages/core/src/session-translation/session-message-localization-projector.test.ts`; expected commit: `test: cover thinking display formatting`
-4. [TODO] Git Commit: `test: cover thinking display formatting` (hash: TBD)
+### Stream: Session Message Display Formatting
+1. [DONE] Применить shared normalizer к Core assistant/thinking display content и localized overlays, чтобы paragraph-boundary repair работал для всех providers на user-facing surface. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/session-translation/session-message-localization-projector.ts`; expected commit: `fix: normalize thinking display formatting`
+2. [DONE] Git Commit: `fix: normalize thinking display formatting` (hash: `a507b396c`)
+3. [IN_PROGRESS] Расширить Core-side paragraph-boundary normalization с `thinking` на обычные assistant messages и синхронизировать active planning wording с пользовательским уточнением, что дефект воспроизводится не только в reasoning. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `doc/SolidWorks-WorkFlow/Plans/Translation_LatinCyrillic_Spacing_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit: `fix: broaden session message formatting normalization`
+4. [TODO] Git Commit: `fix: broaden session message formatting normalization` (hash: TBD)
+5. [TODO] Добавить regression tests для Core assistant/thinking source content и localized overlays с glued standalone bold section titles. scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`, `packages/core/src/session-translation/session-message-localization-projector.test.ts`; expected commit: `test: cover thinking display formatting`
+6. [TODO] Git Commit: `test: cover thinking display formatting` (hash: TBD)
 
 ### Stream: Session Markdown List Spacing
 1. [TODO] Убрать inflated blank spacing в nested markdown lists обычных assistant messages, не меняя raw stored message content и не трогая thinking/translation path. scope: `media/session-view.css`; expected commit: `fix(ui): collapse nested markdown list spacing`

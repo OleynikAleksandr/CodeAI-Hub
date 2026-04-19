@@ -1,8 +1,8 @@
-# Translation And Thinking Text Formatting Architecture
+# Translation And Session Text Formatting Architecture
 
 **Date:** 2026-04-19
 **Status:** Proposed
-**Scope:** bugfix for translated provider overlays and shared thinking display formatting
+**Scope:** bugfix for translated provider overlays, shared session message formatting, and UI markdown rendering
 
 ---
 
@@ -25,17 +25,17 @@
 
 Проблема не привязана к одному провайдеру. Она возникает на слое translated output, поэтому потенциально затрагивает Claude, Codex и Gemini одинаково.
 
-### 1.2. Paragraph boundary loss before standalone bold section titles in thinking blocks
+### 1.2. Paragraph boundary loss before standalone bold section titles in session messages
 
-В thinking/reasoning блоках section-like markdown titles иногда прилипают к предыдущему предложению, вместо того чтобы начинаться с нового абзаца.
+В session messages section-like markdown titles иногда прилипают к предыдущему предложению, вместо того чтобы начинаться с нового абзаца.
 
 Типовой observed пример:
 - `... storage for local project data.**Clarifying Project Manager term**`
 
 Пользовательский эффект:
 - заголовок визуально оказывается в той же строке, что и предыдущий абзац;
-- структура reasoning block читается хуже;
-- проблема особенно заметна в live thinking у Codex, но shared guard нужен не только для одного провайдера.
+- структура ответа или reasoning block читается хуже;
+- проблема заметна и в live thinking, и в обычных assistant replies, поэтому shared guard нужен не только для одного типа сообщений и не только для одного провайдера.
 
 ### 1.3. Inflated blank spacing inside nested markdown lists in ordinary assistant messages
 
@@ -70,7 +70,7 @@ Observed пример:
 
 Значит, правильный слой фикса — shared text-format normalizer, который:
 - применяется в `packages/translation` к translated output;
-- повторно используется в Core для thinking display content и localized overlays;
+- повторно используется в Core для assistant/thinking display content и localized overlays;
 - не перекладывает repair в UI-only слой.
 
 Для nested markdown list spacing фикс должен жить именно в UI renderer/CSS layer, потому что upstream content уже корректен.
@@ -100,7 +100,7 @@ Observed пример:
 
 Он становится canonical path:
 - для translation outputs всех провайдеров и всех translation engines;
-- для Core-side normalization thinking content, который отображается пользователю.
+- для Core-side normalization assistant/thinking content, который отображается пользователю.
 
 ### 4.2. Segmentation model
 
@@ -145,7 +145,7 @@ Core thinking path использует тот же helper:
 
 Это гарантирует:
 - единый результат для Claude/Codex/Gemini overlays;
-- единый формат и для source thinking text, и для translated overlays;
+- единый формат и для source assistant/thinking text, и для translated overlays;
 - отсутствие UI-side patching;
 - одинаковое поведение для Google GTX и Codex translation engine.
 
@@ -170,7 +170,7 @@ Core thinking path использует тот же helper:
 ### Stream B — Translation regression guards
 - `packages/translation/src/translation-facade.test.ts`
 
-### Stream C — Core thinking display integration
+### Stream C — Core session message display integration
 - `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`
 - `packages/core/src/session-translation/session-message-localization-projector.ts`
 
@@ -198,6 +198,7 @@ Release docs and packaging follow only after targeted verification.
 - unit test: inline code `` `lsилиsed` `` остаётся без изменений
 - unit test: fenced code block остаётся без изменений
 - unit test: `...data.**Clarifying ...**\n\nI need...` нормализуется в отдельный section title block
+- unit test: ordinary assistant source content с таким же паттерном нормализуется до persist/broadcast
 - unit test: localized overlay с таким же паттерном проходит через тот же paragraph-normalization
 - targeted build: `npm run build --workspace @codeai-hub/translation`
 - downstream confidence build: `npm run build --workspace @codeai-hub/core`
@@ -209,7 +210,7 @@ Release docs and packaging follow only after targeted verification.
 
 После фикса:
 - translated user-facing prose обязана иметь корректный пробел на границе латиницы и кириллицы вне protected code spans;
-- thinking/reasoning display content обязано сохранять paragraph boundary перед standalone bold section titles;
+- assistant/thinking display content обязано сохранять paragraph boundary перед standalone bold section titles;
 - тот же paragraph contract должен применяться и к translated overlays.
 - ordinary assistant markdown lists не должны получать artificial empty spacing между nested list items.
 

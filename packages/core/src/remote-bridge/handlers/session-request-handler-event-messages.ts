@@ -64,6 +64,10 @@ const isThinkingDisplayMessage = (
   message.role === "thinking" ||
   (message.role === "assistant" && message.tag === "thinking");
 
+const shouldNormalizeDisplayMessageContent = (
+  message: Pick<PersistedSessionMessage, "role" | "tag">
+): boolean => message.role === "assistant" || isThinkingDisplayMessage(message);
+
 const buildMessagePreview = (content: string): string => {
   const normalized = content.replace(/\s+/gu, " ").trim();
   if (normalized.length <= MESSAGE_PREVIEW_LENGTH) {
@@ -164,7 +168,7 @@ export class SessionRequestHandlerEventMessages {
     readonly tag?: string;
   }): void {
     const emissionThinking = isThinkingDisplayMessage(options);
-    const content = emissionThinking
+    const content = shouldNormalizeDisplayMessageContent(options)
       ? normalizeTranslationTextFormatting(options.content)
       : options.content;
     const session = this.deps.sessionManager.getSession(options.sessionId);
