@@ -55,11 +55,11 @@
 
 ### Stream: Codex Module Build Hygiene
 1. [DONE] Убрать stale `dist` outputs из release path: перед компиляцией app-server пакета очищать `dist`, чтобы удалённые `*.test.*` artefacts не попадали в `codex-module-*.tar.bz2`. scope: `packages/Codex_AppServer_Module/package.json`, `doc/TODO/todo-plan.md`; expected commit: `fix: clean codex app-server dist before build`
-2. [TODO] Git Commit: `fix: clean codex app-server dist before build` (hash: TBD)
+2. [DONE] Git Commit: `fix: clean codex app-server dist before build` (hash: `b16ca6123`)
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетные проверки app-server линии: smoke probe reasoning delta flow, `npm run build --workspace @codeai-hub/codex-app-server-module`, при необходимости `npm run build --workspace @codeai-hub/core`, и зафиксировать результаты в closeout docs. scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify codex app-server live reasoning path`
+1. [DONE] Прогнать таргетные проверки app-server линии: smoke probe reasoning delta flow, `npm run build --workspace @codeai-hub/codex-app-server-module`, при необходимости `npm run build --workspace @codeai-hub/core`, и зафиксировать результаты в closeout docs. Результат: clean rebuild пакета проходит; stale `dist` test artefacts больше не остаются; живой smoke через `CodexAppServerFacade` на `gpt-5.4` завершился успешно (`thinkingMessages=3`, `assistantMessages=1`, log file `~/.codeai-hub/logs/codex/sdk-codex-app-server-2026-04-19T15-30-53-834Z-994b06cf-862d-43e3-b7d6-bd2b7e74d11f.jsonl`, `item/reasoning/*Delta` entries: `97`). scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify codex app-server live reasoning path`
 2. [TODO] Git Commit: `test: verify codex app-server live reasoning path` (hash: TBD)
 
 ### Stream: Release Notes And New Release Build
