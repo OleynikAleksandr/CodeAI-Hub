@@ -194,16 +194,18 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 ### 7.3 Codex runtime module
 
 Новый закрытый runtime-модуль:
-- `packages/Codex_Module/src/response-policy/`
+- `packages/Codex_AppServer_Module/src/provider/`
+- `packages/Codex_AppServer_Module/src/app-server/`
 
-Единственная публичная точка входа:
-- `codex-response-policy-facade.ts`
+Публичные точки входа:
+- `codex-provider-adapter.ts` — внешний `ProviderAdapter` bridge для Core
+- `codex-app-server-facade.ts` — внутренний transport façade над app-server RPC
 
-Ответственность фасада:
-- превратить persisted `responsePolicy` в runtime turn policy;
-- решить, когда inject-ить strict schema;
-- решить, какой режим commentary допустим;
-- выставить policy для raw diagnostics/logging.
+Ответственность runtime слоя:
+- превратить persisted `responsePolicy` + Core-applied turn config в outbound `turn/start` envelope;
+- решить, когда пробрасывать `outputSchema` в app-server turn;
+- сохранить тот же внешний provider contract `codexCli` при смене внутреннего transport;
+- выставить diagnostics/raw passthrough policy без возврата к legacy rollout-tail path.
 
 ---
 
@@ -264,9 +266,9 @@ flowchart LR
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- `packages/Codex_Module/src/messaging/structured-output-stream-controller.ts`
-- `packages/Codex_Module/src/messaging/message-processor.ts`
-- `packages/Codex_Module/src/logging/session-logger.ts`
+- `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`
 - `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
 - `src/extension-module/settings/general-settings.ts`
 - `src/client/ui/src/components/settings/general-settings.tsx`
