@@ -9,7 +9,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 - **Official release closeout for the duplication and PM refresh fix-set.** Claude order-safe finalization, Codex terminal-answer dedupe, Project Manager `Stop` → resend reconciliation, replay-first usage telemetry delivery, and visibility-aware polling budget are now shipped together as the public `1.2.19` line.
 
 ### Changed
-- **Planning closeout is archived and neutralized.** The completed umbrella planning scope moved into `doc/SolidWorks-WorkFlow/Plans/Archive/`, active operational docs no longer carry experimental sub-agent execution guidance, and the active release/docs flow now points to the finalized `1.2.19` package.
+- **Planning closeout is archived and finalized.** The completed umbrella planning scope moved into `doc/SolidWorks-WorkFlow/Plans/Archive/`, active operational docs now point to the finalized `1.2.19` release/docs flow, and the active `todo-plan` has been reset to an empty placeholder.
 
 ### Contracts
 - **Single terminal assistant emission and replay-first usage ownership remain the governing contracts for this release line.** Final assistant text is single-owner across Claude/Codex/PM paths, while usage telemetry belongs to provider turn completion plus Core replay/bootstrap rules rather than to UI-owned refresh loops.
