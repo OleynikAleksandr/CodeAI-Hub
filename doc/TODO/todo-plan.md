@@ -107,10 +107,10 @@
 8. [DONE] Git Commit: `chore: bump version to 1.2.18` (hash: `4841a78bf`)
 
 ### Stream 3: Documentation cleanup and planning archive
-1. [TODO] Архивировать umbrella и child planning-doc paths, а `Docs_Index.md` переключить с active references на archive references. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/*1.2.18 scope*`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: archive 1.2.18 duplication and PM refresh planning scope`
-2. [TODO] Git Commit: `docs: archive 1.2.18 duplication and PM refresh planning scope` (hash: TBD)
-3. [TODO] Убрать саб-агентную execution language из planning/audit guidance и закрыть `BUG-2026-04-18-03..06` под официальный релиз `1.2.19`. — scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md`, `doc/TODO/todo-plan.md`; commit: `docs: retire sub-agent guidance and close duplication bugfix scope`
-4. [TODO] Git Commit: `docs: retire sub-agent guidance and close duplication bugfix scope` (hash: TBD)
+1. [DONE] Архивировать umbrella и child planning-doc paths, а `Docs_Index.md` переключить с active references на archive references. — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/*1.2.19 scope*`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: retire sub-agent guidance and archive duplication planning scope`
+2. [DONE] Git Commit: `docs: retire sub-agent guidance and archive duplication planning scope` (hash: `eb0ad1378`)
+3. [DONE] Убрать саб-агентную execution language из planning/audit guidance и закрыть `BUG-2026-04-18-03..06` под официальный релиз `1.2.19`. — scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md`, `doc/TODO/todo-plan.md`; commit: `docs: retire sub-agent guidance and archive duplication planning scope`
+4. [DONE] Git Commit: `docs: retire sub-agent guidance and archive duplication planning scope` (hash: `eb0ad1378`)
 
 ### Stream 4: Final release notes and build 1.2.19
 1. [TODO] Обновить `README.md` и `CHANGELOG.md` под будущий релиз `1.2.19`, сохранив только фактический shipped scope duplication/PM refresh fix-set без experiment-контекста. — scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.19 release notes for duplication and PM refresh fixes`

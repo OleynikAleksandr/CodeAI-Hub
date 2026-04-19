@@ -7,10 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.18
+## Current Release — v1.2.19
 - **Claude/Codex dialog duplication is now single-owner and order-safe.** Claude late `content_block_stop` tails no longer leak orphan text after the final reply, Codex suppresses duplicate terminal answers from equivalent `final_answer` + `task_complete` pairs, and Project Manager reconciles optimistic `Stop`→fast resend user bubbles into the canonical history message instead of leaving duplicate user entries on screen.
 - **Usage telemetry no longer churns on dialog reopen and idle restore.** `Session ID + Usage Limits` is now a display-only UI surface; fresh usage snapshots are delivered by providers at turn completion, Core replays cached `usage_limits` on reopen/reconnect, and ready-binding bootstrap refresh is limited to one lifecycle instead of re-firing on every idle restore.
 - **Project Manager polling now respects window visibility.** Workflow, artifact, and diagram observers keep the foreground cadence, slow down in background windows, and park while the window is hidden, which reduces unnecessary cross-workspace churn without changing the active-surface behavior.
+- **Release closeout is archived and clean.** The duplication / PM refresh planning scope is archived under `doc/SolidWorks-WorkFlow/Plans/Archive/`, active operational docs no longer carry experimental execution guidance, and the official release line now points to `1.2.19`.
 
 ### 1.2.17 (previous)
 - **Claude pre-tool progress text no longer leaks into the dialog as a normal assistant bubble.** In localized Claude workflow turns, a pre-tool fragment such as `I've read the Final_Description.md... Let me create the directory...` could appear between two `Claude · Thinking` bubbles as an ordinary assistant/live message. This was wrong in two ways: the fragment was progress/thinking-like text before a `tool_use`, not a real final answer, and because it materialized as assistant/live it skipped the thinking translation path and stayed in English. The 1.2.17 fix hardens the Claude messaging path so localized pre-tool text no longer escapes through the assistant/live branch when the message resolves to `tool_use`; instead it follows the thinking contract, while ordinary `end_turn` assistant text stays on the normal assistant path.

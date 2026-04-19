@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.19] - 2026-04-19
+### Fixed
+- **Official release closeout for the duplication and PM refresh fix-set.** Claude order-safe finalization, Codex terminal-answer dedupe, Project Manager `Stop` → resend reconciliation, replay-first usage telemetry delivery, and visibility-aware polling budget are now shipped together as the public `1.2.19` line.
+
+### Changed
+- **Planning closeout is archived and neutralized.** The completed umbrella planning scope moved into `doc/SolidWorks-WorkFlow/Plans/Archive/`, active operational docs no longer carry experimental sub-agent execution guidance, and the active release/docs flow now points to the finalized `1.2.19` package.
+
+### Contracts
+- **Single terminal assistant emission and replay-first usage ownership remain the governing contracts for this release line.** Final assistant text is single-owner across Claude/Codex/PM paths, while usage telemetry belongs to provider turn completion plus Core replay/bootstrap rules rather than to UI-owned refresh loops.
+
 ## [1.2.18] - 2026-04-18
 ### Fixed
 - **Claude final live text finalization is now order-safe.** Late `content_block_stop` events can no longer append an orphan tail after the canonical final assistant text has already been materialized. The live buffer tracks the finalized text per session and emits only unseen canonical tail content.
