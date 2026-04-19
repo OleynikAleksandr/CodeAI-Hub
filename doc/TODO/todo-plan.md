@@ -49,8 +49,8 @@
 
 ### Stream: SDK Log Restore
 1. [DONE] Вернуть file-backed app-server session logger в `~/.codeai-hub/logs/codex` через новый logging helper и wiring в process layer без изменения публичного adapter surface. scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/*logger*.ts`, `packages/Codex_AppServer_Module/src/types/index.ts`; expected commit: `feat: restore codex app-server sdk log`
-2. [TODO] Git Commit: `feat: restore codex app-server sdk log` (hash: TBD)
-3. [TODO] Синхронизировать diagnostics/logging documentation для новой app-server линии. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex app-server logging diagnostics`
+2. [DONE] Git Commit: `feat: restore codex app-server sdk log` (hash: `7b573e2ae`)
+3. [DONE] Синхронизировать diagnostics/logging documentation для новой app-server линии. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex app-server logging diagnostics`
 4. [TODO] Git Commit: `docs: sync codex app-server logging diagnostics` (hash: TBD)
 
 ## Phase 2 — Verification And Release (owner: Codex, updated: 2026-04-19)

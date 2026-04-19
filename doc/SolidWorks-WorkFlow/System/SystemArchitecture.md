@@ -189,10 +189,12 @@
 - Codex app-server cluster: `packages/Codex_AppServer_Module/src/app-server/`
   - `codex-app-server-facade.ts` = thin transport façade over `thread/start`, `thread/resume`, `turn/start`, `turn/interrupt`, per-thread active turn tracking, and session listener fan-out
   - `process/codex-app-server-process.ts` = long-lived stdio/JSON-RPC bridge; owns `initialize` handshake with `experimentalApi`, provider-home bootstrap, request correlation, and process lifecycle
+  - `process/codex-app-server-session-logger.ts` = append-safe CodeAI Hub transport logger for app-server JSON-RPC traffic, protocol records, stderr, and malformed stdout lines under `~/.codeai-hub/logs/codex/`
   - `codex-app-server-event-router.ts` = notification normalization for `turn/started`, `turn/completed`, `item/agentMessage/delta`, reasoning summaries, token usage, and usage-limit snapshots
   - `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts` = Core-facing `ProviderAdapter` bridge over the app-server façade and usage-limit refresh path
   - app-server `thread/start` + `thread/resume` return a real `threadId`, so Codex immediate binding is provider-native and no legacy temp-session seam is required
   - `turn/start` keeps Core-owned effective model identity, reasoning effort, and optional `outputSchema` passthrough on the outbound turn envelope
+  - active Codex diagnostics now split into three layers: CodeAI Hub app-server transport JSONL in `~/.codeai-hub/logs/codex/`, session-local normalized `*-description.jsonl`, and provider-native provider-home artifacts (`CODEX_HOME` history / rollout JSONL)
 - Gemini messaging cluster: `packages/Gemini_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn event normalization entrypoint
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
@@ -227,6 +229,7 @@
   - live app-server turns resolve `summary = "detailed" | "none"` from the shared settings snapshot; `detailed` is the baseline required for incremental reasoning deltas, while `none` suppresses the reasoning stream entirely;
   - provider-home `model_reasoning_summary = "none"` remains persisted compatibility state, but it is no longer sufficient by itself to describe the live turn behavior;
   - the provider settings toggle updates provider-home `config.toml` immediately and saved settings remain the restart-proof source of truth for future Codex materialization;
+  - app-server transport diagnostics are append-safe/rotate-safe per process start and remain diagnostic-only; they complement, but do not replace, normalized dialog/session history or provider-home artifacts;
   - token usage and usage-limit notifications now travel through the same normalized app-server event surface as dialog messages.
 - Gemini visible thinking: `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts`, `packages/core/src/session-translation/`
   - Gemini thought text is emitted source-first, then optionally upgraded through the Core overlay translator; `en` skips translation and preserves upstream provider wording

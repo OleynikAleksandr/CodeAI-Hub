@@ -154,7 +154,7 @@
 Повторный `resume` на том же `thread_id` не должен затирать существующий JSONL-лог.  
 SDK/diagnostic log обязан быть append-safe или rotate-safe.
 
-Для active app-server линии это означает отдельный CodeAI Hub transport log в `~/.codeai-hub/logs/codex`, который пишет JSON-RPC requests/responses/notifications, protocol log records и stderr process lines. Этот лог не заменяет provider-home artifacts, а дополняет их.
+Для active app-server линии это означает отдельный CodeAI Hub transport log в `~/.codeai-hub/logs/codex`, который пишет rotate-safe JSONL `sdk-codex-app-server-*.jsonl` на каждый process start и фиксирует JSON-RPC requests/responses/notifications, protocol log records, stderr process lines и malformed stdout lines. Этот лог не заменяет provider-home artifacts и не подменяет session-local `*-description.jsonl`, а дополняет оба диагностических слоя.
 
 ---
 

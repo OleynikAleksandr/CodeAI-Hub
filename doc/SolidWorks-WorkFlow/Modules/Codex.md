@@ -9,6 +9,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Internal transport façade: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
 - Internal notification normalization: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`
 - Long-lived process bridge: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`
+- File-backed transport logger: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-session-logger.ts`
 - Shared usage-limits façade for Codex lives in Core: `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`
 - Legacy package `packages/Codex_Module/` больше не является active bundled/runtime path для Core и release packaging; он допустим только как временный fallback/override path до полного closeout legacy линии.
 
@@ -30,6 +31,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Session creation/resume идут через `thread/start` и `thread/resume`; app-server сразу возвращает реальный `threadId`, поэтому Codex теперь поддерживает immediate binding и не требует legacy temp-session flow.
 - Turn execution идёт через `turn/start` с `input[{ type: "text", text, text_elements: [] }]`, `model`, `effort`, optional `outputSchema` и turn-level `summary = "detailed" | "none"`, который читается из shared settings snapshot; `detailed` является live-capable baseline для reasoning stream, а `none` сохраняет user toggle `Reasoning in dialog`.
 - Stop/cancel path идёт через `turn/interrupt(threadId, turnId)`; если последняя logical session закрыта, CodeAI Hub останавливает сам `codex app-server` process.
+- Process layer параллельно пишет append-safe transport JSONL в `~/.codeai-hub/logs/codex/sdk-codex-app-server-*.jsonl`; лог ротационно создаётся на каждый process start и фиксирует JSON-RPC requests/responses/notifications, protocol log records, stderr и non-JSON stdout lines.
 - Usage limits читаются через `account/rateLimits/read` и live notifications `account/rateLimits/updated`; token usage приходит через `thread/tokenUsage/updated`.
 
 ## Event normalization
@@ -53,6 +55,11 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - User-facing toggle `Reasoning in dialog` управляет тем, уходит ли turn-level `summary` как `detailed` или как `none`; provider-home `model_reasoning_summary` остаётся persisted companion state, но не является единственным runtime source-of-truth для live app-server turns.
 - Live reasoning emission использует readable chunking поверх delta notifications; provider layer не имеет права прокидывать в UI token-level fragments как отдельные bubbles.
 - Видимость reasoning по-прежнему решается в момент emission через `visibilityAtEmission`; скрытые reasoning bubbles не должны попадать в translation queue и не должны внезапно проявляться после обратного включения toggle.
+
+## Diagnostics artifacts
+- CodeAI Hub transport log для active app-server линии: `~/.codeai-hub/logs/codex/sdk-codex-app-server-*.jsonl`
+- Session-local normalized transcript artifact по-прежнему живёт в `~/.codeai-hub/sessions/.../codexCli/*-description.jsonl`
+- Provider-native artifacts (`CODEX_HOME` history / rollout JSONL и прочие provider-home traces) остаются отдельным диагностическим слоем и не заменяются transport log-ом
 
 ## Инварианты
 - Lifecycle обязателен: `turn_started` → `turn_completed | turn_failed`.
