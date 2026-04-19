@@ -19,3 +19,4 @@ export { TranslationEngineRegistry } from "./translation-engine-registry";
 export { TranslationFacade } from "./translation-facade";
 export { normalizeTranslationRequest } from "./translation-request-normalizer";
 export { parseGoogleTranslateResponse } from "./translation-response-parser";
+export { normalizeTranslationTextFormatting } from "./translation-text-format-normalizer";

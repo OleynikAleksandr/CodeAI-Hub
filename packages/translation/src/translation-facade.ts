@@ -11,6 +11,7 @@ import type {
 import type { TranslationFacadeOptions } from "./translation-engine";
 import { TranslationEngineRegistry } from "./translation-engine-registry";
 import { normalizeTranslationRequest } from "./translation-request-normalizer";
+import { normalizeTranslationTextFormatting } from "./translation-text-format-normalizer";
 
 const createSkippedResult = (
   request: TranslationRequest
@@ -104,6 +105,32 @@ const createChunkReporterMetadata = (
   targetLanguage: request.targetLanguage,
 });
 
+const normalizeTranslatedResult = (
+  result: TranslationResult
+): TranslationResult => {
+  if (result.status !== "translated") {
+    return result;
+  }
+  const normalizedFinalText = normalizeTranslationTextFormatting(
+    result.finalText
+  );
+  const normalizedTranslatedText =
+    result.translatedText === null
+      ? null
+      : normalizeTranslationTextFormatting(result.translatedText);
+  if (
+    normalizedFinalText === result.finalText &&
+    normalizedTranslatedText === result.translatedText
+  ) {
+    return result;
+  }
+  return {
+    ...result,
+    finalText: normalizedFinalText,
+    translatedText: normalizedTranslatedText,
+  };
+};
+
 export class TranslationFacade {
   private readonly reporter?: TranslationReporter;
   private readonly registry: TranslationEngineRegistry;
@@ -145,7 +172,7 @@ export class TranslationFacade {
         normalized.chunkPolicy
       );
       if (chunkPlan.chunkCount <= 1) {
-        return await engine.translate(normalized);
+        return normalizeTranslatedResult(await engine.translate(normalized));
       }
 
       this.reporter?.info?.("Translation chunk plan created", {
@@ -216,7 +243,7 @@ export class TranslationFacade {
           (result) => result.status === "translated"
         ).length,
       });
-      return assembledResult;
+      return normalizeTranslatedResult(assembledResult);
     } catch (error) {
       this.reporter?.warn?.("Translation engine threw unexpectedly", {
         engineId: engine.id,
