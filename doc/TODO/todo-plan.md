@@ -42,9 +42,9 @@
 4. [TODO] Git Commit: `docs: sync codex live reasoning policy ssot` (hash: TBD)
 
 ### Stream: Incremental Reasoning Router
-1. [IN_PROGRESS] Добавить инкрементальный `thinking` emission из `item/reasoning/summaryTextDelta` и `item/reasoning/textDelta`, сохранив `item/completed` как flush/fallback path; при необходимости вынести live-buffer/helper в отдельный micro-class. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/*reasoning*.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; expected commit: `fix: stream codex reasoning deltas incrementally`
+1. [DONE] Добавить инкрементальный `thinking` emission из `item/reasoning/summaryTextDelta` и `item/reasoning/textDelta`, сохранив `item/completed` как flush/fallback path; при необходимости вынести live-buffer/helper в отдельный micro-class. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/*reasoning*.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; expected commit: `fix: stream codex reasoning deltas incrementally`
 2. [TODO] Git Commit: `fix: stream codex reasoning deltas incrementally` (hash: TBD)
-3. [TODO] Синхронизировать Codex docs под новый delta-driven reasoning contract и emission-time behavior. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex reasoning delta contract`
+3. [IN_PROGRESS] Синхронизировать Codex docs под новый delta-driven reasoning contract и emission-time behavior. scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: sync codex reasoning delta contract`
 4. [TODO] Git Commit: `docs: sync codex reasoning delta contract` (hash: TBD)
 
 ### Stream: SDK Log Restore

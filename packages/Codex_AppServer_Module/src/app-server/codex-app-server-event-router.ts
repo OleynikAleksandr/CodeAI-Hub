@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import type { CodexUsageLimits, CodexUsageLimitsStreamPayload } from "../types";
+import { CodexReasoningLiveBuffer } from "./codex-reasoning-live-buffer";
 
 export interface AppServerSessionState {
   activeTurnId: string | null;
@@ -46,6 +47,8 @@ const asStringArray = (value: unknown): string[] =>
     : [];
 
 const nowIso = (): string => new Date().toISOString();
+const buildReasoningItemKey = (threadId: string, itemId: string): string =>
+  `${threadId}::${itemId}`;
 
 const buildUsageLimits = (
   snapshot: RateLimitSnapshot | null
@@ -85,6 +88,7 @@ const buildUsageLimitsPayload = (
 
 export class CodexAppServerEventRouter {
   private lastUsageLimits: CodexUsageLimits = null;
+  private readonly reasoningLiveBuffer = new CodexReasoningLiveBuffer();
   private readonly deps: CodexAppServerEventRouterDependencies;
 
   constructor(deps: CodexAppServerEventRouterDependencies) {
@@ -110,6 +114,9 @@ export class CodexAppServerEventRouter {
         break;
       case "item/reasoning/summaryTextDelta":
         this.handleReasoningSummaryTextDelta(params);
+        break;
+      case "item/reasoning/textDelta":
+        this.handleReasoningTextDelta(params);
         break;
       case "item/completed":
         this.handleItemCompleted(params);
@@ -274,6 +281,10 @@ export class CodexAppServerEventRouter {
       summaryParts.push("");
     }
     state.reasoningSummariesByItemId.set(itemId, summaryParts);
+    this.reasoningLiveBuffer.ensureSummaryPart(
+      buildReasoningItemKey(threadId, itemId),
+      summaryIndex
+    );
   }
 
   private handleReasoningSummaryTextDelta(params: unknown): void {
@@ -294,6 +305,45 @@ export class CodexAppServerEventRouter {
     }
     summaryParts[summaryIndex] = `${summaryParts[summaryIndex] ?? ""}${delta}`;
     state.reasoningSummariesByItemId.set(itemId, summaryParts);
+    const readableSegment = this.reasoningLiveBuffer.appendSummaryDelta(
+      buildReasoningItemKey(threadId, itemId),
+      summaryIndex,
+      delta
+    );
+    if (!readableSegment) {
+      return;
+    }
+    this.emitDialogMessage(
+      threadId,
+      "thinking",
+      readableSegment,
+      `${itemId}::live::${crypto.randomUUID()}`
+    );
+  }
+
+  private handleReasoningTextDelta(params: unknown): void {
+    if (!isRecord(params)) {
+      return;
+    }
+    const threadId = asString(params.threadId);
+    const itemId = asString(params.itemId);
+    const delta = asText(params.delta);
+    if (!(threadId && itemId && delta !== null)) {
+      return;
+    }
+    const readableSegment = this.reasoningLiveBuffer.appendTextDelta(
+      buildReasoningItemKey(threadId, itemId),
+      delta
+    );
+    if (!readableSegment) {
+      return;
+    }
+    this.emitDialogMessage(
+      threadId,
+      "thinking",
+      readableSegment,
+      `${itemId}::live::${crypto.randomUUID()}`
+    );
   }
 
   private handleItemCompleted(params: unknown): void {
@@ -352,10 +402,17 @@ export class CodexAppServerEventRouter {
     const fallbackSummary = asStringArray(item.summary).join("\n").trim();
     const fallbackContent = asStringArray(item.content).join("\n").trim();
     const content = summaryText || fallbackSummary || fallbackContent;
-    if (!content) {
+    const finalContent =
+      itemId === null
+        ? content
+        : (this.reasoningLiveBuffer.consumeFinal(
+            buildReasoningItemKey(threadId, itemId),
+            content
+          ) ?? "");
+    if (!(content || finalContent)) {
       return;
     }
-    this.emitDialogMessage(threadId, "thinking", content, itemId);
+    this.emitDialogMessage(threadId, "thinking", finalContent, itemId);
   }
 
   private handleThreadTokenUsageUpdated(params: unknown): void {
