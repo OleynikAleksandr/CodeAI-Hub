@@ -50,3 +50,5 @@ packages/**
 media/react-chat.js
 media/*.css
 media/web-client/**
+node_modules/@codeai-hub/codex-app-server-module/**
+packages/Codex_AppServer_Module/**
