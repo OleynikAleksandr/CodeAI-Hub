@@ -64,6 +64,6 @@
 
 ### Stream: Release Notes And New Release Build
 1. [DONE] Подготовить будущую release line `1.2.23`: обновить `README.md`, `CHANGELOG.md` и связанные архитектурные документы под новый app-server behavior до запуска release scripts. scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: prepare 1.2.23 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.23 release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.23 release notes` (hash: `a237a1c2f`)
 3. [TODO] Выполнить release checklist: чистое дерево, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить release artefacts, заархивировать completed plan, закрыть planning-doc, подготовить новый session report и вернуть active `todo-plan.md` в placeholder. scope: release pipeline / generated manifests / closeout docs; expected commit: `build: release 1.2.23`
 4. [TODO] Git Commit: `build: release 1.2.23` (hash: TBD)
