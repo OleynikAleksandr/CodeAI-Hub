@@ -45,6 +45,8 @@ const asStringArray = (value: unknown): string[] =>
   Array.isArray(value)
     ? value.filter((entry): entry is string => typeof entry === "string")
     : [];
+const collectNonEmptyBlocks = (blocks: string[]): string[] =>
+  blocks.filter((block) => block.trim().length > 0);
 
 const nowIso = (): string => new Date().toISOString();
 const buildReasoningItemKey = (threadId: string, itemId: string): string =>
@@ -281,10 +283,6 @@ export class CodexAppServerEventRouter {
       summaryParts.push("");
     }
     state.reasoningSummariesByItemId.set(itemId, summaryParts);
-    this.reasoningLiveBuffer.ensureSummaryPart(
-      buildReasoningItemKey(threadId, itemId),
-      summaryIndex
-    );
   }
 
   private handleReasoningSummaryTextDelta(params: unknown): void {
@@ -305,20 +303,6 @@ export class CodexAppServerEventRouter {
     }
     summaryParts[summaryIndex] = `${summaryParts[summaryIndex] ?? ""}${delta}`;
     state.reasoningSummariesByItemId.set(itemId, summaryParts);
-    const readableSegment = this.reasoningLiveBuffer.appendSummaryDelta(
-      buildReasoningItemKey(threadId, itemId),
-      summaryIndex,
-      delta
-    );
-    if (!readableSegment) {
-      return;
-    }
-    this.emitDialogMessage(
-      threadId,
-      "thinking",
-      readableSegment,
-      `${itemId}::live::${crypto.randomUUID()}`
-    );
   }
 
   private handleReasoningTextDelta(params: unknown): void {
@@ -331,18 +315,9 @@ export class CodexAppServerEventRouter {
     if (!(threadId && itemId && delta !== null)) {
       return;
     }
-    const readableSegment = this.reasoningLiveBuffer.appendTextDelta(
+    this.reasoningLiveBuffer.appendTextDelta(
       buildReasoningItemKey(threadId, itemId),
       delta
-    );
-    if (!readableSegment) {
-      return;
-    }
-    this.emitDialogMessage(
-      threadId,
-      "thinking",
-      readableSegment,
-      `${itemId}::live::${crypto.randomUUID()}`
     );
   }
 
@@ -392,27 +367,45 @@ export class CodexAppServerEventRouter {
   ): void {
     const itemId = asString(item.id);
     const state = this.deps.ensureSessionState(threadId);
-    const summaryFromDeltas = itemId
-      ? (state.reasoningSummariesByItemId.get(itemId) ?? [])
-      : [];
+    const summaryFromDeltas =
+      itemId === null
+        ? []
+        : collectNonEmptyBlocks(
+            state.reasoningSummariesByItemId.get(itemId) ?? []
+          );
     if (itemId) {
       state.reasoningSummariesByItemId.delete(itemId);
     }
-    const summaryText = summaryFromDeltas.join("").trim();
-    const fallbackSummary = asStringArray(item.summary).join("\n").trim();
-    const fallbackContent = asStringArray(item.content).join("\n").trim();
-    const content = summaryText || fallbackSummary || fallbackContent;
-    const finalContent =
+    const finalSummaryBlocks = collectNonEmptyBlocks(
+      asStringArray(item.summary)
+    );
+    const finalContentBlocks = collectNonEmptyBlocks(
+      asStringArray(item.content)
+    );
+    const textFallback =
       itemId === null
-        ? content
-        : (this.reasoningLiveBuffer.consumeFinal(
-            buildReasoningItemKey(threadId, itemId),
-            content
-          ) ?? "");
-    if (!(content || finalContent)) {
+        ? null
+        : this.reasoningLiveBuffer.consumeText(
+            buildReasoningItemKey(threadId, itemId)
+          );
+    let blocks: string[] = [];
+    if (finalSummaryBlocks.length > 0) {
+      blocks = finalSummaryBlocks;
+    } else if (summaryFromDeltas.length > 0) {
+      blocks = summaryFromDeltas;
+    } else if (finalContentBlocks.length > 0) {
+      blocks = finalContentBlocks;
+    } else if (textFallback !== null) {
+      blocks = [textFallback];
+    }
+    if (blocks.length === 0) {
       return;
     }
-    this.emitDialogMessage(threadId, "thinking", finalContent, itemId);
+    for (const [index, block] of blocks.entries()) {
+      const blockId =
+        itemId === null ? null : `${itemId}::summary-block::${index}`;
+      this.emitDialogMessage(threadId, "thinking", block, blockId);
+    }
   }
 
   private handleThreadTokenUsageUpdated(params: unknown): void {

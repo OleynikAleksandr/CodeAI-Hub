@@ -31,7 +31,7 @@
 
 ## Phase 1 — Codex Final Summary Reasoning Emission (owner: Codex, updated: 2026-04-19)
 ### Stream: Provider Reasoning Contract
-1. [TODO] Перевести Codex reasoning с live readable chunking на final-summary emission: перестать публиковать `thinking` из `summaryTextDelta` / `textDelta`, а на `item/completed` эмитить отдельные block messages по canonical fallback order из planning-doc. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-live-buffer.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: emit codex reasoning from completed summary blocks`
+1. [IN_PROGRESS] Перевести Codex reasoning с live readable chunking на final-summary emission: перестать публиковать `thinking` из `summaryTextDelta` / `textDelta`, а на `item/completed` эмитить отдельные block messages по canonical fallback order из planning-doc. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-live-buffer.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: emit codex reasoning from completed summary blocks`
 2. [TODO] Git Commit: `fix: emit codex reasoning from completed summary blocks` (hash: TBD)
 3. [TODO] Добавить regression coverage для canonical final-summary emission, fallback path без `item.summary[]` и гарантии отсутствия token-level live bubbles. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts`, `packages/Codex_AppServer_Module/package.json`, `doc/TODO/todo-plan.md`; expected commit: `test: cover codex final-summary reasoning emission`
 4. [TODO] Git Commit: `test: cover codex final-summary reasoning emission` (hash: TBD)
