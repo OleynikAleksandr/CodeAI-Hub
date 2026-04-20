@@ -10,8 +10,12 @@ import {
 const ASSISTANT_MESSAGE_CLASS_REGEX = /\bsession-dialog__message--assistant\b/u;
 const ASSISTANT_THINKING_CLASS_REGEX =
   /\bsession-dialog__message--assistant-thinking\b/u;
+const ASSISTANT_CLAUDE_CLASS_REGEX =
+  /\bsession-dialog__message--assistant-claude\b/u;
 const ASSISTANT_CODEX_CLASS_REGEX =
   /\bsession-dialog__message--assistant-codex\b/u;
+const ASSISTANT_GEMINI_CLASS_REGEX =
+  /\bsession-dialog__message--assistant-gemini\b/u;
 
 const createMessage = (
   id: string,
@@ -96,12 +100,28 @@ test("buildMessageClassNames adds dedicated thinking styling hook for assistant-
   const message = createMessage("1", "assistant", "Reasoning block.", {
     tag: "thinking",
   });
+  const providerThemes = [
+    {
+      assistantThemeRegex: ASSISTANT_CLAUDE_CLASS_REGEX,
+      providerTheme: "claude" as const,
+    },
+    {
+      assistantThemeRegex: ASSISTANT_CODEX_CLASS_REGEX,
+      providerTheme: "codex" as const,
+    },
+    {
+      assistantThemeRegex: ASSISTANT_GEMINI_CLASS_REGEX,
+      providerTheme: "gemini" as const,
+    },
+  ];
 
-  const classes = buildMessageClassNames(message, "codex");
+  for (const { assistantThemeRegex, providerTheme } of providerThemes) {
+    const classes = buildMessageClassNames(message, providerTheme);
 
-  assert.match(classes, ASSISTANT_MESSAGE_CLASS_REGEX);
-  assert.match(classes, ASSISTANT_THINKING_CLASS_REGEX);
-  assert.match(classes, ASSISTANT_CODEX_CLASS_REGEX);
+    assert.match(classes, ASSISTANT_MESSAGE_CLASS_REGEX);
+    assert.match(classes, ASSISTANT_THINKING_CLASS_REGEX);
+    assert.match(classes, assistantThemeRegex);
+  }
 });
 
 test("mergeLiveAssistantMessages assembles localizedContent across consecutive live bubbles", () => {
