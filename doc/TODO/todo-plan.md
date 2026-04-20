@@ -64,13 +64,13 @@
 2. [DONE] Git Commit: `docs: prepare 1.2.27 release notes` (hash: `946fde7bf`)
 
 ### Stream: Release Build
-1. [IN_PROGRESS] Выполнить release checklist для `1.2.27`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.2.27.vsix` и fresh tarballs, зафиксировать version/manifest updates и release artifacts. status note: `./scripts/build-all.sh` passed and produced `1.2.27` tarballs/manifests; `build-release.sh --use-current-version` pending after clean-tree commit. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.27`
-2. [TODO] Git Commit: `build: release 1.2.27` (hash: TBD)
+1. [DONE] Выполнить release checklist для `1.2.27`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.2.27.vsix` и fresh tarballs, зафиксировать version/manifest updates и release artifacts. results: `build-all.sh` produced fresh `1.2.27` provider/core/ui/launcher tarballs; `build-release.sh --use-current-version` passed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; VSIX: `codeai-hub-1.2.27.vsix`. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.27`
+2. [DONE] Git Commit: `build: release 1.2.27` (hash: `afb1ff358`)
 
 ## Phase 5 — Execution Cycle Closeout (owner: Codex, updated: 2026-04-20)
 ### Stream: Planning Archive
-1. [TODO] Перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md` под закрытый Codex formatting scope. scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Commentary_And_ThinkingBlockFormatting_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive Codex commentary and thinking formatting planning doc`
-2. [TODO] Git Commit: `docs: archive Codex commentary and thinking formatting planning doc` (hash: TBD)
+1. [DONE] Перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md` под закрытый Codex formatting scope. scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Commentary_And_ThinkingBlockFormatting_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive Codex commentary and thinking formatting planning doc`
+2. [IN_PROGRESS] Git Commit: `docs: archive Codex commentary and thinking formatting planning doc` (hash: TBD)
 
 ### Stream: TODO Plan Closeout
 1. [TODO] Заархивировать завершённый active todo-plan и восстановить placeholder `doc/TODO/todo-plan.md`. scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-1.2.27-codex-commentary-and-thinking-formatting-release.md`; expected commit: `docs: close 1.2.27 todo-plan after build`
