@@ -38,7 +38,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - `turn/started` → `turn_started`
 - `turn/completed` → `turn_completed | turn_failed`
 - `error` → `stream_error`
-- `item/agentMessage/delta` + `item/completed` materialize-ят user-facing `dialog_message`
+- `item/agentMessage/delta` + `item/completed` materialize-ят user-facing `dialog_message`; `phase: "commentary"` обязан сохраняться как non-terminal assistant progress message с `tag: "commentary"`, а `phase: "final_answer"` остаётся terminal assistant answer
 - `item/reasoning/summaryPartAdded` / `item/reasoning/summaryTextDelta` / optional `item/reasoning/textDelta` feed provider-local accumulation only; these notifications are no longer materialized directly as user-facing live `thinking` bubbles
 - `item/completed` for reasoning is the canonical user-facing emission point: provider emits one `thinking` message per completed reasoning block, prioritizing `item.summary[]`, then accumulated summary parts, then `item.content[]`, then accumulated raw `textDelta`
 - `thread/tokenUsage/updated` и usage-limits snapshots materialize-ятся как `stream_event`
@@ -50,6 +50,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Если turn идёт под `outputSchema`, schema пробрасывается в `turn/start`; transport не имеет права терять structured-output passthrough только потому, что Codex transport сменился с rollout-tail на app-server.
 
 ## Reasoning, visibility и translation
+- App-server line обязана сохранять commentary отдельно от reasoning/final answer: даже когда `Reasoning in dialog` отключён, пользователь всё равно должен видеть Codex progress commentary, если upstream реально прислал `phase: "commentary"`.
 - Upstream truth для видимого Codex reasoning теперь — reasoning summary notifications app-server-а, а не legacy rollout tail и не SDK-local display gate.
 - Видимый reasoning остаётся source-first: сначала persist/broadcast native text, затем Core-owned translation overlay может прислать `localizedContent`.
 - User-facing toggle `Reasoning in dialog` управляет тем, уходит ли turn-level `summary` как `detailed` или как `none`; provider-home `model_reasoning_summary` остаётся persisted companion state, но не является единственным runtime source-of-truth для live app-server turns.

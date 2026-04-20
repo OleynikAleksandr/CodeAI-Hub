@@ -43,12 +43,12 @@
 
 ### Stream: Session Heading Spacing
 1. [DONE] Перепроверить и при необходимости ужесточить Session markdown spacing rule так, чтобы standalone bold heading paragraphs всегда имели gap только перед собой, но не между heading и body, без регрессии ordered/unordered list spacing. scope: `media/session-view.css`; implementation note: zero-gap правило после standalone bold heading сузили с wildcard `+ *` до явных paragraph/list blocks, чтобы сохранить контракт точечно и не трогать посторонние соседние элементы; expected commit: `fix(ui): normalize session heading spacing`
-2. [IN_PROGRESS] Git Commit: `fix(ui): normalize session heading spacing` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): normalize session heading spacing` (hash: `a03377a8a`)
 
 ## Phase 3 — SSOT Sync And Targeted Verification (owner: Codex, updated: 2026-04-20)
 ### Stream: Core SSOT Sync
-1. [TODO] Синхронизировать SSOT после реализации: зафиксировать возврат Codex commentary в dialog trail и новый contract для thinking heading-boundary rendering. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync Codex commentary and thinking formatting contract`
-2. [TODO] Git Commit: `docs: sync Codex commentary and thinking formatting contract` (hash: TBD)
+1. [DONE] Синхронизировать SSOT после реализации: зафиксировать возврат Codex commentary в dialog trail и новый contract для thinking heading-boundary rendering. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync Codex commentary and thinking formatting contract`
+2. [IN_PROGRESS] Git Commit: `docs: sync Codex commentary and thinking formatting contract` (hash: TBD)
 
 ### Stream: Response Mode Contract
 1. [TODO] Обновить Codex response-mode contract: явно зафиксировать, что `Hybrid`/passthrough path обязан сохранять non-terminal commentary в app-server линии и не сводить user-facing progress только к reasoning/final answer. scope: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: note Codex hybrid commentary preservation`
