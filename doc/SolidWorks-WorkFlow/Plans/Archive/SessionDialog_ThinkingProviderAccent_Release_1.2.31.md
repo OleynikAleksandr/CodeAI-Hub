@@ -1,6 +1,6 @@
 # Session Dialog Thinking Provider Accent - Release 1.2.31
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
