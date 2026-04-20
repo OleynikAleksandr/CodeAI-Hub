@@ -75,6 +75,9 @@ export class SessionRequestHandlerAppliedTurnConfig {
         ? resolved.thinkingLevelByModel[baseModelId]
         : undefined;
     const translationPolicy = translationPolicyResolver.resolve(settingsPath);
+    const reasoningLanguage =
+      translationPolicy.targetLanguage ?? translationPolicy.sourceLanguage;
+    const reasoningEngineId = translationPolicy.engineId;
 
     return {
       providerId,
@@ -87,12 +90,13 @@ export class SessionRequestHandlerAppliedTurnConfig {
           thinkingEnabled: resolved.thinkingEnabled,
           thinkingLevel,
         }) ?? resolved.effectiveModelId,
-      messagesForTheUserLanguage:
-        translationPolicy.targetLanguage ?? translationPolicy.sourceLanguage,
+      messagesForTheUserLanguage: reasoningLanguage,
       modelId: baseModelId,
       reasoningEffort,
+      reasoningEngineId,
+      reasoningLanguage,
       source: targetModelId ? "switch_request" : "settings_snapshot",
-      translationEngineId: translationPolicy.engineId,
+      translationEngineId: reasoningEngineId,
       ...(resolved.thinkingEnabled === undefined
         ? {}
         : { thinkingEnabled: resolved.thinkingEnabled }),

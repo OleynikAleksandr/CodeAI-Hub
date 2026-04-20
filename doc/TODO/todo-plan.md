@@ -45,9 +45,9 @@
 ## Phase 2 — Runtime Routing (owner: Codex, updated: 2026-04-20)
 ### Stream: Core Reasoning Path
 1. [DONE] Переключить Core live reasoning overlay на `reasoningEngineId` + `reasoningLanguage` и сохранить invariant hidden reasoning -> no translation dispatch; scope: `packages/core/src/config/provider-settings-snapshot.ts` (добавлены `loadUITranslationEngineId` / `loadReasoningTranslationEngineId` / `loadReasoningLanguage`, удалены unused `loadTranslationEngineId` / `loadMessagesForTheUserLanguage`), `packages/core/src/session-translation/session-translation-policy-resolver.ts` (routing), `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (live overlay rule)
-2. [DONE] Git Commit: `feat: route live reasoning through dedicated engine and language` (hash: TBD)
-3. [TODO] Синхронизировать applied runtime envelope и audit-path для reasoning engine + reasoning language fields без возврата split truth; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: propagate dedicated reasoning translation metadata`
-4. [TODO] Git Commit: `feat: propagate dedicated reasoning translation metadata` (hash: TBD)
+2. [DONE] Git Commit: `feat: route live reasoning through dedicated engine and language` (hash: 3ceccb0ab)
+3. [DONE] Синхронизировать applied runtime envelope и audit-path для reasoning engine + reasoning language fields без возврата split truth; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/types.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+4. [DONE] Git Commit: `feat: propagate dedicated reasoning translation metadata` (hash: TBD)
 
 ### Stream: Provider Runtime Audit
 1. [TODO] Перевести remaining provider-local live translation adapters для visible thought/progress copy на `reasoningEngineId` + `reasoningLanguage`; scope: `packages/Claude_Module/src/messaging/claude-thought-translation-adapter.ts`, `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit: `fix: align provider live reasoning translation with dedicated engine and language`

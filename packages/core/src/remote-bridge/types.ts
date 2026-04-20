@@ -43,14 +43,26 @@ export type {
 export interface AppliedProviderTurnConfig {
   readonly baseModelId?: string;
   readonly effectiveModelId?: string;
+  /**
+   * Deprecated legacy alias for {@link reasoningLanguage}. Kept while
+   * provider adapters migrate to the dedicated reasoning field; both carry
+   * the same resolved value sourced from the reasoning translation policy.
+   */
   readonly messagesForTheUserLanguage?: string;
   readonly modelId?: string;
   readonly providerId: string;
   readonly reasoningEffort?: string;
+  readonly reasoningEngineId?: string;
+  readonly reasoningLanguage?: string;
   readonly source: "settings_snapshot" | "switch_request";
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevel?: string;
+  /**
+   * Deprecated legacy alias for {@link reasoningEngineId}. Kept while
+   * provider adapters migrate to the dedicated reasoning field; both carry
+   * the same resolved value sourced from the reasoning translation policy.
+   */
   readonly translationEngineId?: string;
 }
 
@@ -109,6 +121,14 @@ export const readAppliedProviderTurnConfig = (
     reasoningEffort:
       typeof candidate.reasoningEffort === "string"
         ? candidate.reasoningEffort
+        : undefined,
+    reasoningEngineId:
+      typeof candidate.reasoningEngineId === "string"
+        ? candidate.reasoningEngineId
+        : undefined,
+    reasoningLanguage:
+      typeof candidate.reasoningLanguage === "string"
+        ? candidate.reasoningLanguage
         : undefined,
     translationEngineId:
       typeof candidate.translationEngineId === "string"
