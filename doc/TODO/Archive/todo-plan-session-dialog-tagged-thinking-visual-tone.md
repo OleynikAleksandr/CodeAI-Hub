@@ -1,12 +1,11 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/SessionDialog_TaggedThinkingVisualTone_Release_1.2.30.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/SessionDialog_TaggedThinkingVisualTone_Architecture.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
-  - `README.md`
-  - `CHANGELOG.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
@@ -20,14 +19,11 @@
   - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
 - **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run build:project-manager`, `npm run typecheck:webview`.
 - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
-- **Real-time Документация**:
-Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
+- **Real-time Документация**: любое изменение архитектуры/логики требует синхронного обновления документации **до** коммита.
 
-## Phase 1 — Release 1.2.30 (owner: Codex, updated: 2026-04-20)
-### Stream: Packaging
-1. [TODO] Обновить release-facing docs под `1.2.30` для corrected thinking-card visual tuning на реальном user-facing path; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.30 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.30 release notes` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.30`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.30`
-4. [TODO] Git Commit: `build: release 1.2.30` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и закрыть scope архивированием planning/todo; expected commit: `docs: close 1.2.30 release scope`
-6. [TODO] Git Commit: `docs: close 1.2.30 release scope` (hash: TBD)
+## Phase 1 — Tagged thinking visual tone fix (owner: Codex, updated: 2026-04-20)
+### Stream: Thinking renderer alignment
+1. [DONE] Добавить dedicated class hook для `assistant + tag="thinking"` и привязать к нему тот же muted thinking visual contract, что и для общей thinking-плашки. Scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `media/session-view.css`, `doc/TODO/todo-plan.md`. Expected commit message: `fix: align tagged thinking card styling`
+2. [DONE] Git Commit: `fix: align tagged thinking card styling` (hash: `6d1f4706b`)
+3. [DONE] Добавить regression test для class resolution tagged-thinking path и синхронизировать UI SSOT contract. Scope: `src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`. Expected commit message: `fix: align tagged thinking card styling`
+4. [DONE] Git Commit: `fix: align tagged thinking card styling` (hash: `6d1f4706b`)
