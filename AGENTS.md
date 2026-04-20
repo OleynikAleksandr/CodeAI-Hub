@@ -7,6 +7,10 @@
 
 ### Начало сессии
 1. **Чтение отчета**: Найди последний файл `doc/Sessions/SessionXXX.md`.
+   - Искать нужно **по фактической файловой системе**, а не по git-tracked/ignore-aware спискам.
+   - **Запрещено** определять последний session report через `rg --files`, `git ls-files` и любые другие команды, которые уважают `.gitignore`, потому что `doc/Sessions/` может быть скрыт частично.
+   - Используй filesystem-only проверку, например: `find doc/Sessions -maxdepth 1 -type f -name 'Session*.md' | sort` или эквивалентный `ls`, и выбирай максимальный номер `SessionXXX.md`.
+   - Если в рабочем дереве есть более новый session report, но он ignored/untracked, именно он всё равно считается последним и обязан использоваться для старта сессии.
 2. **Базовый SSOT**: Прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, чтобы восстановить глобальные инварианты и карту системы.
 3. **Режим чтения коммитов зависит от статуса scope**:
    - Если в отчете `Execution Scope Status: ACTIVE`, раздел `Git commits` — это обязательный путь восстановления контекста. Ты ОБЯЗАН просмотреть каждый коммит из списка, используя `git show --stat <hash>` и `git show <hash>`.
