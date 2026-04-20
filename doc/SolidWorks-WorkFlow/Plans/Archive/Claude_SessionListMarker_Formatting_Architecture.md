@@ -1,7 +1,7 @@
 # Claude Session List Marker Formatting Architecture
 
 **Date:** 2026-04-20
-**Status:** Approved
+**Status:** Archived
 **Scope:** investigation and fix path for Claude list-marker formatting regressions in Project Manager Session dialog
 
 ---

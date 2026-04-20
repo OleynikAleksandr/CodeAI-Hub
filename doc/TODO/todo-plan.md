@@ -1,9 +1,9 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Claude_SessionListMarker_Formatting_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_SessionListMarker_Formatting_Architecture.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/Claude_SessionListMarker_Formatting_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_SessionListMarker_Formatting_Architecture.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
@@ -63,12 +63,12 @@
 2. [DONE] Git Commit: `docs: prepare 1.2.26 release notes` (hash: `f9c34d067`)
 
 ### Stream: Release Build
-1. [IN_PROGRESS] Выполнить release checklist для `1.2.26`: `build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать version/manifest updates и release artifacts. `build-all.sh` успешно завершён; pending step — финальный `./scripts/build-release.sh --use-current-version` на чистом дереве. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.26`
-2. [TODO] Git Commit: `build: release 1.2.26` (hash: TBD)
+1. [DONE] Выполнить release checklist для `1.2.26`: `build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать version/manifest updates и release artifacts. `build-all.sh` успешно завершён, `./scripts/build-release.sh --use-current-version` собрал `codeai-hub-1.2.26.vsix`, а fresh tarballs синхронизированы в `doc/tmp/releases/`. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.26`
+2. [DONE] Git Commit: `build: release 1.2.26` (hash: `6037a1f51`)
 
 ## Phase 5 — Execution Cycle Closeout (owner: Codex, updated: 2026-04-20)
 ### Stream: Planning Archive
-1. [TODO] Перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md` под закрытый scope. scope: `doc/SolidWorks-WorkFlow/Plans/Claude_SessionListMarker_Formatting_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive Claude list-marker formatting planning doc`
+1. [DONE] Перенести planning-doc в `Plans/Archive/` и обновить `Docs_Index.md` под закрытый scope. scope: `doc/SolidWorks-WorkFlow/Plans/Claude_SessionListMarker_Formatting_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive Claude list-marker formatting planning doc`
 2. [TODO] Git Commit: `docs: archive Claude list-marker formatting planning doc` (hash: TBD)
 
 ### Stream: TODO Plan Closeout
