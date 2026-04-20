@@ -1,6 +1,6 @@
 # Session Dialog Bubble Visual Tone Tuning - Architecture
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 

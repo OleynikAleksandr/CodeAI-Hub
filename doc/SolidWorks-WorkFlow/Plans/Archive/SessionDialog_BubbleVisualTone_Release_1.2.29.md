@@ -1,6 +1,6 @@
 # Session Dialog Bubble Visual Tone - Release 1.2.29
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
