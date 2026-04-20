@@ -7,9 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.33
-- **Provider-facing `Thinking` bubbles are full cards again.** Visible assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` now render with the restored card shadow instead of inheriting the flatter legacy compact-strip treatment.
-- **Muted provider `Thinking` chrome is corrected against the real dialog backdrop.** The user-facing reasoning bubble surface no longer collapses into the darker panel-gray composite; the visible muted fill/stroke are now tuned on the actual Session dialog background while the legacy compact `role="thinking"` strip remains a separate transition surface.
+## Current Release — v1.2.34
+- **Both internal `Thinking` bubble paths now share the same muted chrome.** The legacy `role="thinking"` strip and the visible assistant-tagged reasoning path such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` now use the same fill and stroke contract instead of diverging visually.
+- **The shared `Thinking` shadow is now softer but still visible.** Both thinking paths now use the same `50%`-opacity card shadow, keeping the reasoning surface readable without bringing back the heavier opaque shadow from the previous user-facing retune.
 
 ### 1.2.31 (previous)
 - **Provider `Thinking` headers now keep their accent while remaining muted.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` no longer collapse to neutral gray; the header stays on the provider hue at a softer `60%` alpha, so provider identity remains readable without overpowering the final answer.

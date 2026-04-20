@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.34] - 2026-04-20
+### Fixed
+- **Both internal `Thinking` bubble paths now share one chrome contract.** The legacy `role="thinking"` surface and the assistant-tagged reasoning path (`Claude · Thinking`, `Codex · Thinking`, `Gemini · Thinking`) now use the same muted fill `rgba(44, 50, 48, 0.45)` and stroke `rgba(71, 71, 74, 0.45)` instead of rendering with different chrome values.
+- **Thinking-card shadow is now unified and softened.** Both thinking paths now keep the same visible shadow `0px 6px 14.1px 3px rgba(0, 0, 0, 0.5)`, replacing the previous split between `no shadow` on the legacy strip and the heavier opaque shadow on the assistant-tagged path.
+
+### Tests
+- **Targeted shared-UI verification passed.** `npm run build:webview` and `npm run build:project-manager` both completed successfully before release packaging.
+
 ## [1.2.33] - 2026-04-20
 ### Fixed
 - **Visible provider `Thinking` bubbles now render as full cards again.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` no longer inherit the flatter legacy compact-strip treatment; the user-facing bubble path restores the message-card shadow.

@@ -26,11 +26,11 @@
 ## Phase 1 — Shared Thinking Chrome Unification (owner: Codex, updated: 2026-04-20)
 ### Stream: Styling and SSOT
 1. [DONE] Унифицировать chrome для `.session-dialog__message--thinking` и `.session-dialog__message--assistant-thinking`: общий fill `rgba(44, 50, 48, 0.45)`, общий stroke `rgba(71, 71, 74, 0.45)`, общий shadow `0px 6px 14.1px 3px rgba(0, 0, 0, 0.5)`; SSOT синхронизирован, таргетные сборки `npm run build:webview` + `npm run build:project-manager` прошли успешно; scope: `media/session-view.css`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`; commit: `fix: unify thinking bubble chrome`
-2. [TODO] Git Commit: `fix: unify thinking bubble chrome` (hash: TBD)
+2. [DONE] Git Commit: `fix: unify thinking bubble chrome` (hash: `7dcaac132`)
 
 ## Phase 2 — Release 1.2.34 (owner: Codex, updated: 2026-04-20)
 ### Stream: Packaging
-1. [TODO] Обновить release-facing docs под `1.2.34` для unified thinking chrome; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.34 release notes`
+1. [DONE] Обновить release-facing docs под `1.2.34` для unified thinking chrome; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.34 release notes`
 2. [TODO] Git Commit: `docs: prepare 1.2.34 release notes` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.34`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.34`
 4. [TODO] Git Commit: `build: release 1.2.34` (hash: TBD)
