@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.29] - 2026-04-20
+### Changed
+- **Session dialog message cards now use a shared `1px` stroke.** The base bubble contract in `media/session-view.css` no longer uses the heavier `2px` border, so user, assistant, and thinking cards render with a lighter frame across the whole dialog surface.
+- **Thinking cards are visually muted across Claude, Codex, and Gemini.** Provider reasoning bubbles now use alpha-softened background and border colors plus dimmer header/body/toggle typography, so visible `Thinking` stays readable but no longer competes with the final assistant answer.
+
+### Tests
+- **Targeted shared-UI bundle verification passed.** `npm run build:webview` and `npm run build:project-manager` both completed successfully before the release packaging phase.
+
 ## [1.2.28] - 2026-04-20
 ### Fixed
 - **Late translation growth of the last dialog bubble now re-triggers bottom-lock autoscroll.** Session UI now derives the dialog scroll anchor from the last visible bubble display payload (`localizedContent ?? content`) instead of native `content` alone, so when a late Core translation overlay expands the already-rendered last thinking/assistant bubble in place, the view stays pinned to the newest bottom edge automatically.

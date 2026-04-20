@@ -25,7 +25,7 @@
 
 ## Phase 1 — Release 1.2.29 (owner: Codex, updated: 2026-04-20)
 ### Stream: Packaging
-1. [TODO] Обновить release-facing docs под `1.2.29` для visual tuning Session dialog bubbles; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.29 release notes`
+1. [DONE] Обновить release-facing docs под `1.2.29` для visual tuning Session dialog bubbles; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.29 release notes`
 2. [TODO] Git Commit: `docs: prepare 1.2.29 release notes` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.29`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.29`
 4. [TODO] Git Commit: `build: release 1.2.29` (hash: TBD)

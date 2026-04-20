@@ -7,14 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.28
+## Current Release — v1.2.29
+- **Session dialog message cards now use a lighter `1px` stroke.** The shared bubble contract for user, assistant, and thinking cards no longer uses the heavier `2px` border, so the dialog surface reads cleaner without changing message structure or provider routing.
+- **Thinking cards are visually quieter across all providers.** Claude, Codex, and Gemini reasoning bubbles now use softer background/border alpha plus dimmer header/body typography, making `Thinking` content feel secondary to the final assistant answer while remaining readable.
+
+### 1.2.28 (previous)
 - **Late translation growth of the last dialog bubble now keeps the view pinned to the bottom.** When the last visible thinking or assistant bubble first appears in English and then expands in place after a Russian `localizedContent` overlay arrives, Session UI now treats that display-text growth as a real autoscroll anchor change and re-scrolls to the newest bottom edge automatically.
 - **The fix is regression-covered at the scroll-anchor layer.** Session UI now has a dedicated test proving that a change in `localizedContent` alone, without any change to native `content`, still invalidates the last-bubble scroll anchor.
-
-### 1.2.27 (previous)
-- **Codex progress commentary is visible again on the app-server line.** Intermediate `phase: "commentary"` agent messages now survive normalization as non-terminal assistant dialog messages instead of disappearing between reasoning blocks and the final answer.
-- **Codex thinking cards now preserve section rhythm between completed bold heading blocks.** The Session merge layer keeps a blank paragraph boundary before the next standalone `**Heading**` block while preserving the heading/body pairing inside each completed reasoning section.
-- **Session heading spacing is now stricter and more targeted.** The markdown stylesheet suppresses the extra gap after a bold-only heading only for the immediately following paragraph/list body, avoiding an over-broad wildcard rule.
 
 ### 1.2.25 (previous)
 - **Codex reasoning now renders from completed summary blocks instead of live readable fragments.** The app-server line no longer materializes `thinking` bubbles from `summaryTextDelta` / `textDelta`; user-facing reasoning waits for `item/completed` and emits one block per completed summary section, preserving heading/body boundaries such as `**Crafting concise questions**`.
