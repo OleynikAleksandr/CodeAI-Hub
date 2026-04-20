@@ -227,13 +227,42 @@ Previous releases (summary): `1.1.800–1.1.917` — CSS Grid layout engine repl
 - **Offline-first packaging**: manifests point to the local `~/.codeai-hub/releases/` cache, build scripts publish fresh tarballs for core, launcher, and provider modules without relying on GitHub downloads, and the shipped VSIX excludes repository-only Husky hook helpers.
 - **Quality guardrails**: Ultracite architecture rules, jscpd duplication scans, knip dead-code detection, and Biome formatting are orchestrated through Husky pre-commit/pre-push hooks.
 
-## Getting Started
+## Current Installation Path
+CodeAI Hub is already usable, but the current recommended installation path is still source-based.
+If you want to try the product today, clone the repository, build the release artifacts locally, and install the generated VSIX into Visual Studio Code.
+
+### Prerequisites
+- Git
+- `nvm`
+- Node.js 20 + `npm`
+- Visual Studio Code
+- `cmake` (required for the standalone CEF launcher / Project Manager build)
+- the provider CLIs or SDK access you plan to use (`Claude`, `Codex`, `Gemini`) installed and authenticated separately
+
+### Build from Source
 ```bash
 git clone https://github.com/OleynikAleksandr/CodeAI-Hub.git
 cd CodeAI-Hub
-nvm use
+nvm use || nvm install 20
 npm install
+npm run setup:hooks
+./scripts/build-all.sh
+./scripts/build-release.sh --use-current-version
 ```
+
+### Build Output
+- VSIX package in the repository root: `codeai-hub-<version>.vsix`
+- fresh runtime tarballs in:
+  - `doc/tmp/releases/`
+  - `~/.codeai-hub/releases/`
+
+### Install into VS Code
+Open Visual Studio Code and run `Extensions: Install from VSIX...`, then select the generated `codeai-hub-<version>.vsix`.
+
+### Notes
+- This is the current early-access path, not a polished one-click installer.
+- The first full build can take a while because it prepares provider bundles, UI bundles, core runtime, and the standalone launcher.
+- Provider CLIs / SDKs are not bundled inside this repository and must be available separately.
 
 Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSOT contracts in `doc/SolidWorks-WorkFlow/Contracts/` (especially `Contracts/Workflow_CLI.md`) to configure provider CLIs and SDKs.
 
