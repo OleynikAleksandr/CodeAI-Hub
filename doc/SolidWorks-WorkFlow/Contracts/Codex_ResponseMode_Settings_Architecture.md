@@ -225,6 +225,7 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 
 - Commentary не должен попадать под требование `only JSON`.
 - Structured output относится только к terminal result.
+- На active app-server линии provider normalization обязан сохранять upstream `phase: "commentary"` как non-terminal assistant `dialog_message` с `tag: "commentary"`; `Hybrid` не имеет права сводить user-facing progress только к reasoning bubbles и terminal final answer.
 - Если app-server присылает reasoning deltas, provider не должен публиковать их как user-facing live fragments; видимое reasoning materialize-ится из completed summary blocks на `item/completed`, а deltas остаются fallback/input layer.
 - Если provider не прислал commentary, UI может использовать tool/file progress как деградационный fallback.
 
@@ -260,7 +261,7 @@ flowchart LR
 4. `Debug/Raw` даёт исследовательский режим без жёсткой schema-injection зависимости.
 5. Raw provider log можно использовать как диагностический SSOT.
 6. Повторный `resume` не затирает исторический SDK JSONL лог.
-7. Фикс commentary/progress для `gpt-5.4` доступен на `main` без переноса поздних PM refactor-изменений.
+7. Фикс commentary/progress для `gpt-5.4` доступен на `main` без переноса поздних PM refactor-изменений; на app-server линии commentary снова доходит до dialog как отдельный non-terminal assistant message, а не теряется между reasoning и final answer.
 
 ---
 

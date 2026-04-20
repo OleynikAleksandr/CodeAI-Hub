@@ -48,11 +48,11 @@
 ## Phase 3 — SSOT Sync And Targeted Verification (owner: Codex, updated: 2026-04-20)
 ### Stream: Core SSOT Sync
 1. [DONE] Синхронизировать SSOT после реализации: зафиксировать возврат Codex commentary в dialog trail и новый contract для thinking heading-boundary rendering. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync Codex commentary and thinking formatting contract`
-2. [IN_PROGRESS] Git Commit: `docs: sync Codex commentary and thinking formatting contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync Codex commentary and thinking formatting contract` (hash: `082dfbb79`)
 
 ### Stream: Response Mode Contract
-1. [TODO] Обновить Codex response-mode contract: явно зафиксировать, что `Hybrid`/passthrough path обязан сохранять non-terminal commentary в app-server линии и не сводить user-facing progress только к reasoning/final answer. scope: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: note Codex hybrid commentary preservation`
-2. [TODO] Git Commit: `docs: note Codex hybrid commentary preservation` (hash: TBD)
+1. [DONE] Обновить Codex response-mode contract: явно зафиксировать, что `Hybrid`/passthrough path обязан сохранять non-terminal commentary в app-server линии и не сводить user-facing progress только к reasoning/final answer. scope: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: note Codex hybrid commentary preservation`
+2. [IN_PROGRESS] Git Commit: `docs: note Codex hybrid commentary preservation` (hash: TBD)
 
 ### Stream: Targeted Verification
 1. [TODO] Прогнать таргетную verification цепочку: `npm run build --workspace @codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`, `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview` — результаты зафиксировать в todo-plan. scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify Codex commentary and thinking formatting`
