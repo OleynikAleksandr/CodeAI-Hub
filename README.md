@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.25
+## Current Release — v1.2.26
+- **Claude live streaming no longer breaks ordered-list items at marker boundaries.** The Claude thinking/text live buffers now refuse to flush marker-only tails such as `2.` or `-`, so the next chunk keeps the list item title on the same markdown line instead of starting a new paragraph.
+- **Claude thinking bubbles now repair split list markers before they reach the Session dialog.** If a provider fragment still arrives as `2.` followed by the item title in the next chunk, the Project Manager merge layer rejoins it into one markdown list item instead of persisting a broken boundary.
+- **Session ordered lists now render markers outside the content block again.** The dialog CSS no longer uses `list-style-position: inside` for ordered/unordered lists, so loose markdown lists from Claude keep the number and the first paragraph on the same visual line.
+
+### 1.2.25 (previous)
 - **Codex reasoning now renders from completed summary blocks instead of live readable fragments.** The app-server line no longer materializes `thinking` bubbles from `summaryTextDelta` / `textDelta`; user-facing reasoning waits for `item/completed` and emits one block per completed summary section, preserving heading/body boundaries such as `**Crafting concise questions**`.
 - **Standalone bold reasoning headings now keep the correct vertical rhythm in Session UI.** Bold-only paragraph headings keep the gap before the heading while the extra gap after the heading is suppressed, so section titles read as the start of the following paragraph rather than as isolated floating lines.
 - **Codex reasoning contract and regression coverage are now aligned.** The app-server module includes dedicated regression tests for completed-summary emission, fallback behavior without `item.summary[]`, and raw-text fallback when structured reasoning fields are absent.

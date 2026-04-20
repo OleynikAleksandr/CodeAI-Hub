@@ -55,11 +55,11 @@
 
 ### Stream: Targeted Verification
 1. [DONE] Прогнать таргетную verification цепочку: `npm run build --workspace @codeai-hub/claude-module`, `node --test packages/Claude_Module/dist/messaging/claude-text-live-buffer.test.js packages/Claude_Module/dist/messaging/claude-stream-event-router.test.js`, `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview` — все зелёные; результаты зафиксировать в todo-plan. scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify Claude session list-marker formatting`
-2. [TODO] Git Commit: `test: verify Claude session list-marker formatting` (hash: TBD)
+2. [DONE] Git Commit: `test: verify Claude session list-marker formatting` (hash: `023f12715`)
 
 ## Phase 4 — Release Build 1.2.26 (owner: Codex, updated: 2026-04-20)
 ### Stream: Release Notes Preparation
-1. [TODO] Подготовить release docs под будущую версию `1.2.26`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.26 release notes`
+1. [DONE] Подготовить release docs под будущую версию `1.2.26`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.26 release notes`
 2. [TODO] Git Commit: `docs: prepare 1.2.26 release notes` (hash: TBD)
 
 ### Stream: Release Build

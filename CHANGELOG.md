@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.26] - 2026-04-20
+### Fixed
+- **Claude live ordered lists no longer split on marker-only stream fragments.** The Claude thinking and assistant live buffers now backtrack to the previous safe boundary instead of flushing a chunk that ends with a bare markdown marker such as `1.`, `2.`, `-`, `*`, or `+`.
+- **Project Manager now repairs Claude thinking fragments that still arrive with a split list boundary.** The dialog merge layer rejoins `2.` + `Первоначальный запуск` style fragments into one markdown list item before the visible thinking bubble is persisted.
+- **Session ordered lists now keep their markers on the outside line box.** The dialog stylesheet no longer renders loose markdown lists with `list-style-position: inside`, which previously pushed the ordered-list number onto its own visual line when the item started with a paragraph block.
+
+### Tests
+- **Claude list-marker regressions are covered on both provider and UI paths.** Regression tests now cover thinking/text live buffers, the Claude stream router fallback path, and the Project Manager thinking merge repair utility.
+
+### Contracts
+- **Claude session formatting contract is now marker-safe across provider and UI boundaries.** Provider live buffers must not emit marker-only fragments, while the Session UI remains responsible for secondary repair and outside-marker rendering when provider chunking still arrives imperfectly.
+
 ## [1.2.25] - 2026-04-19
 ### Fixed
 - **Codex reasoning no longer splits semantic sections across live `thinking` bubbles.** The app-server line now waits for `item/completed` and emits user-facing reasoning from completed summary blocks instead of readable live fragments built from `summaryTextDelta` / `textDelta`, so heading/body pairs such as `**Exploring model synchronization**` and `**Crafting concise questions**` stay intact.
