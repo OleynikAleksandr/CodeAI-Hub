@@ -712,7 +712,7 @@
   font-size: 12px;
   font-weight: 200;
   line-height: 1.05;
-  color: rgba(173, 178, 186, 0.6);
+  color: rgba(173, 178, 186, 0.7);
 }
 
 .session-dialog__content--thinking-expanded {
@@ -816,7 +816,10 @@
   color: rgba(171, 52, 203, 0.6);
 }
 
-.session-dialog__message--assistant-thinking .session-dialog__content,
+.session-dialog__message--assistant-thinking .session-dialog__content {
+  color: rgba(173, 178, 186, 0.7);
+}
+
 .session-dialog__message--assistant-thinking .session-dialog__timestamp {
   color: rgba(173, 178, 186, 0.6);
 }
