@@ -1,6 +1,6 @@
 # README Current Installation Path Section — Architecture
 
-**Status:** Proposed
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
