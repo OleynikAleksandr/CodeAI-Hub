@@ -46,11 +46,11 @@
 
 ### Stream: Ordered List Marker Rendering
 1. [DONE] Перевести Session dialog list markers на outside positioning без потери compact spacing для nested lists. scope: `media/session-view.css`; expected commit: `fix(ui): render session ordered-list markers outside`
-2. [TODO] Git Commit: `fix(ui): render session ordered-list markers outside` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): render session ordered-list markers outside` (hash: `30a798d4b`)
 
 ## Phase 3 — SSOT Sync And Targeted Verification (owner: Codex, updated: 2026-04-20)
 ### Stream: Contract Documentation
-1. [TODO] Синхронизировать SSOT после реализации: зафиксировать marker-safe live flush contract для Claude и UI-side ordered-list rendering contract. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync Claude session list-marker contract`
+1. [DONE] Синхронизировать SSOT после реализации: зафиксировать marker-safe live flush contract для Claude и UI-side ordered-list rendering contract. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync Claude session list-marker contract`
 2. [TODO] Git Commit: `docs: sync Claude session list-marker contract` (hash: TBD)
 
 ### Stream: Targeted Verification

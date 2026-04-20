@@ -1,9 +1,9 @@
 # UI Bundles (Webview + Project Manager) — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-18
+**Updated:** 2026-04-20
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (2026-04-18)
+**Validated on:** `main` (2026-04-20)
 
 ## Назначение
 UI бандлы, доставляемые как tarball’ы и устанавливаемые в `~/.codeai-hub/packages/ui/**`.
@@ -40,6 +40,8 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 ## Project Manager Session UI Contracts
 - `src/client/project-manager/components/sessions/session-message-dedupe.ts` owns optimistic user-message reconciliation for PM dialog history. When `Stop` + fast resend leaves a recent optimistic user bubble in the local snapshot, the first canonical user message with the same content arriving within the reconciliation window replaces that optimistic placeholder instead of being appended as a duplicate.
 - The same dedupe helper also treats recent `role + createdAt + content` identity as replay-safe for PM session snapshots, so reconnect/history rebuild does not keep appending visually identical user/assistant entries with new ids.
+- `src/client/ui/src/session/dialog-panel-message-utils.ts` is responsible for display-time merge repair of already-split thinking fragments. When a previous thinking fragment ends with a marker-only markdown list line (`1.`, `2.`, `-`, `*`, `+`) and the next fragment starts with ordinary item text, the merge joiner must be a same-line repair (`2. Item`) instead of `2.\nItem`.
+- `media/session-view.css` owns list-marker rendering for PM Session dialog markdown. Ordered/unordered list markers render with `list-style-position: outside`; valid loose markdown lists from providers must keep the marker and the item paragraph on the same visual line, while compact nested-list spacing remains preserved.
 - `src/client/ui/src/session/session-id-bar.tsx` is display-only for `usageLimits`: it renders the current `status.usageLimits` / `usageLimitLabels` snapshot and no longer triggers provider refresh on mount or rebind.
 - `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` and `project-manager-runtime-session-view.tsx` no longer wire `api.refreshUsageLimits(...)` into `SessionView`. Automatic usage refresh ownership is intentionally outside the bundle mount lifecycle; the PM/UI layer only displays telemetry already delivered by runtime snapshots or stream events.
 
