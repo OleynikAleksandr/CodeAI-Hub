@@ -53,6 +53,7 @@ export interface RawLocalizationCategorySettings {
   readonly artifactsForTheUser?: unknown;
   readonly interactiveTemplates?: unknown;
   readonly messagesForTheUser?: unknown;
+  readonly reasoning?: unknown;
   readonly systemFeedback?: unknown;
   readonly uiHelperText?: unknown;
   readonly uiInterface?: unknown;
@@ -65,6 +66,8 @@ export interface RawGeneralLocalizationSettings {
   readonly defaultLanguage?: unknown;
   readonly engineId?: unknown;
   readonly glossaryEnabled?: unknown;
+  readonly reasoningEngineId?: unknown;
+  readonly uiEngineId?: unknown;
   readonly workflowTermsPolicy?: unknown;
 }
 export interface RawGeneralSettings {

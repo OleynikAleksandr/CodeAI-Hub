@@ -61,6 +61,7 @@ type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
 interface ApprovedLocalizationCategorySettings {
   readonly artifactsForTheUser: string;
   readonly messagesForTheUser: string;
+  readonly reasoning: string;
   readonly uiHelperText: string;
   readonly uiLabels: string;
 }
@@ -68,6 +69,7 @@ interface LocalizationCategorySettings {
   readonly artifactsForTheUser?: string;
   readonly interactiveTemplates: string;
   readonly messagesForTheUser?: string;
+  readonly reasoning: string;
   readonly systemFeedback: string;
   readonly uiHelperText?: string;
   readonly uiInterface: string;
@@ -80,6 +82,7 @@ interface LocalizationSettings {
   readonly defaultLanguage: string;
   readonly engineId: string;
   readonly glossaryEnabled: boolean;
+  readonly reasoningEngineId: string;
   readonly workflowTermsPolicy: LocalizationWorkflowTermsPolicy;
 }
 interface GeneralSettings {
@@ -215,17 +218,24 @@ const mapAutoUpdateSettings = (
 const mapLocalizationCategories = (
   value: RawLocalizationCategorySettings | undefined,
   defaultLanguage: string
-): LocalizationCategorySettings =>
-  createLocalizationCategorySettings({
+): LocalizationCategorySettings => {
+  const messagesForTheUser = resolveLocalizationCategory(
+    value,
+    ["messagesForTheUser", "systemFeedback"],
+    defaultLanguage
+  );
+
+  return createLocalizationCategorySettings({
     artifactsForTheUser: resolveLocalizationCategory(
       value,
       ["artifactsForTheUser", "interactiveTemplates"],
       defaultLanguage
     ),
-    messagesForTheUser: resolveLocalizationCategory(
+    messagesForTheUser,
+    reasoning: resolveLocalizationCategory(
       value,
-      ["messagesForTheUser", "systemFeedback"],
-      defaultLanguage
+      ["reasoning"],
+      messagesForTheUser
     ),
     uiHelperText: resolveLocalizationCategory(
       value,
@@ -238,6 +248,7 @@ const mapLocalizationCategories = (
       defaultLanguage
     ),
   });
+};
 
 const mapLocalizationSettings = (
   value: RawGeneralLocalizationSettings | undefined
@@ -251,16 +262,22 @@ const mapLocalizationSettings = (
     legacyDefaultLanguage
   );
 
+  const uiEngineId =
+    mapLocalizationString(value?.uiEngineId, "") ||
+    mapLocalizationString(value?.engineId, DEFAULT_LOCALIZATION_ENGINE_ID);
+  const reasoningEngineId = mapLocalizationString(
+    value?.reasoningEngineId,
+    DEFAULT_LOCALIZATION_ENGINE_ID
+  );
+
   return {
     defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
     categories,
     workflowTermsPolicy: deriveWorkflowTermsPolicy(
       categories.uiLabels ?? categories.uiInterface
     ),
-    engineId: mapLocalizationString(
-      value?.engineId,
-      DEFAULT_LOCALIZATION_ENGINE_ID
-    ),
+    engineId: uiEngineId,
+    reasoningEngineId,
     glossaryEnabled:
       typeof value?.glossaryEnabled === "boolean"
         ? value.glossaryEnabled
@@ -415,6 +432,7 @@ const areLocalizationCategoriesEqual = (
 ): boolean =>
   left.artifactsForTheUser === right.artifactsForTheUser &&
   left.messagesForTheUser === right.messagesForTheUser &&
+  left.reasoning === right.reasoning &&
   left.uiHelperText === right.uiHelperText &&
   left.uiLabels === right.uiLabels;
 
@@ -426,6 +444,7 @@ const areLocalizationSettingsEqual = (
   areLocalizationCategoriesEqual(left.categories, right.categories) &&
   left.workflowTermsPolicy === right.workflowTermsPolicy &&
   left.engineId === right.engineId &&
+  left.reasoningEngineId === right.reasoningEngineId &&
   left.glossaryEnabled === right.glossaryEnabled;
 
 const areClaudeSettingsEqual = (

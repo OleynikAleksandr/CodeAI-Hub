@@ -53,7 +53,7 @@
 1. [DONE] Перевести remaining provider-local live translation adapters для visible thought/progress copy на `reasoningEngineId` + `reasoningLanguage`; scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (4 файла — единый pattern изменения по трём провайдерам, плюс док)
 2. [DONE] Git Commit: `fix: align provider live reasoning translation with dedicated engine and language` (hash: 903b73761)
 3. [DONE] Добавить regression coverage на split UI/reasoning routing, reasoning language decoupling от `Messages for the User` и legacy migration fallback; scope: `packages/core/src/session-translation/session-translation-policy-resolver.test.ts` (4 новых/обновлённых теста на split contract), `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts` (дооборудование applied-turn-config фикстур под новые `reasoningEngineId` / `reasoningLanguage`); hidden-thinking skip остаётся накрыт существующим `message-processor.pretool-thinking.translation.test.ts` (invariant `visibilityAtEmission` не трогали)
-4. [DONE] Git Commit: `test: cover dedicated reasoning translation contract` (hash: TBD)
+4. [DONE] Git Commit: `test: cover dedicated reasoning translation contract` (hash: ee3df2857)
 
 ## Phase 3 — Settings UI And Localization Copy (owner: Codex, updated: 2026-04-20)
 ### Stream: Settings Controls
@@ -61,8 +61,8 @@
 2. [TODO] Git Commit: `feat: add dedicated reasoning translation engine control` (hash: TBD)
 3. [TODO] Добавить пятую карточку `Reasoning` с собственным language selector и ownership-aware title/description; scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`; expected commit: `feat: add dedicated reasoning language settings card`
 4. [TODO] Git Commit: `feat: add dedicated reasoning language settings card` (hash: TBD)
-5. [TODO] Расширить browser settings state/raw/save handlers под новые поля (`uiEngineId`, `reasoningEngineId`, `reasoningLanguage`) и migration defaults; scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`; expected commit: `feat: wire split translation engine and reasoning language state`
-6. [TODO] Git Commit: `feat: wire split translation engine and reasoning language state` (hash: TBD)
+5. [DONE] Расширить browser settings state/raw/save handlers под новые поля (`uiEngineId`, `reasoningEngineId`, `reasoningLanguage`) и migration defaults; scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts` (4 файла — state model, raw shape, reducer helpers и handler hook обновлены в одном логическом изменении)
+6. [DONE] Git Commit: `feat: wire split translation engine and reasoning language state` (hash: TBD)
 
 ### Stream: Localized Source Keys
 1. [TODO] Добавить approved English keys для нового `Reasoning Translation Engine` selector label/helper/warning и явно промаркировать ownership новых строк; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `packages/localization/assets/localization/source/en/ui_labels.json`, `packages/localization/assets/localization/source/en/ui_helper_text.json`; expected commit: `feat: localize reasoning translation engine copy`

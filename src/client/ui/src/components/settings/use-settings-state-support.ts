@@ -38,6 +38,7 @@ export interface CoreControlState {
 
 export type LocalizationCategoryKey =
   | "interactiveTemplates"
+  | "reasoning"
   | "systemFeedback"
   | "uiInterface"
   | "userGuidance"
@@ -49,6 +50,7 @@ type LocalizationCategorySettings = LocalizationSettingsState["categories"];
 type ApprovedLocalizationCategoryKey =
   | "artifactsForTheUser"
   | "messagesForTheUser"
+  | "reasoning"
   | "uiHelperText"
   | "uiLabels";
 type ApprovedLocalizationCategoryState = Record<
@@ -166,6 +168,11 @@ const resolveApprovedLocalizationCategories = (
   categories: LocalizationCategorySettings
 ): ApprovedLocalizationCategoryState => {
   const fallback = DEFAULT_LOCALIZATION_LANGUAGE;
+  const messagesForTheUser = resolveLocalizationCategory(
+    categories,
+    ["messagesForTheUser", "systemFeedback"],
+    fallback
+  );
 
   return {
     artifactsForTheUser: resolveLocalizationCategory(
@@ -173,10 +180,11 @@ const resolveApprovedLocalizationCategories = (
       ["artifactsForTheUser", "interactiveTemplates"],
       fallback
     ),
-    messagesForTheUser: resolveLocalizationCategory(
+    messagesForTheUser,
+    reasoning: resolveLocalizationCategory(
       categories,
-      ["messagesForTheUser", "systemFeedback"],
-      fallback
+      ["reasoning"],
+      messagesForTheUser
     ),
     uiHelperText: resolveLocalizationCategory(
       categories,
@@ -197,6 +205,7 @@ const createMirroredLocalizationCategories = (
   artifactsForTheUser: approved.artifactsForTheUser,
   interactiveTemplates: approved.artifactsForTheUser,
   messagesForTheUser: approved.messagesForTheUser,
+  reasoning: approved.reasoning,
   systemFeedback: approved.messagesForTheUser,
   uiHelperText: approved.uiHelperText,
   uiInterface: approved.uiLabels,
@@ -246,6 +255,9 @@ export const updateLocalizationCategorySelection = (
   if (category === "systemFeedback") {
     approvedCategories.messagesForTheUser = normalizedLanguage;
   }
+  if (category === "reasoning") {
+    approvedCategories.reasoning = normalizedLanguage;
+  }
   if (category === "userGuidance") {
     approvedCategories.uiHelperText = normalizedLanguage;
   }
@@ -280,6 +292,7 @@ export const updateLocalizationDefaultLanguageSelection = (
         categories: createMirroredLocalizationCategories({
           artifactsForTheUser: normalizedLanguage,
           messagesForTheUser: normalizedLanguage,
+          reasoning: normalizedLanguage,
           uiHelperText: normalizedLanguage,
           uiLabels: normalizedLanguage,
         }),
@@ -334,6 +347,7 @@ export interface UseSettingsStateResult {
     provider: ProviderId,
     enabled: boolean
   ) => void;
+  readonly handleReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly handleReset: () => void;
   readonly handleResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
   readonly handleRestartCore: () => void;

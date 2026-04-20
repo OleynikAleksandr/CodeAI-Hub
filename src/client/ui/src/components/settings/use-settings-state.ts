@@ -297,6 +297,23 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleReasoningTranslationEngineIdChange = useCallback(
+    (engineId: string) => {
+      const normalizedEngineId = normalizeLocalizationEngineId(engineId);
+      updateSettings({
+        ...settings,
+        general: {
+          ...settings.general,
+          localization: {
+            ...settings.general.localization,
+            reasoningEngineId: normalizedEngineId,
+          },
+        },
+      });
+    },
+    [settings, updateSettings]
+  );
+
   const handleLocalizationGlossaryEnabledChange = useCallback(
     (enabled: boolean) => {
       updateSettings({
@@ -449,6 +466,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
+    handleReasoningTranslationEngineIdChange,
     handleProviderAutoUpdateChange,
     handleRestartCore,
     handleResponsePolicyModeChange,
