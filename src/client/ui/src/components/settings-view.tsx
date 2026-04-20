@@ -151,6 +151,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
+    handleReasoningTranslationEngineIdChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
     handleRestartCore,
@@ -250,6 +251,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
                   }
                   onLocalizationWorkflowTermsPolicyChange={
                     handleLocalizationWorkflowTermsPolicyChange
+                  }
+                  onReasoningTranslationEngineIdChange={
+                    handleReasoningTranslationEngineIdChange
                   }
                   onResponsePolicyModeChange={handleResponsePolicyModeChange}
                   onRestartCore={handleRestartCore}

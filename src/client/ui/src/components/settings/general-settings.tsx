@@ -87,6 +87,7 @@ interface GeneralSettingsProps {
   readonly onLocalizationWorkflowTermsPolicyChange: (
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
+  readonly onReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
   readonly onRestartCore: () => void;
   readonly onStrictInstructionTextChange: (value: string) => void;
@@ -213,6 +214,9 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
         onDefaultLanguageChange={props.onLocalizationDefaultLanguageChange}
         onEngineIdChange={props.onLocalizationEngineIdChange}
         onGlossaryEnabledChange={props.onLocalizationGlossaryEnabledChange}
+        onReasoningTranslationEngineIdChange={
+          props.onReasoningTranslationEngineIdChange
+        }
         onWorkflowTermsPolicyChange={
           props.onLocalizationWorkflowTermsPolicyChange
         }

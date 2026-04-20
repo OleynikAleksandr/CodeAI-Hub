@@ -28,7 +28,8 @@ Allowed outcomes are only:
 2. `UI Helper Text`
 3. `Messages for the User`
 4. `Artifacts for the User`
-5. `Internal Agent Instructions` (English-only boundary)
+5. `Reasoning` (runtime-only category for visible provider `Thinking` / `Reasoning` bubbles shown in the Session dialog)
+6. `Internal Agent Instructions` (English-only boundary)
 
 Automatic guessing is not allowed.
 
@@ -68,10 +69,9 @@ Use for user-addressed runtime communication such as:
 - empty states;
 - status lines;
 - success/failure notices;
-- larger help panels and runtime guidance blocks;
-- visible provider `Thinking` / `Reasoning` bubbles shown in the Session dialog.
+- larger help panels and runtime guidance blocks.
 
-Visible provider `Thinking` / `Reasoning` is runtime communication addressed to the user through the dialog transcript. Its target language and translation-engine selection follow `Messages for the User`. This is not a new category; the rule records the existing ownership so that new surfaces do not misclassify visible thinking as `UI Helper Text` or as an internal prompt asset. Hidden thinking that is filtered out of the user-visible transcript stays outside the localization pipeline and is not translated.
+After the UI/Reasoning translation split, `Messages for the User` no longer owns visible provider `Thinking` / `Reasoning` bubbles. That ownership now lives under the dedicated `Reasoning` category (§3.5) with its own target language and its own `Reasoning Translation Engine` selector, independent from `Messages for the User` language and from the `UI Translation Engine`. Hidden thinking that is filtered out of the user-visible transcript stays outside the localization pipeline and is not translated.
 
 ### 3.4. `Artifacts for the User`
 
@@ -88,7 +88,23 @@ When an artifact mixes stable structural identifiers with descriptive prose, the
 - canonical structural names, ids, and titles that function as stable architecture vocabulary may remain English-only;
 - descriptive prose such as purposes, responsibilities, notes, and assumptions may follow the configured `Artifacts for the User` language.
 
-### 3.5. `Internal Agent Instructions`
+### 3.5. `Reasoning`
+
+Use for visible provider `Thinking` / `Reasoning` bubbles surfaced in the Session dialog transcript:
+
+- streaming `thinking_delta` / reasoning segments emitted by the provider while a turn is in flight;
+- final assembled thinking blocks and tool-use preamble text that is rendered under the thinking contract;
+- visible thought/progress copy produced by provider-local adapters that still run their own reasoning translation path.
+
+`Reasoning` ownership constraints:
+
+- target language is selected through the dedicated fifth `Reasoning` card in the localization settings section; it is independent from `Messages for the User` after the UI/Reasoning translation split;
+- translation engine is selected through the dedicated `Reasoning Translation Engine` selector (default `Google GTX Free` for low-risk live translation); it is independent from the `UI Translation Engine`;
+- `Reasoning` is a runtime-only category — there is no bundled English source dictionary for live thought bubbles, and reasoning does not participate in browser bootstrap bundle materialization;
+- reasoning engine or reasoning language changes are never strict save-impact: they never block Settings save, never block Project Manager / new session sends, and never trigger a UI bundle rebuild;
+- hidden provider `Thinking` / `Reasoning` that is filtered out of the user-visible transcript stays outside the localization pipeline entirely and is never translated.
+
+### 3.6. `Internal Agent Instructions`
 
 Use for:
 

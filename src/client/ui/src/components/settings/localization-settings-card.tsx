@@ -8,6 +8,7 @@ import { resolveLocalizationEngineAvailability } from "./localization-engine-ava
 import LocalizationGlossaryEditor from "./localization-glossary-editor";
 import { LocalizationLanguageCombobox } from "./localization-language-combobox";
 import type { LocalizationLanguageOption } from "./localization-language-filter";
+import { TranslationEngineSelector } from "./localization-translation-engine-selector";
 import SettingsCard from "./settings-card";
 import type { Settings } from "./settings-state-model";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
@@ -28,6 +29,7 @@ interface LocalizationSettingsCardProps {
   readonly onDefaultLanguageChange: (defaultLanguage: string) => void;
   readonly onEngineIdChange: (engineId: string) => void;
   readonly onGlossaryEnabledChange: (enabled: boolean) => void;
+  readonly onReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly onWorkflowTermsPolicyChange: (
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
@@ -75,18 +77,6 @@ const labelDescriptionStyles: CSSProperties = {
   margin: 0,
 };
 
-const inputStyles: CSSProperties = {
-  width: "100%",
-  boxSizing: "border-box",
-  minHeight: "36px",
-  padding: "8px 10px",
-  borderRadius: "6px",
-  border: `1px solid ${settingsColorTokens.borderStrong}`,
-  background: settingsColorTokens.surface,
-  color: settingsColorTokens.textPrimary,
-  fontSize: settingsTypographyTokens.bodyFontSize,
-};
-
 const toggleRowStyles: CSSProperties = {
   display: "flex",
   alignItems: "flex-start",
@@ -101,24 +91,6 @@ const checkboxStyles: CSSProperties = {
   width: "16px",
   height: "16px",
   marginTop: "2px",
-};
-
-const availabilityHintStyles: CSSProperties = {
-  fontSize: settingsTypographyTokens.bodyFontSize,
-  color: settingsColorTokens.textMuted,
-  lineHeight: 1.5,
-  margin: 0,
-};
-
-const availabilityWarningStyles: CSSProperties = {
-  border: `1px solid ${settingsColorTokens.borderStrong}`,
-  borderRadius: "6px",
-  background: "rgba(190, 145, 75, 0.12)",
-  color: settingsColorTokens.textSecondary,
-  fontSize: settingsTypographyTokens.bodyFontSize,
-  lineHeight: 1.5,
-  margin: 0,
-  padding: "10px 12px",
 };
 
 const formatUnknownTranslationEngineLabel = (engineId: string): string =>
@@ -166,6 +138,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
   onCategoryLanguageChange,
   onEngineIdChange,
   onGlossaryEnabledChange,
+  onReasoningTranslationEngineIdChange,
 }) => {
   const { availableEngines, t } = useLocalization();
   const [providers, setProviders] = useState<
@@ -309,6 +282,28 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
 
   const activeEngineId = localization.engineId;
   const activeEngineAvailability = engineAvailability.get(activeEngineId);
+  const reasoningEngineId = localization.reasoningEngineId;
+  const selectedReasoningEngineOption = engineOptions.find(
+    (engine) => engine.engineId === reasoningEngineId
+  );
+  const visibleReasoningEngineOptions = selectedReasoningEngineOption
+    ? engineOptions
+    : [{ engineId: reasoningEngineId, languages: [] }, ...engineOptions];
+  const reasoningEngineAvailability = useMemo(
+    () =>
+      new Map(
+        visibleReasoningEngineOptions.map((engine) => [
+          engine.engineId,
+          resolveLocalizationEngineAvailability({
+            engineId: engine.engineId,
+            providers,
+          }),
+        ])
+      ),
+    [providers, visibleReasoningEngineOptions]
+  );
+  const activeReasoningEngineAvailability =
+    reasoningEngineAvailability.get(reasoningEngineId);
   const unavailableSuffix = t(
     "ui_interface",
     "settings.localization.translation_engine.option.unavailable_suffix",
@@ -319,13 +314,15 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
     "settings.localization.translation_engine.availability_hint",
     "Google GTX works without extra account setup. OpenAI and Anthropic engines require matching provider access in the connected CLI."
   );
-  const activeEngineUnavailableMessage = (() => {
-    if (!activeEngineAvailability?.disabled) {
+  const resolveEngineUnavailableMessage = (
+    availability: ReturnType<typeof resolveLocalizationEngineAvailability>
+  ): string | null => {
+    if (!availability.disabled) {
       return null;
     }
-    const providerId = activeEngineAvailability.providerId;
+    const providerId = availability.providerId;
     const providerStatusMessage =
-      activeEngineAvailability.provider?.statusMessage?.trim() ?? "";
+      availability.provider?.statusMessage?.trim() ?? "";
     if (providerStatusMessage.length > 0) {
       return providerStatusMessage;
     }
@@ -348,12 +345,13 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
       "settings.localization.translation_engine.provider_unavailable_message",
       "This translation engine is unavailable until its provider access is restored."
     );
-  })();
-
-  const engineSelectStyles: CSSProperties = {
-    ...inputStyles,
-    appearance: "none",
   };
+  const activeEngineUnavailableMessage = activeEngineAvailability
+    ? resolveEngineUnavailableMessage(activeEngineAvailability)
+    : null;
+  const reasoningEngineUnavailableMessage = activeReasoningEngineAvailability
+    ? resolveEngineUnavailableMessage(activeReasoningEngineAvailability)
+    : null;
 
   return (
     <SettingsCard
@@ -375,48 +373,55 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
       </p>
 
       <div style={controlGridStyles}>
-        <div style={controlRowStyles}>
-          <p style={labelTitleStyles}>
-            {t(
-              "ui_interface",
-              "settings.localization.translation_engine.label",
-              "Translation engine"
-            )}
-          </p>
-          <p style={labelDescriptionStyles}>
-            {t(
-              "user_guidance",
-              "settings.localization.translation_engine.description",
-              "Engine used for localization bundle materialization and live translation of user-facing assistant text."
-            )}
-          </p>
-          <select
-            onChange={(event) => onEngineIdChange(event.target.value)}
-            style={engineSelectStyles}
-            value={activeEngineId}
-          >
-            {visibleEngineOptions.map((engine) => {
-              const availability = engineAvailability.get(engine.engineId);
-              const disabled = availability?.disabled === true;
-              const label = resolveTranslationEngineLabel(engine.engineId, t);
-              return (
-                <option
-                  disabled={disabled}
-                  key={engine.engineId}
-                  value={engine.engineId}
-                >
-                  {disabled ? `${label} (${unavailableSuffix})` : label}
-                </option>
-              );
-            })}
-          </select>
-          <p style={availabilityHintStyles}>{genericAvailabilityHint}</p>
-          {activeEngineUnavailableMessage ? (
-            <p style={availabilityWarningStyles}>
-              {activeEngineUnavailableMessage}
-            </p>
-          ) : null}
-        </div>
+        <TranslationEngineSelector
+          availabilityByEngineId={engineAvailability}
+          description={t(
+            "user_guidance",
+            "settings.localization.ui_translation_engine.description",
+            "Engine used for interface localization bundle materialization and the browser bootstrap payload."
+          )}
+          hint={genericAvailabilityHint}
+          label={t(
+            "ui_interface",
+            "settings.localization.ui_translation_engine.label",
+            "UI Translation Engine"
+          )}
+          onChange={onEngineIdChange}
+          renderEngineLabel={(engineId) =>
+            resolveTranslationEngineLabel(engineId, t)
+          }
+          selectedEngineId={activeEngineId}
+          unavailableMessage={activeEngineUnavailableMessage}
+          unavailableSuffix={unavailableSuffix}
+          visibleEngineOptions={visibleEngineOptions}
+        />
+
+        <TranslationEngineSelector
+          availabilityByEngineId={reasoningEngineAvailability}
+          description={t(
+            "user_guidance",
+            "settings.localization.reasoning_translation_engine.description",
+            "Engine used for live translation of visible Thinking and Reasoning bubbles. Google GTX Free is recommended for the most stable live translation."
+          )}
+          hint={t(
+            "user_guidance",
+            "settings.localization.reasoning_translation_engine.warning",
+            "Provider-backed engines can improve reasoning translation quality, but under higher parallel activity they may increase runtime load and cause visible reasoning to fall back to source English."
+          )}
+          label={t(
+            "ui_interface",
+            "settings.localization.reasoning_translation_engine.label",
+            "Reasoning Translation Engine"
+          )}
+          onChange={onReasoningTranslationEngineIdChange}
+          renderEngineLabel={(engineId) =>
+            resolveTranslationEngineLabel(engineId, t)
+          }
+          selectedEngineId={reasoningEngineId}
+          unavailableMessage={reasoningEngineUnavailableMessage}
+          unavailableSuffix={unavailableSuffix}
+          visibleEngineOptions={visibleReasoningEngineOptions}
+        />
 
         <label style={toggleRowStyles}>
           <input
