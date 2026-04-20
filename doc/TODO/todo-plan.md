@@ -51,10 +51,10 @@
 ## Phase 3 — SSOT Sync And Targeted Verification (owner: Codex, updated: 2026-04-20)
 ### Stream: Contract Documentation
 1. [DONE] Синхронизировать SSOT после реализации: зафиксировать marker-safe live flush contract для Claude и UI-side ordered-list rendering contract. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync Claude session list-marker contract`
-2. [TODO] Git Commit: `docs: sync Claude session list-marker contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync Claude session list-marker contract` (hash: `d7ac9127a`)
 
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетную verification цепочку: relevant Claude messaging tests, `npm run build --workspace @codeai-hub/claude-module`, затем `npm run build:webview`; результаты зафиксировать в todo-plan. scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify Claude session list-marker formatting`
+1. [DONE] Прогнать таргетную verification цепочку: `npm run build --workspace @codeai-hub/claude-module`, `node --test packages/Claude_Module/dist/messaging/claude-text-live-buffer.test.js packages/Claude_Module/dist/messaging/claude-stream-event-router.test.js`, `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview` — все зелёные; результаты зафиксировать в todo-plan. scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify Claude session list-marker formatting`
 2. [TODO] Git Commit: `test: verify Claude session list-marker formatting` (hash: TBD)
 
 ## Phase 4 — Release Build 1.2.26 (owner: Codex, updated: 2026-04-20)
