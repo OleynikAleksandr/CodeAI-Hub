@@ -26,8 +26,12 @@
 ## Phase 1 — Release 1.2.28 (owner: Codex, updated: 2026-04-20)
 ### Stream: Packaging
 1. [DONE] Обновить release-facing docs под `1.2.28` для фикса autoscroll после late localized last-bubble growth; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.28 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.28 release notes` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.28`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.28`
+2. [DONE] Git Commit: `docs: prepare 1.2.28 release notes` (hash: `4dbeda83c`)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.28`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.28`
 4. [TODO] Git Commit: `build: release 1.2.28` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и закрыть scope архивированием planning/todo; scope: release artifacts, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/Archive/`, `doc/TODO/todo-plan.md`; commit: `docs: close 1.2.28 release scope`
 6. [TODO] Git Commit: `docs: close 1.2.28 release scope` (hash: TBD)
+
+Build notes:
+- `./scripts/build-all.sh` ✅
+- Unified version after build: `1.2.28`
