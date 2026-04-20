@@ -1,6 +1,6 @@
 # Session Dialog Thinking Provider Accent - Architecture
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
