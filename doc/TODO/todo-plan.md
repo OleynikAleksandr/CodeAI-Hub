@@ -60,10 +60,10 @@
 ## Phase 4 — Release Build 1.2.26 (owner: Codex, updated: 2026-04-20)
 ### Stream: Release Notes Preparation
 1. [DONE] Подготовить release docs под будущую версию `1.2.26`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.26 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.26 release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.26 release notes` (hash: `f9c34d067`)
 
 ### Stream: Release Build
-1. [TODO] Выполнить release checklist для `1.2.26`: `build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать version/manifest updates и release artifacts. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.26`
+1. [IN_PROGRESS] Выполнить release checklist для `1.2.26`: `build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, зафиксировать version/manifest updates и release artifacts. `build-all.sh` успешно завершён; pending step — финальный `./scripts/build-release.sh --use-current-version` на чистом дереве. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.26`
 2. [TODO] Git Commit: `build: release 1.2.26` (hash: TBD)
 
 ## Phase 5 — Execution Cycle Closeout (owner: Codex, updated: 2026-04-20)
