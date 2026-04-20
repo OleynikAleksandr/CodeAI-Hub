@@ -31,8 +31,8 @@
 ## Phase 2 — Release 1.2.34 (owner: Codex, updated: 2026-04-20)
 ### Stream: Packaging
 1. [DONE] Обновить release-facing docs под `1.2.34` для unified thinking chrome; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.34 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.34 release notes` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.34`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.34`
+2. [DONE] Git Commit: `docs: prepare 1.2.34 release notes` (hash: `9b769ede2`)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.34`; unified version поднята до `1.2.34`, provider/core/ui/launcher tarball артефакты собраны успешно; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.34`
 4. [TODO] Git Commit: `build: release 1.2.34` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и закрыть scope архивированием planning/todo; expected commit: `docs: close 1.2.34 release scope`
 6. [TODO] Git Commit: `docs: close 1.2.34 release scope` (hash: TBD)
