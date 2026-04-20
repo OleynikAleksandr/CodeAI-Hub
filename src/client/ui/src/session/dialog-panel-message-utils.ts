@@ -8,6 +8,9 @@ const LEADING_MARKDOWN_LIST_MARKER_REGEX = /^(?:\d+\.|[-*+])(?:\s|$)/u;
 const LEADING_STANDALONE_BOLD_HEADING_BLOCK_REGEX =
   /^\s*\*\*[^\n]*\*\*\s*(?:\r?\n){2,}\S/u;
 
+const isAssistantThinkingMessage = (message: SessionMessage): boolean =>
+  message.role === "assistant" && message.tag === "thinking";
+
 export const isSegmentBoundaryMessage = (message: SessionMessage): boolean =>
   message.role === "system" &&
   (message.id.startsWith("segment-boundary:") ||
@@ -32,6 +35,9 @@ export const buildMessageClassNames = (
     "session-dialog__message",
     `session-dialog__message--${message.role}`,
   ];
+  if (isAssistantThinkingMessage(message)) {
+    classes.push("session-dialog__message--assistant-thinking");
+  }
   if (message.role === "assistant" && providerTheme) {
     classes.push(`session-dialog__message--assistant-${providerTheme}`);
   }
@@ -59,9 +65,6 @@ export const resolveRoleLabel = (
   }
   return "System";
 };
-
-const isAssistantThinkingMessage = (message: SessionMessage): boolean =>
-  message.role === "assistant" && message.tag === "thinking";
 
 const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
   message.role === "thinking" || isAssistantThinkingMessage(message);

@@ -767,15 +767,23 @@
   color: #ab34cb;
 }
 
-.session-dialog__message--thinking {
+.session-dialog__message--thinking,
+.session-dialog__message--assistant-thinking {
   z-index: 0;
   gap: 0;
-  padding: 0 10px;
-  margin: 0 80px -18px 30px;
   background-color: rgba(49, 50, 51, 0.4);
   border-color: rgba(70, 71, 74, 0.4);
-  border-radius: 4px 4px 0 0;
   box-shadow: none;
+}
+
+.session-dialog__message--thinking {
+  padding: 0 10px;
+  margin: 0 80px -18px 30px;
+  border-radius: 4px 4px 0 0;
+}
+
+.session-dialog__message--assistant-thinking {
+  margin: 0 80px 0 30px;
 }
 
 .session-dialog__message--thinking-terminal {
@@ -783,8 +791,14 @@
   border-radius: 4px;
 }
 
-.session-dialog__message--thinking .session-dialog__role {
+.session-dialog__message--thinking .session-dialog__role,
+.session-dialog__message--assistant-thinking .session-dialog__role {
   font-weight: 200;
+  color: rgba(173, 178, 186, 0.6);
+}
+
+.session-dialog__message--assistant-thinking .session-dialog__content,
+.session-dialog__message--assistant-thinking .session-dialog__timestamp {
   color: rgba(173, 178, 186, 0.6);
 }
 

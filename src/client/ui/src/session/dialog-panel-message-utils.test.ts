@@ -2,9 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { SessionMessage } from "../../../../types/session";
 import {
+  buildMessageClassNames,
   mergeLiveAssistantMessages,
   mergeThinkingMessages,
 } from "./dialog-panel-message-utils";
+
+const ASSISTANT_MESSAGE_CLASS_REGEX = /\bsession-dialog__message--assistant\b/u;
+const ASSISTANT_THINKING_CLASS_REGEX =
+  /\bsession-dialog__message--assistant-thinking\b/u;
+const ASSISTANT_CODEX_CLASS_REGEX =
+  /\bsession-dialog__message--assistant-codex\b/u;
 
 const createMessage = (
   id: string,
@@ -83,6 +90,18 @@ test("mergeLiveAssistantMessages breaks the group when a thinking message sits b
   assert.equal(merged[0].content, "Live chunk one. ");
   assert.equal(merged[1].tag, "thinking");
   assert.equal(merged[2].content, "Live chunk two.");
+});
+
+test("buildMessageClassNames adds dedicated thinking styling hook for assistant-tagged reasoning bubbles", () => {
+  const message = createMessage("1", "assistant", "Reasoning block.", {
+    tag: "thinking",
+  });
+
+  const classes = buildMessageClassNames(message, "codex");
+
+  assert.match(classes, ASSISTANT_MESSAGE_CLASS_REGEX);
+  assert.match(classes, ASSISTANT_THINKING_CLASS_REGEX);
+  assert.match(classes, ASSISTANT_CODEX_CLASS_REGEX);
 });
 
 test("mergeLiveAssistantMessages assembles localizedContent across consecutive live bubbles", () => {
