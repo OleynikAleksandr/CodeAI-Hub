@@ -1,6 +1,6 @@
 # Session Dialog Thinking Chrome Exact Color - Release 1.2.32
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
