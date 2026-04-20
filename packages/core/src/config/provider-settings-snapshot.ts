@@ -160,9 +160,44 @@ export const loadClaudeSettingsSnapshot = (
   return parsed ? (parsed as ClaudeSettingsSnapshot) : null;
 };
 
-export const loadMessagesForTheUserLanguage = (
+export const loadUITranslationEngineId = (settingsPath: string): string => {
+  const parsed = loadJsonSnapshot(settingsPath);
+  if (!parsed) {
+    return DEFAULT_TRANSLATION_ENGINE_ID;
+  }
+
+  const general = isRecord(parsed.general) ? parsed.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+
+  return (
+    normalizeOptionalString(localization.uiEngineId) ??
+    normalizeOptionalString(localization.engineId) ??
+    DEFAULT_TRANSLATION_ENGINE_ID
+  );
+};
+
+export const loadReasoningTranslationEngineId = (
   settingsPath: string
 ): string => {
+  const parsed = loadJsonSnapshot(settingsPath);
+  if (!parsed) {
+    return DEFAULT_TRANSLATION_ENGINE_ID;
+  }
+
+  const general = isRecord(parsed.general) ? parsed.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+
+  return (
+    normalizeOptionalString(localization.reasoningEngineId) ??
+    DEFAULT_TRANSLATION_ENGINE_ID
+  );
+};
+
+export const loadReasoningLanguage = (settingsPath: string): string => {
   const parsed = loadJsonSnapshot(settingsPath);
   if (!parsed) {
     return DEFAULT_LOCALIZATION_LANGUAGE;
@@ -179,27 +214,15 @@ export const loadMessagesForTheUserLanguage = (
     localization.defaultLanguage,
     DEFAULT_LOCALIZATION_LANGUAGE
   );
-
-  return resolveLocalizationCategory(
+  const fallbackFromMessages = resolveLocalizationCategory(
     categories,
     ["messagesForTheUser", "systemFeedback"],
     defaultLanguage
   );
-};
 
-export const loadTranslationEngineId = (settingsPath: string): string => {
-  const parsed = loadJsonSnapshot(settingsPath);
-  if (!parsed) {
-    return DEFAULT_TRANSLATION_ENGINE_ID;
-  }
-
-  const general = isRecord(parsed.general) ? parsed.general : {};
-  const localization = isRecord(general.localization)
-    ? general.localization
-    : {};
-
-  return (
-    normalizeOptionalString(localization.engineId) ??
-    DEFAULT_TRANSLATION_ENGINE_ID
+  return resolveLocalizationCategory(
+    categories,
+    ["reasoning"],
+    fallbackFromMessages
   );
 };

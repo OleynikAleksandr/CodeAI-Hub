@@ -12,8 +12,9 @@ import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
-  loadMessagesForTheUserLanguage,
-  loadTranslationEngineId,
+  loadReasoningLanguage,
+  loadReasoningTranslationEngineId,
+  loadUITranslationEngineId,
 } from "../config/provider-settings-snapshot";
 
 export type SessionThinkingVisibilityProviderId = "claude" | "codex" | "gemini";
@@ -161,7 +162,8 @@ export class SessionTranslationPolicyResolver {
 
   resolve(settingsPath: string): SessionTranslationPolicy {
     const runtimeSettings = this.createRuntimeSettingsSnapshot(settingsPath);
-    const resolvedTargetLanguage = loadMessagesForTheUserLanguage(settingsPath)
+    const reasoningEngineId = loadReasoningTranslationEngineId(settingsPath);
+    const resolvedTargetLanguage = loadReasoningLanguage(settingsPath)
       .trim()
       .toLowerCase();
     const targetLanguage =
@@ -171,7 +173,7 @@ export class SessionTranslationPolicyResolver {
     if (!targetLanguage) {
       return {
         enabled: false,
-        engineId: runtimeSettings.engineId,
+        engineId: reasoningEngineId,
         skipReason: "missing_target_language",
         sourceLanguage: SOURCE_LANGUAGE,
         targetLanguage: null,
@@ -187,7 +189,7 @@ export class SessionTranslationPolicyResolver {
     if (!matchingBootstrap) {
       return {
         enabled: false,
-        engineId: runtimeSettings.engineId,
+        engineId: reasoningEngineId,
         skipReason: "localization_sync_pending",
         sourceLanguage: SOURCE_LANGUAGE,
         targetLanguage,
@@ -196,7 +198,7 @@ export class SessionTranslationPolicyResolver {
 
     return {
       enabled: true,
-      engineId: runtimeSettings.engineId,
+      engineId: reasoningEngineId,
       skipReason: null,
       sourceLanguage: SOURCE_LANGUAGE,
       targetLanguage,
@@ -253,7 +255,8 @@ export class SessionTranslationPolicyResolver {
       },
       defaultLanguage,
       engineId:
-        loadTranslationEngineId(settingsPath) ?? DEFAULT_LOCALIZATION_ENGINE_ID,
+        loadUITranslationEngineId(settingsPath) ??
+        DEFAULT_LOCALIZATION_ENGINE_ID,
       workflowTermsPolicy:
         localization.workflowTermsPolicy === "translate"
           ? "translate"
