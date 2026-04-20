@@ -1,4 +1,5 @@
 import type { SessionMessage } from "../../../../types/session";
+import { resolveDisplayContent } from "./dialog-panel-message-utils";
 
 const HASH_MODULUS = 4_294_967_291;
 
@@ -27,6 +28,6 @@ export const buildDialogPanelScrollAnchor = (
     lastMessage.id,
     lastMessage.role,
     lastMessage.tag ?? "",
-    hashContent(lastMessage.content),
+    hashContent(resolveDisplayContent(lastMessage)),
   ].join(":");
 };
