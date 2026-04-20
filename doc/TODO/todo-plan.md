@@ -26,11 +26,11 @@
 ### Stream: Shared assistant-tagged bubble chrome
 1. [DONE] Разделить visual contract legacy `role="thinking"` strip и assistant-tagged provider `Thinking` bubble, вернуть shadow на assistant-tagged path и подстроить её fill/stroke под реальный session backdrop для всех провайдеров; scope: `media/session-view.css`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: retune assistant thinking bubble chrome`
 2. [DONE] Git Commit: `fix: retune assistant thinking bubble chrome` (hash: `a1582e6fb`)
-3. [IN_PROGRESS] Расширить regression coverage shared provider-facing `Thinking` path так, чтобы assistant-tagged hook проверялся для Claude, Codex и Gemini без provider-specific layout drift; scope: `src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover shared assistant thinking bubble path`
-4. [TODO] Git Commit: `test: cover shared assistant thinking bubble path` (hash: TBD)
+3. [DONE] Расширить regression coverage shared provider-facing `Thinking` path так, чтобы assistant-tagged hook проверялся для Claude, Codex и Gemini без provider-specific layout drift; scope: `src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover shared assistant thinking bubble path`
+4. [DONE] Git Commit: `test: cover shared assistant thinking bubble path` (hash: `d7103d519`)
 
 ### Stream: Scope Closeout
-1. [TODO] Заархивировать planning-doc thinking composite/shadow scope и синхронизировать `Docs_Index`; scope: `doc/SolidWorks-WorkFlow/Plans/SessionDialog_ThinkingCompositeAndShadow_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: archive thinking composite and shadow plan`
+1. [IN_PROGRESS] Заархивировать planning-doc thinking composite/shadow scope и синхронизировать `Docs_Index`; scope: `doc/SolidWorks-WorkFlow/Plans/SessionDialog_ThinkingCompositeAndShadow_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: archive thinking composite and shadow plan`
 2. [TODO] Git Commit: `docs: archive thinking composite and shadow plan` (hash: TBD)
 3. [TODO] После `npm run build:webview` и `npm run build:project-manager` зафиксировать archived `todo-plan` snapshot и вернуть active `doc/TODO/todo-plan.md` в placeholder-state; scope: `doc/TODO/Archive/todo-plan-session-dialog-thinking-composite-and-shadow.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: close thinking composite and shadow scope`
 4. [TODO] Git Commit: `docs: close thinking composite and shadow scope` (hash: TBD)
