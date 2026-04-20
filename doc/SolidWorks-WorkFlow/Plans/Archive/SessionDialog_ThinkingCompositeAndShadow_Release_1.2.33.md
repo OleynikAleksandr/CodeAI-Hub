@@ -1,6 +1,6 @@
 # Session Dialog Thinking Composite And Shadow - Release 1.2.33
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
