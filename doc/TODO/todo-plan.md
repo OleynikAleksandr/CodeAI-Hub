@@ -39,11 +39,11 @@
 ## Phase 2 — Thinking Block Boundary Formatting (owner: Codex, updated: 2026-04-20)
 ### Stream: Thinking Merge Boundary
 1. [DONE] Сделать merge соседних thinking fragments block-aware: сохранять пустую строку перед standalone bold heading block, не добавлять лишний разрыв между heading и body и не ломать marker-only list repair / localizedContent merge. scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel-message-utils.test.ts`; verification: `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `fix(ui): preserve thinking heading boundaries`
-2. [IN_PROGRESS] Git Commit: `fix(ui): preserve thinking heading boundaries` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): preserve thinking heading boundaries` (hash: `e4684d19b`)
 
 ### Stream: Session Heading Spacing
-1. [TODO] Перепроверить и при необходимости ужесточить Session markdown spacing rule так, чтобы standalone bold heading paragraphs всегда имели gap только перед собой, но не между heading и body, без регрессии ordered/unordered list spacing. scope: `media/session-view.css`; expected commit: `fix(ui): normalize session heading spacing`
-2. [TODO] Git Commit: `fix(ui): normalize session heading spacing` (hash: TBD)
+1. [DONE] Перепроверить и при необходимости ужесточить Session markdown spacing rule так, чтобы standalone bold heading paragraphs всегда имели gap только перед собой, но не между heading и body, без регрессии ordered/unordered list spacing. scope: `media/session-view.css`; implementation note: zero-gap правило после standalone bold heading сузили с wildcard `+ *` до явных paragraph/list blocks, чтобы сохранить контракт точечно и не трогать посторонние соседние элементы; expected commit: `fix(ui): normalize session heading spacing`
+2. [IN_PROGRESS] Git Commit: `fix(ui): normalize session heading spacing` (hash: TBD)
 
 ## Phase 3 — SSOT Sync And Targeted Verification (owner: Codex, updated: 2026-04-20)
 ### Stream: Core SSOT Sync
