@@ -771,8 +771,8 @@
 .session-dialog__message--assistant-thinking {
   z-index: 0;
   gap: 0;
-  background-color: rgba(49, 50, 51, 0.45);
-  border-color: rgba(70, 71, 74, 0.45);
+  background-color: rgba(44, 50, 48, 0.45);
+  border-color: rgba(71, 71, 74, 0.45);
   box-shadow: none;
 }
 
