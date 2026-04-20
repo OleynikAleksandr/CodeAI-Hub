@@ -767,24 +767,24 @@
   color: #ab34cb;
 }
 
-.session-dialog__message--thinking {
-  z-index: 0;
+.session-dialog__message--thinking,
+.session-dialog__message--assistant-thinking {
   gap: 0;
-  padding: 0 10px;
-  margin: 0 80px -18px 30px;
   background-color: rgba(44, 50, 48, 0.45);
   border-color: rgba(71, 71, 74, 0.45);
+  box-shadow: 0px 6px 14.1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.session-dialog__message--thinking {
+  z-index: 0;
+  padding: 0 10px;
+  margin: 0 80px -18px 30px;
   border-radius: 4px 4px 0 0;
-  box-shadow: none;
 }
 
 .session-dialog__message--assistant-thinking {
   z-index: 2;
-  gap: 0;
   margin: 0 80px 0 30px;
-  background-color: #2c3230;
-  border-color: #47474a;
-  box-shadow: 0px 6px 14.1px 3px #000;
 }
 
 .session-dialog__message--thinking-terminal {
