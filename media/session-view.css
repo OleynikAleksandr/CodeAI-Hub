@@ -304,7 +304,7 @@
   padding: 6px 10px 10px;
   color: #adb2ba;
   background-color: transparent;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: 4px;
   box-shadow: none;
 }
@@ -712,6 +712,7 @@
   font-size: 12px;
   font-weight: 200;
   line-height: 1.05;
+  color: rgba(173, 178, 186, 0.6);
 }
 
 .session-dialog__content--thinking-expanded {
@@ -771,8 +772,8 @@
   gap: 0;
   padding: 0 10px;
   margin: 0 80px -18px 30px;
-  background-color: #313233;
-  border-color: #46474a;
+  background-color: rgba(49, 50, 51, 0.4);
+  border-color: rgba(70, 71, 74, 0.4);
   border-radius: 4px 4px 0 0;
   box-shadow: none;
 }
@@ -784,7 +785,7 @@
 
 .session-dialog__message--thinking .session-dialog__role {
   font-weight: 200;
-  color: #727272;
+  color: rgba(173, 178, 186, 0.6);
 }
 
 .session-dialog__segment-boundary {
@@ -825,7 +826,7 @@
   padding: 0;
   margin-left: -12px;
   font-size: 16px;
-  color: #727272;
+  color: rgba(173, 178, 186, 0.6);
   appearance: none;
   cursor: pointer;
   background: transparent;
