@@ -659,8 +659,8 @@
 }
 .session-dialog__content ul,
 .session-dialog__content ol {
-  padding-left: 16px;
-  list-style-position: inside;
+  padding-left: 20px;
+  list-style-position: outside;
 }
 .session-dialog__content li {
   white-space: normal;

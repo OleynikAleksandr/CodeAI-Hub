@@ -42,10 +42,10 @@
 ## Phase 2 — Session UI Merge And Rendering (owner: Codex, updated: 2026-04-20)
 ### Stream: Thinking Merge Repair
 1. [DONE] Сделать thinking merge marker-aware, чтобы split boundary `2.` + `First-run experience` склеивалась обратно в один markdown list item, и покрыть это UI unit test. scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `fix(ui): repair split Claude thinking list markers`
-2. [TODO] Git Commit: `fix(ui): repair split Claude thinking list markers` (hash: TBD)
+2. [DONE] Git Commit: `fix(ui): repair split Claude thinking list markers` (hash: `f957679fc`)
 
 ### Stream: Ordered List Marker Rendering
-1. [TODO] Перевести Session dialog list markers на outside positioning без потери compact spacing для nested lists. scope: `media/session-view.css`; expected commit: `fix(ui): render session ordered-list markers outside`
+1. [DONE] Перевести Session dialog list markers на outside positioning без потери compact spacing для nested lists. scope: `media/session-view.css`; expected commit: `fix(ui): render session ordered-list markers outside`
 2. [TODO] Git Commit: `fix(ui): render session ordered-list markers outside` (hash: TBD)
 
 ## Phase 3 — SSOT Sync And Targeted Verification (owner: Codex, updated: 2026-04-20)
