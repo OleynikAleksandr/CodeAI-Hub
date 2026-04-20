@@ -52,11 +52,11 @@
 
 ### Stream: Response Mode Contract
 1. [DONE] Обновить Codex response-mode contract: явно зафиксировать, что `Hybrid`/passthrough path обязан сохранять non-terminal commentary в app-server линии и не сводить user-facing progress только к reasoning/final answer. scope: `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`; expected commit: `docs: note Codex hybrid commentary preservation`
-2. [IN_PROGRESS] Git Commit: `docs: note Codex hybrid commentary preservation` (hash: TBD)
+2. [DONE] Git Commit: `docs: note Codex hybrid commentary preservation` (hash: `8d97cf965`)
 
 ### Stream: Targeted Verification
-1. [TODO] Прогнать таргетную verification цепочку: `npm run build --workspace @codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`, `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview` — результаты зафиксировать в todo-plan. scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify Codex commentary and thinking formatting`
-2. [TODO] Git Commit: `test: verify Codex commentary and thinking formatting` (hash: TBD)
+1. [DONE] Прогнать таргетную verification цепочку: `npm run build --workspace @codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`, `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview` — результаты зафиксировать в todo-plan. results: all green on `main` after commits `f6c31bde0`, `e4684d19b`, `a03377a8a`, `082dfbb79`, `8d97cf965`; expected commit: `test: verify Codex commentary and thinking formatting`
+2. [IN_PROGRESS] Git Commit: `test: verify Codex commentary and thinking formatting` (hash: TBD)
 
 ## Phase 4 — Release Build 1.2.27 (owner: Codex, updated: 2026-04-20)
 ### Stream: Release Notes Preparation
