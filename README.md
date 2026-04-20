@@ -7,7 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.31
+## Current Release — v1.2.32
+- **Muted `Thinking` chrome now matches the exact design colors.** The shared reasoning bubble surface no longer uses approximate near-gray values; fill now resolves from `#2C3230` at `45%` and stroke from `#47474A` at `45%`, matching the approved spec more precisely.
+- **Provider-accent muted headers remain intact on the corrected chrome.** Assistant-tagged cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` keep the provider hue in the header while the bubble chrome uses the exact muted surface colors underneath.
+
+### 1.2.31 (previous)
 - **Provider `Thinking` headers now keep their accent while remaining muted.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` no longer collapse to neutral gray; the header stays on the provider hue at a softer `60%` alpha, so provider identity remains readable without overpowering the final answer.
 - **Muted thinking bubbles are slightly stronger and more legible.** The shared thinking surface now uses `45%` alpha for fill and border instead of the weaker `40%`, keeping the subdued secondary feel while giving the visible card edge and background better separation.
 

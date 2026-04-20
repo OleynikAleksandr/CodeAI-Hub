@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.32] - 2026-04-20
+### Fixed
+- **Muted thinking-card chrome now uses the exact approved design colors.** The shared reasoning surface no longer relies on approximate near-gray values; fill now resolves from `#2C3230` at `45%` alpha and stroke from `#47474A` at `45%` alpha, matching the intended spec more precisely.
+
+### Tests
+- **Targeted shared-UI verification passed.** `npm run build:webview` and `npm run build:project-manager` both completed successfully for the exact-color retune before release packaging.
+
 ## [1.2.31] - 2026-04-20
 ### Fixed
 - **Provider `Thinking` headers now keep their accent instead of fading to neutral gray.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` now preserve the provider hue at `0.6` alpha, so the header remains visibly provider-scoped while still reading as secondary content.
