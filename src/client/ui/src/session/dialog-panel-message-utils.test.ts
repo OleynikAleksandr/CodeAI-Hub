@@ -141,3 +141,34 @@ test("mergeThinkingMessages and mergeLiveAssistantMessages compose so live and t
   assert.equal(merged[2].tag, "live");
   assert.equal(merged[2].content, "Live B.");
 });
+
+test("mergeThinkingMessages repairs a split marker-only list boundary", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage(
+      "1",
+      "assistant",
+      "Questions I identified:\n1. Multiple projects management UX\n2.",
+      {
+        tag: "thinking",
+        localizedContent:
+          "Вопросы, которые я выделил:\n1. UX управления несколькими проектами\n2.",
+      }
+    ),
+    createMessage("2", "assistant", "First-run experience", {
+      tag: "thinking",
+      localizedContent: "Первоначальный запуск",
+    }),
+  ];
+
+  const merged = mergeThinkingMessages(source);
+
+  assert.equal(merged.length, 1);
+  assert.equal(
+    merged[0].content,
+    "Questions I identified:\n1. Multiple projects management UX\n2. First-run experience"
+  );
+  assert.equal(
+    merged[0].localizedContent,
+    "Вопросы, которые я выделил:\n1. UX управления несколькими проектами\n2. Первоначальный запуск"
+  );
+});

@@ -2,6 +2,9 @@ import type { SessionMessage } from "../../../../types/session";
 import type { ProviderTheme } from "./helpers";
 
 const SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
+const TRAILING_MARKDOWN_LIST_MARKER_REGEX =
+  /(?:^|\n)\s{0,3}(?:\d+\.|[-*+])\s*$/u;
+const LEADING_MARKDOWN_LIST_MARKER_REGEX = /^(?:\d+\.|[-*+])(?:\s|$)/u;
 
 export const isSegmentBoundaryMessage = (message: SessionMessage): boolean =>
   message.role === "system" &&
@@ -61,14 +64,42 @@ const isAssistantThinkingMessage = (message: SessionMessage): boolean =>
 const isThinkingDisplayMessage = (message: SessionMessage): boolean =>
   message.role === "thinking" || isAssistantThinkingMessage(message);
 
+const shouldRepairSplitListMarker = (
+  previousContent: string,
+  nextContent: string
+): boolean => {
+  const normalizedPrevious = previousContent.trimEnd();
+  if (!TRAILING_MARKDOWN_LIST_MARKER_REGEX.test(normalizedPrevious)) {
+    return false;
+  }
+  const normalizedNext = nextContent.trimStart();
+  if (normalizedNext.length === 0) {
+    return false;
+  }
+  return !LEADING_MARKDOWN_LIST_MARKER_REGEX.test(normalizedNext);
+};
+
+const joinThinkingDisplayContent = (
+  previousContent: string,
+  nextContent: string
+): string => {
+  if (shouldRepairSplitListMarker(previousContent, nextContent)) {
+    return `${previousContent.trimEnd()} ${nextContent.trimStart()}`;
+  }
+  return `${previousContent}\n${nextContent}`;
+};
+
 const mergeThinkingDisplayMessage = (
   previous: SessionMessage,
   next: SessionMessage
 ): SessionMessage => {
   const useAssistantThinking =
     isAssistantThinkingMessage(previous) || isAssistantThinkingMessage(next);
-  const content = `${previous.content}\n${next.content}`;
-  const localizedContent = `${resolveDisplayContent(previous)}\n${resolveDisplayContent(next)}`;
+  const content = joinThinkingDisplayContent(previous.content, next.content);
+  const localizedContent = joinThinkingDisplayContent(
+    resolveDisplayContent(previous),
+    resolveDisplayContent(next)
+  );
   return {
     ...previous,
     content,

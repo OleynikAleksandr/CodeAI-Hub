@@ -37,11 +37,11 @@
 
 ### Stream: Assistant Live Text Marker Boundary
 1. [DONE] Запретить marker-only flush в Claude text live buffer, добавить regression guard для кейса `1.`/`2.` без item body и безопасный fallback для text-path при отсутствии `runtimeTurnConfig`. scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts`, `packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`; expected commit: `fix(claude): prevent live text list-marker split`
-2. [TODO] Git Commit: `fix(claude): prevent live text list-marker split` (hash: TBD)
+2. [DONE] Git Commit: `fix(claude): prevent live text list-marker split` (hash: `534f7ca7f`)
 
 ## Phase 2 — Session UI Merge And Rendering (owner: Codex, updated: 2026-04-20)
 ### Stream: Thinking Merge Repair
-1. [TODO] Сделать thinking merge marker-aware, чтобы split boundary `2.` + `First-run experience` склеивалась обратно в один markdown list item, и покрыть это UI unit test. scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `fix(ui): repair split Claude thinking list markers`
+1. [DONE] Сделать thinking merge marker-aware, чтобы split boundary `2.` + `First-run experience` склеивалась обратно в один markdown list item, и покрыть это UI unit test. scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `fix(ui): repair split Claude thinking list markers`
 2. [TODO] Git Commit: `fix(ui): repair split Claude thinking list markers` (hash: TBD)
 
 ### Stream: Ordered List Marker Rendering
