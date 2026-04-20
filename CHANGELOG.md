@@ -4,6 +4,22 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.36] - 2026-04-20
+### Added
+- **Dedicated `UI Translation Engine` and `Reasoning Translation Engine` selectors in the Settings localization card.** The UI engine drives interface bundle materialization and the browser bootstrap payload; the reasoning engine drives live translation of visible Thinking / Reasoning bubbles and defaults to `Google GTX Free` for stability.
+- **Fifth user-facing `Reasoning` localization category with its own language selector.** Visible Thinking / Reasoning bubbles now use a dedicated `reasoning` target language, decoupled from `Messages for the User`. Hidden reasoning continues to bypass the translation pipeline entirely.
+
+### Changed
+- **Reasoning engine and reasoning language changes are runtime-only.** They never enter the strict localization sync path, never block Settings save / Project Manager / new session sends, and never rebuild browser bootstrap bundles. Only the UI translation engine and the four UI-owned category languages still trigger the strict sync path.
+- **Core-owned live reasoning overlay translation now reads `reasoningEngineId` and `reasoningLanguage`.** Provider-local applied-turn-config adapters (Claude, Codex, Gemini) prefer the new envelope fields and fall back to the legacy `translationEngineId` / `messagesForTheUserLanguage` aliases only while Core still forwards both.
+
+### Migration
+- **Legacy settings migrate on first load.** `general.localization.engineId` is migrated into `general.localization.uiEngineId` (legacy key dropped from persisted state), `general.localization.reasoningEngineId` is seeded to `google-gtx`, and the new `categories.reasoning` target language is seeded from `messagesForTheUser` so existing installations keep the same visible reasoning language on upgrade.
+
+### Tests
+- **Regression coverage added for the split routing.** `SessionTranslationPolicyResolver` now has dedicated tests covering the reasoning engine routing on both the enabled and `localization_sync_pending` paths, the reasoning-language decoupling from `Messages for the User`, and the on-read legacy-migration fallback.
+- **Applied turn-config envelope tests updated.** The session request handler fixtures now assert the new `reasoningEngineId` and `reasoningLanguage` fields flow through alongside the legacy aliases.
+
 ## [1.2.35] - 2026-04-20
 ### Fixed
 - **Main thinking body text is now slightly brighter on both internal paths.** The readable content inside both legacy `role="thinking"` and assistant-tagged reasoning cards (`Claude · Thinking`, `Codex · Thinking`, `Gemini · Thinking`) now uses `rgba(173, 178, 186, 0.7)` instead of `rgba(173, 178, 186, 0.6)`.

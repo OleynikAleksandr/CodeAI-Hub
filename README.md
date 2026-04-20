@@ -7,7 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.35
+## Current Release — v1.2.36
+- **UI and Reasoning translation engines are now split.** The Settings localization card surfaces two dedicated selectors — `UI Translation Engine` (drives interface bundle materialization and browser bootstrap) and `Reasoning Translation Engine` (drives live translation of visible Thinking / Reasoning bubbles). The reasoning engine defaults to `Google GTX Free` for the most stable live translation, while provider-backed engines remain available with an explicit warning that higher parallel activity may cause fallback to source English.
+- **Reasoning is now a fifth user-facing localization category.** Visible Thinking / Reasoning bubbles no longer share the `Messages for the User` target language; a dedicated `Reasoning` card in Settings exposes an independent language selector, while hidden reasoning stays outside the translation pipeline as before.
+- **Reasoning engine or reasoning language changes are runtime-only.** They never block Settings save, never block Project Manager / new session sends, and never rebuild browser bootstrap bundles; only `UI Translation Engine` and the four UI-owned category languages still enter the strict localization sync path.
+- **Legacy settings migrate automatically.** Existing installations see the previous translation engine preserved under `UI Translation Engine`, the reasoning engine seeded to `Google GTX Free`, and the new reasoning language seeded from the current `Messages for the User` language, so Day 1 after upgrade feels unchanged.
+
+### 1.2.35 (previous)
 - **Main `Thinking` text is now slightly more readable.** The body text inside both internal thinking paths now uses `rgba(173, 178, 186, 0.7)` instead of the dimmer `0.6`, so reasoning content reads more clearly without changing the accepted muted card chrome.
 - **The rest of the `Thinking` card contract stays stable.** Fill, stroke, shadow, provider-colored header, and timestamp treatment remain aligned with the `1.2.34` visual baseline.
 

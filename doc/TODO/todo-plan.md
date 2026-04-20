@@ -68,15 +68,15 @@
 1. [DONE] Добавить approved English keys для нового `UI Translation Engine` / `Reasoning Translation Engine` selector label/helper/warning плюс пятой карточки `Reasoning` (title + description) в одной правке под одним commit; ownership промаркирован через approved dictionary файлы (`UI Labels` через `ui_labels.json`, `UI Helper Text` через `ui_helper_text.json`); scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`
 2. [DONE] Git Commit: `feat: localize split translation engine and reasoning card copy` (hash: 377fed6c3)
 5. [DONE] Синхронизировать SSOT для пятой user-facing category `Reasoning`, отделения от `Messages for the User` и runtime-only change-impact contract; scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md` (финальный свипап по translationEngineId → uiEngineId + reasoningEngineId; остальные правки внесены поэтапно в Phase 1/2/3); `Shared_RuntimeTranslation_Module.md` и `UserFacing_Text_Localization_Boundary.md` уже зафиксированы в соответствующих tасkах
-6. [DONE] Git Commit: `docs: record reasoning category ownership split` (hash: TBD)
+6. [DONE] Git Commit: `docs: record reasoning category ownership split` (hash: 2462a4e13)
 
 ## Phase 4 — Verification And Release (owner: Codex, updated: 2026-04-20)
 ### Stream: Targeted Verification
-1. [TODO] Прогнать targeted verification по затронутым пакетам/UI и закрыть остаточные регрессии до release stage; scope: `@codeai-hub/core`, `@codeai-hub/localization`, `webview`; expected commit: `fix: close reasoning split verification regressions`
-2. [TODO] Git Commit: `fix: close reasoning split verification regressions` (hash: TBD)
+1. [DONE] Прогнать targeted verification по затронутым пакетам/UI; `@codeai-hub/core`, `@codeai-hub/localization`, `build:webview`, `typecheck:webview` прошли без ошибок, no-regression — отдельный commit не потребовался
+2. [DONE] Git Commit: (skipped — no regressions)
 
 ### Stream: Release Build
-1. [TODO] Подготовить release-facing docs под будущую версию (`README.md`, `CHANGELOG.md`) и синхронизировать релизные архитектурные материалы для этого scope; scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: prepare reasoning split release notes`
-2. [TODO] Git Commit: `docs: prepare reasoning split release notes` (hash: TBD)
+1. [DONE] Подготовить release-facing docs под будущую версию `1.2.36` (`README.md`, `CHANGELOG.md`); архитектурные материалы уже синхронизированы в Phase 3
+2. [DONE] Git Commit: `docs: prepare reasoning split release notes` (hash: TBD)
 3. [TODO] На чистом дереве выполнить финальный release pipeline: `./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version`, зафиксировать VSIX/tarball results и после последнего содержательного commit подготовить отдельный session report closeout; scope: release pipeline / artifacts / final closeout handoff; expected commit: `build: release reasoning split update`
 4. [TODO] Git Commit: `build: release reasoning split update` (hash: TBD)
