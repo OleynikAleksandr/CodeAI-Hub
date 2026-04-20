@@ -97,8 +97,9 @@ Approved live user-facing text categories:
 
 - `ui_labels`
 - `ui_helper_text`
-- `messages_for_the_user` (also owns visible provider `Thinking / Reasoning` bubbles shown in the Session dialog; see `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md` §3.3)
+- `messages_for_the_user` (warnings, errors, status hints, notifications; no longer owns live provider `Thinking / Reasoning` overlays after the UI/Reasoning translation split)
 - `artifacts_for_the_user`
+- `reasoning` (fifth user-facing category introduced by the UI/Reasoning translation split; runtime-only marker for visible provider `Thinking / Reasoning` overlays; not a bundled dictionary and does not participate in browser bootstrap bundle materialization; see `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`)
 
 Approved non-user-facing text marker:
 
@@ -126,10 +127,17 @@ User settings policy lives separately in:
 Current settings contract stores:
 
 - default language;
-- per-category language selection;
+- per-category language selection (including the fifth user-facing `reasoning` category target language, persisted as `general.localization.categories.reasoning`);
 - workflow terms policy (`keep_english` / `translate`);
-- translation engine id;
+- UI translation engine id (`general.localization.uiEngineId`) — drives bundle materialization and browser bootstrap;
+- reasoning translation engine id (`general.localization.reasoningEngineId`) — drives live visible provider `Thinking / Reasoning` translation only;
 - glossary enabled flag.
+
+Settings contract migration from the unified engine contract:
+
+- legacy `general.localization.engineId` is migrated into `general.localization.uiEngineId` on first normalized load and the legacy key is dropped from persisted state;
+- `general.localization.reasoningEngineId` defaults to `google-gtx` when absent;
+- `general.localization.categories.reasoning` defaults to the persisted `messagesForTheUser` language (so existing users keep their visible reasoning target language unchanged on upgrade); fresh installs default to `en`.
 
 Current glossary contract stores:
 
@@ -151,6 +159,9 @@ Current user-facing settings contract:
   - `UI Helper Text`
   - `Messages for the User`
   - `Artifacts for the User`
+  - `Reasoning` (fifth user-facing card introduced by the UI/Reasoning translation split; independent target language for live visible provider `Thinking / Reasoning` overlays)
+- independent `UI Translation Engine` selector (drives bundle materialization and browser bootstrap);
+- independent `Reasoning Translation Engine` selector (drives visible reasoning overlay translation only);
 - English default/reset semantics rendered in UI as `Default Language (English)`
 - no user-facing `Default language` control
 - no user-facing `Workflow Terms Policy` control

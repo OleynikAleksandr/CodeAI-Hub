@@ -11,11 +11,14 @@ import { createCoreLocalizationFacade } from "../../translation/core-localizatio
 import type { BridgeEvent } from "../types";
 import { SettingsLoadedBroadcaster } from "./settings-loaded-broadcaster";
 import { normalizeClaudeThinkingSettings } from "./settings-request-handler-claude-thinking";
+import { applyLocalizationSettingsMigration } from "./settings-request-handler-localization-migration";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
+
+const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 
 const DEFAULT_LOCALIZATION_SETTINGS = {
   defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
@@ -23,6 +26,7 @@ const DEFAULT_LOCALIZATION_SETTINGS = {
     artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
     interactiveTemplates: DEFAULT_LOCALIZATION_LANGUAGE,
     messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+    reasoning: DEFAULT_LOCALIZATION_LANGUAGE,
     systemFeedback: DEFAULT_LOCALIZATION_LANGUAGE,
     uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
     uiInterface: DEFAULT_LOCALIZATION_LANGUAGE,
@@ -31,7 +35,8 @@ const DEFAULT_LOCALIZATION_SETTINGS = {
     workflowTerms: DEFAULT_LOCALIZATION_LANGUAGE,
   },
   workflowTermsPolicy: "keep_english",
-  engineId: "google-gtx",
+  uiEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
+  reasoningEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
   glossaryEnabled: true,
 } as const;
 
@@ -185,6 +190,13 @@ export const resolveLocalizationRuntimeSettings = (
     defaultLanguage
   );
 
+  const uiEngineId =
+    normalizeSettingsString(localization.uiEngineId, "") ||
+    normalizeSettingsString(
+      localization.engineId,
+      DEFAULT_LOCALIZATION_SETTINGS.uiEngineId
+    );
+
   return {
     categories: {
       artifacts_for_the_user: artifactsForTheUser,
@@ -198,10 +210,7 @@ export const resolveLocalizationRuntimeSettings = (
       workflow_terms: uiLabels,
     } as LocalizationRuntimeSettingsSnapshot["categories"],
     defaultLanguage: DEFAULT_LOCALIZATION_SETTINGS.defaultLanguage,
-    engineId: normalizeSettingsString(
-      localization.engineId,
-      DEFAULT_LOCALIZATION_SETTINGS.engineId
-    ),
+    engineId: uiEngineId,
     workflowTermsPolicy:
       uiLabels.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE
         ? "keep_english"
@@ -325,7 +334,7 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
         ).categories,
         ...rawLocalizationCategories,
       },
-    },
+    } as Record<string, unknown>,
   };
 
   const hasGeneral = isRecord(settings.general);
@@ -336,7 +345,16 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
   const hasCodex = isRecord(rawProviders.codex);
   const hasGemini = isRecord(rawProviders.gemini);
 
-  let changed = false;
+  let changed = applyLocalizationSettingsMigration({
+    defaultTranslationEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
+    mergedLocalization: general.localization,
+    mergedLocalizationCategories: general.localization.categories as Record<
+      string,
+      unknown
+    >,
+    rawLocalization,
+    rawLocalizationCategories,
+  });
   if (!hasGeneral) {
     changed = true;
   }
