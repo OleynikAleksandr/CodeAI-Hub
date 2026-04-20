@@ -51,9 +51,9 @@
 
 ### Stream: Provider Runtime Audit
 1. [DONE] Перевести remaining provider-local live translation adapters для visible thought/progress copy на `reasoningEngineId` + `reasoningLanguage`; scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`, `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md` (4 файла — единый pattern изменения по трём провайдерам, плюс док)
-2. [DONE] Git Commit: `fix: align provider live reasoning translation with dedicated engine and language` (hash: TBD)
-3. [TODO] Добавить regression coverage на split UI/reasoning routing, reasoning language decoupling от `Messages for the User`, и hidden-thinking skip; scope: `packages/core/src/session-translation/session-translation-policy-resolver.test.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `packages/Claude_Module/src/messaging/message-processor.pretool-thinking.translation.test.ts`; expected commit: `test: cover dedicated reasoning translation contract`
-4. [TODO] Git Commit: `test: cover dedicated reasoning translation contract` (hash: TBD)
+2. [DONE] Git Commit: `fix: align provider live reasoning translation with dedicated engine and language` (hash: 903b73761)
+3. [DONE] Добавить regression coverage на split UI/reasoning routing, reasoning language decoupling от `Messages for the User` и legacy migration fallback; scope: `packages/core/src/session-translation/session-translation-policy-resolver.test.ts` (4 новых/обновлённых теста на split contract), `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts` (дооборудование applied-turn-config фикстур под новые `reasoningEngineId` / `reasoningLanguage`); hidden-thinking skip остаётся накрыт существующим `message-processor.pretool-thinking.translation.test.ts` (invariant `visibilityAtEmission` не трогали)
+4. [DONE] Git Commit: `test: cover dedicated reasoning translation contract` (hash: TBD)
 
 ## Phase 3 — Settings UI And Localization Copy (owner: Codex, updated: 2026-04-20)
 ### Stream: Settings Controls

@@ -15,7 +15,9 @@ const createTempHomeDirectory = async (): Promise<string> =>
 const buildSettingsPath = (homeDirectory: string): string =>
   path.join(homeDirectory, ".codeai-hub", "settings", "settings.json");
 
-const createSettingsSnapshot = (): Record<string, unknown> => ({
+const createSettingsSnapshot = (
+  overrides?: Record<string, unknown>
+): Record<string, unknown> => ({
   general: {
     localization: {
       defaultLanguage: "en",
@@ -23,15 +25,19 @@ const createSettingsSnapshot = (): Record<string, unknown> => ({
         uiLabels: "en",
         uiHelperText: "ru",
         messagesForTheUser: "ru",
+        reasoning: "ru",
         artifactsForTheUser: "ru",
         interactiveTemplates: "ru",
         systemFeedback: "ru",
         uiInterface: "en",
         userGuidance: "ru",
         workflowTerms: "en",
+        ...((overrides?.categories as Record<string, unknown>) ?? {}),
       },
       workflowTermsPolicy: "keep_english",
-      engineId: "codex-gpt-5.3-codex-spark",
+      uiEngineId: "codex-gpt-5.3-codex-spark",
+      reasoningEngineId: "google-gtx",
+      ...overrides,
     },
   },
 });
@@ -90,7 +96,7 @@ const createBootstrapSnapshot = (): LocalizationRuntimeBootstrapSnapshot => ({
   },
 });
 
-test("SessionTranslationPolicyResolver enables translation when the persisted bootstrap exists under the canonical CodeAI root", async () => {
+test("SessionTranslationPolicyResolver enables translation through the dedicated reasoning engine when the persisted UI bootstrap matches the UI engine", async () => {
   const homeDirectory = await createTempHomeDirectory();
 
   try {
@@ -116,7 +122,7 @@ test("SessionTranslationPolicyResolver enables translation when the persisted bo
 
     assert.deepEqual(policy, {
       enabled: true,
-      engineId: "codex-gpt-5.3-codex-spark",
+      engineId: "google-gtx",
       skipReason: null,
       sourceLanguage: "en",
       targetLanguage: "ru",
@@ -126,7 +132,7 @@ test("SessionTranslationPolicyResolver enables translation when the persisted bo
   }
 });
 
-test("SessionTranslationPolicyResolver keeps translation disabled while the persisted bootstrap is missing", async () => {
+test("SessionTranslationPolicyResolver keeps translation disabled while the persisted UI bootstrap is missing, but still exposes the reasoning engine on the policy", async () => {
   const homeDirectory = await createTempHomeDirectory();
 
   try {
@@ -143,11 +149,89 @@ test("SessionTranslationPolicyResolver keeps translation disabled while the pers
 
     assert.deepEqual(policy, {
       enabled: false,
-      engineId: "codex-gpt-5.3-codex-spark",
+      engineId: "google-gtx",
       skipReason: "localization_sync_pending",
       sourceLanguage: "en",
       targetLanguage: "ru",
     });
+  } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});
+
+test("SessionTranslationPolicyResolver decouples reasoning language from Messages for the User language", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+
+  try {
+    const settingsPath = buildSettingsPath(homeDirectory);
+    await mkdir(path.dirname(settingsPath), { recursive: true });
+    await writeFile(
+      settingsPath,
+      `${JSON.stringify(
+        createSettingsSnapshot({
+          categories: {
+            messagesForTheUser: "ru",
+            reasoning: "fr",
+            systemFeedback: "ru",
+          },
+        }),
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const bootstrapPath =
+      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+    await mkdir(path.dirname(bootstrapPath), { recursive: true });
+    await writeFile(
+      bootstrapPath,
+      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const resolver = new SessionTranslationPolicyResolver();
+    const policy = resolver.resolve(settingsPath);
+
+    assert.equal(policy.targetLanguage, "fr");
+    assert.equal(policy.engineId, "google-gtx");
+  } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});
+
+test("SessionTranslationPolicyResolver falls back to the Messages for the User language when reasoning category is not yet persisted (legacy migration)", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+
+  try {
+    const settingsPath = buildSettingsPath(homeDirectory);
+    await mkdir(path.dirname(settingsPath), { recursive: true });
+    const legacySettings = createSettingsSnapshot();
+    const legacyLocalization = (
+      (legacySettings.general as Record<string, unknown>)
+        .localization as Record<string, unknown>
+    ).categories as Record<string, unknown>;
+    legacyLocalization.reasoning = undefined;
+    await writeFile(
+      settingsPath,
+      `${JSON.stringify(legacySettings, null, 2)}\n`,
+      "utf8"
+    );
+
+    const bootstrapPath =
+      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+    await mkdir(path.dirname(bootstrapPath), { recursive: true });
+    await writeFile(
+      bootstrapPath,
+      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const resolver = new SessionTranslationPolicyResolver();
+    const policy = resolver.resolve(settingsPath);
+
+    assert.equal(policy.targetLanguage, "ru");
+    assert.equal(policy.engineId, "google-gtx");
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }

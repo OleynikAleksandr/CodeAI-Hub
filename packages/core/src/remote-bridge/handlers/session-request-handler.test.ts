@@ -257,9 +257,12 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
       modelId: "sonnet",
       source: "settings_snapshot",
       reasoningEffort: undefined,
+      reasoningEngineId: "google-gtx",
+      reasoningLanguage: "en",
       thinkingEnabled: false,
       thinkingDisplaySyncEnabled: true,
       thinkingLevel: undefined,
+      translationEngineId: "google-gtx",
     });
 
     const modelUpdate = harness.events.find(
@@ -343,9 +346,12 @@ test("SessionRequestHandler threads Claude reasoning effort and display sync fro
       modelId: "sonnet",
       source: "settings_snapshot",
       reasoningEffort: "max",
+      reasoningEngineId: "google-gtx",
+      reasoningLanguage: "en",
       thinkingEnabled: true,
       thinkingDisplaySyncEnabled: false,
       thinkingLevel: undefined,
+      translationEngineId: "google-gtx",
     });
 
     const modelUpdate = harness.events.find(
