@@ -32,6 +32,7 @@ test("runtime snapshot uses canonical five-category shape", () => {
       artifactsForTheUser: "ru",
       interactiveTemplates: "ru",
       messagesForTheUser: "de",
+      reasoning: "de",
       systemFeedback: "de",
       uiHelperText: "uk",
       uiInterface: "en",

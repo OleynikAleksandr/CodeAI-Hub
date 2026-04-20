@@ -10,6 +10,7 @@ export type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
 interface ApprovedLocalizationCategorySettings {
   readonly artifactsForTheUser: string;
   readonly messagesForTheUser: string;
+  readonly reasoning: string;
   readonly uiHelperText: string;
   readonly uiLabels: string;
 }
@@ -18,6 +19,7 @@ export interface GeneralLocalizationCategorySettings {
   readonly artifactsForTheUser: string;
   readonly interactiveTemplates: string;
   readonly messagesForTheUser: string;
+  readonly reasoning: string;
   readonly systemFeedback: string;
   readonly uiHelperText: string;
   readonly uiInterface: string;
@@ -31,6 +33,7 @@ export interface GeneralLocalizationSettings {
   readonly defaultLanguage: string;
   readonly engineId: string;
   readonly glossaryEnabled: boolean;
+  readonly reasoningEngineId: string;
   readonly workflowTermsPolicy: LocalizationWorkflowTermsPolicy;
 }
 
@@ -102,9 +105,11 @@ const DEFAULT_GENERAL_LOCALIZATION_SETTINGS: GeneralLocalizationSettings = {
     uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
     messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
     artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+    reasoning: DEFAULT_LOCALIZATION_LANGUAGE,
   }),
   workflowTermsPolicy: deriveWorkflowTermsPolicy(DEFAULT_LOCALIZATION_LANGUAGE),
   engineId: DEFAULT_LOCALIZATION_ENGINE_ID,
+  reasoningEngineId: DEFAULT_LOCALIZATION_ENGINE_ID,
   glossaryEnabled: true,
 };
 
@@ -134,6 +139,11 @@ const normalizeLocalizationCategorySettings = (
   defaultLanguage: string
 ): GeneralLocalizationCategorySettings => {
   const categories = isRecord(value) ? value : {};
+  const messagesForTheUser = resolveLocalizationCategory(
+    categories,
+    ["messagesForTheUser", "systemFeedback"],
+    defaultLanguage
+  );
 
   return createLocalizationCategorySettings({
     uiLabels: resolveLocalizationCategory(
@@ -146,15 +156,16 @@ const normalizeLocalizationCategorySettings = (
       ["uiHelperText", "userGuidance"],
       defaultLanguage
     ),
-    messagesForTheUser: resolveLocalizationCategory(
-      categories,
-      ["messagesForTheUser", "systemFeedback"],
-      defaultLanguage
-    ),
+    messagesForTheUser,
     artifactsForTheUser: resolveLocalizationCategory(
       categories,
       ["artifactsForTheUser", "interactiveTemplates"],
       defaultLanguage
+    ),
+    reasoning: resolveLocalizationCategory(
+      categories,
+      ["reasoning"],
+      messagesForTheUser
     ),
   });
 };
@@ -175,13 +186,21 @@ const normalizeGeneralLocalizationSettings = (
     legacyDefaultLanguage
   );
 
+  const uiEngineId =
+    (typeof value.uiEngineId === "string" && value.uiEngineId.trim()) ||
+    resolveStringSetting(
+      value.engineId,
+      DEFAULT_GENERAL_LOCALIZATION_SETTINGS.engineId
+    );
+
   return {
     defaultLanguage: DEFAULT_GENERAL_LOCALIZATION_SETTINGS.defaultLanguage,
     categories,
     workflowTermsPolicy: deriveWorkflowTermsPolicy(categories.uiLabels),
-    engineId: resolveStringSetting(
-      value.engineId,
-      DEFAULT_GENERAL_LOCALIZATION_SETTINGS.engineId
+    engineId: uiEngineId,
+    reasoningEngineId: resolveStringSetting(
+      value.reasoningEngineId,
+      DEFAULT_GENERAL_LOCALIZATION_SETTINGS.reasoningEngineId
     ),
     glossaryEnabled: resolveBoolean(
       value.glossaryEnabled,

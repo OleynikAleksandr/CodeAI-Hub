@@ -27,6 +27,12 @@ export class LocalizationSettingsImpactClassifier {
     const previousLocalization = previous.general.localization;
     const nextLocalization = next.general.localization;
 
+    // Strict localization impact is driven exclusively by UI-owned fields:
+    // the UI translation engine id, the glossary-enabled flag, and the four
+    // UI-owned category languages. The reasoning translation engine id and
+    // the reasoning category language are runtime-only: changing them does
+    // not rematerialize bundles, block Settings save, or gate PM sends, and
+    // is therefore intentionally NOT inspected here.
     if (previousLocalization.engineId !== nextLocalization.engineId) {
       return { kind: "engine", changedGroups: [] };
     }
