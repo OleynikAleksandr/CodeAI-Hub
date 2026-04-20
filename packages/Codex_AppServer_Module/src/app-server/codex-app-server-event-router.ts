@@ -356,6 +356,10 @@ export class CodexAppServerEventRouter {
     if (!text) {
       return;
     }
+    if (phase === "commentary") {
+      this.emitDialogMessage(threadId, "assistant", text, itemId, "commentary");
+      return;
+    }
     if (phase === "final_answer" || phase === null) {
       this.emitDialogMessage(threadId, "assistant", text, itemId);
     }
@@ -467,19 +471,21 @@ export class CodexAppServerEventRouter {
     threadId: string,
     role: "assistant" | "thinking",
     content: string,
-    itemId: string | null
+    itemId: string | null,
+    tag?: string
   ): void {
     const normalized = content.trim();
     if (!normalized) {
       return;
     }
+    const resolvedTag = role === "thinking" ? "thinking" : tag;
     this.deps.emit(threadId, {
       type: "dialog_message",
       role: role === "thinking" ? "assistant" : role,
       content: normalized,
       uuid: itemId ?? crypto.randomUUID(),
       timestamp: nowIso(),
-      ...(role === "thinking" ? { tag: "thinking" } : {}),
+      ...(resolvedTag ? { tag: resolvedTag } : {}),
     });
   }
 }

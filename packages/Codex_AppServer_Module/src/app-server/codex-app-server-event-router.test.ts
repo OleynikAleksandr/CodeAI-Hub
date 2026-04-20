@@ -183,3 +183,49 @@ test("CodexAppServerEventRouter falls back to accumulated raw text when no summa
     },
   ]);
 });
+
+test("CodexAppServerEventRouter preserves commentary as a tagged non-terminal dialog message", () => {
+  const { emitted, router } = createRouterHarness();
+
+  router.handleNotification("item/agentMessage/delta", {
+    delta: "Inspecting the active files before I answer.",
+    itemId: "agent-1",
+    threadId: "thread-4",
+  });
+
+  router.handleNotification("item/completed", {
+    item: {
+      id: "agent-1",
+      phase: "commentary",
+      type: "agentMessage",
+    },
+    threadId: "thread-4",
+  });
+
+  router.handleNotification("item/completed", {
+    item: {
+      id: "agent-2",
+      phase: "final_answer",
+      text: "Final assistant answer.",
+      type: "agentMessage",
+    },
+    threadId: "thread-4",
+  });
+
+  assert.deepEqual(collectDialogMessages(emitted), [
+    {
+      content: "Inspecting the active files before I answer.",
+      role: "assistant",
+      tag: "commentary",
+      threadId: "thread-4",
+      uuid: "agent-1",
+    },
+    {
+      content: "Final assistant answer.",
+      role: "assistant",
+      tag: undefined,
+      threadId: "thread-4",
+      uuid: "agent-2",
+    },
+  ]);
+});
