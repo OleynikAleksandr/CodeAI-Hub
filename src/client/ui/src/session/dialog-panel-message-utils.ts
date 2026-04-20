@@ -5,6 +5,8 @@ const SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const TRAILING_MARKDOWN_LIST_MARKER_REGEX =
   /(?:^|\n)\s{0,3}(?:\d+\.|[-*+])\s*$/u;
 const LEADING_MARKDOWN_LIST_MARKER_REGEX = /^(?:\d+\.|[-*+])(?:\s|$)/u;
+const LEADING_STANDALONE_BOLD_HEADING_BLOCK_REGEX =
+  /^\s*\*\*[^\n]*\*\*\s*(?:\r?\n){2,}\S/u;
 
 export const isSegmentBoundaryMessage = (message: SessionMessage): boolean =>
   message.role === "system" &&
@@ -79,12 +81,18 @@ const shouldRepairSplitListMarker = (
   return !LEADING_MARKDOWN_LIST_MARKER_REGEX.test(normalizedNext);
 };
 
+const startsWithStandaloneBoldHeadingBlock = (content: string): boolean =>
+  LEADING_STANDALONE_BOLD_HEADING_BLOCK_REGEX.test(content.trimStart());
+
 const joinThinkingDisplayContent = (
   previousContent: string,
   nextContent: string
 ): string => {
   if (shouldRepairSplitListMarker(previousContent, nextContent)) {
     return `${previousContent.trimEnd()} ${nextContent.trimStart()}`;
+  }
+  if (startsWithStandaloneBoldHeadingBlock(nextContent)) {
+    return `${previousContent.trimEnd()}\n\n${nextContent.trimStart()}`;
   }
   return `${previousContent}\n${nextContent}`;
 };

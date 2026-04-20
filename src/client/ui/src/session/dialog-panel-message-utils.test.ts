@@ -172,3 +172,40 @@ test("mergeThinkingMessages repairs a split marker-only list boundary", () => {
     "Вопросы, которые я выделил:\n1. UX управления несколькими проектами\n2. Первоначальный запуск"
   );
 });
+
+test("mergeThinkingMessages preserves a blank line before the next standalone bold heading block", () => {
+  const source: readonly SessionMessage[] = [
+    createMessage(
+      "1",
+      "assistant",
+      "**Creating and reading files**\n\nReviewing the current workspace layout.",
+      {
+        tag: "thinking",
+        localizedContent:
+          "**Создание и чтение файлов**\n\nПроверяю текущую структуру workspace.",
+      }
+    ),
+    createMessage(
+      "2",
+      "assistant",
+      "**Checking file existence**\n\nConfirming whether the questionnaire file already exists.",
+      {
+        tag: "thinking",
+        localizedContent:
+          "**Проверка существования файла**\n\nПодтверждаю, существует ли уже файл анкеты.",
+      }
+    ),
+  ];
+
+  const merged = mergeThinkingMessages(source);
+
+  assert.equal(merged.length, 1);
+  assert.equal(
+    merged[0].content,
+    "**Creating and reading files**\n\nReviewing the current workspace layout.\n\n**Checking file existence**\n\nConfirming whether the questionnaire file already exists."
+  );
+  assert.equal(
+    merged[0].localizedContent,
+    "**Создание и чтение файлов**\n\nПроверяю текущую структуру workspace.\n\n**Проверка существования файла**\n\nПодтверждаю, существует ли уже файл анкеты."
+  );
+});

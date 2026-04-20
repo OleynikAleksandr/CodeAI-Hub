@@ -34,12 +34,12 @@
 ## Phase 1 — Codex Commentary Restoration (owner: Codex, updated: 2026-04-20)
 ### Stream: App-Server Commentary Phase
 1. [DONE] Восстановить `phase: "commentary"` в Codex app-server path как non-terminal `dialog_message` c `role: "assistant"` и `tag: "commentary"`, не затрагивая terminal `final_answer`, и покрыть separation regression test. scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts`; verification: `npm exec -- tsx --test packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts`, `npm run build --workspace @codeai-hub/codex-app-server-module`; expected commit: `fix(codex): restore commentary dialog messages`
-2. [IN_PROGRESS] Git Commit: `fix(codex): restore commentary dialog messages` (hash: TBD)
+2. [DONE] Git Commit: `fix(codex): restore commentary dialog messages` (hash: `f6c31bde0`)
 
 ## Phase 2 — Thinking Block Boundary Formatting (owner: Codex, updated: 2026-04-20)
 ### Stream: Thinking Merge Boundary
-1. [TODO] Сделать merge соседних thinking fragments block-aware: сохранять пустую строку перед standalone bold heading block, не добавлять лишний разрыв между heading и body и не ломать marker-only list repair / localizedContent merge. scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `fix(ui): preserve thinking heading boundaries`
-2. [TODO] Git Commit: `fix(ui): preserve thinking heading boundaries` (hash: TBD)
+1. [DONE] Сделать merge соседних thinking fragments block-aware: сохранять пустую строку перед standalone bold heading block, не добавлять лишний разрыв между heading и body и не ломать marker-only list repair / localizedContent merge. scope: `src/client/ui/src/session/dialog-panel-message-utils.ts`, `src/client/ui/src/session/dialog-panel-message-utils.test.ts`; verification: `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`; expected commit: `fix(ui): preserve thinking heading boundaries`
+2. [IN_PROGRESS] Git Commit: `fix(ui): preserve thinking heading boundaries` (hash: TBD)
 
 ### Stream: Session Heading Spacing
 1. [TODO] Перепроверить и при необходимости ужесточить Session markdown spacing rule так, чтобы standalone bold heading paragraphs всегда имели gap только перед собой, но не между heading и body, без регрессии ordered/unordered list spacing. scope: `media/session-view.css`; expected commit: `fix(ui): normalize session heading spacing`
