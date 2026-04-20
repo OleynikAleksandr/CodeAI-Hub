@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.33] - 2026-04-20
+### Fixed
+- **Visible provider `Thinking` bubbles now render as full cards again.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` no longer inherit the flatter legacy compact-strip treatment; the user-facing bubble path restores the message-card shadow.
+- **Muted provider `Thinking` chrome is now tuned against the real Session dialog backdrop.** The user-facing reasoning bubble surface no longer falls into the darker panel-gray composite caused by sharing the legacy alpha treatment directly on top of the dialog panel background, while the compact `role="thinking"` strip keeps its separate transition-surface contract.
+
+### Tests
+- **Shared provider-facing `Thinking` verification passed.** `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview`, and `npm run build:project-manager` all completed successfully before release packaging.
+
 ## [1.2.32] - 2026-04-20
 ### Fixed
 - **Muted thinking-card chrome now uses the exact approved design colors.** The shared reasoning surface no longer relies on approximate near-gray values; fill now resolves from `#2C3230` at `45%` alpha and stroke from `#47474A` at `45%` alpha, matching the intended spec more precisely.
