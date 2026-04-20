@@ -1,12 +1,11 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/SessionDialog_ThinkingChromeExactColor_Release_1.2.32.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/SessionDialog_ThinkingChromeExactColor_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
-  - `README.md`
-  - `CHANGELOG.md`
+  - `media/session-view.css`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
@@ -23,11 +22,7 @@
 - **Real-time Документация**:
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
 
-## Phase 1 — Release 1.2.32 (owner: Codex, updated: 2026-04-20)
-### Stream: Packaging
-1. [TODO] Обновить release-facing docs под `1.2.32` для exact thinking chrome colors; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.32 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.32 release notes` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.32`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.32`
-4. [TODO] Git Commit: `build: release 1.2.32` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и закрыть scope архивированием planning/todo; expected commit: `docs: close 1.2.32 release scope`
-6. [TODO] Git Commit: `docs: close 1.2.32 release scope` (hash: TBD)
+## Phase 1 — Thinking chrome exact color retune (owner: Codex, updated: 2026-04-20)
+### Stream: Session dialog visual contract
+1. [DONE] Перевести thinking-card fill/stroke на точные design values `#2C3230 @ 45%` и `#47474A @ 45%`, сохранив provider-accent header contract; scope: `media/session-view.css`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: align thinking chrome exact colors`
+2. [DONE] Git Commit: `fix: align thinking chrome exact colors` (hash: `05392a459`)
