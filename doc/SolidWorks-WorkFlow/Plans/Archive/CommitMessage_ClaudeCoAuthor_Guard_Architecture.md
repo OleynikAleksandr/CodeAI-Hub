@@ -1,6 +1,6 @@
 # Commit Message Claude Co-Author Guard
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Oleksandr + Codex
 **Scope:** Git commit message hygiene for local developer workflows
