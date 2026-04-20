@@ -1,6 +1,6 @@
 # Session Dialog Tagged Thinking Visual Tone - Release 1.2.30
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
