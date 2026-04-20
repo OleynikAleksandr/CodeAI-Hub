@@ -1,6 +1,6 @@
 # Session Dialog Thinking Unified Chrome Release 1.2.34
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
