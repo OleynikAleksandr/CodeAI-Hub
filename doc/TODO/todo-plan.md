@@ -25,9 +25,9 @@
 
 ## Phase 1 — Commit Message Guard (owner: Codex, updated: 2026-04-20)
 ### Stream: Claude Co-Author Protection
-1. [TODO] Добавить Husky `commit-msg` hook и repo script для автоматического удаления `Co-Authored-By: Claude ... <noreply@anthropic.com>` из commit message (scope: `.husky/commit-msg`, `scripts/check-commit-message.sh`; expected commit: `fix: add commit message Claude co-author guard`)
-2. [TODO] Git Commit: `fix: add commit message Claude co-author guard` (hash: TBD)
-3. [TODO] Обновить документацию по quality gates и описать новый `commit-msg` guard (scope: `scripts/README.md`; expected commit: `docs: document commit message guard`)
+1. [DONE] Добавить Husky `commit-msg` hook и repo script для автоматического удаления `Co-Authored-By: Claude ... <noreply@anthropic.com>` из commit message (scope: `.husky/commit-msg`, `scripts/check-commit-message.sh`; expected commit: `fix: add commit message Claude co-author guard`)
+2. [DONE] Git Commit: `fix: add commit message Claude co-author guard` (hash: `a1c66e381`)
+3. [IN_PROGRESS] Обновить документацию по quality gates и описать новый `commit-msg` guard (scope: `scripts/README.md`; expected commit: `docs: document commit message guard`)
 4. [TODO] Git Commit: `docs: document commit message guard` (hash: TBD)
 5. [TODO] Закрыть scope: архивировать active plan, вернуть placeholder в `doc/TODO/todo-plan.md`, перенести planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/` (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`; expected commit: `docs: close commit message guard scope`)
 6. [TODO] Git Commit: `docs: close commit message guard scope` (hash: TBD)

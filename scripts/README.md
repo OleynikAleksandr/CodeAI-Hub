@@ -16,6 +16,9 @@ This folder contains local scripts and Husky automation used to enforce quality 
   - `npm run check:tsprune` — unused export detection
   - `npm run format:fix` — formats and applies safe Biome/Ultracite fixes, restaging files
 
+- Commit message (`commit-msg` via Husky):
+  - `scripts/check-commit-message.sh <commit-message-file>` — strips forbidden `Co-Authored-By: Claude ... <noreply@anthropic.com>` trailers from the Git-provided commit message file, then fails only if such a trailer still remains after sanitization
+
 - Pre‑push:
   - `npm run check:dup` — jscpd duplication check (3% threshold, fails if exceeded)
   - `npm run check:links` — documentation link validation (`doc/**`, `README.md`)
@@ -39,11 +42,13 @@ This folder contains local scripts and Husky automation used to enforce quality 
 - Unused exports (ts‑prune): `npm run check:tsprune`
 - Duplicates (jscpd): `npm run check:dup`
 - Docs links: `npm run check:links`
+- Commit message guard: `./scripts/check-commit-message.sh <commit-message-file>`
 - Release build (final packaging on a clean tree): `./scripts/build-release.sh --use-current-version`
 
 ## Notes
 
 - Husky hooks live in `.husky/`; install or refresh them with `npm run setup:hooks` (or `npm install`, which runs `prepare`).
+- `commit-msg` is the repository guard for commit metadata hygiene; it currently removes forbidden Claude co-author trailers before the commit is finalized.
 - `build-release.sh` expects a clean working tree unless `--allow-dirty` is passed explicitly for diagnostics; the normal release path should not rely on `--allow-dirty`.
 - Provider CLIs/SDKs are global; provider SDKs must not reside under `node_modules/` in this repo.
 - All scripts print results to the terminal so developers and the agent get immediate feedback.
