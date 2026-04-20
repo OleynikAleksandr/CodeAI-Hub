@@ -771,8 +771,8 @@
 .session-dialog__message--assistant-thinking {
   z-index: 0;
   gap: 0;
-  background-color: rgba(49, 50, 51, 0.4);
-  border-color: rgba(70, 71, 74, 0.4);
+  background-color: rgba(49, 50, 51, 0.45);
+  border-color: rgba(70, 71, 74, 0.45);
   box-shadow: none;
 }
 
@@ -794,7 +794,25 @@
 .session-dialog__message--thinking .session-dialog__role,
 .session-dialog__message--assistant-thinking .session-dialog__role {
   font-weight: 200;
+}
+
+.session-dialog__message--thinking .session-dialog__role {
   color: rgba(173, 178, 186, 0.6);
+}
+
+.session-dialog__message--assistant-thinking.session-dialog__message--assistant-claude
+  .session-dialog__role {
+  color: rgba(255, 145, 5, 0.6);
+}
+
+.session-dialog__message--assistant-thinking.session-dialog__message--assistant-codex
+  .session-dialog__role {
+  color: rgba(1, 240, 216, 0.6);
+}
+
+.session-dialog__message--assistant-thinking.session-dialog__message--assistant-gemini
+  .session-dialog__role {
+  color: rgba(171, 52, 203, 0.6);
 }
 
 .session-dialog__message--assistant-thinking .session-dialog__content,
