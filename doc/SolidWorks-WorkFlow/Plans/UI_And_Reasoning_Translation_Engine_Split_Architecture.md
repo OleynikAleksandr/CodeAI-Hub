@@ -94,17 +94,33 @@
 
 ### 3.4 Language ownership
 
-`Reasoning Translation Engine` выбирает только engine.
+`Reasoning` получает полный independent ownership:
 
-Target language для visible reasoning:
+- отдельный target language через новую пятую карточку `Reasoning` в localization section Settings;
+- отдельный engine через `Reasoning Translation Engine` selector.
 
-- остаётся тем же, что и у `Messages for the User`.
+Историческая связь: до этого scope live visible `Thinking / Reasoning` неявно наследовал target language от `Messages for the User`. Это был compromise of convenience, а не осознанный ownership contract. В рамках refactor:
 
-То есть scope split только по engine, а не по language selection.
+- `Messages for the User` возвращается к каноническому значению: warnings, errors, status hints, notifications — но НЕ live reasoning overlays;
+- live visible `Thinking / Reasoning` получает собственный language ownership под новой категорией `Reasoning`.
+
+Migration для существующих установок:
+
+- `reasoningLanguage` инициализируется текущим значением language категории `Messages for the User` (чтобы существующий пользователь не увидел регрессии в день апгрейда);
+- `reasoningEngineId` инициализируется в `google-gtx`.
+
+### 3.5 Reasoning category card copy
+
+Пятая карточка в localization section Settings получает собственный title и description. Целевой draft:
+
+- title: `Reasoning`
+- description: `Видимые Thinking / Reasoning сообщения провайдера. Скрытые размышления никогда не переводятся и не попадают в очередь перевода.`
+
+Эти строки должны быть локализованы через approved dictionaries (`ui_labels.json`, `ui_helper_text.json`) и иметь явную ownership classification (`UI Labels` для title, `UI Helper Text` для description). Сама категория `Reasoning` применяется только к runtime-emitted thought bubbles, а не к статическому settings copy.
 
 ---
 
-## 4. New Ownership Marker
+## 4. New User-Facing Category
 
 Текущий boundary имеет 4 user-facing product categories:
 
@@ -113,17 +129,23 @@ Target language для visible reasoning:
 3. `Messages for the User`
 4. `Artifacts for the User`
 
-Для этого scope вводится дополнительный explicit runtime marker:
+В рамках refactor добавляется полноценная пятая user-facing category:
 
 5. `Reasoning`
 
-Важно:
+Ключевые свойства пятой категории:
 
-- `Reasoning` не заменяет четыре существующие UI/product categories;
-- `Reasoning` относится только к visible runtime provider `Thinking / Reasoning` overlays;
-- `Reasoning` не является bundled dictionary category для интерфейсной локализации;
-- `Reasoning` не участвует в browser bootstrap bundle materialization;
-- `Reasoning` использует language ownership от `Messages for the User`, но отдельный engine ownership через `reasoningEngineId`.
+- `Reasoning` — это live visible provider `Thinking / Reasoning` surface, исторически ошибочно лежавший под `Messages for the User`;
+- `Reasoning` получает собственный target language через отдельную пятую карточку в localization section Settings;
+- `Reasoning` получает собственный engine через `Reasoning Translation Engine` selector;
+- `Reasoning` остаётся runtime-only translation path: он не является bundled dictionary и не участвует в browser bootstrap bundle materialization (нет статических English source keys для live thought bubbles);
+- `Reasoning` change-impact остаётся runtime-only non-blocking: смена reasoning language или reasoning engine не запускает strict localization sync и не ребилдит UI bundles;
+- hidden `Thinking / Reasoning` по-прежнему не переводится и не попадает в translation queue.
+
+Boundary cleanup:
+
+- `Messages for the User` возвращается к каноническому значению (warnings, errors, status hints, notifications);
+- любое место в коде или docs, где live reasoning сейчас treated as `Messages`, должно быть перенесено под `Reasoning` в рамках этого scope.
 
 Новая обязательная authoring rule для scope:
 
@@ -153,19 +175,23 @@ Automatic guessing по-прежнему запрещён.
 Текущий persisted shape:
 
 - `general.localization.engineId`
+- `general.localization.categoryLanguages.messagesForTheUser` (канонический path уточняется в `Localization.md`)
 
 Новый shape:
 
 - `general.localization.uiEngineId`
 - `general.localization.reasoningEngineId`
+- `general.localization.categoryLanguages.reasoning` (новая user-facing category target language)
 
 Compatibility contract:
 
 - read-path поддерживает legacy `engineId`;
 - migration-path materializes:
-  - `uiEngineId = legacy engineId`
-  - `reasoningEngineId = "google-gtx"`
-- write-path больше не сохраняет legacy-only `engineId` как источник правды.
+  - `uiEngineId = legacy engineId` (fallback `google-gtx`);
+  - `reasoningEngineId = "google-gtx"` (если не задан);
+  - `reasoningLanguage = legacy messagesForTheUserLanguage` (чтобы существующий пользователь не увидел регрессии в день апгрейда);
+- write-path больше не сохраняет legacy-only `engineId` как источник правды;
+- `messagesForTheUserLanguage` остаётся persisted и активно используется для своих канонических messages, но больше не используется live reasoning overlay path.
 
 ### 5.2 Localization runtime settings
 
@@ -190,10 +216,12 @@ Browser bootstrap snapshot и selective sync planner остаются привя
 
 - `uiEngineId` change -> strict localization impact
 - `reasoningEngineId` change -> runtime-only / non-blocking impact
+- `reasoningLanguage` change -> runtime-only / non-blocking impact
+- language change у четырёх UI-owned categories (`UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`) остаётся strict localization-impacting
 
 Следствие:
 
-- изменение reasoning engine не блокирует Settings save;
+- изменение reasoning engine или reasoning language не блокирует Settings save;
 - не запускает strict bundle rematerialization;
 - не ставит busy overlay для PM/new session sends;
 - начинает влиять только на будущие reasoning translation dispatches.
@@ -202,13 +230,14 @@ Browser bootstrap snapshot и selective sync planner остаются привя
 
 Current:
 
-- live reasoning overlays read the same persisted engine that UI localization uses.
+- live reasoning overlays read the same persisted engine that UI localization uses;
+- live reasoning overlays translate into language категории `Messages for the User`.
 
 Target:
 
-- `LocalizationFacade` / browser bootstrap / bundle materialization -> `uiEngineId`
-- `SessionTranslationPolicyResolver` / Core live reasoning overlay -> `reasoningEngineId`
-- provider-local runtime translation adapters, которые переводят только visible live provider thought/progress copy, должны читать `reasoningEngineId`, а не UI engine.
+- `LocalizationFacade` / browser bootstrap / bundle materialization -> `uiEngineId`, category languages четырёх UI-owned категорий;
+- `SessionTranslationPolicyResolver` / Core live reasoning overlay -> `reasoningEngineId` + `reasoningLanguage`;
+- provider-local runtime translation adapters, которые переводят только visible live provider thought/progress copy, должны читать `reasoningEngineId` + `reasoningLanguage`, а не UI engine и не `messagesForTheUserLanguage`.
 
 ### 5.5 Availability gating
 
@@ -240,10 +269,10 @@ Target:
 
 ### 6.3 Browser settings UI
 
-- settings state model / raw snapshot normalization
+- settings state model / raw snapshot normalization (добавить `reasoningEngineId`, `reasoningLanguage`)
 - settings mutation handlers
-- localization settings card
-- localized source dictionaries for new labels/helper copy/warning copy
+- localization settings card: пятая карточка `Reasoning` с собственным language selector, переименование UI translation engine selector в `UI Translation Engine` и добавление нового `Reasoning Translation Engine` selector
+- localized source dictionaries for new category title/description + engine selector label/helper/warning copy
 
 ### 6.4 Translation consumers
 
@@ -255,11 +284,12 @@ Target:
 
 ## 7. Non-Goals
 
-- Не вводить отдельный language selector для reasoning.
 - Не менять fallback contract reasoning translation: source English остаётся допустимым fallback.
 - Не переводить hidden thinking.
 - Не делать retrospective retranslation старой session history.
 - Не менять transport implementation самих translation engines в этом scope.
+- Не делать `Reasoning` bundled dictionary category: статических English source keys для live thought bubbles нет и в этом scope не появляется.
+- Не добавлять dedicated glossary / protected-terms policy для `Reasoning`: используем default runtime translation poll без UI-owned glossary overrides.
 
 ---
 
@@ -280,6 +310,12 @@ Target:
 5. Boundary confusion:
    если `Reasoning` начнут трактовать как обычную bundled dictionary category, это смешает runtime overlays с persistent UI localization.
 
+6. Reasoning language migration drift:
+   если `reasoningLanguage` при миграции не будет инициализирован текущим значением `messagesForTheUserLanguage`, существующий пользователь в день апгрейда увидит неожиданную смену target language у live thinking bubbles.
+
+7. Language channel cross-contamination:
+   если runtime reasoning path продолжит читать `messagesForTheUserLanguage`, а UI-path продолжит влиять на reasoning language, изоляция категорий будет формальной, а не фактической.
+
 ---
 
 ## 9. Verification Strategy
@@ -289,25 +325,30 @@ Target:
 - legacy settings with only `engineId` migrate to:
   - `uiEngineId = legacy value`
   - `reasoningEngineId = google-gtx`
-- fresh defaults produce `google-gtx` for both selectors.
+  - `reasoningLanguage = legacy messagesForTheUserLanguage`
+- fresh defaults produce `google-gtx` для обоих selectors и `reasoningLanguage = default system language policy` (совпадает с default для новых установок, используемым остальными category languages).
 
 ### 9.2 Save path
 
 - changing `UI Translation Engine` triggers strict localization sync when needed;
-- changing `Reasoning Translation Engine` does not block PM/new session sends and does not rebuild browser bootstrap bundles.
+- changing language категорий `UI Labels` / `UI Helper Text` / `Messages for the User` / `Artifacts for the User` triggers strict localization sync when needed;
+- changing `Reasoning Translation Engine` does not block PM/new session sends and does not rebuild browser bootstrap bundles;
+- changing `Reasoning` language does not block PM/new session sends and does not rebuild browser bootstrap bundles.
 
 ### 9.3 Runtime behavior
 
-- visible reasoning uses `reasoningEngineId`;
+- visible reasoning uses `reasoningEngineId` + `reasoningLanguage`;
 - hidden reasoning never enters translation queue;
-- changing `Reasoning Translation Engine` affects only future reasoning messages;
-- changing `UI Translation Engine` does not silently rewrite already persisted reasoning overlays.
+- changing `Reasoning Translation Engine` или `Reasoning` language влияет только на будущие reasoning messages;
+- changing `UI Translation Engine` или language UI-owned категорий не переписывает уже persisted reasoning overlays;
+- changing language `Messages for the User` больше не влияет на live reasoning overlays.
 
 ### 9.4 UI copy ownership
 
 - all new settings labels/helper/warning strings are added to approved English dictionaries;
 - each new string has explicit category ownership;
-- new `Reasoning` runtime marker is reflected in updated boundary docs.
+- пятая user-facing category `Reasoning` отражена в обновлённых boundary docs;
+- статический settings copy новой карточки маркируется как `UI Labels` (title) / `UI Helper Text` (description, helper, warning), а `Reasoning` как category применяется только к runtime-emitted thought bubbles.
 
 ### 9.5 Release verification
 
@@ -330,12 +371,12 @@ Targeted checks for implementation cycle:
 
 Execution planning should follow these slices:
 
-1. settings contract + migration
-2. save-impact classifier split
-3. Core/runtime reasoning engine routing
-4. provider-local live translation routing audit
-5. settings UI + localized copy
-6. docs/SSOT synchronization
-7. release preparation and final build pipeline
+1. settings contract + migration (`uiEngineId`, `reasoningEngineId`, `reasoningLanguage`);
+2. save-impact classifier split (UI strict vs reasoning runtime-only для engine и language);
+3. Core/runtime reasoning engine + language routing;
+4. provider-local live translation routing audit (engine + target language);
+5. settings UI (переименовать UI engine selector, добавить Reasoning engine selector, добавить пятую карточку `Reasoning` с language selector) + localized copy под approved ownership;
+6. docs/SSOT synchronization (включая boundary cleanup: reasoning отделяется от `Messages for the User`);
+7. release preparation and final build pipeline.
 
 This document is the approved planning source for the next active `doc/TODO/todo-plan.md`.
