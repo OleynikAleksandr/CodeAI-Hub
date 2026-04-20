@@ -66,9 +66,9 @@
 
 ### Stream: Localized Source Keys
 1. [DONE] Добавить approved English keys для нового `UI Translation Engine` / `Reasoning Translation Engine` selector label/helper/warning плюс пятой карточки `Reasoning` (title + description) в одной правке под одним commit; ownership промаркирован через approved dictionary файлы (`UI Labels` через `ui_labels.json`, `UI Helper Text` через `ui_helper_text.json`); scope: `assets/localization/source/en/ui_labels.json`, `assets/localization/source/en/ui_helper_text.json`
-2. [DONE] Git Commit: `feat: localize split translation engine and reasoning card copy` (hash: TBD)
-5. [TODO] Синхронизировать SSOT для пятой user-facing category `Reasoning`, отделения от `Messages for the User` и runtime-only change-impact contract; scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`; expected commit: `docs: record reasoning category ownership split`
-6. [TODO] Git Commit: `docs: record reasoning category ownership split` (hash: TBD)
+2. [DONE] Git Commit: `feat: localize split translation engine and reasoning card copy` (hash: 377fed6c3)
+5. [DONE] Синхронизировать SSOT для пятой user-facing category `Reasoning`, отделения от `Messages for the User` и runtime-only change-impact contract; scope: `doc/SolidWorks-WorkFlow/Modules/Localization.md` (финальный свипап по translationEngineId → uiEngineId + reasoningEngineId; остальные правки внесены поэтапно в Phase 1/2/3); `Shared_RuntimeTranslation_Module.md` и `UserFacing_Text_Localization_Boundary.md` уже зафиксированы в соответствующих tасkах
+6. [DONE] Git Commit: `docs: record reasoning category ownership split` (hash: TBD)
 
 ## Phase 4 — Verification And Release (owner: Codex, updated: 2026-04-20)
 ### Stream: Targeted Verification
