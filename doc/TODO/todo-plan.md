@@ -58,9 +58,9 @@
 ## Phase 3 — Settings UI And Localization Copy (owner: Codex, updated: 2026-04-20)
 ### Stream: Settings Controls
 1. [DONE] Переименовать существующий selector в `UI Translation Engine`, добавить `Reasoning Translation Engine`, задать деликатный helper/warning copy и дефолт `Google GTX Free`; scope: `src/client/ui/src/components/settings/localization-settings-card.tsx` (рефакторинг под ≤500 LOC с выделением `TranslationEngineSelector` в отдельный file), `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx` (новый micro-class), `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings-view.tsx` (threading), `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
-2. [DONE] Git Commit: `feat: add dedicated reasoning translation engine control` (hash: TBD)
-3. [TODO] Добавить пятую карточку `Reasoning` с собственным language selector и ownership-aware title/description; scope: `src/client/ui/src/components/settings/localization-settings-card.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`, `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`; expected commit: `feat: add dedicated reasoning language settings card`
-4. [TODO] Git Commit: `feat: add dedicated reasoning language settings card` (hash: TBD)
+2. [DONE] Git Commit: `feat: add dedicated reasoning translation engine control` (hash: 878c1b538)
+3. [DONE] Добавить пятую карточку `Reasoning` с собственным language selector и ownership-aware title/description; scope: `src/client/ui/src/components/settings/localization-settings-card.tsx` (одна правка — добавлена запись в `categoryFields` для `reasoning`; существующий рендер карточек обслуживает пятую через тот же `onCategoryLanguageChange` канал)
+4. [DONE] Git Commit: `feat: add dedicated reasoning language settings card` (hash: TBD)
 5. [DONE] Расширить browser settings state/raw/save handlers под новые поля (`uiEngineId`, `reasoningEngineId`, `reasoningLanguage`) и migration defaults; scope: `src/client/ui/src/components/settings/settings-state-raw.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts` (4 файла — state model, raw shape, reducer helpers и handler hook обновлены в одном логическом изменении)
 6. [DONE] Git Commit: `feat: wire split translation engine and reasoning language state` (hash: 1c11db130)
 

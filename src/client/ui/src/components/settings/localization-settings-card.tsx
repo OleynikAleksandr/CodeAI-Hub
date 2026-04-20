@@ -214,7 +214,7 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
       description: t(
         "user_guidance",
         "settings.localization.category.messages_for_the_user.description",
-        "Warnings, errors, hints, status updates, visible Thinking and Reasoning bubbles, and other messages addressed to the user."
+        "Warnings, errors, hints, status updates, and other messages addressed to the user."
       ),
     },
     {
@@ -228,6 +228,19 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
         "user_guidance",
         "settings.localization.category.artifacts_for_the_user.description",
         "Forms and final user-facing artifacts. Agent instructions and templates stay in English."
+      ),
+    },
+    {
+      id: "reasoning",
+      label: t(
+        "ui_interface",
+        "settings.localization.category.reasoning.label",
+        "Reasoning"
+      ),
+      description: t(
+        "user_guidance",
+        "settings.localization.category.reasoning.description",
+        "Visible Thinking and Reasoning bubbles emitted by the provider during a turn. Hidden reasoning is never translated."
       ),
     },
   ];
