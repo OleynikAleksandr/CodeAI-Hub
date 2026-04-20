@@ -32,18 +32,18 @@ const readAppliedGeminiTurnConfig = (
     return null;
   }
   return {
-    messagesForTheUserLanguage: readOptionalTrimmedString(
-      candidate.messagesForTheUserLanguage
-    ),
+    messagesForTheUserLanguage:
+      readOptionalTrimmedString(candidate.reasoningLanguage) ??
+      readOptionalTrimmedString(candidate.messagesForTheUserLanguage),
     modelId: readOptionalTrimmedString(candidate.modelId),
     thinkingDisplaySyncEnabled:
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
         ? candidate.thinkingDisplaySyncEnabled
         : true,
     thinkingLevel: readOptionalTrimmedString(candidate.thinkingLevel),
-    translationEngineId: readOptionalTrimmedString(
-      candidate.translationEngineId
-    ),
+    translationEngineId:
+      readOptionalTrimmedString(candidate.reasoningEngineId) ??
+      readOptionalTrimmedString(candidate.translationEngineId),
   };
 };
 

@@ -32,9 +32,9 @@ const readAppliedClaudeTurnConfig = (
   }
 
   return {
-    messagesForTheUserLanguage: readOptionalTrimmedString(
-      candidate.messagesForTheUserLanguage
-    ),
+    messagesForTheUserLanguage:
+      readOptionalTrimmedString(candidate.reasoningLanguage) ??
+      readOptionalTrimmedString(candidate.messagesForTheUserLanguage),
     reasoningEffort: readClaudeReasoningEffort(candidate.reasoningEffort),
     thinkingEnabled:
       typeof candidate.thinkingEnabled === "boolean"
@@ -44,9 +44,9 @@ const readAppliedClaudeTurnConfig = (
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
         ? candidate.thinkingDisplaySyncEnabled
         : true,
-    translationEngineId: readOptionalTrimmedString(
-      candidate.translationEngineId
-    ),
+    translationEngineId:
+      readOptionalTrimmedString(candidate.reasoningEngineId) ??
+      readOptionalTrimmedString(candidate.translationEngineId),
   };
 };
 

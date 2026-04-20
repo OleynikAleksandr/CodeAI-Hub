@@ -182,7 +182,7 @@ Current provider boundary:
 
 - Gemini and Codex now emit source-first thinking text directly into the dialog/runtime stream;
 - Claude keeps provider-local translation only for generic assistant progress/pre-tool text that is not part of the Core-owned thinking overlay path;
-- provider-local live adapters that still translate visible assistant progress now read the persisted `translationEngineId` selected in Localization settings instead of hardcoding `google-gtx`;
+- provider-local live adapters that still translate visible assistant progress prefer the dedicated `reasoningEngineId` and `reasoningLanguage` from the applied provider turn-config envelope; they fall back to the legacy `translationEngineId` / `messagesForTheUserLanguage` aliases only while Core is still forwarding both fields during the UI/Reasoning split migration;
 - `@codeai-hub/translation` still must not know about provider stream buffers, placeholder markers, UI roles, or dialog/session storage.
 
 ### 5.3 Future document and artifact adapters

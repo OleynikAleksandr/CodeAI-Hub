@@ -51,12 +51,26 @@ const readAppliedCodexTurnConfig = (
       ? candidate.effectiveModelId
       : modelId;
 
+  const reasoningLanguage =
+    typeof candidate.reasoningLanguage === "string"
+      ? candidate.reasoningLanguage
+      : undefined;
+  const legacyLanguage =
+    typeof candidate.messagesForTheUserLanguage === "string"
+      ? candidate.messagesForTheUserLanguage
+      : undefined;
+  const reasoningEngineId =
+    typeof candidate.reasoningEngineId === "string"
+      ? candidate.reasoningEngineId
+      : undefined;
+  const legacyEngineId =
+    typeof candidate.translationEngineId === "string"
+      ? candidate.translationEngineId
+      : undefined;
+
   return {
     effectiveModelId,
-    messagesForTheUserLanguage:
-      typeof candidate.messagesForTheUserLanguage === "string"
-        ? candidate.messagesForTheUserLanguage
-        : undefined,
+    messagesForTheUserLanguage: reasoningLanguage ?? legacyLanguage,
     modelId,
     reasoningEffort:
       typeof candidate.reasoningEffort === "string" &&
@@ -70,10 +84,7 @@ const readAppliedCodexTurnConfig = (
       typeof candidate.thinkingDisplaySyncEnabled === "boolean"
         ? candidate.thinkingDisplaySyncEnabled
         : undefined,
-    translationEngineId:
-      typeof candidate.translationEngineId === "string"
-        ? candidate.translationEngineId
-        : undefined,
+    translationEngineId: reasoningEngineId ?? legacyEngineId,
   };
 };
 
