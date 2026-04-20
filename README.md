@@ -7,7 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.30
+## Current Release — v1.2.31
+- **Provider `Thinking` headers now keep their accent while remaining muted.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` no longer collapse to neutral gray; the header stays on the provider hue at a softer `60%` alpha, so provider identity remains readable without overpowering the final answer.
+- **Muted thinking bubbles are slightly stronger and more legible.** The shared thinking surface now uses `45%` alpha for fill and border instead of the weaker `40%`, keeping the subdued secondary feel while giving the visible card edge and background better separation.
+
+### 1.2.30 (previous)
 - **Visible `Thinking` cards now use the muted visual contract on the real user-facing render path.** Session UI now applies the softened alpha treatment not only to dedicated `thinking` role bubbles but also to assistant messages tagged as thinking, so cards such as `Codex · Thinking` actually render with the intended quieter fill, border, and typography.
 - **The real `Thinking` card path is regression-covered in shared Session UI logic.** The dialog message class builder now has a dedicated test for `assistant + tag="thinking"` so the visible reasoning card path cannot silently fall back to ordinary assistant styling again.
 

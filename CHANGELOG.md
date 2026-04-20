@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.31] - 2026-04-20
+### Fixed
+- **Provider `Thinking` headers now keep their accent instead of fading to neutral gray.** Assistant-tagged reasoning cards such as `Codex · Thinking`, `Claude · Thinking`, and `Gemini · Thinking` now preserve the provider hue at `0.6` alpha, so the header remains visibly provider-scoped while still reading as secondary content.
+- **Muted thinking bubble chrome is slightly stronger.** The shared thinking surface now uses `0.45` alpha for fill and border instead of `0.4`, improving contrast without restoring the ordinary assistant-card weight.
+
+### Tests
+- **Targeted shared-UI verification passed.** `npm run build:webview` and `npm run build:project-manager` both completed successfully for the provider-accent retune before release packaging.
+
 ## [1.2.30] - 2026-04-20
 ### Fixed
 - **Visible `Thinking` cards now receive the muted alpha contract on the actual user-facing render path.** Session UI now applies the softened background/border/text treatment not only to `role="thinking"` bubbles but also to assistant messages tagged as thinking, so cards such as `Codex · Thinking` no longer fall back to the ordinary assistant surface.
