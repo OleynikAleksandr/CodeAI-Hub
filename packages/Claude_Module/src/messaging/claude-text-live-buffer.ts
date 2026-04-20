@@ -16,6 +16,8 @@
 
 const MIN_FLUSH_CHARS = 96;
 const SENTENCE_BOUNDARY_REGEX = /[.!?…\n]/g;
+const TRAILING_MARKDOWN_LIST_MARKER_REGEX =
+  /(?:^|\n)\s{0,3}(?:\d+\.|[-*+])\s*$/u;
 
 interface LiveTextState {
   finalizedText: string | null;
@@ -129,18 +131,30 @@ export class ClaudeTextLiveBuffer {
     if (tail.length < MIN_FLUSH_CHARS) {
       return null;
     }
-    let lastBoundary = -1;
+    let lastSafeBoundary = -1;
     SENTENCE_BOUNDARY_REGEX.lastIndex = 0;
     let match: RegExpExecArray | null = SENTENCE_BOUNDARY_REGEX.exec(tail);
     while (match !== null) {
-      lastBoundary = match.index + match[0].length;
+      const boundary = match.index + match[0].length;
+      const candidate = tail.slice(0, boundary);
+      if (!this.endsWithMarkerOnlyListLine(candidate)) {
+        lastSafeBoundary = boundary;
+      }
       match = SENTENCE_BOUNDARY_REGEX.exec(tail);
     }
-    if (lastBoundary <= 0) {
+    if (lastSafeBoundary <= 0) {
       return null;
     }
-    const segment = tail.slice(0, lastBoundary);
-    state.materializedLength += lastBoundary;
+    const segment = tail.slice(0, lastSafeBoundary);
+    state.materializedLength += lastSafeBoundary;
     return segment;
+  }
+
+  private endsWithMarkerOnlyListLine(text: string): boolean {
+    const normalized = text.trimEnd();
+    if (normalized.length === 0) {
+      return false;
+    }
+    return TRAILING_MARKDOWN_LIST_MARKER_REGEX.test(normalized);
   }
 }

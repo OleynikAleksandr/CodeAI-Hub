@@ -33,10 +33,10 @@
 ## Phase 1 — Claude Live Marker-Safe Boundaries (owner: Codex, updated: 2026-04-20)
 ### Stream: Thinking Marker Boundary
 1. [DONE] Запретить marker-only flush в Claude thinking live buffer, добавить regression guard для кейса `2.` → `First-run experience` и безопасный fallback для thinking translation path без обязательного `runtimeTurnConfig`. scope: `packages/Claude_Module/src/messaging/claude-thinking-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.test.ts`; expected commit: `fix(claude): prevent thinking list-marker split`
-2. [TODO] Git Commit: `fix(claude): prevent thinking list-marker split` (hash: TBD)
+2. [DONE] Git Commit: `fix(claude): prevent thinking list-marker split` (hash: `e387a4a41`)
 
 ### Stream: Assistant Live Text Marker Boundary
-1. [TODO] Запретить marker-only flush в Claude text live buffer и добавить regression guard для кейса `1.`/`2.` без item body. scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`; expected commit: `fix(claude): prevent live text list-marker split`
+1. [DONE] Запретить marker-only flush в Claude text live buffer, добавить regression guard для кейса `1.`/`2.` без item body и безопасный fallback для text-path при отсутствии `runtimeTurnConfig`. scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts`, `packages/Claude_Module/src/messaging/claude-content-stream-handler.ts`, `packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`; expected commit: `fix(claude): prevent live text list-marker split`
 2. [TODO] Git Commit: `fix(claude): prevent live text list-marker split` (hash: TBD)
 
 ## Phase 2 — Session UI Merge And Rendering (owner: Codex, updated: 2026-04-20)

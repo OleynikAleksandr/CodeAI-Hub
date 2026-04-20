@@ -38,6 +38,22 @@ test("ClaudeTextLiveBuffer flushes at last sentence boundary once threshold cros
   );
 });
 
+test("ClaudeTextLiveBuffer backtracks from a marker-only list line to the previous safe boundary", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const segment = buffer.appendDelta(
+    "s",
+    "I need to summarize what I created, what is in the file, and which questions matter most next. " +
+      "The questions are:\n1. Entry point\n2."
+  );
+
+  assert.equal(segment?.trimEnd().endsWith("2."), false);
+  assert.equal(segment?.includes("1. Entry point"), true);
+
+  buffer.appendDelta("s", " First-run without projects");
+  const tail = buffer.flushRemaining("s");
+  assert.equal(tail, "2. First-run without projects");
+});
+
 test("ClaudeTextLiveBuffer flushRemaining returns leftover tail and clears it", () => {
   const buffer = new ClaudeTextLiveBuffer();
   buffer.appendDelta("s", "pending tail without any boundary at all");

@@ -279,7 +279,7 @@ export class ClaudeContentStreamHandler {
     text: string
   ): boolean {
     return shouldHoldLocalizedPreToolText(
-      session.runtimeTurnConfig.messagesForTheUserLanguage,
+      session.runtimeTurnConfig?.messagesForTheUserLanguage,
       text
     );
   }
