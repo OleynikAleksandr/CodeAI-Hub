@@ -1,6 +1,6 @@
 # Dialog Panel Localized Last Bubble Autoscroll — Release 1.2.28
 
-**Status:** Proposed
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
