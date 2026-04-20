@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.35] - 2026-04-20
+### Fixed
+- **Main thinking body text is now slightly brighter on both internal paths.** The readable content inside both legacy `role="thinking"` and assistant-tagged reasoning cards (`Claude · Thinking`, `Codex · Thinking`, `Gemini · Thinking`) now uses `rgba(173, 178, 186, 0.7)` instead of `rgba(173, 178, 186, 0.6)`.
+- **The rest of the thinking visual contract remains unchanged.** Fill, stroke, shadow, provider-colored header, and the more-muted timestamp stay on the accepted `1.2.34` baseline while only the main body text is retuned.
+
+### Tests
+- **Targeted shared-UI verification passed.** `npm run build:webview` and `npm run build:project-manager` both completed successfully before release packaging.
+
 ## [1.2.34] - 2026-04-20
 ### Fixed
 - **Both internal `Thinking` bubble paths now share one chrome contract.** The legacy `role="thinking"` surface and the assistant-tagged reasoning path (`Claude · Thinking`, `Codex · Thinking`, `Gemini · Thinking`) now use the same muted fill `rgba(44, 50, 48, 0.45)` and stroke `rgba(71, 71, 74, 0.45)` instead of rendering with different chrome values.

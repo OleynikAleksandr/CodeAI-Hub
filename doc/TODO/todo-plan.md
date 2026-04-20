@@ -26,11 +26,11 @@
 ## Phase 1 — Thinking Text Opacity Retune (owner: Codex, updated: 2026-04-20)
 ### Stream: Styling and SSOT
 1. [DONE] Поднять opacity основного thinking-текста до `rgba(173, 178, 186, 0.7)` на обоих внутренних thinking paths, сохранить остальной chrome `1.2.34` без изменений, синхронизировать SSOT и подтвердить таргетными сборками `npm run build:webview` + `npm run build:project-manager`; scope: `media/session-view.css`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`; commit: `fix: retune thinking text opacity`
-2. [TODO] Git Commit: `fix: retune thinking text opacity` (hash: TBD)
+2. [DONE] Git Commit: `fix: retune thinking text opacity` (hash: `1d707cb4b`)
 
 ## Phase 2 — Release 1.2.35 (owner: Codex, updated: 2026-04-20)
 ### Stream: Packaging
-1. [TODO] Обновить release-facing docs под `1.2.35` для thinking text opacity retune; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.35 release notes`
+1. [DONE] Обновить release-facing docs под `1.2.35` для thinking text opacity retune; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.35 release notes`
 2. [TODO] Git Commit: `docs: prepare 1.2.35 release notes` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.35`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.35`
 4. [TODO] Git Commit: `build: release 1.2.35` (hash: TBD)
