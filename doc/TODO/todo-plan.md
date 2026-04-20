@@ -77,6 +77,6 @@
 
 ### Stream: Release Build
 1. [DONE] Подготовить release-facing docs под будущую версию `1.2.36` (`README.md`, `CHANGELOG.md`); архитектурные материалы уже синхронизированы в Phase 3
-2. [DONE] Git Commit: `docs: prepare reasoning split release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare reasoning split release notes` (hash: e5804c733)
 3. [TODO] На чистом дереве выполнить финальный release pipeline: `./scripts/build-all.sh` -> `./scripts/build-release.sh --use-current-version`, зафиксировать VSIX/tarball results и после последнего содержательного commit подготовить отдельный session report closeout; scope: release pipeline / artifacts / final closeout handoff; expected commit: `build: release reasoning split update`
 4. [TODO] Git Commit: `build: release reasoning split update` (hash: TBD)

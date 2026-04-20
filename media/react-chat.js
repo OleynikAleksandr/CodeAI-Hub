@@ -7731,28 +7731,36 @@
   var mapAutoUpdateSettings = (value) => ({
     enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
   });
-  var mapLocalizationCategories = (value, defaultLanguage) => createLocalizationCategorySettings({
-    artifactsForTheUser: resolveLocalizationCategory(
-      value,
-      ["artifactsForTheUser", "interactiveTemplates"],
-      defaultLanguage
-    ),
-    messagesForTheUser: resolveLocalizationCategory(
+  var mapLocalizationCategories = (value, defaultLanguage) => {
+    const messagesForTheUser = resolveLocalizationCategory(
       value,
       ["messagesForTheUser", "systemFeedback"],
       defaultLanguage
-    ),
-    uiHelperText: resolveLocalizationCategory(
-      value,
-      ["uiHelperText", "userGuidance"],
-      defaultLanguage
-    ),
-    uiLabels: resolveLocalizationCategory(
-      value,
-      ["uiLabels", "uiInterface", "workflowTerms"],
-      defaultLanguage
-    )
-  });
+    );
+    return createLocalizationCategorySettings({
+      artifactsForTheUser: resolveLocalizationCategory(
+        value,
+        ["artifactsForTheUser", "interactiveTemplates"],
+        defaultLanguage
+      ),
+      messagesForTheUser,
+      reasoning: resolveLocalizationCategory(
+        value,
+        ["reasoning"],
+        messagesForTheUser
+      ),
+      uiHelperText: resolveLocalizationCategory(
+        value,
+        ["uiHelperText", "userGuidance"],
+        defaultLanguage
+      ),
+      uiLabels: resolveLocalizationCategory(
+        value,
+        ["uiLabels", "uiInterface", "workflowTerms"],
+        defaultLanguage
+      )
+    });
+  };
   var mapLocalizationSettings = (value) => {
     const legacyDefaultLanguage = mapLocalizationString(
       value?.defaultLanguage,
@@ -7762,16 +7770,19 @@
       value?.categories,
       legacyDefaultLanguage
     );
+    const uiEngineId = mapLocalizationString(value?.uiEngineId, "") || mapLocalizationString(value?.engineId, DEFAULT_LOCALIZATION_ENGINE_ID);
+    const reasoningEngineId = mapLocalizationString(
+      value?.reasoningEngineId,
+      DEFAULT_LOCALIZATION_ENGINE_ID
+    );
     return {
       defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
       categories,
       workflowTermsPolicy: deriveWorkflowTermsPolicy(
         categories.uiLabels ?? categories.uiInterface
       ),
-      engineId: mapLocalizationString(
-        value?.engineId,
-        DEFAULT_LOCALIZATION_ENGINE_ID
-      ),
+      engineId: uiEngineId,
+      reasoningEngineId,
       glossaryEnabled: typeof value?.glossaryEnabled === "boolean" ? value.glossaryEnabled : true
     };
   };
@@ -7863,8 +7874,8 @@
     );
   };
   var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
-  var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
-  var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.glossaryEnabled === right.glossaryEnabled;
+  var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.reasoning === right.reasoning && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
+  var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.reasoningEngineId === right.reasoningEngineId && left.glossaryEnabled === right.glossaryEnabled;
   var areClaudeSettingsEqual = (left, right) => areClaudeThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areCodexSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areReasoningByModelEqual(left.reasoningByModel, right.reasoningByModel) && left.reasoningSummaryEnabled === right.reasoningSummaryEnabled && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areGeminiSettingsEqual = (left, right) => areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && areGeminiThinkingLevelByModelEqual(
@@ -7923,16 +7934,22 @@
   };
   var resolveApprovedLocalizationCategories = (categories) => {
     const fallback = DEFAULT_LOCALIZATION_LANGUAGE2;
+    const messagesForTheUser = resolveLocalizationCategory2(
+      categories,
+      ["messagesForTheUser", "systemFeedback"],
+      fallback
+    );
     return {
       artifactsForTheUser: resolveLocalizationCategory2(
         categories,
         ["artifactsForTheUser", "interactiveTemplates"],
         fallback
       ),
-      messagesForTheUser: resolveLocalizationCategory2(
+      messagesForTheUser,
+      reasoning: resolveLocalizationCategory2(
         categories,
-        ["messagesForTheUser", "systemFeedback"],
-        fallback
+        ["reasoning"],
+        messagesForTheUser
       ),
       uiHelperText: resolveLocalizationCategory2(
         categories,
@@ -7950,6 +7967,7 @@
     artifactsForTheUser: approved.artifactsForTheUser,
     interactiveTemplates: approved.artifactsForTheUser,
     messagesForTheUser: approved.messagesForTheUser,
+    reasoning: approved.reasoning,
     systemFeedback: approved.messagesForTheUser,
     uiHelperText: approved.uiHelperText,
     uiInterface: approved.uiLabels,
@@ -7986,6 +8004,9 @@
     if (category === "systemFeedback") {
       approvedCategories.messagesForTheUser = normalizedLanguage;
     }
+    if (category === "reasoning") {
+      approvedCategories.reasoning = normalizedLanguage;
+    }
     if (category === "userGuidance") {
       approvedCategories.uiHelperText = normalizedLanguage;
     }
@@ -8014,6 +8035,7 @@
           categories: createMirroredLocalizationCategories({
             artifactsForTheUser: normalizedLanguage,
             messagesForTheUser: normalizedLanguage,
+            reasoning: normalizedLanguage,
             uiHelperText: normalizedLanguage,
             uiLabels: normalizedLanguage
           })
@@ -9228,6 +9250,22 @@
       },
       [settings, updateSettings]
     );
+    const handleReasoningTranslationEngineIdChange = (0, import_react.useCallback)(
+      (engineId) => {
+        const normalizedEngineId = normalizeLocalizationEngineId(engineId);
+        updateSettings({
+          ...settings,
+          general: {
+            ...settings.general,
+            localization: {
+              ...settings.general.localization,
+              reasoningEngineId: normalizedEngineId
+            }
+          }
+        });
+      },
+      [settings, updateSettings]
+    );
     const handleLocalizationGlossaryEnabledChange = (0, import_react.useCallback)(
       (enabled) => {
         updateSettings({
@@ -9367,6 +9405,7 @@
       handleLocalizationEngineIdChange,
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
+      handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
       handleRestartCore,
       handleResponsePolicyModeChange,
@@ -11010,24 +11049,8 @@
   );
   LocalizationLanguageCombobox.displayName = "LocalizationLanguageCombobox";
 
-  // src/client/ui/src/components/settings/localization-settings-card.tsx
+  // src/client/ui/src/components/settings/localization-translation-engine-selector.tsx
   var import_jsx_runtime12 = __toESM(require_jsx_runtime());
-  var introStyles = {
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    color: settingsColorTokens.textSecondary,
-    lineHeight: 1.5,
-    margin: 0
-  };
-  var helperStyles = {
-    fontSize: settingsTypographyTokens.bodyFontSize,
-    color: settingsColorTokens.textMuted,
-    lineHeight: 1.5,
-    margin: 0
-  };
-  var controlGridStyles = {
-    display: "grid",
-    gap: "12px"
-  };
   var controlRowStyles = {
     display: "grid",
     gap: "8px",
@@ -11048,31 +11071,6 @@
     lineHeight: 1.5,
     margin: 0
   };
-  var inputStyles3 = {
-    width: "100%",
-    boxSizing: "border-box",
-    minHeight: "36px",
-    padding: "8px 10px",
-    borderRadius: "6px",
-    border: `1px solid ${settingsColorTokens.borderStrong}`,
-    background: settingsColorTokens.surface,
-    color: settingsColorTokens.textPrimary,
-    fontSize: settingsTypographyTokens.bodyFontSize
-  };
-  var toggleRowStyles = {
-    display: "flex",
-    alignItems: "flex-start",
-    gap: "12px",
-    padding: "12px",
-    borderRadius: "8px",
-    border: `1px solid ${settingsColorTokens.borderSubtle}`,
-    background: "rgba(255, 255, 255, 0.02)"
-  };
-  var checkboxStyles = {
-    width: "16px",
-    height: "16px",
-    marginTop: "2px"
-  };
   var availabilityHintStyles = {
     fontSize: settingsTypographyTokens.bodyFontSize,
     color: settingsColorTokens.textMuted,
@@ -11088,6 +11086,110 @@
     lineHeight: 1.5,
     margin: 0,
     padding: "10px 12px"
+  };
+  var selectStyles = {
+    width: "100%",
+    boxSizing: "border-box",
+    minHeight: "36px",
+    padding: "8px 10px",
+    borderRadius: "6px",
+    border: `1px solid ${settingsColorTokens.borderStrong}`,
+    background: settingsColorTokens.surface,
+    color: settingsColorTokens.textPrimary,
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    appearance: "none"
+  };
+  var TranslationEngineSelector = ({
+    availabilityByEngineId,
+    description,
+    hint,
+    label,
+    onChange,
+    renderEngineLabel,
+    selectedEngineId,
+    unavailableMessage,
+    unavailableSuffix,
+    visibleEngineOptions
+  }) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: label }),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: description }),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      "select",
+      {
+        onChange: (event) => onChange(event.target.value),
+        style: selectStyles,
+        value: selectedEngineId,
+        children: visibleEngineOptions.map((engine) => {
+          const availability = availabilityByEngineId.get(engine.engineId);
+          const disabled = availability?.disabled === true;
+          const optionLabel = renderEngineLabel(engine.engineId);
+          return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            "option",
+            {
+              disabled,
+              value: engine.engineId,
+              children: disabled ? `${optionLabel} (${unavailableSuffix})` : optionLabel
+            },
+            engine.engineId
+          );
+        })
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: availabilityHintStyles, children: hint }),
+    unavailableMessage ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: availabilityWarningStyles, children: unavailableMessage }) : null
+  ] });
+
+  // src/client/ui/src/components/settings/localization-settings-card.tsx
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var introStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textSecondary,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var helperStyles = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var controlGridStyles = {
+    display: "grid",
+    gap: "12px"
+  };
+  var controlRowStyles2 = {
+    display: "grid",
+    gap: "8px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: "rgba(255, 255, 255, 0.02)"
+  };
+  var labelTitleStyles2 = {
+    fontSize: "13px",
+    fontWeight: 600,
+    color: settingsColorTokens.textPrimary,
+    margin: 0
+  };
+  var labelDescriptionStyles2 = {
+    fontSize: settingsTypographyTokens.bodyFontSize,
+    color: settingsColorTokens.textMuted,
+    lineHeight: 1.5,
+    margin: 0
+  };
+  var toggleRowStyles = {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "12px",
+    padding: "12px",
+    borderRadius: "8px",
+    border: `1px solid ${settingsColorTokens.borderSubtle}`,
+    background: "rgba(255, 255, 255, 0.02)"
+  };
+  var checkboxStyles = {
+    width: "16px",
+    height: "16px",
+    marginTop: "2px"
   };
   var formatUnknownTranslationEngineLabel = (engineId) => engineId.startsWith("codex-") ? `OpenAI Codex \xB7 ${engineId.slice("codex-".length)}` : engineId;
   var resolveTranslationEngineLabel = (engineId, t) => {
@@ -11125,7 +11227,8 @@
     localization,
     onCategoryLanguageChange,
     onEngineIdChange,
-    onGlossaryEnabledChange
+    onGlossaryEnabledChange,
+    onReasoningTranslationEngineIdChange
   }) => {
     const { availableEngines, t } = useLocalization();
     const [providers, setProviders] = (0, import_react12.useState)(() => getCachedProviders());
@@ -11188,7 +11291,7 @@
         description: t(
           "user_guidance",
           "settings.localization.category.messages_for_the_user.description",
-          "Warnings, errors, hints, status updates, visible Thinking and Reasoning bubbles, and other messages addressed to the user."
+          "Warnings, errors, hints, status updates, and other messages addressed to the user."
         )
       },
       {
@@ -11202,6 +11305,19 @@
           "user_guidance",
           "settings.localization.category.artifacts_for_the_user.description",
           "Forms and final user-facing artifacts. Agent instructions and templates stay in English."
+        )
+      },
+      {
+        id: "reasoning",
+        label: t(
+          "ui_interface",
+          "settings.localization.category.reasoning.label",
+          "Reasoning"
+        ),
+        description: t(
+          "user_guidance",
+          "settings.localization.category.reasoning.description",
+          "Visible Thinking and Reasoning bubbles emitted by the provider during a turn. Hidden reasoning is never translated."
         )
       }
     ];
@@ -11248,6 +11364,24 @@
     const resolveCategoryValue = (value) => value.toLowerCase() === "en" ? "source" : value;
     const activeEngineId = localization.engineId;
     const activeEngineAvailability = engineAvailability.get(activeEngineId);
+    const reasoningEngineId = localization.reasoningEngineId;
+    const selectedReasoningEngineOption = engineOptions.find(
+      (engine) => engine.engineId === reasoningEngineId
+    );
+    const visibleReasoningEngineOptions = selectedReasoningEngineOption ? engineOptions : [{ engineId: reasoningEngineId, languages: [] }, ...engineOptions];
+    const reasoningEngineAvailability = (0, import_react12.useMemo)(
+      () => new Map(
+        visibleReasoningEngineOptions.map((engine) => [
+          engine.engineId,
+          resolveLocalizationEngineAvailability({
+            engineId: engine.engineId,
+            providers
+          })
+        ])
+      ),
+      [providers, visibleReasoningEngineOptions]
+    );
+    const activeReasoningEngineAvailability = reasoningEngineAvailability.get(reasoningEngineId);
     const unavailableSuffix = t(
       "ui_interface",
       "settings.localization.translation_engine.option.unavailable_suffix",
@@ -11258,12 +11392,12 @@
       "settings.localization.translation_engine.availability_hint",
       "Google GTX works without extra account setup. OpenAI and Anthropic engines require matching provider access in the connected CLI."
     );
-    const activeEngineUnavailableMessage = (() => {
-      if (!activeEngineAvailability?.disabled) {
+    const resolveEngineUnavailableMessage = (availability) => {
+      if (!availability.disabled) {
         return null;
       }
-      const providerId = activeEngineAvailability.providerId;
-      const providerStatusMessage = activeEngineAvailability.provider?.statusMessage?.trim() ?? "";
+      const providerId = availability.providerId;
+      const providerStatusMessage = availability.provider?.statusMessage?.trim() ?? "";
       if (providerStatusMessage.length > 0) {
         return providerStatusMessage;
       }
@@ -11286,65 +11420,77 @@
         "settings.localization.translation_engine.provider_unavailable_message",
         "This translation engine is unavailable until its provider access is restored."
       );
-    })();
-    const engineSelectStyles = {
-      ...inputStyles3,
-      appearance: "none"
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+    const activeEngineUnavailableMessage = activeEngineAvailability ? resolveEngineUnavailableMessage(activeEngineAvailability) : null;
+    const reasoningEngineUnavailableMessage = activeReasoningEngineAvailability ? resolveEngineUnavailableMessage(activeReasoningEngineAvailability) : null;
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
       settings_card_default,
       {
         title: t("ui_interface", "settings.localization.title", "Localization"),
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: introStyles, children: t(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: introStyles, children: t(
             "user_guidance",
             "settings.localization.intro",
             "Configure which user-facing text should stay in English and which should be localized for the user."
           ) }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: helperStyles, children: t(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: helperStyles, children: t(
             "user_guidance",
             "settings.localization.category_bridge_helper",
             "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category."
           ) }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlGridStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: t(
-                "ui_interface",
-                "settings.localization.translation_engine.label",
-                "Translation engine"
-              ) }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: t(
-                "user_guidance",
-                "settings.localization.translation_engine.description",
-                "Engine used for localization bundle materialization and live translation of user-facing assistant text."
-              ) }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-                "select",
-                {
-                  onChange: (event) => onEngineIdChange(event.target.value),
-                  style: engineSelectStyles,
-                  value: activeEngineId,
-                  children: visibleEngineOptions.map((engine) => {
-                    const availability = engineAvailability.get(engine.engineId);
-                    const disabled = availability?.disabled === true;
-                    const label = resolveTranslationEngineLabel(engine.engineId, t);
-                    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
-                      "option",
-                      {
-                        disabled,
-                        value: engine.engineId,
-                        children: disabled ? `${label} (${unavailableSuffix})` : label
-                      },
-                      engine.engineId
-                    );
-                  })
-                }
-              ),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: availabilityHintStyles, children: genericAvailabilityHint }),
-              activeEngineUnavailableMessage ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: availabilityWarningStyles, children: activeEngineUnavailableMessage }) : null
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { style: toggleRowStyles, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: controlGridStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              TranslationEngineSelector,
+              {
+                availabilityByEngineId: engineAvailability,
+                description: t(
+                  "user_guidance",
+                  "settings.localization.ui_translation_engine.description",
+                  "Engine used for interface localization bundle materialization and the browser bootstrap payload."
+                ),
+                hint: genericAvailabilityHint,
+                label: t(
+                  "ui_interface",
+                  "settings.localization.ui_translation_engine.label",
+                  "UI Translation Engine"
+                ),
+                onChange: onEngineIdChange,
+                renderEngineLabel: (engineId) => resolveTranslationEngineLabel(engineId, t),
+                selectedEngineId: activeEngineId,
+                unavailableMessage: activeEngineUnavailableMessage,
+                unavailableSuffix,
+                visibleEngineOptions
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              TranslationEngineSelector,
+              {
+                availabilityByEngineId: reasoningEngineAvailability,
+                description: t(
+                  "user_guidance",
+                  "settings.localization.reasoning_translation_engine.description",
+                  "Engine used for live translation of visible Thinking and Reasoning bubbles. Google GTX Free is recommended for the most stable live translation."
+                ),
+                hint: t(
+                  "user_guidance",
+                  "settings.localization.reasoning_translation_engine.warning",
+                  "Provider-backed engines can improve reasoning translation quality, but under higher parallel activity they may increase runtime load and cause visible reasoning to fall back to source English."
+                ),
+                label: t(
+                  "ui_interface",
+                  "settings.localization.reasoning_translation_engine.label",
+                  "Reasoning Translation Engine"
+                ),
+                onChange: onReasoningTranslationEngineIdChange,
+                renderEngineLabel: (engineId) => resolveTranslationEngineLabel(engineId, t),
+                selectedEngineId: reasoningEngineId,
+                unavailableMessage: reasoningEngineUnavailableMessage,
+                unavailableSuffix,
+                visibleEngineOptions: visibleReasoningEngineOptions
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { style: toggleRowStyles, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
                 "input",
                 {
                   checked: localization.glossaryEnabled,
@@ -11353,29 +11499,29 @@
                   type: "checkbox"
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1 }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: t(
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { flex: 1 }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: labelTitleStyles2, children: t(
                   "ui_interface",
                   "settings.localization.glossary_protection.label",
                   "Glossary protection"
                 ) }),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: t(
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: labelDescriptionStyles2, children: t(
                   "user_guidance",
                   "settings.localization.glossary_protection.description",
                   "Keep protected terms, provider names, and product vocabulary stable during localization."
                 ) })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
               localization_glossary_editor_default,
               {
                 glossaryEnabled: localization.glossaryEnabled
               }
             ),
-            categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: controlRowStyles, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelTitleStyles, children: category.label }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: labelDescriptionStyles, children: category.description }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+            categoryFields.map((category) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: controlRowStyles2, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: labelTitleStyles2, children: category.label }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: labelDescriptionStyles2, children: category.description }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
                 LocalizationLanguageCombobox,
                 {
                   onChange: (value) => onCategoryLanguageChange(category.id, value),
@@ -11393,7 +11539,7 @@
   var localization_settings_card_default = (0, import_react12.memo)(LocalizationSettingsCard);
 
   // src/client/ui/src/components/settings/general-settings.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
   var wrapperStyles = {
     display: "flex",
     flexDirection: "column",
@@ -11539,8 +11685,8 @@
           };
       }
     }, [props.coreControl.phase]);
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: wrapperStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: wrapperStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         general_response_mode_facade_default,
         {
           onModeChange: props.onResponsePolicyModeChange,
@@ -11549,7 +11695,7 @@
           responsePolicy: props.responsePolicy
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
         localization_settings_card_default,
         {
           localization: props.localization,
@@ -11557,13 +11703,14 @@
           onDefaultLanguageChange: props.onLocalizationDefaultLanguageChange,
           onEngineIdChange: props.onLocalizationEngineIdChange,
           onGlossaryEnabledChange: props.onLocalizationGlossaryEnabledChange,
+          onReasoningTranslationEngineIdChange: props.onReasoningTranslationEngineIdChange,
           onWorkflowTermsPolicyChange: props.onLocalizationWorkflowTermsPolicyChange
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(settings_card_default, { title: coreControlsTitle, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { style: descriptionStyles2, children: coreControlsDescription }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: controlsRowStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(settings_card_default, { title: coreControlsTitle, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: descriptionStyles2, children: coreControlsDescription }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: controlsRowStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
             "button",
             {
               "aria-busy": props.coreControl.busy,
@@ -11582,7 +11729,7 @@
               children: props.coreControl.busy ? restartPendingLabel : restartIdleLabel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? idleStatusLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { style: resolvedStatusStyles, children: props.coreControl.message ?? idleStatusLabel })
         ] })
       ] })
     ] });
@@ -11594,7 +11741,7 @@
 
   // src/client/ui/src/components/settings/provider-version-row.tsx
   var import_react14 = __toESM(require_react());
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
   var rowStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -11686,17 +11833,17 @@
       resolvedButtonStyle = buttonStyles2;
     }
     const shouldShowButton = row.showUpdateButton ?? true;
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: rowStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { style: labelStyles2, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { style: nameStyles, children: row.label }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("p", { style: versionTextStyles, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: rowStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: labelStyles2, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: nameStyles, children: row.label }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { style: versionTextStyles, children: [
           "Current: ",
           currentLabel,
           " ",
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: chipStyles, children: latestLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { style: chipStyles, children: latestLabel })
         ] })
       ] }),
-      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      row.target && shouldShowButton ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
         "button",
         {
           disabled: disabled || !hasUpdate,
@@ -11705,13 +11852,13 @@
           type: "button",
           children: buttonLabel
         }
-      ) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { style: chipStyles, children: latestLabel })
+      ) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { style: chipStyles, children: latestLabel })
     ] });
   };
   var VersionRowItem = (0, import_react14.memo)(VersionRowItemComponent);
 
   // src/client/ui/src/components/settings/provider-versions-ui.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY9 = "user_guidance";
   var USER_MESSAGES_CATEGORY2 = "system_feedback";
   var warningStyles2 = {
@@ -11812,7 +11959,7 @@
       "settings.provider_versions.update.warning",
       "Warning: Updating is at your own risk. New versions may be incompatible. Updating will close active sessions."
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: warningText });
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: { ...warningStyles2, ...providerBannerStyles(provider) }, children: warningText });
   };
   var AutoUpdateToggle = ({
     provider,
@@ -11829,7 +11976,7 @@
       "Automatically check and update the {packageLabel} on core start. Manual updates remain available below.",
       { packageLabel }
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "label",
       {
         style: {
@@ -11838,7 +11985,7 @@
           cursor: disabled ? "not-allowed" : "pointer"
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
             "input",
             {
               checked: enabled,
@@ -11848,12 +11995,12 @@
               type: "checkbox"
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: { flex: 1 }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { style: toggleTitleStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: { flex: 1 }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { style: toggleTitleStyles, children: [
               "Auto-update ",
               providerLabel
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { style: toggleDescriptionStyles, children: description })
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: toggleDescriptionStyles, children: description })
           ] })
         ]
       }
@@ -11861,7 +12008,7 @@
   };
 
   // src/client/ui/src/components/settings/provider-versions.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
   var rowsContainerStyles = {
     display: "flex",
     flexDirection: "column",
@@ -11985,17 +12132,17 @@
     } else if (provider === "codex") {
       title = "Codex Versions";
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
       settings_card_default,
       {
-        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { style: metadataTextStyles, children: [
+        action: snapshot?.checkedAt ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { style: metadataTextStyles, children: [
           "Checked: ",
           formatCheckedAt(snapshot.checkedAt) ?? snapshot.checkedAt
         ] }) : null,
         title,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(WarningBanner, { provider }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(WarningBanner, { provider }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             AutoUpdateToggle,
             {
               disabled: versions.loading,
@@ -12004,11 +12151,11 @@
               provider
             }
           ),
-          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: errorStyles, children: versions.error }) : null,
-          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: "Loading version information\u2026" }) : null,
-          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
-          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { style: statusStyles3, children: manualUpdateStatus }) : null,
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+          versions.error ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: errorStyles, children: versions.error }) : null,
+          versions.loading && !hasProviderVersions ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: statusStyles3, children: "Loading version information\u2026" }) : null,
+          pendingTarget ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: statusStyles3, children: "Click the highlighted button again to confirm update. Active sessions will close." }) : null,
+          manualUpdateStatus ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: statusStyles3, children: manualUpdateStatus }) : null,
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { style: rowsContainerStyles, children: rows.map((row) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
             VersionRowItem,
             {
               disabled: isBusy,
@@ -12027,7 +12174,7 @@
 
   // src/client/ui/src/components/settings/session-continuity-card.tsx
   var import_react16 = __toESM(require_react());
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
   var settingsLabelStyles = {
     display: "flex",
     flexDirection: "column",
@@ -12083,7 +12230,7 @@
       onCommit(clamped);
       setDraft(String(clamped));
     }, [draft, max, min, onCommit, value]);
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
       "input",
       {
         autoComplete: "off",
@@ -12122,16 +12269,16 @@
       "settings.session_continuity.description",
       "When the remaining context window drops to or below this percentage, CodeAI Hub can automatically wrap up the current session (with a report) and start a new one. Default: 30%."
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(settings_card_default, { title, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { style: settingsDescriptionStyles, children: description }),
-      typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(settings_card_default, { title, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { style: settingsDescriptionStyles, children: description }),
+      typeof contextWindowTokenLimit === "number" && onContextWindowTokenLimitChange ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
         "label",
         {
           htmlFor: `${title}-context-window-token-limit`,
           style: settingsLabelStyles,
           children: [
             "Context window limit (tokens)",
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               ManualIntegerInput,
               {
                 id: `${title}-context-window-token-limit`,
@@ -12144,14 +12291,14 @@
           ]
         }
       ) : null,
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(
         "label",
         {
           htmlFor: `${title}-remaining-percent-threshold`,
           style: settingsLabelStyles,
           children: [
             "Remaining context threshold (%)",
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
               ManualIntegerInput,
               {
                 id: `${title}-remaining-percent-threshold`,
@@ -12169,7 +12316,7 @@
   var session_continuity_card_default = import_react16.default.memo(SessionContinuityCard);
 
   // src/client/ui/src/components/settings/settings-footer.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
   var containerStyles = {
     display: "flex",
     justifyContent: "space-between",
@@ -12316,8 +12463,8 @@
         event.currentTarget.style.background = settingsColorTokens.actionPrimary;
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: containerStyles, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: containerStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
         "button",
         {
           disabled: resetting,
@@ -12338,8 +12485,8 @@
           children: resetting ? resetPendingLabel : resetIdleLabel
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { style: buttonGroupStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: buttonGroupStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "button",
           {
             onBlur: handleCloseBlur,
@@ -12352,7 +12499,7 @@
             children: closeButtonLabel
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
           "button",
           {
             disabled: !hasChanges || saving,
@@ -12378,7 +12525,7 @@
   var settings_footer_default = SettingsFooter;
 
   // src/client/ui/src/components/settings/settings-header.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
   var headerStyles3 = {
     display: "flex",
     alignItems: "center",
@@ -12414,9 +12561,9 @@
       "settings.header.close_button_label",
       "Close settings"
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { style: headerStyles3, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { style: titleStyles4, children: title }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: headerStyles3, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles4, children: title }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         "button",
         {
           "aria-label": closeButtonLabel,
@@ -12436,7 +12583,7 @@
 
   // src/client/ui/src/components/settings/thinking/thinking-effort-selector.tsx
   var import_react17 = __toESM(require_react());
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY11 = "user_guidance";
   var containerStyles2 = {
     paddingLeft: "28px",
@@ -12492,7 +12639,7 @@
         onChange(effort);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
       "div",
       {
         style: {
@@ -12500,9 +12647,9 @@
           ...enabled ? null : disabledContainerStyles
         },
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: titleStyles5, children: "Reasoning effort" }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: subtitleStyles2, children: subtitle }),
-          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: listStyles, children: CLAUDE_THINKING_EFFORTS.map((effort) => {
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles5, children: "Reasoning effort" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: subtitleStyles2, children: subtitle }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: listStyles, children: CLAUDE_THINKING_EFFORTS.map((effort) => {
             const isSelected = value === effort.name;
             const rowStyle = {
               ...rowBaseStyles,
@@ -12512,7 +12659,7 @@
             };
             return (
               // biome-ignore lint/a11y/useSemanticElements: custom radio rows match the rest of the provider settings UI
-              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+              /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
                 "div",
                 {
                   "aria-checked": isSelected,
@@ -12524,20 +12671,20 @@
                   style: rowStyle,
                   tabIndex: enabled ? 0 : -1,
                   children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
                       "div",
                       {
                         style: {
                           ...radioCircleStyles,
                           ...isSelected ? radioCircleSelectedStyles : {}
                         },
-                        children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: radioCircleInnerStyles }) : null
+                        children: isSelected ? /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: radioCircleInnerStyles }) : null
                       }
                     ),
-                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: modelInfoStyles, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelTitleStyles, children: resolveEffortLabel(effort.name) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelDescriptionStyles, children: resolveDescription(effort.name) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { style: modelDescriptionStyles, children: resolveUseCase(effort.name) })
+                    /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: modelInfoStyles, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modelTitleStyles, children: resolveEffortLabel(effort.name) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modelDescriptionStyles, children: resolveDescription(effort.name) }),
+                      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: modelDescriptionStyles, children: resolveUseCase(effort.name) })
                     ] })
                   ]
                 },
@@ -12552,7 +12699,7 @@
   var thinking_effort_selector_default = ThinkingEffortSelector;
 
   // src/client/ui/src/components/settings/thinking/thinking-pro-tip.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY12 = "user_guidance";
   var containerStyles3 = {
     marginTop: "20px",
@@ -12579,15 +12726,15 @@
       "settings.claude_thinking_settings.pro_tip.description",
       'Use "Ultrathink" anywhere in your message to ask Claude for maximum reasoning effort on that specific query, regardless of your current saved setting.'
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { style: containerStyles3, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: titleStyles6, children: "\u{1F4A1} Pro Tip" }),
-      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { style: descriptionStyles3, children: description })
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: containerStyles3, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: titleStyles6, children: "\u{1F4A1} Pro Tip" }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: descriptionStyles3, children: description })
     ] });
   };
   var thinking_pro_tip_default = ThinkingProTip;
 
   // src/client/ui/src/components/settings/thinking/thinking-toggle.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY13 = "user_guidance";
   var toggleContainerStyles2 = {
     display: "flex",
@@ -12627,8 +12774,8 @@
       "settings.claude_thinking_settings.enable_thinking.note",
       "Changes take effect when creating a new session."
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { style: toggleContainerStyles2, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { style: toggleContainerStyles2, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
         "input",
         {
           checked: enabled,
@@ -12637,12 +12784,12 @@
           type: "checkbox"
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: { flex: 1 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { style: titleStyles7, children: "Enable thinking mode" }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { style: descriptionStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { flex: 1 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: titleStyles7, children: "Enable thinking mode" }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: descriptionStyles4, children: [
           description,
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("br", {}),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("strong", { style: noteStyles2, children: "Note:" }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("strong", { style: noteStyles2, children: "Note:" }),
           " ",
           note
         ] })
@@ -12652,7 +12799,7 @@
   var thinking_toggle_default = ThinkingToggle;
 
   // src/client/ui/src/components/settings/thinking-settings.tsx
-  var import_jsx_runtime23 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
   var UI_HELPER_TEXT_CATEGORY14 = "user_guidance";
   var wrapperStyles2 = {
     marginBottom: "30px"
@@ -12699,10 +12846,10 @@
       "settings.claude_thinking_settings.thinking_in_dialog.description",
       "Show Claude reasoning as a normal assistant bubble with a Thinking label."
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: wrapperStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { style: displaySyncToggleStyles3, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: wrapperStyles2, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(settings_card_default, { title: "Claude Thinking Settings", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(thinking_toggle_default, { enabled, onToggle: handleToggle }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("label", { style: displaySyncToggleStyles3, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
           "input",
           {
             checked: thinkingDisplaySyncEnabled,
@@ -12711,12 +12858,12 @@
             type: "checkbox"
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { flex: 1 }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: displaySyncDescriptionStyles3, children: thinkingInDialogDescription })
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: { flex: 1 }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: displaySyncTitleStyles3, children: "Thinking in dialog" }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: displaySyncDescriptionStyles3, children: thinkingInDialogDescription })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
         thinking_effort_selector_default,
         {
           enabled,
@@ -12724,13 +12871,13 @@
           value: effort
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(thinking_pro_tip_default, {})
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(thinking_pro_tip_default, {})
     ] }) });
   };
   var thinking_settings_default = (0, import_react18.memo)(ThinkingSettings);
 
   // src/client/ui/src/components/settings-view.tsx
-  var import_jsx_runtime24 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
   var containerStyles4 = {
     height: "100%",
     display: "flex",
@@ -12842,6 +12989,7 @@
       handleLocalizationEngineIdChange,
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
+      handleReasoningTranslationEngineIdChange,
       handleCodexReasoningChange,
       handleProviderAutoUpdateChange,
       handleRestartCore,
@@ -12854,10 +13002,10 @@
     } = state;
     const localizationSyncTitle = "Synchronizing localization";
     const localizationSyncDescription = "Please wait. CodeAI Hub is rebuilding the translated interface bundles affected by this change. Project Manager and new sessions stay blocked until the affected bundles are ready.";
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { "aria-busy": saving || !ready, style: containerStyles4, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("style", { children: "@keyframes settings-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }" }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(settings_header_default, { onClose }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { "aria-busy": saving || !ready, style: containerStyles4, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("style", { children: "@keyframes settings-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }" }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(settings_header_default, { onClose }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: tabBarStyles, children: settingsTabs.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         "button",
         {
           onClick: () => setActiveTab(tab.id),
@@ -12870,17 +13018,17 @@
         },
         tab.id
       )) }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: contentStyles, children: (() => {
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: contentStyles, children: (() => {
         if (activeTab === "claude") {
-          return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               claude_default_model_card_default,
               {
                 defaultModel: settings.providers.claude.defaultModel,
                 onDefaultModelChange: handleClaudeDefaultModelChange
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.claude.autoUpdate.enabled,
@@ -12890,7 +13038,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               thinking_settings_default,
               {
                 effort: settings.providers.claude.thinking.effort,
@@ -12900,7 +13048,7 @@
                 thinkingDisplaySyncEnabled: settings.providers.claude.thinkingDisplaySyncEnabled
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleClaudeContinuityRemainingPercentThresholdChange,
@@ -12911,7 +13059,7 @@
           ] });
         }
         if (activeTab === "general") {
-          return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: stackStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             general_settings_default,
             {
               coreControl,
@@ -12921,6 +13069,7 @@
               onLocalizationEngineIdChange: handleLocalizationEngineIdChange,
               onLocalizationGlossaryEnabledChange: handleLocalizationGlossaryEnabledChange,
               onLocalizationWorkflowTermsPolicyChange: handleLocalizationWorkflowTermsPolicyChange,
+              onReasoningTranslationEngineIdChange: handleReasoningTranslationEngineIdChange,
               onResponsePolicyModeChange: handleResponsePolicyModeChange,
               onRestartCore: handleRestartCore,
               onStrictInstructionTextChange: handleStrictInstructionTextChange,
@@ -12930,8 +13079,8 @@
           ) });
         }
         if (activeTab === "codex") {
-          return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: stackStyles, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: stackStyles, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               codex_default_model_card_default,
               {
                 defaultModel: settings.providers.codex.defaultModel,
@@ -12942,7 +13091,7 @@
                 reasoningSummaryEnabled: settings.providers.codex.reasoningSummaryEnabled
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               provider_versions_default,
               {
                 autoUpdateEnabled: settings.providers.codex.autoUpdate.enabled,
@@ -12952,7 +13101,7 @@
                 versions
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
               session_continuity_card_default,
               {
                 onRemainingPercentThresholdChange: handleCodexContinuityRemainingPercentThresholdChange,
@@ -12962,8 +13111,8 @@
             )
           ] });
         }
-        return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: stackStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+        return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: stackStyles, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             gemini_default_model_card_default,
             {
               defaultModel: settings.providers.gemini.defaultModel,
@@ -12974,7 +13123,7 @@
               thinkingLevelByModel: settings.providers.gemini.thinkingLevelByModel
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             provider_versions_default,
             {
               autoUpdateEnabled: settings.providers.gemini.autoUpdate.enabled,
@@ -12984,7 +13133,7 @@
               versions
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
             session_continuity_card_default,
             {
               contextWindowTokenLimit: settings.providers.gemini.sessionContinuity.contextWindowTokenLimit,
@@ -12996,7 +13145,7 @@
           )
         ] });
       })() }),
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
         settings_footer_default,
         {
           hasChanges,
@@ -13007,10 +13156,10 @@
           saving
         }
       ),
-      saving ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { "aria-live": "polite", role: "status", style: syncOverlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: syncCardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: syncSpinnerStyles }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: syncTitleStyles, children: localizationSyncTitle }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { style: syncDescriptionStyles, children: localizationSyncDescription })
+      saving ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { "aria-live": "polite", role: "status", style: syncOverlayStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: syncCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { style: syncSpinnerStyles }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: syncTitleStyles, children: localizationSyncTitle }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: syncDescriptionStyles, children: localizationSyncDescription })
       ] }) }) : null
     ] });
   };
@@ -13252,7 +13401,7 @@
   };
 
   // src/client/ui/src/app-host/settings-only-host.tsx
-  var import_jsx_runtime25 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
   var settingsOnlyLayoutStyles = {
     minHeight: "100vh",
     display: "flex",
@@ -13339,12 +13488,12 @@
       onSessionFocusLast: noopVoidHandler,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "app-shell", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("section", { style: settingsOnlyCardStyles, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyBodyStyles, children: settingsOnlyBody }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: settingsOnlyHintStyles, children: settingsOnlyHint }),
-        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "app-shell", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("main", { "aria-label": "Settings only mode", style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("section", { style: settingsOnlyCardStyles, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings only" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: settingsOnlyBodyStyles, children: settingsOnlyBody }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { style: settingsOnlyHintStyles, children: settingsOnlyHint }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
           "button",
           {
             onClick: handleShowSettings,
@@ -13354,7 +13503,7 @@
           }
         )
       ] }) }),
-      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(
+      settingsVisible ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "settings-overlay", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "settings-overlay__panel", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
         settings_view_default,
         {
           mode: "settings-only",
@@ -13366,12 +13515,12 @@
   };
 
   // src/client/ui/src/app-host.tsx
-  var import_jsx_runtime26 = __toESM(require_jsx_runtime());
-  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(SettingsOnlyHost, {});
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var AppHost = () => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(SettingsOnlyHost, {});
   var app_host_default = AppHost;
 
   // src/client/ui/src/index.tsx
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime());
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime());
   initializeCoreBridge();
   window.__CODEAI_LOCALIZATION_BOOTSTRAP__ = readBrowserLocalizationBootstrapSnapshot();
   var mount = () => {
@@ -13382,7 +13531,7 @@
     activateRoot();
     const root = (0, import_client.createRoot)(rootElement);
     root.render(
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_react23.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(app_host_default, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(import_react23.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(app_host_default, {}) })
     );
   };
   mount();
