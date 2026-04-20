@@ -415,8 +415,8 @@ export class ClaudeStreamEventRouter {
   ): Promise<string> {
     const translated = await this.thoughtTranslator.translateReasoning(
       content,
-      session.runtimeTurnConfig.messagesForTheUserLanguage,
-      session.runtimeTurnConfig.translationEngineId
+      session.runtimeTurnConfig?.messagesForTheUserLanguage,
+      session.runtimeTurnConfig?.translationEngineId
     );
     return translated ?? content;
   }

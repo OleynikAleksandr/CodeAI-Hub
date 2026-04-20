@@ -26,6 +26,10 @@ const createSession = (sessionId: string): ActiveSession => {
   const listeners = new Map<string, Array<(payload: unknown) => void>>();
   return {
     sessionId,
+    runtimeTurnConfig: {
+      messagesForTheUserLanguage: undefined,
+      translationEngineId: undefined,
+    },
     eventEmitter: {
       emit: (event: string, payload: unknown) => {
         const handlers = listeners.get(event) ?? [];
@@ -149,6 +153,51 @@ test("ClaudeStreamEventRouter flushes the remaining thinking tail on content_blo
 
   await router.handleStreamEvent(session, buildContentBlockStop(0));
   assert.deepEqual(dialogs, ["short reasoning tail"]);
+});
+
+test("ClaudeStreamEventRouter does not flush a thinking chunk that ends on a marker-only list line", async () => {
+  const buffer = new ClaudeThinkingLiveBuffer();
+  const router = new ClaudeStreamEventRouter(
+    undefined,
+    undefined,
+    new ClaudeContentStreamHandler(buffer)
+  );
+  const session = createSession("session-thinking-list-marker");
+  const dialogs = collectThinkingDialogs(session);
+
+  await router.handleStreamEvent(
+    session,
+    buildContentBlockStart(0, "thinking")
+  );
+
+  const part1 =
+    "The file has been created and now I need to prepare a short report in Russian. " +
+    "I should mention what I created, what is in the file, and which one to three questions are the most critical next. " +
+    "The questions I identified are:\n1. Multiple projects management UX\n2.";
+
+  await router.handleStreamEvent(session, buildThinkingDelta(0, part1, "list"));
+  assert.equal(
+    dialogs.length,
+    1,
+    "buffer should backtrack to the previous safe boundary"
+  );
+  assert.equal(
+    dialogs[0]?.trimEnd().endsWith("2."),
+    false,
+    "emitted thinking chunk must not end with a marker-only list line"
+  );
+
+  await router.handleStreamEvent(
+    session,
+    buildThinkingDelta(0, " First-run experience", "list-tail")
+  );
+  await router.handleStreamEvent(session, buildContentBlockStop(0));
+
+  assert.equal(
+    dialogs.some((dialog) => dialog.includes("2. First-run experience")),
+    true,
+    "buffered marker should stay attached to the eventual item text"
+  );
 });
 
 test("ClaudeStreamEventRouter ignores content_block_delta when block type is not thinking", async () => {
