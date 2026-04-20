@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.30] - 2026-04-20
+### Fixed
+- **Visible `Thinking` cards now receive the muted alpha contract on the actual user-facing render path.** Session UI now applies the softened background/border/text treatment not only to `role="thinking"` bubbles but also to assistant messages tagged as thinking, so cards such as `Codex · Thinking` no longer fall back to the ordinary assistant surface.
+
+### Tests
+- **The real `assistant + tag="thinking"` path is now regression-covered.** `src/client/ui/src/session/dialog-panel-message-utils.test.ts` now locks the dedicated styling hook for tagged thinking cards, and targeted verification passed with `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview`, and `npm run build:project-manager`.
+
 ## [1.2.29] - 2026-04-20
 ### Changed
 - **Session dialog message cards now use a shared `1px` stroke.** The base bubble contract in `media/session-view.css` no longer uses the heavier `2px` border, so user, assistant, and thinking cards render with a lighter frame across the whole dialog surface.
