@@ -61,10 +61,10 @@
 ## Phase 4 — Release Build 1.2.27 (owner: Codex, updated: 2026-04-20)
 ### Stream: Release Notes Preparation
 1. [DONE] Подготовить release docs под будущую версию `1.2.27`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.27 release notes`
-2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.27 release notes` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.27 release notes` (hash: `946fde7bf`)
 
 ### Stream: Release Build
-1. [TODO] Выполнить release checklist для `1.2.27`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.2.27.vsix` и fresh tarballs, зафиксировать version/manifest updates и release artifacts. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.27`
+1. [IN_PROGRESS] Выполнить release checklist для `1.2.27`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.2.27.vsix` и fresh tarballs, зафиксировать version/manifest updates и release artifacts. status note: `./scripts/build-all.sh` passed and produced `1.2.27` tarballs/manifests; `build-release.sh --use-current-version` pending after clean-tree commit. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.27`
 2. [TODO] Git Commit: `build: release 1.2.27` (hash: TBD)
 
 ## Phase 5 — Execution Cycle Closeout (owner: Codex, updated: 2026-04-20)
