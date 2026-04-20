@@ -26,8 +26,8 @@
 ## Phase 1 — Release 1.2.31 (owner: Codex, updated: 2026-04-20)
 ### Stream: Packaging
 1. [DONE] Обновить release-facing docs под `1.2.31` для corrected thinking provider header accent и strengthened thinking bubble chrome; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare 1.2.31 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.31 release notes` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.31`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.31`
+2. [DONE] Git Commit: `docs: prepare 1.2.31 release notes` (hash: `c25449f75`)
+3. [DONE] Выполнить `./scripts/build-all.sh` и зафиксировать массовые version/manifest updates release-пайплайна `1.2.31`; scope: release packaging surface, version manifests, generated bundle metadata; commit: `build: release 1.2.31`
 4. [TODO] Git Commit: `build: release 1.2.31` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить VSIX/tarball артефакты и закрыть scope архивированием planning/todo; expected commit: `docs: close 1.2.31 release scope`
 6. [TODO] Git Commit: `docs: close 1.2.31 release scope` (hash: TBD)
