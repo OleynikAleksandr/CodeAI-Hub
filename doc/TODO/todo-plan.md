@@ -56,12 +56,12 @@
 
 ### Stream: Targeted Verification
 1. [DONE] Прогнать таргетную verification цепочку: `npm run build --workspace @codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`, `npm exec -- tsx --test src/client/ui/src/session/dialog-panel-message-utils.test.ts`, `npm run build:webview` — результаты зафиксировать в todo-plan. results: all green on `main` after commits `f6c31bde0`, `e4684d19b`, `a03377a8a`, `082dfbb79`, `8d97cf965`; expected commit: `test: verify Codex commentary and thinking formatting`
-2. [IN_PROGRESS] Git Commit: `test: verify Codex commentary and thinking formatting` (hash: TBD)
+2. [DONE] Git Commit: `test: verify Codex commentary and thinking formatting` (hash: `0083f12ea`)
 
 ## Phase 4 — Release Build 1.2.27 (owner: Codex, updated: 2026-04-20)
 ### Stream: Release Notes Preparation
-1. [TODO] Подготовить release docs под будущую версию `1.2.27`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.27 release notes`
-2. [TODO] Git Commit: `docs: prepare 1.2.27 release notes` (hash: TBD)
+1. [DONE] Подготовить release docs под будущую версию `1.2.27`: обновить `README.md`, `CHANGELOG.md` и синхронизировать active `todo-plan.md` перед release pipeline. scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.27 release notes`
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.27 release notes` (hash: TBD)
 
 ### Stream: Release Build
 1. [TODO] Выполнить release checklist для `1.2.27`: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить `codeai-hub-1.2.27.vsix` и fresh tarballs, зафиксировать version/manifest updates и release artifacts. scope: release pipeline / generated manifests / `doc/TODO/todo-plan.md`; expected commit: `build: release 1.2.27`

@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.27] - 2026-04-20
+### Fixed
+- **Codex app-server commentary is visible again in the dialog trail.** `phase: "commentary"` agent messages now materialize as non-terminal assistant `dialog_message` entries with `tag: "commentary"` instead of being dropped after transport normalization, while `final_answer` stays the terminal assistant reply.
+- **Merged Codex thinking cards now preserve a blank boundary before the next standalone bold heading block.** The Session merge helper remains marker-repair aware for split list items, but now inserts a paragraph break before the next `**Heading**` block so completed reasoning sections keep their scan rhythm.
+- **Standalone bold heading spacing is now narrowed to real body/list followers.** The Session stylesheet no longer uses an over-broad wildcard sibling rule after bold-only heading paragraphs; the zero-gap rule now targets only the immediately following paragraph/list body, preserving the intended heading rhythm more precisely.
+
+### Tests
+- **Codex commentary and heading-boundary regressions are covered on both provider and UI paths.** The app-server router test now locks commentary preservation, and the Session merge-helper test now locks the blank-line contract before standalone bold heading blocks. Targeted verification also passed for `@codeai-hub/codex-app-server-module`, `dist` router tests, the UI merge test, and `build:webview`.
+
+### Contracts
+- **Codex hybrid/app-server contract now explicitly preserves commentary and completed reasoning structure.** SSOT docs now state that `Hybrid` cannot collapse user-facing progress down to reasoning + final answer only, and that the Session UI owns boundary-aware merge/spacing repair for completed bold heading sections.
+
 ## [1.2.26] - 2026-04-20
 ### Fixed
 - **Claude live ordered lists no longer split on marker-only stream fragments.** The Claude thinking and assistant live buffers now backtrack to the previous safe boundary instead of flushing a chunk that ends with a bare markdown marker such as `1.`, `2.`, `-`, `*`, or `+`.
