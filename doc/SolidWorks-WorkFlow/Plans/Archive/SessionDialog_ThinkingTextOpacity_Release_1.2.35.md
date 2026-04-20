@@ -1,6 +1,6 @@
 # Session Dialog Thinking Text Opacity Release 1.2.35
 
-**Status:** Approved
+**Status:** Archived
 **Date:** 2026-04-20
 **Owner:** Codex
 
