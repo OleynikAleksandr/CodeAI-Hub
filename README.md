@@ -7,7 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.27
+## Current Release — v1.2.28
+- **Late translation growth of the last dialog bubble now keeps the view pinned to the bottom.** When the last visible thinking or assistant bubble first appears in English and then expands in place after a Russian `localizedContent` overlay arrives, Session UI now treats that display-text growth as a real autoscroll anchor change and re-scrolls to the newest bottom edge automatically.
+- **The fix is regression-covered at the scroll-anchor layer.** Session UI now has a dedicated test proving that a change in `localizedContent` alone, without any change to native `content`, still invalidates the last-bubble scroll anchor.
+
+### 1.2.27 (previous)
 - **Codex progress commentary is visible again on the app-server line.** Intermediate `phase: "commentary"` agent messages now survive normalization as non-terminal assistant dialog messages instead of disappearing between reasoning blocks and the final answer.
 - **Codex thinking cards now preserve section rhythm between completed bold heading blocks.** The Session merge layer keeps a blank paragraph boundary before the next standalone `**Heading**` block while preserving the heading/body pairing inside each completed reasoning section.
 - **Session heading spacing is now stricter and more targeted.** The markdown stylesheet suppresses the extra gap after a bold-only heading only for the immediately following paragraph/list body, avoiding an over-broad wildcard rule.

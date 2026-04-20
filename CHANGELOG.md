@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.28] - 2026-04-20
+### Fixed
+- **Late translation growth of the last dialog bubble now re-triggers bottom-lock autoscroll.** Session UI now derives the dialog scroll anchor from the last visible bubble display payload (`localizedContent ?? content`) instead of native `content` alone, so when a late Core translation overlay expands the already-rendered last thinking/assistant bubble in place, the view stays pinned to the newest bottom edge automatically.
+
+### Tests
+- **Localized last-bubble autoscroll is now regression-covered.** `src/client/ui/src/session/dialog-panel-scroll-anchor.test.ts` now proves that a change in `localizedContent` alone is enough to invalidate the last-bubble scroll anchor, and targeted verification passed for the scroll-anchor test plus `build:webview`.
+
 ## [1.2.27] - 2026-04-20
 ### Fixed
 - **Codex app-server commentary is visible again in the dialog trail.** `phase: "commentary"` agent messages now materialize as non-terminal assistant `dialog_message` entries with `tag: "commentary"` instead of being dropped after transport normalization, while `final_answer` stays the terminal assistant reply.
