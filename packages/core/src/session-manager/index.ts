@@ -117,6 +117,42 @@ export class SessionManager {
     return session;
   }
 
+  registerSessionWithId(options: {
+    readonly sessionId: string;
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly providerSessionId: string;
+    readonly stage?: string | null;
+    readonly initiativeSlug?: string | null;
+    readonly runSlug?: string | null;
+    readonly continuationParentId?: string | null;
+  }): Session {
+    const existing = this.sessions.get(options.sessionId);
+    if (existing) {
+      return existing;
+    }
+    const now = new Date().toISOString();
+    const continuationParentId = options.continuationParentId ?? null;
+    const session: Session = {
+      id: options.sessionId,
+      providerId: options.providerId,
+      workspacePath: options.workspacePath,
+      initiativeSlug: options.initiativeSlug ?? null,
+      stage: options.stage ?? null,
+      runSlug: options.runSlug ?? null,
+      continuationParentId,
+      continuationIndex: this.computeContinuationIndex(continuationParentId),
+      title: `Restored session ${options.sessionId.slice(0, SESSION_TITLE_PREFIX_LENGTH)}`,
+      createdAt: now,
+      updatedAt: now,
+      messages: [],
+      providerSessionId: options.providerSessionId,
+      providerSessionStatus: "ready",
+    };
+    this.sessions.set(options.sessionId, session);
+    return session;
+  }
+
   appendMessage(
     sessionId: string,
     role: SessionRole,
