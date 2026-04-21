@@ -1,5 +1,5 @@
 import type React from "react";
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type {
   ClusterProjectionNodeData,
   DiagramProjectionNode,
@@ -221,7 +221,10 @@ const ProductPartNode = ({
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 2;
 const ZOOM_STEP = 0.01;
-
+// Floor for the auto-fit scale so extremely narrow panels don't collapse the
+// composition into an unreadable sliver; below this threshold we allow
+// horizontal overflow (container.overflow-x: auto) as a last resort.
+const AUTO_FIT_MIN = 0.25;
 
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,
@@ -229,22 +232,50 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   title,
   subtitle,
 }) => {
-  const [zoom, setZoom] = useState(1);
+  // userZoom: manual Cmd/Ctrl+scroll overlay applied on top of the auto-fit base.
+  // autoFitScale: horizontal fit factor computed from container width vs natural
+  // content width (<=1). Effective render scale = autoFitScale * userZoom.
+  const [userZoom, setUserZoom] = useState(1);
+  const [autoFitScale, setAutoFitScale] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const effectiveZoom = autoFitScale * userZoom;
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const content = contentRef.current;
+    if (!(container && content)) return;
+
+    const measure = () => {
+      const containerWidth = container.clientWidth;
+      const naturalWidth = content.scrollWidth;
+      if (naturalWidth <= 0 || containerWidth <= 0) return;
+      const fit = Math.min(1, containerWidth / naturalWidth);
+      setAutoFitScale(Math.max(AUTO_FIT_MIN, fit));
+    };
+
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(container);
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, [nodes]);
 
   useEffect(() => {
     window.dispatchEvent(
-      new CustomEvent("pm:diagram:zoom", { detail: { zoom } })
+      new CustomEvent("pm:diagram:zoom", { detail: { zoom: effectiveZoom } })
     );
     return () => {
       window.dispatchEvent(
         new CustomEvent("pm:diagram:zoom", { detail: { zoom: 1 } })
       );
     };
-  }, [zoom]);
+  }, [effectiveZoom]);
 
   useEffect(() => {
-    const handler = () => setZoom(1);
+    const handler = () => setUserZoom(1);
     window.addEventListener("pm:diagram:zoom:reset", handler);
     return () => window.removeEventListener("pm:diagram:zoom:reset", handler);
   }, []);
@@ -252,7 +283,7 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   const handleWheel = useCallback((e: React.WheelEvent) => {
     if (!(e.metaKey || e.ctrlKey)) return;
     e.preventDefault();
-    setZoom((current) => {
+    setUserZoom((current) => {
       const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
       return Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, current + delta));
     });
@@ -261,7 +292,7 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "0") {
       e.preventDefault();
-      setZoom(1);
+      setUserZoom(1);
     }
   }, []);
 
@@ -273,6 +304,8 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
         width: "100%",
         height: "100%",
         minHeight: 420,
+        // Horizontal scrollbar only appears when auto-fit floor is hit or user
+        // manually zooms past 1.0; the normal case (effectiveZoom <= 1) fits.
         overflow: "auto",
         background: "var(--pm-bg-surface)",
         border: "1px solid var(--pm-border-color)",
@@ -288,6 +321,7 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
     >
       <ContextMenuContext.Provider value={onContextMenu ?? null}>
         <div
+          ref={contentRef}
           style={{
             display: "grid",
             gridTemplateColumns: "1fr",
@@ -295,7 +329,13 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
             padding: 18,
             alignContent: "start",
             transformOrigin: "top left",
-            transform: `scale(${zoom})`,
+            transform: `scale(${effectiveZoom})`,
+            // width: max-content lets the grid report its intrinsic natural
+            // width through scrollWidth (used by the auto-fit measurer), while
+            // min-width: 100% keeps it filling the container when the content
+            // is already narrower than the viewport.
+            width: "max-content",
+            minWidth: "100%",
           }}
         >
           {nodes.map((node) => (

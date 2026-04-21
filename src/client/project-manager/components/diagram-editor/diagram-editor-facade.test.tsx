@@ -40,6 +40,24 @@ test("diagram-editor-facade uses CSS Grid ProductPartNode without React Flow", a
   assert.equal(source.includes("ReactFlowProvider"), false);
 });
 
+test("diagram-editor-facade applies horizontal auto-fit zoom based on container width", async () => {
+  const source = await readFile(FACADE_SOURCE_PATH, "utf8");
+  // Auto-fit state and measurement path must survive refactors — they are the
+  // sole reason ProductPart composition stays visible when the Artifacts panel
+  // is narrower than the natural content width.
+  assert.equal(source.includes("autoFitScale"), true);
+  assert.equal(source.includes("userZoom"), true);
+  assert.equal(source.includes("effectiveZoom"), true);
+  assert.equal(source.includes("ResizeObserver"), true);
+  assert.equal(source.includes("scrollWidth"), true);
+  assert.equal(source.includes("containerWidth"), true);
+  // Inner composition must expose its natural width through `max-content` so
+  // scrollWidth reports the intrinsic grid size instead of the clamped one.
+  assert.equal(source.includes("max-content"), true);
+  // Cmd/Ctrl+0 reset must clear the user-zoom overlay, not the auto-fit base.
+  assert.equal(source.includes("setUserZoom(1)"), true);
+});
+
 test("diagram-editor-shell has no React Flow dependency", async () => {
   const source = await readFile(SHELL_SOURCE_PATH, "utf8");
   assert.equal(source.includes("@xyflow/react"), false);
