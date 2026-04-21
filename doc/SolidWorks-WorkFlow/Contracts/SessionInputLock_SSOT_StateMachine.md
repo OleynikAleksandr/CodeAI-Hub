@@ -70,6 +70,32 @@
 
 ---
 
+## 3.3 Инкрементальный этап (реализовано в release `1.2.39`)
+
+Закрыт класс багов “вечное Agents is working” для reopened workflow dialogs, чьи continuity entries существуют на диске, но runtime session-объект не был создан в Core. Раньше Core при cold-start материализовал runtime session только для `lastActive` stage; остальные reopened dialogs оставались без записи в `workspace:snapshot`, и initial `connectionState: "running"` из `createInitialSnapshot` никогда не разблокировался через existing `snapshotSignalsIdleUnlocked` reconciliation (см. §3.1). Симметричный симптом — `SessionRequestHandlerStopAction.handleStop()` возвращал `"Session not found"` и не эмитил `turn_state: "idle"`, из-за чего кнопка Stop не разблокировала UI.
+
+Решение — Core-side runtime session materialization invariant:
+
+1) **Core (`RemoteBridgeDialogCommandRouter.handleDialogList`)**: после чтения `ContinuityIndexEntry[]` через `DialogListService.listDialogs()` вызывается `materializeContinuityEntries` для каждой entry, у которой есть `latestSessionId` + `providerId` + `providerSessionId` и которая ещё не зарегистрирована в `SessionManager`.
+2) Materializer регистрирует stub runtime session:
+   - `SessionManager.registerSessionWithId` — Session объект с `providerSessionStatus: "ready"`, `stage`, `providerSessionId` из continuity.
+   - `SessionProviderBindingService.registerRestoredBinding` — paper-binding в `providerSessions` Map без adapter call.
+   - `WorkspaceRuntimeFacade.notifySessionCreated` — hydrate в WorkspaceStore, чтобы session попала в следующий `workspace:snapshot` push с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"`.
+3) Materializer idempotent: повторные `dialog:list` не пересоздают session и не вызывают лишних `notifySessionCreated`.
+4) Provider adapter turn НЕ стартуется в момент materialize. Реальный `thread/resume` остаётся ленивым и происходит при первом user message через existing `resolveProviderSessionId` в `session-request-handler-message-dispatch.ts`.
+
+Инвариант для обоих reader'ов состояния input lock:
+
+> После первого `dialog:list` в workspace каждый reopened workflow dialog гарантированно имеет runtime session в `workspace:snapshot` с `turnState: "idle"`. PM `createInitialSnapshot` → `session-stream.applyWorkspaceSnapshotToSnapshots()` reconciliation снимает initial "running" через `snapshotSignalsIdleUnlocked` path без дополнительных fallback-правил на UI-стороне. `handleStop(sessionId)` находит session и binding, нормально инвалидирует binding, эмитит `turn_state: "idle"`.
+
+Canonical code:
+- `packages/core/src/session-manager/index.ts` — `registerSessionWithId`.
+- `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts` — `registerRestoredBinding`.
+- `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts` — `materializeContinuityEntries`.
+- `packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts` — integration в `handleDialogList`.
+
+---
+
 ## 4) Target-state planning вынесен из текущего контракта
 
 Явная snapshot-модель `inputLock.active/reason/updatedAt` пока **не реализована** на текущем `main`.

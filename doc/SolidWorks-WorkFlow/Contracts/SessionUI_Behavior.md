@@ -94,6 +94,10 @@ UI copy должна соответствовать состоянию:
 
 Разблокировка ввода привязана к завершению turn (status snapshot), а не к самому факту появления текстового ответа.
 
+### 4.4 Reopened dialog после cold-start
+
+Когда PM открывает dialog из continuity после cold-start Core, Core обязан гарантировать runtime session в `workspace:snapshot` до того, как session-stream reconciliation loop попытается переключить initial `connectionState: "running"` в `"idle"`. Эту гарантию обеспечивает `RemoteBridgeDialogCommandRouter.handleDialogList` → `materializeContinuityEntries`: для каждой continuity entry с `latestSessionId + providerId + providerSessionId` создаётся stub runtime session с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"` без запуска provider adapter turn. PM не держит никаких специальных fallback-правил для "нет runtime session в snapshot" — контракт таков, что это состояние после первого `dialog:list` невозможно. См. `SessionInputLock_SSOT_StateMachine.md` §3.3.
+
 ---
 
 ## 5) Continuity / rollover (happy path)
