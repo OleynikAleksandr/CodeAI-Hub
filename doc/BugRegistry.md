@@ -1677,3 +1677,36 @@ Three-link chain:
 - SSOT: `SessionInputLock_SSOT_StateMachine.md` §3.3, `SessionUI_Behavior.md` §4.4, `CoreOrchestrator.md` §3 (runtime session materialization bullet), `SystemArchitecture.md` §3 Invariant 1 (расширенный snapshot-first lock contract).
 
 **Release:** `1.2.39`
+
+---
+
+## BUG-2026-04-21-02 — Development Tree sidebar показывает фантомные standalone modules на `diagram_modules` артефактах
+
+**Status:** RESOLVED (release `1.2.40`)
+
+**Symptom (user-visible):**
+- На workspace с корректным `product-parts/<part-id>.md` (2 кластера с модулями + 1 настоящий standalone `cef-launcher`) Development Tree в левом sidebar Project Manager показывал до 5 "standalone" модулей под `project-manager` product part вместо одного.
+- Canvas на правой Artifacts panel рендерил композицию корректно.
+- Любая манипуляция в sidebar (expand/collapse кластера) детерминированно перещёлкивала структуру между правильным и искажённым отображением — пользователь наблюдал нестабильный рендер.
+
+**Root cause split на два независимых дефекта в `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts`:**
+1. `NEXT_SECTION_RE` (module-level `/g`-regex) потреблялся через прямой `NEXT_SECTION_RE.exec(body.slice(1))` в `clampSectionBody`. Global regex singleton сохраняет `lastIndex` между вызовами внутри long-lived Core процесса; повторные `exec()`-вызовы на одном и том же body чередовали hit/null/hit/null. Когда exec возвращал null, `clampSectionBody` отдавал body целиком без клампа.
+2. `MODULE_ROW_RE` был nonstrict: non-greedy `(.+?)\s*\|\s*$` съедал 2-ю, 3-ю и 4-ю колонки в одной группе, поэтому 4-колоночные Simple Relations rows (`| \`from-id\` | \`to-id\` | type | label |`) матчились и `from-id` попадал как standalone module id. Когда clamp слетал из-за (1), Simple Relations уходил в standalone-скан.
+
+Precedent-фикс `BUG-2026-03-<...>` (релиз 1.2.37) ограничил standalone body следующим `##`-заголовком, но реализовал это через `NEXT_SECTION_RE.exec(...)` — отсюда регрессия нестабильности.
+
+**Fix (1.2.40):**
+- Все `/g`-regex теперь потребляются через `.matchAll()` (iterator не использует shared lastIndex) или factory-функции, возвращающие свежий regex-инстанс на каждый вызов.
+- `clampSectionBody` переведён на `str.search(NEXT_SECTION_SEARCH_RE)` с non-global regex — `.search` lastIndex не использует.
+- `MODULE_ROW_RE` ужесточён до строго 2-column: `[^|\n]+` во второй колонке + якорь `\|[ \t]*$`, так что 4-колоночные Simple Relations rows физически не матчатся даже если clamp когда-либо опять соскользнёт.
+
+**Commits:**
+- `c1ede86b0 fix: stabilize development tree parser against regex lastIndex drift`
+- `3661b315d test: cover development tree parser idempotency and relations leak guard`
+- `63fdac691 docs: record development tree parser lastIndex safety invariant`
+
+**Guards:**
+- Test `development-tree-snapshot.test.ts`: 10-run идемпотентность на одном артефакте (lastIndex drift guard), artifact с cluster-module в `From` Simple Relations row не выдаёт фантомных standalone.
+- SSOT: `SystemArchitecture.md` §6.4 расширен invariant'ом про regex lastIndex safety и strict 2-column `MODULE_ROW_RE`.
+
+**Release:** `1.2.40`
