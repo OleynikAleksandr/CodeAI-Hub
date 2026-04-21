@@ -4,6 +4,21 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.43] - 2026-04-21
+### Fixed
+- **Codex provider no longer gets stuck in "Provider codexCli unavailable" after a benign child-process restart.** Hotfix to release `1.2.42`. `CodexAppServerProcess.startInternal` inherits `process.env` from the VS Code extension host, which on macOS GUI-launched VS Code often ships without the user's shell PATH additions (`~/.npm-global/bin`, Homebrew). The first spawn at boot could succeed case-by-case; after a graceful `process.stop` (fired when all Codex sessions close), every subsequent spawn raised `spawn codex ENOENT`, and the provider-recovery scheduler looped forever with `write EPIPE` against a dead stdin. The spawn env now prepends a curated set of common install directories (`~/.npm-global/bin`, `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin` on POSIX; `%APPDATA%\npm` on Windows) — inherited PATH stays the primary lookup, candidates only get appended when absent. No hardcoded absolute paths in the runtime.
+- **Claude and Codex `usage_limits` widget no longer stays empty after a Core restart.** PM emits the `binding_ready` `usage_limits` refresh exactly once per logical session. After the `1.2.39` continuity materializer paper-binding, that first refresh races against provider hydration — Claude's HTTP probe and Codex's app-server handshake — and the payload is dropped. Gemini's proactive refresh path hides this for it; Claude and Codex widgets just stayed empty. The `1.2.42` stale-binding retry branch now triggers one additional `adapter.refreshUsageLimits` for the freshly hydrated session via the new `triggerPostRebindUsageLimitsRefresh` helper, so the widget catches up automatically on the same user message that drove the rebind.
+
+### Added
+- **`triggerPostRebindUsageLimitsRefresh`** (`packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.ts`) — exported helper extracted from `SessionRequestHandlerMessageDispatch` so the dispatch file stays under the 500-line architecture limit and the new logic is independently testable.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 1** — post-rebind usage_limits refresh contract (required after successful rebind) and Codex PATH augmentation note added to the existing stale-binding auto-recovery text.
+- **BugRegistry.md** — new entry `BUG-2026-04-21-05` with the two symptom split, root cause, fix, commits, and guards.
+
+### Tests
+- **`session-request-handler-post-rebind-usage-limits.test.ts`** — 4 contract cases: adapter without `refreshUsageLimits` produces no broadcasts; `refreshUsageLimits` invoked exactly once with the retry binding; only normalized `usage_limits` events are broadcast; synchronous adapter failures are logged and swallowed.
+
 ## [1.2.42] - 2026-04-21
 ### Fixed
 - **First user message in a reopened Claude/Codex dialog no longer vanishes after a Core restart.** Follow-up to `BUG-2026-04-21-01`/release `1.2.39`. The continuity materializer correctly journaled paper-bindings with `providerSessionStatus: "ready"` (so PM input stopped sticking in "Agents is working…"), but the dispatch path trusted `ready` as "provider hydrated" and called `adapter.sendMessage` without first resuming. In Claude, `ClaudeSDKManager.sendMessage` threw a generic `Error("Session <id> not found")`; in Codex, `turn/start` hit the freshly spawned app-server child which had never seen the thread. The failure classifier marked both as retryable, but no retry was wired for generic errors — the message was silently dropped. Each provider adapter now throws a typed `ClaudeSessionStaleBindingError` / `CodexSessionStaleBindingError` (symmetric to Gemini's `GeminiSessionStaleBindingError` from `1.2.8`), and the Core dispatch detector is generalized over the shared set of provider-scoped codes so the one-shot `invalidateProviderBinding + ensureSessionReadyForSend + resend` recovery path fires for all three providers.
