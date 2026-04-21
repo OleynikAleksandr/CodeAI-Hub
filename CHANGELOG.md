@@ -4,6 +4,25 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.39] - 2026-04-21
+### Fixed
+- **Reopened workflow dialog no longer sticks in "Agents is working, please wait..." after Core cold-start.** Previously Core only rehydrated a runtime session for the `lastActive` stage on startup; other reopened dialogs (e.g. `virtual_simulation`, `diagram_modules`) had no record in `workspace:snapshot`. PM `createInitialSnapshot` started workflow sessions with `connectionState: "running"` expecting a Core-initiated turn, but the expected idle snapshot update never arrived, and the initial "running" remained indefinitely. `RemoteBridgeDialogCommandRouter.handleDialogList` now materializes a stub runtime session for every continuity entry via the new `materializeContinuityEntries` helper, so the existing snapshot reconciliation (`snapshotSignalsIdleUnlocked`, released in `1.1.646`) flips the UI to idle automatically.
+- **Stop button on a reopened workflow dialog now works.** The same underlying asymmetry caused `SessionRequestHandlerStopAction.handleStop` to return `"Session not found"` without emitting `turn_state: "idle"`, so clicking Stop did nothing. Because the dialog list now always materializes a session + paper-binding in Core, `handleStop` finds both lookups and invalidates the binding normally.
+
+### Added
+- **`SessionManager.registerSessionWithId`** — externally-id-preserving session registration (no UUID regeneration) for restore-from-continuity paths; `providerSessionStatus` is set to `"ready"` without invoking any provider adapter.
+- **`SessionProviderBindingService.registerRestoredBinding`** — paper-binding registration in `providerSessions` Map for restored sessions; no adapter subscription is created, `invalidateProviderBinding`'s existing `unsubscribe()` call is a safe no-op.
+- **`session-continuity-materializer.ts`** — helper that walks a `ContinuityIndexEntry[]` and, for each entry with a complete `latestSessionId + providerId + providerSessionId` triple that is not yet known to `SessionManager`, registers a stub session, paper-binding, and `WorkspaceRuntimeFacade.notifySessionCreated` hydration with `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"`. Idempotent on repeated `dialog:list`.
+
+### Unchanged
+- **External Codex contract stays stable.** Provider `thread/resume` remains lazy — it is triggered by the first user message through the existing `resolveProviderSessionId` dispatch path, not by materialization. Codex app-server `closeSession` is safe on paper-bindings because it only interrupts an active turn (none exist for stubs) and deletes its internal map entry.
+
+### Docs
+- **SessionInputLock SSOT §3.3, SessionUI_Behavior §4.4, CoreOrchestrator §3, SystemArchitecture §3 Invariant 1** all updated to record the runtime session materialization invariant. New `BugRegistry` entry `BUG-2026-04-21-01` captures the full forensics, root cause, fix, and guards.
+
+### Tests
+- **`session-continuity-materializer.test.ts`** — happy path stub creation (session / binding / workspace runtime hydration), idempotency across repeated `dialog:list`, skip behavior for incomplete entries, and explicit assertion that post-materialize state satisfies both `handleStop` preconditions (`sessionManager.getSession` + `providerSessions.get` both non-null).
+
 ## [1.2.38] - 2026-04-21
 ### Removed
 - **Legacy Codex SDK-based provider module deleted.** `packages/Codex_Module/` and its transitive dependency `@openai/codex-sdk@0.53.0` are removed from the repository and the workspace lockfile. The module had been orphaned since release `1.2.22`, when the `codex app-server` line in `packages/Codex_AppServer_Module/` became the sole active runtime; no active `import` from `@codeai-hub/codex-module` existed in Core / provider-registry / build scripts / tests. `knip.json` and `.vscodeignore` entries for the legacy package are cleaned up in the same change.

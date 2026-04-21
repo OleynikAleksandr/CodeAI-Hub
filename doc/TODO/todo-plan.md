@@ -31,28 +31,26 @@
 ## Phase 1 — Core Runtime Session Materialization (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
 ### Stream A: SessionManager + SessionProviderBindingService public surface
-1. [TODO] Добавить `SessionManager.registerSessionWithId({ sessionId, providerId, workspacePath, providerSessionId, stage, initiativeSlug? })` — noop если session уже существует; иначе создаёт `Session` с `providerSessionStatus: "ready"` и сохраняет в `sessions` Map — scope: `packages/core/src/session-manager/index.ts`.
-2. [TODO] Git Commit: `feat: add externally-id-preserving session registration to session manager` (hash: TBD)
-3. [TODO] Добавить `SessionProviderBindingService.registerRestoredBinding({ sessionId, providerId, providerSessionId })` — регистрирует paper-binding в `providerSessions` Map и помечает session `providerSessionStatus: "ready"` через session manager seam; без provider adapter call — scope: `packages/core/src/remote-bridge/handlers/session-provider-binding-service.ts`.
-4. [TODO] Git Commit: `feat: register restored provider binding without adapter turn` (hash: TBD)
+1. [DONE] `SessionManager.registerSessionWithId` добавлен.
+2. [DONE] Git Commit: `feat: add externally-id-preserving session registration to session manager` (hash: 6dafa1523)
+3. [DONE] `SessionProviderBindingService.registerRestoredBinding` добавлен.
+4. [DONE] Git Commit: `feat: register restored provider binding without adapter turn` (hash: 1c917a5eb)
 
 ### Stream B: Continuity materializer + dialog:list integration
-5. [TODO] Создать `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`: экспортирует `materializeContinuityEntries(entries, workspacePath, deps)` — для каждой entry с `latestSessionId && providerSessionId && !sessionManager.getSession(latestSessionId)` вызывает `registerSessionWithId` + `registerRestoredBinding` + `notifySessionCreated` с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"`.
-6. [TODO] Git Commit: `feat: add continuity materializer for dialog list restore path` (hash: TBD)
-7. [TODO] Интегрировать materializer в `remote-bridge-dialog-command-router.handleDialogList` — вызов после `dialogListService.listDialogs()`, перед отправкой `dialog:list:result` — scope: `packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts`.
-8. [TODO] Git Commit: `feat: materialize runtime sessions on dialog list` (hash: TBD)
+5. [DONE] Создан materializer + интегрирован в `handleDialogList` через `SessionRequestHandler.getProviderBindingService()` getter и новые router deps (4 файла в одном коммите ради knip-чистоты).
+6. [DONE] Git Commit: `feat: materialize runtime sessions on dialog list` (hash: 58ac6bb33)
 
 ### Stream C: Regression tests
-9. [TODO] Тест materializer: создать stub session для previously-unknown continuity entry, убедиться что session manager + binding service + workspace store хранят корректный state — scope: `packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts`.
-10. [TODO] Git Commit: `test: cover continuity materializer happy path and idempotency` (hash: TBD)
-11. [TODO] Тест handleStop post-materialize: после materializer работает `handleStop(sessionId)` без `"Session not found"` — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-stop-action.test.ts` (либо дополнение в `session-request-handler.stop.test.ts`).
-12. [TODO] Git Commit: `test: cover stop path for materialized continuity session` (hash: TBD)
+7. [DONE] Materializer test — happy path + idempotency + skip incomplete entries.
+8. [DONE] Git Commit: `test: cover continuity materializer happy path and idempotency` (hash: 7787c4a4c)
+9. [DONE] Stop preconditions post-materialize.
+10. [DONE] Git Commit: `test: cover stop path preconditions for materialized continuity session` (hash: bda2f58cc)
 
 ### Stream D: SSOT sync
-13. [TODO] Обновить `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md` + `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`: зафиксировать инвариант "reopened workflow dialog всегда имеет runtime session в workspace snapshot после первого dialog:list".
-14. [TODO] Git Commit: `docs: record runtime session materialization invariant` (hash: TBD)
-15. [TODO] Обновить `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md` (materializer как часть dialog:list path) + `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 Invariant 1 (snapshot-first lock contract дополнение) + `doc/BugRegistry.md` (новая запись bug + fix).
-16. [TODO] Git Commit: `docs: sync cluster map, system invariant and bug registry` (hash: TBD)
+11. [DONE] `SessionInputLock_SSOT_StateMachine.md` §3.3 + `SessionUI_Behavior.md` §4.4.
+12. [DONE] Git Commit: `docs: record runtime session materialization invariant` (hash: 896f0075e)
+13. [DONE] `CoreOrchestrator.md` §3 + `SystemArchitecture.md` §3 Invariant 1 + `BugRegistry.md` BUG-2026-04-21-01.
+14. [DONE] Git Commit: `docs: sync cluster map, system invariant and bug registry` (hash: 5dd1ed1e5)
 
 ## Phase 2 — Release 1.2.39 (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
