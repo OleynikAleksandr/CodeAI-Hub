@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
+import { CodexSessionStaleBindingError } from "../provider/codex-session-stale-binding-error";
 import {
   CODEX_APPLIED_TURN_CONFIG_KEY,
   type CodexModuleOptions,
@@ -65,6 +66,16 @@ export class CodexAppServerFacade {
   private readonly eventRouter: CodexAppServerEventRouter;
   private readonly process: CodexAppServerProcess;
   private readonly sessions = new Map<string, AppServerSessionState>();
+  // Thread ids for which this facade has actually completed a handshake
+  // (thread/start or thread/resume) against the current app-server child
+  // process. After Core restart the app-server child dies with us, so a
+  // paper-binding resolved by the continuity materializer can point at a
+  // thread id that the facade state map is willing to ensureSessionState
+  // for (subscribe/listener wiring), but that the app-server itself has
+  // never seen. sendMessage consults this set to decide whether to raise
+  // CodexSessionStaleBindingError so the Core dispatch layer can run its
+  // one-shot invalidate + ensureSessionReadyForSend + resend recovery.
+  private readonly handshakedThreadIds = new Set<string>();
   private readonly workspace: CodexModuleOptions["workspace"];
 
   constructor(options: CodexModuleOptions) {
@@ -104,6 +115,7 @@ export class CodexAppServerFacade {
       throw new Error("codex app-server thread/start returned no thread id");
     }
     this.ensureSessionState(threadId, workspacePath);
+    this.handshakedThreadIds.add(threadId);
     this.eventRouter.emitRuntimeModel(threadId, response.model);
     this.eventRouter.emitCachedUsageLimits(threadId);
     return threadId;
@@ -127,6 +139,7 @@ export class CodexAppServerFacade {
     const thread = isRecord(response.thread) ? response.thread : null;
     const resumedThreadId = asString(thread?.id) ?? threadId;
     this.ensureSessionState(resumedThreadId, workspacePath);
+    this.handshakedThreadIds.add(resumedThreadId);
     this.eventRouter.emitRuntimeModel(resumedThreadId, response.model);
     this.eventRouter.emitCachedUsageLimits(resumedThreadId);
     return resumedThreadId;
@@ -145,6 +158,7 @@ export class CodexAppServerFacade {
       }
     }
     this.sessions.delete(threadId);
+    this.handshakedThreadIds.delete(threadId);
     if (this.sessions.size === 0) {
       await this.process.stop();
     }
@@ -155,6 +169,9 @@ export class CodexAppServerFacade {
     content: string,
     turnOptions?: CodexTurnOptions
   ): Promise<void> {
+    if (!this.handshakedThreadIds.has(threadId)) {
+      throw new CodexSessionStaleBindingError(threadId);
+    }
     const state = this.ensureSessionState(threadId);
     const appliedConfig = isRecord(turnOptions?.[CODEX_APPLIED_TURN_CONFIG_KEY])
       ? turnOptions[CODEX_APPLIED_TURN_CONFIG_KEY]

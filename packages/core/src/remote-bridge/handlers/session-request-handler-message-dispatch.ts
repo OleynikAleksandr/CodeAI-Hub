@@ -16,11 +16,13 @@ import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 
 // Recognized across providers: each provider adapter throws its own typed
 // stale-binding error with a provider-scoped code (GEMINI_* since 1.2.8,
-// CLAUDE_* since 1.2.42). The dispatch retry path is shared — a one-shot
-// invalidate + ensureSessionReadyForSend + resend covers all of them.
+// CLAUDE_* and CODEX_* since 1.2.42). The dispatch retry path is shared —
+// a one-shot invalidate + ensureSessionReadyForSend + resend covers all
+// of them.
 const PROVIDER_STALE_BINDING_ERROR_CODES: ReadonlySet<string> = new Set([
   "GEMINI_SESSION_STALE_BINDING",
   "CLAUDE_SESSION_STALE_BINDING",
+  "CODEX_SESSION_STALE_BINDING",
 ]);
 
 const extractStaleProviderSessionId = (error: unknown): string | null => {
