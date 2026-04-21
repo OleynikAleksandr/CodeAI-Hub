@@ -4,6 +4,22 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.42] - 2026-04-21
+### Fixed
+- **First user message in a reopened Claude/Codex dialog no longer vanishes after a Core restart.** Follow-up to `BUG-2026-04-21-01`/release `1.2.39`. The continuity materializer correctly journaled paper-bindings with `providerSessionStatus: "ready"` (so PM input stopped sticking in "Agents is working…"), but the dispatch path trusted `ready` as "provider hydrated" and called `adapter.sendMessage` without first resuming. In Claude, `ClaudeSDKManager.sendMessage` threw a generic `Error("Session <id> not found")`; in Codex, `turn/start` hit the freshly spawned app-server child which had never seen the thread. The failure classifier marked both as retryable, but no retry was wired for generic errors — the message was silently dropped. Each provider adapter now throws a typed `ClaudeSessionStaleBindingError` / `CodexSessionStaleBindingError` (symmetric to Gemini's `GeminiSessionStaleBindingError` from `1.2.8`), and the Core dispatch detector is generalized over the shared set of provider-scoped codes so the one-shot `invalidateProviderBinding + ensureSessionReadyForSend + resend` recovery path fires for all three providers.
+
+### Added
+- **`ClaudeSessionStaleBindingError`** (`packages/Claude_Module/src/provider/claude-session-stale-binding-error.ts`) with `code: "CLAUDE_SESSION_STALE_BINDING"` and carried `providerSessionId`.
+- **`CodexSessionStaleBindingError`** (`packages/Codex_AppServer_Module/src/provider/codex-session-stale-binding-error.ts`) with `code: "CODEX_SESSION_STALE_BINDING"` and carried `providerSessionId`.
+- **`handshakedThreadIds` guard in `CodexAppServerFacade`** — populated in `createSession` / `resumeSession`, consulted in `sendMessage` before `turn/start`, cleared in `closeSession`. Raises the typed error when a paper-binding points at a thread the current app-server child has never seen.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 1** now records that `ready` paper-binding means "journaled" and not "provider hydrated" — every adapter must raise a typed stale-binding error on first-send-after-restart, generic `Error` is forbidden because the retryable classifier would drop it silently.
+- **BugRegistry.md** — new entry `BUG-2026-04-21-04` with full forensics, root cause split, fix, commits, and guards.
+
+### Tests
+- **`claude-session-stale-binding-error.test.ts`** and **`codex-session-stale-binding-error.test.ts`** — error contract tests (code / providerSessionId / message / name / Error prototype) pinning the throw-site ↔ Core catch-site handshake.
+
 ## [1.2.41] - 2026-04-21
 ### Fixed
 - **Diagram Modules Artifacts panel composition now actually fits under auto-fit zoom.** Hotfix to release `1.2.40`. The previous cycle introduced `width: max-content + minWidth: 100%` on the inner composition div, intending to expose the natural grid width through `scrollWidth`. In practice the intrinsic-sizing keyword let prose (purpose text, long titles) and `1fr` column tracks inside ProductPart / Cluster / Module cards expand into unwrappable single lines, so the natural width grew to thousands of pixels and auto-fit collapsed straight to the floor `0.25` — composition overflowed horizontally even at Cmd+Ctrl+0 (100% user-zoom) and Cmd+scroll → 25%. The inner div is now back on natural grid sizing: `scrollWidth` on a normally-sized grid already reports `max(clientWidth, rightmost-child.right)`, which matches the auto-fit measurement path once real card min-content (`minWidth: 220`, `minmax(240px, 1fr)`) overflows the track. Source-level regression assertion inverted to `max-content === false` so the keyword cannot silently return.
