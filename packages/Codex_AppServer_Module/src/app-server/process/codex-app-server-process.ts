@@ -33,6 +33,35 @@ interface JsonRpcLogRecord {
 type JsonRpcLine = JsonRpcNotification | JsonRpcResponse | JsonRpcLogRecord;
 
 const CODEX_EXECUTABLE = process.platform === "win32" ? "codex.cmd" : "codex";
+// Common user-level install locations for the `codex` CLI. Core inherits PATH
+// from its parent (VS Code extension host) which on macOS GUI apps often ships
+// without the user's npm-global / Homebrew directories even when the shell
+// terminal PATH has them. If `spawn("codex")` falls through to ENOENT on the
+// recovery path, the provider gets stuck in "unavailable" until the user
+// manually restarts VS Code with a fixed PATH. Augmenting the spawn env with
+// these candidates keeps PATH lookup as the primary mechanism (no hardcoded
+// absolute path in the runtime) while removing the most common failure mode.
+const CODEX_PATH_CANDIDATES: readonly string[] =
+  process.platform === "win32"
+    ? [path.join(homedir(), "AppData", "Roaming", "npm")]
+    : [
+        path.join(homedir(), ".npm-global", "bin"),
+        "/opt/homebrew/bin",
+        "/usr/local/bin",
+        "/usr/bin",
+      ];
+
+const buildAugmentedPath = (): string => {
+  const inherited = process.env.PATH ?? "";
+  const inheritedEntries = new Set(
+    inherited.split(path.delimiter).filter((entry) => entry.length > 0)
+  );
+  const appended = CODEX_PATH_CANDIDATES.filter(
+    (candidate) => !inheritedEntries.has(candidate)
+  );
+  return [inherited, ...appended].filter(Boolean).join(path.delimiter);
+};
+
 const DEFAULT_PROVIDER_CODEX_HOME = path.join(
   homedir(),
   ".codeai-hub",
@@ -189,6 +218,7 @@ export class CodexAppServerProcess {
       env: {
         ...process.env,
         CODEX_HOME: providerCodexHome,
+        PATH: buildAugmentedPath(),
       },
       stdio: ["pipe", "pipe", "pipe"],
     });
