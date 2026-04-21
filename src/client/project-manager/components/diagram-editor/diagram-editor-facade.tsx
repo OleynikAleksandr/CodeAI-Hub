@@ -330,12 +330,14 @@ export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
             alignContent: "start",
             transformOrigin: "top left",
             transform: `scale(${effectiveZoom})`,
-            // width: max-content lets the grid report its intrinsic natural
-            // width through scrollWidth (used by the auto-fit measurer), while
-            // min-width: 100% keeps it filling the container when the content
-            // is already narrower than the viewport.
-            width: "max-content",
-            minWidth: "100%",
+            // Keep natural grid sizing: when child content overflows the grid
+            // track, scrollWidth on this element already reports the overflow-
+            // inclusive natural width, which the auto-fit measurer consumes.
+            // Do not add an explicit intrinsic-sizing keyword on width here:
+            // prose (purpose text, long titles) would expand into a single
+            // unwrappable line and push the natural width beyond any
+            // reasonable viewport, collapsing every render to the auto-fit
+            // floor.
           }}
         >
           {nodes.map((node) => (

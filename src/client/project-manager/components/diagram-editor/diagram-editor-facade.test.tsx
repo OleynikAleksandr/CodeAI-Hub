@@ -51,9 +51,12 @@ test("diagram-editor-facade applies horizontal auto-fit zoom based on container 
   assert.equal(source.includes("ResizeObserver"), true);
   assert.equal(source.includes("scrollWidth"), true);
   assert.equal(source.includes("containerWidth"), true);
-  // Inner composition must expose its natural width through `max-content` so
-  // scrollWidth reports the intrinsic grid size instead of the clamped one.
-  assert.equal(source.includes("max-content"), true);
+  // Inner composition must NOT set `width: max-content` — doing so lets prose
+  // and column tracks expand into an unwrappable single line and pushes the
+  // natural width arbitrarily large, so auto-fit always hits the floor.
+  // scrollWidth on a normally sized grid already reports overflow-inclusive
+  // natural width, which is exactly what the measurer needs.
+  assert.equal(source.includes("max-content"), false);
   // Cmd/Ctrl+0 reset must clear the user-zoom overlay, not the auto-fit base.
   assert.equal(source.includes("setUserZoom(1)"), true);
 });
