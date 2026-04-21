@@ -4,6 +4,20 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.44] - 2026-04-21
+### Fixed
+- **Usage-limits widget no longer stays empty or shows fake `0%` for Claude and Codex in the cold-cache window.** Hotfix to `1.2.43`. PM emits `binding_ready` usage-limits refresh per reopened dialog after Core restart, and under the `1.2.39` materializer paper-binding those first refreshes raced against provider hydration: `ClaudeLiveHeadersReader` and `CodexAppServerFacade.refreshUsageLimits` returned null payloads, the cache never filled, and subsequent `binding_ready` triggers kept hitting the same race. The cache key is already account-scoped (`providerScopeKey = `${providerId}:global``), so one successful probe is enough to populate every session of a provider — but nothing stopped the parallel storm of failing probes. `SessionRequestHandler` now owns `UsageLimitsWarmupTracker: Set<providerId>`: the first `binding_ready` for a provider dispatches, subsequent `binding_ready` for the same provider skip the dispatch and fall back to cached replay (empty rows stay hidden instead of surfacing as false `0%`). Other lifecycle triggers (`turn_completed`, `reconnect`, `manual`, `provider_session_rebound`, `dialog_opened`, `session_opened`) bypass dedup because they represent real state changes.
+
+### Added
+- **`UsageLimitsWarmupTracker`** + **`handleRefreshUsageLimitsFlow`** (`packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-warmup.ts` + `session-request-handler-usage-limits-refresh.ts`) — extracted from `SessionRequestHandler` so the main handler stays under the 500-line architecture limit and the new dedup / diagnostic logic is independently testable.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 1** — single-probe warmup policy recorded alongside existing stale-binding auto-recovery rules.
+- **BugRegistry.md** — new entry `BUG-2026-04-21-06` capturing the cold-cache race.
+
+### Tests
+- **`session-request-handler.usage-limits.test.ts`** — new case: cold-cache failed warmup (second `binding_ready` for a different session of the same provider must not re-dispatch) + `turn_completed` pass-through even when the provider is already warmed.
+
 ## [1.2.43] - 2026-04-21
 ### Fixed
 - **Codex provider no longer gets stuck in "Provider codexCli unavailable" after a benign child-process restart.** Hotfix to release `1.2.42`. `CodexAppServerProcess.startInternal` inherits `process.env` from the VS Code extension host, which on macOS GUI-launched VS Code often ships without the user's shell PATH additions (`~/.npm-global/bin`, Homebrew). The first spawn at boot could succeed case-by-case; after a graceful `process.stop` (fired when all Codex sessions close), every subsequent spawn raised `spawn codex ENOENT`, and the provider-recovery scheduler looped forever with `write EPIPE` against a dead stdin. The spawn env now prepends a curated set of common install directories (`~/.npm-global/bin`, `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin` on POSIX; `%APPDATA%\npm` on Windows) — inherited PATH stays the primary lookup, candidates only get appended when absent. No hardcoded absolute paths in the runtime.
