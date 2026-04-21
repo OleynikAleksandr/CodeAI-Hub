@@ -170,18 +170,15 @@ fi
 if ! grep -q "node_modules/@google-cloud" .vscodeignore 2>/dev/null; then
   echo "node_modules/@google-cloud/**" >> .vscodeignore
 fi
-if [ -d "node_modules/@codeai-hub/claude-module" ] || [ -d "node_modules/@codeai-hub/codex-app-server-module" ] || [ -d "node_modules/@codeai-hub/codex-module" ] || [ -d "node_modules/@codeai-hub/gemini-module" ]; then
+if [ -d "node_modules/@codeai-hub/claude-module" ] || [ -d "node_modules/@codeai-hub/codex-app-server-module" ] || [ -d "node_modules/@codeai-hub/gemini-module" ]; then
   echo "⚠️  Warning: Bundled provider modules detected, removing..."
-  rm -rf node_modules/@codeai-hub/claude-module node_modules/@codeai-hub/codex-app-server-module node_modules/@codeai-hub/codex-module node_modules/@codeai-hub/gemini-module
+  rm -rf node_modules/@codeai-hub/claude-module node_modules/@codeai-hub/codex-app-server-module node_modules/@codeai-hub/gemini-module
 fi
 if ! grep -q "node_modules/@codeai-hub/claude-module" .vscodeignore 2>/dev/null; then
   echo "node_modules/@codeai-hub/claude-module/**" >> .vscodeignore
 fi
 if ! grep -q "node_modules/@codeai-hub/codex-app-server-module" .vscodeignore 2>/dev/null; then
   echo "node_modules/@codeai-hub/codex-app-server-module/**" >> .vscodeignore
-fi
-if ! grep -q "node_modules/@codeai-hub/codex-module" .vscodeignore 2>/dev/null; then
-  echo "node_modules/@codeai-hub/codex-module/**" >> .vscodeignore
 fi
 if ! grep -q "node_modules/@codeai-hub/gemini-module" .vscodeignore 2>/dev/null; then
   echo "node_modules/@codeai-hub/gemini-module/**" >> .vscodeignore
@@ -191,9 +188,6 @@ if ! grep -q "packages/Claude_Module" .vscodeignore 2>/dev/null; then
 fi
 if ! grep -q "packages/Codex_AppServer_Module" .vscodeignore 2>/dev/null; then
   echo "packages/Codex_AppServer_Module/**" >> .vscodeignore
-fi
-if ! grep -q "packages/Codex_Module" .vscodeignore 2>/dev/null; then
-  echo "packages/Codex_Module/**" >> .vscodeignore
 fi
 if ! grep -q "packages/Gemini_Module" .vscodeignore 2>/dev/null; then
   echo "packages/Gemini_Module/**" >> .vscodeignore
