@@ -248,6 +248,25 @@ export class SessionProviderBindingService {
     }
   }
 
+  registerRestoredBinding(options: {
+    readonly sessionId: string;
+    readonly providerId: string;
+    readonly providerSessionId: string;
+  }): void {
+    if (this.deps.providerSessions.has(options.sessionId)) {
+      return;
+    }
+    this.deps.providerSessions.set(options.sessionId, {
+      providerId: options.providerId,
+      providerSessionId: options.providerSessionId,
+      unsubscribe: () => {
+        // Paper binding: no adapter subscription was created, so nothing
+        // to tear down. Present here so invalidateProviderBinding can call
+        // unsubscribe() uniformly.
+      },
+    });
+  }
+
   updateBindingWithResolvedId(
     sessionId: string,
     providerSessionId: string
