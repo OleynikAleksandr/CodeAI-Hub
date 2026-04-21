@@ -1783,3 +1783,33 @@ Precedent-фикс `BUG-2026-03-<...>` (релиз 1.2.37) ограничил st
 - SSOT: `SystemArchitecture.md` §3 Invariant 1 расширен — `ready` paper-binding НЕ означает "provider-модуль hydrated", adapter обязан throw'ить typed stale-binding error, generic `Error` недопустим.
 
 **Release:** `1.2.42`
+
+---
+
+## BUG-2026-04-21-05 — Codex "Provider codexCli unavailable" после закрытия первой сессии + пустой usage_limits виджет у Claude и Codex
+
+**Status:** RESOLVED (release `1.2.43`, hotfix к `1.2.42`)
+
+**Symptom (user-visible):**
+- Релиз `1.2.42`. Codex работал сразу после Core boot, но после штатного `closeSession` (при `sessions.size === 0` app-server child process останавливается) provider-recovery scheduler каждую минуту пытается перезапустить app-server и получает `spawn codex ENOENT`. PM на send показывает `System: Provider codexCli unavailable`.
+- На том же релизе usage_limits виджет в PM остаётся пустым для Claude и Codex после Core restart, хотя `core.log` показывает `Usage limits refresh request received` + `Usage limits refresh dispatched to adapter` на `lifecycleTrigger: "binding_ready"`. Gemini работает нормально.
+
+**Root cause (двойной):**
+1. `CodexAppServerProcess.startInternal` делает `spawn("codex", ...)` с inherited `process.env`. У VS Code extension host на macOS GUI-application PATH не содержит `~/.npm-global/bin` (где пользователь установил codex), даже если shell PATH его содержит. Первый spawn на старте Core мог работать case-by-case; после graceful process.stop новые spawn попытки падают ENOENT. write EPIPE всплывает дальше при попытке отправить init handshake в мёртвый stdin.
+2. PM emit'ит usage_limits refresh `binding_ready` ровно один раз на логическую session. После `1.2.39` materializer paper-binding с `providerSessionStatus: "ready"` попадает в dispatch до того, как `adapter.resumeSession` отработал handshake. Для Claude `ClaudeLiveHeadersReader` HTTP probe может гонять с hydration; для Codex app-server может ещё не быть handshake'ан. Первый refresh возвращает null или broadcast'ит в невидимый канал — и больше не триггерится, потому что binding flag остаётся `ready` после stale-binding retry из `1.2.42`. Gemini не страдает потому что `startManagedSession` делает proactive refresh внутри.
+
+**Fix (1.2.43):**
+- `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`: curated `CODEX_PATH_CANDIDATES` (`~/.npm-global/bin`, `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin` на POSIX; `%APPDATA%\npm` на Windows) + `buildAugmentedPath()` — inherited PATH остаётся primary lookup, candidates только приписываются если отсутствуют. Передаётся в `env.PATH` spawn'у вместе с `CODEX_HOME`.
+- `packages/core/src/remote-bridge/handlers/session-request-handler-post-rebind-usage-limits.ts`: новый helper `triggerPostRebindUsageLimitsRefresh({adapter, broadcaster, logger, providerId, providerSessionId, session, sessionId})` — best-effort вызов `adapter.refreshUsageLimits` через тот же `normalizeUsageLimitsStreamEvent` путь, что и regular refresh. Adapter без `refreshUsageLimits` — no-op; synchronous exception — warn-лог.
+- `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`: после успешного `providerSend.dispatch` в `retryAfterStaleBinding` вызывается `triggerPostRebindUsageLimitsRefresh(...)` для свеже-hydrated binding.
+
+**Commits:**
+- `d26868644 fix: resolve codex binary via augmented PATH in app-server spawn`
+- `d70c31761 feat: trigger usage limits refresh after stale-binding rebind`
+- `ef9d6897e test: cover post-rebind usage limits refresh trigger`
+
+**Guards:**
+- Test `session-request-handler-post-rebind-usage-limits.test.ts`: 4 контрактных случая (adapter без refreshUsageLimits, exact single invocation, фильтрация не-usage событий через normalizer, swallow synchronous errors с warn-логом).
+- SSOT: `SystemArchitecture.md` §3 Invariant 1 расширен post-rebind usage_limits refresh requirement + Codex PATH augmentation note.
+
+**Release:** `1.2.43`

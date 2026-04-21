@@ -22,25 +22,25 @@
 ## Phase 1 — Codex PATH augmentation
 
 ### Stream: spawn PATH
-1. [TODO] Добавить `CODEX_PATH_CANDIDATES` и augmentation в `CodexAppServerProcess.startInternal` (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts` — 1 файл).
-2. [TODO] Git Commit: `fix: resolve codex binary via augmented PATH in app-server spawn` (hash: TBD)
+1. [DONE] Добавить `CODEX_PATH_CANDIDATES` и augmentation в `CodexAppServerProcess.startInternal` (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts` — 1 файл).
+2. [DONE] Git Commit: `fix: resolve codex binary via augmented PATH in app-server spawn` (hash: `d26868644`)
 
 **Phase 1 closure:** `npm run build --workspace packages/Codex_AppServer_Module` зелёный.
 
 ## Phase 2 — Post-rebind usage_limits refresh
 
 ### Stream: dispatch retry
-1. [TODO] Добавить helper `triggerPostRebindUsageLimitsRefresh` + вызов в retry-ветке после `ensureSessionReadyForSend` до retry `providerSend.dispatch` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` — 1 файл).
-2. [TODO] Git Commit: `feat: trigger usage limits refresh after stale-binding rebind` (hash: TBD)
-3. [TODO] Regression-тест на `session-request-handler-message-dispatch` — retry path вызывает refreshUsageLimits ровно один раз (scope: создаём новый `.test.ts` рядом — 1 файл).
-4. [TODO] Git Commit: `test: cover post-rebind usage limits refresh trigger` (hash: TBD)
+1. [DONE] Добавить helper `triggerPostRebindUsageLimitsRefresh` (вынесен в отдельный файл чтобы не превысить 500-строковый лимит на `session-request-handler-message-dispatch.ts`) + вызов в retry-ветке после успеха `providerSend.dispatch` (scope: 2 файла — NEW `session-request-handler-post-rebind-usage-limits.ts` + MODIFY `session-request-handler-message-dispatch.ts`).
+2. [DONE] Git Commit: `feat: trigger usage limits refresh after stale-binding rebind` (hash: `d70c31761`)
+3. [DONE] Regression-тесты на `triggerPostRebindUsageLimitsRefresh` — 4 контрактных случая (scope: 1 файл).
+4. [DONE] Git Commit: `test: cover post-rebind usage limits refresh trigger` (hash: `ef9d6897e`)
 
 **Phase 2 closure:** `npm run build --workspace packages/core` зелёный, regression проходит.
 
 ## Phase 3 — SSOT + BugRegistry sync
 
 ### Stream: Docs
-1. [TODO] `SystemArchitecture.md` §3 Invariant 1 — добавить post-rebind usage_limits refresh как часть stale-binding auto-recovery contract. `BugRegistry.md` — запись `BUG-2026-04-21-05` (2 симптома: Codex spawn ENOENT + Claude/Codex limits пустые после cold-start) (scope: 2 файла).
+1. [IN_PROGRESS] `SystemArchitecture.md` §3 Invariant 1 — добавить post-rebind usage_limits refresh + Codex PATH augmentation note. `BugRegistry.md` — запись `BUG-2026-04-21-05` (scope: 2 файла).
 2. [TODO] Git Commit: `docs: record post-rebind usage limits + codex path invariants` (hash: TBD)
 
 ## Phase 4 — Release 1.2.43
