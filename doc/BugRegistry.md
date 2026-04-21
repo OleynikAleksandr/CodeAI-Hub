@@ -1710,3 +1710,34 @@ Precedent-фикс `BUG-2026-03-<...>` (релиз 1.2.37) ограничил st
 - SSOT: `SystemArchitecture.md` §6.4 расширен invariant'ом про regex lastIndex safety и strict 2-column `MODULE_ROW_RE`.
 
 **Release:** `1.2.40`
+
+---
+
+## BUG-2026-04-21-03 — Diagram Modules Artifacts panel: auto-fit сваливается в floor при включённом `width: max-content`
+
+**Status:** RESOLVED (release `1.2.41`, hotfix к `1.2.40`)
+
+**Symptom (user-visible):**
+- После установки `1.2.40` на workspace с двумя кластерами внутри Product Part диаграмма на Artifacts panel уходит вправо даже при `Cmd+Ctrl+0` (100% user-zoom, auto-fit применён) и при `Cmd+scroll → 25%` user-zoom.
+- Первый cluster (`Workflow And Artifact Ui`) растягивается на всю "longest unwrappable" ширину своего purpose-текста; второй cluster не виден целиком даже на 25%.
+- Sidebar Development Tree в 1.2.40 рендерится корректно — этот hotfix касается только Artifacts panel auto-fit.
+
+**Root cause:**
+- В `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx` релиз `1.2.40` ввёл `width: "max-content"` + `minWidth: "100%"` на inner composition div, считая это необходимым для `scrollWidth` measurement.
+- Реально `width: max-content` разрешает любому child-элементу тянуть свой longest-line size: русская проза в `purposePanelStyle`, title в auto-колонке `productPartHeaderStyle: "auto minmax(240px, 1fr)"`, и все `1fr` column tracks в `repeat(${columns}, 1fr)` расползаются в unwrappable single lines.
+- Natural width становится тысячами пикселей, `min(1, container.clientWidth / naturalWidth)` попадает в floor `0.25` сразу, но при userZoom ≥ 0.25 composition всё ещё шире viewport.
+- `scrollWidth` на обычно-сайзнутом grid (`width: auto` = 100%) и без того возвращает overflow-inclusive natural width: когда ProductPart min-content exceeds grid track width, grid cells overflow, и scrollWidth = max(clientWidth, rightmost-child.right). Intrinsic-sizing keyword был лишним и вреден.
+
+**Fix (1.2.41):**
+- Убраны `width: "max-content"` и `minWidth: "100%"` из inner div `DiagramEditorFacade`. Auto-fit продолжает работать на естественном grid sizing.
+- Source-level regression assertion в `diagram-editor-facade.test.tsx` инвертирован на `max-content === false`, чтобы keyword не вернулся.
+
+**Commits:**
+- `6f4f18e0d docs: open auto-fit natural-width hotfix scope`
+- `745d05b16 fix: restore natural grid sizing for diagram auto-fit composition`
+
+**Guards:**
+- Regression assertion: source facade не должен содержать `max-content`.
+- SSOT: `SystemArchitecture.md` §6.4 запись про "без intrinsic-sizing keyword'ов на composition-container'е".
+
+**Release:** `1.2.41`

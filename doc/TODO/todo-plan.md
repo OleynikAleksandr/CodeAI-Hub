@@ -23,9 +23,9 @@
 ## Phase 1 — Natural-Width Hotfix (owner: claude, updated: 2026-04-21)
 
 ### Stream: Remove max-content from auto-fit composition
-1. [IN_PROGRESS] Убрать `width: "max-content"` + `minWidth: "100%"` из inner div `DiagramEditorFacade`; inverter assertion `max-content === false` в source-level regression тесте (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx` + `diagram-editor-facade.test.tsx` — 2 файла).
-2. [TODO] Git Commit: `fix: restore natural grid sizing for diagram auto-fit composition` (hash: TBD)
-3. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.4 — rephrase auto-fit zoom contract без упоминания `max-content`/`min-width: 100%`; добавить запись `BUG-2026-04-21-03` в `doc/BugRegistry.md` (scope: 2 файла).
+1. [DONE] Убрать `width: "max-content"` + `minWidth: "100%"` из inner div `DiagramEditorFacade`; inverter assertion `max-content === false` в source-level regression тесте (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx` + `diagram-editor-facade.test.tsx` — 2 файла).
+2. [DONE] Git Commit: `fix: restore natural grid sizing for diagram auto-fit composition` (hash: `745d05b16`)
+3. [IN_PROGRESS] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.4 — rephrase auto-fit zoom contract без упоминания `max-content`/`min-width: 100%`; добавить запись `BUG-2026-04-21-03` в `doc/BugRegistry.md` (scope: 2 файла).
 4. [TODO] Git Commit: `docs: drop max-content from auto-fit contract and register hotfix bug` (hash: TBD)
 
 **Phase 1 closure:** `npm run typecheck:webview` + `npm run build:webview` зелёные; source-level regression тест auto-fit проходит; визуальная проверка в PM — композиция помещается в ширину panel при auto-fit и масштабируется Cmd/Ctrl+scroll.
