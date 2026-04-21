@@ -136,7 +136,7 @@ Project Manager и shared UI должны отображать applied config, �
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`
   - `packages/core/src/remote-bridge/types.ts`
 - Provider adapters:
-  - `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts`
+  - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (consumes the applied-turn-config envelope under `CODEX_APPLIED_TURN_CONFIG_KEY` on `thread/start` / `thread/resume` / `turn/start`)
   - `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`
   - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
 - UI sync:

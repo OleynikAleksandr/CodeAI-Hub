@@ -104,7 +104,7 @@
 Файлы:
 - `packages/Gemini_Module/src/session/gemini-session-manager.ts`
 - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
-- `packages/Codex_Module/src/sdk/codex-sdk-manager.ts`
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
 
 Следствие:
 - same-provider recovery со сменой модели является самым дешёвым первым шагом.
