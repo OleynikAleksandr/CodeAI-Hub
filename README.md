@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.36
+## Current Release — v1.2.37
+- **Diagram Modules now renders clusters, standalone modules, and the Development Tree correctly.** Both the Project Manager diagram canvas and the left-sidebar Development Tree now read module tables in the canonical 2-column shape (`| \`module-id\` | Responsibility |`), matching the agent template and `diagram-modules-field-reference.md`. Previously the parsers still required a third backtick-wrapped column (the removed `ModuleKind` slot), so cluster bodies rendered as `Modules: 0` and standalone modules disappeared, even when the staged artifact was valid.
+- **Simple Relations rows no longer leak as phantom standalone modules in the Development Tree.** The Core development-tree snapshot now clamps the `## Standalone Modules` body at the next `##` header, so `From` / `To` entries from `## Simple Relations` are no longer surfaced as fake standalone module nodes in the PM sidebar.
+- **Parser contract is now a documented invariant.** `System/SystemArchitecture.md` §6.4 records the 2-column module table contract and the standalone-section clamping rule as SSOT for both readers of `product-parts/<part-id>.md` (browser staged-part parser and Core `development-tree-snapshot.ts`).
+
+### 1.2.36 (previous)
 - **UI and Reasoning translation engines are now split.** The Settings localization card surfaces two dedicated selectors — `UI Translation Engine` (drives interface bundle materialization and browser bootstrap) and `Reasoning Translation Engine` (drives live translation of visible Thinking / Reasoning bubbles). The reasoning engine defaults to `Google GTX Free` for the most stable live translation, while provider-backed engines remain available with an explicit warning that higher parallel activity may cause fallback to source English.
 - **Reasoning is now a fifth user-facing localization category.** Visible Thinking / Reasoning bubbles no longer share the `Messages for the User` target language; a dedicated `Reasoning` card in Settings exposes an independent language selector, while hidden reasoning stays outside the translation pipeline as before.
 - **Reasoning engine or reasoning language changes are runtime-only.** They never block Settings save, never block Project Manager / new session sends, and never rebuild browser bootstrap bundles; only `UI Translation Engine` and the four UI-owned category languages still enter the strict localization sync path.

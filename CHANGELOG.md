@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.37] - 2026-04-21
+### Fixed
+- **Diagram Modules module tables now render.** Both the Project Manager diagram canvas parser (`diagram-modules-staged-part-parser.ts`) and the Core Development Tree snapshot (`development-tree-snapshot.ts`) now accept the canonical 2-column `| \`module-id\` | Responsibility |` module table. Previously the parsers still required a third backtick-wrapped column (the removed `ModuleKind` slot from refactor `c488df065`), so new staged artifacts rendered as `Modules: 0` in clusters and lost all standalone modules.
+- **`## Simple Relations` rows no longer leak as phantom standalone modules.** The Core snapshot now clamps the `## Standalone Modules` body at the next `##` header, so `From` / `To` entries from Simple Relations are no longer mis-surfaced as standalone nodes in the PM sidebar Development Tree.
+
+### Changed
+- **Parser tests updated to the 2-column contract.** Staged-part parser and development-tree-snapshot tests now exercise the canonical 2-column shape and include a regression test for Simple Relations isolation.
+
+### Docs
+- **SystemArchitecture §6.4 records the 2-column module table invariant.** The staged `product-parts/<part-id>.md` format and the standalone-section clamping rule are now SSOT for both readers of the staged artifact.
+
 ## [1.2.36] - 2026-04-20
 ### Added
 - **Dedicated `UI Translation Engine` and `Reasoning Translation Engine` selectors in the Settings localization card.** The UI engine drives interface bundle materialization and the browser bootstrap payload; the reasoning engine drives live translation of visible Thinking / Reasoning bubbles and defaults to `Google GTX Free` for stability.

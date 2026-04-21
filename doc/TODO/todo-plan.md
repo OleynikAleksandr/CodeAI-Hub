@@ -33,20 +33,20 @@
 4. [DONE] Git Commit: `fix: align development tree snapshot with two-column module table contract` (hash: 953cb3738)
 
 ### Stream C: SSOT sync
-5. [TODO] Add 2-column module table tolerance note to SystemArchitecture §6.4 — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
-6. [TODO] Git Commit: `docs: align diagram modules parser contract with two-column module table` (hash: TBD)
+5. [DONE] Add 2-column module table tolerance note to SystemArchitecture §6.4 — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
+6. [DONE] Git Commit: `docs: align diagram modules parser contract with two-column module table` (hash: bfdca7f84)
 
 ## Phase 2 — Release 1.2.37 (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
 ### Stream D: Release prep
-11. [TODO] Update `README.md` and `CHANGELOG.md` with target version 1.2.37 (diagram two-column cleanup closeout) — scope: `README.md`, `CHANGELOG.md`.
-12. [TODO] Git Commit: `docs: prepare diagram two-column cleanup release notes (1.2.37)` (hash: TBD)
+7. [IN_PROGRESS] Update `README.md` and `CHANGELOG.md` with target version 1.2.37 — scope: `README.md`, `CHANGELOG.md`.
+8. [TODO] Git Commit: `docs: prepare diagram two-column cleanup release notes (1.2.37)` (hash: TBD)
 
 ### Stream E: Build
-13. [TODO] Run `./scripts/build-all.sh` (version bump commits land here).
-14. [TODO] Run `./scripts/build-release.sh --use-current-version` (produces `codeai-hub-1.2.37.vsix`).
+9. [TODO] Run `./scripts/build-all.sh` (version bump commits land here).
+10. [TODO] Run `./scripts/build-release.sh --use-current-version` (produces `codeai-hub-1.2.37.vsix`).
 
 ### Stream F: Cycle closeout
-15. [TODO] Archive planning-doc → `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_TwoColumnModuleTable_Cleanup_Architecture.md`; archive todo-plan → `doc/TODO/Archive/todo-plan-phase2-diagram-two-column-cleanup.md`; update `doc/SolidWorks-WorkFlow/Docs_Index.md`.
-16. [TODO] Git Commit: `docs: archive diagram two-column cleanup cycle (1.2.37)` (hash: TBD)
-17. [TODO] Create `doc/Sessions/Session074.md` (completion report, type A).
+11. [TODO] Archive planning-doc → `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_TwoColumnModuleTable_Cleanup_Architecture.md`; archive todo-plan → `doc/TODO/Archive/todo-plan-phase2-diagram-two-column-cleanup.md`; update `doc/SolidWorks-WorkFlow/Docs_Index.md`.
+12. [TODO] Git Commit: `docs: archive diagram two-column cleanup cycle (1.2.37)` (hash: TBD)
+13. [TODO] Create `doc/Sessions/Session074.md` (completion report, type A).
