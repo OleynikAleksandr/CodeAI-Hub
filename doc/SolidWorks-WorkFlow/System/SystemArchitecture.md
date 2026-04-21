@@ -33,8 +33,8 @@
 
 ## 3) Глобальные инварианты (must-not-break)
 
-1. **Snapshot-first lock contract**: состояние input определяется только snapshot‑сигналами (`turnState`, continuity lock flags и т.п.).
-   - Канон: `WorkspaceRuntime.md`, `SessionUI_Behavior.md`, `SessionInputLock_SSOT_StateMachine.md`.
+1. **Snapshot-first lock contract**: состояние input определяется только snapshot‑сигналами (`turnState`, continuity lock flags и т.п.). Reopened workflow dialog обязан иметь runtime session в `workspace:snapshot` после первого `dialog:list`: Core materialize-ит stub runtime session для каждой continuity entry (`registerSessionWithId` + `registerRestoredBinding` + `notifySessionCreated` с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"`) без запуска provider adapter turn; PM не имеет права держать fallback-ветку для "runtime session отсутствует в snapshot".
+   - Канон: `WorkspaceRuntime.md`, `SessionUI_Behavior.md`, `SessionInputLock_SSOT_StateMachine.md` §3.3, `CoreOrchestrator.md`.
 2. **Dialogs vs status split**: история/диалог (`dialogId`) независим от live status/usage (`sessionId`); routing обязателен после restart/reconnect.
    - Канон: `Dialogs_And_Continuity_Routing.md`.
 3. **Session continuity**: rollover/handoff обязаны быть надёжны и не залипать UI в working.

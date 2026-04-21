@@ -1626,3 +1626,54 @@ PM теряет WebSocket-соединение с Core → workspace/session/que
 **Priority:** CRITICAL — каскад делает Gemini провайдер непригодным для production use при любом server-side error.
 
 **Discovered:** Session 158, 2026-03-25. Triggered by `gemini-cli-core@0.35.0` + `gemini-3.1-pro-preview` capacity limits.
+
+---
+
+## BUG-2026-04-21-01 — reopened workflow dialog залипает в "Agents is working" после cold-start Core
+
+**Status:** RESOLVED (release `1.2.39`)
+
+**Symptom (user-visible):**
+- Workspace имеет несколько workflow sessions на разных stage (`description`, `virtual_simulation`, `diagram_modules`) с закрытыми turn'ами в continuity.
+- После cold-start Core / рестарта PM одна из sessions (`description` / `lastActive`) работает нормально, остальные открываются с input заблокированным на `Agents is working, please wait...`.
+- Нажатие Stop на заблокированных sessions ни к чему не приводит — UI продолжает быть locked.
+
+**Observed artifacts (forensics, Session 076, 2026-04-21):**
+- Workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`. `continuity/index.json` содержит 3+ entries для `description` / `virtual_simulation` / `diagram_modules`. Chain.json каждой — `tokenUsage.updatedAt` проставлен (turn завершён чисто).
+- `workflow/state.json`: `lastActive.stage = "description"`.
+- Core log (`~/.codeai-hub/logs/core/core.log`) на bootstrap: `pm.dialog.bootstrap.resolved` для description → `hasRuntimeSession: true`, `resolvedRuntimeSessionId` — свежий uuid (runtime session воссоздан auto-select path'ом через `workspace-activate-service`), `Usage limits refresh dispatched to adapter` с `runtimeTurnState: "idle"`.
+- Для `virtual_simulation` / `diagram_modules`: `hasRuntimeSession: false`, `restoreRequested: false`. Snapshot не содержит entry для их sessionId.
+
+**Root cause:**
+Three-link chain:
+1. Core на cold-start материализует runtime session-объект только для `lastActive` stage через `workspace-activate-service.ts`. Для остальных continuity entries runtime session не создаётся.
+2. PM `use-project-manager-dialog-core-events.ts` через `shouldSuppressIdleDialogRestoreRefresh` (релиз 1.2.18, Invariant 31) подавляет `createSession` restore-запрос, когда latest workspace snapshot уже пришёл и не содержит runtime session для dialog'а — ошибочно трактует "нет runtime session" как "idle bootstrap ready".
+3. Session UI `createInitialSnapshot` в `src/client/ui/src/session/helpers.ts:195-202` для любой workflow session стартует с `connectionState: "running"`. Без обновления из `workspace:snapshot` (которое никогда не придёт для этой sessionId) initial "running" остаётся навечно.
+
+Симметричный симптом для Stop: `SessionRequestHandlerStopAction.handleStop()` начинается с `sessionManager.getSession(sessionId)`; при undefined возвращает `"Session not found"` без эмиссии `turn_state: "idle"`. UI продолжает быть locked.
+
+Это продолжение класса багов, закрытых в релизах `1.1.646` (cold-start idle guard) и ранее. Предыдущие фиксы работали, когда snapshot содержал runtime session; этот случай — когда runtime session вообще отсутствует в snapshot.
+
+**Fix direction:** Core-side runtime session materialization — восстановить симметрию `workspace:snapshot` и continuity index. PM-side изменений нет.
+
+**Fix:**
+- `SessionManager.registerSessionWithId` — externally-supplied sessionId, `providerSessionStatus: "ready"`, без adapter call.
+- `SessionProviderBindingService.registerRestoredBinding` — paper-binding в `providerSessions` Map без adapter subscription.
+- `materializeContinuityEntries` (new helper) — для каждой `ContinuityIndexEntry` с полной связкой (`latestSessionId + providerId + providerSessionId`) создаёт stub через обе функции + `WorkspaceRuntimeFacade.notifySessionCreated` с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"`.
+- `RemoteBridgeDialogCommandRouter.handleDialogList` — вызывает materializer после `dialogListService.listDialogs()` перед отправкой `dialog:list:result`.
+- Idempotent: повторные `dialog:list` не пересоздают session.
+- Provider `thread/resume` остаётся ленивым, происходит на первом user message через existing `resolveProviderSessionId` path.
+
+**Commits:**
+- `6dafa1523 feat: add externally-id-preserving session registration to session manager`
+- `1c917a5eb feat: register restored provider binding without adapter turn`
+- `58ac6bb33 feat: materialize runtime sessions on dialog list`
+- `7787c4a4c test: cover continuity materializer happy path and idempotency`
+- `bda2f58cc test: cover stop path preconditions for materialized continuity session`
+- `896f0075e docs: record runtime session materialization invariant`
+
+**Guards:**
+- Test `session-continuity-materializer.test.ts`: materializer happy path (stub registration + workspace runtime hydration), idempotency при повторных `dialog:list`, skip для incomplete entries, stop preconditions (`sessionManager.getSession` + `providerSessions.get` non-null после materialize).
+- SSOT: `SessionInputLock_SSOT_StateMachine.md` §3.3, `SessionUI_Behavior.md` §4.4, `CoreOrchestrator.md` §3 (runtime session materialization bullet), `SystemArchitecture.md` §3 Invariant 1 (расширенный snapshot-first lock contract).
+
+**Release:** `1.2.39`
