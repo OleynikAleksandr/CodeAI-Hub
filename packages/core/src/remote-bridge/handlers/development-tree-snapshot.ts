@@ -4,12 +4,21 @@ import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-arti
 // Lightweight regex for extracting cluster/module structure from product-part files.
 // Intentionally simpler than the full diagram DSL parser — only IDs and titles.
 // Module rows follow the canonical 2-column contract: `| `module-id` | Responsibility |`.
-const CLUSTER_HEADER_RE =
+//
+// lastIndex safety: do NOT invoke `.exec()` or `.test()` on any module-level /g regex
+// singleton here — their `lastIndex` survives across calls in a long-lived Core process
+// and produces alternating hit/null results on the same input. Route through
+// `.matchAll()` / `.search()` (lastIndex-free) or create a fresh instance per call.
+const createClusterHeaderRegex = (): RegExp =>
   /^###\s+(?:Cluster(?:\s+\d+\.)?:?\s+)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
-const MODULE_ROW_RE =
-  /^\|\s*(?:\d+\s*\|\s*)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*(.+?)\s*\|\s*$/gm;
+// Strict 2-column module row. The second column forbids `|` and newline, so 4-column
+// Simple Relations rows (`| from | to | type | label |`) cannot match even if the
+// standalone body accidentally overflows past the section boundary.
+const createModuleRowRegex = (): RegExp =>
+  /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*([^|\n]+?)\s*\|[ \t]*$/gm;
 const STANDALONE_SECTION_RE = /^##\s+(?:Direct\s+)?Standalone\s+Modules/im;
-const NEXT_SECTION_RE = /^##\s+/gm;
+// Non-global: consumed only through `.search(...)`, so no shared lastIndex state.
+const NEXT_SECTION_SEARCH_RE = /^##\s+/m;
 
 // Converts kebab-case identifiers to human-readable Title Case.
 // "extension-entry-shell" → "Extension Entry Shell"
@@ -54,12 +63,14 @@ const extractModuleRows = (
   section: string
 ): readonly DevelopmentTreeModuleNode[] => {
   const modules: DevelopmentTreeModuleNode[] = [];
-  for (const match of section.matchAll(MODULE_ROW_RE)) {
+  for (const match of section.matchAll(createModuleRowRegex())) {
     const id = match[1]?.trim();
     if (!id) {
       continue;
     }
-    // Skip the table header row (e.g. `| module-id | Responsibility |`)
+    // Defensive: table header row (`| module-id | Responsibility |`) lacks backticks
+    // around `module-id`, so the strict row regex already rejects it — this guard
+    // stays as a safety net for legacy artifacts.
     if (id === "module-id") {
       continue;
     }
@@ -74,11 +85,12 @@ const extractModuleRows = (
 // sections (Simple Relations, Assumptions / Open Questions) don't leak their
 // rows into the module scanner.
 const clampSectionBody = (body: string): string => {
-  const match = NEXT_SECTION_RE.exec(body.slice(1));
-  if (!match) {
+  const rest = body.slice(1);
+  const nextSectionOffset = rest.search(NEXT_SECTION_SEARCH_RE);
+  if (nextSectionOffset < 0) {
     return body;
   }
-  return body.slice(0, match.index + 1);
+  return body.slice(0, nextSectionOffset + 1);
 };
 
 const parseProductPartTree = (
@@ -88,7 +100,7 @@ const parseProductPartTree = (
 
   // Extract clusters with their modules
   const clusters: DevelopmentTreeClusterNode[] = [];
-  const clusterHeaders = [...content.matchAll(CLUSTER_HEADER_RE)];
+  const clusterHeaders = [...content.matchAll(createClusterHeaderRegex())];
   for (const [index, header] of clusterHeaders.entries()) {
     const clusterId = header[1]?.trim();
     if (!clusterId) {
