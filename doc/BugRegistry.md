@@ -1741,3 +1741,45 @@ Precedent-фикс `BUG-2026-03-<...>` (релиз 1.2.37) ограничил st
 - SSOT: `SystemArchitecture.md` §6.4 запись про "без intrinsic-sizing keyword'ов на composition-container'е".
 
 **Release:** `1.2.41`
+
+---
+
+## BUG-2026-04-21-04 — Первый user message в reopened Claude dialog тихо пропадает после Core restart
+
+**Status:** RESOLVED (release `1.2.42`)
+
+**Symptom (user-visible):**
+- Workspace `CodeAI-Hub claude`, stage `diagram_modules`, release `1.2.41`, 2026-04-21 14:27 CEST.
+- Пользователь открывает PM, переходит в reopened dialog на `diagram_modules`, пишет сообщение, жмёт Send.
+- Input panel **не блокируется** "Agents is working…" (1.2.39 fix работает на bootstrap, но не в send path).
+- В UI нет ни turn running indicator, ни error toast.
+- Сообщение не появляется в сессионном JSONL, Claude не отвечает.
+- Повторный Send воспроизводит ту же картину. Session JSONL не меняется.
+- `Stop` кнопка пропала (input уже unlocked), workaround через invalidate+rebind через UI недоступен.
+
+**Root cause split:**
+1. 1.2.39 `materializeContinuityEntries` при cold-start создаёт paper-binding с `providerSessionStatus: "ready"` без вызова `adapter.resumeSession` — это сознательная оптимизация, чтобы не платить за resume всех reopened dialog'ов при старте Core.
+2. `SessionRequestHandlerMessageDispatch.dispatchUserMessage` видит `ready` и идёт напрямую в `adapter.sendMessage(providerSessionId)`, минуя resume-шаг.
+3. Для Claude: `ClaudeSDKManager.sendMessage` ищет `sessionId` в своей in-memory `sessions` Map, не находит (Map пуст после рестарта процесса Core), бросает generic `Error("Session <id> not found")`. Generic error classifier помечает как `session_binding_recoverable / retryable: true`, но для этого класса ошибок ни один retry path в dispatch не подписан — сообщение молча поглощается.
+4. Для Codex: app-server child process умирает вместе с Core (1.2.41 lifecycle), новый app-server не знает старые thread id. Core facade `ensureSessionState` лениво создаёт entry в своём Map без вызова `thread/resume` на app-server, `turn/start` уходит на app-server с unknown threadId → JSON-RPC error с generic message, тот же silent drop.
+5. Для Gemini: был закрыт в релизе 1.2.8 через `GeminiSessionStaleBindingError` + one-shot `invalidate + ensureSessionReadyForSend + resend` retry. Claude и Codex этот detector не имели.
+
+**Fix (1.2.42):**
+- `packages/Claude_Module/src/provider/claude-session-stale-binding-error.ts`: новый `ClaudeSessionStaleBindingError` с `code: "CLAUDE_SESSION_STALE_BINDING"` и `providerSessionId`.
+- `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`: `sendMessage` бросает `ClaudeSessionStaleBindingError` вместо generic `Error("Session X not found")`.
+- `packages/Codex_AppServer_Module/src/provider/codex-session-stale-binding-error.ts`: новый `CodexSessionStaleBindingError` (same shape).
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`: добавлен `handshakedThreadIds` Set, заполняется в `createSession` / `resumeSession`, вычищается в `closeSession`. `sendMessage` проверяет membership до `turn/start` и бросает `CodexSessionStaleBindingError`, если handshake'а с app-server не было.
+- `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`: existing detector обобщён на `ReadonlySet<string>` кодов (GEMINI_/CLAUDE_/CODEX_). Retry-ветка — та же one-shot recovery, что работала для Gemini с 1.2.8.
+
+**Commits:**
+- `783deba31 feat: auto-recover claude session binding on stale-send failure`
+- `e4e117e6e test: pin claude stale-binding error contract`
+- `c65e5172f feat: auto-recover codex session binding on stale-send failure`
+- `e588dda80 test: pin codex stale-binding error contract`
+
+**Guards:**
+- Test `packages/Claude_Module/src/provider/claude-session-stale-binding-error.test.ts`: error contract (code, providerSessionId, message, name, Error prototype).
+- Test `packages/Codex_AppServer_Module/src/provider/codex-session-stale-binding-error.test.ts`: симметричный contract.
+- SSOT: `SystemArchitecture.md` §3 Invariant 1 расширен — `ready` paper-binding НЕ означает "provider-модуль hydrated", adapter обязан throw'ить typed stale-binding error, generic `Error` недопустим.
+
+**Release:** `1.2.42`

@@ -30,28 +30,28 @@
 ## Phase 1 — Claude stale-binding auto-recovery (owner: claude, updated: 2026-04-21)
 
 ### Stream: Claude detector + throw
-1. [TODO] Новый `claude-session-stale-binding-error.ts` (класс + `code` + `providerSessionId` + pattern-matcher `extractStaleProviderSessionId`) + замена `throw new Error("Session <id> not found")` на `throw new ClaudeSessionStaleBindingError(sessionId)` в `claude-sdk-manager.ts:~157` (scope: `packages/Claude_Module/src/provider/claude-session-stale-binding-error.ts` — NEW, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts` — MODIFY; 2 файла).
-2. [TODO] Git Commit: `feat: surface claude stale-binding as recognizable error` (hash: TBD)
-3. [TODO] Расширить detector в `dispatchUserMessage` на `CLAUDE_SESSION_STALE_BINDING` code + unit-тест на Claude retry-ветку симметрично Gemini (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` — MODIFY, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.test.ts` — MODIFY; 2 файла).
-4. [TODO] Git Commit: `feat: one-shot rebind retry on claude stale-binding send failure` (hash: TBD)
+1. [DONE] Новый `claude-session-stale-binding-error.ts` (класс + `code` + `providerSessionId`) + замена `throw new Error("Session <id> not found")` на `throw new ClaudeSessionStaleBindingError(sessionId)` в `claude-sdk-manager.ts` + dispatch detector обобщён на set кодов провайдеров (scope: 3 файла; объединено в один commit т.к. knip требует, чтобы новый symbol сразу был использован).
+2. [DONE] Git Commit: `feat: auto-recover claude session binding on stale-send failure` (hash: `783deba31`)
+3. [DONE] Contract test на error shape (code / providerSessionId / message / name / Error prototype) — covers throw-site ↔ catch-site handshake (scope: 1 файл).
+4. [DONE] Git Commit: `test: pin claude stale-binding error contract` (hash: `e4e117e6e`)
 
 **Phase 1 closure:** `npm run build --workspace packages/core` + `npm run build --workspace packages/Claude_Module` зелёные; regression тест на retry-ветку проходит.
 
 ## Phase 2 — Codex stale-binding auto-recovery (owner: claude, updated: 2026-04-21)
 
 ### Stream: Codex detector + throw
-1. [TODO] Прочитать актуальный error shape из Codex app-server при send на несуществующий thread (после Core restart) через чтение `codex-app-server-facade.ts` и JSON-RPC flow; зафиксировать в комментарии планируемого error class (scope: research-only, коммита нет).
-2. [TODO] Новый `codex-session-stale-binding-error.ts` + детекция точки, где app-server возвращает "thread not found"-эквивалент, + wrap его в `CodexSessionStaleBindingError` (scope: `packages/Codex_AppServer_Module/src/provider/codex-session-stale-binding-error.ts` — NEW, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts` — MODIFY, возможно `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` — MODIFY; ≤3 файла).
-3. [TODO] Git Commit: `feat: surface codex stale-binding as recognizable error` (hash: TBD)
-4. [TODO] Расширить detector в `dispatchUserMessage` на `CODEX_SESSION_STALE_BINDING` code + unit-тест на Codex retry-ветку (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` — MODIFY, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.test.ts` — MODIFY; 2 файла).
-5. [TODO] Git Commit: `feat: one-shot rebind retry on codex stale-binding send failure` (hash: TBD)
+1. [DONE] Research: Codex app-server child process умирает вместе с Core, `facade.sessions` Map пустой после рестарта. Решение — не детектить error content от app-server, а гарантировать handshake на Core-facade уровне: новый Set `handshakedThreadIds` заполняется в `createSession`/`resumeSession` и проверяется в `sendMessage`; отсутствие membership бросает typed error до `turn/start`.
+2. [DONE] Новый `codex-session-stale-binding-error.ts` + guard в `codex-app-server-facade.ts` (`handshakedThreadIds` Set) + dispatch detector расширен `CODEX_SESSION_STALE_BINDING` (scope: 3 файла).
+3. [DONE] Git Commit: `feat: auto-recover codex session binding on stale-send failure` (hash: `c65e5172f`)
+4. [DONE] Contract test на error shape симметрично Claude (scope: 1 файл).
+5. [DONE] Git Commit: `test: pin codex stale-binding error contract` (hash: `e588dda80`)
 
 **Phase 2 closure:** `npm run build --workspace packages/Codex_AppServer_Module` зелёный; regression тест проходит.
 
 ## Phase 3 — SSOT sync + BugRegistry
 
 ### Stream: Docs
-1. [TODO] Расширить `SystemArchitecture.md` §3 Invariant 1 и/или §3 Invariant 10 — зафиксировать stale-binding auto-recovery invariant для всех трёх providers (Gemini precedent 1.2.8 + Claude/Codex в 1.2.42). Добавить `BUG-2026-04-21-04` в `BugRegistry.md` с forensics / root cause / fix / commits / guards (scope: 2 файла).
+1. [IN_PROGRESS] Расширить `SystemArchitecture.md` §3 Invariant 1 про stale-binding auto-recovery invariant для всех трёх providers + добавить `BUG-2026-04-21-04` в `BugRegistry.md` (scope: 2 файла).
 2. [TODO] Git Commit: `docs: record provider stale-binding auto-recovery invariant` (hash: TBD)
 
 ## Phase 4 — Release 1.2.42
