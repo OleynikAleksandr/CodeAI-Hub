@@ -1,8 +1,10 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-04-07
+**Updated:** 2026-04-21
 **Owner:** Oleksandr + Codex
+
+> **Note:** Top stage toolbar был удалён в релизе `1.1.924`. Sidebar (Workflow Tree) — единственный source активации stage. Упоминания "Toolbar" ниже в §1 "Проблема" сохранены как исторический контекст; в инвариантах §4–§7 toolbar заменён на sidebar.
 
 ---
 
@@ -27,9 +29,8 @@
 ## 3) Источники активации stage
 
 Любое из событий ниже обязано приводить к установке `activeStage`:
-- клик по Toolbar;
-- клик по stage-узлу в дереве;
-- клик по artifact/session узлу в дереве;
+- клик по stage-узлу в левом sidebar (Workflow Tree);
+- клик по artifact/session узлу в sidebar;
 - auto-select canonical startup stage при смене workspace.
 
 Cold-start restore rule:
@@ -56,11 +57,11 @@ Cold-start restore rule:
 
 ### 4.1 Матрица `activeStage → UI`
 
-| activeStage | Toolbar highlight | Left tree | Right header title | Right header toggle | Session route |
-|---|---|---|---|---|---|
-| `description` | `Description` | `Description` row highlighted; only `Description` branch expanded | `Description` | `Artifacts/Help` | `stage=description` |
-| `virtual_simulation` | `VIRTUAL SIMULATION` | `Virtual Simulation` row highlighted; only `Virtual Simulation` branch expanded | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
-| `diagram_modules` | `Diagram Modules` | `Diagram Modules` row highlighted; only `Diagram Modules` branch expanded | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
+| activeStage | Left sidebar (Workflow Tree) | Right header title | Right header toggle | Session route |
+|---|---|---|---|---|
+| `description` | `Description` row highlighted; only `Description` branch expanded | `Description` | `Artifacts/Help` | `stage=description` |
+| `virtual_simulation` | `Virtual Simulation` row highlighted; only `Virtual Simulation` branch expanded | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
+| `diagram_modules` | `Diagram Modules` row highlighted; only `Diagram Modules` branch expanded | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
 
 Для `Diagram Modules` правая панель использует `Artifacts/Help` (Source mode был удалён):
 - `Artifacts` открывает визуальный Module Graph, построенный из staged product-part файлов;
@@ -68,7 +69,7 @@ Cold-start restore rule:
 
 ## 5) Инварианты
 
-1. Нельзя открывать session/artifact в stage `X`, оставляя Toolbar на stage `Y`.
+1. Нельзя открывать session/artifact в stage `X`, оставляя sidebar highlight на stage `Y`.
 2. Нельзя рендерить header правой панели по старому stage после маршрутизации на новый.
 3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
 4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
@@ -87,7 +88,7 @@ Cold-start restore rule:
 
 ## 7) Критерии приёмки
 
-1. Любой клик в Toolbar/Tree/auto-select приводит к одному и тому же stage-состоянию UI.
+1. Любой клик в sidebar / auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
 3. Для всех active stage доступен `Help`; для `Diagram Modules` доступен `Artifacts/Help` (Source mode был удалён).
 4. При workspace open/switch/reconnect PM всегда стартует в `Description`.

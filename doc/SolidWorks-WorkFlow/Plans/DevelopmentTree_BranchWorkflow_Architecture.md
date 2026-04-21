@@ -1,6 +1,6 @@
 # Development Tree Branch Workflow Architecture
 
-**Status:** Accepted (2026-04-10, rollout sync for first unified execution cycle)
+**Status:** Reference Architecture (2026-04-10). Sidebar визуализация branch structure реализована в production. Branch session execution (`Product Part Specification`, `Cluster Design`, `Module Design` / `Planning` / `Execution` агенты, materialize артефактов `Module Specification` / `Facade Contract` / `Implementation Foundation` / `TODO Plan`, workflow state machine для фаз, "Start Planning" / "Start Execution" UI) на 2026-04-21 **ещё не реализованы** — требуется отдельный execution-phase planning cycle. Документ остаётся как reference architecture и design intake для этой будущей работы. См. SystemArchitecture.md §20 (`[DESIGNED, NOT IMPLEMENTED]`).
 **Created:** 2026-04-07
 **Updated:** 2026-04-10
 **Owner:** Oleksandr + Codex

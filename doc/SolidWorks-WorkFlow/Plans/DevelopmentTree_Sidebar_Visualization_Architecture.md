@@ -1,7 +1,8 @@
 # Архитектура сайдбара и сессий Project Manager
 
-**Status:** Accepted (2026-04-10, rev 3)
+**Status:** Accepted (2026-04-10, rev 3). Sidebar core (tree-node building, status indicators, connector lines, collapse/expand, sequential gating, auto-sync из Diagram Modules) реализован в production: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`, `workspace-tree.tsx`, `workspace-tree-model.ts`.
 **Implementation tab (§10.2):** отложен на неопределённый срок — не блокирует ни продвижение документа, ни implementation `todo-plan.md`. Решение будет принято ближе к реализации Execution session.
+**Custom tooltip (§10.3):** отложен; в production используется native `title` attribute (допустимо per §10.3 notes).
 **Created:** 2026-04-09
 **Updated:** 2026-04-10
 **Owner:** Oleksandr + Claude
