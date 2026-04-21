@@ -44,7 +44,6 @@ binaries/**
 *.tar.bz2
 dist/cef-launcher/**
 packages/Claude_Module/**
-packages/Codex_Module/**
 packages/Gemini_Module/**
 packages/**
 media/react-chat.js

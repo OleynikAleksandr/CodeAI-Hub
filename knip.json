@@ -17,9 +17,6 @@
     "packages/Claude_Module": {
       "entry": ["src/index.ts", "src/**/*.test.ts"]
     },
-    "packages/Codex_Module": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
-    },
     "packages/Gemini_Module": {
       "entry": ["src/index.ts", "src/**/*.test.ts"]
     },
