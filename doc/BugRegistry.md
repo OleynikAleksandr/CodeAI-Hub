@@ -1813,3 +1813,32 @@ Precedent-фикс `BUG-2026-03-<...>` (релиз 1.2.37) ограничил st
 - SSOT: `SystemArchitecture.md` §3 Invariant 1 расширен post-rebind usage_limits refresh requirement + Codex PATH augmentation note.
 
 **Release:** `1.2.43`
+
+---
+
+## BUG-2026-04-21-06 — Пустой / фейково-нулевой usage_limits виджет у Claude и Codex до первого turn'а
+
+**Status:** RESOLVED (release `1.2.44`, hotfix к `1.2.43`)
+
+**Symptom (user-visible):**
+- Релизы `1.2.41`–`1.2.43`. После Core restart пользователь открывает PM, проходит по reopened dialog'ам у Claude / Codex — виджет usage_limits либо пустой, либо показывает `Session 0% / Weekly 0%` вместо актуальных цифр типа `Session 23% (Resets Apr 21 at 11pm) / Weekly 43% (Resets Apr 23 at 11pm)`. Gemini работает.
+- После первого успешного turn'а в любом dialog'е того же провайдера виджет наполняется корректно и во всех остальных dialog'ах тоже. Проблема ровно в cold-cache окне между Core open и первым turn'ом.
+
+**Root cause:**
+- Кэш usage_limits уже account-scoped (`providerScopeKey = {providerId}:global`) — один успешный probe наполняет payload для всех sessions провайдера.
+- НО `SessionRequestHandler.handleRefreshUsageLimits` дёргал `adapter.refreshUsageLimits` **на каждом `binding_ready` trigger**, и их прилетает по одному на каждый reopened dialog после Core restart. Первый refresh гонится против paper-binding hydration (`1.2.39` materializer оставляет resume ленивым) → `ClaudeLiveHeadersReader` probe или `CodexAppServerFacade.refreshUsageLimits` RPC возвращают null payload → broadcast не происходит, cache остаётся пустым. Субсеквентные refresh'и повторяют ту же гонку и дают либо null, либо fake 0% payload.
+- Post-rebind refresh из `1.2.43` покрывает только stale-binding retry — если пользователь НЕ отправил сообщение, session не hydrated, refresh никогда не случается в успешном контексте.
+
+**Fix (1.2.44):**
+- `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-warmup.ts`: новый `UsageLimitsWarmupTracker: Set<providerId>` + diagnostic log helpers. `shouldSkipDispatch` на `binding_ready` triggers возвращает true если провайдер уже warmed; остальные triggers (`turn_completed`, `reconnect`, `manual`, `provider_session_rebound`, `dialog_opened`, `session_opened`) проходят.
+- `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts`: вынесенный из handler'а helper `handleRefreshUsageLimitsFlow` — replay cached payload if available, dedup `binding_ready`, dispatch один раз per provider per Core process, broadcast normalized events.
+- `SessionRequestHandler.handleRefreshUsageLimits` теперь тонкий delegate в `handleRefreshUsageLimitsFlow`.
+
+**Commits:**
+- `d9e7114a4 feat: limit usage-limits refresh to one warmup probe per provider`
+
+**Guards:**
+- Test `session-request-handler.usage-limits.test.ts` (новый случай): cold-cache failed warmup — второй `binding_ready` для другого session того же провайдера НЕ должен dispatch повторно; `turn_completed` после warmup-марки всё равно проходит через dispatch.
+- SSOT: `SystemArchitecture.md` §3 Invariant 1 расширен single-probe warmup policy.
+
+**Release:** `1.2.44`

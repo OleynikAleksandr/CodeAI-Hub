@@ -23,28 +23,24 @@
 ## Phase 1 — Account-scoped usage limits cache
 
 ### Stream: scopeKey rescope
-1. [TODO] `buildProviderUsageLimitScopeKey` — убрать `providerSessionId` из ключа (или принимать его как optional breadcrumb). Обновить все call-sites в `provider-usage-limits-bridge-factory.ts` / `provider-usage-limits-facade.ts` / `session-provider-binding-service.ts` (scope: ≤3 файла).
-2. [TODO] Git Commit: `refactor: scope usage limits cache per-provider instead of per-session` (hash: TBD)
+1. [SKIPPED] `buildProviderUsageLimitScopeKey` уже возвращает `{providerId}:global` — кэш per-provider account-scoped с момента коммита `070139b9e`. Rescope не требуется. Phase 2 может полагаться на этот факт.
 
 ## Phase 2 — Single-probe warmup + binding_ready dedup
 
 ### Stream: handleRefreshUsageLimits
-1. [TODO] `SessionRequestHandler`: внутри `handleRefreshUsageLimits` ввести `warmedProviders: Set<string>`. На `binding_ready` trigger: если cached payload есть — replay; если кэш пуст и провайдер не в `warmedProviders` — один dispatch и помечаем провайдера warmed; если провайдер уже warmed — skip с info-логом (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — 1 файл).
-2. [TODO] Git Commit: `feat: limit usage-limits refresh to one warmup probe per provider` (hash: TBD)
-3. [TODO] Regression-тест на `SessionRequestHandler.handleRefreshUsageLimits`: первый binding_ready dispatch'ит, второй-пятый для того же провайдера — skip (scope: `session-request-handler.test.ts` или новый `-usage-warmup.test.ts` — 1 файл).
-4. [TODO] Git Commit: `test: cover single-probe warmup policy for usage limits refresh` (hash: TBD)
+1. [DONE] `UsageLimitsWarmupTracker` + extract `handleRefreshUsageLimitsFlow` в отдельные helpers (чтобы удержать `session-request-handler.ts` под 500-строковым лимитом). Dedup `binding_ready` через Set<providerId>; остальные triggers проходят. Regression-тест покрывает failed warmup + turn_completed pass-through (scope: 4 файла — 2 NEW + 2 MODIFY).
+2. [DONE] Git Commit: `feat: limit usage-limits refresh to one warmup probe per provider` (hash: `d9e7114a4`)
 
 ## Phase 3 — UI empty-cache fallback
 
 ### Stream: widget
-1. [TODO] Заменить рендер `0%` на `—` когда `usageLimits` null/empty (scope: UI widget file — 1 файл, возможно + нормализатор в `core-bridge/normalizers.ts` если фильтр делается там).
-2. [TODO] Git Commit: `fix: render dash instead of 0% when usage limits cache is empty` (hash: TBD)
+1. [SKIPPED] Проверено: `usage-limits-stream.ts.readBucket` уже возвращает null когда `percentUsed === null`, и `session-id-bar.tsx.renderLimitLabel` уже отсекает `percentUsed === null` от рендера процента (`${label} ${N}%` vs просто `${label}`). `hasUsageLimits` скрывает row целиком когда ВСЕ bucket'ы null. Следовательно, UI **уже** показывает честное состояние: нет payload → нет row; payload есть и нулевой → `Session 0% (Resets …)` (legitimate начало 5-часового окна). Модификация не нужна. Phase 2 dedup закрывает спам fake-нулевых payload'ов от racey binding_ready probe'ов.
 
 ## Phase 4 — SSOT + BugRegistry sync
 
 ### Stream: Docs
-1. [TODO] `SystemArchitecture.md` §3 Invariant 1 — account-scoped cache + single-probe warmup policy. `BugRegistry.md` — запись `BUG-2026-04-21-06` (scope: 2 файла).
-2. [TODO] Git Commit: `docs: record account-scoped usage limits cache invariant` (hash: TBD)
+1. [IN_PROGRESS] `SystemArchitecture.md` §3 Invariant 1 — single-probe warmup policy. `BugRegistry.md` — запись `BUG-2026-04-21-06` (scope: 2 файла).
+2. [TODO] Git Commit: `docs: record single-probe usage limits warmup invariant` (hash: TBD)
 
 ## Phase 5 — Release 1.2.44
 
