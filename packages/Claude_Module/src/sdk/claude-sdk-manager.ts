@@ -4,6 +4,7 @@ import type { SDKInstaller } from "../installer/sdk-installer";
 import { SDKSessionLoggerFacade } from "../logging/sdk-session-logger";
 import type { SDKMessageProcessor } from "../messaging/message-processor";
 import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
+import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
 import type { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
@@ -154,7 +155,7 @@ export class ClaudeSDKManager {
     await this.initialize();
     const session = this.deps.sessions.getSession(sessionId);
     if (!session) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new ClaudeSessionStaleBindingError(sessionId);
     }
     applyClaudeTurnRuntimeConfig({
       owner: session,

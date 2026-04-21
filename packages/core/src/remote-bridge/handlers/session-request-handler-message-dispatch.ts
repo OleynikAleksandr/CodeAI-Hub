@@ -14,13 +14,21 @@ import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-h
 import { SessionRequestHandlerProviderSend } from "./session-request-handler-provider-send";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 
-const PROVIDER_STALE_BINDING_ERROR_CODE = "GEMINI_SESSION_STALE_BINDING";
+// Recognized across providers: each provider adapter throws its own typed
+// stale-binding error with a provider-scoped code (GEMINI_* since 1.2.8,
+// CLAUDE_* since 1.2.42). The dispatch retry path is shared — a one-shot
+// invalidate + ensureSessionReadyForSend + resend covers all of them.
+const PROVIDER_STALE_BINDING_ERROR_CODES: ReadonlySet<string> = new Set([
+  "GEMINI_SESSION_STALE_BINDING",
+  "CLAUDE_SESSION_STALE_BINDING",
+]);
 
 const extractStaleProviderSessionId = (error: unknown): string | null => {
   if (!(error instanceof Error)) {
     return null;
   }
-  if ((error as { code?: string }).code !== PROVIDER_STALE_BINDING_ERROR_CODE) {
+  const code = (error as { code?: string }).code;
+  if (!(code && PROVIDER_STALE_BINDING_ERROR_CODES.has(code))) {
     return null;
   }
   const candidate = (error as { providerSessionId?: string }).providerSessionId;
