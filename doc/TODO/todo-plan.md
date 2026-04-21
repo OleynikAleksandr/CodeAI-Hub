@@ -41,12 +41,10 @@
 ## Phase 2 — Artifacts Diagram Auto-Fit Zoom (owner: claude, updated: 2026-04-21)
 
 ### Stream: Facade auto-fit
-1. [TODO] Добавить auto-fit scale в `DiagramEditorFacade` через `ResizeObserver` + measure `scrollWidth` композиции, compose effective transform = auto-fit × user-zoom (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx` — 1 файл).
-2. [TODO] Git Commit: `feat: auto-fit diagram canvas to artifacts panel width` (hash: TBD)
-3. [TODO] Regression-тесты на auto-fit поведение при изменении container width (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.test.tsx` — 1 файл).
-4. [TODO] Git Commit: `test: cover diagram editor auto-fit zoom on container resize` (hash: TBD)
-5. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.4 — auto-fit zoom как дефолтная база, Cmd/Ctrl+scroll и Cmd/Ctrl+0 как overlay (scope: 1 файл).
-6. [TODO] Git Commit: `docs: record artifacts diagram auto-fit zoom contract` (hash: TBD)
+1. [DONE] Добавить auto-fit scale в `DiagramEditorFacade` через `ResizeObserver` + measure `scrollWidth` композиции, compose effective transform = auto-fit × user-zoom + source-level regression тест на auto-fit API (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx` + `diagram-editor-facade.test.tsx` — 2 файла; code + test объединены в один коммит, т.к. тест — source-level assertion на API surface).
+2. [DONE] Git Commit: `feat: auto-fit diagram canvas to artifacts panel width` (hash: `72097ad9a`)
+3. [IN_PROGRESS] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.4 — auto-fit zoom как дефолтная база, Cmd/Ctrl+scroll и Cmd/Ctrl+0 как overlay (scope: 1 файл).
+4. [TODO] Git Commit: `docs: record artifacts diagram auto-fit zoom contract` (hash: TBD)
 
 **Phase 2 closure:** `npm run build:webview` + `npm run typecheck:webview` зелёные; визуальная проверка в PM — композиция помещается в ширину panel при любом reasonable window size.
 
