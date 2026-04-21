@@ -11,13 +11,13 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Long-lived process bridge: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`
 - File-backed transport logger: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-session-logger.ts`
 - Shared usage-limits façade for Codex lives in Core: `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`
-- Legacy package `packages/Codex_Module/` больше не является active bundled/runtime path для Core и release packaging; он допустим только как временный fallback/override path до полного closeout legacy линии.
+- `packages/Codex_AppServer_Module/` — единственная активная реализация Codex provider line. Legacy SDK-based пакет `packages/Codex_Module/` удалён в релизе `1.2.38`; исторический контекст живёт только в `doc/TODO/Archive/` и `doc/SolidWorks-WorkFlow/Plans/Archive/`.
 
-## Внешний контракт, который НЕ меняется
-- Provider id остаётся `codexCli`.
-- Provider slot и release artifact contract остаются прежними: `~/.codeai-hub/providers/codex` и `codex-module-<version>.tar.bz2`.
-- Core по-прежнему работает через `ProviderAdapter` / `CodexModuleOptions` seam и existing provider-loader path (`CODEX_MODULE_PATH`, bundled provider slot `providers/codex/latest`).
-- `modelId` в Core/UI contract остаётся полной effective model identity; applied turn config по-прежнему приходит из shared settings/Core resolver, а не из локального source-of-truth внутри провайдера.
+## Внешний контракт
+- Provider id — `codexCli`.
+- Provider slot — `~/.codeai-hub/providers/codex`; release artifact name — `codex-module-<version>.tar.bz2` (производится `packages/Codex_AppServer_Module/`, имя сохранено как стабильный installer contract).
+- Core работает через `ProviderAdapter` / `CodexModuleOptions` seam и provider-loader path (`CODEX_MODULE_PATH`, bundled provider slot `providers/codex/latest`).
+- `modelId` в Core/UI contract — полная effective model identity; applied turn config приходит из shared settings/Core resolver, а не из локального source-of-truth внутри провайдера.
 
 ## Provider-home (канон)
 - `CODEX_HOME=~/.codeai-hub/providers/codex/home`
@@ -68,7 +68,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Codex больше не имеет права держать второй локальный source-of-truth для next-turn model/reasoning identity поверх Core-applied config.
 - `turn/interrupt` — единственный корректный Stop path для active turn; legacy kill-path через `codex exec` subprocess больше не является каноническим runtime contract.
 - Released Codex runtime обязан оставаться self-contained: installed provider bundle должен содержать всё, что нужно Core, включая `@codeai-hub/translation` и app-server module payload.
-- Release packaging обязано собирать `packages/Codex_AppServer_Module`, но сохранять внешний artifact name `codex-module-<version>.tar.bz2` ради installer/backward-compatible manifest contract.
+- Release packaging собирает `packages/Codex_AppServer_Module` в artifact `codex-module-<version>.tar.bz2`; artifact name — стабильный installer contract и не меняется.
 
 ## Связанные контракты
 - Effective model identity/settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`

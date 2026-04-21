@@ -425,7 +425,7 @@ flowchart TD
     Packages --> CorePkg["packages/core/src/*\ncore subsystems"]
     Packages --> SupervisorPkg["packages/core-supervisor/src/*"]
     Packages --> LauncherPkg["packages/cef-launcher/src/*"]
-    Packages --> ProviderPkgs["packages/Claude_Module|Codex_Module|Gemini_Module/src/*"]
+    Packages --> ProviderPkgs["packages/Claude_Module|Codex_AppServer_Module|Gemini_Module/src/*"]
     Packages --> AgentsPkg["packages/agents/*"]
     Packages --> SharedPkgs["packages/unified-session/*\npackages/ui/*\npackages/initiatives/*"]
 
