@@ -3,11 +3,13 @@ import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-arti
 
 // Lightweight regex for extracting cluster/module structure from product-part files.
 // Intentionally simpler than the full diagram DSL parser — only IDs and titles.
+// Module rows follow the canonical 2-column contract: `| `module-id` | Responsibility |`.
 const CLUSTER_HEADER_RE =
   /^###\s+(?:Cluster(?:\s+\d+\.)?:?\s+)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const MODULE_ROW_RE =
-  /^\|\s*(?:\d+\s*\|\s*)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`([^`]+)`\s*\|/gm;
+  /^\|\s*(?:\d+\s*\|\s*)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*(.+?)\s*\|\s*$/gm;
 const STANDALONE_SECTION_RE = /^##\s+(?:Direct\s+)?Standalone\s+Modules/im;
+const NEXT_SECTION_RE = /^##\s+/gm;
 
 // Converts kebab-case identifiers to human-readable Title Case.
 // "extension-entry-shell" → "Extension Entry Shell"
@@ -54,23 +56,29 @@ const extractModuleRows = (
   const modules: DevelopmentTreeModuleNode[] = [];
   for (const match of section.matchAll(MODULE_ROW_RE)) {
     const id = match[1]?.trim();
-    const col2 = match[2]?.trim();
-    if (!(id && col2)) {
+    if (!id) {
       continue;
     }
-    // Skip the table header row (e.g. `| module-id | kind | ...`)
+    // Skip the table header row (e.g. `| module-id | Responsibility |`)
     if (id === "module-id") {
       continue;
     }
-    // If column 2 contains spaces it is a human-readable title (e.g. "Main Area").
-    // If it is a single word without spaces it is a DSL kind token (e.g. "service",
-    // "adapter") — derive the display title from the kebab-case module ID instead.
-    const title = col2.includes(" ") ? col2 : humanizeKebabId(id);
     if (!modules.some((m) => m.id === id)) {
-      modules.push({ id, title });
+      modules.push({ id, title: humanizeKebabId(id) });
     }
   }
   return modules;
+};
+
+// Clamp the standalone section body to the next top-level `##` header so trailing
+// sections (Simple Relations, Assumptions / Open Questions) don't leak their
+// rows into the module scanner.
+const clampSectionBody = (body: string): string => {
+  const match = NEXT_SECTION_RE.exec(body.slice(1));
+  if (!match) {
+    return body;
+  }
+  return body.slice(0, match.index + 1);
 };
 
 const parseProductPartTree = (
@@ -99,10 +107,12 @@ const parseProductPartTree = (
     });
   }
 
-  // Extract standalone modules
+  // Extract standalone modules (scoped to the Standalone section only).
   let standaloneModules: readonly DevelopmentTreeModuleNode[] = [];
   if (standaloneSectionStart >= 0) {
-    const standaloneBody = content.slice(standaloneSectionStart);
+    const standaloneBody = clampSectionBody(
+      content.slice(standaloneSectionStart)
+    );
     standaloneModules = extractModuleRows(standaloneBody);
   }
 
