@@ -344,3 +344,71 @@ test("SessionRequestHandler performs binding bootstrap refresh only until cached
     55
   );
 });
+
+test("SessionRequestHandler does not re-dispatch binding_ready refresh after a failed warmup probe", async () => {
+  const harness = createHarness();
+  const firstSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/session-usage-warmup-first",
+    "provider-session-first"
+  );
+  const secondSession = harness.sessionManager.createSession(
+    "claudeCodeCli",
+    "/tmp/session-usage-warmup-second",
+    "provider-session-second"
+  );
+  let refreshCalls = 0;
+  harness.providerSessions.set(firstSession.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-first",
+    unsubscribe: noop,
+  });
+  harness.providerSessions.set(secondSession.id, {
+    providerId: "claudeCodeCli",
+    providerSessionId: "provider-session-second",
+    unsubscribe: noop,
+  });
+  // Adapter's refreshUsageLimits silently "fails" — no broadcast,
+  // cache stays empty. Simulates the real cold-cache race where the
+  // first probe runs before provider hydration and returns null.
+  harness.providerRegistry.getAdapter = () => ({
+    refreshUsageLimits: () => {
+      refreshCalls += 1;
+    },
+    usageLimitsFacade: {
+      getCachedStreamPayload: () => null,
+    },
+  });
+
+  // First binding_ready — dispatches the warmup probe.
+  await harness.handler.handleRefreshUsageLimits({
+    lifecycleTrigger: "binding_ready",
+    providerId: "claudeCodeCli",
+    providerSessionId: null,
+    sessionId: firstSession.id,
+  });
+  assert.equal(refreshCalls, 1);
+
+  // Second binding_ready for the same provider (different session /
+  // workspace / dialog open) — must be deduplicated because the
+  // provider-scoped warmup already fired. No new probe, no extra
+  // broadcast. The UI is expected to render an em-dash via the empty-
+  // cache fallback path.
+  await harness.handler.handleRefreshUsageLimits({
+    lifecycleTrigger: "binding_ready",
+    providerId: "claudeCodeCli",
+    providerSessionId: null,
+    sessionId: secondSession.id,
+  });
+  assert.equal(refreshCalls, 1);
+
+  // turn_completed is a legitimate state-change trigger and must still
+  // pass through even when the provider is already warmed.
+  await harness.handler.handleRefreshUsageLimits({
+    lifecycleTrigger: "turn_completed",
+    providerId: "claudeCodeCli",
+    providerSessionId: null,
+    sessionId: firstSession.id,
+  });
+  assert.equal(refreshCalls, 2);
+});

@@ -14,13 +14,9 @@ import type {
   DescriptionDialogResolution as DescriptionDialogResolutionModel,
   SessionDescriptionDialogSync,
 } from "./session-description-dialog-sync";
-import {
-  normalizeUsageLimitsStreamEvent,
-  resolveCachedUsageLimitsStreamEvent,
-  resolveRuntimeTurnState,
-  type SessionProviderBindingService,
-  shouldDispatchUsageLimitsRefresh,
-  type UsageTelemetryLifecycleTrigger,
+import type {
+  SessionProviderBindingService,
+  UsageTelemetryLifecycleTrigger,
 } from "./session-provider-binding-service";
 import type { SessionProviderEventRouter } from "./session-provider-event-router";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
@@ -51,6 +47,8 @@ import type {
   ProviderSessionBinding,
   SessionRequestHandlerOptions,
 } from "./session-request-handler-types";
+import { handleRefreshUsageLimitsFlow } from "./session-request-handler-usage-limits-refresh";
+import { UsageLimitsWarmupTracker } from "./session-request-handler-usage-limits-warmup";
 import { SessionRequestHandlerWorkflowSession } from "./session-request-handler-workflow-session";
 
 export type {
@@ -65,6 +63,7 @@ export type DescriptionDialogResolution = DescriptionDialogResolutionModel;
 export class SessionRequestHandler {
   private readonly providerSessions = new Map<string, ProviderSessionBinding>();
   private readonly continuityRootBySessionId = new Map<string, string>();
+  private readonly usageLimitsWarmup = new UsageLimitsWarmupTracker();
   private readonly config: CoreConfig;
   private readonly sessionManager: SessionManager;
   private readonly providerRegistry: ProviderRegistry;
@@ -366,109 +365,19 @@ export class SessionRequestHandler {
     readonly providerSessionId: string | null;
     readonly sessionId: string;
   }): Promise<void> {
-    const session = this.sessionManager.getSession(params.sessionId);
-    const resolvedProviderId = session?.providerId ?? params.providerId;
-    const adapter = this.providerRegistry.getAdapter(resolvedProviderId);
-    const boundProviderSessionId =
-      params.providerSessionId?.trim() ||
-      this.providerSessions.get(params.sessionId)?.providerSessionId ||
-      session?.providerSessionId ||
-      null;
-    const lifecycleTrigger = params.lifecycleTrigger ?? null;
-    const runtimeTurnState = session
-      ? resolveRuntimeTurnState({
-          session,
-          workspaceRuntime: this.workspaceRuntime,
-        })
-      : null;
-    const cachedReplayEvent = boundProviderSessionId
-      ? resolveCachedUsageLimitsStreamEvent({
-          adapter,
-          providerSessionId: boundProviderSessionId,
-        })
-      : null;
-    const shouldDispatchRefresh = shouldDispatchUsageLimitsRefresh({
-      cachedReplayAvailable: Boolean(cachedReplayEvent),
-      lifecycleTrigger,
-      runtimeTurnState,
-    });
-    this.logger.info("Usage limits refresh request received", {
-      adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
-      boundProviderSessionId,
-      cachedReplayAvailable: Boolean(cachedReplayEvent),
-      lifecycleTrigger,
-      requestedProviderId: params.providerId,
-      requestedProviderSessionId: params.providerSessionId,
-      resolvedProviderId,
-      runtimeTurnState,
-      runtimeSessionFound: Boolean(session),
-      sessionId: params.sessionId,
-      workspacePath: session?.workspacePath ?? null,
-    });
-    if (session && cachedReplayEvent) {
-      this.broadcaster({
-        type: "session:stream",
-        payload: {
-          sessionId: params.sessionId,
-          event: cachedReplayEvent,
-        },
-      });
-      if (!shouldDispatchRefresh) {
-        this.logger.info("Usage limits replayed from cached snapshot", {
-          boundProviderSessionId,
-          lifecycleTrigger,
-          resolvedProviderId,
-          runtimeTurnState,
-          sessionId: params.sessionId,
-          workspacePath: session.workspacePath,
-        });
-        return;
-      }
-    }
-    if (
-      session &&
-      boundProviderSessionId &&
-      typeof adapter?.refreshUsageLimits === "function" &&
-      shouldDispatchRefresh
-    ) {
-      const broadcast = (event: unknown): void => {
-        const normalizedEvent = normalizeUsageLimitsStreamEvent({
-          event,
-          providerSessionId: boundProviderSessionId,
-        });
-        if (!normalizedEvent) {
-          return;
-        }
-        this.broadcaster({
-          type: "session:stream",
-          payload: { sessionId: params.sessionId, event: normalizedEvent },
-        });
-      };
-      await adapter.refreshUsageLimits({
-        broadcast,
-        providerSessionId: boundProviderSessionId,
-        runtimeSessionId: params.sessionId,
-        workspacePath: session.workspacePath,
-      });
-      this.logger.info("Usage limits refresh dispatched to adapter", {
-        providerSessionId: boundProviderSessionId,
-        lifecycleTrigger,
-        resolvedProviderId,
-        sessionId: params.sessionId,
-        workspacePath: session.workspacePath,
-      });
-      return;
-    }
-    this.logger.warn("Usage limits refresh skipped", {
-      adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
-      boundProviderSessionId,
-      cachedReplayAvailable: Boolean(cachedReplayEvent),
-      lifecycleTrigger,
-      requestedProviderId: params.providerId,
-      requestedProviderSessionId: params.providerSessionId,
-      resolvedProviderId,
-      runtimeTurnState,
-      runtimeSessionFound: Boolean(session),
+    await handleRefreshUsageLimitsFlow({
+      deps: {
+        broadcaster: this.broadcaster,
+        logger: this.logger,
+        providerRegistry: this.providerRegistry,
+        providerSessions: this.providerSessions,
+        sessionManager: this.sessionManager,
+        usageLimitsWarmup: this.usageLimitsWarmup,
+        workspaceRuntime: this.workspaceRuntime,
+      },
+      lifecycleTrigger: params.lifecycleTrigger,
+      providerId: params.providerId,
+      providerSessionId: params.providerSessionId,
       sessionId: params.sessionId,
     });
   }
