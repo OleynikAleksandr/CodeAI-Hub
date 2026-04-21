@@ -29,11 +29,11 @@
 ## Phase 1 — Core DevTree Parser Stability (owner: claude, updated: 2026-04-21)
 
 ### Stream: Parser hardening
-1. [TODO] Переписать `development-tree-snapshot.ts`: локальные regex-инстансы / `str.search()` вместо `NEXT_SECTION_RE.exec`, строго 2-column `MODULE_ROW_RE` (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts` — 1 файл).
-2. [TODO] Git Commit: `fix: stabilize development tree parser against regex lastIndex drift` (hash: TBD)
-3. [TODO] Regression-тесты: идемпотентность N повторных вызовов + Simple Relations leak guard (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts` — 1 файл).
-4. [TODO] Git Commit: `test: cover development tree parser idempotency and relations leak guard` (hash: TBD)
-5. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.4 — фиксация regex lastIndex safety invariant для `development-tree-snapshot` (scope: 1 файл).
+1. [DONE] Переписать `development-tree-snapshot.ts`: локальные regex-инстансы / `str.search()` вместо `NEXT_SECTION_RE.exec`, строго 2-column `MODULE_ROW_RE` (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts` — 1 файл).
+2. [DONE] Git Commit: `fix: stabilize development tree parser against regex lastIndex drift` (hash: `c1ede86b0`)
+3. [DONE] Regression-тесты: идемпотентность N повторных вызовов + Simple Relations leak guard (scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts` — 1 файл).
+4. [DONE] Git Commit: `test: cover development tree parser idempotency and relations leak guard` (hash: `3661b315d`)
+5. [IN_PROGRESS] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §6.4 — фиксация regex lastIndex safety invariant для `development-tree-snapshot` (scope: 1 файл).
 6. [TODO] Git Commit: `docs: record development tree parser lastIndex safety invariant` (hash: TBD)
 
 **Phase 1 closure:** `npm run build --workspace @codeai-hub/core` зелёный, regression-тесты проходят.
