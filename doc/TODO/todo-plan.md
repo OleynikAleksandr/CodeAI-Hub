@@ -30,19 +30,19 @@
 ## Phase 1 — Legacy Codex Module Removal (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
 ### Stream A: Remove legacy package
-1. [TODO] `git rm -r packages/Codex_Module/`, убрать entry `packages/Codex_Module` из `knip.json` workspaces, убрать `packages/Codex_Module/**` из `.vscodeignore`, запустить `npm install` для регенерации `package-lock.json`.
-2. [TODO] Git Commit: `chore: remove legacy Codex SDK module` (hash: TBD)
+1. [DONE] `git rm -r packages/Codex_Module/`, убрать entry `packages/Codex_Module` из `knip.json` workspaces, убрать `packages/Codex_Module/**` из `.vscodeignore`, `rm package-lock.json && npm install` для полной перегенерации lockfile без extraneous записей.
+2. [DONE] Git Commit: `chore: remove legacy Codex SDK module` (hash: 05b702072)
 
 ### Stream B: SSOT doc updates (module + architecture + facade diagram)
-3. [TODO] Обновить `doc/SolidWorks-WorkFlow/Modules/Codex.md` (3 места: legacy bullet строка 14, stable-artifact-name строка 18, release-packaging bullet строка 71) — убрать fallback формулировку, зафиксировать app-server как canonical single implementation с сохранением stable artifact name.
-4. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §4 provider-modules bullet (строка 173): упростить до `packages/Claude_Module/`, `packages/Codex_AppServer_Module/`, `packages/Gemini_Module/`.
-5. [TODO] Обновить `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md` строка 428: в mermaid-диаграмме заменить `Codex_Module` на `Codex_AppServer_Module`.
-6. [TODO] Git Commit: `docs: retire legacy Codex module from canonical SSOT` (hash: TBD)
+3. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Modules/Codex.md`: legacy fallback bullet удалён, раздел `Внешний контракт` переписан под app-server as canonical, release packaging bullet обновлён.
+4. [DONE] Обновлён `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §4 provider-modules bullet.
+5. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md` mermaid-диаграмма.
+6. [DONE] Git Commit: `docs: retire legacy Codex module from canonical SSOT` (hash: 4c7d30310)
 
 ### Stream C: Contract SSOT path updates
-7. [TODO] Обновить `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` строка 107: путь `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` заменить на app-server эквивалент; verify invariant по-прежнему применим.
-8. [TODO] Обновить `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` строка 139: путь `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts` заменить на app-server эквивалент.
-9. [TODO] Git Commit: `docs: retarget codex contract references at app-server module` (hash: TBD)
+7. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`: путь перенаправлен на `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`.
+8. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`: путь перенаправлен на app-server facade с явным упоминанием `CODEX_APPLIED_TURN_CONFIG_KEY`.
+9. [DONE] Git Commit: `docs: retarget codex contract references at app-server module` (hash: 0604b445c)
 
 ## Phase 2 — Release 1.2.38 (owner: CodeAI Hub Bot, updated: 2026-04-21)
 

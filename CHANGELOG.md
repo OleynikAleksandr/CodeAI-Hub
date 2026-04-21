@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.38] - 2026-04-21
+### Removed
+- **Legacy Codex SDK-based provider module deleted.** `packages/Codex_Module/` and its transitive dependency `@openai/codex-sdk@0.53.0` are removed from the repository and the workspace lockfile. The module had been orphaned since release `1.2.22`, when the `codex app-server` line in `packages/Codex_AppServer_Module/` became the sole active runtime; no active `import` from `@codeai-hub/codex-module` existed in Core / provider-registry / build scripts / tests. `knip.json` and `.vscodeignore` entries for the legacy package are cleaned up in the same change.
+
+### Unchanged
+- **External Codex contract stays stable.** Provider id remains `codexCli`, provider-home slot remains `~/.codeai-hub/providers/codex`, and the release artifact name remains `codex-module-<version>.tar.bz2` (now built from `packages/Codex_AppServer_Module/` with the same name as an explicit installer contract). No installer migration required.
+
+### Docs
+- **Canonical SSOT documents retargeted at the app-server module.** `Modules/Codex.md`, `System/SystemArchitecture.md`, `Contracts/Formal_Module_Cluster_Facade_Architecture.md`, `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`, and `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` no longer describe the legacy module as a fallback and no longer reference files under `packages/Codex_Module/`. Historical docs (`CHANGELOG.md` entries for releases ≤ 1.2.21, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/Sessions/`, `doc/BugRegistry.md`) are preserved as audit trail.
+
 ## [1.2.37] - 2026-04-21
 ### Fixed
 - **Diagram Modules module tables now render.** Both the Project Manager diagram canvas parser (`diagram-modules-staged-part-parser.ts`) and the Core Development Tree snapshot (`development-tree-snapshot.ts`) now accept the canonical 2-column `| \`module-id\` | Responsibility |` module table. Previously the parsers still required a third backtick-wrapped column (the removed `ModuleKind` slot from refactor `c488df065`), so new staged artifacts rendered as `Modules: 0` in clusters and lost all standalone modules.
