@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.40] - 2026-04-21
+### Fixed
+- **Development Tree sidebar no longer flickers between correct and phantom standalone modules on `diagram_modules` artifacts.** `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts` consumed its `NEXT_SECTION_RE` singleton through direct `.exec()` calls, so the global regex's `lastIndex` accumulated between calls in the long-lived Core process and produced alternating hit/null results on the same artifact. When the clamp slipped, the standalone body extended past `## Simple Relations` and the non-strict `MODULE_ROW_RE` happily matched the `from-id` in 4-column relation rows as a module id. Any sidebar cluster expand/collapse triggered a `/workflow-state` refetch and re-rolled the alternation. The parser now routes every `/g` regex through `.matchAll()` (lastIndex-free) or a fresh factory instance, and `MODULE_ROW_RE` is strict 2-column (`[^|\n]+` in column 2 + `|\s*$` anchor) so Simple Relations rows physically cannot match even if the clamp ever slips again.
+- **Diagram Modules Artifacts panel composition no longer gets cut off when the PM window is narrow.** `DiagramEditorFacade` now auto-fits the rendered composition to the container width via `ResizeObserver` + the composition's natural `scrollWidth`: `effectiveZoom = autoFitScale * userZoom`, where `autoFitScale = min(1, containerWidth / naturalWidth)` with a floor of `0.25`. Manual Cmd/Ctrl+scroll becomes an overlay on top of the auto-fit base, and Cmd/Ctrl+0 clears only the user overlay without breaking auto-fit.
+
+### Docs
+- **SystemArchitecture.md §6.4** records two new invariants: regex lastIndex safety for `development-tree-snapshot` (no direct `.exec()` / `.test()` on module-level `/g` regex), and the auto-fit zoom contract (auto-fit base × user-zoom overlay, natural width advertised through `width: max-content + min-width: 100%`).
+
+### Tests
+- **`development-tree-snapshot.test.ts`** adds a 10-run idempotency regression (lastIndex drift guard) and a cluster-module-as-Simple-Relations-`From` guard that reproduces the original sidebar symptom.
+- **`diagram-editor-facade.test.tsx`** adds source-level regression coverage for the auto-fit API surface (`autoFitScale`, `userZoom`, `effectiveZoom`, `ResizeObserver`, `scrollWidth`, `max-content`, `setUserZoom(1)`).
+
 ## [1.2.39] - 2026-04-21
 ### Fixed
 - **Reopened workflow dialog no longer sticks in "Agents is working, please wait..." after Core cold-start.** Previously Core only rehydrated a runtime session for the `lastActive` stage on startup; other reopened dialogs (e.g. `virtual_simulation`, `diagram_modules`) had no record in `workspace:snapshot`. PM `createInitialSnapshot` started workflow sessions with `connectionState: "running"` expecting a Core-initiated turn, but the expected idle snapshot update never arrived, and the initial "running" remained indefinitely. `RemoteBridgeDialogCommandRouter.handleDialogList` now materializes a stub runtime session for every continuity entry via the new `materializeContinuityEntries` helper, so the existing snapshot reconciliation (`snapshotSignalsIdleUnlocked`, released in `1.1.646`) flips the UI to idle automatically.
