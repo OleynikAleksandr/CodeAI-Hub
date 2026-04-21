@@ -76,6 +76,9 @@ export class SessionRequestHandler {
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionDialogSync: SessionDescriptionDialogSync;
   private readonly providerBindingService: SessionProviderBindingService;
+  getProviderBindingService(): SessionProviderBindingService {
+    return this.providerBindingService;
+  }
   private readonly providerEventRouter: SessionProviderEventRouter;
   private readonly providerFailureRecovery: SessionProviderFailureRecovery;
   private readonly continuityLockService: SessionContinuityLockService;

@@ -1,7 +1,10 @@
 import type { SessionManager } from "../session-manager";
+import type { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
 import type { DialogHistoryService } from "./handlers/dialog-history-service";
 import type { DialogListService } from "./handlers/dialog-list-service";
 import type { DialogOpenService } from "./handlers/dialog-open-service";
+import { materializeContinuityEntries } from "./handlers/session-continuity-materializer";
+import type { SessionProviderBindingService } from "./handlers/session-provider-binding-service";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import type { IncomingMessage } from "./types";
@@ -11,6 +14,7 @@ interface RemoteBridgeDialogCommandRouterDependencies {
   readonly dialogListService: DialogListService;
   readonly dialogOpenService: DialogOpenService;
   readonly getManager: () => WebSocketManager | undefined;
+  readonly providerBindingService: SessionProviderBindingService;
   readonly sendScopeViolation: (
     clientId: string,
     command: string,
@@ -18,6 +22,7 @@ interface RemoteBridgeDialogCommandRouterDependencies {
   ) => void;
   readonly sessionHandler: SessionRequestHandler;
   readonly sessionManager: SessionManager;
+  readonly workspaceRuntime: WorkspaceRuntimeFacade;
 }
 
 interface ScopedWorkspace {
@@ -113,6 +118,15 @@ export class RemoteBridgeDialogCommandRouter {
       runtimeSessions: this.deps.sessionManager.getSessionsByWorkspacePath(
         scoped.workspaceRoot
       ),
+    });
+    materializeContinuityEntries({
+      deps: {
+        sessionManager: this.deps.sessionManager,
+        providerBindingService: this.deps.providerBindingService,
+        workspaceRuntime: this.deps.workspaceRuntime,
+      },
+      entries: dialogs,
+      workspaceRoot: scoped.workspaceRoot,
     });
     scoped.wsManager.sendToClient(clientId, {
       type: "dialog:list:result",

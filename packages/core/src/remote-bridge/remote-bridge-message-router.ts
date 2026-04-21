@@ -42,11 +42,13 @@ export class RemoteBridgeMessageRouter {
       dialogListService: deps.dialogListService,
       dialogOpenService: deps.dialogOpenService,
       getManager: deps.getManager,
+      providerBindingService: deps.sessionHandler.getProviderBindingService(),
       sendScopeViolation: (clientId, command, message) => {
         this.sendScopeViolation(clientId, command, message);
       },
       sessionHandler: deps.sessionHandler,
       sessionManager: deps.sessionManager,
+      workspaceRuntime: deps.workspaceRuntime,
     });
     this.sessionCreateRouter = new RemoteBridgeSessionCreateRouter({
       getManager: deps.getManager,
