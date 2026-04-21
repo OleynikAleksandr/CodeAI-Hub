@@ -25,20 +25,16 @@
 ## Phase 1 — Parser Cleanup (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
 ### Stream A: Browser staged-part parser
-1. [TODO] Align browser parser regex and shared helper with 2-column contract — scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`.
-2. [TODO] Git Commit: `fix: align diagram staged part parser with two-column module table contract` (hash: TBD)
-3. [TODO] Rewrite staged-part parser tests under 2-column contract — scope: `diagram-modules-staged-part-parser.test.ts`.
-4. [TODO] Git Commit: `test: cover two-column module table contract in staged part parser` (hash: TBD)
+1. [DONE] Align browser parser regex, shared helper and its tests with 2-column contract — scope: `diagram-modules-staged-part-parser.ts`, `diagram-modules-staged-part-parser-shared.ts`, `diagram-modules-staged-part-parser.test.ts`.
+2. [DONE] Git Commit: `fix: align diagram staged part parser with two-column module table contract` (hash: 97c067082)
 
 ### Stream B: Core development-tree-snapshot
-5. [TODO] Update MODULE_ROW_RE and bound standalone-body by next `##` header — scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts`.
-6. [TODO] Git Commit: `fix: align development tree snapshot with two-column module table contract` (hash: TBD)
-7. [TODO] Refresh snapshot tests: 2-column fixture and Simple Relations isolation regression — scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`.
-8. [TODO] Git Commit: `test: cover two-column module table and relations isolation in development tree snapshot` (hash: TBD)
+3. [DONE] Update MODULE_ROW_RE, bound standalone-body by next `##` header, refresh snapshot tests — scope: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts`, `packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`.
+4. [DONE] Git Commit: `fix: align development tree snapshot with two-column module table contract` (hash: 953cb3738)
 
 ### Stream C: SSOT sync
-9. [TODO] Add 2-column module table tolerance note to SystemArchitecture §6.4 — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
-10. [TODO] Git Commit: `docs: align diagram modules parser contract with two-column module table` (hash: TBD)
+5. [TODO] Add 2-column module table tolerance note to SystemArchitecture §6.4 — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
+6. [TODO] Git Commit: `docs: align diagram modules parser contract with two-column module table` (hash: TBD)
 
 ## Phase 2 — Release 1.2.37 (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
