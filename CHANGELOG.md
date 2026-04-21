@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.41] - 2026-04-21
+### Fixed
+- **Diagram Modules Artifacts panel composition now actually fits under auto-fit zoom.** Hotfix to release `1.2.40`. The previous cycle introduced `width: max-content + minWidth: 100%` on the inner composition div, intending to expose the natural grid width through `scrollWidth`. In practice the intrinsic-sizing keyword let prose (purpose text, long titles) and `1fr` column tracks inside ProductPart / Cluster / Module cards expand into unwrappable single lines, so the natural width grew to thousands of pixels and auto-fit collapsed straight to the floor `0.25` — composition overflowed horizontally even at Cmd+Ctrl+0 (100% user-zoom) and Cmd+scroll → 25%. The inner div is now back on natural grid sizing: `scrollWidth` on a normally-sized grid already reports `max(clientWidth, rightmost-child.right)`, which matches the auto-fit measurement path once real card min-content (`minWidth: 220`, `minmax(240px, 1fr)`) overflows the track. Source-level regression assertion inverted to `max-content === false` so the keyword cannot silently return.
+
+### Docs
+- **SystemArchitecture.md §6.4** — rephrased auto-fit zoom contract: no intrinsic-sizing keyword on the composition-container, and an explicit note on why (prose / `1fr` tracks would expand into unwrappable lines and blow the natural width past any reasonable floor).
+- **BugRegistry.md** — new entry `BUG-2026-04-21-03` capturing the root cause split, user-visible symptom on workspace `CodeAI-Hub claude`, fix, commits, and guards.
+
 ## [1.2.40] - 2026-04-21
 ### Fixed
 - **Development Tree sidebar no longer flickers between correct and phantom standalone modules on `diagram_modules` artifacts.** `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts` consumed its `NEXT_SECTION_RE` singleton through direct `.exec()` calls, so the global regex's `lastIndex` accumulated between calls in the long-lived Core process and produced alternating hit/null results on the same artifact. When the clamp slipped, the standalone body extended past `## Simple Relations` and the non-strict `MODULE_ROW_RE` happily matched the `from-id` in 4-column relation rows as a module id. Any sidebar cluster expand/collapse triggered a `/workflow-state` refetch and re-rolled the alternation. The parser now routes every `/g` regex through `.matchAll()` (lastIndex-free) or a fresh factory instance, and `MODULE_ROW_RE` is strict 2-column (`[^|\n]+` in column 2 + `|\s*$` anchor) so Simple Relations rows physically cannot match even if the clamp ever slips again.
