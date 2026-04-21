@@ -11,6 +11,7 @@ import {
 } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import { triggerPostRebindUsageLimitsRefresh } from "./session-request-handler-post-rebind-usage-limits";
 import { SessionRequestHandlerProviderSend } from "./session-request-handler-provider-send";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
 
@@ -280,6 +281,15 @@ export class SessionRequestHandlerMessageDispatch {
         providerId: retryResolved.binding.providerId,
         providerSessionId: retryResolved.binding.providerSessionId,
         providerTurnOptions,
+        sessionId,
+      });
+      triggerPostRebindUsageLimitsRefresh({
+        adapter: retryResolved.adapter,
+        broadcaster: this.deps.broadcaster,
+        logger: this.deps.logger,
+        providerId: retryResolved.binding.providerId,
+        providerSessionId: retryResolved.binding.providerSessionId,
+        session,
         sessionId,
       });
       return true;
