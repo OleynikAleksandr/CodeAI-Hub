@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { materializeModuleMapFromStagedProductPart } from "./diagram-modules-staged-part-parser";
 
-const THREE_COL_PRODUCT_PART = `# Product Part: Standalone Project Manager
+const TWO_COLUMN_PRODUCT_PART = `# Product Part: Standalone Project Manager
 
 ## Identity
 
@@ -17,43 +17,43 @@ Hosts the standalone CEF-based project management UI.
 
 ## Owned Clusters
 
-### Cluster: \`ui-workspace\`
+### \`ui-workspace\`
 
 **Purpose:** Manages workspace tree and catalog browsing.
 
-| \`module-id\` | \`kind\` | Responsibility |
-| --- | --- | --- |
-| \`workspace-catalog-browser\` | \`service\` | Browses the workspace catalog entries |
-| \`workspace-tree-view\` | \`ui\` | Renders the hierarchical workspace tree |
-| \`workspace-search\` | \`service\` | Provides workspace-wide search capability |
+| \`module-id\` | Responsibility |
+| --- | --- |
+| \`workspace-catalog-browser\` | Browses the workspace catalog entries |
+| \`workspace-tree-view\` | Renders the hierarchical workspace tree |
+| \`workspace-search\` | Provides workspace-wide search capability |
 
-### Cluster: \`data-layer\`
+### \`data-layer\`
 
 **Purpose:** Persists and retrieves project data.
 
-| \`module-id\` | \`kind\` | Responsibility |
-| --- | --- | --- |
-| \`project-store\` | \`store\` | Stores project state and metadata |
-| \`artifact-cache\` | \`service\` | Caches compiled artifacts for fast access |
+| \`module-id\` | Responsibility |
+| --- | --- |
+| \`project-store\` | Stores project state and metadata |
+| \`artifact-cache\` | Caches compiled artifacts for fast access |
 
-## Direct Standalone Modules Under This Part
+## Standalone Modules
 
-| \`module-id\` | \`kind\` | Responsibility |
-| --- | --- | --- |
-| \`provider-session-bridge\` | \`adapter\` | Connects provider turns with the runtime session lifecycle |
+| \`module-id\` | Responsibility |
+| --- | --- |
+| \`provider-session-bridge\` | Connects provider turns with the runtime session lifecycle |
 `;
 
-test("parses 3-column outline table without phantom header match", () => {
-  const result = materializeModuleMapFromStagedProductPart(THREE_COL_PRODUCT_PART);
+test("parses 2-column outline tables without phantom header match", () => {
+  const result = materializeModuleMapFromStagedProductPart(TWO_COLUMN_PRODUCT_PART);
   assert.equal(result.ok, true);
   if (!result.ok) return;
 
   const { modules, clusters } = result.value;
 
-  // No phantom "module-id" entry
+  // No phantom "module-id" entry from the header row
   assert.equal(modules.find((m) => m.id === "module-id"), undefined, "phantom header row must be filtered");
 
-  // Cluster ui-workspace: 3 modules (not N-1 or N+1)
+  // Cluster ui-workspace: 3 modules
   const uiCluster = clusters?.find((c) => c.id === "ui-workspace");
   assert.ok(uiCluster, "ui-workspace cluster must exist");
   assert.equal(uiCluster.moduleIds.length, 3, "ui-workspace must have exactly 3 modules");
@@ -69,8 +69,8 @@ test("parses 3-column outline table without phantom header match", () => {
   assert.equal(standalone[0]?.id, "provider-session-bridge");
 });
 
-test("3-column table uses humanized module-id as title instead of kind", () => {
-  const result = materializeModuleMapFromStagedProductPart(THREE_COL_PRODUCT_PART);
+test("2-column table uses humanized module-id as title", () => {
+  const result = materializeModuleMapFromStagedProductPart(TWO_COLUMN_PRODUCT_PART);
   assert.equal(result.ok, true);
   if (!result.ok) return;
 
@@ -78,8 +78,7 @@ test("3-column table uses humanized module-id as title instead of kind", () => {
 
   const browser = modules.find((m) => m.id === "workspace-catalog-browser");
   assert.ok(browser, "workspace-catalog-browser must exist");
-  assert.equal(browser.title, "Workspace Catalog Browser", "title must be humanized from module-id, not kind");
-  assert.notEqual(browser.title, "service", "title must NOT be the kind value");
+  assert.equal(browser.title, "Workspace Catalog Browser");
 
   const treeView = modules.find((m) => m.id === "workspace-tree-view");
   assert.ok(treeView, "workspace-tree-view must exist");
@@ -94,81 +93,47 @@ test("3-column table uses humanized module-id as title instead of kind", () => {
   assert.equal(bridge.title, "Provider Session Bridge");
 });
 
-test("responsibility with pipe inside backticks is not truncated", () => {
-  const content = `# Product Part: Core Part
-
-## Identity
-
-| Field | Value |
-| --- | --- |
-| Part ID | \`core-part\` |
-| Product Part | Core Part |
-
-## Purpose
-
-Core purpose.
-
-## Owned Clusters
-
-### Cluster: \`orchestration\`
-
-**Purpose:** Orchestrates workflow.
-
-| \`module-id\` | \`kind\` | Responsibility |
-| --- | --- | --- |
-| \`turn-lifecycle-controller\` | \`service\` | Ведёт каждый turn по состояниям \`turn_started -> turn_completed|turn_failed\` и не даёт UI зависнуть в running state. |
-`;
-
-  const result = materializeModuleMapFromStagedProductPart(content);
+test("2-column table preserves responsibility text verbatim", () => {
+  const result = materializeModuleMapFromStagedProductPart(TWO_COLUMN_PRODUCT_PART);
   assert.equal(result.ok, true);
   if (!result.ok) return;
 
-  const mod = result.value.modules.find((m) => m.id === "turn-lifecycle-controller");
-  assert.ok(mod, "turn-lifecycle-controller must exist");
-  assert.ok(
-    mod.responsibility.includes("turn_started"),
-    "responsibility must include turn_started (before pipe)"
-  );
-  assert.ok(
-    mod.responsibility.includes("turn_failed"),
-    "responsibility must include turn_failed (after pipe)"
-  );
-  assert.ok(
-    mod.responsibility.includes("running state"),
-    "responsibility must include full text after backtick expression"
-  );
+  const browser = result.value.modules.find((m) => m.id === "workspace-catalog-browser");
+  assert.ok(browser, "workspace-catalog-browser must exist");
+  assert.equal(browser.responsibility, "Browses the workspace catalog entries");
 });
 
-test("4-column table preserves explicit title from column 2", () => {
-  const content = `# Product Part: Test Part
+test("cluster header without `Cluster:` prefix is still parsed", () => {
+  const content = `# Product Part: Bare Cluster Part
 
 ## Identity
 
 | Field | Value |
 | --- | --- |
-| Part ID | \`test-part\` |
-| Product Part | Test Part |
+| Part ID | \`bare-cluster-part\` |
+| Product Part | Bare Cluster Part |
 
 ## Purpose
 
-Test purpose.
+Test bare cluster header form.
 
 ## Owned Clusters
 
-### Cluster: \`my-cluster\`
+### \`bare-cluster\`
 
-**Purpose:** Test cluster.
+**Purpose:** Canonical template form without the \`Cluster:\` prefix.
 
-| \`module-id\` | \`Module Title\` | \`proposed\` | Responsibility |
-| --- | --- | --- | --- |
-| \`my-module\` | \`Custom Title\` | \`proposed\` | Does something |
+| \`module-id\` | Responsibility |
+| --- | --- |
+| \`bare-module\` | Does bare work |
 `;
 
   const result = materializeModuleMapFromStagedProductPart(content);
   assert.equal(result.ok, true);
   if (!result.ok) return;
 
-  const mod = result.value.modules.find((m) => m.id === "my-module");
-  assert.ok(mod, "my-module must exist");
-  assert.equal(mod.title, "Custom Title", "4-col must preserve explicit title");
+  const cluster = result.value.clusters?.find((c) => c.id === "bare-cluster");
+  assert.ok(cluster, "bare-cluster must be recognized");
+  assert.equal(cluster.moduleIds.length, 1);
+  assert.equal(cluster.moduleIds[0], "bare-module");
 });

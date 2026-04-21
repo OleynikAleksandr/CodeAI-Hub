@@ -131,12 +131,10 @@ export const parseModuleRows = (
     .filter((match) => normalizeCell(match[1] ?? "") !== "module-id")
     .map((match) => {
       const id = normalizeCell(match[1] ?? "");
-      const col2 = normalizeCell(match[2] ?? "");
-      const isKind = /^[a-z]+$/u.test(col2);
       return toModuleEntity({
         id,
-        title: isKind ? humanizeIdentifier(id) : col2,
-        responsibility: normalizeParagraph(match[3] ?? ""),
+        title: humanizeIdentifier(id),
+        responsibility: normalizeParagraph(match[2] ?? ""),
         productPart: productPartId,
         cluster: clusterId,
       });
