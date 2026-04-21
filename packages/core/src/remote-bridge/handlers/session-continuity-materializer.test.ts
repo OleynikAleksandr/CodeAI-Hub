@@ -136,6 +136,49 @@ test("materializeContinuityEntries is idempotent on repeated dialog:list", () =>
   );
 });
 
+test("materialized continuity session satisfies handleStop preconditions", () => {
+  // SessionRequestHandlerStopAction.handleStop() returns "Session not found"
+  // when sessionManager.getSession(sessionId) is undefined, and cannot reach
+  // adapter.closeSession() without a binding in providerSessions. Before the
+  // materializer, reopened continuity dialogs hit exactly this path because
+  // the runtime session object was never created for stages other than the
+  // lastActive one. After the materializer runs on dialog:list, both lookups
+  // must succeed so Stop correctly invalidates the binding and emits
+  // turn_state: "idle" back to PM.
+  const sessionManager = new SessionManager();
+  const { providerSessions, service } = buildStubBindingService();
+  const workspaceRuntime = {
+    notifySessionCreated: () => {
+      // not exercised by this assertion
+    },
+  } as unknown as Parameters<
+    typeof materializeContinuityEntries
+  >[0]["deps"]["workspaceRuntime"];
+
+  materializeContinuityEntries({
+    deps: {
+      sessionManager,
+      providerBindingService: service,
+      workspaceRuntime,
+    },
+    entries: [entry],
+    workspaceRoot: "/tmp/ws",
+  });
+
+  // Guard 1 of handleStop: sessionManager.getSession(sessionId).
+  const session = sessionManager.getSession("abc-session-id");
+  assert.ok(
+    session,
+    "handleStop must NOT short-circuit as 'Session not found'"
+  );
+
+  // Guard 2 of handleStop: providerSessions.get(sessionId) resolves a binding
+  // so adapter.closeSession(binding.providerSessionId) is reachable.
+  const binding = providerSessions.get("abc-session-id");
+  assert.ok(binding, "handleStop must find binding for adapter.closeSession");
+  assert.equal(binding.providerSessionId, "019d-provider-session");
+});
+
 test("materializeContinuityEntries skips entries without latestSessionId or providerSessionId", () => {
   const sessionManager = new SessionManager();
   const { providerSessions, service } = buildStubBindingService();
