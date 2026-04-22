@@ -1,13 +1,43 @@
 # План разработки (Development TODO Plan)
 
-**Execution Scope Status:** (no active scope)
+**Execution Scope Status:** ACTIVE
 
 ## Context Pack For This Cycle
-- (пустой — следующий scope будет согласован в новой сессии; базовый SSOT остаётся `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, навигация через `doc/SolidWorks-WorkFlow/Docs_Index.md`)
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`
+- **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`
+  - `doc/BugRegistry.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Активный execution scope отсутствует. Новый scope создаётся после согласования planning-дока в `doc/SolidWorks-WorkFlow/Plans/` и формирования нового `doc/TODO/todo-plan.md`.
-- Предыдущий цикл (Pre-turn usage limits refresh for reopened dialogs, `1.2.45`) заархивирован:
-  - TODO: `doc/TODO/Archive/todo-plan-phase4-preturn-usage-limits-refresh.md`
-  - Planning: `doc/SolidWorks-WorkFlow/Plans/Archive/UsageLimits_PreTurn_DialogOpen_Refresh_Architecture.md`
+- Каждая подзадача должна затрагивать не более 3 файлов или 3 пакетов.
+- Каждая подзадача оформляется парой пунктов: реализация/изменения и отдельный `Git Commit`.
+- Любое архитектурное изменение синхронно отражается в SSOT/bug docs до коммита.
+- Таргетная верификация для этого цикла: `./scripts/build-cef-launcher.sh --force`.
+- Phase завершается на чистом дереве через `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`.
+
+## Phase 1 — CEF macOS bootstrap hardening (owner: Codex, updated: 2026-04-22)
+### Stream: Scope bootstrap
+1. [IN_PROGRESS] Создать planning-doc, формализовать launcher/usage-limits баги в `BugRegistry`, активировать новый `todo-plan` (scope: `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open CEF mac bootstrap hardening scope`)
+2. [TODO] Git Commit: `docs: open CEF mac bootstrap hardening scope` (hash: TBD)
+
+### Stream: Native bootstrap scaffold
+3. [TODO] Добавить custom `NSApplication` + delegate scaffolding для mac launcher bootstrap (scope: `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h`, `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.mm`, `doc/TODO/todo-plan.md`; expected commit: `feat: add CEF-compatible mac application shell`)
+4. [TODO] Git Commit: `feat: add CEF-compatible mac application shell` (hash: TBD)
+5. [TODO] Переподключить `app_main_mac.mm` и `CMakeLists.txt` к новому bootstrap seam, сохранив текущий browser/window ownership в `LauncherApp` (scope: `packages/cef-launcher/src/platform/mac/app_main_mac.mm`, `packages/cef-launcher/CMakeLists.txt`, `doc/TODO/todo-plan.md`; expected commit: `fix: align mac launcher bootstrap with CEF sample`)
+6. [TODO] Git Commit: `fix: align mac launcher bootstrap with CEF sample` (hash: TBD)
+
+### Stream: Docs and release
+7. [TODO] Синхронизировать launcher SSOT и системный инвариант под новый mac bootstrap contract (scope: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync CEF mac bootstrap contract`)
+8. [TODO] Git Commit: `docs: sync CEF mac bootstrap contract` (hash: TBD)
+9. [TODO] Закрыть launcher bug entry после подтверждённого кода и сохранить usage-limits issues как backlog-only bugs (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record CEF mac launcher crash fix`)
+10. [TODO] Git Commit: `docs: record CEF mac launcher crash fix` (hash: TBD)
+11. [TODO] Подготовить release metadata для версии `1.2.46` до запуска `build-all.sh` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.46 release metadata`)
+12. [TODO] Git Commit: `docs: prepare 1.2.46 release metadata` (hash: TBD)
+13. [TODO] Прогнать таргетный launcher build и выполнить `./scripts/build-all.sh` с фиксацией release/version updates (scope: `packages/cef-launcher`, release/version manifests, `doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.46`)
+14. [TODO] Git Commit: `chore: release 1.2.46` (hash: TBD)
+15. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, заархивировать planning/todo артефакты, обновить `Docs_Index.md` и восстановить neutral stub `todo-plan` (scope: `doc/SolidWorks-WorkFlow/Plans`, `doc/TODO`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive CEF mac bootstrap hardening scope (1.2.46)`)
+16. [TODO] Git Commit: `docs: archive CEF mac bootstrap hardening scope (1.2.46)` (hash: TBD)

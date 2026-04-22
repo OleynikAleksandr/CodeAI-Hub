@@ -57,6 +57,9 @@
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
 | BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
+| BUG-2026-04-22-01 | OPEN | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | TBD |
+| BUG-2026-04-22-02 | OPEN | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | TBD |
+| BUG-2026-04-22-03 | OPEN | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | TBD |
 
 ---
 
@@ -257,6 +260,72 @@
 
 **Planning source:**
 - `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_LiveText_OrderSafe_Finalization_1.2.19.md`
+
+## BUG-2026-04-22-01 — Launcher/CEF/macOS: standalone Project Manager crashes on quit/close with plain `NSApplication`
+
+**Status:** OPEN
+
+**Symptom:**
+- После закрытия standalone Project Manager на macOS периодически появляется system crash dialog `CodeAI Hub Project Manager quit unexpectedly`.
+- Падает именно `CodeAIHubLauncher`, а не Core и не PM UI bundle.
+
+**Confirmed evidence:**
+- Crash report: `/Users/oleksandroliinyk/Library/Logs/DiagnosticReports/CodeAIHubLauncher-2026-04-22-091633.ips`
+- Exception: `NSInvalidArgumentException`
+- Reason: `-[NSApplication %s]: unrecognized selector sent to instance ...`
+- Main thread stack проходит через `AppKit -> Chromium Embedded Framework -> CodeAIHubLauncher main`.
+
+**Root cause (confirmed / scope hypothesis):**
+- Текущий `packages/cef-launcher/src/platform/mac/app_main_mac.mm` поднимает обычный `NSApplication`, вручную создаёт минимальное меню и сразу уходит в `CefRunMessageLoop()`.
+- Официальный CEF mac sample использует custom `NSApplication <CefAppProtocol>`, `sendEvent:` с `CefScopedSendingEvent`, override `terminate:` и delegate-driven shutdown/reopen hooks.
+- Наш bootstrap отстаёт от требуемого CEF/macOS lifecycle contract; на quit path Chromium/CEF получает `NSApplication`, у которого отсутствует ожидаемый selector/behavior seam.
+
+**Accepted fix direction (2026-04-22):**
+- Ввести mac-only custom application shell, близкий к официальному CEF sample.
+- Перевести quit path на delegate-driven `CloseAllBrowsers(false)` -> `CefQuitMessageLoop()` -> `CefShutdown()`.
+- Сохранить текущий `LauncherApp` как владельца browser/window creation.
+
+**Planning source:**
+- `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`
+
+## BUG-2026-04-22-02 — Codex/Core/UI: cold-open usage limits lose reset timestamps
+
+**Status:** OPEN
+
+**Symptom:**
+- После Core restart и открытия старого Codex dialog/workspace `Session` / `Weekly` проценты уже отображаются, но `Resets ...` в скобках отсутствуют.
+
+**Confirmed evidence:**
+- `account/rateLimits/read` response в `~/.codeai-hub/logs/codex/sdk-codex-app-server-2026-04-22T07-07-38-146Z-9bf5b9b1-c9b7-4ec0-a50a-9aa8577d1b65.jsonl` содержит `resetsAt` как число.
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts` normalizes `snapshot.primary.resetsAt` / `snapshot.secondary.resetsAt` через `asString(...)`, поэтому numeric payload отбрасывается как `null`.
+
+**Root cause (confirmed):**
+- Это не lifecycle issue, а payload normalization bug: Codex app-server возвращает `resetsAt` numeric-typed, а router принимает только string-typed value.
+
+**Accepted fix direction (2026-04-22):**
+- Исправить normalization path так, чтобы numeric/string `resetsAt` одинаково превращались в display-safe timestamp value.
+- Добавить regression guard на numeric `resetsAt` payload.
+
+## BUG-2026-04-22-03 — Claude/Core/UI: first cold-open usage refresh does not materialize before repeated reopen
+
+**Status:** OPEN
+
+**Symptom:**
+- После Core restart и открытия старого Claude dialog/workspace pre-turn usage limits не появляются на первом cold-open.
+- Если перейти на другой шаг и вернуться, лимиты и `Resets ...` начинают отображаться.
+
+**Confirmed evidence:**
+- `dialog_opened` refresh request действительно отправляется из PM и принимается Core.
+- `packages/Claude_Module/src/provider/claude-provider-adapter.ts` делает `refreshUsageLimits()` как fire-and-forget async branch.
+- `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts` считает refresh завершённым сразу после `await adapter.refreshUsageLimits(...)`, хотя для Claude usable payload прилетает позже через HTTP probe.
+- После первого позднего успешного refresh provider-global cache уже warmed, поэтому повторное открытие шага мгновенно показывает replay.
+
+**Root cause (confirmed):**
+- Проблема в async contract первого cold-open refresh: Core lifecycle не ждёт завершения Claude usage probe, а provider cache наполняется уже после initial open window.
+
+**Accepted fix direction (2026-04-22):**
+- Сделать provider refresh contract truly awaitable или ввести отдельный Core-side completion seam для late-arriving usage payload.
+- Сохранить account-scoped cache и current in-turn/post-turn refresh model без eager session resume.
 
 ## BUG-2026-04-18-04 — PM/UI/Codex: after `Stop` + fast resend transient duplicate user bubble appears in dialog
 
