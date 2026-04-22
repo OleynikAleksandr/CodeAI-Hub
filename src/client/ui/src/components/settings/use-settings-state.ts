@@ -43,6 +43,7 @@ import {
   clampRemainingPercentThreshold,
   isIncomingMessage,
   type LocalizationCategoryKey,
+  type LocalizationSyncStatusState,
   type LocalizationWorkflowTermsPolicy,
   normalizeLoadedLocalizationSettings,
   normalizeLocalizationEngineId,
@@ -88,6 +89,11 @@ export const useSettingsState = (): UseSettingsStateResult => {
     message: null,
     phase: "idle",
   });
+  const [localizationSyncStatus, setLocalizationSyncStatus] =
+    useState<LocalizationSyncStatusState>({
+      busy: false,
+      message: null,
+    });
   const [versions, setVersions] = useState<VersionsState>(() => ({
     data: null,
     loading: true,
@@ -145,6 +151,13 @@ export const useSettingsState = (): UseSettingsStateResult => {
             busy: event.data.busy,
             message: event.data.message ?? null,
             phase: event.data.phase,
+          });
+          return;
+        }
+        case "settings:localization-sync-status": {
+          setLocalizationSyncStatus({
+            busy: event.data.busy,
+            message: event.data.message ?? null,
           });
           return;
         }
@@ -444,6 +457,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     coreControl,
     settings,
     hasChanges,
+    localizationSyncStatus,
     localizationRuntime,
     saving,
     resetting,

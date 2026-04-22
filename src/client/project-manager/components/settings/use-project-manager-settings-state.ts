@@ -421,6 +421,7 @@ export const useProjectManagerSettingsState =
       coreControl,
       settings,
       hasChanges,
+      localizationSyncStatus: transport.localizationSyncStatus,
       localizationRuntime: transport.localizationRuntime,
       saving: transport.saving,
       resetting: transport.resetting,

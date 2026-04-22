@@ -36,6 +36,11 @@ export interface CoreControlState {
     | "error";
 }
 
+export interface LocalizationSyncStatusState {
+  readonly busy: boolean;
+  readonly message: string | null;
+}
+
 export type LocalizationCategoryKey =
   | "interactiveTemplates"
   | "reasoning"
@@ -79,6 +84,11 @@ type IncomingMessage =
       readonly message?: string;
       readonly phase: "stopping" | "waiting" | "starting" | "ready" | "error";
       readonly type: "settings:core-control-status";
+    }
+  | {
+      readonly busy: boolean;
+      readonly message?: string;
+      readonly type: "settings:localization-sync-status";
     };
 
 export const isIncomingMessage = (
@@ -93,7 +103,8 @@ export const isIncomingMessage = (
     candidate.type === "settings:loaded" ||
     candidate.type === "settings:saved" ||
     candidate.type === "settings:versions" ||
-    candidate.type === "settings:core-control-status"
+    candidate.type === "settings:core-control-status" ||
+    candidate.type === "settings:localization-sync-status"
   );
 };
 
@@ -364,6 +375,7 @@ export interface UseSettingsStateResult {
   ) => void;
   readonly hasChanges: boolean;
   readonly localizationRuntime: BrowserLocalizationRuntimePayload;
+  readonly localizationSyncStatus: LocalizationSyncStatusState;
   readonly resetting: boolean;
   readonly saving: boolean;
   readonly settings: Settings;
