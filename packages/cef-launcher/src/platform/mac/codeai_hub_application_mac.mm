@@ -75,17 +75,12 @@ LauncherHandler* GetLauncherHandler() { return LauncherHandler::GetInstance(); }
   [super sendEvent:event];
 }
 
-- (void)terminate:(id)sender {
-  static_cast<void>(sender);
-  CodeAIHubAppDelegate* delegate =
-      (CodeAIHubAppDelegate*)[NSApp delegate];
-  if (delegate != nil) {
-    [delegate tryToTerminateApplication:self];
-    return;
-  }
-
-  CefQuitMessageLoop();
-}
+// Note: we intentionally do NOT override -[NSApplication terminate:]. Quit
+// requests from Cmd+Q, Dock right-click Quit and menu Quit all flow through
+// the standard AppKit path into -applicationShouldTerminate: below, which
+// force-closes CEF browsers and cancels termination until OnBeforeClose
+// drives CefQuitMessageLoop(). Overriding terminate: previously swallowed
+// quits whenever a browser declined a non-force close (regression 1.2.46).
 
 @end
 
@@ -97,21 +92,23 @@ LauncherHandler* GetLauncherHandler() { return LauncherHandler::GetInstance(); }
   [NSApp setDelegate:self];
 }
 
-- (void)tryToTerminateApplication:(NSApplication*)app {
-  static_cast<void>(app);
-  LauncherHandler* handler = GetLauncherHandler();
-  if (handler != nullptr && !handler->IsClosing()) {
-    handler->CloseAllBrowsers(false);
-    return;
-  }
-
-  CefQuitMessageLoop();
-}
-
 - (NSApplicationTerminateReply)applicationShouldTerminate:
     (NSApplication*)sender {
   static_cast<void>(sender);
-  return NSTerminateNow;
+  LauncherHandler* handler = GetLauncherHandler();
+  if (handler == nullptr) {
+    return NSTerminateNow;
+  }
+
+  if (!handler->IsClosing()) {
+    // Force close so beforeunload/TryCloseBrowser cannot indefinitely block
+    // the user-initiated quit. OnBeforeClose drives CefQuitMessageLoop()
+    // once the last browser goes away, which lets main() return from
+    // CefRunMessageLoop() and reach CefShutdown().
+    handler->CloseAllBrowsers(true);
+  }
+
+  return NSTerminateCancel;
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication*)application

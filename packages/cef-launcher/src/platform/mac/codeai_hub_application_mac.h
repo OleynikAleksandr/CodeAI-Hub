@@ -11,7 +11,6 @@
 @interface CodeAIHubAppDelegate : NSObject <NSApplicationDelegate>
 
 - (void)createApplication:(id)object;
-- (void)tryToTerminateApplication:(NSApplication*)app;
 
 @end
 
