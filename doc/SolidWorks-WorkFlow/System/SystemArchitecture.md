@@ -170,15 +170,16 @@
   - PM main-area localization blocking must keep hook execution unconditional across busy/ready transitions; blocked placeholders may replace content, but renderer structure must stay stable
   - bundled English source catalogs are no longer embedded as live browser data; component fallback strings remain only as a last-resort safety path when neither persisted bootstrap snapshot nor refreshed runtime payload is available
 - Provider settings UI: `src/client/ui/src/components/settings/` and `src/client/ui/src/components/settings-view.tsx`
-  - живой product surface принадлежит Project Manager: `src/client/project-manager/app.tsx` route `?mode=detached-settings`, `components/layout/status-bar.tsx`, `components/layout/use-detached-settings-window.ts`, `components/settings/use-project-manager-settings.ts`, `components/settings/use-project-manager-settings-state.ts`
-  - shared `SettingsView` reuse-ится через `mode="project-manager"`; PM general tab intentionally excludes extension-era `Core Controls` and keeps only persisted/general/localization/provider settings flows
+  - живой product surface принадлежит Project Manager: `src/client/project-manager/app.tsx`, `components/layout/status-bar.tsx`, `components/layout/main-area.tsx`, `components/layout/main-area-panel-content.tsx`, `components/settings/use-project-manager-settings.ts`, `components/settings/use-project-manager-settings-state.ts`
+  - shared `SettingsView` reuse-ится через `mode="project-manager"` внутри правой панели PM; footer action `Open Settings` больше не открывает отдельный popup, а переводит right-panel surface в in-shell settings takeover
+  - PM general tab снова использует shared `Core Controls`: user-facing settings surface держит persisted/general/localization/provider flows и один recovery action `Restart Core`, но не экспонирует attach/startup diagnostics или extension-era lifecycle controls
   - `src/client/ui/src/app-host/settings-only-host.tsx` is compat-only notice inside VS Code webview and does not expose live save/reset/provider-update/restart controls
   - the localization card now exposes engine selection through a catalog-backed selector and language selection through a searchable combobox; visible `English` maps to canonical persisted `source`
   - the current user-visible engine set is `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, `OpenAI Codex · GPT-5.3 Codex Spark`, and `Anthropic Claude · Haiku 4.5`
   - `anthropic-claude-haiku-4-5` is a provider-owned engine: the shared translation package only carries its chunk profile, the runtime service lives beside the Claude provider (`packages/Claude_Module/src/translation/claude-haiku-translation-service.ts`), and Core composes the translation facade via `createCoreTranslationFacade(...)` so live reasoning overlays and localization materialization both go through the same Core-backed engine catalog; extension-host must fetch the authoritative Core bootstrap for this engine and fail on missing/mismatched snapshots instead of downgrading to local strict sync
   - the Codex card now surfaces `Reasoning in dialog`, which maps to persisted `reasoningSummaryEnabled`, provider-home `model_reasoning_summary = auto|none`, and a live app-server turn policy `summary = detailed|none` resolved from the same shared settings snapshot; this split is intentional because `turn/start.summary = "detailed"` can override provider-home `none`. The Claude card surfaces `Thinking in dialog` as a visible assistant-bubble gate, and the Gemini card keeps the same short `Thinking in dialog` copy as a presentation-only control; for Claude and Gemini the runtime still persists thinking history, while the Session UI decides whether to render it
 - General Settings response mode UI: `src/client/ui/src/components/settings/general-response-mode/`
-- user-facing PM settings contract does not expose runtime restart/attach controls; runtime bootstrap authority belongs to PM startup path and Core lifecycle, while the extension settings surface is compat-only
+- user-facing PM settings contract exposes only hard recovery `Restart Core`; runtime bootstrap authority still belongs to PM startup path and Core lifecycle, while deeper attach/start controls remain outside Settings UI and the extension settings surface stays compat-only
 - Provider modules: `packages/Claude_Module/`, `packages/Codex_AppServer_Module/`, `packages/Gemini_Module/`
 - Core-owned session translation overlay cluster: `packages/core/src/session-translation/`, `packages/core/src/unified-session/storage.ts`, `packages/unified-session/src/session-translation-overlay-store.ts`
   - providers now emit source-first thinking/reasoning with stable `messageId`, and Core owns async translation scheduling, persistence, and live bridge patching (`session:message_translation`, `dialog:message_translation`)
@@ -452,7 +453,7 @@
 ## 7) Codex Response Mode Boundary (2026-03-13)
 
 - `Settings -> General` теперь владеет persisted policy `general.responsePolicy`; эта настройка не смешивается с `Core Controls`.
-- В Project Manager-owned settings surface `Core Controls` не показывается: General tab управляет только persisted response policy и не смешивается с runtime bootstrap/restart operations.
+- В Project Manager-owned settings surface `Core Controls` снова видимы как recovery block рядом с persisted response policy: General tab допускает `Restart Core`, но не превращается в полный runtime lifecycle console.
 - Baseline default для workflow-сценариев: `hybrid`.
 - `strict` оставляет editable schema/instruction contract для узких machine-readable turn-ов.
 - `debug_raw` нужен для исследования новых моделей без baseline default schema pressure на обычные turn-ы.

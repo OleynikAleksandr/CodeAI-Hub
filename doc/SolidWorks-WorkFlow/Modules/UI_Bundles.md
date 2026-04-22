@@ -3,7 +3,7 @@
 **Status:** Implemented on `main`
 **Updated:** 2026-04-22
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (2026-04-20)
+**Validated on:** `main` (2026-04-22)
 
 ## Назначение
 UI бандлы, доставляемые как tarball’ы и устанавливаемые в `~/.codeai-hub/packages/ui/**`.
@@ -25,8 +25,8 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 
 ## Settings Surface Ownership
 - Shared `src/client/ui/src/components/settings-view.tsx` remains the common presentation surface, but the only live product host is Project Manager.
-- Project Manager opens Settings from the footer via a detached window route `?mode=detached-settings`; `src/client/project-manager/app.tsx`, `components/layout/use-detached-settings-window.ts`, `components/settings/use-project-manager-settings.ts`, and `components/settings/use-project-manager-settings-state.ts` own that runtime.
-- In Project Manager the shared `SettingsView` runs in `mode="project-manager"`: it keeps provider/general/localization flows, routes glossary opens through the PM host bridge, and intentionally hides extension-era runtime restart controls.
+- Project Manager opens Settings from the footer as an in-shell takeover of the right panel; `src/client/project-manager/app.tsx`, `components/layout/main-area.tsx`, `components/layout/main-area-panel-content.tsx`, `components/settings/use-project-manager-settings.ts`, and `components/settings/use-project-manager-settings-state.ts` own that runtime.
+- In Project Manager the shared `SettingsView` runs in `mode="project-manager"`: it keeps provider/general/localization flows, routes glossary opens through the PM host bridge, reuses shared `Core Controls` for `Restart Core`, and renders the blocking localization overlay only from actual `localizationSyncStatus` busy-state.
 - `src/client/ui/src/app-host/settings-only-host.tsx` is a compatibility-only VS Code surface. It may show localized notice copy and bootstrap from persisted localization snapshot, but it is not allowed to expose live save/reset/provider-update/runtime-control UX.
 
 ## Установка

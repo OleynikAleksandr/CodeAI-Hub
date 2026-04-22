@@ -21,7 +21,7 @@
 Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), который:
 - показывает Workflow Tree;
 - открывает Sessions/Artifacts;
-- является единственным живым Settings UI через detached settings window;
+- является единственным живым Settings UI через in-shell takeover правой панели;
 - управляет выбором/открытием диалогов через intent `pm:dialog:open`;
 - гидратирует историю (cold start) и live tail (WS);
 - отображает lock/continuity/usage и обеспечивает recovery UX;
@@ -53,9 +53,11 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - `*.flow.json` не показывается пользователю как артефакт; с релиза `1.1.922` sidecar v2 хранит также declarative CSS Grid layout params;
   - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после write.
 - Settings surface belongs to PM:
-  - footer status bar action `Open Settings` opens or focuses a detached CEF window on `?mode=detached-settings`;
-  - detached settings window reuses shared `SettingsView`, but runs through PM-owned transport/state hooks and sends write intents directly into Core remote bridge;
-  - PM settings general tab intentionally excludes extension-era runtime restart controls; the surface owns persisted settings only, while runtime bootstrap/restart remains outside user-facing settings UX.
+  - footer status bar action `Open Settings` переключает правую панель PM в отдельный in-shell settings mode без второго окна;
+  - settings mode reuses shared `SettingsView`, but runs through PM-owned transport/state hooks and sends write intents directly into Core remote bridge;
+  - закрытие Settings возвращает предыдущий right-panel context вместо закрытия PM window;
+  - PM settings general tab снова показывает shared `Core Controls`, а `Restart Core` routed through PM host bridge for both VS Code-host and standalone launcher-host;
+  - blocking localization overlay inside Settings показывается только при реальном strict localization sync busy-state, а provider-only saves не должны отображаться как localization rebuild.
 - Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors, zoom/fit controls или bottom-right minimap. Пользователь композирует диаграмму через:
   - right-click context menu на ProductPart: `columns` (`auto` | 2..5), `targetAspectRatio` (`landscape` | `wide` | `square`);
   - right-click context menu на Cluster: `moduleColumns` (`auto` | 1..3);
