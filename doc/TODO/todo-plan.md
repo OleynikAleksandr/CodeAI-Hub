@@ -73,12 +73,12 @@
 
 ### Stream F: SSOT synchronization
 1. [DONE] Синхронно обновить канонические SSOT-документы под новые ownership boundaries: PM-only Settings UI, Core-owned settings backend, PM bootstrap authority для runtime start, extension distribution-only role. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; ожидаемый commit message: `docs: sync settings and runtime ownership contract`
-2. [TODO] Git Commit: `docs: sync settings and runtime ownership contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync settings and runtime ownership contract` (hash: `bfed25eef`)
 
 ## Phase 4 — Release 1.2.53 (owner: Codex, updated: 2026-04-22)
 
 ### Stream G: Release metadata 1.2.53
-1. [TODO] Перед release rebuild обновить `README.md` (`Current Release — v1.2.53`) и `CHANGELOG.md` (`## [1.2.53]`) под PM Settings ownership + extension runtime de-scope. scope: 2 файла; ожидаемый commit message: `docs: prepare 1.2.53 release metadata`
+1. [DONE] Перед release rebuild обновить `README.md` (`Current Release — v1.2.53`) и `CHANGELOG.md` (`## [1.2.53]`) под PM Settings ownership + extension runtime de-scope. scope: 2 файла; ожидаемый commit message: `docs: prepare 1.2.53 release metadata`
 2. [TODO] Git Commit: `docs: prepare 1.2.53 release metadata` (hash: TBD)
 
 ### Stream H: Release rebuild 1.2.53

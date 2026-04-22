@@ -7,12 +7,15 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.52
-- **Настоящий fix для crash на красной NSWindow close кнопке: короткозамыкание пути через `[NSApp terminate:]`.** После того как две попытки перехватить exception (1.2.50 `NSSetUncaughtExceptionHandler`, 1.2.51 `reportException:` swizzle) не сработали, подход был пересмотрен: не ловить exception, а **не запускать** проблемный Chromium teardown callback вообще. `LauncherWindowDelegate::CanClose` на macOS теперь вместо `TryCloseBrowser()` (которое запускает buggy callback) вызывает новый helper `codeai::launcher::RequestNativeApplicationTermination()` → `[NSApp terminate:nil]`. Красная close кнопка идёт по тому же pathway что Cmd+Q: `-[NSApplication terminate:]` → `-[NSApplication stop:]` → clean AppKit unwind → `CefShutdown()`.
-- **Exception физически не кидается.** `+[NSApplication _crashOnException:]` не вызывается, crash dialog не появляется. Это не mitigation, а true fix.
-- **Chromium 141 ↔ macOS 26.3.1 incompat всё ещё root cause** — но short-circuit его обходит. Proper root-cause fix (CEF/Chromium upgrade до версии с macOS 26 semantics) остаётся deferred как отдельный scope; urgency снижена, поскольку observable crash устранён.
-- **1.2.51 swizzle retained как safety net** — на случай если в CEF views framework остался ещё один path с тем же exception signature. Overhead нулевой; будет удалён вместе с CEF upgrade.
-- **Не регрессирует 1.2.49-1.2.51:** Cmd+V paste, SuperWhisper, Cmd+C/X/A, меню Edit, Cmd+Q, Dock Quit, dock reopen — всё работает как было. NSApplication остаётся plain; никакого `CefAppProtocol` shell, `sendEvent:` / `terminate:` override, `NSApplicationDelegate`, `Info.plist` изменений; Windows/Linux `CanClose` branch оставлен без изменений.
+## Current Release — v1.2.53
+- **Settings теперь имеют одного backend owner и один живой UI surface.** `Core` стал единственным владельцем `settings:load/save/reset/update-provider/versions/open-user-glossary-file` и связанных broadcasts (`settings:saved`, `settings:save-error`, `settings:localization-sync-status`, `settings:user-glossary-file`), а `Project Manager` стал единственным product-visible Settings surface.
+- **Project Manager получил отдельное окно Settings.** В footer появился `Open Settings`, который открывает/focuses detached PM window `?mode=detached-settings`; внутри reuse-ится shared `SettingsView` в `mode="project-manager"` с PM-owned transport/state hooks и glossary bridge.
+- **VS Code extension перестал быть runtime owner.** Activation больше не стартует и не attach-ит `Core Runtime`; extension теперь ограничен distribution/install/bootstrap-components shell. Legacy settings webview больше не рендерит живой UI и показывает только compat notice `Settings moved to Project Manager`.
+- **SSOT синхронизирован под новые ownership boundaries.** `SystemArchitecture.md`, `Project_Manager.md` и `UI_Bundles.md` теперь фиксируют PM-only Settings UI, Core-owned settings backend и extension distribution-only role.
+
+### 1.2.52 (previous)
+- Красная NSWindow close кнопка на macOS была переведена на безопасный `[NSApp terminate:]` path, что устранило crash dialog без очередной exception-side mitigation.
+- `reportException:` swizzle из `1.2.51` сохранён только как safety net до будущего CEF/Chromium upgrade.
 
 ### 1.2.51 (previous — swizzle alone not sufficient; retained as safety net in 1.2.52)
 - Method swizzle на `-[NSApplication reportException:]` через `+load` category. User retest показал что crash dialog всё равно появляется — на macOS 26 exception достигает `_crashOnException:` не только через `reportException:`. Swizzle оставлен в 1.2.52 как belts-and-suspenders safety net поверх primary short-circuit fix.

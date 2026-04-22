@@ -4,6 +4,19 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.53] - 2026-04-22
+### Added
+- **Project Manager now owns the only live Settings window.** Footer action `Open Settings` opens or focuses a detached CEF window on `?mode=detached-settings`, and the shared `SettingsView` is reused there in `mode="project-manager"` through PM-owned transport/state hooks.
+
+### Changed
+- **Core is now the sole backend owner for settings flows.** The remote bridge settings cluster now owns `settings:load`, `settings:save`, `settings:reset`, `settings:update-provider`, `settings:versions`, and `settings:open-user-glossary-file`, together with the downstream `settings:loaded`, `settings:saved`, `settings:save-error`, `settings:localization-sync-status`, and `settings:user-glossary-file` broadcasts.
+- **Project Manager settings actions no longer depend on the extension-side webview path.** PM websocket contracts and settings state now drive save/reset/provider-update/version/glossary flows directly against Core, while the PM-host bridge handles editor-aware glossary file opening.
+- **VS Code extension is no longer a runtime bootstrap owner.** Activation no longer starts or attaches the Core runtime and no longer runs the extension-owned provider auto-update/runtime keep-alive path; the extension remains only a distribution/install/bootstrap-components shell.
+- **Legacy VS Code Settings webview was de-scoped to a compatibility surface.** `codeaiHub.openSettings` now lands on a localized compat notice instead of a live settings product surface.
+
+### Docs
+- **SystemArchitecture.md, Project_Manager.md, and UI_Bundles.md** were synchronized to lock the new ownership contract: PM-only Settings UI, Core-owned settings backend, PM bootstrap authority for user-facing runtime start, and extension distribution-only role.
+
 ## [1.2.52] - 2026-04-22
 ### Fixed
 - **Red NSWindow close button no longer triggers the "quit unexpectedly" dialog on macOS 26.x — true fix, not another mitigation.** User retest on 1.2.51 confirmed the `-[NSApplication reportException:]` swizzle alone did not prevent the crash: on macOS 26 the exception apparently reaches `+[NSApplication _crashOnException:]` through a route that does not go via `-reportException:`. Rather than chase the exception through another layer, 1.2.52 stops running the buggy Chromium teardown callback in the first place.
