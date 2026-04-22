@@ -220,6 +220,14 @@ class ProjectManagerApi {
   }
 
   refreshUsageLimits(params: {
+    readonly lifecycleTrigger?:
+      | "binding_ready"
+      | "dialog_opened"
+      | "manual"
+      | "provider_session_rebound"
+      | "reconnect"
+      | "session_opened"
+      | "turn_completed";
     readonly providerId: string;
     readonly providerSessionId: string | null;
     readonly sessionId: string;

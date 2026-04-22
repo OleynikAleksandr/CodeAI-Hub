@@ -102,17 +102,30 @@ export class RemoteBridgeMessageRouter {
       case "session:stop":
         await this.handleSessionStopMessage(incoming.payload);
         break;
-      case "session:refreshUsageLimits":
+      case "session:refreshUsageLimits": {
+        const refreshPayload = incoming.payload as typeof incoming.payload & {
+          readonly lifecycleTrigger?:
+            | "binding_ready"
+            | "dialog_opened"
+            | "manual"
+            | "provider_session_rebound"
+            | "reconnect"
+            | "session_opened"
+            | "turn_completed"
+            | null;
+        };
         this.deps.sessionHandler
-          .handleRefreshUsageLimits(incoming.payload)
+          .handleRefreshUsageLimits(refreshPayload)
           .catch((error: unknown) => {
             this.deps.logger.warn("refreshUsageLimits failed", {
-              providerId: incoming.payload.providerId,
-              sessionId: incoming.payload.sessionId,
+              lifecycleTrigger: refreshPayload.lifecycleTrigger ?? null,
+              providerId: refreshPayload.providerId,
+              sessionId: refreshPayload.sessionId,
               error: error instanceof Error ? error.message : String(error),
             });
           });
         break;
+      }
       case "projects:list":
         this.deps.projectHandler.handleList();
         break;

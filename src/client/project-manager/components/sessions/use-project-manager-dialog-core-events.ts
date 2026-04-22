@@ -248,6 +248,14 @@ export const useProjectManagerDialogCoreEvents = (options: {
             latestSnapshot: options.latestWorkspaceSnapshotRef.current,
           })
         );
+        if (providerId && match.providerSessionId) {
+          api.refreshUsageLimits({
+            lifecycleTrigger: "dialog_opened",
+            providerId,
+            providerSessionId: match.providerSessionId,
+            sessionId: nextSession.id,
+          });
+        }
         options.requestDialogHistory(intent, match.dialogId);
         return;
       }
