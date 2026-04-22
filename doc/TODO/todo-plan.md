@@ -27,11 +27,11 @@
 
 ### Stream A: Restore standard terminate-path
 1. [DONE] Убрать `-[CodeAIHubApplication terminate:]` override и метод `tryToTerminateApplication:`; заменить `applicationShouldTerminate:` на async browser-close implementation с `CloseAllBrowsers(true)` + `NSTerminateCancel`, возвращая `NSTerminateNow` когда active browsers нет. Файлы: `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h`, `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.mm`. scope: 2 файла; commit: `fix(launcher-mac): route terminate through applicationShouldTerminate`.
-2. [IN_PROGRESS] Git Commit: `fix(launcher-mac): route terminate through applicationShouldTerminate` (hash: TBD)
+2. [DONE] Git Commit: `fix(launcher-mac): route terminate through applicationShouldTerminate` (hash: a97c5e9c5)
 
 ### Stream B: Remove Edit menu from app-menu
-1. [TODO] Удалить Cut/Copy/Paste/SelectAll из `CreateApplicationMenu` в `codeai_hub_application_mac.mm`; оставить только `Quit %@` в app sub-menu. Chromium обрабатывает clipboard shortcuts на уровне render process. scope: 1 файл; commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts`.
-2. [TODO] Git Commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts` (hash: TBD)
+1. [DONE] Удалить Cut/Copy/Paste/SelectAll из `CreateApplicationMenu` в `codeai_hub_application_mac.mm`; оставить только `Quit %@` в app sub-menu. Chromium обрабатывает clipboard shortcuts на уровне render process. scope: 1 файл; commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts`.
+2. [IN_PROGRESS] Git Commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts` (hash: TBD)
 
 ### Stream C: SSOT sync
 1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — canonical shutdown contract: standard `applicationShouldTerminate:` path, no Edit menu, no `terminate:` override. Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 — новый invariant 1.2.48. Обновить `doc/BugRegistry.md` — запись `BUG-2026-04-22-XX` (paste/SuperWhisper/Quit regression, fixed в 1.2.48). scope: 3 файла; commit: `docs: sync CEF macOS input/quit contract`.

@@ -6,6 +6,11 @@
 
 namespace {
 
+// App-menu exposes only Quit. Cut/Copy/Paste/SelectAll are intentionally NOT
+// registered here: Chromium handles clipboard shortcuts (Cmd+X/C/V/A) on the
+// render-process side. A local Edit menu with |target:nil| would hijack
+// performKeyEquivalent: and swallow Cmd+V before Chromium observes the
+// NSKeyDown event (see §3 Invariant 1.2.48 in SystemArchitecture.md).
 void CreateApplicationMenu() {
   NSApplication* app = [NSApplication sharedApplication];
   if ([app mainMenu] != nil) {
@@ -29,29 +34,6 @@ void CreateApplicationMenu() {
   [quitItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
   [appMenu addItem:quitItem];
   [appMenuItem setSubmenu:appMenu];
-
-  NSMenuItem* editMenuItem =
-      [[NSMenuItem alloc] initWithTitle:@"Edit" action:nil keyEquivalent:@""];
-  [menubar addItem:editMenuItem];
-
-  NSMenu* editMenu = [[NSMenu alloc] initWithTitle:@"Edit"];
-
-  auto addEditCommand = ^(NSString* title, SEL action, NSString* key) {
-    NSMenuItem* item =
-        [[NSMenuItem alloc] initWithTitle:title
-                                    action:action
-                             keyEquivalent:key];
-    [item setKeyEquivalentModifierMask:NSEventModifierFlagCommand];
-    [item setTarget:nil];
-    [editMenu addItem:item];
-  };
-
-  addEditCommand(@"Cut", @selector(cut:), @"x");
-  addEditCommand(@"Copy", @selector(copy:), @"c");
-  addEditCommand(@"Paste", @selector(paste:), @"v");
-  addEditCommand(@"Select All", @selector(selectAll:), @"a");
-
-  [editMenuItem setSubmenu:editMenu];
 }
 
 LauncherHandler* GetLauncherHandler() { return LauncherHandler::GetInstance(); }
