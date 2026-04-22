@@ -71,6 +71,12 @@ export class SettingsRequestHandler {
     );
   }
 
+  handleLoadVersions(): void {
+    this.broadcastVersionsError(
+      "Core provider versions transport is not implemented yet."
+    );
+  }
+
   private broadcastLocalizationSyncStatus(payload: {
     readonly busy: boolean;
     readonly message: string;
@@ -83,6 +89,22 @@ export class SettingsRequestHandler {
 
   private broadcastSaveError(error: string): void {
     this.broadcaster({ type: "settings:save-error", payload: { error } });
+  }
+
+  private broadcastVersionsError(error: string): void {
+    this.broadcaster({
+      type: "settings:versions",
+      payload: { error, versions: undefined },
+    });
+  }
+
+  handleUpdateProvider(
+    _provider: "claude" | "codex" | "gemini",
+    _target: "cli" | "core" | "sdk"
+  ): void {
+    this.broadcastVersionsError(
+      "Core provider update transport is not implemented yet."
+    );
   }
 
   private async publishSaved(result: SettingsWriteResult): Promise<void> {

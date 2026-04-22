@@ -192,6 +192,13 @@ type CoreBridgeEvent =
         readonly message: string | null;
       };
     }
+  | {
+      readonly type: "settings:versions";
+      readonly payload: {
+        readonly error?: string | null;
+        readonly versions?: unknown;
+      };
+    }
   | { readonly type: "core:notification"; readonly payload: unknown }
   | {
       readonly type: "core:loading-status";
@@ -273,11 +280,19 @@ export type BridgeEvent =
 
 type CoreIncomingMessage =
   | { readonly type: "settings:load" }
+  | { readonly type: "settings:versions" }
   | {
       readonly type: "settings:save";
       readonly payload: { readonly settings: unknown };
     }
-  | { readonly type: "settings:reset" };
+  | { readonly type: "settings:reset" }
+  | {
+      readonly type: "settings:update-provider";
+      readonly payload: {
+        readonly provider: "claude" | "codex" | "gemini";
+        readonly target: "cli" | "core" | "sdk";
+      };
+    };
 
 interface ProjectManagerDiagnosticLogIncomingMessage {
   readonly payload: {

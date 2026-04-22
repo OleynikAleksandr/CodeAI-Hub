@@ -90,11 +90,20 @@ export class RemoteBridgeMessageRouter {
       case "settings:load":
         await this.deps.settingsHandler.handleLoad();
         break;
+      case "settings:versions":
+        await this.deps.settingsHandler.handleLoadVersions();
+        break;
       case "settings:save":
         await this.deps.settingsHandler.handleSave(incoming.payload.settings);
         break;
       case "settings:reset":
         await this.deps.settingsHandler.handleReset();
+        break;
+      case "settings:update-provider":
+        await this.deps.settingsHandler.handleUpdateProvider(
+          incoming.payload.provider,
+          incoming.payload.target
+        );
         break;
       case "session:message":
         await this.deps.sessionHandler.handleMessage(
