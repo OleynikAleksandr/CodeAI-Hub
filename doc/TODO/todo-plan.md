@@ -35,11 +35,11 @@
 
 ### Stream C: SSOT sync
 1. [DONE] Обновить `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — canonical shutdown contract: standard `applicationShouldTerminate:` path, no Edit menu, no `terminate:` override. Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 — Invariant 32 уточнён, добавлен Invariant 33 (1.2.48). Обновить `doc/BugRegistry.md` — запись `BUG-2026-04-22-04` (paste/SuperWhisper/Quit regression, fixed в 1.2.48). scope: 3 файла; commit: `docs: sync CEF macOS input/quit contract`.
-2. [IN_PROGRESS] Git Commit: `docs: sync CEF macOS input/quit contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync CEF macOS input/quit contract` (hash: a5c75c0f2)
 
 ### Stream D: Release metadata (pre-build)
-1. [TODO] Обновить `README.md` "Current Release — v1.2.48" и `CHANGELOG.md` новой секцией `## [1.2.48]` с описанием regression fix. scope: 2 файла; commit: `docs: prepare 1.2.48 release metadata`.
-2. [TODO] Git Commit: `docs: prepare 1.2.48 release metadata` (hash: TBD)
+1. [DONE] Обновить `README.md` "Current Release — v1.2.48" и `CHANGELOG.md` новой секцией `## [1.2.48]` с описанием regression fix. scope: 2 файла; commit: `docs: prepare 1.2.48 release metadata`.
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.48 release metadata` (hash: TBD)
 
 ### Stream E: Release build 1.2.48
 1. [TODO] Запустить `./scripts/build-all.sh --version 1.2.48` на чистом дереве; скрипт пересоберёт CEF launcher + core + UI, поднимет версии, создаст tarball'ы. scope: только автогенерируемые version bumps; commit: `chore: release 1.2.48`.

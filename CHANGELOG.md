@@ -4,6 +4,19 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.48] - 2026-04-22
+### Fixed
+- **Paste (Cmd+V) and synthetic Cmd+V from SuperWhisper work again inside the standalone Project Manager input.** The Cut/Copy/Paste/Select All menu items with `target:nil` have been removed from the CEF launcher application menu — they hijacked `NSMenu performKeyEquivalent:` after the 1.2.46 bootstrap refactor dropped the implicit CEF-swizzle of `-[NSApplication sendEvent:]`, and the web view does not answer Cocoa `paste:` / `cut:` / `copy:` / `selectAll:` selectors. Chromium now observes the raw NSKeyDown event and handles clipboard shortcuts on the render-process side, as originally intended.
+- **Dock right-click Quit, Cmd+Q and app-menu Quit close the launcher reliably on the first click again.** The `-[CodeAIHubApplication terminate:]` override and the matching `tryToTerminateApplication:` delegate method have been removed. Quit requests now flow through the standard AppKit path `terminate:` → `applicationShouldTerminate:`; the delegate force-closes CEF browsers via `LauncherHandler::CloseAllBrowsers(true)` and returns `NSTerminateCancel`, while `OnBeforeClose` drives `CefQuitMessageLoop()` once the last browser is gone so `main()` returns from `CefRunMessageLoop()` and reaches `CefShutdown()`.
+
+### Changed
+- **`CodeAIHubApplication` keeps the `CefAppProtocol` shell and `CefScopedSendingEvent` wrapper from 1.2.46** — the shutdown-crash fix remains in place, only the AppKit-facing side (terminate override + Edit menu) is rolled back.
+
+### Docs
+- **SystemArchitecture.md §3** — Invariant 32 (1.2.46) rewritten to drop `tryToTerminateApplication` / `CloseAllBrowsers(false)`; new Invariant 33 (1.2.48) locks the standard terminate path, bans the Edit menu, and pins the permanent CEF acceptance matrix.
+- **Launcher_CEF.md** — macOS bootstrap lifecycle boundary refined: override `terminate:` forbidden, Cut/Copy/Paste/SelectAll menu items forbidden, `applicationShouldTerminate:` + force `CloseAllBrowsers(true)` is the only canonical quit contract.
+- **BugRegistry.md** — `BUG-2026-04-22-04` added newest-first, tracing paste / SuperWhisper / Dock Quit regression from 1.2.46 through the 1.2.48 fix.
+
 ## [1.2.46] - 2026-04-22
 ### Fixed
 - **Standalone Project Manager on macOS no longer relies on a plain `NSApplication` bootstrap.** The CEF launcher browser-process entrypoint now creates a dedicated `CodeAIHubApplication : NSApplication <CefAppProtocol>` and a delegate-driven shutdown/reopen seam before entering the CEF message loop. This aligns the launcher more closely with the official CEF macOS sample and removes the crash-on-quit class where AppKit/CEF hit `NSApplication unrecognized selector` during orderly shutdown.

@@ -7,9 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.46
-- **Standalone Project Manager на macOS больше не должен падать на quit/close.** CEF launcher теперь использует CEF-compatible custom `NSApplication` + delegate-driven shutdown/reopen seam вместо plain `NSApplication` bootstrap; quit path идёт через `CloseAllBrowsers(false)` и orderly `CefQuitMessageLoop()` / `CefShutdown()`.
-- **Mac bootstrap теперь ближе к официальному CEF sample без смены продуктового поведения.** `app_main_mac.mm` остался тонким entrypoint, а platform-specific lifecycle перенесён в отдельный helper, так что browser/window ownership и launcher bridge не менялись.
+## Current Release — v1.2.48
+- **Cmd+V / paste и SuperWhisper снова работают в input Project Manager на macOS.** Edit menu (Cut/Copy/Paste/Select All) с `target:nil` убран из application menu: он перехватывал Cmd+X/C/V/A через `NSMenu performKeyEquivalent:` и не давал NSKeyDown дойти до Chromium. Clipboard shortcuts теперь обрабатываются Chromium на уровне render process, как и должно быть.
+- **Dock right-click → Quit и Cmd+Q снова закрывают standalone Project Manager с первого клика.** Override `-[NSApplication terminate:]` и `tryToTerminateApplication:` удалены; quit идёт стандартным AppKit маршрутом `terminate:` → `applicationShouldTerminate:`, delegate делает force-close через `CloseAllBrowsers(true)` и возвращает `NSTerminateCancel`. Shutdown-crash fix из 1.2.46 сохраняется через `CodeAIHubApplication : NSApplication <CefAppProtocol>`.
+- **Acceptance matrix зафиксирована в SSOT как permanent invariant.** Перед каждым CEF release обязан пройти: Cmd+V/C/X/A + SuperWhisper + Dock Quit + Cmd+Q + window close без crash + dock reopen.
+
+### 1.2.46 (previous)
+- **Standalone Project Manager на macOS больше не должен падать на quit/close.** CEF launcher использует CEF-compatible custom `NSApplication` + delegate-driven shutdown/reopen seam вместо plain `NSApplication` bootstrap.
+- **Mac bootstrap приведён ближе к официальному CEF sample без смены продуктового поведения.** `app_main_mac.mm` остался тонким entrypoint, а platform-specific lifecycle перенесён в отдельный helper.
 
 ### 1.2.45 (previous)
 - **Claude/Codex reopened dialogs теперь показывают лимиты до первого нового turn'а.** PM seed-ит `SessionIdBar` из provider-scoped cache, а explicit `dialog_opened` lifecycle в Core сначала replay-ит last-known snapshot, затем делает cheap refresh без eager `resumeSession`.
