@@ -39,7 +39,7 @@
 
 ### Stream D: Release metadata (pre-build)
 1. [DONE] Обновить `README.md` "Current Release — v1.2.48" и `CHANGELOG.md` новой секцией `## [1.2.48]` с описанием regression fix. scope: 2 файла; commit: `docs: prepare 1.2.48 release metadata`.
-2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.48 release metadata` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.48 release metadata` (hash: 0014874be)
 
 ### Stream E: Release build 1.2.48
 1. [TODO] Запустить `./scripts/build-all.sh --version 1.2.48` на чистом дереве; скрипт пересоберёт CEF launcher + core + UI, поднимет версии, создаст tarball'ы. scope: только автогенерируемые version bumps; commit: `chore: release 1.2.48`.
