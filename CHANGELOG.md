@@ -4,6 +4,28 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.52] - 2026-04-22
+### Fixed
+- **Red NSWindow close button no longer triggers the "quit unexpectedly" dialog on macOS 26.x — true fix, not another mitigation.** User retest on 1.2.51 confirmed the `-[NSApplication reportException:]` swizzle alone did not prevent the crash: on macOS 26 the exception apparently reaches `+[NSApplication _crashOnException:]` through a route that does not go via `-reportException:`. Rather than chase the exception through another layer, 1.2.52 stops running the buggy Chromium teardown callback in the first place.
+
+### Changed
+- **`LauncherWindowDelegate::CanClose` in `packages/cef-launcher/src/launcher_app.cc` now short-circuits on macOS.** Instead of calling `browser->GetHost()->TryCloseBrowser()` (which is the entry point into Chromium 141's async browser-teardown that crashes on macOS 26), the `#if defined(__APPLE__)` branch invokes a new cross-platform helper `codeai::launcher::RequestNativeApplicationTermination()` and returns `false`. The helper is declared in `packages/cef-launcher/src/launcher_handler.h` (namespace `codeai::launcher`) and implemented in `packages/cef-launcher/src/platform/mac/launcher_handler_mac.mm` as `[NSApp terminate:nil]`. The red close button now follows the same `-[NSApplication terminate:]` → `-[NSApplication stop:]` → orderly AppKit unwind → `main()` returns → `CefShutdown()` path that Cmd+Q and Dock Quit already use cleanly. The buggy Chromium callback is never invoked, so the exception is never thrown, and `+[NSApplication _crashOnException:]` is never called.
+- **Windows/Linux `CanClose` behaviour is unchanged** — the `#else` branch keeps the existing `TryCloseBrowser` flow.
+
+### Retained as safety net
+- **The 1.2.51 `-[NSApplication reportException:]` swizzle** (category `NSApplication (CodeAIHubReportExceptionSuppression)` in `app_main_mac.mm` with `+load` / `method_exchangeImplementations`) stays in place as a belts-and-suspenders fallback. Matching pattern is narrow, overhead is negligible, and if a future CEF update ever introduces another path that throws the same signature, the swizzle covers it without needing a new release. It will be removed together with the CEF/Chromium upgrade.
+
+### Known deferred issue
+- **CEF/Chromium upgrade is still the only proper root-cause fix** for `BUG-2026-04-22-01` — Chromium 141 inside our CEF binary remains incompatible with macOS 26.3.1 around that specific teardown callback. With the short-circuit in place the observable crash is gone, but the upgrade remains tracked as a separate investigation scope. Urgency is now low because users do not see the crash.
+
+### Not touched
+- NSApplication remains plain (no `CefAppProtocol` shell, no `sendEvent:` override, no `terminate:` override, no `NSApplicationDelegate`). `Info.plist` is not changed. `LauncherHandler::DoClose`, `LauncherHandler::OnBeforeClose` and `LauncherHandler::CloseAllBrowsers` are not changed. Paste (Cmd+V), SuperWhisper, Cmd+C/X/A, the Edit menu, Cmd+Q, Dock Quit and dock reopen continue to behave exactly as in 1.2.49 / 1.2.50 / 1.2.51.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 32** rewritten around the 1.2.52 short-circuit as the primary fix; both prior exception-pipeline attempts (1.2.50, 1.2.51) are now explicitly recorded as failed, with the reasons spelled out. 1.2.51 swizzle is noted as retained-as-safety-net. Канон list points at `launcher_app.cc`, `launcher_handler.h`, `launcher_handler_mac.mm` and `app_main_mac.mm`.
+- **Launcher_CEF.md** gains a new "Shutdown-crash primary fix (1.2.52 — CanClose short-circuit)" subsection before the 1.2.51 subsection (now tagged "[superseded as primary, retained as safety net]"). Narrative explains the pivot from catching the exception to preventing the buggy callback.
+- **BugRegistry.md** — `BUG-2026-04-22-01` flipped from MITIGATED to FIXED. Current-resolution block is rewritten around the short-circuit; the 1.2.51 swizzle attempt moves into a "Superseded attempts (kept for history)" timeline entry alongside the existing 1.2.50 entry.
+
 ## [1.2.51] - 2026-04-22
 ### Fixed
 - **Red NSWindow close button no longer shows "quit unexpectedly" dialog on macOS 26.x.** User retest on 1.2.50 confirmed that the `NSSetUncaughtExceptionHandler()` approach did not intercept the crash. Two reasons: AppKit reinstalls its own `NSApplicationUncaughtExceptionHandler` during `-[NSApplication finishLaunching]` (overwriting ours, which was installed pre-`CefExecuteProcess`); and `+[NSApplication _crashOnException:]` — a private Apple path — bypasses the standard uncaught-exception chain on macOS 26 regardless of what's registered via `NSSetUncaughtExceptionHandler`. The standard ObjC uncaught chain is simply not the right layer for this issue.

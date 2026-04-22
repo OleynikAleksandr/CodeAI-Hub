@@ -28,11 +28,11 @@
 
 ### Stream B: SSOT sync
 1. [DONE] `SystemArchitecture.md` §3 Invariant 32 переписан: 1.2.52 short-circuit как primary fix, 1.2.51 swizzle retained как safety net, оба predшественника (1.2.50/1.2.51) explicitly noted как failed. Канон-список обновлён. `Launcher_CEF.md` получил новую subsection "Shutdown-crash primary fix (1.2.52 — CanClose short-circuit)" перед 1.2.51 subsection, которая помечена как superseded-but-retained. `BugRegistry.md` `BUG-2026-04-22-01` → Status FIXED; current resolution block переписан под short-circuit; 1.2.51 attempt сохранён как "Superseded attempts". scope: 3 файла; commit: `docs: sync 1.2.52 CanClose short-circuit contract`.
-2. [IN_PROGRESS] Git Commit: `docs: sync 1.2.52 CanClose short-circuit contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync 1.2.52 CanClose short-circuit contract` (hash: bb086b95a)
 
 ### Stream C: Release metadata 1.2.52
-1. [TODO] `README.md` Current Release → v1.2.52; 1.2.51 в previous (marked: "swizzle alone did not suffice"). `CHANGELOG.md` `## [1.2.52]` секция с Fixed / Changed / Not touched / Docs. scope: 2 файла; commit: `docs: prepare 1.2.52 release metadata`.
-2. [TODO] Git Commit: `docs: prepare 1.2.52 release metadata` (hash: TBD)
+1. [DONE] `README.md` Current Release → v1.2.52 с описанием short-circuit pivot'а; 1.2.51 в previous (marked: "swizzle alone not sufficient; retained as safety net"). `CHANGELOG.md` `## [1.2.52]` секция с Fixed / Changed / Retained as safety net / Known deferred issue / Not touched / Docs subsections. scope: 2 файла; commit: `docs: prepare 1.2.52 release metadata`.
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.52 release metadata` (hash: TBD)
 
 ### Stream D: Release build 1.2.52
 1. [TODO] `./scripts/build-all.sh --version 1.2.52` на чистом дереве.

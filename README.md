@@ -7,14 +7,18 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.51
-- **`NSApplication unrecognized selector` crash на красной window-close кнопке больше не показывает "quit unexpectedly" dialog** — через Objective-C method swizzle на `-[NSApplication reportException:]`. User retest 1.2.50 подтвердил, что предыдущий подход через `NSSetUncaughtExceptionHandler` не сработал: AppKit переустанавливает свой handler на `finishLaunching` поверх нашего, а `+[NSApplication _crashOnException:]` — private Apple path который обходит стандартную uncaught-handler chain на macOS 26. Нужен был уровень ниже.
-- **Mitigation 1.2.51:** category `NSApplication (CodeAIHubReportExceptionSuppression)` в `app_main_mac.mm` с `+load`-method, который делает `method_exchangeImplementations(reportException:, codeai_reportException:)`. Objective-C runtime выполняет swap во время dyld image load — до `main()` и до любой AppKit/CEF инициализации. AppKit не может undo swap. Когда AppKit зовёт `-reportException:`, runtime dispatch'ит в наш `codeai_reportException:`, который ловит matching exception (`NSInvalidArgumentException` + reason содержит `unrecognized selector sent to instance` и `NSApplication`), логирует в stderr и возвращается без вызова `_crashOnException:`. Non-matching exceptions forward'ятся в original IMP через swizzle trampoline.
-- **Root cause всё ещё Chromium 141 ↔ macOS 26.3.1 incompat** — mitigation 1.2.51 перехватывает exception, а не устраняет его источник. Proper fix (CEF/Chromium upgrade до версии с macOS 26 semantics) остаётся **deferred** как отдельный investigation scope.
-- **Не регрессирует 1.2.49 / 1.2.50:** Cmd+V paste, SuperWhisper, Cmd+C/X/A, меню Edit, Cmd+Q, Dock Quit, красная close button, dock reopen — всё работает как было. NSApplication остаётся plain; никакого `CefAppProtocol` shell, `sendEvent:` / `terminate:` override, `NSApplicationDelegate`, `Info.plist` или window-close flow изменений.
+## Current Release — v1.2.52
+- **Настоящий fix для crash на красной NSWindow close кнопке: короткозамыкание пути через `[NSApp terminate:]`.** После того как две попытки перехватить exception (1.2.50 `NSSetUncaughtExceptionHandler`, 1.2.51 `reportException:` swizzle) не сработали, подход был пересмотрен: не ловить exception, а **не запускать** проблемный Chromium teardown callback вообще. `LauncherWindowDelegate::CanClose` на macOS теперь вместо `TryCloseBrowser()` (которое запускает buggy callback) вызывает новый helper `codeai::launcher::RequestNativeApplicationTermination()` → `[NSApp terminate:nil]`. Красная close кнопка идёт по тому же pathway что Cmd+Q: `-[NSApplication terminate:]` → `-[NSApplication stop:]` → clean AppKit unwind → `CefShutdown()`.
+- **Exception физически не кидается.** `+[NSApplication _crashOnException:]` не вызывается, crash dialog не появляется. Это не mitigation, а true fix.
+- **Chromium 141 ↔ macOS 26.3.1 incompat всё ещё root cause** — но short-circuit его обходит. Proper root-cause fix (CEF/Chromium upgrade до версии с macOS 26 semantics) остаётся deferred как отдельный scope; urgency снижена, поскольку observable crash устранён.
+- **1.2.51 swizzle retained как safety net** — на случай если в CEF views framework остался ещё один path с тем же exception signature. Overhead нулевой; будет удалён вместе с CEF upgrade.
+- **Не регрессирует 1.2.49-1.2.51:** Cmd+V paste, SuperWhisper, Cmd+C/X/A, меню Edit, Cmd+Q, Dock Quit, dock reopen — всё работает как было. NSApplication остаётся plain; никакого `CefAppProtocol` shell, `sendEvent:` / `terminate:` override, `NSApplicationDelegate`, `Info.plist` изменений; Windows/Linux `CanClose` branch оставлен без изменений.
+
+### 1.2.51 (previous — swizzle alone not sufficient; retained as safety net in 1.2.52)
+- Method swizzle на `-[NSApplication reportException:]` через `+load` category. User retest показал что crash dialog всё равно появляется — на macOS 26 exception достигает `_crashOnException:` не только через `reportException:`. Swizzle оставлен в 1.2.52 как belts-and-suspenders safety net поверх primary short-circuit fix.
 
 ### 1.2.50 (previous — mitigation failed, replaced in 1.2.51)
-- Попытка через `NSSetUncaughtExceptionHandler()` перед `CefExecuteProcess`. User retest подтвердил crash не перехвачен. Dead code удалён в 1.2.51, swizzle занял его место.
+- Попытка через `NSSetUncaughtExceptionHandler()` перед `CefExecuteProcess`. User retest подтвердил crash не перехвачен. Dead code удалён в 1.2.51.
 
 ### 1.2.49 (previous)
 - Полный rollback CEF bootstrap refactor из 1.2.46 + 1.2.48. Восстановлен `[NSApplication sharedApplication]` bootstrap 1.2.45 baseline, Cmd+V/SuperWhisper заработали. Crash-on-quit вернулся как known issue — теперь mitigated в 1.2.50.
