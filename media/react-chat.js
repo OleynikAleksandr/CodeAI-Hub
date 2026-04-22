@@ -7890,7 +7890,7 @@
       return false;
     }
     const candidate = message;
-    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status";
+    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status" || candidate.type === "settings:localization-sync-status";
   };
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
@@ -8127,14 +8127,21 @@
       return false;
     }
   };
-  var tryRequestCoreFromLauncher = () => {
+  var tryRequestCoreFromLauncher = (mode) => {
     const launcher = window.codeaiLauncher;
-    if (!launcher || typeof launcher.ensureCoreRunning !== "function") {
+    if (!launcher) {
       return false;
     }
     try {
-      launcher.ensureCoreRunning();
-      return true;
+      if (mode === "restart" && typeof launcher.restartCore === "function") {
+        launcher.restartCore();
+        return true;
+      }
+      if (typeof launcher.ensureCoreRunning === "function") {
+        launcher.ensureCoreRunning();
+        return true;
+      }
+      return false;
     } catch {
       return false;
     }
@@ -8148,7 +8155,7 @@
     if (mode === "stop") {
       return;
     }
-    tryRequestCoreFromLauncher();
+    tryRequestCoreFromLauncher(mode);
   };
 
   // src/client/ui/src/core-bridge/core-bridge-reconnect.ts
@@ -9058,6 +9065,10 @@
       message: null,
       phase: "idle"
     });
+    const [localizationSyncStatus, setLocalizationSyncStatus] = (0, import_react.useState)({
+      busy: false,
+      message: null
+    });
     const [versions, setVersions] = (0, import_react.useState)(() => ({
       data: null,
       loading: true,
@@ -9112,6 +9123,13 @@
               busy: event.data.busy,
               message: event.data.message ?? null,
               phase: event.data.phase
+            });
+            return;
+          }
+          case "settings:localization-sync-status": {
+            setLocalizationSyncStatus({
+              busy: event.data.busy,
+              message: event.data.message ?? null
             });
             return;
           }
@@ -9381,6 +9399,7 @@
       coreControl,
       settings,
       hasChanges,
+      localizationSyncStatus,
       localizationRuntime,
       saving,
       resetting,

@@ -70,9 +70,9 @@
 
 ### Stream F: Release metadata 1.2.54
 1. [DONE] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.54` под PM Settings stabilization fixes. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.54 release metadata`
-2. [TODO] Git Commit: `docs: prepare 1.2.54 release metadata` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.54 release metadata` (hash: `fd6c689d2`)
 
 ### Stream G: Release rebuild 1.2.54
-1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.54`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.54`
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.54`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.54`
 2. [TODO] Git Commit: `chore: release 1.2.54` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Step 7: Verifying SDK exclusions`, pruning dev dependencies и итоговый VSIX `codeai-hub-1.2.54.vsix`.
