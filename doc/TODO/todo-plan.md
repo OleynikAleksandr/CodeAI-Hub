@@ -67,12 +67,12 @@
 
 ### Stream E: Remove runtime authority from VS Code extension
 1. [DONE] Убрать у extension activation право стартовать/attach-ить `Core Runtime`; extension оставить только как distribution/install/bootstrap-components shell, а runtime bootstrap authority — только у Project Manager. reachability cleanup для осиротевших extension-only runtime хвостов и root manifest выполнить в том же шаге. scope: `src/extension.ts`, `src/extension-module/core/core-keep-alive.ts`, `src/extension-module/settings/provider-auto-update-service.ts`, root manifests; ожидаемый commit message: `chore(extension): remove core startup from vscode activation`
-2. [TODO] Git Commit: `chore(extension): remove core startup from vscode activation` (hash: TBD)
+2. [DONE] Git Commit: `chore(extension): remove core startup from vscode activation` (hash: `92a47b232`)
 3. [DONE] Обезвредить legacy settings webview surface по согласованному compat path: оставить compat notice в VS Code и убрать живой product UI из extension-side settings surface. scope: `package.json`, `src/client/ui/src/app-host/settings-only-host.tsx`, `media/react-chat.js`; ожидаемый commit message: `chore(extension): retire settings webview surface`
-4. [TODO] Git Commit: `chore(extension): retire settings webview surface` (hash: TBD)
+4. [DONE] Git Commit: `chore(extension): retire settings webview surface` (hash: `0bec661b6`)
 
 ### Stream F: SSOT synchronization
-1. [TODO] Синхронно обновить канонические SSOT-документы под новые ownership boundaries: PM-only Settings UI, Core-owned settings backend, PM bootstrap authority для runtime start, extension distribution-only role. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; ожидаемый commit message: `docs: sync settings and runtime ownership contract`
+1. [DONE] Синхронно обновить канонические SSOT-документы под новые ownership boundaries: PM-only Settings UI, Core-owned settings backend, PM bootstrap authority для runtime start, extension distribution-only role. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; ожидаемый commit message: `docs: sync settings and runtime ownership contract`
 2. [TODO] Git Commit: `docs: sync settings and runtime ownership contract` (hash: TBD)
 
 ## Phase 4 — Release 1.2.53 (owner: Codex, updated: 2026-04-22)
