@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.53
-- **Settings теперь имеют одного backend owner и один живой UI surface.** `Core` стал единственным владельцем `settings:load/save/reset/update-provider/versions/open-user-glossary-file` и связанных broadcasts (`settings:saved`, `settings:save-error`, `settings:localization-sync-status`, `settings:user-glossary-file`), а `Project Manager` стал единственным product-visible Settings surface.
-- **Project Manager получил отдельное окно Settings.** В footer появился `Open Settings`, который открывает/focuses detached PM window `?mode=detached-settings`; внутри reuse-ится shared `SettingsView` в `mode="project-manager"` с PM-owned transport/state hooks и glossary bridge.
-- **VS Code extension перестал быть runtime owner.** Activation больше не стартует и не attach-ит `Core Runtime`; extension теперь ограничен distribution/install/bootstrap-components shell. Legacy settings webview больше не рендерит живой UI и показывает только compat notice `Settings moved to Project Manager`.
-- **SSOT синхронизирован под новые ownership boundaries.** `SystemArchitecture.md`, `Project_Manager.md` и `UI_Bundles.md` теперь фиксируют PM-only Settings UI, Core-owned settings backend и extension distribution-only role.
+## Current Release — v1.2.54
+- **Settings теперь живут прямо внутри Project Manager.** `Open Settings` больше не открывает detached popup; он переводит правую панель PM в in-shell settings mode и возвращает предыдущий panel context после `Close Settings`.
+- **`Restart Core` восстановлен в `Settings -> General`.** PM снова показывает shared `Core Controls`, а standalone launcher получил узкий restart bridge `codeai://core-restart`, чтобы recovery UX был одинаковым в CEF-host и VS Code-host.
+- **Provider-only saves больше не маскируются под localization rebuild.** Overlay `Synchronizing localization` теперь завязан на фактический `settings:localization-sync-status`, а не на общий флаг `saving`, поэтому обычные provider settings changes не блокируют PM ложным sync-сообщением.
+- **Core/PM ownership boundary из `1.2.53` сохранена, но стабилизирована.** `Core` остаётся единственным backend owner для settings flow, `Project Manager` остаётся единственным live UI surface, а extension остаётся compat/distribution shell.
 
 ### 1.2.52 (previous)
 - Красная NSWindow close кнопка на macOS была переведена на безопасный `[NSApp terminate:]` path, что устранило crash dialog без очередной exception-side mitigation.

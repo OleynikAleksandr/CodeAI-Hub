@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.54] - 2026-04-22
+### Fixed
+- **Project Manager Settings больше не живут в отдельном popup-окне.** `Open Settings` теперь переводит правую панель PM в in-shell settings mode, а `Close Settings` возвращает предыдущий panel context вместо закрытия Project Manager window вместе с detached settings flow.
+- **`Restart Core` вернулся в `Settings -> General`.** Shared `Core Controls` снова доступны в PM-mode, а standalone CEF-host получил явный restart bridge `codeai://core-restart` и native `RestartCoreProcess()`, так что recovery UX больше не деградирует до декоративной кнопки или отсутствующего control.
+- **Provider-only saves больше не показывают ложный overlay `Synchronizing localization`.** Shared settings state теперь использует фактический `settings:localization-sync-status`, поэтому blocking localization UI появляется только на реальном strict sync busy-state.
+
+### Changed
+- **PM settings stabilization оформлена как in-shell contract, а не popup lifecycle.** `SystemArchitecture.md`, `Project_Manager.md`, `UI_Bundles.md`, `Launcher_CEF.md` и `BugRegistry.md` синхронизированы под новую границу: PM owns the visible settings surface, launcher bridge остаётся узким, а три регрессии `1.2.53` закрыты в `1.2.54`.
+
 ## [1.2.53] - 2026-04-22
 ### Added
 - **Project Manager now owns the only live Settings window.** Footer action `Open Settings` opens or focuses a detached CEF window on `?mode=detached-settings`, and the shared `SettingsView` is reused there in `mode="project-manager"` through PM-owned transport/state hooks.

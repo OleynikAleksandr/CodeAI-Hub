@@ -66,10 +66,10 @@
 1. [DONE] Синхронно обновить SSOT под in-shell PM Settings, restored restart recovery contract и corrected save/localization UX. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; ожидаемый commit message: `docs: sync pm settings stabilization contract`
 2. [DONE] Git Commit: `docs: sync pm settings stabilization contract` (hash: `69e1dab92`)
 3. [DONE] Синхронно закрыть batch-регрессии `1.2.53` в `BugRegistry` и обновить Launcher CEF SSOT под новый PM restart bridge contract (`codeai://core-restart` + `RestartCoreProcess`). scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; ожидаемый commit message: `docs: close pm settings stabilization bugs`
-4. [TODO] Git Commit: `docs: close pm settings stabilization bugs` (hash: TBD)
+4. [DONE] Git Commit: `docs: close pm settings stabilization bugs` (hash: `689938320`)
 
 ### Stream F: Release metadata 1.2.54
-1. [TODO] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.54` под PM Settings stabilization fixes. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.54 release metadata`
+1. [DONE] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.54` под PM Settings stabilization fixes. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.54 release metadata`
 2. [TODO] Git Commit: `docs: prepare 1.2.54 release metadata` (hash: TBD)
 
 ### Stream G: Release rebuild 1.2.54
