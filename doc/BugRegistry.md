@@ -17,7 +17,7 @@
 | BUG-2026-04-22-04 | FIXED | Launcher/CEF/macOS | paste (Cmd+V) и SuperWhisper не работают в input PM; Dock right-click Quit / Cmd+Q не закрывает launcher | 1.2.49 (rollback) |
 | BUG-2026-04-22-03 | FIXED | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | 1.2.47 |
 | BUG-2026-04-22-02 | FIXED | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | 1.2.47 |
-| BUG-2026-04-22-01 | DEFERRED | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | TBD (1.2.46 fix rolled back in 1.2.49) |
+| BUG-2026-04-22-01 | MITIGATED | Launcher/CEF/macOS | standalone Project Manager падает на красной window-close кнопке c `NSApplication unrecognized selector` | 1.2.50 (workaround; proper fix deferred to CEF upgrade) |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
 | BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
@@ -166,12 +166,23 @@
 
 ## BUG-2026-04-22-01 — Launcher/CEF/macOS: standalone Project Manager crashes on quit/close with plain `NSApplication`
 
-**Status:** DEFERRED (re-opened 1.2.49)
+**Status:** MITIGATED (workaround in 1.2.50; proper fix deferred to CEF/Chromium upgrade)
 
-**Re-open note (1.2.49):**
+**Current resolution (1.2.50):**
+- User retest 1.2.49 уточнил trigger: crash детерминирован только на красной NSWindow close кнопке (path `LauncherWindowDelegate::CanClose` → `browser->GetHost()->TryCloseBrowser()` → Chromium async browser-teardown). **Не** воспроизводится на Cmd+Q / Dock Quit (path `-[NSApplication stop:]` обходит buggy Chromium teardown callback).
+- Root cause — Chromium 141 (`141.0.10+chromium-141.0.7390.123` shipped inside our CEF binary) отправляет AppKit-private selector, который больше не существует или изменил signature на macOS 26.3.1. Exception arguments: `["NSApplication", "%s", "0x13800190d80"]` — literal `"%s"` format specifier означает `objc_msgSend` called с NULL/corrupted `SEL`. Это чистая Chromium ↔ macOS 26 incompat.
+- Mitigation 1.2.50: `InstallCodeAIHubUncaughtExceptionHandler()` в `packages/cef-launcher/src/platform/mac/app_main_mac.mm` вызывается из `main()` сразу после `CefScopedLibraryLoader::LoadInMain()`, до `CefExecuteProcess`. Handler перехватывает `NSInvalidArgumentException` где reason содержит `unrecognized selector sent to instance` и `NSApplication`, логирует в stderr `CodeAIHubLauncher: suppressed NSApplication unrecognized selector: ...` и возвращается. Любой другой uncaught exception forward'ится в previous handler captured через `NSGetUncaughtExceptionHandler()`, чтобы не прятать реальные bugs.
+- После перехвата Chromium browser-teardown продолжается нормально (`OnBeforeClose` → `CefQuitMessageLoop()` → `main()` returns → `CefShutdown()`), процесс exits cleanly без "quit unexpectedly" dialog.
+- Commit: `953fb31fc fix(launcher-mac): suppress NSApplication unrecognized selector crash on window close`.
+
+**Proper fix (deferred):**
+- Upgrade CEF binary до версии с Chromium 142+ или 143+, которая понимает macOS 26 selector semantics. Большой scope — download/rebuild CEF framework, проверка API совместимости, риск других регрессий. Требует отдельного execution cycle.
+- Пока proper fix не выпущен, mitigation 1.2.50 остаётся в силе. Если на будущих macOS версиях прилетит новый selector crash из Chromium — тот же handler его перехватит (условие: `NSApplication` + `unrecognized selector sent to instance`).
+
+**Rollback context (1.2.46 → 1.2.48 → 1.2.49):**
 - Изначальный fix из 1.2.46 (custom `CodeAIHubApplication : NSApplication <CefAppProtocol>` + `CodeAIHubAppDelegate`) сломал clipboard shortcuts в standalone Project Manager: Cmd+V, Cmd+C/X/A и SuperWhisper не доходили до Chromium как NSKeyDown. Narrow fix 1.2.48 (удаление Edit menu, стандартный `terminate:` path) не попал в реальный root cause.
-- Полный rollback CEF bootstrap refactor (коммиты `de7c5ad37`, `b6b0cf3d1`, `a97c5e9c5`, `a6dd758b2`) выпущен в 1.2.49. Launcher снова использует plain `[NSApplication sharedApplication]` bootstrap из 1.2.45 baseline. Paste / SuperWhisper восстановлены.
-- Crash-on-quit возвращается как **deferred known issue**: редкий, недетерминированный, считается acceptable trade-off против сломанного core PM workflow. Любая новая попытка shutdown hardening обязана до merge пройти acceptance matrix clipboard+quit+reopen (см. SystemArchitecture Invariant 32) и не может опираться на CefAppProtocol subclass без подтверждения, что Cmd+V продолжает работать в Chromium.
+- Полный rollback CEF bootstrap refactor (коммиты `de7c5ad37`, `b6b0cf3d1`, `a97c5e9c5`, `a6dd758b2`) выпущен в 1.2.49. Launcher снова использует plain `[NSApplication sharedApplication]` bootstrap из 1.2.45 baseline. Paste / SuperWhisper восстановлены. Crash вернулся как known issue — и теперь mitigated в 1.2.50.
+- Guardrail: любая новая попытка shutdown hardening обязана до merge пройти полный acceptance matrix clipboard + quit + red close button + reopen (см. SystemArchitecture Invariant 32) и не может опираться на CefAppProtocol subclass без подтверждения, что Cmd+V продолжает работать в Chromium.
 - Историческая карточка 1.2.46 fix-описания ниже сохранена для контекста.
 
 **Historical details (1.2.46 fix, rolled back):**
