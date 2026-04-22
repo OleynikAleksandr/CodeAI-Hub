@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.54
-- **Settings теперь живут прямо внутри Project Manager.** `Open Settings` больше не открывает detached popup; он переводит правую панель PM в in-shell settings mode и возвращает предыдущий panel context после `Close Settings`.
-- **`Restart Core` восстановлен в `Settings -> General`.** PM снова показывает shared `Core Controls`, а standalone launcher получил узкий restart bridge `codeai://core-restart`, чтобы recovery UX был одинаковым в CEF-host и VS Code-host.
-- **Provider-only saves больше не маскируются под localization rebuild.** Overlay `Synchronizing localization` теперь завязан на фактический `settings:localization-sync-status`, а не на общий флаг `saving`, поэтому обычные provider settings changes не блокируют PM ложным sync-сообщением.
-- **Core/PM ownership boundary из `1.2.53` сохранена, но стабилизирована.** `Core` остаётся единственным backend owner для settings flow, `Project Manager` остаётся единственным live UI surface, а extension остаётся compat/distribution shell.
+## Current Release — v1.2.55
+- **Translation engine selectors больше не роняют standalone Project Manager на macOS 26.x.** Shared `TranslationEngineSelector` больше не использует native `<select>` и переведён на DOM-owned dropdown/listbox, чтобы не заходить в Chromium/AppKit popup branch, который провоцировал `NSApplication unrecognized selector`.
+- **Fix накрывает оба localization engine control-а.** Безопасный selector теперь используется и для `UI Translation Engine`, и для `Reasoning Translation Engine`, сохраняя availability labels и keyboard navigation.
+- **Вся предыдущая stabilization-линия `1.2.54` сохранена.** Settings по-прежнему живут внутри PM, `Restart Core` остаётся в `General`, а provider-only saves не показывают ложный localization overlay.
+- **Launcher boundary уточнена, но не расширена.** Это именно UI-layer trigger removal, а не новый launcher workaround: bridge и CEF bootstrap остаются прежними, product surface просто избегает unsafe native popup path.
 
 ### 1.2.52 (previous)
 - Красная NSWindow close кнопка на macOS была переведена на безопасный `[NSApp terminate:]` path, что устранило crash dialog без очередной exception-side mitigation.

@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.55] - 2026-04-22
+### Fixed
+- **`UI Translation Engine` больше не роняет standalone Project Manager на macOS 26.x.** Shared `TranslationEngineSelector` переведён с native `<select>` на DOM-owned button/listbox selector, поэтому PM больше не заходит в Chromium/AppKit popup path, который завершался `NSApplication unrecognized selector`.
+- **`Reasoning Translation Engine` получил тот же fix-path.** Один и тот же custom selector теперь покрывает оба translation-engine controls и сохраняет availability labels, disabled engines и keyboard navigation без native popup branch.
+
+### Changed
+- **CEF/macOS boundary уточнена на уровне SSOT.** `BugRegistry.md`, `UI_Bundles.md` и `Launcher_CEF.md` теперь фиксируют, что shared translation-engine controls не должны использовать native HTML `<select>` в standalone CEF-host, потому что launcher-side close-button workaround из `1.2.52` не гарантирует безопасность всех Chromium/AppKit popup branches.
+
 ## [1.2.54] - 2026-04-22
 ### Fixed
 - **Project Manager Settings больше не живут в отдельном popup-окне.** `Open Settings` теперь переводит правую панель PM в in-shell settings mode, а `Close Settings` возвращает предыдущий panel context вместо закрытия Project Manager window вместе с detached settings flow.

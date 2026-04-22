@@ -40,12 +40,12 @@
 
 ### Stream C: SSOT sync
 1. [DONE] Синхронно обновить bug history и SSOT под новый `no-native-select-for-translation-engine` contract в shared settings UI / standalone CEF path. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; ожидаемый commit message: `docs: sync translation engine selector crash contract`
-2. [TODO] Git Commit: `docs: sync translation engine selector crash contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync translation engine selector crash contract` (hash: `b10512136`)
 
 ## Phase 2 — Release 1.2.55 (owner: Codex, updated: 2026-04-22)
 
 ### Stream D: Release metadata 1.2.55
-1. [TODO] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.55` под translation-engine selector crash fix. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.55 release metadata`
+1. [DONE] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.55` под translation-engine selector crash fix. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.55 release metadata`
 2. [TODO] Git Commit: `docs: prepare 1.2.55 release metadata` (hash: TBD)
 
 ### Stream E: Release rebuild 1.2.55
