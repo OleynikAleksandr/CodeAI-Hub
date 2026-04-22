@@ -41,8 +41,11 @@
 
 - `SessionIdBar` и остальные session status surfaces только отображают последний известный `usageLimits` / `tokenUsage` snapshot для активного `sessionId`.
 - UI mount/remount и переход `binding.status` в `ready` не имеют права сами инициировать automatic provider refresh.
-- На `session_opened` / `dialog_opened` / `binding_ready` / reconnect UI сначала получает replay last-known snapshot; bootstrap refresh допустим только как one-shot fallback, если cache отсутствует.
+- PM держит provider-scoped usage cache (`providerScopeKey = {providerId}:global`) и seed-ит из него новые runtime/dialog snapshots даже если source `sessionId` ещё не успел materialize-иться в локальном snapshot store.
+- На `binding_ready` / `session_opened` / `provider_session_rebound` / reconnect UI сначала получает replay last-known snapshot; bootstrap refresh допустим только как one-shot fallback, если cache отсутствует.
+- `dialog_opened` — отдельная pre-turn boundary: Core обязан сначала replay-ить last-known usage snapshot, затем запускать cheap provider refresh даже если cache уже есть, чтобы пользователь видел свежие лимиты до отправки следующего сообщения.
 - Каноническая граница свежего usage update — `turn_completed`: provider/core доставляют terminal usage snapshot в turn-completion flow или примыкающем `session:stream`, а UI только применяет его.
+- Пока pre-turn refresh не вернул payload, `SessionIdBar` показывает явный pending state (`Session ...`, `Weekly ...`) без фейкового `0%`; как только provider присылает `resetsAt`, 5-часовое и недельное окна обязаны показывать его в скобках.
 
 ### 2.4 Message materialization uniqueness
 
@@ -96,7 +99,7 @@ UI copy должна соответствовать состоянию:
 
 ### 4.4 Reopened dialog после cold-start
 
-Когда PM открывает dialog из continuity после cold-start Core, Core обязан гарантировать runtime session в `workspace:snapshot` до того, как session-stream reconciliation loop попытается переключить initial `connectionState: "running"` в `"idle"`. Эту гарантию обеспечивает `RemoteBridgeDialogCommandRouter.handleDialogList` → `materializeContinuityEntries`: для каждой continuity entry с `latestSessionId + providerId + providerSessionId` создаётся stub runtime session с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"` без запуска provider adapter turn. PM не держит никаких специальных fallback-правил для "нет runtime session в snapshot" — контракт таков, что это состояние после первого `dialog:list` невозможно. См. `SessionInputLock_SSOT_StateMachine.md` §3.3.
+Когда PM открывает dialog из continuity после cold-start Core, Core обязан гарантировать runtime session в `workspace:snapshot` до того, как session-stream reconciliation loop попытается переключить initial `connectionState: "running"` в `"idle"`. Эту гарантию обеспечивает `RemoteBridgeDialogCommandRouter.handleDialogList` → `materializeContinuityEntries`: для каждой continuity entry с `latestSessionId + providerId + providerSessionId` создаётся stub runtime session с `turnState: "idle"`, `continuityLockActive: false`, `bindingStatus: "ready"` без запуска provider adapter turn. PM не держит никаких специальных fallback-правил для "нет runtime session в snapshot" — контракт таков, что это состояние после первого `dialog:list` невозможно. Дополнительно reopened dialog обязан получать usage telemetry по схеме `provider-cache seed -> dialog_opened cheap refresh -> live provider updates`: пользователь видит last-known limits сразу, а свежий snapshot приходит до следующего turn, не требуя eager `resumeSession`. См. `SessionInputLock_SSOT_StateMachine.md` §3.3.
 
 ---
 
