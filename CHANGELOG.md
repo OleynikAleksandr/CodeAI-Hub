@@ -4,6 +4,21 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.49] - 2026-04-22
+### Reverted
+- **Full rollback of the 1.2.46 CEF macOS bootstrap refactor and the 1.2.48 follow-up.** After a second round of user retesting on 1.2.48, Cmd+V / paste and SuperWhisper (synthetic Cmd+V via CGEvent) still failed to reach the Chromium input field inside the standalone Project Manager. The narrow 1.2.48 fix (dropping the Edit menu and restoring the standard `applicationShouldTerminate:` quit path) was theoretically reasonable but did not address the real breaker — which lives inside the `CodeAIHubApplication : NSApplication <CefAppProtocol>` shell itself, not in the cosmetic surfaces around it. The full CEF bootstrap refactor was therefore reverted.
+
+### Fixed
+- **Paste (Cmd+V), clipboard shortcuts and SuperWhisper work again in the Project Manager input on macOS.** Delivered by rolling the launcher back to the 1.2.45 baseline: `codeai_hub_application_mac.{h,mm}` are deleted, `app_main_mac.mm` is restored to the `70ac9a6ac` state (plain `[NSApplication sharedApplication]` + inline `CreateApplicationMenu` + `CefInitialize` + `CefRunMessageLoop`), and the corresponding entries are removed from `packages/cef-launcher/CMakeLists.txt`.
+
+### Known deferred issue
+- **`BUG-2026-04-22-01` — rare non-deterministic `NSApplication unrecognized selector` crash-on-quit for the standalone Project Manager on macOS is re-opened as DEFERRED.** The 1.2.46 hardening attempt that suppressed this crash broke clipboard shortcuts, so its rollback leaves the crash as a known, accepted trade-off until a new investigation produces a fix that does not regress Cmd+V / SuperWhisper. Any future CEF bootstrap change must pass the full clipboard + quit + reopen acceptance matrix before merge.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 32** rewritten as a rollback note describing why the CefAppProtocol shell was removed and pointing at the deferred shutdown-crash bug. Invariant 33 (introduced in 1.2.48 for the custom shell) deleted entirely.
+- **Launcher_CEF.md** macOS Bootstrap Lifecycle Boundary collapsed to "plain `NSApplication` bootstrap + deferred shutdown crash" and now carries the clipboard+quit acceptance guardrail for any future hardening attempt.
+- **BugRegistry.md** — `BUG-2026-04-22-01` flipped to DEFERRED with the full rollback history retained; `BUG-2026-04-22-04` moved to FIXED (via rollback in 1.2.49) with the 1.2.48 narrow-fix description kept as "superseded, for history".
+
 ## [1.2.48] - 2026-04-22
 ### Fixed
 - **Paste (Cmd+V) and synthetic Cmd+V from SuperWhisper work again inside the standalone Project Manager input.** The Cut/Copy/Paste/Select All menu items with `target:nil` have been removed from the CEF launcher application menu — they hijacked `NSMenu performKeyEquivalent:` after the 1.2.46 bootstrap refactor dropped the implicit CEF-swizzle of `-[NSApplication sendEvent:]`, and the web view does not answer Cocoa `paste:` / `cut:` / `copy:` / `selectAll:` selectors. Chromium now observes the raw NSKeyDown event and handles clipboard shortcuts on the render-process side, as originally intended.

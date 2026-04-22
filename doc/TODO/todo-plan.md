@@ -27,11 +27,11 @@
 
 ### Stream B: SSOT rollback
 1. [DONE] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — Invariant 32 переписан как rollback + deferred issue; Invariant 33 (1.2.48) удалён. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — macOS Bootstrap Lifecycle Boundary редуцирована до плоского NSApplication bootstrap + known deferred issue. `doc/BugRegistry.md` — `BUG-2026-04-22-01` переоткрыт как DEFERRED с rollback note (historical 1.2.46 card сохранён); `BUG-2026-04-22-04` переведён в FIXED (via rollback in 1.2.49). scope: 3 файла; commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline`.
-2. [IN_PROGRESS] Git Commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline` (hash: TBD)
+2. [DONE] Git Commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline` (hash: 9a1f8071b)
 
 ### Stream C: Release metadata 1.2.49
-1. [TODO] `README.md` Current Release → v1.2.49 + 1.2.48 и 1.2.46 в previous. `CHANGELOG.md` `## [1.2.49]` секция про rollback. scope: 2 файла; commit: `docs: prepare 1.2.49 release metadata`.
-2. [TODO] Git Commit: `docs: prepare 1.2.49 release metadata` (hash: TBD)
+1. [DONE] `README.md` Current Release → v1.2.49 + 1.2.48 и 1.2.46 в previous (отмечены как reverted). `CHANGELOG.md` `## [1.2.49]` секция про rollback + deferred issue + docs sync. scope: 2 файла; commit: `docs: prepare 1.2.49 release metadata`.
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.49 release metadata` (hash: TBD)
 
 ### Stream D: Release build 1.2.49
 1. [TODO] `./scripts/build-all.sh --version 1.2.49` на чистом дереве.
