@@ -59,8 +59,8 @@
 
 ### Stream D: Dedicated settings window + footer entrypoint
 1. [DONE] Добавить dedicated PM settings window opener seam в main layout поверх уже существующего detached PM settings route, чтобы окно `SettingsView` открывалось и фокусировалось как независимый PM-owned surface без влияния на state текущих Sessions/Artifacts. scope: `src/client/project-manager/components/layout/use-detached-settings-window.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; ожидаемый commit message: `feat(pm): add dedicated settings window`
-2. [TODO] Git Commit: `feat(pm): add dedicated settings window` (hash: TBD)
-3. [TODO] Разместить кнопку `Open Settings` в footer зоне, где сейчас живёт `Workflow Tree MVP`: надпись остаётся слева, кнопка появляется справа, действие открывает dedicated settings window. scope: `src/client/project-manager/components/layout/status-bar.tsx`, `src/client/project-manager/components/layout/main-area.tsx`, PM settings window host; ожидаемый commit message: `feat(pm): add footer settings entrypoint`
+2. [DONE] Git Commit: `feat(pm): add dedicated settings window` (hash: `f0815290a`)
+3. [DONE] Разместить кнопку `Open Settings` в footer зоне, где сейчас живёт `Workflow Tree MVP`: надпись остаётся слева, кнопка появляется справа, действие открывает dedicated settings window через уже существующий PM opener seam. scope: `src/client/project-manager/components/layout/status-bar.tsx`; ожидаемый commit message: `feat(pm): add footer settings entrypoint`
 4. [TODO] Git Commit: `feat(pm): add footer settings entrypoint` (hash: TBD)
 
 ## Phase 3 — Extension De-Scope + SSOT Sync (owner: Codex, updated: 2026-04-22)

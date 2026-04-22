@@ -8,6 +8,10 @@ interface StatusBarProps {
   workspaceName?: string;
 }
 
+const openDetachedSettingsWindow = (): void => {
+  window.dispatchEvent(new CustomEvent("pm:settings:open"));
+};
+
 const useDigramZoom = (): { zoom: number; reset: () => void } => {
   const [zoom, setZoom] = useState(1);
   useEffect(() => {
@@ -48,6 +52,11 @@ export const StatusBar: React.FC<StatusBarProps> = ({
     "pm.status_bar.workflow_hint_label",
     "Workflow Tree MVP"
   );
+  const openSettingsLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.status_bar.open_settings_label",
+    "Open Settings"
+  );
 
   return (
     <footer className="pm-status-bar">
@@ -66,6 +75,13 @@ export const StatusBar: React.FC<StatusBarProps> = ({
           </button>
         )}
         <span className="pm-status-hint">{workflowHintLabel}</span>
+        <button
+          className="pm-status-zoom"
+          type="button"
+          onClick={openDetachedSettingsWindow}
+        >
+          {openSettingsLabel}
+        </button>
       </div>
     </footer>
   );
