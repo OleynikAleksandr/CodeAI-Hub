@@ -14,10 +14,10 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
-| BUG-2026-04-22-04 | FIXED | Launcher/CEF/macOS | paste (Cmd+V) и SuperWhisper не работают в input PM; Dock right-click Quit / Cmd+Q не закрывает launcher | 1.2.48 |
+| BUG-2026-04-22-04 | FIXED | Launcher/CEF/macOS | paste (Cmd+V) и SuperWhisper не работают в input PM; Dock right-click Quit / Cmd+Q не закрывает launcher | 1.2.49 (rollback) |
 | BUG-2026-04-22-03 | FIXED | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | 1.2.47 |
 | BUG-2026-04-22-02 | FIXED | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | 1.2.47 |
-| BUG-2026-04-22-01 | FIXED | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | 1.2.46 |
+| BUG-2026-04-22-01 | DEFERRED | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | TBD (1.2.46 fix rolled back in 1.2.49) |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
 | BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
@@ -67,7 +67,14 @@
 ---
 ## BUG-2026-04-22-04 — Launcher/CEF/macOS: paste, SuperWhisper and Quit break after 1.2.46 bootstrap refactor
 
-**Status:** FIXED
+**Status:** FIXED (via rollback in 1.2.49)
+
+**Final resolution (1.2.49):**
+- Полный rollback CEF bootstrap refactor. Удалены `codeai_hub_application_mac.{h,mm}`, `app_main_mac.mm` восстановлен в состоянии коммита `70ac9a6ac` (predecessor of `de7c5ad37`), соответствующие entries убраны из `CMakeLists.txt`. Launcher снова использует plain `[NSApplication sharedApplication]` bootstrap из 1.2.45 baseline.
+- User-confirmed гипотеза: narrow fix 1.2.48 (Edit menu removal + standard `terminate:` path) был теоретически разумен, но не попал в реальный paste-breaker. Root cause сидит внутри самого `CodeAIHubApplication : NSApplication <CefAppProtocol>` shell'а (коммит `de7c5ad37`), а не в cosmetic surfaces вокруг него. Точная механика остаётся не до конца установленной — отложено до нового investigation scope по `BUG-2026-04-22-01`.
+- Rollback commit: `8557b598b revert(launcher-mac): drop CefAppProtocol shell and restore plain NSApplication bootstrap`.
+
+**Original 1.2.48 narrow fix (superseded, kept for history):**
 
 **Symptom:**
 - В standalone Project Manager (CEF launcher) Cmd+V в input поле не вставляет текст из буфера.
@@ -159,7 +166,17 @@
 
 ## BUG-2026-04-22-01 — Launcher/CEF/macOS: standalone Project Manager crashes on quit/close with plain `NSApplication`
 
-**Status:** FIXED
+**Status:** DEFERRED (re-opened 1.2.49)
+
+**Re-open note (1.2.49):**
+- Изначальный fix из 1.2.46 (custom `CodeAIHubApplication : NSApplication <CefAppProtocol>` + `CodeAIHubAppDelegate`) сломал clipboard shortcuts в standalone Project Manager: Cmd+V, Cmd+C/X/A и SuperWhisper не доходили до Chromium как NSKeyDown. Narrow fix 1.2.48 (удаление Edit menu, стандартный `terminate:` path) не попал в реальный root cause.
+- Полный rollback CEF bootstrap refactor (коммиты `de7c5ad37`, `b6b0cf3d1`, `a97c5e9c5`, `a6dd758b2`) выпущен в 1.2.49. Launcher снова использует plain `[NSApplication sharedApplication]` bootstrap из 1.2.45 baseline. Paste / SuperWhisper восстановлены.
+- Crash-on-quit возвращается как **deferred known issue**: редкий, недетерминированный, считается acceptable trade-off против сломанного core PM workflow. Любая новая попытка shutdown hardening обязана до merge пройти acceptance matrix clipboard+quit+reopen (см. SystemArchitecture Invariant 32) и не может опираться на CefAppProtocol subclass без подтверждения, что Cmd+V продолжает работать в Chromium.
+- Историческая карточка 1.2.46 fix-описания ниже сохранена для контекста.
+
+**Historical details (1.2.46 fix, rolled back):**
+
+
 
 **Symptom:**
 - После закрытия standalone Project Manager на macOS периодически появляется system crash dialog `CodeAI Hub Project Manager quit unexpectedly`.

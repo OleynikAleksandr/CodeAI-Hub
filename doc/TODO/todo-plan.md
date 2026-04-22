@@ -22,12 +22,12 @@
 ## Phase 1 — CEF macOS Bootstrap Rollback (owner: Codex, updated: 2026-04-22)
 
 ### Stream A: Restore launcher source baseline
-1. [TODO] Удалить `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h` и `codeai_hub_application_mac.mm`. Восстановить `packages/cef-launcher/src/platform/mac/app_main_mac.mm` в состоянии коммита `70ac9a6ac`. Убрать обе `codeai_hub_application_mac.mm` entries из `packages/cef-launcher/CMakeLists.txt` (`PLATFORM_SOURCES` и `set_source_files_properties`). scope: 4 файла; commit: `revert(launcher-mac): drop CefAppProtocol shell and restore plain NSApplication bootstrap`.
-2. [TODO] Git Commit: `revert(launcher-mac): drop CefAppProtocol shell and restore plain NSApplication bootstrap` (hash: TBD)
+1. [DONE] Удалить `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h` и `codeai_hub_application_mac.mm`. Восстановить `packages/cef-launcher/src/platform/mac/app_main_mac.mm` в состоянии коммита `70ac9a6ac`. Убрать обе `codeai_hub_application_mac.mm` entries из `packages/cef-launcher/CMakeLists.txt` (`PLATFORM_SOURCES` и `set_source_files_properties`). scope: 4 файла; commit: `revert(launcher-mac): drop CefAppProtocol shell and restore plain NSApplication bootstrap`.
+2. [DONE] Git Commit: `revert(launcher-mac): drop CefAppProtocol shell and restore plain NSApplication bootstrap` (hash: 8557b598b)
 
 ### Stream B: SSOT rollback
-1. [TODO] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — удалить Invariant 32 (1.2.46) и Invariant 33 (1.2.48) целиком. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — редуцировать macOS Bootstrap Lifecycle Boundary секцию, отметив плоский NSApplication bootstrap + known deferred issue. `doc/BugRegistry.md` — переоткрыть `BUG-2026-04-22-01` как OPEN / DEFERRED; `BUG-2026-04-22-04` закрыть как FIXED в 1.2.49 через rollback с historical note. scope: 3 файла; commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline`.
-2. [TODO] Git Commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline` (hash: TBD)
+1. [DONE] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — Invariant 32 переписан как rollback + deferred issue; Invariant 33 (1.2.48) удалён. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — macOS Bootstrap Lifecycle Boundary редуцирована до плоского NSApplication bootstrap + known deferred issue. `doc/BugRegistry.md` — `BUG-2026-04-22-01` переоткрыт как DEFERRED с rollback note (historical 1.2.46 card сохранён); `BUG-2026-04-22-04` переведён в FIXED (via rollback in 1.2.49). scope: 3 файла; commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline`.
+2. [IN_PROGRESS] Git Commit: `docs: revert CEF macOS bootstrap SSOT to 1.2.45 baseline` (hash: TBD)
 
 ### Stream C: Release metadata 1.2.49
 1. [TODO] `README.md` Current Release → v1.2.49 + 1.2.48 и 1.2.46 в previous. `CHANGELOG.md` `## [1.2.49]` секция про rollback. scope: 2 файла; commit: `docs: prepare 1.2.49 release metadata`.
