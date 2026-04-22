@@ -9,6 +9,7 @@ import {
   type SettingsWriteResult,
 } from "./settings-persistence-service";
 import { resolveLocalizationRuntimeSettings } from "./settings-persistence-snapshot";
+import { SettingsProviderVersionService } from "./settings-provider-version-service";
 
 export { resolveLocalizationRuntimeSettings } from "./settings-persistence-snapshot";
 
@@ -21,6 +22,7 @@ export class SettingsRequestHandler {
   private readonly logger: Logger;
   private readonly settingsLoadedBroadcaster: SettingsLoadedBroadcaster;
   private readonly settingsPersistenceService: SettingsPersistenceService;
+  private readonly settingsProviderVersionService: SettingsProviderVersionService;
 
   constructor(options: {
     readonly broadcaster: (event: BridgeEvent) => void;
@@ -41,6 +43,7 @@ export class SettingsRequestHandler {
       config: options.config,
       logger: options.logger,
     });
+    this.settingsProviderVersionService = new SettingsProviderVersionService();
   }
 
   async handleSave(settings: unknown): Promise<void> {
@@ -71,10 +74,16 @@ export class SettingsRequestHandler {
     );
   }
 
-  handleLoadVersions(): void {
-    this.broadcastVersionsError(
-      "Core provider versions transport is not implemented yet."
-    );
+  async handleLoadVersions(): Promise<void> {
+    try {
+      this.broadcastVersions(
+        await this.settingsProviderVersionService.loadSnapshot()
+      );
+    } catch (error) {
+      const reason = toErrorMessage(error);
+      this.logger.warn("Failed to load provider versions", { error: reason });
+      this.broadcastVersionsError(reason);
+    }
   }
 
   private broadcastLocalizationSyncStatus(payload: {
@@ -98,13 +107,23 @@ export class SettingsRequestHandler {
     });
   }
 
-  handleUpdateProvider(
-    _provider: "claude" | "codex" | "gemini",
-    _target: "cli" | "core" | "sdk"
-  ): void {
-    this.broadcastVersionsError(
-      "Core provider update transport is not implemented yet."
-    );
+  async handleUpdateProvider(
+    provider: "claude" | "codex" | "gemini",
+    target: "cli" | "core" | "sdk"
+  ): Promise<void> {
+    try {
+      this.broadcastVersions(
+        await this.settingsProviderVersionService.updateTarget(provider, target)
+      );
+    } catch (error) {
+      const reason = toErrorMessage(error);
+      this.logger.warn("Failed to update provider target", {
+        error: reason,
+        provider,
+        target,
+      });
+      this.broadcastVersionsError(reason);
+    }
   }
 
   private async publishSaved(result: SettingsWriteResult): Promise<void> {
@@ -150,5 +169,12 @@ export class SettingsRequestHandler {
       }
       throw error;
     }
+  }
+
+  private broadcastVersions(versions: unknown): void {
+    this.broadcaster({
+      type: "settings:versions",
+      payload: { versions },
+    });
   }
 }
