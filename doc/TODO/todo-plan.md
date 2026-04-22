@@ -79,9 +79,9 @@
 
 ### Stream G: Release metadata 1.2.53
 1. [DONE] Перед release rebuild обновить `README.md` (`Current Release — v1.2.53`) и `CHANGELOG.md` (`## [1.2.53]`) под PM Settings ownership + extension runtime de-scope. scope: 2 файла; ожидаемый commit message: `docs: prepare 1.2.53 release metadata`
-2. [TODO] Git Commit: `docs: prepare 1.2.53 release metadata` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.53 release metadata` (hash: `c7b55ba3f`)
 
 ### Stream H: Release rebuild 1.2.53
-1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.53`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.53`
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.53`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.53`
 2. [TODO] Git Commit: `chore: release 1.2.53` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Step 7: Verifying SDK exclusions`, pruning dev dependencies и итоговый VSIX `codeai-hub-1.2.53.vsix`.
