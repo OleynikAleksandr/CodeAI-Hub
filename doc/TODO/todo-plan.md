@@ -43,7 +43,7 @@
 
 ### Stream E: Release build 1.2.48
 1. [DONE] Запустить `./scripts/build-all.sh --version 1.2.48` на чистом дереве; скрипт пересоберёт CEF launcher + core + UI, поднимет версии, создаст tarball'ы. scope: только автогенерируемые version bumps; commit: `chore: release 1.2.48`.
-2. [IN_PROGRESS] Git Commit: `chore: release 1.2.48` (hash: TBD)
+2. [DONE] Git Commit: `chore: release 1.2.48` (hash: f7c6d9556)
 3. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Переложить VSIX и tarball'ы в `doc/tmp/releases/`. Build verification only — без отдельного commit.
 
 ### Stream F: Session closeout
