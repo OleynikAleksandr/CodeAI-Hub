@@ -7,8 +7,9 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.44
-- **Hotfix к 1.2.43: usage-limits виджет у Claude и Codex больше не показывает пустое / фейковое `0%` в окне между Core restart и первым turn'ом.** PM эмитит `binding_ready` usage-limits refresh на каждый reopened dialog после cold start, и все эти refresh'и гонятся против paper-binding hydration из `1.2.39`: probe возвращает null, cache пуст, subsequent binding_ready повторяют ту же гонку. Теперь `SessionRequestHandler` держит `UsageLimitsWarmupTracker: Set<providerId>` — первый `binding_ready` per provider per Core process запускает dispatch, остальные `binding_ready` для того же провайдера делают только cached replay. Cache уже account-scoped (`providerScopeKey = `${providerId}:global``), так что один успешный probe наполняет payload для всех sessions провайдера. Другие triggers (`turn_completed`, `reconnect`, `manual`, `provider_session_rebound`, `dialog_opened`, `session_opened`) не дедуплицируются — они отражают реальные state changes.
+## Current Release — v1.2.45
+- **Claude/Codex reopened dialogs теперь показывают лимиты до первого нового turn'а.** PM seed-ит `SessionIdBar` из provider-scoped cache, а explicit `dialog_opened` lifecycle в Core сначала replay-ит last-known snapshot, затем делает cheap refresh без eager `resumeSession`.
+- **Usage widget стал честнее на cold-open.** Пока fresh payload ещё в полёте, `SessionIdBar` показывает явный pending state вместо молчаливой пустоты; как только провайдер отдаёт `resetsAt`, 5-часовое и недельное окна сразу показывают reset-info в скобках.
 
 ### 1.2.43 (previous)
 - **Hotfix к 1.2.42: Codex больше не застревает в `Provider codexCli unavailable` и usage_limits виджет наполняется после первого turn'а.** PATH augmentation для Codex spawn + post-rebind usage-limits refresh в stale-binding retry branch.

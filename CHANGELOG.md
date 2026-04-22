@@ -4,6 +4,21 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.45] - 2026-04-22
+### Fixed
+- **Claude and Codex reopened dialogs now show truthful usage limits before the next user message.** PM keeps a provider-scoped usage cache (`providerScopeKey = {providerId}:global`), seeds reopened runtime/dialog snapshots from it, and Core treats `dialog_opened` as an explicit pre-turn usage-refresh boundary: cached limits are replayed immediately, then a cheap provider refresh runs even when cached payload already exists. This closes the UX gap where old dialogs stayed empty until the first new assistant response.
+- **Empty first warmup probes no longer permanently suppress later `binding_ready` refreshes.** `UsageLimitsWarmupTracker` now effectively warms a provider only after a real payload reaches the stream; a null Claude/Codex probe after cold start no longer blocks the next ready-binding attempt.
+
+### Added
+- **Explicit pending-state usage bar for cold opens.** `SessionIdBar` now renders a visible loading state for provider usage telemetry instead of silent empty rails, and shows reset timestamps in parentheses for the 5-hour / weekly buckets as soon as `resetsAt` is known.
+- **Explicit `dialog_opened` transport path for usage limits.** PM reuses `session:refreshUsageLimits` with `lifecycleTrigger: "dialog_opened"` so pre-turn refresh stays lifecycle-driven instead of mount-driven.
+
+### Docs
+- **SystemArchitecture.md**, **SessionUI_Behavior.md**, and **Dialogs_And_Continuity_Routing.md** now define the reopened-dialog pre-turn usage refresh contract, provider-scoped PM seeding, and the distinction between replay-first delivery and explicit `dialog_opened` freshness refresh.
+
+### Tests
+- **`usage-limits-stream.test.ts`**, **`project-manager-session-view.test.tsx`**, **`session-id-bar.test.tsx`**, and **`session-request-handler.usage-limits.test.ts`** now cover replay-before-snapshot caching, provider-scoped seeding, explicit `dialog_opened` refresh, and the empty-warmup retry path.
+
 ## [1.2.44] - 2026-04-21
 ### Fixed
 - **Usage-limits widget no longer stays empty or shows fake `0%` for Claude and Codex in the cold-cache window.** Hotfix to `1.2.43`. PM emits `binding_ready` usage-limits refresh per reopened dialog after Core restart, and under the `1.2.39` materializer paper-binding those first refreshes raced against provider hydration: `ClaudeLiveHeadersReader` and `CodexAppServerFacade.refreshUsageLimits` returned null payloads, the cache never filled, and subsequent `binding_ready` triggers kept hitting the same race. The cache key is already account-scoped (`providerScopeKey = `${providerId}:global``), so one successful probe is enough to populate every session of a provider — but nothing stopped the parallel storm of failing probes. `SessionRequestHandler` now owns `UsageLimitsWarmupTracker: Set<providerId>`: the first `binding_ready` for a provider dispatches, subsequent `binding_ready` for the same provider skip the dispatch and fall back to cached replay (empty rows stay hidden instead of surfacing as false `0%`). Other lifecycle triggers (`turn_completed`, `reconnect`, `manual`, `provider_session_rebound`, `dialog_opened`, `session_opened`) bypass dedup because they represent real state changes.

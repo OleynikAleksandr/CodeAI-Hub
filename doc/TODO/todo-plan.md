@@ -52,11 +52,11 @@
 3. [DONE] Синхронизировать SSOT с новым pre-turn contract для reopened dialogs и provider-scoped seeding в PM — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`; ожидаемый commit message: `docs: define pre-turn usage refresh for reopened dialogs`
 4. [DONE] Git Commit: `docs: define pre-turn usage refresh for reopened dialogs` (hash: `17de3e10f`)
 5. [DONE] Закрыть verification по ключевым сценариям: same-workspace reopened dialog, cross-workspace reopened dialog, Core restart, cold computer restart assumptions — scope: пакеты `src/client/project-manager`, `packages/core`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`; ожидаемый commit message: `test: verify pre-turn usage refresh scenarios`
-6. [IN_PROGRESS] Git Commit: `test: verify pre-turn usage refresh scenarios` (hash: TBD)
+6. [DONE] Git Commit: `test: verify pre-turn usage refresh scenarios` (hash: `35a04a3dc`)
 
 ## Phase 4 — Release build stream (owner: Codex, updated: 2026-04-22)
 ### Stream: Release 1.2.45
-1. [TODO] Подготовить prerelease metadata для будущей версии `1.2.45`: обновить `README.md` (`Current Release`), `CHANGELOG.md` (`## [1.2.45]`) и зафиксировать planning-doc текущего scope в репозитории — scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Plans/UsageLimits_PreTurn_DialogOpen_Refresh_Architecture.md`; ожидаемый commit message: `docs: prepare 1.2.45 release metadata`
-2. [TODO] Git Commit: `docs: prepare 1.2.45 release metadata` (hash: TBD)
+1. [DONE] Подготовить prerelease metadata для будущей версии `1.2.45`: обновить `README.md` (`Current Release`), `CHANGELOG.md` (`## [1.2.45]`) и зафиксировать planning-doc текущего scope в репозитории — scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Plans/UsageLimits_PreTurn_DialogOpen_Refresh_Architecture.md`; ожидаемый commit message: `docs: prepare 1.2.45 release metadata`
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.45 release metadata` (hash: TBD)
 3. [TODO] Выполнить release build checklist: clean tree, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты и закоммитить version/package changes релиза `1.2.45` — scope: release scripts + versioned manifests/build artifacts; ожидаемый commit message: `chore: release 1.2.45`
 4. [TODO] Git Commit: `chore: release 1.2.45` (hash: TBD)
