@@ -46,6 +46,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
   onSizeChange,
   activeWorkspace,
 }) => {
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [preferredSessionId, setPreferredSessionId] = useState<string | null>(null);
   const [selectedArtifact, setSelectedArtifact] = useState<{
@@ -139,15 +140,20 @@ export const MainArea: React.FC<MainAreaProps> = ({
         setSelectedBranchNode(parsed);
       }
     };
+    const onSettingsOpen = () => {
+      setSettingsOpen(true);
+    };
     window.addEventListener("pm:artifact:selected", onSelected);
     window.addEventListener("pm:artifact:cleared", onCleared);
     window.addEventListener("pm:stage:activated", onStageActivated);
     window.addEventListener("pm:branch:selected", onBranchSelected);
+    window.addEventListener("pm:settings:open", onSettingsOpen);
     return () => {
       window.removeEventListener("pm:artifact:selected", onSelected);
       window.removeEventListener("pm:artifact:cleared", onCleared);
       window.removeEventListener("pm:stage:activated", onStageActivated);
       window.removeEventListener("pm:branch:selected", onBranchSelected);
+      window.removeEventListener("pm:settings:open", onSettingsOpen);
     };
   }, []);
 
@@ -159,6 +165,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     // hasDescriptionSession: owned by useMainAreaWorkflowState after store poll
     setPendingSessionCreate(null);
     setSelectedBranchNode(null);
+    setSettingsOpen(false);
     setArtifactHeaderMode("artifacts");
     resetGuard();
     if (!activeWorkspace) {
@@ -306,12 +313,17 @@ export const MainArea: React.FC<MainAreaProps> = ({
     !hasDescriptionSessionPending &&
     workflowStoreLoaded;
   const artifactHeaderModes = resolveArtifactHeaderModes(activeTool);
-  const artifactHeaderTitle = selectedBranchNode
-    ? selectedBranchNode.label
-    : activeTool === VIRTUAL_SIMULATION_TOOL_LABEL ? "Virtual Simulation" : activeTool;
+  const artifactHeaderTitle = settingsOpen
+    ? "Settings"
+    : selectedBranchNode
+      ? selectedBranchNode.label
+      : activeTool === VIRTUAL_SIMULATION_TOOL_LABEL
+        ? "Virtual Simulation"
+        : activeTool;
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
   const handleSelectedArtifactClear = useCallback(() => setSelectedArtifact(null), []);
   const handleSetActiveToolNull = useCallback(() => setActiveTool(null), []);
+  const handleSettingsClose = useCallback(() => setSettingsOpen(false), []);
   const descriptionDocumentExists = descriptionDocument !== null;
   const questionnaireDocumentExists = questionnaireDocument !== null;
 
@@ -328,9 +340,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
         hasDescriptionSession={hasDescriptionSession}
         onDescriptionSessionCreated={handleDescriptionSessionCreated}
         onPendingSessionCreateChange={setPendingSessionCreate}
+        onSettingsClose={handleSettingsClose}
         onSelectedArtifactClear={handleSelectedArtifactClear}
         onSetActiveToolNull={handleSetActiveToolNull}
         questionnaireDocumentExists={questionnaireDocumentExists}
+        settingsOpen={settingsOpen}
         selectedArtifact={selectedArtifact}
         selectedBranchNode={selectedBranchNode}
         shouldShowQuestionnaireEditor={shouldShowQuestionnaireEditor}
@@ -342,8 +356,9 @@ export const MainArea: React.FC<MainAreaProps> = ({
       activeWorkspaceSlug, artifactRefreshKey, descriptionDocumentExists,
       artifactHeaderMode, hasDescriptionSession, handleDescriptionSessionCreated,
       setPendingSessionCreate, handleSelectedArtifactClear, handleSetActiveToolNull,
-      questionnaireDocumentExists, selectedArtifact, selectedBranchNode,
-      shouldShowQuestionnaireEditor, workflowStoreLoaded,
+      handleSettingsClose, questionnaireDocumentExists, selectedArtifact,
+      selectedBranchNode, settingsOpen, shouldShowQuestionnaireEditor,
+      workflowStoreLoaded,
     ]
   );
 
@@ -353,14 +368,36 @@ export const MainArea: React.FC<MainAreaProps> = ({
         artifactContent={memoizedArtifactContent}
         artifactHeaderContent={
           artifactHeaderTitle ? (
-            <StageArtifactHeaderToggle
-              availableModes={artifactHeaderModes}
-              extraActions={detachButton}
-              hint={activeTool === "Diagram Modules" ? "Zoom: ⌘/Ctrl+scroll · Reset: ⌘/Ctrl+0" : undefined}
-              mode={artifactHeaderMode}
-              onModeChange={setArtifactHeaderMode}
-              title={artifactHeaderTitle}
-            />
+            settingsOpen ? (
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 8,
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <span>{artifactHeaderTitle}</span>
+                <span
+                  style={{
+                    color: "rgba(255, 255, 255, 0.3)",
+                    fontSize: 11,
+                  }}
+                >
+                  Project-wide configuration
+                </span>
+              </div>
+            ) : (
+              <StageArtifactHeaderToggle
+                availableModes={artifactHeaderModes}
+                extraActions={detachButton}
+                hint={activeTool === "Diagram Modules" ? "Zoom: ⌘/Ctrl+scroll · Reset: ⌘/Ctrl+0" : undefined}
+                mode={artifactHeaderMode}
+                onModeChange={setArtifactHeaderMode}
+                title={artifactHeaderTitle}
+              />
+            )
           ) : undefined
         }
         onSizeChange={onSizeChange}

@@ -7,6 +7,11 @@ import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { api } from "../../api";
 import {
+  LocalizationProvider,
+  useResolvedLocalization,
+} from "../../../ui/src/app-host/use-localization";
+import SettingsView from "../../../ui/src/components/settings-view";
+import {
   hasExistingStageSession,
   resolveStageSessionIntent,
   StageConfirmationCard,
@@ -15,6 +20,7 @@ import {
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
 import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
+import { useProjectManagerSettingsState } from "../settings/use-project-manager-settings-state";
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import {
@@ -124,9 +130,11 @@ interface ArtifactContentProps {
   readonly onPendingSessionCreateChange: (
     payload: { readonly providerTitle: string } | null
   ) => void;
+  readonly onSettingsClose: () => void;
   readonly onSetActiveToolNull: () => void;
   readonly onSelectedArtifactClear: () => void;
   readonly questionnaireDocumentExists: boolean;
+  readonly settingsOpen: boolean;
   readonly selectedArtifact: SelectedArtifact | null;
   readonly selectedBranchNode: BranchNodeSelection | null;
   readonly shouldShowQuestionnaireEditor: boolean;
@@ -144,15 +152,22 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   hasDescriptionSession,
   onDescriptionSessionCreated,
   onPendingSessionCreateChange,
+  onSettingsClose,
   onSetActiveToolNull,
   onSelectedArtifactClear,
   questionnaireDocumentExists,
+  settingsOpen,
   selectedArtifact,
   selectedBranchNode,
   shouldShowQuestionnaireEditor,
   workflowStoreLoaded,
 }) => {
   const localizationSyncStatus = useLocalizationSyncStatus();
+  const settingsState = useProjectManagerSettingsState();
+  const settingsLocalization = useResolvedLocalization(
+    settingsState.settings,
+    settingsState.localizationRuntime
+  );
   const sourceArtifact = resolveDiagramSourceArtifact({
     activeTool,
     workspacePath: activeWorkspacePath,
@@ -188,6 +203,18 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
     workflowStoreLoaded &&
     (shouldShowQuestionnaireEditor ||
       (!descriptionDocumentExists && !questionnaireDocumentExists));
+
+  if (settingsOpen) {
+    return (
+      <LocalizationProvider value={settingsLocalization}>
+        <SettingsView
+          mode="project-manager"
+          onClose={onSettingsClose}
+          state={settingsState}
+        />
+      </LocalizationProvider>
+    );
+  }
 
   if (localizationSyncStatus.busy) {
     return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
