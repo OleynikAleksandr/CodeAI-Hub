@@ -24,11 +24,11 @@
 
 ### Stream A: Short-circuit CanClose via [NSApp terminate:]
 1. [DONE] Declaration `codeai::launcher::RequestNativeApplicationTermination()` добавлен в `launcher_handler.h` (namespace `codeai::launcher`). Implementation в `launcher_handler_mac.mm` — `[NSApp terminate:nil]` с подробным контекстом. `launcher_app.cc` `LauncherWindowDelegate::CanClose` получил `#if defined(__APPLE__)` branch: вызов `RequestNativeApplicationTermination()` + `return false`; `#else` branch оставляет existing `TryCloseBrowser` flow для Win/Linux. scope: 3 файла; commit: `fix(launcher-mac): short-circuit CanClose to [NSApp terminate:] bypassing buggy Chromium teardown`.
-2. [IN_PROGRESS] Git Commit: `fix(launcher-mac): short-circuit CanClose to [NSApp terminate:] bypassing buggy Chromium teardown` (hash: TBD)
+2. [DONE] Git Commit: `fix(launcher-mac): short-circuit CanClose to [NSApp terminate:] bypassing buggy Chromium teardown` (hash: 9fbd2dfaf)
 
 ### Stream B: SSOT sync
-1. [TODO] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 Invariant 32 — дополнить 1.2.52 short-circuit как primary fix; swizzle 1.2.51 остаётся как safety net. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — subsection "Shutdown-crash mitigation" дополнить 1.2.52 branch. `doc/BugRegistry.md` `BUG-2026-04-22-01` current resolution block обновить: short-circuit + swizzle combo. scope: 3 файла; commit: `docs: sync 1.2.52 CanClose short-circuit contract`.
-2. [TODO] Git Commit: `docs: sync 1.2.52 CanClose short-circuit contract` (hash: TBD)
+1. [DONE] `SystemArchitecture.md` §3 Invariant 32 переписан: 1.2.52 short-circuit как primary fix, 1.2.51 swizzle retained как safety net, оба predшественника (1.2.50/1.2.51) explicitly noted как failed. Канон-список обновлён. `Launcher_CEF.md` получил новую subsection "Shutdown-crash primary fix (1.2.52 — CanClose short-circuit)" перед 1.2.51 subsection, которая помечена как superseded-but-retained. `BugRegistry.md` `BUG-2026-04-22-01` → Status FIXED; current resolution block переписан под short-circuit; 1.2.51 attempt сохранён как "Superseded attempts". scope: 3 файла; commit: `docs: sync 1.2.52 CanClose short-circuit contract`.
+2. [IN_PROGRESS] Git Commit: `docs: sync 1.2.52 CanClose short-circuit contract` (hash: TBD)
 
 ### Stream C: Release metadata 1.2.52
 1. [TODO] `README.md` Current Release → v1.2.52; 1.2.51 в previous (marked: "swizzle alone did not suffice"). `CHANGELOG.md` `## [1.2.52]` секция с Fixed / Changed / Not touched / Docs. scope: 2 файла; commit: `docs: prepare 1.2.52 release metadata`.

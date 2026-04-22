@@ -17,7 +17,7 @@
 | BUG-2026-04-22-04 | FIXED | Launcher/CEF/macOS | paste (Cmd+V) и SuperWhisper не работают в input PM; Dock right-click Quit / Cmd+Q не закрывает launcher | 1.2.49 (rollback) |
 | BUG-2026-04-22-03 | FIXED | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | 1.2.47 |
 | BUG-2026-04-22-02 | FIXED | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | 1.2.47 |
-| BUG-2026-04-22-01 | MITIGATED | Launcher/CEF/macOS | standalone Project Manager падает на красной window-close кнопке c `NSApplication unrecognized selector` | 1.2.51 (reportException: swizzle; 1.2.50 NSSetUncaughtExceptionHandler не сработал; proper fix deferred to CEF upgrade) |
+| BUG-2026-04-22-01 | FIXED | Launcher/CEF/macOS | standalone Project Manager падает на красной window-close кнопке c `NSApplication unrecognized selector` | 1.2.52 (CanClose short-circuit via [NSApp terminate:]; 1.2.50/1.2.51 exception-pipeline mitigations failed; CEF upgrade still tracked as deferred follow-up) |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
 | BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
@@ -166,9 +166,20 @@
 
 ## BUG-2026-04-22-01 — Launcher/CEF/macOS: standalone Project Manager crashes on quit/close with plain `NSApplication`
 
-**Status:** MITIGATED (workaround in 1.2.51 after 1.2.50 failed; proper fix deferred to CEF/Chromium upgrade)
+**Status:** FIXED (CanClose short-circuit in 1.2.52 after 1.2.50/1.2.51 exception-pipeline mitigations failed; CEF/Chromium upgrade still tracked as deferred root-cause follow-up)
 
-**Current resolution (1.2.51 — reportException: swizzle):**
+**Current resolution (1.2.52 — CanClose short-circuit):**
+- User retest 1.2.51 подтвердил что swizzle один не помог — crash dialog всё равно появлялся при клике на красную close кнопку. На macOS 26 exception apparently достигает `+[NSApplication _crashOnException:]` не только через `-reportException:`, либо Chromium 141 teardown шлёт её ещё раньше, мимо swizzle.
+- Pivot: **не ловить** exception, а **не запускать** проблемный Chromium teardown callback вообще. Cmd+Q / Dock Quit работают чисто потому что идут через `-[NSApplication terminate:]` → `-[NSApplication stop:]`, и обходят тот самый buggy Chromium path.
+- Изменение в `packages/cef-launcher/src/launcher_app.cc` `LauncherWindowDelegate::CanClose`: на macOS (`#if defined(__APPLE__)`) вместо `browser->GetHost()->TryCloseBrowser()` вызывается cross-platform helper `codeai::launcher::RequestNativeApplicationTermination()` + `return false`. Helper declared в `packages/cef-launcher/src/launcher_handler.h` (namespace `codeai::launcher`), implemented в `packages/cef-launcher/src/platform/mac/launcher_handler_mac.mm` через `[NSApp terminate:nil]`. Красная close кнопка теперь идёт по тому же pathway что Cmd+Q / Dock Quit — `terminate:` → `stop:` → orderly AppKit unwind → `main()` returns → `CefShutdown()`. Buggy Chromium teardown callback не запускается, exception физически не кидается, `_crashOnException:` не вызывается, crash dialog не появляется.
+- Commit: `9fbd2dfaf fix(launcher-mac): short-circuit CanClose to [NSApp terminate:] bypassing buggy Chromium teardown`.
+- Windows/Linux branch (`#else`) оставлен без изменений — existing `TryCloseBrowser` flow.
+- 1.2.51 `-[NSApplication reportException:]` swizzle в `app_main_mac.mm` **оставлен** как belts-and-suspenders safety net. Overhead нулевой, matching pattern узкий. Будет удалён вместе с CEF upgrade.
+- Proper root-cause fix (CEF/Chromium upgrade до версии с macOS 26 semantics) всё ещё deferred как отдельный scope, но urgency снижена: primary fix 1.2.52 устраняет observable crash независимо от upgrade.
+
+**Superseded attempts (kept for history):**
+
+**1.2.51 — reportException: swizzle (failed in user retest):**
 - User retest 1.2.49 уточнил trigger: crash детерминирован только на красной NSWindow close кнопке (path `LauncherWindowDelegate::CanClose` → `browser->GetHost()->TryCloseBrowser()` → Chromium async browser-teardown). **Не** воспроизводится на Cmd+Q / Dock Quit (path `-[NSApplication stop:]` обходит buggy Chromium teardown callback).
 - Root cause — Chromium 141 (`141.0.10+chromium-141.0.7390.123` shipped inside our CEF binary) отправляет AppKit-private selector, который больше не существует или изменил signature на macOS 26.3.1. Exception arguments: `["NSApplication", "%s", "0x13800190d80"]` — literal `"%s"` format specifier означает `objc_msgSend` called с NULL/corrupted `SEL`. Чистая Chromium ↔ macOS 26 incompat.
 - **1.2.50 mitigation (failed, rolled back в 1.2.51):** `NSSetUncaughtExceptionHandler()` в `main()` до `CefExecuteProcess`. User retest 1.2.50 подтвердил что handler не сработал. Две причины: (1) AppKit на `-[NSApplication finishLaunching]` переустанавливает свой `NSApplicationUncaughtExceptionHandler` поверх нашего (мы ставили до `finishLaunching` — AppKit перезаписал); (2) `+[NSApplication _crashOnException:]` — private Apple path, который обходит стандартную uncaught-handler chain на macOS 26 regardless что зарегистрировано через `NSSetUncaughtExceptionHandler`. Standard ObjC uncaught chain — не тот уровень.
