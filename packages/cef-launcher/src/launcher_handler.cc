@@ -286,6 +286,15 @@ bool LauncherHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
   }
   const std::string url = request->GetURL();
 
+  if (launcher_bridge::IsCoreRestartRequest(url)) {
+    CefPostTask(
+      TID_FILE_BACKGROUND,
+      base::BindOnce([]() {
+        static_cast<void>(codeai::launcher::RestartCoreProcess());
+      }));
+    return true;
+  }
+
   if (launcher_bridge::IsCoreStartRequest(url)) {
     CefPostTask(
       TID_FILE_BACKGROUND,

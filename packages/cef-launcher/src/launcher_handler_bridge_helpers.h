@@ -16,6 +16,7 @@ inline constexpr char kLauncherScheme[] = "codeai";
 inline constexpr char kLauncherPickFolderHost[] = "pick-folder";
 inline constexpr char kLauncherFileDropHost[] = "file-drop";
 inline constexpr char kLauncherCoreStartHost[] = "core-start";
+inline constexpr char kLauncherCoreRestartHost[] = "core-restart";
 inline constexpr char kLauncherOpenInVsCodeHost[] = "open-in-vscode";
 
 inline std::string ToDataUri(const std::string& data,
@@ -58,6 +59,10 @@ inline bool IsCoreStartRequest(const std::string& url) {
   return IsLauncherRequestWithHost(url, kLauncherCoreStartHost);
 }
 
+inline bool IsCoreRestartRequest(const std::string& url) {
+  return IsLauncherRequestWithHost(url, kLauncherCoreRestartHost);
+}
+
 inline bool IsOpenInVsCodeRequest(const std::string& url) {
   return IsLauncherRequestWithHost(url, kLauncherOpenInVsCodeHost);
 }
@@ -90,6 +95,13 @@ inline void InjectLauncherBridge(CefRefPtr<CefFrame> frame) {
   if (typeof window.codeaiLauncher.ensureCoreRunning !== "function") {
     window.codeaiLauncher.ensureCoreRunning = () => {
       window.location.href = "codeai://core-start";
+      return true;
+    };
+  }
+
+  if (typeof window.codeaiLauncher.restartCore !== "function") {
+    window.codeaiLauncher.restartCore = () => {
+      window.location.href = "codeai://core-restart";
       return true;
     };
   }

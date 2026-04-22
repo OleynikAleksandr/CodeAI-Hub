@@ -2,6 +2,7 @@ type SupervisorRequestMode = "ensure-started" | "restart" | "stop";
 
 interface LauncherBridge {
   readonly ensureCoreRunning?: () => unknown;
+  readonly restartCore?: () => unknown;
 }
 
 type BridgeWindow = typeof window & {
@@ -33,15 +34,22 @@ const tryRequestCoreFromVsCode = (type: string): boolean => {
   }
 };
 
-const tryRequestCoreFromLauncher = (): boolean => {
+const tryRequestCoreFromLauncher = (mode: SupervisorRequestMode): boolean => {
   const launcher = (window as BridgeWindow).codeaiLauncher;
-  if (!launcher || typeof launcher.ensureCoreRunning !== "function") {
+  if (!launcher) {
     return false;
   }
 
   try {
-    launcher.ensureCoreRunning();
-    return true;
+    if (mode === "restart" && typeof launcher.restartCore === "function") {
+      launcher.restartCore();
+      return true;
+    }
+    if (typeof launcher.ensureCoreRunning === "function") {
+      launcher.ensureCoreRunning();
+      return true;
+    }
+    return false;
   } catch {
     return false;
   }
@@ -60,5 +68,5 @@ export const requestCoreFromSupervisor = (
     return;
   }
 
-  tryRequestCoreFromLauncher();
+  tryRequestCoreFromLauncher(mode);
 };
