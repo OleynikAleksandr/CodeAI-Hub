@@ -7,6 +7,53 @@
 
 namespace {
 
+// Previous uncaught-exception handler, captured before we install ours so
+// non-matching exceptions still flow through AppKit's default crash reporter.
+static NSUncaughtExceptionHandler* g_previous_uncaught_handler = nullptr;
+
+// Chromium 141 (shipped inside the current CEF framework) occasionally sends
+// an AppKit-private selector to -[NSApplication ...] during async browser
+// teardown on macOS 26.x. The selector no longer exists on that OS version,
+// so objc_msgSend is invoked with a NULL/corrupted SEL and the resulting
+// NSInvalidArgumentException propagates all the way up to
+// NSApplicationUncaughtExceptionHandler -> +[NSApplication _crashOnException:],
+// which aborts the process and surfaces a "quit unexpectedly" dialog.
+//
+// The crash is triggered deterministically by clicking the red window-close
+// button (TryCloseBrowser path), but does NOT reproduce when the user quits
+// via Cmd+Q or the Dock menu, which unwind through -[NSApplication stop:]
+// instead of the Chromium teardown callback. See
+// doc/SolidWorks-WorkFlow/Plans/Archive/CEF_MacOS_Shutdown_Crash_Mitigation_Architecture.md
+// and BUG-2026-04-22-01.
+//
+// Real fix requires CEF/Chromium upgrade to a build that understands macOS 26
+// semantics; until then we swallow this specific exception here so the rest
+// of the browser-teardown path (CefQuitMessageLoop -> main() returning ->
+// CefShutdown) can still complete cleanly.
+void CodeAIHubUncaughtExceptionHandler(NSException* exception) {
+  NSString* name = [exception name];
+  NSString* reason = [exception reason];
+  if ([name isEqualToString:NSInvalidArgumentException] &&
+      [reason rangeOfString:@"unrecognized selector sent to instance"].location
+          != NSNotFound &&
+      [reason rangeOfString:@"NSApplication"].location != NSNotFound) {
+    fprintf(stderr,
+            "CodeAIHubLauncher: suppressed NSApplication unrecognized "
+            "selector (CEF/macOS compatibility workaround): %s\n",
+            [reason UTF8String] != nullptr ? [reason UTF8String] : "");
+    return;
+  }
+
+  if (g_previous_uncaught_handler != nullptr) {
+    g_previous_uncaught_handler(exception);
+  }
+}
+
+void InstallCodeAIHubUncaughtExceptionHandler() {
+  g_previous_uncaught_handler = NSGetUncaughtExceptionHandler();
+  NSSetUncaughtExceptionHandler(&CodeAIHubUncaughtExceptionHandler);
+}
+
 void CreateApplicationMenu() {
   NSApplication* app = [NSApplication sharedApplication];
   if ([app mainMenu] != nil) {
@@ -57,6 +104,12 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "CodeAIHubLauncher: failed to load CEF framework\n");
     return 1;
   }
+
+  // Install our uncaught-exception handler before any CEF code runs so the
+  // Chromium browser-teardown path triggered by the red window-close button
+  // cannot terminate the process through AppKit's default crash reporter on
+  // macOS 26.x. See CodeAIHubUncaughtExceptionHandler above for details.
+  InstallCodeAIHubUncaughtExceptionHandler();
 
   CefMainArgs main_args(argc, argv);
   CefRefPtr<LauncherApp> app(new LauncherApp());
