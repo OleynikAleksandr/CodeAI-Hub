@@ -26,11 +26,11 @@
    - Добавлен `#include <objc/runtime.h>` + category `NSApplication (CodeAIHubReportExceptionSuppression)` с `codeai_reportException:` и `+load` swizzle через `method_exchangeImplementations`.
    - Matching filter: `NSInvalidArgumentException` + reason содержит `unrecognized selector sent to instance` + reason содержит `NSApplication` → log в stderr + return. Остальные exceptions — forward в original IMP через `[self codeai_reportException:exception]` (swizzle trampoline).
    scope: 1 файл; commit: `fix(launcher-mac): swizzle -[NSApplication reportException:] to suppress CEF/macOS 26 crash`.
-2. [IN_PROGRESS] Git Commit: `fix(launcher-mac): swizzle -[NSApplication reportException:] to suppress CEF/macOS 26 crash` (hash: TBD)
+2. [DONE] Git Commit: `fix(launcher-mac): swizzle -[NSApplication reportException:] to suppress CEF/macOS 26 crash` (hash: 77149ac34)
 
 ### Stream B: SSOT sync
-1. [TODO] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 Invariant 32 — отметить 1.2.50 NSSetUncaughtExceptionHandler подход как failed, заменён в 1.2.51 на reportException swizzle. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — обновить "Shutdown-crash mitigation" subsection под swizzle. `doc/BugRegistry.md` `BUG-2026-04-22-01` — добавить 1.2.51 timeline entry (1.2.50 failed, 1.2.51 swizzle attempt). scope: 3 файла; commit: `docs: sync 1.2.51 reportException swizzle mitigation`.
-2. [TODO] Git Commit: `docs: sync 1.2.51 reportException swizzle mitigation` (hash: TBD)
+1. [DONE] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 Invariant 32 переписан: 1.2.50 NSSetUncaughtExceptionHandler подход отмечен как failed, 1.2.51 использует reportException swizzle. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` "Shutdown-crash mitigation" subsection полностью переписан под swizzle (trigger + root cause + почему 1.2.50 не сработал + 1.2.51 mechanism + границы применимости). `doc/BugRegistry.md` `BUG-2026-04-22-01` Status остаётся MITIGATED но current resolution теперь про swizzle; 1.2.50 failed attempt сохранён как timeline entry. scope: 3 файла; commit: `docs: sync 1.2.51 reportException swizzle mitigation`.
+2. [IN_PROGRESS] Git Commit: `docs: sync 1.2.51 reportException swizzle mitigation` (hash: TBD)
 
 ### Stream C: Release metadata 1.2.51
 1. [TODO] `README.md` Current Release → v1.2.51 с объяснением что 1.2.50 не сработал и перешли на method swizzle. `CHANGELOG.md` `## [1.2.51]` секция про swizzle-based mitigation. scope: 2 файла; commit: `docs: prepare 1.2.51 release metadata`.
