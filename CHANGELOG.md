@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.46] - 2026-04-22
+### Fixed
+- **Standalone Project Manager on macOS no longer relies on a plain `NSApplication` bootstrap.** The CEF launcher browser-process entrypoint now creates a dedicated `CodeAIHubApplication : NSApplication <CefAppProtocol>` and a delegate-driven shutdown/reopen seam before entering the CEF message loop. This aligns the launcher more closely with the official CEF macOS sample and removes the crash-on-quit class where AppKit/CEF hit `NSApplication unrecognized selector` during orderly shutdown.
+
+### Changed
+- **macOS launcher lifecycle ownership is now explicit.** `codeai_hub_application_mac.{h,mm}` owns `sendEvent:` wrapping via `CefScopedSendingEvent`, `terminate:` redirection into `LauncherHandler::CloseAllBrowsers(false)`, dock reopen, and secure restorable state; `app_main_mac.mm` is back to a thin wiring layer.
+
 ## [1.2.45] - 2026-04-22
 ### Fixed
 - **Claude and Codex reopened dialogs now show truthful usage limits before the next user message.** PM keeps a provider-scoped usage cache (`providerScopeKey = {providerId}:global`), seeds reopened runtime/dialog snapshots from it, and Core treats `dialog_opened` as an explicit pre-turn usage-refresh boundary: cached limits are replayed immediately, then a cheap provider refresh runs even when cached payload already exists. This closes the UX gap where old dialogs stayed empty until the first new assistant response.
