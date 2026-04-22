@@ -36,10 +36,10 @@
 
 ### Stream B: Custom translation engine selector
 1. [DONE] Заменить native `<select>` в shared `TranslationEngineSelector` на DOM-owned selector/listbox, чтобы убрать AppKit-native popup trigger из PM localization settings и сохранить availability UX; подтвердить исправление таргетными сборками `npm run build:webview` и `npm run build:project-manager`. scope: `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx`; ожидаемый commit message: `fix(settings): replace native translation engine select`
-2. [TODO] Git Commit: `fix(settings): replace native translation engine select` (hash: TBD)
+2. [DONE] Git Commit: `fix(settings): replace native translation engine select` (hash: `bbdbc2b1e`)
 
 ### Stream C: SSOT sync
-1. [TODO] Синхронно обновить bug history и SSOT под новый `no-native-select-for-translation-engine` contract в shared settings UI / standalone CEF path. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; ожидаемый commit message: `docs: sync translation engine selector crash contract`
+1. [DONE] Синхронно обновить bug history и SSOT под новый `no-native-select-for-translation-engine` contract в shared settings UI / standalone CEF path. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; ожидаемый commit message: `docs: sync translation engine selector crash contract`
 2. [TODO] Git Commit: `docs: sync translation engine selector crash contract` (hash: TBD)
 
 ## Phase 2 — Release 1.2.55 (owner: Codex, updated: 2026-04-22)

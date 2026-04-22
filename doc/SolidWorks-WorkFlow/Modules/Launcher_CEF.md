@@ -24,6 +24,12 @@
 - 1.2.51 `reportException:` swizzle в `app_main_mac.mm` **retained** как belts-and-suspenders safety net на случай если в CEF views framework остался ещё один path, триггерящий тот же exception signature. Overhead нулевой, matching pattern очень узкий. Убирается вместе с eventual CEF upgrade.
 - Proper root-cause fix — CEF/Chromium upgrade до версии с macOS 26 semantics — остаётся deferred (отдельный scope; urgency снижена поскольку короткозамыкание устраняет observable crash).
 
+### Native popup boundary (1.2.55 — translation engine selector)
+- `1.2.52` fixes only the red-window-close teardown branch; it does **not** prove that every Chromium/AppKit popup path is safe on macOS 26.x.
+- User retest on `1.2.54` showed a second trigger family: interacting with `Settings -> Localization -> UI Translation Engine` caused the same `NSApplication unrecognized selector` crash from the main thread (`BUG-2026-04-22-08`), but this time through Chromium's native HTML `<select>` popup path rather than browser teardown.
+- Therefore the shared Settings UI must not use native `<select>` for translation-engine controls when it can run inside standalone CEF. `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx` now owns a DOM-only button/listbox selector for both `UI Translation Engine` and `Reasoning Translation Engine`.
+- This is intentionally a UI-layer trigger removal, not a launcher-bridge expansion: the launcher stays narrow and unchanged, while the product surface avoids entering the unsafe AppKit popup branch in the first place.
+
 ### Shutdown-crash mitigation (1.2.51 — reportException: swizzle) [superseded as primary, retained as safety net]
 - **Crash trigger (подтверждено user retest 1.2.49):** детерминирован только при клике по красной NSWindow close кнопке (`LauncherWindowDelegate::CanClose` → `browser->GetHost()->TryCloseBrowser()` → Chromium async browser-teardown). НЕ воспроизводится при Cmd+Q / Dock Quit (`-[NSApplication stop:]` path обходит buggy Chromium teardown).
 - **Root cause:** Chromium 141 (`141.0.10+chromium-141.0.7390.123` shipped inside CEF) отправляет AppKit-private selector, который больше не существует на macOS 26.3.1. Чистая Chromium ↔ macOS 26 incompat, proper root-cause fix требует CEF/Chromium upgrade (deferred).

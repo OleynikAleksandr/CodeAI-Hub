@@ -14,7 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
-| BUG-2026-04-22-08 | OPEN | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | TBD |
+| BUG-2026-04-22-08 | FIXED | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | 1.2.55 |
 | BUG-2026-04-22-07 | FIXED | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | 1.2.54 |
 | BUG-2026-04-22-06 | FIXED | PM/Settings/Recovery | в General tab пропал `Restart Core`, хотя PM обязан сохранять recovery UX | 1.2.54 |
 | BUG-2026-04-22-05 | FIXED | PM/Settings/Localization | provider-only save показывает `Synchronizing localization`, хотя strict localization sync реально не запускался | 1.2.54 |
@@ -71,7 +71,7 @@
 ---
 ## BUG-2026-04-22-08 — PM/Settings/Localization/CEF: selecting `UI Translation Engine` crashes standalone PM on macOS 26.x
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - В релизе `1.2.54` попытка открыть или изменить `Settings -> Localization -> UI Translation Engine` в standalone Project Manager завершает процесс `CodeAIHubLauncher`.
@@ -88,13 +88,21 @@
 - На macOS 26.x Chromium 141 внутри CEF по-прежнему имеет known incompatibility family вокруг `NSApplication unrecognized selector`; 1.2.52 закрыл только window-close teardown branch, но не native `<select>` popup branch.
 - Пока translation-engine controls рендерятся как native `<select>`, standalone PM остаётся уязвимым к этому AppKit/CEF crash trigger.
 
-**Accepted fix direction (2026-04-22):**
-- Убрать native `<select>` из `TranslationEngineSelector`.
-- Заменить его на shared DOM-owned button/listbox selector, который не открывает AppKit-native popup в standalone CEF.
-- Применить fix сразу к обоим translation-engine controls: `UI Translation Engine` и `Reasoning Translation Engine`.
+**Fix (1.2.55):**
+- Shared `TranslationEngineSelector` больше не использует native `<select>` и переведён на DOM-owned button/listbox selector с keyboard navigation.
+- Fix накрывает оба translation-engine controls сразу: `UI Translation Engine` и `Reasoning Translation Engine`.
+- Crash trigger убран на presentation layer: standalone PM больше не заходит в AppKit-native popup path при выборе translation engine.
 
-**Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/PM_TranslationEngineSelector_CEF_Crash_Architecture.md`
+**Commits:**
+- `bbdbc2b1e fix(settings): replace native translation engine select`
+
+**Guards:**
+- `npm run build:webview`
+- `npm run build:project-manager`
+- Smoke: в standalone PM открытие `UI Translation Engine` и `Reasoning Translation Engine` больше не вызывает system crash dialog.
+
+**Release:**
+- `1.2.55`
 
 ---
 ## BUG-2026-04-22-07 — PM/Settings/UI: closing Settings also closes Project Manager
