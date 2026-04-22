@@ -176,7 +176,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleUpdateProvider,
   } = state;
   const renderProjectManagerGeneralTab =
-    mode === "project-manager" || state.supportsCoreRestart === false;
+    mode !== "project-manager" && state.supportsCoreRestart === false;
   const localizationSyncTitle = "Synchronizing localization";
   const localizationSyncDescription =
     "Please wait. CodeAI Hub is rebuilding the translated interface bundles affected by this change. Project Manager and new sessions stay blocked until the affected bundles are ready.";
