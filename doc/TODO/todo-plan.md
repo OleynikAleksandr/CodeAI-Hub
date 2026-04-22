@@ -50,6 +50,13 @@
 1. [DONE] Проверить, требуется ли отдельный provider-bridge hardening для Claude/Codex на open-time refresh path; результат: кодовый патч не нужен, потому что adapters уже держат account-scoped cheap refresh без eager session hydration — scope: `packages/Claude_Module/src/provider/claude-provider-adapter.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`, `packages/core/src/provider-registry/provider-usage-limits-bridge-factory.ts`; ожидаемый commit message: `fix: keep provider usage refresh account scoped on dialog open`
 2. [DONE] Git Commit: `fix: keep provider usage refresh account scoped on dialog open` (hash: `N/A — audit confirmed existing contract`)
 3. [DONE] Синхронизировать SSOT с новым pre-turn contract для reopened dialogs и provider-scoped seeding в PM — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`; ожидаемый commit message: `docs: define pre-turn usage refresh for reopened dialogs`
-4. [IN_PROGRESS] Git Commit: `docs: define pre-turn usage refresh for reopened dialogs` (hash: TBD)
-5. [TODO] Закрыть verification по ключевым сценариям: same-workspace reopened dialog, cross-workspace reopened dialog, Core restart, cold computer restart assumptions — scope: пакеты `src/client/project-manager`, `packages/core`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`; ожидаемый commit message: `test: verify pre-turn usage refresh scenarios`
-6. [TODO] Git Commit: `test: verify pre-turn usage refresh scenarios` (hash: TBD)
+4. [DONE] Git Commit: `docs: define pre-turn usage refresh for reopened dialogs` (hash: `17de3e10f`)
+5. [DONE] Закрыть verification по ключевым сценариям: same-workspace reopened dialog, cross-workspace reopened dialog, Core restart, cold computer restart assumptions — scope: пакеты `src/client/project-manager`, `packages/core`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`; ожидаемый commit message: `test: verify pre-turn usage refresh scenarios`
+6. [IN_PROGRESS] Git Commit: `test: verify pre-turn usage refresh scenarios` (hash: TBD)
+
+## Phase 4 — Release build stream (owner: Codex, updated: 2026-04-22)
+### Stream: Release 1.2.45
+1. [TODO] Подготовить prerelease metadata для будущей версии `1.2.45`: обновить `README.md` (`Current Release`), `CHANGELOG.md` (`## [1.2.45]`) и зафиксировать planning-doc текущего scope в репозитории — scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Plans/UsageLimits_PreTurn_DialogOpen_Refresh_Architecture.md`; ожидаемый commit message: `docs: prepare 1.2.45 release metadata`
+2. [TODO] Git Commit: `docs: prepare 1.2.45 release metadata` (hash: TBD)
+3. [TODO] Выполнить release build checklist: clean tree, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты и закоммитить version/package changes релиза `1.2.45` — scope: release scripts + versioned manifests/build artifacts; ожидаемый commit message: `chore: release 1.2.45`
+4. [TODO] Git Commit: `chore: release 1.2.45` (hash: TBD)

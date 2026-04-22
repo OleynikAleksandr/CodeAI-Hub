@@ -11,9 +11,13 @@ const DIALOG_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx"
 );
-const DIALOG_CONTROLLER_SOURCE_PATH = path.resolve(
+const DIALOG_SESSION_CONTROLLER_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts"
+);
+const DIALOG_CORE_EVENTS_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts"
 );
 const RUNTIME_SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -172,7 +176,7 @@ test("project-manager-runtime-session-view hydrates canonical history instead of
 });
 
 test("project-manager-dialog-session-controller seeds materialized dialog snapshots from provider cache", async () => {
-  const source = await readFile(DIALOG_CONTROLLER_SOURCE_PATH, "utf8");
+  const source = await readFile(DIALOG_SESSION_CONTROLLER_SOURCE_PATH, "utf8");
 
   assert.equal(
     source.includes("seedSnapshotWithCachedUsageLimits("),
@@ -184,6 +188,27 @@ test("project-manager-dialog-session-controller seeds materialized dialog snapsh
   );
   assert.equal(
     source.includes("createInitialSnapshot("),
+    true
+  );
+});
+
+test("project-manager-dialog-session-controller requests pre-turn usage refresh on explicit dialog open", async () => {
+  const source = await readFile(DIALOG_CORE_EVENTS_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("api.refreshUsageLimits({"),
+    true
+  );
+  assert.equal(
+    source.includes('lifecycleTrigger: "dialog_opened"'),
+    true
+  );
+  assert.equal(
+    source.includes("providerSessionId: match.providerSessionId,"),
+    true
+  );
+  assert.equal(
+    source.includes("sessionId: nextSession.id,"),
     true
   );
 });
