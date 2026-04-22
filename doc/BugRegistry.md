@@ -168,6 +168,8 @@
 
 **Status:** FIXED (CanClose short-circuit in 1.2.52 after 1.2.50/1.2.51 exception-pipeline mitigations failed; CEF/Chromium upgrade still tracked as deferred root-cause follow-up)
 
+**User retest confirmation (2026-04-22):** пользователь протестировал `codeai-hub-1.2.52.vsix` — клик по красной NSWindow close кнопке закрывает launcher clean, без "quit unexpectedly" dialog, ведёт себя как Cmd+Q. Регрессий нет, релиз готов к публикации на GitHub.
+
 **Current resolution (1.2.52 — CanClose short-circuit):**
 - User retest 1.2.51 подтвердил что swizzle один не помог — crash dialog всё равно появлялся при клике на красную close кнопку. На macOS 26 exception apparently достигает `+[NSApplication _crashOnException:]` не только через `-reportException:`, либо Chromium 141 teardown шлёт её ещё раньше, мимо swizzle.
 - Pivot: **не ловить** exception, а **не запускать** проблемный Chromium teardown callback вообще. Cmd+Q / Dock Quit работают чисто потому что идут через `-[NSApplication terminate:]` → `-[NSApplication stop:]`, и обходят тот самый buggy Chromium path.
