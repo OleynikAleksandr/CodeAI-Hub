@@ -6,7 +6,6 @@ import {
   settingsTypographyTokens,
 } from "../components/settings/style-tokens";
 import { useSettingsState } from "../components/settings/use-settings-state";
-import SettingsView from "../components/settings-view";
 import { activateRoot } from "../root-dom";
 import { useSettingsVisibility } from "./settings-visibility";
 import {
@@ -60,18 +59,6 @@ const settingsOnlyHintStyles: CSSProperties = {
   color: settingsColorTokens.textMuted,
 };
 
-const settingsOnlyButtonStyles: CSSProperties = {
-  alignSelf: "flex-start",
-  marginTop: "4px",
-  padding: "8px 14px",
-  borderRadius: settingsRadiusTokens.control,
-  border: `1px solid ${settingsColorTokens.borderStrong}`,
-  background: settingsColorTokens.actionPrimary,
-  color: settingsColorTokens.actionPrimaryText,
-  fontSize: "13px",
-  cursor: "pointer",
-};
-
 const noopProviderPickerOpen: WebviewMessageHandlers["onProviderPickerOpen"] =
   () => {
     // no-op
@@ -91,18 +78,22 @@ export const SettingsOnlyHost = () => {
     settingsState.settings,
     settingsState.localizationRuntime
   );
-  const settingsOnlyBody = localization.t(
+  const compatBody = localization.t(
     UI_HELPER_TEXT_CATEGORY,
-    "settings.only.body",
-    "Sessions and chats are available in Project Manager."
+    "settings.only.compat_body",
+    "CodeAI Hub settings are now owned by Project Manager."
   );
-  const settingsOnlyHint = localization.t(
+  const compatHint = localization.t(
     UI_HELPER_TEXT_CATEGORY,
-    "settings.only.hint",
-    "Use this panel to configure providers and defaults."
+    "settings.only.compat_hint",
+    "Open Project Manager and use the footer Open Settings button to edit providers, localization, and global defaults."
   );
-  const { settingsVisible, openSettings, closeSettings } =
-    useSettingsVisibility();
+  const compatNotice = localization.t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.only.compat_notice",
+    "This VS Code view remains only as a compatibility notice during the extension de-scope transition."
+  );
+  const { openSettings } = useSettingsVisibility();
   const handleShowSettings = useCallback(() => {
     activateRoot();
     openSettings();
@@ -123,31 +114,19 @@ export const SettingsOnlyHost = () => {
   return (
     <LocalizationProvider value={localization}>
       <div className="app-shell">
-        <main aria-label="Settings only mode" style={settingsOnlyLayoutStyles}>
+        <main
+          aria-label="Settings moved to Project Manager"
+          style={settingsOnlyLayoutStyles}
+        >
           <section style={settingsOnlyCardStyles}>
-            <h1 style={settingsOnlyTitleStyles}>Settings only</h1>
-            <p style={settingsOnlyBodyStyles}>{settingsOnlyBody}</p>
-            <p style={settingsOnlyHintStyles}>{settingsOnlyHint}</p>
-            <button
-              onClick={handleShowSettings}
-              style={settingsOnlyButtonStyles}
-              type="button"
-            >
-              Open settings
-            </button>
+            <h1 style={settingsOnlyTitleStyles}>
+              Settings moved to Project Manager
+            </h1>
+            <p style={settingsOnlyBodyStyles}>{compatBody}</p>
+            <p style={settingsOnlyHintStyles}>{compatHint}</p>
+            <p style={settingsOnlyHintStyles}>{compatNotice}</p>
           </section>
         </main>
-        {settingsVisible ? (
-          <div className="settings-overlay">
-            <div className="settings-overlay__panel">
-              <SettingsView
-                mode="settings-only"
-                onClose={closeSettings}
-                state={settingsState}
-              />
-            </div>
-          </div>
-        ) : null}
       </div>
     </LocalizationProvider>
   );

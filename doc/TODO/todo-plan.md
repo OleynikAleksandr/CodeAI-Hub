@@ -68,7 +68,7 @@
 ### Stream E: Remove runtime authority from VS Code extension
 1. [DONE] Убрать у extension activation право стартовать/attach-ить `Core Runtime`; extension оставить только как distribution/install/bootstrap-components shell, а runtime bootstrap authority — только у Project Manager. reachability cleanup для осиротевших extension-only runtime хвостов и root manifest выполнить в том же шаге. scope: `src/extension.ts`, `src/extension-module/core/core-keep-alive.ts`, `src/extension-module/settings/provider-auto-update-service.ts`, root manifests; ожидаемый commit message: `chore(extension): remove core startup from vscode activation`
 2. [TODO] Git Commit: `chore(extension): remove core startup from vscode activation` (hash: TBD)
-3. [TODO] Обезвредить legacy settings webview surface по согласованному compat path: passive notice или полное удаление activity bar settings surface, но без живого product UI внутри VS Code. scope: `package.json`, `src/extension-module/home-view-provider.ts`, `src/client/ui/src/app-host/settings-only-host.tsx`; ожидаемый commit message: `chore(extension): retire settings webview surface`
+3. [DONE] Обезвредить legacy settings webview surface по согласованному compat path: оставить compat notice в VS Code и убрать живой product UI из extension-side settings surface. scope: `package.json`, `src/client/ui/src/app-host/settings-only-host.tsx`, `media/react-chat.js`; ожидаемый commit message: `chore(extension): retire settings webview surface`
 4. [TODO] Git Commit: `chore(extension): retire settings webview surface` (hash: TBD)
 
 ### Stream F: SSOT synchronization

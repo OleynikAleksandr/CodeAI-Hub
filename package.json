@@ -45,7 +45,7 @@
     "commands": [
       {
         "command": "codeaiHub.openSettings",
-        "title": "Settings",
+        "title": "Project Manager Settings",
         "category": "CodeAI Hub",
         "icon": "$(settings-gear)"
       }
