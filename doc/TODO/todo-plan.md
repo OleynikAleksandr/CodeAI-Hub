@@ -46,9 +46,9 @@
 
 ### Stream D: Release metadata 1.2.55
 1. [DONE] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.55` под translation-engine selector crash fix. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.55 release metadata`
-2. [TODO] Git Commit: `docs: prepare 1.2.55 release metadata` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.55 release metadata` (hash: `fdad1c542`)
 
 ### Stream E: Release rebuild 1.2.55
-1. [TODO] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.55`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.55`
+1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.55`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.55`
 2. [TODO] Git Commit: `chore: release 1.2.55` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Step 7: Verifying SDK exclusions`, pruning dev dependencies и итоговый VSIX `codeai-hub-1.2.55.vsix`.
