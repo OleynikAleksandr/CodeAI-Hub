@@ -31,11 +31,11 @@
 
 ### Stream B: Remove Edit menu from app-menu
 1. [DONE] Удалить Cut/Copy/Paste/SelectAll из `CreateApplicationMenu` в `codeai_hub_application_mac.mm`; оставить только `Quit %@` в app sub-menu. Chromium обрабатывает clipboard shortcuts на уровне render process. scope: 1 файл; commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts`.
-2. [IN_PROGRESS] Git Commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts` (hash: TBD)
+2. [DONE] Git Commit: `fix(launcher-mac): drop edit menu to unblock clipboard shortcuts` (hash: a6dd758b2)
 
 ### Stream C: SSOT sync
-1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — canonical shutdown contract: standard `applicationShouldTerminate:` path, no Edit menu, no `terminate:` override. Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 — новый invariant 1.2.48. Обновить `doc/BugRegistry.md` — запись `BUG-2026-04-22-XX` (paste/SuperWhisper/Quit regression, fixed в 1.2.48). scope: 3 файла; commit: `docs: sync CEF macOS input/quit contract`.
-2. [TODO] Git Commit: `docs: sync CEF macOS input/quit contract` (hash: TBD)
+1. [DONE] Обновить `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` — canonical shutdown contract: standard `applicationShouldTerminate:` path, no Edit menu, no `terminate:` override. Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 — Invariant 32 уточнён, добавлен Invariant 33 (1.2.48). Обновить `doc/BugRegistry.md` — запись `BUG-2026-04-22-04` (paste/SuperWhisper/Quit regression, fixed в 1.2.48). scope: 3 файла; commit: `docs: sync CEF macOS input/quit contract`.
+2. [IN_PROGRESS] Git Commit: `docs: sync CEF macOS input/quit contract` (hash: TBD)
 
 ### Stream D: Release metadata (pre-build)
 1. [TODO] Обновить `README.md` "Current Release — v1.2.48" и `CHANGELOG.md` новой секцией `## [1.2.48]` с описанием regression fix. scope: 2 файла; commit: `docs: prepare 1.2.48 release metadata`.

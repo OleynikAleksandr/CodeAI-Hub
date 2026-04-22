@@ -14,6 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
+| BUG-2026-04-22-04 | FIXED | Launcher/CEF/macOS | paste (Cmd+V) и SuperWhisper не работают в input PM; Dock right-click Quit / Cmd+Q не закрывает launcher | 1.2.48 |
 | BUG-2026-04-22-03 | FIXED | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | 1.2.47 |
 | BUG-2026-04-22-02 | FIXED | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | 1.2.47 |
 | BUG-2026-04-22-01 | FIXED | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | 1.2.46 |
@@ -62,6 +63,37 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
+
+---
+## BUG-2026-04-22-04 — Launcher/CEF/macOS: paste, SuperWhisper and Quit break after 1.2.46 bootstrap refactor
+
+**Status:** FIXED
+
+**Symptom:**
+- В standalone Project Manager (CEF launcher) Cmd+V в input поле не вставляет текст из буфера.
+- SuperWhisper (синтетический Cmd+V через CGEvent) не попадает в input.
+- Dock right-click → Quit не закрывает launcher при первом клике; повторные клики игнорируются. Cmd+Q из собственного app-menu ведёт себя так же.
+- Cmd+C / Cmd+X / Cmd+A также не срабатывают в PM input.
+
+**Regression origin:** Session084 / release 1.2.46 (CEF macOS Bootstrap Hardening, коммиты `de7c5ad37`, `b6b0cf3d1`).
+
+**Root cause:**
+- Перевод NSApp на `CodeAIHubApplication : NSApplication <CefAppProtocol>` убрал CEF-swizzle для `-[NSApplication sendEvent:]`. Наш `[super sendEvent:event]` прогоняет NSKeyDown через `[[NSApp mainMenu] performKeyEquivalent:]`. Edit menu с Cut/Copy/Paste/SelectAll и `target:nil` перехватывает Cmd+X/C/V/A по responder chain; CEF web view не отвечает на `paste:` / `cut:` / `copy:` / `selectAll:` Cocoa-selectors, поэтому key event "съедается" и не доходит до Chromium как NSKeyDown.
+- Override `-[CodeAIHubApplication terminate:]` перенаправлял quit в `CodeAIHubAppDelegate.tryToTerminateApplication:` → `handler->CloseAllBrowsers(false)` (non-force). Если `TryCloseBrowser()` возвращал false (любой in-flight close check), quit молча зависал; второй клик проглатывался через `handler->IsClosing() == true` без `CefQuitMessageLoop()`.
+
+**Fix (1.2.48):**
+- Убран override `-[CodeAIHubApplication terminate:]` и метод `tryToTerminateApplication:`. Quit идёт стандартным AppKit маршрутом `terminate:` → `applicationShouldTerminate:`, delegate force-close-ит browsers через `CloseAllBrowsers(true)` и возвращает `NSTerminateCancel`; `LauncherHandler::OnBeforeClose` драйвит `CefQuitMessageLoop()` после последнего browser'а.
+- Edit menu (Cut/Copy/Paste/SelectAll) удалён из `CreateApplicationMenu`. Chromium внутри CEF обрабатывает clipboard shortcuts на уровне render process. В application-menu остаётся только `Quit %@`.
+
+**Commits:**
+- `a97c5e9c5 fix(launcher-mac): route terminate through applicationShouldTerminate`
+- `a6dd758b2 fix(launcher-mac): drop edit menu to unblock clipboard shortcuts`
+
+**Release:** `1.2.48`.
+
+**Guards:**
+- SystemArchitecture §3 Invariant 33: permanent acceptance matrix для CEF releases — Cmd+V/C/X/A + SuperWhisper + Dock right-click Quit + Cmd+Q + window-close без crash + dock reopen.
+- Launcher_CEF.md macOS Bootstrap Lifecycle Boundary: override `terminate:` запрещён; Edit menu items запрещены.
 
 ---
 ## BUG-2026-04-22-03 — Claude/Core/UI: first cold-open usage refresh does not materialize before repeated reopen

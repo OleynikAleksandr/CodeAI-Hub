@@ -13,10 +13,11 @@
 ## macOS Bootstrap Lifecycle Boundary
 - macOS browser-process bootstrap больше не опирается на "голый" `NSApplication`.
 - `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.{h,mm}` владеют custom `CodeAIHubApplication : NSApplication <CefAppProtocol>` и `CodeAIHubAppDelegate`.
-- `CodeAIHubApplication` обязан оборачивать `sendEvent:` в `CefScopedSendingEvent` и override-ить `terminate:` так, чтобы quit path не уходил в прямой Cocoa `exit()`-style termination.
-- `CodeAIHubAppDelegate` обязан переводить quit path в `LauncherHandler::CloseAllBrowsers(false)` и reuse-ить `LauncherHandler::ShowMainWindow()` для dock reopen.
+- `CodeAIHubApplication` обязан оборачивать `sendEvent:` в `CefScopedSendingEvent`. Override `-[NSApplication terminate:]` **запрещён**: quit path обязан идти стандартным AppKit маршрутом `terminate:` → `-applicationShouldTerminate:`, иначе non-force browser close может зависнуть и следующий Quit молча проглатывается (regression 1.2.46, fixed 1.2.48).
+- `CodeAIHubAppDelegate -applicationShouldTerminate:` force-close-ит browsers через `LauncherHandler::CloseAllBrowsers(true)` и возвращает `NSTerminateCancel`, когда active browsers есть. `LauncherHandler::OnBeforeClose` драйвит `CefQuitMessageLoop()` после того как последний browser закрылся; `main()` возвращается из `CefRunMessageLoop()` → `CefShutdown()`. Если browsers уже нет, delegate сразу возвращает `NSTerminateNow`.
+- `CodeAIHubAppDelegate` владеет `applicationShouldHandleReopen:` для dock reopen (`LauncherHandler::ShowMainWindow()`) и `applicationSupportsSecureRestorableState:` = YES.
 - `packages/cef-launcher/src/platform/mac/app_main_mac.mm` остаётся тонким entrypoint: `sharedApplication` -> `CefExecuteProcess` -> `CefInitialize` -> attach delegate -> `CefRunMessageLoop` -> `CefShutdown`.
-- Ручное меню приложения остаётся допустимым; nib/storyboard migration не требуется, пока lifecycle contract выше соблюдён.
+- Application menu разрешён, но только с `Quit %@`. Cut/Copy/Paste/SelectAll menu items **запрещены**: с `target:nil` они заставляют AppKit hijack-ить Cmd+X/C/V/A через `NSMenu performKeyEquivalent:`, а CEF web view не отвечает на `cut:`/`copy:`/`paste:`/`selectAll:` selectors — key event "съедается" меню и не доходит до Chromium как NSKeyDown (regression 1.2.46, fixed 1.2.48). Chromium внутри CEF обрабатывает clipboard shortcuts на уровне render process.
 
 ## PM File Link Boundary
 - Launcher bridge remains narrow, but it now includes one additional PM-specific command: dialog file-link handoff into Visual Studio Code.
