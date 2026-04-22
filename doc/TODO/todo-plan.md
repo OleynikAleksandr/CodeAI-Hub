@@ -30,11 +30,11 @@
 
 ### Stream B: SSOT sync
 1. [DONE] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 Invariant 32 переписан: 1.2.50 NSSetUncaughtExceptionHandler подход отмечен как failed, 1.2.51 использует reportException swizzle. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` "Shutdown-crash mitigation" subsection полностью переписан под swizzle (trigger + root cause + почему 1.2.50 не сработал + 1.2.51 mechanism + границы применимости). `doc/BugRegistry.md` `BUG-2026-04-22-01` Status остаётся MITIGATED но current resolution теперь про swizzle; 1.2.50 failed attempt сохранён как timeline entry. scope: 3 файла; commit: `docs: sync 1.2.51 reportException swizzle mitigation`.
-2. [IN_PROGRESS] Git Commit: `docs: sync 1.2.51 reportException swizzle mitigation` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync 1.2.51 reportException swizzle mitigation` (hash: d5e0ed63d)
 
 ### Stream C: Release metadata 1.2.51
-1. [TODO] `README.md` Current Release → v1.2.51 с объяснением что 1.2.50 не сработал и перешли на method swizzle. `CHANGELOG.md` `## [1.2.51]` секция про swizzle-based mitigation. scope: 2 файла; commit: `docs: prepare 1.2.51 release metadata`.
-2. [TODO] Git Commit: `docs: prepare 1.2.51 release metadata` (hash: TBD)
+1. [DONE] `README.md` Current Release → v1.2.51 с объяснением что 1.2.50 не сработал и перешли на method swizzle; 1.2.50 явно помечен как "mitigation failed, replaced in 1.2.51". `CHANGELOG.md` `## [1.2.51]` секция с Fixed / Changed / Known deferred issue / Not touched / Docs subsections, документирующая exact swizzle mechanics. scope: 2 файла; commit: `docs: prepare 1.2.51 release metadata`.
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.51 release metadata` (hash: TBD)
 
 ### Stream D: Release build 1.2.51
 1. [TODO] `./scripts/build-all.sh --version 1.2.51` на чистом дереве.

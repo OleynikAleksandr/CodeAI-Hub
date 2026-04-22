@@ -4,6 +4,25 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.51] - 2026-04-22
+### Fixed
+- **Red NSWindow close button no longer shows "quit unexpectedly" dialog on macOS 26.x.** User retest on 1.2.50 confirmed that the `NSSetUncaughtExceptionHandler()` approach did not intercept the crash. Two reasons: AppKit reinstalls its own `NSApplicationUncaughtExceptionHandler` during `-[NSApplication finishLaunching]` (overwriting ours, which was installed pre-`CefExecuteProcess`); and `+[NSApplication _crashOnException:]` — a private Apple path — bypasses the standard uncaught-exception chain on macOS 26 regardless of what's registered via `NSSetUncaughtExceptionHandler`. The standard ObjC uncaught chain is simply not the right layer for this issue.
+
+### Changed
+- **Switched mitigation from `NSSetUncaughtExceptionHandler` to an Objective-C method swizzle on `-[NSApplication reportException:]`.** The new mitigation lives in `packages/cef-launcher/src/platform/mac/app_main_mac.mm` as category `NSApplication (CodeAIHubReportExceptionSuppression)`, whose `+load` method performs `method_exchangeImplementations(reportException:, codeai_reportException:)`. The Objective-C runtime invokes `+load` during dyld image load — before `main()` and before any AppKit / CEF init — so AppKit cannot undo the swap. When AppKit subsequently calls `-[NSApplication reportException:]`, the runtime dispatches into our `codeai_reportException:`, which inspects the exception and returns without reaching `+[NSApplication _crashOnException:]` when it matches the Chromium-141 × macOS-26 signature (`NSInvalidArgumentException` whose reason contains both `unrecognized selector sent to instance` and `NSApplication`). Non-matching exceptions are forwarded to the original IMP through `[self codeai_reportException:exception]` — the standard ObjC swizzle trampoline.
+- **Removed dead 1.2.50 `NSSetUncaughtExceptionHandler` code** (`g_previous_uncaught_handler`, `CodeAIHubUncaughtExceptionHandler`, `InstallCodeAIHubUncaughtExceptionHandler` and its call from `main()`). Atomic swap in the same commit so no one has to guess which mitigation is actually active.
+
+### Known deferred issue
+- **`BUG-2026-04-22-01` remains MITIGATED, not root-fixed.** The swizzle absorbs the specific Chromium-141 × macOS-26 exception signature, but the underlying Chromium 141 teardown callback is still sending an AppKit-private selector that no longer exists on macOS 26. A proper root-cause fix requires upgrading CEF to a build that ships Chromium 142+ or 143+. That CEF upgrade is still tracked as a separate investigation scope. If a future macOS patch moves the problematic path off `-reportException:`, this mitigation stops covering and we'll need the CEF upgrade or a different attack vector.
+
+### Not touched (explicit preservation of 1.2.49 / 1.2.50 behaviour)
+- NSApplication remains plain (no `CefAppProtocol` shell, no `sendEvent:` override, no `terminate:` override, no `NSApplicationDelegate`). Paste (Cmd+V), SuperWhisper (synthetic Cmd+V via CGEvent), Cmd+C/X/A, the Edit menu, Cmd+Q, Dock Quit, the red close button teardown path and dock reopen all continue to behave exactly as in 1.2.49 / 1.2.50. `Info.plist` is not changed. `LauncherWindowDelegate::CanClose` / `LauncherHandler::DoClose` / `LauncherHandler::OnBeforeClose` are not changed.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 32** rewritten around the new swizzle mitigation. Explicitly records that 1.2.50 `NSSetUncaughtExceptionHandler` failed and why, and updates the permanent CEF acceptance matrix with the new stderr signature (`suppressed NSApplication unrecognized selector via reportException: swizzle`).
+- **Launcher_CEF.md** shutdown-crash mitigation subsection rewritten fully: trigger, root cause, why 1.2.50 failed, 1.2.51 swizzle mechanism, what the mitigation still does NOT touch, runtime flow on interception, and the documented limits of the swizzle approach.
+- **BugRegistry.md** — `BUG-2026-04-22-01` still MITIGATED, but the current-resolution block is rewritten around the swizzle; the failed 1.2.50 `NSSetUncaughtExceptionHandler` attempt is preserved inline as a timeline entry with both root causes spelled out (AppKit reinstall + `_crashOnException:` bypass).
+
 ## [1.2.50] - 2026-04-22
 ### Fixed
 - **Red NSWindow close button no longer triggers the "CodeAI Hub Project Manager quit unexpectedly" dialog on macOS 26.x.** User retest on 1.2.49 pinpointed the crash as deterministic on the red close button path only (`LauncherWindowDelegate::CanClose` → `browser->GetHost()->TryCloseBrowser()` → Chromium async browser teardown), while Cmd+Q and Dock Quit remained clean because they unwind through `-[NSApplication stop:]` and bypass the Chromium teardown callback entirely. The failing callback sends an AppKit-private selector to `-[NSApplication ...]` that no longer exists on macOS 26.3.1 under Chromium 141 (shipped inside our CEF binary `141.0.10+chromium-141.0.7390.123`).
