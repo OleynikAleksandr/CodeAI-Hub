@@ -179,6 +179,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     mode !== "project-manager" && state.supportsCoreRestart === false;
   const localizationSyncTitle = "Synchronizing localization";
   const localizationSyncDescription =
+    state.localizationSyncStatus.message ??
     "Please wait. CodeAI Hub is rebuilding the translated interface bundles affected by this change. Project Manager and new sessions stay blocked until the affected bundles are ready.";
 
   useEffect(() => {
@@ -415,7 +416,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
         resetting={resetting}
         saving={saving}
       />
-      {saving ? (
+      {state.localizationSyncStatus.busy ? (
         <div aria-live="polite" role="status" style={syncOverlayStyles}>
           <div style={syncCardStyles}>
             <div style={syncSpinnerStyles} />
