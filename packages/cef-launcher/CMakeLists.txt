@@ -52,6 +52,7 @@ set(CEF_TARGET_OUT_DIR "${OUTPUT_ROOT}")
 if(APPLE)
   set(PLATFORM_SOURCES
     src/platform/mac/app_main_mac.mm
+    src/platform/mac/codeai_hub_application_mac.mm
     src/platform/mac/launcher_handler_mac.mm
     src/platform/mac/window_state_tracker.mm
     src/platform/mac/window_state_persistence.mm
@@ -68,6 +69,9 @@ if(APPLE)
     "-framework CoreFoundation"
   )
   set_source_files_properties(src/platform/mac/app_main_mac.mm PROPERTIES
+    COMPILE_FLAGS "-fobjc-arc"
+  )
+  set_source_files_properties(src/platform/mac/codeai_hub_application_mac.mm PROPERTIES
     COMPILE_FLAGS "-fobjc-arc"
   )
   set_source_files_properties(src/platform/mac/launcher_handler_mac.mm PROPERTIES

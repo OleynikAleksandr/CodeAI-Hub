@@ -26,12 +26,12 @@
 
 ### Stream: Native bootstrap scaffold
 3. [DONE] Добавить custom `NSApplication` + delegate scaffolding для mac launcher bootstrap (scope: `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h`, `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.mm`, `doc/TODO/todo-plan.md`; expected commit: `feat: add CEF-compatible mac application shell`)
-4. [TODO] Git Commit: `feat: add CEF-compatible mac application shell` (hash: TBD)
-5. [IN_PROGRESS] Переподключить `app_main_mac.mm` и `CMakeLists.txt` к новому bootstrap seam, сохранив текущий browser/window ownership в `LauncherApp` (scope: `packages/cef-launcher/src/platform/mac/app_main_mac.mm`, `packages/cef-launcher/CMakeLists.txt`, `doc/TODO/todo-plan.md`; expected commit: `fix: align mac launcher bootstrap with CEF sample`)
+4. [DONE] Git Commit: `feat: add CEF-compatible mac application shell` (hash: `de7c5ad37`)
+5. [DONE] Переподключить `app_main_mac.mm` и `CMakeLists.txt` к новому bootstrap seam, сохранив текущий browser/window ownership в `LauncherApp` (scope: `packages/cef-launcher/src/platform/mac/app_main_mac.mm`, `packages/cef-launcher/CMakeLists.txt`, `doc/TODO/todo-plan.md`; expected commit: `fix: align mac launcher bootstrap with CEF sample`)
 6. [TODO] Git Commit: `fix: align mac launcher bootstrap with CEF sample` (hash: TBD)
 
 ### Stream: Docs and release
-7. [TODO] Синхронизировать launcher SSOT и системный инвариант под новый mac bootstrap contract (scope: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync CEF mac bootstrap contract`)
+7. [IN_PROGRESS] Синхронизировать launcher SSOT и системный инвариант под новый mac bootstrap contract (scope: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync CEF mac bootstrap contract`)
 8. [TODO] Git Commit: `docs: sync CEF mac bootstrap contract` (hash: TBD)
 9. [TODO] Закрыть launcher bug entry после подтверждённого кода и сохранить usage-limits issues как backlog-only bugs (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record CEF mac launcher crash fix`)
 10. [TODO] Git Commit: `docs: record CEF mac launcher crash fix` (hash: TBD)
