@@ -15,11 +15,8 @@ import { applyLocalizationSettingsMigration } from "./settings-request-handler-l
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
-
 const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
-
 const DEFAULT_LOCALIZATION_SETTINGS = {
   defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
   categories: {
@@ -108,7 +105,6 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
     },
   },
 } as const;
-
 const toErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
@@ -123,12 +119,10 @@ const resolveErrorCode = (error: unknown): string | null => {
   const code = error.code;
   return typeof code === "string" ? code : null;
 };
-
 const normalizeSettingsString = (value: unknown, fallback: string): string =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : fallback;
-
 const normalizeLocalizationLanguage = (
   value: unknown,
   fallback: string
@@ -138,7 +132,6 @@ const normalizeLocalizationLanguage = (
     ? DEFAULT_LOCALIZATION_LANGUAGE
     : normalized;
 };
-
 const resolveLocalizationCategory = (
   categories: Record<string, unknown>,
   candidateKeys: readonly string[],
@@ -154,7 +147,6 @@ const resolveLocalizationCategory = (
 
   return fallback;
 };
-
 export const resolveLocalizationRuntimeSettings = (
   settings: Record<string, unknown>
 ): LocalizationRuntimeSettingsSnapshot => {
@@ -268,7 +260,6 @@ const buildDefaultSettingsSnapshot = (
     },
   };
 };
-
 const normalizeLoadedSettingsSnapshotWithDefaults = (
   settings: Record<string, unknown>,
   config: CoreConfig
@@ -413,7 +404,6 @@ const normalizeLoadedSettingsSnapshotWithDefaults = (
     },
   };
 };
-
 const persistDefaultSettingsSnapshot = async (
   settingsPath: string,
   snapshot: Record<string, unknown>
@@ -427,6 +417,7 @@ const persistDefaultSettingsSnapshot = async (
 };
 
 export class SettingsRequestHandler {
+  private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly config: CoreConfig;
   private readonly localizationFacade: LocalizationFacade;
   private readonly logger: Logger;
@@ -437,6 +428,7 @@ export class SettingsRequestHandler {
     readonly logger: Logger;
     readonly broadcaster: (event: BridgeEvent) => void;
   }) {
+    this.broadcaster = options.broadcaster;
     this.config = options.config;
     this.localizationFacade = createCoreLocalizationFacade({
       config: this.config,
@@ -448,7 +440,12 @@ export class SettingsRequestHandler {
       resolveRuntimeSettings: resolveLocalizationRuntimeSettings,
     });
   }
-
+  handleSave(_settings: unknown): void {
+    this.broadcastSaveError("Core settings save is not implemented yet.");
+  }
+  handleReset(): void {
+    this.broadcastSaveError("Core settings reset is not implemented yet.");
+  }
   async handleLoad(): Promise<void> {
     const settingsPath = this.config.claudeSettingsPath;
     try {
@@ -461,7 +458,6 @@ export class SettingsRequestHandler {
         baseSettings as Record<string, unknown>,
         this.config
       );
-
       if (changed) {
         try {
           await persistDefaultSettingsSnapshot(settingsPath, settings);
@@ -477,12 +473,10 @@ export class SettingsRequestHandler {
       const code = resolveErrorCode(error);
       const message = toErrorMessage(error);
       const label = code ? `${code}: ${message}` : message;
-
       this.logger.warn("Failed to load settings", {
         settingsPath,
         error: label,
       });
-
       const snapshot = buildDefaultSettingsSnapshot(this.config);
       if (code === "ENOENT") {
         try {
@@ -496,5 +490,8 @@ export class SettingsRequestHandler {
       }
       await this.settingsLoadedBroadcaster.publish(snapshot);
     }
+  }
+  private broadcastSaveError(error: string): void {
+    this.broadcaster({ type: "settings:save-error", payload: { error } });
   }
 }

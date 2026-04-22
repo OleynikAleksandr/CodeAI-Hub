@@ -165,14 +165,31 @@ export interface CoreStatePayload {
   readonly sessions: readonly SerializedSession[];
 }
 
+interface SettingsLoadedPayload {
+  readonly error: string | null;
+  readonly localizationRuntime: LocalizationRuntimePayload | null;
+  readonly settings: Record<string, unknown> | null;
+}
+
 type CoreBridgeEvent =
   | { readonly type: "core:state"; readonly payload: CoreStatePayload }
   | {
       readonly type: "settings:loaded";
+      readonly payload: SettingsLoadedPayload;
+    }
+  | {
+      readonly type: "settings:saved";
+      readonly payload: Omit<SettingsLoadedPayload, "error">;
+    }
+  | {
+      readonly type: "settings:save-error";
+      readonly payload: { readonly error: string };
+    }
+  | {
+      readonly type: "settings:localization-sync-status";
       readonly payload: {
-        readonly localizationRuntime: LocalizationRuntimePayload | null;
-        readonly settings: Record<string, unknown> | null;
-        readonly error: string | null;
+        readonly busy: boolean;
+        readonly message: string | null;
       };
     }
   | { readonly type: "core:notification"; readonly payload: unknown }
@@ -254,9 +271,13 @@ export type BridgeEvent =
   | SessionBridgeEvent
   | WorkspaceBridgeEvent;
 
-interface CoreIncomingMessage {
-  readonly type: "settings:load";
-}
+type CoreIncomingMessage =
+  | { readonly type: "settings:load" }
+  | {
+      readonly type: "settings:save";
+      readonly payload: { readonly settings: unknown };
+    }
+  | { readonly type: "settings:reset" };
 
 interface ProjectManagerDiagnosticLogIncomingMessage {
   readonly payload: {
