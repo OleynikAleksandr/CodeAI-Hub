@@ -21,13 +21,13 @@
 
 ## Phase 1 — CEF macOS bootstrap hardening (owner: Codex, updated: 2026-04-22)
 ### Stream: Scope bootstrap
-1. [IN_PROGRESS] Создать planning-doc, формализовать launcher/usage-limits баги в `BugRegistry`, активировать новый `todo-plan` (scope: `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open CEF mac bootstrap hardening scope`)
-2. [TODO] Git Commit: `docs: open CEF mac bootstrap hardening scope` (hash: TBD)
+1. [DONE] Создать planning-doc, формализовать launcher/usage-limits баги в `BugRegistry`, активировать новый `todo-plan` (scope: `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: open CEF mac bootstrap hardening scope`)
+2. [DONE] Git Commit: `docs: open CEF mac bootstrap hardening scope` (hash: `e4df54f94`)
 
 ### Stream: Native bootstrap scaffold
-3. [TODO] Добавить custom `NSApplication` + delegate scaffolding для mac launcher bootstrap (scope: `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h`, `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.mm`, `doc/TODO/todo-plan.md`; expected commit: `feat: add CEF-compatible mac application shell`)
+3. [DONE] Добавить custom `NSApplication` + delegate scaffolding для mac launcher bootstrap (scope: `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h`, `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.mm`, `doc/TODO/todo-plan.md`; expected commit: `feat: add CEF-compatible mac application shell`)
 4. [TODO] Git Commit: `feat: add CEF-compatible mac application shell` (hash: TBD)
-5. [TODO] Переподключить `app_main_mac.mm` и `CMakeLists.txt` к новому bootstrap seam, сохранив текущий browser/window ownership в `LauncherApp` (scope: `packages/cef-launcher/src/platform/mac/app_main_mac.mm`, `packages/cef-launcher/CMakeLists.txt`, `doc/TODO/todo-plan.md`; expected commit: `fix: align mac launcher bootstrap with CEF sample`)
+5. [IN_PROGRESS] Переподключить `app_main_mac.mm` и `CMakeLists.txt` к новому bootstrap seam, сохранив текущий browser/window ownership в `LauncherApp` (scope: `packages/cef-launcher/src/platform/mac/app_main_mac.mm`, `packages/cef-launcher/CMakeLists.txt`, `doc/TODO/todo-plan.md`; expected commit: `fix: align mac launcher bootstrap with CEF sample`)
 6. [TODO] Git Commit: `fix: align mac launcher bootstrap with CEF sample` (hash: TBD)
 
 ### Stream: Docs and release
