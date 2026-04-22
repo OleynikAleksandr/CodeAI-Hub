@@ -74,5 +74,5 @@
 
 ### Stream G: Release rebuild 1.2.54
 1. [DONE] На чистом дереве выполнить `./scripts/build-all.sh --version 1.2.54`, проверить release-generated version/manifests artefacts и закоммитить результат. scope: release-generated repo files; ожидаемый commit message: `chore: release 1.2.54`
-2. [TODO] Git Commit: `chore: release 1.2.54` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Step 7: Verifying SDK exclusions`, pruning dev dependencies и итоговый VSIX `codeai-hub-1.2.54.vsix`.
+2. [DONE] Git Commit: `chore: release 1.2.54` (hash: `ad06f74e3`)
+3. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить `Step 7: Verifying SDK exclusions`, pruning dev dependencies и итоговый VSIX `codeai-hub-1.2.54.vsix`.
