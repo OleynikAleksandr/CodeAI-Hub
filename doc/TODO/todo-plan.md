@@ -26,11 +26,11 @@
 
 ### Stream B: SSOT sync
 1. [DONE] `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §3 Invariant 32 дополнен 1.2.50 mitigation note + pending CEF upgrade. `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md` получил subsection "Shutdown-crash mitigation (1.2.50)" с root cause / mitigation / trade-off. `doc/BugRegistry.md` `BUG-2026-04-22-01` → Status `MITIGATED` с narrative: window-close only trigger, exception handler workaround, proper fix deferred to CEF upgrade. scope: 3 файла; commit: `docs: sync 1.2.50 shutdown crash mitigation contract`.
-2. [IN_PROGRESS] Git Commit: `docs: sync 1.2.50 shutdown crash mitigation contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync 1.2.50 shutdown crash mitigation contract` (hash: b8a141e00)
 
 ### Stream C: Release metadata 1.2.50
-1. [TODO] `README.md` Current Release → v1.2.50 + 1.2.49 в previous. `CHANGELOG.md` `## [1.2.50]` секция про mitigation и pending proper fix. scope: 2 файла; commit: `docs: prepare 1.2.50 release metadata`.
-2. [TODO] Git Commit: `docs: prepare 1.2.50 release metadata` (hash: TBD)
+1. [DONE] `README.md` Current Release → v1.2.50 + 1.2.49 в previous. `CHANGELOG.md` `## [1.2.50]` секция с Fixed / Added / Known deferred issue / Not touched / Docs subsections. scope: 2 файла; commit: `docs: prepare 1.2.50 release metadata`.
+2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.50 release metadata` (hash: TBD)
 
 ### Stream D: Release build 1.2.50
 1. [TODO] `./scripts/build-all.sh --version 1.2.50` на чистом дереве.

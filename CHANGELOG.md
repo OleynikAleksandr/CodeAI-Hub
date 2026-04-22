@@ -4,6 +4,24 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.50] - 2026-04-22
+### Fixed
+- **Red NSWindow close button no longer triggers the "CodeAI Hub Project Manager quit unexpectedly" dialog on macOS 26.x.** User retest on 1.2.49 pinpointed the crash as deterministic on the red close button path only (`LauncherWindowDelegate::CanClose` → `browser->GetHost()->TryCloseBrowser()` → Chromium async browser teardown), while Cmd+Q and Dock Quit remained clean because they unwind through `-[NSApplication stop:]` and bypass the Chromium teardown callback entirely. The failing callback sends an AppKit-private selector to `-[NSApplication ...]` that no longer exists on macOS 26.3.1 under Chromium 141 (shipped inside our CEF binary `141.0.10+chromium-141.0.7390.123`).
+
+### Added
+- **`InstallCodeAIHubUncaughtExceptionHandler()` in `packages/cef-launcher/src/platform/mac/app_main_mac.mm`.** The handler is installed from `main()` immediately after `CefScopedLibraryLoader::LoadInMain()` and before `CefExecuteProcess`. It captures the previous handler via `NSGetUncaughtExceptionHandler()`, intercepts `NSInvalidArgumentException` whose reason contains both `unrecognized selector sent to instance` and `NSApplication`, logs a `CodeAIHubLauncher: suppressed NSApplication unrecognized selector: ...` line to stderr and returns without propagation. All other uncaught exceptions are forwarded to the previous handler so real bugs still reach AppKit's default crash reporter. With the exception absorbed before `+[NSApplication _crashOnException:]`, the remainder of the browser teardown (`OnBeforeClose` → `CefQuitMessageLoop` → `main()` returns → `CefShutdown`) completes cleanly.
+
+### Known deferred issue
+- **`BUG-2026-04-22-01` moves from DEFERRED to MITIGATED.** The mitigation is a targeted workaround, not a root-cause fix. A proper fix requires upgrading CEF to a build containing Chromium 142+/143+ that understands the macOS 26 selector semantics. That CEF upgrade is tracked as a separate investigation scope.
+
+### Not touched (explicit preservation of 1.2.49 behaviour)
+- NSApplication remains plain (no `CefAppProtocol` shell, no `sendEvent:` override, no `terminate:` override, no `NSApplicationDelegate`). Paste (Cmd+V), SuperWhisper (synthetic Cmd+V via CGEvent), Cmd+C/X/A, the Edit menu, Cmd+Q, Dock Quit, the red close button flow and dock reopen all continue to behave exactly as in 1.2.49. `Info.plist` is not changed. `LauncherWindowDelegate::CanClose` / `LauncherHandler::DoClose` / `LauncherHandler::OnBeforeClose` are not changed.
+
+### Docs
+- **SystemArchitecture.md §3 Invariant 32** extended with the 1.2.50 mitigation note, the refined window-close-only crash trigger, and the requirement that any future shutdown hardening pass the full clipboard + quit + red-close + reopen acceptance matrix before merge.
+- **Launcher_CEF.md** gains a new "Shutdown-crash mitigation (1.2.50)" subsection covering trigger, root cause, handler install point, explicit non-goals, and the stderr log signature that indicates the handler fired.
+- **BugRegistry.md** — `BUG-2026-04-22-01` flipped from DEFERRED to MITIGATED with the full narrative (window-close-only trigger, Chromium 141 × macOS 26.3.1 incompat, handler implementation, commit hash, deferred proper fix). The 1.2.46 → 1.2.48 → 1.2.49 rollback history is preserved as context.
+
 ## [1.2.49] - 2026-04-22
 ### Reverted
 - **Full rollback of the 1.2.46 CEF macOS bootstrap refactor and the 1.2.48 follow-up.** After a second round of user retesting on 1.2.48, Cmd+V / paste and SuperWhisper (synthetic Cmd+V via CGEvent) still failed to reach the Chromium input field inside the standalone Project Manager. The narrow 1.2.48 fix (dropping the Edit menu and restoring the standard `applicationShouldTerminate:` quit path) was theoretically reasonable but did not address the real breaker — which lives inside the `CodeAIHubApplication : NSApplication <CefAppProtocol>` shell itself, not in the cosmetic surfaces around it. The full CEF bootstrap refactor was therefore reverted.

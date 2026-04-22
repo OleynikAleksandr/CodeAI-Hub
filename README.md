@@ -7,10 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.49
-- **Cmd+V / paste и SuperWhisper снова работают в input Project Manager на macOS.** User retest 1.2.48 подтвердил, что narrow fix (удаление Edit menu + стандартный `terminate:` path) не попал в реальный root cause — paste-breaker сидел внутри самого `CodeAIHubApplication : NSApplication <CefAppProtocol>` shell'а из 1.2.46. Поэтому весь CEF bootstrap refactor из 1.2.46 + 1.2.48 откачен целиком.
-- **Launcher вернулся к plain `[NSApplication sharedApplication]` bootstrap 1.2.45 baseline.** Удалены `codeai_hub_application_mac.{h,mm}`; `app_main_mac.mm` восстановлен в состоянии коммита `70ac9a6ac`; соответствующие entries убраны из `CMakeLists.txt`.
-- **Accepted trade-off:** редкий недетерминированный `NSApplication unrecognized selector` crash-on-quit возвращается как deferred known issue (`BUG-2026-04-22-01`). Это явно меньшая боль, чем сломанный core PM workflow (диктовка + вставка из буфера).
+## Current Release — v1.2.50
+- **`NSApplication unrecognized selector` crash на красной window-close кнопке больше не показывает "quit unexpectedly" dialog.** User retest 1.2.49 уточнил trigger: crash детерминирован только при закрытии через красную NSWindow close кнопку (путь `LauncherWindowDelegate::CanClose` → Chromium async browser teardown), и **не** воспроизводится при Cmd+Q / Dock Quit (путь `-[NSApplication stop:]` обходит buggy Chromium callback).
+- **Root cause:** Chromium 141 (shipped inside our CEF `141.0.10+chromium-141.0.7390.123`) отправляет AppKit-private selector, который больше не существует на macOS 26.3.1. Proper fix требует CEF/Chromium upgrade и остаётся **deferred** как отдельный investigation scope.
+- **Mitigation 1.2.50:** `InstallCodeAIHubUncaughtExceptionHandler()` устанавливается в `main()` до `CefExecuteProcess`. Перехватывает только `NSInvalidArgumentException` с reason `unrecognized selector sent to instance` + `NSApplication`, логирует в stderr, возвращается без propagation. Любое другое uncaught exception forward'ится в previous handler. Chromium teardown завершается clean (`OnBeforeClose` → `CefQuitMessageLoop()` → `main()` returns → `CefShutdown()`), crash dialog не появляется.
+- **Не регрессирует 1.2.49:** Cmd+V paste, SuperWhisper, Cmd+C/X/A, меню Edit, Cmd+Q / Dock Quit / red close button / dock reopen — всё работает как было. NSApplication остаётся plain, никакого `CefAppProtocol` shell, никаких delegate/plist/window-close flow изменений.
+
+### 1.2.49 (previous)
+- Полный rollback CEF bootstrap refactor из 1.2.46 + 1.2.48. Восстановлен `[NSApplication sharedApplication]` bootstrap 1.2.45 baseline, Cmd+V/SuperWhisper заработали. Crash-on-quit вернулся как known issue — теперь mitigated в 1.2.50.
 
 ### 1.2.48 (previous — reverted)
 - Narrow fix: попытка вернуть clipboard shortcuts через удаление Edit menu и стандартный `applicationShouldTerminate:` path. Не попал в корень; полностью откачен в 1.2.49.
