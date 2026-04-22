@@ -16,6 +16,11 @@ import type {
   ProjectManagerDiagnosticLogPayload,
   ProjectUpdatePayload,
   SettingsLoadedPayload,
+  SettingsLocalizationSyncStatusPayload,
+  SettingsProviderTarget,
+  SettingsSaveErrorPayload,
+  SettingsUserGlossaryFilePayload,
+  SettingsVersionsPayload,
   WorkspaceSelectPayload,
   WorkspaceSnapshotRequestPayload,
 } from "./core-stream-message-types";
@@ -29,10 +34,6 @@ import { createDialogApi, type DialogApi } from "./services/dialog-api";
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
-type LocalizationSyncStatus = {
-  readonly busy: boolean;
-  readonly message: string | null;
-};
 type ProjectManagerWindow = typeof window & {
   __CODEAI_PM_STOP_SESSION__?: (sessionId: string) => void;
 };
@@ -44,7 +45,11 @@ class ProjectManagerApi {
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();
   private lastSettingsPayload: SettingsLoadedPayload | null = null;
-  private localizationSyncStatus: LocalizationSyncStatus = {
+  private lastSettingsSaveError: string | null = null;
+  private lastSettingsVersionsPayload: SettingsVersionsPayload | null = null;
+  private lastUserGlossaryFilePayload: SettingsUserGlossaryFilePayload | null =
+    null;
+  private localizationSyncStatus: SettingsLocalizationSyncStatusPayload = {
     busy: false,
     message: null,
   };
@@ -81,7 +86,7 @@ class ProjectManagerApi {
               }
             : null;
         if (payload) {
-          this.localizationSyncStatus = payload;
+          this.setLocalizationSyncStatus(payload);
           this.notifyCoreListeners({
             type: "settings:localization-sync-status",
             payload,
@@ -130,6 +135,7 @@ class ProjectManagerApi {
         });
         this.listProjects(); // Initial fetch
         this.loadSettings();
+        this.loadSettingsVersions();
       };
       this.socket.onmessage = (event) => {
         try {
@@ -173,8 +179,49 @@ class ProjectManagerApi {
     this.send({ type: "settings:load" });
   }
 
+  loadSettingsVersions(): void {
+    this.send({ type: "settings:versions" });
+  }
+
   getLastSettingsPayload(): SettingsLoadedPayload | null {
     return this.lastSettingsPayload;
+  }
+
+  getLastSettingsSaveError(): string | null {
+    return this.lastSettingsSaveError;
+  }
+
+  getLastSettingsVersionsPayload(): SettingsVersionsPayload | null {
+    return this.lastSettingsVersionsPayload;
+  }
+
+  getLastUserGlossaryFilePayload(): SettingsUserGlossaryFilePayload | null {
+    return this.lastUserGlossaryFilePayload;
+  }
+
+  saveSettings(settings: unknown): void {
+    this.lastSettingsSaveError = null;
+    this.send({ type: "settings:save", payload: { settings } });
+  }
+
+  resetSettings(): void {
+    this.lastSettingsSaveError = null;
+    this.send({ type: "settings:reset" });
+  }
+
+  updateSettingsProvider(
+    provider: "claude" | "codex" | "gemini",
+    target: SettingsProviderTarget
+  ): void {
+    this.send({
+      type: "settings:update-provider",
+      payload: { provider, target },
+    });
+  }
+
+  openUserGlossaryFile(): void {
+    this.lastUserGlossaryFilePayload = null;
+    this.send({ type: "settings:open-user-glossary-file" });
   }
 
   addProject(path: string, name?: string): void {
@@ -308,7 +355,7 @@ class ProjectManagerApi {
     return `${wsUrl}/api/v1/stream`;
   }
 
-  getLocalizationSyncStatus(): LocalizationSyncStatus {
+  getLocalizationSyncStatus(): SettingsLocalizationSyncStatusPayload {
     return this.localizationSyncStatus;
   }
 
@@ -345,9 +392,6 @@ class ProjectManagerApi {
         this.notifyListeners(payload.projects);
       }
     }
-    if (message.type === "settings:loaded") {
-      this.lastSettingsPayload = message.payload as SettingsLoadedPayload;
-    }
     if (message.type === "core:state") {
       const payload = message.payload as CoreStatePayload;
       const providers = extractProviders(payload);
@@ -355,7 +399,50 @@ class ProjectManagerApi {
         this.providerSnapshot = providers;
       }
     }
+    this.cacheSettingsMessage(message);
     this.notifyCoreListeners(message);
+  }
+
+  private cacheSettingsMessage(message: IncomingMessage): void {
+    switch (message.type) {
+      case "settings:loaded": {
+        this.lastSettingsPayload = message.payload as SettingsLoadedPayload;
+        this.lastSettingsSaveError = null;
+        return;
+      }
+      case "settings:saved": {
+        this.lastSettingsPayload = {
+          ...(message.payload as SettingsLoadedPayload),
+          error: null,
+        };
+        this.lastSettingsSaveError = null;
+        return;
+      }
+      case "settings:save-error": {
+        const payload = message.payload as SettingsSaveErrorPayload;
+        this.lastSettingsSaveError = payload.error;
+        return;
+      }
+      case "settings:localization-sync-status": {
+        this.setLocalizationSyncStatus(
+          message.payload as SettingsLocalizationSyncStatusPayload
+        );
+        return;
+      }
+      case "settings:versions": {
+        this.lastSettingsVersionsPayload =
+          message.payload as SettingsVersionsPayload;
+        return;
+      }
+      case "settings:user-glossary-file": {
+        this.lastUserGlossaryFilePayload =
+          message.payload as SettingsUserGlossaryFilePayload;
+        return;
+      }
+      default: {
+        return;
+      }
+    }
   }
 
   private notifyListeners(projects: readonly WorkspaceProject[]): void {
@@ -368,6 +455,12 @@ class ProjectManagerApi {
     for (const listener of this.coreListeners) {
       listener(message);
     }
+  }
+
+  private setLocalizationSyncStatus(
+    payload: SettingsLocalizationSyncStatusPayload
+  ): void {
+    this.localizationSyncStatus = payload;
   }
 
   private scheduleReconnect(): void {

@@ -5,26 +5,87 @@ import { readBrowserLocalizationBootstrapSnapshot } from "../../../ui/src/app-ho
 import {
   createDefaultSettings,
   mapSettingsSnapshot,
+  type ProviderId,
   type RawSettingsSnapshot,
   type Settings,
 } from "../../../ui/src/components/settings/settings-state-model";
+import type { VersionsState } from "../../../ui/src/components/settings/use-settings-state-support";
 import { createBootstrapSettings } from "../../../ui/src/shared-hooks/use-bootstrap-settings";
-import type { SettingsLoadedPayload } from "../../core-stream-message-types";
-
-type IncomingMessage = {
-  readonly type: string;
-  readonly payload?: unknown;
-};
+import type {
+  IncomingMessage,
+  SettingsLoadedPayload,
+  SettingsLocalizationSyncStatusPayload,
+  SettingsProviderTarget,
+  SettingsSaveErrorPayload,
+  SettingsSnapshotPayload,
+  SettingsUserGlossaryFilePayload,
+  SettingsVersionsPayload,
+} from "../../core-stream-message-types";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-export const useProjectManagerSettings = (): {
+const createVersionsState = (
+  payload: SettingsVersionsPayload | null
+): VersionsState => ({
+  data: payload?.versions ?? null,
+  error: payload?.error ?? null,
+  loading: payload === null,
+  updatingTargets: [],
+});
+
+type SettingsPayload = SettingsLoadedPayload | SettingsSnapshotPayload;
+
+const resolveSettingsPayloadError = (payload: SettingsPayload): string | null =>
+  "error" in payload && typeof payload.error === "string"
+    ? payload.error
+    : null;
+
+const applySettingsPayload = (options: {
+  readonly payload: SettingsPayload;
+  readonly setError: (value: string | null) => void;
+  readonly setLocalizationRuntime: (
+    value: BrowserLocalizationRuntimePayload
+  ) => void;
+  readonly setSettings: (value: Settings) => void;
+}): void => {
+  const { payload, setError, setLocalizationRuntime, setSettings } = options;
+  const rawSettings = payload.settings;
+
+  if (!isRecord(rawSettings)) {
+    setLocalizationRuntime(null);
+    setSettings(createDefaultSettings());
+    setError(resolveSettingsPayloadError(payload) ?? "Invalid settings payload");
+    return;
+  }
+
+  setLocalizationRuntime(payload.localizationRuntime ?? null);
+  setSettings(mapSettingsSnapshot(rawSettings as RawSettingsSnapshot));
+  setError(resolveSettingsPayloadError(payload));
+};
+
+export type UseProjectManagerSettingsResult = {
   readonly settings: Settings;
   readonly error: string | null;
   readonly localizationRuntime: BrowserLocalizationRuntimePayload;
+  readonly localizationSyncStatus: SettingsLocalizationSyncStatusPayload;
+  readonly reset: () => void;
   readonly reload: () => void;
-} => {
+  readonly reloadVersions: () => void;
+  readonly resetting: boolean;
+  readonly save: (nextSettings: Settings) => void;
+  readonly saveError: string | null;
+  readonly saving: boolean;
+  readonly updateProvider: (
+    provider: ProviderId,
+    target: SettingsProviderTarget
+  ) => void;
+  readonly userGlossaryFile: SettingsUserGlossaryFilePayload | null;
+  readonly versions: VersionsState;
+  readonly openUserGlossaryFile: () => void;
+};
+
+export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => {
   const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
   const [localizationRuntime, setLocalizationRuntime] =
     useState<BrowserLocalizationRuntimePayload>(
@@ -34,53 +95,150 @@ export const useProjectManagerSettings = (): {
     createBootstrapSettings(bootstrapSnapshot)
   );
   const [error, setError] = useState<string | null>(null);
+  const [localizationSyncStatus, setLocalizationSyncStatus] =
+    useState<SettingsLocalizationSyncStatusPayload>(() =>
+      api.getLocalizationSyncStatus()
+    );
+  const [saveError, setSaveError] = useState<string | null>(() =>
+    api.getLastSettingsSaveError()
+  );
+  const [saving, setSaving] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [versions, setVersions] = useState<VersionsState>(() =>
+    createVersionsState(api.getLastSettingsVersionsPayload())
+  );
+  const [userGlossaryFile, setUserGlossaryFile] =
+    useState<SettingsUserGlossaryFilePayload | null>(() =>
+      api.getLastUserGlossaryFilePayload()
+    );
 
   const reload = useCallback(() => {
     api.loadSettings();
   }, []);
 
+  const reloadVersions = useCallback(() => {
+    setVersions((current) => ({
+      ...current,
+      error: null,
+      loading: true,
+    }));
+    api.loadSettingsVersions();
+  }, []);
+
+  const save = useCallback((nextSettings: Settings) => {
+    setSaving(true);
+    setSaveError(null);
+    api.saveSettings(nextSettings);
+  }, []);
+
+  const reset = useCallback(() => {
+    setResetting(true);
+    setSaveError(null);
+    api.resetSettings();
+  }, []);
+
+  const updateProvider = useCallback(
+    (provider: ProviderId, target: SettingsProviderTarget) => {
+      const targetKey = `${provider}:${target}`;
+      setVersions((current) => ({
+        ...current,
+        error: null,
+        updatingTargets: [...new Set([...current.updatingTargets, targetKey])],
+      }));
+      api.updateSettingsProvider(provider, target);
+    },
+    []
+  );
+
+  const openUserGlossaryFile = useCallback(() => {
+    setUserGlossaryFile(null);
+    api.openUserGlossaryFile();
+  }, []);
+
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message: IncomingMessage) => {
-      if (message.type !== "settings:loaded") {
-        return;
+      switch (message.type) {
+        case "settings:loaded":
+        case "settings:saved": {
+          applySettingsPayload({
+            payload: message.payload as SettingsPayload,
+            setError,
+            setLocalizationRuntime,
+            setSettings,
+          });
+          setSaving(false);
+          setResetting(false);
+          setSaveError(null);
+          return;
+        }
+        case "settings:save-error": {
+          const payload = message.payload as SettingsSaveErrorPayload;
+          setSaving(false);
+          setResetting(false);
+          setSaveError(payload.error);
+          return;
+        }
+        case "settings:localization-sync-status": {
+          setLocalizationSyncStatus(
+            message.payload as SettingsLocalizationSyncStatusPayload
+          );
+          return;
+        }
+        case "settings:versions": {
+          const payload = message.payload as SettingsVersionsPayload;
+          setVersions({
+            data: payload.versions ?? null,
+            error: payload.error ?? null,
+            loading: false,
+            updatingTargets: [],
+          });
+          return;
+        }
+        case "settings:user-glossary-file": {
+          setUserGlossaryFile(message.payload as SettingsUserGlossaryFilePayload);
+          return;
+        }
+        default: {
+          return;
+        }
       }
-
-      if (!isRecord(message.payload)) {
-        setSettings(createDefaultSettings());
-        setError("Invalid settings payload");
-        return;
-      }
-
-      const payload = message.payload as SettingsLoadedPayload;
-      const rawSettings = payload.settings;
-
-      if (!isRecord(rawSettings)) {
-        setLocalizationRuntime(null);
-        setSettings(createDefaultSettings());
-        setError(typeof payload.error === "string" ? payload.error : null);
-        return;
-      }
-
-      setLocalizationRuntime(payload.localizationRuntime ?? null);
-      setSettings(mapSettingsSnapshot(rawSettings as RawSettingsSnapshot));
-      setError(null);
     });
 
     const cachedPayload = api.getLastSettingsPayload();
-    if (cachedPayload && isRecord(cachedPayload.settings)) {
-      setLocalizationRuntime(cachedPayload.localizationRuntime ?? null);
-      setSettings(mapSettingsSnapshot(cachedPayload.settings as RawSettingsSnapshot));
-      setError(
-        typeof cachedPayload.error === "string" ? cachedPayload.error : null
-      );
+    if (cachedPayload) {
+      applySettingsPayload({
+        payload: cachedPayload,
+        setError,
+        setLocalizationRuntime,
+        setSettings,
+      });
     } else {
       reload();
+    }
+    if (api.getLastSettingsVersionsPayload() === null) {
+      reloadVersions();
     }
 
     return () => {
       unsubscribe();
     };
-  }, [reload]);
+  }, [reload, reloadVersions]);
 
-  return { settings, error, localizationRuntime, reload };
+  return {
+    settings,
+    error,
+    localizationRuntime,
+    localizationSyncStatus,
+    reload,
+    reloadVersions,
+    save,
+    reset,
+    saveError,
+    saving,
+    resetting,
+    versions,
+    updateProvider,
+    userGlossaryFile,
+    openUserGlossaryFile,
+  };
 };

@@ -1,4 +1,8 @@
 import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
+import type {
+  ProviderId,
+  ProviderVersions,
+} from "../ui/src/components/settings/settings-state-model";
 import type { WorkspaceProject } from "./types";
 
 export type WorkspaceScopeSyncReason =
@@ -155,6 +159,32 @@ export type ProjectManagerDiagnosticLogPayload = {
   readonly context?: Record<string, unknown>;
 };
 
+export type SettingsProviderTarget = "cli" | "core" | "sdk";
+
+export type SettingsSnapshotPayload = {
+  readonly localizationRuntime?: LocalizationRuntimePayload | null;
+  readonly settings?: unknown;
+};
+
+export type SettingsSaveErrorPayload = {
+  readonly error: string;
+};
+
+export type SettingsLocalizationSyncStatusPayload = {
+  readonly busy: boolean;
+  readonly message: string | null;
+};
+
+export type SettingsVersionsPayload = {
+  readonly error?: string | null;
+  readonly versions?: ProviderVersions;
+};
+
+export type SettingsUserGlossaryFilePayload = {
+  readonly error?: string | null;
+  readonly path: string | null;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -214,6 +244,20 @@ export type OutgoingMessage =
     }
   | { readonly type: "dialog:send"; readonly payload: DialogSendRequestPayload }
   | { readonly type: "settings:load" }
+  | { readonly type: "settings:versions" }
+  | {
+      readonly type: "settings:save";
+      readonly payload: { readonly settings: unknown };
+    }
+  | { readonly type: "settings:reset" }
+  | {
+      readonly type: "settings:update-provider";
+      readonly payload: {
+        readonly provider: ProviderId;
+        readonly target: SettingsProviderTarget;
+      };
+    }
+  | { readonly type: "settings:open-user-glossary-file" }
   | {
       readonly type: "pm:diag:log";
       readonly payload: ProjectManagerDiagnosticLogPayload;
@@ -282,6 +326,30 @@ export type IncomingMessage =
       };
     }
   | {
+      readonly type: "settings:loaded";
+      readonly payload: SettingsLoadedPayload;
+    }
+  | {
+      readonly type: "settings:saved";
+      readonly payload: SettingsSnapshotPayload;
+    }
+  | {
+      readonly type: "settings:save-error";
+      readonly payload: SettingsSaveErrorPayload;
+    }
+  | {
+      readonly type: "settings:localization-sync-status";
+      readonly payload: SettingsLocalizationSyncStatusPayload;
+    }
+  | {
+      readonly type: "settings:versions";
+      readonly payload: SettingsVersionsPayload;
+    }
+  | {
+      readonly type: "settings:user-glossary-file";
+      readonly payload: SettingsUserGlossaryFilePayload;
+    }
+  | {
       readonly type: "dialog:message";
       readonly payload: {
         readonly dialogId: string;
@@ -304,4 +372,3 @@ export type SettingsLoadedPayload = {
   readonly localizationRuntime?: LocalizationRuntimePayload | null;
   readonly settings?: unknown;
 };
-
