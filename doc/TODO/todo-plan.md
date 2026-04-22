@@ -31,14 +31,12 @@
 ## Phase 1 — PM Translation Engine Selector Stabilization (owner: Codex, updated: 2026-04-22)
 
 ### Stream A: Intake + crash boundary
-1. [TODO] Зафиксировать standalone PM crash на `UI Translation Engine`, открыть planning cycle и определить запрет на native `<select>` для translation-engine controls в CEF/macOS path. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/PM_TranslationEngineSelector_CEF_Crash_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: plan translation engine selector crash fix`
-2. [TODO] Git Commit: `docs: plan translation engine selector crash fix` (hash: TBD)
+1. [DONE] Зафиксировать standalone PM crash на `UI Translation Engine`, открыть planning cycle и определить запрет на native `<select>` для translation-engine controls в CEF/macOS path. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/PM_TranslationEngineSelector_CEF_Crash_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: plan translation engine selector crash fix`
+2. [DONE] Git Commit: `docs: plan translation engine selector crash fix` (hash: `b013477e5`)
 
 ### Stream B: Custom translation engine selector
-1. [TODO] Заменить native `<select>` в shared `TranslationEngineSelector` на DOM-owned selector/listbox, чтобы убрать AppKit-native popup trigger из PM localization settings и сохранить availability UX. scope: `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx`; ожидаемый commit message: `fix(settings): replace native translation engine select`
+1. [DONE] Заменить native `<select>` в shared `TranslationEngineSelector` на DOM-owned selector/listbox, чтобы убрать AppKit-native popup trigger из PM localization settings и сохранить availability UX; подтвердить исправление таргетными сборками `npm run build:webview` и `npm run build:project-manager`. scope: `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx`; ожидаемый commit message: `fix(settings): replace native translation engine select`
 2. [TODO] Git Commit: `fix(settings): replace native translation engine select` (hash: TBD)
-3. [TODO] Подтвердить исправление таргетными сборками shared UI bundles после замены selector surface. scope: `src/client/ui`; ожидаемый commit message: `chore: verify translation engine selector fix`
-4. [TODO] Git Commit: `chore: verify translation engine selector fix` (hash: TBD)
 
 ### Stream C: SSOT sync
 1. [TODO] Синхронно обновить bug history и SSOT под новый `no-native-select-for-translation-engine` contract в shared settings UI / standalone CEF path. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; ожидаемый commit message: `docs: sync translation engine selector crash contract`
