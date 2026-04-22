@@ -37,6 +37,13 @@ type UsageValue<T> = {
 
 type UsageLimits = UsageValue<Bucket>;
 type UsageLimitLabels = UsageValue<string>;
+type CachedUsageTelemetry = {
+  readonly providerScopeKey: string;
+  readonly usageLimitLabels: UsageLimitLabels | null;
+  readonly usageLimits: UsageLimits;
+};
+
+const providerUsageTelemetryCache = new Map<string, CachedUsageTelemetry>();
 
 const areBucketsEqual = (
   left: Bucket | null | undefined,
@@ -182,31 +189,88 @@ const extractUsageLimits = (event: unknown): UsageLimits | null => {
   };
 };
 
+const cacheUsageTelemetry = (telemetry: CachedUsageTelemetry): void => {
+  providerUsageTelemetryCache.set(telemetry.providerScopeKey, telemetry);
+};
+
+const resolveCachedUsageTelemetry = (
+  snapshot: SessionSnapshots[string]
+): CachedUsageTelemetry | null => {
+  const providerScopeKey = resolveProviderScopeKey(snapshot);
+  if (!providerScopeKey) {
+    return null;
+  }
+  return providerUsageTelemetryCache.get(providerScopeKey) ?? null;
+};
+
+export const seedSnapshotWithCachedUsageLimits = (
+  snapshot: SessionSnapshots[string]
+): SessionSnapshots[string] => {
+  const cachedTelemetry = resolveCachedUsageTelemetry(snapshot);
+  if (!cachedTelemetry) {
+    return snapshot;
+  }
+
+  const currentProviderScopeKey = normalizeProviderScopeKey(
+    snapshot.status.providerScopeKey
+  );
+  const usageLimitLabels =
+    cachedTelemetry.usageLimitLabels ?? snapshot.status.usageLimitLabels ?? null;
+  if (
+    areUsageLimitsEqual(snapshot.status.usageLimits, cachedTelemetry.usageLimits) &&
+    areUsageLimitLabelsEqual(snapshot.status.usageLimitLabels, usageLimitLabels) &&
+    currentProviderScopeKey === cachedTelemetry.providerScopeKey
+  ) {
+    return snapshot;
+  }
+
+  return {
+    ...snapshot,
+    status: {
+      ...snapshot.status,
+      providerScopeKey: cachedTelemetry.providerScopeKey,
+      usageLimits: cachedTelemetry.usageLimits,
+      ...(usageLimitLabels ? { usageLimitLabels } : {}),
+    },
+  };
+};
+
+export const resetProviderUsageTelemetryCacheForTests = (): void => {
+  providerUsageTelemetryCache.clear();
+};
+
 export const updateSnapshotsWithUsageLimits = (
   snapshots: SessionSnapshots,
   payload: { readonly sessionId: string; readonly event: unknown }
 ): SessionSnapshots => {
-  const sourceSnapshot = snapshots[payload.sessionId];
-  if (!sourceSnapshot) {
-    return snapshots;
-  }
-
   const usageLimits = extractUsageLimits(payload.event);
   if (!usageLimits) {
     return snapshots;
   }
 
+  const sourceSnapshot = snapshots[payload.sessionId];
   const sourceProviderKey =
     extractProviderScopeKey(payload.event) ||
-    resolveProviderScopeKey(sourceSnapshot);
+    (sourceSnapshot ? resolveProviderScopeKey(sourceSnapshot) : "");
+  const usageLimitLabels =
+    extractUsageLimitLabels(payload.event) ??
+    sourceSnapshot?.status.usageLimitLabels ??
+    null;
+  if (sourceProviderKey) {
+    cacheUsageTelemetry({
+      providerScopeKey: sourceProviderKey,
+      usageLimitLabels,
+      usageLimits,
+    });
+  }
+  if (!sourceSnapshot) {
+    return snapshots;
+  }
+
   const sourceProviderFamily = normalizeProviderFamily(sourceProviderKey);
   const currentSourceProviderKey = normalizeProviderScopeKey(
     sourceSnapshot.status.providerScopeKey
   );
-  const usageLimitLabels =
-    extractUsageLimitLabels(payload.event) ??
-    sourceSnapshot.status.usageLimitLabels ??
-    null;
   if (
     areUsageLimitsEqual(sourceSnapshot.status.usageLimits, usageLimits) &&
     areUsageLimitLabelsEqual(sourceSnapshot.status.usageLimitLabels, usageLimitLabels) &&

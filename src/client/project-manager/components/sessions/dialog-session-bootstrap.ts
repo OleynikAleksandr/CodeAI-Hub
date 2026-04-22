@@ -8,6 +8,7 @@ import {
 } from "../../../ui/src/session/helpers";
 import { buildProviderLabels } from "./project-manager-dialog-session-view-helpers";
 import { applyWorkspaceSnapshotToSnapshots } from "./session-stream";
+import { seedSnapshotWithCachedUsageLimits } from "./usage-limits-stream";
 
 const RUNTIME_RESTORE_IN_FLIGHT_TTL_MS = 30_000;
 
@@ -67,10 +68,12 @@ export const createDialogBootstrapSnapshots = (options: {
     return options.previous;
   }
   const labelsForSnapshot = buildProviderLabels(options.providerId);
-  const base = createInitialSnapshot(
-    options.nextSession,
-    labelsForSnapshot,
-    options.settings
+  const base = seedSnapshotWithCachedUsageLimits(
+    createInitialSnapshot(
+      options.nextSession,
+      labelsForSnapshot,
+      options.settings
+    )
   );
   let next: SessionSnapshots = {
     ...options.previous,

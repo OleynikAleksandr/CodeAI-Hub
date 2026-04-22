@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
 import {
+  resetProviderUsageTelemetryCacheForTests,
+  seedSnapshotWithCachedUsageLimits,
   updateSnapshotsWithUsageLimits,
 } from "./usage-limits-stream";
 
@@ -36,6 +38,7 @@ const createSnapshot = (options?: {
 });
 
 test("updateSnapshotsWithUsageLimits applies direct usageLimits payload", () => {
+  resetProviderUsageTelemetryCacheForTests();
   const snapshots = { s1: createSnapshot() };
 
   const next = updateSnapshotsWithUsageLimits(snapshots, {
@@ -66,6 +69,7 @@ test("updateSnapshotsWithUsageLimits applies direct usageLimits payload", () => 
 });
 
 test("updateSnapshotsWithUsageLimits supports stream_event data.kind=usage_limits payload", () => {
+  resetProviderUsageTelemetryCacheForTests();
   const snapshots = { s1: createSnapshot() };
 
   const next = updateSnapshotsWithUsageLimits(snapshots, {
@@ -97,6 +101,7 @@ test("updateSnapshotsWithUsageLimits supports stream_event data.kind=usage_limit
 });
 
 test("updateSnapshotsWithUsageLimits ignores malformed payloads", () => {
+  resetProviderUsageTelemetryCacheForTests();
   const snapshots = { s1: createSnapshot() };
 
   const next = updateSnapshotsWithUsageLimits(snapshots, {
@@ -117,6 +122,7 @@ test("updateSnapshotsWithUsageLimits ignores malformed payloads", () => {
 });
 
 test("updateSnapshotsWithUsageLimits normalizes same-provider sessions to a global scope key", () => {
+  resetProviderUsageTelemetryCacheForTests();
   const snapshots = {
     s1: createSnapshot({
       providerSummary: "CodeAI-Hub codex 5.4",
@@ -158,6 +164,7 @@ test("updateSnapshotsWithUsageLimits normalizes same-provider sessions to a glob
 });
 
 test("updateSnapshotsWithUsageLimits keeps cached usage snapshot stable for identical replayed payload", () => {
+  resetProviderUsageTelemetryCacheForTests();
   const usageLimits = {
     currentSession: {
       percentUsed: 18,
@@ -189,6 +196,7 @@ test("updateSnapshotsWithUsageLimits keeps cached usage snapshot stable for iden
 });
 
 test("updateSnapshotsWithUsageLimits keeps tokenUsage untouched when replaying cached usage limits", () => {
+  resetProviderUsageTelemetryCacheForTests();
   const snapshots = {
     s1: createSnapshot({
       providerSummary: "Codex",
@@ -228,4 +236,45 @@ test("updateSnapshotsWithUsageLimits keeps tokenUsage untouched when replaying c
   assert.equal(next.s2.status.connectionState, "running");
   assert.equal(next.s1.status.continuityLock?.active, true);
   assert.equal(next.s2.status.continuityLock?.active, true);
+});
+
+test("updateSnapshotsWithUsageLimits caches provider telemetry before dialog snapshot exists", () => {
+  resetProviderUsageTelemetryCacheForTests();
+  const next = updateSnapshotsWithUsageLimits({}, {
+    sessionId: "missing-session",
+    event: {
+      type: "stream_event",
+      providerSessionId: "provider-session-replay",
+      data: {
+        kind: "usage_limits",
+        providerScopeKey: "codex:provider-session-replay",
+        usageLimits: {
+          currentSession: {
+            percentUsed: 41,
+            resetsAt: "2026-04-22T10:00:00.000Z",
+          },
+          currentWeekAllModels: {
+            percentUsed: 63,
+            resetsAt: "2026-04-26T10:00:00.000Z",
+          },
+        },
+      },
+    },
+  });
+
+  assert.deepEqual(next, {});
+
+  const seeded = seedSnapshotWithCachedUsageLimits(
+    createSnapshot({
+      providerSummary: "Codex",
+      providerScopeKey: "codex:global",
+    })
+  );
+
+  assert.equal(seeded.status.providerScopeKey, "codex:global");
+  assert.equal(seeded.status.usageLimits?.currentSession?.percentUsed, 41);
+  assert.equal(
+    seeded.status.usageLimits?.currentWeekAllModels?.percentUsed,
+    63
+  );
 });
