@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/gemini-module",
-  "version": "1.2.48",
+  "version": "1.2.49",
   "description": "Gemini provider integration for CodeAI Hub core (CJS bridge)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
