@@ -105,6 +105,9 @@ export class RemoteBridgeMessageRouter {
           incoming.payload.target
         );
         break;
+      case "settings:open-user-glossary-file":
+        await this.deps.settingsHandler.handleOpenUserGlossaryFile();
+        break;
       case "session:message":
         await this.deps.sessionHandler.handleMessage(
           incoming.payload.sessionId,

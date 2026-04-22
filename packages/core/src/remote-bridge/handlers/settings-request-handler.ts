@@ -1,4 +1,7 @@
-import type { LocalizationFacade } from "@codeai-hub/localization";
+import {
+  type LocalizationFacade,
+  UserGlossaryStore,
+} from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
@@ -126,6 +129,16 @@ export class SettingsRequestHandler {
     }
   }
 
+  async handleOpenUserGlossaryFile(): Promise<void> {
+    try {
+      this.broadcastUserGlossaryFile(
+        await new UserGlossaryStore().ensureEditableGlossaryFile()
+      );
+    } catch (error) {
+      this.broadcastUserGlossaryFileError(toErrorMessage(error));
+    }
+  }
+
   private async publishSaved(result: SettingsWriteResult): Promise<void> {
     if (result.syncMode === "strict") {
       this.broadcastLocalizationSyncStatus({
@@ -175,6 +188,20 @@ export class SettingsRequestHandler {
     this.broadcaster({
       type: "settings:versions",
       payload: { versions },
+    });
+  }
+
+  private broadcastUserGlossaryFile(path: string): void {
+    this.broadcaster({
+      type: "settings:user-glossary-file",
+      payload: { path },
+    });
+  }
+
+  private broadcastUserGlossaryFileError(error: string): void {
+    this.broadcaster({
+      type: "settings:user-glossary-file",
+      payload: { error, path: null },
     });
   }
 }

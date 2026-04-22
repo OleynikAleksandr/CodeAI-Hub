@@ -199,6 +199,13 @@ type CoreBridgeEvent =
         readonly versions?: unknown;
       };
     }
+  | {
+      readonly type: "settings:user-glossary-file";
+      readonly payload: {
+        readonly error?: string | null;
+        readonly path: string | null;
+      };
+    }
   | { readonly type: "core:notification"; readonly payload: unknown }
   | {
       readonly type: "core:loading-status";
@@ -292,7 +299,8 @@ type CoreIncomingMessage =
         readonly provider: "claude" | "codex" | "gemini";
         readonly target: "cli" | "core" | "sdk";
       };
-    };
+    }
+  | { readonly type: "settings:open-user-glossary-file" };
 
 interface ProjectManagerDiagnosticLogIncomingMessage {
   readonly payload: {
