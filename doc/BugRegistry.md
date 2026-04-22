@@ -4,6 +4,8 @@
 
 ## Правила ведения
 - **Required reading перед любым UI/оркестрационным фиксом:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- **Порядок записей всегда `newest-first`:** новый баг добавляется в начало индекса и в начало подробных карточек, а не в конец файла.
+- **Индекс и карточка обновляются синхронно:** нельзя добавить или закрыть баг только в одной части реестра.
 - **Добавляем запись сразу** при обнаружении бага (Status: `OPEN`).
 - **Любой фикс** обновляет запись: `Root cause`, `Fix`, `Commits`, `Release`, `Guards`.
 - Для багов на стыке Core/PM/UI обязательны **guards** (минимум: тест или воспроизводимый smoke‑чек).
@@ -12,8 +14,8 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
-| BUG-2026-04-22-03 | OPEN | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | TBD |
-| BUG-2026-04-22-02 | OPEN | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | TBD |
+| BUG-2026-04-22-03 | FIXED | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | 1.2.47 |
+| BUG-2026-04-22-02 | FIXED | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | 1.2.47 |
 | BUG-2026-04-22-01 | FIXED | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | 1.2.46 |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
 | BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
@@ -64,7 +66,7 @@
 ---
 ## BUG-2026-04-22-03 — Claude/Core/UI: first cold-open usage refresh does not materialize before repeated reopen
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - После Core restart и открытия старого Claude dialog/workspace pre-turn usage limits не появляются на первом cold-open.
@@ -77,15 +79,28 @@
 - После первого позднего успешного refresh provider-global cache уже warmed, поэтому повторное открытие шага мгновенно показывает replay.
 
 **Root cause (confirmed):**
-- Проблема в async contract первого cold-open refresh: Core lifecycle не ждёт завершения Claude usage probe, а provider cache наполняется уже после initial open window.
+- `packages/Claude_Module/src/provider/claude-provider-adapter.ts` делал `refreshUsageLimits()` как fire-and-forget: `dialog_opened` refresh завершался в Core раньше, чем HTTP probe фактически возвращал usable payload.
+- PM `updateSnapshotsWithUsageLimits()` обновлял только direct source session. Если поздний provider-scoped payload приходил уже после того, как placeholder/bootstrap session id был заменён restored runtime session id, событие кэшировалось, но не применялось к открытому snapshot. Поэтому пользователь видел лимиты только после повторного открытия шага, когда происходил seed из provider cache.
 
-**Accepted fix direction (2026-04-22):**
-- Сделать provider refresh contract truly awaitable или ввести отдельный Core-side completion seam для late-arriving usage payload.
-- Сохранить account-scoped cache и current in-turn/post-turn refresh model без eager session resume.
+**Fix (1.2.47):**
+- `packages/Claude_Module/src/provider/claude-provider-adapter.ts`: `refreshUsageLimits()` теперь truly awaitable и резолвится только после завершения `readStreamPayload(force: true)` и возможного broadcast.
+- `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`: тот же awaitable contract применён и к Codex, чтобы Core lifecycle одинаково трактовал completion semantics всех account-scoped refresh adapter'ов.
+- `src/client/project-manager/components/sessions/usage-limits-stream.ts`: provider-scoped late payload теперь fan-out'ится по provider family даже если исходный `payload.sessionId` уже отсутствует в локальных snapshots из-за restore-swap.
+
+**Commits:**
+- `884f7b1eb fix: harden pre-turn usage limits cold-open refresh`
+
+**Guards:**
+- `packages/Claude_Module/src/provider/claude-provider-adapter.test.ts`
+- `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.test.ts`
+- `src/client/project-manager/components/sessions/usage-limits-stream.test.ts`
+
+**Release:**
+- `1.2.47`
 
 ## BUG-2026-04-22-02 — Codex/Core/UI: cold-open usage limits lose reset timestamps
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - После Core restart и открытия старого Codex dialog/workspace `Session` / `Weekly` проценты уже отображаются, но `Resets ...` в скобках отсутствуют.
@@ -95,11 +110,20 @@
 - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts` normalizes `snapshot.primary.resetsAt` / `snapshot.secondary.resetsAt` через `asString(...)`, поэтому numeric payload отбрасывается как `null`.
 
 **Root cause (confirmed):**
-- Это не lifecycle issue, а payload normalization bug: Codex app-server возвращает `resetsAt` numeric-typed, а router принимает только string-typed value.
+- Это не lifecycle issue, а payload normalization bug: Codex app-server возвращает `resetsAt` numeric-typed, а router принимал только string-typed value и срезал reset timestamps до `null`.
 
-**Accepted fix direction (2026-04-22):**
-- Исправить normalization path так, чтобы numeric/string `resetsAt` одинаково превращались в display-safe timestamp value.
-- Добавить regression guard на numeric `resetsAt` payload.
+**Fix (1.2.47):**
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-usage-limits.ts`: новый helper нормализует numeric и digit-string `resetsAt` в ISO timestamp перед построением совместимого usage payload.
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`: usage-limits routing делегирован в новый helper; reset timestamps сохраняются на cold-open path, а сам router остаётся ниже 500-line architecture limit.
+
+**Commits:**
+- `884f7b1eb fix: harden pre-turn usage limits cold-open refresh`
+
+**Guards:**
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts`
+
+**Release:**
+- `1.2.47`
 
 ## BUG-2026-04-22-01 — Launcher/CEF/macOS: standalone Project Manager crashes on quit/close with plain `NSApplication`
 

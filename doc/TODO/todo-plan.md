@@ -9,4 +9,4 @@
 ## Navigation Until New Scope
 - Базовый SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - Индекс выбора документов: `doc/SolidWorks-WorkFlow/Docs_Index.md`
-- Последний session report: `doc/Sessions/Session084.md` после завершения текущей сессии.
+- Последний session report: `doc/Sessions/Session085.md` после завершения текущей сессии.
