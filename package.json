@@ -112,8 +112,7 @@
     "@codeai-hub/core-supervisor": "file:packages/core-supervisor",
     "@codeai-hub/localization": "file:packages/localization",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
-    "ws": "^8.18.3"
+    "remark-gfm": "^4.0.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [

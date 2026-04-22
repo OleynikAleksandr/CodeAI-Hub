@@ -61,12 +61,12 @@
 1. [DONE] Добавить dedicated PM settings window opener seam в main layout поверх уже существующего detached PM settings route, чтобы окно `SettingsView` открывалось и фокусировалось как независимый PM-owned surface без влияния на state текущих Sessions/Artifacts. scope: `src/client/project-manager/components/layout/use-detached-settings-window.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; ожидаемый commit message: `feat(pm): add dedicated settings window`
 2. [DONE] Git Commit: `feat(pm): add dedicated settings window` (hash: `f0815290a`)
 3. [DONE] Разместить кнопку `Open Settings` в footer зоне, где сейчас живёт `Workflow Tree MVP`: надпись остаётся слева, кнопка появляется справа, действие открывает dedicated settings window через уже существующий PM opener seam. scope: `src/client/project-manager/components/layout/status-bar.tsx`; ожидаемый commit message: `feat(pm): add footer settings entrypoint`
-4. [TODO] Git Commit: `feat(pm): add footer settings entrypoint` (hash: TBD)
+4. [DONE] Git Commit: `feat(pm): add footer settings entrypoint` (hash: `93b6254ee`)
 
 ## Phase 3 — Extension De-Scope + SSOT Sync (owner: Codex, updated: 2026-04-22)
 
 ### Stream E: Remove runtime authority from VS Code extension
-1. [TODO] Убрать у extension activation право стартовать/attach-ить `Core Runtime`; extension должен остаться distribution/install/update shell, а runtime bootstrap authority — только у Project Manager. scope: extension activation/runtime bootstrap path (`<= 3 файлов`); ожидаемый commit message: `chore(extension): remove core startup from vscode activation`
+1. [DONE] Убрать у extension activation право стартовать/attach-ить `Core Runtime`; extension оставить только как distribution/install/bootstrap-components shell, а runtime bootstrap authority — только у Project Manager. reachability cleanup для осиротевших extension-only runtime хвостов и root manifest выполнить в том же шаге. scope: `src/extension.ts`, `src/extension-module/core/core-keep-alive.ts`, `src/extension-module/settings/provider-auto-update-service.ts`, root manifests; ожидаемый commit message: `chore(extension): remove core startup from vscode activation`
 2. [TODO] Git Commit: `chore(extension): remove core startup from vscode activation` (hash: TBD)
 3. [TODO] Обезвредить legacy settings webview surface по согласованному compat path: passive notice или полное удаление activity bar settings surface, но без живого product UI внутри VS Code. scope: `package.json`, `src/extension-module/home-view-provider.ts`, `src/client/ui/src/app-host/settings-only-host.tsx`; ожидаемый commit message: `chore(extension): retire settings webview surface`
 4. [TODO] Git Commit: `chore(extension): retire settings webview surface` (hash: TBD)
