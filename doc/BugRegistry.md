@@ -14,9 +14,9 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
-| BUG-2026-04-22-07 | OPEN | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | TBD |
-| BUG-2026-04-22-06 | OPEN | PM/Settings/Recovery | в General tab пропал `Restart Core`, хотя PM обязан сохранять recovery UX | TBD |
-| BUG-2026-04-22-05 | OPEN | PM/Settings/Localization | provider-only save показывает `Synchronizing localization`, хотя strict localization sync реально не запускался | TBD |
+| BUG-2026-04-22-07 | FIXED | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | 1.2.54 |
+| BUG-2026-04-22-06 | FIXED | PM/Settings/Recovery | в General tab пропал `Restart Core`, хотя PM обязан сохранять recovery UX | 1.2.54 |
+| BUG-2026-04-22-05 | FIXED | PM/Settings/Localization | provider-only save показывает `Synchronizing localization`, хотя strict localization sync реально не запускался | 1.2.54 |
 | BUG-2026-04-22-04 | FIXED | Launcher/CEF/macOS | paste (Cmd+V) и SuperWhisper не работают в input PM; Dock right-click Quit / Cmd+Q не закрывает launcher | 1.2.49 (rollback) |
 | BUG-2026-04-22-03 | FIXED | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | 1.2.47 |
 | BUG-2026-04-22-02 | FIXED | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | 1.2.47 |
@@ -70,7 +70,7 @@
 ---
 ## BUG-2026-04-22-07 — PM/Settings/UI: closing Settings also closes Project Manager
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - В релизе `1.2.53` Settings открываются в отдельном popup-окне из Project Manager.
@@ -82,17 +82,25 @@
 - Такой split-window lifecycle создаёт хрупкую связку между главным PM window и Settings window: focus, close и host ownership больше не живут в одном React/runtime контуре.
 - Пока Settings остаются popup-сценарием, подобные lifecycle-регрессии будут повторяться.
 
-**Accepted fix direction (2026-04-22):**
-- Убрать detached settings window из Project Manager.
-- Открывать Settings как in-shell takeover правой панели PM, то есть в той зоне, где обычно отображаются artifacts/help/source.
-- Закрытие Settings должно возвращать пользователя в прежний right-panel context, не затрагивая главное PM окно.
+**Fix (1.2.54):**
+- Detached settings route и popup opener полностью удалены из Project Manager.
+- `Open Settings` теперь переводит правую панель PM в in-shell settings mode вместо открытия отдельного окна.
+- `Close Settings` возвращает прежний right-panel context, не затрагивая lifecycle главного PM окна.
 
-**Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/PM_Settings_InShell_Stabilization_Architecture.md`
+**Commits:**
+- `cc98d7713 feat(pm): host settings inside main area`
+- `179eaaf2e chore(pm): remove detached settings window`
+
+**Guards:**
+- Smoke: `Open Settings` открывает settings внутри правой зоны PM, а закрытие settings не закрывает Project Manager.
+- Smoke: после закрытия settings PM возвращает предыдущий panel context (`artifact` / `help`).
+
+**Release:**
+- `1.2.54`
 
 ## BUG-2026-04-22-06 — PM/Settings/Recovery: General tab lost `Restart Core`
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - После релиза `1.2.53` в PM Settings -> General исчез user-facing control `Restart Core`.
@@ -102,17 +110,27 @@
 - PM settings state сейчас жёстко объявляет `supportsCoreRestart: false`, а shared `SettingsView` по этому флагу уходит в урезанный General path без `Core Controls`.
 - В результате миграция ownership в PM сохранила сам Settings surface, но потеряла recovery control, который раньше жил в shared GeneralSettings contract.
 
-**Accepted fix direction (2026-04-22):**
-- Вернуть shared `Core Controls` в PM-mode вместо PM-specific урезанного General tab.
-- `Restart Core` должен работать и в VS Code-host, и в standalone launcher-host через единый PM host bridge contract.
-- PM должен показывать понятный restart status, а не декоративную кнопку без feedback.
+**Fix (1.2.54):**
+- PM settings state снова экспонирует реальный `Restart Core` transport и synthetic core-control lifecycle для Project Manager.
+- Shared `SettingsView` перестал скрывать `Core Controls` в PM-mode, поэтому `Restart Core` снова виден в `General`.
+- Standalone launcher получил узкий restart primitive и bridge `codeai://core-restart`, чтобы PM recovery UX работал не только в VS Code-host.
 
-**Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/PM_Settings_InShell_Stabilization_Architecture.md`
+**Commits:**
+- `a05fa9c61 feat(pm): add core restart transport`
+- `123125555 fix(pm): restore restart core in settings`
+- `8f69ae002 feat(launcher): add core restart primitive`
+- `f15310b91 feat(launcher): wire restart bridge`
+
+**Guards:**
+- Smoke: PM `Settings -> General` снова показывает `Core Controls` и кнопку `Restart Core`.
+- Smoke: в standalone launcher restart request идёт через host bridge, а PM получает lifecycle phases `stopping -> starting -> ready`.
+
+**Release:**
+- `1.2.54`
 
 ## BUG-2026-04-22-05 — PM/Settings/Localization: provider-only save shows fake localization sync overlay
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - В PM Settings изменение provider-only параметра (подтверждённый кейс: Claude thinking effort) показывает overlay `Synchronizing localization`.
@@ -123,13 +141,21 @@
 - Но shared `SettingsView` показывает localization overlay по общему флагу `saving`, а не по фактическому `settings:localization-sync-status`.
 - Следовательно, UI перепутал `saving settings` и `strict localization sync`, из-за чего пользователь получает ложный blocking message.
 
-**Accepted fix direction (2026-04-22):**
-- Вынести actual localization sync status в shared settings view-state contract.
-- Показывать overlay `Synchronizing localization` только когда реальный sync status = `busy`.
-- Provider-only saves должны оставаться обычным save flow без ложного localization-blocking UX.
+**Fix (1.2.54):**
+- Shared settings state contract теперь получает фактический `settings:localization-sync-status` и для VS Code-host, и для PM host.
+- Overlay `Synchronizing localization` больше не привязан к общему флагу `saving` и показывается только когда реальный localization sync действительно `busy`.
+- Provider-only saves остаются обычным settings save flow без ложного blocking overlay.
 
-**Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/PM_Settings_InShell_Stabilization_Architecture.md`
+**Commits:**
+- `b413fd7f1 feat(settings): expose localization sync status`
+- `75135ca08 fix(settings): gate localization overlay by sync status`
+
+**Guards:**
+- Smoke: изменение provider-only настроек (например `Claude Thinking`) не показывает `Synchronizing localization`.
+- Smoke: strict localization changes продолжают показывать blocking overlay только на реальном sync busy-state.
+
+**Release:**
+- `1.2.54`
 
 ## BUG-2026-04-22-04 — Launcher/CEF/macOS: paste, SuperWhisper and Quit break after 1.2.46 bootstrap refactor
 

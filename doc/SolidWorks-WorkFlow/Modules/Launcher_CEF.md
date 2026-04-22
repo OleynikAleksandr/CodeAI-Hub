@@ -40,6 +40,15 @@
 - The launcher-side URI builder must preserve real filesystem separators (`/`) and Windows drive separators (`:`) inside `vscode://file/...`; already encoded spaces like `%20` stay encoded, but separators must not become `%2F` or `%3A`.
 - The standalone launcher path is successful when Visual Studio Code receives the real target path and opens it after confirmation; the external-open prompt itself may still appear as a host-level safeguard.
 
+## PM Supervisor Bridge Boundary
+- Launcher bridge now exposes PM supervisor intents for both `ensureCoreRunning` and explicit `restartCore`.
+- PM Settings `Restart Core` must not fallback to plain `ensure-started` when running inside standalone CEF host: the injected browser bridge routes restart requests to `codeai://core-restart`, `LauncherHandler::OnBeforeBrowse` cancels Chromium navigation, and the launcher host executes `RestartCoreProcess()` on the background thread.
+- `RestartCoreProcess()` is layered on top of the same shutdown/start primitives as the normal launcher lifecycle:
+  - detect the active Core endpoint from current launcher environment;
+  - if Core is reachable, request graceful `/shutdown`, fall back to force-kill when needed, and wait for port release;
+  - then call `EnsureCoreProcessRunning()` to attach or start a fresh instance.
+- This bridge is intentionally narrow: it exists only to preserve PM recovery UX inside standalone host and must not grow into a generic runtime console surface.
+
 ## Связанные документы
 - UI bundles: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
 - System: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

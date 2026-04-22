@@ -35,36 +35,38 @@
 ## Phase 1 — PM Settings Stabilization (owner: Codex, updated: 2026-04-22)
 
 ### Stream A: Intake + architecture pivot
-1. [TODO] Зафиксировать batch регрессий `1.2.53` в `BugRegistry` и открыть новый planning cycle для in-shell PM Settings takeover, restart recovery restoration и save/localization UX alignment. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/PM_Settings_InShell_Stabilization_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: plan pm settings stabilization`
-2. [TODO] Git Commit: `docs: plan pm settings stabilization` (hash: TBD)
+1. [DONE] Зафиксировать batch регрессий `1.2.53` в `BugRegistry` и открыть новый planning cycle для in-shell PM Settings takeover, restart recovery restoration и save/localization UX alignment. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Plans/PM_Settings_InShell_Stabilization_Architecture.md`, `doc/TODO/todo-plan.md`; ожидаемый commit message: `docs: plan pm settings stabilization`
+2. [DONE] Git Commit: `docs: plan pm settings stabilization` (hash: `33c12f370`)
 
 ### Stream B: In-shell Settings surface
-1. [TODO] Перевести Settings из popup-path в in-shell режим правой панели PM: `MainArea` должен открывать settings takeover внутри текущего окна и возвращать прежний right-panel context после close. scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; ожидаемый commit message: `feat(pm): host settings inside main area`
-2. [TODO] Git Commit: `feat(pm): host settings inside main area` (hash: TBD)
-3. [TODO] Удалить detached settings route и popup opener seam из PM после перевода Settings в in-shell surface. scope: `src/client/project-manager/app.tsx`, `src/client/project-manager/components/layout/main-layout.tsx`, `src/client/project-manager/components/layout/use-detached-settings-window.ts`; ожидаемый commit message: `chore(pm): remove detached settings window`
-4. [TODO] Git Commit: `chore(pm): remove detached settings window` (hash: TBD)
+1. [DONE] Перевести Settings из popup-path в in-shell режим правой панели PM: `MainArea` должен открывать settings takeover внутри текущего окна и возвращать прежний right-panel context после close. scope: `src/client/project-manager/components/layout/main-area.tsx`, `src/client/project-manager/components/layout/main-area-panel-content.tsx`; ожидаемый commit message: `feat(pm): host settings inside main area`
+2. [DONE] Git Commit: `feat(pm): host settings inside main area` (hash: `cc98d7713`)
+3. [DONE] Удалить detached settings route и popup opener seam из PM после перевода Settings в in-shell surface. scope: `src/client/project-manager/app.tsx`, `src/client/project-manager/components/layout/main-layout.tsx`, `src/client/project-manager/components/layout/use-detached-settings-window.ts`; ожидаемый commit message: `chore(pm): remove detached settings window`
+4. [DONE] Git Commit: `chore(pm): remove detached settings window` (hash: `179eaaf2e`)
 
 ### Stream C: Restart Core recovery contract
-1. [TODO] Добавить в PM API restart transport + synthetic core-control feedback, чтобы PM Settings могли показывать restart lifecycle без legacy extension-only handler. scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; ожидаемый commit message: `feat(pm): add core restart transport`
-2. [TODO] Git Commit: `feat(pm): add core restart transport` (hash: TBD)
-3. [TODO] Вернуть shared `Core Controls` в PM General tab и снять PM-specific запрет на `Restart Core`. scope: `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `fix(pm): restore restart core in settings`
-4. [TODO] Git Commit: `fix(pm): restore restart core in settings` (hash: TBD)
-5. [TODO] Добавить standalone launcher restart primitive для PM host bridge вместо fallback `ensure-started`. scope: `packages/cef-launcher/src/core_launcher.h`, `packages/cef-launcher/src/core_launcher.cc`; ожидаемый commit message: `feat(launcher): add core restart primitive`
-6. [TODO] Git Commit: `feat(launcher): add core restart primitive` (hash: TBD)
-7. [TODO] Подключить launcher JS bridge к restart primitive, чтобы PM restart request работал в standalone CEF-host так же, как в VS Code-host. scope: `packages/cef-launcher/src/launcher_handler_bridge_helpers.h`, `packages/cef-launcher/src/launcher_handler.cc`; ожидаемый commit message: `feat(launcher): wire restart bridge`
-8. [TODO] Git Commit: `feat(launcher): wire restart bridge` (hash: TBD)
+1. [DONE] Добавить в PM API restart transport + synthetic core-control feedback, чтобы PM Settings могли показывать restart lifecycle без legacy extension-only handler. scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/project-manager-core-restart-tracker.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; ожидаемый commit message: `feat(pm): add core restart transport`
+2. [DONE] Git Commit: `feat(pm): add core restart transport` (hash: `a05fa9c61`)
+3. [DONE] Вернуть shared `Core Controls` в PM General tab и снять PM-specific запрет на `Restart Core`. scope: `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `fix(pm): restore restart core in settings`
+4. [DONE] Git Commit: `fix(pm): restore restart core in settings` (hash: `123125555`)
+5. [DONE] Добавить standalone launcher restart primitive для PM host bridge вместо fallback `ensure-started`. scope: `packages/cef-launcher/src/core_launcher.h`, `packages/cef-launcher/src/core_launcher.cc`; ожидаемый commit message: `feat(launcher): add core restart primitive`
+6. [DONE] Git Commit: `feat(launcher): add core restart primitive` (hash: `8f69ae002`)
+7. [DONE] Подключить launcher JS bridge к restart primitive, чтобы PM restart request работал в standalone CEF-host так же, как в VS Code-host. scope: `src/client/ui/src/core-bridge/supervisor-requests.ts`, `packages/cef-launcher/src/launcher_handler_bridge_helpers.h`, `packages/cef-launcher/src/launcher_handler.cc`; ожидаемый commit message: `feat(launcher): wire restart bridge`
+8. [DONE] Git Commit: `feat(launcher): wire restart bridge` (hash: `f15310b91`)
 
 ### Stream D: Save/localization UX stabilization
-1. [TODO] Прокинуть actual `localizationSyncStatus` в shared settings state contract для обоих host-paths (`VS Code webview` и `Project Manager`). scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; ожидаемый commit message: `feat(settings): expose localization sync status`
-2. [TODO] Git Commit: `feat(settings): expose localization sync status` (hash: TBD)
-3. [TODO] Ограничить overlay `Synchronizing localization` только реальным strict sync busy-state, не показывая его на provider-only saves. scope: `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `fix(settings): gate localization overlay by sync status`
-4. [TODO] Git Commit: `fix(settings): gate localization overlay by sync status` (hash: TBD)
+1. [DONE] Прокинуть actual `localizationSyncStatus` в shared settings state contract для обоих host-paths (`VS Code webview` и `Project Manager`). scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; ожидаемый commit message: `feat(settings): expose localization sync status`
+2. [DONE] Git Commit: `feat(settings): expose localization sync status` (hash: `b413fd7f1`)
+3. [DONE] Ограничить overlay `Synchronizing localization` только реальным strict sync busy-state, не показывая его на provider-only saves. scope: `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `fix(settings): gate localization overlay by sync status`
+4. [DONE] Git Commit: `fix(settings): gate localization overlay by sync status` (hash: `75135ca08`)
 
 ## Phase 2 — SSOT Sync + Release 1.2.54 (owner: Codex, updated: 2026-04-22)
 
 ### Stream E: Documentation sync
-1. [TODO] Синхронно обновить SSOT под in-shell PM Settings, restored restart recovery contract и corrected save/localization UX. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; ожидаемый commit message: `docs: sync pm settings stabilization contract`
-2. [TODO] Git Commit: `docs: sync pm settings stabilization contract` (hash: TBD)
+1. [DONE] Синхронно обновить SSOT под in-shell PM Settings, restored restart recovery contract и corrected save/localization UX. scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; ожидаемый commit message: `docs: sync pm settings stabilization contract`
+2. [DONE] Git Commit: `docs: sync pm settings stabilization contract` (hash: `69e1dab92`)
+3. [DONE] Синхронно закрыть batch-регрессии `1.2.53` в `BugRegistry` и обновить Launcher CEF SSOT под новый PM restart bridge contract (`codeai://core-restart` + `RestartCoreProcess`). scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`; ожидаемый commit message: `docs: close pm settings stabilization bugs`
+4. [TODO] Git Commit: `docs: close pm settings stabilization bugs` (hash: TBD)
 
 ### Stream F: Release metadata 1.2.54
 1. [TODO] Перед release rebuild обновить `README.md` и `CHANGELOG.md` на будущую версию `1.2.54` под PM Settings stabilization fixes. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.54 release metadata`
