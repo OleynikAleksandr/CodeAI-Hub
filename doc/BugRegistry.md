@@ -14,6 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
+| BUG-2026-04-22-08 | OPEN | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | TBD |
 | BUG-2026-04-22-07 | FIXED | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | 1.2.54 |
 | BUG-2026-04-22-06 | FIXED | PM/Settings/Recovery | в General tab пропал `Restart Core`, хотя PM обязан сохранять recovery UX | 1.2.54 |
 | BUG-2026-04-22-05 | FIXED | PM/Settings/Localization | provider-only save показывает `Synchronizing localization`, хотя strict localization sync реально не запускался | 1.2.54 |
@@ -66,6 +67,34 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
+
+---
+## BUG-2026-04-22-08 — PM/Settings/Localization/CEF: selecting `UI Translation Engine` crashes standalone PM on macOS 26.x
+
+**Status:** OPEN
+
+**Symptom:**
+- В релизе `1.2.54` попытка открыть или изменить `Settings -> Localization -> UI Translation Engine` в standalone Project Manager завершает процесс `CodeAIHubLauncher`.
+- macOS crash report фиксирует `NSInvalidArgumentException` / `-[NSApplication %s]: unrecognized selector sent to instance ...`.
+- Пользователь подтвердил, что provider-only settings больше не запускают localization sync, а crash остаётся привязан именно к translation-engine selector interaction.
+
+**Confirmed evidence:**
+- `~/Library/Logs/DiagnosticReports/CodeAIHubLauncher-2026-04-22-181851.ips` показывает main-thread crash внутри Chromium / AppKit popup path, без наших settings save/localization handler frames.
+- Shared `TranslationEngineSelector` в `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx` всё ещё использует native `<select>`.
+- Рядом лежащий `LocalizationLanguageCombobox` уже реализован как custom DOM listbox и не уходит в AppKit-native select/popup path.
+
+**Root cause hypothesis (confirmed at trigger level):**
+- Crash относится не к Core-side localization persistence, а к standalone CEF/macOS native popup path для HTML `<select>`.
+- На macOS 26.x Chromium 141 внутри CEF по-прежнему имеет known incompatibility family вокруг `NSApplication unrecognized selector`; 1.2.52 закрыл только window-close teardown branch, но не native `<select>` popup branch.
+- Пока translation-engine controls рендерятся как native `<select>`, standalone PM остаётся уязвимым к этому AppKit/CEF crash trigger.
+
+**Accepted fix direction (2026-04-22):**
+- Убрать native `<select>` из `TranslationEngineSelector`.
+- Заменить его на shared DOM-owned button/listbox selector, который не открывает AppKit-native popup в standalone CEF.
+- Применить fix сразу к обоим translation-engine controls: `UI Translation Engine` и `Reasoning Translation Engine`.
+
+**Planning source:**
+- `doc/SolidWorks-WorkFlow/Plans/PM_TranslationEngineSelector_CEF_Crash_Architecture.md`
 
 ---
 ## BUG-2026-04-22-07 — PM/Settings/UI: closing Settings also closes Project Manager
