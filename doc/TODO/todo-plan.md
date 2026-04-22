@@ -53,8 +53,8 @@
 
 ### Stream C: PM settings transport and state
 1. [DONE] Расширить PM websocket contracts/API для `settings:save`, `settings:reset`, `settings:update-provider`, `settings:versions`, `settings:save-error`, `settings:localization-sync-status`; PM должен стать полноценным клиентом core-owned settings flow. scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/components/settings/use-project-manager-settings.ts`; ожидаемый commit message: `feat(pm): wire settings write transport`
-2. [TODO] Git Commit: `feat(pm): wire settings write transport` (hash: TBD)
-3. [TODO] Добавить PM-specific settings state hook, который питает текущий shared `SettingsView` от PM transport и сохраняет текущий UI без redesign. scope: `src/client/project-manager/components/settings/use-project-manager-settings.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/ui/src/components/settings-view.tsx`; ожидаемый commit message: `feat(pm): reuse shared settings view in project manager`
+2. [DONE] Git Commit: `feat(pm): wire settings write transport` (hash: `d33e94984`)
+3. [DONE] Добавить PM-specific settings state hook и подключить текущий shared `SettingsView` к PM runtime через detached PM route, сохранив текущий UI без redesign и без legacy VS Code-only glossary path. scope: `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/ui/src/components/settings-view.tsx`, `src/client/project-manager/app.tsx`; ожидаемый commit message: `feat(pm): reuse shared settings view in project manager`
 4. [TODO] Git Commit: `feat(pm): reuse shared settings view in project manager` (hash: TBD)
 
 ### Stream D: Dedicated settings window + footer entrypoint

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalization } from "../app-host/use-localization";
+import vscode from "../vscode";
 import ClaudeDefaultModelCard from "./settings/claude-default-model/claude-default-model-card";
 import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
 import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
+import GeneralResponseModeFacade from "./settings/general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./settings/general-settings";
+import LocalizationSettingsCard from "./settings/localization-settings-card";
 import ProviderVersions from "./settings/provider-versions";
 import SessionContinuityCard from "./settings/session-continuity-card";
 import SettingsFooter from "./settings/settings-footer";
@@ -16,11 +19,17 @@ import {
 import ThinkingSettings from "./settings/thinking-settings";
 import type { UseSettingsStateResult } from "./settings/use-settings-state";
 
-type SettingsMode = "settings-only" | "full";
+type SettingsMode = "full" | "project-manager" | "settings-only";
+
+type SettingsViewState = UseSettingsStateResult & {
+  readonly hostPostMessage?: (message: unknown) => void;
+  readonly supportsCoreRestart?: boolean;
+};
+
 interface SettingsViewProps {
   readonly mode?: SettingsMode;
   readonly onClose: () => void;
-  readonly state: UseSettingsStateResult;
+  readonly state: SettingsViewState;
 }
 
 type SettingsTab = "claude" | "codex" | "gemini" | "general";
@@ -124,7 +133,11 @@ const settingsTabs: ReadonlyArray<{
   { id: "general", label: "General" },
 ];
 
-const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
+const SettingsView: React.FC<SettingsViewProps> = ({
+  mode = "full",
+  onClose,
+  state,
+}) => {
   const { ready } = useLocalization();
   const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
   const {
@@ -162,9 +175,24 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
     handleReset,
     handleUpdateProvider,
   } = state;
+  const renderProjectManagerGeneralTab =
+    mode === "project-manager" || state.supportsCoreRestart === false;
   const localizationSyncTitle = "Synchronizing localization";
   const localizationSyncDescription =
     "Please wait. CodeAI Hub is rebuilding the translated interface bundles affected by this change. Project Manager and new sessions stay blocked until the affected bundles are ready.";
+
+  useEffect(() => {
+    if (typeof state.hostPostMessage !== "function") {
+      return;
+    }
+    const previousPostMessage = vscode.postMessage;
+    vscode.postMessage = (message: unknown) => {
+      state.hostPostMessage?.(message);
+    };
+    return () => {
+      vscode.postMessage = previousPostMessage;
+    };
+  }, [state.hostPostMessage]);
 
   return (
     <div aria-busy={saving || !ready} style={containerStyles}>
@@ -234,35 +262,67 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onClose, state }) => {
           if (activeTab === "general") {
             return (
               <div style={stackStyles}>
-                <GeneralSettings
-                  coreControl={coreControl}
-                  localization={settings.general.localization}
-                  onLocalizationCategoryLanguageChange={
-                    handleLocalizationCategoryLanguageChange
-                  }
-                  onLocalizationDefaultLanguageChange={
-                    handleLocalizationDefaultLanguageChange
-                  }
-                  onLocalizationEngineIdChange={
-                    handleLocalizationEngineIdChange
-                  }
-                  onLocalizationGlossaryEnabledChange={
-                    handleLocalizationGlossaryEnabledChange
-                  }
-                  onLocalizationWorkflowTermsPolicyChange={
-                    handleLocalizationWorkflowTermsPolicyChange
-                  }
-                  onReasoningTranslationEngineIdChange={
-                    handleReasoningTranslationEngineIdChange
-                  }
-                  onResponsePolicyModeChange={handleResponsePolicyModeChange}
-                  onRestartCore={handleRestartCore}
-                  onStrictInstructionTextChange={
-                    handleStrictInstructionTextChange
-                  }
-                  onStrictSchemaTextChange={handleStrictSchemaTextChange}
-                  responsePolicy={settings.general.responsePolicy}
-                />
+                {renderProjectManagerGeneralTab ? (
+                  <>
+                    <GeneralResponseModeFacade
+                      onModeChange={handleResponsePolicyModeChange}
+                      onStrictInstructionTextChange={
+                        handleStrictInstructionTextChange
+                      }
+                      onStrictSchemaTextChange={handleStrictSchemaTextChange}
+                      responsePolicy={settings.general.responsePolicy}
+                    />
+                    <LocalizationSettingsCard
+                      localization={settings.general.localization}
+                      onCategoryLanguageChange={
+                        handleLocalizationCategoryLanguageChange
+                      }
+                      onDefaultLanguageChange={
+                        handleLocalizationDefaultLanguageChange
+                      }
+                      onEngineIdChange={handleLocalizationEngineIdChange}
+                      onGlossaryEnabledChange={
+                        handleLocalizationGlossaryEnabledChange
+                      }
+                      onReasoningTranslationEngineIdChange={
+                        handleReasoningTranslationEngineIdChange
+                      }
+                      onWorkflowTermsPolicyChange={
+                        handleLocalizationWorkflowTermsPolicyChange
+                      }
+                    />
+                  </>
+                ) : (
+                  <GeneralSettings
+                    coreControl={coreControl}
+                    localization={settings.general.localization}
+                    onLocalizationCategoryLanguageChange={
+                      handleLocalizationCategoryLanguageChange
+                    }
+                    onLocalizationDefaultLanguageChange={
+                      handleLocalizationDefaultLanguageChange
+                    }
+                    onLocalizationEngineIdChange={
+                      handleLocalizationEngineIdChange
+                    }
+                    onLocalizationGlossaryEnabledChange={
+                      handleLocalizationGlossaryEnabledChange
+                    }
+                    onLocalizationWorkflowTermsPolicyChange={
+                      handleLocalizationWorkflowTermsPolicyChange
+                    }
+                    onReasoningTranslationEngineIdChange={
+                      handleReasoningTranslationEngineIdChange
+                    }
+                    onResponsePolicyModeChange={handleResponsePolicyModeChange}
+                    onRestartCore={handleRestartCore}
+                    onStrictInstructionTextChange={
+                      handleStrictInstructionTextChange
+                    }
+                    onStrictSchemaTextChange={handleStrictSchemaTextChange}
+                    responsePolicy={settings.general.responsePolicy}
+                  />
+                )}
               </div>
             );
           }
