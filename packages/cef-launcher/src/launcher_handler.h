@@ -8,6 +8,20 @@
 #include "cef_client.h"
 #include "include/cef_drag_handler.h"
 
+namespace codeai::launcher {
+
+// Requests orderly application termination through the OS-native path.
+// On macOS this routes through -[NSApplication terminate:], which unwinds
+// via -[NSApplication stop:] and bypasses the Chromium 141 async
+// browser-teardown callback that crashes on macOS 26.x. See
+// doc/SolidWorks-WorkFlow/Plans/Archive/CEF_MacOS_CanClose_ShortCircuit_Architecture.md
+// and BUG-2026-04-22-01. Other platforms currently fall through to the
+// default CEF teardown path; see the #else branch in
+// LauncherWindowDelegate::CanClose.
+void RequestNativeApplicationTermination();
+
+}  // namespace codeai::launcher
+
 class LauncherHandler : public CefClient,
                          public CefDisplayHandler,
                          public CefDragHandler,

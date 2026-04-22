@@ -29,10 +29,24 @@ class LauncherWindowDelegate : public CefWindowDelegate {
   void OnWindowDestroyed(CefRefPtr<CefWindow> window) override { browser_view_ = nullptr; }
 
   bool CanClose(CefRefPtr<CefWindow> window) override {
+#if defined(__APPLE__)
+    // Short-circuit the red window-close button into the native Cmd+Q
+    // / Dock Quit code path. On macOS 26.x, Chromium 141's normal
+    // TryCloseBrowser() teardown callback sends an AppKit-private
+    // selector that no longer exists and crashes the process. Routing
+    // through -[NSApplication terminate:] unwinds via -stop: and
+    // avoids that buggy callback entirely (see BUG-2026-04-22-01 and
+    // doc/SolidWorks-WorkFlow/Plans/Archive/CEF_MacOS_CanClose_ShortCircuit_Architecture.md).
+    // Returning false keeps CefWindow from continuing its own close
+    // path; -terminate: drives the orderly shutdown from here on.
+    codeai::launcher::RequestNativeApplicationTermination();
+    return false;
+#else
     CefRefPtr<CefBrowser> browser = browser_view_->GetBrowser();
     if (browser)
       return browser->GetHost()->TryCloseBrowser();
     return true;
+#endif
   }
 
   CefSize GetPreferredSize(CefRefPtr<CefView>) override { return CefSize(1024, 720); }

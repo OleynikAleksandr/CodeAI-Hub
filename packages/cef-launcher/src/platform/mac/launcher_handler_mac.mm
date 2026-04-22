@@ -84,3 +84,19 @@ void LauncherHandler::PlatformPersistWindowState(
   [WindowStateTracker stopTrackingWindow:window];
   [WindowStatePersistence persistWindow:window];
 }
+
+namespace codeai::launcher {
+
+void RequestNativeApplicationTermination() {
+  // Forwarding the red window-close button into -[NSApplication terminate:]
+  // is the canonical fix for BUG-2026-04-22-01 on macOS 26.x: AppKit then
+  // unwinds via -stop: and -terminate: in the same way Cmd+Q / Dock Quit
+  // do, bypassing the Chromium 141 async browser-teardown callback that
+  // throws NSInvalidArgumentException ("unrecognized selector sent to
+  // instance" / NSApplication) on that OS. Three earlier mitigations
+  // (1.2.50 NSSetUncaughtExceptionHandler, 1.2.51 reportException: swizzle)
+  // tried to absorb the exception after the fact and did not suffice.
+  [NSApp terminate:nil];
+}
+
+}  // namespace codeai::launcher
