@@ -47,6 +47,7 @@ import {
   updateThinkingSettings,
 } from "../../../ui/src/components/settings/settings-state-helpers";
 import { openProjectManagerFileLink } from "../../services/project-manager-file-link-opener";
+import { api } from "../../api";
 import { useProjectManagerSettings } from "./use-project-manager-settings";
 
 const PM_CORE_CONTROL_STATE: CoreControlState = {
@@ -57,6 +58,24 @@ const PM_CORE_CONTROL_STATE: CoreControlState = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isCoreControlStatusPayload = (
+  payload: unknown
+): payload is CoreControlState => {
+  if (!isRecord(payload)) {
+    return false;
+  }
+
+  return (
+    typeof payload.busy === "boolean" &&
+    (payload.message === null || typeof payload.message === "string") &&
+    (payload.phase === "stopping" ||
+      payload.phase === "waiting" ||
+      payload.phase === "starting" ||
+      payload.phase === "ready" ||
+      payload.phase === "error")
+  );
+};
 
 export type UseProjectManagerSettingsStateResult = UseSettingsStateResult & {
   readonly hostPostMessage: (message: unknown) => void;
@@ -74,6 +93,9 @@ export const useProjectManagerSettingsState =
       normalizeLoadedLocalizationSettings(transport.settings)
     );
     const [hasChanges, setHasChanges] = useState(false);
+    const [coreControl, setCoreControl] = useState<CoreControlState>(
+      PM_CORE_CONTROL_STATE
+    );
 
     useEffect(() => {
       const nextSettings = normalizeLoadedLocalizationSettings(
@@ -108,6 +130,22 @@ export const useProjectManagerSettingsState =
         line: null,
       });
     }, [transport.userGlossaryFile]);
+
+    useEffect(() => {
+      const unsubscribe = api.onCoreEvent((message) => {
+        if (
+          message.type !== "settings:core-control-status" ||
+          !isCoreControlStatusPayload(message.payload)
+        ) {
+          return;
+        }
+        setCoreControl(message.payload);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }, []);
 
     const updateSettings = useCallback((nextSettings: Settings) => {
       const normalizedSettings =
@@ -376,12 +414,11 @@ export const useProjectManagerSettingsState =
     );
 
     const handleRestartCore = useCallback(() => {
-      // Project Manager settings intentionally omit legacy extension-side
-      // restart controls while runtime ownership is moving to PM.
+      api.restartCore();
     }, []);
 
     return {
-      coreControl: PM_CORE_CONTROL_STATE,
+      coreControl,
       settings,
       hasChanges,
       localizationRuntime: transport.localizationRuntime,

@@ -31,6 +31,7 @@ import {
   resolveVscodeBridge,
 } from "./services/pm-bridges";
 import { createDialogApi, type DialogApi } from "./services/dialog-api";
+import { ProjectManagerCoreRestartTracker } from "./services/project-manager-core-restart-tracker";
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
@@ -55,6 +56,9 @@ class ProjectManagerApi {
   };
   private providerSnapshot: ProviderSnapshot[] = [];
   private readonly outgoingQueue = new OutgoingMessageQueue();
+  private readonly coreRestartTracker = new ProjectManagerCoreRestartTracker(
+    (message) => this.notifyCoreListeners(message)
+  );
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly config: ApiConfig;
   readonly dialogs: DialogApi;
@@ -126,6 +130,7 @@ class ProjectManagerApi {
     try {
       this.socket = new WebSocket(`${this.config.wsUrl}/api/v1/stream`);
       this.socket.onopen = () => {
+        this.coreRestartTracker.handleSocketOpen();
         console.log("[ProjectManagerApi] Connected to Core");
         this.outgoingQueue.flush((message) => {
           if (this.socket?.readyState !== WebSocket.OPEN) {
@@ -146,6 +151,7 @@ class ProjectManagerApi {
         }
       };
       this.socket.onclose = () => {
+        this.coreRestartTracker.handleSocketClose();
         console.log("[ProjectManagerApi] Disconnected. Reconnecting...");
         this.scheduleReconnect();
       };
@@ -207,6 +213,10 @@ class ProjectManagerApi {
   resetSettings(): void {
     this.lastSettingsSaveError = null;
     this.send({ type: "settings:reset" });
+  }
+
+  restartCore(): void {
+    this.coreRestartTracker.requestRestart();
   }
 
   updateSettingsProvider(
@@ -386,6 +396,7 @@ class ProjectManagerApi {
   }
 
   private handleMessage(message: IncomingMessage): void {
+    this.coreRestartTracker.handleIncomingMessage(message);
     if (message.type === "projects:update") {
       const payload = message.payload as ProjectUpdatePayload;
       if (payload?.projects) {
