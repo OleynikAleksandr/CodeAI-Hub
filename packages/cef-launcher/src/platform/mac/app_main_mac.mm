@@ -1,58 +1,87 @@
 #import <Cocoa/Cocoa.h>
 
+#include <objc/runtime.h>
+
 #include "cef_application_mac.h"
 #include "cef_sandbox_mac.h"
 #include "wrapper/cef_library_loader.h"
 #include "launcher_app.h"
 
-namespace {
-
-// Previous uncaught-exception handler, captured before we install ours so
-// non-matching exceptions still flow through AppKit's default crash reporter.
-static NSUncaughtExceptionHandler* g_previous_uncaught_handler = nullptr;
-
 // Chromium 141 (shipped inside the current CEF framework) occasionally sends
 // an AppKit-private selector to -[NSApplication ...] during async browser
 // teardown on macOS 26.x. The selector no longer exists on that OS version,
 // so objc_msgSend is invoked with a NULL/corrupted SEL and the resulting
-// NSInvalidArgumentException propagates all the way up to
-// NSApplicationUncaughtExceptionHandler -> +[NSApplication _crashOnException:],
-// which aborts the process and surfaces a "quit unexpectedly" dialog.
+// NSInvalidArgumentException propagates up through
+// _objc_terminate -> __handleUncaughtException ->
+// NSApplicationUncaughtExceptionHandler -> -[NSApplication reportException:]
+// -> +[NSApplication _crashOnException:], which aborts the process.
 //
-// The crash is triggered deterministically by clicking the red window-close
-// button (TryCloseBrowser path), but does NOT reproduce when the user quits
-// via Cmd+Q or the Dock menu, which unwind through -[NSApplication stop:]
-// instead of the Chromium teardown callback. See
-// doc/SolidWorks-WorkFlow/Plans/Archive/CEF_MacOS_Shutdown_Crash_Mitigation_Architecture.md
+// The crash reproduces deterministically on the red window-close button
+// path (LauncherWindowDelegate::CanClose -> TryCloseBrowser ->
+// Chromium async teardown) and does NOT reproduce under Cmd+Q / Dock
+// Quit, which unwind via -[NSApplication stop:] and bypass the buggy
+// teardown callback. See
+// doc/SolidWorks-WorkFlow/Plans/Archive/CEF_MacOS_ReportException_Swizzle_Architecture.md
 // and BUG-2026-04-22-01.
 //
-// Real fix requires CEF/Chromium upgrade to a build that understands macOS 26
-// semantics; until then we swallow this specific exception here so the rest
-// of the browser-teardown path (CefQuitMessageLoop -> main() returning ->
-// CefShutdown) can still complete cleanly.
-void CodeAIHubUncaughtExceptionHandler(NSException* exception) {
+// The 1.2.50 attempt with NSSetUncaughtExceptionHandler() did not work:
+// AppKit reinstalls its own handler during -finishLaunching and
+// +[NSApplication _crashOnException:] bypasses the standard uncaught
+// handler chain on macOS 26 regardless. This swizzle operates one level
+// lower: it replaces the IMP of -[NSApplication reportException:] itself
+// via method_exchangeImplementations, installed from a category +load
+// which the Objective-C runtime calls during dyld image load — before
+// main() and any AppKit / CEF init. AppKit cannot undo that; when it
+// later calls -[NSApplication reportException:] the runtime dispatches
+// into our codeai_reportException: implementation instead.
+//
+// Real fix requires CEF/Chromium upgrade to a build that understands
+// macOS 26 semantics; until then we swallow this specific exception so
+// the rest of the teardown (OnBeforeClose -> CefQuitMessageLoop ->
+// main() returning -> CefShutdown) can still complete cleanly.
+@interface NSApplication (CodeAIHubReportExceptionSuppression)
+- (void)codeai_reportException:(NSException*)exception;
+@end
+
+@implementation NSApplication (CodeAIHubReportExceptionSuppression)
+
+- (void)codeai_reportException:(NSException*)exception {
   NSString* name = [exception name];
   NSString* reason = [exception reason];
-  if ([name isEqualToString:NSInvalidArgumentException] &&
+  if (name != nil && reason != nil &&
+      [name isEqualToString:NSInvalidArgumentException] &&
       [reason rangeOfString:@"unrecognized selector sent to instance"].location
           != NSNotFound &&
       [reason rangeOfString:@"NSApplication"].location != NSNotFound) {
+    const char* reason_utf8 = [reason UTF8String];
     fprintf(stderr,
             "CodeAIHubLauncher: suppressed NSApplication unrecognized "
-            "selector (CEF/macOS compatibility workaround): %s\n",
-            [reason UTF8String] != nullptr ? [reason UTF8String] : "");
+            "selector via reportException: swizzle (CEF/macOS 26 "
+            "compatibility workaround): %s\n",
+            reason_utf8 != nullptr ? reason_utf8 : "");
     return;
   }
 
-  if (g_previous_uncaught_handler != nullptr) {
-    g_previous_uncaught_handler(exception);
+  // After method_exchangeImplementations swaps the two selectors, calling
+  // codeai_reportException: on self dispatches into the ORIGINAL
+  // -[NSApplication reportException:] IMP. This is the standard ObjC
+  // swizzle trampoline; do not collapse to [super reportException:...].
+  [self codeai_reportException:exception];
+}
+
++ (void)load {
+  Method original = class_getInstanceMethod([NSApplication class],
+                                            @selector(reportException:));
+  Method replacement = class_getInstanceMethod(
+      [NSApplication class], @selector(codeai_reportException:));
+  if (original != nullptr && replacement != nullptr) {
+    method_exchangeImplementations(original, replacement);
   }
 }
 
-void InstallCodeAIHubUncaughtExceptionHandler() {
-  g_previous_uncaught_handler = NSGetUncaughtExceptionHandler();
-  NSSetUncaughtExceptionHandler(&CodeAIHubUncaughtExceptionHandler);
-}
+@end
+
+namespace {
 
 void CreateApplicationMenu() {
   NSApplication* app = [NSApplication sharedApplication];
@@ -105,11 +134,9 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  // Install our uncaught-exception handler before any CEF code runs so the
-  // Chromium browser-teardown path triggered by the red window-close button
-  // cannot terminate the process through AppKit's default crash reporter on
-  // macOS 26.x. See CodeAIHubUncaughtExceptionHandler above for details.
-  InstallCodeAIHubUncaughtExceptionHandler();
+  // The NSApplication reportException: swizzle installed via the category
+  // +load above is already active by the time we reach main() — no explicit
+  // install step is needed here.
 
   CefMainArgs main_args(argc, argv);
   CefRefPtr<LauncherApp> app(new LauncherApp());
