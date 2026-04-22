@@ -57,7 +57,7 @@
 | BUG-2026-04-19-01 | OPEN | Translation/Core/UI | translated overlays теряют пробелы на границе latin/cyrillic (`parallelдля`, `вродеpwd`, `lsилиsed`) | TBD |
 | BUG-2026-04-19-02 | OPEN | Core/UI/Translation | section titles в session messages теряют paragraph boundary и прилипают к предыдущему абзацу (`...data.**Clarifying ...**`) | TBD |
 | BUG-2026-04-19-03 | OPEN | UI/Markdown | ordinary assistant nested lists раздуваются пустыми вертикальными блоками, хотя raw markdown уже компактный | TBD |
-| BUG-2026-04-22-01 | OPEN | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | TBD |
+| BUG-2026-04-22-01 | FIXED | Launcher/CEF/macOS | standalone Project Manager периодически падает на quit/close c `NSApplication unrecognized selector` | 1.2.46 |
 | BUG-2026-04-22-02 | OPEN | Codex/Core/UI | pre-turn usage limits показывают проценты, но теряют `Resets ...` на cold-open после Core restart | TBD |
 | BUG-2026-04-22-03 | OPEN | Claude/Core/UI | pre-turn usage limits не появляются на первом cold-open workspace/step и догоняются только после повторного открытия шага | TBD |
 
@@ -263,7 +263,7 @@
 
 ## BUG-2026-04-22-01 — Launcher/CEF/macOS: standalone Project Manager crashes on quit/close with plain `NSApplication`
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - После закрытия standalone Project Manager на macOS периодически появляется system crash dialog `CodeAI Hub Project Manager quit unexpectedly`.
@@ -275,15 +275,27 @@
 - Reason: `-[NSApplication %s]: unrecognized selector sent to instance ...`
 - Main thread stack проходит через `AppKit -> Chromium Embedded Framework -> CodeAIHubLauncher main`.
 
-**Root cause (confirmed / scope hypothesis):**
+**Root cause (confirmed):**
 - Текущий `packages/cef-launcher/src/platform/mac/app_main_mac.mm` поднимает обычный `NSApplication`, вручную создаёт минимальное меню и сразу уходит в `CefRunMessageLoop()`.
 - Официальный CEF mac sample использует custom `NSApplication <CefAppProtocol>`, `sendEvent:` с `CefScopedSendingEvent`, override `terminate:` и delegate-driven shutdown/reopen hooks.
 - Наш bootstrap отстаёт от требуемого CEF/macOS lifecycle contract; на quit path Chromium/CEF получает `NSApplication`, у которого отсутствует ожидаемый selector/behavior seam.
 
-**Accepted fix direction (2026-04-22):**
-- Ввести mac-only custom application shell, близкий к официальному CEF sample.
-- Перевести quit path на delegate-driven `CloseAllBrowsers(false)` -> `CefQuitMessageLoop()` -> `CefShutdown()`.
-- Сохранить текущий `LauncherApp` как владельца browser/window creation.
+**Fix (implemented):**
+- Добавлены `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h` и `.mm` с `CodeAIHubApplication : NSApplication <CefAppProtocol>` и `CodeAIHubAppDelegate`.
+- `CodeAIHubApplication` теперь оборачивает `sendEvent:` в `CefScopedSendingEvent` и override-ит `terminate:` так, чтобы quit path шёл через delegate вместо direct Cocoa terminate.
+- `app_main_mac.mm` больше не держит inline menu/bootstrap logic: он создаёт `CodeAIHubApplication` до `CefExecuteProcess`, после `CefInitialize` привязывает `CodeAIHubAppDelegate`, а shutdown возвращается к canonical chain `CloseAllBrowsers(false)` -> `CefQuitMessageLoop()` -> `CefShutdown()`.
+- `LauncherHandler::ShowMainWindow()` reused для dock reopen path, secure restorable state вынесен на delegate-level seam.
+
+**Commits:**
+- `de7c5ad37 feat: add CEF-compatible mac application shell`
+- `b6b0cf3d1 fix: align mac launcher bootstrap with CEF sample`
+- `402ed621d docs: sync CEF mac bootstrap contract`
+
+**Release:**
+- `1.2.46`
+
+**Guards delivered:**
+- `./scripts/build-cef-launcher.sh --force --launcher-version 1.2.45`
 
 **Planning source:**
 - `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`

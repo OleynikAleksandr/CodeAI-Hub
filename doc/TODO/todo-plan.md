@@ -32,10 +32,10 @@
 
 ### Stream: Docs and release
 7. [DONE] Синхронизировать launcher SSOT и системный инвариант под новый mac bootstrap contract (scope: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync CEF mac bootstrap contract`)
-8. [TODO] Git Commit: `docs: sync CEF mac bootstrap contract` (hash: TBD)
-9. [IN_PROGRESS] Закрыть launcher bug entry после подтверждённого кода и сохранить usage-limits issues как backlog-only bugs (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record CEF mac launcher crash fix`)
+8. [DONE] Git Commit: `docs: sync CEF mac bootstrap contract` (hash: `402ed621d`)
+9. [DONE] Закрыть launcher bug entry после подтверждённого кода и сохранить usage-limits issues как backlog-only bugs (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record CEF mac launcher crash fix`)
 10. [TODO] Git Commit: `docs: record CEF mac launcher crash fix` (hash: TBD)
-11. [TODO] Подготовить release metadata для версии `1.2.46` до запуска `build-all.sh` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.46 release metadata`)
+11. [IN_PROGRESS] Подготовить release metadata для версии `1.2.46` до запуска `build-all.sh` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.46 release metadata`)
 12. [TODO] Git Commit: `docs: prepare 1.2.46 release metadata` (hash: TBD)
 13. [TODO] Прогнать таргетный launcher build и выполнить `./scripts/build-all.sh` с фиксацией release/version updates (scope: `packages/cef-launcher`, release/version manifests, `doc/TODO/todo-plan.md`; expected commit: `chore: release 1.2.46`)
 14. [TODO] Git Commit: `chore: release 1.2.46` (hash: TBD)
