@@ -9,6 +9,7 @@ namespace codeai::launcher {
 // Returns true when the core is reachable (either already running or
 // successfully launched), false otherwise.
 bool EnsureCoreProcessRunning();
+bool RestartCoreProcess();
 
 // Exposed for tests/platform code to check whether an active core is listening.
 bool IsCoreListening(const std::string& host, int port);

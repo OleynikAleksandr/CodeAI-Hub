@@ -1472,6 +1472,28 @@ bool EnsureCoreProcessRunning() {
   return false;
 }
 
+bool RestartCoreProcess() {
+  const std::string host = GetEnvOrDefault("CORE_HOST", kDefaultHost);
+  const int port = ParsePort(
+    GetEnvOrDefault("CORE_PORT", std::to_string(kDefaultPort)),
+    kDefaultPort);
+  const auto health = QueryCoreHealth(host, port);
+  const bool coreListening = health.has_value() || IsCoreListening(host, port);
+
+  if (coreListening) {
+    LogLauncherInfo(
+      "Explicit core restart requested on " + FormatEndpoint(host, port));
+    if (!TryShutdownExistingCore(host, port, health ? health->pid : -1)) {
+      return false;
+    }
+  } else {
+    LogLauncherInfo(
+      "Explicit core restart requested while core is offline; starting fresh instance.");
+  }
+
+  return EnsureCoreProcessRunning();
+}
+
 void StartCoreMonitoring() {
   LogLauncherInfo("Starting core health monitoring");
   CefPostDelayedTask(
