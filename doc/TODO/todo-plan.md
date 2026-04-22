@@ -28,12 +28,12 @@
 3. [DONE] Добавить custom `NSApplication` + delegate scaffolding для mac launcher bootstrap (scope: `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.h`, `packages/cef-launcher/src/platform/mac/codeai_hub_application_mac.mm`, `doc/TODO/todo-plan.md`; expected commit: `feat: add CEF-compatible mac application shell`)
 4. [DONE] Git Commit: `feat: add CEF-compatible mac application shell` (hash: `de7c5ad37`)
 5. [DONE] Переподключить `app_main_mac.mm` и `CMakeLists.txt` к новому bootstrap seam, сохранив текущий browser/window ownership в `LauncherApp` (scope: `packages/cef-launcher/src/platform/mac/app_main_mac.mm`, `packages/cef-launcher/CMakeLists.txt`, `doc/TODO/todo-plan.md`; expected commit: `fix: align mac launcher bootstrap with CEF sample`)
-6. [TODO] Git Commit: `fix: align mac launcher bootstrap with CEF sample` (hash: TBD)
+6. [DONE] Git Commit: `fix: align mac launcher bootstrap with CEF sample` (hash: `b6b0cf3d1`)
 
 ### Stream: Docs and release
-7. [IN_PROGRESS] Синхронизировать launcher SSOT и системный инвариант под новый mac bootstrap contract (scope: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync CEF mac bootstrap contract`)
+7. [DONE] Синхронизировать launcher SSOT и системный инвариант под новый mac bootstrap contract (scope: `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync CEF mac bootstrap contract`)
 8. [TODO] Git Commit: `docs: sync CEF mac bootstrap contract` (hash: TBD)
-9. [TODO] Закрыть launcher bug entry после подтверждённого кода и сохранить usage-limits issues как backlog-only bugs (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record CEF mac launcher crash fix`)
+9. [IN_PROGRESS] Закрыть launcher bug entry после подтверждённого кода и сохранить usage-limits issues как backlog-only bugs (scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record CEF mac launcher crash fix`)
 10. [TODO] Git Commit: `docs: record CEF mac launcher crash fix` (hash: TBD)
 11. [TODO] Подготовить release metadata для версии `1.2.46` до запуска `build-all.sh` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.46 release metadata`)
 12. [TODO] Git Commit: `docs: prepare 1.2.46 release metadata` (hash: TBD)
