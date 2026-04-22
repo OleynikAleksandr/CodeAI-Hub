@@ -44,10 +44,11 @@ test("SessionIdBar renders live usage limits from session status", () => {
 
   assert.equal(html.includes("Session 9%"), true);
   assert.equal(html.includes("Weekly 12%"), true);
-  assert.equal(html.includes("Resets"), true);
+  assert.equal(html.includes("Session 9% (Resets"), true);
+  assert.equal(html.includes("Weekly 12% (Resets"), true);
 });
 
-test("SessionIdBar does not invent usage limits without live status data", () => {
+test("SessionIdBar renders loading labels when provider usage telemetry is pending", () => {
   Object.assign(globalThis, { React: { createElement } });
 
   const html = renderToStaticMarkup(
@@ -69,41 +70,32 @@ test("SessionIdBar does not invent usage limits without live status data", () =>
 
   assert.equal(html.includes("Session 9%"), false);
   assert.equal(html.includes("Weekly 12%"), false);
-  assert.equal(html.includes(">Session<"), true);
-  assert.equal(html.includes(">Weekly<"), true);
+  assert.equal(html.includes("Session ..."), true);
+  assert.equal(html.includes("Weekly ..."), true);
+  assert.equal(html.includes("unavailable"), false);
 });
 
-test("SessionIdBar refresh effect waits for ready binding state", async () => {
+test("SessionIdBar stays display-only and resolves pending labels from session status", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes('binding.status === "ready"'),
-    true,
-    "usage limits refresh must not fire before binding becomes ready"
+    source.includes("useEffect"),
+    false,
+    "usage limits bar must stay display-only"
   );
   assert.equal(
-    source.includes("binding.status,"),
-    true,
-    "usage limits refresh effect must rerun when binding status changes to ready"
+    source.includes("onRefreshUsageLimits({"),
+    false,
+    "usage limits bar must not trigger transport refresh on mount"
   );
   assert.equal(
-    source.includes("const rawProviderId = resolveRawProviderId(status);"),
+    source.includes("const resolveUsageLabelState ="),
     true,
-    "usage limits refresh must resolve provider from live runtime status"
+    "pending label state must be derived from current session status"
   );
   assert.equal(
-    source.includes("providerId: rawProviderId,"),
+    source.includes('row.labelState === "loading" ? "..." : "unavailable"'),
     true,
-    "usage limits refresh request must use the runtime provider identity"
-  );
-  assert.equal(
-    source.includes("binding.providerSessionId,"),
-    true,
-    "usage limits refresh effect must rerun when the bound provider session changes"
-  );
-  assert.equal(
-    source.includes("sessionId,"),
-    true,
-    "usage limits refresh effect must follow the active runtime session id"
+    "pending and unavailable labels must stay explicit without inventing percentages"
   );
 });

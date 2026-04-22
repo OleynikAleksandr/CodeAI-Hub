@@ -11,6 +11,10 @@ const DIALOG_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx"
 );
+const DIALOG_CONTROLLER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts"
+);
 const RUNTIME_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
@@ -123,7 +127,13 @@ test("project-manager-runtime-session-view rebuilds snapshots from fresh session
     true
   );
   assert.equal(
-    source.includes("nextSnapshots[session.id] = createInitialSnapshot("),
+    source.includes(
+      "nextSnapshots[session.id] = seedSnapshotWithCachedUsageLimits("
+    ),
+    true
+  );
+  assert.equal(
+    source.includes("createInitialSnapshot("),
     true
   );
   assert.equal(
@@ -157,6 +167,23 @@ test("project-manager-runtime-session-view hydrates canonical history instead of
   );
   assert.equal(
     source.includes("if (loadedHistorySessionIdsRef.current.has(session.id)) {"),
+    true
+  );
+});
+
+test("project-manager-dialog-session-controller seeds materialized dialog snapshots from provider cache", async () => {
+  const source = await readFile(DIALOG_CONTROLLER_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("seedSnapshotWithCachedUsageLimits("),
+    true
+  );
+  assert.equal(
+    source.includes("existingCreatedSnapshot ??"),
+    true
+  );
+  assert.equal(
+    source.includes("createInitialSnapshot("),
     true
   );
 });

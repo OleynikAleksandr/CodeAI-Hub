@@ -79,6 +79,15 @@ const readProviderLabelPrefix = (
     case "geminiCli":
       return "gemini";
     default:
+      if (status.providerSummary.toLowerCase().includes("claude")) {
+        return "claude";
+      }
+      if (status.providerSummary.toLowerCase().includes("codex")) {
+        return "codex";
+      }
+      if (status.providerSummary.toLowerCase().includes("gemini")) {
+        return "gemini";
+      }
       return null;
   }
 };
@@ -115,11 +124,9 @@ const resolveUsageLabelState = (options: {
   readonly binding: SessionBindingInfo;
   readonly status: SessionStatusInfo;
 }): "loading" | "unavailable" => {
-  const scopeKey = resolveStatusUsageLimitScopeKey(
-    options.status,
-    options.binding
-  );
-  return scopeKey ? "loading" : "unavailable";
+  return readProviderLabelPrefix(options.status, options.binding)
+    ? "loading"
+    : "unavailable";
 };
 
 const buildLimitRowData = (
