@@ -14,7 +14,10 @@ import {
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
-import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
+import {
+  seedSnapshotWithCachedUsageLimits,
+  updateSnapshotsWithUsageLimits,
+} from "./usage-limits-stream";
 import { appendOptimisticUserMessage } from "./session-message-dedupe";
 import {
   shouldSuppressIdleDialogRestoreRefresh,
@@ -279,7 +282,13 @@ export const useProjectManagerDialogSessionController = (
           const labelsForCreated = buildProviderLabels(created.providerIds[0] ?? null);
           const base =
             existingCreatedSnapshot ??
-            createInitialSnapshot(created, labelsForCreated, settingsRef.current);
+            seedSnapshotWithCachedUsageLimits(
+              createInitialSnapshot(
+                created,
+                labelsForCreated,
+                settingsRef.current
+              )
+            );
           let next: SessionSnapshots = {
             ...previous,
             [created.id]: {

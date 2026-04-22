@@ -17,7 +17,10 @@ import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } fro
 import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
-import { updateSnapshotsWithUsageLimits } from "./usage-limits-stream";
+import {
+  seedSnapshotWithCachedUsageLimits,
+  updateSnapshotsWithUsageLimits,
+} from "./usage-limits-stream";
 import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
 
@@ -81,10 +84,12 @@ const ProjectManagerRuntimeSessionView = ({
         setSessions(nextSessions);
         const nextSnapshots: SessionSnapshots = {};
         for (const session of nextSessions) {
-          nextSnapshots[session.id] = createInitialSnapshot(
-            session,
-            labels,
-            settings
+          nextSnapshots[session.id] = seedSnapshotWithCachedUsageLimits(
+            createInitialSnapshot(
+              session,
+              labels,
+              settings
+            )
           );
         }
         setSnapshots(() => { const snapshotState = workspaceSnapshotStore.getState(); if (workspacePath && snapshotState.activeWorkspaceRoot === workspacePath && snapshotState.currentSnapshot?.workspaceRoot === workspacePath) { return applyWorkspaceSnapshotToSnapshots(nextSnapshots, { workspaceRoot: snapshotState.currentSnapshot.workspaceRoot, selectionId: snapshotState.activeSelectionId ?? "__rehydrate__", sequence: snapshotState.lastAppliedSequence > 0 ? snapshotState.lastAppliedSequence : 1, generatedAt: new Date().toISOString(), snapshot: snapshotState.currentSnapshot }); } return nextSnapshots; });
@@ -140,7 +145,9 @@ const ProjectManagerRuntimeSessionView = ({
         }
         return {
           ...previous,
-          [session.id]: createInitialSnapshot(session, providerLabels, settings),
+          [session.id]: seedSnapshotWithCachedUsageLimits(
+            createInitialSnapshot(session, providerLabels, settings)
+          ),
         };
       });
       if (isInScope) {

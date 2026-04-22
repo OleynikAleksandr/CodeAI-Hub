@@ -106,16 +106,29 @@ const buildFallbackLabels = (
 interface LimitRowData {
   readonly fillStyle: LimitBarStyle | undefined;
   readonly label: string;
+  readonly labelState: "loading" | "unavailable" | null;
   readonly percentUsed: number | null;
   readonly resetLabel: string | null;
 }
+
+const resolveUsageLabelState = (options: {
+  readonly binding: SessionBindingInfo;
+  readonly status: SessionStatusInfo;
+}): "loading" | "unavailable" => {
+  const scopeKey = resolveStatusUsageLimitScopeKey(
+    options.status,
+    options.binding
+  );
+  return scopeKey ? "loading" : "unavailable";
+};
 
 const buildLimitRowData = (
   bucket:
     | { readonly percentUsed?: number; readonly resetsAt?: string | null }
     | null
     | undefined,
-  fallbackLabel: string
+  fallbackLabel: string,
+  labelState: "loading" | "unavailable" | null
 ): LimitRowData => {
   const percentUsed = bucket?.percentUsed ?? null;
   const resetsAt = bucket?.resetsAt ?? null;
@@ -126,7 +139,13 @@ const buildLimitRowData = (
       : ({
           "--limit-fill": `${clampPercent(percentUsed)}%`,
         } as unknown as CSSProperties);
-  return { fillStyle, label: fallbackLabel, percentUsed, resetLabel };
+  return {
+    fillStyle,
+    label: fallbackLabel,
+    labelState,
+    percentUsed,
+    resetLabel,
+  };
 };
 
 const LimitRow = ({ row }: { readonly row: LimitRowData }) => (
@@ -136,7 +155,10 @@ const LimitRow = ({ row }: { readonly row: LimitRowData }) => (
   >
     <span className="session-id-bar__limit-label">
       {renderLimitLabel({
-        label: row.label,
+        label:
+          row.percentUsed === null && row.labelState
+            ? `${row.label} ${row.labelState === "loading" ? "..." : "unavailable"}`
+            : row.label,
         percentUsed: row.percentUsed,
         resetLabel: row.resetLabel,
       })}
@@ -149,18 +171,25 @@ const SessionIdBar = ({ binding, status }: SessionIdBarProps) => {
   const resolvedUsageLimits = status.usageLimits ?? null;
   const resolvedUsageLimitLabels =
     status.usageLimitLabels ?? buildFallbackLabels(status, binding);
+  const pendingLabelState =
+    resolvedUsageLimits === null
+      ? resolveUsageLabelState({ binding, status })
+      : null;
 
   const primary = buildLimitRowData(
     resolvedUsageLimits?.currentSession,
-    resolvedUsageLimitLabels.currentSession ?? "Session"
+    resolvedUsageLimitLabels.currentSession ?? "Session",
+    pendingLabelState
   );
   const secondary = buildLimitRowData(
     resolvedUsageLimits?.currentWeekAllModels,
-    resolvedUsageLimitLabels.currentWeekAllModels ?? "Weekly"
+    resolvedUsageLimitLabels.currentWeekAllModels ?? "Weekly",
+    pendingLabelState
   );
   const tertiary = buildLimitRowData(
     resolvedUsageLimits?.currentWeekSonnetOnly,
-    resolvedUsageLimitLabels.currentWeekSonnetOnly ?? "Model Weekly"
+    resolvedUsageLimitLabels.currentWeekSonnetOnly ?? "Model Weekly",
+    pendingLabelState
   );
 
   return (
