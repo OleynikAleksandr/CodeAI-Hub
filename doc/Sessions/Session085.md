@@ -17,6 +17,7 @@
 - Added regression guards for the two adapter contracts, Codex numeric `resetsAt` normalization, and the PM late-payload/same-provider replay path.
 - Ran targeted tests and compilation checks, then completed the full release stream: `./scripts/build-all.sh --version 1.2.47` followed by `./scripts/build-release.sh --use-current-version`, producing `codeai-hub-1.2.47.vsix`.
 - Updated `BugRegistry` to mark both usage-limits regressions fixed in `1.2.47`, synchronized `SystemArchitecture.md` with the new awaitable/provider-scoped usage contract, and restored `doc/TODO/todo-plan.md` to the neutral no-active-scope stub pointing at this session report.
+- Verified document closure status after release: no live planning-docs for this usage-limits scope remained outside `Archive/`; the relevant implementation planning artifacts had already been archived in the earlier `1.2.45` closeout, so this session only needed SSOT/report synchronization and release closeout docs.
 
 ## Verification
 - `npx tsx --test src/client/project-manager/components/sessions/usage-limits-stream.test.ts`
@@ -28,6 +29,9 @@
 - `npm run build --workspace=@codeai-hub/codex-app-server-module`
 - `./scripts/build-all.sh --version 1.2.47`
 - `./scripts/build-release.sh --use-current-version`
+
+## User feedback
+- Retest feedback (2026-04-22): пользователь подтвердил, что релиз `1.2.47` ведёт себя именно как требовалось: cold-open limits для `Codex` и `Claude` отображаются корректно, включая ожидаемый pre-turn UX.
 
 ## Git commits
 (REFERENCE ONLY: этот список сохраняется для исторической трассировки и расследования регрессий; следующая сессия не обязана читать все коммиты по умолчанию.)
