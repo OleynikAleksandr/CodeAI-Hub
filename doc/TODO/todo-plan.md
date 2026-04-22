@@ -57,6 +57,6 @@
 ## Phase 4 — Release build stream (owner: Codex, updated: 2026-04-22)
 ### Stream: Release 1.2.45
 1. [DONE] Подготовить prerelease metadata для будущей версии `1.2.45`: обновить `README.md` (`Current Release`), `CHANGELOG.md` (`## [1.2.45]`) и зафиксировать planning-doc текущего scope в репозитории — scope: `README.md`, `CHANGELOG.md`, `doc/SolidWorks-WorkFlow/Plans/UsageLimits_PreTurn_DialogOpen_Refresh_Architecture.md`; ожидаемый commit message: `docs: prepare 1.2.45 release metadata`
-2. [IN_PROGRESS] Git Commit: `docs: prepare 1.2.45 release metadata` (hash: TBD)
-3. [TODO] Выполнить release build checklist: clean tree, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты и закоммитить version/package changes релиза `1.2.45` — scope: release scripts + versioned manifests/build artifacts; ожидаемый commit message: `chore: release 1.2.45`
+2. [DONE] Git Commit: `docs: prepare 1.2.45 release metadata` (hash: `276a570ae`)
+3. [IN_PROGRESS] Выполнить release build checklist: clean tree, `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить артефакты и закоммитить version/package changes релиза `1.2.45` — scope: release scripts + versioned manifests/build artifacts; ожидаемый commit message: `chore: release 1.2.45`
 4. [TODO] Git Commit: `chore: release 1.2.45` (hash: TBD)
