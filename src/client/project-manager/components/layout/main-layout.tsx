@@ -7,7 +7,6 @@ import { ensureWorkflowWorktree } from "../../services/workspace-session-client"
 import type { WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
-import { useDetachedSettingsWindow } from "./use-detached-settings-window";
 import { useWorkspaceScopeSync } from "./workspace-scope-sync";
 
 const UI_LABELS_CATEGORY = "ui_interface";
@@ -33,7 +32,6 @@ type AddWorkspaceRequestedDetail = {
 export const MainLayout: React.FC = () => {
   const { t } = useLocalization();
   const { sizes, updateSize } = usePanelSizes();
-  useDetachedSettingsWindow();
   const [projects, setProjects] = useState<readonly WorkspaceProject[]>([]);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | undefined>();
   const [isAddWorkspaceModalOpen, setIsAddWorkspaceModalOpen] = useState(false);
