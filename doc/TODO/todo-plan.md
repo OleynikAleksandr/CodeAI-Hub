@@ -41,9 +41,9 @@
 ## Phase 2 — Core pre-turn refresh on explicit dialog activation (owner: Codex, updated: 2026-04-22)
 ### Stream: Dialog-Opened Cheap Refresh
 1. [DONE] Переиспользовать transport `session:refreshUsageLimits` на explicit dialog activation event, чтобы reopened session запрашивала pre-turn refresh только после фактического открытия пользователем — scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/api.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`; ожидаемый commit message: `feat: request pre-turn usage refresh on dialog open`
-2. [IN_PROGRESS] Git Commit: `feat: request pre-turn usage refresh on dialog open` (hash: TBD)
-3. [TODO] Обновить Core usage-refresh lifecycle для `dialog_opened`: immediate cached replay, cold/stale cheap refresh и отсутствие permanent suppression после пустого warmup probe — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-warmup.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts`; ожидаемый commit message: `fix: refresh usage limits when reopening cold dialogs`
-4. [TODO] Git Commit: `fix: refresh usage limits when reopening cold dialogs` (hash: TBD)
+2. [DONE] Git Commit: `feat: request pre-turn usage refresh on dialog open` (hash: `08032f0a3`)
+3. [DONE] Обновить Core usage-refresh lifecycle для `dialog_opened`: immediate cached replay, cold/stale cheap refresh и отсутствие permanent suppression после пустого warmup probe — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-refresh.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-usage-limits-warmup.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts`; ожидаемый commit message: `fix: refresh usage limits when reopening cold dialogs`
+4. [IN_PROGRESS] Git Commit: `fix: refresh usage limits when reopening cold dialogs` (hash: TBD)
 
 ## Phase 3 — Provider contract hardening and SSOT sync (owner: Codex, updated: 2026-04-22)
 ### Stream: Cheap Provider Refresh Contract

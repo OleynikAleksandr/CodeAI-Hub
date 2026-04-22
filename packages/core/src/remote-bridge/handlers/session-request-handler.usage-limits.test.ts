@@ -345,7 +345,7 @@ test("SessionRequestHandler performs binding bootstrap refresh only until cached
   );
 });
 
-test("SessionRequestHandler does not re-dispatch binding_ready refresh after a failed warmup probe", async () => {
+test("SessionRequestHandler re-dispatches binding_ready refresh after an empty warmup probe", async () => {
   const harness = createHarness();
   const firstSession = harness.sessionManager.createSession(
     "claudeCodeCli",
@@ -400,7 +400,7 @@ test("SessionRequestHandler does not re-dispatch binding_ready refresh after a f
     providerSessionId: null,
     sessionId: secondSession.id,
   });
-  assert.equal(refreshCalls, 1);
+  assert.equal(refreshCalls, 2);
 
   // turn_completed is a legitimate state-change trigger and must still
   // pass through even when the provider is already warmed.
@@ -410,5 +410,89 @@ test("SessionRequestHandler does not re-dispatch binding_ready refresh after a f
     providerSessionId: null,
     sessionId: firstSession.id,
   });
-  assert.equal(refreshCalls, 2);
+  assert.equal(refreshCalls, 3);
+});
+
+test("SessionRequestHandler replays cached usage limits and still refreshes on dialog_opened", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/session-usage-dialog-opened",
+    "provider-session-dialog-opened"
+  );
+  let refreshCalls = 0;
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-dialog-opened",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    refreshUsageLimits: (params: {
+      readonly broadcast: (event: unknown) => void;
+    }) => {
+      refreshCalls += 1;
+      params.broadcast({
+        providerScopeKey: "codex:global",
+        usageLimits: {
+          currentSession: {
+            percentUsed: 34,
+            resetsAt: "2026-04-22T18:00:00.000Z",
+          },
+        },
+        data: {
+          kind: "usage_limits",
+          providerScopeKey: "codex:global",
+          usageLimits: {
+            currentSession: {
+              percentUsed: 34,
+              resetsAt: "2026-04-22T18:00:00.000Z",
+            },
+          },
+        },
+      });
+    },
+    usageLimitsFacade: {
+      getCachedStreamPayload: () => ({
+        providerScopeKey: "codex:global",
+        usageLimits: {
+          currentSession: {
+            percentUsed: 21,
+            resetsAt: "2026-04-22T12:00:00.000Z",
+          },
+        },
+        data: {
+          kind: "usage_limits",
+          providerScopeKey: "codex:global",
+          usageLimits: {
+            currentSession: {
+              percentUsed: 21,
+              resetsAt: "2026-04-22T12:00:00.000Z",
+            },
+          },
+        },
+      }),
+    },
+  });
+
+  await harness.handler.handleRefreshUsageLimits({
+    lifecycleTrigger: "dialog_opened",
+    providerId: "codexCli",
+    providerSessionId: null,
+    sessionId: session.id,
+  });
+
+  assert.equal(refreshCalls, 1);
+  const usageLimitEvents = findUsageLimitsStreamEvents(
+    harness.events,
+    session.id
+  );
+  assert.equal(usageLimitEvents.length, 2);
+  assert.equal(
+    usageLimitEvents[0]?.payload.event.usageLimits?.currentSession?.percentUsed,
+    21
+  );
+  assert.equal(
+    usageLimitEvents[1]?.payload.event.usageLimits?.currentSession?.percentUsed,
+    34
+  );
 });

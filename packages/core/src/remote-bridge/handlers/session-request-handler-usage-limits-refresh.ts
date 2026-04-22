@@ -65,11 +65,12 @@ export const handleRefreshUsageLimitsFlow = async (params: {
         providerSessionId: boundProviderSessionId,
       })
     : null;
-  const shouldDispatchRefresh = shouldDispatchUsageLimitsRefresh({
-    cachedReplayAvailable: Boolean(cachedReplayEvent),
-    lifecycleTrigger,
-    runtimeTurnState,
-  });
+  const shouldDispatchRefresh =
+    shouldDispatchUsageLimitsRefresh({
+      cachedReplayAvailable: Boolean(cachedReplayEvent),
+      lifecycleTrigger,
+      runtimeTurnState,
+    }) || lifecycleTrigger === "dialog_opened";
   logUsageLimitsRefreshReceived({
     adapterAvailable: typeof adapter?.refreshUsageLimits === "function",
     boundProviderSessionId,
@@ -118,7 +119,7 @@ export const handleRefreshUsageLimitsFlow = async (params: {
     ) {
       return;
     }
-    deps.usageLimitsWarmup.markWarmed(resolvedProviderId);
+    let didBroadcastUsageLimits = false;
     const broadcast = (event: unknown): void => {
       const normalizedEvent = normalizeUsageLimitsStreamEvent({
         event,
@@ -127,6 +128,7 @@ export const handleRefreshUsageLimitsFlow = async (params: {
       if (!normalizedEvent) {
         return;
       }
+      didBroadcastUsageLimits = true;
       deps.broadcaster({
         type: "session:stream",
         payload: { sessionId: params.sessionId, event: normalizedEvent },
@@ -138,7 +140,11 @@ export const handleRefreshUsageLimitsFlow = async (params: {
       runtimeSessionId: params.sessionId,
       workspacePath: session.workspacePath,
     });
+    if (didBroadcastUsageLimits) {
+      deps.usageLimitsWarmup.markWarmed(resolvedProviderId);
+    }
     deps.logger.info("Usage limits refresh dispatched to adapter", {
+      didBroadcastUsageLimits,
       providerSessionId: boundProviderSessionId,
       lifecycleTrigger,
       resolvedProviderId,

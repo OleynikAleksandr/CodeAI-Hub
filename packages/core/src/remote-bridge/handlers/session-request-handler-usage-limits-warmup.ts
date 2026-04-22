@@ -2,15 +2,17 @@ import type { Logger } from "../../telemetry/logger";
 import type { UsageTelemetryLifecycleTrigger } from "./session-provider-binding-service";
 
 // Providers for which a usage-limits warmup probe has already been
-// dispatched during this Core process lifetime. Kept account-wide (by
+// completed during this Core process lifetime. Kept account-wide (by
 // providerId) because rate limits are account-wide for all three
 // providers, so one successful probe naturally populates the shared
 // cache (providerScopeKey = `${providerId}:global`). Subsequent
 // binding_ready triggers for the same provider skip the dispatch and
 // rely on cached replay — this avoids the previous "one HTTP probe per
 // reopened dialog" storm and the race between paper-binding and
-// provider hydration. Reset is implicit: the Set lives with the
-// SessionRequestHandler instance and vanishes on Core restart.
+// provider hydration. A probe that returns no payload does not warm the
+// provider and must not suppress the next binding_ready attempt. Reset
+// is implicit: the Set lives with the SessionRequestHandler instance and
+// vanishes on Core restart.
 
 export class UsageLimitsWarmupTracker {
   private readonly warmedProviders = new Set<string>();
