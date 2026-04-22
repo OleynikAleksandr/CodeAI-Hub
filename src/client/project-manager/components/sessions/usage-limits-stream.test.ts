@@ -278,3 +278,51 @@ test("updateSnapshotsWithUsageLimits caches provider telemetry before dialog sna
     63
   );
 });
+
+test("updateSnapshotsWithUsageLimits applies late provider-scoped payload even when source session snapshot was replaced", () => {
+  resetProviderUsageTelemetryCacheForTests();
+  const snapshots = {
+    "active-claude": createSnapshot({
+      providerSummary: "Claude",
+      providerScopeKey: "claude:global",
+    }),
+    "active-codex": createSnapshot({
+      providerSummary: "Codex",
+      providerScopeKey: "codex:global",
+    }),
+  };
+
+  const next = updateSnapshotsWithUsageLimits(snapshots, {
+    sessionId: "stale-claude-session",
+    event: {
+      type: "stream_event",
+      providerSessionId: "claude-provider-session",
+      providerScopeKey: "claude:provider-session",
+      data: {
+        kind: "usage_limits",
+        providerScopeKey: "claude:provider-session",
+        usageLimits: {
+          currentSession: {
+            percentUsed: 58,
+            resetsAt: "2026-04-22T11:00:00.000Z",
+          },
+          currentWeekAllModels: {
+            percentUsed: 77,
+            resetsAt: "2026-04-25T11:00:00.000Z",
+          },
+        },
+      },
+    },
+  });
+
+  assert.equal(
+    next["active-claude"].status.usageLimits?.currentSession?.percentUsed,
+    58
+  );
+  assert.equal(
+    next["active-claude"].status.usageLimits?.currentWeekAllModels?.percentUsed,
+    77
+  );
+  assert.equal(next["active-claude"].status.providerScopeKey, "claude:global");
+  assert.equal(next["active-codex"].status.usageLimits, undefined);
+});

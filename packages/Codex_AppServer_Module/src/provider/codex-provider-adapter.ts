@@ -45,28 +45,24 @@ export class CodexProviderAdapter {
     return this.facade.subscribe(sessionId, listener);
   }
 
-  refreshUsageLimits(params: {
+  async refreshUsageLimits(params: {
     readonly broadcast: (event: unknown) => void;
     readonly providerSessionId: string;
     readonly runtimeSessionId: string;
     readonly workspacePath: string;
-  }): void {
-    this.facade
+  }): Promise<void> {
+    const payload = await this.facade
       .refreshUsageLimits()
-      .then((payload: CodexUsageLimitsStreamPayload | null) => {
-        if (!payload) {
-          return;
-        }
-        params.broadcast({
-          providerScopeKey: payload.providerScopeKey,
-          usageLimits: payload.usageLimits,
-          data: payload.data,
-          uuid: `${crypto.randomUUID()}::usage_limits`,
-          timestamp: new Date().toISOString(),
-        });
-      })
-      .catch(() => {
-        // Best-effort refresh only.
-      });
+      .catch((): CodexUsageLimitsStreamPayload | null => null);
+    if (!payload) {
+      return;
+    }
+    params.broadcast({
+      providerScopeKey: payload.providerScopeKey,
+      usageLimits: payload.usageLimits,
+      data: payload.data,
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
   }
 }

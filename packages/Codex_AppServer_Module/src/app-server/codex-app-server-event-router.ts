@@ -1,5 +1,10 @@
 import crypto from "node:crypto";
 import type { CodexUsageLimits, CodexUsageLimitsStreamPayload } from "../types";
+import {
+  buildUsageLimits,
+  buildUsageLimitsPayload,
+  type RateLimitSnapshot,
+} from "./codex-app-server-usage-limits";
 import { CodexReasoningLiveBuffer } from "./codex-reasoning-live-buffer";
 
 export interface AppServerSessionState {
@@ -10,23 +15,12 @@ export interface AppServerSessionState {
   workspacePath: string;
 }
 
-interface RateLimitBucket {
-  readonly resetsAt?: unknown;
-  readonly usedPercent?: unknown;
-}
-
-interface RateLimitSnapshot {
-  readonly primary?: RateLimitBucket | null;
-  readonly secondary?: RateLimitBucket | null;
-}
-
 interface CodexAppServerEventRouterDependencies {
   readonly emit: (threadId: string, payload: unknown) => void;
   readonly ensureSessionState: (threadId: string) => AppServerSessionState;
   readonly listThreadIds: () => Iterable<string>;
 }
 
-const DEFAULT_PROVIDER_SCOPE_KEY = "codex";
 const PROVIDER = "codex";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -51,42 +45,6 @@ const collectNonEmptyBlocks = (blocks: string[]): string[] =>
 const nowIso = (): string => new Date().toISOString();
 const buildReasoningItemKey = (threadId: string, itemId: string): string =>
   `${threadId}::${itemId}`;
-
-const buildUsageLimits = (
-  snapshot: RateLimitSnapshot | null
-): CodexUsageLimits => {
-  if (!snapshot) {
-    return null;
-  }
-  return {
-    currentSession: snapshot.primary
-      ? {
-          percentUsed: asNumber(snapshot.primary.usedPercent) ?? 0,
-          resetsAt: asString(snapshot.primary.resetsAt),
-        }
-      : null,
-    currentWeekAllModels: snapshot.secondary
-      ? {
-          percentUsed: asNumber(snapshot.secondary.usedPercent) ?? 0,
-          resetsAt: asString(snapshot.secondary.resetsAt),
-        }
-      : null,
-  };
-};
-
-const buildUsageLimitsPayload = (
-  usageLimits: NonNullable<CodexUsageLimits>
-): CodexUsageLimitsStreamPayload => ({
-  providerScopeKey: DEFAULT_PROVIDER_SCOPE_KEY,
-  usageLimits,
-  data: {
-    kind: "usage_limits",
-    usageLimits,
-    providerScopeKey: DEFAULT_PROVIDER_SCOPE_KEY,
-    source: "app_server",
-    collectedAt: nowIso(),
-  },
-});
 
 export class CodexAppServerEventRouter {
   private lastUsageLimits: CodexUsageLimits = null;

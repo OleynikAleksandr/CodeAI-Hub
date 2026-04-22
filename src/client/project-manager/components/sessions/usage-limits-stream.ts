@@ -263,20 +263,21 @@ export const updateSnapshotsWithUsageLimits = (
       usageLimits,
     });
   }
-  if (!sourceSnapshot) {
-    return snapshots;
-  }
-
   const sourceProviderFamily = normalizeProviderFamily(sourceProviderKey);
-  const currentSourceProviderKey = normalizeProviderScopeKey(
-    sourceSnapshot.status.providerScopeKey
-  );
-  if (
-    areUsageLimitsEqual(sourceSnapshot.status.usageLimits, usageLimits) &&
-    areUsageLimitLabelsEqual(sourceSnapshot.status.usageLimitLabels, usageLimitLabels) &&
-    currentSourceProviderKey === sourceProviderKey
-  ) {
-    return snapshots;
+  if (sourceSnapshot) {
+    const currentSourceProviderKey = normalizeProviderScopeKey(
+      sourceSnapshot.status.providerScopeKey
+    );
+    if (
+      areUsageLimitsEqual(sourceSnapshot.status.usageLimits, usageLimits) &&
+      areUsageLimitLabelsEqual(
+        sourceSnapshot.status.usageLimitLabels,
+        usageLimitLabels
+      ) &&
+      currentSourceProviderKey === sourceProviderKey
+    ) {
+      return snapshots;
+    }
   }
 
   const now = Date.now();
@@ -297,7 +298,8 @@ export const updateSnapshotsWithUsageLimits = (
     const shouldUpdateScopeKey =
       sourceProviderKey.length > 0 &&
       currentProviderScopeKey !== sourceProviderKey;
-    if (!(sameProviderScope || sessionId === payload.sessionId)) {
+    const isDirectSourceSession = sessionId === payload.sessionId;
+    if (!(sameProviderScope || isDirectSourceSession)) {
       continue;
     }
 

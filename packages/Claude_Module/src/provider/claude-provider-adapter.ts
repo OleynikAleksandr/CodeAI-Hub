@@ -101,38 +101,34 @@ export class ClaudeProviderAdapter {
     return resumedId;
   }
 
-  refreshUsageLimits(params: {
+  async refreshUsageLimits(params: {
     readonly broadcast: (event: unknown) => void;
     readonly providerSessionId: string;
     readonly runtimeSessionId: string;
     readonly workspacePath: string;
-  }): void {
+  }): Promise<void> {
     const facade = this.usageLimitsFacade;
     if (!facade) {
       return;
     }
-    facade
+    const payload = await facade
       .readStreamPayload({
         workspacePath: params.workspacePath,
         runtimeSessionId: params.runtimeSessionId,
         providerSessionId: params.providerSessionId,
         force: true,
       })
-      .then((payload: ClaudeUsageLimitsStreamPayload | null) => {
-        if (!payload?.usageLimits) {
-          return;
-        }
-        params.broadcast({
-          providerScopeKey: payload.providerScopeKey,
-          usageLimits: payload.usageLimits,
-          data: payload.data,
-          uuid: `${crypto.randomUUID()}::usage_limits`,
-          timestamp: new Date().toISOString(),
-        });
-      })
-      .catch(() => {
-        // Best-effort refresh.
-      });
+      .catch((): ClaudeUsageLimitsStreamPayload | null => null);
+    if (!payload?.usageLimits) {
+      return;
+    }
+    params.broadcast({
+      providerScopeKey: payload.providerScopeKey,
+      usageLimits: payload.usageLimits,
+      data: payload.data,
+      uuid: `${crypto.randomUUID()}::usage_limits`,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   async closeSession(sessionId: string): Promise<void> {

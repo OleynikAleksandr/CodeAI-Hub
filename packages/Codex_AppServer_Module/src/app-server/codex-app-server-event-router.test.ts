@@ -36,7 +36,15 @@ const createRouterHarness = () => {
     },
     listThreadIds: () => states.keys(),
   });
-  return { emitted, router };
+  return {
+    emitted,
+    ensureThread: (threadId: string) => {
+      if (!states.has(threadId)) {
+        states.set(threadId, createSessionState());
+      }
+    },
+    router,
+  };
 };
 
 const collectDialogMessages = (events: EmittedEvent[]) =>
@@ -228,4 +236,45 @@ test("CodexAppServerEventRouter preserves commentary as a tagged non-terminal di
       uuid: "agent-2",
     },
   ]);
+});
+
+test("CodexAppServerEventRouter normalizes numeric resetsAt values from account rate limits", () => {
+  const { emitted, ensureThread, router } = createRouterHarness();
+  ensureThread("thread-usage-a");
+  ensureThread("thread-usage-b");
+
+  const payload = router.registerUsageLimitsSnapshot({
+    primary: {
+      usedPercent: 41,
+      resetsAt: 1_776_855_314,
+    },
+    secondary: {
+      usedPercent: 66,
+      resetsAt: "1777455314000",
+    },
+  });
+
+  assert.equal(
+    payload?.usageLimits?.currentSession?.resetsAt,
+    new Date(1_776_855_314 * 1000).toISOString()
+  );
+  assert.equal(
+    payload?.usageLimits?.currentWeekAllModels?.resetsAt,
+    new Date(1_777_455_314_000).toISOString()
+  );
+  const usageEvents = emitted.filter(({ payload: eventPayload }) => {
+    const record = eventPayload as Record<string, unknown>;
+    return record.type === "stream_event";
+  });
+  assert.equal(usageEvents.length, 2);
+  assert.equal(
+    (
+      usageEvents[0]?.payload as {
+        readonly usageLimits?: {
+          readonly currentSession?: { readonly resetsAt?: string | null };
+        };
+      }
+    ).usageLimits?.currentSession?.resetsAt,
+    new Date(1_776_855_314 * 1000).toISOString()
+  );
 });
