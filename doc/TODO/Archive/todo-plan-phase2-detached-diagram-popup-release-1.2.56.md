@@ -1,9 +1,9 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/PM_DetachedDiagram_Popup_Lifecycle_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/PM_DetachedDiagram_Popup_Lifecycle_Architecture.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/PM_DetachedDiagram_Popup_Lifecycle_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/PM_DetachedDiagram_Popup_Lifecycle_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`

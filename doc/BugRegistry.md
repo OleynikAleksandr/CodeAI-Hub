@@ -98,6 +98,7 @@
 - Smoke: `Diagram Modules -> Detach` открывает popup отдельным окном и его закрытие не завершает main PM window.
 - Smoke: detached popup стартует уже не на full-width main PM frame, а в popup-sized geometry.
 - Smoke: закрытие главного PM окна по-прежнему идёт по существующему `1.2.52` shutdown path.
+- User retest after release build confirmed: detached popup closes locally, main PM remains alive, and popup sizing now matches expectations.
 
 **Release:**
 - `1.2.56`
