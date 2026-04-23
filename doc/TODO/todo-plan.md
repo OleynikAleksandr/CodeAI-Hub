@@ -35,7 +35,7 @@
 4. [DONE] Git Commit: `fix(settings): remove legacy settings fallback` (hash: `cd14e98ee`)
 
 ### Stream: SSOT sync
-5. [TODO] Обновить SSOT под canonical invariant settings path и hard cutover away from `claude.json`; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit message: `docs(settings): define canonical settings path invariant`
+5. [DONE] Обновить SSOT под canonical invariant settings path и hard cutover away from `claude.json`; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit message: `docs(settings): define canonical settings path invariant`
 6. [TODO] Git Commit: `docs(settings): define canonical settings path invariant` (hash: TBD)
 
 ### Stream: Release 1.2.61

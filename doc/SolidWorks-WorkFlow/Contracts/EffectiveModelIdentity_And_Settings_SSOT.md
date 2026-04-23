@@ -1,7 +1,7 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-03-31
+**Updated:** 2026-04-23
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.854`)
 
@@ -16,6 +16,7 @@
 - `modelId` в transport/runtime/UI contract означает полную effective model identity, а не только base model.
 - `reasoning` и `thinking` являются частью identity, а не декоративным metadata.
 - единственным source of truth для next-turn identity остаётся persisted settings snapshot в `~/.codeai-hub/settings/settings.json`.
+- legacy `~/.codeai-hub/settings/claude.json` is not part of the supported runtime contract anymore: no live read/write path may depend on it.
 
 Этот документ применим ко всем provider-цепочкам, где Core вычисляет applied turn config и передаёт его provider runtime на следующий turn.
 
@@ -80,6 +81,7 @@ Core then:
 - emits `session:model:update` with the effective identity that the provider will actually use next;
 - сохраняет публичный `modelId` как effective identity;
 - не требует от UI или provider module догадок о следующем turn-е.
+- if `settings.json` is absent at startup/bootstrap time, Core materializes a fresh normalized canonical snapshot there instead of falling back to any legacy filename.
 
 ### 4.2. Providers are last-mile adapters
 
@@ -123,14 +125,17 @@ Project Manager и shared UI должны отображать applied config, �
 6. UI must display Core-confirmed applied identity, not a locally guessed future state.
 7. Provider-native runtime traces remain the proof of what was actually applied.
 8. Presentation-only settings flags do not participate in effective identity resolution.
+9. `~/.codeai-hub/settings/claude.json` is not an allowed fallback for normal runtime settings resolution or persistence.
 
 ---
 
 ## 6. Code Map
 
 - Core settings resolution:
+  - `packages/core/src/config/index.ts`
   - `packages/core/src/config/provider-turn-config-resolver.ts`
   - `packages/core/src/config/provider-defaults-resolver.ts`
+  - `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`
 - Core outbound bridge:
   - `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`
@@ -140,6 +145,7 @@ Project Manager и shared UI должны отображать applied config, �
   - `packages/Gemini_Module/src/provider/gemini-applied-turn-config.ts`
   - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
 - UI sync:
+  - `src/extension-module/settings/settings-storage.ts`
   - `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
   - `src/client/ui/src/app-host/use-settings-models-sync.ts`
 
