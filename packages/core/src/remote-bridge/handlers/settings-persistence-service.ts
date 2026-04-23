@@ -153,6 +153,7 @@ export class SettingsPersistenceService {
   }) {
     this.config = options.config;
     this.logger = options.logger;
+    this.primeDefaultsIfMissing().catch(() => undefined);
   }
 
   async load(): Promise<Record<string, unknown>> {
@@ -204,6 +205,29 @@ export class SettingsPersistenceService {
     return (
       isRecord(value) && isRecord(value.general) && isRecord(value.providers)
     );
+  }
+
+  private async primeDefaultsIfMissing(): Promise<void> {
+    const settingsPath = this.config.claudeSettingsPath;
+    try {
+      await readFile(settingsPath, "utf8");
+    } catch (error: unknown) {
+      const code = resolveErrorCode(error);
+      if (code !== "ENOENT") {
+        return;
+      }
+      try {
+        await persistSettingsSnapshot(
+          settingsPath,
+          buildDefaultSettingsSnapshot(this.config)
+        );
+      } catch (persistError) {
+        this.logger.warn("Failed to persist default settings on startup", {
+          error: toErrorMessage(persistError),
+          settingsPath,
+        });
+      }
+    }
   }
 
   private async loadSettingsEntry(): Promise<SettingsLoadEntry> {

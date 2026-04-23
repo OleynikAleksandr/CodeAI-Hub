@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -49,10 +48,6 @@ const MILLISECONDS_IN_MINUTE = 60_000;
 const DEFAULT_TEMPLATES_DIR = path.join(homedir(), ".codeai-hub", "templates");
 const CLAUDE_SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
 const CLAUDE_SETTINGS_FILE = path.join(CLAUDE_SETTINGS_DIR, "settings.json");
-const LEGACY_CLAUDE_SETTINGS_FILE = path.join(
-  CLAUDE_SETTINGS_DIR,
-  "claude.json"
-);
 const CODEX_SETTINGS_PATH = path.join(
   homedir(),
   ".codeai-hub",
@@ -113,10 +108,7 @@ export const loadConfig = (): CoreConfig => {
     (workspacePath ? sanitizeSlug(workspacePath) : "default-workspace");
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
   const claudeSettingsPath =
-    process.env.CLAUDE_SETTINGS_PATH ??
-    (existsSync(CLAUDE_SETTINGS_FILE)
-      ? CLAUDE_SETTINGS_FILE
-      : LEGACY_CLAUDE_SETTINGS_FILE);
+    process.env.CLAUDE_SETTINGS_PATH ?? CLAUDE_SETTINGS_FILE;
   const claudeDefaultModel = resolveClaudeDefaultModel(
     process.env.CLAUDE_DEFAULT_MODEL
   );
