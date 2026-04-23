@@ -1,12 +1,7 @@
 import { existsSync, promises as fs, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
-import {
-  type ClaudeThinkingSettings,
-  DEFAULT_CLAUDE_SETTINGS,
-  normalizeClaudeSettings,
-  normalizeClaudeThinkingSettings,
-} from "./claude-settings";
+import { normalizeClaudeSettings } from "./claude-settings";
 import { normalizeCodexSettings } from "./codex-settings";
 import { normalizeGeminiSettings } from "./gemini-settings";
 import { normalizeGeneralSettings } from "./general-settings";
@@ -15,11 +10,6 @@ import { DEFAULT_SETTINGS_SNAPSHOT, type SettingsSnapshot } from "./types";
 
 const SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
 const SETTINGS_FILE = path.join(SETTINGS_DIR, "settings.json");
-const LEGACY_CLAUDE_SETTINGS_FILE = path.join(SETTINGS_DIR, "claude.json");
-
-interface LegacyClaudeSettingsFile {
-  readonly thinking?: unknown;
-}
 
 const normalizeSnapshotForStorage = (
   value: unknown
@@ -90,19 +80,6 @@ const needsLocalizationBackfill = (value: unknown): boolean => {
   );
 };
 
-const extractLegacyClaudeThinking = (): ClaudeThinkingSettings | null => {
-  try {
-    const raw = readFileSync(LEGACY_CLAUDE_SETTINGS_FILE, "utf8");
-    const parsed = JSON.parse(raw) as LegacyClaudeSettingsFile;
-    if (!(parsed && isRecord(parsed) && isRecord(parsed.thinking))) {
-      return null;
-    }
-    return normalizeClaudeThinkingSettings(parsed.thinking);
-  } catch {
-    return null;
-  }
-};
-
 export const parseSettingsSnapshot = (
   value: unknown
 ): SettingsSnapshot | null => {
@@ -146,24 +123,6 @@ export const loadSettingsSnapshot = (): SettingsSnapshot => {
     }
   } catch {
     // ignore missing/invalid files and fall back to defaults
-  }
-
-  const legacyThinking = extractLegacyClaudeThinking();
-  if (legacyThinking) {
-    const migrated: SettingsSnapshot = {
-      ...DEFAULT_SETTINGS_SNAPSHOT,
-      providers: {
-        ...DEFAULT_SETTINGS_SNAPSHOT.providers,
-        claude: {
-          ...DEFAULT_CLAUDE_SETTINGS,
-          thinking: legacyThinking,
-        },
-      },
-    };
-    persistSettingsSnapshot(migrated).catch(() => {
-      /* ignore persistence errors */
-    });
-    return migrated;
   }
 
   if (!hadSettingsFile) {

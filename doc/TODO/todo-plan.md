@@ -30,8 +30,8 @@
 
 ### Stream: Core canonical settings path
 1. [DONE] Зафиксировать Core canonical read/write target на `~/.codeai-hub/settings/settings.json` и убрать `claude.json` из live runtime-path; scope: `packages/core/src/config/index.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`; expected commit message: `fix(settings): canonicalize core settings path`
-2. [TODO] Git Commit: `fix(settings): canonicalize core settings path` (hash: TBD)
-3. [TODO] Убрать `claude.json` из extension-side settings storage и оставить единственным persisted snapshot файл `settings.json`; scope: `src/extension-module/settings/settings-storage.ts`; expected commit message: `fix(settings): remove legacy settings fallback`
+2. [DONE] Git Commit: `fix(settings): canonicalize core settings path` (hash: `14fc03392`)
+3. [DONE] Убрать `claude.json` из extension-side settings storage и оставить единственным persisted snapshot файл `settings.json`; scope: `src/extension-module/settings/settings-storage.ts`; expected commit message: `fix(settings): remove legacy settings fallback`
 4. [TODO] Git Commit: `fix(settings): remove legacy settings fallback` (hash: TBD)
 
 ### Stream: SSOT sync

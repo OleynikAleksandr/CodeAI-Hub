@@ -89,7 +89,7 @@ const normalizeClaudeThinkingEffort = (value: unknown): ClaudeThinkingEffort =>
     ? (value as ClaudeThinkingEffort)
     : resolveLegacyThinkingEffort(value);
 
-export const normalizeClaudeThinkingSettings = (
+const normalizeClaudeThinkingSettings = (
   value: unknown
 ): ClaudeThinkingSettings => {
   if (!isRecord(value)) {
