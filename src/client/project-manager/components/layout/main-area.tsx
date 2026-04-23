@@ -416,7 +416,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
         }
         sizes={sizes}
       />
-      <StatusBar workspaceName={activeWorkspace?.name} />
+      <StatusBar />
     </main>
   );
 };

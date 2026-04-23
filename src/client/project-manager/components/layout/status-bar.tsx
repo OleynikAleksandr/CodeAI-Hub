@@ -4,10 +4,6 @@ import { useLocalization } from "../../../ui/src/app-host/use-localization";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 
-interface StatusBarProps {
-  workspaceName?: string;
-}
-
 const openProjectManagerSettings = (): void => {
   window.dispatchEvent(new CustomEvent("pm:settings:open"));
 };
@@ -23,9 +19,7 @@ const useDiagramZoom = (): { zoom: number; reset: () => void } => {
     return () => window.removeEventListener("pm:diagram:zoom", handler);
   }, []);
   const reset = () => {
-    window.dispatchEvent(
-      new CustomEvent("pm:diagram:zoom:reset")
-    );
+    window.dispatchEvent(new CustomEvent("pm:diagram:zoom:reset"));
   };
   return { zoom, reset };
 };
@@ -34,19 +28,9 @@ const useDiagramZoom = (): { zoom: number; reset: () => void } => {
  * Section 7: Status Bar
  * Displays contextual info and system hints.
  */
-export const StatusBar: React.FC<StatusBarProps> = ({
-  workspaceName,
-}) => {
+export const StatusBar: React.FC = () => {
   const { t } = useLocalization();
   const { zoom, reset: resetZoom } = useDiagramZoom();
-  const workspaceLabel =
-    workspaceName ??
-    t(UI_LABELS_CATEGORY, "pm.status_bar.no_workspace_label", "No workspace");
-  const contextLabel = t(
-    UI_LABELS_CATEGORY,
-    "pm.status_bar.context_label",
-    "Context"
-  );
   const workflowHintLabel = t(
     UI_LABELS_CATEGORY,
     "pm.status_bar.workflow_hint_label",
@@ -60,10 +44,6 @@ export const StatusBar: React.FC<StatusBarProps> = ({
 
   return (
     <footer className="pm-status-bar">
-      <div className="pm-status-bar__left">
-        <span className="pm-status-pill">{contextLabel}</span>
-        <span className="pm-status-text">{workspaceLabel}</span>
-      </div>
       <div className="pm-status-bar__right">
         {zoom !== 1 && (
           <button
@@ -76,7 +56,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({
         )}
         <span className="pm-status-hint">{workflowHintLabel}</span>
         <button
-          className="pm-status-zoom"
+          className="pm-status-open-settings"
           type="button"
           onClick={openProjectManagerSettings}
         >
