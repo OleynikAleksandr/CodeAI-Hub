@@ -8,11 +8,11 @@ interface StatusBarProps {
   workspaceName?: string;
 }
 
-const openDetachedSettingsWindow = (): void => {
+const openProjectManagerSettings = (): void => {
   window.dispatchEvent(new CustomEvent("pm:settings:open"));
 };
 
-const useDigramZoom = (): { zoom: number; reset: () => void } => {
+const useDiagramZoom = (): { zoom: number; reset: () => void } => {
   const [zoom, setZoom] = useState(1);
   useEffect(() => {
     const handler = (e: Event) => {
@@ -38,7 +38,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({
   workspaceName,
 }) => {
   const { t } = useLocalization();
-  const { zoom, reset: resetZoom } = useDigramZoom();
+  const { zoom, reset: resetZoom } = useDiagramZoom();
   const workspaceLabel =
     workspaceName ??
     t(UI_LABELS_CATEGORY, "pm.status_bar.no_workspace_label", "No workspace");
@@ -78,7 +78,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({
         <button
           className="pm-status-zoom"
           type="button"
-          onClick={openDetachedSettingsWindow}
+          onClick={openProjectManagerSettings}
         >
           {openSettingsLabel}
         </button>
