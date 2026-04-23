@@ -7,11 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.59
-- **VS Code extension compat notice переписан на steady-state текст.** Старое сообщение "Settings moved to Project Manager" (эпоха миграции настроек 1.2.53/1.2.54) заменено на описание актуальной роли: расширение — только installer + updater, вся работа идёт в Project Manager (иконка на рабочем столе после первого запуска).
-- **Новые approved ключи `extension_shell.role.{title,body,hint}`** добавлены в `ui_helper_text.json` (категория `user_guidance`, переводится под UI Helper Text invariant §16/§17).
-- **Retired**: fallback-only ключи `settings.only.compat_{body,hint,notice}` (в source dictionary их не было). Третий параграф compat notice удалён.
-- **aria-label** webview region теперь следует за локализованным заголовком, а не за хардкодом "Settings moved to Project Manager".
+## Current Release — v1.2.60
+- **Локализация VS Code extension webview теперь работает с первого рендера.** `HomeViewProvider` загружает cached bootstrap snapshot через `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot(...)` и инжектит его в `window.__CODEAI_LOCALIZATION_BOOTSTRAP__` до mount'а React. Раньше extension всегда передавал `localizationBootstrap: null` → первый paint был на English fallback независимо от пользовательских настроек.
+- **Retag заголовка extension shell под UI Labels.** Ключ `extension_shell.role.title` перенесён из `ui_helper_text.json` в `ui_labels.json` (runtime категория `ui_interface`), потому что короткий section title — это `UI Labels` per `UserFacing_Text_Localization_Boundary §3.1`. Body/Hint остаются в `ui_helper_text.json` под `user_guidance`. С выбором пользователя `UI Labels: Default Language (English)` заголовок остаётся английским, а body/hint следуют за языком `UI Helper Text`.
+
+### 1.2.59 (previous)
+- VS Code extension compat notice переписан на steady-state копию про роль расширения; retired fallback-only ключи `settings.only.compat_*`.
 
 ### 1.2.58 (previous)
 - CI quality-gate Lint разблокирован через pinning всех 7 non-host Biome platform binaries в root `optionalDependencies`; Knip step переведён в advisory на CI; Invariant §34 зафиксирован в SystemArchitecture.

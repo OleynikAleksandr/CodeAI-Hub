@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.60] - 2026-04-23
+### Fixed
+- **VS Code extension webview теперь получает локализованный bootstrap snapshot при первом рендере.** `HomeViewProvider` ранее всегда передавал `localizationBootstrap: null` в `WebviewHtmlGenerator.generate`, из-за чего `window.__CODEAI_LOCALIZATION_BOOTSTRAP__` стартовал пустым, и `SettingsOnlyHost` рендерил English fallback вплоть до прихода `settings:loaded` message (на практике пользователь видел English не дожидаясь update'а). Теперь `resolveWebviewView` вызывает `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot(loadSettingsSnapshot())` и инжектит результат в HTML до mount'а React — тот же контракт, что уже работает в Project Manager.
+
+### Changed
+- **Retag `extension_shell.role.title` как UI Labels.** Короткий section title классифицируется как `UI Labels` per `UserFacing_Text_Localization_Boundary §3.1`, не как `UI Helper Text`. Ключ перенесён из `assets/localization/source/en/ui_helper_text.json` в `assets/localization/source/en/ui_labels.json`; `SettingsOnlyHost` теперь резолвит заголовок через runtime категорию `ui_interface`. Body и Hint остаются в `user_guidance` как explanatory paragraphs.
+
 ## [1.2.59] - 2026-04-23
 ### Changed
 - **VS Code extension webview (SettingsOnlyHost) теперь показывает steady-state описание роли расширения**, а не устаревшее сообщение о переезде настроек в Project Manager. Новый текст: "This extension is for install and updates only" + два параграфа про то, что весь функционал живёт в Project Manager (иконка на рабочем столе после первого запуска).
