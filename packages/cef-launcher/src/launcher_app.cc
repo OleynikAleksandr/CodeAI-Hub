@@ -16,10 +16,12 @@ class LauncherWindowDelegate : public CefWindowDelegate {
  public:
   LauncherWindowDelegate(CefRefPtr<CefBrowserView> browser_view,
                          cef_runtime_style_t runtime_style,
-                         cef_show_state_t initial_state)
+                         cef_show_state_t initial_state,
+                         bool is_popup_window)
       : browser_view_(browser_view),
         runtime_style_(runtime_style),
-        initial_state_(initial_state) {}
+        initial_state_(initial_state),
+        is_popup_window_(is_popup_window) {}
 
   void OnWindowCreated(CefRefPtr<CefWindow> window) override {
     window->AddChildView(browser_view_);
@@ -29,7 +31,15 @@ class LauncherWindowDelegate : public CefWindowDelegate {
   void OnWindowDestroyed(CefRefPtr<CefWindow> window) override { browser_view_ = nullptr; }
 
   bool CanClose(CefRefPtr<CefWindow> window) override {
+    static_cast<void>(window);
 #if defined(__APPLE__)
+    if (is_popup_window_) {
+      // Detached diagram popups are disposable auxiliary windows, not app
+      // owners. Let CEF close the popup locally instead of routing through
+      // the whole-application terminate path.
+      return true;
+    }
+
     // Short-circuit the red window-close button into the native Cmd+Q
     // / Dock Quit code path. On macOS 26.x, Chromium 141's normal
     // TryCloseBrowser() teardown callback sends an AppKit-private
@@ -61,6 +71,7 @@ class LauncherWindowDelegate : public CefWindowDelegate {
   CefRefPtr<CefBrowserView> browser_view_;
   const cef_runtime_style_t runtime_style_;
   const cef_show_state_t initial_state_;
+  const bool is_popup_window_;
 
   IMPLEMENT_REFCOUNTING(LauncherWindowDelegate);
   DISALLOW_COPY_AND_ASSIGN(LauncherWindowDelegate);
@@ -74,8 +85,10 @@ class LauncherBrowserViewDelegate : public CefBrowserViewDelegate {
   bool OnPopupBrowserViewCreated(CefRefPtr<CefBrowserView> browser_view,
                                  CefRefPtr<CefBrowserView> popup_browser_view,
                                  bool is_devtools) override {
+    static_cast<void>(browser_view);
+    static_cast<void>(is_devtools);
     CefWindow::CreateTopLevelWindow(new LauncherWindowDelegate(
-        popup_browser_view, runtime_style_, CEF_SHOW_STATE_NORMAL));
+        popup_browser_view, runtime_style_, CEF_SHOW_STATE_NORMAL, true));
     return true;
   }
 
@@ -140,7 +153,8 @@ void LauncherApp::OnContextInitialized() {
     }
 
     CefWindow::CreateTopLevelWindow(
-        new LauncherWindowDelegate(browser_view, runtime_style, initial_state));
+        new LauncherWindowDelegate(
+            browser_view, runtime_style, initial_state, false));
   } else {
     CefWindowInfo window_info;
 #if defined(_WIN32)
