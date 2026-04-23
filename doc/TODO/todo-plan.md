@@ -39,6 +39,6 @@
 ## Phase 2 — Release 1.2.56 (owner: Codex, updated: 2026-04-23)
 ### Stream: Release build for detached diagram popup fix
 1. [DONE] Подготовить release-facing metadata для версии `1.2.56` перед сборкой релиза. scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.56 release metadata`
-2. [TODO] Git Commit: `docs: prepare 1.2.56 release metadata` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare 1.2.56 release metadata` (hash: `625dd3509`)
 3. [TODO] Выпустить релиз `1.2.56` для пользовательского retest detached diagram popup fix через `./scripts/build-all.sh --version 1.2.56` и `./scripts/build-release.sh --use-current-version`, затем зафиксировать release outputs и обновить статусы плана. scope: release outputs + `doc/TODO/todo-plan.md`; ожидаемый commit message: `chore: release 1.2.56`
 4. [TODO] Git Commit: `chore: release 1.2.56` (hash: TBD)
