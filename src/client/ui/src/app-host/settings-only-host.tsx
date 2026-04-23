@@ -70,6 +70,7 @@ const noopVoidHandler: WebviewMessageHandlers["onSessionClearAll"] = () => {
   // no-op
 };
 
+const UI_LABELS_CATEGORY = "ui_interface";
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 
 export const SettingsOnlyHost = () => {
@@ -79,7 +80,7 @@ export const SettingsOnlyHost = () => {
     settingsState.localizationRuntime
   );
   const roleTitle = localization.t(
-    UI_HELPER_TEXT_CATEGORY,
+    UI_LABELS_CATEGORY,
     "extension_shell.role.title",
     "This extension is for install and updates only"
   );

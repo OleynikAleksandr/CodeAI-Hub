@@ -36,7 +36,6 @@
   "settings.provider_versions.auto_update.description": "Automatically check and update the {packageLabel} on core start. Manual updates remain available below.",
   "settings.only.body": "Sessions and chats are available in Project Manager.",
   "settings.only.hint": "Use this panel to configure providers and defaults.",
-  "extension_shell.role.title": "This extension is for install and updates only",
   "extension_shell.role.body": "The VS Code extension only installs CodeAI Hub and delivers updates. You don't need to come back here during regular work.",
   "extension_shell.role.hint": "All work happens in the Project Manager app — its icon appears on your desktop after the first launch. Sessions, settings, localization, and workflow live there.",
   "settings.claude_default_model.description": "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md",

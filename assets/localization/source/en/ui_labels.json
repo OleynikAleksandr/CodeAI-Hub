@@ -1,4 +1,5 @@
 {
+  "extension_shell.role.title": "This extension is for install and updates only",
   "settings.header.title": "Settings",
   "settings.header.close_button_label": "Close settings",
   "settings.footer.reset_button_title": "Reset all settings to defaults",

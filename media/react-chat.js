@@ -9867,6 +9867,7 @@
   };
   var noopVoidHandler = () => {
   };
+  var UI_LABELS_CATEGORY = "ui_interface";
   var UI_HELPER_TEXT_CATEGORY = "user_guidance";
   var SettingsOnlyHost = () => {
     const settingsState = useSettingsState();
@@ -9875,7 +9876,7 @@
       settingsState.localizationRuntime
     );
     const roleTitle = localization.t(
-      UI_HELPER_TEXT_CATEGORY,
+      UI_LABELS_CATEGORY,
       "extension_shell.role.title",
       "This extension is for install and updates only"
     );
