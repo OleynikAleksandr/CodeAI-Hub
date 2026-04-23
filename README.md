@@ -7,10 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.57
-- **PM footer больше не дублирует workspace identity.** Левая часть status bar очищена: плашка `CONTEXT` и имя workspace удалены, потому что workspace selector уже виден в верхней части левого sidebar.
-- **Кнопка `Open Settings` стала primary action футера.** Выделенный CSS-класс `pm-status-open-settings` в accent-цвете PM, typography в регистре и размере `WORKFLOW TREE MVP`, три визуальные фазы: default / hover / active, плюс focus-visible outline для keyboard navigation.
-- **Contract и `pm:settings:open` dispatch не тронуты.** Клик по кнопке по-прежнему переводит правую панель PM в in-shell settings mode без второго окна (инвариант §33 сохранён).
+## Current Release — v1.2.58
+- **CI quality-gate починена.** Lockfile теперь tracks всех 7 non-host Biome platform binaries через root `optionalDependencies`, что позволяет `npm ci` на Ubuntu CI runner'е установить Linux native binary и запустить Lint. Предыдущие 9 runs'ов подряд (#43-#52) падали за 0 секунд из-за missing `@biomejs/cli-linux-x64`.
+- **Knip step переведён в advisory режим на CI** (`continue-on-error: true`) пока расследуется непрозрачный Linux-specific exit 1. Pre-commit hook продолжает запускать Knip в strict режиме локально — dead code detection не теряется.
+- **Invariant §34 зафиксирован** в `SystemArchitecture.md`: при bump'е Biome/других toolchain'ов с native binaries все platform-specific CLI packages обязаны быть в root `optionalDependencies` синхронно.
+- **Продуктовое поведение не изменилось.** Релиз — чистый CI-hardening; функциональные изменения PM footer (1.2.57) сохранены.
+
+### 1.2.57 (previous)
+- PM footer больше не дублирует workspace identity, Open Settings выведен в primary action с accent-цветом и тремя визуальными фазами.
 
 ### 1.2.56 (previous)
 - Detached Digital Models popup больше не закрывает весь standalone PM, popup больше не наследует autosaved frame главного окна.
