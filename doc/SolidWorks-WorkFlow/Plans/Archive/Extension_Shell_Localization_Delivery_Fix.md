@@ -10,7 +10,7 @@ After 1.2.59 ships the new `extension_shell.role.*` copy, the VS Code extension 
 Two issues feed into the user-visible symptom:
 
 ### Issue A — wrong category for the title
-Per [UserFacing_Text_Localization_Boundary.md §3.1 / §3.2 / §4.5](doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md):
+Per [UserFacing_Text_Localization_Boundary.md §3.1 / §3.2 / §4.5](../../Contracts/UserFacing_Text_Localization_Boundary.md):
 - short interface terms (button labels, section titles, short headers) → `UI Labels` → approved file `ui_labels.json` → runtime category `ui_interface`.
 - explanatory paragraphs under a control / short helper copy → `UI Helper Text` → approved file `ui_helper_text.json` → runtime category `user_guidance`.
 
