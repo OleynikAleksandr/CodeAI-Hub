@@ -11,6 +11,8 @@ const buttonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
+const DETACHED_DIAGRAM_POPUP_FEATURES = "popup,width=1180,height=820";
+
 /**
  * Produces a Detach button element when activeTool is "Diagram Modules",
  * or undefined otherwise. Designed to slot into StageArtifactHeaderToggle.extraActions.
@@ -31,7 +33,11 @@ export const useDetachDiagramButton = (
         workspaceSlug,
         workspacePath,
       });
-      window.open(`${base}?${params.toString()}`, "_blank", "popup");
+      window.open(
+        `${base}?${params.toString()}`,
+        "_blank",
+        DETACHED_DIAGRAM_POPUP_FEATURES
+      );
     };
     return (
       <button type="button" onClick={handleDetach} style={buttonStyle}>

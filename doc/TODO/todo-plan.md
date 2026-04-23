@@ -28,8 +28,8 @@
 ## Phase 1 — Detached Diagram Popup Fix (owner: Codex, updated: 2026-04-23)
 ### Stream: Launcher popup ownership
 1. [DONE] Разделить close semantics для main PM окна и detached popup окна, чтобы закрытие detached `Diagram Modules` window не завершало всё приложение. Фактический scope сузился до `packages/cef-launcher/src/launcher_app.cc`: popup lifecycle разделён на уровне `LauncherWindowDelegate`, без расширения launcher bridge/API seam. commit: `fix(launcher): keep detached diagram popup local`
-2. [TODO] Git Commit: `fix(launcher): keep detached diagram popup local` (hash: TBD)
-3. [TODO] Изолировать popup geometry от main PM autosave slot и добавить popup-sized width hint из PM detach action, чтобы detached diagram окно не открывалось на весь горизонтальный размер standalone PM. scope: `packages/cef-launcher/src/platform/mac/window_state_persistence.h`, `packages/cef-launcher/src/platform/mac/window_state_persistence.mm`, `src/client/project-manager/components/layout/detach-diagram-button.tsx`; ожидаемый commit message: `fix(pm): tune detached diagram popup geometry`
+2. [DONE] Git Commit: `fix(launcher): keep detached diagram popup local` (hash: `aa13048ff`)
+3. [DONE] Изолировать popup geometry от main PM autosave slot и добавить popup-sized width hint из PM detach action, чтобы detached diagram окно не открывалось на весь горизонтальный размер standalone PM. Фактический scope: `packages/cef-launcher/src/platform/mac/launcher_handler_mac.mm`, `src/client/project-manager/components/layout/detach-diagram-button.tsx`; popup больше не читает/пишет main window autosave state, а PM detach action отправляет explicit popup-sized open hint. Таргетная проверка: `npm run build:project-manager`. commit: `fix(pm): tune detached diagram popup geometry`
 4. [TODO] Git Commit: `fix(pm): tune detached diagram popup geometry` (hash: TBD)
 
 ### Stream: Bug registry + SSOT sync

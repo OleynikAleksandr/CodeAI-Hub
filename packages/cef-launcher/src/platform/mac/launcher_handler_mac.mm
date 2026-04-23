@@ -69,13 +69,19 @@ void LauncherHandler::PlatformShowWindow(CefRefPtr<CefBrowser> browser) {
     return;
   }
 
-  [WindowStatePersistence restoreWindow:window];
+  if (!browser || !browser->IsPopup()) {
+    [WindowStatePersistence restoreWindow:window];
+    [WindowStateTracker startTrackingWindow:window];
+  }
   [window makeKeyAndOrderFront:window];
-  [WindowStateTracker startTrackingWindow:window];
 }
 
 void LauncherHandler::PlatformPersistWindowState(
     CefRefPtr<CefBrowser> browser) {
+  if (!browser || browser->IsPopup()) {
+    return;
+  }
+
   NSWindow* window = GetWindowForBrowser(browser);
   if (!window) {
     return;
