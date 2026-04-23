@@ -78,20 +78,20 @@ export const SettingsOnlyHost = () => {
     settingsState.settings,
     settingsState.localizationRuntime
   );
-  const compatBody = localization.t(
+  const roleTitle = localization.t(
     UI_HELPER_TEXT_CATEGORY,
-    "settings.only.compat_body",
-    "CodeAI Hub settings are now owned by Project Manager."
+    "extension_shell.role.title",
+    "This extension is for install and updates only"
   );
-  const compatHint = localization.t(
+  const roleBody = localization.t(
     UI_HELPER_TEXT_CATEGORY,
-    "settings.only.compat_hint",
-    "Open Project Manager and use the footer Open Settings button to edit providers, localization, and global defaults."
+    "extension_shell.role.body",
+    "The VS Code extension only installs CodeAI Hub and delivers updates. You don't need to come back here during regular work."
   );
-  const compatNotice = localization.t(
+  const roleHint = localization.t(
     UI_HELPER_TEXT_CATEGORY,
-    "settings.only.compat_notice",
-    "This VS Code view remains only as a compatibility notice during the extension de-scope transition."
+    "extension_shell.role.hint",
+    "All work happens in the Project Manager app — its icon appears on your desktop after the first launch. Sessions, settings, localization, and workflow live there."
   );
   const { openSettings } = useSettingsVisibility();
   const handleShowSettings = useCallback(() => {
@@ -114,17 +114,11 @@ export const SettingsOnlyHost = () => {
   return (
     <LocalizationProvider value={localization}>
       <div className="app-shell">
-        <main
-          aria-label="Settings moved to Project Manager"
-          style={settingsOnlyLayoutStyles}
-        >
+        <main aria-label={roleTitle} style={settingsOnlyLayoutStyles}>
           <section style={settingsOnlyCardStyles}>
-            <h1 style={settingsOnlyTitleStyles}>
-              Settings moved to Project Manager
-            </h1>
-            <p style={settingsOnlyBodyStyles}>{compatBody}</p>
-            <p style={settingsOnlyHintStyles}>{compatHint}</p>
-            <p style={settingsOnlyHintStyles}>{compatNotice}</p>
+            <h1 style={settingsOnlyTitleStyles}>{roleTitle}</h1>
+            <p style={settingsOnlyBodyStyles}>{roleBody}</p>
+            <p style={settingsOnlyHintStyles}>{roleHint}</p>
           </section>
         </main>
       </div>

@@ -9874,20 +9874,20 @@
       settingsState.settings,
       settingsState.localizationRuntime
     );
-    const compatBody = localization.t(
+    const roleTitle = localization.t(
       UI_HELPER_TEXT_CATEGORY,
-      "settings.only.compat_body",
-      "CodeAI Hub settings are now owned by Project Manager."
+      "extension_shell.role.title",
+      "This extension is for install and updates only"
     );
-    const compatHint = localization.t(
+    const roleBody = localization.t(
       UI_HELPER_TEXT_CATEGORY,
-      "settings.only.compat_hint",
-      "Open Project Manager and use the footer Open Settings button to edit providers, localization, and global defaults."
+      "extension_shell.role.body",
+      "The VS Code extension only installs CodeAI Hub and delivers updates. You don't need to come back here during regular work."
     );
-    const compatNotice = localization.t(
+    const roleHint = localization.t(
       UI_HELPER_TEXT_CATEGORY,
-      "settings.only.compat_notice",
-      "This VS Code view remains only as a compatibility notice during the extension de-scope transition."
+      "extension_shell.role.hint",
+      "All work happens in the Project Manager app \u2014 its icon appears on your desktop after the first launch. Sessions, settings, localization, and workflow live there."
     );
     const { openSettings } = useSettingsVisibility();
     const handleShowSettings = (0, import_react5.useCallback)(() => {
@@ -9904,19 +9904,11 @@
       onSessionFocusLast: noopVoidHandler,
       onShowSettings: handleShowSettings
     });
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "app-shell", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-      "main",
-      {
-        "aria-label": "Settings moved to Project Manager",
-        style: settingsOnlyLayoutStyles,
-        children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { style: settingsOnlyCardStyles, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: settingsOnlyTitleStyles, children: "Settings moved to Project Manager" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: settingsOnlyBodyStyles, children: compatBody }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: settingsOnlyHintStyles, children: compatHint }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: settingsOnlyHintStyles, children: compatNotice })
-        ] })
-      }
-    ) }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LocalizationProvider, { value: localization, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "app-shell", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", { "aria-label": roleTitle, style: settingsOnlyLayoutStyles, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { style: settingsOnlyCardStyles, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { style: settingsOnlyTitleStyles, children: roleTitle }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: settingsOnlyBodyStyles, children: roleBody }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { style: settingsOnlyHintStyles, children: roleHint })
+    ] }) }) }) });
   };
 
   // src/client/ui/src/app-host.tsx
