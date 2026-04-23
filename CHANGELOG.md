@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.59] - 2026-04-23
+### Changed
+- **VS Code extension webview (SettingsOnlyHost) теперь показывает steady-state описание роли расширения**, а не устаревшее сообщение о переезде настроек в Project Manager. Новый текст: "This extension is for install and updates only" + два параграфа про то, что весь функционал живёт в Project Manager (иконка на рабочем столе после первого запуска).
+- **Локализация**: добавлены approved ключи `extension_shell.role.{title,body,hint}` в `assets/localization/source/en/ui_helper_text.json` (категория `user_guidance`). Ключи переводятся на активный UI language через стандартный UI Helper Text pipeline.
+- **Retired**: fallback-only ключи `settings.only.compat_{body,hint,notice}` удалены из компонента (в source dictionary их никогда и не было). Третий `<p>` compat notice удалён — сообщение теперь двухабзацное.
+- **aria-label** webview region мирроррит локализованный заголовок вместо хардкод-английского "Settings moved to Project Manager".
+
 ## [1.2.58] - 2026-04-23
 ### Fixed
 - **CI quality-gate Lint step больше не падает за 0 секунд на Ubuntu runner.** Root cause: Biome доставляет native binary через platform-specific optional packages (`@biomejs/cli-<os>-<arch>`), и наш `package-lock.json` генерируется на macOS Apple Silicon → в `packages` секции lockfile только `@biomejs/cli-darwin-arm64`. `npm ci` строго следует lockfile, не устанавливает Linux binary, shim `biome` падает `require.resolve` мгновенно. Фикс: все 7 non-host `@biomejs/cli-*` пакетов добавлены в root `optionalDependencies` с exact pinned version 2.4.7, что делает их tracked в `packages` секции lockfile с `os/cpu` guards. На каждой платформе npm ставит только свой binary; CI Ubuntu теперь находит Linux binary. Предыдущие 9 runs (#43-#52) падали по этой причине.

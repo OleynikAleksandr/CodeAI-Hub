@@ -7,11 +7,14 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.58
-- **CI quality-gate починена.** Lockfile теперь tracks всех 7 non-host Biome platform binaries через root `optionalDependencies`, что позволяет `npm ci` на Ubuntu CI runner'е установить Linux native binary и запустить Lint. Предыдущие 9 runs'ов подряд (#43-#52) падали за 0 секунд из-за missing `@biomejs/cli-linux-x64`.
-- **Knip step переведён в advisory режим на CI** (`continue-on-error: true`) пока расследуется непрозрачный Linux-specific exit 1. Pre-commit hook продолжает запускать Knip в strict режиме локально — dead code detection не теряется.
-- **Invariant §34 зафиксирован** в `SystemArchitecture.md`: при bump'е Biome/других toolchain'ов с native binaries все platform-specific CLI packages обязаны быть в root `optionalDependencies` синхронно.
-- **Продуктовое поведение не изменилось.** Релиз — чистый CI-hardening; функциональные изменения PM footer (1.2.57) сохранены.
+## Current Release — v1.2.59
+- **VS Code extension compat notice переписан на steady-state текст.** Старое сообщение "Settings moved to Project Manager" (эпоха миграции настроек 1.2.53/1.2.54) заменено на описание актуальной роли: расширение — только installer + updater, вся работа идёт в Project Manager (иконка на рабочем столе после первого запуска).
+- **Новые approved ключи `extension_shell.role.{title,body,hint}`** добавлены в `ui_helper_text.json` (категория `user_guidance`, переводится под UI Helper Text invariant §16/§17).
+- **Retired**: fallback-only ключи `settings.only.compat_{body,hint,notice}` (в source dictionary их не было). Третий параграф compat notice удалён.
+- **aria-label** webview region теперь следует за локализованным заголовком, а не за хардкодом "Settings moved to Project Manager".
+
+### 1.2.58 (previous)
+- CI quality-gate Lint разблокирован через pinning всех 7 non-host Biome platform binaries в root `optionalDependencies`; Knip step переведён в advisory на CI; Invariant §34 зафиксирован в SystemArchitecture.
 
 ### 1.2.57 (previous)
 - PM footer больше не дублирует workspace identity, Open Settings выведен в primary action с accent-цветом и тремя визуальными фазами.
