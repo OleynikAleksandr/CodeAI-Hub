@@ -51,7 +51,9 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode убран):
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов через nested CSS Grid (React Flow удалён в релизе `1.1.921`);
   - `*.flow.json` не показывается пользователю как артефакт; с релиза `1.1.922` sidecar v2 хранит также declarative CSS Grid layout params;
-  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после write.
+  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после write;
+  - detached diagram popup не является owner-window приложения: его закрытие не должно завершать main PM window;
+  - detached diagram popup не должен наследовать autosaved frame главного PM окна; PM отправляет popup-sized open hint, а launcher не применяет main-window restore/persist path к popup browser.
 - Settings surface belongs to PM:
   - footer status bar action `Open Settings` переключает правую панель PM в отдельный in-shell settings mode без второго окна;
   - settings mode reuses shared `SettingsView`, but runs through PM-owned transport/state hooks and sends write intents directly into Core remote bridge;

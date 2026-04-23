@@ -14,6 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
+| BUG-2026-04-23-01 | FIXED | PM/Diagram Modules/Launcher | закрытие detached Digital Models popup закрывает весь Project Manager; popup также наследует full-width geometry main окна | 1.2.56 |
 | BUG-2026-04-22-08 | FIXED | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | 1.2.55 |
 | BUG-2026-04-22-07 | FIXED | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | 1.2.54 |
 | BUG-2026-04-22-06 | FIXED | PM/Settings/Recovery | в General tab пропал `Restart Core`, хотя PM обязан сохранять recovery UX | 1.2.54 |
@@ -67,6 +68,39 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
+
+---
+## BUG-2026-04-23-01 — PM/Diagram Modules/Launcher: closing detached Digital Models popup closes the whole Project Manager
+
+**Status:** FIXED
+
+**Symptom:**
+- В `Diagram Modules` пользователь может открыть граф в отдельном detached CEF popup окне через `Detach`.
+- Закрытие этого detached окна завершает весь standalone Project Manager, хотя popup должен быть локальной вспомогательной surface.
+- Дополнительно detached окно открывается с геометрией main PM окна по горизонтали, вместо более узкого popup-sized presentation.
+
+**Root cause hypothesis (confirmed in code):**
+- После релиза `1.2.52` `LauncherWindowDelegate::CanClose(...)` на macOS стал role-agnostic: и main window, и popup windows маршрутизировались в `RequestNativeApplicationTermination()`.
+- Это было правильным fix-path для main PM window, но неверным для detachable auxiliary popup, который не должен владеть whole-app shutdown.
+- macOS popup также проходил через тот же restore/persist path, что и main window (`WindowStatePersistence` + `WindowStateTracker`), поэтому наследовал full-width autosave frame Project Manager.
+
+**Fix (1.2.56):**
+- `LauncherWindowDelegate` теперь различает main и popup windows. На macOS только main Project Manager window сохраняет `1.2.52` short-circuit в `RequestNativeApplicationTermination()`, а popup window закрывается локально.
+- Detached popup перестал читать и писать main-window autosave state: launcher больше не вызывает restore/tracking/persist path для popup browsers.
+- PM detach action теперь добавляет explicit popup-sized open hint (`width=1180,height=820`), чтобы popup стартовал в более узком artifact-oriented формате.
+
+**Commits:**
+- `aa13048ff fix(launcher): keep detached diagram popup local`
+- `eb78180f8 fix(pm): tune detached diagram popup geometry`
+
+**Guards:**
+- `npm run build:project-manager`
+- Smoke: `Diagram Modules -> Detach` открывает popup отдельным окном и его закрытие не завершает main PM window.
+- Smoke: detached popup стартует уже не на full-width main PM frame, а в popup-sized geometry.
+- Smoke: закрытие главного PM окна по-прежнему идёт по существующему `1.2.52` shutdown path.
+
+**Release:**
+- `1.2.56`
 
 ---
 ## BUG-2026-04-22-08 — PM/Settings/Localization/CEF: selecting `UI Translation Engine` crashes standalone PM on macOS 26.x
