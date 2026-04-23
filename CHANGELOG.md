@@ -4,6 +4,11 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.57] - 2026-04-23
+### Changed
+- **PM footer: убран дубликат workspace identity.** `StatusBar` больше не рендерит левый блок с плашкой `CONTEXT` и именем workspace — workspace selector в левом sidebar остаётся единственным visible surface для workspace identity. Prop `workspaceName` удалён из `StatusBar`, связанные локализационные ключи (`pm.status_bar.context_label`, `pm.status_bar.no_workspace_label`) удалены из approved dictionary.
+- **PM footer: кнопка `Open Settings` выведена в primary action.** Кнопка получила выделенный CSS-класс `pm-status-open-settings` вместо generic `pm-status-zoom`. Typography выровнена с `WORKFLOW TREE MVP` (uppercase, letter-spacing `0.08em`, font-size 12px), но выделена цветом через PM accent. Три визуальные фазы: default (accent border + tinted background), hover (brighter accent, primary text), active/pressed (deeper accent + inset shadow + translateY(1px)), плюс focus-visible outline для keyboard navigation.
+
 ## [1.2.56] - 2026-04-23
 ### Fixed
 - **Detached Digital Models popup больше не закрывает весь standalone Project Manager.** `LauncherWindowDelegate` теперь различает main window и popup window, поэтому auxiliary detached diagram popup больше не маршрутизируется в whole-app `RequestNativeApplicationTermination()` path.

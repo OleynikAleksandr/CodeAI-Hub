@@ -7,11 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.56
-- **Detached Digital Models popup больше не закрывает весь standalone Project Manager.** Launcher теперь различает main window и auxiliary popup window: только главное PM окно сохраняет `1.2.52` shutdown short-circuit, а detached diagram popup закрывается локально.
-- **Detached popup больше не наследует full-width frame главного PM окна.** Popup browser не использует main-window autosave state, а PM detach action даёт explicit popup-sized open hint, поэтому граф стартует в более узком artifact-oriented формате.
-- **Предыдущие CEF/macOS guards сохранены.** Главный PM close path по-прежнему идёт через безопасный `RequestNativeApplicationTermination()` / `[NSApp terminate:]`, а translation-engine selector fix из `1.2.55` остаётся без изменений.
-- **Релиз ориентирован на пользовательский retest detached diagram flow.** Проверочный сценарий: `Diagram Modules -> Detach`, затем отдельная проверка закрытия popup и отдельная проверка закрытия main PM окна.
+## Current Release — v1.2.57
+- **PM footer больше не дублирует workspace identity.** Левая часть status bar очищена: плашка `CONTEXT` и имя workspace удалены, потому что workspace selector уже виден в верхней части левого sidebar.
+- **Кнопка `Open Settings` стала primary action футера.** Выделенный CSS-класс `pm-status-open-settings` в accent-цвете PM, typography в регистре и размере `WORKFLOW TREE MVP`, три визуальные фазы: default / hover / active, плюс focus-visible outline для keyboard navigation.
+- **Contract и `pm:settings:open` dispatch не тронуты.** Клик по кнопке по-прежнему переводит правую панель PM в in-shell settings mode без второго окна (инвариант §33 сохранён).
+
+### 1.2.56 (previous)
+- Detached Digital Models popup больше не закрывает весь standalone PM, popup больше не наследует autosaved frame главного окна.
 
 ### 1.2.52 (previous)
 - Красная NSWindow close кнопка на macOS была переведена на безопасный `[NSApp terminate:]` path, что устранило crash dialog без очередной exception-side mitigation.
