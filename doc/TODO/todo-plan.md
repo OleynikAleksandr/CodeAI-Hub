@@ -22,4 +22,4 @@
 1. [DONE] Add three approved keys (`extension_shell.role.title`, `extension_shell.role.body`, `extension_shell.role.hint`) to `assets/localization/source/en/ui_helper_text.json` — scope: 1 file
 2. [DONE] Update `src/client/ui/src/app-host/settings-only-host.tsx`: replace compat keys with `extension_shell.role.*`, update `aria-label`, collapse third paragraph — scope: 1 file
 3. [DONE] Rebuild webview (`npm run build:webview`) + typecheck (`npm run typecheck:webview`) — scope: generated bundle + type surface
-4. [DONE] Git Commit: `feat(webview): replace extension compat notice with installer/updater role copy` (hash: TBD)
+4. [DONE] Git Commit: `feat(webview): replace extension compat notice with installer/updater role copy` (hash: 665028141)
