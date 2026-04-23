@@ -34,7 +34,14 @@ jobs:
         run: npm run lint
 
       - name: Knip (dead code detection)
-        run: npm run check:knip
+        run: |
+          node --version
+          npm --version
+          ls -la node_modules/.bin/knip || true
+          ls -la node_modules/knip/bin/ || true
+          node --version
+          node ./node_modules/knip/bin/knip.js --version || echo "knip --version exit: $?"
+          npm run check:knip
 
       - name: Compile
         run: npm run compile
