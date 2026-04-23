@@ -40,6 +40,6 @@
 
 ### Stream: Release 1.2.61
 7. [DONE] Подготовить release docs на будущую версию `1.2.61`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare README/CHANGELOG for 1.2.61`
-8. [TODO] Git Commit: `docs: prepare README/CHANGELOG for 1.2.61` (hash: TBD)
+8. [DONE] Git Commit: `docs: prepare README/CHANGELOG for 1.2.61` (hash: `1eba7d108`)
 9. [TODO] Выполнить release pipeline `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bumps / manifests / release artifacts; scope: release-generated files and manifests; expected commit message: `chore: release 1.2.61`
 10. [TODO] Git Commit: `chore: release 1.2.61` (hash: TBD)
