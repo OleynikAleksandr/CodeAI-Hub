@@ -26,4 +26,4 @@
 ### Stream 2: Inject bootstrap into VS Code extension webview
 3. [DONE] Wire `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot` into `src/extension-module/home-view-provider.ts`; load cached settings + bootstrap snapshot before `WebviewHtmlGenerator.generate`, pass as `localizationBootstrap`, preserve existing error-warning path — scope: 1 file
 4. [DONE] Rebuild webview (`npm run build:webview`) + `npm run typecheck:webview` + `npx tsc -p tsconfig.json --noEmit` for extension-side types — scope: generated bundle + types
-5. [DONE] Git Commit: `fix(extension): inject cached localization bootstrap into VS Code webview at HTML generation` (hash: TBD)
+5. [DONE] Git Commit: `fix(extension): inject cached localization bootstrap into VS Code webview at HTML generation` (hash: 6f5696f92)
