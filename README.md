@@ -7,11 +7,11 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.55
-- **Translation engine selectors больше не роняют standalone Project Manager на macOS 26.x.** Shared `TranslationEngineSelector` больше не использует native `<select>` и переведён на DOM-owned dropdown/listbox, чтобы не заходить в Chromium/AppKit popup branch, который провоцировал `NSApplication unrecognized selector`.
-- **Fix накрывает оба localization engine control-а.** Безопасный selector теперь используется и для `UI Translation Engine`, и для `Reasoning Translation Engine`, сохраняя availability labels и keyboard navigation.
-- **Вся предыдущая stabilization-линия `1.2.54` сохранена.** Settings по-прежнему живут внутри PM, `Restart Core` остаётся в `General`, а provider-only saves не показывают ложный localization overlay.
-- **Launcher boundary уточнена, но не расширена.** Это именно UI-layer trigger removal, а не новый launcher workaround: bridge и CEF bootstrap остаются прежними, product surface просто избегает unsafe native popup path.
+## Current Release — v1.2.56
+- **Detached Digital Models popup больше не закрывает весь standalone Project Manager.** Launcher теперь различает main window и auxiliary popup window: только главное PM окно сохраняет `1.2.52` shutdown short-circuit, а detached diagram popup закрывается локально.
+- **Detached popup больше не наследует full-width frame главного PM окна.** Popup browser не использует main-window autosave state, а PM detach action даёт explicit popup-sized open hint, поэтому граф стартует в более узком artifact-oriented формате.
+- **Предыдущие CEF/macOS guards сохранены.** Главный PM close path по-прежнему идёт через безопасный `RequestNativeApplicationTermination()` / `[NSApp terminate:]`, а translation-engine selector fix из `1.2.55` остаётся без изменений.
+- **Релиз ориентирован на пользовательский retest detached diagram flow.** Проверочный сценарий: `Diagram Modules -> Detach`, затем отдельная проверка закрытия popup и отдельная проверка закрытия main PM окна.
 
 ### 1.2.52 (previous)
 - Красная NSWindow close кнопка на macOS была переведена на безопасный `[NSApp terminate:]` path, что устранило crash dialog без очередной exception-side mitigation.

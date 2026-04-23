@@ -30,15 +30,15 @@
 1. [DONE] Разделить close semantics для main PM окна и detached popup окна, чтобы закрытие detached `Diagram Modules` window не завершало всё приложение. Фактический scope сузился до `packages/cef-launcher/src/launcher_app.cc`: popup lifecycle разделён на уровне `LauncherWindowDelegate`, без расширения launcher bridge/API seam. commit: `fix(launcher): keep detached diagram popup local`
 2. [DONE] Git Commit: `fix(launcher): keep detached diagram popup local` (hash: `aa13048ff`)
 3. [DONE] Изолировать popup geometry от main PM autosave slot и добавить popup-sized width hint из PM detach action, чтобы detached diagram окно не открывалось на весь горизонтальный размер standalone PM. Фактический scope: `packages/cef-launcher/src/platform/mac/launcher_handler_mac.mm`, `src/client/project-manager/components/layout/detach-diagram-button.tsx`; popup больше не читает/пишет main window autosave state, а PM detach action отправляет explicit popup-sized open hint. Таргетная проверка: `npm run build:project-manager`. commit: `fix(pm): tune detached diagram popup geometry`
-4. [TODO] Git Commit: `fix(pm): tune detached diagram popup geometry` (hash: TBD)
+4. [DONE] Git Commit: `fix(pm): tune detached diagram popup geometry` (hash: `eb78180f8`)
 
 ### Stream: Bug registry + SSOT sync
-1. [TODO] Зарегистрировать bug и синхронизировать канонический контракт detached diagram popup ownership/geometry в SSOT. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; ожидаемый commit message: `docs: sync detached diagram popup contract`
-2. [TODO] Git Commit: `docs: sync detached diagram popup contract` (hash: TBD)
+1. [DONE] Зарегистрировать bug и синхронизировать канонический контракт detached diagram popup ownership/geometry в SSOT. scope: `doc/BugRegistry.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; commit: `docs: sync detached diagram popup contract`
+2. [DONE] Git Commit: `docs: sync detached diagram popup contract` (hash: `36bc1a026`)
 
 ## Phase 2 — Release 1.2.56 (owner: Codex, updated: 2026-04-23)
 ### Stream: Release build for detached diagram popup fix
-1. [TODO] Подготовить release-facing metadata для версии `1.2.56` перед сборкой релиза. scope: `README.md`, `CHANGELOG.md`; ожидаемый commit message: `docs: prepare 1.2.56 release metadata`
+1. [DONE] Подготовить release-facing metadata для версии `1.2.56` перед сборкой релиза. scope: `README.md`, `CHANGELOG.md`; commit: `docs: prepare 1.2.56 release metadata`
 2. [TODO] Git Commit: `docs: prepare 1.2.56 release metadata` (hash: TBD)
 3. [TODO] Выпустить релиз `1.2.56` для пользовательского retest detached diagram popup fix через `./scripts/build-all.sh --version 1.2.56` и `./scripts/build-release.sh --use-current-version`, затем зафиксировать release outputs и обновить статусы плана. scope: release outputs + `doc/TODO/todo-plan.md`; ожидаемый commit message: `chore: release 1.2.56`
 4. [TODO] Git Commit: `chore: release 1.2.56` (hash: TBD)

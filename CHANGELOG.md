@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.56] - 2026-04-23
+### Fixed
+- **Detached Digital Models popup больше не закрывает весь standalone Project Manager.** `LauncherWindowDelegate` теперь различает main window и popup window, поэтому auxiliary detached diagram popup больше не маршрутизируется в whole-app `RequestNativeApplicationTermination()` path.
+- **Detached popup больше не наследует autosaved frame главного PM окна.** Launcher перестал применять restore/tracking/persist path к popup browsers, а PM detach action теперь даёт explicit popup-sized open hint (`width=1180,height=820`), так что окно стартует в более узком artifact-oriented формате.
+
+### Changed
+- **CEF/PM contract уточнён на уровне bug history и SSOT.** `BugRegistry.md`, `Launcher_CEF.md` и `Project_Manager.md` теперь фиксируют split между главным PM окном и detached diagram popup: popup не является owner-window приложения и не должен reuse-ить main-window autosave state.
+
 ## [1.2.55] - 2026-04-22
 ### Fixed
 - **`UI Translation Engine` больше не роняет standalone Project Manager на macOS 26.x.** Shared `TranslationEngineSelector` переведён с native `<select>` на DOM-owned button/listbox selector, поэтому PM больше не заходит в Chromium/AppKit popup path, который завершался `NSApplication unrecognized selector`.
