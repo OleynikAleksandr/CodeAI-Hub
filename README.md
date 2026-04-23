@@ -7,9 +7,10 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.60
-- **Локализация VS Code extension webview теперь работает с первого рендера.** `HomeViewProvider` загружает cached bootstrap snapshot через `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot(...)` и инжектит его в `window.__CODEAI_LOCALIZATION_BOOTSTRAP__` до mount'а React. Раньше extension всегда передавал `localizationBootstrap: null` → первый paint был на English fallback независимо от пользовательских настроек.
-- **Retag заголовка extension shell под UI Labels.** Ключ `extension_shell.role.title` перенесён из `ui_helper_text.json` в `ui_labels.json` (runtime категория `ui_interface`), потому что короткий section title — это `UI Labels` per `UserFacing_Text_Localization_Boundary §3.1`. Body/Hint остаются в `ui_helper_text.json` под `user_guidance`. С выбором пользователя `UI Labels: Default Language (English)` заголовок остаётся английским, а body/hint следуют за языком `UI Helper Text`.
+## Current Release — v1.2.61
+- **Canonical settings path жёстко зафиксирован на `~/.codeai-hub/settings/settings.json`.** Launcher/Core bootstrap больше не имеет live fallback на `claude.json`, поэтому unified settings snapshot больше не может записываться в устаревшее имя файла и расходиться с read-path, который уже ожидал `settings.json`.
+- **Core теперь materialize-ит новый `settings.json` уже на старте, если canonical файла нет.** `SettingsPersistenceService` делает startup prime default snapshot, так что удаление старого `claude.json` не оставляет runtime без persisted settings file до первого ручного `settings:load`.
+- **Extension-side settings storage тоже полностью забывает `claude.json`.** В VS Code shell остаётся только один persisted snapshot path — `settings.json`; legacy fallback и связанный dead export удалены.
 
 ### 1.2.59 (previous)
 - VS Code extension compat notice переписан на steady-state копию про роль расширения; retired fallback-only ключи `settings.only.compat_*`.

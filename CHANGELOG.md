@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.61] - 2026-04-23
+### Fixed
+- **Canonical settings path теперь жёстко зафиксирован на `~/.codeai-hub/settings/settings.json`.** Core config bootstrap больше не выбирает `claude.json` как runtime fallback path, поэтому launcher/Core startup и Core-owned settings persistence больше не могут resurrect full unified snapshot под legacy filename.
+- **Core materialize-ит default `settings.json` уже на startup/settings bootstrap, если canonical файла нет.** `SettingsPersistenceService` делает best-effort startup prime для normalized default snapshot, так что после удаления `claude.json` новый persisted settings file появляется сразу на canonical path.
+
+### Changed
+- **VS Code extension settings storage полностью перестал консультироваться с `claude.json`.** Extension-side `loadSettingsSnapshot()` теперь работает только с `settings.json`; legacy fallback удалён, вместе с мёртвым exported helper для old Claude-only thinking migration.
+- **SSOT обновлён под hard cutover.** `SystemArchitecture.md` и `EffectiveModelIdentity_And_Settings_SSOT.md` теперь явно фиксируют, что `settings.json` — единственный поддерживаемый runtime settings snapshot, а `claude.json` не участвует в нормальном read/write contract.
+
 ## [1.2.60] - 2026-04-23
 ### Fixed
 - **VS Code extension webview теперь получает локализованный bootstrap snapshot при первом рендере.** `HomeViewProvider` ранее всегда передавал `localizationBootstrap: null` в `WebviewHtmlGenerator.generate`, из-за чего `window.__CODEAI_LOCALIZATION_BOOTSTRAP__` стартовал пустым, и `SettingsOnlyHost` рендерил English fallback вплоть до прихода `settings:loaded` message (на практике пользователь видел English не дожидаясь update'а). Теперь `resolveWebviewView` вызывает `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot(loadSettingsSnapshot())` и инжектит результат в HTML до mount'а React — тот же контракт, что уже работает в Project Manager.

@@ -36,10 +36,10 @@
 
 ### Stream: SSOT sync
 5. [DONE] Обновить SSOT под canonical invariant settings path и hard cutover away from `claude.json`; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit message: `docs(settings): define canonical settings path invariant`
-6. [TODO] Git Commit: `docs(settings): define canonical settings path invariant` (hash: TBD)
+6. [DONE] Git Commit: `docs(settings): define canonical settings path invariant` (hash: `cea4aa8ae`)
 
 ### Stream: Release 1.2.61
-7. [TODO] Подготовить release docs на будущую версию `1.2.61`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare README/CHANGELOG for 1.2.61`
+7. [DONE] Подготовить release docs на будущую версию `1.2.61`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare README/CHANGELOG for 1.2.61`
 8. [TODO] Git Commit: `docs: prepare README/CHANGELOG for 1.2.61` (hash: TBD)
 9. [TODO] Выполнить release pipeline `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, зафиксировать version bumps / manifests / release artifacts; scope: release-generated files and manifests; expected commit message: `chore: release 1.2.61`
 10. [TODO] Git Commit: `chore: release 1.2.61` (hash: TBD)
