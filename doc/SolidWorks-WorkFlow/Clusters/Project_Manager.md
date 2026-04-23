@@ -55,7 +55,8 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - detached diagram popup не является owner-window приложения: его закрытие не должно завершать main PM window;
   - detached diagram popup не должен наследовать autosaved frame главного PM окна; PM отправляет popup-sized open hint, а launcher не применяет main-window restore/persist path к popup browser.
 - Settings surface belongs to PM:
-  - footer status bar action `Open Settings` переключает правую панель PM в отдельный in-shell settings mode без второго окна;
+  - footer status bar больше не дублирует workspace identity: левая часть футера пустая, workspace selector остаётся единственной visible surface в левом sidebar;
+  - footer status bar action `Open Settings` использует выделенный CSS-класс `pm-status-open-settings` (accent-colored default/hover/active фазы + focus-visible outline) и переключает правую панель PM в отдельный in-shell settings mode без второго окна;
   - settings mode reuses shared `SettingsView`, but runs through PM-owned transport/state hooks and sends write intents directly into Core remote bridge;
   - закрытие Settings возвращает предыдущий right-panel context вместо закрытия PM window;
   - PM settings general tab снова показывает shared `Core Controls`, а `Restart Core` routed through PM host bridge for both VS Code-host and standalone launcher-host;

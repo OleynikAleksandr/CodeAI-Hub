@@ -23,15 +23,15 @@
 ## Phase 1 — PM Footer Cleanup + Open Settings Prominence (owner: CodeAI Hub Bot, updated: 2026-04-23)
 
 ### Stream 1: Left-side context cleanup
-1. [TODO] Удалить `pm-status-bar__left` блок (CONTEXT pill + workspace name) в `status-bar.tsx`, убрать prop `workspaceName` + его проброс у родителя, обновить `pm-status-bar` layout под flex-end — scope: `src/client/project-manager/components/layout/status-bar.tsx`, родитель (ожидается `src/client/project-manager/app.tsx` или `main-layout.tsx`), `packages/ui/project-manager/styles.css`.
-2. [TODO] Git Commit: `fix(pm): drop duplicate workspace context from footer` (hash: TBD)
+1. [DONE] Удалить `pm-status-bar__left` блок (CONTEXT pill + workspace name) в `status-bar.tsx`, убрать prop `workspaceName` + его проброс у родителя — scope: `src/client/project-manager/components/layout/status-bar.tsx`, `src/client/project-manager/components/layout/main-area.tsx`, planning artifacts.
+2. [DONE] Git Commit: `fix(pm): drop duplicate workspace context from footer` (hash: b45315e72)
 
 ### Stream 2: Open Settings visual contract + localization cleanup
-1. [TODO] Добавить CSS-класс `pm-status-open-settings` с default/hover/active/focus-visible фазами в `packages/ui/project-manager/styles.css`; переключить кнопку в `status-bar.tsx` на новый класс; удалить неиспользуемые ключи `pm.status_bar.context_label`, `pm.status_bar.no_workspace_label` из approved dict — scope: `packages/ui/project-manager/styles.css`, `src/client/project-manager/components/layout/status-bar.tsx`, `src/localization/source/ui_labels.json` (путь уточняется при fix).
-2. [TODO] Git Commit: `feat(pm): promote Open Settings action in footer` (hash: TBD)
+1. [DONE] Добавить CSS-класс `pm-status-open-settings` с default/hover/active/focus-visible фазами, переключить кнопку на новый класс, удалить неиспользуемые ключи `pm.status_bar.context_label`, `pm.status_bar.no_workspace_label` из `assets/localization/source/en/ui_labels.json` — scope: `packages/ui/project-manager/styles.css`, `assets/localization/source/en/ui_labels.json`.
+2. [DONE] Git Commit: `feat(pm): promote Open Settings action in footer` (hash: 7a8060ec7)
 
 ### Stream 3: SSOT sync + architectural doc update
-1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` и `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` — footer contract больше не содержит workspace duplication, Open Settings выведен в отдельный CSS-класс и pressured visibility; обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33 если необходимо — scope: до 3 doc файлов.
+1. [IN_PROGRESS] Обновить `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` и `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` — footer contract больше не содержит workspace duplication, Open Settings выведен в отдельный CSS-класс и имеет visible фазы — scope: 2 doc файла.
 2. [TODO] Git Commit: `docs: sync PM footer cleanup contract` (hash: TBD)
 
 ### Stream 4: Release 1.2.57 build
