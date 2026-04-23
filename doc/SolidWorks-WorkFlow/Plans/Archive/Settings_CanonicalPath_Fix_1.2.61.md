@@ -1,6 +1,6 @@
 # Canonical Settings Path Fix (1.2.61)
 
-**Status:** active (planning -> implementation same session)
+**Status:** completed (implemented and released in `1.2.61`)
 **Date:** 2026-04-23
 
 ## Problem
