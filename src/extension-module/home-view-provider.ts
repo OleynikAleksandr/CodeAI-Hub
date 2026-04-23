@@ -1,3 +1,4 @@
+import type { LocalizationRuntimeBootstrapSnapshot } from "@codeai-hub/localization";
 import {
   Uri,
   type WebviewView,
@@ -8,6 +9,8 @@ import { WebviewHtmlGenerator } from "../core/webview-module/webview-html-genera
 import type { CoreProcessManager } from "./core/core-process-manager";
 import type { WebviewMessage } from "./home-view-message-router";
 import { HomeViewMessageRouter } from "./home-view-message-router";
+import { LocalizationRuntimeService } from "./settings/localization-runtime-service";
+import { loadSettingsSnapshot } from "./settings/settings-storage";
 
 export class HomeViewProvider implements WebviewViewProvider {
   static readonly viewType = "codeaiHubView";
@@ -16,6 +19,7 @@ export class HomeViewProvider implements WebviewViewProvider {
   private readonly webviewUIRootPath: string;
   private readonly htmlGenerator: WebviewHtmlGenerator;
   private readonly messageRouter: HomeViewMessageRouter;
+  private readonly localizationRuntimeService: LocalizationRuntimeService;
   private readonly coreConfig?: {
     readonly httpUrl: string;
     readonly wsUrl: string;
@@ -41,12 +45,13 @@ export class HomeViewProvider implements WebviewViewProvider {
       extensionUri.fsPath,
       coreProcessManager
     );
+    this.localizationRuntimeService = new LocalizationRuntimeService();
     this.coreConfig = coreConfig;
   }
 
-  resolveWebviewView(webviewView: WebviewView): void {
+  async resolveWebviewView(webviewView: WebviewView): Promise<void> {
     try {
-      this.resolveWebviewViewSync(webviewView);
+      await this.resolveWebviewViewAsync(webviewView);
     } catch (error: unknown) {
       window.showWarningMessage(
         `Failed to initialize settings webview: ${String(error)}`
@@ -54,7 +59,9 @@ export class HomeViewProvider implements WebviewViewProvider {
     }
   }
 
-  private resolveWebviewViewSync(webviewView: WebviewView): void {
+  private async resolveWebviewViewAsync(
+    webviewView: WebviewView
+  ): Promise<void> {
     const { webview } = webviewView;
     this.currentView = webviewView;
 
@@ -66,13 +73,15 @@ export class HomeViewProvider implements WebviewViewProvider {
       ],
     };
 
+    const localizationBootstrap = await this.loadLocalizationBootstrap();
+
     webview.html = this.htmlGenerator.generate(
       webview,
       this.extensionUri,
       this.webviewUIRootPath,
       {
         coreBridgeConfig: this.coreConfig,
-        localizationBootstrap: null,
+        localizationBootstrap,
       }
     );
 
@@ -83,6 +92,22 @@ export class HomeViewProvider implements WebviewViewProvider {
     if (this.pendingShowSettings) {
       this.pendingShowSettings = false;
       this.showSettingsInternal();
+    }
+  }
+
+  private async loadLocalizationBootstrap(): Promise<LocalizationRuntimeBootstrapSnapshot | null> {
+    try {
+      const settings = loadSettingsSnapshot();
+      return await this.localizationRuntimeService.loadRuntimeBootstrapSnapshot(
+        settings
+      );
+    } catch (error: unknown) {
+      // Non-fatal: webview renders with English fallbacks and relies on the
+      // subsequent `settings:loaded` message for the actual payload.
+      window.showWarningMessage(
+        `Failed to load localization bootstrap for settings webview: ${String(error)}`
+      );
+      return null;
     }
   }
 

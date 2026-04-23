@@ -21,9 +21,9 @@
 
 ### Stream 1: Retag title as UI Labels
 1. [DONE] Move `extension_shell.role.title` from `assets/localization/source/en/ui_helper_text.json` to `assets/localization/source/en/ui_labels.json`; update `src/client/ui/src/app-host/settings-only-host.tsx` so title uses category `ui_interface`, body/hint stay on `user_guidance` — scope: 3 files
-2. [DONE] Git Commit: `feat(localization): retag extension_shell.role.title as UI Labels` (hash: TBD)
+2. [DONE] Git Commit: `feat(localization): retag extension_shell.role.title as UI Labels` (hash: 70f03fe0b)
 
 ### Stream 2: Inject bootstrap into VS Code extension webview
-3. [TODO] Wire `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot` into `src/extension-module/home-view-provider.ts`; load cached settings + bootstrap snapshot before `WebviewHtmlGenerator.generate`, pass as `localizationBootstrap`, preserve existing error-warning path — scope: 1 file
-4. [TODO] Rebuild webview (`npm run build:webview`) + `npm run typecheck:webview` + `npx tsc -p tsconfig.json --noEmit` for extension-side types — scope: generated bundle + types
-5. [TODO] Git Commit: `fix(extension): inject cached localization bootstrap into VS Code webview at HTML generation` (hash: TBD)
+3. [DONE] Wire `LocalizationRuntimeService.loadRuntimeBootstrapSnapshot` into `src/extension-module/home-view-provider.ts`; load cached settings + bootstrap snapshot before `WebviewHtmlGenerator.generate`, pass as `localizationBootstrap`, preserve existing error-warning path — scope: 1 file
+4. [DONE] Rebuild webview (`npm run build:webview`) + `npm run typecheck:webview` + `npx tsc -p tsconfig.json --noEmit` for extension-side types — scope: generated bundle + types
+5. [DONE] Git Commit: `fix(extension): inject cached localization bootstrap into VS Code webview at HTML generation` (hash: TBD)
