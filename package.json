@@ -119,5 +119,14 @@
     "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
       "npx ultracite fix"
     ]
+  },
+  "optionalDependencies": {
+    "@biomejs/cli-darwin-x64": "^2.4.7",
+    "@biomejs/cli-linux-arm64": "^2.4.7",
+    "@biomejs/cli-linux-arm64-musl": "^2.4.7",
+    "@biomejs/cli-linux-x64": "^2.4.7",
+    "@biomejs/cli-linux-x64-musl": "^2.4.7",
+    "@biomejs/cli-win32-arm64": "^2.4.7",
+    "@biomejs/cli-win32-x64": "^2.4.7"
   }
 }
