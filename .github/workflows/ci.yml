@@ -27,6 +27,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Biome ships its native binary through platform-specific optional
+      # peer packages (`@biomejs/cli-<os>-<arch>`). Our package-lock.json is
+      # generated on macOS, so it only tracks the darwin-arm64 binary, and
+      # `npm ci` on the Ubuntu runner does not install the Linux binary.
+      # Without it the `biome` shim in node_modules/@biomejs/biome/bin/biome
+      # cannot resolve the native binary and fails instantly, which appears
+      # as a 0-second Lint failure with "Process completed with exit code 1".
+      # Installing it lockfile-less/save-less keeps the local workflow
+      # unchanged while giving the Linux runner what it needs.
+      - name: Ensure Biome Linux binary (CI platform shim)
+        run: npm install --no-save --no-package-lock @biomejs/cli-linux-x64@2.4.7
+
       - name: Architecture check
         run: npm run check:architecture
 
