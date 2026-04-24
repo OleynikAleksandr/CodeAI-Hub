@@ -38,9 +38,15 @@
 10. [TODO] Git Commit: `docs: summarize claude preset capture comparison` (hash: TBD)
 
 ### Stream: Test release package
-11. [IN_PROGRESS] Подготовить release docs для будущей версии `1.2.68` перед `build-all.sh` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude preset capture release notes`
-12. [TODO] Git Commit: `docs: prepare claude preset capture release notes` (hash: TBD)
+11. [DONE] Подготовить release docs для будущей версии `1.2.68` перед `build-all.sh` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude preset capture release notes`
+12. [DONE] Git Commit: `docs: prepare claude preset capture release notes` (hash: `0e117fa3d`)
 13. [DONE] Собрать release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude preset capture test release`
    - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.68`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
    - `./scripts/build-release.sh --use-current-version` прошел: проверены `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; VSIX: `codeai-hub-1.2.68.vsix` (`2.4M`).
 14. [DONE] Git Commit: `chore: build claude preset capture test release` (hash: `48fec390d`)
+
+### Stream: Claude capture target filter
+15. [IN_PROGRESS] Исправить diagnostic-only Claude capture target filter, чтобы translation/localization Haiku requests не закрывали Settings capture раньше workflow agent-loop request — scope: `packages/core/src/provider-network-capture/native-request-capture-types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`; expected commit message: `fix: filter claude native capture to agent requests`
+16. [TODO] Git Commit: `fix: filter claude native capture to agent requests` (hash: TBD)
+17. [TODO] Добавить targeted test и evidence note по regression `1.2.68 captured translation request first` — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude capture target filtering evidence`
+18. [TODO] Git Commit: `docs: record claude capture target filtering evidence` (hash: TBD)

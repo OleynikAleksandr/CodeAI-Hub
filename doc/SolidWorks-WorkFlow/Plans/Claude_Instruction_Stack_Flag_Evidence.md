@@ -179,3 +179,43 @@ sdk.query({
 - count/name/hash для `tools`;
 - появился ли где-либо `CLAUDE.md` или settings content;
 - добавил или убрал ли SDK reminders, skills, deferred tools, dynamic context blocks.
+
+## 4. Наблюдение после тестового релиза 1.2.68
+
+В релизе `1.2.68` diagnostic capture path действительно получил:
+
+```ts
+systemPrompt: { type: "preset", preset: "claude_code" }
+```
+
+Флаг подтвержден в установленном bundle:
+
+- `~/.codeai-hub/providers/claude/1.2.68/dist/diagnostics/claude-native-request-capture-service.js`
+
+Но новый runtime capture:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-24T13-35-33-342Z-claude-native-request.md`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-24T13-35-33-342Z-claude-native-request.jsonl`
+
+не является валидным C1 для сравнения с baseline. Причина: proxy завершил capture на первом Anthropic `/v1/messages` request, которым оказался provider-owned translation/localization request:
+
+- model: `claude-haiku-4-5-20251001`;
+- tools count: `0`;
+- request shape совпадает с translation/localization profile, а не с workflow agent loop.
+
+Baseline `2026-04-24T12-22-42-190Z` содержал два captured Anthropic requests:
+
+- first: `claude-haiku-4-5-20251001`, `tools: 0`;
+- second: `claude-opus-4-7`, `tools: 10`, основной workflow agent-loop request.
+
+Вывод:
+
+- размер нового файла меньше из-за того, что основной workflow request не был captured;
+- сам `systemPrompt` flag не опровергнут и не подтвержден runtime-сравнением;
+- нужна корректировка diagnostic capture filter, но только для Settings capture command, не для реальных runtime sessions.
+
+Корректирующее решение:
+
+- для Claude `Native Request Capture` считать успешным target request только Anthropic `/v1/messages` с agent-loop tool declarations;
+- translation/localization requests внутри того же diagnostic run записывать как ignored/intermediate и продолжать ждать следующий request;
+- реальный Claude/Haiku runtime traffic не менять.

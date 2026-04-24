@@ -40,7 +40,13 @@ const PROVIDER_TARGET_RULES: Readonly<
     readonly NativeRequestCaptureTargetRule[]
   >
 > = {
-  claude: [{ host: "api.anthropic.com", pathIncludes: "/v1/messages" }],
+  claude: [
+    {
+      host: "api.anthropic.com",
+      minimumToolCount: 1,
+      pathIncludes: "/v1/messages",
+    },
+  ],
   codex: [
     { host: "chatgpt.com", pathIncludes: "/backend-api/codex/responses" },
   ],

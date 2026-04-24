@@ -137,6 +137,10 @@ test("NativeRequestCaptureFacade starts proxy and passes capture env to provider
     },
     proxyFactory: (options) => ({
       start: () => {
+        const targetRule = options.targetRules[0];
+        assert.ok(targetRule);
+        assert.equal(targetRule.host, "api.anthropic.com");
+        assert.equal(targetRule.minimumToolCount, 1);
         const request = createCapturedRequest("capture-facade-test");
         const capturedEvent: NativeRequestCaptureProxyEvent = {
           type: "request_captured",

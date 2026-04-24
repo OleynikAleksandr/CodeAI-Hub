@@ -10,6 +10,7 @@ export type NativeRequestCaptureFailureReason =
 
 export interface NativeRequestCaptureTargetRule {
   readonly host: string;
+  readonly minimumToolCount?: number;
   readonly pathIncludes?: string;
   readonly port?: number;
 }

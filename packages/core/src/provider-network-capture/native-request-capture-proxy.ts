@@ -192,8 +192,12 @@ export class NativeRequestCaptureProxy {
         return;
       }
 
-      if (!requestMatchesRule(parsed, connectRule)) {
-        this.#emitIgnored(target, "request_path_not_matched", parsed);
+      const mismatchReason = resolveRequestRuleMismatchReason(
+        parsed,
+        connectRule
+      );
+      if (mismatchReason) {
+        this.#emitIgnored(target, mismatchReason, parsed);
         tlsSocket.end();
         return;
       }
@@ -457,14 +461,25 @@ const parseBody = (bodyText: string): unknown => {
   }
 };
 
-const requestMatchesRule = (
+const resolveRequestRuleMismatchReason = (
   request: ParsedHttpRequest,
   rule: NativeRequestCaptureTargetRule
-): boolean => {
-  if (!rule.pathIncludes) {
-    return true;
+): string | null => {
+  if (rule.pathIncludes && !request.path.includes(rule.pathIncludes)) {
+    return "request_path_not_matched";
   }
-  return request.path.includes(rule.pathIncludes);
+  if (
+    typeof rule.minimumToolCount === "number" &&
+    countRequestTools(request.body) < rule.minimumToolCount
+  ) {
+    return "request_body_not_matched";
+  }
+  return null;
+};
+
+const countRequestTools = (body: unknown): number => {
+  const tools = (body as { readonly tools?: unknown } | null)?.tools;
+  return Array.isArray(tools) ? tools.length : 0;
 };
 
 const buildCapturedResponse = (): string => {
