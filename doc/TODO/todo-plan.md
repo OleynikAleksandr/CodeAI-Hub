@@ -23,9 +23,9 @@
 ## Phase 1 — Claude diagnostic preset systemPrompt test (owner: Codex, updated: 2026-04-24)
 
 ### Stream: Minimal Claude capture toggle
-1. [IN_PROGRESS] Создать execution plan для первого Claude-only test — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan claude instruction stack preset capture test`
-2. [TODO] Git Commit: `docs: plan claude instruction stack preset capture test` (hash: TBD)
-3. [TODO] Добавить в Claude diagnostic capture path явный SDK preset `systemPrompt: { type: "preset", preset: "claude_code" }` без изменения `tools`, permissions, sandbox, `settingSources`, model или thinking policy — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit message: `test: add claude preset system prompt capture flag`
-4. [TODO] Git Commit: `test: add claude preset system prompt capture flag` (hash: TBD)
+1. [DONE] Создать execution plan для первого Claude-only test — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan claude instruction stack preset capture test`
+2. [DONE] Git Commit: `docs: plan claude instruction stack preset capture test` (hash: `7f57de989`)
+3. [DONE] Добавить в Claude diagnostic capture path явный SDK preset `systemPrompt: { type: "preset", preset: "claude_code" }` без изменения `tools`, permissions, sandbox, `settingSources`, model или thinking policy — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit message: `test: add claude preset system prompt capture flag`
+4. [IN_PROGRESS] Git Commit: `test: add claude preset system prompt capture flag` (hash: TBD)
 5. [TODO] Выполнить таргетную проверку Claude module и зафиксировать результат в TODO — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude preset capture verification`
 6. [TODO] Git Commit: `docs: record claude preset capture verification` (hash: TBD)

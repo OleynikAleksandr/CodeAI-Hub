@@ -36,6 +36,11 @@ type QueryFunction = (payload: {
   readonly prompt: string;
 }) => AsyncIterableIterator<ClaudeStreamMessage>;
 
+const CLAUDE_CODE_SYSTEM_PROMPT_PRESET = {
+  preset: "claude_code",
+  type: "preset",
+} as const;
+
 export class ClaudeNativeRequestCaptureService {
   readonly #authManager: SDKAuthManager;
   readonly #installer: SDKInstaller;
@@ -101,6 +106,7 @@ export class ClaudeNativeRequestCaptureService {
         this.#workspace.claudeProjectSlug
       ),
       settingSources: [],
+      systemPrompt: CLAUDE_CODE_SYSTEM_PROMPT_PRESET,
       thinking: thinkingOptions.thinking,
       ...(thinkingOptions.effort ? { effort: thinkingOptions.effort } : {}),
     };
