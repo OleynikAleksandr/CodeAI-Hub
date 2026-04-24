@@ -52,7 +52,8 @@
 18. [DONE] Git Commit: `fix: filter claude native capture to agent requests` (hash: `88df7c121`)
 
 ### Stream: Corrective test release package
-19. [IN_PROGRESS] Подготовить release docs для будущей версии `1.2.69` с diagnostic-only Claude capture target filter — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude capture filter release notes`
-20. [TODO] Git Commit: `docs: prepare claude capture filter release notes` (hash: TBD)
-21. [TODO] Собрать corrective release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude capture filter test release`
+19. [DONE] Подготовить release docs для будущей версии `1.2.69` с diagnostic-only Claude capture target filter — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude capture filter release notes`
+20. [DONE] Git Commit: `docs: prepare claude capture filter release notes` (hash: `ddc5db6db`)
+21. [IN_PROGRESS] Собрать corrective release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude capture filter test release`
+   - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.69`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
 22. [TODO] Git Commit: `chore: build claude capture filter test release` (hash: TBD)
