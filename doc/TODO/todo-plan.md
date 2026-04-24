@@ -51,7 +51,7 @@
 
 ### Stream: Core Bridge Command
 9. [DONE] Расширить provider adapter contract и Core facade для capture command; scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; expected commit message: `feat: add native request capture core command`
-10. [TODO] Git Commit: `feat: add native request capture core command` (hash: TBD)
+10. [DONE] Git Commit: `feat: add native request capture core command` (hash: `fb0177e3b`)
 11. [TODO] Протянуть bridge message/result через Remote Bridge; scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.test.ts`; expected commit message: `feat: expose native request capture bridge event`
 12. [TODO] Git Commit: `feat: expose native request capture bridge event` (hash: TBD)
 
