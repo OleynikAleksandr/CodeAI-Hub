@@ -12,14 +12,21 @@ import type {
   CoreControlState,
   LocalizationCategoryKey,
   LocalizationWorkflowTermsPolicy,
+  NativeRequestCaptureProviderId,
+  NativeRequestCaptureState,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import {
   clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
+  completeNativeRequestCapture,
+  createNativeRequestCaptureState,
   normalizeLoadedLocalizationSettings,
-  normalizeLocalizationEngineId,
+  startNativeRequestCapture,
   updateLocalizationCategorySelection,
   updateLocalizationDefaultLanguageSelection,
+  updateLocalizationEngineSelection,
+  updateLocalizationGlossaryEnabledSelection,
+  updateReasoningTranslationEngineSelection,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import {
   areSettingsEqual,
@@ -48,6 +55,7 @@ import {
 } from "../../../ui/src/components/settings/settings-state-helpers";
 import { openProjectManagerFileLink } from "../../services/project-manager-file-link-opener";
 import { api } from "../../api";
+import type { SettingsNativeRequestCaptureResultPayload } from "../../core-stream-message-types";
 import { useProjectManagerSettings } from "./use-project-manager-settings";
 
 const PM_CORE_CONTROL_STATE: CoreControlState = {
@@ -77,6 +85,18 @@ const isCoreControlStatusPayload = (
   );
 };
 
+const isNativeRequestCaptureProviderId = (
+  value: unknown
+): value is NativeRequestCaptureProviderId =>
+  value === "claude" || value === "codex";
+
+const isNativeRequestCaptureResultPayload = (
+  payload: unknown
+): payload is SettingsNativeRequestCaptureResultPayload =>
+  isRecord(payload) &&
+  typeof payload.ok === "boolean" &&
+  isNativeRequestCaptureProviderId(payload.providerId);
+
 export type UseProjectManagerSettingsStateResult = UseSettingsStateResult & {
   readonly hostPostMessage: (message: unknown) => void;
   readonly supportsCoreRestart: false;
@@ -96,6 +116,8 @@ export const useProjectManagerSettingsState =
     const [coreControl, setCoreControl] = useState<CoreControlState>(
       PM_CORE_CONTROL_STATE
     );
+    const [nativeRequestCapture, setNativeRequestCapture] =
+      useState<NativeRequestCaptureState>(createNativeRequestCaptureState);
 
     useEffect(() => {
       const nextSettings = normalizeLoadedLocalizationSettings(
@@ -133,13 +155,22 @@ export const useProjectManagerSettingsState =
 
     useEffect(() => {
       const unsubscribe = api.onCoreEvent((message) => {
-        if (
-          message.type !== "settings:core-control-status" ||
-          !isCoreControlStatusPayload(message.payload)
-        ) {
+        if (message.type === "settings:core-control-status") {
+          if (isCoreControlStatusPayload(message.payload)) {
+            setCoreControl(message.payload);
+          }
           return;
         }
-        setCoreControl(message.payload);
+        if (message.type === "settings:native-request-capture:result") {
+          if (isNativeRequestCaptureResultPayload(message.payload)) {
+            setNativeRequestCapture(
+              completeNativeRequestCapture({
+                type: "settings:native-request-capture:result",
+                ...message.payload,
+              })
+            );
+          }
+        }
       });
 
       return () => {
@@ -276,50 +307,25 @@ export const useProjectManagerSettingsState =
 
     const handleLocalizationEngineIdChange = useCallback(
       (engineId: string) => {
-        const normalizedEngineId = normalizeLocalizationEngineId(engineId);
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              engineId: normalizedEngineId,
-            },
-          },
-        });
+        updateSettings(updateLocalizationEngineSelection(settings, engineId));
       },
       [settings, updateSettings]
     );
 
     const handleReasoningTranslationEngineIdChange = useCallback(
       (engineId: string) => {
-        const normalizedEngineId = normalizeLocalizationEngineId(engineId);
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              reasoningEngineId: normalizedEngineId,
-            },
-          },
-        });
+        updateSettings(
+          updateReasoningTranslationEngineSelection(settings, engineId)
+        );
       },
       [settings, updateSettings]
     );
 
     const handleLocalizationGlossaryEnabledChange = useCallback(
       (enabled: boolean) => {
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              glossaryEnabled: enabled,
-            },
-          },
-        });
+        updateSettings(
+          updateLocalizationGlossaryEnabledSelection(settings, enabled)
+        );
       },
       [settings, updateSettings]
     );
@@ -401,6 +407,14 @@ export const useProjectManagerSettingsState =
       [transport]
     );
 
+    const handleNativeRequestCapture = useCallback(
+      (providerId: NativeRequestCaptureProviderId) => {
+        setNativeRequestCapture(startNativeRequestCapture(providerId));
+        api.captureNativeRequest(providerId);
+      },
+      []
+    );
+
     const handleHostMessage = useCallback(
       (message: unknown) => {
         if (!isRecord(message) || typeof message.type !== "string") {
@@ -409,8 +423,14 @@ export const useProjectManagerSettingsState =
         if (message.type === "settings:open-user-glossary-file") {
           transport.openUserGlossaryFile();
         }
+        if (
+          message.type === "settings:native-request-capture" &&
+          isNativeRequestCaptureProviderId(message.providerId)
+        ) {
+          handleNativeRequestCapture(message.providerId);
+        }
       },
-      [transport]
+      [handleNativeRequestCapture, transport]
     );
 
     const handleRestartCore = useCallback(() => {
@@ -423,6 +443,7 @@ export const useProjectManagerSettingsState =
       hasChanges,
       localizationSyncStatus: transport.localizationSyncStatus,
       localizationRuntime: transport.localizationRuntime,
+      nativeRequestCapture,
       saving: transport.saving,
       resetting: transport.resetting,
       versions: transport.versions,
@@ -444,6 +465,7 @@ export const useProjectManagerSettingsState =
       handleLocalizationEngineIdChange,
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
+      handleNativeRequestCapture,
       handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
       handleRestartCore,

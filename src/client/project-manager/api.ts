@@ -17,6 +17,7 @@ import type {
   ProjectUpdatePayload,
   SettingsLoadedPayload,
   SettingsLocalizationSyncStatusPayload,
+  SettingsNativeRequestCaptureProviderId,
   SettingsProviderTarget,
   SettingsSaveErrorPayload,
   SettingsUserGlossaryFilePayload,
@@ -232,6 +233,15 @@ class ProjectManagerApi {
   openUserGlossaryFile(): void {
     this.lastUserGlossaryFilePayload = null;
     this.send({ type: "settings:open-user-glossary-file" });
+  }
+
+  captureNativeRequest(
+    providerId: SettingsNativeRequestCaptureProviderId
+  ): void {
+    this.send({
+      type: "settings:native-request-capture",
+      payload: { providerId },
+    });
   }
 
   addProject(path: string, name?: string): void {

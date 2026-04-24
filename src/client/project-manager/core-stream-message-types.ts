@@ -185,6 +185,17 @@ export type SettingsUserGlossaryFilePayload = {
   readonly path: string | null;
 };
 
+export type SettingsNativeRequestCaptureProviderId = "claude" | "codex";
+
+export type SettingsNativeRequestCaptureResultPayload = {
+  readonly error?: string | null;
+  readonly jsonlPath?: string | null;
+  readonly markdownPath?: string | null;
+  readonly ok: boolean;
+  readonly providerId: SettingsNativeRequestCaptureProviderId;
+  readonly reason?: string | null;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -250,6 +261,12 @@ export type OutgoingMessage =
       readonly payload: { readonly settings: unknown };
     }
   | { readonly type: "settings:reset" }
+  | {
+      readonly type: "settings:native-request-capture";
+      readonly payload: {
+        readonly providerId: SettingsNativeRequestCaptureProviderId;
+      };
+    }
   | {
       readonly type: "settings:update-provider";
       readonly payload: {
@@ -348,6 +365,10 @@ export type IncomingMessage =
   | {
       readonly type: "settings:user-glossary-file";
       readonly payload: SettingsUserGlossaryFilePayload;
+    }
+  | {
+      readonly type: "settings:native-request-capture:result";
+      readonly payload: SettingsNativeRequestCaptureResultPayload;
     }
   | {
       readonly type: "dialog:message";

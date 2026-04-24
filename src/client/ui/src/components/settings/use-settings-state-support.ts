@@ -163,7 +163,7 @@ const normalizeLocalizationSelection = (value: string): string => {
     : trimmed;
 };
 
-export const normalizeLocalizationEngineId = (value: string): string => {
+const normalizeLocalizationEngineId = (value: string): string => {
   const trimmed = value.trim();
   if (!(trimmed.length > 0)) {
     return DEFAULT_LOCALIZATION_ENGINE_ID;
