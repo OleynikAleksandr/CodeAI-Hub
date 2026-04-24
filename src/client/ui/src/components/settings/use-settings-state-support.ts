@@ -41,6 +41,22 @@ export interface LocalizationSyncStatusState {
   readonly message: string | null;
 }
 
+export type NativeRequestCaptureProviderId = "claude" | "codex";
+export type NativeRequestCaptureStatus =
+  | "idle"
+  | "running"
+  | "success"
+  | "error";
+
+export interface NativeRequestCaptureState {
+  readonly activeProvider: NativeRequestCaptureProviderId | null;
+  readonly error: string | null;
+  readonly jsonlPath: string | null;
+  readonly markdownPath: string | null;
+  readonly providerId: NativeRequestCaptureProviderId | null;
+  readonly status: NativeRequestCaptureStatus;
+}
+
 export type LocalizationCategoryKey =
   | "interactiveTemplates"
   | "reasoning"
@@ -89,6 +105,15 @@ type IncomingMessage =
       readonly busy: boolean;
       readonly message?: string;
       readonly type: "settings:localization-sync-status";
+    }
+  | {
+      readonly error?: string | null;
+      readonly jsonlPath?: string | null;
+      readonly markdownPath?: string | null;
+      readonly ok: boolean;
+      readonly providerId: NativeRequestCaptureProviderId;
+      readonly reason?: string | null;
+      readonly type: "settings:native-request-capture:result";
     };
 
 export const isIncomingMessage = (
@@ -104,7 +129,8 @@ export const isIncomingMessage = (
     candidate.type === "settings:saved" ||
     candidate.type === "settings:versions" ||
     candidate.type === "settings:core-control-status" ||
-    candidate.type === "settings:localization-sync-status"
+    candidate.type === "settings:localization-sync-status" ||
+    candidate.type === "settings:native-request-capture:result"
   );
 };
 
@@ -312,6 +338,83 @@ export const updateLocalizationDefaultLanguageSelection = (
   };
 };
 
+export const updateLocalizationEngineSelection = (
+  settings: Settings,
+  engineId: string
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    localization: {
+      ...settings.general.localization,
+      engineId: normalizeLocalizationEngineId(engineId),
+    },
+  },
+});
+
+export const updateReasoningTranslationEngineSelection = (
+  settings: Settings,
+  engineId: string
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    localization: {
+      ...settings.general.localization,
+      reasoningEngineId: normalizeLocalizationEngineId(engineId),
+    },
+  },
+});
+
+export const updateLocalizationGlossaryEnabledSelection = (
+  settings: Settings,
+  enabled: boolean
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    localization: {
+      ...settings.general.localization,
+      glossaryEnabled: enabled,
+    },
+  },
+});
+
+export const createNativeRequestCaptureState =
+  (): NativeRequestCaptureState => ({
+    activeProvider: null,
+    error: null,
+    jsonlPath: null,
+    markdownPath: null,
+    providerId: null,
+    status: "idle",
+  });
+
+export const startNativeRequestCapture = (
+  providerId: NativeRequestCaptureProviderId
+): NativeRequestCaptureState => ({
+  activeProvider: providerId,
+  error: null,
+  jsonlPath: null,
+  markdownPath: null,
+  providerId,
+  status: "running",
+});
+
+export const completeNativeRequestCapture = (
+  result: Extract<
+    IncomingMessage,
+    { readonly type: "settings:native-request-capture:result" }
+  >
+): NativeRequestCaptureState => ({
+  activeProvider: null,
+  error: result.ok ? null : (result.error ?? result.reason ?? "capture_failed"),
+  jsonlPath: result.jsonlPath ?? null,
+  markdownPath: result.markdownPath ?? null,
+  providerId: result.providerId,
+  status: result.ok ? "success" : "error",
+});
+
 export interface UseSettingsStateResult {
   readonly coreControl: CoreControlState;
   readonly handleClaudeContinuityRemainingPercentThresholdChange: (
@@ -354,6 +457,9 @@ export interface UseSettingsStateResult {
   readonly handleLocalizationWorkflowTermsPolicyChange: (
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
+  readonly handleNativeRequestCapture: (
+    providerId: NativeRequestCaptureProviderId
+  ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
     enabled: boolean
@@ -376,6 +482,7 @@ export interface UseSettingsStateResult {
   readonly hasChanges: boolean;
   readonly localizationRuntime: BrowserLocalizationRuntimePayload;
   readonly localizationSyncStatus: LocalizationSyncStatusState;
+  readonly nativeRequestCapture: NativeRequestCaptureState;
   readonly resetting: boolean;
   readonly saving: boolean;
   readonly settings: Settings;

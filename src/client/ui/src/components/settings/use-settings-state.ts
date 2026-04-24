@@ -41,15 +41,21 @@ import {
   type CoreControlState,
   clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
+  completeNativeRequestCapture,
+  createNativeRequestCaptureState,
   isIncomingMessage,
   type LocalizationCategoryKey,
   type LocalizationSyncStatusState,
   type LocalizationWorkflowTermsPolicy,
+  type NativeRequestCaptureState,
   normalizeLoadedLocalizationSettings,
-  normalizeLocalizationEngineId,
+  startNativeRequestCapture,
   type UseSettingsStateResult,
   updateLocalizationCategorySelection,
   updateLocalizationDefaultLanguageSelection,
+  updateLocalizationEngineSelection,
+  updateLocalizationGlossaryEnabledSelection,
+  updateReasoningTranslationEngineSelection,
   type VersionsState,
 } from "./use-settings-state-support";
 
@@ -94,6 +100,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
       busy: false,
       message: null,
     });
+  const [nativeRequestCapture, setNativeRequestCapture] =
+    useState<NativeRequestCaptureState>(createNativeRequestCaptureState);
   const [versions, setVersions] = useState<VersionsState>(() => ({
     data: null,
     loading: true,
@@ -159,6 +167,10 @@ export const useSettingsState = (): UseSettingsStateResult => {
             busy: event.data.busy,
             message: event.data.message ?? null,
           });
+          return;
+        }
+        case "settings:native-request-capture:result": {
+          setNativeRequestCapture(completeNativeRequestCapture(event.data));
           return;
         }
         default: {
@@ -295,50 +307,25 @@ export const useSettingsState = (): UseSettingsStateResult => {
 
   const handleLocalizationEngineIdChange = useCallback(
     (engineId: string) => {
-      const normalizedEngineId = normalizeLocalizationEngineId(engineId);
-      updateSettings({
-        ...settings,
-        general: {
-          ...settings.general,
-          localization: {
-            ...settings.general.localization,
-            engineId: normalizedEngineId,
-          },
-        },
-      });
+      updateSettings(updateLocalizationEngineSelection(settings, engineId));
     },
     [settings, updateSettings]
   );
 
   const handleReasoningTranslationEngineIdChange = useCallback(
     (engineId: string) => {
-      const normalizedEngineId = normalizeLocalizationEngineId(engineId);
-      updateSettings({
-        ...settings,
-        general: {
-          ...settings.general,
-          localization: {
-            ...settings.general.localization,
-            reasoningEngineId: normalizedEngineId,
-          },
-        },
-      });
+      updateSettings(
+        updateReasoningTranslationEngineSelection(settings, engineId)
+      );
     },
     [settings, updateSettings]
   );
 
   const handleLocalizationGlossaryEnabledChange = useCallback(
     (enabled: boolean) => {
-      updateSettings({
-        ...settings,
-        general: {
-          ...settings.general,
-          localization: {
-            ...settings.general.localization,
-            glossaryEnabled: enabled,
-          },
-        },
-      });
+      updateSettings(
+        updateLocalizationGlossaryEnabledSelection(settings, enabled)
+      );
     },
     [settings, updateSettings]
   );
@@ -453,12 +440,24 @@ export const useSettingsState = (): UseSettingsStateResult => {
     });
   }, []);
 
+  const handleNativeRequestCapture = useCallback(
+    (providerId: "claude" | "codex") => {
+      setNativeRequestCapture(startNativeRequestCapture(providerId));
+      vscode.postMessage({
+        type: "settings:native-request-capture",
+        providerId,
+      });
+    },
+    []
+  );
+
   return {
     coreControl,
     settings,
     hasChanges,
     localizationSyncStatus,
     localizationRuntime,
+    nativeRequestCapture,
     saving,
     resetting,
     versions,
@@ -480,6 +479,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
+    handleNativeRequestCapture,
     handleReasoningTranslationEngineIdChange,
     handleProviderAutoUpdateChange,
     handleRestartCore,
