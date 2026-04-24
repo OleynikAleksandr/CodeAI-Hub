@@ -29,4 +29,4 @@
 4. [DONE] Git Commit: `test: add claude preset system prompt capture flag` (hash: `145ed0717`)
 5. [DONE] Выполнить таргетную проверку Claude module и зафиксировать результат в TODO — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude preset capture verification`
    - Verification: `npm install` восстановил workspace dependencies; `npm run build --workspace @codeai-hub/translation` прошел; `npm run build --workspace @codeai-hub/claude-module` прошел; `node --test packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js` прошел; Husky pre-commit для `145ed0717` прошел `check-architecture.sh`, `npm run lint`, `npm run check:knip`, staged `format:fix`.
-6. [IN_PROGRESS] Git Commit: `docs: record claude preset capture verification` (hash: TBD)
+6. [DONE] Git Commit: `docs: record claude preset capture verification` (hash: `116d7df12`)
