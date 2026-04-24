@@ -147,6 +147,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     saving,
     resetting,
     versions,
+    nativeRequestCapture,
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
     handleCodexContinuityRemainingPercentThresholdChange,
@@ -164,6 +165,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
+    handleNativeRequestCapture,
     handleReasoningTranslationEngineIdChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
@@ -297,6 +299,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                   <GeneralSettings
                     coreControl={coreControl}
                     localization={settings.general.localization}
+                    nativeRequestCapture={nativeRequestCapture}
                     onLocalizationCategoryLanguageChange={
                       handleLocalizationCategoryLanguageChange
                     }
@@ -312,6 +315,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                     onLocalizationWorkflowTermsPolicyChange={
                       handleLocalizationWorkflowTermsPolicyChange
                     }
+                    onNativeRequestCapture={handleNativeRequestCapture}
                     onReasoningTranslationEngineIdChange={
                       handleReasoningTranslationEngineIdChange
                     }

@@ -5,6 +5,7 @@ import GeneralResponseModeFacade from "./general-response-mode/general-response-
 import type { GeneralResponseMode } from "./general-response-mode/response-mode-copy";
 import type { GeneralResponsePolicySettings } from "./general-response-mode/response-mode-state";
 import LocalizationSettingsCard from "./localization-settings-card";
+import NativeRequestCaptureCard from "./native-request-capture-card";
 import SettingsCard from "./settings-card";
 import type { Settings } from "./settings-state-model";
 import {
@@ -16,6 +17,8 @@ import type {
   CoreControlState,
   LocalizationCategoryKey,
   LocalizationWorkflowTermsPolicy,
+  NativeRequestCaptureProviderId,
+  NativeRequestCaptureState,
 } from "./use-settings-state-support";
 
 const wrapperStyles: CSSProperties = {
@@ -75,6 +78,7 @@ const USER_MESSAGES_CATEGORY = "system_feedback";
 interface GeneralSettingsProps {
   readonly coreControl: CoreControlState;
   readonly localization: Settings["general"]["localization"];
+  readonly nativeRequestCapture: NativeRequestCaptureState;
   readonly onLocalizationCategoryLanguageChange: (
     category: LocalizationCategoryKey,
     language: string
@@ -86,6 +90,9 @@ interface GeneralSettingsProps {
   readonly onLocalizationGlossaryEnabledChange: (enabled: boolean) => void;
   readonly onLocalizationWorkflowTermsPolicyChange: (
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
+  ) => void;
+  readonly onNativeRequestCapture: (
+    providerId: NativeRequestCaptureProviderId
   ) => void;
   readonly onReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
@@ -246,6 +253,10 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
           </div>
         </div>
       </SettingsCard>
+      <NativeRequestCaptureCard
+        onCapture={props.onNativeRequestCapture}
+        state={props.nativeRequestCapture}
+      />
     </div>
   );
 };
