@@ -219,3 +219,37 @@ Baseline `2026-04-24T12-22-42-190Z` содержал два captured Anthropic r
 - для Claude `Native Request Capture` считать успешным target request только Anthropic `/v1/messages` с agent-loop tool declarations;
 - translation/localization requests внутри того же diagnostic run записывать как ignored/intermediate и продолжать ждать следующий request;
 - реальный Claude/Haiku runtime traffic не менять.
+
+## 5. Наблюдение после корректирующего релиза 1.2.69
+
+Runtime capture после установки `1.2.69`:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-24T13-55-05-221Z-claude-native-request.md`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-24T13-55-05-221Z-claude-native-request.jsonl`
+
+Результат подтверждает, что diagnostic-only filter работает по назначению:
+
+- JSONL record `25`: `request_ignored`, reason `request_body_not_matched`, model `claude-haiku-4-5-20251001`, `tools: 0`;
+- JSONL record `28`: `request_captured`, model `claude-opus-4-7`, `tools: 10`;
+- raw runtime/localization request не теряется, но больше не закрывает Settings capture раньше основного workflow request.
+
+Где лежат prompt и tools в captured request:
+
+- `body.system` — Anthropic system prompt field. В Markdown dump это начинается около line `449`; в JSONL это поле находится в captured record `28`.
+- `body.tools` — Anthropic tool declarations field. В Markdown dump это начинается около line `476`; в JSONL это поле находится в captured record `28`.
+- `body.messages` — user-message payload с workflow prompt. В Markdown dump это начинается около line `422`.
+
+Captured request summary:
+
+- model: `claude-opus-4-7`;
+- body key order: `model -> messages -> system -> tools -> metadata -> max_tokens -> thinking -> context_management -> output_config -> stream`;
+- `messages`: `1`, hash `24c98fd552e2a4ba`;
+- `system`: `4` text blocks, text chars `84, 62, 9936, 18404`, hash `124660c13277895d`;
+- `tools`: `10`, hash `4a3f9e88a7a8bd49`;
+- tool names: `Agent`, `Bash`, `Edit`, `Glob`, `Grep`, `Read`, `ScheduleWakeup`, `Skill`, `ToolSearch`, `Write`.
+
+Транспортное различие:
+
+- system prompt — это не список tools; это `body.system`;
+- системные инструменты Claude Code передаются отдельно как `body.tools`;
+- часть текста внутри `body.system` может объяснять правила использования инструментов, но сами tool schemas находятся только в `body.tools`.
