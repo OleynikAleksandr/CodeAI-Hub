@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.64
+## Current Release — v1.2.65
+- **Native Request Capture получил выбор модели перед запуском.** В Settings -> General для Claude и Codex теперь есть отдельный model selector рядом с capture action; выбор используется только для diagnostic run и не перезаписывает provider defaults.
+- **Capture probe теперь зеркалит app-path turn config.** Core протягивает selected `modelId`, резолвит тот же applied turn config, что normal send path, и передаёт provider diagnostic service актуальные Claude thinking/effort и Codex effort/summary flags.
+- **Capture artifacts стали удобнее для тюнинга запросов.** JSONL `capture_start` пишет selected/applied config, Markdown перечисляет все matched provider requests, берёт последний как primary и извлекает Codex `instructions` / `input` как system/messages surface.
+
+### 1.2.64 (previous)
 - **Native Request Capture теперь читает первый Codex WebSocket payload.** Diagnostic proxy локально завершает upgrade через `101 Switching Protocols`, разбирает masked client frame и пишет фактический JSON body в `.jsonl` / `.md` вместо пустого HTTP upgrade.
 - **Ignored provider requests стали видимыми.** Для ignored событий артефакты теперь содержат reason, target, method/path, redacted headers и body/bodyText, чтобы было понятно, что именно клиент пытался отправить.
 - **Targeted regression coverage закрывает WebSocket и ignored diagnostics.** Core tests проверяют RFC accept header, masked JSON frame parsing, Markdown/JSONL ignored details и proxy ignored CONNECT event.

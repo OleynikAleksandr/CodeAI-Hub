@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.65] - 2026-04-24
+### Added
+- **Settings -> General теперь позволяет выбрать модель для Native Request Capture.** Claude и Codex capture controls получили provider-local model selectors; выбранная модель применяется только к диагностическому запуску и не сохраняется как default.
+
+### Changed
+- **Native Request Capture теперь идёт по app-path config resolver.** Webview/Project Manager/Core протягивают `modelId`, Core резолвит normal applied turn config, а provider diagnostics используют selected/applied model, Claude thinking/effort и Codex effort/summary вместо старых diagnostic-only defaults.
+- **Capture artifacts показывают applied config и все matched requests.** JSONL `capture_start` фиксирует selected model и resolved applied config; Markdown перечисляет все захваченные provider requests, выбирает последний matched request как primary и извлекает Codex `instructions` / `input` в читаемые sections.
+
+### Tests
+- **Targeted checks закрывают новый capture путь.** Пройдены `build:webview`, `typecheck:webview`, сборки core/Claude/Codex modules и node tests для writer + provider diagnostic services.
+
 ## [1.2.64] - 2026-04-24
 ### Fixed
 - **Native Request Capture теперь умеет читать первый Codex WebSocket payload.** Diagnostic proxy отвечает локальным `101 Switching Protocols`, разбирает masked client frame и пишет фактический JSON body в JSONL/Markdown вместо одного HTTP upgrade без тела.
