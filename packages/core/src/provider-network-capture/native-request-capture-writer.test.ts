@@ -21,6 +21,10 @@ const MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN = /ignored system prompt/;
 const MARKDOWN_SYSTEM_PROMPT_HEADING_PATTERN = /## Extracted System Prompt/;
 const MARKDOWN_SYSTEM_PROMPT_PATTERN = /system prompt/;
 const MARKDOWN_TITLE_PATTERN = /# Claude Native Request Capture/;
+const MARKDOWN_CAPTURED_TWO_PATTERN = /Captured provider requests: 2/;
+const MARKDOWN_CODEX_INSTRUCTIONS_PATTERN = /codex instructions/;
+const MARKDOWN_CODEX_INPUT_PATTERN = /input text/;
+const MARKDOWN_SELECTED_MODEL_PATTERN = /gpt-5\.3-codex/;
 
 test("redactCaptureHeaders removes credential-bearing values", () => {
   const redacted = redactCaptureHeaders({
@@ -117,4 +121,63 @@ test("NativeRequestCaptureWriter records ignored request details", async () => {
   assert.match(markdown, MARKDOWN_IGNORED_HEADING_PATTERN);
   assert.match(markdown, MARKDOWN_IGNORED_REASON_PATTERN);
   assert.match(markdown, MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN);
+});
+
+test("NativeRequestCaptureWriter lists multiple captures and extracts Codex instructions", async () => {
+  const outputDir = await fs.mkdtemp(
+    path.join(os.tmpdir(), "native-capture-writer-")
+  );
+  const writer = await NativeRequestCaptureWriter.create({
+    appliedTurnConfig: {
+      modelId: "gpt-5.3-codex",
+      providerId: "codexCli",
+      reasoningEffort: "xhigh",
+      source: "switch_request",
+    },
+    captureId: "capture-writer-codex-test",
+    providerId: "codex",
+    outputDir,
+    selectedModelId: "gpt-5.3-codex",
+    clock: () => FIXED_DATE,
+  });
+
+  await writer.writeCapturedRequest({
+    captureId: "capture-writer-codex-test",
+    providerId: "codex",
+    target: "chatgpt.com:443",
+    method: "GET",
+    path: "/backend-api/codex/responses",
+    timestamp: FIXED_DATE.toISOString(),
+    headers: {},
+    bodyText: '{"instructions":"first instructions","input":[]}',
+    body: {
+      instructions: "first instructions",
+      input: [],
+    },
+  });
+  await writer.writeCapturedRequest({
+    captureId: "capture-writer-codex-test",
+    providerId: "codex",
+    target: "chatgpt.com:443",
+    method: "GET",
+    path: "/backend-api/codex/responses",
+    timestamp: FIXED_DATE.toISOString(),
+    headers: {},
+    bodyText: '{"instructions":"codex instructions","input":[]}',
+    body: {
+      instructions: "codex instructions",
+      input: [{ type: "text", text: "input text" }],
+      tools: [{ name: "shell" }],
+    },
+  });
+  await writer.complete("captured");
+
+  const jsonl = await fs.readFile(writer.artifacts.jsonlPath, "utf8");
+  const markdown = await fs.readFile(writer.artifacts.markdownPath, "utf8");
+
+  assert.match(jsonl, MARKDOWN_SELECTED_MODEL_PATTERN);
+  assert.match(markdown, MARKDOWN_CAPTURED_TWO_PATTERN);
+  assert.match(markdown, MARKDOWN_SELECTED_MODEL_PATTERN);
+  assert.match(markdown, MARKDOWN_CODEX_INSTRUCTIONS_PATTERN);
+  assert.match(markdown, MARKDOWN_CODEX_INPUT_PATTERN);
 });

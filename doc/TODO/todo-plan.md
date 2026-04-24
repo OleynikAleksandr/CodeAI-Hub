@@ -55,12 +55,12 @@
 13. [DONE] Настроить Claude diagnostic query на selected model/applied thinking — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; commit: `feat: mirror claude turn config in native capture`.
 14. [DONE] Git Commit: `feat: mirror claude turn config in native capture` (hash: `f3fc8d574`)
 15. [DONE] Настроить Codex diagnostic turn на selected model/applied effort/summary — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: mirror codex turn config in native capture`.
-16. [IN_PROGRESS] Git Commit: `feat: mirror codex turn config in native capture` (hash: TBD)
+16. [DONE] Git Commit: `feat: mirror codex turn config in native capture` (hash: `9c82aa355`)
 
 ### Stream: Capture Artifact Readability
 
-17. [TODO] Улучшить writer для app config, multi-request Markdown и Codex instructions extraction — scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`; commit: `feat: improve native capture artifact extraction`.
-18. [TODO] Git Commit: `feat: improve native capture artifact extraction` (hash: TBD)
+17. [DONE] Улучшить writer для app config, multi-request Markdown и Codex instructions extraction — scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; commit: `feat: improve native capture artifact extraction`.
+18. [IN_PROGRESS] Git Commit: `feat: improve native capture artifact extraction` (hash: TBD)
 
 ### Stream: Verification And Release
 

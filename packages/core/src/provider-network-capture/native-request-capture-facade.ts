@@ -155,9 +155,11 @@ export class NativeRequestCaptureFacade {
         targetModelId: command.modelId ?? null,
       }) ?? null;
     const writer = await NativeRequestCaptureWriter.create({
+      appliedTurnConfig,
       captureId,
       outputDir: this.#outputDir,
       providerId: command.providerId,
+      selectedModelId: command.modelId ?? null,
     });
     const eventWrites: Promise<void>[] = [];
     const targetRules = PROVIDER_TARGET_RULES[command.providerId];

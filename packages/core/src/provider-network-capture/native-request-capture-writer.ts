@@ -15,10 +15,12 @@ type NativeRequestCaptureIgnoredRecord = Extract<
 >;
 
 interface NativeRequestCaptureWriterOptions {
+  readonly appliedTurnConfig?: unknown;
   readonly captureId: string;
   readonly clock?: () => Date;
   readonly outputDir: string;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly selectedModelId?: string | null;
 }
 
 interface NativeRequestCaptureArtifacts {
@@ -46,20 +48,24 @@ interface ProviderRuntimeErrorRecord {
 
 export class NativeRequestCaptureWriter {
   readonly #artifacts: NativeRequestCaptureArtifacts;
+  readonly #appliedTurnConfig: unknown;
   readonly #captureId: string;
   readonly #clock: () => Date;
   readonly #providerId: NativeRequestCaptureProviderId;
   readonly #records: unknown[] = [];
-  #capturedRequest: NativeRequestCaptureRequest | null = null;
+  readonly #selectedModelId: string | null;
+  readonly #capturedRequests: NativeRequestCaptureRequest[] = [];
 
   private constructor(
     options: NativeRequestCaptureWriterOptions,
     artifacts: NativeRequestCaptureArtifacts
   ) {
     this.#artifacts = artifacts;
+    this.#appliedTurnConfig = options.appliedTurnConfig ?? null;
     this.#captureId = options.captureId;
     this.#clock = options.clock ?? (() => new Date());
     this.#providerId = options.providerId;
+    this.#selectedModelId = options.selectedModelId ?? null;
   }
 
   static async create(
@@ -78,7 +84,9 @@ export class NativeRequestCaptureWriter {
     await writer.appendRecord({
       type: "capture_start",
       captureId: options.captureId,
+      appliedTurnConfig: options.appliedTurnConfig ?? null,
       providerId: options.providerId,
+      selectedModelId: options.selectedModelId ?? null,
       sentUpstream: false,
       timestamp: writer.#clock().toISOString(),
     });
@@ -124,7 +132,7 @@ export class NativeRequestCaptureWriter {
       ...request,
       headers: redactCaptureHeaders(request.headers),
     };
-    this.#capturedRequest = sanitizedRequest;
+    this.#capturedRequests.push(sanitizedRequest);
     await this.appendRecord({
       type: "request_captured",
       ...sanitizedRequest,
@@ -162,7 +170,7 @@ export class NativeRequestCaptureWriter {
   }
 
   private async writeMarkdown(): Promise<void> {
-    const request = this.#capturedRequest;
+    const request = this.getPrimaryRequest();
     const title = `${capitalizeProvider(this.#providerId)} Native Request Capture`;
     const bodySections = request ? extractSections(request.body) : [];
     const ignoredRequests = findIgnoredRequestRecords(this.#records);
@@ -177,13 +185,18 @@ export class NativeRequestCaptureWriter {
       "",
       "## Summary",
       "",
-      buildSummary(request, this.#records),
+      buildSummary(request, this.#records, this.#capturedRequests.length),
+      "",
+      "## Capture Configuration",
+      "",
+      fencedJson({
+        selectedModelId: this.#selectedModelId,
+        appliedTurnConfig: this.#appliedTurnConfig,
+      }),
       "",
       "## Captured Requests",
       "",
-      request
-        ? `- ${request.method} ${request.target}${request.path}`
-        : "- No matching request captured yet.",
+      formatCapturedRequests(this.#capturedRequests),
       "",
       "## Ignored Requests",
       "",
@@ -226,6 +239,12 @@ export class NativeRequestCaptureWriter {
     ].join("\n");
     await fs.writeFile(this.#artifacts.markdownPath, markdown, "utf8");
   }
+
+  private getPrimaryRequest(): NativeRequestCaptureRequest | null {
+    return this.#capturedRequests.length > 0
+      ? (this.#capturedRequests.at(-1) ?? null)
+      : null;
+  }
 }
 
 const buildArtifactStem = (params: {
@@ -247,6 +266,12 @@ const extractSections = (body: unknown): readonly CaptureSectionRecord[] => {
       section: "system",
       content: body.system,
     });
+  } else if ("instructions" in body) {
+    sections.push({
+      type: "section_extract",
+      section: "system",
+      content: body.instructions,
+    });
   }
   if ("tools" in body) {
     sections.push({
@@ -261,6 +286,12 @@ const extractSections = (body: unknown): readonly CaptureSectionRecord[] => {
       section: "messages",
       payload: body.messages,
     });
+  } else if ("input" in body) {
+    sections.push({
+      type: "section_extract",
+      section: "messages",
+      payload: body.input,
+    });
   }
   return sections;
 };
@@ -273,7 +304,8 @@ const findSection = (
 
 const buildSummary = (
   request: NativeRequestCaptureRequest | null,
-  records: readonly unknown[]
+  records: readonly unknown[],
+  capturedRequestCount: number
 ): string => {
   const recordCount = records.length;
   const ignoredCount = findIgnoredRequestRecords(records).length;
@@ -295,11 +327,29 @@ const buildSummary = (
     ].join("\n");
   }
   return [
-    `Captured one provider request for ${request.target}.`,
+    `Captured provider requests: ${capturedRequestCount}.`,
+    `Primary request: ${request.target}.`,
     `Method/path: ${request.method} ${request.path}.`,
     `Ignored requests before capture: ${ignoredCount}.`,
     `JSONL records: ${recordCount}.`,
   ].join("\n");
+};
+
+const formatCapturedRequests = (
+  records: readonly NativeRequestCaptureRequest[]
+): string => {
+  if (records.length === 0) {
+    return "- No matching request captured yet.";
+  }
+  return records
+    .map((request, index) => {
+      const bodyLength = request.bodyText.length;
+      return [
+        `- ${index + 1}. ${request.method} ${request.target}${request.path}`,
+        `(bodyTextLength: ${bodyLength})`,
+      ].join(" ");
+    })
+    .join("\n");
 };
 
 const fencedJson = (value: unknown): string =>
