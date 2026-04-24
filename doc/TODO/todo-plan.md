@@ -54,6 +54,7 @@
 ### Stream: Corrective test release package
 19. [DONE] Подготовить release docs для будущей версии `1.2.69` с diagnostic-only Claude capture target filter — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude capture filter release notes`
 20. [DONE] Git Commit: `docs: prepare claude capture filter release notes` (hash: `ddc5db6db`)
-21. [IN_PROGRESS] Собрать corrective release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude capture filter test release`
+21. [DONE] Собрать corrective release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude capture filter test release`
    - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.69`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
-22. [TODO] Git Commit: `chore: build claude capture filter test release` (hash: TBD)
+   - `./scripts/build-release.sh --use-current-version` прошел: проверены `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; VSIX: `codeai-hub-1.2.69.vsix` (`2.4M`).
+22. [DONE] Git Commit: `chore: build claude capture filter test release` (hash: `2abfd0487`)
