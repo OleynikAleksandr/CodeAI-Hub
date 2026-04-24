@@ -11,6 +11,7 @@ import type { BrowserLocalizationRuntimePayload } from "../../app-host/localizat
 import { readBrowserLocalizationBootstrapSnapshot } from "../../app-host/localization-runtime-contract";
 import { createBootstrapSettings } from "../../shared-hooks/use-bootstrap-settings";
 import vscode from "../../vscode";
+import { startBrowserNativeRequestCapture } from "./native-request-capture-browser-runner";
 import {
   updateClaudeContinuityRemainingPercentThreshold,
   updateClaudeDefaultModel,
@@ -48,9 +49,9 @@ import {
   type LocalizationSyncStatusState,
   type LocalizationWorkflowTermsPolicy,
   type NativeRequestCaptureModelId,
+  type NativeRequestCaptureScenarioId,
   type NativeRequestCaptureState,
   normalizeLoadedLocalizationSettings,
-  startNativeRequestCapture,
   type UseSettingsStateResult,
   updateLocalizationCategorySelection,
   updateLocalizationDefaultLanguageSelection,
@@ -63,7 +64,6 @@ import {
 const RESET_DELAY_MS = 100;
 export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
   "codeaihub:settings:localization:user-glossary-draft";
-
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
 const isSettingsSaveErrorMessage = (
@@ -442,12 +442,16 @@ export const useSettingsState = (): UseSettingsStateResult => {
   }, []);
 
   const handleNativeRequestCapture = useCallback(
-    (providerId: "claude" | "codex", modelId: NativeRequestCaptureModelId) => {
-      setNativeRequestCapture(startNativeRequestCapture(providerId, modelId));
-      vscode.postMessage({
-        type: "settings:native-request-capture",
+    (
+      providerId: "claude" | "codex",
+      modelId: NativeRequestCaptureModelId,
+      scenarioId: NativeRequestCaptureScenarioId
+    ) => {
+      startBrowserNativeRequestCapture({
         modelId,
         providerId,
+        scenarioId,
+        setNativeRequestCapture,
       });
     },
     []

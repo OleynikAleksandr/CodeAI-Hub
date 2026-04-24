@@ -18,6 +18,7 @@ import type {
   LocalizationCategoryKey,
   LocalizationWorkflowTermsPolicy,
   NativeRequestCaptureProviderId,
+  NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
 } from "./use-settings-state-support";
 
@@ -99,7 +100,8 @@ interface GeneralSettingsProps {
     providerId: NativeRequestCaptureProviderId,
     modelId:
       | Settings["providers"]["claude"]["defaultModel"]
-      | Settings["providers"]["codex"]["defaultModel"]
+      | Settings["providers"]["codex"]["defaultModel"],
+    scenarioId: NativeRequestCaptureScenarioId
   ) => void;
   readonly onReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;

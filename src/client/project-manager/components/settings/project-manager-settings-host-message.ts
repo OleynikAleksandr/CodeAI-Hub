@@ -1,4 +1,8 @@
-import type { NativeRequestCaptureModelId, NativeRequestCaptureProviderId } from "../../../ui/src/components/settings/use-settings-state-support";
+import type {
+  NativeRequestCaptureModelId,
+  NativeRequestCaptureProviderId,
+  NativeRequestCaptureScenarioId,
+} from "../../../ui/src/components/settings/use-settings-state-support";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import type { UseProjectManagerSettingsResult } from "./use-project-manager-settings";
 
@@ -10,10 +14,19 @@ export const isNativeRequestCaptureProviderId = (
 ): value is NativeRequestCaptureProviderId =>
   value === "claude" || value === "codex";
 
+const isNativeRequestCaptureScenarioId = (
+  value: unknown
+): value is NativeRequestCaptureScenarioId =>
+  value === "description" ||
+  value === "virtual_simulation" ||
+  value === "diagram_modules" ||
+  value === "diagnostic_probe";
+
 export const handleProjectManagerSettingsHostMessage = (params: {
   readonly handleNativeRequestCapture: (
     providerId: NativeRequestCaptureProviderId,
-    modelId: NativeRequestCaptureModelId
+    modelId: NativeRequestCaptureModelId,
+    scenarioId: NativeRequestCaptureScenarioId
   ) => void;
   readonly message: unknown;
   readonly settings: Settings;
@@ -38,6 +51,13 @@ export const handleProjectManagerSettingsHostMessage = (params: {
       params.message.modelId.trim().length > 0
         ? (params.message.modelId as NativeRequestCaptureModelId)
         : defaultModelId;
-    params.handleNativeRequestCapture(params.message.providerId, modelId);
+    const scenarioId = isNativeRequestCaptureScenarioId(params.message.scenarioId)
+      ? params.message.scenarioId
+      : "description";
+    params.handleNativeRequestCapture(
+      params.message.providerId,
+      modelId,
+      scenarioId
+    );
   }
 };

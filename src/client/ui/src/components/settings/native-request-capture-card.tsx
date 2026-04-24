@@ -17,6 +17,7 @@ import {
 } from "./style-tokens";
 import type {
   NativeRequestCaptureProviderId,
+  NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
 } from "./use-settings-state-support";
 
@@ -50,6 +51,12 @@ const modelRowStyles: CSSProperties = {
   margin: 0,
   minWidth: 0,
   padding: 0,
+};
+
+const scenarioRowStyles: CSSProperties = {
+  ...modelRowStyles,
+  borderBottom: `1px solid ${settingsColorTokens.borderSubtle}`,
+  paddingBottom: "12px",
 };
 
 const visuallyHiddenStyles: CSSProperties = {
@@ -150,6 +157,19 @@ interface NativeRequestCaptureModels {
   readonly codex: CodexModelId;
 }
 
+const SCENARIO_OPTIONS: readonly {
+  readonly id: NativeRequestCaptureScenarioId;
+  readonly label: string;
+}[] = [
+  { id: "description", label: "Description" },
+  { id: "virtual_simulation", label: "Virtual Simulation" },
+  { id: "diagram_modules", label: "Diagram Modules" },
+];
+
+const getScenarioLabel = (scenarioId: NativeRequestCaptureScenarioId): string =>
+  SCENARIO_OPTIONS.find((scenario) => scenario.id === scenarioId)?.label ??
+  scenarioId;
+
 const getModelDisplayName = (
   providerId: NativeRequestCaptureProviderId,
   modelId: NativeRequestCaptureModelId
@@ -205,7 +225,10 @@ const resolveStatusText = (options: {
 }): string => {
   const { errorLabel, idleLabel, runningLabel, state, successLabel } = options;
   if (state.status === "running" && state.activeProvider) {
-    return `${runningLabel}: ${getProviderLabel(state.activeProvider)}`;
+    const scenarioText = state.activeScenarioId
+      ? ` · ${getScenarioLabel(state.activeScenarioId)}`
+      : "";
+    return `${runningLabel}: ${getProviderLabel(state.activeProvider)}${scenarioText}`;
   }
   if (state.status === "success") {
     return successLabel;
@@ -220,7 +243,8 @@ interface NativeRequestCaptureCardProps {
   readonly defaultModels: NativeRequestCaptureModels;
   readonly onCapture: (
     providerId: NativeRequestCaptureProviderId,
-    modelId: NativeRequestCaptureModelId
+    modelId: NativeRequestCaptureModelId,
+    scenarioId: NativeRequestCaptureScenarioId
   ) => void;
   readonly state: NativeRequestCaptureState;
 }
@@ -234,6 +258,8 @@ const NativeRequestCaptureCard = ({
   const isRunning = state.status === "running";
   const [selectedModels, setSelectedModels] =
     useState<NativeRequestCaptureModels>(defaultModels);
+  const [selectedScenarioId, setSelectedScenarioId] =
+    useState<NativeRequestCaptureScenarioId>("description");
 
   useEffect(() => {
     setSelectedModels({
@@ -323,6 +349,24 @@ const NativeRequestCaptureCard = ({
   return (
     <SettingsCard title={title}>
       <div style={buttonRowStyles}>
+        <fieldset style={scenarioRowStyles}>
+          <legend style={visuallyHiddenStyles}>Workflow scenario</legend>
+          {SCENARIO_OPTIONS.map((scenario) => {
+            const isSelected = scenario.id === selectedScenarioId;
+            return (
+              <button
+                aria-pressed={isSelected}
+                disabled={isRunning}
+                key={scenario.id}
+                onClick={() => setSelectedScenarioId(scenario.id)}
+                style={isSelected ? activeModelButtonStyles : modelButtonStyles}
+                type="button"
+              >
+                {scenario.label}
+              </button>
+            );
+          })}
+        </fieldset>
         {captureRows.map((row) => (
           <div key={row.providerId} style={providerRowStyles}>
             <div style={providerLabelStyles}>
@@ -366,7 +410,13 @@ const NativeRequestCaptureCard = ({
                 row.selectedModelId
               )}`}
               disabled={isRunning}
-              onClick={() => onCapture(row.providerId, row.selectedModelId)}
+              onClick={() =>
+                onCapture(
+                  row.providerId,
+                  row.selectedModelId,
+                  selectedScenarioId
+                )
+              }
               style={isRunning ? disabledButtonStyles : buttonStyles}
               type="button"
             >

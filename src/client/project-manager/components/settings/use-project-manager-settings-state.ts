@@ -14,6 +14,7 @@ import type {
   LocalizationWorkflowTermsPolicy,
   NativeRequestCaptureProviderId,
   NativeRequestCaptureModelId,
+  NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import {
@@ -418,12 +419,14 @@ export const useProjectManagerSettingsState =
     const handleNativeRequestCapture = useCallback(
       (
         providerId: NativeRequestCaptureProviderId,
-        modelId: NativeRequestCaptureModelId
+        modelId: NativeRequestCaptureModelId,
+        scenarioId: NativeRequestCaptureScenarioId
       ) => {
         startProjectManagerNativeRequestCapture({
           context,
           modelId,
           providerId,
+          scenarioId,
           setNativeRequestCapture,
         });
       },

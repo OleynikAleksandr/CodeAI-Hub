@@ -1,20 +1,22 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { NativeRequestCaptureModelId, NativeRequestCaptureProviderId, NativeRequestCaptureState } from "../../../ui/src/components/settings/use-settings-state-support";
+import type {
+  NativeRequestCaptureModelId,
+  NativeRequestCaptureProviderId,
+  NativeRequestCaptureScenarioId,
+  NativeRequestCaptureState,
+} from "../../../ui/src/components/settings/use-settings-state-support";
 import {
   completeNativeRequestCapture,
   startNativeRequestCapture,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import { api } from "../../api";
-import type {
-  SettingsLoadedPayload,
-  SettingsNativeRequestCaptureScenarioId,
-} from "../../core-stream-message-types";
+import type { SettingsLoadedPayload } from "../../core-stream-message-types";
 import { buildNativeRequestCaptureScenarioPrompt } from "../../services/native-request-capture-scenario-prompt";
 
 interface ProjectManagerNativeRequestCaptureParams {
   readonly modelId: NativeRequestCaptureModelId;
   readonly providerId: NativeRequestCaptureProviderId;
-  readonly scenarioId: SettingsNativeRequestCaptureScenarioId;
+  readonly scenarioId: NativeRequestCaptureScenarioId;
   readonly settingsPayload: SettingsLoadedPayload | null;
   readonly workspaceName?: string;
   readonly workspacePath?: string;
@@ -65,15 +67,20 @@ export const startProjectManagerNativeRequestCapture = (params: {
   };
   readonly modelId: NativeRequestCaptureModelId;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly scenarioId: NativeRequestCaptureScenarioId;
   readonly setNativeRequestCapture: NativeRequestCaptureStateSetter;
 }): void => {
   params.setNativeRequestCapture(
-    startNativeRequestCapture(params.providerId, params.modelId)
+    startNativeRequestCapture(
+      params.providerId,
+      params.modelId,
+      params.scenarioId
+    )
   );
   void runProjectManagerNativeRequestCapture({
     modelId: params.modelId,
     providerId: params.providerId,
-    scenarioId: "description",
+    scenarioId: params.scenarioId,
     settingsPayload: api.getLastSettingsPayload(),
     workspaceName: params.context.activeWorkspaceName,
     workspacePath: params.context.activeWorkspacePath,

@@ -38,18 +38,18 @@
 ### Stream: PM Scenario Prompt Source
 
 3. [DONE] Добавить Project Manager resolver, который строит capture prompt через существующий `buildWorkflowPromptPack` для `Description`, `Virtual Simulation`, `Diagram Modules` — scope: `src/client/project-manager/services/native-request-capture-scenario-prompt.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat: build workflow capture prompts from project manager`.
-4. [IN_PROGRESS] Git Commit: `feat: build workflow capture prompts from project manager` (hash: TBD)
+4. [DONE] Git Commit: `feat: build workflow capture prompts from project manager` (hash: `53019e013`)
 
 5. [DONE] Протянуть `scenarioId/scenarioPrompt` через Project Manager API без роста `api.ts` за лимит 500 строк — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/settings/native-request-capture-runner.ts`; expected commit: `feat: send workflow scenario capture payloads`.
-6. [IN_PROGRESS] Git Commit: `feat: send workflow scenario capture payloads` (hash: TBD)
+6. [DONE] Git Commit: `feat: send workflow scenario capture payloads` (hash: `53019e013`)
 
 ### Stream: Settings Scenario UI
 
-7. [TODO] Добавить scenario selector в shared Settings -> General native capture card и состояние active scenario — scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `native-request-capture-state.ts`, `use-settings-state-support.ts`; expected commit: `feat: add native capture workflow scenario selector`.
-8. [TODO] Git Commit: `feat: add native capture workflow scenario selector` (hash: TBD)
+7. [DONE] Добавить scenario selector в shared Settings -> General native capture card и состояние active scenario — scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `native-request-capture-state.ts`, `use-settings-state-support.ts`; expected commit: `feat: add native capture workflow scenario selector`.
+8. [IN_PROGRESS] Git Commit: `feat: add native capture workflow scenario selector` (hash: TBD)
 
-9. [TODO] Протянуть selector в VS Code webview state и Project Manager settings state — scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/ui/src/components/settings/general-settings.tsx`; expected commit: `feat: route native capture scenario from settings`.
-10. [TODO] Git Commit: `feat: route native capture scenario from settings` (hash: TBD)
+9. [DONE] Протянуть selector в VS Code webview state и Project Manager settings state — scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/ui/src/components/settings/general-settings.tsx`; expected commit: `feat: route native capture scenario from settings`.
+10. [IN_PROGRESS] Git Commit: `feat: route native capture scenario from settings` (hash: TBD)
 
 ### Stream: Core And Provider Prompt Threading
 

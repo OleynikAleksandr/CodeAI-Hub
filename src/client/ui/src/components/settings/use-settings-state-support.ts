@@ -10,6 +10,7 @@ import type { BrowserLocalizationRuntimePayload } from "../../app-host/localizat
 import type {
   NativeRequestCaptureModelId,
   NativeRequestCaptureProviderId,
+  NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
 } from "./native-request-capture-state";
 import type {
@@ -25,6 +26,7 @@ import type {
 export type {
   NativeRequestCaptureModelId,
   NativeRequestCaptureProviderId,
+  NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
   NativeRequestCaptureStatus,
 } from "./native-request-capture-state";
@@ -425,7 +427,8 @@ export interface UseSettingsStateResult {
   ) => void;
   readonly handleNativeRequestCapture: (
     providerId: NativeRequestCaptureProviderId,
-    modelId: NativeRequestCaptureModelId
+    modelId: NativeRequestCaptureModelId,
+    scenarioId: NativeRequestCaptureScenarioId
   ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
