@@ -47,7 +47,7 @@
 - The diagnostic path reuses `SDKInstaller` + `SDKAuthManager`, performs provider-home subscription/auth bootstrap, then runs one SDK `query(...)` with the Core-provided proxy/certificate environment and diagnostic probe prompt.
 - Capture query options intentionally keep `settingSources: []`, `persistSession: false`, `thinking: { type: "disabled" }`, `permissionMode: "bypassPermissions"`, `allowDangerouslySkipPermissions: true`, `cwd` / `additionalDirectories` = selected workspace, and `projectPath` under the CodeAI Hub provider project slug. This preserves normal SDK isolation while forcing the outbound provider request through the local capture proxy.
 - Successful capture means the Core proxy saw `api.anthropic.com` `/v1/messages` and locally aborted that request; the diagnostic service may observe the resulting synthetic network failure, but upstream delivery is intentionally blocked.
-- Artifacts are Core-owned and written to `~/.codeai-hub/logs/native-request-capture/` as `.jsonl` plus readable `.md`; provider-home Claude JSONL remains the canonical provider-owned audit layer for normal turns.
+- Artifacts are Core-owned and written to `~/.codeai-hub/logs/native-request-capture/` as `.jsonl` plus readable `.md`; ignored Anthropic requests preserve reason/target/method/path/redacted headers/body for debugging path mismatches, while provider-home Claude JSONL remains the canonical provider-owned audit layer for normal turns.
 
 ## Auth cluster
 - `src/auth/sdk-auth-manager.ts` — façade/coordinator for Claude auth bootstrap, provider-home preflight и auth runtime checks.
