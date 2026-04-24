@@ -1,8 +1,9 @@
 # Native Request Capture Codex Turn Context Hotfix 1.2.67
 
-**Status:** approved for implementation
+**Status:** completed and archived
 **Date:** 2026-04-24
 **Owner:** Codex
+**Closed by release:** `1.2.67`
 
 ## Problem
 
@@ -67,3 +68,10 @@ SSOT sync:
 - Existing native request sections still show the provider WebSocket body, headers, tools and instructions.
 - Claude behavior is unchanged.
 - Targeted tests cover writer persistence, facade callback wiring, and Codex diagnostic emission.
+
+## Completion Notes
+
+- Implemented Core provider diagnostic context persistence for `.jsonl` and `.md` capture artifacts.
+- Wired the diagnostic context callback through `NativeRequestCaptureFacade` into provider adapters.
+- Codex app-server diagnostic capture now records `thread/start` and `turn/start` request/response payloads in the same capture artifact, separately from provider-native WebSocket frames.
+- Built release `1.2.67` with `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`.
