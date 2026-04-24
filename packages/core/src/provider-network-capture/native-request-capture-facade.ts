@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
-import type { ProviderAdapter } from "../provider-registry/provider-module-loader.types";
+import type {
+  ProviderAdapter,
+  ProviderNativeRequestCaptureAppliedTurnConfig,
+} from "../provider-registry/provider-module-loader.types";
 import { NativeRequestCaptureCertificateStore } from "./native-request-capture-certificates";
 import { NativeRequestCapturePreflight } from "./native-request-capture-preflight";
 import { NativeRequestCaptureProxy } from "./native-request-capture-proxy";
@@ -50,6 +53,10 @@ interface ProviderAdapterLookup {
 type ProxyFactory = (
   options: ConstructorParameters<typeof NativeRequestCaptureProxy>[0]
 ) => Pick<NativeRequestCaptureProxy, "start">;
+type AppliedTurnConfigResolver = (options: {
+  readonly providerId: string;
+  readonly targetModelId?: string | null;
+}) => ProviderNativeRequestCaptureAppliedTurnConfig | null;
 
 interface CertificateStoreLike {
   prepareHostCredentials(
@@ -75,6 +82,7 @@ interface NativeRequestCaptureFacadeOptions {
   readonly preflight?: PreflightLike;
   readonly providerRegistry: ProviderAdapterLookup;
   readonly proxyFactory?: ProxyFactory;
+  readonly resolveAppliedTurnConfig?: AppliedTurnConfigResolver;
   readonly timeoutMs?: number;
 }
 
@@ -105,6 +113,7 @@ export class NativeRequestCaptureFacade {
   readonly #preflight: PreflightLike;
   readonly #providerRegistry: ProviderAdapterLookup;
   readonly #proxyFactory: ProxyFactory;
+  readonly #resolveAppliedTurnConfig?: AppliedTurnConfigResolver;
   readonly #timeoutMs?: number;
 
   constructor(options: NativeRequestCaptureFacadeOptions) {
@@ -117,6 +126,7 @@ export class NativeRequestCaptureFacade {
     this.#proxyFactory =
       options.proxyFactory ??
       ((proxyOptions) => new NativeRequestCaptureProxy(proxyOptions));
+    this.#resolveAppliedTurnConfig = options.resolveAppliedTurnConfig;
     this.#timeoutMs = options.timeoutMs;
   }
 
@@ -139,6 +149,11 @@ export class NativeRequestCaptureFacade {
     }
 
     const captureId = this.#captureIdFactory();
+    const appliedTurnConfig =
+      this.#resolveAppliedTurnConfig?.({
+        providerId: runtimeProviderId,
+        targetModelId: command.modelId ?? null,
+      }) ?? null;
     const writer = await NativeRequestCaptureWriter.create({
       captureId,
       outputDir: this.#outputDir,
@@ -171,6 +186,7 @@ export class NativeRequestCaptureFacade {
       const captureResult = await this.#runProviderAndProxy({
         captureId,
         adapter,
+        appliedTurnConfig,
         certificateBundle,
         command,
         handle,
@@ -199,6 +215,7 @@ export class NativeRequestCaptureFacade {
 
   async #runProviderAndProxy(params: {
     readonly adapter: ProviderAdapter;
+    readonly appliedTurnConfig: ProviderNativeRequestCaptureAppliedTurnConfig | null;
     readonly captureId: string;
     readonly certificateBundle: Awaited<
       ReturnType<NativeRequestCaptureCertificateStore["prepareHostCredentials"]>
@@ -221,8 +238,10 @@ export class NativeRequestCaptureFacade {
         captureId: params.captureId,
         certificateEnv: params.certificateBundle.envHints,
         certificatePath: params.certificateBundle.certificatePath,
+        appliedTurnConfig: params.appliedTurnConfig,
         probePrompt: DIAGNOSTIC_PROBE_PROMPT,
         proxyUrl: params.handle.proxyUrl,
+        selectedModelId: params.command.modelId ?? null,
         workspacePath: params.command.workspacePath,
       })
       .then(() => ({ type: "provider_done" as const }))

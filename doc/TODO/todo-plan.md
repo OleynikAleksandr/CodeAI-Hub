@@ -46,9 +46,9 @@
 ### Stream: Core App-Path Resolver
 
 9. [DONE] Добавить modelId в Core bridge payload и capture command — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; commit: `feat: resolve native capture turn config`.
-10. [IN_PROGRESS] Git Commit: `feat: resolve native capture turn config` (hash: TBD)
-11. [TODO] Передать selected model/applied config в provider adapters — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `feat: pass native capture app config`.
-12. [TODO] Git Commit: `feat: pass native capture app config` (hash: TBD)
+10. [DONE] Git Commit: `feat: resolve native capture turn config` (hash: `7f336b601`)
+11. [DONE] Передать selected model/applied config в provider adapters — scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`; commit: `feat: pass native capture app config`.
+12. [IN_PROGRESS] Git Commit: `feat: pass native capture app config` (hash: TBD)
 
 ### Stream: Provider Diagnostic Parity
 

@@ -83,12 +83,30 @@ export interface ProviderModelSyncCapabilities {
   readonly syncsLabelFromAppliedConfig: boolean;
 }
 
+export interface ProviderNativeRequestCaptureAppliedTurnConfig {
+  readonly baseModelId?: string;
+  readonly effectiveModelId?: string;
+  readonly messagesForTheUserLanguage?: string;
+  readonly modelId?: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: string;
+  readonly reasoningEngineId?: string;
+  readonly reasoningLanguage?: string;
+  readonly source: "settings_snapshot" | "switch_request";
+  readonly thinkingDisplaySyncEnabled?: boolean;
+  readonly thinkingEnabled?: boolean;
+  readonly thinkingLevel?: string;
+  readonly translationEngineId?: string;
+}
+
 export interface ProviderNativeRequestCaptureOptions {
+  readonly appliedTurnConfig?: ProviderNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly selectedModelId?: string | null;
   readonly workspacePath: string;
 }
 

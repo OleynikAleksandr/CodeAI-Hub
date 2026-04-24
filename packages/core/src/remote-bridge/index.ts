@@ -11,12 +11,14 @@ import type {
 } from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
 import { HttpApiRouter } from "./handlers/http-api-router";
+import { SessionRequestHandlerAppliedTurnConfig } from "./handlers/session-request-handler-applied-turn-config";
 import { createRemoteBridgeBootstrap } from "./remote-bridge-bootstrap";
 import { RemoteBridgeMessageRouter } from "./remote-bridge-message-router";
 import { RemoteBridgeServerLifecycle } from "./remote-bridge-server-lifecycle";
 import {
   type BridgeEvent,
   type CoreStatePayload,
+  readAppliedProviderTurnConfig,
   serializeSession,
 } from "./types";
 
@@ -109,6 +111,9 @@ export class RemoteBridge {
       },
       workspaceRuntime: this.bootstrap.workspaceRuntime,
     });
+    const nativeCaptureTurnConfig = new SessionRequestHandlerAppliedTurnConfig(
+      this.config
+    );
     this.messageRouter = new RemoteBridgeMessageRouter({
       dialogHistoryService: this.bootstrap.dialogHistoryService,
       dialogListService: this.bootstrap.dialogListService,
@@ -117,6 +122,13 @@ export class RemoteBridge {
       logger: this.logger,
       nativeRequestCaptureFacade: new NativeRequestCaptureFacade({
         providerRegistry: this.providerRegistry,
+        resolveAppliedTurnConfig: ({ providerId, targetModelId }) =>
+          readAppliedProviderTurnConfig(
+            nativeCaptureTurnConfig.attachToTurnOptions({
+              providerId,
+              targetModelId: targetModelId ?? undefined,
+            })
+          ),
       }),
       projectHandler: this.bootstrap.projectHandler,
       sessionHandler: this.bootstrap.sessionHandler,
