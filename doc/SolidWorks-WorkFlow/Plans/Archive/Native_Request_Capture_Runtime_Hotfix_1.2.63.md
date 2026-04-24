@@ -1,6 +1,6 @@
 # Native Request Capture Runtime Hotfix 1.2.63
 
-**Status:** Active hotfix plan
+**Status:** Completed hotfix plan
 **Date:** 2026-04-24
 **Owner:** Codex
 
@@ -76,3 +76,6 @@ const captureNativeRequest = adapter?.captureNativeRequest;
   - `./scripts/build-all.sh`
   - `./scripts/build-release.sh --use-current-version`
 
+## 6. Result
+
+Релиз `1.2.63` собран как hotfix к `1.2.62`. Основной Core bug закрыт: `NativeRequestCaptureFacade` больше не вызывает provider adapter method без receiver, provider runtime failures пишутся в `.jsonl` / `.md`, proxy stop очищает pending timeout. VSIX: `codeai-hub-1.2.63.vsix`.
