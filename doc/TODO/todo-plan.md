@@ -66,8 +66,8 @@
 16. [DONE] Git Commit: `test: cover claude native request capture` (hash: `eea89115c`)
 
 ### Stream: Codex Native Capture
-17. [TODO] Добавить Codex capture service на временном app-server runtime с capture proxy env; scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; expected commit message: `feat: capture codex native requests`
-18. [TODO] Git Commit: `feat: capture codex native requests` (hash: TBD)
+17. [DONE] Добавить Codex capture service на временном app-server runtime с capture proxy env; scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; expected commit message: `feat: capture codex native requests`
+18. [DONE] Git Commit: `feat: capture codex native requests` (hash: `c4ed612ba`)
 19. [TODO] Покрыть Codex capture target filtering/temp process shutdown tests; scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.test.ts`; expected commit message: `test: cover codex native request capture`
 20. [TODO] Git Commit: `test: cover codex native request capture` (hash: TBD)
 
