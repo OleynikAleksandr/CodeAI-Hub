@@ -30,3 +30,9 @@
 5. [DONE] Выполнить таргетную проверку Claude module и зафиксировать результат в TODO — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude preset capture verification`
    - Verification: `npm install` восстановил workspace dependencies; `npm run build --workspace @codeai-hub/translation` прошел; `npm run build --workspace @codeai-hub/claude-module` прошел; `node --test packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js` прошел; Husky pre-commit для `145ed0717` прошел `check-architecture.sh`, `npm run lint`, `npm run check:knip`, staged `format:fix`.
 6. [DONE] Git Commit: `docs: record claude preset capture verification` (hash: `116d7df12`)
+
+### Stream: Runtime capture comparison
+7. [TODO] Выполнить runtime capture через Project Manager Settings -> General для Claude `Description` scenario на текущей ветке; raw artifacts оставить только в `~/.codeai-hub/logs/native-request-capture/`; repo scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude preset capture evidence`
+8. [TODO] Git Commit: `docs: record claude preset capture evidence` (hash: TBD)
+9. [TODO] Сравнить новый capture с baseline `2026-04-24T12-22-42-190Z-claude-native-request.md` и зафиксировать только high-level выводы, section names/counts/hashes без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: summarize claude preset capture comparison`
+10. [TODO] Git Commit: `docs: summarize claude preset capture comparison` (hash: TBD)
