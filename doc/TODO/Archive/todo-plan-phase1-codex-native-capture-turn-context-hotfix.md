@@ -47,4 +47,4 @@
 16. [DONE] Build release `1.2.67` with `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` (scope: release scripts/package artifacts; result: `./scripts/build-all.sh` passed, `./scripts/build-release.sh --use-current-version` passed, VSIX `codeai-hub-1.2.67.vsix`; commit: `chore: build codex native capture context release assets`)
 17. [DONE] Git Commit: `chore: build codex native capture context release assets` (hash: `64a62f0ee`)
 18. [DONE] Closeout scope, archive planning/TODO, and create session report (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/`, `doc/Sessions/`; commit: `docs: close codex native capture turn context hotfix`)
-19. [DONE] Git Commit: `docs: close codex native capture turn context hotfix` (hash: TBD)
+19. [DONE] Git Commit: `docs: close codex native capture turn context hotfix` (hash: `9198c11e3`)
