@@ -47,6 +47,8 @@ export type NativeRequestCaptureProxyEvent =
     }
   | {
       readonly captureId: string;
+      readonly method?: string;
+      readonly path?: string;
       readonly providerId: NativeRequestCaptureProviderId;
       readonly reason: string;
       readonly target: string;

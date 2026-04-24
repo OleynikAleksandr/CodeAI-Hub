@@ -11,6 +11,11 @@ import type {
   NativeRequestCaptureTargetRule,
   NativeRequestCaptureTlsCredentials,
 } from "./native-request-capture-types";
+import {
+  buildWebSocketUpgradeResponse,
+  isWebSocketUpgradeRequest,
+  parseWebSocketClientFrame,
+} from "./native-request-capture-websocket";
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const HTTP_HEADER_SEPARATOR = "\r\n\r\n";
@@ -180,7 +185,7 @@ export class NativeRequestCaptureProxy {
     connectRule: NativeRequestCaptureTargetRule
   ): void {
     const chunks: Buffer[] = [];
-    tlsSocket.on("data", (chunk: Buffer) => {
+    const handleHttpData = (chunk: Buffer) => {
       chunks.push(chunk);
       const parsed = parseHttpRequest(Buffer.concat(chunks));
       if (!parsed) {
@@ -188,8 +193,14 @@ export class NativeRequestCaptureProxy {
       }
 
       if (!requestMatchesRule(parsed, connectRule)) {
-        this.#emitIgnored(target, "request_path_not_matched");
+        this.#emitIgnored(target, "request_path_not_matched", parsed);
         tlsSocket.end();
+        return;
+      }
+
+      if (isWebSocketUpgradeRequest(parsed)) {
+        tlsSocket.off("data", handleHttpData);
+        this.#captureWebSocketFrame(tlsSocket, target, parsed);
         return;
       }
 
@@ -208,9 +219,49 @@ export class NativeRequestCaptureProxy {
       });
       tlsSocket.end(buildCapturedResponse());
       this.#completeCaptured(capturedRequest);
-    });
+    };
+    tlsSocket.on("data", handleHttpData);
     tlsSocket.on("error", () => {
-      this.#completeFailure("tls_trust_failed");
+      this.#emitIgnored(target, "tls_socket_error");
+    });
+  }
+
+  #captureWebSocketFrame(
+    tlsSocket: tls.TLSSocket,
+    target: string,
+    request: ParsedHttpRequest
+  ): void {
+    const response = buildWebSocketUpgradeResponse(request.headers);
+    if (!response) {
+      this.#completeFailure("runtime_failed");
+      return;
+    }
+
+    let buffer = Buffer.alloc(0);
+    tlsSocket.write(response);
+    tlsSocket.on("data", (chunk: Buffer) => {
+      buffer = Buffer.concat([buffer, chunk]);
+      const frame = parseWebSocketClientFrame(buffer);
+      if (!frame) {
+        return;
+      }
+      const capturedRequest: NativeRequestCaptureRequest = {
+        ...request,
+        body: frame.body,
+        bodyText: frame.bodyText,
+        captureId: this.#options.captureId,
+        providerId: this.#options.providerId,
+        target,
+        timestamp: new Date().toISOString(),
+      };
+      this.#emit({
+        type: "request_captured",
+        captureId: this.#options.captureId,
+        providerId: this.#options.providerId,
+        request: capturedRequest,
+      });
+      tlsSocket.end();
+      this.#completeCaptured(capturedRequest);
     });
   }
 
@@ -289,10 +340,16 @@ export class NativeRequestCaptureProxy {
     this.#options.onEvent?.(event);
   }
 
-  #emitIgnored(target: string, reason: string): void {
+  #emitIgnored(
+    target: string,
+    reason: string,
+    request?: ParsedHttpRequest
+  ): void {
     this.#emit({
       type: "request_ignored",
       captureId: this.#options.captureId,
+      method: request?.method,
+      path: request?.path,
       providerId: this.#options.providerId,
       reason,
       target,

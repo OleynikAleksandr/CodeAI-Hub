@@ -31,12 +31,12 @@
 ### Stream: Hotfix Planning
 
 1. [DONE] Создать planning-документ и активный `todo-plan.md` — scope: `doc/SolidWorks-WorkFlow/Plans/Native_Request_Capture_WebSocket_And_Trace_Hotfix_1.2.64.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan native capture websocket hotfix`.
-2. [IN_PROGRESS] Git Commit: `docs: plan native capture websocket hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan native capture websocket hotfix` (hash: `a3fe277d0`)
 
 ### Stream: Core Capture Transport
 
-3. [TODO] Добавить WebSocket frame capture helper и подключить его к proxy — scope: `packages/core/src/provider-network-capture/native-request-capture-websocket.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`; commit: `fix: capture native websocket request frames`.
-4. [TODO] Git Commit: `fix: capture native websocket request frames` (hash: TBD)
+3. [DONE] Добавить WebSocket frame capture helper и подключить его к proxy — scope: `packages/core/src/provider-network-capture/native-request-capture-websocket.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`; commit: `fix: capture native websocket request frames`.
+4. [IN_PROGRESS] Git Commit: `fix: capture native websocket request frames` (hash: TBD)
 5. [TODO] Улучшить ignored request diagnostics и Markdown summary — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`; commit: `fix: record native capture ignored request details`.
 6. [TODO] Git Commit: `fix: record native capture ignored request details` (hash: TBD)
 7. [TODO] Добавить targeted regression tests — scope: `packages/core/src/provider-network-capture/native-request-capture-websocket.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.test.ts`; commit: `test: cover native capture websocket diagnostics`.
