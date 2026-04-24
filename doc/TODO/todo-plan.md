@@ -48,12 +48,12 @@
 9. [DONE] Добавить modelId в Core bridge payload и capture command — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; commit: `feat: resolve native capture turn config`.
 10. [DONE] Git Commit: `feat: resolve native capture turn config` (hash: `7f336b601`)
 11. [DONE] Передать selected model/applied config в provider adapters — scope: `packages/core/src/remote-bridge/index.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`; commit: `feat: pass native capture app config`.
-12. [IN_PROGRESS] Git Commit: `feat: pass native capture app config` (hash: TBD)
+12. [DONE] Git Commit: `feat: pass native capture app config` (hash: `7b45ef52b`)
 
 ### Stream: Provider Diagnostic Parity
 
-13. [TODO] Настроить Claude diagnostic query на selected model/applied thinking — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; commit: `feat: mirror claude turn config in native capture`.
-14. [TODO] Git Commit: `feat: mirror claude turn config in native capture` (hash: TBD)
+13. [DONE] Настроить Claude diagnostic query на selected model/applied thinking — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; commit: `feat: mirror claude turn config in native capture`.
+14. [IN_PROGRESS] Git Commit: `feat: mirror claude turn config in native capture` (hash: TBD)
 15. [TODO] Настроить Codex diagnostic turn на selected model/applied effort/summary — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: mirror codex turn config in native capture`.
 16. [TODO] Git Commit: `feat: mirror codex turn config in native capture` (hash: TBD)
 

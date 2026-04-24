@@ -4,12 +4,30 @@ import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
 import type { ClaudeStreamMessage, ClaudeWorkspaceOptions } from "../types";
 
 export interface ClaudeNativeRequestCaptureOptions {
+  readonly appliedTurnConfig?: ClaudeNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly selectedModelId?: string | null;
   readonly workspacePath: string;
+}
+
+interface ClaudeNativeRequestCaptureAppliedTurnConfig {
+  readonly modelId?: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: string;
+  readonly source: "settings_snapshot" | "switch_request";
+  readonly thinkingEnabled?: boolean;
+}
+
+interface ClaudeCaptureThinkingOptions {
+  readonly effort?: string;
+  readonly thinking: {
+    readonly display?: "summarized";
+    readonly type: "adaptive" | "disabled";
+  };
 }
 
 type QueryFunction = (payload: {
@@ -55,6 +73,7 @@ export class ClaudeNativeRequestCaptureService {
   private buildQueryOptions(
     options: ClaudeNativeRequestCaptureOptions
   ): Record<string, unknown> {
+    const thinkingOptions = resolveThinkingOptions(options.appliedTurnConfig);
     return {
       additionalDirectories: [options.workspacePath],
       allowDangerouslySkipPermissions: true,
@@ -73,7 +92,7 @@ export class ClaudeNativeRequestCaptureService {
           options.certificateEnv.SSL_CERT_FILE ?? options.certificatePath,
       },
       includePartialMessages: false,
-      model: this.#workspace.defaultModel,
+      model: resolveModelId(options) ?? this.#workspace.defaultModel,
       pathToClaudeCodeExecutable: this.#installer.getExecutablePath(),
       permissionMode: "bypassPermissions",
       persistSession: false,
@@ -81,7 +100,31 @@ export class ClaudeNativeRequestCaptureService {
         this.#workspace.claudeProjectSlug
       ),
       settingSources: [],
-      thinking: { type: "disabled" },
+      thinking: thinkingOptions.thinking,
+      ...(thinkingOptions.effort ? { effort: thinkingOptions.effort } : {}),
     };
   }
 }
+
+const resolveModelId = (
+  options: ClaudeNativeRequestCaptureOptions
+): string | undefined =>
+  readNonEmptyString(options.appliedTurnConfig?.modelId) ??
+  readNonEmptyString(options.selectedModelId);
+
+const resolveThinkingOptions = (
+  appliedTurnConfig?: ClaudeNativeRequestCaptureAppliedTurnConfig | null
+): ClaudeCaptureThinkingOptions => {
+  if (appliedTurnConfig?.thinkingEnabled) {
+    return {
+      thinking: { type: "adaptive", display: "summarized" },
+      effort: readNonEmptyString(appliedTurnConfig.reasoningEffort) ?? "medium",
+    };
+  }
+  return { thinking: { type: "disabled" } };
+};
+
+const readNonEmptyString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;

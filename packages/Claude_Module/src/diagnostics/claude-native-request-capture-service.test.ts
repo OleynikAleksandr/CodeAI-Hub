@@ -62,6 +62,7 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
   assert.deepEqual(queryPayload.options.additionalDirectories, ["/workspace"]);
   assert.deepEqual(queryPayload.options.settingSources, []);
   assert.equal(queryPayload.options.model, "sonnet");
+  assert.deepEqual(queryPayload.options.thinking, { type: "disabled" });
   assert.equal(
     (queryPayload.options.env as Record<string, string>).HTTPS_PROXY,
     "http://127.0.0.1:4444"
@@ -71,4 +72,63 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     "/tmp/ca.pem"
   );
   assert.equal(queryPayload.options.persistSession, false);
+});
+
+test("ClaudeNativeRequestCaptureService mirrors selected model and applied thinking config", async () => {
+  const queryPayloads: {
+    readonly options: Record<string, unknown>;
+    readonly prompt: string;
+  }[] = [];
+  const service = new ClaudeNativeRequestCaptureService({
+    authManager: {
+      ensureProviderHomeSessionBootstrap: () => Promise.resolve(),
+      ensureSubscriptionAuth: () => Promise.resolve(),
+      getAuthEnvironment: () => ({}),
+    } as never,
+    installer: {
+      ensureInstalled: () => Promise.resolve(),
+      getExecutablePath: () => "/tmp/claude",
+      loadModule: () =>
+        Promise.resolve({
+          query: (payload: {
+            readonly options: Record<string, unknown>;
+            readonly prompt: string;
+          }) => {
+            queryPayloads.push(payload);
+            return emptyClaudeStream();
+          },
+        }),
+    } as never,
+    workspace: {
+      claudeProjectSlug: "workspace-slug",
+      defaultModel: "sonnet",
+      workspacePath: "/workspace",
+    },
+  });
+
+  await service.captureNativeRequest({
+    appliedTurnConfig: {
+      modelId: "opus",
+      providerId: "claudeCodeCli",
+      reasoningEffort: "high",
+      source: "switch_request",
+      thinkingEnabled: true,
+    },
+    captureId: "capture-claude-app-config-test",
+    certificateEnv: {},
+    certificatePath: "/tmp/ca.pem",
+    probePrompt: "probe",
+    proxyUrl: "http://127.0.0.1:4444",
+    selectedModelId: "haiku",
+    workspacePath: "/workspace",
+  });
+
+  const queryPayload = queryPayloads[0];
+  assert.ok(queryPayload);
+  assert.equal(queryPayload.options.model, "opus");
+  assert.deepEqual(queryPayload.options.thinking, {
+    type: "adaptive",
+    display: "summarized",
+  });
+  assert.equal(queryPayload.options.effort, "high");
 });
