@@ -86,8 +86,8 @@
 26. [DONE] Git Commit: `feat: wire native request capture settings events` (hash: `0a38f4c10`)
 
 ### Stream: General Settings Card
-27. [TODO] Создать нижнюю card в General Settings с двумя кнопками и status/path rendering; scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/style-tokens.ts`; expected commit message: `feat: add native request capture buttons`
-28. [TODO] Git Commit: `feat: add native request capture buttons` (hash: TBD)
+27. [DONE] Создать нижнюю card в General Settings с двумя кнопками и status/path rendering; scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/style-tokens.ts`; expected commit message: `feat: add native request capture buttons`
+28. [DONE] Git Commit: `feat: add native request capture buttons` (hash: `32ea7dbe6`)
 29. [TODO] Добавить localization copy для card/buttons/status/error; scope: `packages/localization/src/approved-english-dictionary.ts`, `packages/localization/src/generated/approved-english-dictionary.json`, `src/client/ui/src/components/settings/native-request-capture-card.tsx`; expected commit message: `feat: localize native request capture settings copy`
 30. [TODO] Git Commit: `feat: localize native request capture settings copy` (hash: TBD)
 
