@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.62
+## Current Release — v1.2.63
+- **Hotfix для Native Request Capture: provider-запуск больше не ломается на unbound class method.** Core теперь вызывает `captureNativeRequest` через adapter receiver, поэтому Claude/Codex provider adapters сохраняют корректный `this` и реально доходят до своего diagnostic runtime path.
+- **Пустые capture artifacts стали диагностическими.** Если provider падает до network request, JSONL и Markdown теперь содержат `provider_runtime_error` / `Provider Runtime Error` с message/stack, а proxy stop очищает pending timeout и не дописывает поздний ложный `timeout`.
+- **Regression coverage закрывает именно найденный сценарий.** Core test теперь моделирует class-style adapter, чей `captureNativeRequest` зависит от `this`, и проверяет запись provider runtime error в `.jsonl` / `.md`.
+
+### 1.2.62 (previous)
 - **Settings -> General получил native request capture диагностику для Claude и Codex.** Внизу General теперь есть отдельная card с кнопками `Capture Claude Native Request` и `Capture Codex Native Request`, status/error состоянием и ссылками на созданные `.md` / `.jsonl` артефакты.
 - **Core умеет локально перехватывать фактический native HTTPS request body провайдерского клиента без upstream отправки.** Новый `provider-network-capture` модуль запускает `127.0.0.1` CONNECT/TLS proxy, подготавливает диагностический CA/certs, фильтрует provider model targets, редактирует credential-bearing headers и пишет sensitive local artifacts в `~/.codeai-hub/logs/native-request-capture/`.
 - **Claude и Codex используют production-близкие runtime paths для capture probe.** Claude запускает Agent SDK path с diagnostic proxy/cert env, а Codex стартует изолированный временный App Server process, чтобы не мутировать long-lived runtime.

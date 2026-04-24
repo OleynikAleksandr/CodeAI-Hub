@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.63] - 2026-04-24
+### Fixed
+- **Native Request Capture больше не вызывает provider adapter method без class receiver.** Core `NativeRequestCaptureFacade` вызывает `captureNativeRequest` через adapter object, поэтому class-based Claude/Codex adapters сохраняют `this.nativeRequestCaptureService` и не падают до запуска diagnostic runtime.
+- **Ранний provider failure теперь виден в capture artifacts.** JSONL получает `provider_runtime_error`, Markdown получает `Provider Runtime Error` с message/stack, поэтому пустой capture больше не выглядит как молчаливый timeout без причины.
+- **Proxy stop очищает pending capture timeout.** При provider failure Core останавливает proxy без позднего второго `capture_end timeout`, чтобы artifact не смешивал первичную runtime ошибку с вторичным ожиданием.
+
+### Tests
+- **Regression test покрывает найденный live bug.** Core facade test теперь использует class-style adapter, чей `captureNativeRequest` пишет в `this`, и отдельно проверяет provider runtime diagnostics в `.jsonl` / `.md`.
+
 ## [1.2.62] - 2026-04-24
 ### Added
 - **Settings -> General получил native request capture диагностику для Claude и Codex.** Новая bottom card запускает one-shot commands `Capture Claude Native Request` и `Capture Codex Native Request`, показывает running/success/error state и возвращает пути к `.md` / `.jsonl` артефактам.
