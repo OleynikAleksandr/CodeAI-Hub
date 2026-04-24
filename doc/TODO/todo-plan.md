@@ -70,10 +70,10 @@
 ### Stream: Docs And Release
 
 19. [DONE] Синхронизировать SSOT docs под workflow scenario capture — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: document workflow scenario native capture`.
-20. [IN_PROGRESS] Git Commit: `docs: document workflow scenario native capture` (hash: TBD)
+20. [DONE] Git Commit: `docs: document workflow scenario native capture` (hash: `11f745a0f`)
 
-21. [TODO] Обновить Claude docs при изменении provider capture prompt threading — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: close workflow scenario capture docs`.
-22. [TODO] Git Commit: `docs: close workflow scenario capture docs` (hash: TBD)
+21. [DONE] Обновить Claude docs при изменении provider capture prompt threading — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: close workflow scenario capture docs`.
+22. [IN_PROGRESS] Git Commit: `docs: close workflow scenario capture docs` (hash: TBD)
 
 23. [TODO] Подготовить release notes для будущей версии `1.2.66` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow scenario capture release`.
 24. [TODO] Git Commit: `docs: prepare workflow scenario capture release` (hash: TBD)
