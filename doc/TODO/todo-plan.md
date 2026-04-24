@@ -62,15 +62,15 @@
 ### Stream: Codex Full Turn Capture
 
 15. [DONE] Обновить WebSocket capture: писать несколько client frames и завершать на useful Codex turn frame — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-websocket-session.ts`, tests; expected commit: `fix: capture codex full turn websocket frame`.
-16. [IN_PROGRESS] Git Commit: `fix: capture codex full turn websocket frame` (hash: TBD)
+16. [DONE] Git Commit: `fix: capture codex full turn websocket frame` (hash: `5f80d1632`)
 
 17. [DONE] Обновить writer primary-request selection для Codex: выбирать non-empty input/full turn frame — scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, tests; expected commit: `fix: prefer codex full turn in capture markdown`.
-18. [IN_PROGRESS] Git Commit: `fix: prefer codex full turn in capture markdown` (hash: TBD)
+18. [DONE] Git Commit: `fix: prefer codex full turn in capture markdown` (hash: `5f80d1632`)
 
 ### Stream: Docs And Release
 
-19. [TODO] Синхронизировать SSOT docs под workflow scenario capture — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: document workflow scenario native capture`.
-20. [TODO] Git Commit: `docs: document workflow scenario native capture` (hash: TBD)
+19. [DONE] Синхронизировать SSOT docs под workflow scenario capture — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: document workflow scenario native capture`.
+20. [IN_PROGRESS] Git Commit: `docs: document workflow scenario native capture` (hash: TBD)
 
 21. [TODO] Обновить Claude docs при изменении provider capture prompt threading — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: close workflow scenario capture docs`.
 22. [TODO] Git Commit: `docs: close workflow scenario capture docs` (hash: TBD)
