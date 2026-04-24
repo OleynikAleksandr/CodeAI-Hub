@@ -40,5 +40,6 @@
 ### Stream: Test release package
 11. [IN_PROGRESS] Подготовить release docs для будущей версии `1.2.68` перед `build-all.sh` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude preset capture release notes`
 12. [TODO] Git Commit: `docs: prepare claude preset capture release notes` (hash: TBD)
-13. [TODO] Собрать release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude preset capture test release`
+13. [IN_PROGRESS] Собрать release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude preset capture test release`
+   - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.68`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
 14. [TODO] Git Commit: `chore: build claude preset capture test release` (hash: TBD)
