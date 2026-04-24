@@ -80,8 +80,8 @@
 ## Phase 3 — Settings General UI (owner: Codex, updated: 2026-04-24)
 
 ### Stream: UI Command State
-23. [TODO] Добавить UI state/handler для `settings:native-request-capture`; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`; expected commit message: `feat: add native request capture settings state`
-24. [TODO] Git Commit: `feat: add native request capture settings state` (hash: TBD)
+23. [DONE] Добавить UI state/handler для `settings:native-request-capture`; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`; expected commit message: `feat: add native request capture settings state`
+24. [DONE] Git Commit: `feat: add native request capture settings state` (hash: `d1c7e6d28`)
 25. [TODO] Добавить bridge result handling и host message wiring; scope: `src/client/ui/src/components/settings-view.tsx`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat: wire native request capture settings events`
 26. [TODO] Git Commit: `feat: wire native request capture settings events` (hash: TBD)
 
