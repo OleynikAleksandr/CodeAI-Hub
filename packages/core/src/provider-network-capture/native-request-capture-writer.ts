@@ -9,6 +9,10 @@ import type {
 } from "./native-request-capture-types";
 
 type SectionName = "messages" | "system" | "tools";
+type NativeRequestCaptureIgnoredRecord = Extract<
+  NativeRequestCaptureProxyEvent,
+  { readonly type: "request_ignored" }
+>;
 
 interface NativeRequestCaptureWriterOptions {
   readonly captureId: string;
@@ -94,6 +98,11 @@ export class NativeRequestCaptureWriter {
       await this.complete(event.status, event.reason);
       return;
     }
+    if (event.type === "request_ignored") {
+      await this.appendRecord(sanitizeIgnoredRequest(event));
+      await this.writeMarkdown();
+      return;
+    }
     await this.appendRecord(event);
   }
 
@@ -156,6 +165,7 @@ export class NativeRequestCaptureWriter {
     const request = this.#capturedRequest;
     const title = `${capitalizeProvider(this.#providerId)} Native Request Capture`;
     const bodySections = request ? extractSections(request.body) : [];
+    const ignoredRequests = findIgnoredRequestRecords(this.#records);
     const providerRuntimeError = findProviderRuntimeError(this.#records);
     const markdown = [
       `# ${title}`,
@@ -174,6 +184,14 @@ export class NativeRequestCaptureWriter {
       request
         ? `- ${request.method} ${request.target}${request.path}`
         : "- No matching request captured yet.",
+      "",
+      "## Ignored Requests",
+      "",
+      formatIgnoredRequests(ignoredRequests),
+      "",
+      "### Ignored Request Details",
+      "",
+      fencedJson(ignoredRequests),
       "",
       "## Request Headers",
       "",
@@ -258,6 +276,7 @@ const buildSummary = (
   records: readonly unknown[]
 ): string => {
   const recordCount = records.length;
+  const ignoredCount = findIgnoredRequestRecords(records).length;
   const providerRuntimeError = findProviderRuntimeError(records);
   if (!request) {
     if (providerRuntimeError) {
@@ -265,14 +284,20 @@ const buildSummary = (
       return [
         "No matching provider model request captured yet.",
         `Provider runtime error: ${errorName}: ${providerRuntimeError.message}.`,
+        `Ignored requests: ${ignoredCount}.`,
         `JSONL records: ${recordCount}.`,
       ].join("\n");
     }
-    return `No matching provider model request captured yet. JSONL records: ${recordCount}.`;
+    return [
+      "No matching provider model request captured yet.",
+      `Ignored requests: ${ignoredCount}.`,
+      `JSONL records: ${recordCount}.`,
+    ].join("\n");
   }
   return [
     `Captured one provider request for ${request.target}.`,
     `Method/path: ${request.method} ${request.path}.`,
+    `Ignored requests before capture: ${ignoredCount}.`,
     `JSONL records: ${recordCount}.`,
   ].join("\n");
 };
@@ -292,12 +317,49 @@ const findProviderRuntimeError = (
 ): ProviderRuntimeErrorRecord | null =>
   records.find(isProviderRuntimeErrorRecord) ?? null;
 
+const findIgnoredRequestRecords = (
+  records: readonly unknown[]
+): readonly NativeRequestCaptureIgnoredRecord[] =>
+  records.filter(isIgnoredRequestRecord);
+
+const formatIgnoredRequests = (
+  records: readonly NativeRequestCaptureIgnoredRecord[]
+): string => {
+  if (records.length === 0) {
+    return "- No ignored provider HTTP requests observed.";
+  }
+  return records
+    .map((record) => {
+      const request = record.method
+        ? `${record.method} ${record.path ?? ""}`
+        : "";
+      const suffix = request ? ` - ${request}` : "";
+      return `- ${record.reason}: ${record.target}${suffix}`;
+    })
+    .join("\n");
+};
+
 const isProviderRuntimeErrorRecord = (
   record: unknown
 ): record is ProviderRuntimeErrorRecord =>
   isRecord(record) &&
   record.type === "provider_runtime_error" &&
   typeof record.message === "string";
+
+const isIgnoredRequestRecord = (
+  record: unknown
+): record is NativeRequestCaptureIgnoredRecord =>
+  isRecord(record) &&
+  record.type === "request_ignored" &&
+  typeof record.reason === "string" &&
+  typeof record.target === "string";
+
+const sanitizeIgnoredRequest = (
+  event: NativeRequestCaptureIgnoredRecord
+): NativeRequestCaptureIgnoredRecord => ({
+  ...event,
+  headers: event.headers ? redactCaptureHeaders(event.headers) : undefined,
+});
 
 const normalizeProviderRuntimeError = (
   error: unknown,

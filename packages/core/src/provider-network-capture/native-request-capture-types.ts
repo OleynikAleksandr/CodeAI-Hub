@@ -46,7 +46,10 @@ export type NativeRequestCaptureProxyEvent =
       readonly type: "proxy_connect";
     }
   | {
+      readonly body?: unknown;
+      readonly bodyText?: string;
       readonly captureId: string;
+      readonly headers?: Readonly<Record<string, string>>;
       readonly method?: string;
       readonly path?: string;
       readonly providerId: NativeRequestCaptureProviderId;

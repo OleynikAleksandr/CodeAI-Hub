@@ -36,9 +36,9 @@
 ### Stream: Core Capture Transport
 
 3. [DONE] Добавить WebSocket frame capture helper и подключить его к proxy — scope: `packages/core/src/provider-network-capture/native-request-capture-websocket.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`; commit: `fix: capture native websocket request frames`.
-4. [IN_PROGRESS] Git Commit: `fix: capture native websocket request frames` (hash: TBD)
-5. [TODO] Улучшить ignored request diagnostics и Markdown summary — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`; commit: `fix: record native capture ignored request details`.
-6. [TODO] Git Commit: `fix: record native capture ignored request details` (hash: TBD)
+4. [DONE] Git Commit: `fix: capture native websocket request frames` (hash: `1bb1c1f93`)
+5. [DONE] Улучшить ignored request diagnostics и Markdown summary — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`; commit: `fix: record native capture ignored request details`.
+6. [IN_PROGRESS] Git Commit: `fix: record native capture ignored request details` (hash: TBD)
 7. [TODO] Добавить targeted regression tests — scope: `packages/core/src/provider-network-capture/native-request-capture-websocket.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.test.ts`; commit: `test: cover native capture websocket diagnostics`.
 8. [TODO] Git Commit: `test: cover native capture websocket diagnostics` (hash: TBD)
 9. [TODO] Выполнить targeted verification — scope: `packages/core`; command: `npm run build --workspace @codeai-hub/core`; commit: `chore: verify native capture websocket hotfix`.

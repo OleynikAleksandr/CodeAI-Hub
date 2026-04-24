@@ -347,7 +347,10 @@ export class NativeRequestCaptureProxy {
   ): void {
     this.#emit({
       type: "request_ignored",
+      body: request?.body,
+      bodyText: request?.bodyText,
       captureId: this.#options.captureId,
+      headers: request?.headers,
       method: request?.method,
       path: request?.path,
       providerId: this.#options.providerId,
