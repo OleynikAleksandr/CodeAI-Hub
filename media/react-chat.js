@@ -7890,7 +7890,7 @@
       return false;
     }
     const candidate = message;
-    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status" || candidate.type === "settings:localization-sync-status";
+    return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status" || candidate.type === "settings:localization-sync-status" || candidate.type === "settings:native-request-capture:result";
   };
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
@@ -8043,6 +8043,60 @@
       }
     };
   };
+  var updateLocalizationEngineSelection = (settings, engineId) => ({
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: {
+        ...settings.general.localization,
+        engineId: normalizeLocalizationEngineId(engineId)
+      }
+    }
+  });
+  var updateReasoningTranslationEngineSelection = (settings, engineId) => ({
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: {
+        ...settings.general.localization,
+        reasoningEngineId: normalizeLocalizationEngineId(engineId)
+      }
+    }
+  });
+  var updateLocalizationGlossaryEnabledSelection = (settings, enabled) => ({
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: {
+        ...settings.general.localization,
+        glossaryEnabled: enabled
+      }
+    }
+  });
+  var createNativeRequestCaptureState = () => ({
+    activeProvider: null,
+    error: null,
+    jsonlPath: null,
+    markdownPath: null,
+    providerId: null,
+    status: "idle"
+  });
+  var startNativeRequestCapture = (providerId) => ({
+    activeProvider: providerId,
+    error: null,
+    jsonlPath: null,
+    markdownPath: null,
+    providerId,
+    status: "running"
+  });
+  var completeNativeRequestCapture = (result) => ({
+    activeProvider: null,
+    error: result.ok ? null : result.error ?? result.reason ?? "capture_failed",
+    jsonlPath: result.jsonlPath ?? null,
+    markdownPath: result.markdownPath ?? null,
+    providerId: result.providerId,
+    status: result.ok ? "success" : "error"
+  });
 
   // src/client/ui/src/shared-hooks/use-bootstrap-settings.ts
   var createBootstrapSettings = (snapshot) => {
@@ -9069,6 +9123,7 @@
       busy: false,
       message: null
     });
+    const [nativeRequestCapture, setNativeRequestCapture] = (0, import_react.useState)(createNativeRequestCaptureState);
     const [versions, setVersions] = (0, import_react.useState)(() => ({
       data: null,
       loading: true,
@@ -9131,6 +9186,10 @@
               busy: event.data.busy,
               message: event.data.message ?? null
             });
+            return;
+          }
+          case "settings:native-request-capture:result": {
+            setNativeRequestCapture(completeNativeRequestCapture(event.data));
             return;
           }
           default: {
@@ -9252,48 +9311,23 @@
     );
     const handleLocalizationEngineIdChange = (0, import_react.useCallback)(
       (engineId) => {
-        const normalizedEngineId = normalizeLocalizationEngineId(engineId);
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              engineId: normalizedEngineId
-            }
-          }
-        });
+        updateSettings(updateLocalizationEngineSelection(settings, engineId));
       },
       [settings, updateSettings]
     );
     const handleReasoningTranslationEngineIdChange = (0, import_react.useCallback)(
       (engineId) => {
-        const normalizedEngineId = normalizeLocalizationEngineId(engineId);
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              reasoningEngineId: normalizedEngineId
-            }
-          }
-        });
+        updateSettings(
+          updateReasoningTranslationEngineSelection(settings, engineId)
+        );
       },
       [settings, updateSettings]
     );
     const handleLocalizationGlossaryEnabledChange = (0, import_react.useCallback)(
       (enabled) => {
-        updateSettings({
-          ...settings,
-          general: {
-            ...settings.general,
-            localization: {
-              ...settings.general.localization,
-              glossaryEnabled: enabled
-            }
-          }
-        });
+        updateSettings(
+          updateLocalizationGlossaryEnabledSelection(settings, enabled)
+        );
       },
       [settings, updateSettings]
     );
@@ -9395,12 +9429,23 @@
         type: "core:restart-request"
       });
     }, []);
+    const handleNativeRequestCapture = (0, import_react.useCallback)(
+      (providerId) => {
+        setNativeRequestCapture(startNativeRequestCapture(providerId));
+        vscode_default.postMessage({
+          type: "settings:native-request-capture",
+          providerId
+        });
+      },
+      []
+    );
     return {
       coreControl,
       settings,
       hasChanges,
       localizationSyncStatus,
       localizationRuntime,
+      nativeRequestCapture,
       saving,
       resetting,
       versions,
@@ -9422,6 +9467,7 @@
       handleLocalizationEngineIdChange,
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
+      handleNativeRequestCapture,
       handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
       handleRestartCore,
