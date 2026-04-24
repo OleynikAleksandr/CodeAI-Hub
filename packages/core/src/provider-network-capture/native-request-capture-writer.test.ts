@@ -24,6 +24,11 @@ const MARKDOWN_TITLE_PATTERN = /# Claude Native Request Capture/;
 const MARKDOWN_CAPTURED_TWO_PATTERN = /Captured provider requests: 2/;
 const MARKDOWN_CODEX_INSTRUCTIONS_PATTERN = /codex instructions/;
 const MARKDOWN_CODEX_INPUT_PATTERN = /input text/;
+const MARKDOWN_DIAGNOSTIC_CONTEXT_HEADING_PATTERN =
+  /## Provider Diagnostic Context/;
+const MARKDOWN_DIAGNOSTIC_CONTEXT_KIND_PATTERN =
+  /codex_app_server_turn_start_request/;
+const MARKDOWN_DIAGNOSTIC_CONTEXT_PROMPT_PATTERN = /workflow prompt/;
 const MARKDOWN_SELECTED_MODEL_PATTERN = /gpt-5\.3-codex/;
 
 test("redactCaptureHeaders removes credential-bearing values", () => {
@@ -170,6 +175,13 @@ test("NativeRequestCaptureWriter lists multiple captures and extracts Codex inst
       tools: [{ name: "shell" }],
     },
   });
+  await writer.recordProviderDiagnosticContext({
+    kind: "codex_app_server_turn_start_request",
+    payload: {
+      input: [{ type: "text", text: "workflow prompt" }],
+      model: "gpt-5.3-codex",
+    },
+  });
   await writer.complete("captured");
 
   const jsonl = await fs.readFile(writer.artifacts.jsonlPath, "utf8");
@@ -180,4 +192,7 @@ test("NativeRequestCaptureWriter lists multiple captures and extracts Codex inst
   assert.match(markdown, MARKDOWN_SELECTED_MODEL_PATTERN);
   assert.match(markdown, MARKDOWN_CODEX_INSTRUCTIONS_PATTERN);
   assert.match(markdown, MARKDOWN_CODEX_INPUT_PATTERN);
+  assert.match(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_HEADING_PATTERN);
+  assert.match(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_KIND_PATTERN);
+  assert.match(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_PROMPT_PATTERN);
 });

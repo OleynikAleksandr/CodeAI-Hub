@@ -29,6 +29,16 @@ export interface ProviderRuntimeErrorRecord {
   readonly type: "provider_runtime_error";
 }
 
+interface ProviderDiagnosticContextRecord {
+  readonly captureId: string;
+  readonly kind: string;
+  readonly payload: unknown;
+  readonly providerId: NativeRequestCaptureProviderId;
+  readonly sentUpstream: false;
+  readonly timestamp: string;
+  readonly type: "provider_diagnostic_context";
+}
+
 export interface NativeRequestCaptureMarkdownOptions {
   readonly appliedTurnConfig: unknown;
   readonly capturedRequests: readonly NativeRequestCaptureRequest[];
@@ -49,6 +59,9 @@ export const buildNativeRequestCaptureMarkdown = (
   const title = `${capitalizeProvider(options.providerId)} Native Request Capture`;
   const bodySections = request ? extractSections(request.body) : [];
   const ignoredRequests = findIgnoredRequestRecords(options.records);
+  const diagnosticContext = findProviderDiagnosticContextRecords(
+    options.records
+  );
   const providerRuntimeError = findProviderRuntimeError(options.records);
   return [
     `# ${title}`,
@@ -69,6 +82,10 @@ export const buildNativeRequestCaptureMarkdown = (
       appliedTurnConfig: options.appliedTurnConfig,
       scenarioMetadata: options.scenarioMetadata,
     }),
+    "",
+    "## Provider Diagnostic Context",
+    "",
+    fencedJson(diagnosticContext),
     "",
     "## Captured Requests",
     "",
@@ -240,6 +257,8 @@ const buildSummary = (
 ): string => {
   const recordCount = records.length;
   const ignoredCount = findIgnoredRequestRecords(records).length;
+  const diagnosticContextCount =
+    findProviderDiagnosticContextRecords(records).length;
   const providerRuntimeError = findProviderRuntimeError(records);
   if (!request) {
     if (providerRuntimeError) {
@@ -247,12 +266,14 @@ const buildSummary = (
       return [
         "No matching provider model request captured yet.",
         `Provider runtime error: ${errorName}: ${providerRuntimeError.message}.`,
+        `Provider diagnostic context records: ${diagnosticContextCount}.`,
         `Ignored requests: ${ignoredCount}.`,
         `JSONL records: ${recordCount}.`,
       ].join("\n");
     }
     return [
       "No matching provider model request captured yet.",
+      `Provider diagnostic context records: ${diagnosticContextCount}.`,
       `Ignored requests: ${ignoredCount}.`,
       `JSONL records: ${recordCount}.`,
     ].join("\n");
@@ -261,6 +282,7 @@ const buildSummary = (
     `Captured provider requests: ${capturedRequestCount}.`,
     `Primary request: ${request.target}.`,
     `Method/path: ${request.method} ${request.path}.`,
+    `Provider diagnostic context records: ${diagnosticContextCount}.`,
     `Ignored requests before capture: ${ignoredCount}.`,
     `JSONL records: ${recordCount}.`,
   ].join("\n");
@@ -311,6 +333,11 @@ const findIgnoredRequestRecords = (
 ): readonly NativeRequestCaptureIgnoredRecord[] =>
   records.filter(isIgnoredRequestRecord);
 
+const findProviderDiagnosticContextRecords = (
+  records: readonly unknown[]
+): readonly ProviderDiagnosticContextRecord[] =>
+  records.filter(isProviderDiagnosticContextRecord);
+
 const formatIgnoredRequests = (
   records: readonly NativeRequestCaptureIgnoredRecord[]
 ): string => {
@@ -342,6 +369,13 @@ const isIgnoredRequestRecord = (
   record.type === "request_ignored" &&
   typeof record.reason === "string" &&
   typeof record.target === "string";
+
+const isProviderDiagnosticContextRecord = (
+  record: unknown
+): record is ProviderDiagnosticContextRecord =>
+  isRecord(record) &&
+  record.type === "provider_diagnostic_context" &&
+  typeof record.kind === "string";
 
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.length > 0 ? value : null;

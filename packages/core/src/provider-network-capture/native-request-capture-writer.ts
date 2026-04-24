@@ -111,6 +111,22 @@ export class NativeRequestCaptureWriter {
     await this.writeMarkdown();
   }
 
+  async recordProviderDiagnosticContext(record: {
+    readonly kind: string;
+    readonly payload: unknown;
+  }): Promise<void> {
+    await this.appendRecord({
+      type: "provider_diagnostic_context",
+      captureId: this.#captureId,
+      kind: record.kind,
+      payload: record.payload,
+      providerId: this.#providerId,
+      sentUpstream: false,
+      timestamp: this.#clock().toISOString(),
+    });
+    await this.writeMarkdown();
+  }
+
   async writeCapturedRequest(
     request: NativeRequestCaptureRequest
   ): Promise<void> {
