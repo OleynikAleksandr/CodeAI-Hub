@@ -30,11 +30,11 @@
 8. [DONE] Git Commit: `feat: wire native capture diagnostic context callback` (hash: `0d34249bf`)
 
 ### Stream: Codex App Server Diagnostics
-9. [IN_PROGRESS] Record Codex app-server thread and turn payloads during diagnostic capture (scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: include codex app-server turn payload in capture`)
-10. [TODO] Git Commit: `feat: include codex app-server turn payload in capture` (hash: TBD)
+9. [DONE] Record Codex app-server thread and turn payloads during diagnostic capture (scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: include codex app-server turn payload in capture`)
+10. [DONE] Git Commit: `feat: include codex app-server turn payload in capture` (hash: `69fda6ccd`)
 
 ### Stream: Documentation And Verification
-11. [TODO] Sync SSOT docs for Codex native capture context (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: document codex native capture turn context`)
+11. [IN_PROGRESS] Sync SSOT docs for Codex native capture context (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: document codex native capture turn context`)
 12. [TODO] Git Commit: `docs: document codex native capture turn context` (hash: TBD)
 13. [TODO] Run targeted verification for Core/Codex capture diagnostics (scope: `packages/core`, `packages/Codex_AppServer_Module`; commit: no commit expected unless fixes are needed)
 14. [TODO] Closeout scope, archive planning/TODO, and decide release packaging (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/`; commit: `docs: close codex native capture turn context hotfix`)
