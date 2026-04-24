@@ -1,5 +1,13 @@
 import type { CSSProperties } from "react";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
+import {
+  CLAUDE_MODEL_ALIASES,
+  type ClaudeModelAliasId,
+} from "../../../../../types/claude-model-registry";
+import {
+  CODEX_SETTINGS_MODELS,
+  type CodexModelId,
+} from "../../../../../types/codex-model-registry";
 import { useLocalization } from "../../app-host/use-localization";
 import SettingsCard from "./settings-card";
 import {
@@ -17,8 +25,60 @@ const USER_MESSAGES_CATEGORY = "system_feedback";
 
 const buttonRowStyles: CSSProperties = {
   display: "flex",
-  flexWrap: "wrap",
+  flexDirection: "column",
+  gap: "12px",
+};
+
+const providerRowStyles: CSSProperties = {
+  alignItems: "center",
+  display: "grid",
   gap: "10px",
+  gridTemplateColumns: "76px minmax(0, 1fr) auto",
+};
+
+const providerLabelStyles: CSSProperties = {
+  color: settingsColorTokens.textSecondary,
+  fontSize: settingsTypographyTokens.bodyFontSize,
+  fontWeight: 700,
+};
+
+const modelRowStyles: CSSProperties = {
+  border: "none",
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "6px",
+  margin: 0,
+  minWidth: 0,
+  padding: 0,
+};
+
+const visuallyHiddenStyles: CSSProperties = {
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: "1px",
+  overflow: "hidden",
+  position: "absolute",
+  whiteSpace: "nowrap",
+  width: "1px",
+};
+
+const modelButtonStyles: CSSProperties = {
+  background: "rgba(255, 255, 255, 0.04)",
+  border: `1px solid ${settingsColorTokens.borderSubtle}`,
+  borderRadius: settingsRadiusTokens.control,
+  color: settingsColorTokens.textSecondary,
+  cursor: "pointer",
+  fontSize: "12px",
+  fontWeight: 600,
+  minHeight: "30px",
+  padding: "0 10px",
+};
+
+const activeModelButtonStyles: CSSProperties = {
+  ...modelButtonStyles,
+  background: "rgba(31, 123, 184, 0.24)",
+  borderColor: "rgba(31, 123, 184, 0.72)",
+  color: settingsColorTokens.textPrimary,
 };
 
 const buttonStyles: CSSProperties = {
@@ -30,7 +90,7 @@ const buttonStyles: CSSProperties = {
   fontSize: settingsTypographyTokens.bodyFontSize,
   fontWeight: 600,
   minHeight: "34px",
-  minWidth: "190px",
+  minWidth: "168px",
   padding: "0 12px",
 };
 
@@ -83,6 +143,29 @@ const getProviderLabel = (
   providerId: NativeRequestCaptureProviderId
 ): string => (providerId === "claude" ? "Claude" : "Codex");
 
+type NativeRequestCaptureModelId = ClaudeModelAliasId | CodexModelId;
+
+interface NativeRequestCaptureModels {
+  readonly claude: ClaudeModelAliasId;
+  readonly codex: CodexModelId;
+}
+
+const getModelDisplayName = (
+  providerId: NativeRequestCaptureProviderId,
+  modelId: NativeRequestCaptureModelId
+): string => {
+  if (providerId === "claude") {
+    return (
+      CLAUDE_MODEL_ALIASES.find((model) => model.alias === modelId)
+        ?.displayName ?? modelId
+    );
+  }
+  return (
+    CODEX_SETTINGS_MODELS.find((model) => model.id === modelId)?.displayName ??
+    modelId
+  );
+};
+
 const resolveStatusStyles = (
   state: NativeRequestCaptureState
 ): CSSProperties => {
@@ -134,16 +217,30 @@ const resolveStatusText = (options: {
 };
 
 interface NativeRequestCaptureCardProps {
-  readonly onCapture: (providerId: NativeRequestCaptureProviderId) => void;
+  readonly defaultModels: NativeRequestCaptureModels;
+  readonly onCapture: (
+    providerId: NativeRequestCaptureProviderId,
+    modelId: NativeRequestCaptureModelId
+  ) => void;
   readonly state: NativeRequestCaptureState;
 }
 
 const NativeRequestCaptureCard = ({
+  defaultModels,
   state,
   onCapture,
 }: NativeRequestCaptureCardProps) => {
   const { t } = useLocalization();
   const isRunning = state.status === "running";
+  const [selectedModels, setSelectedModels] =
+    useState<NativeRequestCaptureModels>(defaultModels);
+
+  useEffect(() => {
+    setSelectedModels({
+      claude: defaultModels.claude,
+      codex: defaultModels.codex,
+    });
+  }, [defaultModels.claude, defaultModels.codex]);
   const title = t(
     UI_LABELS_CATEGORY,
     "settings.native_capture.title",
@@ -186,36 +283,97 @@ const NativeRequestCaptureCard = ({
     state,
     successLabel,
   });
+  const captureRows = [
+    {
+      providerId: "claude" as const,
+      models: CLAUDE_MODEL_ALIASES.map((model) => ({
+        id: model.alias,
+        label: model.displayName,
+      })),
+      selectedModelId: selectedModels.claude,
+      buttonLabel: t(
+        UI_LABELS_CATEGORY,
+        "settings.native_capture.capture_claude",
+        "Capture Claude Native Request"
+      ),
+    },
+    {
+      providerId: "codex" as const,
+      models: CODEX_SETTINGS_MODELS.map((model) => ({
+        id: model.id,
+        label: model.displayName,
+      })),
+      selectedModelId: selectedModels.codex,
+      buttonLabel: t(
+        UI_LABELS_CATEGORY,
+        "settings.native_capture.capture_codex",
+        "Capture Codex Native Request"
+      ),
+    },
+  ] satisfies readonly {
+    readonly buttonLabel: string;
+    readonly models: readonly {
+      readonly id: NativeRequestCaptureModelId;
+      readonly label: string;
+    }[];
+    readonly providerId: NativeRequestCaptureProviderId;
+    readonly selectedModelId: NativeRequestCaptureModelId;
+  }[];
 
   return (
     <SettingsCard title={title}>
       <div style={buttonRowStyles}>
-        <button
-          aria-busy={isRunning}
-          disabled={isRunning}
-          onClick={() => onCapture("claude")}
-          style={isRunning ? disabledButtonStyles : buttonStyles}
-          type="button"
-        >
-          {t(
-            UI_LABELS_CATEGORY,
-            "settings.native_capture.capture_claude",
-            "Capture Claude Native Request"
-          )}
-        </button>
-        <button
-          aria-busy={isRunning}
-          disabled={isRunning}
-          onClick={() => onCapture("codex")}
-          style={isRunning ? disabledButtonStyles : buttonStyles}
-          type="button"
-        >
-          {t(
-            UI_LABELS_CATEGORY,
-            "settings.native_capture.capture_codex",
-            "Capture Codex Native Request"
-          )}
-        </button>
+        {captureRows.map((row) => (
+          <div key={row.providerId} style={providerRowStyles}>
+            <div style={providerLabelStyles}>
+              {getProviderLabel(row.providerId)}
+            </div>
+            <fieldset style={modelRowStyles}>
+              <legend style={visuallyHiddenStyles}>
+                {getProviderLabel(row.providerId)} model
+              </legend>
+              {row.models.map((model) => {
+                const isSelected = model.id === row.selectedModelId;
+                return (
+                  <button
+                    aria-pressed={isSelected}
+                    disabled={isRunning}
+                    key={model.id}
+                    onClick={() => {
+                      setSelectedModels((current) =>
+                        row.providerId === "claude"
+                          ? {
+                              ...current,
+                              claude: model.id as ClaudeModelAliasId,
+                            }
+                          : { ...current, codex: model.id as CodexModelId }
+                      );
+                    }}
+                    style={
+                      isSelected ? activeModelButtonStyles : modelButtonStyles
+                    }
+                    type="button"
+                  >
+                    {model.label}
+                  </button>
+                );
+              })}
+            </fieldset>
+            <button
+              aria-busy={isRunning}
+              aria-label={`${row.buttonLabel}: ${getModelDisplayName(
+                row.providerId,
+                row.selectedModelId
+              )}`}
+              disabled={isRunning}
+              onClick={() => onCapture(row.providerId, row.selectedModelId)}
+              style={isRunning ? disabledButtonStyles : buttonStyles}
+              type="button"
+            >
+              {row.buttonLabel}
+            </button>
+          </div>
+        ))}
       </div>
       <p aria-live="polite" style={resolveStatusStyles(state)}>
         {statusText}

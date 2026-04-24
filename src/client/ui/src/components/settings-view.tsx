@@ -300,6 +300,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                     coreControl={coreControl}
                     localization={settings.general.localization}
                     nativeRequestCapture={nativeRequestCapture}
+                    nativeRequestCaptureModels={{
+                      claude: settings.providers.claude.defaultModel,
+                      codex: settings.providers.codex.defaultModel,
+                    }}
                     onLocalizationCategoryLanguageChange={
                       handleLocalizationCategoryLanguageChange
                     }

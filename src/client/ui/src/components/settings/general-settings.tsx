@@ -79,6 +79,10 @@ interface GeneralSettingsProps {
   readonly coreControl: CoreControlState;
   readonly localization: Settings["general"]["localization"];
   readonly nativeRequestCapture: NativeRequestCaptureState;
+  readonly nativeRequestCaptureModels: {
+    readonly claude: Settings["providers"]["claude"]["defaultModel"];
+    readonly codex: Settings["providers"]["codex"]["defaultModel"];
+  };
   readonly onLocalizationCategoryLanguageChange: (
     category: LocalizationCategoryKey,
     language: string
@@ -92,7 +96,10 @@ interface GeneralSettingsProps {
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
   readonly onNativeRequestCapture: (
-    providerId: NativeRequestCaptureProviderId
+    providerId: NativeRequestCaptureProviderId,
+    modelId:
+      | Settings["providers"]["claude"]["defaultModel"]
+      | Settings["providers"]["codex"]["defaultModel"]
   ) => void;
   readonly onReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
@@ -254,6 +261,7 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
         </div>
       </SettingsCard>
       <NativeRequestCaptureCard
+        defaultModels={props.nativeRequestCaptureModels}
         onCapture={props.onNativeRequestCapture}
         state={props.nativeRequestCapture}
       />
