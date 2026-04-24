@@ -51,8 +51,8 @@ const CODEX_PATH_CANDIDATES: readonly string[] =
         "/usr/bin",
       ];
 
-const buildAugmentedPath = (): string => {
-  const inherited = process.env.PATH ?? "";
+const buildAugmentedPath = (basePath = process.env.PATH ?? ""): string => {
+  const inherited = basePath;
   const inheritedEntries = new Set(
     inherited.split(path.delimiter).filter((entry) => entry.length > 0)
   );
@@ -127,8 +127,19 @@ const extractResponseError = (response: JsonRpcResponse): Error | null => {
   );
 };
 
+interface CodexAppServerProcessOptions {
+  readonly environment?: Readonly<Record<string, string>>;
+  readonly reporter?: ModuleReporter;
+}
+
+const isProcessOptions = (
+  value: ModuleReporter | CodexAppServerProcessOptions | undefined
+): value is CodexAppServerProcessOptions =>
+  Boolean(value && ("environment" in value || "reporter" in value));
+
 export class CodexAppServerProcess {
   private child: ChildProcessWithoutNullStreams | null = null;
+  private readonly environment: Readonly<Record<string, string>>;
   private stdoutReader: readline.Interface | null = null;
   private readonly notificationListeners = new Set<
     (notification: {
@@ -148,8 +159,11 @@ export class CodexAppServerProcess {
   private readonly reporter?: ModuleReporter;
   private readonly sessionLogger = new CodexAppServerSessionLogger();
 
-  constructor(reporter?: ModuleReporter) {
-    this.reporter = reporter;
+  constructor(options?: ModuleReporter | CodexAppServerProcessOptions) {
+    this.reporter = isProcessOptions(options) ? options.reporter : options;
+    this.environment = isProcessOptions(options)
+      ? (options.environment ?? {})
+      : {};
   }
 
   async start(): Promise<void> {
@@ -217,8 +231,9 @@ export class CodexAppServerProcess {
     const child = spawn(CODEX_EXECUTABLE, ["app-server"], {
       env: {
         ...process.env,
+        ...this.environment,
         CODEX_HOME: providerCodexHome,
-        PATH: buildAugmentedPath(),
+        PATH: buildAugmentedPath(this.environment.PATH),
       },
       stdio: ["pipe", "pipe", "pipe"],
     });

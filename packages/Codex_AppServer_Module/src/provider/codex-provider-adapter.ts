@@ -1,4 +1,8 @@
 import { CodexAppServerFacade } from "../app-server/codex-app-server-facade";
+import {
+  type CodexNativeRequestCaptureOptions,
+  CodexNativeRequestCaptureService,
+} from "../diagnostics/codex-native-request-capture-service";
 import type {
   CodexModuleOptions,
   CodexTurnOptions,
@@ -8,10 +12,15 @@ import type {
 export class CodexProviderAdapter {
   readonly usageLimitsFacade?: CodexModuleOptions["usageLimitsFacade"];
   private readonly facade: CodexAppServerFacade;
+  private readonly nativeRequestCaptureService: CodexNativeRequestCaptureService;
 
   constructor(options: CodexModuleOptions) {
     this.usageLimitsFacade = options.usageLimitsFacade;
     this.facade = new CodexAppServerFacade(options);
+    this.nativeRequestCaptureService = new CodexNativeRequestCaptureService({
+      reporter: options.reporter,
+      workspace: options.workspace,
+    });
   }
 
   initialize(): Promise<void> {
@@ -28,6 +37,12 @@ export class CodexProviderAdapter {
 
   closeSession(sessionId: string): Promise<void> {
     return this.facade.closeSession(sessionId);
+  }
+
+  captureNativeRequest(
+    options: CodexNativeRequestCaptureOptions
+  ): Promise<void> {
+    return this.nativeRequestCaptureService.captureNativeRequest(options);
   }
 
   sendMessage(
