@@ -72,8 +72,8 @@
 20. [DONE] Git Commit: `test: cover codex native request capture` (hash: `524266fb7`)
 
 ### Stream: Provider Build Gate
-21. [TODO] Прогнать provider builds и исправить локальные compile issues; scope: `packages/Claude_Module`, `packages/Codex_AppServer_Module`; expected commit message: `chore: stabilize provider capture builds`
-22. [TODO] Git Commit: `chore: stabilize provider capture builds` (hash: TBD)
+21. [DONE] Прогнать provider builds и исправить локальные compile issues; scope: `packages/Claude_Module`, `packages/Codex_AppServer_Module`; expected commit message: `chore: stabilize provider capture builds`
+22. [DONE] Git Commit: `chore: stabilize provider capture builds` (hash: `9a5e0bc0f`)
 
 ---
 
