@@ -100,8 +100,8 @@
 ## Phase 4 — Documentation, Verification, and Release (owner: Codex, updated: 2026-04-24)
 
 ### Stream: SSOT Documentation
-33. [TODO] Обновить SSOT по диагностике provider-native request capture; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit message: `docs: document provider native request capture`
-34. [TODO] Git Commit: `docs: document provider native request capture` (hash: TBD)
+33. [DONE] Обновить SSOT по диагностике provider-native request capture; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit message: `docs: document provider native request capture`
+34. [DONE] Git Commit: `docs: document provider native request capture` (hash: `4b7490697`)
 35. [TODO] Обновить UI/Settings docs и Docs Index; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`; expected commit message: `docs: update native capture settings documentation`
 36. [TODO] Git Commit: `docs: update native capture settings documentation` (hash: TBD)
 
