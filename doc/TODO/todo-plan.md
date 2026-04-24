@@ -63,7 +63,7 @@
 13. [DONE] Добавить Claude capture service, который запускает SDK query через capture proxy и не отправляет upstream; scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/provider/claude-provider-adapter.ts`; expected commit message: `feat: capture claude native requests`
 14. [DONE] Git Commit: `feat: capture claude native requests` (hash: `162b23f41`)
 15. [DONE] Покрыть Claude capture env injection/synthetic failure tests; scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`, `packages/Claude_Module/src/provider/claude-provider-adapter.test.ts`; expected commit message: `test: cover claude native request capture`
-16. [TODO] Git Commit: `test: cover claude native request capture` (hash: TBD)
+16. [DONE] Git Commit: `test: cover claude native request capture` (hash: `eea89115c`)
 
 ### Stream: Codex Native Capture
 17. [TODO] Добавить Codex capture service на временном app-server runtime с capture proxy env; scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts`; expected commit message: `feat: capture codex native requests`
