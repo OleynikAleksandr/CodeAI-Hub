@@ -13,7 +13,11 @@ import { NativeRequestCaptureWriter } from "./native-request-capture-writer";
 const FIXED_DATE = new Date("2026-04-24T10:00:00.000Z");
 const JSONL_CAPTURE_START_PATTERN = /"type":"capture_start"/;
 const JSONL_REDACTED_AUTHORIZATION_PATTERN = /"authorization":"\[REDACTED\]"/;
+const JSONL_REQUEST_IGNORED_PATTERN = /"type":"request_ignored"/;
 const JSONL_REQUEST_CAPTURED_PATTERN = /"type":"request_captured"/;
+const MARKDOWN_IGNORED_HEADING_PATTERN = /## Ignored Requests/;
+const MARKDOWN_IGNORED_REASON_PATTERN = /request_path_not_matched/;
+const MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN = /ignored system prompt/;
 const MARKDOWN_SYSTEM_PROMPT_HEADING_PATTERN = /## Extracted System Prompt/;
 const MARKDOWN_SYSTEM_PROMPT_PATTERN = /system prompt/;
 const MARKDOWN_TITLE_PATTERN = /# Claude Native Request Capture/;
@@ -75,4 +79,42 @@ test("NativeRequestCaptureWriter writes JSONL and Markdown artifacts", async () 
   assert.match(markdown, MARKDOWN_TITLE_PATTERN);
   assert.match(markdown, MARKDOWN_SYSTEM_PROMPT_HEADING_PATTERN);
   assert.match(markdown, MARKDOWN_SYSTEM_PROMPT_PATTERN);
+});
+
+test("NativeRequestCaptureWriter records ignored request details", async () => {
+  const outputDir = await fs.mkdtemp(
+    path.join(os.tmpdir(), "native-capture-writer-")
+  );
+  const writer = await NativeRequestCaptureWriter.create({
+    captureId: "capture-writer-ignored-test",
+    providerId: "claude",
+    outputDir,
+    clock: () => FIXED_DATE,
+  });
+
+  await writer.recordProxyEvent({
+    type: "request_ignored",
+    body: { system: "ignored system prompt" },
+    bodyText: '{"system":"ignored system prompt"}',
+    captureId: "capture-writer-ignored-test",
+    headers: {
+      authorization: "Bearer secret",
+      "content-type": "application/json",
+    },
+    method: "POST",
+    path: "/v1/complete",
+    providerId: "claude",
+    reason: "request_path_not_matched",
+    target: "api.anthropic.com:443",
+  });
+  await writer.complete("timeout", "timeout");
+
+  const jsonl = await fs.readFile(writer.artifacts.jsonlPath, "utf8");
+  const markdown = await fs.readFile(writer.artifacts.markdownPath, "utf8");
+
+  assert.match(jsonl, JSONL_REQUEST_IGNORED_PATTERN);
+  assert.match(jsonl, JSONL_REDACTED_AUTHORIZATION_PATTERN);
+  assert.match(markdown, MARKDOWN_IGNORED_HEADING_PATTERN);
+  assert.match(markdown, MARKDOWN_IGNORED_REASON_PATTERN);
+  assert.match(markdown, MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN);
 });

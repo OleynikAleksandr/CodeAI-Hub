@@ -46,4 +46,8 @@ test("NativeRequestCaptureProxy ignores non-target CONNECT requests without upst
     events.some((event) => event.type === "request_ignored"),
     true
   );
+  const ignoredEvent = events.find((event) => event.type === "request_ignored");
+  assert.ok(ignoredEvent);
+  assert.equal(ignoredEvent.reason, "target_not_configured");
+  assert.equal(ignoredEvent.target, "example.com:443");
 });
