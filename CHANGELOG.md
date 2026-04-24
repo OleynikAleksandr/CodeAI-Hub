@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.62] - 2026-04-24
+### Added
+- **Settings -> General получил native request capture диагностику для Claude и Codex.** Новая bottom card запускает one-shot commands `Capture Claude Native Request` и `Capture Codex Native Request`, показывает running/success/error state и возвращает пути к `.md` / `.jsonl` артефактам.
+- **Core добавил локальный provider-native capture слой.** `provider-network-capture` запускает `127.0.0.1` CONNECT/TLS proxy, готовит diagnostic CA/host certs, пишет Markdown + JSONL, редактирует credential-bearing headers и завершает captured request без forwarding к Anthropic/OpenAI.
+
+### Changed
+- **Claude capture идёт через Agent SDK runtime path, а Codex capture — через временный isolated App Server process.** Оба пути используют тот же provider bootstrap/auth/settings контур, который нужен для сборки native request, но diagnostic run не привязывается к обычной workflow continuity.
+- **Remote Bridge и Project Manager получили новый settings command/result contract.** Host принимает `settings:native-request-capture`, возвращает `settings:native-request-capture:result`, а Settings UI отображает artifact paths без сохранения каких-либо новых settings.
+
+### Docs
+- **SSOT обновлён под новый diagnostic feature.** `SystemArchitecture.md`, `Modules/Claude.md`, `Modules/Codex.md`, `Modules/UI_Bundles.md` и `Docs_Index.md` фиксируют capture-and-abort contract, provider boundaries, artifact output и Settings ownership.
+
 ## [1.2.61] - 2026-04-23
 ### Fixed
 - **Canonical settings path теперь жёстко зафиксирован на `~/.codeai-hub/settings/settings.json`.** Core config bootstrap больше не выбирает `claude.json` как runtime fallback path, поэтому launcher/Core startup и Core-owned settings persistence больше не могут resurrect full unified snapshot под legacy filename.

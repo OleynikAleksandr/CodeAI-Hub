@@ -7,7 +7,13 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.61
+## Current Release — v1.2.62
+- **Settings -> General получил native request capture диагностику для Claude и Codex.** Внизу General теперь есть отдельная card с кнопками `Capture Claude Native Request` и `Capture Codex Native Request`, status/error состоянием и ссылками на созданные `.md` / `.jsonl` артефакты.
+- **Core умеет локально перехватывать фактический native HTTPS request body провайдерского клиента без upstream отправки.** Новый `provider-network-capture` модуль запускает `127.0.0.1` CONNECT/TLS proxy, подготавливает диагностический CA/certs, фильтрует provider model targets, редактирует credential-bearing headers и пишет sensitive local artifacts в `~/.codeai-hub/logs/native-request-capture/`.
+- **Claude и Codex используют production-близкие runtime paths для capture probe.** Claude запускает Agent SDK path с diagnostic proxy/cert env, а Codex стартует изолированный временный App Server process, чтобы не мутировать long-lived runtime.
+- **Диагностика предназначена для проверки системных инструкций, native tools и служебного provider metadata.** Захваченный body помогает увидеть, что именно клиент собирает перед отправкой к Anthropic/OpenAI, и проверить, работают ли наши флаги/инструкционные ограничения.
+
+### 1.2.61 (previous)
 - **Canonical settings path жёстко зафиксирован на `~/.codeai-hub/settings/settings.json`.** Launcher/Core bootstrap больше не имеет live fallback на `claude.json`, поэтому unified settings snapshot больше не может записываться в устаревшее имя файла и расходиться с read-path, который уже ожидал `settings.json`.
 - **Core теперь materialize-ит новый `settings.json` уже на старте, если canonical файла нет.** `SettingsPersistenceService` делает startup prime default snapshot, так что удаление старого `claude.json` не оставляет runtime без persisted settings file до первого ручного `settings:load`.
 - **Extension-side settings storage тоже полностью забывает `claude.json`.** В VS Code shell остаётся только один persisted snapshot path — `settings.json`; legacy fallback и связанный dead export удалены.
