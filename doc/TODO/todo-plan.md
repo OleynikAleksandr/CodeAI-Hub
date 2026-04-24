@@ -45,7 +45,7 @@
 3. [DONE] Реализовать Core capture proxy skeleton: локальный `127.0.0.1` CONNECT proxy, capture lifecycle, timeout; scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`, `packages/core/src/provider-network-capture/index.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.test.ts` (knip discoverability smoke test); expected commit message: `feat: add native request capture proxy`
 4. [DONE] Git Commit: `feat: add native request capture proxy` (hash: `9d9867363`)
 5. [DONE] Добавить writer/redaction слой для `.jsonl` и `.md`; scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-redaction.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`; expected commit message: `feat: persist native request capture artifacts`
-6. [TODO] Git Commit: `feat: persist native request capture artifacts` (hash: TBD)
+6. [DONE] Git Commit: `feat: persist native request capture artifacts` (hash: `7ed9e708b`)
 7. [TODO] Добавить certificate store/preflight: local CA, host cert generation, env hints, trust failure codes; scope: `packages/core/src/provider-network-capture/native-request-capture-certificates.ts`, `packages/core/src/provider-network-capture/native-request-capture-preflight.ts`, `packages/core/src/provider-network-capture/native-request-capture-certificates.test.ts`; expected commit message: `feat: prepare diagnostic capture certificates`
 8. [TODO] Git Commit: `feat: prepare diagnostic capture certificates` (hash: TBD)
 
