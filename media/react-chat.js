@@ -7884,6 +7884,38 @@
   ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
 
+  // src/client/ui/src/components/settings/native-request-capture-state.ts
+  var createNativeRequestCaptureState = () => ({
+    activeModelId: null,
+    activeProvider: null,
+    error: null,
+    jsonlPath: null,
+    markdownPath: null,
+    modelId: null,
+    providerId: null,
+    status: "idle"
+  });
+  var startNativeRequestCapture = (providerId, modelId) => ({
+    activeModelId: modelId ?? null,
+    activeProvider: providerId,
+    error: null,
+    jsonlPath: null,
+    markdownPath: null,
+    modelId: modelId ?? null,
+    providerId,
+    status: "running"
+  });
+  var completeNativeRequestCapture = (result) => ({
+    activeModelId: null,
+    activeProvider: null,
+    error: result.ok ? null : result.error ?? result.reason ?? "capture_failed",
+    jsonlPath: result.jsonlPath ?? null,
+    markdownPath: result.markdownPath ?? null,
+    modelId: result.modelId ?? null,
+    providerId: result.providerId,
+    status: result.ok ? "success" : "error"
+  });
+
   // src/client/ui/src/components/settings/use-settings-state-support.ts
   var isIncomingMessage = (message) => {
     if (!message || typeof message !== "object") {
@@ -8072,30 +8104,6 @@
         glossaryEnabled: enabled
       }
     }
-  });
-  var createNativeRequestCaptureState = () => ({
-    activeProvider: null,
-    error: null,
-    jsonlPath: null,
-    markdownPath: null,
-    providerId: null,
-    status: "idle"
-  });
-  var startNativeRequestCapture = (providerId) => ({
-    activeProvider: providerId,
-    error: null,
-    jsonlPath: null,
-    markdownPath: null,
-    providerId,
-    status: "running"
-  });
-  var completeNativeRequestCapture = (result) => ({
-    activeProvider: null,
-    error: result.ok ? null : result.error ?? result.reason ?? "capture_failed",
-    jsonlPath: result.jsonlPath ?? null,
-    markdownPath: result.markdownPath ?? null,
-    providerId: result.providerId,
-    status: result.ok ? "success" : "error"
   });
 
   // src/client/ui/src/shared-hooks/use-bootstrap-settings.ts
@@ -9430,10 +9438,11 @@
       });
     }, []);
     const handleNativeRequestCapture = (0, import_react.useCallback)(
-      (providerId) => {
-        setNativeRequestCapture(startNativeRequestCapture(providerId));
+      (providerId, modelId) => {
+        setNativeRequestCapture(startNativeRequestCapture(providerId, modelId));
         vscode_default.postMessage({
           type: "settings:native-request-capture",
+          modelId,
           providerId
         });
       },

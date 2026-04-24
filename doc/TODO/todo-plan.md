@@ -60,12 +60,12 @@
 ### Stream: Capture Artifact Readability
 
 17. [DONE] Улучшить writer для app config, multi-request Markdown и Codex instructions extraction — scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; commit: `feat: improve native capture artifact extraction`.
-18. [IN_PROGRESS] Git Commit: `feat: improve native capture artifact extraction` (hash: TBD)
+18. [DONE] Git Commit: `feat: improve native capture artifact extraction` (hash: `9a4da6721`)
 
 ### Stream: Verification And Release
 
-19. [TODO] Выполнить targeted verification — scope: affected packages; commands: `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/codex-app-server-module`; commit: `chore: verify native capture app-path tuning`.
-20. [TODO] Git Commit: `chore: verify native capture app-path tuning` (hash: TBD)
+19. [DONE] Выполнить targeted verification — scope: affected packages; commands: `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/codex-app-server-module`; commit: `chore: verify native capture app-path tuning`.
+20. [IN_PROGRESS] Git Commit: `chore: verify native capture app-path tuning` (hash: TBD)
 21. [TODO] Синхронизировать SSOT по capture app-path contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `docs: document native capture app-path contract`.
 22. [TODO] Git Commit: `docs: document native capture app-path contract` (hash: TBD)
 23. [TODO] Подготовить release notes для будущей версии `1.2.65` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare native capture app-path release`.
