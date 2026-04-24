@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.64] - 2026-04-24
+### Fixed
+- **Native Request Capture теперь умеет читать первый Codex WebSocket payload.** Diagnostic proxy отвечает локальным `101 Switching Protocols`, разбирает masked client frame и пишет фактический JSON body в JSONL/Markdown вместо одного HTTP upgrade без тела.
+- **Ignored provider requests стали диагностируемыми.** Для `request_path_not_matched` и других ignored events JSONL/Markdown теперь фиксируют method/path, redacted headers, bodyText/body, reason и target, чтобы было видно, что именно клиент пытался отправить.
+- **TLS socket errors больше не затирают уже собранную трассу.** Ошибки TLS-сокета после observed request записываются как ignored diagnostics, а не как преждевременный terminal `tls_trust_failed`.
+
+### Tests
+- **Добавлены targeted regression tests для WebSocket frame parsing и ignored diagnostics.** Core tests проверяют RFC accept header, masked JSON frame parsing, Markdown/JSONL ignored details и proxy ignored CONNECT event.
+
 ## [1.2.63] - 2026-04-24
 ### Fixed
 - **Native Request Capture больше не вызывает provider adapter method без class receiver.** Core `NativeRequestCaptureFacade` вызывает `captureNativeRequest` через adapter object, поэтому class-based Claude/Codex adapters сохраняют `this.nativeRequestCaptureService` и не падают до запуска diagnostic runtime.
