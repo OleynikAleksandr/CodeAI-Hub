@@ -71,6 +71,7 @@ class FakeCodexProcess {
 
 test("CodexNativeRequestCaptureService starts an isolated app-server process with proxy and certificate env", async () => {
   const processes: FakeCodexProcess[] = [];
+  const diagnosticRecords: { kind: string; payload: unknown }[] = [];
   let capturedEnvironment: Readonly<Record<string, string>> | null = null;
   const service = new CodexNativeRequestCaptureService({
     processFactory: ({ environment }) => {
@@ -97,6 +98,9 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     certificatePath: "/tmp/fallback-ca.pem",
     probePrompt: "diagnostic probe",
     proxyUrl: "http://127.0.0.1:4567",
+    recordDiagnosticContext: (record) => {
+      diagnosticRecords.push(record);
+    },
     workflowPrompt: "workflow prompt",
     workspacePath: "/workspace/capture",
   });
@@ -142,6 +146,33 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
       },
     },
   ]);
+  assert.deepEqual(
+    diagnosticRecords.map((record) => record.kind),
+    [
+      "codex_app_server_thread_start_request",
+      "codex_app_server_thread_start_response",
+      "codex_app_server_turn_start_request",
+      "codex_app_server_turn_start_response",
+    ]
+  );
+  const turnStart = diagnosticRecords.find(
+    (record) => record.kind === "codex_app_server_turn_start_request"
+  );
+  assert.ok(turnStart);
+  assert.deepEqual(turnStart.payload, {
+    threadId: "diagnostic-thread",
+    input: [
+      {
+        type: "text",
+        text: "workflow prompt",
+        text_elements: [],
+      },
+    ],
+    cwd: "/workspace/capture",
+    model: "gpt-5.4",
+    effort: "medium",
+    summary: "detailed",
+  });
 });
 
 test("CodexNativeRequestCaptureService mirrors selected model and applied reasoning config", async () => {

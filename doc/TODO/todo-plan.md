@@ -26,11 +26,11 @@
 4. [DONE] Git Commit: `refactor: split native capture markdown formatting` (hash: `047a07981`)
 5. [DONE] Add provider diagnostic context writer persistence (scope: `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`; commit: `feat: record provider diagnostic context in native capture`)
 6. [DONE] Git Commit: `feat: record provider diagnostic context in native capture` (hash: `837ffcbc7`)
-7. [IN_PROGRESS] Wire diagnostic context callback through the capture facade (scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `feat: wire native capture diagnostic context callback`)
-8. [TODO] Git Commit: `feat: wire native capture diagnostic context callback` (hash: TBD)
+7. [DONE] Wire diagnostic context callback through the capture facade (scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `feat: wire native capture diagnostic context callback`)
+8. [DONE] Git Commit: `feat: wire native capture diagnostic context callback` (hash: `0d34249bf`)
 
 ### Stream: Codex App Server Diagnostics
-9. [TODO] Record Codex app-server thread and turn payloads during diagnostic capture (scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: include codex app-server turn payload in capture`)
+9. [IN_PROGRESS] Record Codex app-server thread and turn payloads during diagnostic capture (scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: include codex app-server turn payload in capture`)
 10. [TODO] Git Commit: `feat: include codex app-server turn payload in capture` (hash: TBD)
 
 ### Stream: Documentation And Verification

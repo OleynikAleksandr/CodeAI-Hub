@@ -26,6 +26,10 @@ export interface CodexNativeRequestCaptureOptions {
   readonly certificatePath: string;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly recordDiagnosticContext?: (record: {
+    readonly kind: string;
+    readonly payload: unknown;
+  }) => Promise<void> | void;
   readonly selectedModelId?: string | null;
   readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
@@ -164,16 +168,25 @@ export class CodexNativeRequestCaptureService {
     process: CodexProcessLike,
     options: CodexNativeRequestCaptureOptions
   ): Promise<string> {
+    const params = {
+      cwd: options.workspacePath,
+      approvalPolicy: this.#workspace.defaultApprovalMode,
+      sandbox: this.#workspace.defaultSandboxMode,
+      model: this.#resolveModelId(options),
+      persistExtendedHistory: false,
+    };
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_thread_start_request",
+      payload: params,
+    });
     const response = await process.request<Record<string, unknown>>(
       "thread/start",
-      {
-        cwd: options.workspacePath,
-        approvalPolicy: this.#workspace.defaultApprovalMode,
-        sandbox: this.#workspace.defaultSandboxMode,
-        model: this.#resolveModelId(options),
-        persistExtendedHistory: false,
-      }
+      params
     );
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_thread_start_response",
+      payload: response,
+    });
     const thread = isRecord(response.thread) ? response.thread : null;
     const threadId = asString(thread?.id);
     if (!threadId) {
@@ -187,7 +200,7 @@ export class CodexNativeRequestCaptureService {
     threadId: string,
     options: CodexNativeRequestCaptureOptions
   ): Promise<void> {
-    await process.request("turn/start", {
+    const params = {
       threadId,
       input: [
         {
@@ -200,7 +213,26 @@ export class CodexNativeRequestCaptureService {
       model: this.#resolveModelId(options),
       effort: this.#resolveReasoningEffort(options),
       summary: this.#resolveReasoningSummaryMode(),
+    };
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_turn_start_request",
+      payload: params,
     });
+    const response = await process.request("turn/start", params);
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_turn_start_response",
+      payload: response,
+    });
+  }
+
+  async #recordDiagnosticContext(
+    options: CodexNativeRequestCaptureOptions,
+    record: {
+      readonly kind: string;
+      readonly payload: unknown;
+    }
+  ): Promise<void> {
+    await options.recordDiagnosticContext?.(record);
   }
 
   #resolveModelId(options: CodexNativeRequestCaptureOptions): string | null {
