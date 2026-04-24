@@ -1,4 +1,6 @@
 import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
+import type { NativeRequestCaptureCommandResult } from "../provider-network-capture/native-request-capture-facade";
+import type { NativeRequestCaptureProviderId } from "../provider-network-capture/native-request-capture-types";
 import type { ProviderRegistry } from "../provider-registry";
 import type { WorkspaceProject } from "../services/project-registry/types";
 import type { RuntimeStatusEvent } from "../status/runtime-status-reporter";
@@ -206,6 +208,10 @@ type CoreBridgeEvent =
         readonly path: string | null;
       };
     }
+  | {
+      readonly type: "settings:native-request-capture:result";
+      readonly payload: NativeRequestCaptureCommandResult;
+    }
   | { readonly type: "core:notification"; readonly payload: unknown }
   | {
       readonly type: "core:loading-status";
@@ -293,6 +299,13 @@ type CoreIncomingMessage =
       readonly payload: { readonly settings: unknown };
     }
   | { readonly type: "settings:reset" }
+  | {
+      readonly type: "settings:native-request-capture";
+      readonly payload: {
+        readonly providerId: NativeRequestCaptureProviderId;
+        readonly workspacePath?: string | null;
+      };
+    }
   | {
       readonly type: "settings:update-provider";
       readonly payload: {

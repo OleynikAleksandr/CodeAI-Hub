@@ -1,4 +1,8 @@
 import { randomUUID } from "node:crypto";
+import {
+  isNativeRequestCaptureProviderId,
+  type NativeRequestCaptureFacade,
+} from "../provider-network-capture/native-request-capture-facade";
 import type { SessionManager } from "../session-manager";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
@@ -21,6 +25,10 @@ interface RemoteBridgeMessageRouterDependencies {
   readonly dialogOpenService: DialogOpenService;
   readonly getManager: () => WebSocketManager | undefined;
   readonly logger: Logger;
+  readonly nativeRequestCaptureFacade: Pick<
+    NativeRequestCaptureFacade,
+    "capture"
+  >;
   readonly projectHandler: ProjectRequestHandler;
   readonly sessionHandler: SessionRequestHandler;
   readonly sessionManager: SessionManager;
@@ -107,6 +115,9 @@ export class RemoteBridgeMessageRouter {
         break;
       case "settings:open-user-glossary-file":
         await this.deps.settingsHandler.handleOpenUserGlossaryFile();
+        break;
+      case "settings:native-request-capture":
+        await this.handleNativeRequestCapture(clientId, incoming.payload);
         break;
       case "session:message":
         await this.deps.sessionHandler.handleMessage(
@@ -306,6 +317,47 @@ export class RemoteBridgeMessageRouter {
         typeof payload.targetModelId === "string"
           ? payload.targetModelId
           : undefined,
+    });
+  }
+
+  private async handleNativeRequestCapture(
+    clientId: string,
+    payload: { readonly providerId?: unknown; readonly workspacePath?: unknown }
+  ): Promise<void> {
+    const providerId = isNativeRequestCaptureProviderId(payload.providerId)
+      ? payload.providerId
+      : null;
+    if (!providerId) {
+      this.sendNativeRequestCaptureResult(clientId, {
+        providerId: "claude",
+        ok: false,
+        markdownPath: null,
+        jsonlPath: null,
+        error: "provider_not_supported",
+        reason: "provider_not_supported",
+      });
+      return;
+    }
+    const scope = this.deps.getManager()?.getWorkspaceScope(clientId);
+    const workspacePath =
+      typeof payload.workspacePath === "string" &&
+      payload.workspacePath.trim().length > 0
+        ? payload.workspacePath
+        : (scope?.workspacePath ?? process.cwd());
+    const result = await this.deps.nativeRequestCaptureFacade.capture({
+      providerId,
+      workspacePath,
+    });
+    this.sendNativeRequestCaptureResult(clientId, result);
+  }
+
+  private sendNativeRequestCaptureResult(
+    clientId: string,
+    payload: Awaited<ReturnType<NativeRequestCaptureFacade["capture"]>>
+  ): void {
+    this.deps.getManager()?.sendToClient(clientId, {
+      type: "settings:native-request-capture:result",
+      payload,
     });
   }
 

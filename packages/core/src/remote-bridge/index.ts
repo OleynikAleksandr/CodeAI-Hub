@@ -1,6 +1,7 @@
 import type { WebSocket } from "ws";
 import type { CoreConfig } from "../config";
 import type { FileDropService } from "../file-drop/file-drop-service";
+import { NativeRequestCaptureFacade } from "../provider-network-capture/native-request-capture-facade";
 import type { ProviderRegistry } from "../provider-registry";
 import type { ProjectRegistry } from "../services/project-registry/project-registry";
 import type { SessionManager } from "../session-manager";
@@ -114,6 +115,9 @@ export class RemoteBridge {
       dialogOpenService: this.bootstrap.dialogOpenService,
       getManager: () => this.serverLifecycle.getManager(),
       logger: this.logger,
+      nativeRequestCaptureFacade: new NativeRequestCaptureFacade({
+        providerRegistry: this.providerRegistry,
+      }),
       projectHandler: this.bootstrap.projectHandler,
       sessionHandler: this.bootstrap.sessionHandler,
       sessionManager: this.sessionManager,
