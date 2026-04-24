@@ -40,9 +40,9 @@
 5. [DONE] Улучшить ignored request diagnostics и Markdown summary — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`; commit: `fix: record native capture ignored request details`.
 6. [DONE] Git Commit: `fix: record native capture ignored request details` (hash: `ed78ffc7a`)
 7. [DONE] Добавить targeted regression tests — scope: `packages/core/src/provider-network-capture/native-request-capture-websocket.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.test.ts`; commit: `test: cover native capture websocket diagnostics`.
-8. [IN_PROGRESS] Git Commit: `test: cover native capture websocket diagnostics` (hash: TBD)
-9. [TODO] Выполнить targeted verification — scope: `packages/core`; command: `npm run build --workspace @codeai-hub/core`; commit: `chore: verify native capture websocket hotfix`.
-10. [TODO] Git Commit: `chore: verify native capture websocket hotfix` (hash: TBD)
+8. [DONE] Git Commit: `test: cover native capture websocket diagnostics` (hash: `563c17e10`)
+9. [DONE] Выполнить targeted verification — scope: `packages/core`; command: `npm run build --workspace @codeai-hub/core` + `node --test packages/core/dist/provider-network-capture/native-request-capture-websocket.test.js packages/core/dist/provider-network-capture/native-request-capture-writer.test.js packages/core/dist/provider-network-capture/native-request-capture-proxy.test.js`; commit: `chore: verify native capture websocket hotfix`.
+10. [IN_PROGRESS] Git Commit: `chore: verify native capture websocket hotfix` (hash: TBD)
 
 ### Stream: Hotfix Release
 
