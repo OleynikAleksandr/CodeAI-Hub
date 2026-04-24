@@ -41,12 +41,12 @@
 5. [DONE] Протянуть modelId через browser settings state — scope: `src/client/ui/src/components/settings/native-request-capture-state.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`; commit: `feat: send native capture model from webview`.
 6. [DONE] Git Commit: `feat: send native capture model from webview` (hash: `88b869294`)
 7. [DONE] Протянуть modelId через Project Manager transport — scope: `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat: send native capture model from project manager`.
-8. [IN_PROGRESS] Git Commit: `feat: send native capture model from project manager` (hash: TBD)
+8. [DONE] Git Commit: `feat: send native capture model from project manager` (hash: `9301fbb8f`)
 
 ### Stream: Core App-Path Resolver
 
-9. [TODO] Добавить modelId в Core bridge payload и resolver injection — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/index.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`; commit: `feat: resolve native capture turn config`.
-10. [TODO] Git Commit: `feat: resolve native capture turn config` (hash: TBD)
+9. [DONE] Добавить modelId в Core bridge payload и capture command — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; commit: `feat: resolve native capture turn config`.
+10. [IN_PROGRESS] Git Commit: `feat: resolve native capture turn config` (hash: TBD)
 11. [TODO] Передать selected model/applied config в provider adapters — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `feat: pass native capture app config`.
 12. [TODO] Git Commit: `feat: pass native capture app config` (hash: TBD)
 

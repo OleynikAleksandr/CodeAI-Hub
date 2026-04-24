@@ -322,7 +322,11 @@ export class RemoteBridgeMessageRouter {
 
   private async handleNativeRequestCapture(
     clientId: string,
-    payload: { readonly providerId?: unknown; readonly workspacePath?: unknown }
+    payload: {
+      readonly modelId?: unknown;
+      readonly providerId?: unknown;
+      readonly workspacePath?: unknown;
+    }
   ): Promise<void> {
     const providerId = isNativeRequestCaptureProviderId(payload.providerId)
       ? payload.providerId
@@ -333,6 +337,7 @@ export class RemoteBridgeMessageRouter {
         ok: false,
         markdownPath: null,
         jsonlPath: null,
+        modelId: null,
         error: "provider_not_supported",
         reason: "provider_not_supported",
       });
@@ -344,7 +349,12 @@ export class RemoteBridgeMessageRouter {
       payload.workspacePath.trim().length > 0
         ? payload.workspacePath
         : (scope?.workspacePath ?? process.cwd());
+    const modelId =
+      typeof payload.modelId === "string" && payload.modelId.trim().length > 0
+        ? payload.modelId.trim()
+        : null;
     const result = await this.deps.nativeRequestCaptureFacade.capture({
+      modelId,
       providerId,
       workspacePath,
     });

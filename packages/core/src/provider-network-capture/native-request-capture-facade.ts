@@ -79,6 +79,7 @@ interface NativeRequestCaptureFacadeOptions {
 }
 
 export interface NativeRequestCaptureCommand {
+  readonly modelId?: string | null;
   readonly providerId: NativeRequestCaptureProviderId;
   readonly workspacePath: string;
 }
@@ -87,6 +88,7 @@ export interface NativeRequestCaptureCommandResult {
   readonly error: string | null;
   readonly jsonlPath: string | null;
   readonly markdownPath: string | null;
+  readonly modelId: string | null;
   readonly ok: boolean;
   readonly providerId: NativeRequestCaptureProviderId;
   readonly reason: NativeRequestCaptureFailureReason | null;
@@ -124,13 +126,13 @@ export class NativeRequestCaptureFacade {
     const runtimeProviderId = PROVIDER_RUNTIME_IDS[command.providerId];
     const adapter = this.#providerRegistry.getAdapter(runtimeProviderId);
     if (!adapter?.captureNativeRequest) {
-      return this.#failure(command.providerId, "provider_not_supported", null);
+      return this.#failure(command, "provider_not_supported", null);
     }
 
     const preflight = await this.#preflight.checkOpenSsl();
     if (!preflight.ok) {
       return this.#failure(
-        command.providerId,
+        command,
         preflight.reason ?? "tls_credentials_unavailable",
         null
       );
@@ -146,7 +148,7 @@ export class NativeRequestCaptureFacade {
     const targetRules = PROVIDER_TARGET_RULES[command.providerId];
     const firstTargetHost = targetRules[0]?.host;
     if (!firstTargetHost) {
-      return this.#failure(command.providerId, "target_not_seen", writer);
+      return this.#failure(command, "target_not_seen", writer);
     }
 
     const certificateBundle =
@@ -180,6 +182,7 @@ export class NativeRequestCaptureFacade {
           providerId: command.providerId,
           ok: true,
           markdownPath: writer.artifacts.markdownPath,
+          modelId: command.modelId ?? null,
           jsonlPath: writer.artifacts.jsonlPath,
           error: null,
           reason: null,
@@ -188,7 +191,7 @@ export class NativeRequestCaptureFacade {
       if (!captureResult.completedByProxy) {
         await writer.complete(captureResult.status, captureResult.reason);
       }
-      return this.#failure(command.providerId, captureResult.reason, writer);
+      return this.#failure(command, captureResult.reason, writer);
     } finally {
       await handle.stop();
     }
@@ -247,14 +250,15 @@ export class NativeRequestCaptureFacade {
   }
 
   #failure(
-    providerId: NativeRequestCaptureProviderId,
+    command: Pick<NativeRequestCaptureCommand, "modelId" | "providerId">,
     reason: NativeRequestCaptureFailureReason,
     writer: NativeRequestCaptureWriter | null
   ): NativeRequestCaptureCommandResult {
     return {
-      providerId,
+      providerId: command.providerId,
       ok: false,
       markdownPath: writer?.artifacts.markdownPath ?? null,
+      modelId: command.modelId ?? null,
       jsonlPath: writer?.artifacts.jsonlPath ?? null,
       error: reason,
       reason,
