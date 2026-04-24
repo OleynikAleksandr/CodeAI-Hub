@@ -37,7 +37,7 @@
 8. [DONE] Git Commit: `docs: record claude preset capture evidence` (hash: `244c6d730`)
 9. [DONE] Сравнить новый capture с baseline `2026-04-24T12-22-42-190Z-claude-native-request.md` и зафиксировать только high-level выводы, section names/counts/hashes без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: summarize claude preset capture comparison`
    - Comparison: main workflow request kept identical `messages` hash `24c98fd552e2a4ba` and `tools` hash `4a3f9e88a7a8bd49`; `body.system` grew from `2` blocks / `146` text chars to `4` blocks / `28486` text chars with Claude Code preset sections.
-10. [DONE] Git Commit: `docs: summarize claude preset capture comparison` (hash: TBD)
+10. [DONE] Git Commit: `docs: summarize claude preset capture comparison` (hash: `0065f49e0`)
 
 ### Stream: Test release package
 11. [DONE] Подготовить release docs для будущей версии `1.2.68` перед `build-all.sh` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude preset capture release notes`
