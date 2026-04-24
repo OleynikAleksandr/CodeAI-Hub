@@ -46,7 +46,7 @@
 14. [DONE] Git Commit: `chore: build claude preset capture test release` (hash: `48fec390d`)
 
 ### Stream: Claude capture target filter
-15. [IN_PROGRESS] Исправить diagnostic-only Claude capture target filter, чтобы translation/localization Haiku requests не закрывали Settings capture раньше workflow agent-loop request — scope: `packages/core/src/provider-network-capture/native-request-capture-types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`; expected commit message: `fix: filter claude native capture to agent requests`
-16. [TODO] Git Commit: `fix: filter claude native capture to agent requests` (hash: TBD)
-17. [TODO] Добавить targeted test и evidence note по regression `1.2.68 captured translation request first` — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude capture target filtering evidence`
-18. [TODO] Git Commit: `docs: record claude capture target filtering evidence` (hash: TBD)
+15. [DONE] Исправить diagnostic-only Claude capture target filter, чтобы translation/localization Haiku requests не закрывали Settings capture раньше workflow agent-loop request — scope: `packages/core/src/provider-network-capture/native-request-capture-types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`; expected commit message: `fix: filter claude native capture to agent requests`
+16. [DONE] Git Commit: `fix: filter claude native capture to agent requests` (hash: `88df7c121`)
+17. [DONE] Добавить targeted test и evidence note по regression `1.2.68 captured translation request first` — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: filter claude native capture to agent requests`
+18. [DONE] Git Commit: `fix: filter claude native capture to agent requests` (hash: `88df7c121`)
