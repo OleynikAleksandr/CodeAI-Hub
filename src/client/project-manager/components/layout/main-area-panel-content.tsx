@@ -163,7 +163,11 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   workflowStoreLoaded,
 }) => {
   const localizationSyncStatus = useLocalizationSyncStatus();
-  const settingsState = useProjectManagerSettingsState();
+  const settingsState = useProjectManagerSettingsState({
+    activeWorkspaceName,
+    activeWorkspacePath,
+    activeWorkspaceSlug,
+  });
   const settingsLocalization = useResolvedLocalization(
     settingsState.settings,
     settingsState.localizationRuntime

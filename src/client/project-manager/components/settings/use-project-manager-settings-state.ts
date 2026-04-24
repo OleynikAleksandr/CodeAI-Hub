@@ -22,7 +22,6 @@ import {
   completeNativeRequestCapture,
   createNativeRequestCaptureState,
   normalizeLoadedLocalizationSettings,
-  startNativeRequestCapture,
   updateLocalizationCategorySelection,
   updateLocalizationDefaultLanguageSelection,
   updateLocalizationEngineSelection,
@@ -57,6 +56,11 @@ import {
 import { openProjectManagerFileLink } from "../../services/project-manager-file-link-opener";
 import { api } from "../../api";
 import type { SettingsNativeRequestCaptureResultPayload } from "../../core-stream-message-types";
+import {
+  handleProjectManagerSettingsHostMessage,
+  isNativeRequestCaptureProviderId,
+} from "./project-manager-settings-host-message";
+import { startProjectManagerNativeRequestCapture } from "./native-request-capture-runner";
 import { useProjectManagerSettings } from "./use-project-manager-settings";
 
 const PM_CORE_CONTROL_STATE: CoreControlState = {
@@ -86,11 +90,6 @@ const isCoreControlStatusPayload = (
   );
 };
 
-const isNativeRequestCaptureProviderId = (
-  value: unknown
-): value is NativeRequestCaptureProviderId =>
-  value === "claude" || value === "codex";
-
 const isNativeRequestCaptureResultPayload = (
   payload: unknown
 ): payload is SettingsNativeRequestCaptureResultPayload =>
@@ -103,8 +102,16 @@ export type UseProjectManagerSettingsStateResult = UseSettingsStateResult & {
   readonly supportsCoreRestart: false;
 };
 
+interface ProjectManagerSettingsContext {
+  readonly activeWorkspaceName?: string;
+  readonly activeWorkspacePath?: string;
+  readonly activeWorkspaceSlug?: string | null;
+}
+
 export const useProjectManagerSettingsState =
-  (): UseProjectManagerSettingsStateResult => {
+  (
+    context: ProjectManagerSettingsContext = {}
+  ): UseProjectManagerSettingsStateResult => {
     const transport = useProjectManagerSettings();
     const initialSettingsRef = useRef<Settings>(
       normalizeLoadedLocalizationSettings(transport.settings)
@@ -413,35 +420,28 @@ export const useProjectManagerSettingsState =
         providerId: NativeRequestCaptureProviderId,
         modelId: NativeRequestCaptureModelId
       ) => {
-        setNativeRequestCapture(startNativeRequestCapture(providerId, modelId));
-        api.captureNativeRequest(providerId, modelId);
+        startProjectManagerNativeRequestCapture({
+          context,
+          modelId,
+          providerId,
+          setNativeRequestCapture,
+        });
       },
-      []
+      [
+        context.activeWorkspaceName,
+        context.activeWorkspacePath,
+        context.activeWorkspaceSlug,
+      ]
     );
 
     const handleHostMessage = useCallback(
       (message: unknown) => {
-        if (!isRecord(message) || typeof message.type !== "string") {
-          return;
-        }
-        if (message.type === "settings:open-user-glossary-file") {
-          transport.openUserGlossaryFile();
-        }
-        if (
-          message.type === "settings:native-request-capture" &&
-          isNativeRequestCaptureProviderId(message.providerId)
-        ) {
-          const defaultModelId =
-            message.providerId === "claude"
-              ? settings.providers.claude.defaultModel
-              : settings.providers.codex.defaultModel;
-          const modelId =
-            typeof message.modelId === "string" &&
-            message.modelId.trim().length > 0
-              ? (message.modelId as NativeRequestCaptureModelId)
-              : defaultModelId;
-          handleNativeRequestCapture(message.providerId, modelId);
-        }
+        handleProjectManagerSettingsHostMessage({
+          handleNativeRequestCapture,
+          message,
+          settings,
+          transport,
+        });
       },
       [handleNativeRequestCapture, settings, transport]
     );

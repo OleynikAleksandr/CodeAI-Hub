@@ -188,6 +188,19 @@ export type SettingsUserGlossaryFilePayload = {
 
 export type SettingsNativeRequestCaptureProviderId = "claude" | "codex";
 export type SettingsNativeRequestCaptureModelId = NativeRequestCaptureModelId;
+export type SettingsNativeRequestCaptureScenarioId =
+  | "description"
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "diagnostic_probe";
+export type SettingsNativeRequestCaptureOptions = {
+  readonly scenarioId?: SettingsNativeRequestCaptureScenarioId | null;
+  readonly scenarioInputPath?: string | null;
+  readonly scenarioLabel?: string | null;
+  readonly scenarioPrompt?: string | null;
+  readonly scenarioTargetPath?: string | null;
+  readonly workspacePath?: string | null;
+};
 
 export type SettingsNativeRequestCaptureResultPayload = {
   readonly error?: string | null;
@@ -266,7 +279,7 @@ export type OutgoingMessage =
   | { readonly type: "settings:reset" }
   | {
       readonly type: "settings:native-request-capture";
-      readonly payload: {
+      readonly payload: SettingsNativeRequestCaptureOptions & {
         readonly modelId?: SettingsNativeRequestCaptureModelId | null;
         readonly providerId: SettingsNativeRequestCaptureProviderId;
       };

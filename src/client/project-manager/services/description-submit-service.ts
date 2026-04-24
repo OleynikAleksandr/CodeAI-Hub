@@ -84,7 +84,7 @@ export const resolveArtifactsForTheUserLanguage = (
   );
 };
 
-type WorkflowContractSnapshot = {
+export type WorkflowContractSnapshot = {
   readonly prompt: string;
   readonly schema: Record<string, unknown>;
   readonly template: string;
@@ -152,7 +152,7 @@ const normalizeWorkflowContract = (
     },
   };
 };
-const loadWorkflowContract = async (
+export const loadWorkflowContract = async (
   stage: WorkflowStageId
 ): Promise<WorkflowContractSnapshot> => {
   const httpUrl = resolveCoreHttpUrl();

@@ -33,15 +33,15 @@
 ### Stream: Planning Bootstrap
 
 1. [DONE] Создать planning-документ и active todo-plan для workflow scenario native capture — scope: `doc/SolidWorks-WorkFlow/Plans/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: plan workflow scenario native capture`.
-2. [TODO] Git Commit: `docs: plan workflow scenario native capture` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan workflow scenario native capture` (hash: `18ef92ad5`)
 
 ### Stream: PM Scenario Prompt Source
 
-3. [TODO] Добавить Project Manager resolver, который строит capture prompt через существующий `buildWorkflowPromptPack` для `Description`, `Virtual Simulation`, `Diagram Modules` — scope: `src/client/project-manager/services/*scenario*`, `src/client/project-manager/services/description-submit-service.ts` или tests; expected commit: `feat: build workflow capture prompts from project manager`.
-4. [TODO] Git Commit: `feat: build workflow capture prompts from project manager` (hash: TBD)
+3. [DONE] Добавить Project Manager resolver, который строит capture prompt через существующий `buildWorkflowPromptPack` для `Description`, `Virtual Simulation`, `Diagram Modules` — scope: `src/client/project-manager/services/native-request-capture-scenario-prompt.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat: build workflow capture prompts from project manager`.
+4. [IN_PROGRESS] Git Commit: `feat: build workflow capture prompts from project manager` (hash: TBD)
 
-5. [TODO] Протянуть `scenarioId/scenarioPrompt` через Project Manager API без роста `api.ts` за лимит 500 строк — scope: `src/client/project-manager/api.ts`, новый PM API helper или `core-stream-message-types.ts`; expected commit: `feat: send workflow scenario capture payloads`.
-6. [TODO] Git Commit: `feat: send workflow scenario capture payloads` (hash: TBD)
+5. [DONE] Протянуть `scenarioId/scenarioPrompt` через Project Manager API без роста `api.ts` за лимит 500 строк — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/settings/native-request-capture-runner.ts`; expected commit: `feat: send workflow scenario capture payloads`.
+6. [IN_PROGRESS] Git Commit: `feat: send workflow scenario capture payloads` (hash: TBD)
 
 ### Stream: Settings Scenario UI
 
