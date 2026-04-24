@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.69] - 2026-04-24
+### Fixed
+- **Claude native capture больше не завершается на translation/localization request.** Core diagnostic proxy теперь требует agent-loop tool declarations для Claude `api.anthropic.com/v1/messages` target rule, поэтому Haiku translation requests записываются как ignored/intermediate и не закрывают capture раньше workflow request.
+
+### Tests
+- **Targeted checks закрывают corrective filter.** Пройдены `npm run build --workspace @codeai-hub/core` и direct node test для `native-request-capture-facade`.
+
 ## [1.2.68] - 2026-04-24
 ### Changed
 - **Claude diagnostic capture включает Claude Code preset system prompt.** `ClaudeNativeRequestCaptureService` теперь передает SDK option `systemPrompt: { type: "preset", preset: "claude_code" }` вместе с существующим `settingSources: []`.

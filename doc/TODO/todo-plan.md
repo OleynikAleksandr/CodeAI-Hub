@@ -50,3 +50,9 @@
 16. [DONE] Git Commit: `fix: filter claude native capture to agent requests` (hash: `88df7c121`)
 17. [DONE] Добавить targeted test и evidence note по regression `1.2.68 captured translation request first` — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: filter claude native capture to agent requests`
 18. [DONE] Git Commit: `fix: filter claude native capture to agent requests` (hash: `88df7c121`)
+
+### Stream: Corrective test release package
+19. [IN_PROGRESS] Подготовить release docs для будущей версии `1.2.69` с diagnostic-only Claude capture target filter — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude capture filter release notes`
+20. [TODO] Git Commit: `docs: prepare claude capture filter release notes` (hash: TBD)
+21. [TODO] Собрать corrective release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude capture filter test release`
+22. [TODO] Git Commit: `chore: build claude capture filter test release` (hash: TBD)

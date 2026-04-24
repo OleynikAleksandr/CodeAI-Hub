@@ -7,12 +7,17 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.68
+## Current Release — v1.2.69
+- **Claude Native Request Capture теперь ждёт agent-loop request.** Diagnostic proxy для Settings capture игнорирует промежуточные Anthropic translation/localization requests без agent tools и продолжает ждать основной workflow request.
+- **Haiku localization runtime не затронут.** Фильтр применяется только внутри diagnostic capture command; реальные Claude Haiku translation/localization turns продолжают работать по прежнему runtime path.
+- **Повторный preset capture должен содержать основной Claude workflow request.** Новый лог должен включать выбранный workflow model request с tool declarations, пригодный для сравнения `systemPrompt` preset с baseline.
+
+### 1.2.68 (previous)
 - **Claude Native Request Capture проверяет Claude Code preset system prompt.** Diagnostic SDK query теперь передает `systemPrompt: { type: "preset", preset: "claude_code" }` при сохраненном `settingSources: []`.
 - **Тестовый релиз предназначен для извлечения полного Claude system prompt.** Capture path не меняет tools, permissions, sandbox, selected model, thinking policy или workflow first user prompt.
 - **Raw provider prompt dumps остаются только в runtime logs.** В репозиторий фиксируются только выводы, counts/hashes и high-level comparison notes после ручного запуска capture.
 
-### 1.2.67 (previous)
+### 1.2.67
 - **Codex Native Request Capture теперь показывает полный app-server turn context.** Markdown/JSONL артефакты получили отдельную секцию `Provider Diagnostic Context` с реальными `thread/start` и `turn/start` payloads временного Codex App Server процесса.
 - **Workflow prompt больше не теряется при раннем Codex WebSocket frame.** Даже если native WebSocket request показывает только служебный `response.create` с `generate:false` и `input: []`, рядом виден фактический `turn/start.input[0].text`, который CodeAI Hub отправил через штатный diagnostic path.
 - **Native network request и app-server payload разделены явно.** Provider request body продолжает показывать системные инструкции/tools из `chatgpt.com/backend-api/codex/responses`, а app-server section показывает selected model, reasoning effort, summary mode и workflow first user prompt.
