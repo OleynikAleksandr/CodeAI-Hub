@@ -1,6 +1,6 @@
 # Native Request Capture WebSocket And Trace Hotfix 1.2.64
 
-**Status:** Active hotfix plan
+**Status:** Completed / archived
 **Date:** 2026-04-24
 **Owner:** Codex
 
@@ -76,3 +76,9 @@ After `1.2.64`, Codex capture should show a body from the first WebSocket frame 
   - `./scripts/build-all.sh`
   - `./scripts/build-release.sh --use-current-version`
 
+## 6. Result
+
+- Released as `1.2.64`.
+- Codex native capture now completes the local WebSocket upgrade and captures the first client frame body.
+- Ignored request events now include method/path/redacted headers/body in JSONL and Markdown.
+- Release artifact: `codeai-hub-1.2.64.vsix`.
