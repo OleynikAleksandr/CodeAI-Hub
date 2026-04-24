@@ -7888,31 +7888,37 @@
   var createNativeRequestCaptureState = () => ({
     activeModelId: null,
     activeProvider: null,
+    activeScenarioId: null,
     error: null,
     jsonlPath: null,
     markdownPath: null,
     modelId: null,
     providerId: null,
+    scenarioId: null,
     status: "idle"
   });
-  var startNativeRequestCapture = (providerId, modelId) => ({
+  var startNativeRequestCapture = (providerId, modelId, scenarioId) => ({
     activeModelId: modelId ?? null,
     activeProvider: providerId,
+    activeScenarioId: scenarioId ?? null,
     error: null,
     jsonlPath: null,
     markdownPath: null,
     modelId: modelId ?? null,
     providerId,
+    scenarioId: scenarioId ?? null,
     status: "running"
   });
   var completeNativeRequestCapture = (result) => ({
     activeModelId: null,
     activeProvider: null,
+    activeScenarioId: null,
     error: result.ok ? null : result.error ?? result.reason ?? "capture_failed",
     jsonlPath: result.jsonlPath ?? null,
     markdownPath: result.markdownPath ?? null,
     modelId: result.modelId ?? null,
     providerId: result.providerId,
+    scenarioId: result.scenarioId ?? null,
     status: result.ok ? "success" : "error"
   });
 
@@ -8918,6 +8924,23 @@
   var vscode = vscodeInstance ?? fallbackApi;
   var vscode_default = vscode;
 
+  // src/client/ui/src/components/settings/native-request-capture-browser-runner.ts
+  var startBrowserNativeRequestCapture = (params) => {
+    params.setNativeRequestCapture(
+      startNativeRequestCapture(
+        params.providerId,
+        params.modelId,
+        params.scenarioId
+      )
+    );
+    vscode_default.postMessage({
+      type: "settings:native-request-capture",
+      modelId: params.modelId,
+      providerId: params.providerId,
+      scenarioId: params.scenarioId
+    });
+  };
+
   // src/client/ui/src/components/settings/settings-state-helpers.ts
   var updateThinkingSettings = (settings, enabled, effort) => ({
     ...settings,
@@ -9438,12 +9461,12 @@
       });
     }, []);
     const handleNativeRequestCapture = (0, import_react.useCallback)(
-      (providerId, modelId) => {
-        setNativeRequestCapture(startNativeRequestCapture(providerId, modelId));
-        vscode_default.postMessage({
-          type: "settings:native-request-capture",
+      (providerId, modelId, scenarioId) => {
+        startBrowserNativeRequestCapture({
           modelId,
-          providerId
+          providerId,
+          scenarioId,
+          setNativeRequestCapture
         });
       },
       []
