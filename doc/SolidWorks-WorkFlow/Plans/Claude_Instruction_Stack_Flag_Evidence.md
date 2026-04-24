@@ -253,3 +253,36 @@ Captured request summary:
 - system prompt — это не список tools; это `body.system`;
 - системные инструменты Claude Code передаются отдельно как `body.tools`;
 - часть текста внутри `body.system` может объяснять правила использования инструментов, но сами tool schemas находятся только в `body.tools`.
+
+## 6. Сравнение baseline C0 и preset C1
+
+Сравниваем только основной workflow agent-loop request:
+
+- C0 baseline: `2026-04-24T12-22-42-190Z-claude-native-request.jsonl`, record `28`, model `claude-opus-4-7`;
+- C1 preset: `2026-04-24T13-55-05-221Z-claude-native-request.jsonl`, record `28`, model `claude-opus-4-7`.
+
+Что не изменилось:
+
+- `messages` hash остался `24c98fd552e2a4ba`;
+- `tools` count остался `10`;
+- `tools` hash остался `4a3f9e88a7a8bd49`;
+- tool names остались `Agent`, `Bash`, `Edit`, `Glob`, `Grep`, `Read`, `ScheduleWakeup`, `Skill`, `ToolSearch`, `Write`;
+- workflow prompt продолжает находиться в `body.messages`, а не переносится в `body.system`.
+
+Что изменилось:
+
+- C0 `body.system`: `2` text blocks, text chars `146`, hash `fa24a5d30f64f5b3`;
+- C1 `body.system`: `4` text blocks, text chars `28486`, hash `124660c13277895d`;
+- C1 добавил два больших cached text blocks после двух коротких baseline blocks.
+
+High-level headings, обнаруженные в новых cached system blocks C1:
+
+- block `2`: `System`, `Doing tasks`, `Executing actions with care`, `Using your tools`, `Tone and style`;
+- block `3`: `Text output (does not apply to tool calls)`, `System reminders`, `Session-specific guidance`, `auto memory`, `Types of memory`.
+
+Вывод:
+
+- `systemPrompt: { type: "preset", preset: "claude_code" }` действительно меняет native Anthropic request и добавляет большой Claude Code instruction stack в `body.system`;
+- это не изменяет `body.tools`: schemas инструментов остаются отдельным полем Anthropic request;
+- это не переносит наш workflow prompt из `body.messages` в `body.system`;
+- следующая полезная проверка — C2 `preset + append`, чтобы понять, можно ли добавить CodeAI Hub frame поверх Claude Code preset без потери preset blocks.

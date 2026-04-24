@@ -34,9 +34,10 @@
 ### Stream: Runtime capture comparison
 7. [DONE] Выполнить runtime capture через Project Manager Settings -> General для Claude `Description` scenario на текущей ветке; raw artifacts оставить только в `~/.codeai-hub/logs/native-request-capture/`; repo scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude preset capture evidence`
    - Runtime capture: `2026-04-24T13-55-05-221Z-claude-native-request.jsonl`; diagnostic filter ignored Haiku translation request with `tools: 0` and captured main `claude-opus-4-7` workflow request with `tools: 10`.
-8. [DONE] Git Commit: `docs: record claude preset capture evidence` (hash: TBD)
-9. [TODO] Сравнить новый capture с baseline `2026-04-24T12-22-42-190Z-claude-native-request.md` и зафиксировать только high-level выводы, section names/counts/hashes без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: summarize claude preset capture comparison`
-10. [TODO] Git Commit: `docs: summarize claude preset capture comparison` (hash: TBD)
+8. [DONE] Git Commit: `docs: record claude preset capture evidence` (hash: `244c6d730`)
+9. [DONE] Сравнить новый capture с baseline `2026-04-24T12-22-42-190Z-claude-native-request.md` и зафиксировать только high-level выводы, section names/counts/hashes без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: summarize claude preset capture comparison`
+   - Comparison: main workflow request kept identical `messages` hash `24c98fd552e2a4ba` and `tools` hash `4a3f9e88a7a8bd49`; `body.system` grew from `2` blocks / `146` text chars to `4` blocks / `28486` text chars with Claude Code preset sections.
+10. [DONE] Git Commit: `docs: summarize claude preset capture comparison` (hash: TBD)
 
 ### Stream: Test release package
 11. [DONE] Подготовить release docs для будущей версии `1.2.68` перед `build-all.sh` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude preset capture release notes`
