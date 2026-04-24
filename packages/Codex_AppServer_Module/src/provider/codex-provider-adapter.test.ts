@@ -75,3 +75,46 @@ test("CodexProviderAdapter refreshUsageLimits returns an awaitable promise and b
     29
   );
 });
+
+test("CodexProviderAdapter delegates native request capture to diagnostics service", async () => {
+  const adapter = Object.create(
+    CodexProviderAdapter.prototype
+  ) as CodexProviderAdapter;
+  const capturedOptions: unknown[] = [];
+  (
+    adapter as unknown as {
+      nativeRequestCaptureService: {
+        captureNativeRequest: (options: unknown) => Promise<void>;
+      };
+    }
+  ).nativeRequestCaptureService = {
+    captureNativeRequest: (options) => {
+      capturedOptions.push(options);
+      return Promise.resolve();
+    },
+  };
+
+  await adapter.captureNativeRequest({
+    captureId: "capture-codex-adapter",
+    certificateEnv: {
+      SSL_CERT_FILE: "/tmp/capture-ca.pem",
+    },
+    certificatePath: "/tmp/capture-ca.pem",
+    probePrompt: "diagnostic probe",
+    proxyUrl: "http://127.0.0.1:4567",
+    workspacePath: "/workspace/capture",
+  });
+
+  assert.deepEqual(capturedOptions, [
+    {
+      captureId: "capture-codex-adapter",
+      certificateEnv: {
+        SSL_CERT_FILE: "/tmp/capture-ca.pem",
+      },
+      certificatePath: "/tmp/capture-ca.pem",
+      probePrompt: "diagnostic probe",
+      proxyUrl: "http://127.0.0.1:4567",
+      workspacePath: "/workspace/capture",
+    },
+  ]);
+});
