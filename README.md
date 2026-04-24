@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.66
+## Current Release — v1.2.67
+- **Codex Native Request Capture теперь показывает полный app-server turn context.** Markdown/JSONL артефакты получили отдельную секцию `Provider Diagnostic Context` с реальными `thread/start` и `turn/start` payloads временного Codex App Server процесса.
+- **Workflow prompt больше не теряется при раннем Codex WebSocket frame.** Даже если native WebSocket request показывает только служебный `response.create` с `generate:false` и `input: []`, рядом виден фактический `turn/start.input[0].text`, который CodeAI Hub отправил через штатный diagnostic path.
+- **Native network request и app-server payload разделены явно.** Provider request body продолжает показывать системные инструкции/tools из `chatgpt.com/backend-api/codex/responses`, а app-server section показывает selected model, reasoning effort, summary mode и workflow first user prompt.
+
+### 1.2.66 (previous)
 - **Native Request Capture теперь проверяет реальные workflow first turns.** В Settings -> General добавлен selector сценария `Description` / `Virtual Simulation` / `Diagram Modules`; выбранный сценарий строится Project Manager через тот же `buildWorkflowPromptPack(...)`, что и штатный workflow send.
 - **Диагностика идёт через тот же provider-native capture-and-abort path.** Claude получает `workflowPrompt ?? probePrompt` в SDK `query(...)`, Codex получает тот же текст в `turn/start.input[0].text`, а Core сохраняет scenario metadata вместе с selected model и applied turn config.
 - **Codex capture выбирает полноценный turn frame.** WebSocket capture больше не останавливается на раннем пустом frame с `input: []` / `generate:false`; Markdown primary request берётся из useful full-turn frame с реальным `instructions` / `input`.

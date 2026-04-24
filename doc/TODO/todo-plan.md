@@ -34,8 +34,11 @@
 10. [DONE] Git Commit: `feat: include codex app-server turn payload in capture` (hash: `69fda6ccd`)
 
 ### Stream: Documentation And Verification
-11. [IN_PROGRESS] Sync SSOT docs for Codex native capture context (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: document codex native capture turn context`)
-12. [TODO] Git Commit: `docs: document codex native capture turn context` (hash: TBD)
-13. [TODO] Run targeted verification for Core/Codex capture diagnostics (scope: `packages/core`, `packages/Codex_AppServer_Module`; commit: no commit expected unless fixes are needed)
-14. [TODO] Closeout scope, archive planning/TODO, and decide release packaging (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/`; commit: `docs: close codex native capture turn context hotfix`)
-15. [TODO] Git Commit: `docs: close codex native capture turn context hotfix` (hash: TBD)
+11. [DONE] Sync SSOT docs for Codex native capture context (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: document codex native capture turn context`)
+12. [DONE] Git Commit: `docs: document codex native capture turn context` (hash: `4d8681d9f`)
+13. [DONE] Run targeted verification for Core/Codex capture diagnostics (scope: `packages/core`, `packages/Codex_AppServer_Module`; result: `npm run build --workspace @codeai-hub/codex-app-server-module`, `npm run build --workspace @codeai-hub/core`, `node --test packages/core/dist/provider-network-capture/native-request-capture-writer.test.js packages/core/dist/provider-network-capture/native-request-capture-facade.test.js packages/core/dist/provider-network-capture/native-request-capture-websocket.test.js`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; note: initial parallel Core/Codex build raced on Codex dist cleanup, sequential rerun passed; commit: no commit expected unless fixes are needed)
+14. [IN_PROGRESS] Prepare release docs for `1.2.67` (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex native capture context release`)
+15. [TODO] Git Commit: `docs: prepare codex native capture context release` (hash: TBD)
+16. [TODO] Build release `1.2.67` with `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` (scope: release scripts/package artifacts; commit: release build commit)
+17. [TODO] Closeout scope, archive planning/TODO, and create session report (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/`, `doc/Sessions/`; commit: `docs: close codex native capture turn context hotfix`)
+18. [TODO] Git Commit: `docs: close codex native capture turn context hotfix` (hash: TBD)

@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.67] - 2026-04-24
+### Added
+- **Codex capture artifacts получили `Provider Diagnostic Context`.** JSONL/Markdown теперь сохраняют provider-supplied diagnostic records отдельно от native request body.
+- **Codex diagnostic run записывает app-server payloads.** Temporary App Server capture фиксирует `thread/start` request/response и `turn/start` request/response, включая полный workflow prompt в `turn/start.input[0].text`.
+
+### Changed
+- **Codex capture теперь честно показывает два слоя.** Native WebSocket request остаётся provider-network surface с системными инструкциями/tools, а app-server context показывает фактический turn payload, который CodeAI Hub отправил через штатный diagnostic path.
+- **Markdown writer вынес форматирование в отдельный helper.** `native-request-capture-writer.ts` больше не находится у 500-line limit и остаётся тонким владельцем записи артефактов.
+
+### Tests
+- **Targeted checks закрывают новый diagnostic context path.** Пройдены сборки Core/Codex App Server module и node tests для native capture writer/facade/WebSocket плюс Codex native request capture service.
+
 ## [1.2.66] - 2026-04-24
 ### Added
 - **Settings -> General получил workflow scenario selector для Native Request Capture.** Диагностика теперь может отправить `Description`, `Virtual Simulation` или `Diagram Modules` first-turn prompt вместо generic probe.
