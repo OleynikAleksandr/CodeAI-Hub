@@ -2,9 +2,9 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Native_Request_Capture_AppPath_Tuning_1.2.65.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_Native_Request_Capture_Architecture.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
@@ -32,12 +32,12 @@
 
 ### Stream: Planning Bootstrap
 
-1. [DONE] Создать planning-документ и active todo-plan для workflow scenario native capture — scope: `doc/SolidWorks-WorkFlow/Plans/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: plan workflow scenario native capture`.
+1. [DONE] Создать planning-документ и active todo-plan для workflow scenario native capture — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`, `doc/TODO/Archive/todo-plan-phase1-native-request-capture-workflow-scenarios-1.2.66.md`; expected commit: `docs: plan workflow scenario native capture`.
 2. [DONE] Git Commit: `docs: plan workflow scenario native capture` (hash: `18ef92ad5`)
 
 ### Stream: PM Scenario Prompt Source
 
-3. [DONE] Добавить Project Manager resolver, который строит capture prompt через существующий `buildWorkflowPromptPack` для `Description`, `Virtual Simulation`, `Diagram Modules` — scope: `src/client/project-manager/services/native-request-capture-scenario-prompt.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/todo-plan.md`; expected commit: `feat: build workflow capture prompts from project manager`.
+3. [DONE] Добавить Project Manager resolver, который строит capture prompt через существующий `buildWorkflowPromptPack` для `Description`, `Virtual Simulation`, `Diagram Modules` — scope: `src/client/project-manager/services/native-request-capture-scenario-prompt.ts`, `src/client/project-manager/services/description-submit-service.ts`, `doc/TODO/Archive/todo-plan-phase1-native-request-capture-workflow-scenarios-1.2.66.md`; expected commit: `feat: build workflow capture prompts from project manager`.
 4. [DONE] Git Commit: `feat: build workflow capture prompts from project manager` (hash: `53019e013`)
 
 5. [DONE] Протянуть `scenarioId/scenarioPrompt` через Project Manager API без роста `api.ts` за лимит 500 строк — scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/settings/native-request-capture-runner.ts`; expected commit: `feat: send workflow scenario capture payloads`.
@@ -72,11 +72,14 @@
 19. [DONE] Синхронизировать SSOT docs под workflow scenario capture — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit: `docs: document workflow scenario native capture`.
 20. [DONE] Git Commit: `docs: document workflow scenario native capture` (hash: `11f745a0f`)
 
-21. [DONE] Обновить Claude docs при изменении provider capture prompt threading — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: close workflow scenario capture docs`.
+21. [DONE] Обновить Claude docs при изменении provider capture prompt threading — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/Archive/todo-plan-phase1-native-request-capture-workflow-scenarios-1.2.66.md`; expected commit: `docs: close workflow scenario capture docs`.
 22. [DONE] Git Commit: `docs: close workflow scenario capture docs` (hash: `6abe9f494`)
 
-23. [DONE] Подготовить release notes для будущей версии `1.2.66` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow scenario capture release`.
+23. [DONE] Подготовить release notes для будущей версии `1.2.66` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/Archive/todo-plan-phase1-native-request-capture-workflow-scenarios-1.2.66.md`; expected commit: `docs: prepare workflow scenario capture release`.
 24. [DONE] Git Commit: `docs: prepare workflow scenario capture release` (hash: `7483ebe1e`)
 
 25. [DONE] Выполнить release build `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем закрыть todo/archive/session — scope: release artifacts, `doc/TODO/Archive/`, `doc/Sessions/`; expected commit: `chore: package workflow scenario capture release`.
-26. [IN_PROGRESS] Git Commit: `chore: package workflow scenario capture release` (hash: TBD)
+26. [DONE] Git Commit: `chore: package workflow scenario capture release` (hash: `1d907d3e9`)
+
+27. [DONE] Closeout: архивировать planning/todo и обновить Docs_Index — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close workflow scenario capture session`.
+28. [IN_PROGRESS] Git Commit: `docs: close workflow scenario capture session` (hash: TBD)

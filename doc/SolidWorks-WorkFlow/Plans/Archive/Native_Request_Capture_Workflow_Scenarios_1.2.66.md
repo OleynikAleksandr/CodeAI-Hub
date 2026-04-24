@@ -1,6 +1,6 @@
 # Native Request Capture Workflow Scenarios 1.2.66
 
-**Status:** Active
+**Status:** Archived (completed in release 1.2.66)
 **Date:** 2026-04-24
 **Owner:** Codex
 **Target release:** 1.2.66
