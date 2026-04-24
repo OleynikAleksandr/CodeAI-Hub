@@ -102,8 +102,8 @@
 ### Stream: SSOT Documentation
 33. [DONE] Обновить SSOT по диагностике provider-native request capture; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; expected commit message: `docs: document provider native request capture`
 34. [DONE] Git Commit: `docs: document provider native request capture` (hash: `4b7490697`)
-35. [TODO] Обновить UI/Settings docs и Docs Index; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`; expected commit message: `docs: update native capture settings documentation`
-36. [TODO] Git Commit: `docs: update native capture settings documentation` (hash: TBD)
+35. [DONE] Обновить UI/Settings docs и Docs Index; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`; expected commit message: `docs: update native capture settings documentation`
+36. [DONE] Git Commit: `docs: update native capture settings documentation` (hash: `6acea76b1`)
 
 ### Stream: Full Verification
 37. [TODO] Прогнать targeted builds: `npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/codex-app-server-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`; scope: provider packages + Core + Webview; expected commit message: `chore: verify native request capture`
