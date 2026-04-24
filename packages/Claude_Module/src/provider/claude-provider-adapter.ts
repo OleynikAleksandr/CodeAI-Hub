@@ -1,5 +1,9 @@
 import crypto from "node:crypto";
 import { SDKAuthManager } from "../auth/sdk-auth-manager";
+import {
+  type ClaudeNativeRequestCaptureOptions,
+  ClaudeNativeRequestCaptureService,
+} from "../diagnostics/claude-native-request-capture-service";
 import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
 import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
@@ -19,6 +23,7 @@ export type SessionListener = (payload: unknown) => void;
 export class ClaudeProviderAdapter {
   private readonly installer: SDKInstaller;
   private readonly sdkManager: ClaudeSDKManager;
+  private readonly nativeRequestCaptureService: ClaudeNativeRequestCaptureService;
   private readonly authManager: SDKAuthManager;
   private readonly reporter?: ModuleReporter;
   private haikuTranslationService: ClaudeHaikuTranslationService | null = null;
@@ -56,6 +61,11 @@ export class ClaudeProviderAdapter {
       workspace: options.workspace,
       reporter,
       enableDebugStreams: options.enableDebugStreams,
+    });
+    this.nativeRequestCaptureService = new ClaudeNativeRequestCaptureService({
+      authManager,
+      installer,
+      workspace: options.workspace,
     });
   }
 
@@ -134,6 +144,12 @@ export class ClaudeProviderAdapter {
   async closeSession(sessionId: string): Promise<void> {
     await this.sdkManager.closeSession(sessionId);
     this.listeners.delete(sessionId);
+  }
+
+  async captureNativeRequest(
+    options: ClaudeNativeRequestCaptureOptions
+  ): Promise<void> {
+    await this.nativeRequestCaptureService.captureNativeRequest(options);
   }
 
   async sendMessage(
