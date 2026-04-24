@@ -52,12 +52,13 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     certificatePath: "/tmp/ca.pem",
     probePrompt: "probe",
     proxyUrl: "http://127.0.0.1:4444",
+    workflowPrompt: "workflow prompt",
     workspacePath: "/workspace",
   });
 
   const queryPayload = queryPayloads[0];
   assert.ok(queryPayload);
-  assert.equal(queryPayload.prompt, "probe");
+  assert.equal(queryPayload.prompt, "workflow prompt");
   assert.equal(queryPayload.options.cwd, "/workspace");
   assert.deepEqual(queryPayload.options.additionalDirectories, ["/workspace"]);
   assert.deepEqual(queryPayload.options.settingSources, []);

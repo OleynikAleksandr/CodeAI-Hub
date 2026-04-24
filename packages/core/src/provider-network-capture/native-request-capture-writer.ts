@@ -20,6 +20,7 @@ interface NativeRequestCaptureWriterOptions {
   readonly clock?: () => Date;
   readonly outputDir: string;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly scenarioMetadata?: unknown;
   readonly selectedModelId?: string | null;
 }
 
@@ -53,6 +54,7 @@ export class NativeRequestCaptureWriter {
   readonly #clock: () => Date;
   readonly #providerId: NativeRequestCaptureProviderId;
   readonly #records: unknown[] = [];
+  readonly #scenarioMetadata: unknown;
   readonly #selectedModelId: string | null;
   readonly #capturedRequests: NativeRequestCaptureRequest[] = [];
 
@@ -65,6 +67,7 @@ export class NativeRequestCaptureWriter {
     this.#captureId = options.captureId;
     this.#clock = options.clock ?? (() => new Date());
     this.#providerId = options.providerId;
+    this.#scenarioMetadata = options.scenarioMetadata ?? null;
     this.#selectedModelId = options.selectedModelId ?? null;
   }
 
@@ -86,6 +89,7 @@ export class NativeRequestCaptureWriter {
       captureId: options.captureId,
       appliedTurnConfig: options.appliedTurnConfig ?? null,
       providerId: options.providerId,
+      scenarioMetadata: options.scenarioMetadata ?? null,
       selectedModelId: options.selectedModelId ?? null,
       sentUpstream: false,
       timestamp: writer.#clock().toISOString(),
@@ -192,6 +196,7 @@ export class NativeRequestCaptureWriter {
       fencedJson({
         selectedModelId: this.#selectedModelId,
         appliedTurnConfig: this.#appliedTurnConfig,
+        scenarioMetadata: this.#scenarioMetadata,
       }),
       "",
       "## Captured Requests",

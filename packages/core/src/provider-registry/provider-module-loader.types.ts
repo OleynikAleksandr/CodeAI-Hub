@@ -107,6 +107,7 @@ export interface ProviderNativeRequestCaptureOptions {
   readonly probePrompt: string;
   readonly proxyUrl: string;
   readonly selectedModelId?: string | null;
+  readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
 }
 

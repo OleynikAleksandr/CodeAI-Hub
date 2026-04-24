@@ -325,6 +325,11 @@ export class RemoteBridgeMessageRouter {
     payload: {
       readonly modelId?: unknown;
       readonly providerId?: unknown;
+      readonly scenarioId?: unknown;
+      readonly scenarioInputPath?: unknown;
+      readonly scenarioLabel?: unknown;
+      readonly scenarioPrompt?: unknown;
+      readonly scenarioTargetPath?: unknown;
       readonly workspacePath?: unknown;
     }
   ): Promise<void> {
@@ -340,6 +345,7 @@ export class RemoteBridgeMessageRouter {
         modelId: null,
         error: "provider_not_supported",
         reason: "provider_not_supported",
+        scenarioId: null,
       });
       return;
     }
@@ -356,6 +362,11 @@ export class RemoteBridgeMessageRouter {
     const result = await this.deps.nativeRequestCaptureFacade.capture({
       modelId,
       providerId,
+      scenarioId: readOptionalString(payload.scenarioId),
+      scenarioInputPath: readOptionalString(payload.scenarioInputPath),
+      scenarioLabel: readOptionalString(payload.scenarioLabel),
+      scenarioPrompt: readOptionalString(payload.scenarioPrompt),
+      scenarioTargetPath: readOptionalString(payload.scenarioTargetPath),
       workspacePath,
     });
     this.sendNativeRequestCaptureResult(clientId, result);
@@ -391,3 +402,6 @@ export class RemoteBridgeMessageRouter {
     });
   }
 }
+
+const readOptionalString = (value: unknown): string | null =>
+  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;

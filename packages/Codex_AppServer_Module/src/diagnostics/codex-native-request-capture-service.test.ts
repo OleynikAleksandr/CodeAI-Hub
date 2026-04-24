@@ -97,6 +97,7 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     certificatePath: "/tmp/fallback-ca.pem",
     probePrompt: "diagnostic probe",
     proxyUrl: "http://127.0.0.1:4567",
+    workflowPrompt: "workflow prompt",
     workspacePath: "/workspace/capture",
   });
 
@@ -130,7 +131,7 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
         input: [
           {
             type: "text",
-            text: "diagnostic probe",
+            text: "workflow prompt",
             text_elements: [],
           },
         ],

@@ -27,6 +27,7 @@ export interface CodexNativeRequestCaptureOptions {
   readonly probePrompt: string;
   readonly proxyUrl: string;
   readonly selectedModelId?: string | null;
+  readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
 }
 
@@ -191,7 +192,7 @@ export class CodexNativeRequestCaptureService {
       input: [
         {
           type: "text",
-          text: options.probePrompt,
+          text: this.#resolveCapturePrompt(options),
           text_elements: [],
         },
       ],
@@ -219,6 +220,10 @@ export class CodexNativeRequestCaptureService {
       this.#workspace.defaultReasoningEffort ??
       null
     );
+  }
+
+  #resolveCapturePrompt(options: CodexNativeRequestCaptureOptions): string {
+    return asString(options.workflowPrompt) ?? options.probePrompt;
   }
 
   #waitForTurnCompletion(process: CodexProcessLike): {

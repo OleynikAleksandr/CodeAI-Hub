@@ -46,18 +46,18 @@
 ### Stream: Settings Scenario UI
 
 7. [DONE] Добавить scenario selector в shared Settings -> General native capture card и состояние active scenario — scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `native-request-capture-state.ts`, `use-settings-state-support.ts`; expected commit: `feat: add native capture workflow scenario selector`.
-8. [IN_PROGRESS] Git Commit: `feat: add native capture workflow scenario selector` (hash: TBD)
+8. [DONE] Git Commit: `feat: add native capture workflow scenario selector` (hash: `b88e6f29c`)
 
 9. [DONE] Протянуть selector в VS Code webview state и Project Manager settings state — scope: `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/ui/src/components/settings/general-settings.tsx`; expected commit: `feat: route native capture scenario from settings`.
-10. [IN_PROGRESS] Git Commit: `feat: route native capture scenario from settings` (hash: TBD)
+10. [DONE] Git Commit: `feat: route native capture scenario from settings` (hash: `b88e6f29c`)
 
 ### Stream: Core And Provider Prompt Threading
 
-11. [TODO] Расширить Core command contract и writer metadata под scenario id/label/prompt source — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; expected commit: `feat: pass workflow prompts into native capture`.
-12. [TODO] Git Commit: `feat: pass workflow prompts into native capture` (hash: TBD)
+11. [DONE] Расширить Core command contract и writer metadata под scenario id/label/prompt source — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; expected commit: `feat: pass workflow prompts into native capture`.
+12. [IN_PROGRESS] Git Commit: `feat: pass workflow prompts into native capture` (hash: TBD)
 
-13. [TODO] Передать workflow prompt в Claude/Codex diagnostics вместо probe fallback — scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`; expected commit: `feat: use workflow prompt in provider capture diagnostics`.
-14. [TODO] Git Commit: `feat: use workflow prompt in provider capture diagnostics` (hash: TBD)
+13. [DONE] Передать workflow prompt в Claude/Codex diagnostics вместо probe fallback — scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`; expected commit: `feat: use workflow prompt in provider capture diagnostics`.
+14. [IN_PROGRESS] Git Commit: `feat: use workflow prompt in provider capture diagnostics` (hash: TBD)
 
 ### Stream: Codex Full Turn Capture
 

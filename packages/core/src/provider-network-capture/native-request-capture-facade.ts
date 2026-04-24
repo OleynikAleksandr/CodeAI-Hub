@@ -89,6 +89,11 @@ interface NativeRequestCaptureFacadeOptions {
 export interface NativeRequestCaptureCommand {
   readonly modelId?: string | null;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly scenarioId?: string | null;
+  readonly scenarioInputPath?: string | null;
+  readonly scenarioLabel?: string | null;
+  readonly scenarioPrompt?: string | null;
+  readonly scenarioTargetPath?: string | null;
   readonly workspacePath: string;
 }
 
@@ -100,6 +105,7 @@ export interface NativeRequestCaptureCommandResult {
   readonly ok: boolean;
   readonly providerId: NativeRequestCaptureProviderId;
   readonly reason: NativeRequestCaptureFailureReason | null;
+  readonly scenarioId: string | null;
 }
 
 type NativeRequestCaptureRunResult = NativeRequestCaptureProxyResult & {
@@ -159,6 +165,7 @@ export class NativeRequestCaptureFacade {
       captureId,
       outputDir: this.#outputDir,
       providerId: command.providerId,
+      scenarioMetadata: buildScenarioMetadata(command),
       selectedModelId: command.modelId ?? null,
     });
     const eventWrites: Promise<void>[] = [];
@@ -204,6 +211,7 @@ export class NativeRequestCaptureFacade {
           jsonlPath: writer.artifacts.jsonlPath,
           error: null,
           reason: null,
+          scenarioId: command.scenarioId ?? null,
         };
       }
       if (!captureResult.completedByProxy) {
@@ -245,6 +253,7 @@ export class NativeRequestCaptureFacade {
         proxyUrl: params.handle.proxyUrl,
         selectedModelId: params.command.modelId ?? null,
         workspacePath: params.command.workspacePath,
+        workflowPrompt: params.command.scenarioPrompt ?? null,
       })
       .then(() => ({ type: "provider_done" as const }))
       .catch((error: unknown) => ({ type: "provider_failed" as const, error }));
@@ -271,7 +280,10 @@ export class NativeRequestCaptureFacade {
   }
 
   #failure(
-    command: Pick<NativeRequestCaptureCommand, "modelId" | "providerId">,
+    command: Pick<
+      NativeRequestCaptureCommand,
+      "modelId" | "providerId" | "scenarioId"
+    >,
     reason: NativeRequestCaptureFailureReason,
     writer: NativeRequestCaptureWriter | null
   ): NativeRequestCaptureCommandResult {
@@ -283,6 +295,7 @@ export class NativeRequestCaptureFacade {
       jsonlPath: writer?.artifacts.jsonlPath ?? null,
       error: reason,
       reason,
+      scenarioId: command.scenarioId ?? null,
     };
   }
 }
@@ -295,3 +308,18 @@ export const isNativeRequestCaptureProviderId = (
 export const createCapturedProxyResult = (
   request: NativeRequestCaptureRequest
 ): NativeRequestCaptureProxyResult => ({ status: "captured", request });
+
+const buildScenarioMetadata = (
+  command: NativeRequestCaptureCommand
+): Record<string, unknown> | null => {
+  if (!command.scenarioId) {
+    return null;
+  }
+  return {
+    id: command.scenarioId,
+    inputPath: command.scenarioInputPath ?? null,
+    label: command.scenarioLabel ?? command.scenarioId,
+    promptLength: command.scenarioPrompt?.length ?? 0,
+    targetPath: command.scenarioTargetPath ?? null,
+  };
+};

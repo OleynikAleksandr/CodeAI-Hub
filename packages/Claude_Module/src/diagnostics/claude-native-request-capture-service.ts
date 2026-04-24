@@ -11,6 +11,7 @@ export interface ClaudeNativeRequestCaptureOptions {
   readonly probePrompt: string;
   readonly proxyUrl: string;
   readonly selectedModelId?: string | null;
+  readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
 }
 
@@ -62,7 +63,7 @@ export class ClaudeNativeRequestCaptureService {
       readonly query: QueryFunction;
     }>();
     const iterator = sdkModule.query({
-      prompt: options.probePrompt,
+      prompt: resolveCapturePrompt(options),
       options: this.buildQueryOptions(options),
     });
     for await (const _message of iterator) {
@@ -128,3 +129,7 @@ const readNonEmptyString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : undefined;
+
+const resolveCapturePrompt = (
+  options: ClaudeNativeRequestCaptureOptions
+): string => readNonEmptyString(options.workflowPrompt) ?? options.probePrompt;
