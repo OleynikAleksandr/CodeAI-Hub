@@ -13,6 +13,7 @@ import type {
   LocalizationCategoryKey,
   LocalizationWorkflowTermsPolicy,
   NativeRequestCaptureProviderId,
+  NativeRequestCaptureModelId,
   NativeRequestCaptureState,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import {
@@ -408,9 +409,12 @@ export const useProjectManagerSettingsState =
     );
 
     const handleNativeRequestCapture = useCallback(
-      (providerId: NativeRequestCaptureProviderId) => {
-        setNativeRequestCapture(startNativeRequestCapture(providerId));
-        api.captureNativeRequest(providerId);
+      (
+        providerId: NativeRequestCaptureProviderId,
+        modelId: NativeRequestCaptureModelId
+      ) => {
+        setNativeRequestCapture(startNativeRequestCapture(providerId, modelId));
+        api.captureNativeRequest(providerId, modelId);
       },
       []
     );
@@ -427,10 +431,19 @@ export const useProjectManagerSettingsState =
           message.type === "settings:native-request-capture" &&
           isNativeRequestCaptureProviderId(message.providerId)
         ) {
-          handleNativeRequestCapture(message.providerId);
+          const defaultModelId =
+            message.providerId === "claude"
+              ? settings.providers.claude.defaultModel
+              : settings.providers.codex.defaultModel;
+          const modelId =
+            typeof message.modelId === "string" &&
+            message.modelId.trim().length > 0
+              ? (message.modelId as NativeRequestCaptureModelId)
+              : defaultModelId;
+          handleNativeRequestCapture(message.providerId, modelId);
         }
       },
-      [handleNativeRequestCapture, transport]
+      [handleNativeRequestCapture, settings, transport]
     );
 
     const handleRestartCore = useCallback(() => {

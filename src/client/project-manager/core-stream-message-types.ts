@@ -3,6 +3,7 @@ import type {
   ProviderId,
   ProviderVersions,
 } from "../ui/src/components/settings/settings-state-model";
+import type { NativeRequestCaptureModelId } from "../ui/src/components/settings/use-settings-state-support";
 import type { WorkspaceProject } from "./types";
 
 export type WorkspaceScopeSyncReason =
@@ -186,11 +187,13 @@ export type SettingsUserGlossaryFilePayload = {
 };
 
 export type SettingsNativeRequestCaptureProviderId = "claude" | "codex";
+export type SettingsNativeRequestCaptureModelId = NativeRequestCaptureModelId;
 
 export type SettingsNativeRequestCaptureResultPayload = {
   readonly error?: string | null;
   readonly jsonlPath?: string | null;
   readonly markdownPath?: string | null;
+  readonly modelId?: SettingsNativeRequestCaptureModelId | null;
   readonly ok: boolean;
   readonly providerId: SettingsNativeRequestCaptureProviderId;
   readonly reason?: string | null;
@@ -264,6 +267,7 @@ export type OutgoingMessage =
   | {
       readonly type: "settings:native-request-capture";
       readonly payload: {
+        readonly modelId?: SettingsNativeRequestCaptureModelId | null;
         readonly providerId: SettingsNativeRequestCaptureProviderId;
       };
     }

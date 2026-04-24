@@ -17,6 +17,7 @@ import type {
   ProjectUpdatePayload,
   SettingsLoadedPayload,
   SettingsLocalizationSyncStatusPayload,
+  SettingsNativeRequestCaptureModelId,
   SettingsNativeRequestCaptureProviderId,
   SettingsProviderTarget,
   SettingsSaveErrorPayload,
@@ -236,11 +237,12 @@ class ProjectManagerApi {
   }
 
   captureNativeRequest(
-    providerId: SettingsNativeRequestCaptureProviderId
+    providerId: SettingsNativeRequestCaptureProviderId,
+    modelId?: SettingsNativeRequestCaptureModelId
   ): void {
     this.send({
       type: "settings:native-request-capture",
-      payload: { providerId },
+      payload: { modelId, providerId },
     });
   }
 
