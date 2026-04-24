@@ -22,6 +22,9 @@ const PROVIDER_RUNTIME_ERROR_RECORD_PATTERN = /provider_runtime_error/;
 const PROVIDER_RUNTIME_ERROR_MESSAGE_PATTERN =
   /provider crashed before network/;
 const PROVIDER_RUNTIME_ERROR_SECTION_PATTERN = /Provider Runtime Error/;
+const PROVIDER_DIAGNOSTIC_CONTEXT_PATTERN = /provider diagnostic context/;
+const PROVIDER_DIAGNOSTIC_CONTEXT_SECTION_PATTERN =
+  /Provider Diagnostic Context/;
 
 const createNoopAdapter = (): ProviderAdapter => ({
   closeSession: () => Promise.resolve(),
@@ -34,11 +37,15 @@ const createNoopAdapter = (): ProviderAdapter => ({
 class BoundSensitiveCaptureAdapter implements ProviderAdapter {
   readonly providerOptions: ProviderNativeRequestCaptureOptions[] = [];
 
-  captureNativeRequest(
+  async captureNativeRequest(
     options: ProviderNativeRequestCaptureOptions
   ): Promise<void> {
     this.providerOptions.push(options);
-    return new Promise((resolve) => {
+    await options.recordDiagnosticContext?.({
+      kind: "facade_test_context",
+      payload: { note: "provider diagnostic context" },
+    });
+    await new Promise<void>((resolve) => {
       setTimeout(resolve, 5);
     });
   }
@@ -164,6 +171,10 @@ test("NativeRequestCaptureFacade starts proxy and passes capture env to provider
   assert.equal(capturedOptions.probePrompt.includes("native request"), true);
   assert.equal(Boolean(result.markdownPath), true);
   assert.equal(Boolean(result.jsonlPath), true);
+  assert.ok(result.markdownPath);
+  const markdown = await fs.readFile(result.markdownPath, "utf8");
+  assert.match(markdown, PROVIDER_DIAGNOSTIC_CONTEXT_SECTION_PATTERN);
+  assert.match(markdown, PROVIDER_DIAGNOSTIC_CONTEXT_PATTERN);
 });
 
 test("NativeRequestCaptureFacade records provider runtime errors in artifacts", async () => {

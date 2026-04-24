@@ -106,6 +106,10 @@ export interface ProviderNativeRequestCaptureOptions {
   readonly certificatePath: string;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly recordDiagnosticContext?: (record: {
+    readonly kind: string;
+    readonly payload: unknown;
+  }) => Promise<void> | void;
   readonly selectedModelId?: string | null;
   readonly workflowPrompt?: string | null;
   readonly workspacePath: string;

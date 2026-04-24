@@ -198,6 +198,7 @@ export class NativeRequestCaptureFacade {
         appliedTurnConfig,
         certificateBundle,
         command,
+        eventWrites,
         handle,
         writer,
       });
@@ -231,6 +232,7 @@ export class NativeRequestCaptureFacade {
       ReturnType<NativeRequestCaptureCertificateStore["prepareHostCredentials"]>
     >;
     readonly command: NativeRequestCaptureCommand;
+    readonly eventWrites: Promise<void>[];
     readonly handle: NativeRequestCaptureProxyHandle;
     readonly writer: NativeRequestCaptureWriter;
   }): Promise<NativeRequestCaptureRunResult> {
@@ -251,6 +253,11 @@ export class NativeRequestCaptureFacade {
         appliedTurnConfig: params.appliedTurnConfig,
         probePrompt: DIAGNOSTIC_PROBE_PROMPT,
         proxyUrl: params.handle.proxyUrl,
+        recordDiagnosticContext: (record) => {
+          params.eventWrites.push(
+            params.writer.recordProviderDiagnosticContext(record)
+          );
+        },
         selectedModelId: params.command.modelId ?? null,
         workspacePath: params.command.workspacePath,
         workflowPrompt: params.command.scenarioPrompt ?? null,

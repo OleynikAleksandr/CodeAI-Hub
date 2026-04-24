@@ -24,9 +24,9 @@
 ### Stream: Core Capture Artifacts
 3. [DONE] Split native capture Markdown formatting out of the near-limit writer (scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, `doc/TODO/todo-plan.md`; commit: `refactor: split native capture markdown formatting`)
 4. [DONE] Git Commit: `refactor: split native capture markdown formatting` (hash: `047a07981`)
-5. [IN_PROGRESS] Add provider diagnostic context writer persistence (scope: `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`; commit: `feat: record provider diagnostic context in native capture`)
-6. [TODO] Git Commit: `feat: record provider diagnostic context in native capture` (hash: TBD)
-7. [TODO] Wire diagnostic context callback through the capture facade (scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `feat: wire native capture diagnostic context callback`)
+5. [DONE] Add provider diagnostic context writer persistence (scope: `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`; commit: `feat: record provider diagnostic context in native capture`)
+6. [DONE] Git Commit: `feat: record provider diagnostic context in native capture` (hash: `837ffcbc7`)
+7. [IN_PROGRESS] Wire diagnostic context callback through the capture facade (scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `feat: wire native capture diagnostic context callback`)
 8. [TODO] Git Commit: `feat: wire native capture diagnostic context callback` (hash: TBD)
 
 ### Stream: Codex App Server Diagnostics
