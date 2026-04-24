@@ -47,7 +47,7 @@
 5. [DONE] Добавить writer/redaction слой для `.jsonl` и `.md`; scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-redaction.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.test.ts`; expected commit message: `feat: persist native request capture artifacts`
 6. [DONE] Git Commit: `feat: persist native request capture artifacts` (hash: `7ed9e708b`)
 7. [DONE] Добавить certificate store/preflight: local CA, host cert generation, env hints, trust failure codes; scope: `packages/core/src/provider-network-capture/native-request-capture-certificates.ts`, `packages/core/src/provider-network-capture/native-request-capture-preflight.ts`, `packages/core/src/provider-network-capture/native-request-capture-certificates.test.ts`; expected commit message: `feat: prepare diagnostic capture certificates`
-8. [TODO] Git Commit: `feat: prepare diagnostic capture certificates` (hash: TBD)
+8. [DONE] Git Commit: `feat: prepare diagnostic capture certificates` (hash: `bf9e56834`)
 
 ### Stream: Core Bridge Command
 9. [TODO] Расширить provider adapter contract и Core facade для capture command; scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; expected commit message: `feat: add native request capture core command`
