@@ -42,6 +42,13 @@
 - Provider-driven Claude turns run in SDK isolation mode: filesystem setting sources stay empty, so Claude does not auto-load user/project/local settings or any `CLAUDE.md` memory files from the active workspace, its parent directories, or the real user home.
 - Tool/file access may still point at the active workspace through `cwd` and `additionalDirectories`, but that must not re-enable filesystem `CLAUDE.md` discovery; global user settings and global `~/.claude/CLAUDE.md` must never leak into provider-home sessions.
 
+## Native request capture diagnostics
+- Settings → General → `Capture Claude Native Request` calls `ClaudeProviderAdapter.captureNativeRequest(...)`, implemented by `src/diagnostics/claude-native-request-capture-service.ts`.
+- The diagnostic path reuses `SDKInstaller` + `SDKAuthManager`, performs provider-home subscription/auth bootstrap, then runs one SDK `query(...)` with the Core-provided proxy/certificate environment and diagnostic probe prompt.
+- Capture query options intentionally keep `settingSources: []`, `persistSession: false`, `thinking: { type: "disabled" }`, `permissionMode: "bypassPermissions"`, `allowDangerouslySkipPermissions: true`, `cwd` / `additionalDirectories` = selected workspace, and `projectPath` under the CodeAI Hub provider project slug. This preserves normal SDK isolation while forcing the outbound provider request through the local capture proxy.
+- Successful capture means the Core proxy saw `api.anthropic.com` `/v1/messages` and locally aborted that request; the diagnostic service may observe the resulting synthetic network failure, but upstream delivery is intentionally blocked.
+- Artifacts are Core-owned and written to `~/.codeai-hub/logs/native-request-capture/` as `.jsonl` plus readable `.md`; provider-home Claude JSONL remains the canonical provider-owned audit layer for normal turns.
+
 ## Auth cluster
 - `src/auth/sdk-auth-manager.ts` — façade/coordinator for Claude auth bootstrap, provider-home preflight и auth runtime checks.
 - `src/auth/claude-auth-home-bridge.ts` — provider-home/macOS Keychain bridge, legacy `.claude.json` link/copy flow и migration of legacy `~/.claude/.credentials.json`.

@@ -61,6 +61,9 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - CodeAI Hub transport log для active app-server линии: `~/.codeai-hub/logs/codex/sdk-codex-app-server-*.jsonl`
 - Session-local normalized transcript artifact по-прежнему живёт в `~/.codeai-hub/sessions/.../codexCli/*-description.jsonl`
 - Provider-native artifacts (`CODEX_HOME` history / rollout JSONL и прочие provider-home traces) остаются отдельным диагностическим слоем и не заменяются transport log-ом
+- Settings → General → `Capture Codex Native Request` calls `CodexProviderAdapter.captureNativeRequest(...)`, implemented by `src/diagnostics/codex-native-request-capture-service.ts`. It never mutates the long-lived normal app-server child; instead it starts an isolated temporary `CodexAppServerProcess` with `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` and certificate env injected for the diagnostic run only.
+- The temporary diagnostic process performs the normal app-server `initialize` handshake, sends `thread/start` with `persistExtendedHistory: false`, then sends one `turn/start` with the diagnostic probe, current default model, current default reasoning effort, and `summary: "none"`. It waits for `turn/completed` / `error` or its own timeout, then always stops the temporary process.
+- Successful capture means the Core proxy saw `chatgpt.com` `/backend-api/codex/responses` and locally aborted that request; artifacts are Core-owned under `~/.codeai-hub/logs/native-request-capture/` and complement, but do not replace, `~/.codeai-hub/logs/codex/` app-server transport logs or provider-home Codex artifacts.
 
 ## Инварианты
 - Lifecycle обязателен: `turn_started` → `turn_completed | turn_failed`.
