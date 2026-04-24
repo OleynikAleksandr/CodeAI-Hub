@@ -47,6 +47,7 @@ import {
   type LocalizationCategoryKey,
   type LocalizationSyncStatusState,
   type LocalizationWorkflowTermsPolicy,
+  type NativeRequestCaptureModelId,
   type NativeRequestCaptureState,
   normalizeLoadedLocalizationSettings,
   startNativeRequestCapture,
@@ -441,10 +442,11 @@ export const useSettingsState = (): UseSettingsStateResult => {
   }, []);
 
   const handleNativeRequestCapture = useCallback(
-    (providerId: "claude" | "codex") => {
-      setNativeRequestCapture(startNativeRequestCapture(providerId));
+    (providerId: "claude" | "codex", modelId: NativeRequestCaptureModelId) => {
+      setNativeRequestCapture(startNativeRequestCapture(providerId, modelId));
       vscode.postMessage({
         type: "settings:native-request-capture",
+        modelId,
         providerId,
       });
     },

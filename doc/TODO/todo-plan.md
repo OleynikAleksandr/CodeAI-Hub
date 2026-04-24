@@ -37,9 +37,9 @@
 ### Stream: Settings UI Model Selection
 
 3. [DONE] Добавить provider/model capture UI — scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings-view.tsx`; commit: `feat: select native capture model in settings`.
-4. [IN_PROGRESS] Git Commit: `feat: select native capture model in settings` (hash: TBD)
-5. [TODO] Протянуть modelId через browser settings state — scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`; commit: `feat: send native capture model from webview`.
-6. [TODO] Git Commit: `feat: send native capture model from webview` (hash: TBD)
+4. [DONE] Git Commit: `feat: select native capture model in settings` (hash: `226e5265a`)
+5. [DONE] Протянуть modelId через browser settings state — scope: `src/client/ui/src/components/settings/native-request-capture-state.ts`, `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`; commit: `feat: send native capture model from webview`.
+6. [IN_PROGRESS] Git Commit: `feat: send native capture model from webview` (hash: TBD)
 7. [TODO] Протянуть modelId через Project Manager transport — scope: `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat: send native capture model from project manager`.
 8. [TODO] Git Commit: `feat: send native capture model from project manager` (hash: TBD)
 

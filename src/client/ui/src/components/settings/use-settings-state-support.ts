@@ -8,6 +8,11 @@ import type {
 } from "../../../../../types/gemini-model-registry";
 import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import type {
+  NativeRequestCaptureModelId,
+  NativeRequestCaptureProviderId,
+  NativeRequestCaptureState,
+} from "./native-request-capture-state";
+import type {
   CodexModelId,
   CodexReasoningLevel,
   GeneralResponseMode,
@@ -16,6 +21,18 @@ import type {
   RawSettingsSnapshot,
   Settings,
 } from "./settings-state-model";
+
+export type {
+  NativeRequestCaptureModelId,
+  NativeRequestCaptureProviderId,
+  NativeRequestCaptureState,
+  NativeRequestCaptureStatus,
+} from "./native-request-capture-state";
+export {
+  completeNativeRequestCapture,
+  createNativeRequestCaptureState,
+  startNativeRequestCapture,
+} from "./native-request-capture-state";
 
 export interface VersionsState {
   readonly data: ProviderVersions | null;
@@ -39,22 +56,6 @@ export interface CoreControlState {
 export interface LocalizationSyncStatusState {
   readonly busy: boolean;
   readonly message: string | null;
-}
-
-export type NativeRequestCaptureProviderId = "claude" | "codex";
-export type NativeRequestCaptureStatus =
-  | "idle"
-  | "running"
-  | "success"
-  | "error";
-
-export interface NativeRequestCaptureState {
-  readonly activeProvider: NativeRequestCaptureProviderId | null;
-  readonly error: string | null;
-  readonly jsonlPath: string | null;
-  readonly markdownPath: string | null;
-  readonly providerId: NativeRequestCaptureProviderId | null;
-  readonly status: NativeRequestCaptureStatus;
 }
 
 export type LocalizationCategoryKey =
@@ -380,41 +381,6 @@ export const updateLocalizationGlossaryEnabledSelection = (
   },
 });
 
-export const createNativeRequestCaptureState =
-  (): NativeRequestCaptureState => ({
-    activeProvider: null,
-    error: null,
-    jsonlPath: null,
-    markdownPath: null,
-    providerId: null,
-    status: "idle",
-  });
-
-export const startNativeRequestCapture = (
-  providerId: NativeRequestCaptureProviderId
-): NativeRequestCaptureState => ({
-  activeProvider: providerId,
-  error: null,
-  jsonlPath: null,
-  markdownPath: null,
-  providerId,
-  status: "running",
-});
-
-export const completeNativeRequestCapture = (
-  result: Extract<
-    IncomingMessage,
-    { readonly type: "settings:native-request-capture:result" }
-  >
-): NativeRequestCaptureState => ({
-  activeProvider: null,
-  error: result.ok ? null : (result.error ?? result.reason ?? "capture_failed"),
-  jsonlPath: result.jsonlPath ?? null,
-  markdownPath: result.markdownPath ?? null,
-  providerId: result.providerId,
-  status: result.ok ? "success" : "error",
-});
-
 export interface UseSettingsStateResult {
   readonly coreControl: CoreControlState;
   readonly handleClaudeContinuityRemainingPercentThresholdChange: (
@@ -458,7 +424,8 @@ export interface UseSettingsStateResult {
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
   readonly handleNativeRequestCapture: (
-    providerId: NativeRequestCaptureProviderId
+    providerId: NativeRequestCaptureProviderId,
+    modelId: NativeRequestCaptureModelId
   ) => void;
   readonly handleProviderAutoUpdateChange: (
     provider: ProviderId,
