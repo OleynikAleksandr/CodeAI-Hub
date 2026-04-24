@@ -92,6 +92,10 @@ export interface NativeRequestCaptureCommandResult {
   readonly reason: NativeRequestCaptureFailureReason | null;
 }
 
+type NativeRequestCaptureRunResult = NativeRequestCaptureProxyResult & {
+  readonly completedByProxy: boolean;
+};
+
 export class NativeRequestCaptureFacade {
   readonly #captureIdFactory: () => string;
   readonly #certificateStore: CertificateStoreLike;
@@ -119,8 +123,7 @@ export class NativeRequestCaptureFacade {
   ): Promise<NativeRequestCaptureCommandResult> {
     const runtimeProviderId = PROVIDER_RUNTIME_IDS[command.providerId];
     const adapter = this.#providerRegistry.getAdapter(runtimeProviderId);
-    const captureNativeRequest = adapter?.captureNativeRequest;
-    if (!captureNativeRequest) {
+    if (!adapter?.captureNativeRequest) {
       return this.#failure(command.providerId, "provider_not_supported", null);
     }
 
@@ -165,10 +168,11 @@ export class NativeRequestCaptureFacade {
     try {
       const captureResult = await this.#runProviderAndProxy({
         captureId,
+        adapter,
         certificateBundle,
         command,
-        captureNativeRequest,
         handle,
+        writer,
       });
       await Promise.all(eventWrites);
       if (captureResult.status === "captured") {
@@ -181,7 +185,9 @@ export class NativeRequestCaptureFacade {
           reason: null,
         };
       }
-      await writer.complete(captureResult.status, captureResult.reason);
+      if (!captureResult.completedByProxy) {
+        await writer.complete(captureResult.status, captureResult.reason);
+      }
       return this.#failure(command.providerId, captureResult.reason, writer);
     } finally {
       await handle.stop();
@@ -189,18 +195,26 @@ export class NativeRequestCaptureFacade {
   }
 
   async #runProviderAndProxy(params: {
+    readonly adapter: ProviderAdapter;
     readonly captureId: string;
     readonly certificateBundle: Awaited<
       ReturnType<NativeRequestCaptureCertificateStore["prepareHostCredentials"]>
     >;
     readonly command: NativeRequestCaptureCommand;
-    readonly captureNativeRequest: NonNullable<
-      ProviderAdapter["captureNativeRequest"]
-    >;
     readonly handle: NativeRequestCaptureProxyHandle;
-  }): Promise<NativeRequestCaptureProxyResult> {
-    const providerRun = params
-      .captureNativeRequest({
+    readonly writer: NativeRequestCaptureWriter;
+  }): Promise<NativeRequestCaptureRunResult> {
+    const captureNativeRequest = params.adapter.captureNativeRequest;
+    if (!captureNativeRequest) {
+      return {
+        completedByProxy: false,
+        status: "failed",
+        reason: "provider_not_supported",
+      };
+    }
+
+    const providerRun = captureNativeRequest
+      .call(params.adapter, {
         captureId: params.captureId,
         certificateEnv: params.certificateBundle.envHints,
         certificatePath: params.certificateBundle.certificatePath,
@@ -209,18 +223,26 @@ export class NativeRequestCaptureFacade {
         workspacePath: params.command.workspacePath,
       })
       .then(() => ({ type: "provider_done" as const }))
-      .catch(() => ({ type: "provider_failed" as const }));
+      .catch((error: unknown) => ({ type: "provider_failed" as const, error }));
     const proxyRun = params.handle
       .waitForCapture()
       .then((result) => ({ type: "proxy_done" as const, result }));
     const first = await Promise.race([providerRun, proxyRun]);
     if (first.type === "proxy_done") {
-      return first.result;
+      return { ...first.result, completedByProxy: true };
+    }
+    if (first.type === "provider_failed") {
+      await params.writer.recordProviderRuntimeError(first.error);
+      return {
+        completedByProxy: false,
+        status: "failed",
+        reason: "runtime_failed",
+      };
     }
     return {
+      completedByProxy: false,
       status: "failed",
-      reason:
-        first.type === "provider_failed" ? "runtime_failed" : "target_not_seen",
+      reason: "target_not_seen",
     };
   }
 

@@ -111,6 +111,8 @@ export class NativeRequestCaptureProxy {
   }
 
   async stop(): Promise<void> {
+    const pending = this.#consumePendingCapture();
+    pending?.resolve({ status: "failed", reason: "runtime_failed" });
     const server = this.#server;
     this.#server = null;
     for (const socket of this.#sockets) {

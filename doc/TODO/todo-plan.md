@@ -30,12 +30,12 @@
 ### Stream: Hotfix Planning
 
 1. [DONE] Создать hotfix planning-документ и активный `todo-plan.md` — scope: `doc/SolidWorks-WorkFlow/Plans/Native_Request_Capture_Runtime_Hotfix_1.2.63.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan native request capture runtime hotfix`.
-2. [IN_PROGRESS] Git Commit: `docs: plan native request capture runtime hotfix` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan native request capture runtime hotfix` (hash: `689fa4ce5`)
 
 ### Stream: Core Runtime Fix
 
-3. [TODO] Исправить Core capture runtime: bound adapter call, provider runtime error artifact, proxy pending timeout cleanup — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`; commit: `fix: stabilize native request capture runtime`.
-4. [TODO] Git Commit: `fix: stabilize native request capture runtime` (hash: TBD)
+3. [DONE] Исправить Core capture runtime: bound adapter call, provider runtime error artifact, proxy pending timeout cleanup — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts`, `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`; commit: `fix: stabilize native request capture runtime`.
+4. [IN_PROGRESS] Git Commit: `fix: stabilize native request capture runtime` (hash: TBD)
 5. [TODO] Добавить regression test для class-style provider adapter и provider runtime diagnostics — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`; commit: `test: cover native request capture runtime diagnostics`.
 6. [TODO] Git Commit: `test: cover native request capture runtime diagnostics` (hash: TBD)
 7. [TODO] Выполнить targeted verification — scope: `packages/core`; command: `npm run build --workspace @codeai-hub/core`; commit: `chore: verify native request capture hotfix`.

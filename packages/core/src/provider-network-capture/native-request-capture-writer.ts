@@ -29,6 +29,17 @@ interface CaptureSectionRecord {
   readonly type: "section_extract";
 }
 
+interface ProviderRuntimeErrorRecord {
+  readonly captureId: string;
+  readonly message: string;
+  readonly name: string | null;
+  readonly providerId: NativeRequestCaptureProviderId;
+  readonly sentUpstream: false;
+  readonly stack: string | null;
+  readonly timestamp: string;
+  readonly type: "provider_runtime_error";
+}
+
 export class NativeRequestCaptureWriter {
   readonly #artifacts: NativeRequestCaptureArtifacts;
   readonly #captureId: string;
@@ -86,6 +97,17 @@ export class NativeRequestCaptureWriter {
     await this.appendRecord(event);
   }
 
+  async recordProviderRuntimeError(error: unknown): Promise<void> {
+    await this.appendRecord(
+      normalizeProviderRuntimeError(error, {
+        captureId: this.#captureId,
+        providerId: this.#providerId,
+        timestamp: this.#clock().toISOString(),
+      })
+    );
+    await this.writeMarkdown();
+  }
+
   async writeCapturedRequest(
     request: NativeRequestCaptureRequest
   ): Promise<void> {
@@ -134,6 +156,7 @@ export class NativeRequestCaptureWriter {
     const request = this.#capturedRequest;
     const title = `${capitalizeProvider(this.#providerId)} Native Request Capture`;
     const bodySections = request ? extractSections(request.body) : [];
+    const providerRuntimeError = findProviderRuntimeError(this.#records);
     const markdown = [
       `# ${title}`,
       "",
@@ -171,6 +194,10 @@ export class NativeRequestCaptureWriter {
       "## Extracted Messages",
       "",
       fencedJson(findSection(bodySections, "messages")?.payload ?? null),
+      "",
+      "## Provider Runtime Error",
+      "",
+      fencedJson(providerRuntimeError),
       "",
       "## Notes",
       "",
@@ -231,7 +258,16 @@ const buildSummary = (
   records: readonly unknown[]
 ): string => {
   const recordCount = records.length;
+  const providerRuntimeError = findProviderRuntimeError(records);
   if (!request) {
+    if (providerRuntimeError) {
+      const errorName = providerRuntimeError.name ?? "Error";
+      return [
+        "No matching provider model request captured yet.",
+        `Provider runtime error: ${errorName}: ${providerRuntimeError.message}.`,
+        `JSONL records: ${recordCount}.`,
+      ].join("\n");
+    }
     return `No matching provider model request captured yet. JSONL records: ${recordCount}.`;
   }
   return [
@@ -250,3 +286,64 @@ const capitalizeProvider = (
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const findProviderRuntimeError = (
+  records: readonly unknown[]
+): ProviderRuntimeErrorRecord | null =>
+  records.find(isProviderRuntimeErrorRecord) ?? null;
+
+const isProviderRuntimeErrorRecord = (
+  record: unknown
+): record is ProviderRuntimeErrorRecord =>
+  isRecord(record) &&
+  record.type === "provider_runtime_error" &&
+  typeof record.message === "string";
+
+const normalizeProviderRuntimeError = (
+  error: unknown,
+  metadata: {
+    readonly captureId: string;
+    readonly providerId: NativeRequestCaptureProviderId;
+    readonly timestamp: string;
+  }
+): ProviderRuntimeErrorRecord => {
+  if (error instanceof Error) {
+    return {
+      ...metadata,
+      message: error.message || "Provider runtime failed",
+      name: error.name || null,
+      sentUpstream: false,
+      stack: error.stack ?? null,
+      type: "provider_runtime_error",
+    };
+  }
+  if (isRecord(error)) {
+    return {
+      ...metadata,
+      message: readString(error.message) ?? stringifyErrorRecord(error),
+      name: readString(error.name),
+      sentUpstream: false,
+      stack: readString(error.stack),
+      type: "provider_runtime_error",
+    };
+  }
+  return {
+    ...metadata,
+    message: String(error),
+    name: null,
+    sentUpstream: false,
+    stack: null,
+    type: "provider_runtime_error",
+  };
+};
+
+const readString = (value: unknown): string | null =>
+  typeof value === "string" && value.length > 0 ? value : null;
+
+const stringifyErrorRecord = (value: Record<string, unknown>): string => {
+  try {
+    return JSON.stringify(value) ?? "Provider runtime failed";
+  } catch {
+    return "Provider runtime failed";
+  }
+};
