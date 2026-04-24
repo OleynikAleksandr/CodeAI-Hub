@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.68] - 2026-04-24
+### Changed
+- **Claude diagnostic capture включает Claude Code preset system prompt.** `ClaudeNativeRequestCaptureService` теперь передает SDK option `systemPrompt: { type: "preset", preset: "claude_code" }` вместе с существующим `settingSources: []`.
+- **Capture path остается изолированным экспериментом.** Изменение не трогает tools, permissions, sandbox, model selection, thinking policy или normal workflow send path.
+
+### Tests
+- **Targeted checks закрывают новый SDK option.** Пройдены `npm run build --workspace @codeai-hub/translation`, `npm run build --workspace @codeai-hub/claude-module` и direct node test для `claude-native-request-capture-service`.
+
 ## [1.2.67] - 2026-04-24
 ### Added
 - **Codex capture artifacts получили `Provider Diagnostic Context`.** JSONL/Markdown теперь сохраняют provider-supplied diagnostic records отдельно от native request body.

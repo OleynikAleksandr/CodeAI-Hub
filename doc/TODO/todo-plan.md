@@ -36,3 +36,9 @@
 8. [TODO] Git Commit: `docs: record claude preset capture evidence` (hash: TBD)
 9. [TODO] Сравнить новый capture с baseline `2026-04-24T12-22-42-190Z-claude-native-request.md` и зафиксировать только high-level выводы, section names/counts/hashes без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: summarize claude preset capture comparison`
 10. [TODO] Git Commit: `docs: summarize claude preset capture comparison` (hash: TBD)
+
+### Stream: Test release package
+11. [IN_PROGRESS] Подготовить release docs для будущей версии `1.2.68` перед `build-all.sh` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude preset capture release notes`
+12. [TODO] Git Commit: `docs: prepare claude preset capture release notes` (hash: TBD)
+13. [TODO] Собрать release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude preset capture test release`
+14. [TODO] Git Commit: `chore: build claude preset capture test release` (hash: TBD)
