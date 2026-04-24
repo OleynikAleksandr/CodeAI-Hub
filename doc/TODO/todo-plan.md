@@ -92,8 +92,8 @@
 30. [DONE] Git Commit: `feat: localize native request capture settings copy` (hash: `0b6f50f5a`)
 
 ### Stream: UI Build Gate
-31. [TODO] Прогнать `npm run build:webview` и `npm run typecheck:webview`, исправить UI issues; scope: `src/client/ui`, `src/client/project-manager`; expected commit message: `chore: stabilize native capture UI build`
-32. [TODO] Git Commit: `chore: stabilize native capture UI build` (hash: TBD)
+31. [DONE] Прогнать `npm run build:webview` и `npm run typecheck:webview`, исправить UI issues; scope: `src/client/ui`, `src/client/project-manager`; expected commit message: `chore: stabilize native capture UI build`
+32. [DONE] Git Commit: `chore: stabilize native capture UI build` (hash: `c00795b4a`)
 
 ---
 
