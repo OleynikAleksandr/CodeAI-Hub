@@ -1,8 +1,8 @@
 # Provider Native Request Capture — Architecture Plan
 
 **Date:** 2026-04-24
-**Status:** Implemented / pending release closeout
-**Target release:** next release after `1.2.61`
+**Status:** Archived / released in `1.2.62`
+**Target release:** `1.2.62`
 
 ---
 
@@ -16,7 +16,7 @@ As of 2026-04-24 the planned feature has been implemented in the active executio
 - Codex implements `captureNativeRequest` through an isolated temporary App Server process, so the long-lived app-server environment is not mutated.
 - Project Manager Settings -> General renders the bottom `Native Request Capture` card with separate Claude/Codex buttons and result artifact paths.
 - Localization copy lives in the source localization assets under `assets/localization/source/en/` and is compiled through the normal localization build.
-- The remaining closeout work is targeted verification, release docs, `build-all`, final VSIX packaging, and archiving this planning document.
+- Release closeout completed with targeted verification, `build-all`, `build-release.sh --use-current-version`, VSIX packaging, and archive handoff.
 
 Canonical SSOT after implementation:
 

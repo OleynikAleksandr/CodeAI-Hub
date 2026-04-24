@@ -1,14 +1,14 @@
 # План разработки (Development TODO Plan)
 
-**Execution Scope Status:** ACTIVE
+**Execution Scope Status:** COMPLETED
 **Scope:** Provider Native Request Capture
-**Planning source:** `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`
-**Target release:** next release after `1.2.61`
+**Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_Native_Request_Capture_Architecture.md`
+**Target release:** `1.2.62`
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_Native_Request_Capture_Architecture.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_Native_Request_Capture_Architecture.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
@@ -118,6 +118,6 @@
 44. [DONE] Git Commit: `chore: package native request capture release` (hash: `79b6242e7`)
 
 ### Stream: Closeout
-45. [TODO] Заархивировать completed TODO и planning-doc после release, обновить Docs Index/links; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive native request capture plan`
-46. [TODO] Git Commit: `docs: archive native request capture plan` (hash: TBD)
-47. [TODO] Создать новый session report с release artifacts и итоговыми commit hashes; scope: `doc/Sessions/SessionXXX.md`; expected commit message: not required, session report remains final uncommitted closeout artifact unless user asks otherwise
+45. [DONE] Заархивировать completed TODO и planning-doc после release, обновить Docs Index/links; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive native request capture plan`
+46. [DONE] Git Commit: `docs: archive native request capture plan` (hash: TBD)
+47. [DONE] Создать новый session report с release artifacts и итоговыми commit hashes; scope: `doc/Sessions/SessionXXX.md`; expected commit message: not required, session report remains final uncommitted closeout artifact unless user asks otherwise
