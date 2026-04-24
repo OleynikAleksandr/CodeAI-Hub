@@ -246,9 +246,7 @@ export class NativeRequestCaptureWriter {
   }
 
   private getPrimaryRequest(): NativeRequestCaptureRequest | null {
-    return this.#capturedRequests.length > 0
-      ? (this.#capturedRequests.at(-1) ?? null)
-      : null;
+    return selectPrimaryRequest(this.#providerId, this.#capturedRequests);
   }
 }
 
@@ -366,6 +364,38 @@ const capitalizeProvider = (
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const selectPrimaryRequest = (
+  providerId: NativeRequestCaptureProviderId,
+  requests: readonly NativeRequestCaptureRequest[]
+): NativeRequestCaptureRequest | null => {
+  if (requests.length === 0) {
+    return null;
+  }
+  if (providerId !== "codex") {
+    return requests.at(-1) ?? null;
+  }
+  for (let index = requests.length - 1; index >= 0; index -= 1) {
+    const request = requests[index];
+    if (request && isCodexFullTurnRequest(request)) {
+      return request;
+    }
+  }
+  return requests.at(-1) ?? null;
+};
+
+const isCodexFullTurnRequest = (
+  request: NativeRequestCaptureRequest
+): boolean => {
+  const body = request.body;
+  if (!isRecord(body)) {
+    return false;
+  }
+  if (Array.isArray(body.input)) {
+    return body.input.length > 0;
+  }
+  return body.generate !== false;
+};
 
 const findProviderRuntimeError = (
   records: readonly unknown[]

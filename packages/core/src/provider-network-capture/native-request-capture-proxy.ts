@@ -14,8 +14,8 @@ import type {
 import {
   buildWebSocketUpgradeResponse,
   isWebSocketUpgradeRequest,
-  parseWebSocketClientFrame,
 } from "./native-request-capture-websocket";
+import { captureWebSocketClientFrames } from "./native-request-capture-websocket-session";
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const HTTP_HEADER_SEPARATOR = "\r\n\r\n";
@@ -237,31 +237,24 @@ export class NativeRequestCaptureProxy {
       return;
     }
 
-    let buffer = Buffer.alloc(0);
     tlsSocket.write(response);
-    tlsSocket.on("data", (chunk: Buffer) => {
-      buffer = Buffer.concat([buffer, chunk]);
-      const frame = parseWebSocketClientFrame(buffer);
-      if (!frame) {
-        return;
-      }
-      const capturedRequest: NativeRequestCaptureRequest = {
-        ...request,
-        body: frame.body,
-        bodyText: frame.bodyText,
-        captureId: this.#options.captureId,
-        providerId: this.#options.providerId,
-        target,
-        timestamp: new Date().toISOString(),
-      };
-      this.#emit({
-        type: "request_captured",
-        captureId: this.#options.captureId,
-        providerId: this.#options.providerId,
-        request: capturedRequest,
-      });
-      tlsSocket.end();
-      this.#completeCaptured(capturedRequest);
+    captureWebSocketClientFrames({
+      captureId: this.#options.captureId,
+      providerId: this.#options.providerId,
+      request,
+      target,
+      tlsSocket,
+      onCaptured: (capturedRequest) => {
+        this.#emit({
+          type: "request_captured",
+          captureId: this.#options.captureId,
+          providerId: this.#options.providerId,
+          request: capturedRequest,
+        });
+      },
+      onComplete: (capturedRequest) => {
+        this.#completeCaptured(capturedRequest);
+      },
     });
   }
 

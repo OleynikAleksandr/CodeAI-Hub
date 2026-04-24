@@ -54,18 +54,18 @@
 ### Stream: Core And Provider Prompt Threading
 
 11. [DONE] Расширить Core command contract и writer metadata под scenario id/label/prompt source — scope: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/provider-network-capture/native-request-capture-facade.ts`; expected commit: `feat: pass workflow prompts into native capture`.
-12. [IN_PROGRESS] Git Commit: `feat: pass workflow prompts into native capture` (hash: TBD)
+12. [DONE] Git Commit: `feat: pass workflow prompts into native capture` (hash: `6e38f845a`)
 
 13. [DONE] Передать workflow prompt в Claude/Codex diagnostics вместо probe fallback — scope: `packages/core/src/provider-registry/provider-module-loader.types.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`; expected commit: `feat: use workflow prompt in provider capture diagnostics`.
-14. [IN_PROGRESS] Git Commit: `feat: use workflow prompt in provider capture diagnostics` (hash: TBD)
+14. [DONE] Git Commit: `feat: use workflow prompt in provider capture diagnostics` (hash: `6e38f845a`)
 
 ### Stream: Codex Full Turn Capture
 
-15. [TODO] Обновить WebSocket capture: писать несколько client frames и завершать на useful Codex turn frame — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-websocket.ts`, tests; expected commit: `fix: capture codex full turn websocket frame`.
-16. [TODO] Git Commit: `fix: capture codex full turn websocket frame` (hash: TBD)
+15. [DONE] Обновить WebSocket capture: писать несколько client frames и завершать на useful Codex turn frame — scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-websocket-session.ts`, tests; expected commit: `fix: capture codex full turn websocket frame`.
+16. [IN_PROGRESS] Git Commit: `fix: capture codex full turn websocket frame` (hash: TBD)
 
-17. [TODO] Обновить writer primary-request selection для Codex: выбирать non-empty input/full turn frame — scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, tests; expected commit: `fix: prefer codex full turn in capture markdown`.
-18. [TODO] Git Commit: `fix: prefer codex full turn in capture markdown` (hash: TBD)
+17. [DONE] Обновить writer primary-request selection для Codex: выбирать non-empty input/full turn frame — scope: `packages/core/src/provider-network-capture/native-request-capture-writer.ts`, tests; expected commit: `fix: prefer codex full turn in capture markdown`.
+18. [IN_PROGRESS] Git Commit: `fix: prefer codex full turn in capture markdown` (hash: TBD)
 
 ### Stream: Docs And Release
 

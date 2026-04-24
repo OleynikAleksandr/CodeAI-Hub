@@ -4,6 +4,7 @@ import {
   buildWebSocketUpgradeResponse,
   parseWebSocketClientFrame,
 } from "./native-request-capture-websocket";
+import { shouldCompleteWebSocketCapture } from "./native-request-capture-websocket-session";
 
 const SAMPLE_WEBSOCKET_KEY = "dGhlIHNhbXBsZSBub25jZQ==";
 const SAMPLE_WEBSOCKET_ACCEPT = "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=";
@@ -38,6 +39,25 @@ test("parseWebSocketClientFrame unmasks JSON text frames", () => {
   assert.deepEqual(parsed.body, body);
   assert.equal(parsed.bytesConsumed, frame.length);
   assert.equal(parsed.opcode, 1);
+});
+
+test("shouldCompleteWebSocketCapture waits for Codex non-empty turn input", () => {
+  assert.equal(
+    shouldCompleteWebSocketCapture("codex", {
+      generate: false,
+      input: [],
+      instructions: "native instructions",
+    }),
+    false
+  );
+  assert.equal(
+    shouldCompleteWebSocketCapture("codex", {
+      generate: true,
+      input: [{ type: "text", text: "workflow prompt" }],
+    }),
+    true
+  );
+  assert.equal(shouldCompleteWebSocketCapture("claude", { input: [] }), true);
 });
 
 const createMaskedTextFrame = (bodyText: string): Buffer => {
