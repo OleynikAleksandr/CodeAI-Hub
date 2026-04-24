@@ -83,7 +83,19 @@ export interface ProviderModelSyncCapabilities {
   readonly syncsLabelFromAppliedConfig: boolean;
 }
 
+export interface ProviderNativeRequestCaptureOptions {
+  readonly captureId: string;
+  readonly certificateEnv: Readonly<Record<string, string>>;
+  readonly certificatePath: string;
+  readonly probePrompt: string;
+  readonly proxyUrl: string;
+  readonly workspacePath: string;
+}
+
 export interface ProviderAdapter {
+  captureNativeRequest?(
+    options: ProviderNativeRequestCaptureOptions
+  ): Promise<void>;
   closeSession(sessionId: string): Promise<void>;
   createSession(workspacePath?: string): Promise<string>;
   initialize(): Promise<void>;
