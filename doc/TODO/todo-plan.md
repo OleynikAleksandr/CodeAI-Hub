@@ -82,8 +82,8 @@
 ### Stream: UI Command State
 23. [DONE] Добавить UI state/handler для `settings:native-request-capture`; scope: `src/client/ui/src/components/settings/use-settings-state-support.ts`, `src/client/ui/src/components/settings/use-settings-state.ts`, `src/client/ui/src/components/settings/settings-state-model.ts`; expected commit message: `feat: add native request capture settings state`
 24. [DONE] Git Commit: `feat: add native request capture settings state` (hash: `d1c7e6d28`)
-25. [TODO] Добавить bridge result handling и host message wiring; scope: `src/client/ui/src/components/settings-view.tsx`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat: wire native request capture settings events`
-26. [TODO] Git Commit: `feat: wire native request capture settings events` (hash: TBD)
+25. [DONE] Добавить bridge result handling и host message wiring; scope: `src/client/ui/src/components/settings-view.tsx`, `src/client/project-manager/components/settings/use-project-manager-settings-state.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat: wire native request capture settings events`
+26. [DONE] Git Commit: `feat: wire native request capture settings events` (hash: `0a38f4c10`)
 
 ### Stream: General Settings Card
 27. [TODO] Создать нижнюю card в General Settings с двумя кнопками и status/path rendering; scope: `src/client/ui/src/components/settings/native-request-capture-card.tsx`, `src/client/ui/src/components/settings/general-settings.tsx`, `src/client/ui/src/components/settings/style-tokens.ts`; expected commit message: `feat: add native request capture buttons`
