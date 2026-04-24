@@ -106,8 +106,8 @@
 36. [DONE] Git Commit: `docs: update native capture settings documentation` (hash: `6acea76b1`)
 
 ### Stream: Full Verification
-37. [TODO] Прогнать targeted builds: `npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/codex-app-server-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`; scope: provider packages + Core + Webview; expected commit message: `chore: verify native request capture`
-38. [TODO] Git Commit: `chore: verify native request capture` (hash: TBD)
+37. [DONE] Прогнать targeted builds: `npm run build --workspace @codeai-hub/claude-module`, `npm run build --workspace @codeai-hub/codex-app-server-module`, `npm run build --workspace @codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`; scope: provider packages + Core + Webview; expected commit message: `chore: verify native request capture`
+38. [DONE] Git Commit: `chore: verify native request capture` (hash: `9c35fe4ef`)
 
 ### Stream: Release Build
 39. [TODO] Подготовить release docs на будущую версию: обновить `README.md` Current Release и `CHANGELOG.md` entry до следующей версии после `1.2.61`; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare native request capture release notes`
