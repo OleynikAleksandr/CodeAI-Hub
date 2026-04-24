@@ -1,8 +1,9 @@
 # Claude Agent SDK: Анализ возможностей и приоритеты для CodeAI Hub
 
 **Date:** 2026-04-19
+**Updated:** 2026-04-24
 **Status:** Research / Capabilities analysis (исследовательский документ)
-**Source type:** Обзор публичной документации Anthropic (code.claude.com, github.com/anthropics)
+**Source type:** Обзор публичной документации Anthropic (code.claude.com, github.com/anthropics), локальная проверка типов/опций SDK и текущей интеграции CodeAI Hub.
 **Scope:** Исчерпывающий разбор возможностей `@anthropic-ai/claude-agent-sdk` — библиотеки, через которую в CodeAI Hub работает провайдер Claude. Фиксирует, что мы уже используем и что остаётся на столе.
 
 ---
@@ -211,7 +212,7 @@ Agent SDK стримит на выход типизированный Union из
 
 - Нет обработки `tool_use` блоков (никаких UI-панелей инструментов).
 - Нет MCP-поддержки (`mcpServers` не передаётся).
-- Нет хуков (ни одного из 18 событий).
+- Нет хуков (ни одного hook event не подключено; текущий SDK содержит расширенный набор событий).
 - Нет сабагентов.
 - Нет custom tools через `tool()` / `createSdkMcpServer()`.
 - Нет plugins.
@@ -233,11 +234,50 @@ Agent SDK стримит на выход типизированный Union из
 
 Фактически мы используем Agent SDK как **«чистый LLM с extended thinking»** — без агентного цикла. Это рациональный стартовый минимум, но оставляет большой запас.
 
+### 4.6. Что уже сделано для изоляции стартовых инструкций
+
+Важный нюанс для текущего обсуждения workflow-агентов: CodeAI Hub уже не запускает Claude как «полный Claude Code со всеми файловыми настройками пользователя».
+
+Сейчас в обычных Claude-сессиях мы передаём `settingSources: []`. Это означает:
+
+- SDK не подгружает `~/.claude/settings.json`, `.claude/settings.json`, `.claude/settings.local.json`.
+- SDK не подгружает `CLAUDE.md` / `.claude/CLAUDE.md`, потому что для этого нужен source `user` или `project`.
+- SDK не подгружает filesystem skills, slash commands, hooks и MCP из пользовательских/project settings.
+
+Это хорошая база для наших специализированных workflow-агентов: внешний пользовательский memory-файл не может случайно спорить с первым запросом шага.
+
+Но мы **пока не используем** `systemPrompt` в обычных Claude workflow-сессиях. То есть сейчас у нас есть изоляция от filesystem-инструкций, но нет provider-level per-step system prompt. Для translation-only сервиса `systemPrompt` уже используется, значит механизм технически проверен в проекте.
+
+Практический вывод: следующий шаг для Claude — не skills и не filesystem discovery, а явный `systemPrompt` для каждого workflow step плюс текущий `settingSources: []`.
+
 ---
 
 ## 5. Полный каталог дополнительных возможностей
 
 Ниже — сгруппированные возможности Claude Agent SDK, которые мы пока не используем. Формат такой же, как в документе по Codex App Server: «зачем это», конкретные API, «как выглядело бы в UI».
+
+### 5.0. Управление `systemPrompt` и динамическими инструкциями
+
+**Зачем это нужно простым языком**: наши Claude workflow-агенты не должны быть универсальными помощниками. Если агент создан для шага Virtual Simulation, его стартовая рамка должна быть именно про Virtual Simulation, а не про весь CodeAI Hub сразу.
+
+Что даёт Agent SDK:
+
+- **`systemPrompt: string`** — полностью custom system prompt для сессии. Это самый прямой способ задать короткую provider-level рамку для конкретного workflow step.
+- **`systemPrompt: string[]`** — композиция нескольких system-prompt фрагментов. Удобно разделить общий harness-блок и step-specific блок.
+- **`systemPrompt: { type: "preset", preset: "claude_code" }`** — включить полный Claude Code preset. Для наших узких workflow-агентов это обычно слишком широкий режим.
+- **`append`** у preset-варианта — добавить свой блок к Claude Code system prompt.
+- **`excludeDynamicSections`** у preset-варианта — убрать динамические части preset-а, если нужен более стабильный prompt.
+- **`settingSources: []`** — оставить filesystem discovery выключенным. Это важно: иначе `CLAUDE.md`, skills, commands и hooks из проекта смогут добавить нерелевантный контекст.
+- **`UserPromptSubmit` / `SessionStart` hooks** — могут добавить `additionalContext`, но это append-механизм. Он полезен для runtime context, но не заменяет явный `systemPrompt`.
+
+Рекомендуемая модель для CodeAI Hub:
+
+1. Ввести общий `WorkflowInstructionProfile`.
+2. Для Claude маппить его в `systemPrompt` + `settingSources: []`.
+3. Подробный template конкретного шага из `~/.codeai-hub/templates/...` оставлять первым user prompt, потому что именно это рабочее требование агента.
+4. Не использовать skills как основной механизм выбора поведения: наш workflow уже создаёт отдельного агента под конкретную задачу.
+
+Ограничение: если мы включаем built-in tools, custom `systemPrompt` не должен случайно вырезать важные tool/safety правила. Для tool-enabled режимов нужно либо использовать `preset: "claude_code"` + `append`, либо включить в наш custom prompt минимальный harness-пакет с правилами инструментов, permission flow и output expectations.
 
 ### 5.1. Встроенные инструменты (Built-in tools)
 
@@ -283,29 +323,34 @@ Agent SDK стримит на выход типизированный Union из
 
 Runtime-смена режима: `query.setPermissionMode(mode)`.
 
-### 5.3. Хуки (Hooks) — 18 событий жизненного цикла
+### 5.3. Хуки (Hooks) — расширенный набор событий жизненного цикла
 
 **Зачем это нужно простым языком**: Хук — это наш код, который Agent SDK вызовет в строго определённый момент: «сейчас агент хочет что-то сделать» или «что-то уже произошло». Хук может заблокировать, изменить ввод, добавить контекст, инициировать подтверждение, записать в audit-log.
 
-**Полный список событий**:
+**Актуальный набор событий в SDK шире старых 18 пунктов**:
 
 - **`PreToolUse`** — до вызова инструмента. Может заблокировать (`deny`), изменить ввод (`updatedInput`), авто-одобрить (`allow`), спросить у пользователя (`ask`). UI: идеален для custom approval карточек.
 - **`PostToolUse`** — после успешного выполнения инструмента. Может добавить контекст в разговор через `additionalContext`. UI: audit log, пост-обработка результата.
 - **`PostToolUseFailure`** — после неуспешного выполнения. UI: отловить ошибки инструментов, специальная обработка.
-- **`UserPromptSubmit`** — когда пользователь отправил промпт. Можно инжектировать доп.контекст в запрос.
-- **`SessionStart`** (только TS) — инициализация сессии. Логирование, телеметрия.
-- **`SessionEnd`** (только TS) — завершение сессии. Очистка ресурсов.
-- **`Stop`** — агент прекратил работу. Сохранение состояния.
-- **`SubagentStart`** — сабагент запустился. Трекинг параллельных задач.
-- **`SubagentStop`** — сабагент завершился. Агрегация результатов.
-- **`PreCompact`** — перед компактацией контекста. Можно заархивировать полный транскрипт.
-- **`PermissionRequest`** — диалог разрешения был бы показан. Custom permission handling.
+- **`PostToolBatch`** — после пачки tool calls. UI: агрегированная телеметрия и audit-log.
 - **`Notification`** — статусные сообщения (`permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`). UI: можно пересылать в Slack/PagerDuty.
-- **`Setup`** (только TS) — задачи инициализации и обслуживания сессии.
-- **`TeammateIdle`** (только TS) — коллега-агент простаивает. Переназначение работы.
-- **`TaskCompleted`** (только TS) — фоновая задача завершена. Агрегация.
-- **`ConfigChange`** (только TS) — изменился конфиг. Подгрузка настроек без перезапуска.
-- **`WorktreeCreate`** / **`WorktreeRemove`** (только TS) — создан/удалён git worktree.
+- **`UserPromptSubmit`** — когда пользователь отправил промпт. Можно инжектировать доп.контекст в запрос.
+- **`UserPromptExpansion`** — расширение пользовательского prompt перед исполнением.
+- **`SessionStart`** — инициализация сессии. Логирование, телеметрия.
+- **`SessionEnd`** — завершение сессии. Очистка ресурсов.
+- **`Stop`** / **`StopFailure`** — агент прекратил работу или stop-hook завершился ошибкой.
+- **`SubagentStart`** / **`SubagentStop`** — жизненный цикл сабагента.
+- **`PreCompact`** / **`PostCompact`** — до и после компактации контекста.
+- **`PermissionRequest`** / **`PermissionDenied`** — запрос и отказ разрешения.
+- **`Setup`** — задачи инициализации и обслуживания сессии.
+- **`TeammateIdle`** — коллега-агент простаивает.
+- **`TaskCreated`** / **`TaskCompleted`** — жизненный цикл background task.
+- **`Elicitation`** / **`ElicitationResult`** — интерактивное уточнение и результат.
+- **`ConfigChange`** — изменился конфиг. Подгрузка настроек без перезапуска.
+- **`WorktreeCreate`** / **`WorktreeRemove`** — создан/удалён git worktree.
+- **`InstructionsLoaded`** — инструкции были загружены в сессию.
+- **`CwdChanged`** — изменился рабочий каталог.
+- **`FileChanged`** — изменение файла, видимое hook pipeline.
 
 **Фильтры (matchers)**: `matcher: "Write|Edit"` или `matcher: "^mcp__"` — регулярное выражение, по которому хук будет срабатывать только для нужных инструментов. Без matcher'а срабатывает на все события типа.
 
@@ -651,6 +696,16 @@ UI: индикатор «не авторизовано / авторизация 
 
 Ниже — рекомендованный порядок внедрения сверх текущего минимума. Сортировка по соотношению «видимая польза / цена внедрения» с учётом того, что UI-слой у нас единый для всех провайдеров.
 
+### Приоритет 0. Динамические инструкции и изоляция prompt stack
+
+Это главный новый вывод по Claude после сверки с текущей интеграцией.
+
+0. **`WorkflowInstructionProfile` для Claude** — единая provider-neutral структура, которая раскладывается в `systemPrompt`, `settingSources` и первый user prompt.
+1. **Передача `systemPrompt` в обычные workflow-сессии** — короткая provider-level рамка конкретного шага, без попытки заменить ею подробный template.
+2. **Сохранить `settingSources: []` по умолчанию** — не подгружать `CLAUDE.md`, `.claude/skills`, slash commands, hooks и MCP из filesystem без явного opt-in.
+3. **Оставить первый user prompt главным рабочим заданием** — template шага из `~/.codeai-hub/templates/...` остаётся основным требованием к агенту.
+4. **Диагностировать фактический prompt stack** — в debug-режиме логировать, какой `systemPrompt`, `settingSources` и первый user prompt ушли в SDK.
+
 ### Приоритет 1. Переход из «чистого LLM» в «агентный режим»
 
 1. **Обработка `tool_use` блоков** — научиться отрисовывать в UI вызов инструмента (имя, аргументы, результат).
@@ -719,7 +774,9 @@ UI: индикатор «не авторизовано / авторизация 
 ### Что НЕ стоит делать в ближайшее время
 
 - **Не стоит привязываться к Bedrock/Vertex/Azure** авторизации — это специфично для Claude и может ломать multi-provider UX.
-- **Не стоит брать полный `settingSources`** без опт-ина — пользователь не ожидает, что мы читаем его `~/.claude/`.
+- **Не стоит брать полный `settingSources`** без опт-ина — пользователь не ожидает, что мы читаем его `~/.claude/` или project `CLAUDE.md`.
+- **Не стоит использовать skills как основной способ stage-specific workflow** — skills нужны универсальному агенту для выбора навыка, а CodeAI Hub уже создаёт отдельного агента под конкретный workflow step.
+- **Не стоит включать custom `systemPrompt` для tool-enabled режима без harness-пакета** — иначе можно потерять важные правила инструментов, permissions и ожидаемого формата вывода.
 - **Не стоит использовать `allowDangerouslySkipPermissions` в интерактивных сессиях** — только в translation-only/CI-режимах.
 - **Не стоит делать custom MCP OAuth-flow** без явного запроса — пусть пользователь сам проходит OAuth в своём браузере.
 - **Не гнаться за экспериментальными хуками** (`TeammateIdle`, `Setup`, и т.п.) — они Claude-specific и могут не иметь аналогов у других провайдеров.
@@ -747,7 +804,7 @@ UI: индикатор «не авторизовано / авторизация 
 - Slash commands: https://code.claude.com/docs/en/agent-sdk/slash-commands
 - Plugins: https://code.claude.com/docs/en/agent-sdk/plugins
 - Skills: https://code.claude.com/docs/en/agent-sdk/skills
-- Modifying system prompts (memory): https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts
+- Modifying system prompts (`systemPrompt`, `CLAUDE.md`, `settingSources`): https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts
 - Migration guide (Claude Code SDK → Claude Agent SDK): https://code.claude.com/docs/en/agent-sdk/migration-guide
 - User input / approvals / AskUserQuestion: https://code.claude.com/docs/en/agent-sdk/user-input
 - Quickstart: https://code.claude.com/docs/en/agent-sdk/quickstart
@@ -786,4 +843,4 @@ UI: индикатор «не авторизовано / авторизация 
 
 ## 8. Итог одной строкой
 
-Claude Agent SDK — это не «клиент API», а полноценная агентная библиотека, эквивалентная по функциональности тому, чем является Codex App Server для экосистемы OpenAI: готовый agent loop с 10+ встроенными инструментами, 4 типами MCP-серверов, 18 хуками жизненного цикла, сабагентами, управлением сессиями, чекпоинтингом файлов, hot-reload MCP, structured output, extended thinking с runtime-управлением, bug budgeting по деньгам и по шагам. В CodeAI Hub мы используем **менее 10%** этого surface — фактически, только streaming текста и thinking. Оставшиеся 90% — это тот резерв, из которого имеет смысл выбирать только те фичи, у которых есть аналог в Codex App Server, чтобы сохранить единый UX-контракт поверх всех провайдеров. Список пересечений вынесен в отдельный документ [`CrossProvider_Common_Capabilities.md`](./CrossProvider_Common_Capabilities.md).
+Claude Agent SDK — это не «клиент API», а полноценная агентная библиотека, эквивалентная по функциональности тому, чем является Codex App Server для экосистемы OpenAI: готовый agent loop с 10+ встроенными инструментами, 4 типами MCP-серверов, расширенным hook pipeline, сабагентами, управлением сессиями, чекпоинтингом файлов, hot-reload MCP, structured output, extended thinking с runtime-управлением, budget-ограничителями по деньгам и по шагам. В CodeAI Hub мы используем **менее 10%** этого surface — фактически, только streaming текста/thinking, structured output и изоляцию `settingSources: []`. Главный ближайший выигрыш — добавить `systemPrompt` для конкретного workflow step, сохранив подробный template как первый user prompt. Остальные 90% — это резерв, из которого имеет смысл выбирать только те фичи, у которых есть аналог в Codex App Server, чтобы сохранить единый UX-контракт поверх всех провайдеров. Список пересечений вынесен в отдельный документ [`CrossProvider_Common_Capabilities.md`](./CrossProvider_Common_Capabilities.md).

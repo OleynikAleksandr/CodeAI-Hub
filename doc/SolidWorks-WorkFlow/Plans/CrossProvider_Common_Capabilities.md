@@ -1,13 +1,79 @@
 # Пересечение возможностей Claude Agent SDK и Codex App Server: что безопасно внедрять в CodeAI Hub
 
 **Date:** 2026-04-19
+**Updated:** 2026-04-24
 **Status:** Research / Decision-making document (документ для принятия решений)
-**Source type:** Синтез двух предыдущих аналитических документов
+**Source type:** Синтез двух provider-документов, актуализированный после полного перехода Codex на App Server и проверки механизмов стартовых инструкций.
 **Scope:** Выделить **только те возможности, которые одинаково доступны** через Codex App Server и через Claude Agent SDK — чтобы в едином UI-слое CodeAI Hub можно было внедрять именно их, без риска расхождения UX между провайдерами.
 
 **Связанные документы:**
-- [Codex SDK vs Codex App Server — анализ возможностей](./Codex_SDK_vs_AppServer_Capabilities_Analysis.md)
+- [Codex App Server — анализ возможностей](./Codex_AppServer_Capabilities_Analysis.md)
 - [Claude Agent SDK — анализ возможностей](./Claude_Agent_SDK_Capabilities_Analysis.md)
+
+---
+
+## Планы внедрения общих возможностей
+
+Этот блок — практический shortlist того, что мы пока не используем или используем частично, но можем внедрять как общий механизм для Claude и Codex без ломки единого UX.
+
+### План 0. Динамические инструкции workflow-агентов
+
+Это самый важный общий следующий шаг.
+
+Нужно ввести provider-neutral `WorkflowInstructionProfile` для каждого workflow step (`Description`, `Virtual Simulation`, `Diagram Modules`, далее development tree). Один profile должен содержать:
+
+- короткий общий harness-блок CodeAI Hub;
+- step-specific developer/system рамку;
+- список разрешённых источников контекста;
+- флаги отключения нерелевантного provider-noise;
+- путь к первому user template из `~/.codeai-hub/templates/...`.
+
+Mapping по провайдерам:
+
+- **Claude**: `systemPrompt` + `settingSources: []`; подробный template шага остаётся первым user prompt.
+- **Codex**: `thread/start.baseInstructions` / `thread/resume.baseInstructions`, `thread/start.developerInstructions` / `thread/resume.developerInstructions`; при необходимости config/profile flags (`project_doc_max_bytes = 0`, `[skills] include_instructions = false`, отключение нерелевантных app/env blocks). Подробный template шага также остаётся первым user prompt.
+
+Skills не являются основным механизмом stage-specific поведения в нашем workflow. Они полезны универсальному агенту, который сам выбирает навык, но CodeAI Hub уже создаёт отдельного агента под конкретный шаг.
+
+Для tool-enabled режимов нельзя просто вырезать provider harness. В profile должен быть минимальный общий блок про инструменты, permissions, sandbox и ожидаемый формат вывода; иначе мы улучшим релевантность инструкций ценой потери правил исполнения.
+
+### План 1. Tool/action UI
+
+Следующий видимый выигрыш: единый слой для tool calls, command output, file changes и approvals.
+
+- Codex: `commandExecution`, `fileChange`, `permissions/requestApproval`, `turn/diff/updated`.
+- Claude: `tool_use`, `SDKToolProgressMessage`, `SDKLocalCommandOutputMessage`, `PreToolUse` / `PermissionRequest`.
+
+Цель: один UI-контракт `AgentActionItem` для терминала, diff-viewer, approval cards и audit log.
+
+### План 2. Жизненный цикл сессий
+
+Общий слой сессий можно расширять без provider lock-in:
+
+- список и чтение истории;
+- fork;
+- rollback/rewind;
+- compact;
+- rename;
+- metadata/usage/errors.
+
+Это должно лечь в общий Session Sidebar, а provider-specific механика останется внутри адаптеров.
+
+### План 3. MCP и custom tools
+
+Оба провайдера поддерживают MCP и client-side/custom tools, но API разные. Правильная абстракция — не «пробросить сырой MCP», а завести общий registry инструментов CodeAI Hub и provider-specific adapters.
+
+### План 4. Usage, errors, model discovery
+
+Нужно перестать хардкодить поведение в UI:
+
+- модели брать из runtime discovery, где это возможно;
+- usage/rate limits приводить к общим категориям;
+- provider-specific errors маппить в единый набор (`ContextWindow`, `UsageLimit`, `Unauthorized`, `Network`, `Sandbox`, `Execution`, `Other`).
+
+### План 5. Отложенное
+
+Skills, plugins/marketplaces, review mode, realtime/voice, subagents, background tasks и provider hook internals не должны быть первым этапом. Их можно использовать под капотом или вынести в provider-specific advanced settings, но не как базовый единый UX.
 
 ---
 
@@ -50,6 +116,16 @@
 ## 2. Сильное пересечение — что безопасно внедрять прямо сейчас
 
 Это базис «общий знаменатель», на который мы можем строить единый UX.
+
+### 2.0. Scoped стартовые инструкции workflow-агентов
+
+**Описание простым языком**: каждый workflow step получает не «общего ассистента», а отдельного агента с релевантной стартовой рамкой. Первый user prompt остаётся подробным заданием шага, а provider-level инструкции только убирают конфликтующий шум и фиксируют границы роли.
+
+- Codex App Server: `thread/start.baseInstructions`, `thread/resume.baseInstructions`, `thread/start.developerInstructions`, `thread/resume.developerInstructions`; дополнительно config/profile flags вроде `project_doc_max_bytes = 0`, `[skills] include_instructions = false`, `include_environment_context`, `include_permissions_instructions`, `include_apps_instructions`.
+- Claude Agent SDK: `systemPrompt` + `settingSources: []`; опционально `systemPrompt` preset/append, но для узких workflow-агентов предпочтительнее короткий custom prompt.
+- Совместимость: **сильное пересечение по цели, разные API**.
+- Внедрять: **первым**. Это не UI-фича, но она влияет на качество всех workflow-шагов и снижает риск конфликта между широкими системными инструкциями провайдера и конкретным первым запросом пользователя.
+- Ограничение: при включённых инструментах profile обязан сохранить минимальные tool/sandbox/permission/output правила, а не только step-specific задачу.
 
 ### 2.1. Базовый жизненный цикл сессии
 
@@ -256,7 +332,7 @@
 - Codex App Server: `skills/list`, `skills/config/write`, skill item в turn input.
 - Claude Agent SDK: Agent Skills через `settingSources` (`.claude/skills/*/SKILL.md`) или programmatic.
 - Совместимость: **концептуально**. Разные места хранения (Codex — через API, Claude — через filesystem), но UX «подключить скилл к сессии» один.
-- Внедрять: список скиллов в настройках сессии с чек-боксами.
+- Внедрять: **не как основной workflow-механизм**. Для наших специализированных шагов скиллы не нужны как router поведения, потому что агент уже создаётся под конкретную задачу. Их можно оставить как опциональное расширение сессии: список скиллов в advanced-настройках с чек-боксами.
 
 ---
 
@@ -352,7 +428,7 @@
 
 Возможности, которых нет у Codex App Server:
 
-- **18 хуков жизненного цикла** (PreToolUse, PostToolUse, SessionStart/End, SubagentStart/Stop, PreCompact, Notification, Setup, TeammateIdle, TaskCompleted, ConfigChange, WorktreeCreate/Remove и др.) — Codex построен на уведомлениях сервера, не на колбэках клиента. Ближайший аналог — `item/*` уведомления, но они информационные, не блокирующие.
+- **Claude hook pipeline как SDK callback-система** — у Claude есть расширенный набор hooks с blocking/modify/additionalContext semantics внутри SDK. У Codex тоже появились lifecycle hooks (`SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PermissionRequest`, `PostToolUse`, `Stop`), но это filesystem/config hooks App Server/CLI, а не тот же programmatic callback API. В единый UX не нужно выставлять «hooks» как пользовательскую фичу; использовать их стоит только внутри provider adapter.
 - **Субагенты с собственным контекстом** (`agents: AgentDefinition`, built-in `Agent` tool, `parent_tool_use_id`) — у Codex есть `collaborationMode` (концептуально похоже, но разная модель).
 - **File checkpointing** как отдельная фича (`enableFileCheckpointing` + `rewindFiles` с возможностью `dryRun`) — у Codex есть `thread/rollback`, но он откатывает turn'ы, не файлы.
 - **`maxBudgetUsd`** — остановка по стоимости в долларах. У Codex нет аналога.
@@ -397,6 +473,15 @@
 ## 7. Сводная дорожная карта для единого UX
 
 Ниже — приоритизированный список того, что **имеет смысл внедрять в CodeAI Hub** с учётом того, что это работает и у Claude, и у Codex (то есть UX будет согласованным).
+
+### Уровень 0. Динамические инструкции workflow
+
+0. **`WorkflowInstructionProfile`** — единый объект для описания стартовой рамки workflow step.
+1. **Provider mapping**:
+   - Claude: `systemPrompt` + `settingSources: []`.
+   - Codex: `baseInstructions` + `developerInstructions` + config toggles.
+2. **Prompt diagnostics** — debug-лог фактического instruction stack для каждого provider/step.
+3. **No skills routing by default** — skills остаются advanced extension, а не механизм выбора поведения workflow-агента.
 
 ### Уровень 1. Уже внедрено
 
@@ -449,10 +534,10 @@
 - Realtime / voice — только Codex.
 - Windows Sandbox setup — только Codex.
 - External agent migration — только Codex.
-- Hooks как UI-surface — только Claude, инфраструктурно.
+- Provider hook internals как UI-surface — не берём. У обоих провайдеров есть hook-like механизмы, но они разные по API и должны оставаться внутри adapter layer.
 - ChatGPT OAuth — только Codex, API запрещён для Anthropic.
 - Bedrock/Vertex/Azure auth — только Claude.
-- Memory (`CLAUDE.md`) / Agent Skills из filesystem — только Claude, через filesystem discovery.
+- Memory (`CLAUDE.md`) / Agent Skills из filesystem — Claude-specific discovery; для нашего workflow по умолчанию выключено через `settingSources: []`.
 - Turn steer / thread/shellCommand / inject_items — только Codex.
 - File checkpointing (как отдельная фича с dry-run) — только Claude.
 
@@ -464,7 +549,7 @@
 
 ### 8.1. Внутренние документы
 
-- [Codex SDK vs Codex App Server — анализ возможностей](./Codex_SDK_vs_AppServer_Capabilities_Analysis.md)
+- [Codex App Server — анализ возможностей](./Codex_AppServer_Capabilities_Analysis.md)
 - [Claude Agent SDK — анализ возможностей](./Claude_Agent_SDK_Capabilities_Analysis.md)
 
 ### 8.2. Официальные источники
@@ -482,8 +567,10 @@
 
 **OpenAI / Codex App Server:**
 - App Server docs: https://developers.openai.com/codex/app-server
+- Config reference: https://developers.openai.com/codex/config-reference
+- AGENTS.md instructions: https://developers.openai.com/codex/guides/agents-md
+- Hooks: https://developers.openai.com/codex/hooks
 - App Server README (GitHub): https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md
-- SDK docs: https://developers.openai.com/codex/sdk
 - Anthropic Engineering blog «Building agents with the Claude Agent SDK»: https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk
 - OpenAI Engineering blog «Unlocking the Codex harness»: https://openai.com/index/unlocking-the-codex-harness/
 
@@ -496,4 +583,4 @@
 
 ## 9. Итог одной строкой
 
-Claude Agent SDK и Codex App Server имеют очень широкое **концептуальное пересечение**: оба дают полноценный agentic-цикл с MCP, approvals, tool streaming, session management, structured output, extended thinking, usage tracking, fork/rollback, compact и web-search. Ровно это пересечение и стоит выставлять в единый UI-слой CodeAI Hub — здесь мы гарантируем, что переключение провайдера не ломает пользователю привычный продукт. Claude-специфичное (хуки, сабагенты, file checkpointing, maxBudgetUsd) и Codex-специфичное (review mode, voice, ChatGPT OAuth, Windows sandbox, steer) в UI не берём — оно либо остаётся внутренней оптимизацией провайдерского слоя, либо откладывается до полноценного аналога у всех активных провайдеров (включая Gemini).
+Claude Agent SDK и Codex App Server имеют очень широкое **концептуальное пересечение**: оба дают управляемые стартовые инструкции, полноценный agentic-цикл с MCP, approvals, tool streaming, session management, structured output, extended thinking, usage tracking, fork/rollback, compact и web-search. Первый общий шаг после перехода Codex на App Server — внедрить `WorkflowInstructionProfile`, который для Claude раскладывается в `systemPrompt` + `settingSources: []`, а для Codex — в `baseInstructions` + `developerInstructions` + config toggles. После этого в единый UI стоит выводить только пересечение возможностей, чтобы переключение провайдера не ломало пользователю привычный продукт. Provider-specific surface остаётся внутренней оптимизацией adapter layer или откладывается до полноценного аналога у всех активных провайдеров (включая Gemini).

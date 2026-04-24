@@ -1,9 +1,10 @@
-# Codex SDK vs Codex App Server: Анализ возможностей и приоритеты для CodeAI Hub
+# Codex App Server: анализ возможностей и приоритеты для CodeAI Hub
 
 **Date:** 2026-04-19
+**Updated:** 2026-04-24
 **Status:** Research / Capabilities analysis (исследовательский документ)
-**Source type:** Обзор публичной документации OpenAI
-**Scope:** Сравнение двух технологий OpenAI для интеграции с Codex-агентом и идентификация возможностей, которые мы можем дополнительно получить, переключившись полностью на Codex App Server.
+**Source type:** Обзор публичной документации OpenAI, сгенерированной схемы `codex app-server generate-ts`, open-source исходников `openai/codex` и локального runtime CodeAI Hub.
+**Scope:** Анализ Codex App Server как текущей и единственной интеграционной поверхности CodeAI Hub для Codex-провайдера. TypeScript SDK упоминается только как исторический baseline, от которого мы уже ушли.
 
 ---
 
@@ -11,13 +12,13 @@
 
 Документ написан простым языком и рассчитан не только на разработчика. Технические имена методов протокола оставлены как есть (например, `thread/fork`) — они позволяют быстро находить соответствующие разделы в документации OpenAI. Рядом с каждым таким именем идёт объяснение «что это по сути», «зачем нужно» и «как выглядело бы для пользователя CodeAI Hub».
 
-Документ намеренно не описывает нашу текущую кодовую базу. Всё сравнение сделано по официальной публичной документации OpenAI и открытым источникам (все ссылки в разделе 7).
+Документ сочетает публичную документацию OpenAI, фактическую схему локально установленного `codex app-server` и точечную проверку нашей текущей интеграции. Это важно: публичная страница App Server не перечисляет все поля протокола, поэтому для рабочих решений нужно сверяться с `codex app-server generate-ts` под конкретную установленную версию.
 
 ---
 
-## 1. Введение: две технологии OpenAI для интеграции с Codex
+## 1. Введение: текущая интеграционная поверхность Codex
 
-У OpenAI есть коммерческий продукт — коде-агент Codex (модель + утилита `codex`). Сам агент один и тот же, но у него исторически сложилось **несколько разных «дверей», через которые к нему можно подключиться** из внешнего приложения:
+У OpenAI есть коммерческий продукт — коде-агент Codex (модель + утилита `codex`). Сам агент один и тот же, но у него есть **несколько разных «дверей», через которые к нему можно подключиться** из внешнего приложения:
 
 1. **Codex CLI** — консольная команда `codex` для ручного запуска из терминала.
 2. **Codex TypeScript SDK** — npm-пакет `@openai/codex-sdk`, который позволяет запускать Codex из Node.js-кода.
@@ -25,7 +26,7 @@
 4. **Codex MCP Server** — альтернативная «дверь» для клиентов, использующих стандарт Model Context Protocol.
 5. **Codex Cloud / Web** — облачный режим (нас сейчас не касается).
 
-Нас интересуют **две** из них: TypeScript SDK и App Server. Ядро CodeAI Hub раньше работало через SDK, теперь переключено на App Server. Этот документ разбирает — что именно мы выигрываем от такого переключения.
+Для CodeAI Hub актуальна только одна из них: **Codex App Server**. Ядро раньше работало через TypeScript SDK, но этот путь закрыт как основной: мы полностью перешли на App Server и дальше рассматриваем SDK только как историческое сравнение, чтобы понимать, какие product-level возможности стали доступны.
 
 ### 1.1. Что говорит сама OpenAI
 
@@ -35,7 +36,7 @@
 
 Перевод простым языком: **App Server — это тот способ интеграции, который OpenAI называет основным и который они собираются развивать дальше**. На нём же построены собственные клиенты OpenAI — VS Code extension Codex и терминальный TUI. Новый Python SDK OpenAI уже сам является клиентом App Server, а не самостоятельной обёрткой над CLI.
 
-TypeScript SDK по сути остаётся «тонкой обёрткой над CLI» — он запускает бинарь `codex` и обменивается с ним JSONL-событиями через stdin/stdout. Он удобен для автоматизации и CI, но имеет минимальную поверхность API.
+TypeScript SDK по сути остаётся «тонкой обёрткой над CLI» — он запускает бинарь `codex` и обменивается с ним JSONL-событиями через stdin/stdout. Он удобен для автоматизации и CI, но имеет минимальную поверхность API. Для нашего интерактивного продукта он больше не является целевой интеграционной поверхностью.
 
 ---
 
@@ -126,6 +127,9 @@ OpenAI встроила в App Server команды генерации типо
 - Часть item-дельт: текстовые дельты ответа `item/agentMessage/delta`, дельты рассуждений `item/reasoning/summaryTextDelta` и `item/reasoning/textDelta`.
 - Уведомления о жизненном цикле турна: `turn/started`, `turn/completed`, ошибки турна.
 - Уведомления о токен-юсадже и rate limits: `thread/tokenUsage/updated`, `account/rateLimits/updated`.
+- Изолированный `CODEX_HOME` провайдера: App Server стартует с `CODEX_HOME=~/.codeai-hub/providers/codex/home`, а не с пользовательским `~/.codex`.
+
+Что важно: наша текущая интеграция **пока не передаёт** `baseInstructions` и `developerInstructions` в `thread/start` / `thread/resume`, и **пока не управляет** `model_instructions_file` для обычных Codex-сессий. То есть переход на App Server уже завершён, но самый интересный слой динамических стартовых инструкций ещё не использован.
 
 Этого хватает, чтобы иметь полноценный чат с агентом, стримингом текста и рассуждений, с отменой и с информацией об использовании. Ниже — всё, что к этому можно докрутить, не меняя базовую архитектуру.
 
@@ -399,7 +403,40 @@ OpenAI встроила в App Server команды генерации типо
 - **Генерация типов под конкретную версию** — `codex app-server generate-ts` и `generate-json-schema`. Гарантирует полную совместимость клиента и сервера.
 - **Обратная совместимость** — формально гарантирована: новые поля добавляются, старые — сохраняются, новых уведомлений можно избегать через opt-out.
 
-### 5.19. Ошибки как данные
+### 5.19. Управление стартовыми инструкциями и отключение лишнего контекста
+
+**Зачем это нужно простым языком**: наши workflow-агенты не являются универсальным ассистентом «на всё». На шаге Description агент должен вести Description, на шаге Virtual Simulation — Virtual Simulation, на Diagram Modules — Diagram Modules. Поэтому стартовый контекст Codex должен быть максимально узким: минимум системного шума, короткая provider-level рамка и подробный первый запрос пользователя из нашего template.
+
+Новые возможности, которые мы дополнительно проверили в локальной схеме app-server и исходниках `openai/codex`:
+
+- **`thread/start.baseInstructions`** и **`thread/resume.baseInstructions`** — замена базовых model/system instructions для треда. Это thread-level override: задаётся при старте или resume сессии, а не как обычное сообщение пользователя.
+- **`thread/start.developerInstructions`** и **`thread/resume.developerInstructions`** — developer-role инструкции для треда. Это правильное место для короткой, обязательной рамки workflow-агента: роль шага, границы источников, запрет уходить в соседние workflow stages.
+- **`model_instructions_file`** — config/profile-level замена built-in instruction file. Это более тяжёлый рычаг, чем `baseInstructions`: он подходит для изолированного per-step `CODEX_HOME` или per-profile запуска. В upstream-коде OpenAI это поле явно помечено как рискованное при неосторожном использовании, потому что можно потерять важные harness/tool/safety инструкции.
+- **`developer_instructions`** в config.toml — developer-role сообщение из конфигурации. Может быть полезно для provider-home defaults, но для наших workflow steps лучше thread-level `developerInstructions`, чтобы не менять весь provider home глобально.
+- **`personality`** — только стиль общения (`none` / `friendly` / `pragmatic`). Это не замена инструкций и не инструмент для stage-specific workflow.
+- **`collaborationMode.settings.developer_instructions`** — режимный developer-блок. Если `developer_instructions: null`, Codex использует built-in instructions выбранного mode; если строка задана, она становится developer-инструкцией режима. Для обычных workflow-агентов это вторичный механизм, а не основа.
+
+Что можно отключать, чтобы убрать нерелевантный стартовый шум:
+
+- **Global AGENTS discovery**: Codex читает `AGENTS.override.md` или `AGENTS.md` из `CODEX_HOME`. Наш provider home сейчас изолирован и не содержит такого файла.
+- **Project AGENTS discovery**: Codex читает `AGENTS.override.md` / `AGENTS.md` по пути от project root до `cwd`. Полное отключение делается через `project_doc_max_bytes = 0`. `project_root_markers = []` останавливает подъём к родителям, но текущую директорию Codex всё равно проверит, поэтому для полного disable нужен именно нулевой лимит.
+- **Skills instructions**: `[skills] include_instructions = false` отключает автоматическую инъекцию skill descriptions/instructions. Для нашего workflow это важно: stage-specific agent уже знает свою задачу из первого запроса пользователя, ему не нужно выбирать между несколькими skills.
+- **Apps/plugins noise**: `features.apps = false`, `features.multi_agent = false` и отключение plugin/app surfaces уместны для узких workflow-агентов, если конкретный шаг не использует эти возможности.
+- **Environment / permissions / apps blocks**: в config есть `include_environment_context`, `include_permissions_instructions`, `include_apps_instructions`. Эти блоки можно отключать только если мы осознанно заменяем их минимальной provider-level рамкой; нельзя просто вырезать tool/sandbox инструкции и оставить агенту доступ к инструментам без объяснения правил.
+
+Отдельно: **Codex hooks** (`SessionStart`, `UserPromptSubmit`) могут вернуть `additionalContext`, который добавляется как extra developer context. Это полезно для инъекции динамического контекста, но это **append-only механизм**, а не замена base/system instructions. Через hooks нельзя «отключить» built-in инструкции, можно только добавить ещё один слой.
+
+Практический вывод для CodeAI Hub:
+
+1. Ввести provider-neutral `WorkflowInstructionProfile` для каждого шага (`description`, `virtual_simulation`, `diagram_modules`, далее development tree).
+2. Для Codex при создании нового workflow-thread передавать:
+   - `baseInstructions`: короткая минимальная рамка agent harness + CodeAI Hub workflow.
+   - `developerInstructions`: конкретная роль шага и non-negotiable ограничения.
+   - первый user message: полный template шага из `~/.codeai-hub/templates/...`.
+3. Для шагов, где нужно максимально чистое окружение, запускать Codex с изолированным profile / provider home и `model_instructions_file`, но только после отдельной проверки, что мы не потеряли нужные tool/sandbox правила.
+4. Не использовать skills как основной механизм выбора workflow-поведения. Skills полезны для универсального ассистента, а наши workflow-агенты уже специализированы.
+
+### 5.20. Ошибки как данные
 
 Когда турн завершается с ошибкой, в `turn/completed` приходит объект `error` с полем `codexErrorInfo`. Его варианты — готовый словарь для UX-обработки:
 
@@ -417,6 +454,15 @@ OpenAI встроила в App Server команды генерации типо
 ## 6. Приоритеты для CodeAI Hub
 
 Ниже — рекомендованный порядок внедрения. Отсортировано по соотношению «видимая польза пользователю / цена внедрения».
+
+### Приоритет 0. Динамические стартовые инструкции для workflow-агентов
+
+Это главный новый вывод после перехода на App Server.
+
+0. **`WorkflowInstructionProfile` для Codex** — provider-neutral структура, которая раскладывается в `baseInstructions`, `developerInstructions`, config toggles и первый user prompt.
+1. **Передача `baseInstructions` / `developerInstructions` в `thread/start` и `thread/resume`** — убрать противоречие между широкими системными инструкциями и узким первым запросом шага.
+2. **Опциональное отключение AGENTS/skills/apps/env blocks** для узких workflow-сессий: `project_doc_max_bytes = 0`, `[skills] include_instructions = false`, отключение нерелевантных features.
+3. **Проверочный debug-loop** через `codex debug prompt-input` в тестах/diagnostics — фиксировать, какой prompt реально видит модель для каждого workflow step.
 
 ### Приоритет 1. Делает продукт визуально сопоставимым с Codex VS Code
 
@@ -489,7 +535,9 @@ OpenAI встроила в App Server команды генерации типо
 
 ### Что НЕ стоит делать в ближайшее время
 
-- **Убирать старый Codex SDK модуль** — оставляем как fallback пока App Server окончательно не стабилизируется в продакшене.
+- **Возвращаться к TypeScript SDK как fallback-интеграции** — текущая архитектура уже app-server-first, а SDK не даёт нужного нам управления thread lifecycle, approvals, инструкциями и UI-событиями.
+- **Полностью заменять Codex built-in instructions без минимального harness-пакета** — `model_instructions_file` мощный, но опасный рычаг. Если его использовать, нужно сохранить правила инструментов, sandbox, approvals, streaming и output expectations.
+- **Использовать skills как основной способ stage-specific workflow** — это механизм для универсального ассистента, который сам выбирает навык. Наш workflow уже создаёт отдельного агента под конкретный шаг.
 - **Гнаться за экспериментальными фичами** без явного `capabilities.experimentalApi: true`. Это отдельное решение — всегда за ним должна стоять осмысленная оценка рисков совместимости.
 
 ---
@@ -501,6 +549,10 @@ OpenAI встроила в App Server команды генерации типо
 ### 7.1. Официальная документация OpenAI
 
 - App Server — портал OpenAI Developers: https://developers.openai.com/codex/app-server
+- Config basics: https://developers.openai.com/codex/config-basic
+- Config reference: https://developers.openai.com/codex/config-reference
+- AGENTS.md instructions discovery: https://developers.openai.com/codex/guides/agents-md
+- Hooks: https://developers.openai.com/codex/hooks
 - SDK — портал OpenAI Developers: https://developers.openai.com/codex/sdk
 - CLI — портал OpenAI Developers: https://developers.openai.com/codex/cli
 - CLI reference (флаги командной строки): https://developers.openai.com/codex/cli/reference
@@ -514,6 +566,9 @@ OpenAI встроила в App Server команды генерации типо
 
 - App Server README (основной технический файл): https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md
 - App Server — корень исходников: https://github.com/openai/codex/tree/main/codex-rs/app-server
+- Config TOML source (`model_instructions_file`, `developer_instructions`, include flags): https://github.com/openai/codex/blob/main/codex-rs/config/src/config_toml.rs
+- Core config source (`base_instructions`, `developer_instructions`, AGENTS discovery): https://github.com/openai/codex/blob/main/codex-rs/core/src/config/mod.rs
+- Core session source (`baseInstructions` priority and user-instruction injection): https://github.com/openai/codex/blob/main/codex-rs/core/src/session/mod.rs
 - TypeScript SDK README: https://github.com/openai/codex/blob/main/sdk/typescript/README.md
 - TypeScript SDK — корень исходников: https://github.com/openai/codex/tree/main/sdk/typescript
 
@@ -539,4 +594,4 @@ OpenAI встроила в App Server команды генерации типо
 
 ## 8. Итог одной строкой
 
-Codex App Server — это официально рекомендованный OpenAI путь интеграции с Codex-агентом, который вместо тонкой обёртки над CLI даёт богатую двунаправленную серверную поверхность с полноценным управлением сессиями, approvals, MCP, скиллами, плагинами, авторизацией, песочницей, файловой системой, исполнением команд, ревью кода, live-диффами, live-планами и встроенным realtime-режимом. Переключение CodeAI Hub с SDK на App Server открывает путь к продукту уровня Codex VS Code — без существенных изменений архитектуры ядра, только за счёт поэтапного расширения того, какие протокольные сообщения мы уже обрабатываем.
+Codex App Server — это официально рекомендованный OpenAI путь интеграции с Codex-агентом, который вместо тонкой обёртки над CLI даёт богатую двунаправленную серверную поверхность с полноценным управлением сессиями, approvals, MCP, скиллами, плагинами, авторизацией, песочницей, файловой системой, исполнением команд, ревью кода, live-диффами, live-планами и встроенным realtime-режимом. После полного перехода CodeAI Hub на App Server главный следующий выигрыш — не просто новые UI-события, а управление стартовым instruction stack: `baseInstructions`, `developerInstructions`, `model_instructions_file` и отключение нерелевантных AGENTS/skills/apps слоёв для каждого workflow step.
