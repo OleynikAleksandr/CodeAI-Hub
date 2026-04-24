@@ -73,10 +73,10 @@
 20. [DONE] Git Commit: `docs: document workflow scenario native capture` (hash: `11f745a0f`)
 
 21. [DONE] Обновить Claude docs при изменении provider capture prompt threading — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: close workflow scenario capture docs`.
-22. [IN_PROGRESS] Git Commit: `docs: close workflow scenario capture docs` (hash: TBD)
+22. [DONE] Git Commit: `docs: close workflow scenario capture docs` (hash: `6abe9f494`)
 
-23. [TODO] Подготовить release notes для будущей версии `1.2.66` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow scenario capture release`.
-24. [TODO] Git Commit: `docs: prepare workflow scenario capture release` (hash: TBD)
+23. [DONE] Подготовить release notes для будущей версии `1.2.66` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow scenario capture release`.
+24. [IN_PROGRESS] Git Commit: `docs: prepare workflow scenario capture release` (hash: TBD)
 
 25. [TODO] Выполнить release build `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем закрыть todo/archive/session — scope: release artifacts, `doc/TODO/Archive/`, `doc/Sessions/`; expected commit: `chore: package workflow scenario capture release`.
 26. [TODO] Git Commit: `chore: package workflow scenario capture release` (hash: TBD)

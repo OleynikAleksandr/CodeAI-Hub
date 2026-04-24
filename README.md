@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.65
+## Current Release — v1.2.66
+- **Native Request Capture теперь проверяет реальные workflow first turns.** В Settings -> General добавлен selector сценария `Description` / `Virtual Simulation` / `Diagram Modules`; выбранный сценарий строится Project Manager через тот же `buildWorkflowPromptPack(...)`, что и штатный workflow send.
+- **Диагностика идёт через тот же provider-native capture-and-abort path.** Claude получает `workflowPrompt ?? probePrompt` в SDK `query(...)`, Codex получает тот же текст в `turn/start.input[0].text`, а Core сохраняет scenario metadata вместе с selected model и applied turn config.
+- **Codex capture выбирает полноценный turn frame.** WebSocket capture больше не останавливается на раннем пустом frame с `input: []` / `generate:false`; Markdown primary request берётся из useful full-turn frame с реальным `instructions` / `input`.
+
+### 1.2.65 (previous)
 - **Native Request Capture получил выбор модели перед запуском.** В Settings -> General для Claude и Codex теперь есть отдельный model selector рядом с capture action; выбор используется только для diagnostic run и не перезаписывает provider defaults.
 - **Capture probe теперь зеркалит app-path turn config.** Core протягивает selected `modelId`, резолвит тот же applied turn config, что normal send path, и передаёт provider diagnostic service актуальные Claude thinking/effort и Codex effort/summary flags.
 - **Capture artifacts стали удобнее для тюнинга запросов.** JSONL `capture_start` пишет selected/applied config, Markdown перечисляет все matched provider requests, берёт последний как primary и извлекает Codex `instructions` / `input` как system/messages surface.

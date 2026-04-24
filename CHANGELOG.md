@@ -4,6 +4,20 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.66] - 2026-04-24
+### Added
+- **Settings -> General получил workflow scenario selector для Native Request Capture.** Диагностика теперь может отправить `Description`, `Virtual Simulation` или `Diagram Modules` first-turn prompt вместо generic probe.
+
+### Changed
+- **Capture prompt строится через штатный Project Manager workflow path.** PM использует `buildWorkflowPromptPack(...)` для выбранного сценария и передаёт `scenarioPrompt` в Core; provider diagnostics используют `workflowPrompt ?? probePrompt` без создания workflow sessions или записи артефактов.
+- **Capture artifacts фиксируют scenario metadata.** JSONL/Markdown `capture_start` показывает выбранный сценарий рядом с model/applied config, чтобы сравнивать эффект изменений флагов и инструкций на одном и том же workflow turn.
+
+### Fixed
+- **Codex WebSocket capture теперь выбирает full-turn payload.** Proxy пишет несколько client frames и ждёт useful frame с non-empty `input` / non-`generate:false`, поэтому Markdown primary request больше не оказывается ранним служебным frame.
+
+### Tests
+- **Targeted checks закрывают scenario prompt и full-turn capture.** Пройдены webview/core/provider сборки, provider diagnostic tests, writer tests и Codex WebSocket multi-frame tests.
+
 ## [1.2.65] - 2026-04-24
 ### Added
 - **Settings -> General теперь позволяет выбрать модель для Native Request Capture.** Claude и Codex capture controls получили provider-local model selectors; выбранная модель применяется только к диагностическому запуску и не сохраняется как default.
