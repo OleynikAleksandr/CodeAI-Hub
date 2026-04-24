@@ -39,7 +39,7 @@
 
 ### Stream: Planning Baseline
 1. [DONE] Зафиксировать planning baseline и активный TODO для Provider Native Request Capture; scope: `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: plan provider native request capture`
-2. [TODO] Git Commit: `docs: plan provider native request capture` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan provider native request capture` (hash: `2c3562be3`)
 
 ### Stream: Core Capture Proxy
 3. [TODO] Реализовать Core capture proxy skeleton: локальный `127.0.0.1` CONNECT proxy, capture lifecycle, timeout; scope: `packages/core/src/provider-network-capture/native-request-capture-proxy.ts`, `packages/core/src/provider-network-capture/native-request-capture-types.ts`, `packages/core/src/provider-network-capture/index.ts`; expected commit message: `feat: add native request capture proxy`
