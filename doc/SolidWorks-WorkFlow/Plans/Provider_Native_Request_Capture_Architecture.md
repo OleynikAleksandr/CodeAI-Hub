@@ -1,8 +1,29 @@
 # Provider Native Request Capture — Architecture Plan
 
 **Date:** 2026-04-24
-**Status:** Planning / Approved for TODO slicing
+**Status:** Implemented / pending release closeout
 **Target release:** next release after `1.2.61`
+
+---
+
+## 0. Implementation Snapshot
+
+As of 2026-04-24 the planned feature has been implemented in the active execution cycle:
+
+- Core owns `packages/core/src/provider-network-capture/` with the capture facade, CONNECT/TLS proxy, diagnostic certificate store/preflight, redaction, and JSONL/Markdown writer.
+- Remote Bridge accepts `settings:native-request-capture` and returns `settings:native-request-capture:result`.
+- Claude implements `captureNativeRequest` through the Agent SDK runtime path with diagnostic proxy/certificate environment injection.
+- Codex implements `captureNativeRequest` through an isolated temporary App Server process, so the long-lived app-server environment is not mutated.
+- Project Manager Settings -> General renders the bottom `Native Request Capture` card with separate Claude/Codex buttons and result artifact paths.
+- Localization copy lives in the source localization assets under `assets/localization/source/en/` and is compiled through the normal localization build.
+- The remaining closeout work is targeted verification, release docs, `build-all`, final VSIX packaging, and archiving this planning document.
+
+Canonical SSOT after implementation:
+
+- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- `doc/SolidWorks-WorkFlow/Modules/Claude.md`
+- `doc/SolidWorks-WorkFlow/Modules/Codex.md`
+- `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
 
 ---
 

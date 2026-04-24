@@ -1,9 +1,9 @@
 # UI Bundles (Webview + Project Manager) — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-22
+**Updated:** 2026-04-24
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (2026-04-22)
+**Validated on:** `main` (2026-04-24)
 
 ## Назначение
 UI бандлы, доставляемые как tarball’ы и устанавливаемые в `~/.codeai-hub/packages/ui/**`.
@@ -27,6 +27,7 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 - Shared `src/client/ui/src/components/settings-view.tsx` remains the common presentation surface, but the only live product host is Project Manager.
 - Project Manager opens Settings from the footer as an in-shell takeover of the right panel; `src/client/project-manager/app.tsx`, `components/layout/main-area.tsx`, `components/layout/main-area-panel-content.tsx`, `components/settings/use-project-manager-settings.ts`, and `components/settings/use-project-manager-settings-state.ts` own that runtime. The footer trigger uses dedicated CSS class `pm-status-open-settings` (accent-colored default/hover/active states plus focus-visible outline) instead of the generic zoom-button class, and the footer no longer duplicates workspace identity on the left side.
 - In Project Manager the shared `SettingsView` runs in `mode="project-manager"`: it keeps provider/general/localization flows, routes glossary opens through the PM host bridge, reuses shared `Core Controls` for `Restart Core`, and renders the blocking localization overlay only from actual `localizationSyncStatus` busy-state.
+- General Settings owns the user-facing entry point for provider native request capture diagnostics. `src/client/ui/src/components/settings/native-request-capture-card.tsx` renders the bottom card with separate Claude/Codex command buttons, running/success/error state, and returned `.md` / `.jsonl` artifact paths. The UI sends `settings:native-request-capture` through the Project Manager bridge, and the host returns `settings:native-request-capture:result`; the card must not persist settings because these controls are one-shot diagnostics, not saved preferences.
 - Shared translation-engine controls inside `src/client/ui/src/components/settings/localization-translation-engine-selector.tsx` must remain DOM-owned button/listbox surfaces, not native HTML `<select>`, because standalone CEF/macOS 26.x can crash on the AppKit-native popup branch (`BUG-2026-04-22-08`). This constraint currently applies to both `UI Translation Engine` and `Reasoning Translation Engine`.
 - `src/client/ui/src/app-host/settings-only-host.tsx` is a compatibility-only VS Code surface. It may show localized notice copy and bootstrap from persisted localization snapshot, but it is not allowed to expose live save/reset/provider-update/runtime-control UX.
 

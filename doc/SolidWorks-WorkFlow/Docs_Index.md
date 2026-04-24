@@ -23,7 +23,7 @@
 - `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→6), артефактов, OUTDATED propagation.
 
 ### System
-- `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов.
+- `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, or release-time regressions.
 
 ### Clusters
@@ -38,7 +38,7 @@
 - `Modules/Localization.md` — SSOT persistent UI localization module, including the four user-facing categories and the English-only internal-instructions boundary.
 - `Plans/Archive/Localization_TranslationEngine_AnthropicHaiku_Architecture.md` — archived Anthropic Claude Haiku 4.5 translation engine architecture (closed by release `1.1.986`; canonical SSOT lives in `Modules/Claude.md`, `Modules/Shared_RuntimeTranslation_Module.md`, and `Modules/Localization.md`).
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
-- `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager).
+- `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager), включая Settings -> General card для provider native request capture commands.
 - `Modules/Session_UI/README.md` — factual inventory of the five Session UI panels inside Project Manager, including truth-paths, update channels, outputs, side effects, and code ownership.
 
 ### Contracts (активные)
@@ -70,7 +70,7 @@
 - `Plans/Codex_AppServer_Capabilities_Analysis.md` — research/capabilities analysis по публичной документации OpenAI, сгенерированной схеме App Server и локальной интеграции CodeAI Hub; фиксирует product-level возможности `codex app-server` (thread lifecycle, approvals, plan/diff updates, MCP, auth, steer, review, multi-client coordination, динамические стартовые инструкции) и почему App Server является текущей интеграционной поверхностью Codex-провайдера.
 - `Plans/Claude_Agent_SDK_Capabilities_Analysis.md` — research/capabilities analysis по публичной документации Anthropic и локальной интеграции; фиксирует реальные возможности `@anthropic-ai/claude-agent-sdk`, включая `systemPrompt`, `settingSources`, hooks, MCP, сабагентов, custom tools и runtime session controls, чтобы оценивать дальнейшую эволюцию линии Claude без смешения с Codex/App Server.
 - `Plans/CrossProvider_Common_Capabilities.md` — decision-oriented research-doc, который сводит пересечение возможностей Codex App Server и Claude Agent SDK в единый safe baseline для общего UI/ядра CodeAI Hub; первым кандидатом выделяет `WorkflowInstructionProfile`, а provider-specific возможности оставляет внутри адаптеров или advanced-настроек.
-- `Plans/Provider_Native_Request_Capture_Architecture.md` — active planning-doc для Settings -> General diagnostic buttons `Capture Claude Native Request` / `Capture Codex Native Request`: локальный TLS MITM capture-and-abort режим, который пишет фактический native HTTPS request body провайдерского клиента в `.jsonl` и `.md` без upstream отправки к Anthropic/OpenAI.
+- `Plans/Provider_Native_Request_Capture_Architecture.md` — active planning-doc для Settings -> General diagnostic buttons `Capture Claude Native Request` / `Capture Codex Native Request`: локальный TLS MITM capture-and-abort режим, который пишет фактический native HTTPS request body провайдерского клиента в `.jsonl` и `.md` без upstream отправки к Anthropic/OpenAI. Канонический итог после реализации дублируется в `System/SystemArchitecture.md`, `Modules/Claude.md`, `Modules/Codex.md` и `Modules/UI_Bundles.md`; после release-closeout документ должен быть перенесён в `Plans/Archive/`.
 - `Plans/Archive/Claude_SessionListMarker_Formatting_Architecture.md` — archived planning-doc закрытого bugfix/release scope релиза `1.2.26`; фиксирует Claude marker-safe live flush contract, thinking merge repair guard в Project Manager и возврат Session list markers к outside rendering.
 - `Plans/Archive/Codex_Commentary_And_ThinkingBlockFormatting_Architecture.md` — archived planning-doc закрытого bugfix/release scope релиза `1.2.27`; фиксирует возврат Codex `phase: "commentary"` в app-server dialog trail как non-terminal assistant message, block-aware merge contract для standalone bold heading sections в thinking cards и follow-up CSS tightening для heading/body spacing.
 - `Plans/Archive/DialogPanel_LocalizedLastBubble_Autoscroll_Architecture.md` — archived planning-doc закрытого UI bugfix scope от `2026-04-20`; фиксирует bottom-lock autoscroll contract для Session dialog: late translation overlay patch последней visible bubble должен менять scroll anchor по display payload (`localizedContent ?? content`) и повторно доскролливать контейнер к низу, если пользователь уже был pinned-to-bottom.
