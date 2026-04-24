@@ -53,9 +53,9 @@
 ### Stream: Provider Diagnostic Parity
 
 13. [DONE] Настроить Claude diagnostic query на selected model/applied thinking — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; commit: `feat: mirror claude turn config in native capture`.
-14. [IN_PROGRESS] Git Commit: `feat: mirror claude turn config in native capture` (hash: TBD)
-15. [TODO] Настроить Codex diagnostic turn на selected model/applied effort/summary — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: mirror codex turn config in native capture`.
-16. [TODO] Git Commit: `feat: mirror codex turn config in native capture` (hash: TBD)
+14. [DONE] Git Commit: `feat: mirror claude turn config in native capture` (hash: `f3fc8d574`)
+15. [DONE] Настроить Codex diagnostic turn на selected model/applied effort/summary — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; commit: `feat: mirror codex turn config in native capture`.
+16. [IN_PROGRESS] Git Commit: `feat: mirror codex turn config in native capture` (hash: TBD)
 
 ### Stream: Capture Artifact Readability
 

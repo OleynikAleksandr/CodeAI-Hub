@@ -1,20 +1,40 @@
+import { readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import path from "node:path";
 import { CodexAppServerProcess } from "../app-server/process/codex-app-server-process";
 import type {
+  CodexReasoningEffort,
   CodexReasoningSummaryMode,
   CodexWorkspaceOptions,
   ModuleReporter,
 } from "../types";
 
 const DIAGNOSTIC_TURN_TIMEOUT_MS = 35_000;
-const DIAGNOSTIC_REASONING_SUMMARY: CodexReasoningSummaryMode = "none";
+const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
+const DEFAULT_REASONING_SUMMARY_ENABLED = true;
+const DEFAULT_SETTINGS_PATH = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
 
 export interface CodexNativeRequestCaptureOptions {
+  readonly appliedTurnConfig?: CodexNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly selectedModelId?: string | null;
   readonly workspacePath: string;
+}
+
+interface CodexNativeRequestCaptureAppliedTurnConfig {
+  readonly modelId?: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: string;
+  readonly source: "settings_snapshot" | "switch_request";
 }
 
 interface CodexProcessLike {
@@ -43,18 +63,52 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const asString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const resolveSettingsPath = (): string =>
+  asString(process.env.CODEX_SETTINGS_PATH) ??
+  asString(process.env.CLAUDE_SETTINGS_PATH) ??
+  DEFAULT_SETTINGS_PATH;
+
+const resolveReasoningSummaryEnabled = (): boolean => {
+  try {
+    const parsed = JSON.parse(
+      readFileSync(resolveSettingsPath(), "utf8")
+    ) as unknown;
+    if (!(isRecord(parsed) && isRecord(parsed.providers))) {
+      return DEFAULT_REASONING_SUMMARY_ENABLED;
+    }
+    const codex = parsed.providers.codex;
+    if (!isRecord(codex)) {
+      return DEFAULT_REASONING_SUMMARY_ENABLED;
+    }
+    if (typeof codex.reasoningSummaryEnabled === "boolean") {
+      return codex.reasoningSummaryEnabled;
+    }
+    if (typeof codex.thinkingDisplaySyncEnabled === "boolean") {
+      return codex.thinkingDisplaySyncEnabled;
+    }
+    return DEFAULT_REASONING_SUMMARY_ENABLED;
+  } catch {
+    return DEFAULT_REASONING_SUMMARY_ENABLED;
+  }
+};
+
+const resolveTurnReasoningSummaryMode = (): CodexReasoningSummaryMode =>
+  resolveReasoningSummaryEnabled() ? DEFAULT_REASONING_SUMMARY : "none";
+
 const createTimeoutError = (): Error =>
   new Error("Timed out waiting for diagnostic Codex turn completion");
 
 export class CodexNativeRequestCaptureService {
   readonly #processFactory: CodexProcessFactory;
   readonly #reporter?: ModuleReporter;
+  readonly #resolveReasoningSummaryMode: () => CodexReasoningSummaryMode;
   readonly #turnTimeoutMs: number;
   readonly #workspace: CodexWorkspaceOptions;
 
   constructor(options: {
     readonly processFactory?: CodexProcessFactory;
     readonly reporter?: ModuleReporter;
+    readonly resolveReasoningSummaryMode?: () => CodexReasoningSummaryMode;
     readonly turnTimeoutMs?: number;
     readonly workspace: CodexWorkspaceOptions;
   }) {
@@ -62,6 +116,8 @@ export class CodexNativeRequestCaptureService {
       options.processFactory ??
       ((processOptions) => new CodexAppServerProcess(processOptions));
     this.#reporter = options.reporter;
+    this.#resolveReasoningSummaryMode =
+      options.resolveReasoningSummaryMode ?? resolveTurnReasoningSummaryMode;
     this.#turnTimeoutMs = options.turnTimeoutMs ?? DIAGNOSTIC_TURN_TIMEOUT_MS;
     this.#workspace = options.workspace;
   }
@@ -113,7 +169,7 @@ export class CodexNativeRequestCaptureService {
         cwd: options.workspacePath,
         approvalPolicy: this.#workspace.defaultApprovalMode,
         sandbox: this.#workspace.defaultSandboxMode,
-        model: this.#workspace.defaultModel,
+        model: this.#resolveModelId(options),
         persistExtendedHistory: false,
       }
     );
@@ -140,10 +196,29 @@ export class CodexNativeRequestCaptureService {
         },
       ],
       cwd: options.workspacePath,
-      model: this.#workspace.defaultModel,
-      effort: this.#workspace.defaultReasoningEffort ?? null,
-      summary: DIAGNOSTIC_REASONING_SUMMARY,
+      model: this.#resolveModelId(options),
+      effort: this.#resolveReasoningEffort(options),
+      summary: this.#resolveReasoningSummaryMode(),
     });
+  }
+
+  #resolveModelId(options: CodexNativeRequestCaptureOptions): string | null {
+    return (
+      asString(options.appliedTurnConfig?.modelId) ??
+      asString(options.selectedModelId) ??
+      this.#workspace.defaultModel ??
+      null
+    );
+  }
+
+  #resolveReasoningEffort(
+    options: CodexNativeRequestCaptureOptions
+  ): CodexReasoningEffort | null {
+    return (
+      asCodexReasoningEffort(options.appliedTurnConfig?.reasoningEffort) ??
+      this.#workspace.defaultReasoningEffort ??
+      null
+    );
   }
 
   #waitForTurnCompletion(process: CodexProcessLike): {
@@ -190,3 +265,8 @@ export class CodexNativeRequestCaptureService {
     return isRecord(params) && asString(params.threadId) === threadId;
   }
 }
+
+const asCodexReasoningEffort = (value: unknown): CodexReasoningEffort | null =>
+  value === "low" || value === "medium" || value === "high" || value === "xhigh"
+    ? value
+    : null;

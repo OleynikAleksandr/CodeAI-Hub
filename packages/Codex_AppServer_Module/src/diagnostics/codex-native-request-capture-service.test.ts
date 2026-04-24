@@ -79,6 +79,7 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
       processes.push(process);
       return process;
     },
+    resolveReasoningSummaryMode: () => "detailed",
     workspace: {
       defaultApprovalMode: "on-request",
       defaultModel: "gpt-5.4",
@@ -136,8 +137,65 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
         cwd: "/workspace/capture",
         model: "gpt-5.4",
         effort: "medium",
-        summary: "none",
+        summary: "detailed",
       },
     },
   ]);
+});
+
+test("CodexNativeRequestCaptureService mirrors selected model and applied reasoning config", async () => {
+  const processes: FakeCodexProcess[] = [];
+  const service = new CodexNativeRequestCaptureService({
+    processFactory: () => {
+      const process = new FakeCodexProcess();
+      processes.push(process);
+      return process;
+    },
+    resolveReasoningSummaryMode: () => "none",
+    workspace: {
+      defaultApprovalMode: "on-request",
+      defaultModel: "gpt-5.4",
+      defaultReasoningEffort: "medium",
+      defaultSandboxMode: "workspace-write",
+      workspacePath: "/workspace/default",
+    },
+  });
+
+  await service.captureNativeRequest({
+    appliedTurnConfig: {
+      modelId: "gpt-5.3-codex",
+      providerId: "codexCli",
+      reasoningEffort: "xhigh",
+      source: "switch_request",
+    },
+    captureId: "capture-codex-app-config-test",
+    certificateEnv: {},
+    certificatePath: "/tmp/fallback-ca.pem",
+    probePrompt: "diagnostic probe",
+    proxyUrl: "http://127.0.0.1:4567",
+    selectedModelId: "gpt-5.4-mini",
+    workspacePath: "/workspace/capture",
+  });
+
+  const requests = processes[0]?.requests;
+  assert.equal(requests?.[0]?.method, "thread/start");
+  assert.equal(
+    (requests?.[0]?.params as { model?: string }).model,
+    "gpt-5.3-codex"
+  );
+  assert.equal(requests?.[1]?.method, "turn/start");
+  assert.deepEqual(requests?.[1]?.params, {
+    threadId: "diagnostic-thread",
+    input: [
+      {
+        type: "text",
+        text: "diagnostic probe",
+        text_elements: [],
+      },
+    ],
+    cwd: "/workspace/capture",
+    model: "gpt-5.3-codex",
+    effort: "xhigh",
+    summary: "none",
+  });
 });
