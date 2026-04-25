@@ -75,3 +75,7 @@
    - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.70`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
    - `./scripts/build-release.sh --use-current-version` прошел: проверены `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; VSIX: `codeai-hub-1.2.70.vsix` (`2.4M`).
 32. [DONE] Git Commit: `chore: build claude custom system prompt test release` (hash: `4fa9d7ae0`)
+33. [DONE] Проверить runtime capture C2 после установки `1.2.70` и зафиксировать high-level evidence без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude custom system prompt capture evidence`
+   - Runtime capture: `2026-04-25T06-36-21-416Z-claude-native-request.jsonl`; captured main `claude-opus-4-7` workflow request at JSONL record `27`.
+   - Result: `body.system` has `3` blocks / `2948` text chars and includes custom `Agent Operating Rules`; `body.tools` remains `10` tools with hash `4a3f9e88a7a8bd49`; Claude Code preset blocks from C1 are absent from `body.system`.
+34. [TODO] Git Commit: `docs: record claude custom system prompt capture evidence` (hash: TBD)

@@ -315,3 +315,58 @@ systemPrompt: AGENT_OPERATING_RULES_SYSTEM_PROMPT
 - большие Claude Code preset blocks из C1 отсутствуют;
 - `body.tools` остается с теми же agent-loop tool declarations;
 - `body.messages` продолжает содержать workflow step template.
+
+## 8. Наблюдение после тестового релиза 1.2.70
+
+Runtime capture после установки `1.2.70`:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T06-36-21-416Z-claude-native-request.md`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T06-36-21-416Z-claude-native-request.jsonl`
+
+Результат соответствует цели C2:
+
+- JSONL record `26`: `request_ignored`, reason `request_body_not_matched`, model `claude-haiku-4-5-20251001`, `tools: 0`;
+- JSONL record `27`: `request_captured`, model `claude-opus-4-7`, `tools: 10`;
+- Markdown `body.messages` начинается около line `422`;
+- Markdown `body.system` начинается около line `449`;
+- Markdown `body.tools` начинается около line `471`;
+- Markdown `Extracted System Prompt` начинается около line `838`;
+- Markdown `Extracted Tool Declarations` начинается около line `865`.
+
+C2 captured request summary:
+
+- model: `claude-opus-4-7`;
+- `messages`: `1`, hash `cf4d43a6d8b2631b`;
+- `system`: `3` text blocks, text chars `84, 62, 2802`, hash `5091df5c4f03728a`;
+- `tools`: `10`, hash `4a3f9e88a7a8bd49`;
+- tool names: `Agent`, `Bash`, `Edit`, `Glob`, `Grep`, `Read`, `ScheduleWakeup`, `Skill`, `ToolSearch`, `Write`.
+
+System prompt block inspection:
+
+- block `0`: SDK billing marker, `84` chars;
+- block `1`: SDK identity marker, `62` chars;
+- block `2`: custom neutral `Agent Operating Rules`, `2802` chars;
+- block `2` headings: `Agent Operating Rules`, `Instruction priority and source boundaries`, `Artifact-first workflow`, `Accuracy and assumptions`, `Scope control`, `Communication`;
+- block `2` does not contain `CodeAI Hub`;
+- block `2` does not contain `claude_code`;
+- block `2` does not contain the Claude Code preset opening text from C1.
+
+C0/C1/C2 comparison:
+
+- C0 baseline system: `2` blocks, `146` text chars, hash `fa24a5d30f64f5b3`;
+- C1 preset system: `4` blocks, `28486` text chars, hash `124660c13277895d`;
+- C2 custom-only system: `3` blocks, `2948` text chars, hash `5091df5c4f03728a`;
+- `tools` hash remained `4a3f9e88a7a8bd49` in C0, C1, and C2.
+
+Вывод:
+
+- custom-only `systemPrompt` работает как задумано;
+- полный Claude Code preset stack из C1 больше не попадает в `body.system`;
+- neutral operating rules попадают в `body.system`;
+- agent-loop `body.tools` остается неизменным;
+- workflow step template остается в `body.messages`.
+
+Важно для чтения Markdown dump:
+
+- строки с `CodeAI Hub`, `Claude Code` или `claude_code` в Markdown могут встречаться вне extracted system prompt: в capture configuration, workflow message text или tool declarations;
+- для оценки system prompt нужно смотреть именно `body.system` / `Extracted System Prompt`, а не весь Markdown файл целиком.
