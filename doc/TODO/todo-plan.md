@@ -62,12 +62,13 @@
 22. [DONE] Git Commit: `chore: build claude capture filter test release` (hash: `2abfd0487`)
 
 ### Stream: Custom-only neutral Claude system prompt
-23. [TODO] Зафиксировать C2 plan: заменить Claude diagnostic preset на custom-only neutral system prompt без переноса step templates — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan claude custom system prompt test`
-24. [TODO] Git Commit: `docs: plan claude custom system prompt test` (hash: TBD)
-25. [TODO] Реализовать Claude diagnostic custom-only `systemPrompt` и обновить targeted test — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit message: `test: use claude custom operating system prompt`
-26. [TODO] Git Commit: `test: use claude custom operating system prompt` (hash: TBD)
-27. [TODO] Выполнить targeted Claude module verification и зафиксировать результат — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude custom system prompt verification`
-28. [TODO] Git Commit: `docs: record claude custom system prompt verification` (hash: TBD)
+23. [DONE] Зафиксировать C2 plan: заменить Claude diagnostic preset на custom-only neutral system prompt без переноса step templates — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan claude custom system prompt test`
+24. [DONE] Git Commit: `docs: plan claude custom system prompt test` (hash: `9c2d0083c`)
+25. [DONE] Реализовать Claude diagnostic custom-only `systemPrompt` и обновить targeted test — scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit message: `test: use claude custom operating system prompt`
+26. [DONE] Git Commit: `test: use claude custom operating system prompt` (hash: `08c575428`)
+27. [DONE] Выполнить targeted Claude module verification и зафиксировать результат — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude custom system prompt verification`
+   - Verification: `npm run build --workspace @codeai-hub/claude-module` прошел; `node --test packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js` прошел; Husky pre-commit для `08c575428` прошел `check-architecture.sh`, `npm run lint`, `npm run check:knip`, staged `format:fix`.
+28. [DONE] Git Commit: `docs: record claude custom system prompt verification` (hash: TBD)
 29. [TODO] Подготовить release docs для будущей версии `1.2.70` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude custom system prompt release notes`
 30. [TODO] Git Commit: `docs: prepare claude custom system prompt release notes` (hash: TBD)
 31. [TODO] Собрать test release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude custom system prompt test release`
