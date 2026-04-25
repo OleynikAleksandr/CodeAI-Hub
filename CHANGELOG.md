@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.71] - 2026-04-25
+### Changed
+- **Codex diagnostic capture теперь отправляет `project_doc_max_bytes = 0` в App Server `thread/start`.** Это первый X8 flag experiment для проверки, можно ли убрать project `AGENTS.md` из Codex instruction sources без изменения normal workflow runtime path.
+- **Флаг ограничен Settings -> General native request capture.** `CodexNativeRequestCaptureService` меняет только временный isolated App Server diagnostic process; обычные Codex sessions остаются на прежнем `CodexAppServerFacade` path.
+
+### Tests
+- **Targeted checks закрывают X8 diagnostic request shape.** Пройдены `npm run build --workspace=@codeai-hub/codex-app-server-module` и direct node test для `codex-native-request-capture-service`.
+
 ## [1.2.70] - 2026-04-25
 ### Changed
 - **Claude diagnostic capture перешёл с Claude Code preset на custom-only neutral system prompt.** `ClaudeNativeRequestCaptureService` теперь передает строковый `systemPrompt` с нейтральными operating rules вместо `{ type: "preset", preset: "claude_code" }`.
