@@ -83,6 +83,7 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
       reasoningByModel: {
         "gpt-5.3-codex": "medium",
         "gpt-5.4": "medium",
+        "gpt-5.5": "medium",
         "gpt-5.4-mini": "medium",
       },
       sessionContinuity: { remainingPercentThreshold: 30 },

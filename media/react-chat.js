@@ -7400,6 +7400,14 @@
       tier: "general"
     },
     {
+      id: "gpt-5.5",
+      displayName: "GPT-5.5",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    },
+    {
       id: "gpt-5.4-mini",
       displayName: "GPT-5.4 Mini",
       description: "Smaller GPT-5.4 variant for faster everyday coding tasks",

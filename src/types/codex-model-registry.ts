@@ -36,6 +36,14 @@ export const CODEX_RECOMMENDED_MODELS = [
     tier: "general",
   },
   {
+    id: "gpt-5.5",
+    displayName: "GPT-5.5",
+    description: "Best general agentic model for tasks across industries",
+    platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+    status: "active",
+    tier: "general",
+  },
+  {
     id: "gpt-5.4-mini",
     displayName: "GPT-5.4 Mini",
     description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
@@ -61,6 +69,14 @@ export const CODEX_SETTINGS_MODELS = [
   {
     id: "gpt-5.4",
     displayName: "GPT-5.4",
+    description: "Best general agentic model for tasks across industries",
+    platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+    status: "active",
+    tier: "general",
+  },
+  {
+    id: "gpt-5.5",
+    displayName: "GPT-5.5",
     description: "Best general agentic model for tasks across industries",
     platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
     status: "active",
