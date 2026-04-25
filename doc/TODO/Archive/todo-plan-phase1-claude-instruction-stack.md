@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Instruction_Stack_Flag_Evidence.md`
 - **Related umbrella planning source:** `doc/SolidWorks-WorkFlow/Plans/Provider_Instruction_Stack_Tuning_Tests.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
@@ -20,7 +20,7 @@
 - Raw provider/system prompt dumps не коммитить. В git фиксировать только summary, hashes, high-level section names and conclusions.
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и module docs обновлять синхронно только если меняется product/runtime contract. Для экспериментального diagnostic-only флага без смены product baseline достаточно planning/evidence + TODO.
 
-## Phase 1 — Claude diagnostic preset systemPrompt test (owner: Codex, updated: 2026-04-24)
+## Phase 1 — Claude diagnostic preset systemPrompt test (owner: Codex, updated: 2026-04-25, status: completed)
 
 ### Stream: Minimal Claude capture toggle
 1. [DONE] Создать execution plan для первого Claude-only test — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan claude instruction stack preset capture test`

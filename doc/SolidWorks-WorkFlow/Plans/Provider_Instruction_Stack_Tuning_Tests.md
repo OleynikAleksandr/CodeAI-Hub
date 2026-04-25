@@ -5,6 +5,10 @@
 **Scope:** Claude Agent SDK and Codex App Server instruction-stack tuning  
 **Out of scope:** provider system tools, tool declarations, MCP/tool allowlists, sandbox/permission policy changes
 
+**Claude status:** completed in release `1.2.70`; final evidence is archived in `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Instruction_Stack_Flag_Evidence.md`, and the canonical Claude runtime contract lives in `doc/SolidWorks-WorkFlow/Modules/Claude.md`.
+
+**Next provider focus:** Codex App Server. Mechanisms are expected to differ from Claude Agent SDK, so the next scope must start from the Codex module docs and App Server instruction/config surfaces instead of copying the Claude implementation directly.
+
 ## 0. Цель
 
 Нужно получить управляемый способ проверять, как CodeAI Hub может менять структуру и содержание инструкций, которые фактически уходят провайдерам:

@@ -1,9 +1,11 @@
 # Claude Instruction Stack Flag Evidence
 
-**Статус:** планирование / сбор фактических данных  
+**Статус:** завершено / archived evidence  
 **Дата:** 2026-04-24  
 **Scope:** только Claude Agent SDK  
 **Связанный общий scope:** `doc/SolidWorks-WorkFlow/Plans/Provider_Instruction_Stack_Tuning_Tests.md`
+
+**Итоговый SSOT:** `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 
 ## 0. Назначение документа
 
@@ -21,6 +23,18 @@
 `Project Manager -> Core -> Claude provider adapter -> Claude Agent SDK -> Anthropic request`
 
 Raw provider/system prompt dumps нельзя коммитить в git. В этот документ попадают только выводы, короткие выдержки, названия flags и ссылки на runtime logs.
+
+## Итог closeout
+
+Claude-этап завершен релизом `1.2.70`.
+
+Финальное решение:
+
+- product/runtime baseline для Claude workflow остается `settingSources: []`;
+- diagnostic capture path использует custom-only neutral `systemPrompt`, а не полный `claude_code` preset;
+- workflow step templates остаются первым user message и не переносятся в system layer;
+- `body.tools` не менялся и остался отдельным Anthropic tool declarations contract;
+- финальная спецификация вызова и полный текст custom system prompt перенесены в `doc/SolidWorks-WorkFlow/Modules/Claude.md`.
 
 ## 1. Текущий baseline вызова Claude SDK
 
