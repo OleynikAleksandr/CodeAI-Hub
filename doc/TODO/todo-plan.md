@@ -71,6 +71,7 @@
 28. [DONE] Git Commit: `docs: record claude custom system prompt verification` (hash: `2f367ed62`)
 29. [DONE] Подготовить release docs для будущей версии `1.2.70` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude custom system prompt release notes`
 30. [DONE] Git Commit: `docs: prepare claude custom system prompt release notes` (hash: `e41c60d24`)
-31. [IN_PROGRESS] Собрать test release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude custom system prompt test release`
+31. [DONE] Собрать test release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude custom system prompt test release`
    - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.70`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
-32. [TODO] Git Commit: `chore: build claude custom system prompt test release` (hash: TBD)
+   - `./scripts/build-release.sh --use-current-version` прошел: проверены `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; VSIX: `codeai-hub-1.2.70.vsix` (`2.4M`).
+32. [DONE] Git Commit: `chore: build claude custom system prompt test release` (hash: `4fa9d7ae0`)
