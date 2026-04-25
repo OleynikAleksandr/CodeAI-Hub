@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.73] - 2026-04-25
+### Changed
+- **Codex diagnostic capture снова включает X8 `project_doc_max_bytes = 0`.** Temporary App Server `thread/start` получает diagnostic-only `config.project_doc_max_bytes = 0`, чтобы проверить удаление project `AGENTS.md` уже после фикса полной observability.
+- **Проверка теперь должна проходить по одному artifact.** `.md` / `.jsonl` содержит `thread/start`, native WebSocket frame и embedded `codex_provider_home_rollout_context`; retest должен показать отсутствие `AGENTS.md` и пустой/без-project `turn_context.user_instructions` без ручного открытия rollout-файла.
+
+### Tests
+- **Targeted checks закрывают X8 full-capture request shape.** Пройдены `npm run build --workspace=@codeai-hub/codex-app-server-module` и direct node test для `codex-native-request-capture-service`.
+
 ## [1.2.72] - 2026-04-25
 ### Fixed
 - **Codex native capture теперь встраивает provider-home rollout context в основной artifact.** Diagnostic run читает rollout JSONL из `thread/start.response.thread.path` и пишет его в `Provider Diagnostic Context` как `codex_provider_home_rollout_context`, чтобы `.md` / `.jsonl` показывали полный `turn_context.user_instructions` / `AGENTS.md` слой без ручного поиска второго файла.
