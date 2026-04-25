@@ -1,6 +1,6 @@
 # Claude Workflow Tool Profile Allowlist
 
-**Status:** Active test scope
+**Status:** Retest confirmed
 **Date:** 2026-04-25
 **Owner:** Codex
 
@@ -65,3 +65,27 @@ In the next Claude native request capture:
 If the SDK treats `tools` as additive instead of restrictive, retest will show the default `10` tools still present. That is acceptable for this experiment and will become evidence for the next flag choice.
 
 If `Read` / `Write` / `Edit` is too narrow for a future workflow step, the profile should become stage-specific. For the current documentation-first steps, it is the right first reduction candidate.
+
+## Retest Result
+
+User retested release `1.2.80`.
+
+Fresh capture:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-38-27-844Z-claude-native-request.jsonl`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-38-27-844Z-claude-native-request.md`
+
+Result: `works`.
+
+Evidence:
+
+- captured workflow request count: `1`;
+- `body.tools` count: `3`;
+- tools: `Edit`, `Read`, `Write`;
+- `body.tools` JSON length: `5166` chars;
+- request `bodyTextLength`: `23522`;
+- `Agent`, `Skill`, `ToolSearch`, and subagent wording are absent from tool declarations;
+- ignored SDK request with tools has `toolsCount: 0`;
+- Markdown size dropped from about `76K` to about `38K`; JSONL size dropped from about `218K` to about `112K`.
+
+Conclusion: Claude Agent SDK treats explicit `tools: ["Read", "Write", "Edit"]` as a restrictive tool profile for this workflow request, not as an additive list.
