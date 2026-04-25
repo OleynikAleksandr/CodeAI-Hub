@@ -8,6 +8,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_Documentation_Tool_Profile.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
@@ -149,3 +150,14 @@
 8. [DONE] Git Commit: `chore: bump codex multi agent tool flag release version` (hash: `2d9fc1489`)
 9. [DONE] Verify user retest logs for Codex `--disable multi_agent` — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-59-13-002Z-codex-native-request.*`, `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`, `doc/TODO/todo-plan.md`; result: `body.tools` dropped from `18` to `13`, removed `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; controls stable: base instructions hash `20a9fda290415bad2b2fd0f1fe05fd65f2f34eb4743cf3565eafcf01955f48eb`, workflow prompt hash `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`, `project_doc_max_bytes = 0`, `instructionSources = []`; expected commit message: `docs: record codex multi agent retest`
 10. [DONE] Git Commit: `docs: record codex multi agent retest` (hash: `866f4bb66`)
+
+## Phase 10 — Codex Documentation Tool Profile (owner: Codex, updated: 2026-04-25)
+
+### Stream: Remove Non-Documentation Tools From Codex Requests
+
+1. [DONE] Plan and implement a CodeAI Hub-owned Codex documentation tool profile using only confirmed App Server startup flags/config overrides — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_Documentation_Tool_Profile.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.test.ts`, `doc/TODO/todo-plan.md`; target removal: `mcp__playwright__`, `mcp__codex__`, MCP resource tools, `image_generation`, plugin/app surfaces; target keep: `exec_command`, `write_stdin`, `apply_patch`, `update_plan`, `web_search`, `view_image`; note: `request_user_input` has no confirmed removal knob and must be verified by retest; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, direct node tests for process/facade/diagnostics; expected commit message: `test: narrow codex documentation tool profile`
+2. [TODO] Git Commit: `test: narrow codex documentation tool profile` (hash: TBD)
+3. [TODO] Update Codex SSOT docs and release notes for the documentation tool profile retest — scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; release target: `1.2.82`; expected commit message: `docs: prepare codex documentation tool profile release`
+4. [TODO] Git Commit: `docs: prepare codex documentation tool profile release` (hash: TBD)
+5. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.82`; artifacts: TBD; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected retest: Codex native `body.tools` should keep shell/patch/plan/web/view-image tools and remove browser/playwright, nested Codex MCP, MCP resources, and image generation if confirmed by provider-native JSONL
+6. [TODO] Git Commit: `chore: bump codex documentation tool profile release version` (hash: TBD)

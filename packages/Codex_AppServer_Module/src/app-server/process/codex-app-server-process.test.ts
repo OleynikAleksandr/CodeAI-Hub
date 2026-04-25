@@ -2,10 +2,28 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CODEAI_CODEX_APP_SERVER_ARGS } from "./codex-app-server-process";
 
-test("CodexAppServerProcess disables Codex multi-agent tools at app-server startup", () => {
+test("CodexAppServerProcess applies the documentation workflow tool profile at app-server startup", () => {
   assert.deepEqual(CODEAI_CODEX_APP_SERVER_ARGS, [
     "app-server",
     "--disable",
     "multi_agent",
+    "--disable",
+    "browser_use",
+    "--disable",
+    "in_app_browser",
+    "--disable",
+    "computer_use",
+    "--disable",
+    "image_generation",
+    "--disable",
+    "plugins",
+    "--disable",
+    "apps",
+    "--disable",
+    "tool_search",
+    "-c",
+    "mcp_servers.codex.enabled=false",
+    "-c",
+    "mcp_servers.playwright.enabled=false",
   ]);
 });
