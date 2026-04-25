@@ -169,4 +169,4 @@
 ### Stream: Move Codex Tool Profile Evidence Into Experiment Results
 
 1. [DONE] Move the completed Codex documentation tool-profile protocol into the instruction-stack experiment result bundle and record release `1.2.82` as the current Codex documentation-tree baseline — scope: `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Experiment_Results.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: consolidate codex documentation tool profile results`
-2. [TODO] Git Commit: `docs: consolidate codex documentation tool profile results` (hash: TBD)
+2. [DONE] Git Commit: `docs: consolidate codex documentation tool profile results` (hash: `b196dcd0b`)
