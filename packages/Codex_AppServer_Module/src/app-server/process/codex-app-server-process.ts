@@ -33,6 +33,11 @@ interface JsonRpcLogRecord {
 type JsonRpcLine = JsonRpcNotification | JsonRpcResponse | JsonRpcLogRecord;
 
 const CODEX_EXECUTABLE = process.platform === "win32" ? "codex.cmd" : "codex";
+export const CODEAI_CODEX_APP_SERVER_ARGS = [
+  "app-server",
+  "--disable",
+  "multi_agent",
+] as const;
 // Common user-level install locations for the `codex` CLI. Core inherits PATH
 // from its parent (VS Code extension host) which on macOS GUI apps often ships
 // without the user's npm-global / Homebrew directories even when the shell
@@ -228,7 +233,7 @@ export class CodexAppServerProcess {
   private async startInternal(): Promise<void> {
     const providerCodexHome = await prepareProviderCodexHome();
     this.sessionLogger.start({ providerCodexHome });
-    const child = spawn(CODEX_EXECUTABLE, ["app-server"], {
+    const child = spawn(CODEX_EXECUTABLE, [...CODEAI_CODEX_APP_SERVER_ARGS], {
       env: {
         ...process.env,
         ...this.environment,
@@ -239,7 +244,7 @@ export class CodexAppServerProcess {
     });
     this.child = child;
     this.sessionLogger.logLifecycle("spawn", {
-      argv: [CODEX_EXECUTABLE, "app-server"],
+      argv: [CODEX_EXECUTABLE, ...CODEAI_CODEX_APP_SERVER_ARGS],
       pid: child.pid ?? null,
     });
     this.attachProcessHandlers(child);
