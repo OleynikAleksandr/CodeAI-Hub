@@ -79,3 +79,5 @@
    - Runtime capture: `2026-04-25T06-36-21-416Z-claude-native-request.jsonl`; captured main `claude-opus-4-7` workflow request at JSONL record `27`.
    - Result: `body.system` has `3` blocks / `2948` text chars and includes custom `Agent Operating Rules`; `body.tools` remains `10` tools with hash `4a3f9e88a7a8bd49`; Claude Code preset blocks from C1 are absent from `body.system`.
 34. [DONE] Git Commit: `docs: record claude custom system prompt capture evidence` (hash: `adac28ef9`)
+35. [DONE] Зафиксировать финальную спецификацию Claude diagnostic SDK call и полный custom system prompt в module SSOT — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: document claude custom system prompt contract`
+36. [TODO] Git Commit: `docs: document claude custom system prompt contract` (hash: TBD)
