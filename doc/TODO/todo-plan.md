@@ -109,4 +109,4 @@
 ### Stream: Readable Markdown Without Raw Payload Repetition
 
 1. [DONE] Remove repeated large raw payload printing from native-capture Markdown while preserving full JSONL evidence — scope: `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, writer/facade tests, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; verification: `npm run lint`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/provider-network-capture/native-request-capture-writer.test.js packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`; commit message: `fix: dedupe native capture markdown payloads`
-2. [IN_PROGRESS] Git Commit: `fix: dedupe native capture markdown payloads` (hash: TBD)
+2. [DONE] Git Commit: `fix: dedupe native capture markdown payloads` (hash: `ad70fa745b3b04483a73a7bf49fba840f2d0841d`)
