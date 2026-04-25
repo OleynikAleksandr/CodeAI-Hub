@@ -162,6 +162,24 @@ Implementation for release `1.2.74`:
   - `instructionSources` remains empty;
   - native tools remain unchanged.
 
+Result for release `1.2.74`: `works`.
+
+Evidence from user retest logs:
+
+- Fresh capture:
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T10-01-53-191Z-codex-native-request.jsonl`
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T10-01-53-191Z-codex-native-request.md`
+- Comparison capture for previous X8-only release:
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T09-28-41-532Z-codex-native-request.jsonl`
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T09-28-41-532Z-codex-native-request.md`
+- `thread/start.request.baseInstructions` is present in the fresh log and has length `2770`, sha256 `13c46a584601db1133248fbe063a7491a78750c89e13388d26f3f40f8fe5724f`.
+- Fresh provider-home `base_instructions.text` has the same length/hash: `2770` / `13c46a584601db1133248fbe063a7491a78750c89e13388d26f3f40f8fe5724f`.
+- Fresh native `response.create.instructions` has the same length/hash: `2770` / `13c46a584601db1133248fbe063a7491a78750c89e13388d26f3f40f8fe5724f`.
+- Previous X8-only provider-home/native base instructions were `12343` chars, sha256 `6fdc9b734797bf69f7982c747cd869a834615baab4244bd1bb7676625717f598`.
+- Reduction: `9573` chars removed, about `77.6%` smaller.
+- `instructionSources` remains empty and provider-home `turn_context.user_instructions` remains absent/empty, so project `AGENTS.md` noise stays removed.
+- Native tools remain unchanged: count `18`, sha256 `36ce31151ccbb30d55966082b343f3c5ab7fcf1f5265ac0c65feceacab71cb45`.
+
 ### X1 — Replace baseInstructions
 
 Flag:
