@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.74
+## Current Release — v1.2.75
+- **Codex diagnostic capture временно возвращает полный provider base prompt.** Temporary App Server `thread/start` больше не отправляет diagnostic-only `baseInstructions`, чтобы capture показал оригинальный system/base prompt выбранной Codex-модели.
+- **X8 cleanup остается включенным.** `config.project_doc_max_bytes = 0` сохраняется, поэтому retest должен показывать полный model-specific base prompt без project `AGENTS.md` шума.
+- **Цель retest — сравнить разные Codex-модели.** Новый `.md` / `.jsonl` должен показать отсутствие `thread/start.request.baseInstructions`, пустой `instructionSources`, embedded rollout context и полный provider-home/native `base_instructions.text`.
+
+### 1.2.74 (previous)
 - **Codex diagnostic capture проверяет compact `baseInstructions`.** Temporary App Server `thread/start` теперь получает diagnostic-only compact system prompt через `baseInstructions` вместе с уже принятым X8 `config.project_doc_max_bytes = 0`.
 - **Цель retest — подтвердить замену provider base prompt.** Новый `.md` / `.jsonl` должен показать `thread/start.request.baseInstructions`, измененный native `response.create.instructions` и provider-home `base_instructions.text`, совпадающий с compact prompt.
 - **Project `AGENTS.md` по-прежнему должен быть отключен.** Одновременно проверяем, что `instructionSources` пустой, embedded rollout context есть, workflow prompt остается user message, а native tools не меняются неожиданно.
