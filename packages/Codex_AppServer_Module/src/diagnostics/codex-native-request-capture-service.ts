@@ -10,6 +10,9 @@ import type {
 } from "../types";
 
 const DIAGNOSTIC_TURN_TIMEOUT_MS = 35_000;
+const DIAGNOSTIC_THREAD_CONFIG = {
+  project_doc_max_bytes: 0,
+} as const;
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
 const DEFAULT_SETTINGS_PATH = path.join(
@@ -174,6 +177,7 @@ export class CodexNativeRequestCaptureService {
       sandbox: this.#workspace.defaultSandboxMode,
       model: this.#resolveModelId(options),
       persistExtendedHistory: false,
+      config: DIAGNOSTIC_THREAD_CONFIG,
     };
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_thread_start_request",

@@ -126,6 +126,9 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
         sandbox: "workspace-write",
         model: "gpt-5.4",
         persistExtendedHistory: false,
+        config: {
+          project_doc_max_bytes: 0,
+        },
       },
     },
     {
@@ -215,6 +218,9 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
     (requests?.[0]?.params as { model?: string }).model,
     "gpt-5.3-codex"
   );
+  assert.deepEqual((requests?.[0]?.params as { config?: unknown }).config, {
+    project_doc_max_bytes: 0,
+  });
   assert.equal(requests?.[1]?.method, "turn/start");
   assert.deepEqual(requests?.[1]?.params, {
     threadId: "diagnostic-thread",

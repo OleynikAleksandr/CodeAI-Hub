@@ -34,16 +34,16 @@
 ### Stream: Planning And Recovery Context
 
 1. [DONE] Create Codex-specific planning doc, active TODO plan, and Docs Index entry — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit message: `docs: plan codex instruction stack flag tests`
-2. [IN_PROGRESS] Git Commit: `docs: plan codex instruction stack flag tests` (hash: TBD)
-3. [TODO] Create Session004 recovery report for the active Codex scope — scope: `doc/Sessions/Session004.md`; commit message: `docs: record codex instruction stack session setup`
-4. [TODO] Git Commit: `docs: record codex instruction stack session setup` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan codex instruction stack flag tests` (hash: `2532b0e4c`)
+3. [DONE] Create Session004 recovery report for the active Codex scope — scope: `doc/Sessions/Session004.md`; commit message: `docs: record codex instruction stack session setup`
+4. [DONE] Session report is maintained as ignored filesystem recovery artifact per session lifecycle; no git commit required until closeout policy changes (hash: N/A)
 
 ## Phase 1 — X8 Disable Project AGENTS Discovery (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Diagnostic Flag X8
 
-1. [TODO] Add diagnostic-only `thread/start.config.project_doc_max_bytes = 0` for Codex native capture — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file if required, `doc/TODO/todo-plan.md`; commit message: `test: add codex project doc max bytes capture flag`
-2. [TODO] Git Commit: `test: add codex project doc max bytes capture flag` (hash: TBD)
+1. [DONE] Add diagnostic-only `thread/start.config.project_doc_max_bytes = 0` for Codex native capture — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/TODO/todo-plan.md`; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; commit message: `test: add codex project doc max bytes capture flag`
+2. [IN_PROGRESS] Git Commit: `test: add codex project doc max bytes capture flag` (hash: TBD)
 3. [TODO] Build a new release package for X8 retest and record VSIX/tarball paths — scope: release metadata docs, `doc/TODO/todo-plan.md`; commit message: `chore: build codex project doc flag test release`
 4. [TODO] Git Commit: `chore: build codex project doc flag test release` (hash: TBD)
 5. [TODO] Analyze user-provided X8 native capture logs and classify result — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex project doc flag evidence`
