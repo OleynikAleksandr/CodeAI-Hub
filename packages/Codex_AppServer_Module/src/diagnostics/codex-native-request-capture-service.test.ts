@@ -5,9 +5,6 @@ import path from "node:path";
 import test from "node:test";
 import { CodexNativeRequestCaptureService } from "./codex-native-request-capture-service";
 
-const DIAGNOSTIC_BASE_INSTRUCTIONS_PREFIX =
-  /^You are Codex, a pragmatic coding agent/;
-
 interface RequestRecord {
   readonly method: string;
   readonly params: unknown;
@@ -142,16 +139,6 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     REQUESTS_CA_BUNDLE: "/tmp/fallback-ca.pem",
     SSL_CERT_FILE: "/tmp/capture-ca.pem",
   });
-  const threadStartParams = processes[0]?.requests[0]?.params as
-    | { readonly baseInstructions?: unknown }
-    | undefined;
-  const diagnosticBaseInstructions = threadStartParams?.baseInstructions;
-  if (typeof diagnosticBaseInstructions !== "string") {
-    assert.fail("Expected diagnostic thread/start baseInstructions");
-  }
-  assert.match(diagnosticBaseInstructions, DIAGNOSTIC_BASE_INSTRUCTIONS_PREFIX);
-  assert.ok(diagnosticBaseInstructions.length < 4000);
-
   assert.deepEqual(processes[0]?.requests, [
     {
       method: "thread/start",
@@ -164,7 +151,6 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
         config: {
           project_doc_max_bytes: 0,
         },
-        baseInstructions: diagnosticBaseInstructions,
       },
     },
     {
@@ -274,16 +260,11 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
   assert.deepEqual((requests?.[0]?.params as { config?: unknown }).config, {
     project_doc_max_bytes: 0,
   });
-  const baseInstructions = (
-    requests?.[0]?.params as {
-      baseInstructions?: unknown;
-    }
-  ).baseInstructions;
-  if (typeof baseInstructions !== "string") {
-    assert.fail("Expected diagnostic thread/start baseInstructions");
-  }
-  assert.match(baseInstructions, DIAGNOSTIC_BASE_INSTRUCTIONS_PREFIX);
-  assert.ok(baseInstructions.length < 4000);
+  assert.equal(
+    "baseInstructions" in
+      ((requests?.[0]?.params as Record<string, unknown> | undefined) ?? {}),
+    false
+  );
   assert.equal(requests?.[1]?.method, "turn/start");
   assert.deepEqual(requests?.[1]?.params, {
     threadId: "diagnostic-thread",

@@ -180,6 +180,32 @@ Evidence from user retest logs:
 - `instructionSources` remains empty and provider-home `turn_context.user_instructions` remains absent/empty, so project `AGENTS.md` noise stays removed.
 - Native tools remain unchanged: count `18`, sha256 `36ce31151ccbb30d55966082b343f3c5ab7fcf1f5265ac0c65feceacab71cb45`.
 
+### X3 rollback retake — model-specific full base prompt inventory
+
+Reason:
+
+- X3 proved that `thread/start.baseInstructions` replaces Codex provider/system base instructions.
+- Before productizing a compact replacement, we need to inspect the original full base prompt for other Codex models because the provider/system prompt may differ by model.
+
+Implementation for release `1.2.75`:
+
+- Keep accepted X8 cleanup config: `config.project_doc_max_bytes = 0`.
+- Remove diagnostic `thread/start.baseInstructions`.
+- Keep embedded provider-home rollout context in the same capture artifact.
+
+Expected result:
+
+- `thread/start.request` has no `baseInstructions`;
+- `thread/start.request.config.project_doc_max_bytes = 0`;
+- `instructionSources` remains empty;
+- provider-home `base_instructions.text` and native `response.create.instructions` contain the full model-specific Codex base prompt;
+- project `AGENTS.md` stays absent from provider-home `turn_context.user_instructions`.
+
+Decision rule:
+
+- Use this release only for collecting full base-prompt samples across Codex models.
+- Do not classify X3 as rejected; this is a temporary rollback for prompt inventory.
+
 ### X1 — Replace baseInstructions
 
 Flag:
