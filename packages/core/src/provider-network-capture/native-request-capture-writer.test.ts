@@ -18,6 +18,7 @@ const JSONL_REQUEST_CAPTURED_PATTERN = /"type":"request_captured"/;
 const MARKDOWN_IGNORED_HEADING_PATTERN = /## Ignored Requests/;
 const MARKDOWN_IGNORED_REASON_PATTERN = /request_path_not_matched/;
 const MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN = /ignored system prompt/;
+const MARKDOWN_BODY_TEXT_LENGTH_PATTERN = /bodyTextLength/;
 const MARKDOWN_SYSTEM_PROMPT_HEADING_PATTERN = /## Extracted System Prompt/;
 const MARKDOWN_SYSTEM_PROMPT_PATTERN = /system prompt/;
 const MARKDOWN_TITLE_PATTERN = /# Claude Native Request Capture/;
@@ -125,7 +126,8 @@ test("NativeRequestCaptureWriter records ignored request details", async () => {
   assert.match(jsonl, JSONL_REDACTED_AUTHORIZATION_PATTERN);
   assert.match(markdown, MARKDOWN_IGNORED_HEADING_PATTERN);
   assert.match(markdown, MARKDOWN_IGNORED_REASON_PATTERN);
-  assert.match(markdown, MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN);
+  assert.match(markdown, MARKDOWN_BODY_TEXT_LENGTH_PATTERN);
+  assert.doesNotMatch(markdown, MARKDOWN_IGNORED_SYSTEM_PROMPT_PATTERN);
 });
 
 test("NativeRequestCaptureWriter lists multiple captures and extracts Codex instructions", async () => {
@@ -191,8 +193,17 @@ test("NativeRequestCaptureWriter lists multiple captures and extracts Codex inst
   assert.match(markdown, MARKDOWN_CAPTURED_TWO_PATTERN);
   assert.match(markdown, MARKDOWN_SELECTED_MODEL_PATTERN);
   assert.match(markdown, MARKDOWN_CODEX_INSTRUCTIONS_PATTERN);
+  assert.equal(countMatches(markdown, MARKDOWN_CODEX_INSTRUCTIONS_PATTERN), 1);
   assert.match(markdown, MARKDOWN_CODEX_INPUT_PATTERN);
   assert.match(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_HEADING_PATTERN);
   assert.match(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_KIND_PATTERN);
-  assert.match(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_PROMPT_PATTERN);
+  assert.doesNotMatch(markdown, MARKDOWN_DIAGNOSTIC_CONTEXT_PROMPT_PATTERN);
 });
+
+const countMatches = (text: string, pattern: RegExp): number =>
+  text.match(
+    new RegExp(
+      pattern.source,
+      pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`
+    )
+  )?.length ?? 0;

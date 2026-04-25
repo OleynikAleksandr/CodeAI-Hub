@@ -103,3 +103,10 @@
 8. [DONE] Git Commit: `docs: prepare provider readiness release` (hash: `a1f0cd36a`)
 9. [DONE] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.78`; artifacts: `codeai-hub-1.2.78.vsix`, `doc/tmp/releases/claude-module-1.2.78.tar.bz2`, `doc/tmp/releases/codex-module-1.2.78.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.78.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.78.tar.bz2`, `doc/tmp/releases/project-manager-1.2.78.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.78.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.78.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build provider readiness release`
 10. [DONE] Git Commit: `chore: bump provider readiness release version` (hash: `92b7c06ef`)
+
+## Phase 7 — Native Capture Markdown Deduplication (owner: Codex, updated: 2026-04-25)
+
+### Stream: Readable Markdown Without Raw Payload Repetition
+
+1. [DONE] Remove repeated large raw payload printing from native-capture Markdown while preserving full JSONL evidence — scope: `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, writer/facade tests, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; verification: `npm run lint`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/provider-network-capture/native-request-capture-writer.test.js packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`; commit message: `fix: dedupe native capture markdown payloads`
+2. [IN_PROGRESS] Git Commit: `fix: dedupe native capture markdown payloads` (hash: TBD)

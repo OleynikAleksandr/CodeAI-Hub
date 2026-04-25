@@ -85,7 +85,7 @@ export const buildNativeRequestCaptureMarkdown = (
     "",
     "## Provider Diagnostic Context",
     "",
-    fencedJson(diagnosticContext),
+    fencedJson(summarizeDiagnosticContextRecords(diagnosticContext)),
     "",
     "## Captured Requests",
     "",
@@ -97,15 +97,15 @@ export const buildNativeRequestCaptureMarkdown = (
     "",
     "### Ignored Request Details",
     "",
-    fencedJson(ignoredRequests),
+    fencedJson(summarizeIgnoredRequests(ignoredRequests)),
     "",
     "## Request Headers",
     "",
     fencedJson(request?.headers ?? {}),
     "",
-    "## Request Body",
+    "## Request Body Summary",
     "",
-    fencedJson(request?.body ?? null),
+    fencedJson(summarizeRequestBody(request)),
     "",
     "## Extracted System Prompt",
     "",
@@ -127,7 +127,8 @@ export const buildNativeRequestCaptureMarkdown = (
     "",
     "- Sensitive local diagnostic artifact. Do not upload or share.",
     "- Credential-bearing headers are redacted by default.",
-    "- Request body is intentionally preserved for instruction debugging.",
+    "- Full raw request bodies are preserved in the JSONL artifact.",
+    "- Markdown intentionally prints large system/tools/messages payloads only in the extracted sections.",
     "",
   ].join("\n");
 };
@@ -337,6 +338,87 @@ const findProviderDiagnosticContextRecords = (
   records: readonly unknown[]
 ): readonly ProviderDiagnosticContextRecord[] =>
   records.filter(isProviderDiagnosticContextRecord);
+
+const summarizeDiagnosticContextRecords = (
+  records: readonly ProviderDiagnosticContextRecord[]
+): readonly Record<string, unknown>[] =>
+  records.map((record) => ({
+    captureId: record.captureId,
+    kind: record.kind,
+    payloadSummary: summarizeUnknownPayload(record.payload),
+    providerId: record.providerId,
+    sentUpstream: record.sentUpstream,
+    timestamp: record.timestamp,
+    type: record.type,
+  }));
+
+const summarizeIgnoredRequests = (
+  records: readonly NativeRequestCaptureIgnoredRecord[]
+): readonly Record<string, unknown>[] =>
+  records.map((record) => ({
+    bodySummary: summarizeUnknownPayload(record.body),
+    bodyTextLength: record.bodyText?.length ?? 0,
+    captureId: record.captureId,
+    headers: record.headers,
+    method: record.method ?? null,
+    path: record.path ?? null,
+    providerId: record.providerId,
+    reason: record.reason,
+    target: record.target,
+    type: record.type,
+  }));
+
+const summarizeRequestBody = (
+  request: NativeRequestCaptureRequest | null
+): Record<string, unknown> | null => {
+  if (!request) {
+    return null;
+  }
+  return {
+    bodySummary: summarizeUnknownPayload(request.body),
+    bodyTextLength: request.bodyText.length,
+    method: request.method,
+    path: request.path,
+    providerId: request.providerId,
+    target: request.target,
+  };
+};
+
+const summarizeUnknownPayload = (value: unknown): Record<string, unknown> => {
+  if (Array.isArray(value)) {
+    return {
+      type: "array",
+      length: value.length,
+      jsonLength: safeJsonLength(value),
+    };
+  }
+  if (isRecord(value)) {
+    const keys = Object.keys(value);
+    return {
+      type: "object",
+      keys,
+      jsonLength: safeJsonLength(value),
+      model: readString(value.model),
+      toolsCount: Array.isArray(value.tools) ? value.tools.length : null,
+      messagesCount: Array.isArray(value.messages)
+        ? value.messages.length
+        : null,
+      inputCount: Array.isArray(value.input) ? value.input.length : null,
+    };
+  }
+  return {
+    type: value === null ? "null" : typeof value,
+    jsonLength: safeJsonLength(value),
+  };
+};
+
+const safeJsonLength = (value: unknown): number | null => {
+  try {
+    return JSON.stringify(value).length;
+  } catch {
+    return null;
+  }
+};
 
 const formatIgnoredRequests = (
   records: readonly NativeRequestCaptureIgnoredRecord[]

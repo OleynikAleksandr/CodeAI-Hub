@@ -22,7 +22,7 @@ const PROVIDER_RUNTIME_ERROR_RECORD_PATTERN = /provider_runtime_error/;
 const PROVIDER_RUNTIME_ERROR_MESSAGE_PATTERN =
   /provider crashed before network/;
 const PROVIDER_RUNTIME_ERROR_SECTION_PATTERN = /Provider Runtime Error/;
-const PROVIDER_DIAGNOSTIC_CONTEXT_PATTERN = /provider diagnostic context/;
+const PROVIDER_DIAGNOSTIC_CONTEXT_PATTERN = /provider_diagnostic_context/;
 const PROVIDER_DIAGNOSTIC_CONTEXT_SECTION_PATTERN =
   /Provider Diagnostic Context/;
 
