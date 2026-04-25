@@ -128,6 +128,6 @@
 5. [DONE] Add targeted tests for the Claude `Read` / `Write` / `Edit` tool profile — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; verification: `npm run build --workspace=@codeai-hub/claude-module`, direct node tests for both files; expected commit message: `test: cover claude workflow tool allowlist`
 6. [DONE] Git Commit: `test: cover claude workflow tool allowlist` (hash: `3ec42208ef1c98a5c74acf1a71405f005f483d28`)
 7. [DONE] Update SSOT docs and release notes for Claude tool allowlist retest — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Experiment_Results.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; release target: `1.2.80`; expected commit message: `docs: prepare claude tool allowlist release`
-8. [TODO] Git Commit: `docs: prepare claude tool allowlist release` (hash: TBD)
+8. [DONE] Git Commit: `docs: prepare claude tool allowlist release` (hash: `521a23550a9f648f1abf178fd1e686fc292d9bd2`)
 9. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.80`; artifacts: TBD; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected commit message: `chore: build claude tool allowlist release`
 10. [TODO] Git Commit: `chore: bump claude tool allowlist release version` (hash: TBD)
