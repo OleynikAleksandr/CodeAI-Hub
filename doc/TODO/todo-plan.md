@@ -140,7 +140,7 @@
 ### Stream: Remove Subagent Tool Noise From Codex Workflow Requests
 
 1. [DONE] Plan the Codex `multi_agent` feature flag experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Codex native `body.tools` should drop the subagent family `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; commit message: `docs: plan codex multi agent tool flag test`
-2. [TODO] Git Commit: `docs: plan codex multi agent tool flag test` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan codex multi agent tool flag test` (hash: `d2bdf270613e1361b11c9bc82c205d4d92a329c4`)
 3. [TODO] Start CodeAI Hub Codex App Server with `--disable multi_agent` for runtime and diagnostic capture — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, targeted process/app-server tests, `doc/TODO/todo-plan.md`; expected commit message: `test: disable codex multi agent tool profile`
 4. [TODO] Git Commit: `test: disable codex multi agent tool profile` (hash: TBD)
 5. [TODO] Update Codex SSOT docs and release notes for the multi-agent tool profile retest — scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Experiment_Results.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; release target: `1.2.81`; expected commit message: `docs: prepare codex multi agent tool flag release`
