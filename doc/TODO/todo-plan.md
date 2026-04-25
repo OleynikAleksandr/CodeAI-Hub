@@ -110,3 +110,7 @@
 
 1. [DONE] Remove repeated large raw payload printing from native-capture Markdown while preserving full JSONL evidence — scope: `packages/core/src/provider-network-capture/native-request-capture-markdown.ts`, writer/facade tests, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; verification: `npm run lint`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/provider-network-capture/native-request-capture-writer.test.js packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`; commit message: `fix: dedupe native capture markdown payloads`
 2. [DONE] Git Commit: `fix: dedupe native capture markdown payloads` (hash: `ad70fa745b3b04483a73a7bf49fba840f2d0841d`)
+3. [IN_PROGRESS] Prepare release notes for native-capture Markdown dedupe retest — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; release target: `1.2.79`; commit message: `docs: prepare native capture markdown dedupe release`
+4. [TODO] Git Commit: `docs: prepare native capture markdown dedupe release` (hash: TBD)
+5. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.79`; artifacts: TBD; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build native capture markdown dedupe release`
+6. [TODO] Git Commit: `chore: bump native capture markdown dedupe release version` (hash: TBD)

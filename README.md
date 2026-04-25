@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.78
+## Current Release — v1.2.79
+- **Native Request Capture Markdown больше не дублирует большие payload.** Markdown теперь показывает summary для raw request body, ignored requests и provider diagnostic context, а полный system/tools/messages оставляет в extracted sections.
+- **JSONL остается полным источником истины.** Полные request body/bodyText, ignored request bodies и diagnostic payloads сохраняются в `.jsonl`, чтобы не потерять forensic-картину провайдерского запроса.
+- **Цель retest — проверить читаемость Claude и Codex логов.** В Claude `.md` workflow prompt больше не должен повторяться через body/bodyText/section_extract; в Codex `.md` custom system prompt не должен размножаться через diagnostic context и request body.
+
+### 1.2.78 (previous)
 - **Provider auto-update снова выполняется на старте Core.** Core читает Project Manager settings из `~/.codeai-hub/settings/settings.json` и до provider initialization обновляет enabled provider CLI/SDK targets через тот же `settings:update-provider` сервис.
 - **Claude auth preflight больше не зависит от интерактивного `npx`.** Проверка `--version` и provider-home auth probe идут через установленный `claude` executable из `SDKInstaller`; hidden SDK latest-update убран из обычного `ensureInstalled()`.
 - **Native Request Capture честнее сообщает readiness.** Если provider известен registry, но adapter ещё не поднялся, результат теперь `provider_not_ready`, а не misleading `provider_not_supported`.

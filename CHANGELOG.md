@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.79] - 2026-04-25
+### Fixed
+- **Native Request Capture Markdown больше не размножает большие prompt payload.** Raw request body, ignored request details и provider diagnostic context теперь печатаются как summary; полный читаемый system/tools/messages остается в extracted sections, а full-fidelity payload сохраняется в JSONL.
+- **Claude и Codex capture logs стали менее неоднозначными.** Claude workflow prompt больше не повторяется в `.md` через parsed body/bodyText/section extracts, а Codex custom system prompt не дублируется через diagnostic context.
+
+### Tests
+- **Targeted checks закрывают Markdown dedupe.** Пройдены `npm run lint`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/provider-network-capture/native-request-capture-writer.test.js packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`.
+
 ## [1.2.78] - 2026-04-25
 ### Fixed
 - **Provider startup auto-update восстановлен для Project Manager settings.** Core на старте читает persisted `settings.json`, применяет `providers.*.autoUpdate.enabled`, последовательно запускает update targets и только после этого инициализирует provider registry.
