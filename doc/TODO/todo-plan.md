@@ -78,4 +78,4 @@
 33. [DONE] Проверить runtime capture C2 после установки `1.2.70` и зафиксировать high-level evidence без raw prompt dump — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Instruction_Stack_Flag_Evidence.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude custom system prompt capture evidence`
    - Runtime capture: `2026-04-25T06-36-21-416Z-claude-native-request.jsonl`; captured main `claude-opus-4-7` workflow request at JSONL record `27`.
    - Result: `body.system` has `3` blocks / `2948` text chars and includes custom `Agent Operating Rules`; `body.tools` remains `10` tools with hash `4a3f9e88a7a8bd49`; Claude Code preset blocks from C1 are absent from `body.system`.
-34. [TODO] Git Commit: `docs: record claude custom system prompt capture evidence` (hash: TBD)
+34. [DONE] Git Commit: `docs: record claude custom system prompt capture evidence` (hash: `adac28ef9`)
