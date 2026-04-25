@@ -99,7 +99,9 @@ export class ClaudeSDKManager {
       return;
     }
     await this.deps.installer.ensureInstalled();
-    await this.deps.authManager.ensureSubscriptionAuth();
+    await this.deps.authManager.ensureSubscriptionAuth({
+      executablePath: this.deps.installer.getExecutablePath(),
+    });
     this.sdkModule = await this.deps.installer.loadModule<{
       readonly query: QueryFunction;
     }>();

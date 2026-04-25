@@ -100,6 +100,20 @@ export class ClaudeAuthRuntime {
     this.reporter = options?.reporter;
   }
 
+  private resolveClaudeCliInvocation(options: {
+    readonly args: readonly string[];
+    readonly executablePath?: string;
+  }): { readonly args: readonly string[]; readonly command: string } {
+    const executablePath = options.executablePath?.trim();
+    if (executablePath) {
+      return { command: executablePath, args: options.args };
+    }
+    return {
+      command: this.npxExecutable,
+      args: ["@anthropic-ai/claude-code", ...options.args],
+    };
+  }
+
   getAuthEnvironment(): NodeJS.ProcessEnv {
     // Strip ANTHROPIC_API_KEY (force CLI auth) and CLAUDECODE (prevent nested
     // session detection when Core is launched from a Claude Code CLI context).
@@ -168,16 +182,21 @@ export class ClaudeAuthRuntime {
     }
   }
 
-  async runAuthProbe(workspacePath: string): Promise<boolean> {
-    const args = [
-      "@anthropic-ai/claude-code",
-      "-p",
-      "--no-session-persistence",
-      "--model",
-      AUTH_PROBE_MODEL_ALIAS,
-      AUTH_PROBE_PROMPT,
-    ];
-    const child = spawn(this.npxExecutable, args, {
+  async runAuthProbe(
+    workspacePath: string,
+    options?: { readonly executablePath?: string }
+  ): Promise<boolean> {
+    const invocation = this.resolveClaudeCliInvocation({
+      executablePath: options?.executablePath,
+      args: [
+        "-p",
+        "--no-session-persistence",
+        "--model",
+        AUTH_PROBE_MODEL_ALIAS,
+        AUTH_PROBE_PROMPT,
+      ],
+    });
+    const child = spawn(invocation.command, invocation.args, {
       cwd: workspacePath,
       env: this.getAuthEnvironment(),
       windowsHide: true,
@@ -264,11 +283,17 @@ export class ClaudeAuthRuntime {
     });
   }
 
-  async checkAuthentication(): Promise<boolean> {
+  async checkAuthentication(options?: {
+    readonly executablePath?: string;
+  }): Promise<boolean> {
     try {
+      const invocation = this.resolveClaudeCliInvocation({
+        executablePath: options?.executablePath,
+        args: ["--version"],
+      });
       const { stdout, stderr } = await execFileAsync(
-        this.npxExecutable,
-        ["@anthropic-ai/claude-code", "--version"],
+        invocation.command,
+        invocation.args,
         {
           env: this.getAuthEnvironment(),
           windowsHide: true,

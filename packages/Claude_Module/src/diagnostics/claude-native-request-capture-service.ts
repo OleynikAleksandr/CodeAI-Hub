@@ -56,8 +56,10 @@ export class ClaudeNativeRequestCaptureService {
     options: ClaudeNativeRequestCaptureOptions
   ): Promise<void> {
     await this.#installer.ensureInstalled();
-    await this.#authManager.ensureSubscriptionAuth();
+    const executablePath = this.#installer.getExecutablePath();
+    await this.#authManager.ensureSubscriptionAuth({ executablePath });
     await this.#authManager.ensureProviderHomeSessionBootstrap({
+      executablePath,
       workspacePath: options.workspacePath,
     });
     const sdkModule = await this.#installer.loadModule<{

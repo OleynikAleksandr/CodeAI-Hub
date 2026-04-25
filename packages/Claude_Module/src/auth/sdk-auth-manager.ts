@@ -22,18 +22,23 @@ export class SDKAuthManager {
     });
   }
 
-  async ensureSubscriptionAuth(): Promise<void> {
+  async ensureSubscriptionAuth(options?: {
+    readonly executablePath?: string;
+  }): Promise<void> {
     await this.authHomeBridge.ensureMacOSProviderHomeKeychainBridgeIfNeeded();
     await this.authHomeBridge.linkLegacyCliStateIfNeeded();
     await this.authHomeBridge.migrateLegacyCredentialsIfNeeded();
     await this.authRuntime.bootstrapOAuthToken();
-    const authenticated = await this.authRuntime.checkAuthentication();
+    const authenticated = await this.authRuntime.checkAuthentication({
+      executablePath: options?.executablePath,
+    });
     if (!authenticated) {
       throw new Error(CLAUDE_LOGIN_HINT);
     }
   }
 
   async ensureProviderHomeSessionBootstrap(payload: {
+    readonly executablePath?: string;
     readonly workspacePath: string;
   }): Promise<void> {
     if (this.providerHomeBootstrapReady) {
@@ -49,7 +54,8 @@ export class SDKAuthManager {
     await this.authRuntime.bootstrapOAuthToken();
 
     const initialAttempt = await this.authRuntime.runAuthProbe(
-      payload.workspacePath
+      payload.workspacePath,
+      { executablePath: payload.executablePath }
     );
     if (initialAttempt) {
       this.providerHomeBootstrapReady = true;
@@ -61,7 +67,8 @@ export class SDKAuthManager {
     );
     await this.authRuntime.bootstrapOAuthToken({ forceRefresh: true });
     const retryAttempt = await this.authRuntime.runAuthProbe(
-      payload.workspacePath
+      payload.workspacePath,
+      { executablePath: payload.executablePath }
     );
     if (retryAttempt) {
       this.providerHomeBootstrapReady = true;

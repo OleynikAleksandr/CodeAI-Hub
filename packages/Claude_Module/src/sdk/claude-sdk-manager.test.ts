@@ -6,15 +6,30 @@ import test from "node:test";
 import type { ActiveSession } from "../session/types";
 import { ClaudeSDKManager } from "./claude-sdk-manager";
 
+const shouldYieldEmptyStreamValue = (): boolean => false;
+
+async function* emptyClaudeStream(): AsyncIterableIterator<never> {
+  await Promise.resolve();
+  if (shouldYieldEmptyStreamValue()) {
+    yield undefined as never;
+  }
+}
+
 const createManager = (settingsPath?: string): ClaudeSDKManager =>
   new ClaudeSDKManager({
     authManager: {
+      ensureSubscriptionAuth: () => Promise.resolve(),
       getAuthEnvironment: () => ({
         HOME: "/sandbox/provider-home",
       }),
     },
     installer: {
+      ensureInstalled: () => Promise.resolve(),
       getExecutablePath: () => "/tmp/claude",
+      loadModule: () =>
+        Promise.resolve({
+          query: () => emptyClaudeStream(),
+        }),
     },
     processor: {
       configureContextUsageReader: () => {
@@ -68,6 +83,46 @@ test("ClaudeSDKManager keeps provider sessions in SDK isolation mode", () => {
   assert.deepEqual(options.env, {
     HOME: "/sandbox/provider-home",
   });
+});
+
+test("ClaudeSDKManager passes installed executable to auth preflight", async () => {
+  let executablePath: string | undefined;
+  const manager = new ClaudeSDKManager({
+    authManager: {
+      ensureSubscriptionAuth: (options?: {
+        readonly executablePath?: string;
+      }) => {
+        executablePath = options?.executablePath;
+        return Promise.resolve();
+      },
+      getAuthEnvironment: () => ({
+        HOME: "/sandbox/provider-home",
+      }),
+    },
+    installer: {
+      ensureInstalled: () => Promise.resolve(),
+      getExecutablePath: () => "/tmp/claude",
+      loadModule: () =>
+        Promise.resolve({
+          query: () => emptyClaudeStream(),
+        }),
+    },
+    processor: {
+      configureContextUsageReader: () => {
+        // noop
+      },
+    },
+    sessions: {},
+    workspace: {
+      claudeProjectSlug: "workspace-slug",
+      defaultModel: "opus",
+      workspacePath: "/workspace",
+    },
+  } as never);
+
+  await manager.initialize();
+
+  assert.equal(executablePath, "/tmp/claude");
 });
 
 test("ClaudeSDKManager uses applied Claude effort instead of deprecated maxThinkingTokens", () => {

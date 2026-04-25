@@ -1,5 +1,4 @@
 import { access, mkdir } from "node:fs/promises";
-import https from "node:https";
 import { homedir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -7,8 +6,6 @@ import type { ClaudeInstallerPaths, ModuleReporter } from "../types";
 import { runNpmCommand } from "./npm-runner";
 
 const PACKAGE_NAME = "@anthropic-ai/claude-agent-sdk";
-const REGISTRY_URL =
-  "https://registry.npmjs.org/@anthropic-ai/claude-agent-sdk/latest";
 const HOME_DIRECTORY_PATTERN = /^~(?=$|\/|\\)/u;
 const USERPROFILE_PATTERN = /%USERPROFILE%/giu;
 const SDK_ENTRY_FILENAME = "sdk.mjs";
@@ -89,8 +86,7 @@ export class SDKInstaller {
     await this.ensurePrefixDirectories();
     const installed = await this.checkGlobalInstallation();
     if (installed) {
-      this.emitProgress("Checking Claude components...");
-      await this.checkAndUpdateSDK();
+      this.emitProgress("Claude components already installed.");
     } else {
       this.emitProgress("Downloading Claude components for the first run...", {
         firstRun: true,
@@ -186,47 +182,6 @@ export class SDKInstaller {
     this.reportStatus("Installing Claude Agent SDK globally");
     await this.runNpm(["install", "-g", `${PACKAGE_NAME}@latest`, "--force"]);
     await this.checkGlobalInstallation();
-  }
-
-  private async checkAndUpdateSDK(): Promise<void> {
-    const latestVersion = await this.getLatestVersion();
-    if (
-      !(latestVersion && this.currentVersion) ||
-      this.currentVersion === latestVersion
-    ) {
-      return;
-    }
-    this.emitProgress("Updating Claude components...", {
-      detail: "Applying the latest improvements.",
-    });
-    this.reportStatus(`Updating Claude Agent SDK to v${latestVersion}`);
-    await this.runNpm(["install", "-g", `${PACKAGE_NAME}@latest`, "--force"]);
-    await this.checkGlobalInstallation();
-  }
-
-  private getLatestVersion(): Promise<string | null> {
-    return new Promise((resolve) => {
-      https
-        .get(REGISTRY_URL, (response) => {
-          let body = "";
-          response.setEncoding("utf8");
-          response.on("data", (chunk) => {
-            body += chunk;
-          });
-          response.on("end", () => {
-            try {
-              const parsed = JSON.parse(body) as { readonly version?: string };
-              resolve(parsed.version ?? null);
-            } catch {
-              resolve(null);
-            }
-          });
-        })
-        .on("error", (error) => {
-          this.logger?.error?.("Unable to reach npm registry", error);
-          resolve(null);
-        });
-    });
   }
 
   private runNpm(

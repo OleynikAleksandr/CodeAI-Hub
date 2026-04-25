@@ -12,14 +12,26 @@ async function* emptyClaudeStream(): AsyncIterableIterator<never> {
 }
 
 test("ClaudeNativeRequestCaptureService injects proxy and certificate env into SDK query", async () => {
+  const authCalls: {
+    bootstrap?: Record<string, unknown>;
+    subscription?: Record<string, unknown>;
+  } = {};
   const queryPayloads: {
     readonly options: Record<string, unknown>;
     readonly prompt: string;
   }[] = [];
   const service = new ClaudeNativeRequestCaptureService({
     authManager: {
-      ensureProviderHomeSessionBootstrap: () => Promise.resolve(),
-      ensureSubscriptionAuth: () => Promise.resolve(),
+      ensureProviderHomeSessionBootstrap: (
+        payload: Record<string, unknown>
+      ) => {
+        authCalls.bootstrap = payload;
+        return Promise.resolve();
+      },
+      ensureSubscriptionAuth: (options: Record<string, unknown>) => {
+        authCalls.subscription = options;
+        return Promise.resolve();
+      },
       getAuthEnvironment: () => ({ HOME: "/provider-home" }),
     } as never,
     installer: {
@@ -83,6 +95,11 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     (queryPayload.options.systemPrompt as string).includes("claude_code"),
     false
   );
+  assert.deepEqual(authCalls.subscription, { executablePath: "/tmp/claude" });
+  assert.deepEqual(authCalls.bootstrap, {
+    executablePath: "/tmp/claude",
+    workspacePath: "/workspace",
+  });
   assert.equal(queryPayload.options.model, "sonnet");
   assert.deepEqual(queryPayload.options.thinking, { type: "disabled" });
   assert.equal(

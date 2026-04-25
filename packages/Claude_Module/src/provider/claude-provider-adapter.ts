@@ -83,6 +83,7 @@ export class ClaudeProviderAdapter {
   async initialize(): Promise<void> {
     await this.sdkManager.initialize();
     await this.authManager.ensureProviderHomeSessionBootstrap({
+      executablePath: this.installer.getExecutablePath(),
       workspacePath: this.workspacePath,
     });
   }

@@ -94,9 +94,9 @@
 ### Stream: Startup Update Policy And Claude Readiness
 
 1. [DONE] Restore Core startup auto-update from Project Manager settings — scope: `packages/core/src/orchestrator/core-orchestrator.ts`, Core settings/provider-version service files, tests/docs; verification: `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/remote-bridge/handlers/settings-provider-auto-update-service.test.js`; commit message: `fix: restore provider startup auto update`
-2. [IN_PROGRESS] Git Commit: `fix: restore provider startup auto update` (hash: TBD)
-3. [TODO] Make Claude auth preflight use the installed executable path instead of interactive `npx` — scope: `packages/Claude_Module/src/auth/`, Claude SDK/diagnostic/translation call sites, tests; commit message: `fix: use installed claude executable for auth preflight`
-4. [TODO] Git Commit: `fix: use installed claude executable for auth preflight` (hash: TBD)
+2. [DONE] Git Commit: `fix: restore provider startup auto update` (hash: `a13385f9d`)
+3. [DONE] Make Claude auth preflight use the installed executable path instead of interactive `npx` — scope: `packages/Claude_Module/src/auth/`, Claude SDK/diagnostic/translation call sites, tests; verification: `npm run build --workspace=@codeai-hub/claude-module`, `node --test packages/Claude_Module/dist/sdk/claude-sdk-manager.test.js packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js packages/Claude_Module/dist/translation/claude-haiku-translation-service.test.js`; commit message: `fix: use installed claude executable for auth preflight`
+4. [IN_PROGRESS] Git Commit: `fix: use installed claude executable for auth preflight` (hash: TBD)
 5. [TODO] Return `provider_not_ready` for known native-capture providers whose adapter is not initialized — scope: `packages/core/src/provider-network-capture/`, bridge result types/tests; commit message: `fix: report provider readiness in native capture`
 6. [TODO] Git Commit: `fix: report provider readiness in native capture` (hash: TBD)
 7. [TODO] Update SSOT docs and release notes for the provider startup readiness release — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare provider readiness release`

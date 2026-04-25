@@ -201,7 +201,9 @@ export class ClaudeHaikuTranslationService {
       await this.initialize();
       const workspaceCwd = resolveTranslationRuntimeCwd();
       await mkdir(workspaceCwd, { recursive: true });
+      const executablePath = this.options.installer.getExecutablePath();
       await this.options.authManager.ensureProviderHomeSessionBootstrap({
+        executablePath,
         workspacePath: resolveClaudeProviderHome(),
       });
       const systemPrompt = buildClaudeHaikuTranslatorInstruction(request);
@@ -236,7 +238,9 @@ export class ClaudeHaikuTranslationService {
       return;
     }
     await this.options.installer.ensureInstalled();
-    await this.options.authManager.ensureSubscriptionAuth();
+    await this.options.authManager.ensureSubscriptionAuth({
+      executablePath: this.options.installer.getExecutablePath(),
+    });
     const loaded = this.options.queryLoader
       ? await this.options.queryLoader()
       : await this.options.installer.loadModule<{

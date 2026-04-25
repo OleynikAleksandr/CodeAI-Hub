@@ -13,16 +13,23 @@ interface RecordedQueryCall {
   readonly prompt: string;
 }
 
+interface FakeAuthCalls {
+  authProbe: number;
+  authProbeExecutablePath?: string;
+  bootstrap: number;
+  bootstrapExecutablePath?: string;
+  getEnv: number;
+}
+
 interface FakeAuthManager {
-  readonly calls: {
-    readonly authProbe: number;
-    readonly bootstrap: number;
-    readonly getEnv: number;
-  };
+  readonly calls: FakeAuthCalls;
   ensureProviderHomeSessionBootstrap(payload: {
+    readonly executablePath?: string;
     readonly workspacePath: string;
   }): Promise<void>;
-  ensureSubscriptionAuth(): Promise<void>;
+  ensureSubscriptionAuth(options?: {
+    readonly executablePath?: string;
+  }): Promise<void>;
   getAuthEnvironment(): NodeJS.ProcessEnv;
 }
 
@@ -33,15 +40,17 @@ interface FakeInstaller {
 }
 
 const createFakeAuthManager = (): FakeAuthManager => {
-  const calls = { authProbe: 0, bootstrap: 0, getEnv: 0 };
+  const calls: FakeAuthCalls = { authProbe: 0, bootstrap: 0, getEnv: 0 };
   return {
     calls,
-    ensureProviderHomeSessionBootstrap(_payload): Promise<void> {
+    ensureProviderHomeSessionBootstrap(payload): Promise<void> {
       calls.bootstrap += 1;
+      calls.bootstrapExecutablePath = payload.executablePath;
       return Promise.resolve();
     },
-    ensureSubscriptionAuth(): Promise<void> {
+    ensureSubscriptionAuth(options): Promise<void> {
       calls.authProbe += 1;
+      calls.authProbeExecutablePath = options?.executablePath;
       return Promise.resolve();
     },
     getAuthEnvironment(): NodeJS.ProcessEnv {
@@ -124,7 +133,9 @@ test("ClaudeHaikuTranslationService runs ensure/auth/bootstrap before query and 
   assert.equal(result.errorCode, undefined);
   assert.equal(installer.calls.ensureInstalled, 1);
   assert.equal(auth.calls.authProbe, 1);
+  assert.equal(auth.calls.authProbeExecutablePath, "/tmp/claude-cli");
   assert.equal(auth.calls.bootstrap, 1);
+  assert.equal(auth.calls.bootstrapExecutablePath, "/tmp/claude-cli");
   assert.equal(recorded.length, 1);
   assert.equal(
     recorded[0]?.prompt,
