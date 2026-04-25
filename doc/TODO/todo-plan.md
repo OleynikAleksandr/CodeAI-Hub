@@ -57,4 +57,4 @@
 ### Stream: User Capture Analysis
 
 1. [DONE] Analyze user-provided GPT-5.5 native capture logs and compare provider base/system instructions with `gpt-5.3-codex` and `gpt-5.4` — result: `gpt-5.5` has a distinct provider base prompt; evidence: `2026-04-25T10-51-29-554Z` selected/applied `gpt-5.5`, no `thread/start.baseInstructions`, `config.project_doc_max_bytes = 0`, `instructionSources: []`, workflow prompt length/hash `12973` / `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`, tools count/hash `18` / `a1a33140218a5d234965813f26cb0ac2d1e3edb6044aa7c78bb33c88f2829a33`, base instructions length/hash `21335` / `c2a980bc28af132eb89e0b4c68ae884043faae83a1afd3fd4889f7e8a1ada7b0`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex gpt 5.5 prompt inventory`
-2. [TODO] Git Commit: `docs: record codex gpt 5.5 prompt inventory` (hash: TBD)
+2. [DONE] Git Commit: `docs: record codex gpt 5.5 prompt inventory` (hash: `a9becb9f2`)
