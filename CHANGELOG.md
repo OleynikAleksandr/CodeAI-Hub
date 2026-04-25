@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.74] - 2026-04-25
+### Changed
+- **Codex diagnostic capture теперь отправляет compact `baseInstructions`.** Temporary App Server `thread/start` получает diagnostic-only compact system prompt через `baseInstructions` и сохраняет X8 cleanup `config.project_doc_max_bytes = 0`.
+- **Retest проверяет замену system/base prompt, а не developer instructions.** Capture должен показать новый compact prompt в `thread/start.request.baseInstructions`, native `response.create.instructions` и provider-home `base_instructions.text`.
+
+### Tests
+- **Targeted checks закрывают compact baseInstructions request shape.** Пройдены `npm run build --workspace=@codeai-hub/codex-app-server-module` и direct node test для `codex-native-request-capture-service`.
+
 ## [1.2.73] - 2026-04-25
 ### Changed
 - **Codex diagnostic capture снова включает X8 `project_doc_max_bytes = 0`.** Temporary App Server `thread/start` получает diagnostic-only `config.project_doc_max_bytes = 0`, чтобы проверить удаление project `AGENTS.md` уже после фикса полной observability.
