@@ -48,8 +48,8 @@
 ### Stream: Release Package For User Retest
 
 1. [DONE] Prepare release notes for the next version with the new GPT-5.5 Codex model option — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex gpt 5.5 release notes`
-2. [TODO] Git Commit: `docs: prepare codex gpt 5.5 release notes` (hash: TBD)
-3. [TODO] Build a new release package and stop for user retest — scope: release-generated version files, `doc/TODO/todo-plan.md`; artifacts: next `codeai-hub-<version>.vsix` and tarballs under `doc/tmp/releases/`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex gpt 5.5 capture release`
+2. [DONE] Git Commit: `docs: prepare codex gpt 5.5 release notes` (hash: `ccb749218`)
+3. [IN_PROGRESS] Build a new release package and stop for user retest — scope: release-generated version files, `doc/TODO/todo-plan.md`; artifacts: next `codeai-hub-<version>.vsix` and tarballs under `doc/tmp/releases/`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex gpt 5.5 capture release`
 4. [TODO] Git Commit: `chore: build codex gpt 5.5 capture release` (hash: TBD)
 
 ## Phase 3 — GPT-5.5 Prompt Inventory (owner: Codex, updated: 2026-04-25)
