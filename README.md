@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.82
+## Current Release — v1.2.83
+- **Main merge verification release.** This release verifies that the completed `codex/claude-instruction-stack-tests` work is correctly merged into `main` and that the merged codebase is release-packageable.
+- **No new provider behavior changes.** The runtime surface remains the `1.2.82` baseline: Codex documentation tool profile, CodeAI Hub-owned Codex/Claude instruction profiles, and provider-native capture diagnostics are carried forward unchanged.
+- **Release automation is the verification target.** `build-all.sh` and `build-release.sh --use-current-version` must both pass on `main`, producing the `1.2.83` provider/core/UI/launcher tarballs and VSIX package.
+
+### 1.2.82 (previous)
 - **Codex workflow turns тестируют documentation tool profile.** Normal runtime и Settings diagnostic capture стартуют Codex App Server с отключенными `multi_agent`, browser/computer surfaces, `image_generation`, plugins/apps/tool-search и provider-home MCP servers `codex` / `playwright`.
 - **Цель retest — сузить provider-native `body.tools` до documentation minimum.** Ожидаемый keep-list: `exec_command`, `write_stdin`, `apply_patch`, `update_plan`, `web_search`, `view_image`.
 - **MCP и browser noise должны уйти.** Проверяем удаление `mcp__playwright__`, `mcp__codex__`, MCP resource tools и `image_generation`; `request_user_input` отдельно смотрим по факту, потому что подтвержденного dedicated removal knob пока нет.

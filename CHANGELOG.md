@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.83] - 2026-04-25
+### Changed
+- **Main merge verification release.** Confirms that the completed `codex/claude-instruction-stack-tests` work is present on `main` and that the merged branch can pass the full release packaging flow.
+- **No new runtime behavior is introduced.** The `1.2.82` provider instruction/tool-profile baseline is carried forward unchanged.
+
+### Tests
+- **Release automation is the acceptance gate.** `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` must complete for `1.2.83`, including SDK exclusion verification, production dependency pruning and VSIX package creation.
+
 ## [1.2.82] - 2026-04-25
 ### Changed
 - **Codex App Server теперь тестирует documentation tool profile.** Normal Codex runtime и Settings diagnostic capture стартуют с отключенными `multi_agent`, browser/computer surfaces, `image_generation`, plugins/apps/tool-search и provider-home MCP servers `codex` / `playwright`.

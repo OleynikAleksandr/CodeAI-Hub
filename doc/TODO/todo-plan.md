@@ -28,9 +28,9 @@
 ### Stream: Release 1.2.83
 
 1. [DONE] Create release verification planning docs and active todo — scope: `doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.83.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan main merge release verification`
-2. [IN_PROGRESS] Git Commit: `docs: plan main merge release verification` (hash: TBD)
-3. [TODO] Prepare release notes for future version `1.2.83` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare main merge release verification`
-4. [TODO] Git Commit: `docs: prepare main merge release verification` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan main merge release verification` (hash: `3878c3a41`)
+3. [DONE] Prepare release notes for future version `1.2.83` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare main merge release verification`
+4. [IN_PROGRESS] Git Commit: `docs: prepare main merge release verification` (hash: TBD)
 5. [TODO] Run release automation `./scripts/build-all.sh` for `1.2.83` — scope: release-script generated version/package artifacts; commit: `chore: build main merge verification release`
 6. [TODO] Git Commit: `chore: build main merge verification release` (hash: TBD)
 7. [TODO] Run VSIX packaging `./scripts/build-release.sh --use-current-version` and record artifacts — scope: release package outputs, `doc/TODO/todo-plan.md`; commit: `docs: record main merge verification release`
