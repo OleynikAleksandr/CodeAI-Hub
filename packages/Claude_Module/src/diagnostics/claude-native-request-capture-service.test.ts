@@ -71,7 +71,13 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
   );
   assert.equal(
     (queryPayload.options.systemPrompt as string).includes("CodeAI Hub"),
-    false
+    true
+  );
+  assert.equal(
+    (queryPayload.options.systemPrompt as string).includes(
+      "## Progress Updates"
+    ),
+    true
   );
   assert.equal(
     (queryPayload.options.systemPrompt as string).includes("claude_code"),
