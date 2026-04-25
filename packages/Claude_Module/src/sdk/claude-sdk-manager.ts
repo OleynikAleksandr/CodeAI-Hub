@@ -13,6 +13,7 @@ import type {
   ModuleReporter,
 } from "../types";
 import { resolveClaudeProviderProjectDir } from "./claude-provider-home";
+import { CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT } from "./claude-workflow-system-prompt";
 
 export type QueryFunction = (payload: {
   readonly prompt: string;
@@ -75,6 +76,7 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
   projectPath: string;
   resume?: string;
   settingSources: string[];
+  systemPrompt?: string;
   thinking?: {
     readonly display?: "summarized" | "omitted";
     readonly type: "adaptive" | "disabled";
@@ -272,6 +274,7 @@ export class ClaudeSDKManager {
       // Keep CodeAI Hub-managed Claude turns in SDK isolation mode so
       // CLAUDE.md/settings discovery cannot walk parent directories from cwd.
       settingSources: [],
+      systemPrompt: CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
       env: this.resolveAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };

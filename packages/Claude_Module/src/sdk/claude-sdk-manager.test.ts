@@ -59,6 +59,12 @@ test("ClaudeSDKManager keeps provider sessions in SDK isolation mode", () => {
 
   assert.deepEqual(options.additionalDirectories, ["/tmp/codeai-workspace"]);
   assert.deepEqual(options.settingSources, []);
+  assert.equal(typeof options.systemPrompt, "string");
+  assert.equal((options.systemPrompt as string).includes("CodeAI Hub"), true);
+  assert.equal(
+    (options.systemPrompt as string).includes("## Progress Updates"),
+    true
+  );
   assert.deepEqual(options.env, {
     HOME: "/sandbox/provider-home",
   });
@@ -82,7 +88,10 @@ test("ClaudeSDKManager uses applied Claude effort instead of deprecated maxThink
     }
   );
 
-  assert.deepEqual(options.thinking, { type: "adaptive" });
+  assert.deepEqual(options.thinking, {
+    type: "adaptive",
+    display: "summarized",
+  });
   assert.equal(options.effort, "high");
   assert.equal("maxThinkingTokens" in options, false);
 });
@@ -117,7 +126,10 @@ test("ClaudeSDKManager maps legacy Claude maxTokens snapshots to effort", async 
       workspacePath: "/tmp/codeai-workspace",
     } as ActiveSession);
 
-    assert.deepEqual(options.thinking, { type: "adaptive" });
+    assert.deepEqual(options.thinking, {
+      type: "adaptive",
+      display: "summarized",
+    });
     assert.equal(options.effort, "max");
     assert.equal("maxThinkingTokens" in options, false);
   } finally {
