@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.76] - 2026-04-25
+### Added
+- **Codex settings теперь включают `gpt-5.5`.** Shared Codex model registry добавляет `GPT-5.5`, и Settings -> General -> Provider Native Request Capture получает новую кнопку через существующий `CODEX_SETTINGS_MODELS` source of truth.
+- **Core defaults принимают GPT-5.5 reasoning state.** Core settings resolver и persisted snapshot defaults знают `gpt-5.5` с default reasoning `medium`, сохраняя те же уровни `low` / `medium` / `high` / `xhigh`, что и у `gpt-5.4`.
+
+### Tests
+- **Targeted checks закрывают UI/Core model propagation.** Пройдены `npm run build --workspace=@codeai-hub/core`, `npm run build:webview` и `npm run typecheck:webview`.
+
 ## [1.2.75] - 2026-04-25
 ### Changed
 - **Codex diagnostic capture временно убирает compact `baseInstructions`.** Temporary App Server `thread/start` снова не отправляет `baseInstructions`, чтобы retest мог собрать полный provider/system base prompt для выбранной Codex-модели.
