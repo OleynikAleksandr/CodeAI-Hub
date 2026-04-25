@@ -286,3 +286,32 @@ High-level headings, обнаруженные в новых cached system blocks
 - это не изменяет `body.tools`: schemas инструментов остаются отдельным полем Anthropic request;
 - это не переносит наш workflow prompt из `body.messages` в `body.system`;
 - следующая полезная проверка — C2 `preset + append`, чтобы понять, можно ли добавить CodeAI Hub frame поверх Claude Code preset без потери preset blocks.
+
+## 7. План C2: custom-only neutral system prompt
+
+После анализа extracted Claude Code prompt принято не использовать `preset + append` для следующей проверки:
+
+- `preset + append` ожидаемо отправит полный Claude Code preset stack плюс наш append;
+- цель C2 — проверить минимальный custom-only system layer без полного Claude Code preset;
+- step-specific templates остаются в первом user message и не переносятся в system prompt.
+
+Новый diagnostic C2 должен передавать:
+
+```ts
+systemPrompt: AGENT_OPERATING_RULES_SYSTEM_PROMPT
+```
+
+Требования к custom system prompt:
+
+- не упоминать `CodeAI Hub`, `orchestrator`, wrapper/надстройку или third-party app;
+- не утверждать, что runtime является Claude Code CLI;
+- описывать только нейтральные operating rules: instruction priority, source boundaries, prompt-injection boundary, artifact-first workflow, accuracy/assumptions, scope control, short communication;
+- не содержать step-specific правил `Description`, `Virtual Simulation` или `Diagram Modules`;
+- не переносить workflow templates из `~/.codeai-hub/templates/` в system prompt.
+
+Ожидаемая проверка после релиза:
+
+- `body.system` содержит baseline SDK markers и custom neutral operating rules;
+- большие Claude Code preset blocks из C1 отсутствуют;
+- `body.tools` остается с теми же agent-loop tool declarations;
+- `body.messages` продолжает содержать workflow step template.
