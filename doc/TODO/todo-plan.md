@@ -45,8 +45,8 @@
 1. [DONE] Add diagnostic-only `thread/start.config.project_doc_max_bytes = 0` for Codex native capture — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/TODO/todo-plan.md`; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; commit message: `test: add codex project doc max bytes capture flag`
 2. [DONE] Git Commit: `test: add codex project doc max bytes capture flag` (hash: `6c3755d5f`)
 3. [DONE] Prepare X8 release notes for future version `1.2.71` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex project doc flag release notes`
-4. [IN_PROGRESS] Git Commit: `docs: prepare codex project doc flag release notes` (hash: TBD)
-5. [TODO] Build a new release package for X8 retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.71`; commit message: `chore: build codex project doc flag test release`
+4. [DONE] Git Commit: `docs: prepare codex project doc flag release notes` (hash: `53e5b151e`)
+5. [IN_PROGRESS] Build a new release package for X8 retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.71`; commit message: `chore: build codex project doc flag test release`
 6. [TODO] Git Commit: `chore: build codex project doc flag test release` (hash: TBD)
 7. [TODO] Analyze user-provided X8 native capture logs and classify result — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex project doc flag evidence`
 8. [TODO] Git Commit: `docs: record codex project doc flag evidence` (hash: TBD)
