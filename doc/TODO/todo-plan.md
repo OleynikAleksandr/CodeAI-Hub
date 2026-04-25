@@ -70,6 +70,7 @@
    - Verification: `npm run build --workspace @codeai-hub/claude-module` прошел; `node --test packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js` прошел; Husky pre-commit для `08c575428` прошел `check-architecture.sh`, `npm run lint`, `npm run check:knip`, staged `format:fix`.
 28. [DONE] Git Commit: `docs: record claude custom system prompt verification` (hash: `2f367ed62`)
 29. [DONE] Подготовить release docs для будущей версии `1.2.70` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude custom system prompt release notes`
-30. [TODO] Git Commit: `docs: prepare claude custom system prompt release notes` (hash: TBD)
-31. [TODO] Собрать test release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude custom system prompt test release`
+30. [DONE] Git Commit: `docs: prepare claude custom system prompt release notes` (hash: `e41c60d24`)
+31. [IN_PROGRESS] Собрать test release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude custom system prompt test release`
+   - `./scripts/build-all.sh` прошел: version/manifests обновлены до `1.2.70`, tarball artifacts созданы в `~/.codeai-hub/releases/` и `doc/tmp/releases/`.
 32. [TODO] Git Commit: `chore: build claude custom system prompt test release` (hash: TBD)
