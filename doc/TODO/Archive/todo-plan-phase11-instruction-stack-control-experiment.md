@@ -2,12 +2,12 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Provider_AutoUpdate_And_Claude_Preflight.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_AutoUpdate_And_Claude_Preflight_1.2.78.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/Provider_AutoUpdate_And_Claude_Preflight.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_AutoUpdate_And_Claude_Preflight_1.2.78.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_GPT55_Model_Addition_1.2.76.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Instruction_Stack_StepByStep_Flag_Tests_1.2.75.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Workflow_MultiAgent_Tool_Profile_Flag_1.2.81.md`
   - `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
@@ -37,7 +37,7 @@
 
 ### Stream: Planning And Recovery Context
 
-1. [DONE] Create planning doc and active TODO plan for the GPT-5.5 Codex model addition — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit message: `docs: plan codex gpt 5.5 model addition`
+1. [DONE] Create planning doc and active TODO plan for the GPT-5.5 Codex model addition — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_GPT55_Model_Addition_1.2.76.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit message: `docs: plan codex gpt 5.5 model addition`
 2. [DONE] Git Commit: `docs: plan codex gpt 5.5 model addition` (hash: `618d40984`)
 
 ## Phase 1 — Codex GPT-5.5 Model Surface (owner: Codex, updated: 2026-04-25)
@@ -60,7 +60,7 @@
 
 ### Stream: User Capture Analysis
 
-1. [DONE] Analyze user-provided GPT-5.5 native capture logs and compare provider base/system instructions with `gpt-5.3-codex` and `gpt-5.4` — result: `gpt-5.5` has a distinct provider base prompt; evidence: `2026-04-25T10-51-29-554Z` selected/applied `gpt-5.5`, no `thread/start.baseInstructions`, `config.project_doc_max_bytes = 0`, `instructionSources: []`, workflow prompt length/hash `12973` / `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`, tools count/hash `18` / `a1a33140218a5d234965813f26cb0ac2d1e3edb6044aa7c78bb33c88f2829a33`, base instructions length/hash `21335` / `c2a980bc28af132eb89e0b4c68ae884043faae83a1afd3fd4889f7e8a1ada7b0`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex gpt 5.5 prompt inventory`
+1. [DONE] Analyze user-provided GPT-5.5 native capture logs and compare provider base/system instructions with `gpt-5.3-codex` and `gpt-5.4` — result: `gpt-5.5` has a distinct provider base prompt; evidence: `2026-04-25T10-51-29-554Z` selected/applied `gpt-5.5`, no `thread/start.baseInstructions`, `config.project_doc_max_bytes = 0`, `instructionSources: []`, workflow prompt length/hash `12973` / `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`, tools count/hash `18` / `a1a33140218a5d234965813f26cb0ac2d1e3edb6044aa7c78bb33c88f2829a33`, base instructions length/hash `21335` / `c2a980bc28af132eb89e0b4c68ae884043faae83a1afd3fd4889f7e8a1ada7b0`; scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_GPT55_Model_Addition_1.2.76.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex gpt 5.5 prompt inventory`
 2. [DONE] Git Commit: `docs: record codex gpt 5.5 prompt inventory` (hash: `a9becb9f2`)
 
 ## Phase 4 — Instruction Stack Experiment Consolidation (owner: Codex, updated: 2026-04-25)
@@ -123,7 +123,7 @@
 
 ### Stream: Remove Agent And Skill Tool Noise From Claude Workflow Requests
 
-1. [DONE] Plan the Claude `tools` allowlist experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Workflow_Tool_Profile_Allowlist.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Claude native `body.tools` should contain only `Read`, `Write`, `Edit`; commit message: `docs: plan claude workflow tool allowlist test`
+1. [DONE] Plan the Claude `tools` allowlist experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Workflow_Tool_Profile_Allowlist_1.2.80.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Claude native `body.tools` should contain only `Read`, `Write`, `Edit`; commit message: `docs: plan claude workflow tool allowlist test`
 2. [DONE] Git Commit: `docs: plan claude workflow tool allowlist test` (hash: `c2f23a718d4a1f49b6a1a4e608015d1661fd6e41`)
 3. [DONE] Apply explicit Claude workflow tool profile to runtime and diagnostic capture — scope: `packages/Claude_Module/src/sdk/claude-workflow-system-prompt.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`; expected commit message: `test: add claude workflow tool allowlist`
 4. [DONE] Git Commit: `test: add claude workflow tool allowlist` (hash: `72e2857ce918d2c3de3652be4212ae7ed69c16df`)
@@ -133,14 +133,14 @@
 8. [DONE] Git Commit: `docs: prepare claude tool allowlist release` (hash: `521a23550a9f648f1abf178fd1e686fc292d9bd2`)
 9. [DONE] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.80`; artifacts: `codeai-hub-1.2.80.vsix`, `doc/tmp/releases/claude-module-1.2.80.tar.bz2`, `doc/tmp/releases/codex-module-1.2.80.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.80.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.80.tar.bz2`, `doc/tmp/releases/project-manager-1.2.80.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.80.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.80.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected retest: Claude native `body.tools` should contain only `Read`, `Write`, `Edit`
 10. [DONE] Git Commit: `chore: bump claude tool allowlist release version` (hash: `1f52e53e9800d5db95ca76b294ff75c6dc88239e`)
-11. [DONE] Verify user retest logs for Claude tool allowlist — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-38-27-844Z-claude-native-request.*`, `doc/SolidWorks-WorkFlow/Plans/Claude_Workflow_Tool_Profile_Allowlist.md`, `doc/TODO/todo-plan.md`; result: `body.tools` contains only `Edit`, `Read`, `Write`; `Agent`, `Skill`, `ToolSearch`, and subagent wording are absent from tool declarations; expected commit message: `docs: record claude tool allowlist retest`
+11. [DONE] Verify user retest logs for Claude tool allowlist — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-38-27-844Z-claude-native-request.*`, `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Workflow_Tool_Profile_Allowlist_1.2.80.md`, `doc/TODO/todo-plan.md`; result: `body.tools` contains only `Edit`, `Read`, `Write`; `Agent`, `Skill`, `ToolSearch`, and subagent wording are absent from tool declarations; expected commit message: `docs: record claude tool allowlist retest`
 12. [DONE] Git Commit: `docs: record claude tool allowlist retest` (hash: `b49ee52b2f400b2bbb0f5aef4c39354480f43e8b`)
 
 ## Phase 9 — Codex Multi-Agent Tool Profile Flag (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Remove Subagent Tool Noise From Codex Workflow Requests
 
-1. [DONE] Plan the Codex `multi_agent` feature flag experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Codex native `body.tools` should drop the subagent family `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; commit message: `docs: plan codex multi agent tool flag test`
+1. [DONE] Plan the Codex `multi_agent` feature flag experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Workflow_MultiAgent_Tool_Profile_Flag_1.2.81.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Codex native `body.tools` should drop the subagent family `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; commit message: `docs: plan codex multi agent tool flag test`
 2. [DONE] Git Commit: `docs: plan codex multi agent tool flag test` (hash: `d2bdf270613e1361b11c9bc82c205d4d92a329c4`)
 3. [DONE] Start CodeAI Hub Codex App Server with `--disable multi_agent` for runtime and diagnostic capture — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.test.ts`, `doc/TODO/todo-plan.md`; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, direct node tests for process/facade/diagnostics; expected commit message: `test: disable codex multi agent tool profile`
 4. [DONE] Git Commit: `test: disable codex multi agent tool profile` (hash: `f8618dfd8fcaa99608dd71ce6d4fdbf47a1e0644`)
@@ -148,7 +148,7 @@
 6. [DONE] Git Commit: `docs: prepare codex multi agent tool flag release` (hash: `45972c0e8fe6f66fdd8e767c3f7374e92cab533e`)
 7. [DONE] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.81`; artifacts: `codeai-hub-1.2.81.vsix`, `doc/tmp/releases/claude-module-1.2.81.tar.bz2`, `doc/tmp/releases/codex-module-1.2.81.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.81.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.81.tar.bz2`, `doc/tmp/releases/project-manager-1.2.81.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.81.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.81.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected retest: Codex native `body.tools` should not contain `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`
 8. [DONE] Git Commit: `chore: bump codex multi agent tool flag release version` (hash: `2d9fc1489`)
-9. [DONE] Verify user retest logs for Codex `--disable multi_agent` — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-59-13-002Z-codex-native-request.*`, `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`, `doc/TODO/todo-plan.md`; result: `body.tools` dropped from `18` to `13`, removed `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; controls stable: base instructions hash `20a9fda290415bad2b2fd0f1fe05fd65f2f34eb4743cf3565eafcf01955f48eb`, workflow prompt hash `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`, `project_doc_max_bytes = 0`, `instructionSources = []`; expected commit message: `docs: record codex multi agent retest`
+9. [DONE] Verify user retest logs for Codex `--disable multi_agent` — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-59-13-002Z-codex-native-request.*`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Workflow_MultiAgent_Tool_Profile_Flag_1.2.81.md`, `doc/TODO/todo-plan.md`; result: `body.tools` dropped from `18` to `13`, removed `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; controls stable: base instructions hash `20a9fda290415bad2b2fd0f1fe05fd65f2f34eb4743cf3565eafcf01955f48eb`, workflow prompt hash `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`, `project_doc_max_bytes = 0`, `instructionSources = []`; expected commit message: `docs: record codex multi agent retest`
 10. [DONE] Git Commit: `docs: record codex multi agent retest` (hash: `866f4bb66`)
 
 ## Phase 10 — Codex Documentation Tool Profile (owner: Codex, updated: 2026-04-25)
