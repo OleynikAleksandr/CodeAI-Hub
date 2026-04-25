@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.80] - 2026-04-25
+### Changed
+- **Claude workflow runtime теперь тестирует explicit `Read` / `Write` / `Edit` tool allowlist.** Normal SDK turns и Settings diagnostic capture передают `tools: ["Read", "Write", "Edit"]`, чтобы проверить, заменяет ли Claude Agent SDK default Claude Code tool declarations или добавляет allowlist поверх них.
+- **Retest должен проверить удаление Agent/Skill шума.** Ожидаемый native request target: `body.tools` содержит только `Read`, `Write`, `Edit`; `Agent`, subagents, `Skill`, `ScheduleWakeup`, `ToolSearch` и broad exploration guidance отсутствуют.
+
+### Tests
+- **Targeted checks закрывают SDK option wiring.** Пройдены `npm run build --workspace=@codeai-hub/claude-module` и direct node tests для `claude-sdk-manager` / `claude-native-request-capture-service`.
+
 ## [1.2.79] - 2026-04-25
 ### Fixed
 - **Native Request Capture Markdown больше не размножает большие prompt payload.** Raw request body, ignored request details и provider diagnostic context теперь печатаются как summary; полный читаемый system/tools/messages остается в extracted sections, а full-fidelity payload сохраняется в JSONL.

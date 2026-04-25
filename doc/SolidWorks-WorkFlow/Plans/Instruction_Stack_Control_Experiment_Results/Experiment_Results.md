@@ -76,13 +76,15 @@ Provider request фактически состоит из трех разных 
 - Custom-only `systemPrompt` заменяет этот большой provider harness в diagnostic path.
 - `settingSources: []` является безопасным baseline для CodeAI Hub workflow turns, потому что не дает uncontrolled user/project/local Claude settings и memory files попадать в provider request.
 - Workflow template остается first user message; его не нужно переносить в `systemPrompt`.
-- Tool declarations оставались стабильными в успешных instruction-stack tests.
+- Tool declarations в успешных instruction-stack tests оставались default Claude Code profile (`10` tools), но это отдельный SDK `body.tools` слой, не `body.system`.
+- Новый тестовый флаг `1.2.80` проверяет explicit SDK `tools: ["Read", "Write", "Edit"]` для normal runtime и diagnostic capture, чтобы убрать `Agent`, subagents, `Skill`, `ScheduleWakeup`, `ToolSearch` и broad exploration tool noise из ранних documentation workflow turns.
 
 Product decision:
 
 - Claude custom system prompt пригоден для CodeAI Hub-owned workflow-agent frame.
 - Claude provider defaults полезны как reference material, но активный workflow profile должен принадлежать продукту.
 - Финальная реализация подключает `CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT` в `ClaudeSDKManager` и `ClaudeNativeRequestCaptureService`, сохраняя `settingSources: []`.
+- Текущий Claude workflow tool-profile candidate: `Read` / `Write` / `Edit`. Retest должен доказать, заменяет ли SDK default tools или добавляет allowlist поверх них.
 
 ## 4. Итоги по Codex
 

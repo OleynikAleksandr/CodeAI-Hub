@@ -42,6 +42,7 @@
 - Provider-driven Claude turns run in SDK isolation mode: filesystem setting sources stay empty, so Claude does not auto-load user/project/local settings or any `CLAUDE.md` memory files from the active workspace, its parent directories, or the real user home.
 - Tool/file access may still point at the active workspace through `cwd` and `additionalDirectories`, but that must not re-enable filesystem `CLAUDE.md` discovery; global user settings and global `~/.claude/CLAUDE.md` must never leak into provider-home sessions.
 - Normal SDK turns and diagnostic capture both pass `systemPrompt = CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT` from `src/sdk/claude-workflow-system-prompt.ts`. This keeps the provider/system layer CodeAI Hub-owned while leaving the current workflow step template in the first user message.
+- Normal SDK turns and diagnostic capture also pass the explicit CodeAI Hub-owned tool profile `CODEAI_CLAUDE_WORKFLOW_TOOLS = ["Read", "Write", "Edit"]`. This is a test flag for early documentation workflow steps: `Agent`, subagents, `Skill`, `ScheduleWakeup`, `ToolSearch`, and broad codebase exploration tools are not intended workflow dependencies for these steps.
 
 ## Native request capture diagnostics
 - Settings → General → `Capture Claude Native Request` calls `ClaudeProviderAdapter.captureNativeRequest(...)`, implemented by `src/diagnostics/claude-native-request-capture-service.ts`. The Settings card supplies the selected diagnostic model plus workflow scenario, while Project Manager supplies the scenario first-turn prompt built through the same `buildWorkflowPromptPack(...)` path used by normal workflow sends.
@@ -50,7 +51,7 @@
 - Capture query options intentionally keep `settingSources: []`, `persistSession: false`, `permissionMode: "bypassPermissions"`, `allowDangerouslySkipPermissions: true`, `cwd` / `additionalDirectories` = selected workspace, and `projectPath` under the provider project slug. The selected capture model and Core-applied `thinkingEnabled` / `reasoningEffort` are mirrored into the SDK `query(...)` options, including `thinking: { type: "adaptive", display: "summarized" }` plus `effort` when thinking is enabled and `thinking: { type: "disabled" }` when disabled. This preserves normal SDK isolation while forcing the outbound provider request through the local capture proxy.
 - Successful capture means the Core proxy saw `api.anthropic.com` `/v1/messages` and locally aborted that request; the diagnostic service may observe the resulting synthetic network failure, but upstream delivery is intentionally blocked.
 - Artifacts are Core-owned and written to `~/.codeai-hub/logs/native-request-capture/` as `.jsonl` plus readable `.md`; ignored Anthropic requests preserve reason/target/method/path/redacted headers/body for debugging path mismatches, while provider-home Claude JSONL remains the canonical provider-owned audit layer for normal turns.
-- Runtime evidence from `1.2.70` confirms the final shape: main Opus workflow request captured at JSONL record `27`, `body.system` has baseline SDK markers plus the custom neutral `Agent Operating Rules` block (`3` text blocks / `2948` text chars), `body.tools` remains the unchanged agent-loop declarations (`10` tools, hash `4a3f9e88a7a8bd49`), and the workflow step template remains in `body.messages`.
+- Runtime evidence from `1.2.79` showed the old default Claude Code tool profile: `body.tools` contained `10` tools (`Agent`, `Bash`, `Edit`, `Glob`, `Grep`, `Read`, `ScheduleWakeup`, `Skill`, `ToolSearch`, `Write`) and was about `35.9K` JSON characters / `61%` of the request body. Release `1.2.80` tests whether the explicit `tools: ["Read", "Write", "Edit"]` SDK option replaces that default set in the native provider request.
 
 ### Diagnostic SDK query contract
 
@@ -84,6 +85,7 @@ sdk.query({
     thinking: thinkingEnabled
       ? { type: "adaptive", display: "summarized" }
       : { type: "disabled" },
+    tools: ["Read", "Write", "Edit"],
     ...(thinkingEnabled ? { effort: reasoningEffort ?? "medium" } : {}),
   },
 });
@@ -93,7 +95,8 @@ Important transport mapping:
 
 - `prompt` becomes the workflow first user message in Anthropic `body.messages`.
 - `systemPrompt` becomes Anthropic `body.system`.
-- SDK agent tool declarations remain Anthropic `body.tools`; they are not part of `body.system`.
+- SDK tool declarations remain Anthropic `body.tools`; they are not part of `body.system`.
+- The current test target is a compact `body.tools` containing only `Read`, `Write`, and `Edit`. If retest shows the SDK treats `tools` as additive instead of restrictive, that result becomes evidence for the next flag choice.
 - `settingSources: []` must remain present so filesystem/user/project/local Claude settings and `CLAUDE.md` memory files are not auto-loaded into the diagnostic request.
 
 ### Current shared workflow system prompt
