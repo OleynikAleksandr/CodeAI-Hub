@@ -212,3 +212,37 @@ After every flag change:
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+
+## 7. Evidence Log
+
+### X8 retest — `project_doc_max_bytes = 0`
+
+Release:
+
+- VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-ClaudeTests/codeai-hub-1.2.71.vsix`
+- Implementation commit: `6c3755d5f test: add codex project doc max bytes capture flag`
+- Release commit: `15340d0ac chore: build codex project doc flag test release`
+
+User retest logs:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T08-51-09-405Z-codex-native-request.jsonl`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T08-51-09-405Z-codex-native-request.md`
+- Provider-home rollout: `/Users/oleksandroliinyk/.codeai-hub/providers/codex/home/sessions/2026/04/25/rollout-2026-04-25T10-51-12-019dc3d5-f6d1-7190-92d4-4a6479743c64.jsonl`
+
+Comparison against baseline `2026-04-25T07-09-11-514Z`:
+
+| Field | Baseline | X8 retest |
+| --- | --- | --- |
+| `thread/start.request.config` | absent | `{ "project_doc_max_bytes": 0 }` |
+| `thread/start.response.instructionSources` | `[ "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/AGENTS.md" ]` | `[]` |
+| provider-home `turn_context.user_instructions.length` | `20885` | `0` |
+| provider-home `turn_context.user_instructions` includes project `AGENTS.md` | yes | no |
+| native `response.create.instructions` sha256 | `478e8a11b180adb2659f21aba51744711f79f665039bb0bc4a13d3c051fcb76c` | unchanged |
+| native tools count / sha256 | `18` / `da2d0ac0a715d42d58bd01c37bbe56b2770e9b0d9d197e582f9705f3408aaec0` | unchanged |
+| workflow prompt length in `turn/start.input[0].text` | `12901` | `12901` |
+
+Decision:
+
+- `works` for its target: inline App Server config `project_doc_max_bytes = 0` disables project `AGENTS.md` discovery in the diagnostic Codex native capture path.
+- It does **not** change the default Codex base instructions. Native `response.create.instructions` staying identical is expected and desired for X8 because this flag only removes project/user instruction noise, not the built-in Codex harness.
+- The next evidence-gated step can proceed to X2: add diagnostic-only `thread/start.developerInstructions` while keeping X8, so the retest shows whether a short CodeAI Hub workflow frame appears in the developer layer without reintroducing `AGENTS.md`.
