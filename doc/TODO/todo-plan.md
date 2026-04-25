@@ -49,8 +49,8 @@
 
 1. [DONE] Prepare release notes for the next version with the new GPT-5.5 Codex model option — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex gpt 5.5 release notes`
 2. [DONE] Git Commit: `docs: prepare codex gpt 5.5 release notes` (hash: `ccb749218`)
-3. [IN_PROGRESS] Build a new release package and stop for user retest — scope: release-generated version files, `doc/TODO/todo-plan.md`; artifacts: next `codeai-hub-<version>.vsix` and tarballs under `doc/tmp/releases/`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex gpt 5.5 capture release`
-4. [TODO] Git Commit: `chore: build codex gpt 5.5 capture release` (hash: TBD)
+3. [DONE] Build a new release package and stop for user retest — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.76`; artifacts: `codeai-hub-1.2.76.vsix`, `doc/tmp/releases/codex-module-1.2.76.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.76.tar.bz2`, `doc/tmp/releases/project-manager-1.2.76.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.76.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.76.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex gpt 5.5 capture release`
+4. [DONE] Git Commit: `chore: build codex gpt 5.5 capture release` (hash: `a696a523f`)
 
 ## Phase 3 — GPT-5.5 Prompt Inventory (owner: Codex, updated: 2026-04-25)
 
