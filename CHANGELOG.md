@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.70] - 2026-04-25
+### Changed
+- **Claude diagnostic capture перешёл с Claude Code preset на custom-only neutral system prompt.** `ClaudeNativeRequestCaptureService` теперь передает строковый `systemPrompt` с нейтральными operating rules вместо `{ type: "preset", preset: "claude_code" }`.
+- **System prompt не содержит product/wrapper identity.** Новый diagnostic prompt не упоминает CodeAI Hub, orchestrator/wrapper или third-party app, а фиксирует только instruction priority, source boundaries, artifact-first workflow, assumptions/scope control и communication rules.
+- **Workflow templates остаются user-message contract.** Stage-specific инструкции из template path не переносятся в system prompt; capture должен подтвердить, что они остаются в `body.messages`.
+
+### Tests
+- **Targeted checks закрывают custom systemPrompt option.** Пройдены `npm run build --workspace @codeai-hub/claude-module` и direct node test для `claude-native-request-capture-service`.
+
 ## [1.2.69] - 2026-04-24
 ### Fixed
 - **Claude native capture больше не завершается на translation/localization request.** Core diagnostic proxy теперь требует agent-loop tool declarations для Claude `api.anthropic.com/v1/messages` target rule, поэтому Haiku translation requests записываются как ignored/intermediate и не закрывают capture раньше workflow request.

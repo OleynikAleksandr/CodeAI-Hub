@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.69
+## Current Release — v1.2.70
+- **Claude diagnostic capture проверяет custom-only system prompt.** Claude SDK query больше не использует `preset: "claude_code"` в diagnostic path; вместо него передаётся короткий нейтральный `Agent Operating Rules` system prompt.
+- **Step templates остаются в первом user message.** Новый system layer задаёт только instruction priority, source boundaries, artifact-first discipline, assumptions/scope control и short communication; `Description` / `Virtual Simulation` / `Diagram Modules` templates не переносятся в system prompt.
+- **Тестовый capture должен показать минимальный `body.system`.** Ожидаем baseline SDK markers + neutral operating rules, при неизменных `body.tools` и workflow prompt в `body.messages`.
+
+### 1.2.69 (previous)
 - **Claude Native Request Capture теперь ждёт agent-loop request.** Diagnostic proxy для Settings capture игнорирует промежуточные Anthropic translation/localization requests без agent tools и продолжает ждать основной workflow request.
 - **Haiku localization runtime не затронут.** Фильтр применяется только внутри diagnostic capture command; реальные Claude Haiku translation/localization turns продолжают работать по прежнему runtime path.
 - **Повторный preset capture должен содержать основной Claude workflow request.** Новый лог должен включать выбранный workflow model request с tool declarations, пригодный для сравнения `systemPrompt` preset с baseline.

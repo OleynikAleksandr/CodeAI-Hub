@@ -68,8 +68,8 @@
 26. [DONE] Git Commit: `test: use claude custom operating system prompt` (hash: `08c575428`)
 27. [DONE] Выполнить targeted Claude module verification и зафиксировать результат — scope: `doc/TODO/todo-plan.md`; expected commit message: `docs: record claude custom system prompt verification`
    - Verification: `npm run build --workspace @codeai-hub/claude-module` прошел; `node --test packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js` прошел; Husky pre-commit для `08c575428` прошел `check-architecture.sh`, `npm run lint`, `npm run check:knip`, staged `format:fix`.
-28. [DONE] Git Commit: `docs: record claude custom system prompt verification` (hash: TBD)
-29. [TODO] Подготовить release docs для будущей версии `1.2.70` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude custom system prompt release notes`
+28. [DONE] Git Commit: `docs: record claude custom system prompt verification` (hash: `2f367ed62`)
+29. [DONE] Подготовить release docs для будущей версии `1.2.70` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare claude custom system prompt release notes`
 30. [TODO] Git Commit: `docs: prepare claude custom system prompt release notes` (hash: TBD)
 31. [TODO] Собрать test release artifacts через `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version` — scope: package manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build claude custom system prompt test release`
 32. [TODO] Git Commit: `chore: build claude custom system prompt test release` (hash: TBD)
