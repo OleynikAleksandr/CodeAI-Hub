@@ -292,3 +292,17 @@ Planned release:
   - embedded `turn_context.user_instructions` is empty or does not contain project `AGENTS.md`;
   - workflow first prompt remains in `codex_app_server_turn_start_request.payload.input[0].text`;
   - native tool declarations stay unchanged.
+
+Observed retest:
+
+- User retest artifacts:
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T09-28-41-532Z-codex-native-request.jsonl`
+  - `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T09-28-41-532Z-codex-native-request.md`
+- Result: `works` for disabling project `AGENTS.md` discovery in the diagnostic Codex native capture path with full embedded provider-home evidence.
+- Evidence:
+  - markdown line `58`: `thread/start.request.config.project_doc_max_bytes = 0`;
+  - markdown line `95`: `thread/start.response.instructionSources = []`;
+  - markdown line `169`: embedded `codex_provider_home_rollout_context` is present;
+  - provider-home rollout line `5`: `turn_context` exists but has no `user_instructions`;
+  - repository/project `AGENTS.md` text is absent from both the embedded markdown context and the provider-home rollout JSONL.
+- The workflow prompt is still present in the turn-start request/user response items; X8 only removes project instruction discovery, not the user-supplied workflow prompt or built-in Codex base instructions.
