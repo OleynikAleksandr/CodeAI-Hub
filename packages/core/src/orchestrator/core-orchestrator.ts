@@ -5,6 +5,7 @@ import { type CoreConfig, loadConfig } from "../config";
 import { FileDropService } from "../file-drop/file-drop-service";
 import { ProviderRegistry } from "../provider-registry";
 import { type CoreTtlState, RemoteBridge } from "../remote-bridge";
+import { SettingsProviderAutoUpdateService } from "../remote-bridge/handlers/settings-provider-auto-update-service";
 import { ProjectRegistry } from "../services/project-registry/project-registry";
 import { SessionManager } from "../session-manager";
 import { RuntimeStatusReporter } from "../status/runtime-status-reporter";
@@ -35,6 +36,8 @@ export class CoreOrchestrator {
 
   private readonly templateSync: TemplateSyncFacade;
 
+  private readonly providerAutoUpdateService: SettingsProviderAutoUpdateService;
+
   private activeClients = 0;
 
   private shuttingDown = false;
@@ -51,6 +54,10 @@ export class CoreOrchestrator {
     this.config = loadConfig();
     this.logger = new Logger();
     this.templateSync = new TemplateSyncFacade(this.logger);
+    this.providerAutoUpdateService = new SettingsProviderAutoUpdateService({
+      config: this.config,
+      logger: this.logger,
+    });
     this.sessionManager = new SessionManager();
     this.statusReporter = new RuntimeStatusReporter();
     this.projectRegistry = new ProjectRegistry();
@@ -106,6 +113,7 @@ export class CoreOrchestrator {
     await this.templateSync.sync();
     await this.runStartupSelfTest();
     await this.remoteBridge.start();
+    await this.providerAutoUpdateService.runStartupAutoUpdate();
     await this.providerRegistry.initialize();
     this.statusReporter.emit({
       phase: "finalize",

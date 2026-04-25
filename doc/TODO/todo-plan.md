@@ -2,11 +2,13 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Provider_AutoUpdate_And_Claude_Preflight.md`
 - **Read this context before implementation:**
+  - `doc/SolidWorks-WorkFlow/Plans/Provider_AutoUpdate_And_Claude_Preflight.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
   - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
@@ -86,3 +88,18 @@
 10. [DONE] Git Commit: `docs: prepare instruction profile retest release` (hash: `fb972fc96`)
 11. [DONE] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.77`; artifacts: `codeai-hub-1.2.77.vsix`, `doc/tmp/releases/claude-module-1.2.77.tar.bz2`, `doc/tmp/releases/codex-module-1.2.77.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.77.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.77.tar.bz2`, `doc/tmp/releases/project-manager-1.2.77.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.77.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.77.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build instruction profile retest release`
 12. [DONE] Git Commit: `chore: build instruction profile retest release` (hash: `a03b8e9f2`)
+
+## Phase 6 — Provider Startup Auto-Update And Claude Preflight (owner: Codex, updated: 2026-04-25)
+
+### Stream: Startup Update Policy And Claude Readiness
+
+1. [DONE] Restore Core startup auto-update from Project Manager settings — scope: `packages/core/src/orchestrator/core-orchestrator.ts`, Core settings/provider-version service files, tests/docs; verification: `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/remote-bridge/handlers/settings-provider-auto-update-service.test.js`; commit message: `fix: restore provider startup auto update`
+2. [IN_PROGRESS] Git Commit: `fix: restore provider startup auto update` (hash: TBD)
+3. [TODO] Make Claude auth preflight use the installed executable path instead of interactive `npx` — scope: `packages/Claude_Module/src/auth/`, Claude SDK/diagnostic/translation call sites, tests; commit message: `fix: use installed claude executable for auth preflight`
+4. [TODO] Git Commit: `fix: use installed claude executable for auth preflight` (hash: TBD)
+5. [TODO] Return `provider_not_ready` for known native-capture providers whose adapter is not initialized — scope: `packages/core/src/provider-network-capture/`, bridge result types/tests; commit message: `fix: report provider readiness in native capture`
+6. [TODO] Git Commit: `fix: report provider readiness in native capture` (hash: TBD)
+7. [TODO] Update SSOT docs and release notes for the provider startup readiness release — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare provider readiness release`
+8. [TODO] Git Commit: `docs: prepare provider readiness release` (hash: TBD)
+9. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.78`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build provider readiness release`
+10. [TODO] Git Commit: `chore: build provider readiness release` (hash: TBD)
