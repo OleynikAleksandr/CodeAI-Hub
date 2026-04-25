@@ -13,6 +13,10 @@ import {
   type AppServerSessionState,
   CodexAppServerEventRouter,
 } from "./codex-app-server-event-router";
+import {
+  CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
+  CODEAI_CODEX_THREAD_CONFIG,
+} from "./codex-workflow-instruction-profile";
 import { CodexAppServerProcess } from "./process/codex-app-server-process";
 
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
@@ -107,6 +111,8 @@ export class CodexAppServerFacade {
         sandbox: this.workspace.defaultSandboxMode,
         model: this.workspace.defaultModel,
         persistExtendedHistory: true,
+        baseInstructions: CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
+        config: CODEAI_CODEX_THREAD_CONFIG,
       }
     );
     const thread = isRecord(response.thread) ? response.thread : null;
