@@ -93,6 +93,7 @@ Product decision:
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`
 - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
+- `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Codex_Workflow_Documentation_Tool_Profile.md`
 
 Сохраненные artifacts в этом bundle:
 
@@ -115,6 +116,80 @@ Product decision:
 - Новый тестовый флаг `1.2.81` проверяет startup feature flag `codex app-server --disable multi_agent`, чтобы убрать из Codex provider-native tools subagent family: `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`.
 - Workflow first user prompt оставался в `turn/start.input[0].text`.
 - Финальная реализация подключает `CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` и `project_doc_max_bytes = 0` в diagnostic `thread/start` и normal runtime `thread/start`.
+
+### 4.1 Codex documentation tool profile
+
+Релиз `1.2.82` подтвердил рабочий Codex tool profile для текущих documentation-tree тестов с кастомным early-architecture system prompt.
+
+Технический протокол эксперимента сохранен отдельно:
+
+- `Codex_Workflow_Documentation_Tool_Profile.md`
+
+Включенные App Server startup flags/config overrides:
+
+```text
+--disable multi_agent
+--disable browser_use
+--disable in_app_browser
+--disable computer_use
+--disable image_generation
+--disable plugins
+--disable apps
+--disable tool_search
+-c mcp_servers.codex.enabled=false
+-c mcp_servers.playwright.enabled=false
+```
+
+Фактически оставшийся provider-visible tool set в свежем Codex native request:
+
+- `exec_command`;
+- `write_stdin`;
+- `update_plan`;
+- `request_user_input`;
+- `apply_patch`;
+- `web_search`;
+- `view_image`.
+
+Фактически удалено из provider-visible `body.tools`:
+
+- `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`;
+- `mcp__playwright__`;
+- `mcp__codex__`;
+- `list_mcp_resources`;
+- `list_mcp_resource_templates`;
+- `read_mcp_resource`;
+- `image_generation`;
+- browser/computer-use/plugin/app/tool-search surfaces.
+
+Evidence for release `1.2.82`:
+
+- Fresh capture: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T15-27-58-551Z-codex-native-request.jsonl`
+- Fresh Markdown: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T15-27-58-551Z-codex-native-request.md`
+- Baseline before tool-profile narrowing: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-08-10-831Z-codex-native-request.jsonl`
+- Baseline after only `--disable multi_agent`: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-59-13-002Z-codex-native-request.jsonl`
+
+Measured result:
+
+- `body.tools`: `18` -> `13` -> `7`;
+- provider request body: `28726` -> `12208` chars compared with the `1.2.81` multi-agent-only baseline;
+- `body.tools` JSON: `22734` -> `6482` chars;
+- JSONL artifact: `162467` -> `104227` bytes;
+- Markdown artifact: `54686` -> `25336` bytes.
+
+Controls stayed stable:
+
+- model: `gpt-5.5`;
+- reasoning effort: `high`;
+- `project_doc_max_bytes = 0`;
+- `instructionSources = []`;
+- custom system/base instructions length/hash: `5021` / `20a9fda290415bad2b2fd0f1fe05fd65f2f34eb4743cf3565eafcf01955f48eb`;
+- workflow first user prompt length/hash: `12973` / `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`.
+
+Product decision:
+
+- This is the current test baseline for further Codex documentation-tree experiments.
+- The remaining `request_user_input` tool is known and accepted temporarily because no confirmed Codex App Server removal knob has been found yet.
+- Future work may investigate `request_user_input`, but it must be evidence-gated separately and not mixed with the already validated `1.2.82` tool-profile baseline.
 
 Что отложено или не является текущим решением:
 

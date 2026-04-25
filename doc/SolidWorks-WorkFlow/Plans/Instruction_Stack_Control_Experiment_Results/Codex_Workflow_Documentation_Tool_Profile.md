@@ -1,8 +1,11 @@
-# Codex Workflow Documentation Tool Profile
+# Codex Workflow Documentation Tool Profile — Technical Protocol
 
-**Status:** Active test scope
+**Status:** Completed experiment protocol
 **Date:** 2026-04-25
 **Owner:** Codex
+**Release validated:** `1.2.82`
+
+This file keeps the technical protocol for the Codex documentation-tree tool-profile experiment. Product-level conclusions and release results are summarized in `Experiment_Results.md`.
 
 ## Problem
 
@@ -148,7 +151,7 @@ Check:
 - `thread/start.config.project_doc_max_bytes = 0`;
 - `instructionSources = []`.
 
-## Retest Result
+## Retest Result Reference
 
 User retested release `1.2.82`.
 
@@ -162,7 +165,9 @@ Baseline comparison:
 - `1.2.79` / pre-tool-profile baseline: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-08-10-831Z-codex-native-request.jsonl`
 - `1.2.81` / after `multi_agent` baseline: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-59-13-002Z-codex-native-request.jsonl`
 
-Result: `mostly works`.
+Full product-level result is recorded in `Experiment_Results.md`, section `4.1 Codex documentation tool profile`.
+
+Technical result: `mostly works`.
 
 Provider-native `body.tools` dropped:
 
