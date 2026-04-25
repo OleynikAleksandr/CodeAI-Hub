@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.81] - 2026-04-25
+### Changed
+- **Codex App Server теперь тестирует отключение `multi_agent`.** Normal Codex runtime и Settings diagnostic capture стартуют `codex app-server --disable multi_agent`, чтобы проверить удаление subagent tool family из provider-native request.
+- **Retest должен проверить уменьшение Codex `body.tools`.** Ожидаемый target: `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent` отсутствуют; остальные Codex tool classes пока не меняются.
+
+### Tests
+- **Targeted checks закрывают startup-flag wiring.** Пройдены `npm run build --workspace=@codeai-hub/codex-app-server-module` и direct node tests для `codex-app-server-process`, `codex-app-server-facade`, `codex-native-request-capture-service`.
+
 ## [1.2.80] - 2026-04-25
 ### Changed
 - **Claude workflow runtime теперь тестирует explicit `Read` / `Write` / `Edit` tool allowlist.** Normal SDK turns и Settings diagnostic capture передают `tools: ["Read", "Write", "Edit"]`, чтобы проверить, заменяет ли Claude Agent SDK default Claude Code tool declarations или добавляет allowlist поверх них.

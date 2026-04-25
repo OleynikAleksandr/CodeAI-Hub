@@ -111,7 +111,8 @@ Product decision:
 - Provider-home `turn_context.user_instructions` становится пустым или отсутствует, поэтому project `AGENTS.md` не попадает в provider context.
 - `thread/start.baseInstructions` заменяет Codex provider/system base prompt.
 - Когда `baseInstructions` отправлен, один и тот же compact text появляется и в native `response.create.instructions`, и в provider-home `base_instructions.text`.
-- Tool declarations оставались стабильными.
+- Tool declarations оставались стабильными во время instruction-only tests.
+- Новый тестовый флаг `1.2.81` проверяет startup feature flag `codex app-server --disable multi_agent`, чтобы убрать из Codex provider-native tools subagent family: `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`.
 - Workflow first user prompt оставался в `turn/start.input[0].text`.
 - Финальная реализация подключает `CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` и `project_doc_max_bytes = 0` в diagnostic `thread/start` и normal runtime `thread/start`.
 

@@ -7,12 +7,17 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.80
+## Current Release — v1.2.81
+- **Codex workflow turns тестируют отключение multi-agent tools.** Normal runtime и Settings diagnostic capture теперь стартуют `codex app-server --disable multi_agent`.
+- **Цель retest — проверить, влияет ли startup feature flag на provider-native `body.tools`.** Ожидаемый target: из Codex tools исчезают `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`.
+- **Остальные Codex tools пока не меняем.** MCP, web search, image generation, browser/playwright и базовые shell/patch tools остаются как есть до отдельных step-by-step flags.
+
+### 1.2.80 (previous)
 - **Claude workflow turns тестируют compact tool profile.** Normal runtime и Settings diagnostic capture теперь передают SDK `tools: ["Read", "Write", "Edit"]` вместо implicit default Claude Code tool set.
 - **Цель retest — проверить реальное поведение SDK.** Capture должен показать, заменяет ли `tools` default набор или SDK добавляет allowlist поверх него; ожидаемый target — только `Read`, `Write`, `Edit` в `body.tools`.
 - **Agent/Skill шум должен исчезнуть из Claude tool declarations.** Если флаг работает как restrictive allowlist, `Agent`, subagents, `Skill`, `ScheduleWakeup`, `ToolSearch` и broad exploration guidance больше не должны улетать в provider request.
 
-### 1.2.79 (previous)
+### 1.2.79
 - **Native Request Capture Markdown больше не дублирует большие payload.** Markdown теперь показывает summary для raw request body, ignored requests и provider diagnostic context, а полный system/tools/messages оставляет в extracted sections.
 - **JSONL остается полным источником истины.** Полные request body/bodyText, ignored request bodies и diagnostic payloads сохраняются в `.jsonl`, чтобы не потерять forensic-картину провайдерского запроса.
 - **Цель retest — проверить читаемость Claude и Codex логов.** В Claude `.md` workflow prompt больше не должен повторяться через body/bodyText/section_extract; в Codex `.md` custom system prompt не должен размножаться через diagnostic context и request body.
