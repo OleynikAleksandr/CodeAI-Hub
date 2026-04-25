@@ -147,3 +147,71 @@ Check:
 - workflow `turn/start.input[0].text` hash unchanged;
 - `thread/start.config.project_doc_max_bytes = 0`;
 - `instructionSources = []`.
+
+## Retest Result
+
+User retested release `1.2.82`.
+
+Fresh capture:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T15-27-58-551Z-codex-native-request.jsonl`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T15-27-58-551Z-codex-native-request.md`
+
+Baseline comparison:
+
+- `1.2.79` / pre-tool-profile baseline: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-08-10-831Z-codex-native-request.jsonl`
+- `1.2.81` / after `multi_agent` baseline: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-59-13-002Z-codex-native-request.jsonl`
+
+Result: `mostly works`.
+
+Provider-native `body.tools` dropped:
+
+- from `18` in the pre-tool-profile baseline;
+- to `13` after `--disable multi_agent`;
+- to `7` after the documentation profile.
+
+Fresh tool list:
+
+- `exec_command`;
+- `write_stdin`;
+- `update_plan`;
+- `request_user_input`;
+- `apply_patch`;
+- `web_search`;
+- `view_image`.
+
+Removed successfully:
+
+- `mcp__playwright__`;
+- `mcp__codex__`;
+- `list_mcp_resources`;
+- `list_mcp_resource_templates`;
+- `read_mcp_resource`;
+- `image_generation`.
+
+Still present:
+
+- `request_user_input`.
+
+Size evidence:
+
+- provider request body dropped from `28726` to `12208` chars compared with the `1.2.81` multi-agent-only baseline;
+- `body.tools` JSON dropped from `22734` to `6482` chars;
+- JSONL dropped from `162467` to `104227` bytes;
+- Markdown dropped from `54686` to `25336` bytes.
+
+Control fields stayed stable:
+
+- model: `gpt-5.5`;
+- reasoning effort: `high`;
+- `thread/start.config.project_doc_max_bytes = 0`;
+- `thread/start.response.instructionSources = []`;
+- CodeAI Hub `baseInstructions` length/hash stayed `5021` / `20a9fda290415bad2b2fd0f1fe05fd65f2f34eb4743cf3565eafcf01955f48eb`;
+- native `body.instructions` length/hash stayed `5021` / `20a9fda290415bad2b2fd0f1fe05fd65f2f34eb4743cf3565eafcf01955f48eb`;
+- workflow `turn/start.input[0].text` length/hash stayed `12973` / `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`;
+- provider-home `turn_context.user_instructions` stayed empty.
+
+Conclusion:
+
+- The confirmed startup flags and MCP server overrides remove all non-documentation tool classes except `request_user_input`.
+- `request_user_input` needs separate investigation because `default_mode_request_user_input=false` was already ineffective for provider-visible tool removal.
