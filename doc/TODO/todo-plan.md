@@ -7,6 +7,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Provider_AutoUpdate_And_Claude_Preflight.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
@@ -133,3 +134,16 @@
 10. [DONE] Git Commit: `chore: bump claude tool allowlist release version` (hash: `1f52e53e9800d5db95ca76b294ff75c6dc88239e`)
 11. [DONE] Verify user retest logs for Claude tool allowlist — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-38-27-844Z-claude-native-request.*`, `doc/SolidWorks-WorkFlow/Plans/Claude_Workflow_Tool_Profile_Allowlist.md`, `doc/TODO/todo-plan.md`; result: `body.tools` contains only `Edit`, `Read`, `Write`; `Agent`, `Skill`, `ToolSearch`, and subagent wording are absent from tool declarations; expected commit message: `docs: record claude tool allowlist retest`
 12. [DONE] Git Commit: `docs: record claude tool allowlist retest` (hash: `b49ee52b2f400b2bbb0f5aef4c39354480f43e8b`)
+
+## Phase 9 — Codex Multi-Agent Tool Profile Flag (owner: Codex, updated: 2026-04-25)
+
+### Stream: Remove Subagent Tool Noise From Codex Workflow Requests
+
+1. [DONE] Plan the Codex `multi_agent` feature flag experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Workflow_MultiAgent_Tool_Profile_Flag.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Codex native `body.tools` should drop the subagent family `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`; commit message: `docs: plan codex multi agent tool flag test`
+2. [TODO] Git Commit: `docs: plan codex multi agent tool flag test` (hash: TBD)
+3. [TODO] Start CodeAI Hub Codex App Server with `--disable multi_agent` for runtime and diagnostic capture — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`, targeted process/app-server tests, `doc/TODO/todo-plan.md`; expected commit message: `test: disable codex multi agent tool profile`
+4. [TODO] Git Commit: `test: disable codex multi agent tool profile` (hash: TBD)
+5. [TODO] Update Codex SSOT docs and release notes for the multi-agent tool profile retest — scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Experiment_Results.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; release target: `1.2.81`; expected commit message: `docs: prepare codex multi agent tool flag release`
+6. [TODO] Git Commit: `docs: prepare codex multi agent tool flag release` (hash: TBD)
+7. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.81`; artifacts: TBD; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected retest: Codex native `body.tools` should not contain `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`
+8. [TODO] Git Commit: `chore: bump codex multi agent tool flag release version` (hash: TBD)
