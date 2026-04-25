@@ -80,6 +80,7 @@ test("ClaudeSDKManager keeps provider sessions in SDK isolation mode", () => {
     (options.systemPrompt as string).includes("## Progress Updates"),
     true
   );
+  assert.deepEqual(options.tools, ["Read", "Write", "Edit"]);
   assert.deepEqual(options.env, {
     HOME: "/sandbox/provider-home",
   });

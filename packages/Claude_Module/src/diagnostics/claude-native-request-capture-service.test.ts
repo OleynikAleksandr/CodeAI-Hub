@@ -95,6 +95,7 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     (queryPayload.options.systemPrompt as string).includes("claude_code"),
     false
   );
+  assert.deepEqual(queryPayload.options.tools, ["Read", "Write", "Edit"]);
   assert.deepEqual(authCalls.subscription, { executablePath: "/tmp/claude" });
   assert.deepEqual(authCalls.bootstrap, {
     executablePath: "/tmp/claude",
