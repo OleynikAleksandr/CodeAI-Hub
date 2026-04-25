@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.82] - 2026-04-25
+### Changed
+- **Codex App Server теперь тестирует documentation tool profile.** Normal Codex runtime и Settings diagnostic capture стартуют с отключенными `multi_agent`, browser/computer surfaces, `image_generation`, plugins/apps/tool-search и provider-home MCP servers `codex` / `playwright`.
+- **Retest должен проверить минимальный provider-native tool surface.** Ожидаемый keep-list: `exec_command`, `write_stdin`, `apply_patch`, `update_plan`, `web_search`, `view_image`; ожидаемое удаление: `mcp__playwright__`, `mcp__codex__`, MCP resource tools и `image_generation`.
+- **`request_user_input` остается evidence-gated.** Отдельного подтвержденного removal knob пока нет: `default_mode_request_user_input` уже был `false`, но tool оставался в предыдущем capture.
+
+### Tests
+- **Targeted checks закрывают startup-profile wiring.** Пройдены `npm run build --workspace=@codeai-hub/codex-app-server-module` и direct node tests для `codex-app-server-process`, `codex-app-server-facade`, `codex-native-request-capture-service`.
+
 ## [1.2.81] - 2026-04-25
 ### Changed
 - **Codex App Server теперь тестирует отключение `multi_agent`.** Normal Codex runtime и Settings diagnostic capture стартуют `codex app-server --disable multi_agent`, чтобы проверить удаление subagent tool family из provider-native request.

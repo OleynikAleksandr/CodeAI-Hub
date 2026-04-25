@@ -7,12 +7,17 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.81
+## Current Release — v1.2.82
+- **Codex workflow turns тестируют documentation tool profile.** Normal runtime и Settings diagnostic capture стартуют Codex App Server с отключенными `multi_agent`, browser/computer surfaces, `image_generation`, plugins/apps/tool-search и provider-home MCP servers `codex` / `playwright`.
+- **Цель retest — сузить provider-native `body.tools` до documentation minimum.** Ожидаемый keep-list: `exec_command`, `write_stdin`, `apply_patch`, `update_plan`, `web_search`, `view_image`.
+- **MCP и browser noise должны уйти.** Проверяем удаление `mcp__playwright__`, `mcp__codex__`, MCP resource tools и `image_generation`; `request_user_input` отдельно смотрим по факту, потому что подтвержденного dedicated removal knob пока нет.
+
+### 1.2.81 (previous)
 - **Codex workflow turns тестируют отключение multi-agent tools.** Normal runtime и Settings diagnostic capture теперь стартуют `codex app-server --disable multi_agent`.
 - **Цель retest — проверить, влияет ли startup feature flag на provider-native `body.tools`.** Ожидаемый target: из Codex tools исчезают `spawn_agent`, `send_input`, `resume_agent`, `wait_agent`, `close_agent`.
 - **Остальные Codex tools пока не меняем.** MCP, web search, image generation, browser/playwright и базовые shell/patch tools остаются как есть до отдельных step-by-step flags.
 
-### 1.2.80 (previous)
+### 1.2.80
 - **Claude workflow turns тестируют compact tool profile.** Normal runtime и Settings diagnostic capture теперь передают SDK `tools: ["Read", "Write", "Edit"]` вместо implicit default Claude Code tool set.
 - **Цель retest — проверить реальное поведение SDK.** Capture должен показать, заменяет ли `tools` default набор или SDK добавляет allowlist поверх него; ожидаемый target — только `Read`, `Write`, `Edit` в `body.tools`.
 - **Agent/Skill шум должен исчезнуть из Claude tool declarations.** Если флаг работает как restrictive allowlist, `Agent`, subagents, `Skill`, `ScheduleWakeup`, `ToolSearch` и broad exploration guidance больше не должны улетать в provider request.
