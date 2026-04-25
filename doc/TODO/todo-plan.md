@@ -33,15 +33,15 @@
 
 ### Stream: Planning And Recovery Context
 
-1. [IN_PROGRESS] Create planning doc and active TODO plan for the GPT-5.5 Codex model addition — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit message: `docs: plan codex gpt 5.5 model addition`
-2. [TODO] Git Commit: `docs: plan codex gpt 5.5 model addition` (hash: TBD)
+1. [DONE] Create planning doc and active TODO plan for the GPT-5.5 Codex model addition — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_GPT55_Model_Addition.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit message: `docs: plan codex gpt 5.5 model addition`
+2. [DONE] Git Commit: `docs: plan codex gpt 5.5 model addition` (hash: `618d40984`)
 
 ## Phase 1 — Codex GPT-5.5 Model Surface (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Registry And Core Defaults
 
-1. [TODO] Add `gpt-5.5` to the shared Codex settings model registry and Core settings/default snapshots — scope: `src/types/codex-model-registry.ts`, `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; verification: targeted builds/tests for affected workspaces; commit message: `feat: add codex gpt 5.5 model option`
-2. [TODO] Git Commit: `feat: add codex gpt 5.5 model option` (hash: TBD)
+1. [DONE] Add `gpt-5.5` to the shared Codex settings model registry and Core settings/default snapshots — source scope: `src/types/codex-model-registry.ts`, `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`; generated bundle: `media/react-chat.js`; verification: `npm run build --workspace=@codeai-hub/core`, `npm run build:webview`, `npm run typecheck:webview`; commit message: `feat: add codex gpt 5.5 model option`
+2. [DONE] Git Commit: `feat: add codex gpt 5.5 model option` (hash: `741c9544c`)
 
 ## Phase 2 — GPT-5.5 Capture Release (owner: Codex, updated: 2026-04-25)
 
