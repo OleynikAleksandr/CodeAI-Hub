@@ -62,10 +62,21 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
   assert.equal(queryPayload.options.cwd, "/workspace");
   assert.deepEqual(queryPayload.options.additionalDirectories, ["/workspace"]);
   assert.deepEqual(queryPayload.options.settingSources, []);
-  assert.deepEqual(queryPayload.options.systemPrompt, {
-    preset: "claude_code",
-    type: "preset",
-  });
+  assert.equal(typeof queryPayload.options.systemPrompt, "string");
+  assert.equal(
+    (queryPayload.options.systemPrompt as string).includes(
+      "# Agent Operating Rules"
+    ),
+    true
+  );
+  assert.equal(
+    (queryPayload.options.systemPrompt as string).includes("CodeAI Hub"),
+    false
+  );
+  assert.equal(
+    (queryPayload.options.systemPrompt as string).includes("claude_code"),
+    false
+  );
   assert.equal(queryPayload.options.model, "sonnet");
   assert.deepEqual(queryPayload.options.thinking, { type: "disabled" });
   assert.equal(
