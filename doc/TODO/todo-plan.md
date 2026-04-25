@@ -85,7 +85,7 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 ### Stream: Replace Wrong X2 Target
 
 1. [DONE] Reclassify `thread/start.developerInstructions` as not the next target because the active goal is reducing system/base instructions, not adding a developer frame — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; evidence: latest `1.2.73` capture has `turn_context.collaboration_mode.settings.developer_instructions = null`, and `developer-instructions` appears only inside the Codex tool schema; commit message: `docs: retarget codex flag search to system instructions`
-2. [IN_PROGRESS] Git Commit: `docs: retarget codex flag search to system instructions` (hash: TBD)
+2. [DONE] Git Commit: `docs: retarget codex flag search to system instructions` (hash: `90f1e3317`)
 
 ## Phase 5 — Base Instructions Diagnostic Flag (owner: Codex, updated: 2026-04-25)
 
