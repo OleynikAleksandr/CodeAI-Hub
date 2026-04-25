@@ -54,6 +54,7 @@ const PROVIDER_TARGET_RULES: Readonly<
 
 interface ProviderAdapterLookup {
   getAdapter(providerId: string): ProviderAdapter | undefined;
+  getDescriptor?(providerId: string): unknown;
 }
 
 type ProxyFactory = (
@@ -147,7 +148,16 @@ export class NativeRequestCaptureFacade {
   ): Promise<NativeRequestCaptureCommandResult> {
     const runtimeProviderId = PROVIDER_RUNTIME_IDS[command.providerId];
     const adapter = this.#providerRegistry.getAdapter(runtimeProviderId);
-    if (!adapter?.captureNativeRequest) {
+    if (!adapter) {
+      const knownProvider =
+        this.#providerRegistry.getDescriptor?.(runtimeProviderId) !== undefined;
+      return this.#failure(
+        command,
+        knownProvider ? "provider_not_ready" : "provider_not_supported",
+        null
+      );
+    }
+    if (!adapter.captureNativeRequest) {
       return this.#failure(command, "provider_not_supported", null);
     }
 

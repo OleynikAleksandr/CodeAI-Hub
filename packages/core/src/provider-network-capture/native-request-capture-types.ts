@@ -1,6 +1,7 @@
 export type NativeRequestCaptureProviderId = "claude" | "codex";
 
 export type NativeRequestCaptureFailureReason =
+  | "provider_not_ready"
   | "provider_not_supported"
   | "runtime_failed"
   | "target_not_seen"

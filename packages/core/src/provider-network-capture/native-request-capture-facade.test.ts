@@ -103,6 +103,24 @@ test("NativeRequestCaptureFacade returns provider_not_supported for missing adap
   assert.equal(result.reason, "provider_not_supported");
 });
 
+test("NativeRequestCaptureFacade returns provider_not_ready for known provider without initialized adapter", async () => {
+  const facade = new NativeRequestCaptureFacade({
+    providerRegistry: {
+      getAdapter: () => undefined,
+      getDescriptor: (providerId) =>
+        providerId === "claudeCodeCli" ? { id: providerId } : undefined,
+    },
+  });
+
+  const result = await facade.capture({
+    providerId: "claude",
+    workspacePath: "/workspace",
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "provider_not_ready");
+});
+
 test("NativeRequestCaptureFacade starts proxy and passes capture env to provider", async () => {
   const outputDir = await fs.mkdtemp(
     path.join(os.tmpdir(), "native-capture-facade-")
