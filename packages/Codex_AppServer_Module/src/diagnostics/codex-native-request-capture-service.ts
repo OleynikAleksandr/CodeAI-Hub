@@ -2,6 +2,10 @@ import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import {
+  CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
+  CODEAI_CODEX_THREAD_CONFIG,
+} from "../app-server/codex-workflow-instruction-profile";
 import { CodexAppServerProcess } from "../app-server/process/codex-app-server-process";
 import type {
   CodexReasoningEffort,
@@ -11,9 +15,6 @@ import type {
 } from "../types";
 
 const DIAGNOSTIC_TURN_TIMEOUT_MS = 35_000;
-const DIAGNOSTIC_THREAD_CONFIG = {
-  project_doc_max_bytes: 0,
-} as const;
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
 const DEFAULT_SETTINGS_PATH = path.join(
@@ -186,7 +187,8 @@ export class CodexNativeRequestCaptureService {
       sandbox: this.#workspace.defaultSandboxMode,
       model: this.#resolveModelId(options),
       persistExtendedHistory: false,
-      config: DIAGNOSTIC_THREAD_CONFIG,
+      baseInstructions: CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
+      config: CODEAI_CODEX_THREAD_CONFIG,
     };
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_thread_start_request",

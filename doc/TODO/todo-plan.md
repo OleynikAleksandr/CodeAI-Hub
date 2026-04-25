@@ -69,3 +69,18 @@
 4. [DONE] Git Commit: `docs: add progress update rules to custom prompts` (hash: `33935eb2c`)
 5. [DONE] Convert `Claude_My_System_Prompt.md` from extracted JSON capture format to a direct Markdown prompt body so it matches the insertable format of `Codex_My_System_Prompt.md` — scope: `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md`, `doc/TODO/todo-plan.md`; verification: prompt header/readback and git diff; commit message: `docs: make claude custom prompt insertable`
 6. [DONE] Git Commit: `docs: make claude custom prompt insertable` (hash: `5ee7f3e45`)
+
+## Phase 5 — Final Instruction Profile Runtime Release (owner: Codex, updated: 2026-04-25)
+
+### Stream: Runtime Prompt Wiring And Retest Release
+
+1. [DONE] Add the shared Codex early-architecture instruction profile and apply it to diagnostic `thread/start` with `project_doc_max_bytes = 0` — scope: Codex prompt/profile helper, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; commit message: `feat: apply codex prompt profile to diagnostics`
+2. [IN_PROGRESS] Git Commit: `feat: apply codex prompt profile to diagnostics` (hash: TBD)
+3. [TODO] Apply the same Codex instruction profile to normal runtime `thread/start` while keeping turn templates in `turn/start.input` — scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, optional targeted runtime-shape test, `doc/TODO/todo-plan.md`; commit message: `feat: apply codex prompt profile to runtime`
+4. [TODO] Git Commit: `feat: apply codex prompt profile to runtime` (hash: TBD)
+5. [TODO] Wire the Claude custom system prompt into diagnostic and normal SDK query paths while preserving `settingSources: []` — scope: Claude prompt helper, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; commit message: `feat: apply claude workflow system prompt`
+6. [TODO] Git Commit: `feat: apply claude workflow system prompt` (hash: TBD)
+7. [TODO] Update SSOT docs, release notes, and targeted verification for the final instruction-profile retest release — scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare instruction profile retest release`
+8. [TODO] Git Commit: `docs: prepare instruction profile retest release` (hash: TBD)
+9. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: TBD; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build instruction profile retest release`
+10. [TODO] Git Commit: `chore: build instruction profile retest release` (hash: TBD)

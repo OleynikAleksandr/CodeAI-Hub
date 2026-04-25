@@ -5,6 +5,8 @@ import path from "node:path";
 import test from "node:test";
 import { CodexNativeRequestCaptureService } from "./codex-native-request-capture-service";
 
+const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
+
 interface RequestRecord {
   readonly method: string;
   readonly params: unknown;
@@ -139,7 +141,15 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     REQUESTS_CA_BUNDLE: "/tmp/fallback-ca.pem",
     SSL_CERT_FILE: "/tmp/capture-ca.pem",
   });
-  assert.deepEqual(processes[0]?.requests, [
+  const requests = processes[0]?.requests ?? [];
+  const threadStartParams = requests[0]?.params as {
+    readonly baseInstructions?: string;
+  };
+  assert.match(
+    threadStartParams.baseInstructions ?? "",
+    EARLY_ARCHITECTURE_WORKFLOW_PATTERN
+  );
+  assert.deepEqual(requests, [
     {
       method: "thread/start",
       params: {
@@ -148,6 +158,7 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
         sandbox: "workspace-write",
         model: "gpt-5.4",
         persistExtendedHistory: false,
+        baseInstructions: threadStartParams.baseInstructions,
         config: {
           project_doc_max_bytes: 0,
         },
@@ -261,9 +272,13 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
     project_doc_max_bytes: 0,
   });
   assert.equal(
-    "baseInstructions" in
-      ((requests?.[0]?.params as Record<string, unknown> | undefined) ?? {}),
-    false
+    typeof (requests?.[0]?.params as { baseInstructions?: unknown })
+      .baseInstructions,
+    "string"
+  );
+  assert.match(
+    (requests?.[0]?.params as { baseInstructions: string }).baseInstructions,
+    EARLY_ARCHITECTURE_WORKFLOW_PATTERN
   );
   assert.equal(requests?.[1]?.method, "turn/start");
   assert.deepEqual(requests?.[1]?.params, {
