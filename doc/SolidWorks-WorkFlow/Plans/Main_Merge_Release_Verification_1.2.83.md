@@ -36,6 +36,26 @@ Release `1.2.83` is considered valid if:
   - `Removing dev dependencies before packaging`
   - `Package created`
 
+## Verification Result
+
+Release `1.2.83` passed the release verification on `main`.
+
+- `./scripts/build-all.sh` passed and produced:
+  - `doc/tmp/releases/claude-module-1.2.83.tar.bz2`
+  - `doc/tmp/releases/codex-module-1.2.83.tar.bz2`
+  - `doc/tmp/releases/gemini-module-1.2.83.tar.bz2`
+  - `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.83.tar.bz2`
+  - `doc/tmp/releases/project-manager-1.2.83.tar.bz2`
+  - `doc/tmp/releases/vscode-webview-1.2.83.tar.bz2`
+  - `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.83.tar.bz2`
+- `./scripts/build-release.sh --use-current-version` passed and produced:
+  - `codeai-hub-1.2.83.vsix`
+- Required release output markers were present:
+  - `Step 7: Verifying SDK exclusions`
+  - `Removing dev dependencies before packaging`
+  - `Package created`
+- Advisory markdown link warnings remain limited to archived provider prompt dumps with upstream example absolute paths.
+
 ## Documents
 
 - Base SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
