@@ -67,18 +67,31 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 7. [DONE] Analyze user-provided no-flag baseline capture logs and verify markdown/jsonl include `codex_provider_home_rollout_context` with full `AGENTS.md` / `turn_context.user_instructions` — result: `works`; evidence: `thread/start.request` has no `config`, `instructionSources` includes project `AGENTS.md`, markdown line `168` has `codex_provider_home_rollout_context`, line `236` has `# AGENTS.md instructions`, line `288` has `turn_context.user_instructions`, length `20885`, sha256 `5beabb3ca4f216b6f77d7b356454f7c42a289bf8da09d4510bb4cd74de210f39`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture baseline evidence`
 8. [DONE] Git Commit: `docs: record codex full capture baseline evidence` (hash: `bc10e36ad`)
 
-## Phase 3 — X2 Developer Instructions (owner: Codex, updated: 2026-04-25)
+## Phase 3 — X8 Disable Project AGENTS With Full Capture Evidence (owner: Codex, updated: 2026-04-25)
+
+### Stream: Diagnostic Flag X8 Retake
+
+1. [DONE] Add diagnostic-only `thread/start.config.project_doc_max_bytes = 0` again, now with embedded provider-home rollout context available in the same capture artifact — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/TODO/todo-plan.md`; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; commit message: `test: add codex project doc max bytes full capture flag`
+2. [TODO] Git Commit: `test: add codex project doc max bytes full capture flag` (hash: TBD)
+3. [TODO] Prepare release notes for future version `1.2.73` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex full capture project doc flag release notes`
+4. [TODO] Git Commit: `docs: prepare codex full capture project doc flag release notes` (hash: TBD)
+5. [TODO] Build a new release package for X8 full-capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.73`; commit message: `chore: build codex full capture project doc flag release`
+6. [TODO] Git Commit: `chore: build codex full capture project doc flag release` (hash: TBD)
+7. [TODO] Analyze user-provided X8 full-capture logs and verify markdown/jsonl include `config.project_doc_max_bytes = 0`, `instructionSources: []`, and embedded `codex_provider_home_rollout_context` with empty/no project `turn_context.user_instructions` — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture project doc flag evidence`
+8. [TODO] Git Commit: `docs: record codex full capture project doc flag evidence` (hash: TBD)
+
+## Phase 4 — X2 Developer Instructions (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Diagnostic Flag X2
 
-1. [TODO] Add diagnostic-only `thread/start.developerInstructions` after the full no-flag observability baseline is verified — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file if required, `doc/TODO/todo-plan.md`; commit message: `test: add codex developer instructions capture flag`
+1. [TODO] Add diagnostic-only `thread/start.developerInstructions` after the X8 full-capture retest is verified — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file if required, `doc/TODO/todo-plan.md`; commit message: `test: add codex developer instructions capture flag`
 2. [TODO] Git Commit: `test: add codex developer instructions capture flag` (hash: TBD)
 3. [TODO] Build a new release package for X2 retest and record VSIX/tarball paths — scope: release metadata docs, `doc/TODO/todo-plan.md`; commit message: `chore: build codex developer instructions test release`
 4. [TODO] Git Commit: `chore: build codex developer instructions test release` (hash: TBD)
 5. [TODO] Analyze user-provided X2 native capture logs and classify result — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex developer instructions evidence`
 6. [TODO] Git Commit: `docs: record codex developer instructions evidence` (hash: TBD)
 
-## Phase 4 — Next Flag Selection (owner: Codex, updated: 2026-04-25)
+## Phase 5 — Next Flag Selection (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Evidence-Gated Continuation
 

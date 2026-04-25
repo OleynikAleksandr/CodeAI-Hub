@@ -277,4 +277,18 @@ Observed:
 Decision:
 
 - `works` for observability: the main `.jsonl` / `.md` capture artifact now contains the full Codex provider-home context needed to inspect `AGENTS.md`, `turn_context.user_instructions`, developer response items, model/cwd/sandbox metadata and the provider-network frame together.
-- X2 `thread/start.developerInstructions` can be unblocked as the next step, because future flag tests can be judged from a single capture artifact without manual rollout-file lookup.
+- X8 can now be retested as the next step, because the same artifact can prove both sides of the flag: `thread/start.config.project_doc_max_bytes = 0` on input and absence of project `AGENTS.md` / empty `turn_context.user_instructions` in embedded provider-home context.
+
+### X8 full-capture retake — `project_doc_max_bytes = 0`
+
+Planned release:
+
+- Version: `1.2.73`
+- Target flag: diagnostic-only `thread/start.config.project_doc_max_bytes = 0`
+- Required proof in one capture artifact:
+  - `thread/start.request.config.project_doc_max_bytes = 0`;
+  - `thread/start.response.instructionSources` is empty or does not include project `AGENTS.md`;
+  - embedded `codex_provider_home_rollout_context` exists;
+  - embedded `turn_context.user_instructions` is empty or does not contain project `AGENTS.md`;
+  - workflow first prompt remains in `codex_app_server_turn_start_request.payload.input[0].text`;
+  - native tool declarations stay unchanged.
