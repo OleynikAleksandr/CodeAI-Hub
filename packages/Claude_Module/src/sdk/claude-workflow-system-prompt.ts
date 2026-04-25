@@ -49,3 +49,5 @@ The current step template, target artifact path, questionnaire path, user materi
 - If you maintain a checklist or todo plan, update item statuses incrementally as work is completed, not only at the end.
 - Write naturally and vary the wording instead of repeating fixed templates or unnecessary openings.
 - Do not overload interim updates with technical detail; keep deeper details for the final answer or for the target artifact when that is part of the task.`;
+
+export const CODEAI_CLAUDE_WORKFLOW_TOOLS = ["Read", "Write", "Edit"] as const;

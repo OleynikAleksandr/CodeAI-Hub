@@ -13,7 +13,10 @@ import type {
   ModuleReporter,
 } from "../types";
 import { resolveClaudeProviderProjectDir } from "./claude-provider-home";
-import { CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT } from "./claude-workflow-system-prompt";
+import {
+  CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
+  CODEAI_CLAUDE_WORKFLOW_TOOLS,
+} from "./claude-workflow-system-prompt";
 
 export type QueryFunction = (payload: {
   readonly prompt: string;
@@ -81,6 +84,7 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
     readonly display?: "summarized" | "omitted";
     readonly type: "adaptive" | "disabled";
   };
+  tools: string[];
 }
 
 export class ClaudeSDKManager {
@@ -277,6 +281,7 @@ export class ClaudeSDKManager {
       // CLAUDE.md/settings discovery cannot walk parent directories from cwd.
       settingSources: [],
       systemPrompt: CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
+      tools: [...CODEAI_CLAUDE_WORKFLOW_TOOLS],
       env: this.resolveAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };

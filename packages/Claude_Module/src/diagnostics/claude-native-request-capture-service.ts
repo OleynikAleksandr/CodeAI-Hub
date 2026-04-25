@@ -1,7 +1,10 @@
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
-import { CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT } from "../sdk/claude-workflow-system-prompt";
+import {
+  CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
+  CODEAI_CLAUDE_WORKFLOW_TOOLS,
+} from "../sdk/claude-workflow-system-prompt";
 import type { ClaudeStreamMessage, ClaudeWorkspaceOptions } from "../types";
 
 export interface ClaudeNativeRequestCaptureOptions {
@@ -106,6 +109,7 @@ export class ClaudeNativeRequestCaptureService {
       settingSources: [],
       systemPrompt: CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
       thinking: thinkingOptions.thinking,
+      tools: [...CODEAI_CLAUDE_WORKFLOW_TOOLS],
       ...(thinkingOptions.effort ? { effort: thinkingOptions.effort } : {}),
     };
   }
