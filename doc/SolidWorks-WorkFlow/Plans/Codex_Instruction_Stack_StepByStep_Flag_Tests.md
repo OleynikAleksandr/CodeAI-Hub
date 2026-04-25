@@ -250,3 +250,31 @@ Decision:
 - `works` for its narrow target: inline App Server config `project_doc_max_bytes = 0` disables project `AGENTS.md` discovery in the diagnostic Codex native capture path.
 - It does **not** change the default Codex base instructions. Native `response.create.instructions` staying identical is expected and desired for X8 because this flag only removes project/user instruction noise, not the built-in Codex harness.
 - This result is not the next active baseline because the artifact required provider-home rollout lookup outside the markdown capture. Per user decision, X8 is removed from the diagnostic path before the next release. The next step is to rebuild a no-flag baseline where the markdown/jsonl artifact itself includes `codex_provider_home_rollout_context`; only after that do we resume flag testing.
+
+### No-flag full capture baseline retest — embedded provider-home rollout context
+
+Release:
+
+- VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-ClaudeTests/codeai-hub-1.2.72.vsix`
+- Implementation commit: `91e3dfd0f fix: record codex provider home rollout context`
+- Release commit: `eea3056ac chore: build codex full capture baseline release`
+
+User retest logs:
+
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T09-16-11-550Z-codex-native-request.jsonl`
+- `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T09-16-11-550Z-codex-native-request.md`
+
+Observed:
+
+- `thread/start.request` has no `config` field and no `project_doc_max_bytes`.
+- `thread/start.response.instructionSources` again contains `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-ClaudeTests/AGENTS.md`.
+- Markdown line `168` contains `kind: "codex_provider_home_rollout_context"`.
+- Embedded rollout snapshot has `recordCount = 7` and no `readError`.
+- Embedded rollout records include `response_item` with `# AGENTS.md instructions for /Users/oleksandroliinyk/VSCODE/CodeAI-Hub-ClaudeTests` at markdown line `236`.
+- Embedded `turn_context` is present at markdown line `247`; `turn_context.user_instructions` starts at markdown line `288`, length `20885`, sha256 `5beabb3ca4f216b6f77d7b356454f7c42a289bf8da09d4510bb4cd74de210f39`.
+- Native WebSocket frame is still early/service-like: one captured request with `generate: false`, `input.length = 0`; this is now acceptable because the same artifact also contains the provider-home full context layer.
+
+Decision:
+
+- `works` for observability: the main `.jsonl` / `.md` capture artifact now contains the full Codex provider-home context needed to inspect `AGENTS.md`, `turn_context.user_instructions`, developer response items, model/cwd/sandbox metadata and the provider-network frame together.
+- X2 `thread/start.developerInstructions` can be unblocked as the next step, because future flag tests can be judged from a single capture artifact without manual rollout-file lookup.

@@ -64,14 +64,14 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 4. [DONE] Git Commit: `docs: prepare codex capture context release notes` (hash: `91e3dfd0f`)
 5. [DONE] Build a new no-flag baseline release package for full capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.72`; artifacts: `codeai-hub-1.2.72.vsix`, `doc/tmp/releases/codex-module-1.2.72.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.72.tar.bz2`, `doc/tmp/releases/project-manager-1.2.72.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.72.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.72.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex full capture baseline release`
 6. [DONE] Git Commit: `chore: build codex full capture baseline release` (hash: `eea3056ac`)
-7. [TODO] Analyze user-provided no-flag baseline capture logs and verify markdown/jsonl include `codex_provider_home_rollout_context` with full `AGENTS.md` / `turn_context.user_instructions` — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture baseline evidence`
+7. [DONE] Analyze user-provided no-flag baseline capture logs and verify markdown/jsonl include `codex_provider_home_rollout_context` with full `AGENTS.md` / `turn_context.user_instructions` — result: `works`; evidence: `thread/start.request` has no `config`, `instructionSources` includes project `AGENTS.md`, markdown line `168` has `codex_provider_home_rollout_context`, line `236` has `# AGENTS.md instructions`, line `288` has `turn_context.user_instructions`, length `20885`, sha256 `5beabb3ca4f216b6f77d7b356454f7c42a289bf8da09d4510bb4cd74de210f39`; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture baseline evidence`
 8. [TODO] Git Commit: `docs: record codex full capture baseline evidence` (hash: TBD)
 
 ## Phase 3 — X2 Developer Instructions (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Diagnostic Flag X2
 
-1. [BLOCKED] Add diagnostic-only `thread/start.developerInstructions` after the full no-flag observability baseline is verified — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file if required, `doc/TODO/todo-plan.md`; commit message: `test: add codex developer instructions capture flag`
+1. [TODO] Add diagnostic-only `thread/start.developerInstructions` after the full no-flag observability baseline is verified — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file if required, `doc/TODO/todo-plan.md`; commit message: `test: add codex developer instructions capture flag`
 2. [TODO] Git Commit: `test: add codex developer instructions capture flag` (hash: TBD)
 3. [TODO] Build a new release package for X2 retest and record VSIX/tarball paths — scope: release metadata docs, `doc/TODO/todo-plan.md`; commit message: `chore: build codex developer instructions test release`
 4. [TODO] Git Commit: `chore: build codex developer instructions test release` (hash: TBD)
