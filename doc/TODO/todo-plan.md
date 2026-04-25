@@ -64,4 +64,4 @@
 ### Stream: Results Bundle And Early Architecture Prompt
 
 1. [DONE] Move Claude/Codex instruction analysis artifacts out of `doc/tmp`, create an experiment result bundle, and rewrite `Codex_My_System_Prompt.md` as a universal early-architecture system prompt candidate for `Description`, `Virtual Simulation`, and `Diagram Modules` — scope: `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; commit message: `docs: consolidate instruction stack experiment results`
-2. [TODO] Git Commit: `docs: consolidate instruction stack experiment results` (hash: TBD)
+2. [DONE] Git Commit: `docs: consolidate instruction stack experiment results` (hash: `d415417f6`)
