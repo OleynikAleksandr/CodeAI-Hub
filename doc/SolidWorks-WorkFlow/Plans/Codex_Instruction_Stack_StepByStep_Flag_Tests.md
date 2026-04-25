@@ -13,6 +13,8 @@ Claude instruction-stack evidence is closed in release `1.2.70`. The next goal i
 
 This scope is intentionally step-by-step. We test one new Codex flag or one minimal flag combination at a time.
 
+Update after the first X8 retest: the native capture artifact did not include the provider-home rollout records where Codex stores `turn_context.user_instructions` and the `AGENTS.md` response item. Before testing any instruction flag, the diagnostic artifact itself must be fixed so a single `.jsonl` / `.md` shows the full Codex request context. The next release is therefore an observability baseline release with **no instruction-stack flag enabled**.
+
 For every tested flag:
 
 1. Codex changes the diagnostic capture path only.
@@ -48,6 +50,8 @@ Key conclusion: Codex analysis must compare three layers, not only the native We
 - App Server diagnostic context: `thread/start`, `thread/resume`, `turn/start`.
 - Native provider request: `response.create.instructions`, `tools`, early/full frame shape.
 - Provider-home rollout JSONL: `base_instructions`, `turn_context.user_instructions`, `collaboration_mode`.
+
+Current diagnostic requirement: the capture artifact must embed the provider-home rollout JSONL as `codex_provider_home_rollout_context`, so the markdown/jsonl artifact contains the full `AGENTS.md` / `user_instructions` layer without requiring manual lookup of a second file.
 
 ## 2. Test Protocol
 
@@ -243,6 +247,6 @@ Comparison against baseline `2026-04-25T07-09-11-514Z`:
 
 Decision:
 
-- `works` for its target: inline App Server config `project_doc_max_bytes = 0` disables project `AGENTS.md` discovery in the diagnostic Codex native capture path.
+- `works` for its narrow target: inline App Server config `project_doc_max_bytes = 0` disables project `AGENTS.md` discovery in the diagnostic Codex native capture path.
 - It does **not** change the default Codex base instructions. Native `response.create.instructions` staying identical is expected and desired for X8 because this flag only removes project/user instruction noise, not the built-in Codex harness.
-- The next evidence-gated step can proceed to X2: add diagnostic-only `thread/start.developerInstructions` while keeping X8, so the retest shows whether a short CodeAI Hub workflow frame appears in the developer layer without reintroducing `AGENTS.md`.
+- This result is not the next active baseline because the artifact required provider-home rollout lookup outside the markdown capture. Per user decision, X8 is removed from the diagnostic path before the next release. The next step is to rebuild a no-flag baseline where the markdown/jsonl artifact itself includes `codex_provider_home_rollout_context`; only after that do we resume flag testing.

@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { CodexNativeRequestCaptureService } from "./codex-native-request-capture-service";
 
@@ -17,6 +20,7 @@ class FakeCodexProcess {
   >();
   started = false;
   stopped = false;
+  threadPath: string | null = null;
 
   onNotification(
     listener: (notification: {
@@ -37,7 +41,7 @@ class FakeCodexProcess {
     this.requests.push({ method, params });
     if (method === "thread/start") {
       return Promise.resolve({
-        thread: { id: "diagnostic-thread" },
+        thread: { id: "diagnostic-thread", path: this.threadPath },
       } as TResult);
     }
     if (method === "turn/start") {
@@ -70,6 +74,20 @@ class FakeCodexProcess {
 }
 
 test("CodexNativeRequestCaptureService starts an isolated app-server process with proxy and certificate env", async () => {
+  const tempDir = await mkdtemp(
+    path.join(tmpdir(), "codex-native-capture-test-")
+  );
+  const rolloutPath = path.join(tempDir, "rollout.jsonl");
+  await writeFile(
+    rolloutPath,
+    `${JSON.stringify({
+      type: "turn_context",
+      payload: {
+        user_instructions: "# AGENTS.md instructions\nFull project text",
+      },
+    })}\n`,
+    "utf8"
+  );
   const processes: FakeCodexProcess[] = [];
   const diagnosticRecords: { kind: string; payload: unknown }[] = [];
   let capturedEnvironment: Readonly<Record<string, string>> | null = null;
@@ -77,6 +95,7 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     processFactory: ({ environment }) => {
       capturedEnvironment = environment;
       const process = new FakeCodexProcess();
+      process.threadPath = rolloutPath;
       processes.push(process);
       return process;
     },
@@ -90,20 +109,24 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     },
   });
 
-  await service.captureNativeRequest({
-    captureId: "capture-codex-test",
-    certificateEnv: {
-      SSL_CERT_FILE: "/tmp/capture-ca.pem",
-    },
-    certificatePath: "/tmp/fallback-ca.pem",
-    probePrompt: "diagnostic probe",
-    proxyUrl: "http://127.0.0.1:4567",
-    recordDiagnosticContext: (record) => {
-      diagnosticRecords.push(record);
-    },
-    workflowPrompt: "workflow prompt",
-    workspacePath: "/workspace/capture",
-  });
+  try {
+    await service.captureNativeRequest({
+      captureId: "capture-codex-test",
+      certificateEnv: {
+        SSL_CERT_FILE: "/tmp/capture-ca.pem",
+      },
+      certificatePath: "/tmp/fallback-ca.pem",
+      probePrompt: "diagnostic probe",
+      proxyUrl: "http://127.0.0.1:4567",
+      recordDiagnosticContext: (record) => {
+        diagnosticRecords.push(record);
+      },
+      workflowPrompt: "workflow prompt",
+      workspacePath: "/workspace/capture",
+    });
+  } finally {
+    await rm(tempDir, { force: true, recursive: true });
+  }
 
   assert.equal(processes.length, 1);
   assert.equal(processes[0]?.started, true);
@@ -126,9 +149,6 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
         sandbox: "workspace-write",
         model: "gpt-5.4",
         persistExtendedHistory: false,
-        config: {
-          project_doc_max_bytes: 0,
-        },
       },
     },
     {
@@ -156,6 +176,7 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
       "codex_app_server_thread_start_response",
       "codex_app_server_turn_start_request",
       "codex_app_server_turn_start_response",
+      "codex_provider_home_rollout_context",
     ]
   );
   const turnStart = diagnosticRecords.find(
@@ -175,6 +196,22 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
     model: "gpt-5.4",
     effort: "medium",
     summary: "detailed",
+  });
+  const rolloutContext = diagnosticRecords.find(
+    (record) => record.kind === "codex_provider_home_rollout_context"
+  );
+  assert.ok(rolloutContext);
+  assert.deepEqual(rolloutContext.payload, {
+    path: rolloutPath,
+    recordCount: 1,
+    records: [
+      {
+        type: "turn_context",
+        payload: {
+          user_instructions: "# AGENTS.md instructions\nFull project text",
+        },
+      },
+    ],
   });
 });
 
@@ -218,9 +255,7 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
     (requests?.[0]?.params as { model?: string }).model,
     "gpt-5.3-codex"
   );
-  assert.deepEqual((requests?.[0]?.params as { config?: unknown }).config, {
-    project_doc_max_bytes: 0,
-  });
+  assert.equal("config" in (requests?.[0]?.params as object), false);
   assert.equal(requests?.[1]?.method, "turn/start");
   assert.deepEqual(requests?.[1]?.params, {
     threadId: "diagnostic-thread",

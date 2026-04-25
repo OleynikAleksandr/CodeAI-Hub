@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import { CodexAppServerProcess } from "../app-server/process/codex-app-server-process";
@@ -10,9 +11,6 @@ import type {
 } from "../types";
 
 const DIAGNOSTIC_TURN_TIMEOUT_MS = 35_000;
-const DIAGNOSTIC_THREAD_CONFIG = {
-  project_doc_max_bytes: 0,
-} as const;
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
 const DEFAULT_SETTINGS_PATH = path.join(
@@ -21,6 +19,8 @@ const DEFAULT_SETTINGS_PATH = path.join(
   "settings",
   "settings.json"
 );
+const PROVIDER_HOME_ROLLOUT_CONTEXT_KIND =
+  "codex_provider_home_rollout_context";
 
 export interface CodexNativeRequestCaptureOptions {
   readonly appliedTurnConfig?: CodexNativeRequestCaptureAppliedTurnConfig | null;
@@ -106,6 +106,11 @@ const resolveTurnReasoningSummaryMode = (): CodexReasoningSummaryMode =>
 const createTimeoutError = (): Error =>
   new Error("Timed out waiting for diagnostic Codex turn completion");
 
+interface CodexDiagnosticThread {
+  readonly id: string;
+  readonly rolloutPath: string | null;
+}
+
 export class CodexNativeRequestCaptureService {
   readonly #processFactory: CodexProcessFactory;
   readonly #reporter?: ModuleReporter;
@@ -140,10 +145,11 @@ export class CodexNativeRequestCaptureService {
     const turnCompletion = this.#waitForTurnCompletion(process);
     try {
       await process.start();
-      const threadId = await this.#startThread(process, options);
-      turnCompletion.bindThread(threadId);
-      await this.#startTurn(process, threadId, options);
+      const thread = await this.#startThread(process, options);
+      turnCompletion.bindThread(thread.id);
+      await this.#startTurn(process, thread.id, options);
       await turnCompletion.done;
+      await this.#recordProviderHomeRolloutContext(options, thread.rolloutPath);
     } finally {
       turnCompletion.unsubscribe();
       await process.stop();
@@ -170,14 +176,13 @@ export class CodexNativeRequestCaptureService {
   async #startThread(
     process: CodexProcessLike,
     options: CodexNativeRequestCaptureOptions
-  ): Promise<string> {
+  ): Promise<CodexDiagnosticThread> {
     const params = {
       cwd: options.workspacePath,
       approvalPolicy: this.#workspace.defaultApprovalMode,
       sandbox: this.#workspace.defaultSandboxMode,
       model: this.#resolveModelId(options),
       persistExtendedHistory: false,
-      config: DIAGNOSTIC_THREAD_CONFIG,
     };
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_thread_start_request",
@@ -196,7 +201,10 @@ export class CodexNativeRequestCaptureService {
     if (!threadId) {
       throw new Error("diagnostic codex thread/start returned no thread id");
     }
-    return threadId;
+    return {
+      id: threadId,
+      rolloutPath: asString(thread?.path),
+    };
   }
 
   async #startTurn(
@@ -237,6 +245,45 @@ export class CodexNativeRequestCaptureService {
     }
   ): Promise<void> {
     await options.recordDiagnosticContext?.(record);
+  }
+
+  async #recordProviderHomeRolloutContext(
+    options: CodexNativeRequestCaptureOptions,
+    rolloutPath: string | null
+  ): Promise<void> {
+    if (!rolloutPath) {
+      await this.#recordDiagnosticContext(options, {
+        kind: PROVIDER_HOME_ROLLOUT_CONTEXT_KIND,
+        payload: {
+          path: null,
+          readError: "thread/start response did not include thread.path",
+          records: [],
+        },
+      });
+      return;
+    }
+    try {
+      const text = await readFile(rolloutPath, "utf8");
+      const records = parseProviderHomeRolloutJsonl(text);
+      await this.#recordDiagnosticContext(options, {
+        kind: PROVIDER_HOME_ROLLOUT_CONTEXT_KIND,
+        payload: {
+          path: rolloutPath,
+          recordCount: records.length,
+          records,
+        },
+      });
+    } catch (error) {
+      await this.#recordDiagnosticContext(options, {
+        kind: PROVIDER_HOME_ROLLOUT_CONTEXT_KIND,
+        payload: {
+          path: rolloutPath,
+          readError:
+            error instanceof Error ? error.message : "Unknown read error",
+          records: [],
+        },
+      });
+    }
   }
 
   #resolveModelId(options: CodexNativeRequestCaptureOptions): string | null {
@@ -311,3 +358,22 @@ const asCodexReasoningEffort = (value: unknown): CodexReasoningEffort | null =>
   value === "low" || value === "medium" || value === "high" || value === "xhigh"
     ? value
     : null;
+
+const parseProviderHomeRolloutJsonl = (text: string): readonly unknown[] =>
+  text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => parseProviderHomeRolloutLine(line));
+
+const parseProviderHomeRolloutLine = (line: string): unknown => {
+  try {
+    return JSON.parse(line) as unknown;
+  } catch (error) {
+    return {
+      parseError:
+        error instanceof Error ? error.message : "Unknown JSON parse error",
+      rawLine: line,
+    };
+  }
+};

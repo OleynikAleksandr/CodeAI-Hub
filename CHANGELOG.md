@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.72] - 2026-04-25
+### Fixed
+- **Codex native capture теперь встраивает provider-home rollout context в основной artifact.** Diagnostic run читает rollout JSONL из `thread/start.response.thread.path` и пишет его в `Provider Diagnostic Context` как `codex_provider_home_rollout_context`, чтобы `.md` / `.jsonl` показывали полный `turn_context.user_instructions` / `AGENTS.md` слой без ручного поиска второго файла.
+- **Диагностический X8 flag убран из текущего baseline-релиза.** `project_doc_max_bytes = 0` больше не отправляется в `thread/start`; релиз нужен для no-flag baseline полной структуры запроса перед следующими flag experiments.
+
+### Tests
+- **Targeted checks закрывают rollout snapshot и no-flag request shape.** Пройдены `npm run build --workspace=@codeai-hub/codex-app-server-module` и direct node test для `codex-native-request-capture-service`.
+
 ## [1.2.71] - 2026-04-25
 ### Changed
 - **Codex diagnostic capture теперь отправляет `project_doc_max_bytes = 0` в App Server `thread/start`.** Это первый X8 flag experiment для проверки, можно ли убрать project `AGENTS.md` из Codex instruction sources без изменения normal workflow runtime path.

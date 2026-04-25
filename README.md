@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.71
+## Current Release — v1.2.72
+- **Codex native capture теперь должен показывать полный provider-home context в одном artifact.** Diagnostic run копирует rollout JSONL из `thread.path` в `Provider Diagnostic Context` как `codex_provider_home_rollout_context`.
+- **No-flag baseline перед следующими experiments.** Diagnostic `thread/start` снова не отправляет `project_doc_max_bytes = 0`; сначала проверяем полную структуру запроса с обычным `AGENTS.md`.
+- **Retest должен подтвердить, что markdown/jsonl сами содержат `AGENTS.md` / `turn_context.user_instructions`.** Если это видно в новом capture без ручного открытия provider-home rollout, можно переходить к следующему флагу.
+
+### 1.2.71 (previous)
 - **Codex diagnostic capture проверяет отключение project AGENTS discovery.** Temporary App Server `thread/start` теперь получает diagnostic-only `config.project_doc_max_bytes = 0`.
 - **Normal Codex workflow path не затронут.** Флаг применяется только в Settings -> General native request capture run и не меняет обычные `thread/start` / `thread/resume` defaults.
 - **Retest должен показать, ушёл ли `AGENTS.md` из Codex instruction sources.** Сравниваем `thread/start` diagnostic context, native tools hash и provider-home rollout `turn_context.user_instructions`.
