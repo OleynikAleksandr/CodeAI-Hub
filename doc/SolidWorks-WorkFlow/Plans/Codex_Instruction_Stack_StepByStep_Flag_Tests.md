@@ -150,6 +150,18 @@ Decision rule:
 
 - If X3 works and tools remain stable, it becomes the first practical Codex diagnostic profile candidate for reducing system instructions.
 
+Implementation for release `1.2.74`:
+
+- Diagnostic `thread/start` keeps the accepted X8 cleanup config: `config.project_doc_max_bytes = 0`.
+- Diagnostic `thread/start` also sends `baseInstructions` with the compact prompt stored for review at:
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-ClaudeTests/doc/tmp/codex-instruction-analysis/Codex_My_System_Prompt.md`
+- Target evidence for retest:
+  - `thread/start.request.baseInstructions` is present and starts with `You are Codex, a pragmatic coding agent`;
+  - native `response.create.instructions` hash differs from the original provider base hash `6fdc9b734797bf69f7982c747cd869a834615baab4244bd1bb7676625717f598`;
+  - provider-home `session_meta.base_instructions.text` matches the compact prompt;
+  - `instructionSources` remains empty;
+  - native tools remain unchanged.
+
 ### X1 — Replace baseInstructions
 
 Flag:
