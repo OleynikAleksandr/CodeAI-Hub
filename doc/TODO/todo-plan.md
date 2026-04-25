@@ -49,7 +49,7 @@
 5. [DONE] Build a new release package for X8 retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.71`; artifacts: `codeai-hub-1.2.71.vsix`, `doc/tmp/releases/codex-module-1.2.71.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.71.tar.bz2`, `doc/tmp/releases/project-manager-1.2.71.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex project doc flag test release`
 6. [DONE] Git Commit: `chore: build codex project doc flag test release` (hash: `15340d0ac`)
 7. [DONE] Analyze user-provided X8 native capture logs and classify result — result: `works` for disabling project `AGENTS.md` discovery; evidence: `thread/start.request.config.project_doc_max_bytes = 0`, `instructionSources: []`, provider-home `turn_context.user_instructions.length = 0`, native tools hash unchanged; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex project doc flag evidence`
-8. [IN_PROGRESS] Git Commit: `docs: record codex project doc flag evidence` (hash: TBD)
+8. [DONE] Git Commit: `docs: record codex project doc flag evidence` (hash: `df8d4529e`)
 
 ## Phase 2 — X2 Developer Instructions (owner: Codex, updated: 2026-04-25)
 
