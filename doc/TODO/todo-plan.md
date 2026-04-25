@@ -75,8 +75,8 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 2. [DONE] Git Commit: `test: add codex project doc max bytes full capture flag` (hash: `f098e3165`)
 3. [DONE] Prepare release notes for future version `1.2.73` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex full capture project doc flag release notes`
 4. [DONE] Git Commit: `docs: prepare codex full capture project doc flag release notes` (hash: `8937c24fb`)
-5. [TODO] Build a new release package for X8 full-capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.73`; commit message: `chore: build codex full capture project doc flag release`
-6. [TODO] Git Commit: `chore: build codex full capture project doc flag release` (hash: TBD)
+5. [DONE] Build a new release package for X8 full-capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.73`; artifacts: `codeai-hub-1.2.73.vsix`, `doc/tmp/releases/codex-module-1.2.73.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.73.tar.bz2`, `doc/tmp/releases/project-manager-1.2.73.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.73.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.73.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex full capture project doc flag release`
+6. [DONE] Git Commit: `chore: build codex full capture project doc flag release` (hash: `9d02e3044`)
 7. [TODO] Analyze user-provided X8 full-capture logs and verify markdown/jsonl include `config.project_doc_max_bytes = 0`, `instructionSources: []`, and embedded `codex_provider_home_rollout_context` with empty/no project `turn_context.user_instructions` — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture project doc flag evidence`
 8. [TODO] Git Commit: `docs: record codex full capture project doc flag evidence` (hash: TBD)
 
