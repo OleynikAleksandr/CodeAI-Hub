@@ -62,8 +62,8 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 2. [DONE] Git Commit: `fix: record codex provider home rollout context` (hash: `91e3dfd0f`)
 3. [DONE] Prepare release notes for future version `1.2.72` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex capture context release notes`
 4. [DONE] Git Commit: `docs: prepare codex capture context release notes` (hash: `91e3dfd0f`)
-5. [TODO] Build a new no-flag baseline release package for full capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.72`; commit message: `chore: build codex full capture baseline release`
-6. [TODO] Git Commit: `chore: build codex full capture baseline release` (hash: TBD)
+5. [DONE] Build a new no-flag baseline release package for full capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.72`; artifacts: `codeai-hub-1.2.72.vsix`, `doc/tmp/releases/codex-module-1.2.72.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.72.tar.bz2`, `doc/tmp/releases/project-manager-1.2.72.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.72.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.72.tar.bz2`; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; commit message: `chore: build codex full capture baseline release`
+6. [DONE] Git Commit: `chore: build codex full capture baseline release` (hash: `eea3056ac`)
 7. [TODO] Analyze user-provided no-flag baseline capture logs and verify markdown/jsonl include `codex_provider_home_rollout_context` with full `AGENTS.md` / `turn_context.user_instructions` — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture baseline evidence`
 8. [TODO] Git Commit: `docs: record codex full capture baseline evidence` (hash: TBD)
 
