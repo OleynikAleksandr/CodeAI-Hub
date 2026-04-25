@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.76
+## Current Release — v1.2.77
+- **Codex получает CodeAI Hub-owned early-architecture base prompt.** Normal `thread/start` и diagnostic capture теперь передают `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`.
+- **Codex project `AGENTS.md` discovery отключен для новых threads.** В normal и diagnostic `thread/start` включен `config.project_doc_max_bytes = 0`, поэтому retest должен показать пустой/no-project `instructionSources` и отсутствие project text в provider-home `turn_context.user_instructions`.
+- **Claude получает общий workflow `systemPrompt`.** Normal SDK turns и diagnostic capture передают `CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT` при сохраненном `settingSources: []`; workflow step template остается first user message.
+
+### 1.2.76 (previous)
 - **Codex Settings получил GPT-5.5.** Shared Codex model registry теперь включает `gpt-5.5`, поэтому модель появляется в Codex default model settings и в Settings -> General -> Provider Native Request Capture.
 - **Reasoning parity сохранена.** Для `gpt-5.5` используется тот же Codex reasoning selector contract, что и для `gpt-5.4`: `low`, `medium`, `high`, `xhigh`, с persisted default `medium`.
 - **Цель retest — снять GPT-5.5 provider base prompt.** Новый capture должен позволить сравнить полный system/base prompt GPT-5.5 с уже снятыми `gpt-5.3-codex` и `gpt-5.4` без повторного включения compact `baseInstructions`.

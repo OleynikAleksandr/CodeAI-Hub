@@ -3,7 +3,7 @@
 **Статус:** итоговый bundle эксперимента
 **Дата:** 2026-04-25
 **Scope:** Claude Agent SDK и Codex App Server provider/system instruction control
-**Главный вывод:** CodeAI Hub управляет и provider/system инструкциями, и workflow user-инструкциями для проверенных провайдеров. Дальше вопрос не в том, можем ли мы управлять prompt stack, а в том, какой instruction profile должен применяться на каждом этапе workflow.
+**Главный вывод:** CodeAI Hub управляет и provider/system инструкциями, и workflow user-инструкциями для проверенных провайдеров. Итоговый early-architecture instruction profile подключен в runtime и diagnostic paths для Claude и Codex в релизном scope `1.2.77`; следующий шаг — пользовательский retest native capture.
 
 ## 1. Главный результат
 
@@ -82,6 +82,7 @@ Product decision:
 
 - Claude custom system prompt пригоден для CodeAI Hub-owned workflow-agent frame.
 - Claude provider defaults полезны как reference material, но активный workflow profile должен принадлежать продукту.
+- Финальная реализация подключает `CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT` в `ClaudeSDKManager` и `ClaudeNativeRequestCaptureService`, сохраняя `settingSources: []`.
 
 ## 4. Итоги по Codex
 
@@ -110,6 +111,7 @@ Product decision:
 - Когда `baseInstructions` отправлен, один и тот же compact text появляется и в native `response.create.instructions`, и в provider-home `base_instructions.text`.
 - Tool declarations оставались стабильными.
 - Workflow first user prompt оставался в `turn/start.input[0].text`.
+- Финальная реализация подключает `CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` и `project_doc_max_bytes = 0` в diagnostic `thread/start` и normal runtime `thread/start`.
 
 Что отложено или не является текущим решением:
 
@@ -168,7 +170,7 @@ Product decision:
 - намеренно исключает широкий frontend/backend/implementation/dev-server guidance;
 - концентрирует агента на architecture discovery, product meaning, scenarios, boundaries, assumptions и artifact-first work.
 
-Этот файл пока не подключен к normal product runtime. Это результат эксперимента и prompt candidate.
+Этот файл стал reference copy для runtime prompt source. Активная Codex runtime-константа живет в `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`.
 
 ## 8. Product Direction
 

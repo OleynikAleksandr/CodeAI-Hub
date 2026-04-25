@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.77] - 2026-04-25
+### Changed
+- **Codex runtime теперь использует CodeAI Hub-owned early-architecture instruction profile.** Normal `thread/start` и Settings diagnostic capture передают compact `baseInstructions` и `config.project_doc_max_bytes = 0`.
+- **Claude runtime теперь использует общий CodeAI Hub workflow `systemPrompt`.** Normal SDK turns и diagnostic capture передают `CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT`, сохраняя `settingSources: []`.
+
+### Tests
+- **Targeted checks закрывают request-shape changes.** Пройдены targeted builds/tests для `@codeai-hub/codex-app-server-module` и `@codeai-hub/claude-module`.
+
 ## [1.2.76] - 2026-04-25
 ### Added
 - **Codex settings теперь включают `gpt-5.5`.** Shared Codex model registry добавляет `GPT-5.5`, и Settings -> General -> Provider Native Request Capture получает новую кнопку через существующий `CODEX_SETTINGS_MODELS` source of truth.
