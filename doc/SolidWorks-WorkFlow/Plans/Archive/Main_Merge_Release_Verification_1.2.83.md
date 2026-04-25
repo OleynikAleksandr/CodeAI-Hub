@@ -1,6 +1,6 @@
 # Main Merge Release Verification 1.2.83
 
-**Status:** Active planning scope
+**Status:** Completed and archived
 **Date:** 2026-04-25
 **Owner:** Oleksandr + Codex
 

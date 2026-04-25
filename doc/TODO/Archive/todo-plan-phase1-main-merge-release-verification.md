@@ -34,6 +34,6 @@
 5. [DONE] Run release automation `./scripts/build-all.sh` for `1.2.83` — scope: release-script generated version/package artifacts; commit: `chore: build main merge verification release`; result: passed, produced provider/core/UI/launcher tarballs for `1.2.83`
 6. [DONE] Git Commit: `chore: build main merge verification release` (hash: `157656002`)
 7. [DONE] Run VSIX packaging `./scripts/build-release.sh --use-current-version` and record artifacts — scope: release package outputs, `doc/TODO/todo-plan.md`; commit: `docs: record main merge verification release`; result: passed, produced `codeai-hub-1.2.83.vsix`
-8. [IN_PROGRESS] Git Commit: `docs: record main merge verification release` (hash: TBD)
-9. [TODO] Close scope: archive todo-plan, archive planning-doc, update Docs_Index, create completion session report — scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/Sessions/`; commit: `docs: close main merge release verification`
-10. [TODO] Git Commit: `docs: close main merge release verification` (hash: TBD)
+8. [DONE] Git Commit: `docs: record main merge verification release` (hash: `846e60286`)
+9. [DONE] Close scope: archive todo-plan, archive planning-doc, update Docs_Index, create completion session report — scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/Sessions/`; commit: `docs: close main merge release verification`
+10. [IN_PROGRESS] Git Commit: `docs: close main merge release verification` (hash: TBD)
