@@ -59,9 +59,9 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 ### Stream: Provider-Home Rollout Context In Capture
 
 1. [DONE] Remove the diagnostic X8 `project_doc_max_bytes = 0` flag and embed provider-home rollout JSONL into the Codex native capture artifact — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/TODO/todo-plan.md`; verification: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; commit message: `fix: record codex provider home rollout context`
-2. [TODO] Git Commit: `fix: record codex provider home rollout context` (hash: TBD)
+2. [DONE] Git Commit: `fix: record codex provider home rollout context` (hash: `91e3dfd0f`)
 3. [DONE] Prepare release notes for future version `1.2.72` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit message: `docs: prepare codex capture context release notes`
-4. [TODO] Git Commit: `docs: prepare codex capture context release notes` (hash: TBD)
+4. [DONE] Git Commit: `docs: prepare codex capture context release notes` (hash: `91e3dfd0f`)
 5. [TODO] Build a new no-flag baseline release package for full capture retest and record VSIX/tarball paths — scope: release-generated version files, `doc/TODO/todo-plan.md`; release target: `1.2.72`; commit message: `chore: build codex full capture baseline release`
 6. [TODO] Git Commit: `chore: build codex full capture baseline release` (hash: TBD)
 7. [TODO] Analyze user-provided no-flag baseline capture logs and verify markdown/jsonl include `codex_provider_home_rollout_context` with full `AGENTS.md` / `turn_context.user_instructions` — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture baseline evidence`
