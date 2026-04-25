@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.78] - 2026-04-25
+### Fixed
+- **Provider startup auto-update восстановлен для Project Manager settings.** Core на старте читает persisted `settings.json`, применяет `providers.*.autoUpdate.enabled`, последовательно запускает update targets и только после этого инициализирует provider registry.
+- **Claude auth preflight больше не запускает интерактивный `npx @anthropic-ai/claude-code --version`.** SDK/runtime/diagnostic/translation paths передают установленный `claude` executable из `SDKInstaller`; `ensureInstalled()` больше не делает скрытый latest-check при каждом старте.
+- **Native Request Capture различает unsupported и not-ready provider.** Для известного provider descriptor без initialized adapter Core возвращает `provider_not_ready`, что делает стартовую ошибку Claude/Opus диагностически честной.
+
+### Tests
+- **Targeted checks закрывают startup update, Claude preflight и capture readiness.** Пройдены `npm run build --workspace=@codeai-hub/core`, `npm run build --workspace=@codeai-hub/claude-module`, direct node tests для `settings-provider-auto-update-service`, `native-request-capture-facade`, `claude-sdk-manager`, `claude-native-request-capture-service` и `claude-haiku-translation-service`.
+
 ## [1.2.77] - 2026-04-25
 ### Changed
 - **Codex runtime теперь использует CodeAI Hub-owned early-architecture instruction profile.** Normal `thread/start` и Settings diagnostic capture передают compact `baseInstructions` и `config.project_doc_max_bytes = 0`.

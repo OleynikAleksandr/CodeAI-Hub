@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.77
+## Current Release — v1.2.78
+- **Provider auto-update снова выполняется на старте Core.** Core читает Project Manager settings из `~/.codeai-hub/settings/settings.json` и до provider initialization обновляет enabled provider CLI/SDK targets через тот же `settings:update-provider` сервис.
+- **Claude auth preflight больше не зависит от интерактивного `npx`.** Проверка `--version` и provider-home auth probe идут через установленный `claude` executable из `SDKInstaller`; hidden SDK latest-update убран из обычного `ensureInstalled()`.
+- **Native Request Capture честнее сообщает readiness.** Если provider известен registry, но adapter ещё не поднялся, результат теперь `provider_not_ready`, а не misleading `provider_not_supported`.
+
+### 1.2.77 (previous)
 - **Codex получает CodeAI Hub-owned early-architecture base prompt.** Normal `thread/start` и diagnostic capture теперь передают `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`.
 - **Codex project `AGENTS.md` discovery отключен для новых threads.** В normal и diagnostic `thread/start` включен `config.project_doc_max_bytes = 0`, поэтому retest должен показать пустой/no-project `instructionSources` и отсутствие project text в provider-home `turn_context.user_instructions`.
 - **Claude получает общий workflow `systemPrompt`.** Normal SDK turns и diagnostic capture передают `CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT` при сохраненном `settingSources: []`; workflow step template остается first user message.

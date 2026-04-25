@@ -105,10 +105,11 @@ Important transport mapping:
 ## Auth cluster
 - `src/auth/sdk-auth-manager.ts` — façade/coordinator for Claude auth bootstrap, provider-home preflight и auth runtime checks.
 - `src/auth/claude-auth-home-bridge.ts` — provider-home/macOS Keychain bridge, legacy `.claude.json` link/copy flow и migration of legacy `~/.claude/.credentials.json`.
-- `src/auth/claude-auth-runtime.ts` — OAuth bootstrap/cache refresh, auth environment assembly, `npx @anthropic-ai/claude-code` preflight probe и final auth check.
+- `src/auth/claude-auth-runtime.ts` — OAuth bootstrap/cache refresh, auth environment assembly, installed `claude` executable preflight probe и final auth check. Fallback `npx @anthropic-ai/claude-code` invocation remains only for callers that do not provide an executable path; normal SDK runtime, diagnostic capture and Haiku translation must pass `SDKInstaller.getExecutablePath()`.
 
 ## Auth bootstrap (критично)
 - Core/модуль пытаются резолвить OAuth токен (env/credentials/platform store) и инжектить `CLAUDE_CODE_OAUTH_TOKEN` в runtime env.
+- `SDKInstaller.ensureInstalled()` отвечает за missing first-run install и executable/module path verification, но не делает скрытый latest-check на каждом старте. Обновление уже установленного Claude SDK/CLI принадлежит Core startup/manual settings policy (`SettingsProviderAutoUpdateService` / `settings:update-provider`).
 - Если токен истёк/401 — система должна завершить turn как failure и предоставить recovery hint (см. Phase 211).
 
 ## Инварианты
