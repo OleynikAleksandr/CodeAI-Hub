@@ -80,20 +80,16 @@ Note: X8 is historical evidence only. Per user decision after reviewing the arti
 7. [DONE] Analyze user-provided X8 full-capture logs and verify markdown/jsonl include `config.project_doc_max_bytes = 0`, `instructionSources: []`, and embedded `codex_provider_home_rollout_context` with empty/no project `turn_context.user_instructions` — result: `works`; evidence: `2026-04-25T09-28-41-532Z-codex-native-request.md` line `58` has `project_doc_max_bytes = 0`, line `95` has `instructionSources: []`, line `169` has `codex_provider_home_rollout_context`; provider-home rollout line `5` has `turn_context` with no `user_instructions`; project `AGENTS.md` text absent from embedded rollout; scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex full capture project doc flag evidence`
 8. [DONE] Git Commit: `docs: record codex full capture project doc flag evidence` (hash: `7d2730426`)
 
-## Phase 4 — X2 Developer Instructions (owner: Codex, updated: 2026-04-25)
+## Phase 4 — System Instructions Reduction Candidate Selection (owner: Codex, updated: 2026-04-25)
 
-### Stream: Diagnostic Flag X2
+### Stream: Replace Wrong X2 Target
 
-1. [TODO] Add diagnostic-only `thread/start.developerInstructions` after the X8 full-capture retest is verified — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file if required, `doc/TODO/todo-plan.md`; commit message: `test: add codex developer instructions capture flag`
-2. [TODO] Git Commit: `test: add codex developer instructions capture flag` (hash: TBD)
-3. [TODO] Build a new release package for X2 retest and record VSIX/tarball paths — scope: release metadata docs, `doc/TODO/todo-plan.md`; commit message: `chore: build codex developer instructions test release`
-4. [TODO] Git Commit: `chore: build codex developer instructions test release` (hash: TBD)
-5. [TODO] Analyze user-provided X2 native capture logs and classify result — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; commit message: `docs: record codex developer instructions evidence`
-6. [TODO] Git Commit: `docs: record codex developer instructions evidence` (hash: TBD)
+1. [DONE] Reclassify `thread/start.developerInstructions` as not the next target because the active goal is reducing system/base instructions, not adding a developer frame — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`, `doc/TODO/todo-plan.md`; evidence: latest `1.2.73` capture has `turn_context.collaboration_mode.settings.developer_instructions = null`, and `developer-instructions` appears only inside the Codex tool schema; commit message: `docs: retarget codex flag search to system instructions`
+2. [IN_PROGRESS] Git Commit: `docs: retarget codex flag search to system instructions` (hash: TBD)
 
-## Phase 5 — Next Flag Selection (owner: Codex, updated: 2026-04-25)
+## Phase 5 — Base Instructions Diagnostic Flag (owner: Codex, updated: 2026-04-25)
 
 ### Stream: Evidence-Gated Continuation
 
-1. [TODO] Based on X8/X2 evidence, choose the next single flag or minimal combination (`X3`, `X1`, or fallback) and rewrite this Phase into concrete microtasks — scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Plans/Codex_Instruction_Stack_StepByStep_Flag_Tests.md`; commit message: `docs: select next codex instruction stack flag`
-2. [TODO] Git Commit: `docs: select next codex instruction stack flag` (hash: TBD)
+1. [TODO] Add one diagnostic-only system-instruction reduction candidate, starting with `thread/start.baseInstructions` while keeping X8 `config.project_doc_max_bytes = 0` enabled — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`, focused test file, `doc/TODO/todo-plan.md`; expected evidence: shorter native `response.create.instructions`, shorter provider-home `base_instructions.text`, unchanged tools; commit message: `test: add codex base instructions capture flag`
+2. [TODO] Git Commit: `test: add codex base instructions capture flag` (hash: TBD)

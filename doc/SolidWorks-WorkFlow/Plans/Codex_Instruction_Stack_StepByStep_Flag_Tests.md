@@ -108,7 +108,15 @@ Decision rule:
 
 ### X2 — Add thread developerInstructions
 
-Flag:
+Status: rejected as next target.
+
+Reason:
+
+- Latest `1.2.73` evidence shows no real developer instruction payload: provider-home `turn_context.collaboration_mode.settings.developer_instructions = null`.
+- The `developer-instructions` text seen in capture belongs to the Codex tool schema, not to an instruction payload sent to the model.
+- The active goal is not to add another developer frame. The active goal is to reduce or replace the long Codex system/base instructions.
+
+Historical candidate only:
 
 ```json
 {
@@ -116,23 +124,9 @@ Flag:
 }
 ```
 
-Target surface:
+Do not test X2 before a separate user-approved goal exists for adding developer-level instructions.
 
-- diagnostic `thread/start` only.
-
-Expected result:
-
-- `thread/start` request contains `developerInstructions`;
-- provider-home rollout shows a developer-role block or `collaboration_mode.settings.developer_instructions`;
-- workflow prompt remains the first user message;
-- native tools unchanged.
-
-Decision rule:
-
-- If X2 works, it becomes the preferred step-specific frame mechanism.
-- If X2 is invisible or rewritten in an unsafe layer, test `collaborationMode.settings.developer_instructions` as secondary.
-
-### X3 — Combine project-doc disable plus developerInstructions
+### X3 — Combine project-doc disable plus baseInstructions
 
 Flag:
 
@@ -141,20 +135,20 @@ Flag:
   "config": {
     "project_doc_max_bytes": 0
   },
-  "developerInstructions": "<short CodeAI Hub Description Agent frame>"
+  "baseInstructions": "<minimal CodeAI Hub Codex harness>"
 }
 ```
 
 Expected result:
 
 - no project `AGENTS.md` noise;
-- developer frame visible;
+- native `response.create.instructions` and provider-home `base_instructions.text` are materially shorter;
 - workflow prompt remains intact;
 - tools unchanged.
 
 Decision rule:
 
-- If X3 works, it becomes the first practical Codex diagnostic profile candidate.
+- If X3 works and tools remain stable, it becomes the first practical Codex diagnostic profile candidate for reducing system instructions.
 
 ### X1 — Replace baseInstructions
 
@@ -178,11 +172,9 @@ Risk:
 
 ### Later candidates
 
-Only after X8/X2/X3/X1 evidence:
+Only after X8/X3/X1 evidence:
 
-- `thread/resume.developerInstructions`;
 - `thread/resume.baseInstructions`;
-- `turn/start.collaborationMode.settings.developer_instructions`;
 - `thread/start.config.project_doc_fallback_filenames = []`;
 - `model_instructions_file`;
 - suspected include flags such as `include_environment_context`, `include_permissions_instructions`, `include_apps_instructions`, `[skills] include_instructions = false`.
