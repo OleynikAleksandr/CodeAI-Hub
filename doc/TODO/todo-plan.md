@@ -116,3 +116,18 @@
 6. [DONE] Git Commit: `chore: bump native capture markdown dedupe release version` (hash: `e3252b47986593e09f1ae62892b9a7b5ce34b5bf`)
 7. [DONE] Verify user retest logs for Claude and Codex Markdown dedupe — scope: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-07-59-765Z-claude-native-request.*`, `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T14-08-10-831Z-codex-native-request.*`; result: Claude Markdown `# Draft v4` appears once in `Extracted Messages`, Codex custom system prompt appears once in `Extracted System Prompt`, JSONL preserves full captured payloads; commit message: `docs: record native capture markdown dedupe retest`
 8. [DONE] Git Commit: `docs: record native capture markdown dedupe retest` (hash: `f23ed1459d9fbc0067ebec845d2228ca05fbe605`)
+
+## Phase 8 — Claude Workflow Tool Profile Allowlist (owner: Codex, updated: 2026-04-25)
+
+### Stream: Remove Agent And Skill Tool Noise From Claude Workflow Requests
+
+1. [IN_PROGRESS] Plan the Claude `tools` allowlist experiment and update navigation docs — scope: `doc/SolidWorks-WorkFlow/Plans/Claude_Workflow_Tool_Profile_Allowlist.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected retest: Claude native `body.tools` should contain only `Read`, `Write`, `Edit`; commit message: `docs: plan claude workflow tool allowlist test`
+2. [TODO] Git Commit: `docs: plan claude workflow tool allowlist test` (hash: TBD)
+3. [TODO] Apply explicit Claude workflow tool profile to runtime and diagnostic capture — scope: `packages/Claude_Module/src/sdk/claude-workflow-system-prompt.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`; expected commit message: `test: add claude workflow tool allowlist`
+4. [TODO] Git Commit: `test: add claude workflow tool allowlist` (hash: TBD)
+5. [TODO] Add targeted tests for the Claude `Read` / `Write` / `Edit` tool profile — scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; verification: `npm run build --workspace=@codeai-hub/claude-module`, direct node tests for both files; expected commit message: `test: cover claude workflow tool allowlist`
+6. [TODO] Git Commit: `test: cover claude workflow tool allowlist` (hash: TBD)
+7. [TODO] Update SSOT docs and release notes for Claude tool allowlist retest — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/Experiment_Results.md`, `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; release target: `1.2.80`; expected commit message: `docs: prepare claude tool allowlist release`
+8. [TODO] Git Commit: `docs: prepare claude tool allowlist release` (hash: TBD)
+9. [TODO] Build the new release package and stop for user retest — scope: generated version/release artifacts, `doc/TODO/todo-plan.md`, `doc/Sessions/Session004.md`; release target: `1.2.80`; artifacts: TBD; verification: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`; expected commit message: `chore: build claude tool allowlist release`
+10. [TODO] Git Commit: `chore: bump claude tool allowlist release version` (hash: TBD)
