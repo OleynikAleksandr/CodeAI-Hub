@@ -1,6 +1,6 @@
 # Codex Workflow Multi-Agent Tool Profile Flag
 
-**Status:** Active test scope
+**Status:** Built in `1.2.81`, waiting for user retest
 **Date:** 2026-04-25
 **Owner:** Codex
 
@@ -74,6 +74,21 @@ In the next Codex native request capture:
 - `project_doc_max_bytes = 0` should remain present in `thread/start.config`;
 - JSONL remains the full evidence source;
 - Markdown remains deduped and should show the reduced extracted tool declarations.
+
+## Release Handoff
+
+Release `1.2.81` includes the first Codex tool-profile experiment:
+
+- CodeAI Hub starts Codex App Server as `codex app-server --disable multi_agent`;
+- the change is shared by normal runtime and Settings -> General native request capture diagnostics through `CodexAppServerProcess`;
+- targeted verification passed before release:
+  - `npm run build --workspace=@codeai-hub/codex-app-server-module`;
+  - direct Node tests for Codex process, facade, and diagnostic capture;
+- release verification passed:
+  - `./scripts/build-all.sh`;
+  - `./scripts/build-release.sh --use-current-version`;
+- packaged VSIX:
+  - `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-ClaudeTests/codeai-hub-1.2.81.vsix`.
 
 ## Risk
 
