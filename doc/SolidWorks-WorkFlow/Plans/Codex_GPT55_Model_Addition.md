@@ -74,3 +74,34 @@ Optional verification surface:
 - Do not change the active diagnostic flags in the Codex capture path during the model-addition release.
 - Do not reintroduce `thread/start.baseInstructions` until after `gpt-5.5` full base prompt inventory is captured.
 - Do not change Claude or Gemini model lists.
+
+## 6. GPT-5.5 Retest Evidence
+
+User retested release `1.2.76` with `GPT-5.5` selected in Settings -> General -> Provider Native Request Capture.
+
+Compared captures:
+- `gpt-5.4`: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T10-25-45-352Z-codex-native-request.md`
+- `gpt-5.5`: `/Users/oleksandroliinyk/.codeai-hub/logs/native-request-capture/2026-04-25T10-51-29-554Z-codex-native-request.md`
+
+Stable shared evidence:
+- both captures have `thread/start.config.project_doc_max_bytes = 0`;
+- both captures have no `thread/start.baseInstructions`;
+- both captures have `instructionSources: []`;
+- workflow prompt is identical: length `12973`, sha256 `90054eee3308614b58dcc59671fa7d117f9e649d558e95e10d205fa492c192a8`;
+- native tools are identical: count `18`, sha256 `a1a33140218a5d234965813f26cb0ac2d1e3edb6044aa7c78bb33c88f2829a33`;
+- native request body is identical after excluding expected model-specific/volatile fields: `model`, `instructions`, `prompt_cache_key`, `client_metadata`.
+
+Model-specific base prompt evidence:
+- `gpt-5.4`: native/provider-home base instructions length `14732`, sha256 `478e8a11b180adb2659f21aba51744711f79f665039bb0bc4a13d3c051fcb76c`.
+- `gpt-5.5`: native/provider-home base instructions length `21335`, sha256 `c2a980bc28af132eb89e0b4c68ae884043faae83a1afd3fd4889f7e8a1ada7b0`.
+- `gpt-5.5` is not just a renamed `gpt-5.4`; it has a third distinct provider base prompt in this inventory, longer than `gpt-5.4` by `6603` characters.
+
+Prompt-structure difference:
+- `gpt-5.5` keeps shared `Personality`, `Values`, and `Escalation` sections.
+- `gpt-5.5` adds or expands explicit `Engineering judgment` and `Frontend guidance` sections with `Build with empathy` and `Design instructions` subsections.
+- `gpt-5.4` has a shorter `Frontend tasks` section instead.
+- `gpt-5.5` has a shorter `Final answer instructions` section than `gpt-5.4`, but a much larger frontend/design policy block overall.
+
+Decision impact:
+- A single compact Codex base prompt is still technically possible through `thread/start.baseInstructions`, but it should be treated as an explicit cross-model policy choice, not as "matching the native provider prompt".
+- If we want to preserve model-specific behavioral strengths, `gpt-5.5` needs either a model-specific compact prompt or a shared compact prompt that intentionally imports the stronger `gpt-5.5` engineering/frontend guidance.
