@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.87] - 2026-04-27
+### Changed
+- **Codex reasoning summaries now stream paragraph-by-paragraph.** The app-server router emits a completed reasoning summary block when the next summary part starts, instead of waiting for the whole reasoning item to complete.
+- **Codex reasoning blocks use stable message ids.** `CodexReasoningSummaryStreamBuffer` assigns `<itemId>::summary-block::<index>` ids and avoids duplicate block emission when final completion arrives.
+- **Translation overlays receive smaller append-only thinking messages.** Each reasoning paragraph can be translated and merged by the UI progressively, reducing long silent gaps before a large thinking card appears.
+
+### Tests
+- **Targeted Codex provider verification passed before release.** Passed `npm run build --workspace=@codeai-hub/codex-app-server-module` plus direct node tests for the reasoning summary stream buffer and app-server event router.
+
 ## [1.2.86] - 2026-04-27
 ### Changed
 - **Codex progress-update cadence is stricter for long turns.** The early-architecture prompt now tells Codex not to continue silently through several internal analysis/tool cycles and to send a visible update about every 30 seconds while still working.

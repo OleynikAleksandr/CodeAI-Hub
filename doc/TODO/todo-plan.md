@@ -43,7 +43,7 @@
 10. [DONE] Git Commit: `test: verify codex reasoning paragraph streaming` (hash: `7c2f9b816`)
 
 ### Stream: Release 1.2.87
-11. [TODO] Prepare release notes for `1.2.87` before build-all — scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex reasoning paragraph release notes`
+11. [DONE] Prepare release notes for `1.2.87` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex reasoning paragraph release notes`
 12. [TODO] Git Commit: `docs: prepare codex reasoning paragraph release notes` (hash: TBD)
 13. [TODO] Run `./scripts/build-all.sh` for `1.2.87` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex reasoning paragraph release`
 14. [TODO] Git Commit: `chore: build codex reasoning paragraph release` (hash: TBD)
