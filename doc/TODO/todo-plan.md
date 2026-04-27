@@ -68,6 +68,6 @@
 25. [DONE] Run cleanup verification query and targeted provider builds, then record results in this plan; scope: provider package build commands, `doc/TODO/todo-plan.md`; expected commit message: `test: verify provider sdk log removal`; result: `rg` found no provider SDK/raw logger runtime references in `packages`, and targeted builds passed for `@codeai-hub/codex-app-server-module`, `@codeai-hub/claude-module`, `@codeai-hub/gemini-module`
 26. [DONE] Git Commit: `test: verify provider sdk log removal` (hash: `795cddea6`)
 27. [DONE] Prepare release docs for the next version before build-all; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare provider sdk log removal release`
-28. [TODO] Git Commit: `docs: prepare provider sdk log removal release` (hash: TBD)
-29. [TODO] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build provider sdk log removal release`
+28. [DONE] Git Commit: `docs: prepare provider sdk log removal release` (hash: `ac9f01773`)
+29. [IN_PROGRESS] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build provider sdk log removal release`; note: first `build-all.sh` pass produced `1.2.94` artifacts and exposed stale Claude `dist/logging/sdk-session-logger.*`, so provider package builds now clean `dist` before recompiling and release artifacts must be regenerated before VSIX packaging
 30. [TODO] Git Commit: `chore: build provider sdk log removal release` (hash: TBD)

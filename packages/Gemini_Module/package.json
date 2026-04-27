@@ -1,12 +1,12 @@
 {
   "name": "@codeai-hub/gemini-module",
-  "version": "1.2.93",
+  "version": "1.2.94",
   "description": "Gemini provider integration for CodeAI Hub core (CJS bridge)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.json",
     "clean": "rimraf dist"
   },
   "engines": {
