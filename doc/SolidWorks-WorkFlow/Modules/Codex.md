@@ -9,7 +9,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Internal transport façade: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
 - Internal notification normalization: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`
 - Long-lived process bridge: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`
-- File-backed transport logger: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-session-logger.ts`
+- Transport logger compatibility shim: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-session-logger.ts`
 - Shared usage-limits façade for Codex lives in Core: `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`
 - `packages/Codex_AppServer_Module/` — единственная активная реализация Codex provider line. Legacy SDK-based пакет `packages/Codex_Module/` удалён в релизе `1.2.38`; исторический контекст живёт только в `doc/TODO/Archive/` и `doc/SolidWorks-WorkFlow/Plans/Archive/`.
 
@@ -39,7 +39,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Progress-update wording in this instruction profile must ask Codex for ordinary user-visible assistant chat messages, not hidden commentary/reasoning/tool-adjacent notes. The `1.2.85` prompt tuning fixed the visibility class; the `1.2.86` cadence tuning additionally requires a visible update about every 30 seconds or, when elapsed time is hard to estimate, after 3-5 substantial tool/file-reading/internal-analysis cycles without a visible update.
 - Turn execution идёт через `turn/start` с `input[{ type: "text", text, text_elements: [] }]`, `model`, `effort`, optional `outputSchema` и turn-level `summary = "detailed" | "none"`, который читается из shared settings snapshot; `detailed` является live-capable baseline для reasoning stream, а `none` сохраняет user toggle `Reasoning in dialog`.
 - Stop/cancel path идёт через `turn/interrupt(threadId, turnId)`; если последняя logical session закрыта, CodeAI Hub останавливает сам `codex app-server` process.
-- Process layer параллельно пишет append-safe transport JSONL в `~/.codeai-hub/logs/codex/sdk-codex-app-server-process-*.jsonl`; лог ротационно создаётся на каждый process start и фиксирует JSON-RPC requests/responses/notifications, protocol log records, stderr и non-JSON stdout lines. Для per-thread диагностики тот же logger дополнительно создаёт `~/.codeai-hub/logs/codex/sdk-codex-thread-<threadId>-*.jsonl`: файл открывается после `thread/start` / `thread/resume` привязки и содержит относящиеся к этому `threadId` JSON-RPC requests/responses/notifications, включая отложенно прикреплённый `thread/start` request/response. В diagnostic release `1.2.92` split file names сохранены, но process/thread logs снова пишутся в один flat log root без отдельного `threads/` mkdir.
+- Process layer no longer writes Codex SDK transport JSONL files. Starting with diagnostic release `1.2.93`, `codex-app-server-session-logger.ts` is a no-op compatibility shim, so the app-server hot path does not create `~/.codeai-hub/logs/codex/*` files and does not perform filesystem logging work before `child.stdin.write(...)` or before notification fan-out. Runtime behavior must come from the live app-server JSON-RPC stream, not from SDK transport logs.
 - Usage limits читаются через `account/rateLimits/read` и live notifications `account/rateLimits/updated`; token usage приходит через `thread/tokenUsage/updated`.
 
 ## Event normalization
@@ -66,8 +66,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Видимость reasoning по-прежнему решается в момент emission через `visibilityAtEmission`; скрытые reasoning bubbles не должны попадать в translation queue и не должны внезапно проявляться после обратного включения toggle.
 
 ## Diagnostics artifacts
-- CodeAI Hub process transport log для active app-server линии: `~/.codeai-hub/logs/codex/sdk-codex-app-server-process-*.jsonl`
-- CodeAI Hub per-thread transport sublog для конкретного Codex rollout/thread: `~/.codeai-hub/logs/codex/sdk-codex-thread-<threadId>-*.jsonl`
+- Codex SDK transport logs under `~/.codeai-hub/logs/codex/` are disabled in release `1.2.93`; no process-wide or per-thread app-server transport JSONL is expected.
 - Session-local normalized transcript artifact по-прежнему живёт в `~/.codeai-hub/sessions/.../codexCli/*-description.jsonl`
 - Provider-native artifacts (`CODEX_HOME` history / rollout JSONL и прочие provider-home traces) остаются отдельным диагностическим слоем и не заменяются transport log-ом
 - Settings → General → `Capture Codex Native Request` calls `CodexProviderAdapter.captureNativeRequest(...)`, implemented by `src/diagnostics/codex-native-request-capture-service.ts`. The Settings card supplies the selected diagnostic model plus workflow scenario, while Project Manager supplies the scenario first-turn prompt built through the same `buildWorkflowPromptPack(...)` path used by normal workflow sends. It never mutates the long-lived normal app-server child; instead it starts an isolated temporary `CodexAppServerProcess` with `HTTP_PROXY` / `HTTPS_PROXY` / `ALL_PROXY` and certificate env injected for the diagnostic run only.

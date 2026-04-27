@@ -45,6 +45,24 @@ Fresh retest results:
 
 This means Core/UI did not drop ordinary progress messages after receipt. The app-server/model emitted only one ordinary `agentMessage`, at the end.
 
+### 1.2.92 success
+
+Release `1.2.92` kept the split file names from `1.2.91`, but removed the split folders:
+
+- process log: `~/.codeai-hub/logs/codex/sdk-codex-app-server-process-*.jsonl`;
+- thread log: `~/.codeai-hub/logs/codex/sdk-codex-thread-<threadId>-*.jsonl`;
+- no `app-server-process/` or `threads/` subdirectories.
+
+Fresh retest results with `gpt-5.2`, `effort = xhigh`, and `summary = detailed`:
+
+- run 01: `4` completed `agentMessage`, `23` completed reasoning, `21` completed command execution, `1` completed turn;
+- run 02: `5` completed `agentMessage`, `19` completed reasoning, `17` completed command execution, `1` completed turn;
+- run 03: `4` completed `agentMessage`, `16` completed reasoning, `14` completed command execution, `1` completed turn;
+- process-wide log matched the three thread sublogs: `13` completed `agentMessage`, `58` completed reasoning, `52` completed command execution, `3` completed turns;
+- matching dialog JSONL contained `4`, `5`, and `4` ordinary assistant messages respectively.
+
+This confirms that split file names are not the trigger. The strongest remaining suspect is filesystem work from the split-folder layout, especially separate thread-log folder creation / mkdir timing.
+
 ### System instructions are present
 
 Provider Native Request Capture for `1.2.91` confirmed:
@@ -107,16 +125,17 @@ Some earlier successful runs used different visible model configuration. Future 
 
 ## Next Diagnostic Release
 
-Release `1.2.92` should isolate the folder/mkdir hypothesis:
+Release `1.2.93` should remove Codex SDK transport logs entirely:
 
-- keep the split file names from `1.2.91`;
-- write both process and thread logs back into the flat `~/.codeai-hub/logs/codex/` root;
-- keep `thread_log_created` disabled.
+- make `codex-app-server-session-logger.ts` a no-op compatibility shim;
+- do not create process-wide SDK logs;
+- do not create per-thread SDK sublogs;
+- keep live app-server JSON-RPC routing, provider-home rollout artifacts, session-local normalized dialog JSONL, and native request capture untouched.
 
 Expected interpretation:
 
-- if ordinary progress messages return, the suspicious factor is the separate folder / separate `mkdir(THREAD_LOG_ROOT)` path;
-- if ordinary progress messages stay missing, file names or logger timing/state shape are still suspicious, and the next step should remove logging from the app-server hot path entirely.
+- if ordinary progress messages stay stable, Codex SDK transport logs are confirmed as diagnostics-only and should remain disabled by default;
+- if ordinary progress messages regress even with no SDK transport logs, the logger path is not the active trigger and the investigation must move back to model/effort/prompt/runtime confounders.
 
 ## Longer-Term Fix Direction
 
@@ -126,3 +145,5 @@ If logger timing keeps correlating with progress-message behavior, the robust fi
 - avoid any filesystem bootstrap from the request hot path;
 - enqueue lightweight in-memory log records and let a separate worker drain them;
 - preserve diagnostics without changing timing before `child.stdin.write(...)`.
+
+After the `1.2.92` retest, the preferred longer-term direction is simpler: keep Codex SDK transport logs disabled unless a future explicit diagnostic mode needs them. Runtime observability should use session-local normalized transcripts, provider-home rollout artifacts, and native request capture.
