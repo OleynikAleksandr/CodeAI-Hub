@@ -214,7 +214,6 @@ export class ClaudeSDKManager {
       newId: realId,
       shortId: realId.slice(0, SHORT_ID_LENGTH),
     });
-    targetSession?.logger?.renameSession?.(tempId, realId);
   }
 
   private invokeQuery(payload: {

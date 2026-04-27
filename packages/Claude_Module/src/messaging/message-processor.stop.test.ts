@@ -2,24 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { setImmediate } from "node:timers";
 import { SDKSessionManager } from "../session/session-manager";
-import type { ActiveSession, SessionLogger } from "../session/types";
+import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage } from "../types";
 import { SDKMessageProcessor } from "./message-processor";
-
-const NOOP_LOGGER: SessionLogger = {
-  start: () => {
-    // noop
-  },
-  end: () => {
-    // noop
-  },
-  logUserInput: () => {
-    // noop
-  },
-  logSDKMessage: () => {
-    // noop
-  },
-};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -111,8 +96,7 @@ const collectErrorEvents = (
 test("SDKMessageProcessor emits processing error on active stream failure", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-processing-error-channel",
-    NOOP_LOGGER
+    "/tmp/claude-test-processing-error-channel"
   );
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test-processing-error-channel",
@@ -142,8 +126,7 @@ test("SDKMessageProcessor emits processing error on active stream failure", asyn
 test("SDKMessageProcessor suppresses late error emission after session shutdown interrupt", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-shutdown-interrupt",
-    NOOP_LOGGER
+    "/tmp/claude-test-shutdown-interrupt"
   );
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test-shutdown-interrupt",

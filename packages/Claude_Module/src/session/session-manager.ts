@@ -5,7 +5,6 @@ import type {
   ClaudeQueuedTurn,
   ClaudeTurnQueueState,
   SessionCreationResult,
-  SessionLogger,
 } from "./types";
 
 export class SDKSessionManager {
@@ -20,10 +19,7 @@ export class SDKSessionManager {
     this.lifecycle = options?.lifecycle ?? new SDKSessionLifecycle();
   }
 
-  createSession(
-    workspacePath: string,
-    logger: SessionLogger | null = null
-  ): SessionCreationResult {
+  createSession(workspacePath: string): SessionCreationResult {
     const controller = this.lifecycle.createMessageController();
     const eventEmitter = this.lifecycle.createEventEmitter();
     const tempId = this.lifecycle.generateTemporaryId();
@@ -33,7 +29,6 @@ export class SDKSessionManager {
       createdAt: Date.now(),
       eventEmitter,
       messageController: controller,
-      logger,
       runtimeTurnConfig: {
         thinkingDisplaySyncEnabled: true,
       },
@@ -42,14 +37,12 @@ export class SDKSessionManager {
     session.messageGenerator =
       this.lifecycle.createMessageGenerator(controller);
     this.registry.add(session);
-    session.logger?.start(tempId);
     return { tempId, session };
   }
 
   createResumedSession(
     workspacePath: string,
-    sessionId: string,
-    logger: SessionLogger | null = null
+    sessionId: string
   ): ActiveSession {
     const controller = this.lifecycle.createMessageController();
     const eventEmitter = this.lifecycle.createEventEmitter();
@@ -59,7 +52,6 @@ export class SDKSessionManager {
       createdAt: Date.now(),
       eventEmitter,
       messageController: controller,
-      logger,
       resumeSessionId: sessionId,
       runtimeTurnConfig: {
         thinkingDisplaySyncEnabled: true,
@@ -69,7 +61,6 @@ export class SDKSessionManager {
     session.messageGenerator =
       this.lifecycle.createMessageGenerator(controller);
     this.registry.add(session);
-    session.logger?.start(sessionId);
     return session;
   }
 
@@ -139,7 +130,6 @@ export class SDKSessionManager {
       return;
     }
     await this.lifecycle.closeSession(session);
-    session.logger?.end();
     this.registry.delete(sessionId);
   }
 

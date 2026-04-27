@@ -6,14 +6,6 @@ export interface MessageController {
   resolveNext: ((value: unknown) => void) | null;
 }
 
-export interface SessionLogger {
-  readonly end: () => void;
-  readonly logSDKMessage: (type: string, payload: unknown) => void;
-  readonly logUserInput: (content: string) => void;
-  readonly renameSession?: (oldId: string, newId: string) => void;
-  readonly start: (sessionId: string) => void;
-}
-
 export interface ClaudeTurnLifecycleState {
   ended: boolean;
   started: boolean;
@@ -46,7 +38,6 @@ export interface ClaudeTurnQueueState {
 export interface ActiveSession {
   readonly createdAt: number;
   readonly eventEmitter: EventEmitter;
-  readonly logger: SessionLogger | null;
   readonly messageController: MessageController;
   messageGenerator?: AsyncGenerator<unknown>;
   processingLoop?: Promise<void>;
