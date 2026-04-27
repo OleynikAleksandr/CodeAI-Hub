@@ -190,12 +190,12 @@ ensure_clean_worktree() {
 update_workspace_version() {
   local workspace="$1"
   local version="$2"
-  npm version "$version" --workspace="$workspace" --no-git-tag-version >/dev/null
+  npm version "$version" --workspace="$workspace" --no-git-tag-version --allow-same-version >/dev/null
 }
 
 update_root_version() {
   local version="$1"
-  npm version "$version" --no-git-tag-version >/dev/null
+  npm version "$version" --no-git-tag-version --allow-same-version >/dev/null
 }
 
 clean_local_artifacts() {

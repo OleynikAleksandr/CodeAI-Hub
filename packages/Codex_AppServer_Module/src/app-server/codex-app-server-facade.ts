@@ -13,6 +13,7 @@ import {
   type AppServerSessionState,
   CodexAppServerEventRouter,
 } from "./codex-app-server-event-router";
+import { buildCodexReasoningSummaryParams } from "./codex-reasoning-summary-params";
 import {
   CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
   CODEAI_CODEX_THREAD_CONFIG,
@@ -206,7 +207,10 @@ export class CodexAppServerFacade {
         cwd: state.workspacePath,
         model: modelId,
         effort: reasoningEffort,
-        summary: resolveTurnReasoningSummaryMode(),
+        ...buildCodexReasoningSummaryParams(
+          modelId,
+          resolveTurnReasoningSummaryMode()
+        ),
         ...(outputSchema === undefined ? {} : { outputSchema }),
       }
     );

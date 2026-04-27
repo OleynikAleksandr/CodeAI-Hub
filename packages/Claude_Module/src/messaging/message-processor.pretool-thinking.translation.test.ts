@@ -2,24 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { setImmediate } from "node:timers";
 import { SDKSessionManager } from "../session/session-manager";
-import type { ActiveSession, SessionLogger } from "../session/types";
+import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage } from "../types";
 import { SDKMessageProcessor } from "./message-processor";
-
-const NOOP_LOGGER: SessionLogger = {
-  start: () => {
-    // noop
-  },
-  end: () => {
-    // noop
-  },
-  logUserInput: () => {
-    // noop
-  },
-  logSDKMessage: () => {
-    // noop
-  },
-};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -65,8 +50,7 @@ test("SDKMessageProcessor routes localized live Claude pre-tool text through thi
   const userFacingCalls: string[] = [];
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-live-pretool-thinking-translation",
-    NOOP_LOGGER
+    "/tmp/claude-test-live-pretool-thinking-translation"
   );
   session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   const processor = new SDKMessageProcessor(sessionManager, {

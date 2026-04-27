@@ -4,21 +4,102 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.2.88] - 2026-04-27
+## [1.2.97] - 2026-04-27
+### Changed
+- **Merged the main-line Codex reasoning paragraph stream work into the retest release line.** Codex reasoning summaries keep stable per-block ids and can be emitted paragraph-by-paragraph for progressive translation overlays.
+- **Merged the main-line reasoning translation timeout adjustment.** Live reasoning overlay translation keeps the longer timeout profile from the main branch, reducing fallback English paragraphs for large Codex reasoning summaries.
+
 ### Fixed
-- **Codex reasoning translation timeout is less aggressive.** Live reasoning overlay translation now starts from a 15-second base timeout plus the existing per-character allowance, capped at 30 seconds, reducing fallback English paragraphs for Codex reasoning summaries.
+- **Codex Spark remains compatible without reintroducing the unsupported turn parameter.** `gpt-5.3-codex-spark` still omits explicit `turn/start.summary`, and the Codex App Server process materializes provider-home `model_reasoning_summary = "auto" | "none"` from shared Codex settings before startup. User retest showed Spark still may not emit readable reasoning summaries; this is left as a provider-side limitation while preserving successful turns.
+- **Non-Spark Codex summary behavior is guarded.** Other Codex models keep the existing explicit `turn/start.summary = "detailed" | "none"` path, so the Spark compatibility fix does not weaken normal visible reasoning controls.
 
 ### Tests
-- **Targeted Core session-translation verification passed before release.** Passed `npm run build --workspace=@codeai-hub/core` plus `node --test packages/core/dist/session-translation/session-translation-facade.test.js`.
+- **Targeted Codex provider checks passed.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module` and direct Node tests for provider-home summary materialization, Spark summary omission, non-Spark `gpt-5.5` summary preservation, native request capture parity, and main-line reasoning paragraph streaming.
+- **Targeted Core session-translation verification passed on the main line before merge.** Passed `npm run build --workspace=@codeai-hub/core` plus `node --test packages/core/dist/session-translation/session-translation-facade.test.js`.
+
+## [1.2.96] - 2026-04-27
+### Fixed
+- **Codex Spark no longer receives unsupported explicit reasoning-summary parameters.** Normal Codex App Server turns and native request capture now omit `turn/start.summary` for `gpt-5.3-codex-spark`, avoiding the provider error `Unsupported parameter: 'reasoning.summary'`.
+- **Codex Spark translation runtime is protected too.** Localization/reasoning translation uses `codex exec`, not App Server, but its temporary `config.toml` also now omits explicit `model_reasoning_summary` for `gpt-5.3-codex-spark`. Other Codex translation models still keep `model_reasoning_summary = "none"`.
+
+### Tests
+- **Targeted Codex provider checks passed.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module` and regression tests for normal runtime/native capture Spark summary omission.
+- **Targeted translation checks passed.** Passed `npm run build --workspace @codeai-hub/translation` and `node --test packages/translation/dist/codex-translation-runtime-home-facade.test.js`.
+
+## [1.2.95] - 2026-04-27
+### Changed
+- **Codex progress updates are explicitly non-terminal.** The shared Codex early-workflow prompt now states that after an ordinary visible progress update, Codex must continue the same turn until the promised work or requested artifact is complete.
+- **The guard is provider-level, not Description-specific.** No Description templates were changed; the rule applies through the shared Codex workflow prompt used by all Codex models and current early-workflow steps.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; runtime prompt and synced Codex prompt artifact have matching `Progress Updates` sections.
+
+## [1.2.94] - 2026-04-27
+### Changed
+- **Provider-owned SDK/raw file logs are removed from runtime.** Claude, Codex, and Gemini no longer construct or call the file-backed mirrors under `~/.codeai-hub/logs/{claude,codex,gemini}`.
+- **Codex app-server logger code is gone, not just disabled.** The deleted transport logger path removes SDK-log serialization from `child.stdin.write(...)` and app-server notification fan-out.
+- **Runtime evidence is now explicit.** Audits should use live provider streams, session-local normalized history, provider-home artifacts, and optional native request capture instead of always-on SDK/raw JSONL mirrors.
+
+### Tests
+- **Provider cleanup verification passed.** `rg` found no runtime references to the removed SDK/raw loggers in `packages`, and targeted builds passed for Codex app-server, Claude, and Gemini provider modules.
+
+## [1.2.93] - 2026-04-27
+### Changed
+- **Codex SDK transport logs are disabled.** `codex-app-server-session-logger.ts` is now a no-op compatibility shim and no longer creates process-wide or per-thread JSONL files under `~/.codeai-hub/logs/codex/`.
+- **Runtime evidence stays on the real runtime paths.** Codex behavior continues to come from the live app-server JSON-RPC stream, provider-home rollout artifacts, session-local normalized dialog JSONL, and optional native request capture rather than from SDK transport logs.
+- **Diagnostic report updated with the `1.2.92` result.** The retest confirmed that split file names were not the trigger; the remaining risk was filesystem work from SDK transport logging, which this release removes.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
+## [1.2.92] - 2026-04-27
+### Changed
+- **Diagnostic retest: Codex app-server logs keep split names but return to the flat log root.** Process-wide logs now use `~/.codeai-hub/logs/codex/sdk-codex-app-server-process-*.jsonl`, while per-thread logs use `~/.codeai-hub/logs/codex/sdk-codex-thread-<threadId>-*.jsonl`.
+- **The split-folder `app-server-process/` and `threads/` layout from `1.2.91` is intentionally removed for this test.** This isolates whether ordinary Codex progress-message loss follows separate log folders / thread-log mkdir timing rather than file naming.
+- **Diagnostic report added.** `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Message_Regression_Diagnostics_1.2.91.md` records the evidence from `1.2.90` and `1.2.91`, including provider-native confirmation that system instructions were present.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
+## [1.2.91] - 2026-04-27
+### Changed
+- **Diagnostic retest: Codex app-server logs use split folders without the extra creation event.** Process-wide logs are written under `~/.codeai-hub/logs/codex/app-server-process/sdk-codex-app-server-process-*.jsonl`, and per-thread logs are written under `~/.codeai-hub/logs/codex/threads/sdk-codex-thread-<threadId>-*.jsonl`.
+- **The `thread_log_created` process-log record from `1.2.89` remains disabled.** This isolates whether the folder/name split alone affects ordinary Codex progress-message emission.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
+## [1.2.90] - 2026-04-27
+### Changed
+- **Rollback retest: Codex diagnostic log layout returns to the `1.2.88` shape.** The per-thread SDK sublog remains enabled, but process and thread JSONL files are again written side-by-side under `~/.codeai-hub/logs/codex/` with the `sdk-codex-app-server-*.jsonl` and `sdk-codex-app-server-thread-<threadId>-*.jsonl` names.
+- **The `1.2.89` folder split is intentionally removed.** This release is meant to test whether ordinary Codex progress messages return when only the log-layout cleanup is rolled back.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the rollback commit.
+
+## [1.2.89] - 2026-04-27
+### Changed
+- **Codex app-server diagnostics now separate process and thread logs by folder.** Process-wide transport logs are written under `~/.codeai-hub/logs/codex/app-server-process/sdk-codex-app-server-process-*.jsonl`, while per-rollout/thread mirrors are written under `~/.codeai-hub/logs/codex/threads/sdk-codex-thread-<threadId>-*.jsonl`.
+- **Process logs now point to their thread sublogs.** When a thread sublog is created, the process log records `thread_log_created` with the `threadId` and target path, making the two diagnostic layers explicit instead of looking like duplicate SDK sessions.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
+## [1.2.88] - 2026-04-27
+### Added
+- **Codex app-server now writes per-thread SDK sublogs.** In addition to the process-wide `sdk-codex-app-server-*.jsonl`, the Codex transport logger now writes `sdk-codex-app-server-thread-<threadId>-*.jsonl` for each rollout/thread so retests can inspect one Description run without manually filtering a long-lived app-server process log.
+- **Thread sublogs preserve the app-server request/response boundary.** `thread/start` is attached after the returned `threadId` is known, while `turn/start` requests, matching responses, and thread-scoped notifications are written directly to the matching sublog.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
 
 ## [1.2.87] - 2026-04-27
 ### Changed
-- **Codex reasoning summaries now stream paragraph-by-paragraph.** The app-server router emits a completed reasoning summary block when the next summary part starts, instead of waiting for the whole reasoning item to complete.
-- **Codex reasoning blocks use stable message ids.** `CodexReasoningSummaryStreamBuffer` assigns `<itemId>::summary-block::<index>` ids and avoids duplicate block emission when final completion arrives.
-- **Translation overlays receive smaller append-only thinking messages.** Each reasoning paragraph can be translated and merged by the UI progressively, reducing long silent gaps before a large thinking card appears.
+- **Controlled Codex progress-message rollback release.** This release is intentionally built from the `1.2.86` baseline so the Codex Description-step retest can verify whether ordinary user-visible assistant progress messages still appear before the later reasoning paragraph streaming changes.
+- **No implementation behavior is changed before the retest.** The goal is to produce a clean installable package from the known-good progress cadence baseline and collect runtime evidence.
 
 ### Tests
-- **Targeted Codex provider verification passed before release.** Passed `npm run build --workspace=@codeai-hub/codex-app-server-module` plus direct node tests for the reasoning summary stream buffer and app-server event router.
+- **Full release automation is the acceptance gate.** `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` must complete for this rollback/retest package.
 
 ## [1.2.86] - 2026-04-27
 ### Changed

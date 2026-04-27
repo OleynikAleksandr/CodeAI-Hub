@@ -33,16 +33,6 @@ interface PendingAssistantText {
 
 type PendingAssistantTextResolution = "regular" | "tool_use_preamble";
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-export const shouldSkipClaudeSDKMessageLog = (
-  message: ClaudeStreamMessage
-): boolean =>
-  message.type === "stream_event" &&
-  isRecord(message.event) &&
-  message.event.type === "content_block_delta";
-
 export class ClaudeStreamEventRouter {
   private readonly pendingAssistantTextBySession = new Map<
     string,

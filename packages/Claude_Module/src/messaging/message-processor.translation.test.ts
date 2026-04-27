@@ -3,24 +3,9 @@ import test from "node:test";
 import { setImmediate } from "node:timers";
 import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
 import { SDKSessionManager } from "../session/session-manager";
-import type { ActiveSession, SessionLogger } from "../session/types";
+import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage } from "../types";
 import { SDKMessageProcessor } from "./message-processor";
-
-const NOOP_LOGGER: SessionLogger = {
-  start: () => {
-    // noop
-  },
-  end: () => {
-    // noop
-  },
-  logUserInput: () => {
-    // noop
-  },
-  logSDKMessage: () => {
-    // noop
-  },
-};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -64,8 +49,7 @@ const collectMessageEvents = (
 test("applyClaudeTurnRuntimeConfig stores messages-for-user language", () => {
   const sessionManager = new SDKSessionManager();
   const { session } = sessionManager.createSession(
-    "/tmp/claude-test-language-runtime-config",
-    NOOP_LOGGER
+    "/tmp/claude-test-language-runtime-config"
   );
 
   applyClaudeTurnRuntimeConfig({
@@ -91,8 +75,7 @@ test("SDKMessageProcessor translates Claude thinking bubbles to user language", 
   const translationCalls: string[] = [];
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-thinking-translation",
-    NOOP_LOGGER
+    "/tmp/claude-test-thinking-translation"
   );
   session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   const processor = new SDKMessageProcessor(sessionManager, {
@@ -155,8 +138,7 @@ test("SDKMessageProcessor routes Claude pre-tool assistant text through thinking
   const userFacingCalls: string[] = [];
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-pretool-translation",
-    NOOP_LOGGER
+    "/tmp/claude-test-pretool-translation"
   );
   session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   const processor = new SDKMessageProcessor(sessionManager, {
@@ -239,8 +221,7 @@ test("SDKMessageProcessor keeps Claude same-message tool-use text under thinking
   const reasoningCalls: string[] = [];
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-thinking-text-classification",
-    NOOP_LOGGER
+    "/tmp/claude-test-thinking-text-classification"
   );
   session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   const processor = new SDKMessageProcessor(sessionManager, {
@@ -340,8 +321,7 @@ test("SDKMessageProcessor keeps end_turn Claude assistant text untouched", async
   const translationCalls: string[] = [];
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-end-turn-assistant-text",
-    NOOP_LOGGER
+    "/tmp/claude-test-end-turn-assistant-text"
   );
   session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   const processor = new SDKMessageProcessor(sessionManager, {
@@ -401,8 +381,7 @@ test("SDKMessageProcessor keeps end_turn Claude assistant text untouched", async
 test("SDKMessageProcessor emits long Claude thinking in multiple dialog chunks", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-thinking-dialog-chunks",
-    NOOP_LOGGER
+    "/tmp/claude-test-thinking-dialog-chunks"
   );
   session.runtimeTurnConfig.messagesForTheUserLanguage = "ru";
   const processor = new SDKMessageProcessor(sessionManager, {

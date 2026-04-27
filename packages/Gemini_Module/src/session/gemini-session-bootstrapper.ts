@@ -113,7 +113,6 @@ export class GeminiSessionBootstrapper {
         abortController: null,
         runtimeTurnConfig,
         reporter: options.reporter,
-        logger: options.logger ?? undefined,
       },
     };
   }

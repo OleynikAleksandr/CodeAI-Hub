@@ -12,7 +12,7 @@
 2. `System/WorkflowSteps_Overview.md`
 3. `Clusters/Project_Manager.md`
 4. `Clusters/CoreOrchestrator.md`
-5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 6. `Contracts/` (только по ссылкам из документов выше)
 7. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 8. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
@@ -33,6 +33,7 @@
 ### Modules
 - `Modules/Claude.md` — SSOT Claude provider module, including provider-home runtime isolation and SDK isolation-mode rules for CodeAI Hub-managed turns.
 - `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings and provider-home config policy.
+- `Modules/Codex_ProviderInvocationFlags.md` — SSOT actual Codex App Server startup flags, JSON-RPC `initialize` / `thread/start` / `thread/resume` / `turn/start` payloads, model/reasoning resolution, provider-home env, and native request capture parity.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Localization.md` — SSOT persistent UI localization module, including the four user-facing categories and the English-only internal-instructions boundary.
@@ -80,6 +81,10 @@
 - `Plans/Archive/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md` — archived prompt-cadence tuning planning-doc: Codex early-architecture system prompt keeps ordinary user-visible assistant messages and adds 30-second / 3-5 work-cycle progress-update fallback; confirms release `1.2.86` artifacts plus `codeai-hub-1.2.86.vsix`.
 - `Plans/Archive/Codex_Reasoning_Paragraph_Streaming_1.2.87.md` — archived Codex reasoning streaming planning-doc: app-server reasoning summaries now emit completed summary paragraphs before final item completion, use stable per-block message ids, feed per-block translation overlays, and confirm release `1.2.87` artifacts plus `codeai-hub-1.2.87.vsix`.
 - `Plans/Archive/Codex_Reasoning_Translation_Timeout_1.2.88.md` — archived Codex reasoning translation timeout planning-doc: live reasoning overlay translation now uses a 15-second base timeout plus per-character allowance capped at 30 seconds, reducing fallback English paragraphs for Codex reasoning summaries; confirms release `1.2.88` artifacts plus `codeai-hub-1.2.88.vsix`.
+- `Plans/Codex_Progress_Message_Regression_Diagnostics_1.2.91.md` — active diagnostic report for the rollback/retest line after releases `1.2.87` through `1.2.93`; records that system instructions are present in provider-native capture, `thread_log_created` and split file names are not the primary trigger, and release `1.2.93` confirmed Codex works without SDK transport logs.
+- `Plans/Archive/Codex_Spark_Reasoning_Summary_Config_1.2.97.md` — archived hotfix planning-doc for Spark after release `1.2.96`: `gpt-5.3-codex-spark` keeps `turn/start.summary` omitted, provider-home `model_reasoning_summary = "auto" | "none"` is materialized for compatibility, non-Spark Codex models keep explicit per-turn summary payloads, and release `1.2.97` produced `codeai-hub-1.2.97.vsix`; user retest still showed no visible Spark reasoning summaries, now treated as provider-side limitation.
+- `Plans/Archive/Codex_Progress_Update_NonTerminal_1.2.95.md` — archived prompt-guard planning-doc for the `1.2.94` retest failure where Codex `gpt-5.2` emitted a normal progress message and immediately completed the turn before creating the promised `Final_Description.md`; release `1.2.95` added the shared non-terminal progress-update rule, and follow-up release `1.2.96` fixed the Spark explicit reasoning-summary request compatibility issue.
+- `Plans/Archive/Provider_SDK_Logs_Removal_Refactor_1.2.94.md` — archived refactor planning-doc for removing provider-owned SDK/raw file-backed logs under `~/.codeai-hub/logs/{claude,codex,gemini}` from runtime construction, call sites, tests, and SSOT documentation while preserving session-local history, provider-home artifacts, native request capture, and Core/reporter diagnostics.
 - `Plans/Archive/Codex_Instruction_Stack_StepByStep_Flag_Tests_1.2.75.md` — archived Codex step-by-step instruction/config flag planning-doc: full-capture baseline, `project_doc_max_bytes = 0`, compact/baseInstructions test, rollback to full base prompt and evidence-gated comparison.
 - `Plans/Archive/Codex_GPT55_Model_Addition_1.2.76.md` — archived planning-doc для добавления `gpt-5.5` в Codex settings/model registry и Settings -> General native request capture selector; итоговая модельная инвентаризация зафиксирована в experiment result bundle.
 - `Plans/Archive/Provider_AutoUpdate_And_Claude_Preflight_1.2.78.md` — archived technical-debt planning-doc: Core startup auto-update по Project Manager settings, Claude auth preflight через installed executable path и `provider_not_ready` diagnostic reason.

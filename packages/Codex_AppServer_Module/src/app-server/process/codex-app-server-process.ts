@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import type { ModuleReporter } from "../../types";
-import { CodexAppServerSessionLogger } from "./codex-app-server-session-logger";
+import { materializeCodexProviderHomeSummaryConfig } from "./codex-provider-home-config";
 
 interface JsonRpcError {
   readonly code?: number;
@@ -137,6 +137,7 @@ const prepareProviderCodexHome = async (): Promise<string> => {
   await mkdir(providerCodexHome, { recursive: true });
   await copyLegacyFileIfMissing(AUTH_FILENAME, providerCodexHome);
   await copyLegacyFileIfMissing(CONFIG_FILENAME, providerCodexHome);
+  await materializeCodexProviderHomeSummaryConfig(providerCodexHome);
   return providerCodexHome;
 };
 
@@ -180,7 +181,6 @@ export class CodexAppServerProcess {
   private requestCounter = 0;
   private startPromise: Promise<void> | null = null;
   private readonly reporter?: ModuleReporter;
-  private readonly sessionLogger = new CodexAppServerSessionLogger();
 
   constructor(options?: ModuleReporter | CodexAppServerProcessOptions) {
     this.reporter = isProcessOptions(options) ? options.reporter : options;
@@ -228,10 +228,6 @@ export class CodexAppServerProcess {
     if (!child) {
       return;
     }
-    this.sessionLogger.logLifecycle("stop_requested", {
-      pid: child.pid ?? null,
-      signal: "SIGTERM",
-    });
     this.child = null;
     this.stdoutReader?.close();
     this.stdoutReader = null;
@@ -250,7 +246,6 @@ export class CodexAppServerProcess {
 
   private async startInternal(): Promise<void> {
     const providerCodexHome = await prepareProviderCodexHome();
-    this.sessionLogger.start({ providerCodexHome });
     const child = spawn(CODEX_EXECUTABLE, [...CODEAI_CODEX_APP_SERVER_ARGS], {
       env: {
         ...process.env,
@@ -261,10 +256,6 @@ export class CodexAppServerProcess {
       stdio: ["pipe", "pipe", "pipe"],
     });
     this.child = child;
-    this.sessionLogger.logLifecycle("spawn", {
-      argv: [CODEX_EXECUTABLE, ...CODEAI_CODEX_APP_SERVER_ARGS],
-      pid: child.pid ?? null,
-    });
     this.attachProcessHandlers(child);
     await this.initializeHandshake();
   }
@@ -281,18 +272,16 @@ export class CodexAppServerProcess {
       if (!message) {
         return;
       }
-      this.sessionLogger.logStderr(message);
       this.reporter?.warn?.(`codex app-server stderr: ${message}`);
     });
 
     child.on("error", (error) => {
-      this.sessionLogger.logLifecycle("spawn_error", {
-        message: toError(error).message,
-      });
+      this.reporter?.error?.(
+        `codex app-server spawn error: ${toError(error).message}`
+      );
     });
 
     child.on("exit", (code, signal) => {
-      this.sessionLogger.end({ code, signal: signal ?? null });
       if (this.child === child) {
         this.child = null;
       }
@@ -347,7 +336,6 @@ export class CodexAppServerProcess {
       params === undefined
         ? { id: requestId, method }
         : { id: requestId, method, params };
-    this.sessionLogger.logRequest(payload);
 
     return await new Promise<unknown>((resolve, reject) => {
       this.pendingRequests.set(requestId, { resolve, reject });
@@ -370,7 +358,6 @@ export class CodexAppServerProcess {
     try {
       parsed = JSON.parse(line) as JsonRpcLine;
     } catch {
-      this.sessionLogger.logMalformedStdout(line);
       this.reporter?.warn?.(`Ignoring non-JSON app-server line: ${line}`);
       return;
     }
@@ -385,7 +372,6 @@ export class CodexAppServerProcess {
       if (!pending) {
         return;
       }
-      this.sessionLogger.logResponse(parsed);
       this.pendingRequests.delete(responseId);
       const error = extractResponseError(parsed as JsonRpcResponse);
       if (error) {
@@ -399,7 +385,6 @@ export class CodexAppServerProcess {
     const notificationMethod = asString(parsed.method);
     if (notificationMethod) {
       const params = "params" in parsed ? parsed.params : undefined;
-      this.sessionLogger.logNotification(notificationMethod, params);
       for (const listener of this.notificationListeners) {
         listener({ method: notificationMethod, params });
       }
@@ -410,7 +395,6 @@ export class CodexAppServerProcess {
   }
 
   private handleProtocolLogRecord(record: Record<string, unknown>): void {
-    this.sessionLogger.logProtocolRecord(record);
     const level =
       typeof record.level === "string" ? record.level.toLowerCase() : null;
     const message = isRecord(record.fields) ? record.fields.message : undefined;

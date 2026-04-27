@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import { buildCodexReasoningSummaryParams } from "../app-server/codex-reasoning-summary-params";
 import {
   CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
   CODEAI_CODEX_THREAD_CONFIG,
@@ -218,6 +219,7 @@ export class CodexNativeRequestCaptureService {
     threadId: string,
     options: CodexNativeRequestCaptureOptions
   ): Promise<void> {
+    const modelId = this.#resolveModelId(options);
     const params = {
       threadId,
       input: [
@@ -228,9 +230,12 @@ export class CodexNativeRequestCaptureService {
         },
       ],
       cwd: options.workspacePath,
-      model: this.#resolveModelId(options),
+      model: modelId,
       effort: this.#resolveReasoningEffort(options),
-      summary: this.#resolveReasoningSummaryMode(),
+      ...buildCodexReasoningSummaryParams(
+        modelId,
+        this.#resolveReasoningSummaryMode()
+      ),
     };
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_turn_start_request",

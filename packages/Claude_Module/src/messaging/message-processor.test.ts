@@ -2,24 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { setImmediate } from "node:timers";
 import { SDKSessionManager } from "../session/session-manager";
-import type { ActiveSession, SessionLogger } from "../session/types";
+import type { ActiveSession } from "../session/types";
 import type { ClaudeStreamMessage } from "../types";
 import { SDKMessageProcessor } from "./message-processor";
-
-const NOOP_LOGGER: SessionLogger = {
-  start: () => {
-    // noop
-  },
-  end: () => {
-    // noop
-  },
-  logUserInput: () => {
-    // noop
-  },
-  logSDKMessage: () => {
-    // noop
-  },
-};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -67,10 +52,7 @@ const collectMessageEvents = (
 
 test("SDKMessageProcessor processes queued turns in FIFO order", async () => {
   const sessionManager = new SDKSessionManager();
-  const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test",
-    NOOP_LOGGER
-  );
+  const { tempId, session } = sessionManager.createSession("/tmp/claude-test");
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test",
   });
@@ -150,8 +132,7 @@ test("SDKMessageProcessor processes queued turns in FIFO order", async () => {
 test("SDKMessageProcessor emits turn_failed exactly once on stream error", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-failure",
-    NOOP_LOGGER
+    "/tmp/claude-test-failure"
   );
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test-failure",
@@ -180,79 +161,10 @@ test("SDKMessageProcessor emits turn_failed exactly once on stream error", async
   assert.equal(failureEvent?.message, "stream exploded");
 });
 
-test("SDKMessageProcessor filters content_block_delta from sdk logger and keeps result logs", async () => {
-  const loggedSDKEvents: { type: string; eventType: string | null }[] = [];
-  const logger: SessionLogger = {
-    start: () => {
-      // noop
-    },
-    end: () => {
-      // noop
-    },
-    logUserInput: () => {
-      // noop
-    },
-    logSDKMessage: (type: string, payload: unknown) => {
-      const eventType =
-        isRecord(payload) && typeof payload.event === "object"
-          ? ((payload.event as { readonly type?: unknown }).type ?? null)
-          : null;
-      loggedSDKEvents.push({
-        type,
-        eventType: typeof eventType === "string" ? eventType : null,
-      });
-    },
-  };
-
-  const sessionManager = new SDKSessionManager();
-  const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-log-filter",
-    logger
-  );
-  const processor = new SDKMessageProcessor(sessionManager, {
-    projectPath: "/tmp/claude-test-log-filter",
-  });
-
-  processor.enqueueTurn(
-    tempId,
-    { content: "log-filter", internal: false, enqueuedAt: Date.now() },
-    {
-      createIterator: () =>
-        createIterator([
-          {
-            type: "stream_event",
-            session_id: "real-session-log-filter",
-            event: { type: "content_block_delta", text: "..." },
-          },
-          { type: "result", session_id: "real-session-log-filter" },
-        ]),
-      onRealSessionId: ({ previousSessionId, realSessionId }) => {
-        sessionManager.updateSessionId(previousSessionId, realSessionId);
-      },
-    }
-  );
-
-  await waitForQueueDrain(session);
-
-  assert.equal(
-    loggedSDKEvents.some(
-      (event) =>
-        event.type === "stream_event" &&
-        event.eventType === "content_block_delta"
-    ),
-    false
-  );
-  assert.equal(
-    loggedSDKEvents.some((event) => event.type === "result"),
-    true
-  );
-});
-
 test("SDKMessageProcessor does not derive tokenUsage from modelUsage fallback", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-no-model-usage-fallback",
-    NOOP_LOGGER
+    "/tmp/claude-test-no-model-usage-fallback"
   );
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test-no-model-usage-fallback",
@@ -300,8 +212,7 @@ test("SDKMessageProcessor does not derive tokenUsage from modelUsage fallback", 
 test("SDKMessageProcessor emits tagged assistant thinking bubbles when display sync is enabled", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-thinking-enabled",
-    NOOP_LOGGER
+    "/tmp/claude-test-thinking-enabled"
   );
   const processor = new SDKMessageProcessor(sessionManager, {
     projectPath: "/tmp/claude-test-thinking-enabled",
@@ -352,8 +263,7 @@ test("SDKMessageProcessor emits tagged assistant thinking bubbles when display s
 test("SDKMessageProcessor still emits Claude thinking bubbles when display sync is disabled", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
-    "/tmp/claude-test-thinking-disabled",
-    NOOP_LOGGER
+    "/tmp/claude-test-thinking-disabled"
   );
   session.runtimeTurnConfig.thinkingDisplaySyncEnabled = false;
   const processor = new SDKMessageProcessor(sessionManager, {

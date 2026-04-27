@@ -24,7 +24,7 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleToolCallRequestEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown,
     accumulator: TurnAccumulator
   ): readonly GeminiSessionEvent[] {
@@ -34,12 +34,6 @@ export class GeminiSystemEventNormalizer {
 
     this.assistantEventNormalizer?.snapshotPreToolAssistantSegment(accumulator);
     accumulator.toolRequests.push(value);
-    session.logger?.logEvent({
-      type: "tool_call_request",
-      promptId: accumulator.promptId,
-      tool: value.name,
-      callId: value.callId,
-    });
     return [
       {
         type: "system",
@@ -79,10 +73,9 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleChatCompressedEvent(
-    session: ActiveSession,
-    value: unknown
+    _session: ActiveSession,
+    _value: unknown
   ): readonly GeminiSessionEvent[] {
-    session.logger?.logEvent({ type: "chat_compressed", payload: value });
     return [
       {
         type: "system",
@@ -105,11 +98,10 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleRetryEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown,
-    accumulator: TurnAccumulator
+    _accumulator: TurnAccumulator
   ): readonly GeminiSessionEvent[] {
-    session.logger?.logEvent({ type: "retry", promptId: accumulator.promptId });
     return [
       {
         type: "system",
@@ -121,9 +113,8 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleMaxSessionTurnsEvent(
-    session: ActiveSession
+    _session: ActiveSession
   ): readonly GeminiSessionEvent[] {
-    session.logger?.logEvent({ type: "max_turns" });
     return [
       {
         type: "warning",
@@ -135,13 +126,9 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleLoopDetectedEvent(
-    session: ActiveSession,
-    accumulator: TurnAccumulator
+    _session: ActiveSession,
+    _accumulator: TurnAccumulator
   ): readonly GeminiSessionEvent[] {
-    session.logger?.logEvent({
-      type: "loop_detected",
-      promptId: accumulator.promptId,
-    });
     return [
       {
         type: "warning",
@@ -152,15 +139,10 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleInvalidStreamEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown,
-    accumulator: TurnAccumulator
+    _accumulator: TurnAccumulator
   ): readonly GeminiSessionEvent[] {
-    session.logger?.logError({
-      type: "invalid_stream",
-      promptId: accumulator.promptId,
-      payload: value,
-    });
     return [
       {
         type: "error",
@@ -172,11 +154,10 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleModelInfoEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown
   ): readonly GeminiSessionEvent[] {
     const modelName = typeof value === "string" ? value : "unknown";
-    session.logger?.logEvent({ type: "model_info", model: modelName });
     return [
       {
         type: "system",
@@ -188,11 +169,10 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleAgentExecutionStoppedEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown
   ): readonly GeminiSessionEvent[] {
     const reason = this.readReason(value);
-    session.logger?.logEvent({ type: "agent_execution_stopped", reason });
     return [
       {
         type: "warning",
@@ -204,11 +184,10 @@ export class GeminiSystemEventNormalizer {
   }
 
   handleAgentExecutionBlockedEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown
   ): readonly GeminiSessionEvent[] {
     const reason = this.readReason(value);
-    session.logger?.logEvent({ type: "agent_execution_blocked", reason });
     return [
       {
         type: "warning",

@@ -1,13 +1,13 @@
 {
   "name": "@codeai-hub/claude-module",
-  "version": "1.2.88",
+  "version": "1.2.97",
   "description": "Claude provider integration for CodeAI Hub core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "node --test dist/messaging/message-processor.test.js dist/logging/sdk-session-logger.test.js dist/sdk/claude-usage-limits-snapshot.test.js dist/sdk/claude-sdk-manager.test.js"
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.json",
+    "test": "node --test dist/messaging/message-processor.test.js dist/sdk/claude-usage-limits-snapshot.test.js dist/sdk/claude-sdk-manager.test.js"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -111,7 +111,7 @@ export class GeminiSessionSettingsResolver {
       query: undefined,
       model: options.defaultModel,
       sandbox: undefined,
-      debug: options.logger !== undefined,
+      debug: false,
       prompt: undefined,
       promptInteractive: undefined,
       yolo: true,

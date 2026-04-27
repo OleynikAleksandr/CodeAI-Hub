@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
-import { SDKSessionLoggerFacade } from "../logging/sdk-session-logger";
 import type { SDKMessageProcessor } from "../messaging/message-processor";
 import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
 import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
@@ -124,10 +123,7 @@ export class ClaudeSDKManager {
     await this.initialize();
     const actualWorkspacePath =
       workspacePath ?? this.deps.workspace.workspacePath;
-    const { tempId } = this.deps.sessions.createSession(
-      actualWorkspacePath,
-      new SDKSessionLoggerFacade()
-    );
+    const { tempId } = this.deps.sessions.createSession(actualWorkspacePath);
     return tempId;
   }
 
@@ -138,11 +134,7 @@ export class ClaudeSDKManager {
     await this.initialize();
     const actualWorkspacePath =
       workspacePath ?? this.deps.workspace.workspacePath;
-    this.deps.sessions.createResumedSession(
-      actualWorkspacePath,
-      sessionId,
-      new SDKSessionLoggerFacade()
-    );
+    this.deps.sessions.createResumedSession(actualWorkspacePath, sessionId);
     this.proactiveUsageLimitsRefresh(sessionId);
     return sessionId;
   }
@@ -222,7 +214,6 @@ export class ClaudeSDKManager {
       newId: realId,
       shortId: realId.slice(0, SHORT_ID_LENGTH),
     });
-    targetSession?.logger?.renameSession?.(tempId, realId);
   }
 
   private invokeQuery(payload: {

@@ -23,6 +23,9 @@ const PROVIDER_CODEX_HOME = path.join(
 const DEFAULT_INSTRUCTIONS_FILE = "translation-instructions.md";
 const DEFAULT_SANDBOX_MODE = "read-only";
 const DEFAULT_REASONING_SUMMARY = "none";
+const CODEX_MODELS_WITHOUT_EXPLICIT_REASONING_SUMMARY = new Set([
+  "gpt-5.3-codex-spark",
+]);
 const CODEX_AUTH_FILE = "auth.json";
 const CODEX_MODELS_CACHE_FILE = "models_cache.json";
 const OPTIONAL_BOOTSTRAP_ARTIFACTS = [
@@ -36,6 +39,9 @@ const OPTIONAL_BOOTSTRAP_ARTIFACTS = [
 const toTomlString = (value: string): string =>
   `"${value.split("\\").join("\\\\").split('"').join('\\"')}"`;
 
+const shouldWriteReasoningSummary = (modelId: string): boolean =>
+  !CODEX_MODELS_WITHOUT_EXPLICIT_REASONING_SUMMARY.has(modelId.trim());
+
 const buildConfigToml = (options: {
   readonly instructionsFilePath: string;
   readonly modelId: string;
@@ -46,7 +52,9 @@ const buildConfigToml = (options: {
     'approval_policy = "never"',
     `model = ${toTomlString(options.modelId)}`,
     `model_reasoning_effort = ${toTomlString(options.reasoningEffort)}`,
-    `model_reasoning_summary = ${toTomlString(DEFAULT_REASONING_SUMMARY)}`,
+    ...(shouldWriteReasoningSummary(options.modelId)
+      ? [`model_reasoning_summary = ${toTomlString(DEFAULT_REASONING_SUMMARY)}`]
+      : []),
     `model_instructions_file = ${toTomlString(options.instructionsFilePath)}`,
     `sandbox_mode = ${toTomlString(options.sandboxMode)}`,
     "suppress_unstable_features_warning = true",
