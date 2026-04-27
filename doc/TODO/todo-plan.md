@@ -28,10 +28,10 @@
 
 ### Stream: Prompt cadence
 3. [DONE] Strengthen Progress Updates cadence rule with 30-second and 3-5 work-cycle fallback — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: tighten codex progress update cadence`
-4. [TODO] Git Commit: `fix: tighten codex progress update cadence` (hash: TBD)
+4. [DONE] Git Commit: `fix: tighten codex progress update cadence` (hash: `16e7c4e6a`)
 
 ### Stream: Release 1.2.86
-5. [TODO] Prepare release notes for `1.2.86` before build-all — scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex progress cadence release notes`
+5. [DONE] Prepare release notes for `1.2.86` before build-all — scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex progress cadence release notes`
 6. [TODO] Git Commit: `docs: prepare codex progress cadence release notes` (hash: TBD)
 7. [TODO] Run `./scripts/build-all.sh` for `1.2.86` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex progress cadence release`
 8. [TODO] Git Commit: `chore: build codex progress cadence release` (hash: TBD)

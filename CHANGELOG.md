@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.86] - 2026-04-27
+### Changed
+- **Codex progress-update cadence is stricter for long turns.** The early-architecture prompt now tells Codex not to continue silently through several internal analysis/tool cycles and to send a visible update about every 30 seconds while still working.
+- **Codex has a work-cycle fallback when elapsed time is hard to estimate.** After 3-5 substantial tool calls, file-reading steps, or internal analysis cycles without a visible update, the prompt asks for one short visible assistant message before continuing.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace=@codeai-hub/codex-app-server-module` and Husky pre-commit gates on the prompt cadence change commit.
+
 ## [1.2.85] - 2026-04-27
 ### Changed
 - **Codex progress-update prompt wording now targets visible chat messages.** The CodeAI Hub-owned Codex early-architecture prompt asks for ordinary user-visible assistant chat messages and explicitly excludes reasoning summaries, hidden commentary, tool-call notes, metadata, and other non-user-visible channels.
