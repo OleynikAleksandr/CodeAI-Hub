@@ -4,8 +4,6 @@ import { homedir } from "node:os";
 import path from "node:path";
 
 const LOG_ROOT = path.join(homedir(), ".codeai-hub", "logs", "codex");
-const PROCESS_LOG_ROOT = path.join(LOG_ROOT, "app-server-process");
-const THREAD_LOG_ROOT = path.join(LOG_ROOT, "threads");
 const FILE_PREFIX = "sdk-codex-app-server-process";
 const THREAD_FILE_PREFIX = "sdk-codex-thread";
 
@@ -19,13 +17,13 @@ const sanitizeFileSegment = (value: string): string =>
 
 const buildLogFilePath = (): string =>
   path.join(
-    PROCESS_LOG_ROOT,
+    LOG_ROOT,
     `${FILE_PREFIX}-${sanitizeTimestamp(toIsoTimestamp())}-${randomUUID()}.jsonl`
   );
 
 const buildThreadLogFilePath = (threadId: string): string =>
   path.join(
-    THREAD_LOG_ROOT,
+    LOG_ROOT,
     `${THREAD_FILE_PREFIX}-${sanitizeFileSegment(threadId)}-${sanitizeTimestamp(toIsoTimestamp())}-${randomUUID()}.jsonl`
   );
 
@@ -101,7 +99,7 @@ export class CodexAppServerSessionLogger {
       timestamp: toIsoTimestamp(),
       type: "session_start",
     });
-    mkdir(PROCESS_LOG_ROOT, { recursive: true })
+    mkdir(LOG_ROOT, { recursive: true })
       .then(async () => {
         if (!this.filePath) {
           return;
@@ -287,7 +285,7 @@ export class CodexAppServerSessionLogger {
       timestamp: toIsoTimestamp(),
       type: "thread_log_start",
     });
-    mkdir(THREAD_LOG_ROOT, { recursive: true })
+    mkdir(LOG_ROOT, { recursive: true })
       .then(async () => {
         await appendFile(state.filePath, "", "utf8");
         state.fileReady = true;
