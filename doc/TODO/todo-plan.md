@@ -29,7 +29,7 @@
 2. [DONE] Git Commit: `docs: plan codex reasoning paragraph streaming` (hash: `5d371cd09`)
 
 ### Stream: Provider Streaming Core
-3. [TODO] Add Codex reasoning summary stream buffer microclass with focused tests — scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.test.ts`; commit: `feat: add codex reasoning paragraph buffer`
+3. [DONE] Add Codex reasoning summary stream buffer microclass with focused tests — scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.test.ts`; commit: `feat: add codex reasoning paragraph buffer`
 4. [TODO] Git Commit: `feat: add codex reasoning paragraph buffer` (hash: TBD)
 5. [TODO] Wire paragraph-level reasoning emission into Codex app-server router and update Codex SSOT — scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `feat: stream codex reasoning paragraphs`
 6. [TODO] Git Commit: `feat: stream codex reasoning paragraphs` (hash: TBD)
