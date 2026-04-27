@@ -26,7 +26,7 @@
 
 ### Stream: Planning
 1. [DONE] Create planning-doc and active todo-plan for Codex reasoning paragraph streaming — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Paragraph_Streaming_1.2.87.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan codex reasoning paragraph streaming`
-2. [TODO] Git Commit: `docs: plan codex reasoning paragraph streaming` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan codex reasoning paragraph streaming` (hash: `5d371cd09`)
 
 ### Stream: Provider Streaming Core
 3. [TODO] Add Codex reasoning summary stream buffer microclass with focused tests — scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.test.ts`; commit: `feat: add codex reasoning paragraph buffer`
