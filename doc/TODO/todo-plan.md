@@ -46,7 +46,7 @@
 11. [DONE] Prepare release notes for `1.2.87` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex reasoning paragraph release notes`
 12. [DONE] Git Commit: `docs: prepare codex reasoning paragraph release notes` (hash: `212376477`)
 13. [DONE] Run `./scripts/build-all.sh` for `1.2.87` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex reasoning paragraph release`
-14. [TODO] Git Commit: `chore: build codex reasoning paragraph release` (hash: TBD)
+14. [DONE] Git Commit: `chore: build codex reasoning paragraph release` (hash: `a98c21efc`)
 15. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex reasoning paragraph vsix`
 16. [TODO] Git Commit: `chore: package codex reasoning paragraph vsix` (hash: TBD)
 17. [TODO] Close active planning/todo scope and create completion session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Paragraph_Streaming_1.2.87.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Paragraph_Streaming_1.2.87.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-reasoning-paragraph-1.2.87.md`, `doc/Sessions/Session0XX.md`; commit: `docs: close codex reasoning paragraph release`
