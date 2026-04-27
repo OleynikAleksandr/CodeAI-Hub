@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.97] - 2026-04-27
+### Fixed
+- **Codex Spark readable reasoning summaries are restored without reintroducing the unsupported turn parameter.** `gpt-5.3-codex-spark` still omits explicit `turn/start.summary`, but the Codex App Server process now materializes provider-home `model_reasoning_summary = "auto" | "none"` from shared Codex settings before startup.
+- **Non-Spark Codex summary behavior is guarded.** Other Codex models keep the existing explicit `turn/start.summary = "detailed" | "none"` path, so the Spark compatibility fix does not weaken normal visible reasoning controls.
+
+### Tests
+- **Targeted Codex provider checks passed.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module` and direct Node tests for provider-home summary materialization, Spark summary omission, non-Spark `gpt-5.5` summary preservation, and native request capture parity.
+
 ## [1.2.96] - 2026-04-27
 ### Fixed
 - **Codex Spark no longer receives unsupported explicit reasoning-summary parameters.** Normal Codex App Server turns and native request capture now omit `turn/start.summary` for `gpt-5.3-codex-spark`, avoiding the provider error `Unsupported parameter: 'reasoning.summary'`.
