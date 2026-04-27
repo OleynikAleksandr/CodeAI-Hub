@@ -1,6 +1,6 @@
 # Codex Spark Reasoning Summary Config 1.2.97
 
-**Status:** Approved for implementation
+**Status:** Implemented and archived
 **Date:** 2026-04-27
 **Owner:** Codex
 
@@ -64,3 +64,11 @@ Release files:
 - Provider-home config writes `model_reasoning_summary = "none"` when settings disable reasoning summaries.
 - Targeted Codex app-server build and tests pass.
 - Release `1.2.97` is built with normal version bump and produces `codeai-hub-1.2.97.vsix`.
+
+## Result
+
+- Implemented Spark-safe provider-home summary materialization before `codex app-server` startup.
+- Preserved Spark `turn/start.summary` omission to avoid the provider-side `reasoning.summary` rejection.
+- Added regression coverage for provider-home `model_reasoning_summary = "auto" | "none"` materialization and non-Spark `gpt-5.5` explicit `summary: "detailed"` preservation.
+- Updated Codex invocation SSOT, SystemArchitecture, BugRegistry, README, and CHANGELOG.
+- Built release `1.2.97` with normal release automation; final VSIX artifact is `codeai-hub-1.2.97.vsix`.
