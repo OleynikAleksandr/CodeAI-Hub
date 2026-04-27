@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.94] - 2026-04-27
+### Changed
+- **Provider-owned SDK/raw file logs are removed from runtime.** Claude, Codex, and Gemini no longer construct or call the file-backed mirrors under `~/.codeai-hub/logs/{claude,codex,gemini}`.
+- **Codex app-server logger code is gone, not just disabled.** The deleted transport logger path removes SDK-log serialization from `child.stdin.write(...)` and app-server notification fan-out.
+- **Runtime evidence is now explicit.** Audits should use live provider streams, session-local normalized history, provider-home artifacts, and optional native request capture instead of always-on SDK/raw JSONL mirrors.
+
+### Tests
+- **Provider cleanup verification passed.** `rg` found no runtime references to the removed SDK/raw loggers in `packages`, and targeted builds passed for Codex app-server, Claude, and Gemini provider modules.
+
 ## [1.2.93] - 2026-04-27
 ### Changed
 - **Codex SDK transport logs are disabled.** `codex-app-server-session-logger.ts` is now a no-op compatibility shim and no longer creates process-wide or per-thread JSONL files under `~/.codeai-hub/logs/codex/`.

@@ -66,8 +66,8 @@
 23. [DONE] Update system/contracts/index docs and run targeted provider builds; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: update provider diagnostics contract`
 24. [DONE] Git Commit: `docs: update provider diagnostics contract` (hash: `fc9cfc280`)
 25. [DONE] Run cleanup verification query and targeted provider builds, then record results in this plan; scope: provider package build commands, `doc/TODO/todo-plan.md`; expected commit message: `test: verify provider sdk log removal`; result: `rg` found no provider SDK/raw logger runtime references in `packages`, and targeted builds passed for `@codeai-hub/codex-app-server-module`, `@codeai-hub/claude-module`, `@codeai-hub/gemini-module`
-26. [TODO] Git Commit: `test: verify provider sdk log removal` (hash: TBD)
-27. [TODO] Prepare release docs for the next version before build-all; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare provider sdk log removal release`
+26. [DONE] Git Commit: `test: verify provider sdk log removal` (hash: `795cddea6`)
+27. [DONE] Prepare release docs for the next version before build-all; scope: `README.md`, `CHANGELOG.md`; expected commit message: `docs: prepare provider sdk log removal release`
 28. [TODO] Git Commit: `docs: prepare provider sdk log removal release` (hash: TBD)
 29. [TODO] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build provider sdk log removal release`
 30. [TODO] Git Commit: `chore: build provider sdk log removal release` (hash: TBD)
