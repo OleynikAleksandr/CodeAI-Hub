@@ -27,10 +27,10 @@
 
 ### Stream: Planning
 1. [DONE] Create planning-doc and active todo-plan for experimental Codex progress-update wording — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Updates_Instruction_Tuning_1.2.85.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan codex progress update instruction tuning`
-2. [TODO] Git Commit: `docs: plan codex progress update instruction tuning` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan codex progress update instruction tuning` (hash: `9de089a7d`)
 
 ### Stream: Prompt tuning
-3. [TODO] Replace ambiguous `short commentary messages` wording with ordinary user-visible assistant chat messages — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: clarify codex progress update visibility`
+3. [DONE] Replace ambiguous `short commentary messages` wording with ordinary user-visible assistant chat messages — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: clarify codex progress update visibility`
 4. [TODO] Git Commit: `fix: clarify codex progress update visibility` (hash: TBD)
 
 ### Stream: Release 1.2.85
