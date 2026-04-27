@@ -39,7 +39,7 @@
 7. [DONE] Prepare release notes for `1.2.88` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare reasoning translation timeout release notes`
 8. [DONE] Git Commit: `docs: prepare reasoning translation timeout release notes` (hash: `5a0383de6`)
 9. [DONE] Run `./scripts/build-all.sh` for `1.2.88` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build reasoning translation timeout release`
-10. [TODO] Git Commit: `chore: build reasoning translation timeout release` (hash: TBD)
+10. [DONE] Git Commit: `chore: build reasoning translation timeout release` (hash: `bfbc6d632`)
 11. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package reasoning translation timeout vsix`
 12. [TODO] Git Commit: `chore: package reasoning translation timeout vsix` (hash: TBD)
 13. [TODO] Close active planning/todo scope and create completion session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-reasoning-translation-timeout-1.2.88.md`, `doc/Sessions/Session017.md`; commit: `docs: close reasoning translation timeout release`
