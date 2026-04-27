@@ -35,7 +35,9 @@
 
 ### Stream: Release Build
 
-5. [TODO] Run release build pipeline for `1.2.84` — scope: release scripts/artifacts, `doc/TODO/todo-plan.md`; expected commit message: `chore: build settings footer codex models release`
+5. [DONE] Run `./scripts/build-all.sh` for `1.2.84` — scope: package versions, manifests, release tarballs, `doc/TODO/todo-plan.md`; expected commit message: `chore: build settings footer codex models release`
 6. [TODO] Git Commit: `chore: build settings footer codex models release` (hash: TBD)
-7. [TODO] Close release scope and archive planning/todo docs — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_Footer_Codex_Models_Release_1.2.84.md`, `doc/TODO/Archive/todo-plan-phase1-settings-footer-codex-models-release-1.2.84.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: close settings footer codex models release`
-8. [TODO] Git Commit: `docs: close settings footer codex models release` (hash: TBD)
+7. [TODO] Run `./scripts/build-release.sh --use-current-version` for final VSIX — scope: `codeai-hub-1.2.84.vsix`, `doc/TODO/todo-plan.md`; expected commit message: `chore: package settings footer codex models vsix`
+8. [TODO] Git Commit: `chore: package settings footer codex models vsix` (hash: TBD)
+9. [TODO] Close release scope and archive planning/todo docs — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_Footer_Codex_Models_Release_1.2.84.md`, `doc/TODO/Archive/todo-plan-phase1-settings-footer-codex-models-release-1.2.84.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: close settings footer codex models release`
+10. [TODO] Git Commit: `docs: close settings footer codex models release` (hash: TBD)
