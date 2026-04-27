@@ -44,7 +44,7 @@
 
 ### Stream: Release 1.2.87
 11. [DONE] Prepare release notes for `1.2.87` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex reasoning paragraph release notes`
-12. [TODO] Git Commit: `docs: prepare codex reasoning paragraph release notes` (hash: TBD)
+12. [DONE] Git Commit: `docs: prepare codex reasoning paragraph release notes` (hash: `212376477`)
 13. [TODO] Run `./scripts/build-all.sh` for `1.2.87` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex reasoning paragraph release`
 14. [TODO] Git Commit: `chore: build codex reasoning paragraph release` (hash: TBD)
 15. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex reasoning paragraph vsix`
