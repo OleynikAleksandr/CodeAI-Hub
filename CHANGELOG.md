@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.88] - 2026-04-27
+### Added
+- **Codex app-server now writes per-thread SDK sublogs.** In addition to the process-wide `sdk-codex-app-server-*.jsonl`, the Codex transport logger now writes `sdk-codex-app-server-thread-<threadId>-*.jsonl` for each rollout/thread so retests can inspect one Description run without manually filtering a long-lived app-server process log.
+- **Thread sublogs preserve the app-server request/response boundary.** `thread/start` is attached after the returned `threadId` is known, while `turn/start` requests, matching responses, and thread-scoped notifications are written directly to the matching sublog.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
 ## [1.2.87] - 2026-04-27
 ### Changed
 - **Controlled Codex progress-message rollback release.** This release is intentionally built from the `1.2.86` baseline so the Codex Description-step retest can verify whether ordinary user-visible assistant progress messages still appear before the later reasoning paragraph streaming changes.
