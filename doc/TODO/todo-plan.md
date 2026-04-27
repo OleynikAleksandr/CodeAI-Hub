@@ -41,9 +41,9 @@
 
 ### Stream: Omit unsupported `summary` for Spark
 
-1. [IN_PROGRESS] Register `BUG-2026-04-27-01` and document the active Spark `reasoning.summary` failure; scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: track codex spark summary bug`; result: bug entry opened from user-provided provider error
-2. [TODO] Git Commit: `docs: track codex spark summary bug` (hash: TBD)
-3. [TODO] Omit `turn/start.summary` for `gpt-5.3-codex-spark` in normal runtime and native capture while preserving summary behavior for other Codex models; scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`; expected commit message: `fix: omit codex summary for spark`
+1. [DONE] Register `BUG-2026-04-27-01` and document the active Spark `reasoning.summary` failure; scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: track codex spark summary bug`; result: bug entry opened from user-provided provider error
+2. [DONE] Git Commit: `docs: track codex spark summary bug` (hash: `87fc7d22a`)
+3. [DONE] Omit `turn/start.summary` for `gpt-5.3-codex-spark` in normal runtime and native capture while preserving summary behavior for other Codex models; scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`; expected commit message: `fix: omit codex summary for spark`; result: normal runtime and native capture now omit `summary` only for `gpt-5.3-codex-spark`, while other models still receive the shared settings `summary`
 4. [TODO] Git Commit: `fix: omit codex summary for spark` (hash: TBD)
 5. [TODO] Add regression tests and update SSOT docs for Spark summary omission; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover codex spark summary omission`
 6. [TODO] Git Commit: `test: cover codex spark summary omission` (hash: TBD)

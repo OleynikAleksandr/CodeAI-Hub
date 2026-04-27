@@ -139,7 +139,7 @@ Every user turn is sent with:
     "cwd": "<workspace path>",
     "model": "<applied base model id>",
     "effort": "<applied Codex reasoning effort or null>",
-    "summary": "detailed | none",
+    "summary": "detailed | none (omitted for gpt-5.3-codex-spark)",
     "outputSchema": "<optional structured output schema>"
   }
 }
@@ -149,9 +149,10 @@ Behavioral meaning:
 
 - `model` is the base model id, not the UI effective label. Example: `gpt-5.2`, not `gpt-5.2 reasoning:medium`.
 - `effort` is the applied Codex reasoning effort: `low`, `medium`, `high`, `xhigh`, or `null`.
-- `summary` is live-resolved from shared settings:
+- `summary` is live-resolved from shared settings for models that support provider-native reasoning summaries:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
+- `gpt-5.3-codex-spark` does not support provider-native `reasoning.summary`; for this model the `summary` field is omitted entirely, not sent as `none`.
 - `outputSchema` is passed through only when the workflow/core turn supplied one.
 - `approvalPolicy`, `sandbox`, `baseInstructions`, and `config.project_doc_max_bytes` are not turn-level fields; they belong to thread startup/resume.
 
@@ -235,7 +236,7 @@ Diagnostic `turn/start` mirrors normal runtime fields:
 - `input[0].text`: workflow prompt when available, otherwise probe prompt
 - `model`: selected/applied model
 - `effort`: applied/default Codex reasoning effort
-- `summary`: same shared settings policy, `detailed` or `none`
+- `summary`: same shared settings policy, `detailed` or `none`, omitted entirely for `gpt-5.3-codex-spark`
 
 The diagnostic path records app-server `thread/start` and `turn/start` request/response payloads into the native capture artifact and copies provider-home rollout JSONL context when available.
 
