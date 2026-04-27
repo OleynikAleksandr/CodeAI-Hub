@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.93] - 2026-04-27
+### Changed
+- **Codex SDK transport logs are disabled.** `codex-app-server-session-logger.ts` is now a no-op compatibility shim and no longer creates process-wide or per-thread JSONL files under `~/.codeai-hub/logs/codex/`.
+- **Runtime evidence stays on the real runtime paths.** Codex behavior continues to come from the live app-server JSON-RPC stream, provider-home rollout artifacts, session-local normalized dialog JSONL, and optional native request capture rather than from SDK transport logs.
+- **Diagnostic report updated with the `1.2.92` result.** The retest confirmed that split file names were not the trigger; the remaining risk was filesystem work from SDK transport logging, which this release removes.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
 ## [1.2.92] - 2026-04-27
 ### Changed
 - **Diagnostic retest: Codex app-server logs keep split names but return to the flat log root.** Process-wide logs now use `~/.codeai-hub/logs/codex/sdk-codex-app-server-process-*.jsonl`, while per-thread logs use `~/.codeai-hub/logs/codex/sdk-codex-thread-<threadId>-*.jsonl`.
