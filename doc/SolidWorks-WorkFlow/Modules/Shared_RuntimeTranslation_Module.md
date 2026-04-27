@@ -165,6 +165,7 @@ Current live overlay rules:
 - providers emit native/source thinking text immediately with stable per-emission `messageId`;
 - Core decides whether that message should be translated and calls `TranslationFacade.translate(...)` asynchronously;
 - reasoning overlays now translate each provider-emitted thinking message as one block by default instead of re-planning it through the shared chunk planner;
+- live reasoning overlay translation uses a 15-second base timeout plus the existing per-character allowance, capped at 30 seconds; this avoids premature fallback for short Codex reasoning paragraphs while keeping translation failure non-blocking;
 - reasoning overlay translation is routed through the dedicated `reasoningEngineId` and the fifth user-facing `Reasoning` category target language (`reasoningLanguage`); the UI translation engine (`uiEngineId`) and the `Messages for the User` category language no longer control reasoning overlays after the UI/Reasoning translation split;
 - the Core translation gate still requires the persisted localization bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` to match the active UI localization settings and to report `system_feedback.source = "materialized"`; the gate is driven by UI bootstrap integrity only and is not gated on reasoning engine/language state — reasoning engine or reasoning language changes never pend/block this gate;
 - successful translations are appended to `*.translations.jsonl` sidecars and never rewrite the native JSONL transcript;

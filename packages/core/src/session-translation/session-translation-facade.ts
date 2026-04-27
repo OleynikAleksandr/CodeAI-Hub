@@ -13,7 +13,7 @@ import {
 import { SessionTranslationPolicyResolver } from "./session-translation-policy-resolver";
 
 const TRANSLATION_PREVIEW_LENGTH = 160;
-const TRANSLATION_TIMEOUT_BASE_MS = 5000;
+const TRANSLATION_TIMEOUT_BASE_MS = 15_000;
 const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
 const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
 

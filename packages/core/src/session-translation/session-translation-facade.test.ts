@@ -29,6 +29,7 @@ const createSettingsSnapshot = (): Record<string, unknown> => ({
         artifactsForTheUser: "ru",
         interactiveTemplates: "ru",
         messagesForTheUser: "ru",
+        reasoning: "ru",
         systemFeedback: "ru",
         uiHelperText: "ru",
         uiInterface: "en",
@@ -38,6 +39,8 @@ const createSettingsSnapshot = (): Record<string, unknown> => ({
       },
       defaultLanguage: "en",
       engineId: "anthropic-claude-haiku-4-5",
+      reasoningEngineId: "anthropic-claude-haiku-4-5",
+      uiEngineId: "anthropic-claude-haiku-4-5",
       workflowTermsPolicy: "keep_english",
     },
   },
@@ -195,6 +198,72 @@ test("SessionTranslationFacade routes through the injected translation factory",
     assert.equal(typeof recorded[0]?.reporter, "object");
     assert.equal(outcome?.translatedContent, "Привет");
     assert.equal(outcome?.targetLanguage, "ru");
+  } finally {
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
+test("SessionTranslationFacade gives short reasoning translations at least 15 seconds", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  try {
+    const settingsPath = path.join(
+      homeDirectory,
+      ".codeai-hub",
+      "settings",
+      "settings.json"
+    );
+    await mkdir(path.dirname(settingsPath), { recursive: true });
+    await writeFile(
+      settingsPath,
+      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    const bootstrapPath =
+      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+    await mkdir(path.dirname(bootstrapPath), { recursive: true });
+    await writeFile(
+      bootstrapPath,
+      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
+      "utf8"
+    );
+
+    let recordedRequest: TranslationRequest | undefined;
+    const facade = new SessionTranslationFacade({
+      logger: createSilentLogger(),
+      settingsPath,
+      translationFacadeFactory: () =>
+        ({
+          translate: (request: TranslationRequest) => {
+            recordedRequest = request;
+            return Promise.resolve({
+              engine: "anthropic-claude-haiku-4-5",
+              finalText: "Коротко",
+              originalText: request.text,
+              sourceLanguage: "en",
+              status: "translated",
+              targetLanguage: "ru",
+              translatedText: "Коротко",
+            });
+          },
+        }) as unknown as TranslationFacade,
+    });
+
+    const outcome = await facade.translateDialogMessage({
+      content: "Short reasoning paragraph.",
+      messageId: "msg-timeout",
+      providerId: "codex",
+      role: "assistant",
+      sessionId: "sess-timeout",
+      tag: "thinking",
+    });
+
+    assert.equal(outcome?.translatedContent, "Коротко");
+    assert.ok(recordedRequest);
+    assert.equal(
+      recordedRequest.timeoutMs,
+      15_000 + "Short reasoning paragraph.".length * 8
+    );
   } finally {
     await rm(homeDirectory, { recursive: true, force: true });
   }
