@@ -213,6 +213,35 @@ Settings sync writes compatibility state into provider-home `config.toml`:
 
 This persisted provider-home state is not the only live runtime source of truth. Normal `turn/start.summary` is still sent explicitly from the shared settings snapshot as `detailed` or `none`.
 
+## Translation `codex exec` Runtime
+
+Localization and reasoning translation do not use `codex app-server`. Codex translation engines run `codex exec` with an isolated temporary `CODEX_HOME` built by `packages/translation/src/codex-translation-runtime-home-facade.ts`.
+
+The translation command shape is:
+
+```text
+codex exec
+  --skip-git-repo-check
+  --ephemeral
+  -C <temporary workspace>
+  -m <translation model id>
+  -s read-only
+  --json
+  <translation prompt>
+```
+
+The temporary translation `config.toml` includes:
+
+- `approval_policy = "never"`
+- `model = "<translation model id>"`
+- `model_reasoning_effort = "low"` by default
+- `model_reasoning_summary = "none"` for models that accept explicit summary config
+- `model_instructions_file = "<temporary translation instructions file>"`
+- `sandbox_mode = "read-only"`
+- `[features] unified_exec = false`, `shell_snapshot = false`, `steer = false`, `apps = false`, `multi_agent = false`
+
+`gpt-5.3-codex-spark` is the exception: translation runtime omits `model_reasoning_summary` entirely. Its model cache already declares `default_reasoning_summary = "none"`, and omitting the explicit config avoids the same class of provider-side `reasoning.summary` rejection seen on the App Server `turn/start` path.
+
 ## Native Request Capture Parity
 
 Settings -> General -> `Capture Codex Native Request` starts an isolated temporary App Server process with the same startup args as normal runtime, plus proxy/certificate env:

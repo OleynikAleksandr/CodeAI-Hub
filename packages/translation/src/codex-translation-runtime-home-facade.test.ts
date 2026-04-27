@@ -12,6 +12,9 @@ import path from "node:path";
 import test from "node:test";
 import { CodexTranslationRuntimeHomeFacade } from "./codex-translation-runtime-home-facade";
 
+const MODEL_REASONING_SUMMARY_NONE_LINE_REGEX =
+  /model_reasoning_summary = "none"/u;
+
 const createTempRoot = (): Promise<string> =>
   mkdtemp(path.join(tmpdir(), "codex-translation-runtime-home-"));
 
@@ -50,9 +53,14 @@ test("CodexTranslationRuntimeHomeFacade falls back to legacy auth when provider 
       path.join(runtime.homePath, "models_cache.json"),
       "utf8"
     );
+    const runtimeConfig = await readFile(
+      path.join(runtime.homePath, "config.toml"),
+      "utf8"
+    );
 
     assert.equal(runtimeAuth, '{"token":"legacy"}\n');
     assert.equal(runtimeModelsCache, '{"models":["gpt-5.3-codex-spark"]}\n');
+    assert.equal(runtimeConfig.includes("model_reasoning_summary"), false);
   } finally {
     await runtime.cleanup();
     await rm(root, { recursive: true, force: true });
@@ -84,10 +92,15 @@ test("CodexTranslationRuntimeHomeFacade tolerates missing models cache", async (
       path.join(runtime.homePath, "auth.json"),
       "utf8"
     );
+    const runtimeConfig = await readFile(
+      path.join(runtime.homePath, "config.toml"),
+      "utf8"
+    );
     await assert.rejects(
       access(path.join(runtime.homePath, "models_cache.json"))
     );
     assert.equal(runtimeAuth, '{"token":"provider"}\n');
+    assert.match(runtimeConfig, MODEL_REASONING_SUMMARY_NONE_LINE_REGEX);
   } finally {
     await runtime.cleanup();
     await rm(root, { recursive: true, force: true });
