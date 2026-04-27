@@ -209,12 +209,11 @@
 - Codex app-server cluster: `packages/Codex_AppServer_Module/src/app-server/`
   - `codex-app-server-facade.ts` = thin transport façade over `thread/start`, `thread/resume`, `turn/start`, `turn/interrupt`, per-thread active turn tracking, and session listener fan-out
   - `process/codex-app-server-process.ts` = long-lived stdio/JSON-RPC bridge; owns `initialize` handshake with `experimentalApi`, provider-home bootstrap, request correlation, and process lifecycle
-  - `process/codex-app-server-session-logger.ts` = no-op compatibility shim; release `1.2.93` disables Codex SDK transport JSONL writes so app-server runtime behavior is driven only by the live JSON-RPC stream, session-local normalized transcripts, and provider-native provider-home artifacts
   - `codex-app-server-event-router.ts` = notification normalization for `turn/started`, `turn/completed`, `item/agentMessage/delta`, reasoning summaries, token usage, and usage-limit snapshots
   - `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts` = Core-facing `ProviderAdapter` bridge over the app-server façade and usage-limit refresh path
   - app-server `thread/start` + `thread/resume` return a real `threadId`, so Codex immediate binding is provider-native and no legacy temp-session seam is required
   - `turn/start` keeps Core-owned effective model identity, reasoning effort, and optional `outputSchema` passthrough on the outbound turn envelope
-  - active Codex diagnostics now avoid SDK transport file logging: no process-wide or per-thread app-server JSONL under `~/.codeai-hub/logs/codex/` is expected in release `1.2.93`; the remaining runtime evidence layers are session-local normalized `*-description.jsonl`, provider-native provider-home artifacts (`CODEX_HOME` history / rollout JSONL), and optional native request capture artifacts
+  - active provider diagnostics do not use always-on provider SDK/raw file-backed logs under `~/.codeai-hub/logs/{claude,codex,gemini}`; the remaining runtime evidence layers are session-local normalized history, provider-native provider-home artifacts, and optional native request capture artifacts
 - Gemini messaging cluster: `packages/Gemini_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn event normalization entrypoint
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
@@ -468,4 +467,4 @@
 - Baseline default для workflow-сценариев: `hybrid`.
 - `strict` оставляет editable schema/instruction contract для узких machine-readable turn-ов.
 - `debug_raw` нужен для исследования новых моделей без baseline default schema pressure на обычные turn-ы.
-- Raw provider rollouts и append-safe SDK JSONL являются диагностическими артефактами; dialog/history остаётся нормализованным display-слоем.
+- Provider-home native artifacts and optional native request capture are diagnostic artifacts; dialog/history остаётся нормализованным display-слоем. Always-on provider SDK/raw JSONL mirrors under `~/.codeai-hub/logs/{claude,codex,gemini}` are not part of the runtime contract.

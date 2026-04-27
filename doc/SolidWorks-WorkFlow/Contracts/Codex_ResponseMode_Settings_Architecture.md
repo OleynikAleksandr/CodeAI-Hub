@@ -149,12 +149,11 @@
 
 Потеря данных на уровне `normalized events` или `dialog history` не должна означать потерю сырых данных провайдера.
 
-### 6.3 SDK logging invariant
+### 6.3 Provider diagnostics invariant
 
-Повторный `resume` на том же `thread_id` не должен затирать существующий JSONL-лог.  
-SDK/diagnostic log обязан быть append-safe или rotate-safe.
+Повторный `resume` на том же `thread_id` не должен затирать provider-home artifacts или session-local normalized history.
 
-Для active app-server линии это означает отдельный CodeAI Hub transport log в `~/.codeai-hub/logs/codex`, который пишет rotate-safe JSONL `sdk-codex-app-server-*.jsonl` на каждый process start и фиксирует JSON-RPC requests/responses/notifications, protocol log records, stderr process lines и malformed stdout lines. Этот лог не заменяет provider-home artifacts и не подменяет session-local `*-description.jsonl`, а дополняет оба диагностических слоя.
+Active app-server line no longer owns a CodeAI Hub SDK transport log under `~/.codeai-hub/logs/codex`. Diagnostic evidence comes from the live app-server stream while the turn is running, session-local `*-description.jsonl`, provider-home Codex history/rollout artifacts, and optional Core-owned native request capture.
 
 ---
 
@@ -233,7 +232,7 @@ SDK/diagnostic log обязан быть append-safe или rotate-safe.
 
 - Нет жёсткого schema pressure на live turn.
 - Raw provider output сохраняется максимально полно.
-- Debug/Raw не отменяет final-summary reasoning contract: reasoning deltas и transport log сохраняются полностью для диагностики, но user-facing reasoning всё равно ждёт terminal assembly на `item/completed`.
+- Debug/Raw не отменяет final-summary reasoning contract: reasoning deltas remain provider-local input/fallback data and user-facing reasoning всё равно ждёт terminal assembly на `item/completed`.
 - Этот режим используется как основной investigative mode для новых моделей.
 
 ---
@@ -260,7 +259,7 @@ flowchart LR
 3. `Strict` даёт editable schema + editable instruction text.
 4. `Debug/Raw` даёт исследовательский режим без жёсткой schema-injection зависимости.
 5. Raw provider log можно использовать как диагностический SSOT.
-6. Повторный `resume` не затирает исторический SDK JSONL лог.
+6. Повторный `resume` не затирает provider-home artifacts или session-local history.
 7. Фикс commentary/progress для `gpt-5.4` доступен на `main` без переноса поздних PM refactor-изменений; на app-server линии commentary снова доходит до dialog как отдельный non-terminal assistant message, а не теряется между reasoning и final answer.
 
 ---
