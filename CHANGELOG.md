@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.87] - 2026-04-27
+### Changed
+- **Controlled Codex progress-message rollback release.** This release is intentionally built from the `1.2.86` baseline so the Codex Description-step retest can verify whether ordinary user-visible assistant progress messages still appear before the later reasoning paragraph streaming changes.
+- **No implementation behavior is changed before the retest.** The goal is to produce a clean installable package from the known-good progress cadence baseline and collect runtime evidence.
+
+### Tests
+- **Full release automation is the acceptance gate.** `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` must complete for this rollback/retest package.
+
 ## [1.2.86] - 2026-04-27
 ### Changed
 - **Codex progress-update cadence is stricter for long turns.** The early-architecture prompt now tells Codex not to continue silently through several internal analysis/tool cycles and to send a visible update about every 30 seconds while still working.
