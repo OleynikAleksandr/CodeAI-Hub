@@ -29,8 +29,8 @@
 3. [DONE] Add a short non-terminal progress-update rule to the shared Codex workflow prompt and synced prompt artifact; scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`; expected commit message: `fix: keep codex progress updates non-terminal`; result: prompt sections match and `npm run build --workspace @codeai-hub/codex-app-server-module` passed
 4. [DONE] Git Commit: `fix: keep codex progress updates non-terminal` (hash: `145382b74`)
 5. [DONE] Update Codex SSOT / Docs Index and verify no Description templates changed; scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record codex progress update guard`; result: Codex module SSOT and Docs Index updated, tracked Description templates have no diff
-6. [TODO] Git Commit: `docs: record codex progress update guard` (hash: TBD)
-7. [TODO] Prepare release docs for `1.2.95`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare codex progress guard release`
+6. [DONE] Git Commit: `docs: record codex progress update guard` (hash: `cdedac02e`)
+7. [DONE] Prepare release docs for `1.2.95`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare codex progress guard release`; result: README current release and changelog updated to `1.2.95`
 8. [TODO] Git Commit: `docs: prepare codex progress guard release` (hash: TBD)
 9. [TODO] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build codex progress guard release`
 10. [TODO] Git Commit: `chore: build codex progress guard release` (hash: TBD)

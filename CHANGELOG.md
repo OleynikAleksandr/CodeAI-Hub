@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.95] - 2026-04-27
+### Changed
+- **Codex progress updates are explicitly non-terminal.** The shared Codex early-workflow prompt now states that after an ordinary visible progress update, Codex must continue the same turn until the promised work or requested artifact is complete.
+- **The guard is provider-level, not Description-specific.** No Description templates were changed; the rule applies through the shared Codex workflow prompt used by all Codex models and current early-workflow steps.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; runtime prompt and synced Codex prompt artifact have matching `Progress Updates` sections.
+
 ## [1.2.94] - 2026-04-27
 ### Changed
 - **Provider-owned SDK/raw file logs are removed from runtime.** Claude, Codex, and Gemini no longer construct or call the file-backed mirrors under `~/.codeai-hub/logs/{claude,codex,gemini}`.
