@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.96] - 2026-04-27
+### Fixed
+- **Codex Spark no longer receives unsupported explicit reasoning-summary parameters.** Normal Codex App Server turns and native request capture now omit `turn/start.summary` for `gpt-5.3-codex-spark`, avoiding the provider error `Unsupported parameter: 'reasoning.summary'`.
+- **Codex Spark translation runtime is protected too.** Localization/reasoning translation uses `codex exec`, not App Server, but its temporary `config.toml` also now omits explicit `model_reasoning_summary` for `gpt-5.3-codex-spark`. Other Codex translation models still keep `model_reasoning_summary = "none"`.
+
+### Tests
+- **Targeted Codex provider checks passed.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module` and regression tests for normal runtime/native capture Spark summary omission.
+- **Targeted translation checks passed.** Passed `npm run build --workspace @codeai-hub/translation` and `node --test packages/translation/dist/codex-translation-runtime-home-facade.test.js`.
+
 ## [1.2.95] - 2026-04-27
 ### Changed
 - **Codex progress updates are explicitly non-terminal.** The shared Codex early-workflow prompt now states that after an ordinary visible progress update, Codex must continue the same turn until the promised work or requested artifact is complete.

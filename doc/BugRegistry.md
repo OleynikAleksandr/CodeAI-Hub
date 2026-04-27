@@ -14,7 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
-| BUG-2026-04-27-01 | OPEN | Codex Runtime/Translation | `gpt-5.3-codex-spark` падает с `unsupported_parameter` по `reasoning.summary` при выборе модели в Settings Codex; translation runtime also had explicit summary config risk | TBD |
+| BUG-2026-04-27-01 | FIXED | Codex Runtime/Translation | `gpt-5.3-codex-spark` падает с `unsupported_parameter` по `reasoning.summary` при выборе модели в Settings Codex; translation runtime also had explicit summary config risk | 1.2.96 |
 | BUG-2026-04-23-01 | FIXED | PM/Diagram Modules/Launcher | закрытие detached Digital Models popup закрывает весь Project Manager; popup также наследует full-width geometry main окна | 1.2.56 |
 | BUG-2026-04-22-08 | FIXED | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | 1.2.55 |
 | BUG-2026-04-22-07 | FIXED | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | 1.2.54 |
@@ -73,7 +73,7 @@
 ---
 ## BUG-2026-04-27-01 — Codex Runtime/Translation: `gpt-5.3-codex-spark` rejects `reasoning.summary`
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - Пользователь выбирает `gpt-5.3-codex-spark` в Settings -> Codex.
@@ -95,15 +95,16 @@
 **Commits:**
 - `8d4ff9c24 fix: omit codex summary for spark`
 - `b17ebd7c8 test: cover codex spark summary omission`
-- TBD translation runtime commit
+- `923e5983f fix: omit codex translation summary for spark`
 
 **Guards:**
 - `npm run build --workspace @codeai-hub/codex-app-server-module`
 - `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-facade.test.js packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`
-- TBD translation build/test
+- `npm run build --workspace @codeai-hub/translation`
+- `node --test packages/translation/dist/codex-translation-runtime-home-facade.test.js`
 
 **Release:**
-- TBD
+- `1.2.96`
 
 ---
 ## BUG-2026-04-23-01 — PM/Diagram Modules/Launcher: closing detached Digital Models popup closes the whole Project Manager
