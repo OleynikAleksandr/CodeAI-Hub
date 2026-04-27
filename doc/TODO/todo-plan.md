@@ -32,5 +32,5 @@
 6. [DONE] Git Commit: `docs: record codex progress update guard` (hash: `cdedac02e`)
 7. [DONE] Prepare release docs for `1.2.95`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare codex progress guard release`; result: README current release and changelog updated to `1.2.95`
 8. [DONE] Git Commit: `docs: prepare codex progress guard release` (hash: `4e557d65b`)
-9. [IN_PROGRESS] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build codex progress guard release`; result: `./scripts/build-all.sh` completed and produced `1.2.95` provider/core/UI/launcher tarballs
-10. [TODO] Git Commit: `chore: build codex progress guard release` (hash: TBD)
+9. [DONE] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build codex progress guard release`; result: `./scripts/build-all.sh` completed and produced `1.2.95` provider/core/UI/launcher tarballs; `./scripts/build-release.sh --use-current-version` passed with SDK exclusions verified, dev dependencies pruned before packaging, and `codeai-hub-1.2.95.vsix` created
+10. [DONE] Git Commit: `chore: build codex progress guard release` (hash: `b914a0f3c`)
