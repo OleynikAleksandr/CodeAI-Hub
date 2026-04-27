@@ -14,10 +14,7 @@ import {
   ClaudeMessageFinishHandler,
   type ContextUsageReaderConfig,
 } from "./claude-message-finish-handler";
-import {
-  ClaudeStreamEventRouter,
-  shouldSkipClaudeSDKMessageLog,
-} from "./claude-stream-event-router";
+import { ClaudeStreamEventRouter } from "./claude-stream-event-router";
 import type { ClaudeTextTranslationAdapter } from "./claude-thought-translation-adapter";
 
 interface ProcessResponseOptions {
@@ -189,9 +186,6 @@ export class SDKMessageProcessor {
       throw new Error(`Session ${sessionId} not found`);
     }
     const internal = options?.internal ?? false;
-    if (!internal) {
-      targetSession.logger?.logUserInput(content);
-    }
 
     targetSession.messageController.pendingMessages.push({
       type: "user",
@@ -292,10 +286,6 @@ export class SDKMessageProcessor {
     const emitter = session?.eventEmitter;
     if (!emitter) {
       return;
-    }
-
-    if (!shouldSkipClaudeSDKMessageLog(message)) {
-      session?.logger?.logSDKMessage(message.type, message);
     }
 
     switch (message.type) {
