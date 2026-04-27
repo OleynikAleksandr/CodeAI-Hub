@@ -4,6 +4,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import type { ModuleReporter } from "../../types";
+import { materializeCodexProviderHomeSummaryConfig } from "./codex-provider-home-config";
 
 interface JsonRpcError {
   readonly code?: number;
@@ -136,6 +137,7 @@ const prepareProviderCodexHome = async (): Promise<string> => {
   await mkdir(providerCodexHome, { recursive: true });
   await copyLegacyFileIfMissing(AUTH_FILENAME, providerCodexHome);
   await copyLegacyFileIfMissing(CONFIG_FILENAME, providerCodexHome);
+  await materializeCodexProviderHomeSummaryConfig(providerCodexHome);
   return providerCodexHome;
 };
 
