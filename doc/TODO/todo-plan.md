@@ -36,7 +36,7 @@
 
 ### Stream: UI/Translation Contract Documentation
 7. [DONE] Document sequential thinking blocks and per-block translation overlay expectations — scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; commit: `docs: document codex reasoning paragraph overlays`
-8. [TODO] Git Commit: `docs: document codex reasoning paragraph overlays` (hash: TBD)
+8. [DONE] Git Commit: `docs: document codex reasoning paragraph overlays` (hash: `8155c37b2`)
 
 ### Stream: Verification
 9. [TODO] Run targeted Codex provider verification — scope: `packages/Codex_AppServer_Module`; command: `npm run build --workspace=@codeai-hub/codex-app-server-module`; commit: `test: verify codex reasoning paragraph streaming`
