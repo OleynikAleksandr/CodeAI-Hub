@@ -93,7 +93,7 @@ export class GeminiAssistantEventNormalizer {
   }
 
   handleContentEvent(
-    session: ActiveSession,
+    _session: ActiveSession,
     value: unknown,
     accumulator: TurnAccumulator
   ): readonly GeminiSessionEvent[] {
@@ -101,7 +101,6 @@ export class GeminiAssistantEventNormalizer {
     if (chunk.length > 0) {
       accumulator.currentAssistantChunks.push(chunk);
       accumulator.responseChunks.push(chunk);
-      session.logger?.logEvent({ direction: "incoming", chunk });
     }
     return [];
   }
@@ -115,11 +114,6 @@ export class GeminiAssistantEventNormalizer {
       return [];
     }
 
-    session.logger?.logEvent({
-      type: "thought",
-      promptId: accumulator.promptId,
-      summary: value,
-    });
     const formatted =
       value.subject && value.subject.trim().length > 0
         ? `${value.subject.trim()}: ${value.description}`
@@ -172,7 +166,6 @@ export class GeminiAssistantEventNormalizer {
     value: unknown,
     accumulator: TurnAccumulator
   ): readonly GeminiSessionEvent[] {
-    session.logger?.logEvent({ type: "finished", payload: value });
     accumulator.usage =
       value && typeof value === "object"
         ? (value as { usageMetadata?: UsageMetadata }).usageMetadata

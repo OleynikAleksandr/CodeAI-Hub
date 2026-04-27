@@ -28,12 +28,6 @@ export class GeminiToolCallOrchestrator {
     const completedCalls: CompletedToolCall[] = [];
 
     for (const request of requests) {
-      session.logger?.logEvent({
-        type: "tool_execution_start",
-        tool: request.name,
-        callId: request.callId,
-      });
-
       events.push({
         type: "system",
         provider: "gemini",
@@ -72,26 +66,7 @@ export class GeminiToolCallOrchestrator {
             error: toolResponse?.error,
           },
         });
-
-        if (toolResponse?.error) {
-          session.logger?.logError({
-            error: toolResponse.error,
-            callId: request.callId,
-            tool: request.name,
-          });
-        } else {
-          session.logger?.logEvent({
-            type: "tool_execution_complete",
-            tool: request.name,
-            callId: request.callId,
-          });
-        }
       } catch (error) {
-        session.logger?.logError({
-          error,
-          promptId: request.callId,
-          stage: "tool",
-        });
         events.push({
           type: "error",
           provider: "gemini",
