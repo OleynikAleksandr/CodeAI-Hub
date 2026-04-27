@@ -14,7 +14,7 @@ It translates short runtime text fragments through an engine-neutral facade and 
 
 Current production use:
 
-- live provider thinking/reasoning is emitted source-first and stored in canonical session history without rewriting the native transcript; for Claude this stream is now incremental (live readable segments materialized from `thinking_delta` fragments via `ClaudeThinkingLiveBuffer`), so the overlay pipeline must be ready to translate multiple append-only thinking bubbles per turn, each carrying its own stable `messageId`, instead of waiting for one monolithic final block;
+- live provider thinking/reasoning is emitted source-first and stored in canonical session history without rewriting the native transcript; for Claude this stream is incremental (live readable segments materialized from `thinking_delta` fragments via `ClaudeThinkingLiveBuffer`), and Codex now emits reasoning summary paragraphs sequentially from `CodexReasoningSummaryStreamBuffer`, so the overlay pipeline must be ready to translate multiple append-only thinking bubbles per turn, each carrying its own stable `messageId`, instead of waiting for one monolithic final block;
 - Core owns the runtime translation overlay pipeline for persisted thinking messages and broadcasts async `session:message_translation` / `dialog:message_translation` patches when translation completes; one overlay record per emitted bubble — earlier live bubbles are never re-translated when later bubbles arrive;
 - translated text is stored as per-session sidecar overlay records (`*.translations.jsonl`) and is merged into history reads as `localizedContent`, while the source text remains the only canonical transcript;
 - translation failure is non-blocking and falls back to the original text in the visible UI.
@@ -172,7 +172,7 @@ Current live overlay rules:
 - if a second pending translation resolves to the same `engineId + targetLanguage + sourceHash`, Core must reuse the in-flight promise instead of queueing a duplicate provider call; caller-specific `messageId` stays unique, but the translated text payload is shared;
 - UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
 - runtime diagnostics for session translation must log both requested and resolved engine metadata. For `anthropic-claude-haiku-4-5`, that metadata includes provider `claude`, model `claude-haiku-4-5-20251001`, project slug `translation-runtime-haiku`, `persistSession: true`, and `runtimePath: "provider-owned"`.
-- providers that stream one reasoning item across multiple visible delta messages must not reuse the same `messageId` for every delta chunk; overlay/replay stores are keyed by `messageId`, so later translations would otherwise overwrite earlier thinking fragments from the same provider item.
+- providers that stream one reasoning item across multiple visible paragraph/block messages must not reuse the same `messageId` for every emitted block; overlay/replay stores are keyed by `messageId`, so later translations would otherwise overwrite earlier thinking fragments from the same provider item. Codex uses `<itemId>::summary-block::<index>` for this identity.
 
 ### 5.2 Provider boundary
 
@@ -180,7 +180,7 @@ Provider modules still own provider-specific text extraction and message identit
 
 Current provider boundary:
 
-- Gemini and Codex now emit source-first thinking text directly into the dialog/runtime stream;
+- Gemini and Codex now emit source-first thinking text directly into the dialog/runtime stream; Codex emits reasoning summary blocks sequentially, not as token-level deltas, so Core translation sees one normal persisted thinking message per paragraph/block;
 - Claude keeps provider-local translation only for generic assistant progress/pre-tool text that is not part of the Core-owned thinking overlay path;
 - provider-local live adapters that still translate visible assistant progress prefer the dedicated `reasoningEngineId` and `reasoningLanguage` from the applied provider turn-config envelope; they fall back to the legacy `translationEngineId` / `messagesForTheUserLanguage` aliases only while Core is still forwarding both fields during the UI/Reasoning split migration;
 - `@codeai-hub/translation` still must not know about provider stream buffers, placeholder markers, UI roles, or dialog/session storage.

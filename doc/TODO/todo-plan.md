@@ -35,7 +35,7 @@
 6. [DONE] Git Commit: `feat: stream codex reasoning paragraphs` (hash: `4991c980d`)
 
 ### Stream: UI/Translation Contract Documentation
-7. [TODO] Document sequential thinking blocks and per-block translation overlay expectations — scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; commit: `docs: document codex reasoning paragraph overlays`
+7. [DONE] Document sequential thinking blocks and per-block translation overlay expectations — scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; commit: `docs: document codex reasoning paragraph overlays`
 8. [TODO] Git Commit: `docs: document codex reasoning paragraph overlays` (hash: TBD)
 
 ### Stream: Verification
