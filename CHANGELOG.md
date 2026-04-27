@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.89] - 2026-04-27
+### Changed
+- **Codex app-server diagnostics now separate process and thread logs by folder.** Process-wide transport logs are written under `~/.codeai-hub/logs/codex/app-server-process/sdk-codex-app-server-process-*.jsonl`, while per-rollout/thread mirrors are written under `~/.codeai-hub/logs/codex/threads/sdk-codex-thread-<threadId>-*.jsonl`.
+- **Process logs now point to their thread sublogs.** When a thread sublog is created, the process log records `thread_log_created` with the `threadId` and target path, making the two diagnostic layers explicit instead of looking like duplicate SDK sessions.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
 ## [1.2.88] - 2026-04-27
 ### Added
 - **Codex app-server now writes per-thread SDK sublogs.** In addition to the process-wide `sdk-codex-app-server-*.jsonl`, the Codex transport logger now writes `sdk-codex-app-server-thread-<threadId>-*.jsonl` for each rollout/thread so retests can inspect one Description run without manually filtering a long-lived app-server process log.
