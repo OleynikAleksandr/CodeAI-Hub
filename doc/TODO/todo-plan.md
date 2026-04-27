@@ -7,8 +7,10 @@
   - `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Update_NonTerminal_1.2.95.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Codex_ResponseMode_Settings_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/BugRegistry.md`
 - Only this list is the context source for the current execution cycle.
 
 ## Execution Rules
@@ -34,3 +36,16 @@
 8. [DONE] Git Commit: `docs: prepare codex progress guard release` (hash: `4e557d65b`)
 9. [DONE] Build release with normal version bump; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build codex progress guard release`; result: `./scripts/build-all.sh` completed and produced `1.2.95` provider/core/UI/launcher tarballs; `./scripts/build-release.sh --use-current-version` passed with SDK exclusions verified, dev dependencies pruned before packaging, and `codeai-hub-1.2.95.vsix` created
 10. [DONE] Git Commit: `chore: build codex progress guard release` (hash: `b914a0f3c`)
+
+## Phase 2 - Codex Spark Summary Compatibility (owner: Codex, updated: 2026-04-27)
+
+### Stream: Omit unsupported `summary` for Spark
+
+1. [IN_PROGRESS] Register `BUG-2026-04-27-01` and document the active Spark `reasoning.summary` failure; scope: `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: track codex spark summary bug`; result: bug entry opened from user-provided provider error
+2. [TODO] Git Commit: `docs: track codex spark summary bug` (hash: TBD)
+3. [TODO] Omit `turn/start.summary` for `gpt-5.3-codex-spark` in normal runtime and native capture while preserving summary behavior for other Codex models; scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`; expected commit message: `fix: omit codex summary for spark`
+4. [TODO] Git Commit: `fix: omit codex summary for spark` (hash: TBD)
+5. [TODO] Add regression tests and update SSOT docs for Spark summary omission; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover codex spark summary omission`
+6. [TODO] Git Commit: `test: cover codex spark summary omission` (hash: TBD)
+7. [TODO] Prepare and build release `1.2.96`; scope: `README.md`, `CHANGELOG.md`, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`; expected commit message: `chore: build codex spark summary release`
+8. [TODO] Git Commit: `chore: build codex spark summary release` (hash: TBD)

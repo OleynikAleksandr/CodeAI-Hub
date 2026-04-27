@@ -14,6 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
+| BUG-2026-04-27-01 | OPEN | Codex Runtime | `gpt-5.3-codex-spark` падает с `unsupported_parameter` по `reasoning.summary` при выборе модели в Settings Codex | TBD |
 | BUG-2026-04-23-01 | FIXED | PM/Diagram Modules/Launcher | закрытие detached Digital Models popup закрывает весь Project Manager; popup также наследует full-width geometry main окна | 1.2.56 |
 | BUG-2026-04-22-08 | FIXED | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | 1.2.55 |
 | BUG-2026-04-22-07 | FIXED | PM/Settings/UI | закрытие окна Settings закрывает и Project Manager; popup lifecycle ломает PM-owned settings flow | 1.2.54 |
@@ -68,6 +69,33 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
+
+---
+## BUG-2026-04-27-01 — Codex Runtime: `gpt-5.3-codex-spark` rejects `reasoning.summary`
+
+**Status:** OPEN
+
+**Symptom:**
+- Пользователь выбирает `gpt-5.3-codex-spark` в Settings -> Codex.
+- Turn не стартует как нормальный агентский ответ и завершается системной ошибкой:
+  `Provider turn failed: unsupported_parameter: Unsupported parameter: 'reasoning.summary' is not supported with the 'gpt-5.3-codex-spark' model.`
+
+**Root cause hypothesis (confirmed in code):**
+- Codex App Server send path безусловно добавляет `summary: "detailed" | "none"` в каждый `turn/start`.
+- Для остальных текущих Codex-моделей это является live reasoning-summary control.
+- `gpt-5.3-codex-spark` не поддерживает provider-native `reasoning.summary` вообще; даже отключающее значение должно быть не `summary: "none"`, а полное отсутствие параметра.
+
+**Fix:**
+- TBD
+
+**Commits:**
+- TBD
+
+**Guards:**
+- TBD
+
+**Release:**
+- TBD
 
 ---
 ## BUG-2026-04-23-01 — PM/Diagram Modules/Launcher: closing detached Digital Models popup closes the whole Project Manager
