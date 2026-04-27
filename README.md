@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.84
+## Current Release — v1.2.85
+- **Codex progress updates are prompted as visible chat messages.** The early-architecture Codex prompt now asks for ordinary user-visible assistant messages instead of ambiguous `commentary` messages.
+- **Hidden/internal channels no longer satisfy the progress-update instruction.** The prompt explicitly excludes reasoning summaries, hidden commentary, tool-call notes, metadata, and other non-user-visible channels.
+- **Runtime and agreed prompt artifact stay aligned.** The shipped Codex runtime prompt matches `Codex_My_System_Prompt.md` for this experimental wording so retest evidence can be compared cleanly.
+
+### 1.2.84 (previous)
 - **Settings General footer scroll is corrected.** The Settings shell now keeps the action footer anchored/reachable while the tab content owns vertical scrolling.
 - **Codex Settings adds two models.** `gpt-5.2` and `gpt-5.3-codex-spark` are available in the Codex provider model list.
 - **Codex model order is normalized.** The Settings list now follows `gpt-5.2` -> `gpt-5.3-codex-spark` -> `gpt-5.3-codex` -> `gpt-5.4-mini` -> `gpt-5.4` -> `gpt-5.5`, with Core settings normalization accepting the new IDs.

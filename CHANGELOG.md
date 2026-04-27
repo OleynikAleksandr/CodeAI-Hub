@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.85] - 2026-04-27
+### Changed
+- **Codex progress-update prompt wording now targets visible chat messages.** The CodeAI Hub-owned Codex early-architecture prompt asks for ordinary user-visible assistant chat messages and explicitly excludes reasoning summaries, hidden commentary, tool-call notes, metadata, and other non-user-visible channels.
+- **The agreed Codex system-prompt artifact stays in sync with runtime.** `Codex_My_System_Prompt.md` and `CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` now match exactly for the tuned Progress Updates section.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace=@codeai-hub/codex-app-server-module` and Husky pre-commit gates on the prompt change commit.
+
 ## [1.2.84] - 2026-04-27
 ### Added
 - **Codex Settings now exposes `gpt-5.2` and `gpt-5.3-codex-spark`.** The shared Codex model registry and Core settings defaults accept both model IDs with default reasoning `medium`.

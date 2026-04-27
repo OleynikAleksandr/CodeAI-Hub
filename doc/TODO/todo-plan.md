@@ -31,10 +31,10 @@
 
 ### Stream: Prompt tuning
 3. [DONE] Replace ambiguous `short commentary messages` wording with ordinary user-visible assistant chat messages — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: clarify codex progress update visibility`
-4. [TODO] Git Commit: `fix: clarify codex progress update visibility` (hash: TBD)
+4. [DONE] Git Commit: `fix: clarify codex progress update visibility` (hash: `7931317bb`)
 
 ### Stream: Release 1.2.85
-5. [TODO] Prepare release notes for `1.2.85` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex progress update release notes`
+5. [DONE] Prepare release notes for `1.2.85` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex progress update release notes`
 6. [TODO] Git Commit: `docs: prepare codex progress update release notes` (hash: TBD)
 7. [TODO] Run release build stream: `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX and release artifacts — scope: release scripts/generated artifacts; commit: `chore: build codex progress update release`
 8. [TODO] Git Commit: `chore: build codex progress update release` (hash: TBD)
