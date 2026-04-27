@@ -2,7 +2,7 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Settings_General_Footer_And_Codex_Models_1.2.84.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Settings_General_Footer_And_Codex_Models_1.2.84.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
@@ -38,4 +38,4 @@
 5. [DONE] Add Codex UI/shared model catalog entries in requested order — scope: `src/types/codex-model-registry.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/TODO/todo-plan.md`; expected commit message: `feat: add codex gpt 5.2 and spark models`
 6. [DONE] Git Commit: `feat: add codex gpt 5.2 and spark models` (hash: `b213bdc59`)
 7. [DONE] Accept new Codex model IDs in Core settings defaults — scope: `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix: accept new codex models in core settings`
-8. [TODO] Git Commit: `fix: accept new codex models in core settings` (hash: TBD)
+8. [DONE] Git Commit: `fix: accept new codex models in core settings` (hash: `d9b72919d`)

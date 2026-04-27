@@ -1,6 +1,6 @@
 # Settings General Footer And Codex Models 1.2.84
 
-**Status:** Approved for execution
+**Status:** Completed
 **Date:** 2026-04-27
 **Owner:** Oleksandr + Codex
 
@@ -64,4 +64,4 @@ The default Codex model remains `gpt-5.3-codex`.
 
 ## 5. Execution Plan
 
-The active execution checklist lives in `doc/TODO/todo-plan.md`.
+The completed execution checklist lives in `doc/TODO/Archive/todo-plan-phase1-settings-footer-and-codex-models-1.2.84.md`.

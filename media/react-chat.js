@@ -7384,12 +7384,36 @@
   // src/types/codex-model-registry.ts
   var CODEX_SETTINGS_MODELS = [
     {
+      id: "gpt-5.2",
+      displayName: "GPT-5.2",
+      description: "Optimized for professional work and long-running agents",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    },
+    {
+      id: "gpt-5.3-codex-spark",
+      displayName: "GPT-5.3-Codex-Spark",
+      description: "Ultra-fast coding model for lower-latency engineering tasks",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "mini"
+    },
+    {
       id: "gpt-5.3-codex",
       displayName: "GPT-5.3-Codex",
       description: "Most advanced agentic coding model for real-world engineering",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "flagship"
+    },
+    {
+      id: "gpt-5.4-mini",
+      displayName: "GPT-5.4 Mini",
+      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "mini"
     },
     {
       id: "gpt-5.4",
@@ -7406,14 +7430,6 @@
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
-    },
-    {
-      id: "gpt-5.4-mini",
-      displayName: "GPT-5.4 Mini",
-      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "mini"
     }
   ];
   var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
