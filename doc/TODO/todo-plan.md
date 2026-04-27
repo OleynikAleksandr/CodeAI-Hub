@@ -40,7 +40,7 @@
 
 ### Stream: Verification
 9. [DONE] Run targeted Codex provider verification — scope: `packages/Codex_AppServer_Module`; command: `npm run build --workspace=@codeai-hub/codex-app-server-module` plus `node --test packages/Codex_AppServer_Module/dist/app-server/codex-reasoning-summary-stream-buffer.test.js packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`; commit: `test: verify codex reasoning paragraph streaming`
-10. [TODO] Git Commit: `test: verify codex reasoning paragraph streaming` (hash: TBD)
+10. [DONE] Git Commit: `test: verify codex reasoning paragraph streaming` (hash: `7c2f9b816`)
 
 ### Stream: Release 1.2.87
 11. [TODO] Prepare release notes for `1.2.87` before build-all — scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex reasoning paragraph release notes`
