@@ -5,8 +5,8 @@
     "darwin-arm64": {
       "launcherVersion": "1.2.94",
       "package": "CodeAIHubLauncher-macos-arm64-1.2.94.tar.bz2",
-      "size": 241090786,
-      "sha1": "531c5005632544208491816a76a8dbcfa98b42a3"
+      "size": 241089465,
+      "sha1": "dfb55d69212f01d9a7ebecf7276aa5c98f0d3b19"
     }
   }
 }
