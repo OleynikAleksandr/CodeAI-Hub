@@ -31,7 +31,7 @@
 ### Stream: Release Documentation
 
 3. [DONE] Prepare `README.md` and `CHANGELOG.md` for future release `1.2.84` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare 1.2.84 release notes`
-4. [TODO] Git Commit: `docs: prepare 1.2.84 release notes` (hash: TBD)
+4. [DONE] Git Commit: `docs: prepare 1.2.84 release notes` (hash: `3c25309ba`)
 
 ### Stream: Release Build
 
