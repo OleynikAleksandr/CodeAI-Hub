@@ -36,6 +36,6 @@
 ### Stream: Codex Model Catalog
 
 5. [DONE] Add Codex UI/shared model catalog entries in requested order — scope: `src/types/codex-model-registry.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/TODO/todo-plan.md`; expected commit message: `feat: add codex gpt 5.2 and spark models`
-6. [TODO] Git Commit: `feat: add codex gpt 5.2 and spark models` (hash: TBD)
-7. [TODO] Accept new Codex model IDs in Core settings defaults — scope: `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix: accept new codex models in core settings`
+6. [DONE] Git Commit: `feat: add codex gpt 5.2 and spark models` (hash: `b213bdc59`)
+7. [DONE] Accept new Codex model IDs in Core settings defaults — scope: `packages/core/src/config/provider-defaults-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix: accept new codex models in core settings`
 8. [TODO] Git Commit: `fix: accept new codex models in core settings` (hash: TBD)

@@ -81,10 +81,12 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
       autoUpdate: { enabled: true },
       defaultModel: "gpt-5.3-codex",
       reasoningByModel: {
+        "gpt-5.2": "medium",
+        "gpt-5.3-codex-spark": "medium",
         "gpt-5.3-codex": "medium",
+        "gpt-5.4-mini": "medium",
         "gpt-5.4": "medium",
         "gpt-5.5": "medium",
-        "gpt-5.4-mini": "medium",
       },
       sessionContinuity: { remainingPercentThreshold: 30 },
     },
