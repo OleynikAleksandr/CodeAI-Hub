@@ -41,14 +41,6 @@ const createSession = (): ActiveSession =>
     runtimeTurnConfig: {},
     status: "idle",
     abortController: null,
-    logger: {
-      logRawEvent: () => {
-        // noop
-      },
-      logEvent: () => {
-        // noop
-      },
-    },
   }) as unknown as ActiveSession;
 
 test("formatGeminiStreamErrorMessage extracts nested error message", () => {
