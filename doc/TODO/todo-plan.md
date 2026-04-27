@@ -25,7 +25,7 @@
 
 ### Stream: Planning
 1. [DONE] Create planning-doc and active todo-plan for reasoning translation timeout — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan codex reasoning translation timeout`
-2. [TODO] Git Commit: `docs: plan codex reasoning translation timeout` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan codex reasoning translation timeout` (hash: `881a2142f`)
 
 ### Stream: Timeout Fix
 3. [TODO] Raise live reasoning translation minimum timeout to 15 seconds and document the runtime policy — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; commit: `fix: extend reasoning translation timeout`
