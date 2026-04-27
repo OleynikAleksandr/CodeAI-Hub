@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import path from "node:path";
 import { GeminiInstaller } from "../installer/gemini-installer";
-import { GeminiSessionLogger } from "../logging/session-logger";
 import { isGeminiCliCompatibilityError } from "../runtime/cli-bridge";
 import type { GeminiCliBridge } from "../runtime/cli-types";
 import { GeminiSessionManager } from "../session/gemini-session-manager";
@@ -90,7 +89,6 @@ export class GeminiProviderAdapter {
     readonly resumeSessionId?: string;
   }): Promise<string> {
     const manager = this.requireSessionManager();
-    const logger = new GeminiSessionLogger(this.options.reporter);
     const defaultModel = this.options.workspace.defaultModel;
     const thinkingLevel = defaultModel
       ? this.options.workspace.thinkingLevelByModel?.[defaultModel]
@@ -106,7 +104,6 @@ export class GeminiProviderAdapter {
           thinkingLevel,
           settingsPath: this.options.workspace.settingsPath,
           reporter: this.options.reporter,
-          logger,
         })
       : await manager.createSession({
           workspacePath: resolvedWorkspacePath,
@@ -114,7 +111,6 @@ export class GeminiProviderAdapter {
           thinkingLevel,
           settingsPath: this.options.workspace.settingsPath,
           reporter: this.options.reporter,
-          logger,
         });
     const { sessionId, session } = sessionResult;
     let currentSessionId = sessionId;
