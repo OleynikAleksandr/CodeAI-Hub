@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.88] - 2026-04-27
+### Fixed
+- **Codex reasoning translation timeout is less aggressive.** Live reasoning overlay translation now starts from a 15-second base timeout plus the existing per-character allowance, capped at 30 seconds, reducing fallback English paragraphs for Codex reasoning summaries.
+
+### Tests
+- **Targeted Core session-translation verification passed before release.** Passed `npm run build --workspace=@codeai-hub/core` plus `node --test packages/core/dist/session-translation/session-translation-facade.test.js`.
+
 ## [1.2.87] - 2026-04-27
 ### Changed
 - **Codex reasoning summaries now stream paragraph-by-paragraph.** The app-server router emits a completed reasoning summary block when the next summary part starts, instead of waiting for the whole reasoning item to complete.

@@ -36,7 +36,7 @@
 6. [DONE] Git Commit: `test: verify reasoning translation timeout` (hash: `37ea0f33c`)
 
 ### Stream: Release 1.2.88
-7. [TODO] Prepare release notes for `1.2.88` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare reasoning translation timeout release notes`
+7. [DONE] Prepare release notes for `1.2.88` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare reasoning translation timeout release notes`
 8. [TODO] Git Commit: `docs: prepare reasoning translation timeout release notes` (hash: TBD)
 9. [TODO] Run `./scripts/build-all.sh` for `1.2.88` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build reasoning translation timeout release`
 10. [TODO] Git Commit: `chore: build reasoning translation timeout release` (hash: TBD)
