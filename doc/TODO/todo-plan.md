@@ -32,7 +32,7 @@
 3. [DONE] Add Codex reasoning summary stream buffer microclass with focused tests — scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-stream-buffer.test.ts`; commit: `feat: add codex reasoning paragraph buffer`
 4. [DONE] Git Commit: `feat: add codex reasoning paragraph buffer` (hash: `a53daf9c5`)
 5. [DONE] Wire paragraph-level reasoning emission into Codex app-server router and update Codex SSOT — scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `feat: stream codex reasoning paragraphs`
-6. [TODO] Git Commit: `feat: stream codex reasoning paragraphs` (hash: TBD)
+6. [DONE] Git Commit: `feat: stream codex reasoning paragraphs` (hash: `4991c980d`)
 
 ### Stream: UI/Translation Contract Documentation
 7. [TODO] Document sequential thinking blocks and per-block translation overlay expectations — scope: `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; commit: `docs: document codex reasoning paragraph overlays`
