@@ -36,7 +36,9 @@
 ### Stream: Release 1.2.85
 5. [DONE] Prepare release notes for `1.2.85` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex progress update release notes`
 6. [DONE] Git Commit: `docs: prepare codex progress update release notes` (hash: `bd842597d`)
-7. [IN_PROGRESS] Run release build stream: `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX and release artifacts — scope: release scripts/generated artifacts; commit: `chore: build codex progress update release`
+7. [DONE] Run `./scripts/build-all.sh`, raise package/manifests to `1.2.85`, and move README release history out of README while keeping `Current Installation Path` first after product description — scope: release scripts/generated artifacts, `README.md`, `doc/TODO/todo-plan.md`; commit: `chore: build codex progress update release`
 8. [TODO] Git Commit: `chore: build codex progress update release` (hash: TBD)
-9. [TODO] Close active planning/todo scope and create session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Updates_Instruction_Tuning_1.2.85.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Instruction_Tuning_1.2.85.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-progress-updates-1.2.85.md`, `doc/Sessions/Session013.md`; commit: `docs: close codex progress update release`
-10. [TODO] Git Commit: `docs: close codex progress update release` (hash: TBD)
+9. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex progress update vsix`
+10. [TODO] Git Commit: `chore: package codex progress update vsix` (hash: TBD)
+11. [TODO] Close active planning/todo scope and create session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Updates_Instruction_Tuning_1.2.85.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Instruction_Tuning_1.2.85.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-progress-updates-1.2.85.md`, `doc/Sessions/Session013.md`; commit: `docs: close codex progress update release`
+12. [TODO] Git Commit: `docs: close codex progress update release` (hash: TBD)
