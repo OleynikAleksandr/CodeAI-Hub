@@ -1,4 +1,3 @@
-import { SDKSessionLoggerFacade } from "../logging/sdk-session-logger";
 import { SDKSessionLifecycle } from "./session-lifecycle";
 import { SDKSessionRegistry } from "./session-registry";
 import type {
@@ -34,7 +33,7 @@ export class SDKSessionManager {
       createdAt: Date.now(),
       eventEmitter,
       messageController: controller,
-      logger: logger ?? new SDKSessionLoggerFacade(),
+      logger,
       runtimeTurnConfig: {
         thinkingDisplaySyncEnabled: true,
       },
@@ -60,7 +59,7 @@ export class SDKSessionManager {
       createdAt: Date.now(),
       eventEmitter,
       messageController: controller,
-      logger: logger ?? new SDKSessionLoggerFacade(),
+      logger,
       resumeSessionId: sessionId,
       runtimeTurnConfig: {
         thinkingDisplaySyncEnabled: true,
