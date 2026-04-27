@@ -50,4 +50,4 @@
 15. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex reasoning paragraph vsix`
 16. [DONE] Git Commit: `chore: package codex reasoning paragraph vsix` (hash: `8442629d8`)
 17. [DONE] Close active planning/todo scope and create completion session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Paragraph_Streaming_1.2.87.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Paragraph_Streaming_1.2.87.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-reasoning-paragraph-1.2.87.md`, `doc/Sessions/Session016.md`; commit: `docs: close codex reasoning paragraph release`
-18. [TODO] Git Commit: `docs: close codex reasoning paragraph release` (hash: TBD)
+18. [DONE] Git Commit: `docs: close codex reasoning paragraph release` (hash: `0257dabff`)
