@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Translation_Timeout_1.2.88.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Translation_Timeout_1.2.88.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`
@@ -24,7 +24,7 @@
 ## Phase 1 — Codex reasoning translation timeout and release (owner: Codex, updated: 2026-04-27)
 
 ### Stream: Planning
-1. [DONE] Create planning-doc and active todo-plan for reasoning translation timeout — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan codex reasoning translation timeout`
+1. [DONE] Create planning-doc and active todo-plan for reasoning translation timeout — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/TODO/Archive/todo-plan-phase1-codex-reasoning-translation-timeout-1.2.88.md`; commit: `docs: plan codex reasoning translation timeout`
 2. [DONE] Git Commit: `docs: plan codex reasoning translation timeout` (hash: `881a2142f`)
 
 ### Stream: Timeout Fix
@@ -42,5 +42,5 @@
 10. [DONE] Git Commit: `chore: build reasoning translation timeout release` (hash: `bfbc6d632`)
 11. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package reasoning translation timeout vsix`
 12. [DONE] Git Commit: `chore: package reasoning translation timeout vsix` (hash: `01a4c3f4b`)
-13. [TODO] Close active planning/todo scope and create completion session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-reasoning-translation-timeout-1.2.88.md`, `doc/Sessions/Session017.md`; commit: `docs: close reasoning translation timeout release`
+13. [DONE] Close active planning/todo scope and create completion session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Reasoning_Translation_Timeout_1.2.88.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/Archive/todo-plan-phase1-codex-reasoning-translation-timeout-1.2.88.md`, `doc/Sessions/Session017.md`; commit: `docs: close reasoning translation timeout release`
 14. [TODO] Git Commit: `docs: close reasoning translation timeout release` (hash: TBD)

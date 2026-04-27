@@ -1,6 +1,6 @@
 # Codex Reasoning Translation Timeout 1.2.88
 
-**Status:** Approved for implementation
+**Status:** Completed / Archived
 **Date:** 2026-04-27
 **Owner:** Codex
 
@@ -56,3 +56,12 @@ Release/docs scope:
 - Targeted Core/session-translation tests pass.
 - `./scripts/build-all.sh` builds `1.2.88` artifacts.
 - `./scripts/build-release.sh --use-current-version` creates `codeai-hub-1.2.88.vsix`.
+
+## Release Result
+
+Release `1.2.88` is built and packaged:
+
+- `./scripts/build-all.sh` completed for provider/core/UI/launcher artifacts.
+- `./scripts/build-release.sh --use-current-version` completed and created `codeai-hub-1.2.88.vsix`.
+- SDK exclusion verification, local artifact validation, production dependency pruning, VSIX runtime package surface verification and package size verification passed.
+- Markdown link check reported advisory broken links in archived provider instruction analysis examples; this did not block packaging.
