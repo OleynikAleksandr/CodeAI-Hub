@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.98] - 2026-04-27
+### Changed
+- **Main repository release rebuilt after retest merge.** This release packages the merged `main` line after `1.2.97`, combining the main-line Codex reasoning paragraph/translation timeout work with the retest-line Spark compatibility, progress-update guard, provider SDK/raw log removal, and provider-home summary config materialization.
+
+### Tests
+- **Release verification build planned from a clean main tree.** The release flow rebuilds provider modules, Core, UI bundles, CEF launcher, runtime tarballs, and the final VSIX from the merged repository state.
+
 ## [1.2.97] - 2026-04-27
 ### Changed
 - **Merged the main-line Codex reasoning paragraph stream work into the retest release line.** Codex reasoning summaries keep stable per-block ids and can be emitted paragraph-by-paragraph for progressive translation overlays.
