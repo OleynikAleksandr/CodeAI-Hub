@@ -26,11 +26,11 @@
 ### Stream: Planning Baseline
 
 1. [DONE] Create planning-doc and active todo-plan — scope: `doc/SolidWorks-WorkFlow/Plans/Settings_General_Footer_And_Codex_Models_1.2.84.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan settings footer and codex models`
-2. [TODO] Git Commit: `docs: plan settings footer and codex models` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan settings footer and codex models` (hash: `03294c7a7`)
 
 ### Stream: Settings General Footer
 
-3. [TODO] Fix Settings shell footer scroll boundary — scope: `src/client/ui/src/components/settings-view.tsx`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: keep settings footer anchored during scroll`
+3. [DONE] Fix Settings shell footer scroll boundary — scope: `src/client/ui/src/components/settings-view.tsx`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: keep settings footer anchored during scroll`
 4. [TODO] Git Commit: `fix: keep settings footer anchored during scroll` (hash: TBD)
 
 ### Stream: Codex Model Catalog

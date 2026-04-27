@@ -38,6 +38,7 @@ const containerStyles: React.CSSProperties = {
   height: "100%",
   display: "flex",
   flexDirection: "column",
+  overflow: "hidden",
   position: "relative",
   background: settingsColorTokens.surface,
   color: settingsColorTokens.textSecondary,
@@ -67,7 +68,9 @@ const activeTabStyles: React.CSSProperties = {
 
 const contentStyles: React.CSSProperties = {
   flex: 1,
+  minHeight: 0,
   overflowY: "auto",
+  overscrollBehavior: "contain",
   padding: settingsSpacingTokens.pagePadding,
 };
 
