@@ -29,10 +29,10 @@
 
 ### Stream: Timeout Fix
 3. [DONE] Raise live reasoning translation minimum timeout to 15 seconds and document the runtime policy — scope: `packages/core/src/session-translation/session-translation-facade.ts`, `packages/core/src/session-translation/session-translation-facade.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; commit: `fix: extend reasoning translation timeout`
-4. [TODO] Git Commit: `fix: extend reasoning translation timeout` (hash: TBD)
+4. [DONE] Git Commit: `fix: extend reasoning translation timeout` (hash: `b40c3fae4`)
 
 ### Stream: Verification
-5. [TODO] Run targeted Core/session translation verification — scope: `packages/core`; command: `npm run build --workspace=@codeai-hub/core` plus direct session translation tests; commit: `test: verify reasoning translation timeout`
+5. [DONE] Run targeted Core/session translation verification — scope: `packages/core`; command: `npm run build --workspace=@codeai-hub/core` plus `node --test packages/core/dist/session-translation/session-translation-facade.test.js`; commit: `test: verify reasoning translation timeout`
 6. [TODO] Git Commit: `test: verify reasoning translation timeout` (hash: TBD)
 
 ### Stream: Release 1.2.88
