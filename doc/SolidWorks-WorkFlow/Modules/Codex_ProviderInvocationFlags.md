@@ -1,7 +1,7 @@
 # Codex Provider Invocation Flags - Module SSOT
 
 **Status:** implemented SSOT  
-**Last verified:** 2026-04-27, release `1.2.95`  
+**Last verified:** 2026-04-27, release `1.2.97`  
 **Owner module:** `packages/Codex_AppServer_Module/`
 
 This document records the actual CodeAI Hub Codex invocation surface that shapes model behavior for all current Codex models. It is a runtime contract, not a proposal.
@@ -9,11 +9,12 @@ This document records the actual CodeAI Hub Codex invocation surface that shapes
 ## Source Files
 
 - `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts` - `codex app-server` startup args, provider-home env, JSON-RPC initialize handshake.
+- `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-config.ts` - runtime provider-home `config.toml` summary materialization before App Server startup.
 - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` - normal `thread/start`, `thread/resume`, `turn/start`, `turn/interrupt`, reasoning-summary policy.
 - `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` - CodeAI Hub-owned early-architecture `baseInstructions` and thread config.
 - `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts` - isolated native request capture path and parity with normal runtime payloads.
 - `packages/core/src/config/provider-turn-config-resolver.ts` and `packages/core/src/config/provider-defaults-resolver.ts` - effective model/reasoning settings resolution.
-- `src/extension-module/settings/codex-provider-config-sync.ts` - provider-home `config.toml` compatibility sync.
+- `src/extension-module/settings/codex-provider-config-sync.ts` - extension-side provider-home `config.toml` compatibility sync after settings saves.
 
 ## Process Startup
 
@@ -39,6 +40,7 @@ Runtime facts:
 - `CODEX_HOME` is set to `~/.codeai-hub/providers/codex/home` by default.
 - If `process.env.CODEX_HOME` is already set before provider startup, that value is used as the provider home.
 - Missing `auth.json` and `config.toml` are copy-migrated from legacy `~/.codex/` into provider home.
+- Before spawning App Server, CodeAI Hub normalizes provider-home `config.toml`: removes legacy `default_reasoning_summary` and writes `model_reasoning_summary = "auto" | "none"` from shared Codex reasoning settings.
 - `PATH` is inherited and augmented with common user-level install locations:
   - POSIX: `~/.npm-global/bin`, `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`
   - Windows: `%APPDATA%\npm`
@@ -152,7 +154,7 @@ Behavioral meaning:
 - `summary` is live-resolved from shared settings for models that support provider-native reasoning summaries:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
-- `gpt-5.3-codex-spark` does not support provider-native `reasoning.summary`; for this model the `summary` field is omitted entirely, not sent as `none`.
+- `gpt-5.3-codex-spark` rejects explicit turn-level `reasoning.summary`; for this model the `summary` field is omitted entirely, not sent as `none`. Its readable reasoning summaries are controlled by provider-home `model_reasoning_summary = "auto" | "none"` instead.
 - `outputSchema` is passed through only when the workflow/core turn supplied one.
 - `approvalPolicy`, `sandbox`, `baseInstructions`, and `config.project_doc_max_bytes` are not turn-level fields; they belong to thread startup/resume.
 
@@ -206,12 +208,17 @@ That file is intentionally kept as raw prompt text so it can be compared byte-fo
 
 ## Provider-Home `config.toml`
 
-Settings sync writes compatibility state into provider-home `config.toml`:
+Provider-home `config.toml` carries restart-safe compatibility state:
 
 - `model = "<selected Codex default model>"`
 - `model_reasoning_summary = "auto" | "none"`
 
-This persisted provider-home state is not the only live runtime source of truth. Normal `turn/start.summary` is still sent explicitly from the shared settings snapshot as `detailed` or `none`.
+Two paths keep this state current:
+
+- Extension-side settings save sync writes `model` and `model_reasoning_summary`.
+- Runtime App Server startup materializes `model_reasoning_summary` again from shared settings immediately before `codex app-server` starts.
+
+For non-Spark models, this persisted provider-home state is not the only live runtime source of truth: normal `turn/start.summary` is still sent explicitly from the shared settings snapshot as `detailed` or `none`. For `gpt-5.3-codex-spark`, the explicit turn field is omitted and provider-home `model_reasoning_summary` is the readable-summary control.
 
 ## Translation `codex exec` Runtime
 
