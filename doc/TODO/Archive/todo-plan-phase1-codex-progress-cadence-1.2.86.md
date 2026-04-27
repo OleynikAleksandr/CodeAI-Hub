@@ -1,7 +1,7 @@
 # План разработки (Development TODO Plan)
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
@@ -36,6 +36,6 @@
 7. [DONE] Run `./scripts/build-all.sh` for `1.2.86` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex progress cadence release`
 8. [DONE] Git Commit: `chore: build codex progress cadence release` (hash: `a68019bb1`)
 9. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex progress cadence vsix`
-10. [TODO] Git Commit: `chore: package codex progress cadence vsix` (hash: TBD)
-11. [TODO] Close active planning/todo scope and create session report — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`, `doc/TODO/Archive/todo-plan-phase1-codex-progress-cadence-1.2.86.md`, `doc/Sessions/Session014.md`; commit: `docs: close codex progress cadence release`
-12. [TODO] Git Commit: `docs: close codex progress cadence release` (hash: TBD)
+10. [DONE] Git Commit: `chore: package codex progress cadence vsix` (hash: `8892e5ffa`)
+11. [DONE] Close active planning/todo scope and create session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/Archive/todo-plan-phase1-codex-progress-cadence-1.2.86.md`, `doc/Sessions/Session014.md`; commit: `docs: close codex progress cadence release`
+12. [DONE] Git Commit: `docs: close codex progress cadence release` (hash: recorded in `doc/Sessions/Session014.md`)
