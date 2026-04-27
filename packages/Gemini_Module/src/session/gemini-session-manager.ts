@@ -79,7 +79,6 @@ export class GeminiSessionManager {
     const { providerSessionId, requestedSessionId, session } =
       await this.sessionBootstrapper.bootstrap(options);
 
-    session.logger?.start(requestedSessionId);
     this.sessionStore.registerSession(requestedSessionId, session);
 
     let resolvedSessionId: string = requestedSessionId;
@@ -89,8 +88,6 @@ export class GeminiSessionManager {
         providerSessionId,
         session
       );
-    } else {
-      session.logger?.renameSession?.(requestedSessionId, requestedSessionId);
     }
     queueMicrotask(() => {
       session.eventEmitter.emit("realSessionId", resolvedSessionId);
@@ -157,12 +154,6 @@ export class GeminiSessionManager {
         promptId,
       },
     });
-    session.logger?.logUserInput({
-      promptId,
-      content: trimmed,
-      timestamp,
-    });
-
     this.sessionLifecycle.emitEvents(session, [
       {
         type: "user_input",
@@ -202,13 +193,6 @@ export class GeminiSessionManager {
       const finalCitations = [...result.citations];
 
       if (result.assistantSegmentsEmitted === 0 && finalText.length > 0) {
-        session.logger?.logEvent({
-          type: "assistant_response",
-          promptId,
-          content: finalText,
-          citations: finalCitations,
-        });
-
         this.sessionLifecycle.emitEvents(session, [
           {
             type: "assistant",
@@ -238,11 +222,6 @@ export class GeminiSessionManager {
           timestamp: new Date().toISOString(),
         });
       }
-      session.logger?.logError({
-        error: failure,
-        promptId,
-        stage: "send",
-      });
       throw failure;
     } finally {
       clearWatchdog();

@@ -24,14 +24,12 @@ export class GeminiSessionStore {
   ): string {
     if (nextId === previousId) {
       session.sessionId = nextId;
-      session.logger?.renameSession?.(previousId, nextId);
       return nextId;
     }
     this.sessionAliases.set(previousId, nextId);
     this.sessions.delete(previousId);
     session.sessionId = nextId;
     this.sessions.set(nextId, session);
-    session.logger?.renameSession?.(previousId, nextId);
     return nextId;
   }
 

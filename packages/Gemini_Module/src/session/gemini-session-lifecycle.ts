@@ -112,7 +112,6 @@ export class GeminiSessionLifecycle {
     // on Gemini CLI --resume <providerSessionId> reading that history back.
     // See SystemArchitecture.md Invariant 24 (Gemini branch).
 
-    session.logger?.end();
     session.status = "closed";
     sessionStore.removeSession(resolvedSessionId);
     this.emitEvents(session, [
