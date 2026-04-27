@@ -34,6 +34,6 @@
 7. [DONE] Update SystemArchitecture and bug record for Spark config-level summary behavior; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/BugRegistry.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: close spark summary bug record`; result: SystemArchitecture now describes non-Spark turn summary plus Spark provider-home summary split, and `BUG-2026-04-27-02` is closed for release `1.2.97`
 8. [DONE] Git Commit: `docs: close spark summary bug record` (hash: `dc1806272`)
 9. [DONE] Prepare release docs for `1.2.97`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare codex spark summary config release`; result: README current release and CHANGELOG now target `1.2.97` before version bump automation
-10. [TODO] Git Commit: `docs: prepare codex spark summary config release` (hash: TBD)
-11. [TODO] Build release `1.2.97`; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit message: `chore: build codex spark summary config release`
+10. [DONE] Git Commit: `docs: prepare codex spark summary config release` (hash: `9747cf8e5`)
+11. [IN_PROGRESS] Build release `1.2.97`; scope: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit message: `chore: build codex spark summary config release`; result so far: `./scripts/build-all.sh` completed and produced provider/core/UI/CEF tarballs for `1.2.97`
 12. [TODO] Git Commit: `chore: build codex spark summary config release` (hash: TBD)
