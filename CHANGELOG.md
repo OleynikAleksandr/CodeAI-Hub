@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.90] - 2026-04-27
+### Changed
+- **Rollback retest: Codex diagnostic log layout returns to the `1.2.88` shape.** The per-thread SDK sublog remains enabled, but process and thread JSONL files are again written side-by-side under `~/.codeai-hub/logs/codex/` with the `sdk-codex-app-server-*.jsonl` and `sdk-codex-app-server-thread-<threadId>-*.jsonl` names.
+- **The `1.2.89` folder split is intentionally removed.** This release is meant to test whether ordinary Codex progress messages return when only the log-layout cleanup is rolled back.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the rollback commit.
+
 ## [1.2.89] - 2026-04-27
 ### Changed
 - **Codex app-server diagnostics now separate process and thread logs by folder.** Process-wide transport logs are written under `~/.codeai-hub/logs/codex/app-server-process/sdk-codex-app-server-process-*.jsonl`, while per-rollout/thread mirrors are written under `~/.codeai-hub/logs/codex/threads/sdk-codex-thread-<threadId>-*.jsonl`.
