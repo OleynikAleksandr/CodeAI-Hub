@@ -296,3 +296,44 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
     summary: "none",
   });
 });
+
+test("CodexNativeRequestCaptureService omits reasoning summary for Codex Spark", async () => {
+  const processes: FakeCodexProcess[] = [];
+  const service = new CodexNativeRequestCaptureService({
+    processFactory: () => {
+      const process = new FakeCodexProcess();
+      processes.push(process);
+      return process;
+    },
+    resolveReasoningSummaryMode: () => "detailed",
+    workspace: {
+      defaultApprovalMode: "on-request",
+      defaultModel: "gpt-5.3-codex-spark",
+      defaultReasoningEffort: "medium",
+      defaultSandboxMode: "workspace-write",
+      workspacePath: "/workspace/default",
+    },
+  });
+
+  await service.captureNativeRequest({
+    appliedTurnConfig: {
+      modelId: "gpt-5.3-codex-spark",
+      providerId: "codexCli",
+      reasoningEffort: "medium",
+      source: "settings_snapshot",
+    },
+    captureId: "capture-codex-spark-test",
+    certificateEnv: {},
+    certificatePath: "/tmp/fallback-ca.pem",
+    probePrompt: "diagnostic probe",
+    proxyUrl: "http://127.0.0.1:4567",
+    workspacePath: "/workspace/capture",
+  });
+
+  const requests = processes[0]?.requests;
+  assert.equal(requests?.[1]?.method, "turn/start");
+  const params = requests?.[1]?.params as Record<string, unknown>;
+  assert.equal(params.model, "gpt-5.3-codex-spark");
+  assert.equal(params.effort, "medium");
+  assert.equal("summary" in params, false);
+});
