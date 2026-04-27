@@ -14,7 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
-| BUG-2026-04-27-02 | OPEN | Codex Runtime/UI | `gpt-5.3-codex-spark` runs after 1.2.96 but shows no reasoning bubbles because readable summaries fall back to model default `none` | TBD |
+| BUG-2026-04-27-02 | FIXED | Codex Runtime/UI | `gpt-5.3-codex-spark` runs after 1.2.96 but shows no reasoning bubbles because readable summaries fall back to model default `none` | 1.2.97 |
 | BUG-2026-04-27-01 | FIXED | Codex Runtime/Translation | `gpt-5.3-codex-spark` падает с `unsupported_parameter` по `reasoning.summary` при выборе модели в Settings Codex; translation runtime also had explicit summary config risk | 1.2.96 |
 | BUG-2026-04-23-01 | FIXED | PM/Diagram Modules/Launcher | закрытие detached Digital Models popup закрывает весь Project Manager; popup также наследует full-width geometry main окна | 1.2.56 |
 | BUG-2026-04-22-08 | FIXED | PM/Settings/Localization/CEF | выбор `UI Translation Engine` в standalone PM на macOS 26.x роняет launcher с `NSApplication unrecognized selector` | 1.2.55 |
@@ -74,7 +74,7 @@
 ---
 ## BUG-2026-04-27-02 — Codex Runtime/UI: Spark runs but visible reasoning is absent
 
-**Status:** OPEN
+**Status:** FIXED
 
 **Symptom:**
 - After release `1.2.96`, selecting `gpt-5.3-codex-spark` in Settings Codex no longer fails with `unsupported_parameter`.
@@ -87,25 +87,29 @@
 - The same turn has `reasoning_output_tokens` in token usage, so the model did perform hidden reasoning.
 - `~/.codeai-hub/providers/codex/home/models_cache.json` says Spark has `supports_reasoning_summaries: true` and `default_reasoning_summary: "none"`.
 
-**Root cause hypothesis:**
+**Root cause:**
 - Release `1.2.96` correctly removed the unsupported per-turn `turn/start.summary` field for Spark.
 - Without another config-level override, Spark falls back to its model default readable summary mode: `none`.
 - Therefore Spark reasoning tokens exist, but the App Server has no readable summary text to emit into CodeAI Hub's thinking-bubble path.
 
-**Planned fix:**
+**Fix:**
 - Keep Spark `turn/start.summary` omitted to avoid the provider 400 error.
 - Before App Server startup, materialize provider-home `model_reasoning_summary = "auto"` for Spark-compatible visible reasoning when the shared Codex reasoning toggle is enabled.
 - Write `model_reasoning_summary = "none"` when the shared Codex reasoning toggle is disabled.
 - Preserve the existing explicit `turn/start.summary = "detailed" | "none"` behavior for non-Spark Codex models.
 
 **Commits:**
-- TBD
+- `647c441df docs: plan codex spark summary config fix`
+- `31d1159b7 fix: enable spark reasoning summary via provider config`
+- `b20adf514 docs: document spark summary config path`
 
 **Guards:**
-- TBD
+- `npm run build --workspace @codeai-hub/codex-app-server-module`
+- `node --test packages/Codex_AppServer_Module/dist/app-server/process/codex-provider-home-config.test.js packages/Codex_AppServer_Module/dist/app-server/codex-app-server-facade.test.js packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`
+- Regression coverage confirms Spark omits `turn/start.summary`, provider-home `config.toml` materializes `model_reasoning_summary = "auto" | "none"`, and non-Spark `gpt-5.5` still receives `summary: "detailed"`.
 
 **Release:**
-- TBD
+- `1.2.97`
 
 ---
 ## BUG-2026-04-27-01 — Codex Runtime/Translation: `gpt-5.3-codex-spark` rejects `reasoning.summary`
