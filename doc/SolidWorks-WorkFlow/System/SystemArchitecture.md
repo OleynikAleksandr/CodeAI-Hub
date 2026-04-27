@@ -214,7 +214,7 @@
   - `packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts` = Core-facing `ProviderAdapter` bridge over the app-server façade and usage-limit refresh path
   - app-server `thread/start` + `thread/resume` return a real `threadId`, so Codex immediate binding is provider-native and no legacy temp-session seam is required
   - `turn/start` keeps Core-owned effective model identity, reasoning effort, and optional `outputSchema` passthrough on the outbound turn envelope
-  - active Codex diagnostics now split into three layers: CodeAI Hub app-server transport JSONL in `~/.codeai-hub/logs/codex/`, session-local normalized `*-description.jsonl`, and provider-native provider-home artifacts (`CODEX_HOME` history / rollout JSONL)
+  - active Codex diagnostics now split into four layers: CodeAI Hub process-wide app-server transport JSONL in `~/.codeai-hub/logs/codex/sdk-codex-app-server-*.jsonl`, CodeAI Hub per-thread app-server transport sublogs in `sdk-codex-app-server-thread-<threadId>-*.jsonl`, session-local normalized `*-description.jsonl`, and provider-native provider-home artifacts (`CODEX_HOME` history / rollout JSONL)
 - Gemini messaging cluster: `packages/Gemini_Module/src/messaging/`
   - `message-processor.ts` = thin façade / turn event normalization entrypoint
   - `gemini-stream-event-router.ts` = event dispatch and stream-error handling
