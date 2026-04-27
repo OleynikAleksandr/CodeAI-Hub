@@ -39,7 +39,7 @@
 8. [DONE] Git Commit: `docs: document codex reasoning paragraph overlays` (hash: `8155c37b2`)
 
 ### Stream: Verification
-9. [TODO] Run targeted Codex provider verification — scope: `packages/Codex_AppServer_Module`; command: `npm run build --workspace=@codeai-hub/codex-app-server-module`; commit: `test: verify codex reasoning paragraph streaming`
+9. [DONE] Run targeted Codex provider verification — scope: `packages/Codex_AppServer_Module`; command: `npm run build --workspace=@codeai-hub/codex-app-server-module` plus `node --test packages/Codex_AppServer_Module/dist/app-server/codex-reasoning-summary-stream-buffer.test.js packages/Codex_AppServer_Module/dist/app-server/codex-app-server-event-router.test.js`; commit: `test: verify codex reasoning paragraph streaming`
 10. [TODO] Git Commit: `test: verify codex reasoning paragraph streaming` (hash: TBD)
 
 ### Stream: Release 1.2.87
