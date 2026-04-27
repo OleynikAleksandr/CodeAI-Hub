@@ -7,7 +7,12 @@ CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) 
 - Session input lock SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
 - Bug registry: `doc/BugRegistry.md`
 
-## Current Release — v1.2.83
+## Current Release — v1.2.84
+- **Settings General footer scroll is corrected.** The Settings shell now keeps the action footer anchored/reachable while the tab content owns vertical scrolling.
+- **Codex Settings adds two models.** `gpt-5.2` and `gpt-5.3-codex-spark` are available in the Codex provider model list.
+- **Codex model order is normalized.** The Settings list now follows `gpt-5.2` -> `gpt-5.3-codex-spark` -> `gpt-5.3-codex` -> `gpt-5.4-mini` -> `gpt-5.4` -> `gpt-5.5`, with Core settings normalization accepting the new IDs.
+
+### 1.2.83 (previous)
 - **Main merge verification release.** This release verifies that the completed `codex/claude-instruction-stack-tests` work is correctly merged into `main` and that the merged codebase is release-packageable.
 - **No new provider behavior changes.** The runtime surface remains the `1.2.82` baseline: Codex documentation tool profile, CodeAI Hub-owned Codex/Claude instruction profiles, and provider-native capture diagnostics are carried forward unchanged.
 - **Release automation is the verification target.** `build-all.sh` and `build-release.sh --use-current-version` must both pass on `main`, producing the `1.2.83` provider/core/UI/launcher tarballs and VSIX package.

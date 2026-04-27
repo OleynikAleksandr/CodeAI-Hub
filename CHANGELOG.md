@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.84] - 2026-04-27
+### Added
+- **Codex Settings now exposes `gpt-5.2` and `gpt-5.3-codex-spark`.** The shared Codex model registry and Core settings defaults accept both model IDs with default reasoning `medium`.
+- **Codex model order is numeric/provider-family ascending.** Settings now lists `gpt-5.2`, `gpt-5.3-codex-spark`, `gpt-5.3-codex`, `gpt-5.4-mini`, `gpt-5.4`, then `gpt-5.5`.
+
+### Fixed
+- **Settings General footer no longer scrolls past the action bar.** The Settings shell clips outer overflow, the tab body owns vertical scrolling, and the footer remains anchored/reachable.
+
+### Tests
+- **Targeted checks covered the changed UI/Core surfaces.** Passed `npm run build:webview`, `npm run build:core`, and Husky pre-commit gates on all implementation commits.
+
 ## [1.2.83] - 2026-04-25
 ### Changed
 - **Main merge verification release.** Confirms that the completed `codex/claude-instruction-stack-tests` work is present on `main` and that the merged branch can pass the full release packaging flow.

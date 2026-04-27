@@ -26,11 +26,11 @@
 ### Stream: Release Planning
 
 1. [DONE] Create release planning-doc and active todo-plan — scope: `doc/SolidWorks-WorkFlow/Plans/Settings_Footer_Codex_Models_Release_1.2.84.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan settings footer codex models release`
-2. [TODO] Git Commit: `docs: plan settings footer codex models release` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan settings footer codex models release` (hash: `020e97898`)
 
 ### Stream: Release Documentation
 
-3. [TODO] Prepare `README.md` and `CHANGELOG.md` for future release `1.2.84` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare 1.2.84 release notes`
+3. [DONE] Prepare `README.md` and `CHANGELOG.md` for future release `1.2.84` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare 1.2.84 release notes`
 4. [TODO] Git Commit: `docs: prepare 1.2.84 release notes` (hash: TBD)
 
 ### Stream: Release Build
