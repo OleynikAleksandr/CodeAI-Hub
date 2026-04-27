@@ -18,6 +18,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Provider slot — `~/.codeai-hub/providers/codex`; release artifact name — `codex-module-<version>.tar.bz2` (производится `packages/Codex_AppServer_Module/`, имя сохранено как стабильный installer contract).
 - Core работает через `ProviderAdapter` / `CodexModuleOptions` seam и provider-loader path (`CODEX_MODULE_PATH`, bundled provider slot `providers/codex/latest`).
 - `modelId` в Core/UI contract — полная effective model identity; applied turn config приходит из shared settings/Core resolver, а не из локального source-of-truth внутри провайдера.
+- User-facing Codex model order in Settings is numeric/provider-family ascending: `gpt-5.2`, `gpt-5.3-codex-spark`, `gpt-5.3-codex`, `gpt-5.4-mini`, `gpt-5.4`, `gpt-5.5`. The default remains `gpt-5.3-codex`.
 
 ## Provider-home (канон)
 - `CODEX_HOME=~/.codeai-hub/providers/codex/home`
