@@ -9,6 +9,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Internal transport façade: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
 - Internal notification normalization: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`
 - Long-lived process bridge: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`
+- Current App Server startup/thread/turn invocation flags are canonical in `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`.
 - Shared usage-limits façade for Codex lives in Core: `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`
 - `packages/Codex_AppServer_Module/` — единственная активная реализация Codex provider line. Legacy SDK-based пакет `packages/Codex_Module/` удалён в релизе `1.2.38`; исторический контекст живёт только в `doc/TODO/Archive/` и `doc/SolidWorks-WorkFlow/Plans/Archive/`.
 
@@ -27,6 +28,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 
 ## Transport cluster
 - Runtime transport — это long-lived `codex app-server`, поднятый через `child_process.spawn(...)` с CodeAI Hub-owned documentation workflow startup profile.
+- Exact process args, JSON-RPC `initialize`, `thread/start`, `thread/resume`, `turn/start`, model/reasoning resolution, provider-home env, and native-capture parity live in `Modules/Codex_ProviderInvocationFlags.md`. `Codex.md` keeps the architectural summary; the flags document is the update target when invocation parameters change.
 - CodeAI Hub applies the same Codex startup profile to normal runtime and diagnostic capture. Current profile:
   - disables feature flags `multi_agent`, `browser_use`, `in_app_browser`, `computer_use`, `image_generation`, `plugins`, `apps`, and `tool_search`;
   - disables configured provider-home MCP servers with `-c mcp_servers.codex.enabled=false` and `-c mcp_servers.playwright.enabled=false`.
@@ -81,6 +83,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Release packaging собирает `packages/Codex_AppServer_Module` в artifact `codex-module-<version>.tar.bz2`; artifact name — стабильный installer contract и не меняется.
 
 ## Связанные контракты
+- Current invocation flags: `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`
 - Effective model identity/settings: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
 - Workspace/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
