@@ -6,6 +6,10 @@ import {
   type RateLimitSnapshot,
 } from "./codex-app-server-usage-limits";
 import { CodexReasoningLiveBuffer } from "./codex-reasoning-live-buffer";
+import {
+  type CodexReasoningSummaryBlock,
+  CodexReasoningSummaryStreamBuffer,
+} from "./codex-reasoning-summary-stream-buffer";
 
 export interface AppServerSessionState {
   activeTurnId: string | null;
@@ -39,7 +43,7 @@ const asStringArray = (value: unknown): string[] =>
   Array.isArray(value)
     ? value.filter((entry): entry is string => typeof entry === "string")
     : [];
-const collectNonEmptyBlocks = (blocks: string[]): string[] =>
+const collectNonEmptyBlocks = (blocks: readonly string[]): string[] =>
   blocks.filter((block) => block.trim().length > 0);
 
 const nowIso = (): string => new Date().toISOString();
@@ -49,6 +53,8 @@ const buildReasoningItemKey = (threadId: string, itemId: string): string =>
 export class CodexAppServerEventRouter {
   private lastUsageLimits: CodexUsageLimits = null;
   private readonly reasoningLiveBuffer = new CodexReasoningLiveBuffer();
+  private readonly reasoningSummaryStreamBuffer =
+    new CodexReasoningSummaryStreamBuffer();
   private readonly deps: CodexAppServerEventRouterDependencies;
 
   constructor(deps: CodexAppServerEventRouterDependencies) {
@@ -235,12 +241,12 @@ export class CodexAppServerEventRouter {
     if (!(threadId && itemId) || summaryIndex === null) {
       return;
     }
-    const state = this.deps.ensureSessionState(threadId);
-    const summaryParts = state.reasoningSummariesByItemId.get(itemId) ?? [];
-    while (summaryParts.length <= summaryIndex) {
-      summaryParts.push("");
-    }
-    state.reasoningSummariesByItemId.set(itemId, summaryParts);
+    const blocks = this.reasoningSummaryStreamBuffer.startSummaryPart({
+      itemId,
+      itemKey: buildReasoningItemKey(threadId, itemId),
+      summaryIndex,
+    });
+    this.emitReasoningSummaryBlocks(threadId, blocks);
   }
 
   private handleReasoningSummaryTextDelta(params: unknown): void {
@@ -254,13 +260,12 @@ export class CodexAppServerEventRouter {
     if (!(threadId && itemId && delta !== null) || summaryIndex === null) {
       return;
     }
-    const state = this.deps.ensureSessionState(threadId);
-    const summaryParts = state.reasoningSummariesByItemId.get(itemId) ?? [];
-    while (summaryParts.length <= summaryIndex) {
-      summaryParts.push("");
-    }
-    summaryParts[summaryIndex] = `${summaryParts[summaryIndex] ?? ""}${delta}`;
-    state.reasoningSummariesByItemId.set(itemId, summaryParts);
+    this.reasoningSummaryStreamBuffer.appendSummaryDelta({
+      delta,
+      itemId,
+      itemKey: buildReasoningItemKey(threadId, itemId),
+      summaryIndex,
+    });
   }
 
   private handleReasoningTextDelta(params: unknown): void {
@@ -328,45 +333,64 @@ export class CodexAppServerEventRouter {
     item: Record<string, unknown>
   ): void {
     const itemId = asString(item.id);
-    const state = this.deps.ensureSessionState(threadId);
-    const summaryFromDeltas =
-      itemId === null
-        ? []
-        : collectNonEmptyBlocks(
-            state.reasoningSummariesByItemId.get(itemId) ?? []
-          );
-    if (itemId) {
-      state.reasoningSummariesByItemId.delete(itemId);
-    }
-    const finalSummaryBlocks = collectNonEmptyBlocks(
-      asStringArray(item.summary)
-    );
-    const finalContentBlocks = collectNonEmptyBlocks(
-      asStringArray(item.content)
-    );
     const textFallback =
       itemId === null
         ? null
         : this.reasoningLiveBuffer.consumeText(
             buildReasoningItemKey(threadId, itemId)
           );
-    let blocks: string[] = [];
-    if (finalSummaryBlocks.length > 0) {
-      blocks = finalSummaryBlocks;
-    } else if (summaryFromDeltas.length > 0) {
-      blocks = summaryFromDeltas;
-    } else if (finalContentBlocks.length > 0) {
-      blocks = finalContentBlocks;
-    } else if (textFallback !== null) {
-      blocks = [textFallback];
-    }
-    if (blocks.length === 0) {
+    if (!itemId) {
+      this.emitReasoningBlocksWithoutStableId(threadId, {
+        finalContentBlocks: asStringArray(item.content),
+        finalSummaryBlocks: asStringArray(item.summary),
+        textFallback,
+      });
       return;
     }
-    for (const [index, block] of blocks.entries()) {
-      const blockId =
-        itemId === null ? null : `${itemId}::summary-block::${index}`;
-      this.emitDialogMessage(threadId, "thinking", block, blockId);
+    const blocks = this.reasoningSummaryStreamBuffer.flushRemaining({
+      finalContentBlocks: asStringArray(item.content),
+      finalSummaryBlocks: asStringArray(item.summary),
+      itemId,
+      itemKey: buildReasoningItemKey(threadId, itemId),
+      textFallback,
+    });
+    this.emitReasoningSummaryBlocks(threadId, blocks);
+  }
+
+  private emitReasoningBlocksWithoutStableId(
+    threadId: string,
+    options: {
+      readonly finalContentBlocks: readonly string[];
+      readonly finalSummaryBlocks: readonly string[];
+      readonly textFallback: string | null;
+    }
+  ): void {
+    const blocks =
+      collectNonEmptyBlocks(options.finalSummaryBlocks).length > 0
+        ? collectNonEmptyBlocks(options.finalSummaryBlocks)
+        : collectNonEmptyBlocks(options.finalContentBlocks);
+    const resolvedBlocks =
+      blocks.length > 0 ? blocks : this.buildTextFallbackBlocks(options);
+    for (const block of resolvedBlocks) {
+      this.emitDialogMessage(threadId, "thinking", block, null);
+    }
+  }
+
+  private buildTextFallbackBlocks(options: {
+    readonly textFallback: string | null;
+  }): string[] {
+    if (options.textFallback === null) {
+      return [];
+    }
+    return [options.textFallback];
+  }
+
+  private emitReasoningSummaryBlocks(
+    threadId: string,
+    blocks: readonly CodexReasoningSummaryBlock[]
+  ): void {
+    for (const block of blocks) {
+      this.emitDialogMessage(threadId, "thinking", block.content, block.uuid);
     }
   }
 

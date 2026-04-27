@@ -60,7 +60,7 @@ const collectDialogMessages = (events: EmittedEvent[]) =>
     };
   });
 
-test("CodexAppServerEventRouter waits for item/completed before emitting reasoning summary blocks", () => {
+test("CodexAppServerEventRouter streams completed reasoning summary paragraphs before item/completed", () => {
   const { emitted, router } = createRouterHarness();
 
   router.handleNotification("item/reasoning/summaryPartAdded", {
@@ -76,6 +76,20 @@ test("CodexAppServerEventRouter waits for item/completed before emitting reasoni
   });
 
   assert.equal(emitted.length, 0);
+  router.handleNotification("item/reasoning/summaryPartAdded", {
+    itemId: "reasoning-1",
+    summaryIndex: 1,
+    threadId: "thread-1",
+  });
+  assert.deepEqual(collectDialogMessages(emitted), [
+    {
+      content: "**Draft heading**",
+      role: "assistant",
+      tag: "thinking",
+      threadId: "thread-1",
+      uuid: "reasoning-1::summary-block::0",
+    },
+  ]);
 
   router.handleNotification("item/completed", {
     item: {
@@ -91,7 +105,7 @@ test("CodexAppServerEventRouter waits for item/completed before emitting reasoni
 
   assert.deepEqual(collectDialogMessages(emitted), [
     {
-      content: "**Exploring model synchronization**\n\nBody one.",
+      content: "**Draft heading**",
       role: "assistant",
       tag: "thinking",
       threadId: "thread-1",
@@ -121,19 +135,27 @@ test("CodexAppServerEventRouter falls back to accumulated summary parts when ite
     summaryIndex: 0,
     threadId: "thread-2",
   });
+  assert.equal(emitted.length, 0);
   router.handleNotification("item/reasoning/summaryPartAdded", {
     itemId: "reasoning-2",
     summaryIndex: 1,
     threadId: "thread-2",
   });
+  assert.deepEqual(collectDialogMessages(emitted), [
+    {
+      content: "**Evaluating downstream review**\n\nBody one.",
+      role: "assistant",
+      tag: "thinking",
+      threadId: "thread-2",
+      uuid: "reasoning-2::summary-block::0",
+    },
+  ]);
   router.handleNotification("item/reasoning/summaryTextDelta", {
     delta: "**Considering product structure**\n\nBody two.",
     itemId: "reasoning-2",
     summaryIndex: 1,
     threadId: "thread-2",
   });
-
-  assert.equal(emitted.length, 0);
 
   router.handleNotification("item/completed", {
     item: {

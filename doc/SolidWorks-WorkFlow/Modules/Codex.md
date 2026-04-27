@@ -47,8 +47,8 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - `turn/completed` → `turn_completed | turn_failed`
 - `error` → `stream_error`
 - `item/agentMessage/delta` + `item/completed` materialize-ят user-facing `dialog_message`; `phase: "commentary"` обязан сохраняться как non-terminal assistant progress message с `tag: "commentary"`, а `phase: "final_answer"` остаётся terminal assistant answer
-- `item/reasoning/summaryPartAdded` / `item/reasoning/summaryTextDelta` / optional `item/reasoning/textDelta` feed provider-local accumulation only; these notifications are no longer materialized directly as user-facing live `thinking` bubbles
-- `item/completed` for reasoning is the canonical user-facing emission point: provider emits one `thinking` message per completed reasoning block, prioritizing `item.summary[]`, then accumulated summary parts, then `item.content[]`, then accumulated raw `textDelta`
+- `item/reasoning/summaryPartAdded` / `item/reasoning/summaryTextDelta` feed `CodexReasoningSummaryStreamBuffer`, which emits a completed previous summary block when the next summary part starts; this is paragraph/block-level streaming, not token-level reasoning streaming
+- `item/completed` for reasoning remains the cleanup/finalization point: provider emits only remaining, not-yet-emitted `thinking` blocks, prioritizing `item.summary[]`, then accumulated summary parts, then `item.content[]`, then accumulated raw `textDelta`
 - `thread/tokenUsage/updated` и usage-limits snapshots materialize-ятся как `stream_event`
 - Runtime model updates materialize-ятся как `system` event с фактическим model id
 
@@ -60,9 +60,9 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 ## Reasoning, visibility и translation
 - App-server line обязана сохранять commentary отдельно от reasoning/final answer: даже когда `Reasoning in dialog` отключён, пользователь всё равно должен видеть Codex progress commentary, если upstream реально прислал `phase: "commentary"`.
 - Upstream truth для видимого Codex reasoning теперь — reasoning summary notifications app-server-а, а не legacy rollout tail и не SDK-local display gate.
-- Видимый reasoning остаётся source-first: сначала persist/broadcast native text, затем Core-owned translation overlay может прислать `localizedContent`.
+- Видимый reasoning остаётся source-first: сначала persist/broadcast native text, затем Core-owned translation overlay может прислать `localizedContent`. С `1.2.87` Codex emits reasoning summary blocks sequentially as append-only `assistant` messages tagged `thinking`, each with stable id `<itemId>::summary-block::<index>`, so translation overlays process one visible paragraph/block at a time.
 - User-facing toggle `Reasoning in dialog` управляет тем, уходит ли turn-level `summary` как `detailed` или как `none`; provider-home `model_reasoning_summary` остаётся persisted companion state, но не является единственным runtime source-of-truth для live app-server turns.
-- Provider layer больше не имеет права прокидывать в UI token-level или sentence-level reasoning fragments как отдельные bubbles; user-facing reasoning materialize-ится только из completed block-level summary emission.
+- Provider layer больше не имеет права прокидывать в UI token-level или sentence-level reasoning fragments как отдельные bubbles; user-facing reasoning materialize-ится только из completed paragraph/block-level summary emission, either when the next summary part begins or at final reasoning completion.
 - Видимость reasoning по-прежнему решается в момент emission через `visibilityAtEmission`; скрытые reasoning bubbles не должны попадать в translation queue и не должны внезапно проявляться после обратного включения toggle.
 
 ## Diagnostics artifacts
