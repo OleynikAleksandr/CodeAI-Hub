@@ -33,7 +33,7 @@
 
 ### Stream: Verification
 5. [DONE] Run targeted Core/session translation verification — scope: `packages/core`; command: `npm run build --workspace=@codeai-hub/core` plus `node --test packages/core/dist/session-translation/session-translation-facade.test.js`; commit: `test: verify reasoning translation timeout`
-6. [TODO] Git Commit: `test: verify reasoning translation timeout` (hash: TBD)
+6. [DONE] Git Commit: `test: verify reasoning translation timeout` (hash: `37ea0f33c`)
 
 ### Stream: Release 1.2.88
 7. [TODO] Prepare release notes for `1.2.88` before build-all — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare reasoning translation timeout release notes`
