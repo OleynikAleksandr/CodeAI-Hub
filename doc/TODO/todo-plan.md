@@ -24,10 +24,10 @@
 
 ### Stream: Planning
 1. [DONE] Create planning-doc and active todo-plan for Codex progress-update cadence tuning — scope: `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`, `doc/TODO/todo-plan.md`; commit: `docs: plan codex progress cadence tuning`
-2. [TODO] Git Commit: `docs: plan codex progress cadence tuning` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan codex progress cadence tuning` (hash: `20751a137`)
 
 ### Stream: Prompt cadence
-3. [TODO] Strengthen Progress Updates cadence rule with 30-second and 3-5 work-cycle fallback — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: tighten codex progress update cadence`
+3. [DONE] Strengthen Progress Updates cadence rule with 30-second and 3-5 work-cycle fallback — scope: `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts`, `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/codex-instruction-analysis/Codex_My_System_Prompt.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`; commit: `fix: tighten codex progress update cadence`
 4. [TODO] Git Commit: `fix: tighten codex progress update cadence` (hash: TBD)
 
 ### Stream: Release 1.2.86
