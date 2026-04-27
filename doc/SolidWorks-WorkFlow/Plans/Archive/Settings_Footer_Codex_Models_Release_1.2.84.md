@@ -1,6 +1,6 @@
 # Settings Footer Codex Models Release 1.2.84
 
-**Status:** Approved for execution
+**Status:** Completed
 **Date:** 2026-04-27
 **Owner:** Oleksandr + Codex
 
@@ -40,4 +40,4 @@ Required success evidence:
 
 ## 5. Execution Plan
 
-The active execution checklist lives in `doc/TODO/todo-plan.md`.
+The completed execution checklist lives in `doc/TODO/Archive/todo-plan-phase1-settings-footer-codex-models-release-1.2.84.md`.
