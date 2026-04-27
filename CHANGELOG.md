@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.91] - 2026-04-27
+### Changed
+- **Diagnostic retest: Codex app-server logs use split folders without the extra creation event.** Process-wide logs are written under `~/.codeai-hub/logs/codex/app-server-process/sdk-codex-app-server-process-*.jsonl`, and per-thread logs are written under `~/.codeai-hub/logs/codex/threads/sdk-codex-thread-<threadId>-*.jsonl`.
+- **The `thread_log_created` process-log record from `1.2.89` remains disabled.** This isolates whether the folder/name split alone affects ordinary Codex progress-message emission.
+
+### Tests
+- **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.
+
 ## [1.2.90] - 2026-04-27
 ### Changed
 - **Rollback retest: Codex diagnostic log layout returns to the `1.2.88` shape.** The per-thread SDK sublog remains enabled, but process and thread JSONL files are again written side-by-side under `~/.codeai-hub/logs/codex/` with the `sdk-codex-app-server-*.jsonl` and `sdk-codex-app-server-thread-<threadId>-*.jsonl` names.
