@@ -9,7 +9,6 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Internal transport façade: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
 - Internal notification normalization: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`
 - Long-lived process bridge: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`
-- Transport logger compatibility shim: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-session-logger.ts`
 - Shared usage-limits façade for Codex lives in Core: `packages/core/src/provider-usage-limits/providers/codex/codex-usage-limits-facade.ts`
 - `packages/Codex_AppServer_Module/` — единственная активная реализация Codex provider line. Legacy SDK-based пакет `packages/Codex_Module/` удалён в релизе `1.2.38`; исторический контекст живёт только в `doc/TODO/Archive/` и `doc/SolidWorks-WorkFlow/Plans/Archive/`.
 
