@@ -33,7 +33,7 @@
 ### Stream: Release 1.2.86
 5. [DONE] Prepare release notes for `1.2.86` before build-all — scope: `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare codex progress cadence release notes`
 6. [DONE] Git Commit: `docs: prepare codex progress cadence release notes` (hash: `23a93bff5`)
-7. [IN_PROGRESS] Run `./scripts/build-all.sh` for `1.2.86` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex progress cadence release`
+7. [DONE] Run `./scripts/build-all.sh` for `1.2.86` — scope: release scripts/generated artifacts, package/manifests, `doc/TODO/todo-plan.md`; commit: `chore: build codex progress cadence release`
 8. [TODO] Git Commit: `chore: build codex progress cadence release` (hash: TBD)
 9. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex progress cadence vsix`
 10. [TODO] Git Commit: `chore: package codex progress cadence vsix` (hash: TBD)
