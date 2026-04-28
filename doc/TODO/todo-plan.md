@@ -54,9 +54,9 @@
 
 ### Stream: Project Manager Socket Lifecycle
 1. [DONE] Сделать `ProjectManagerApi.connect()` idempotent для `OPEN`/`CONNECTING`, добавить intentional `disconnect()` и cleanup из `MainLayout`; scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/project-manager-api-lifecycle.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `fix: harden project manager websocket lifecycle`
-2. [TODO] Git Commit: `fix: harden project manager websocket lifecycle` (hash: TBD)
-3. [TODO] Добавить/обновить PM lifecycle regression coverage без расширения runtime surface; scope: `src/client/project-manager/api.ts`, `src/client/project-manager/api.websocket-lifecycle.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket lifecycle`
-4. [TODO] Git Commit: `test: cover project manager websocket lifecycle` (hash: TBD)
+2. [DONE] Git Commit: `fix: harden project manager websocket lifecycle` (hash: `09432d779`)
+3. [DONE] Добавить/обновить PM lifecycle regression coverage без расширения runtime surface; scope: `src/client/project-manager/services/project-manager-api-lifecycle.ts`, `src/client/project-manager/services/project-manager-api-lifecycle.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket lifecycle`
+4. [IN_PROGRESS] Git Commit: `test: cover project manager websocket lifecycle` (hash: TBD)
 
 ### Stream: Project Manager Incoming Message Validation
 5. [TODO] Ввести PM-side parser/type guards для incoming Core WS messages и заменить прямой `JSON.parse(...) as IncomingMessage`; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/api.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: validate project manager websocket messages`
