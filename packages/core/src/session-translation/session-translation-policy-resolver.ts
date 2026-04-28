@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
   DEFAULT_LOCALIZATION_ENGINE_ID,
@@ -8,6 +7,7 @@ import {
   type LocalizationRuntimeSettingsSnapshot,
   type LocalizationWorkflowTermsPolicy,
 } from "@codeai-hub/localization";
+import { providerSettingsSnapshotCache } from "../config/json-file-snapshot-cache";
 import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
@@ -265,13 +265,7 @@ export class SessionTranslationPolicyResolver {
   }
 
   private loadJsonSnapshot(settingsPath: string): JsonRecord | null {
-    try {
-      const raw = readFileSync(settingsPath, "utf8");
-      const parsed = JSON.parse(raw) as unknown;
-      return isRecord(parsed) ? parsed : null;
-    } catch {
-      return null;
-    }
+    return providerSettingsSnapshotCache.readObject(settingsPath);
   }
 
   private loadPersistedBootstrapSnapshot(settingsPath: string): {
@@ -279,47 +273,41 @@ export class SessionTranslationPolicyResolver {
     readonly settings: LocalizationRuntimeSettingsSnapshot;
     readonly systemFeedbackSource: "materialized" | "source_fallback";
   } | null {
-    try {
-      const raw = readFileSync(
-        resolveBrowserRuntimeBootstrapPath(settingsPath),
-        "utf8"
-      );
-      const parsed = JSON.parse(raw) as unknown;
-      if (!(isRecord(parsed) && isRecord(parsed.runtimePayload))) {
-        return null;
-      }
-
-      const settings = parseSettingsSnapshot(parsed.settings);
-      const runtimePayload = parsed.runtimePayload;
-      const resolvedBundles = isRecord(runtimePayload.resolvedBundlesByCategory)
-        ? runtimePayload.resolvedBundlesByCategory
-        : null;
-      const systemFeedbackBundle =
-        resolvedBundles && isRecord(resolvedBundles.system_feedback)
-          ? resolvedBundles.system_feedback
-          : null;
-      const systemFeedbackSource =
-        systemFeedbackBundle?.source === "materialized" ||
-        systemFeedbackBundle?.source === "source_fallback"
-          ? systemFeedbackBundle.source
-          : null;
-      if (
-        !(
-          settings &&
-          typeof runtimePayload.activeEngineId === "string" &&
-          systemFeedbackSource
-        )
-      ) {
-        return null;
-      }
-
-      return {
-        activeEngineId: runtimePayload.activeEngineId,
-        settings,
-        systemFeedbackSource,
-      };
-    } catch {
+    const parsed = providerSettingsSnapshotCache.readObject(
+      resolveBrowserRuntimeBootstrapPath(settingsPath)
+    );
+    if (!(parsed && isRecord(parsed.runtimePayload))) {
       return null;
     }
+
+    const settings = parseSettingsSnapshot(parsed.settings);
+    const runtimePayload = parsed.runtimePayload;
+    const resolvedBundles = isRecord(runtimePayload.resolvedBundlesByCategory)
+      ? runtimePayload.resolvedBundlesByCategory
+      : null;
+    const systemFeedbackBundle =
+      resolvedBundles && isRecord(resolvedBundles.system_feedback)
+        ? resolvedBundles.system_feedback
+        : null;
+    const systemFeedbackSource =
+      systemFeedbackBundle?.source === "materialized" ||
+      systemFeedbackBundle?.source === "source_fallback"
+        ? systemFeedbackBundle.source
+        : null;
+    if (
+      !(
+        settings &&
+        typeof runtimePayload.activeEngineId === "string" &&
+        systemFeedbackSource
+      )
+    ) {
+      return null;
+    }
+
+    return {
+      activeEngineId: runtimePayload.activeEngineId,
+      settings,
+      systemFeedbackSource,
+    };
   }
 }

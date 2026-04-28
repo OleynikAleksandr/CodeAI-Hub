@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import type { CoreConfig } from "../../config";
+import { providerSettingsSnapshotCache } from "../../config/json-file-snapshot-cache";
 import type { Logger } from "../../telemetry/logger";
 import {
   buildDefaultSettingsSnapshot,
@@ -164,6 +165,7 @@ export class SettingsPersistenceService {
     const current = await this.loadSettingsEntry();
     const settings = buildDefaultSettingsSnapshot(this.config);
     await persistSettingsSnapshot(this.config.claudeSettingsPath, settings);
+    this.invalidateSettingsSnapshotCache();
 
     const impact = resolveLocalizationImpact(current.settings, settings);
     return {
@@ -186,6 +188,7 @@ export class SettingsPersistenceService {
       this.config
     );
     await persistSettingsSnapshot(this.config.claudeSettingsPath, settings);
+    this.invalidateSettingsSnapshotCache();
 
     const impact = resolveLocalizationImpact(current.settings, settings);
     return {
@@ -221,6 +224,7 @@ export class SettingsPersistenceService {
           settingsPath,
           buildDefaultSettingsSnapshot(this.config)
         );
+        this.invalidateSettingsSnapshotCache();
       } catch (persistError) {
         this.logger.warn("Failed to persist default settings on startup", {
           error: toErrorMessage(persistError),
@@ -246,6 +250,7 @@ export class SettingsPersistenceService {
       if (normalized.changed) {
         try {
           await persistSettingsSnapshot(settingsPath, normalized.settings);
+          this.invalidateSettingsSnapshotCache();
         } catch (persistError) {
           this.logger.warn("Failed to persist settings migration", {
             error: toErrorMessage(persistError),
@@ -267,6 +272,7 @@ export class SettingsPersistenceService {
       if (code === "ENOENT") {
         try {
           await persistSettingsSnapshot(settingsPath, snapshot);
+          this.invalidateSettingsSnapshotCache();
         } catch (persistError) {
           this.logger.warn("Failed to persist default settings", {
             error: toErrorMessage(persistError),
@@ -277,5 +283,9 @@ export class SettingsPersistenceService {
 
       return { changed: code === "ENOENT", settings: snapshot };
     }
+  }
+
+  private invalidateSettingsSnapshotCache(): void {
+    providerSettingsSnapshotCache.clear(this.config.claudeSettingsPath);
   }
 }
