@@ -1,8 +1,10 @@
 export const CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY =
   "codex:workflow-documentation";
+export const CODEX_TRANSLATION_PROCESS_PROFILE_KEY = "codex:translation";
 
 export type CodexAppServerProcessProfileKey =
-  typeof CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY;
+  | typeof CODEX_TRANSLATION_PROCESS_PROFILE_KEY
+  | typeof CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY;
 
 export interface CodexAppServerProcessProfile {
   readonly appServerArgs: readonly string[];
@@ -32,6 +34,8 @@ export const CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS = [
   "-c",
   "mcp_servers.playwright.enabled=false",
 ] as const;
+const CODEAI_CODEX_TRANSLATION_APP_SERVER_ARGS =
+  CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS;
 
 const CODEX_APP_SERVER_PROCESS_PROFILES: ReadonlyMap<
   CodexAppServerProcessProfileKey,
@@ -42,6 +46,13 @@ const CODEX_APP_SERVER_PROCESS_PROFILES: ReadonlyMap<
     {
       appServerArgs: CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS,
       key: CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+    },
+  ],
+  [
+    CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
+    {
+      appServerArgs: CODEAI_CODEX_TRANSLATION_APP_SERVER_ARGS,
+      key: CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
     },
   ],
 ]);

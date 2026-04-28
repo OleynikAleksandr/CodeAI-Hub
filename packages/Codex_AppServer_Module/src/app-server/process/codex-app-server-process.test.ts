@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   CODEAI_CODEX_APP_SERVER_ARGS,
+  CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
   CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
   resolveCodexAppServerProcessProfile,
 } from "./codex-app-server-process";
@@ -38,5 +39,14 @@ test("CodexAppServerProcess exposes current startup args as a named process prof
   );
 
   assert.equal(profile.key, "codex:workflow-documentation");
+  assert.deepEqual(profile.appServerArgs, CODEAI_CODEX_APP_SERVER_ARGS);
+});
+
+test("CodexAppServerProcess exposes a separate translation process profile key", () => {
+  const profile = resolveCodexAppServerProcessProfile(
+    CODEX_TRANSLATION_PROCESS_PROFILE_KEY
+  );
+
+  assert.equal(profile.key, "codex:translation");
   assert.deepEqual(profile.appServerArgs, CODEAI_CODEX_APP_SERVER_ARGS);
 });
