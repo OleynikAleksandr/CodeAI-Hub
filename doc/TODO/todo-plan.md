@@ -40,7 +40,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Scope Activation
 
 1. [DONE] Create accepted planning document, activate execution `todo-plan.md`, and register the active planning document in `Docs_Index.md` (scope: `doc/SolidWorks-WorkFlow/Plans/ModelInvocationProfiles_And_TemplateSync_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: start model invocation profile execution plan`)
-2. [IN_PROGRESS] Git Commit: `docs: start model invocation profile execution plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: start model invocation profile execution plan` (hash: `c5c48d521`)
 
 ---
 
@@ -48,8 +48,8 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Core Profile Contract
 
-1. [TODO] Add provider-neutral model invocation selector/effective-profile contract and resolver scaffold; `purpose` must be only `workflow-agent | translation`, with no `diagnostic` purpose (scope: `packages/core/src/model-invocation/*`, `packages/core/src/config/*`; commit: `feat: add model invocation profile resolver`)
-2. [TODO] Git Commit: `feat: add model invocation profile resolver` (hash: TBD)
+1. [DONE] Add provider-neutral model invocation selector/effective-profile contract and resolver scaffold; `purpose` must be only `workflow-agent | translation`, with no `diagnostic` purpose (scope: `packages/core/src/model-invocation/*`, `packages/core/src/config/*`; commit: `feat: add model invocation profile resolver`)
+2. [IN_PROGRESS] Git Commit: `feat: add model invocation profile resolver` (hash: TBD)
 3. [TODO] Add focused resolver tests for workflow step profiles, translation profiles, and compatible model lists (scope: `packages/core/src/model-invocation/*.test.ts`, `packages/core/src/config/*.test.ts`; commit: `test: cover model invocation profile resolution`)
 4. [TODO] Git Commit: `test: cover model invocation profile resolution` (hash: TBD)
 5. [TODO] Update architecture docs for the new profile contract and the rule that native request capture is diagnostic mode over real profiles (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: define model invocation profile contract`)
