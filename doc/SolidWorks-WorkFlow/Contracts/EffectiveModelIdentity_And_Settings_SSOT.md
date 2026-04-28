@@ -1,7 +1,7 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-23
+**Updated:** 2026-04-28
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.854`)
 
@@ -17,6 +17,7 @@
 - `reasoning` и `thinking` являются частью identity, а не декоративным metadata.
 - единственным source of truth для next-turn identity остаётся persisted settings snapshot в `~/.codeai-hub/settings/settings.json`.
 - legacy `~/.codeai-hub/settings/claude.json` is not part of the supported runtime contract anymore: no live read/write path may depend on it.
+- `ModelInvocationProfile` controls the provider process/session/turn envelope around that identity; it is a separate contract from effective model identity.
 
 Этот документ применим ко всем provider-цепочкам, где Core вычисляет applied turn config и передаёт его provider runtime на следующий turn.
 
@@ -30,6 +31,7 @@
 - delivery applied turn config от Core к provider modules;
 - runtime/UI sync для label/model display;
 - provider-specific last-mile adaptation без локального ownership над identity.
+- compatibility between effective identity changes and the active model invocation profile.
 
 Контракт не покрывает:
 
@@ -37,6 +39,7 @@
 - UI layout;
 - session continuity rollout mechanics;
 - translation/localization logic;
+- provider process startup flag implementation details;
 - provider debugging telemetry beyond applied identity semantics.
 
 ---
@@ -66,6 +69,16 @@ Persisted user-facing settings state, из которого Core вычисля�
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled` and `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity.
+
+### 3.5. `ModelInvocationProfile`
+
+Provider-neutral profile resolved by Core before a provider call. It describes the provider process/session/turn envelope for a selected model and purpose:
+
+- process profile: startup flags, tool/system-tool policy, sandbox, approval policy;
+- session profile: base/system instruction stack, persistence policy, provider config overrides;
+- turn profile: model, reasoning/thinking effort, summary policy, output schema and prompt payload.
+
+Allowed purposes are only `workflow-agent` and `translation`. `diagnostic` is not a purpose; Provider Native Request Capture is a one-shot diagnostic mode over a real workflow-agent or translation profile.
 
 ---
 
@@ -113,6 +126,19 @@ Project Manager и shared UI должны отображать applied config, �
 - **Gemini**: `thinking` входит в effective identity; `gpt-5.3-codex reasoning:xhigh` и `gpt-5.3-codex reasoning:high` are different runtime identities.
 - **Claude**: `thinking` off remains `sonnet thinking:off`, while enabled Claude turns now expose explicit effort through identities such as `sonnet reasoning:high` and `sonnet reasoning:max`; this is how Session UI learns that the next Claude turn will use a different effort level.
 
+### 4.5. Model invocation profile compatibility
+
+Effective model identity answers "what model/effective reasoning will the next turn use". `ModelInvocationProfile` answers "under which provider process/session/turn envelope will it run". Core must keep these boundaries explicit.
+
+Runtime rules:
+
+- model switching inside an active turn/session may offer only models whose compatible model list matches the active process/session profile;
+- changing to a model that requires different startup flags, system tools, sandbox, approval policy, or session-level instruction stack requires a new logical step/session;
+- workflow-agent profiles require a workflow `stepId`; translation profiles do not;
+- workflow-agent profiles may resolve tree/step-specific instruction fragments for Documentation Tree and future Development Tree steps;
+- translation profiles use translation-specific instructions and tool policy, not workflow step prompts;
+- user-editable templates may override text instruction fragments only; flags, system tools, sandbox and approval policy remain code-owned.
+
 ---
 
 ## 5. Invariants
@@ -126,6 +152,10 @@ Project Manager и shared UI должны отображать applied config, �
 7. Provider-native runtime traces remain the proof of what was actually applied.
 8. Presentation-only settings flags do not participate in effective identity resolution.
 9. `~/.codeai-hub/settings/claude.json` is not an allowed fallback for normal runtime settings resolution or persistence.
+10. `ModelInvocationProfile` is resolved separately from effective model identity and must not be inferred from UI labels.
+11. `diagnostic` is not an invocation purpose; native request capture uses the selected workflow-agent or translation profile.
+12. In-turn model switching must be filtered by process/session profile compatibility.
+13. User-editable invocation templates may change instruction text only, never flags, tools, sandbox, or approval policy.
 
 ---
 
@@ -136,6 +166,8 @@ Project Manager и shared UI должны отображать applied config, �
   - `packages/core/src/config/provider-turn-config-resolver.ts`
   - `packages/core/src/config/provider-defaults-resolver.ts`
   - `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`
+- Core model invocation profiles:
+  - `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`
 - Core outbound bridge:
   - `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`

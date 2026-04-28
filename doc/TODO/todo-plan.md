@@ -51,9 +51,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 1. [DONE] Add provider-neutral model invocation selector/effective-profile contract and resolver scaffold; `purpose` must be only `workflow-agent | translation`, with no `diagnostic` purpose (scope: `packages/core/src/model-invocation/*`, `packages/core/src/config/*`; commit: `feat: add model invocation profile resolver`)
 2. [DONE] Git Commit: `feat: add model invocation profile resolver` (hash: `ffb55c132`)
 3. [DONE] Add focused resolver tests for workflow step profiles, translation profiles, and compatible model lists (scope: `packages/core/src/model-invocation/*.test.ts`, `packages/core/src/config/*.test.ts`; commit: `test: cover model invocation profile resolution`)
-4. [IN_PROGRESS] Git Commit: `test: cover model invocation profile resolution` (hash: TBD)
-5. [TODO] Update architecture docs for the new profile contract and the rule that native request capture is diagnostic mode over real profiles (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: define model invocation profile contract`)
-6. [TODO] Git Commit: `docs: define model invocation profile contract` (hash: TBD)
+4. [DONE] Git Commit: `test: cover model invocation profile resolution` (hash: `b80b71d0e`)
+5. [DONE] Update architecture docs for the new profile contract and the rule that native request capture is diagnostic mode over real profiles (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: define model invocation profile contract`)
+6. [IN_PROGRESS] Git Commit: `docs: define model invocation profile contract` (hash: TBD)
 
 ---
 
