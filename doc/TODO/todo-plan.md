@@ -70,15 +70,15 @@
 11. [DONE] Покрыть Core validation/rejection path в WebSocketManager tests; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover core websocket command validation`
 12. [DONE] Git Commit: `test: cover core websocket command validation` (hash: `d8e9f40ed`)
 13. [DONE] Закрыть Phase 1 таргетными проверками `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`; scope: UI bundle, Core package, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify websocket hardening`
-14. [IN_PROGRESS] Git Commit: `chore: verify websocket hardening` (hash: TBD)
+14. [DONE] Git Commit: `chore: verify websocket hardening` (hash: `9204ea598`)
 
 ## Phase 2 — Settings Snapshot Caching (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Core Settings Cache
-1. [TODO] Добавить path-scoped TTL JSON cache и перевести provider settings snapshot reads на него; scope: `packages/core/src/config/json-file-snapshot-cache.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix: cache core provider settings snapshots`
-2. [TODO] Git Commit: `fix: cache core provider settings snapshots` (hash: TBD)
-3. [TODO] Покрыть Core settings cache TTL, malformed JSON и path isolation; scope: `packages/core/src/config/json-file-snapshot-cache.ts`, `packages/core/src/config/provider-settings-snapshot.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover core settings snapshot cache`
-4. [TODO] Git Commit: `test: cover core settings snapshot cache` (hash: TBD)
+1. [DONE] Добавить path-scoped TTL JSON cache и перевести provider settings snapshot reads на него; scope: `packages/core/src/config/json-file-snapshot-cache.ts`, `packages/core/src/config/provider-settings-snapshot.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix: cache core provider settings snapshots`
+2. [DONE] Git Commit: `fix: cache core provider settings snapshots` (hash: `237be9186`)
+3. [DONE] Покрыть Core settings cache TTL, malformed JSON и path isolation; scope: `packages/core/src/config/json-file-snapshot-cache.ts`, `packages/core/src/config/provider-settings-snapshot.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover core settings snapshot cache`
+4. [IN_PROGRESS] Git Commit: `test: cover core settings snapshot cache` (hash: TBD)
 5. [TODO] Перевести session translation policy settings/bootstrap reads на shared cache и invalidation on settings save/reset where practical; scope: `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix: cache session translation settings reads`
 6. [TODO] Git Commit: `fix: cache session translation settings reads` (hash: TBD)
 7. [TODO] Обновить translation policy tests для cache/invalidation behavior; scope: `packages/core/src/session-translation/session-translation-policy-resolver.test.ts`, `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover session translation settings cache`

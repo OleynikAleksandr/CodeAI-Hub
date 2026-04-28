@@ -19,7 +19,7 @@ interface JsonFileSnapshotCacheOptions {
 const isRecord = (value: unknown): value is JsonRecord =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-class JsonFileSnapshotCache {
+export class JsonFileSnapshotCache {
   private readonly entries = new Map<string, JsonSnapshotCacheEntry>();
   private readonly now: () => number;
   private readonly readFile: (filePath: string) => string;
