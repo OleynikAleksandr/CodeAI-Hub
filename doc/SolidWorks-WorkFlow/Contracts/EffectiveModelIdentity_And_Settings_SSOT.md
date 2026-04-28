@@ -70,6 +70,7 @@ Provider-neutral payload, вычисленный Core-ом из `session.modelBi
 
 Persisted user-facing settings state, из которого Core вычисляет default identity for a new session binding and presentation/localization policy.
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth for a bound session identity.
+Settings snapshot reads may be cached only as short, path-scoped read-through snapshots. Core-owned settings save/reset/default-materialization paths must invalidate the canonical path immediately after write; provider-local fallback caches are bounded helpers and never become a second settings owner.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled` and `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity.
 
@@ -189,6 +190,7 @@ Runtime rules:
 15. Continuity restore must hydrate `session.modelBinding` from persisted continuity data before the next user turn.
 16. Threshold-created continuation sessions must inherit the previous binding and must not resolve current Settings defaults.
 17. Unbound runtime/model SDK events must not overwrite an existing binding-owned UI/runtime identity.
+18. Settings snapshot caches must be path-scoped, short-lived, and invalidated by Core write/reset/default-materialization paths; cache reuse is a performance detail and must not change settings ownership.
 
 ---
 
@@ -196,9 +198,12 @@ Runtime rules:
 
 - Core settings resolution:
   - `packages/core/src/config/index.ts`
+  - `packages/core/src/config/json-file-snapshot-cache.ts`
+  - `packages/core/src/config/provider-settings-snapshot.ts`
   - `packages/core/src/config/provider-turn-config-resolver.ts`
   - `packages/core/src/config/provider-defaults-resolver.ts`
   - `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`
+  - `packages/core/src/session-translation/session-translation-policy-resolver.ts`
 - Core session model binding:
   - `packages/core/src/session-model-binding/session-model-binding-facade.ts`
   - `packages/core/src/session-model-binding/session-model-binding-resolver.ts`

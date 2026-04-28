@@ -52,6 +52,13 @@
 - Optimistic user bubble — временный placeholder. После первого canonical echo из `dialog:history` UI обязан заменить placeholder на canonical message, а не показывать второй user bubble.
 - Эквивалентные terminal assistant payload-ы одного logical turn могут материализоваться в истории только один раз, даже если provider/runtime прислал несколько terminal signals.
 
+### 2.5 Runtime hydration diagnostics
+
+- `dialog:history` hydration failures, status snapshot fetch failures, and Core supervisor bridge request failures do not change Session UI source-of-truth. They are recoverable evidence for diagnostics, not alternate UI state.
+- Browser-side Core Bridge must log these failures through sanitized diagnostics without raw provider payloads or user message content. Live stream replay, status snapshots, and later history hydration remain the recovery paths.
+- Session UI must not use silent `catch` blocks for runtime hydration/recovery evidence. If a failure is intentionally non-blocking, it still needs a safe diagnostic event.
+- PM Core stream validation belongs at the PM/Core transport boundary before Session UI handlers. View components consume already validated runtime/session events and must not re-own wire schema validation.
+
 ---
 
 ## 3) Типы сессий

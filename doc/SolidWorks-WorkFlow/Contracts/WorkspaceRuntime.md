@@ -9,6 +9,15 @@
 - `sessionId` — текущий runtime сегмент Core (live status/usage/lock)
 - `providerSessionId` — native id провайдера (resume)
 
+## Wire Boundary / Diagnostics (runtime stability)
+- PM/Core WebSocket frames проходят owner-layer validators до dispatch. PM валидирует входящий Core stream на своей границе, Core валидирует входящие PM commands на remote-bridge границе; invalid frame не должен попадать в downstream handlers.
+- `ProjectManagerApi.connect()` обязан быть idempotent для состояний `OPEN` и `CONNECTING`; повторный `connect` не создаёт параллельный socket. `disconnect()` является intentional cleanup boundary and clears pending reconnect/retry state.
+- Core Bridge browser-side status/history/supervisor calls are best-effort hydration paths. Failure to fetch status snapshot, dialog history, or supervisor bridge result must be logged as sanitized diagnostics and must not block Session UI from recovering through live stream or later snapshot hydration.
+- Code map:
+  - `src/client/project-manager/services/core-stream-message-validator.ts`
+  - `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`
+  - `src/client/ui/src/core-bridge/core-bridge-logger.ts`
+
 ## Lock / Unlock (канон)
 - Source-of-truth для input lock — только snapshot (`workspace:snapshot`), а не stream сообщения.
 - Канонические session-поля в snapshot (минимум):
