@@ -356,7 +356,10 @@ const buildScenarioMetadata = (
     inputPath: command.scenarioInputPath ?? null,
     label: command.scenarioLabel ?? command.scenarioId,
     purpose: invocationPurpose,
-    promptLength: command.scenarioPrompt?.length ?? 0,
+    promptLength:
+      invocationPurpose === "translation"
+        ? 0
+        : (command.scenarioPrompt?.length ?? 0),
     targetPath: command.scenarioTargetPath ?? null,
   };
 };

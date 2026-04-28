@@ -157,7 +157,7 @@ interface NativeRequestCaptureModels {
   readonly codex: CodexModelId;
 }
 
-const SCENARIO_OPTIONS: readonly {
+export const NATIVE_REQUEST_CAPTURE_SCENARIO_OPTIONS: readonly {
   readonly id: NativeRequestCaptureScenarioId;
   readonly label: string;
 }[] = [
@@ -168,8 +168,9 @@ const SCENARIO_OPTIONS: readonly {
 ];
 
 const getScenarioLabel = (scenarioId: NativeRequestCaptureScenarioId): string =>
-  SCENARIO_OPTIONS.find((scenario) => scenario.id === scenarioId)?.label ??
-  scenarioId;
+  NATIVE_REQUEST_CAPTURE_SCENARIO_OPTIONS.find(
+    (scenario) => scenario.id === scenarioId
+  )?.label ?? scenarioId;
 
 const getModelDisplayName = (
   providerId: NativeRequestCaptureProviderId,
@@ -352,7 +353,7 @@ const NativeRequestCaptureCard = ({
       <div style={buttonRowStyles}>
         <fieldset style={scenarioRowStyles}>
           <legend style={visuallyHiddenStyles}>Workflow scenario</legend>
-          {SCENARIO_OPTIONS.map((scenario) => {
+          {NATIVE_REQUEST_CAPTURE_SCENARIO_OPTIONS.map((scenario) => {
             const isSelected = scenario.id === selectedScenarioId;
             return (
               <button

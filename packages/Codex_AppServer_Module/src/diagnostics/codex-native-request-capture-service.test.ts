@@ -3,10 +3,17 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY } from "../app-server/process/codex-app-server-process-profile";
+import {
+  CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
+  CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+} from "../app-server/process/codex-app-server-process-profile";
 import { CodexNativeRequestCaptureService } from "./codex-native-request-capture-service";
 
 const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
+const TRANSLATION_ENGINE_INSTRUCTIONS_PATTERN = /precise translation engine/;
+const TRANSLATION_PROMPT_TARGET_PATTERN = /Translate the source text into es/;
+const TRANSLATION_SAMPLE_PATTERN =
+  /CodeAI Hub native request capture translation sample/;
 
 interface RequestRecord {
   readonly method: string;
@@ -302,6 +309,70 @@ test("CodexNativeRequestCaptureService mirrors selected model and applied reason
     effort: "xhigh",
     summary: "none",
   });
+});
+
+test("CodexNativeRequestCaptureService uses translation profile for translation capture", async () => {
+  const processes: FakeCodexProcess[] = [];
+  let capturedProcessProfileKey: string | null = null;
+  const service = new CodexNativeRequestCaptureService({
+    processFactory: ({ processProfileKey }) => {
+      capturedProcessProfileKey = processProfileKey;
+      const process = new FakeCodexProcess();
+      processes.push(process);
+      return process;
+    },
+    workspace: {
+      defaultApprovalMode: "on-request",
+      defaultModel: "gpt-5.4",
+      defaultReasoningEffort: "medium",
+      defaultSandboxMode: "workspace-write",
+      workspacePath: "/workspace/default",
+    },
+  });
+
+  await service.captureNativeRequest({
+    captureId: "capture-codex-translation-test",
+    certificateEnv: {},
+    certificatePath: "/tmp/fallback-ca.pem",
+    invocationPurpose: "translation",
+    probePrompt: "diagnostic probe must not be used",
+    proxyUrl: "http://127.0.0.1:4567",
+    scenarioId: "translation",
+    selectedModelId: "gpt-5.4-mini",
+    workflowPrompt: "workflow prompt must not be used",
+    workspacePath: "/workspace/capture",
+  });
+
+  assert.equal(
+    capturedProcessProfileKey,
+    CODEX_TRANSLATION_PROCESS_PROFILE_KEY
+  );
+  const requests = processes[0]?.requests ?? [];
+  const threadStart = requests[0]?.params as Record<string, unknown>;
+  assert.equal(threadStart.approvalPolicy, "never");
+  assert.equal(threadStart.sandbox, "read-only");
+  assert.equal(threadStart.persistExtendedHistory, false);
+  assert.equal(threadStart.model, "gpt-5.4-mini");
+  assert.deepEqual(threadStart.config, { project_doc_max_bytes: 0 });
+  assert.match(
+    String(threadStart.baseInstructions),
+    TRANSLATION_ENGINE_INSTRUCTIONS_PATTERN
+  );
+  const turnStart = requests[1]?.params as Record<string, unknown>;
+  const input = turnStart.input as readonly { readonly text: string }[];
+  assert.equal(turnStart.model, "gpt-5.4-mini");
+  assert.equal(turnStart.effort, "low");
+  assert.equal(turnStart.summary, "none");
+  assert.match(input[0]?.text ?? "", TRANSLATION_PROMPT_TARGET_PATTERN);
+  assert.match(input[0]?.text ?? "", TRANSLATION_SAMPLE_PATTERN);
+  assert.equal(
+    input[0]?.text.includes("workflow prompt must not be used"),
+    false
+  );
+  assert.equal(
+    input[0]?.text.includes("diagnostic probe must not be used"),
+    false
+  );
 });
 
 test("CodexNativeRequestCaptureService omits reasoning summary for Codex Spark", async () => {
