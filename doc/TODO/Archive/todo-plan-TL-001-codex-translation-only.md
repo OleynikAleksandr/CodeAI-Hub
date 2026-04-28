@@ -1,15 +1,17 @@
 # План разработки (Development TODO Plan)
 
 **Plan ID:** `TL-001`  
-**Status:** `ACTIVE` — выполняется из planned-файла по прямой команде пользователя; активный `doc/TODO/todo-plan.md` не создавался  
-**Planning source:** `doc/SolidWorks-WorkFlow/Plans/Codex_TranslationOnly_Profile_Hardening_Architecture.md`  
+**Status:** `COMPLETED` — выполнен из planned-файла по прямой команде пользователя и заархивирован после release `1.2.100`; активный `doc/TODO/todo-plan.md` не создавался  
+**Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_TranslationOnly_Profile_Hardening_Architecture.md`  
 **Created:** 2026-04-28  
 **Started:** 2026-04-28  
+**Completed:** 2026-04-28  
+**Release:** `1.2.100` (`codeai-hub-1.2.100.vsix`)  
 
-> Execution note: пользователь явно выбрал этот planned-файл как execution owner. Прогресс и hash фиксируются здесь.
+> Execution note: пользователь явно выбрал planned-файл как execution owner. После успешного release build файл перенесён в `doc/TODO/Archive/`.
 
 ## Context Pack For This Cycle
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Codex_TranslationOnly_Profile_Hardening_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_TranslationOnly_Profile_Hardening_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
@@ -27,7 +29,11 @@
 - Если по факту задача затрагивает больше 3 файлов/пакетов, перед реализацией разбить ее на более мелкие пункты.
 - Гейты запускаются через Husky на `git commit`; не обходить hooks.
 - Таргетные проверки для этого плана: `npm run build --workspace @codeai-hub/codex-app-server-module`, `npm run build --workspace @codeai-hub/core`; при изменении UI/Settings capture path добавить `npm run build:webview` и `npm run typecheck:webview`.
-- После каждого коммита обновить статус пункта и hash в этом файле (`doc/TODO/Planned/todo-plan-TL-001-codex-translation-only.md`).
+- После каждого коммита обновить статус пункта и hash в execution owner file; финальный owner path: `doc/TODO/Archive/todo-plan-TL-001-codex-translation-only.md`.
+
+## Release Result
+- `./scripts/build-all.sh`: DONE, собраны provider/core/UI/launcher tarballs версии `1.2.100` в `~/.codeai-hub/releases/`.
+- `./scripts/build-release.sh --use-current-version`: DONE, создан `codeai-hub-1.2.100.vsix` (2.5M), VSIX runtime package surface verification passed.
 
 ## Phase 1 — Codex Translation-Only Hardening (owner: Codex, updated: 2026-04-28)
 
@@ -52,5 +58,5 @@
 10. [DONE] Git Commit: `test: verify codex translation capture profile` (hash: `7ce4d58f5`)
 
 ### Stream: Targeted Builds And Closeout
-11. [DONE] Прогнать таргетные сборки Codex/Core, обновить этот execution plan результатами и закрыть scope — scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/Planned/todo-plan-TL-001-codex-translation-only.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `npm run build --workspace @codeai-hub/core`; expected commit message: `chore: verify codex translation-only profile`.
+11. [DONE] Прогнать таргетные сборки Codex/Core, обновить этот execution plan результатами и закрыть scope — scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/Archive/todo-plan-TL-001-codex-translation-only.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `npm run build --workspace @codeai-hub/core`; expected commit message: `chore: verify codex translation-only profile`.
 12. [DONE] Git Commit: `chore: verify codex translation-only profile` (hash: `6a0c5c1ee`)

@@ -1,11 +1,14 @@
 # Codex Translation-Only Profile Hardening Architecture
 
-**Status:** Draft for discussion  
+**Status:** Implemented and archived in release `1.2.100`  
 **Created:** 2026-04-28  
+**Archived:** 2026-04-28  
 **Owner:** Oleksandr + Codex  
 **Planning source:** follow-up to release `1.2.99` Model Invocation Profiles scope  
 
 ---
+
+> Closeout: implementation completed by `doc/TODO/Archive/todo-plan-TL-001-codex-translation-only.md`. Stable outcomes were promoted to `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`, and `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`.
 
 ## 1. Problem
 
