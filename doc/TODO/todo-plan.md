@@ -80,9 +80,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Template Update UI
 
 1. [DONE] Add Project Manager/Core bridge support for loading pending template updates and applying grouped decisions (scope: `src/client/project-manager/*`, `packages/core/src/remote-bridge/*`, `packages/core/src/templates/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: expose template update decisions`)
-2. [IN_PROGRESS] Git Commit: `feat: expose template update decisions` (hash: TBD)
-3. [TODO] Add Settings UI surface for grouped template decisions: preserve, replace, backup+replace, and review file-by-file (scope: `src/client/ui/src/components/settings/*`, `src/client/project-manager/components/settings/*`; commit: `feat: add template update settings UI`)
-4. [TODO] Git Commit: `feat: add template update settings UI` (hash: TBD)
+2. [DONE] Git Commit: `feat: expose template update decisions` (hash: `9ff72d89b`)
+3. [DONE] Add Settings UI surface for grouped template decisions: preserve, replace, backup+replace, and review file-by-file (scope: `src/client/ui/src/components/settings/*`, `src/client/project-manager/components/settings/*`; commit: `feat: add template update settings UI`)
+4. [IN_PROGRESS] Git Commit: `feat: add template update settings UI` (hash: TBD)
 5. [TODO] Run webview checks and fix UI type/style regressions if any (scope: `src/client/ui`, `src/client/project-manager`; commit: `fix: stabilize template update settings UI`)
 6. [TODO] Git Commit: `fix: stabilize template update settings UI` (hash: TBD)
 

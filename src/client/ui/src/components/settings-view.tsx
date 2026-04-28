@@ -16,6 +16,8 @@ import {
   settingsSpacingTokens,
   settingsTypographyTokens,
 } from "./settings/style-tokens";
+import type { TemplateUpdateSettingsControls } from "./settings/template-update-settings-model";
+import TemplateUpdatesCard from "./settings/template-updates-card";
 import ThinkingSettings from "./settings/thinking-settings";
 import type { UseSettingsStateResult } from "./settings/use-settings-state";
 
@@ -24,7 +26,7 @@ type SettingsMode = "full" | "project-manager" | "settings-only";
 type SettingsViewState = UseSettingsStateResult & {
   readonly hostPostMessage?: (message: unknown) => void;
   readonly supportsCoreRestart?: boolean;
-};
+} & Partial<TemplateUpdateSettingsControls>;
 
 interface SettingsViewProps {
   readonly mode?: SettingsMode;
@@ -182,6 +184,16 @@ const SettingsView: React.FC<SettingsViewProps> = ({
   } = state;
   const renderProjectManagerGeneralTab =
     mode !== "project-manager" && state.supportsCoreRestart === false;
+  const templateUpdateControls =
+    state.templateUpdates &&
+    state.handleTemplateUpdatesLoad &&
+    state.handleTemplateUpdateResolve
+      ? {
+          handleTemplateUpdateResolve: state.handleTemplateUpdateResolve,
+          handleTemplateUpdatesLoad: state.handleTemplateUpdatesLoad,
+          templateUpdates: state.templateUpdates,
+        }
+      : null;
   const localizationSyncTitle = "Synchronizing localization";
   const localizationSyncDescription =
     state.localizationSyncStatus.message ??
@@ -299,41 +311,56 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                     />
                   </>
                 ) : (
-                  <GeneralSettings
-                    coreControl={coreControl}
-                    localization={settings.general.localization}
-                    nativeRequestCapture={nativeRequestCapture}
-                    nativeRequestCaptureModels={{
-                      claude: settings.providers.claude.defaultModel,
-                      codex: settings.providers.codex.defaultModel,
-                    }}
-                    onLocalizationCategoryLanguageChange={
-                      handleLocalizationCategoryLanguageChange
-                    }
-                    onLocalizationDefaultLanguageChange={
-                      handleLocalizationDefaultLanguageChange
-                    }
-                    onLocalizationEngineIdChange={
-                      handleLocalizationEngineIdChange
-                    }
-                    onLocalizationGlossaryEnabledChange={
-                      handleLocalizationGlossaryEnabledChange
-                    }
-                    onLocalizationWorkflowTermsPolicyChange={
-                      handleLocalizationWorkflowTermsPolicyChange
-                    }
-                    onNativeRequestCapture={handleNativeRequestCapture}
-                    onReasoningTranslationEngineIdChange={
-                      handleReasoningTranslationEngineIdChange
-                    }
-                    onResponsePolicyModeChange={handleResponsePolicyModeChange}
-                    onRestartCore={handleRestartCore}
-                    onStrictInstructionTextChange={
-                      handleStrictInstructionTextChange
-                    }
-                    onStrictSchemaTextChange={handleStrictSchemaTextChange}
-                    responsePolicy={settings.general.responsePolicy}
-                  />
+                  <>
+                    <GeneralSettings
+                      coreControl={coreControl}
+                      localization={settings.general.localization}
+                      nativeRequestCapture={nativeRequestCapture}
+                      nativeRequestCaptureModels={{
+                        claude: settings.providers.claude.defaultModel,
+                        codex: settings.providers.codex.defaultModel,
+                      }}
+                      onLocalizationCategoryLanguageChange={
+                        handleLocalizationCategoryLanguageChange
+                      }
+                      onLocalizationDefaultLanguageChange={
+                        handleLocalizationDefaultLanguageChange
+                      }
+                      onLocalizationEngineIdChange={
+                        handleLocalizationEngineIdChange
+                      }
+                      onLocalizationGlossaryEnabledChange={
+                        handleLocalizationGlossaryEnabledChange
+                      }
+                      onLocalizationWorkflowTermsPolicyChange={
+                        handleLocalizationWorkflowTermsPolicyChange
+                      }
+                      onNativeRequestCapture={handleNativeRequestCapture}
+                      onReasoningTranslationEngineIdChange={
+                        handleReasoningTranslationEngineIdChange
+                      }
+                      onResponsePolicyModeChange={
+                        handleResponsePolicyModeChange
+                      }
+                      onRestartCore={handleRestartCore}
+                      onStrictInstructionTextChange={
+                        handleStrictInstructionTextChange
+                      }
+                      onStrictSchemaTextChange={handleStrictSchemaTextChange}
+                      responsePolicy={settings.general.responsePolicy}
+                    />
+                    {templateUpdateControls ? (
+                      <TemplateUpdatesCard
+                        onLoad={
+                          templateUpdateControls.handleTemplateUpdatesLoad
+                        }
+                        onResolve={
+                          templateUpdateControls.handleTemplateUpdateResolve
+                        }
+                        state={templateUpdateControls.templateUpdates}
+                      />
+                    ) : null}
+                  </>
                 )}
               </div>
             );

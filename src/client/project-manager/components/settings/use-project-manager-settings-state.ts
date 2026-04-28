@@ -17,6 +17,7 @@ import type {
   NativeRequestCaptureScenarioId,
   NativeRequestCaptureState,
 } from "../../../ui/src/components/settings/use-settings-state-support";
+import type { TemplateUpdateSettingsControls } from "../../../ui/src/components/settings/template-update-settings-model";
 import {
   clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
@@ -98,10 +99,12 @@ const isNativeRequestCaptureResultPayload = (
   typeof payload.ok === "boolean" &&
   isNativeRequestCaptureProviderId(payload.providerId);
 
-export type UseProjectManagerSettingsStateResult = UseSettingsStateResult & {
-  readonly hostPostMessage: (message: unknown) => void;
-  readonly supportsCoreRestart: false;
-};
+export type UseProjectManagerSettingsStateResult =
+  UseSettingsStateResult &
+    TemplateUpdateSettingsControls & {
+      readonly hostPostMessage: (message: unknown) => void;
+      readonly supportsCoreRestart: false;
+    };
 
 interface ProjectManagerSettingsContext {
   readonly activeWorkspaceName?: string;
@@ -401,21 +404,6 @@ export const useProjectManagerSettingsState =
       [settings, updateSettings]
     );
 
-    const handleSave = useCallback(() => {
-      transport.save(settings);
-    }, [settings, transport]);
-
-    const handleReset = useCallback(() => {
-      transport.reset();
-    }, [transport]);
-
-    const handleUpdateProvider = useCallback(
-      (provider: ProviderId, target: "cli" | "sdk" | "core") => {
-        transport.updateProvider(provider, target);
-      },
-      [transport]
-    );
-
     const handleNativeRequestCapture = useCallback(
       (
         providerId: NativeRequestCaptureProviderId,
@@ -449,10 +437,6 @@ export const useProjectManagerSettingsState =
       [handleNativeRequestCapture, settings, transport]
     );
 
-    const handleRestartCore = useCallback(() => {
-      api.restartCore();
-    }, []);
-
     return {
       coreControl,
       settings,
@@ -484,14 +468,17 @@ export const useProjectManagerSettingsState =
       handleNativeRequestCapture,
       handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
-      handleRestartCore,
+      handleRestartCore: () => api.restartCore(),
       handleResponsePolicyModeChange,
       handleStrictSchemaTextChange,
       handleStrictInstructionTextChange,
-      handleSave,
-      handleReset,
-      handleUpdateProvider,
+      handleSave: () => transport.save(settings),
+      handleReset: transport.reset,
+      handleUpdateProvider: transport.updateProvider,
+      handleTemplateUpdateResolve: transport.resolveTemplateUpdate,
+      handleTemplateUpdatesLoad: transport.loadTemplateUpdates,
       hostPostMessage: handleHostMessage,
       supportsCoreRestart: false,
+      templateUpdates: transport.templateUpdates,
     };
   };
