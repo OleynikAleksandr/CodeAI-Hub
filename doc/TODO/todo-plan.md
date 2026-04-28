@@ -118,9 +118,9 @@
 9. [DONE] Убрать definite assignment assertions из runtime-core factory через safe lazy refs без поведения change; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/TODO/todo-plan.md`; expected commit message: `refactor: make session runtime wiring explicit`
 10. [DONE] Git Commit: `refactor: make session runtime wiring explicit` (hash: `8086cb7bb`)
 11. [DONE] Добавить/обновить lightweight coverage для runtime factory construction if feasible; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover session runtime wiring`
-12. [IN_PROGRESS] Git Commit: `test: cover session runtime wiring` (hash: TBD)
-13. [TODO] Закрыть Phase 3 таргетными сборками UI/Core/Gemini; scope: UI bundle, Core package, Gemini module; expected commit message: `chore: verify listener and diagnostics remediation`
-14. [TODO] Git Commit: `chore: verify listener and diagnostics remediation` (hash: TBD)
+12. [DONE] Git Commit: `test: cover session runtime wiring` (hash: `722d90674`)
+13. [DONE] Закрыть Phase 3 таргетными сборками UI/Core/Gemini; scope: UI bundle, Core package, Gemini module; expected commit message: `chore: verify listener and diagnostics remediation`
+14. [IN_PROGRESS] Git Commit: `chore: verify listener and diagnostics remediation` (hash: TBD)
 
 ## Phase 4 — SSOT Closeout Before Release (owner: Codex, updated: 2026-04-28)
 
