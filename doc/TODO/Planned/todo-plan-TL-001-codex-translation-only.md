@@ -53,4 +53,4 @@
 
 ### Stream: Targeted Builds And Closeout
 11. [DONE] Прогнать таргетные сборки Codex/Core, обновить этот execution plan результатами и закрыть scope — scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/Planned/todo-plan-TL-001-codex-translation-only.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `npm run build --workspace @codeai-hub/core`; expected commit message: `chore: verify codex translation-only profile`.
-12. [IN_PROGRESS] Git Commit: `chore: verify codex translation-only profile` (hash: TBD)
+12. [DONE] Git Commit: `chore: verify codex translation-only profile` (hash: `6a0c5c1ee`)

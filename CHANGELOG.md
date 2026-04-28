@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.100] - 2026-04-28
+### Changed
+- **Codex GPT translation engines are now translator-only by contract.** `gpt-5.4-mini` and `gpt-5.3-codex-spark` translation calls use dedicated translation instructions that forbid workflow-agent work, tools, shell/file/patch access, web search, planning, and user-input requests.
+- **Codex translation capture is guarded against workflow prompt leakage.** The `Translation` native request capture route now verifies the `translation` purpose, `codex:translation` process profile, `codex:translation-tools-minimal` policy key, `workflowPrompt = null`, and zero workflow prompt metadata.
+
+### Tests
+- **Targeted Codex/Core verification passed before release packaging.** Passed Codex App Server and Core builds plus focused native capture, Codex diagnostic capture, and model invocation profile tests.
+
 ## [1.2.99] - 2026-04-28
 ### Added
 - **Model invocation profiles now separate workflow-agent and translation purposes.** Core resolves provider/model/step profiles with compatible model lists, keeps `diagnostic` as a capture mode rather than a profile, and loads user-editable text-only instruction fragments without exposing process flags, tools, sandbox, or approval policy.
