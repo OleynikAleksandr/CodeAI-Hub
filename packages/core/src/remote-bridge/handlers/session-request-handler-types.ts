@@ -34,6 +34,7 @@ export interface CreateAndRegisterSessionOptions {
   readonly resumeMode?: SessionResumeMode;
   readonly rootSessionId?: string | null;
   readonly silent?: boolean;
+  readonly targetModelId?: string | null;
   readonly workspacePath: string;
 }
 

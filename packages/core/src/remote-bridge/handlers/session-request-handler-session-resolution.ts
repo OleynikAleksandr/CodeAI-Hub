@@ -76,6 +76,7 @@ export class SessionRequestHandlerSessionResolution {
       readonly stage?: string | null;
       readonly runSlug?: string | null;
       readonly providerSessionId?: string | null;
+      readonly targetModelId?: string | null;
     }
   ): Promise<void> {
     const requestedProviderId =
@@ -121,6 +122,7 @@ export class SessionRequestHandlerSessionResolution {
           runSlug: context?.runSlug ?? null,
           providerSessionId: runBound.providerSessionId,
         },
+        targetModelId: context?.targetModelId ?? null,
       });
     } catch (error) {
       this.deps.handleProviderFailure(runBound.providerId, error);

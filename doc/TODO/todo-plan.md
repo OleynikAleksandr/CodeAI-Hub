@@ -43,44 +43,46 @@
 
 ### Stream: Transport And Serialization
 5. [DONE] Расширить session model binding в Core session/transport contract — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat: serialize session model bindings`.
-6. [IN_PROGRESS] Git Commit: `feat: serialize session model bindings` (hash: TBD)
+6. [DONE] Git Commit: `feat: serialize session model bindings` (hash: `9362302ad`)
 
 ### Stream: Session Creation
-7. [TODO] Протянуть explicit model selection через `session:create` и bind на создании logical session — scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`; expected commit message: `feat: bind model during session creation`.
-8. [TODO] Git Commit: `feat: bind model during session creation` (hash: TBD)
+7. [DONE] Протянуть explicit model selection из `session:create` до bootstrap options — scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-types.ts`; expected commit message: `feat: pass session model selection through create`.
+8. [IN_PROGRESS] Git Commit: `feat: pass session model selection through create` (hash: TBD)
+9. [TODO] Создать session model binding в shell factory до `session:created` broadcast — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`; expected commit message: `feat: bind model during session creation`.
+10. [TODO] Git Commit: `feat: bind model during session creation` (hash: TBD)
 
 ### Stream: Applied Turn Config
-9. [TODO] Перевести outbound applied turn config на session-bound identity вместо live Settings для существующих сессий — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `feat: use session-bound model for turns`.
-10. [TODO] Git Commit: `feat: use session-bound model for turns` (hash: TBD)
+11. [TODO] Перевести outbound applied turn config на session-bound identity вместо live Settings для существующих сессий — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `feat: use session-bound model for turns`.
+12. [TODO] Git Commit: `feat: use session-bound model for turns` (hash: TBD)
 
 ### Stream: Explicit Switch Path
-11. [TODO] Сделать `switch_model` явной mutation path для session binding и сохранить effective broadcast contract — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit message: `feat: route model switches through session binding`.
-12. [TODO] Git Commit: `feat: route model switches through session binding` (hash: TBD)
+13. [TODO] Сделать `switch_model` явной mutation path для session binding и сохранить effective broadcast contract — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit message: `feat: route model switches through session binding`.
+14. [TODO] Git Commit: `feat: route model switches through session binding` (hash: TBD)
 
 ## Phase 3 — PM/UI Binding Display (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Shared UI ModelInfo
-13. [TODO] Расширить `SessionRecord`/`ModelInfo` binding source и builder fallback — scope: `src/types/session.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/ui/src/session/model-info-builder.test.ts`; expected commit message: `feat: display session-bound model identity`.
-14. [TODO] Git Commit: `feat: display session-bound model identity` (hash: TBD)
+15. [TODO] Расширить `SessionRecord`/`ModelInfo` binding source и builder fallback — scope: `src/types/session.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/ui/src/session/model-info-builder.test.ts`; expected commit message: `feat: display session-bound model identity`.
+16. [TODO] Git Commit: `feat: display session-bound model identity` (hash: TBD)
 
 ### Stream: Snapshot Seeding
-15. [TODO] Сделать initial snapshots binding-first в runtime/dialog controllers — scope: `src/client/ui/src/session/helpers.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit message: `feat: seed session snapshots from model binding`.
-16. [TODO] Git Commit: `feat: seed session snapshots from model binding` (hash: TBD)
+17. [TODO] Сделать initial snapshots binding-first в runtime/dialog controllers — scope: `src/client/ui/src/session/helpers.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit message: `feat: seed session snapshots from model binding`.
+18. [TODO] Git Commit: `feat: seed session snapshots from model binding` (hash: TBD)
 
 ### Stream: Settings Sync Guard
-17. [TODO] Запретить `useSettingsModelsSync` переписывать bound/runtime sessions после изменения Settings — scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; expected commit message: `fix: keep settings sync from rewriting bound session models`.
-18. [TODO] Git Commit: `fix: keep settings sync from rewriting bound session models` (hash: TBD)
+19. [TODO] Запретить `useSettingsModelsSync` переписывать bound/runtime sessions после изменения Settings — scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; expected commit message: `fix: keep settings sync from rewriting bound session models`.
+20. [TODO] Git Commit: `fix: keep settings sync from rewriting bound session models` (hash: TBD)
 
 ### Stream: PM Regression Coverage
-19. [TODO] Добавить UI regression: две сессии одного provider показывают разные bound models — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit message: `test: cover session-scoped model labels`.
-20. [TODO] Git Commit: `test: cover session-scoped model labels` (hash: TBD)
+21. [TODO] Добавить UI regression: две сессии одного provider показывают разные bound models — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit message: `test: cover session-scoped model labels`.
+22. [TODO] Git Commit: `test: cover session-scoped model labels` (hash: TBD)
 
 ## Phase 4 — Documentation And Verification (owner: Codex, updated: 2026-04-28)
 
 ### Stream: SSOT Documentation
-21. [TODO] Обновить SSOT по session-scoped model binding и Settings-as-seed contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit message: `docs: document session-scoped model binding`.
-22. [TODO] Git Commit: `docs: document session-scoped model binding` (hash: TBD)
+23. [TODO] Обновить SSOT по session-scoped model binding и Settings-as-seed contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit message: `docs: document session-scoped model binding`.
+24. [TODO] Git Commit: `docs: document session-scoped model binding` (hash: TBD)
 
 ### Stream: Targeted Builds And Closeout
-23. [TODO] Прогнать таргетные сборки Core/Webview, обновить активный todo-plan результатами и закрыть queued scope после активации — scope: `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify session-scoped model binding`.
-24. [TODO] Git Commit: `chore: verify session-scoped model binding` (hash: TBD)
+25. [TODO] Прогнать таргетные сборки Core/Webview, обновить активный todo-plan результатами и закрыть queued scope после активации — scope: `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify session-scoped model binding`.
+26. [TODO] Git Commit: `chore: verify session-scoped model binding` (hash: TBD)
