@@ -1,6 +1,6 @@
 # Runtime Stability Remediation — Architecture Plan
 
-**Status:** Accepted for implementation
+**Status:** Archived after release `1.2.103`
 **Created:** 2026-04-28 18:17 CEST
 **Accepted:** 2026-04-28 18:25 CEST
 **Branch at planning time:** `main`
@@ -18,8 +18,9 @@ behavior, provider contracts, or workflow semantics beyond the minimum needed
 for safer lifecycle handling, input validation, settings reads, cleanup, and
 diagnostics.
 
-The user approved implementation on 2026-04-28. The active execution checklist
-is `doc/TODO/todo-plan.md`.
+The user approved implementation on 2026-04-28. The completed execution
+checklist is archived at
+`doc/TODO/Archive/todo-plan-phase5-runtime-stability-remediation.md`.
 
 ## 2. Confirmed Findings
 
