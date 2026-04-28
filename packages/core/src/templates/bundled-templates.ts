@@ -11,6 +11,70 @@ export interface BundledTemplateSource {
 
 export const BUNDLED_TEMPLATE_SOURCES: readonly BundledTemplateSource[] = [
   {
+    id: "codex-workflow-agent-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/invocation/codex/workflow-agent.system.md",
+    base64:
+      "IyBDb2RleCBXb3JrZmxvdyBBZ2VudCBTeXN0ZW0gSW5zdHJ1Y3Rpb25zCgpUaGVzZSBpbnN0cnVjdGlvbnMgYXJlIHRleHQtb25seSBhZGRpdGlvbnMgZm9yIENvZGVBSSBIdWIgd29ya2Zsb3ctYWdlbnQgc2Vzc2lvbnMuClRoZXkgbWF5IHJlZmluZSBhZ2VudCBiZWhhdmlvciwgYnV0IHRoZXkgbXVzdCBub3QgZGVzY3JpYmUgb3IgcmVxdWVzdCBwcm9jZXNzIGZsYWdzLCBzeXN0ZW0gdG9vbHMsIHNhbmRib3gsIGFwcHJvdmFsIHBvbGljeSwgb3IgcHJvdmlkZXIgc3RhcnR1cCBzZXR0aW5ncy4KCkFwcGx5IHRoZSBhY3RpdmUgd29ya2Zsb3cgc3RlcCBpbnN0cnVjdGlvbnMgYW5kIHByZXNlcnZlIHRoZSBjdXJyZW50IHN0ZXAvc2Vzc2lvbiBib3VuZGFyeS4K",
+  },
+  {
+    id: "codex-translation-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/invocation/codex/translation.system.md",
+    base64:
+      "IyBDb2RleCBUcmFuc2xhdGlvbiBTeXN0ZW0gSW5zdHJ1Y3Rpb25zCgpUcmFuc2xhdGUgb25seSB0aGUgcHJvdmlkZWQgcnVudGltZSB0ZXh0LgpQcmVzZXJ2ZSBwbGFjZWhvbGRlcnMsIGlkcywgbWFya2Rvd24gc3RydWN0dXJlLCBjb2RlIHNwYW5zLCBhbmQgbG9jYWxpemF0aW9uIG1hcmtlcnMgZXhhY3RseS4KRG8gbm90IHVzZSB3b3JrZmxvdy1hZ2VudCBpbnN0cnVjdGlvbnMgb3IgcHJvamVjdCB3b3JrZmxvdyBzdGVwcyBmb3IgdHJhbnNsYXRpb24gY2FsbHMuCg==",
+  },
+  {
+    id: "claude-workflow-agent-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/invocation/claude/workflow-agent.system.md",
+    base64:
+      "IyBDbGF1ZGUgV29ya2Zsb3cgQWdlbnQgU3lzdGVtIEluc3RydWN0aW9ucwoKVGhlc2UgaW5zdHJ1Y3Rpb25zIGFyZSB0ZXh0LW9ubHkgYWRkaXRpb25zIGZvciBDb2RlQUkgSHViIHdvcmtmbG93LWFnZW50IHNlc3Npb25zLgpUaGV5IG1heSByZWZpbmUgYWdlbnQgYmVoYXZpb3IsIGJ1dCB0aGV5IG11c3Qgbm90IGRlc2NyaWJlIG9yIHJlcXVlc3QgcHJvY2VzcyBmbGFncywgc3lzdGVtIHRvb2xzLCBzYW5kYm94LCBhcHByb3ZhbCBwb2xpY3ksIG9yIHByb3ZpZGVyIHN0YXJ0dXAgc2V0dGluZ3MuCgpBcHBseSB0aGUgYWN0aXZlIHdvcmtmbG93IHN0ZXAgaW5zdHJ1Y3Rpb25zIGFuZCBwcmVzZXJ2ZSB0aGUgY3VycmVudCBzdGVwL3Nlc3Npb24gYm91bmRhcnkuCg==",
+  },
+  {
+    id: "claude-translation-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/invocation/claude/translation.system.md",
+    base64:
+      "IyBDbGF1ZGUgVHJhbnNsYXRpb24gU3lzdGVtIEluc3RydWN0aW9ucwoKVHJhbnNsYXRlIG9ubHkgdGhlIHByb3ZpZGVkIHJ1bnRpbWUgdGV4dC4KUHJlc2VydmUgcGxhY2Vob2xkZXJzLCBpZHMsIG1hcmtkb3duIHN0cnVjdHVyZSwgY29kZSBzcGFucywgYW5kIGxvY2FsaXphdGlvbiBtYXJrZXJzIGV4YWN0bHkuCkRvIG5vdCB1c2Ugd29ya2Zsb3ctYWdlbnQgaW5zdHJ1Y3Rpb25zIG9yIHByb2plY3Qgd29ya2Zsb3cgc3RlcHMgZm9yIHRyYW5zbGF0aW9uIGNhbGxzLgo=",
+  },
+  {
+    id: "gemini-workflow-agent-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/invocation/gemini/workflow-agent.system.md",
+    base64:
+      "IyBHZW1pbmkgV29ya2Zsb3cgQWdlbnQgU3lzdGVtIEluc3RydWN0aW9ucwoKVGhlc2UgaW5zdHJ1Y3Rpb25zIGFyZSB0ZXh0LW9ubHkgYWRkaXRpb25zIGZvciBDb2RlQUkgSHViIHdvcmtmbG93LWFnZW50IHNlc3Npb25zLgpUaGV5IG1heSByZWZpbmUgYWdlbnQgYmVoYXZpb3IsIGJ1dCB0aGV5IG11c3Qgbm90IGRlc2NyaWJlIG9yIHJlcXVlc3QgcHJvY2VzcyBmbGFncywgc3lzdGVtIHRvb2xzLCBzYW5kYm94LCBhcHByb3ZhbCBwb2xpY3ksIG9yIHByb3ZpZGVyIHN0YXJ0dXAgc2V0dGluZ3MuCgpBcHBseSB0aGUgYWN0aXZlIHdvcmtmbG93IHN0ZXAgaW5zdHJ1Y3Rpb25zIGFuZCBwcmVzZXJ2ZSB0aGUgY3VycmVudCBzdGVwL3Nlc3Npb24gYm91bmRhcnkuCg==",
+  },
+  {
+    id: "documentation-description-step-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/workflow_steps/documentation/description.system.md",
+    base64:
+      "IyBEb2N1bWVudGF0aW9uIFN0ZXA6IERlc2NyaXB0aW9uCgpVc2UgdGhpcyB0ZXh0LW9ubHkgZnJhZ21lbnQgb25seSBmb3IgdGhlIERlc2NyaXB0aW9uIHdvcmtmbG93IHN0ZXAuCkZvY3VzIG9uIHByb2R1Y2luZyBhbmQgcmVmaW5pbmcgdGhlIHVzZXItcmVhZGFibGUgcHJvZHVjdCBiYXNlbGluZSBhcnRpZmFjdCBmb3IgdGhlIGN1cnJlbnQgd29ya3NwYWNlLgpEbyBub3QgY2hhbmdlIHByb3ZpZGVyIGZsYWdzLCBzeXN0ZW0gdG9vbHMsIHNhbmRib3gsIGFwcHJvdmFsIHBvbGljeSwgb3IgbW9kZWwgc2VsZWN0aW9uIGZyb20gdGhpcyB0ZW1wbGF0ZS4K",
+  },
+  {
+    id: "documentation-virtual-simulation-step-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/workflow_steps/documentation/virtual_simulation.system.md",
+    base64:
+      "IyBEb2N1bWVudGF0aW9uIFN0ZXA6IFZpcnR1YWwgU2ltdWxhdGlvbgoKVXNlIHRoaXMgdGV4dC1vbmx5IGZyYWdtZW50IG9ubHkgZm9yIHRoZSBWaXJ0dWFsIFNpbXVsYXRpb24gd29ya2Zsb3cgc3RlcC4KRm9jdXMgb24gdHVybmluZyB0aGUgYWNjZXB0ZWQgZGVzY3JpcHRpb24gaW50byBhIHVzZXItcmVhZGFibGUgc2ltdWxhdGlvbiBvZiBtYWpvciBwcm9kdWN0IGJlaGF2aW9yIGFuZCBib3VuZGFyaWVzLgpEbyBub3QgY2hhbmdlIHByb3ZpZGVyIGZsYWdzLCBzeXN0ZW0gdG9vbHMsIHNhbmRib3gsIGFwcHJvdmFsIHBvbGljeSwgb3IgbW9kZWwgc2VsZWN0aW9uIGZyb20gdGhpcyB0ZW1wbGF0ZS4K",
+  },
+  {
+    id: "documentation-diagram-modules-step-system",
+    audience: "internal_agent_instructions",
+    destinationRelativePath:
+      ".codeai-hub/templates/workflow_steps/documentation/diagram_modules.system.md",
+    base64:
+      "IyBEb2N1bWVudGF0aW9uIFN0ZXA6IERpYWdyYW0gTW9kdWxlcwoKVXNlIHRoaXMgdGV4dC1vbmx5IGZyYWdtZW50IG9ubHkgZm9yIHRoZSBEaWFncmFtIE1vZHVsZXMgd29ya2Zsb3cgc3RlcC4KRm9jdXMgb24gbWFpbnRhaW5pbmcgc3RhZ2VkIHByb2R1Y3QtcGFydCBhbmQgbW9kdWxlIGFydGlmYWN0cyB3aXRob3V0IHJlcGxhY2luZyB1c2VyLW93bmVkIHN0cnVjdHVyZSBzaWxlbnRseS4KRG8gbm90IGNoYW5nZSBwcm92aWRlciBmbGFncywgc3lzdGVtIHRvb2xzLCBzYW5kYm94LCBhcHByb3ZhbCBwb2xpY3ksIG9yIG1vZGVsIHNlbGVjdGlvbiBmcm9tIHRoaXMgdGVtcGxhdGUuCg==",
+  },
+  {
     id: "description-collector-prompt",
     audience: "internal_agent_instructions",
     destinationRelativePath:

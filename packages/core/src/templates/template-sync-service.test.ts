@@ -108,6 +108,22 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
       "do not silently convert standalone modules into cluster members",
     ],
   },
+  {
+    relativePath:
+      ".codeai-hub/templates/invocation/codex/translation.system.md",
+    snippets: [
+      "# Codex Translation System Instructions",
+      "Do not use workflow-agent instructions",
+    ],
+  },
+  {
+    relativePath:
+      ".codeai-hub/templates/workflow_steps/documentation/virtual_simulation.system.md",
+    snippets: [
+      "# Documentation Step: Virtual Simulation",
+      "Do not change provider flags",
+    ],
+  },
 ] as const;
 
 const encodeTemplateContent = (content: string): string =>

@@ -64,12 +64,12 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 1. [DONE] Add template sync state, bundled-content hashing, user-modified detection, and `.incoming/<version>/...` preservation for changed bundled templates (scope: `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: preserve user-modified templates`)
 2. [DONE] Git Commit: `feat: preserve user-modified templates` (hash: `585a3f9fd`)
 3. [DONE] Add backup + explicit resolution actions for pending template updates, keeping flags/tools unavailable to user templates (scope: `packages/core/src/templates/*`, `packages/core/src/remote-bridge/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: add template update resolution actions`)
-4. [IN_PROGRESS] Git Commit: `feat: add template update resolution actions` (hash: TBD)
+4. [DONE] Git Commit: `feat: add template update resolution actions` (hash: `fb851a44b`)
 
 ### Stream: Invocation Instruction Templates
 
-5. [TODO] Add bundled text-only invocation instruction templates and a loader for user-overridden `.md` fragments (scope: `packages/core/src/templates/*`, `packages/core/src/model-invocation/*`; commit: `feat: add invocation instruction templates`)
-6. [TODO] Git Commit: `feat: add invocation instruction templates` (hash: TBD)
+5. [DONE] Add bundled text-only invocation instruction templates and a loader for user-overridden `.md` fragments (scope: `packages/core/src/templates/*`, `packages/core/src/model-invocation/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: add invocation instruction templates`)
+6. [IN_PROGRESS] Git Commit: `feat: add invocation instruction templates` (hash: TBD)
 7. [TODO] Add tests proving text templates can change instructions without exposing flags/tools/sandbox/approval controls (scope: `packages/core/src/templates/*.test.ts`, `packages/core/src/model-invocation/*.test.ts`; commit: `test: cover invocation template overrides`)
 8. [TODO] Git Commit: `test: cover invocation template overrides` (hash: TBD)
 

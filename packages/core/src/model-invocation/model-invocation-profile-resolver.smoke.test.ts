@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
+import { ModelInvocationInstructionLoader } from "./model-invocation-instruction-loader";
 import {
   ModelInvocationProfileResolver,
   normalizeModelInvocationPurpose,
@@ -111,4 +115,32 @@ test("ModelInvocationProfileResolver resolves provider-owned Claude translation 
     profile.sessionProfile.instructionFragments.map((fragment) => fragment.key),
     ["invocation/claude/translation.system.md"]
   );
+});
+
+test("ModelInvocationInstructionLoader loads only user-template fragments", async () => {
+  const templateRoot = await mkdtemp(path.join(os.tmpdir(), "invocation-"));
+  try {
+    const templatePath = path.join(
+      templateRoot,
+      "invocation/codex/translation.system.md"
+    );
+    await mkdir(path.dirname(templatePath), { recursive: true });
+    await writeFile(templatePath, "Custom translation instructions\n", "utf8");
+
+    const profile = resolver.resolve({
+      modelId: "gpt-5.4-mini",
+      providerId: "codex",
+      purpose: "translation",
+    });
+    const fragments = await new ModelInvocationInstructionLoader({
+      templateRoot,
+    }).load(profile);
+
+    assert.equal(fragments[0]?.status, "code-owned");
+    assert.equal(fragments[0]?.content, undefined);
+    assert.equal(fragments[1]?.status, "loaded");
+    assert.equal(fragments[1]?.content, "Custom translation instructions");
+  } finally {
+    await rm(templateRoot, { recursive: true, force: true });
+  }
 });
