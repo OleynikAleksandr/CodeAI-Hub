@@ -75,13 +75,13 @@
 
 ### Stream: PM Regression Coverage
 21. [DONE] Добавить UI regression: две сессии одного provider показывают разные bound models — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit message: `test: cover session-scoped model labels`.
-22. [IN_PROGRESS] Git Commit: `test: cover session-scoped model labels` (hash: TBD)
+22. [DONE] Git Commit: `test: cover session-scoped model labels` (hash: `185a64538`)
 
 ## Phase 4 — Documentation And Verification (owner: Codex, updated: 2026-04-28)
 
 ### Stream: SSOT Documentation
-23. [TODO] Обновить SSOT по session-scoped model binding и Settings-as-seed contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit message: `docs: document session-scoped model binding`.
-24. [TODO] Git Commit: `docs: document session-scoped model binding` (hash: TBD)
+23. [DONE] Обновить SSOT по session-scoped model binding и Settings-as-seed contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit message: `docs: document session-scoped model binding`.
+24. [IN_PROGRESS] Git Commit: `docs: document session-scoped model binding` (hash: TBD)
 
 ### Stream: Targeted Builds And Closeout
 25. [TODO] Прогнать таргетные сборки Core/Webview, обновить активный todo-plan результатами и закрыть queued scope после активации — scope: `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify session-scoped model binding`.
