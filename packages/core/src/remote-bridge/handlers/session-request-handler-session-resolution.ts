@@ -163,6 +163,12 @@ export class SessionRequestHandlerSessionResolution {
           candidate.providerId === last.providerId &&
           candidate.providerSessionId === last.providerSessionId
       );
+    if (existingSession && last.modelBinding) {
+      this.deps.sessionManager.setModelBinding(
+        existingSession.id,
+        last.modelBinding
+      );
+    }
     const resolvedSession =
       existingSession ??
       (await this.deps.sessionBootstrap.createAndRegisterSession({
@@ -175,6 +181,7 @@ export class SessionRequestHandlerSessionResolution {
           runSlug: this.inferRunSlugFromDialogId(options.dialogId),
           providerSessionId: last.providerSessionId,
         },
+        inheritedModelBinding: last.modelBinding ?? null,
         rootSessionId: options.dialogId,
       }));
     if (!resolvedSession) {

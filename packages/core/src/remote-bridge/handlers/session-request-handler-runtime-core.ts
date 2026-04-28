@@ -2,7 +2,10 @@ import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
-import { SessionModelBindingFacade } from "../../session-model-binding";
+import {
+  type SessionModelBinding,
+  SessionModelBindingFacade,
+} from "../../session-model-binding";
 import { SessionModelBindingResolver } from "../../session-model-binding/session-model-binding-resolver";
 import { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import { createCoreTranslationFacade } from "../../translation/core-translation-facade-factory";
@@ -261,26 +264,40 @@ export const createSessionRequestHandlerRuntimeCore = (
     broadcastSessionBinding: (sessionId) =>
       providerBindingService.broadcastSessionBinding(sessionId),
     bindSessionModel: (bindingOptions) => {
-      const binding = bindingOptions.targetModelId
-        ? sessionModelBindingResolver.bindFromExplicitSelection({
-            providerId: bindingOptions.session.providerId,
-            sessionId: bindingOptions.session.id,
-            continuityRootId: bindingOptions.continuityRootSessionId,
-            workspacePath: bindingOptions.session.workspacePath,
-            workspaceSlug: bindingOptions.session.initiativeSlug,
-            stage: bindingOptions.session.stage,
-            runSlug: bindingOptions.session.runSlug,
-            targetModelId: bindingOptions.targetModelId,
-          })
-        : sessionModelBindingResolver.bindFromSettingsDefault({
-            providerId: bindingOptions.session.providerId,
-            sessionId: bindingOptions.session.id,
-            continuityRootId: bindingOptions.continuityRootSessionId,
-            workspacePath: bindingOptions.session.workspacePath,
-            workspaceSlug: bindingOptions.session.initiativeSlug,
-            stage: bindingOptions.session.stage,
-            runSlug: bindingOptions.session.runSlug,
-          });
+      let binding: SessionModelBinding | null = null;
+      if (bindingOptions.inheritedModelBinding) {
+        binding = sessionModelBindingResolver.inheritBinding({
+          providerId: bindingOptions.session.providerId,
+          sessionId: bindingOptions.session.id,
+          continuityRootId: bindingOptions.continuityRootSessionId,
+          workspacePath: bindingOptions.session.workspacePath,
+          workspaceSlug: bindingOptions.session.initiativeSlug,
+          stage: bindingOptions.session.stage,
+          runSlug: bindingOptions.session.runSlug,
+          sourceBinding: bindingOptions.inheritedModelBinding,
+        });
+      } else if (bindingOptions.targetModelId) {
+        binding = sessionModelBindingResolver.bindFromExplicitSelection({
+          providerId: bindingOptions.session.providerId,
+          sessionId: bindingOptions.session.id,
+          continuityRootId: bindingOptions.continuityRootSessionId,
+          workspacePath: bindingOptions.session.workspacePath,
+          workspaceSlug: bindingOptions.session.initiativeSlug,
+          stage: bindingOptions.session.stage,
+          runSlug: bindingOptions.session.runSlug,
+          targetModelId: bindingOptions.targetModelId,
+        });
+      } else {
+        binding = sessionModelBindingResolver.bindFromSettingsDefault({
+          providerId: bindingOptions.session.providerId,
+          sessionId: bindingOptions.session.id,
+          continuityRootId: bindingOptions.continuityRootSessionId,
+          workspacePath: bindingOptions.session.workspacePath,
+          workspaceSlug: bindingOptions.session.initiativeSlug,
+          stage: bindingOptions.session.stage,
+          runSlug: bindingOptions.session.runSlug,
+        });
+      }
       if (binding) {
         options.sessionManager.setModelBinding(
           bindingOptions.session.id,

@@ -1,5 +1,6 @@
 import type { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { BridgeEvent } from "../types";
@@ -22,6 +23,7 @@ interface SessionRequestHandlerSessionBootstrapDependencies {
   }) => Promise<void>;
   readonly bindSessionModel: (options: {
     readonly continuityRootSessionId: string;
+    readonly inheritedModelBinding?: SessionModelBinding | null;
     readonly session: Session;
     readonly targetModelId?: string | null;
   }) => void;

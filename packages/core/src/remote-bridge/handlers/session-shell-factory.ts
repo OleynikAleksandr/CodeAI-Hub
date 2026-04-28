@@ -1,5 +1,6 @@
 import type { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import { type BridgeEvent, serializeSession } from "../types";
@@ -20,6 +21,7 @@ interface SessionShellFactoryDependencies {
   }) => Promise<void>;
   readonly bindSessionModel: (options: {
     readonly continuityRootSessionId: string;
+    readonly inheritedModelBinding?: SessionModelBinding | null;
     readonly session: Session;
     readonly targetModelId?: string | null;
   }) => void;
@@ -106,6 +108,7 @@ export class SessionShellFactory {
     this.deps.bindSessionModel({
       session,
       continuityRootSessionId,
+      inheritedModelBinding: options.inheritedModelBinding,
       targetModelId: options.targetModelId,
     });
 
@@ -177,6 +180,7 @@ export class SessionShellFactory {
     this.deps.bindSessionModel({
       session,
       continuityRootSessionId,
+      inheritedModelBinding: options.inheritedModelBinding,
       targetModelId: options.targetModelId,
     });
     if (!supportsImmediateBinding) {

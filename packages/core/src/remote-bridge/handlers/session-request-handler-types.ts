@@ -1,6 +1,7 @@
 import type { CoreConfig } from "../../config";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
@@ -30,6 +31,7 @@ export interface CreateAndRegisterSessionOptions {
   readonly adapter: NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
   readonly context: ContinuityRootResolutionOptions["context"];
   readonly continuationParentId?: string | null;
+  readonly inheritedModelBinding?: SessionModelBinding | null;
   readonly providerId: string;
   readonly resumeMode?: SessionResumeMode;
   readonly rootSessionId?: string | null;

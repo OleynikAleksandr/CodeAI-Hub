@@ -40,6 +40,16 @@ const buildStubBindingService = (): {
 const entry: ContinuityIndexEntry = {
   dialogId: "codex-abc-diagram-modules",
   latestSessionId: "abc-session-id",
+  modelBinding: {
+    key: "provider\u001fcodexCli\u001fsession\u001fcodex-abc-diagram-modules",
+    providerId: "codexCli",
+    baseModelId: "gpt-5.3-codex-spark",
+    modelId: "gpt-5.3-codex-spark reasoning:xhigh",
+    reasoningEffort: "xhigh",
+    source: "settings_default",
+    boundAt: "2026-04-28T12:00:00.000Z",
+    updatedAt: "2026-04-28T12:00:00.000Z",
+  },
   providerId: "codexCli",
   providerSessionId: "019d-provider-session",
   rootSessionId: "codex-abc-diagram-modules",
@@ -76,6 +86,10 @@ test("materializeContinuityEntries registers stub session + binding + hydrates w
   assert.equal(session.providerSessionStatus, "ready");
   assert.equal(session.stage, "diagram_modules");
   assert.equal(session.workspacePath, "/tmp/ws");
+  assert.equal(
+    session.modelBinding?.modelId,
+    "gpt-5.3-codex-spark reasoning:xhigh"
+  );
 
   const binding = providerSessions.get("abc-session-id");
   assert.ok(binding, "binding must be registered");

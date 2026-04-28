@@ -189,6 +189,7 @@ export class SessionRequestHandlerFlowNodeRollover {
           runSlug: session.runSlug,
           providerSessionId: null,
         },
+        inheritedModelBinding: session.modelBinding ?? null,
         rootSessionId:
           this.deps.continuityRootBySessionId.get(session.id) ?? session.id,
         continuationParentId: session.id,

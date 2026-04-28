@@ -41,6 +41,12 @@ export const materializeContinuityEntries = (options: {
       providerSessionId,
       stage: entry.stage,
     });
+    if (entry.modelBinding) {
+      options.deps.sessionManager.setModelBinding(
+        sessionId,
+        entry.modelBinding
+      );
+    }
     options.deps.providerBindingService.registerRestoredBinding({
       sessionId,
       providerId,

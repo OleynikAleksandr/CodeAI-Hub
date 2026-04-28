@@ -49,8 +49,8 @@
 ## Phase 3 — Restore, Dialog, Workspace Hydration (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Hydrate bound identity after materialization
-1. [TODO] Hydrate restored/materialized sessions from persisted binding instead of current Settings; scope: `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`; expected commit: `fix: hydrate restored sessions with persisted model binding`.
-2. [TODO] Git Commit: `fix: hydrate restored sessions with persisted model binding` (hash: TBD)
+1. [DONE] Hydrate restored/materialized sessions from persisted binding instead of current Settings; scope: `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`; expected commit: `fix: hydrate restored sessions with persisted model binding`.
+2. [DONE] Git Commit: `fix: hydrate restored sessions with persisted model binding` (hash: TBD)
 3. [TODO] Thread model binding through Project Manager dialog bootstrap placeholders; scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-core-events.test.ts`; expected commit: `fix: restore project manager dialog model binding`.
 4. [TODO] Git Commit: `fix: restore project manager dialog model binding` (hash: TBD)
 
@@ -58,7 +58,7 @@
 
 ### Stream: Clone binding for continuation sessions
 1. [DONE] Add explicit inherit/clone binding API for continuation-created sessions; scope: `packages/core/src/session-model-binding/session-model-binding-types.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.ts`, `packages/core/src/session-model-binding/session-model-binding-resolver.ts`; expected commit: `fix: clone model binding for continuation sessions`.
-2. [DONE] Git Commit: `fix: clone model binding for continuation sessions` (hash: TBD)
+2. [DONE] Git Commit: `fix: clone model binding for continuation sessions` (hash: `76d1d5cf7`)
 3. [TODO] Ensure `Remaining context threshold (%)` rollover uses inherited binding for provider requests; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix: keep rollover sessions on bound model`.
 4. [TODO] Git Commit: `fix: keep rollover sessions on bound model` (hash: TBD)
 
