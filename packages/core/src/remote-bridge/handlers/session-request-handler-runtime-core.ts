@@ -56,6 +56,30 @@ interface ClaudeTranslationServiceOwner {
 
 const SETTINGS_FILE_NAME = "settings.json";
 
+interface DeferredRuntimeRef<TDependency> {
+  get(): TDependency;
+  set(value: TDependency): void;
+}
+
+const createDeferredRuntimeRef = <TDependency>(
+  name: string
+): DeferredRuntimeRef<TDependency> => {
+  let value: TDependency | undefined;
+  return {
+    get: () => {
+      if (value === undefined) {
+        throw new Error(
+          `Session request runtime dependency "${name}" was used before initialization`
+        );
+      }
+      return value;
+    },
+    set: (nextValue) => {
+      value = nextValue;
+    },
+  };
+};
+
 export const resolveClaudeHaikuTranslationServiceForRuntime = (
   options: SessionRequestHandlerRuntimeDependencies
 ): ClaudeHaikuTranslationService | undefined => {
@@ -69,8 +93,14 @@ export const createSessionRequestHandlerRuntimeCore = (
   options: SessionRequestHandlerRuntimeDependencies,
   continuityRolloverBridge: ContinuityRolloverBridge
 ): SessionRequestHandlerRuntimeCore => {
-  let messageDispatch!: SessionRequestHandlerMessageDispatch;
-  let sessionResolution!: SessionRequestHandlerSessionResolution;
+  const messageDispatchRef =
+    createDeferredRuntimeRef<SessionRequestHandlerMessageDispatch>(
+      "messageDispatch"
+    );
+  const sessionResolutionRef =
+    createDeferredRuntimeRef<SessionRequestHandlerSessionResolution>(
+      "sessionResolution"
+    );
   const continuity: SessionContinuityFacade = new SessionContinuityFacade({
     logger: options.logger,
     clock: options.continuityClock,
@@ -84,9 +114,9 @@ export const createSessionRequestHandlerRuntimeCore = (
     enableLegacyHandoff: false,
     callbacks: {
       sendMessage: async (sessionId, content) =>
-        await messageDispatch.sendInternalMessage(sessionId, content),
+        await messageDispatchRef.get().sendInternalMessage(sessionId, content),
       createSession: async (request) =>
-        await sessionResolution.createContinuitySession(request),
+        await sessionResolutionRef.get().createContinuitySession(request),
     },
     sessionLookup: (sessionId) => options.sessionManager.getSession(sessionId),
   });
@@ -232,7 +262,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     expirePendingUserIntent: (sessionId) =>
       retryState.expirePendingUserIntent(sessionId),
   });
-  messageDispatch = new SessionRequestHandlerMessageDispatch({
+  const messageDispatch = new SessionRequestHandlerMessageDispatch({
     appliedTurnConfig,
     sessionManager: options.sessionManager,
     sessionStorage: options.sessionStorage,
@@ -246,6 +276,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     trackPendingUserIntent: (sessionId, content) =>
       retryState.trackPendingUserIntent(sessionId, content),
   });
+  messageDispatchRef.set(messageDispatch);
   const dialogSegmentMeta = new SessionRequestHandlerDialogSegmentMeta({
     broadcaster: options.broadcaster,
     continuity,
@@ -333,7 +364,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     resumeLifecycle,
     workspaceRuntime: options.workspaceRuntime,
   });
-  sessionResolution = new SessionRequestHandlerSessionResolution({
+  const sessionResolution = new SessionRequestHandlerSessionResolution({
     broadcaster: options.broadcaster,
     broadcastSessionBinding: (sessionId) =>
       providerBindingService.broadcastSessionBinding(sessionId),
@@ -346,6 +377,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     sessionManager: options.sessionManager,
     workspacePathOverride: options.config.claudeWorkspacePath,
   });
+  sessionResolutionRef.set(sessionResolution);
   return {
     appliedTurnConfig,
     continuity,

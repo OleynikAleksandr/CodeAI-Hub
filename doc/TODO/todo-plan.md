@@ -112,11 +112,11 @@
 5. [DONE] Добавить sanitized diagnostics helper для `src/client/ui/src/core-bridge` и заменить silent catches в server/history paths; scope: `src/client/ui/src/core-bridge/core-bridge-logger.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/core-bridge/session-history.ts`; expected commit message: `fix: log core bridge parsing and history failures`
 6. [DONE] Git Commit: `fix: log core bridge parsing and history failures` (hash: `05c0d6cd8`)
 7. [DONE] Заменить silent best-effort catches в supervisor/status reconnect paths без изменения UX; scope: `src/client/ui/src/core-bridge/supervisor-requests.ts`, `src/client/ui/src/core-bridge/core-bridge.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: log core bridge supervisor failures`
-8. [IN_PROGRESS] Git Commit: `fix: log core bridge supervisor failures` (hash: TBD)
+8. [DONE] Git Commit: `fix: log core bridge supervisor failures` (hash: `2acff1091`)
 
 ### Stream: Runtime Factory Wiring Safety
-9. [TODO] Убрать definite assignment assertions из runtime-core factory через safe lazy refs без поведения change; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/TODO/todo-plan.md`; expected commit message: `refactor: make session runtime wiring explicit`
-10. [TODO] Git Commit: `refactor: make session runtime wiring explicit` (hash: TBD)
+9. [DONE] Убрать definite assignment assertions из runtime-core factory через safe lazy refs без поведения change; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/TODO/todo-plan.md`; expected commit message: `refactor: make session runtime wiring explicit`
+10. [IN_PROGRESS] Git Commit: `refactor: make session runtime wiring explicit` (hash: TBD)
 11. [TODO] Добавить/обновить lightweight coverage для runtime factory construction if feasible; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover session runtime wiring`
 12. [TODO] Git Commit: `test: cover session runtime wiring` (hash: TBD)
 13. [TODO] Закрыть Phase 3 таргетными сборками UI/Core/Gemini; scope: UI bundle, Core package, Gemini module; expected commit message: `chore: verify listener and diagnostics remediation`
