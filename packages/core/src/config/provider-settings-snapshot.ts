@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
 import { LOCALIZATION_SOURCE_SELECTION } from "@codeai-hub/localization";
+import { providerSettingsSnapshotCache } from "./json-file-snapshot-cache";
 
 export interface CodexSettingsSnapshot {
   readonly defaultModel?: unknown;
@@ -77,13 +77,7 @@ const resolveLocalizationCategory = (
 const loadJsonSnapshot = (
   settingsPath: string
 ): Record<string, unknown> | null => {
-  try {
-    const raw = readFileSync(settingsPath, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    return isRecord(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
+  return providerSettingsSnapshotCache.readObject(settingsPath);
 };
 
 const loadProviderSnapshot = (
