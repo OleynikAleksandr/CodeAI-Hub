@@ -82,11 +82,11 @@
 5. [DONE] Перевести session translation policy settings/bootstrap reads на shared cache и invalidation on settings save/reset where practical; scope: `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix: cache session translation settings reads`
 6. [DONE] Git Commit: `fix: cache session translation settings reads` (hash: `239583165`)
 7. [DONE] Обновить translation policy tests для cache/invalidation behavior; scope: `packages/core/src/session-translation/session-translation-policy-resolver.test.ts`, `packages/core/src/session-translation/session-translation-policy-resolver.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover session translation settings cache`
-8. [IN_PROGRESS] Git Commit: `test: cover session translation settings cache` (hash: TBD)
+8. [DONE] Git Commit: `test: cover session translation settings cache` (hash: `bb8ca01b9`)
 
 ### Stream: Provider-Local Settings Cache
-9. [TODO] Добавить Codex provider-local TTL cache для reasoning summary settings read; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `fix: cache codex reasoning summary settings`
-10. [TODO] Git Commit: `fix: cache codex reasoning summary settings` (hash: TBD)
+9. [DONE] Добавить Codex provider-local TTL cache для reasoning summary settings read; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `fix: cache codex reasoning summary settings`
+10. [IN_PROGRESS] Git Commit: `fix: cache codex reasoning summary settings` (hash: TBD)
 11. [TODO] Покрыть Codex settings cache behavior; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover codex settings cache`
 12. [TODO] Git Commit: `test: cover codex settings cache` (hash: TBD)
 13. [TODO] Добавить Claude provider-local TTL cache для SDK query settings snapshot; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: cache claude settings snapshots`

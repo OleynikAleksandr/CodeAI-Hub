@@ -159,6 +159,7 @@ Behavioral meaning:
 - `summary` is live-resolved from shared settings for models that support provider-native reasoning summaries:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
+- The live summary toggle read is cached inside the Codex App Server facade by normalized settings path with a `500ms` TTL. Settings changes can therefore affect the next non-Spark turn immediately after cache expiry, while avoiding one synchronous `settings.json` read per turn-start call under rapid sends.
 - `gpt-5.3-codex-spark` rejects explicit turn-level `reasoning.summary`; for this model the `summary` field is omitted entirely, not sent as `none`. Its readable reasoning summaries are controlled by provider-home `model_reasoning_summary = "auto" | "none"` instead.
 - `outputSchema` is passed through only when the workflow/core turn supplied one.
 - `approvalPolicy`, `sandbox`, `baseInstructions`, and `config.project_doc_max_bytes` are not turn-level fields; they belong to thread startup/resume.

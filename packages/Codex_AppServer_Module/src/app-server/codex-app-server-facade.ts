@@ -19,12 +19,22 @@ import { CodexAppServerProcess } from "./process/codex-app-server-process";
 
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
+const REASONING_SUMMARY_SETTINGS_CACHE_TTL_MS = 500;
 const DEFAULT_SETTINGS_PATH = path.join(
   homedir(),
   ".codeai-hub",
   "settings",
   "settings.json"
 );
+
+interface ReasoningSummarySettingsCacheEntry {
+  readonly enabled: boolean;
+  readonly expiresAtMs: number;
+  readonly settingsPath: string;
+}
+
+let reasoningSummarySettingsCache: ReasoningSummarySettingsCacheEntry | null =
+  null;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -37,11 +47,9 @@ const resolveSettingsPath = (): string =>
   asString(process.env.CLAUDE_SETTINGS_PATH) ??
   DEFAULT_SETTINGS_PATH;
 
-const resolveReasoningSummaryEnabled = (): boolean => {
+const readReasoningSummaryEnabled = (settingsPath: string): boolean => {
   try {
-    const parsed = JSON.parse(
-      readFileSync(resolveSettingsPath(), "utf8")
-    ) as unknown;
+    const parsed = JSON.parse(readFileSync(settingsPath, "utf8")) as unknown;
     if (!(isRecord(parsed) && isRecord(parsed.providers))) {
       return DEFAULT_REASONING_SUMMARY_ENABLED;
     }
@@ -59,6 +67,25 @@ const resolveReasoningSummaryEnabled = (): boolean => {
   } catch {
     return DEFAULT_REASONING_SUMMARY_ENABLED;
   }
+};
+
+const resolveReasoningSummaryEnabled = (): boolean => {
+  const settingsPath = path.resolve(resolveSettingsPath());
+  const nowMs = Date.now();
+  if (
+    reasoningSummarySettingsCache?.settingsPath === settingsPath &&
+    reasoningSummarySettingsCache.expiresAtMs > nowMs
+  ) {
+    return reasoningSummarySettingsCache.enabled;
+  }
+
+  const enabled = readReasoningSummaryEnabled(settingsPath);
+  reasoningSummarySettingsCache = {
+    enabled,
+    expiresAtMs: nowMs + REASONING_SUMMARY_SETTINGS_CACHE_TTL_MS,
+    settingsPath,
+  };
+  return enabled;
 };
 
 const resolveTurnReasoningSummaryMode = (): CodexReasoningSummaryMode =>
