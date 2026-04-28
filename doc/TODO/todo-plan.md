@@ -48,12 +48,12 @@
 
 ### Stream: Planning Approval
 1. [DONE] Получить явное approval от пользователя на planning-документ перед кодом; scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_Stability_Remediation_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: plan runtime stability remediation`
-2. [TODO] Git Commit: `docs: plan runtime stability remediation` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan runtime stability remediation` (hash: `374816119`)
 
 ## Phase 1 — WebSocket Lifecycle and Boundary Validation (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Project Manager Socket Lifecycle
-1. [TODO] Сделать `ProjectManagerApi.connect()` idempotent для `OPEN`/`CONNECTING`, добавить intentional `disconnect()` и cleanup из `MainLayout`; scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/layout/main-layout.tsx`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit message: `fix: harden project manager websocket lifecycle`
+1. [DONE] Сделать `ProjectManagerApi.connect()` idempotent для `OPEN`/`CONNECTING`, добавить intentional `disconnect()` и cleanup из `MainLayout`; scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/project-manager-api-lifecycle.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `fix: harden project manager websocket lifecycle`
 2. [TODO] Git Commit: `fix: harden project manager websocket lifecycle` (hash: TBD)
 3. [TODO] Добавить/обновить PM lifecycle regression coverage без расширения runtime surface; scope: `src/client/project-manager/api.ts`, `src/client/project-manager/api.websocket-lifecycle.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket lifecycle`
 4. [TODO] Git Commit: `test: cover project manager websocket lifecycle` (hash: TBD)

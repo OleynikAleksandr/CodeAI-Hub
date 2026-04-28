@@ -77,6 +77,7 @@ export const MainLayout: React.FC = () => {
 
     return () => {
       unsubscribe();
+      api.disconnect({ dispose: true });
     };
   }, []);
 

@@ -36,6 +36,10 @@ import {
 } from "./services/pm-bridges";
 import { createDialogApi, type DialogApi } from "./services/dialog-api";
 import { ProjectManagerCoreRestartTracker } from "./services/project-manager-core-restart-tracker";
+import {
+  createProjectManagerWindowMessageHandler,
+  ProjectManagerSocketLifecycle,
+} from "./services/project-manager-api-lifecycle";
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
@@ -46,7 +50,6 @@ type ProjectManagerWindow = typeof window & {
 const vscode = resolveVscodeBridge();
 
 class ProjectManagerApi {
-  private socket: WebSocket | null = null;
   private readonly listeners = new Set<ProjectListener>();
   private readonly coreListeners = new Set<CoreEventListener>();
   private lastSettingsPayload: SettingsLoadedPayload | null = null;
@@ -63,108 +66,45 @@ class ProjectManagerApi {
   private readonly coreRestartTracker = new ProjectManagerCoreRestartTracker(
     (message) => this.notifyCoreListeners(message)
   );
-  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly socketLifecycle: ProjectManagerSocketLifecycle;
+  private windowMessageListenerAttached = false;
   private readonly config: ApiConfig;
+  private readonly windowMessageHandler =
+    createProjectManagerWindowMessageHandler({
+      addProject: (path) => this.addProject(path),
+      notifyCoreListeners: (message) => this.notifyCoreListeners(message),
+      setLocalizationSyncStatus: (payload) =>
+        this.setLocalizationSyncStatus(payload),
+    });
   readonly dialogs: DialogApi;
 
   constructor() {
     this.config = resolveBridgeConfig();
+    this.socketLifecycle = new ProjectManagerSocketLifecycle({
+      onClose: () => this.handleSocketClose(),
+      onError: (error) => console.error("[ProjectManagerApi] Socket error", error),
+      onMessage: (data) => this.handleSocketMessage(data),
+      onOpen: () => this.handleSocketOpen(),
+      streamUrl: `${this.config.wsUrl}/api/v1/stream`,
+    });
     (window as ProjectManagerWindow).__CODEAI_PM_STOP_SESSION__ = (
       sessionId: string
     ) => {
       this.stopSession(sessionId);
     };
 
-    window.addEventListener("message", (event) => {
-      const message = event.data;
-      if (
-        message &&
-        typeof message === "object" &&
-        "type" in message &&
-        message.type === "settings:localization-sync-status"
-      ) {
-        const payload =
-          "busy" in message && typeof message.busy === "boolean"
-            ? {
-                busy: message.busy,
-                message:
-                  "message" in message && typeof message.message === "string"
-                    ? message.message
-                    : null,
-              }
-            : null;
-        if (payload) {
-          this.setLocalizationSyncStatus(payload);
-          this.notifyCoreListeners({
-            type: "settings:localization-sync-status",
-            payload,
-          });
-        }
-        return;
-      }
-      if (
-        message &&
-        typeof message === "object" &&
-        "type" in message &&
-        message.type === "projects:folderPicked"
-      ) {
-        const payload = "payload" in message ? message.payload : null;
-        if (payload && typeof payload === "object" && "path" in payload) {
-          const path = payload.path;
-          if (typeof path === "string") {
-            window.dispatchEvent(
-              new CustomEvent("pm:workspace:add-requested", {
-                detail: { path },
-              })
-            );
-            this.addProject(path);
-          }
-        }
-      }
-    });
-
     this.dialogs = createDialogApi((message) => this.send(message));
   }
 
   connect(): void {
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      return;
-    }
+    this.attachWindowMessageListener();
+    this.socketLifecycle.connect();
+  }
 
-    try {
-      this.socket = new WebSocket(`${this.config.wsUrl}/api/v1/stream`);
-      this.socket.onopen = () => {
-        this.coreRestartTracker.handleSocketOpen();
-        console.log("[ProjectManagerApi] Connected to Core");
-        this.outgoingQueue.flush((message) => {
-          if (this.socket?.readyState !== WebSocket.OPEN) {
-            throw new Error("Socket not ready");
-          }
-          this.socket.send(JSON.stringify(message));
-        });
-        this.listProjects(); // Initial fetch
-        this.loadSettings();
-        this.loadSettingsVersions();
-      };
-      this.socket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data) as IncomingMessage;
-          this.handleMessage(message);
-        } catch (error) {
-          console.error("[ProjectManagerApi] Failed to parse message", error);
-        }
-      };
-      this.socket.onclose = () => {
-        this.coreRestartTracker.handleSocketClose();
-        console.log("[ProjectManagerApi] Disconnected. Reconnecting...");
-        this.scheduleReconnect();
-      };
-      this.socket.onerror = (error) => {
-        console.error("[ProjectManagerApi] Socket error", error);
-      };
-    } catch (error) {
-      console.error("[ProjectManagerApi] Connection failed", error);
-      this.scheduleReconnect();
+  disconnect(options: { readonly dispose?: boolean } = {}): void {
+    this.socketLifecycle.disconnect();
+    if (options.dispose) {
+      this.detachWindowMessageListener();
     }
   }
 
@@ -391,15 +331,11 @@ class ProjectManagerApi {
   }
 
   private send(message: OutgoingMessage): void {
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message));
-    } else {
-      this.outgoingQueue.enqueue(message);
-      console.warn(
-        "[ProjectManagerApi] Socket not ready, message queued",
-        message
-      );
+    if (this.socketLifecycle.send(JSON.stringify(message))) {
+      return;
     }
+    this.outgoingQueue.enqueue(message);
+    console.warn("[ProjectManagerApi] Socket not ready, message queued", message);
   }
 
   private handleMessage(message: IncomingMessage): void {
@@ -481,14 +417,47 @@ class ProjectManagerApi {
     this.localizationSyncStatus = payload;
   }
 
-  private scheduleReconnect(): void {
-    if (this.reconnectTimer) {
+  private attachWindowMessageListener(): void {
+    if (this.windowMessageListenerAttached) {
       return;
     }
-    this.reconnectTimer = setTimeout(() => {
-      this.reconnectTimer = null;
-      this.connect();
-    }, 2000);
+    window.addEventListener("message", this.windowMessageHandler);
+    this.windowMessageListenerAttached = true;
+  }
+
+  private detachWindowMessageListener(): void {
+    if (!this.windowMessageListenerAttached) {
+      return;
+    }
+    window.removeEventListener("message", this.windowMessageHandler);
+    this.windowMessageListenerAttached = false;
+  }
+
+  private handleSocketClose(): void {
+    this.coreRestartTracker.handleSocketClose();
+    console.log("[ProjectManagerApi] Disconnected. Reconnecting...");
+  }
+
+  private handleSocketMessage(data: string): void {
+    try {
+      const message = JSON.parse(data) as IncomingMessage;
+      this.handleMessage(message);
+    } catch (error) {
+      console.error("[ProjectManagerApi] Failed to parse message", error);
+    }
+  }
+
+  private handleSocketOpen(): void {
+    this.coreRestartTracker.handleSocketOpen();
+    console.log("[ProjectManagerApi] Connected to Core");
+    this.outgoingQueue.flush((message) => {
+      if (!this.socketLifecycle.send(JSON.stringify(message))) {
+        throw new Error("Socket not ready");
+      }
+    });
+    this.listProjects();
+    this.loadSettings();
+    this.loadSettingsVersions();
   }
 }
 
