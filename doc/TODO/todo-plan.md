@@ -126,9 +126,9 @@
 
 ### Stream: Documentation Synchronization
 1. [DONE] Сверить System/Cluster SSOT с фактической реализацией remediation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `docs: document runtime stability remediation`
-2. [IN_PROGRESS] Git Commit: `docs: document runtime stability remediation` (hash: TBD)
-3. [TODO] Сверить Module SSOT provider/UI updates with implemented behavior; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `docs: sync provider and ui stability contracts`
-4. [TODO] Git Commit: `docs: sync provider and ui stability contracts` (hash: TBD)
+2. [DONE] Git Commit: `docs: document runtime stability remediation` (hash: `cc1e1c26c`)
+3. [DONE] Сверить Module SSOT provider/UI updates with implemented behavior; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `docs: sync provider and ui stability contracts`
+4. [IN_PROGRESS] Git Commit: `docs: sync provider and ui stability contracts` (hash: TBD)
 5. [TODO] Сверить Claude docs and Docs Index references, keeping active planning-doc visible until archive; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: sync runtime remediation navigation`
 6. [TODO] Git Commit: `docs: sync runtime remediation navigation` (hash: TBD)
 
