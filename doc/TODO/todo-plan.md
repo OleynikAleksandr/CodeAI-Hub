@@ -33,10 +33,10 @@
 ## Phase 1 — Client Transport Label Fix (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Preserve Core modelBinding on client
-1. [TODO] Normalize serialized `modelBinding` from Core into client `SessionRecord`; scope: `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`, `src/client/ui/src/core-bridge/normalizers.test.ts`; expected commit: `fix: preserve session model binding in client bridge`.
-2. [TODO] Git Commit: `fix: preserve session model binding in client bridge` (hash: TBD)
-3. [TODO] Make runtime model sync prefer binding-owned identity over active Settings fallback for existing PM sessions; scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.test.ts`; expected commit: `fix: keep project manager session labels bound to session model`.
-4. [TODO] Git Commit: `fix: keep project manager session labels bound to session model` (hash: TBD)
+1. [DONE] Normalize serialized `modelBinding` from Core into client `SessionRecord`; scope: `src/client/ui/src/core-bridge/types.ts`, `src/client/ui/src/core-bridge/normalizers.ts`, `src/client/ui/src/core-bridge/normalizers.test.ts`; expected commit: `fix: preserve session model binding in client bridge`.
+2. [DONE] Git Commit: `fix: preserve session model binding in client bridge` (hash: `46c71d5a8`)
+3. [DONE] Make runtime model sync prefer binding-owned identity over active Settings fallback for existing PM sessions; scope: `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.test.ts`; expected commit: `fix: keep project manager session labels bound to session model`.
+4. [DONE] Git Commit: `fix: keep project manager session labels bound to session model` (hash: TBD)
 
 ## Phase 2 — Persistent Core Binding (owner: Codex, updated: 2026-04-28)
 

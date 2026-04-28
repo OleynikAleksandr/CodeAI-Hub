@@ -9,9 +9,15 @@
 
 import { useEffect, useRef } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { ModelInfo } from "../../../../types/session";
+import type {
+  ModelInfo,
+  SessionModelBindingInfo,
+} from "../../../../types/session";
 import { api } from "../../api";
-import { buildModelInfo } from "../../../ui/src/session/model-info-builder";
+import {
+  buildModelInfo,
+  buildModelInfoFromBinding,
+} from "../../../ui/src/session/model-info-builder";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 
 const modelInfoChanged = (
@@ -31,12 +37,32 @@ const modelInfoChanged = (
   left.source !== right.source;
 
 type RuntimeModelUpdatePayload = {
+  readonly modelBinding?: SessionModelBindingInfo | null;
   readonly modelId: string;
   readonly providerId?: string;
   readonly sessionId: string;
 };
 
-const applyRuntimeModelUpdate = (
+const resolveUpdatedModel = (
+  currentModel: ModelInfo,
+  payload: RuntimeModelUpdatePayload
+): ModelInfo | null => {
+  if (payload.modelBinding) {
+    return buildModelInfoFromBinding(payload.modelBinding, null);
+  }
+  if (currentModel.source === "binding") {
+    return null;
+  }
+  return buildModelInfo(
+    (payload.providerId as typeof currentModel.providerId | undefined) ??
+      currentModel.providerId,
+    null,
+    payload.modelId,
+    "runtime"
+  );
+};
+
+export const applyRuntimeModelUpdate = (
   previous: SessionSnapshots,
   resolvedId: string,
   payload: RuntimeModelUpdatePayload
@@ -47,13 +73,10 @@ const applyRuntimeModelUpdate = (
     return previous;
   }
   const currentModel = models[0];
-  const updatedModel = buildModelInfo(
-    (payload.providerId as typeof currentModel.providerId | undefined) ??
-      currentModel.providerId,
-    null,
-    payload.modelId,
-    "runtime"
-  );
+  const updatedModel = resolveUpdatedModel(currentModel, payload);
+  if (!updatedModel) {
+    return previous;
+  }
   if (!modelInfoChanged(currentModel, updatedModel)) {
     return previous;
   }
@@ -103,6 +126,7 @@ export const useRuntimeModelSync = (
         return;
       }
       const payload = message.payload as {
+        modelBinding?: SessionModelBindingInfo | null;
         sessionId?: string;
         providerId?: string;
         modelId?: string;
@@ -114,21 +138,25 @@ export const useRuntimeModelSync = (
       setSnapshots((previous) => {
         // Core broadcasts with its runtime sessionId, but PM dialog sessions
         // may store the snapshot under the dialogId. Fall back to activeSessionId
-        // when the broadcast sessionId has no matching snapshot.
+        // only when Core also sent the session binding; unbound runtime updates
+        // must not relabel an unrelated active dialog.
         const resolvedId =
           previous[sessionId]?.status.models?.length
             ? sessionId
-            : activeSessionId && previous[activeSessionId]?.status.models?.length
+            : activeSessionId &&
+                payload.modelBinding &&
+                previous[activeSessionId]?.status.models?.length
               ? activeSessionId
               : null;
         if (!resolvedId) {
           const pendingUpdate = {
             modelId,
+            modelBinding: payload.modelBinding,
             providerId: payload.providerId,
             sessionId,
           } satisfies RuntimeModelUpdatePayload;
           pendingUpdatesRef.current.set(sessionId, pendingUpdate);
-          if (activeSessionId) {
+          if (activeSessionId && payload.modelBinding) {
             pendingUpdatesRef.current.set(activeSessionId, pendingUpdate);
           }
           return previous;
@@ -139,6 +167,7 @@ export const useRuntimeModelSync = (
         }
         return applyRuntimeModelUpdate(previous, resolvedId, {
           modelId,
+          modelBinding: payload.modelBinding,
           providerId: payload.providerId,
           sessionId,
         });
