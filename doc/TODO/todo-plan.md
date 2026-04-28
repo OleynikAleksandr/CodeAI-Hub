@@ -97,7 +97,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 3. [DONE] Route Codex workflow `thread/start` and native capture workflow scenarios through the resolved workflow profile without changing current workflow behavior (scope: `packages/Codex_AppServer_Module/src/app-server/*`, `packages/Codex_AppServer_Module/src/diagnostics/*`; checks: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-facade.test.js`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`, `node --test packages/Codex_AppServer_Module/dist/app-server/process/codex-app-server-process.test.js`; commit: `feat: apply codex workflow invocation profile`)
 4. [DONE] Git Commit: `feat: apply codex workflow invocation profile` (hash: `aa99db5b3`)
 5. [DONE] Add Codex tests for profile-selected base instructions, project-doc config, summary omission for Spark, and compatible model list behavior (scope: `packages/Codex_AppServer_Module/src/**/*.test.ts`; checks: `npx ultracite check`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-facade.test.js`, `node --test packages/core/dist/model-invocation/model-invocation-profile-resolver.smoke.test.js`, `npm run build --workspace=@codeai-hub/core`; commit: `test: cover codex workflow invocation profiles`)
-6. [IN_PROGRESS] Git Commit: `test: cover codex workflow invocation profiles` (hash: TBD)
+6. [DONE] Git Commit: `test: cover codex workflow invocation profiles` (hash: `114b1efa5`)
 
 ---
 
@@ -105,8 +105,8 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Translation Service
 
-1. [TODO] Add Codex translation instruction/prompt builders equivalent to current `CodexCliTranslationEngine` behavior, including localization marker preservation and Spark summary omission (scope: `packages/Codex_AppServer_Module/src/translation/*`; commit: `feat: add codex translation prompt profile`)
-2. [TODO] Git Commit: `feat: add codex translation prompt profile` (hash: TBD)
+1. [DONE] Add Codex translation instruction/prompt builders equivalent to current `CodexCliTranslationEngine` behavior, including localization marker preservation and Spark summary omission (scope: `packages/Codex_AppServer_Module/src/translation/*`; checks: `npx ultracite check`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/translation/codex-translation-prompt-profile.test.js`; commit: `feat: add codex translation prompt profile`)
+2. [IN_PROGRESS] Git Commit: `feat: add codex translation prompt profile` (hash: TBD)
 3. [TODO] Add provider-owned `CodexAppServerTranslationService` with isolated temporary workspace, `approvalPolicy=never`, `sandbox=read-only`, `persistExtendedHistory=false`, `effort=low`, and strict translation process profile (scope: `packages/Codex_AppServer_Module/src/translation/*`, `packages/Codex_AppServer_Module/src/app-server/process/*`; commit: `feat: add codex app-server translation service`)
 4. [TODO] Git Commit: `feat: add codex app-server translation service` (hash: TBD)
 5. [TODO] Register provider-owned Codex GPT translation engines through Core translation facade composition while keeping the shared `codex exec` engine as fallback during migration (scope: `packages/core/src/translation/*`, `packages/translation/src/*`, `packages/Codex_AppServer_Module/src/index.ts`; commit: `feat: register codex app-server translation engines`)
