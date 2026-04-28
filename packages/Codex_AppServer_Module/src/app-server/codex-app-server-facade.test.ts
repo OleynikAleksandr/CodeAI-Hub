@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -9,6 +9,110 @@ import { resolveCodexWorkflowInvocationProfile } from "./codex-workflow-instruct
 import { CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY } from "./process/codex-app-server-process-profile";
 
 const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
+
+const writeCodexSettings = async (
+  settingsPath: string,
+  reasoningSummaryEnabled: boolean
+): Promise<void> => {
+  await writeFile(
+    settingsPath,
+    JSON.stringify({
+      providers: {
+        codex: {
+          reasoningSummaryEnabled,
+        },
+      },
+    }),
+    "utf8"
+  );
+};
+
+const createSendMessageFacadeHarness = (
+  threadId: string
+): {
+  readonly facade: CodexAppServerFacade;
+  readonly requests: {
+    readonly method: string;
+    readonly params: unknown;
+  }[];
+} => {
+  const requests: {
+    readonly method: string;
+    readonly params: unknown;
+  }[] = [];
+  const facade = Object.create(
+    CodexAppServerFacade.prototype
+  ) as CodexAppServerFacade;
+  (
+    facade as unknown as {
+      handshakedThreadIds: Set<string>;
+      process: {
+        request<TResult = unknown>(
+          method: string,
+          params?: unknown
+        ): Promise<TResult>;
+      };
+      sessions: Map<string, unknown>;
+      workspace: {
+        defaultReasoningEffort: string;
+        workspacePath: string;
+      };
+    }
+  ).process = {
+    request: (method, params) => {
+      requests.push({ method, params });
+      return Promise.resolve({
+        turn: { id: `${threadId}-turn-${requests.length}` },
+      } as never);
+    },
+  };
+  (
+    facade as unknown as {
+      handshakedThreadIds: Set<string>;
+      sessions: Map<string, unknown>;
+      workspace: {
+        defaultReasoningEffort: string;
+        workspacePath: string;
+      };
+    }
+  ).sessions = new Map();
+  (
+    facade as unknown as {
+      handshakedThreadIds: Set<string>;
+      workspace: {
+        defaultReasoningEffort: string;
+        workspacePath: string;
+      };
+    }
+  ).handshakedThreadIds = new Set([threadId]);
+  (
+    facade as unknown as {
+      workspace: {
+        defaultReasoningEffort: string;
+        workspacePath: string;
+      };
+    }
+  ).workspace = {
+    defaultReasoningEffort: "high",
+    workspacePath: "/workspace/cache",
+  };
+
+  return { facade, requests };
+};
+
+const sendNonSparkTurn = (
+  facade: CodexAppServerFacade,
+  threadId: string,
+  content: string
+): Promise<void> =>
+  facade.sendMessage(threadId, content, {
+    [CODEX_APPLIED_TURN_CONFIG_KEY]: {
+      modelId: "gpt-5.5",
+      providerId: "codexCli",
+      reasoningEffort: "high",
+      source: "settings_snapshot",
+    },
+  });
 
 test("Codex workflow invocation profile selects startup and thread controls", () => {
   const profile = resolveCodexWorkflowInvocationProfile();
@@ -309,5 +413,47 @@ test("CodexAppServerFacade keeps explicit reasoning summary for non-Spark turns"
     } else {
       process.env.CODEX_SETTINGS_PATH = previousCodeSettingsPath;
     }
+  }
+});
+
+test("CodexAppServerFacade caches non-Spark reasoning summary settings by path for rapid turns", async () => {
+  const previousCodeSettingsPath = process.env.CODEX_SETTINGS_PATH;
+  const tempDir = await mkdtemp(path.join(tmpdir(), "codex-facade-cache-"));
+  const firstSettingsPath = path.join(tempDir, "settings-a.json");
+  const secondSettingsPath = path.join(tempDir, "settings-b.json");
+  await writeCodexSettings(firstSettingsPath, false);
+  await writeCodexSettings(secondSettingsPath, true);
+  process.env.CODEX_SETTINGS_PATH = firstSettingsPath;
+
+  try {
+    const threadId = "thread-cache";
+    const { facade, requests } = createSendMessageFacadeHarness(threadId);
+
+    await sendNonSparkTurn(facade, threadId, "first");
+    await writeCodexSettings(firstSettingsPath, true);
+    await sendNonSparkTurn(facade, threadId, "second");
+
+    process.env.CODEX_SETTINGS_PATH = secondSettingsPath;
+    await sendNonSparkTurn(facade, threadId, "third");
+
+    assert.equal(
+      (requests[0]?.params as Record<string, unknown>).summary,
+      "none"
+    );
+    assert.equal(
+      (requests[1]?.params as Record<string, unknown>).summary,
+      "none"
+    );
+    assert.equal(
+      (requests[2]?.params as Record<string, unknown>).summary,
+      "detailed"
+    );
+  } finally {
+    if (previousCodeSettingsPath === undefined) {
+      process.env.CODEX_SETTINGS_PATH = undefined;
+    } else {
+      process.env.CODEX_SETTINGS_PATH = previousCodeSettingsPath;
+    }
+    await rm(tempDir, { force: true, recursive: true });
   }
 });

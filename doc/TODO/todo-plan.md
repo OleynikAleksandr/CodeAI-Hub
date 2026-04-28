@@ -86,9 +86,9 @@
 
 ### Stream: Provider-Local Settings Cache
 9. [DONE] Добавить Codex provider-local TTL cache для reasoning summary settings read; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `fix: cache codex reasoning summary settings`
-10. [IN_PROGRESS] Git Commit: `fix: cache codex reasoning summary settings` (hash: TBD)
-11. [TODO] Покрыть Codex settings cache behavior; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover codex settings cache`
-12. [TODO] Git Commit: `test: cover codex settings cache` (hash: TBD)
+10. [DONE] Git Commit: `fix: cache codex reasoning summary settings` (hash: `e13adc7f2`)
+11. [DONE] Покрыть Codex settings cache behavior; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover codex settings cache`
+12. [IN_PROGRESS] Git Commit: `test: cover codex settings cache` (hash: TBD)
 13. [TODO] Добавить Claude provider-local TTL cache для SDK query settings snapshot; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: cache claude settings snapshots`
 14. [TODO] Git Commit: `fix: cache claude settings snapshots` (hash: TBD)
 15. [TODO] Покрыть Claude settings cache behavior; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover claude settings cache`
