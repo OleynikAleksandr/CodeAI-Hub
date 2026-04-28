@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.101] - 2026-04-28
+### Added
+- **Workflow sessions now bind their model identity at creation time.** Core stores a session-scoped effective model binding, serializes it through session/runtime snapshots, and uses it for later turns instead of letting Settings changes rewrite existing sessions.
+- **Explicit model switching now updates the session binding intentionally.** The `switch_model` path mutates the logical session binding and preserves the effective `session:model:update` broadcast contract.
+
+### Fixed
+- **Project Manager keeps bound session labels stable across Settings edits.** Session snapshots are seeded from `SessionRecord.modelBinding`, Settings sync no longer overwrites binding/runtime-owned model info, and same-provider sessions can display different frozen model labels.
+
+### Tests
+- **Targeted SMB verification passed before release packaging.** Passed Core build, webview build, webview typecheck, and focused regression coverage for session-bound model labels and Settings sync ownership.
+
 ## [1.2.100] - 2026-04-28
 ### Changed
 - **Codex GPT translation engines are now translator-only by contract.** `gpt-5.4-mini` and `gpt-5.3-codex-spark` translation calls use dedicated translation instructions that forbid workflow-agent work, tools, shell/file/patch access, web search, planning, and user-input requests.
