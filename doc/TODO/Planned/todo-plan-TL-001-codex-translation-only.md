@@ -37,11 +37,11 @@
 
 ### Stream: Translation Prompt Contract
 3. [DONE] Сделать Codex translation prompt минимальным translator-only contract — scope: `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `node --test packages/Codex_AppServer_Module/dist/translation/codex-translation-prompt-profile.test.js` + `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; expected commit message: `feat: harden codex translation prompt profile`.
-4. [IN_PROGRESS] Git Commit: `feat: harden codex translation prompt profile` (hash: TBD)
+4. [DONE] Git Commit: `feat: harden codex translation prompt profile` (hash: `cbd1ed8ab`)
 
 ### Stream: Translation Process Profile
-5. [TODO] Выделить самостоятельный `codex:translation` process/tool profile и проверить Spark summary omission — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `feat: isolate codex translation process profile`.
-6. [TODO] Git Commit: `feat: isolate codex translation process profile` (hash: TBD)
+5. [DONE] Выделить самостоятельный `codex:translation` process/tool profile и проверить Spark summary omission — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `node --test packages/Codex_AppServer_Module/dist/translation/codex-app-server-translation-service.test.js`; expected commit message: `feat: isolate codex translation process profile`.
+6. [IN_PROGRESS] Git Commit: `feat: isolate codex translation process profile` (hash: TBD)
 
 ### Stream: Core Invocation Profile Alignment
 7. [TODO] Синхронизировать Core `translation` invocation profile с новым Codex translation-only profile — scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`, `packages/core/src/model-invocation/model-invocation-profile-resolver.smoke.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit message: `feat: align codex translation invocation profile`.

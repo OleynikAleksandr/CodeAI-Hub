@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import { access } from "node:fs/promises";
 import test from "node:test";
-import { CODEX_TRANSLATION_PROCESS_PROFILE_KEY } from "../app-server/process/codex-app-server-process-profile";
+import {
+  CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
+  CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+  resolveCodexAppServerProcessProfile,
+} from "../app-server/process/codex-app-server-process-profile";
 import { CodexAppServerTranslationService } from "./codex-app-server-translation-service";
 
 interface RequestRecord {
@@ -89,6 +93,26 @@ class FakeCodexProcess {
     }
   }
 }
+
+test("Codex translation process profile owns independent startup args", () => {
+  const workflowProfile = resolveCodexAppServerProcessProfile(
+    CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY
+  );
+  const translationProfile = resolveCodexAppServerProcessProfile(
+    CODEX_TRANSLATION_PROCESS_PROFILE_KEY
+  );
+
+  assert.equal(translationProfile.key, CODEX_TRANSLATION_PROCESS_PROFILE_KEY);
+  assert.notEqual(
+    translationProfile.appServerArgs,
+    workflowProfile.appServerArgs
+  );
+  assert.deepEqual(
+    translationProfile.appServerArgs,
+    workflowProfile.appServerArgs
+  );
+  assert.equal(translationProfile.appServerArgs.includes("tool_search"), true);
+});
 
 test("CodexAppServerTranslationService uses strict translation thread profile", async () => {
   const processes: FakeCodexProcess[] = [];

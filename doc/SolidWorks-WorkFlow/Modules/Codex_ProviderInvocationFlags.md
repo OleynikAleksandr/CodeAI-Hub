@@ -22,7 +22,7 @@ This document records the actual CodeAI Hub Codex invocation surface that shapes
 
 Normal runtime, provider-owned Codex translation, and Codex native request capture all start the same App Server executable through named process profiles:
 
-Current process profile keys: `codex:workflow-documentation` for normal workflow sessions and `codex:translation` for provider-owned app-server translation. The old `CODEAI_CODEX_APP_SERVER_ARGS` export is a compatibility alias for the workflow profile's `appServerArgs`; the translation profile currently uses the same disabled-tool startup args under a separate key so future translation-specific startup controls do not mutate workflow sessions.
+Current process profile keys: `codex:workflow-documentation` for normal workflow sessions and `codex:translation` for provider-owned app-server translation. The old `CODEAI_CODEX_APP_SERVER_ARGS` export is a compatibility alias for the workflow profile's `appServerArgs`; the translation profile owns an independent startup args array with the same currently verified disabled-tool flags, so future translation-specific startup controls cannot mutate workflow sessions by aliasing the same array.
 The workflow invocation profile resolves to the same process profile key plus `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` and `threadConfig = { project_doc_max_bytes: 0 }`.
 
 ```text
