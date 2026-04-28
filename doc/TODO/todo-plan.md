@@ -62,13 +62,13 @@
 5. [DONE] Ввести PM-side parser/type guards для incoming Core WS messages и заменить прямой `JSON.parse(...) as IncomingMessage`; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/api.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: validate project manager websocket messages`
 6. [DONE] Git Commit: `fix: validate project manager websocket messages` (hash: `94ef9e9ff`)
 7. [DONE] Покрыть PM parser malformed JSON / malformed payload / accepted known message cases; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/services/core-stream-message-validator.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket validation`
-8. [IN_PROGRESS] Git Commit: `test: cover project manager websocket validation` (hash: TBD)
+8. [DONE] Git Commit: `test: cover project manager websocket validation` (hash: `86ee5e08e`)
 
 ### Stream: Core Incoming Command Validation
-9. [TODO] Ввести Core-side incoming WS command parser перед router dispatch; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix: validate core websocket commands`
-10. [TODO] Git Commit: `fix: validate core websocket commands` (hash: TBD)
-11. [TODO] Покрыть Core validation/rejection path в WebSocketManager tests; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover core websocket command validation`
-12. [TODO] Git Commit: `test: cover core websocket command validation` (hash: TBD)
+9. [DONE] Ввести Core-side incoming WS command parser перед router dispatch; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix: validate core websocket commands`
+10. [DONE] Git Commit: `fix: validate core websocket commands` (hash: `67ab20130`)
+11. [DONE] Покрыть Core validation/rejection path в WebSocketManager tests; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover core websocket command validation`
+12. [IN_PROGRESS] Git Commit: `test: cover core websocket command validation` (hash: TBD)
 13. [TODO] Закрыть Phase 1 таргетными проверками `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`; scope: UI bundle, Core package, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify websocket hardening`
 14. [TODO] Git Commit: `chore: verify websocket hardening` (hash: TBD)
 

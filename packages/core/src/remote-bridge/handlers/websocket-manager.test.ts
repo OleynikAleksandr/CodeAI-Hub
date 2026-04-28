@@ -94,6 +94,56 @@ const handleClientDisconnected = (): void => {
   // No-op: disconnect side effects are not relevant for this replay test.
 };
 
+test("WebSocketManager rejects invalid commands before router dispatch", async () => {
+  const httpServer = http.createServer();
+  const incomingMessages: unknown[] = [];
+  const manager = new WebSocketManager({
+    httpServer,
+    logger: new Logger("error"),
+    onIncomingMessage: (_clientId, _socket, message) => {
+      incomingMessages.push(message);
+      return Promise.resolve();
+    },
+    onClientConnected: () => undefined,
+    onClientDisconnected: handleClientDisconnected,
+    getInitialState: () => ({ sessions: [], providers: [] }),
+    getLatestStatus: () => null,
+  });
+
+  let socket: WebSocket | null = null;
+  try {
+    manager.start();
+    const port = await listen(httpServer);
+    socket = new WebSocket(`ws://127.0.0.1:${port}/api/v1/stream`);
+    const messages: unknown[] = [];
+    socket.on("message", (payload) => {
+      messages.push(JSON.parse(payload.toString()));
+    });
+    await once(socket, "open");
+
+    socket.send("{");
+    await waitFor(() =>
+      messages.find((message) => {
+        const typed = message as {
+          readonly payload?: { readonly reason?: string };
+          readonly type?: string;
+        };
+        return (
+          typed.type === "session:error" &&
+          typed.payload?.reason === "invalid-json"
+        );
+      })
+    );
+    assert.equal(incomingMessages.length, 0);
+  } finally {
+    if (socket) {
+      await closeSocket(socket);
+    }
+    manager.stop();
+    await closeServer(httpServer);
+  }
+});
+
 test("WebSocketManager replays usage limits after workspace scope changes", async () => {
   const httpServer = http.createServer();
   const connectedClientIds: string[] = [];
