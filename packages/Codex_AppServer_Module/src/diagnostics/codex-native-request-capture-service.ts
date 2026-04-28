@@ -15,6 +15,13 @@ import type {
   CodexWorkspaceOptions,
   ModuleReporter,
 } from "../types";
+import {
+  buildCodexNativeTranslationCapturePromptProfile,
+  buildCodexNativeTranslationThreadStartParams,
+  buildCodexNativeTranslationTurnStartParams,
+  type CodexNativeRequestCaptureInvocationPurpose,
+  isCodexNativeTranslationCapture,
+} from "./codex-native-translation-capture-profile";
 
 const DIAGNOSTIC_TURN_TIMEOUT_MS = 35_000;
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
@@ -33,12 +40,14 @@ export interface CodexNativeRequestCaptureOptions {
   readonly captureId: string;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
+  readonly invocationPurpose?: CodexNativeRequestCaptureInvocationPurpose;
   readonly probePrompt: string;
   readonly proxyUrl: string;
   readonly recordDiagnosticContext?: (record: {
     readonly kind: string;
     readonly payload: unknown;
   }) => Promise<void> | void;
+  readonly scenarioId?: string | null;
   readonly selectedModelId?: string | null;
   readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
@@ -145,6 +154,10 @@ export class CodexNativeRequestCaptureService {
   async captureNativeRequest(
     options: CodexNativeRequestCaptureOptions
   ): Promise<void> {
+    if (isCodexNativeTranslationCapture(options)) {
+      await this.#captureTranslationNativeRequest(options);
+      return;
+    }
     const workflowProfile = resolveCodexWorkflowInvocationProfile();
     const process = this.#processFactory({
       environment: this.#buildEnvironment(options),
@@ -157,6 +170,40 @@ export class CodexNativeRequestCaptureService {
       const thread = await this.#startThread(process, options, workflowProfile);
       turnCompletion.bindThread(thread.id);
       await this.#startTurn(process, thread.id, options);
+      await turnCompletion.done;
+      await this.#recordProviderHomeRolloutContext(options, thread.rolloutPath);
+    } finally {
+      turnCompletion.unsubscribe();
+      await process.stop();
+    }
+  }
+
+  async #captureTranslationNativeRequest(
+    options: CodexNativeRequestCaptureOptions
+  ): Promise<void> {
+    const promptProfile = buildCodexNativeTranslationCapturePromptProfile(
+      this.#resolveModelId(options) ?? "gpt-5.4-mini"
+    );
+    const process = this.#processFactory({
+      environment: this.#buildEnvironment(options),
+      processProfileKey: promptProfile.processProfileKey,
+      reporter: this.#reporter,
+    });
+    const turnCompletion = this.#waitForTurnCompletion(process);
+    try {
+      await process.start();
+      const thread = await this.#startTranslationThread(
+        process,
+        options,
+        promptProfile
+      );
+      turnCompletion.bindThread(thread.id);
+      await this.#startTranslationTurn(
+        process,
+        thread.id,
+        options,
+        promptProfile
+      );
       await turnCompletion.done;
       await this.#recordProviderHomeRolloutContext(options, thread.rolloutPath);
     } finally {
@@ -219,6 +266,40 @@ export class CodexNativeRequestCaptureService {
     };
   }
 
+  async #startTranslationThread(
+    process: CodexProcessLike,
+    options: CodexNativeRequestCaptureOptions,
+    promptProfile: ReturnType<
+      typeof buildCodexNativeTranslationCapturePromptProfile
+    >
+  ): Promise<CodexDiagnosticThread> {
+    const params = buildCodexNativeTranslationThreadStartParams({
+      promptProfile,
+      workspacePath: options.workspacePath,
+    });
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_thread_start_request",
+      payload: params,
+    });
+    const response = await process.request<Record<string, unknown>>(
+      "thread/start",
+      params
+    );
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_thread_start_response",
+      payload: response,
+    });
+    const thread = isRecord(response.thread) ? response.thread : null;
+    const threadId = asString(thread?.id);
+    if (!threadId) {
+      throw new Error("diagnostic codex thread/start returned no thread id");
+    }
+    return {
+      id: threadId,
+      rolloutPath: asString(thread?.path),
+    };
+  }
+
   async #startTurn(
     process: CodexProcessLike,
     threadId: string,
@@ -242,6 +323,30 @@ export class CodexNativeRequestCaptureService {
         this.#resolveReasoningSummaryMode()
       ),
     };
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_turn_start_request",
+      payload: params,
+    });
+    const response = await process.request("turn/start", params);
+    await this.#recordDiagnosticContext(options, {
+      kind: "codex_app_server_turn_start_response",
+      payload: response,
+    });
+  }
+
+  async #startTranslationTurn(
+    process: CodexProcessLike,
+    threadId: string,
+    options: CodexNativeRequestCaptureOptions,
+    promptProfile: ReturnType<
+      typeof buildCodexNativeTranslationCapturePromptProfile
+    >
+  ): Promise<void> {
+    const params = buildCodexNativeTranslationTurnStartParams({
+      promptProfile,
+      threadId,
+      workspacePath: options.workspacePath,
+    });
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_turn_start_request",
       payload: params,
