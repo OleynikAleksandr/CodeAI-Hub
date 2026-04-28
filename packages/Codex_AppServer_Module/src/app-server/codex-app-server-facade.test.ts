@@ -5,8 +5,21 @@ import path from "node:path";
 import test from "node:test";
 import { CODEX_APPLIED_TURN_CONFIG_KEY } from "../types";
 import { CodexAppServerFacade } from "./codex-app-server-facade";
+import { resolveCodexWorkflowInvocationProfile } from "./codex-workflow-instruction-profile";
+import { CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY } from "./process/codex-app-server-process-profile";
 
 const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
+
+test("Codex workflow invocation profile selects startup and thread controls", () => {
+  const profile = resolveCodexWorkflowInvocationProfile();
+
+  assert.equal(
+    profile.processProfileKey,
+    CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY
+  );
+  assert.match(profile.baseInstructions, EARLY_ARCHITECTURE_WORKFLOW_PATTERN);
+  assert.deepEqual(profile.threadConfig, { project_doc_max_bytes: 0 });
+});
 
 test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread start", async () => {
   const requests: {
