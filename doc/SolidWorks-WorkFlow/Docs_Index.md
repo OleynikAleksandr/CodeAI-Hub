@@ -32,14 +32,14 @@
 
 ### Modules
 - `Modules/Claude.md` — SSOT Claude provider module, including provider-home runtime isolation and SDK isolation-mode rules for CodeAI Hub-managed turns.
-- `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings and provider-home config policy.
+- `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings, provider-home config policy, workflow-agent App Server profile, and provider-owned Codex GPT translation engine path.
 - `Modules/Codex_ProviderInvocationFlags.md` — SSOT actual Codex App Server startup flags, JSON-RPC `initialize` / `thread/start` / `thread/resume` / `turn/start` payloads, model/reasoning resolution, provider-home env, and native request capture parity.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Localization.md` — SSOT persistent UI localization module, including the four user-facing categories and the English-only internal-instructions boundary.
 - `Plans/Archive/Localization_TranslationEngine_AnthropicHaiku_Architecture.md` — archived Anthropic Claude Haiku 4.5 translation engine architecture (closed by release `1.1.986`; canonical SSOT lives in `Modules/Claude.md`, `Modules/Shared_RuntimeTranslation_Module.md`, and `Modules/Localization.md`).
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
-- `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager), включая Settings -> General card для provider native request capture commands.
+- `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager), включая Settings -> General card для provider native request capture commands and the `Translation` capture scenario.
 - `Modules/Session_UI/README.md` — factual inventory of the five Session UI panels inside Project Manager, including truth-paths, update channels, outputs, side effects, and code ownership.
 
 ### Contracts (активные)
@@ -163,7 +163,21 @@
 - `Plans/Archive/ModelLabel_FlickerFix_1.2.13.md` — archived planning-doc закрытого scope релиза `1.2.13`; фиксирует cosmetic bug, выявленный на 1.2.12 retest — UI label в session status panel мерцал между `Gemini 3.1 Pro Preview (thinking high)` и `Gemini 3.1 Pro Preview (high)` внутри одного turn'а. Root cause: два broadcast-пути `session:model:update` (raw SDK `model_info` vs applied-turn-config dispatch) отправляли modelId в разных формах (`gemini-3.1-pro-preview` vs `gemini-3.1-pro-preview thinking:high`), UI renderer парсил их по-разному. Решение: обогатить SDK-путь через новый `SessionRequestHandlerAppliedTurnConfig.resolveEffectiveModelId(providerId, targetModelId)` — оба пути теперь эмитят одну effective identity. Invariant 14 (Effective model identity SSOT) расширен broadcast-contract'ом.
 - `Plans/Archive.zip` + `Plans/Archive.README.md` — сжатый архив исторических planning-документов (Session023+ rollback волны Diagram Modules autolayout, Foundation Envelope история, локализационные волны, PM hotfixes `1.1.899–1.1.916`, рефакторинг рантайма, Sidecar v2 и projection rename из Session025, закрытый provider-override scope `StageConfirmationCard_Architecture.md` из релиза `1.1.972`, закрытый thinking-translation overlay scope `ThinkingTranslationOverlay_Architecture.md` из релиза `1.1.973`, закрытый translation-engine selector scope `Localization_TranslationEngine_CodexModels_Architecture.md` из релиза `1.1.975`, закрытый Codex release-hotfix scope `Codex_TranslationEngine_ReleaseHotfix_Architecture.md` из релиза `1.1.976`, закрытый post-release regression scope `Codex_PostRelease_TranslationRegression_Architecture.md` из релиза `1.1.977`, закрытый universal chunked translation scope `Universal_ChunkedTranslation_Architecture.md` из релиза `1.1.979`, закрытый localization recovery scope `Localization_Settings_RestartHydration_Architecture.md` из релиза `1.1.980`, закрытый interface-localization batching / PM blank-screen hotfix scope `Localization_InterfaceBatching_And_PMBlankScreen_Architecture.md` из релиза `1.1.981`, закрытый Codex thinking bootstrap-path hotfix scope `Codex_ThinkingTranslation_BootstrapPath_Hotfix_Architecture.md` из релиза `1.1.983`, а также закрытый reasoning no-chunking scope `Reasoning_NoChunking_Architecture.md` из релиза `1.1.984`, закрытый incremental localization sync + emission-time thinking visibility scope `Localization_IncrementalSync_And_ThinkingVisibility_Architecture.md` из релиза `1.1.985`), изначально compressed в Phase 3 cleanup (Session025, 2026-04-09) и пополняется при закрытии каждого execution cycle. Для доступа к конкретному плану — см. инструкции в `Archive.README.md`. Git history для каждого архивного документа сохранена и доступна через `git log --all --follow`.
 
-## 2) Runtime templates (Description)
+## 2) Runtime templates (invocation + workflow)
+
+Каноничные bundled instruction templates для model invocation profiles (source-пути внутри `BUNDLED_TEMPLATE_SOURCES` в `packages/core/src/templates/bundled-templates.ts`; материализуются `template-sync-service` в `~/.codeai-hub/templates/` при старте):
+- `.codeai-hub/templates/invocation/codex/workflow-agent.system.md` — text-only Codex workflow-agent system instruction fragment.
+- `.codeai-hub/templates/invocation/codex/translation.system.md` — text-only Codex translation system instruction fragment.
+- `.codeai-hub/templates/invocation/claude/workflow-agent.system.md` — text-only Claude workflow-agent system instruction fragment.
+- `.codeai-hub/templates/invocation/claude/translation.system.md` — text-only Claude translation system instruction fragment.
+- `.codeai-hub/templates/invocation/gemini/workflow-agent.system.md` — text-only Gemini workflow-agent system instruction fragment.
+- `.codeai-hub/templates/workflow_steps/documentation/description.system.md` — text-only Documentation Tree `Description` step instruction fragment.
+- `.codeai-hub/templates/workflow_steps/documentation/virtual_simulation.system.md` — text-only Documentation Tree `Virtual Simulation` step instruction fragment.
+- `.codeai-hub/templates/workflow_steps/documentation/diagram_modules.system.md` — text-only Documentation Tree `Diagram Modules` step instruction fragment.
+
+Эти templates могут менять только instruction text. Process flags, system tools, sandbox, approval policy и model compatibility остаются внутренним code-owned contract.
+
+Каноничные bundled templates для шага `Description` (source-пути внутри `BUNDLED_TEMPLATE_SOURCES` в `packages/core/src/templates/bundled-templates.ts`; материализуются `template-sync-service` в `~/.codeai-hub/templates/description/` при старте):
 
 Каноничные bundled-шаблоны для шага `Description` (source-пути внутри `BUNDLED_TEMPLATE_SOURCES` в `packages/core/src/templates/bundled-templates.ts`; материализуются `template-sync-service` в `~/.codeai-hub/templates/description/` при старте):
 - `.codeai-hub/templates/description/questionnaire-template.md` — анкета pre-submit.

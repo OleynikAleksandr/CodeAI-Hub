@@ -136,9 +136,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Documentation And Verification
 
 1. [DONE] Update final SSOT docs for implemented profile resolver, template sync safety, Codex translation App Server path, and capture Translation scenario (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; checks: `npx ultracite check`; commit: `docs: document invocation profiles and codex translation`)
-2. [IN_PROGRESS] Git Commit: `docs: document invocation profiles and codex translation` (hash: TBD)
-3. [TODO] Update remaining affected docs and index entries, then move or archive the planning document according to closeout rules if the execution cycle is complete (scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: close invocation profile planning docs`)
-4. [TODO] Git Commit: `docs: close invocation profile planning docs` (hash: TBD)
+2. [DONE] Git Commit: `docs: document invocation profiles and codex translation` (hash: `2c9e9848b`)
+3. [DONE] Update remaining affected docs and index entries, then move or archive the planning document according to closeout rules if the execution cycle is complete (scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; checks: `npx ultracite check`; planning document remains active until release closeout; commit: `docs: close invocation profile planning docs`)
+4. [IN_PROGRESS] Git Commit: `docs: close invocation profile planning docs` (hash: TBD)
 5. [TODO] Run targeted builds for Core, Codex module, translation, webview, and Project Manager typecheck/build surfaces; fix any failures in scoped follow-up tasks before release (scope: `packages/core`, `packages/Codex_AppServer_Module`, `packages/translation`, `src/client`; commit: `fix: stabilize invocation profile release checks`)
 6. [TODO] Git Commit: `fix: stabilize invocation profile release checks` (hash: TBD)
 7. [TODO] Prepare release metadata, run `./scripts/build-all.sh`, run `./scripts/build-release.sh --use-current-version`, move release artifacts as required, and create the session closeout report (scope: release docs/scripts output/session report; commit: `chore: build invocation profile release`)
