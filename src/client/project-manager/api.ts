@@ -35,6 +35,7 @@ import {
   resolveVscodeBridge,
 } from "./services/pm-bridges";
 import { createDialogApi, type DialogApi } from "./services/dialog-api";
+import { parseCoreStreamMessage } from "./services/core-stream-message-validator";
 import { ProjectManagerCoreRestartTracker } from "./services/project-manager-core-restart-tracker";
 import {
   createProjectManagerWindowMessageHandler,
@@ -439,12 +440,15 @@ class ProjectManagerApi {
   }
 
   private handleSocketMessage(data: string): void {
-    try {
-      const message = JSON.parse(data) as IncomingMessage;
-      this.handleMessage(message);
-    } catch (error) {
-      console.error("[ProjectManagerApi] Failed to parse message", error);
+    const result = parseCoreStreamMessage(data);
+    if (!result.ok) {
+      console.warn("[ProjectManagerApi] Dropped invalid Core stream message", {
+        error: result.error,
+        reason: result.reason,
+      });
+      return;
     }
+    this.handleMessage(result.message);
   }
 
   private handleSocketOpen(): void {
