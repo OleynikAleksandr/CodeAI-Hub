@@ -1,3 +1,5 @@
+import { logCoreBridgeDiagnostic } from "./core-bridge-logger";
+
 type SupervisorRequestMode = "ensure-started" | "restart" | "stop";
 
 interface LauncherBridge {
@@ -29,7 +31,11 @@ const tryRequestCoreFromVsCode = (type: string): boolean => {
   try {
     api.postMessage({ type });
     return true;
-  } catch {
+  } catch (error) {
+    logCoreBridgeDiagnostic("supervisor:vscode-post-message-failed", {
+      error,
+      type,
+    });
     return false;
   }
 };
@@ -50,7 +56,11 @@ const tryRequestCoreFromLauncher = (mode: SupervisorRequestMode): boolean => {
       return true;
     }
     return false;
-  } catch {
+  } catch (error) {
+    logCoreBridgeDiagnostic("supervisor:launcher-request-failed", {
+      error,
+      mode,
+    });
     return false;
   }
 };

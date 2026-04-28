@@ -3,6 +3,7 @@ import type {
   ProviderStackId,
 } from "../../../../types/provider";
 import { DEFAULT_CONFIG, FALLBACK_PROVIDERS } from "./constants";
+import { logCoreBridgeDiagnostic } from "./core-bridge-logger";
 import { scheduleCoreBridgeReconnect } from "./core-bridge-reconnect";
 import { convertStatusResponse } from "./normalizers";
 import { createServerMessageHandler } from "./server-message-handler";
@@ -108,8 +109,8 @@ const connectWebSocket = (config: CoreBridgeConfig): void => {
   websocket.addEventListener("open", () => {
     hasSuccessfulConnection = true;
     notifyConnectionStatus("ready");
-    fetchStatusSnapshot(config).catch(() => {
-      /* ignore, we'll retry on demand */
+    fetchStatusSnapshot(config).catch((error) => {
+      logCoreBridgeDiagnostic("status:open-snapshot-failed", { error });
     });
     flushPendingMessages();
   });
@@ -159,17 +160,17 @@ const fetchStatusSnapshot = async (config: CoreBridgeConfig): Promise<void> => {
     });
     loadSessionHistories(config, normalized.sessions, (payload) => {
       notifyWindow({ type: "session:history", payload });
-    }).catch(() => {
-      /* Ignore history hydration failures; live stream will populate messages. */
+    }).catch((error) => {
+      logCoreBridgeDiagnostic("status:history-hydration-failed", { error });
     });
-  } catch {
+  } catch (error) {
+    logCoreBridgeDiagnostic("status:fetch-failed", { error });
     if (!hasSuccessfulConnection) {
       notifyConnectionStatus(
         "connecting",
         "Waiting for status response from CodeAI Hub core…"
       );
     }
-    /* Ignore status fetch failures; the UI will retry when the user interacts. */
   }
 };
 const ensureProvidersAvailable = async (

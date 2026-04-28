@@ -8199,6 +8199,37 @@
     connected: true
   }));
 
+  // src/client/ui/src/core-bridge/core-bridge-logger.ts
+  var MAX_DIAGNOSTIC_STRING_LENGTH = 180;
+  var truncateDiagnosticString = (value) => value.length > MAX_DIAGNOSTIC_STRING_LENGTH ? `${value.slice(0, MAX_DIAGNOSTIC_STRING_LENGTH)}...` : value;
+  var toDiagnosticPrimitive = (value) => {
+    if (value === null || value === void 0) {
+      return null;
+    }
+    if (typeof value === "string") {
+      return truncateDiagnosticString(value);
+    }
+    if (typeof value === "number" || typeof value === "boolean") {
+      return value;
+    }
+    if (value instanceof Error) {
+      return truncateDiagnosticString(`${value.name}: ${value.message}`);
+    }
+    return Object.prototype.toString.call(value);
+  };
+  var logCoreBridgeDiagnostic = (eventName, details = {}) => {
+    const sanitized = Object.fromEntries(
+      Object.entries(details).map(([key, value]) => [
+        key,
+        toDiagnosticPrimitive(value)
+      ])
+    );
+    globalThis.console?.warn?.(
+      `[CodeAI Hub core bridge] ${eventName}`,
+      sanitized
+    );
+  };
+
   // src/client/ui/src/core-bridge/supervisor-requests.ts
   var SUPERVISOR_REQUEST_TYPES = {
     "ensure-started": "core:ensure-started",
@@ -8215,7 +8246,11 @@
     try {
       api.postMessage({ type });
       return true;
-    } catch {
+    } catch (error) {
+      logCoreBridgeDiagnostic("supervisor:vscode-post-message-failed", {
+        error,
+        type
+      });
       return false;
     }
   };
@@ -8234,7 +8269,11 @@
         return true;
       }
       return false;
-    } catch {
+    } catch (error) {
+      logCoreBridgeDiagnostic("supervisor:launcher-request-failed", {
+        error,
+        mode
+      });
       return false;
     }
   };
@@ -8536,37 +8575,6 @@
     createdAt: Date.now()
   });
 
-  // src/client/ui/src/core-bridge/core-bridge-logger.ts
-  var MAX_DIAGNOSTIC_STRING_LENGTH = 180;
-  var truncateDiagnosticString = (value) => value.length > MAX_DIAGNOSTIC_STRING_LENGTH ? `${value.slice(0, MAX_DIAGNOSTIC_STRING_LENGTH)}...` : value;
-  var toDiagnosticPrimitive = (value) => {
-    if (value === null || value === void 0) {
-      return null;
-    }
-    if (typeof value === "string") {
-      return truncateDiagnosticString(value);
-    }
-    if (typeof value === "number" || typeof value === "boolean") {
-      return value;
-    }
-    if (value instanceof Error) {
-      return truncateDiagnosticString(`${value.name}: ${value.message}`);
-    }
-    return Object.prototype.toString.call(value);
-  };
-  var logCoreBridgeDiagnostic = (eventName, details = {}) => {
-    const sanitized = Object.fromEntries(
-      Object.entries(details).map(([key, value]) => [
-        key,
-        toDiagnosticPrimitive(value)
-      ])
-    );
-    globalThis.console?.warn?.(
-      `[CodeAI Hub core bridge] ${eventName}`,
-      sanitized
-    );
-  };
-
   // src/client/ui/src/core-bridge/server-message-handler.ts
   var parseEnvelope = (raw) => {
     try {
@@ -8855,7 +8863,8 @@
     websocket.addEventListener("open", () => {
       hasSuccessfulConnection = true;
       notifyConnectionStatus("ready");
-      fetchStatusSnapshot(config).catch(() => {
+      fetchStatusSnapshot(config).catch((error) => {
+        logCoreBridgeDiagnostic("status:open-snapshot-failed", { error });
       });
       flushPendingMessages();
     });
@@ -8905,9 +8914,11 @@
       });
       loadSessionHistories(config, normalized.sessions, (payload) => {
         notifyWindow({ type: "session:history", payload });
-      }).catch(() => {
+      }).catch((error) => {
+        logCoreBridgeDiagnostic("status:history-hydration-failed", { error });
       });
-    } catch {
+    } catch (error) {
+      logCoreBridgeDiagnostic("status:fetch-failed", { error });
       if (!hasSuccessfulConnection) {
         notifyConnectionStatus(
           "connecting",

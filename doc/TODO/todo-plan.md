@@ -110,9 +110,9 @@
 
 ### Stream: UI Core Bridge Diagnostics
 5. [DONE] Добавить sanitized diagnostics helper для `src/client/ui/src/core-bridge` и заменить silent catches в server/history paths; scope: `src/client/ui/src/core-bridge/core-bridge-logger.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/core-bridge/session-history.ts`; expected commit message: `fix: log core bridge parsing and history failures`
-6. [IN_PROGRESS] Git Commit: `fix: log core bridge parsing and history failures` (hash: TBD)
-7. [TODO] Заменить silent best-effort catches в supervisor/status reconnect paths без изменения UX; scope: `src/client/ui/src/core-bridge/supervisor-requests.ts`, `src/client/ui/src/core-bridge/core-bridge.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: log core bridge supervisor failures`
-8. [TODO] Git Commit: `fix: log core bridge supervisor failures` (hash: TBD)
+6. [DONE] Git Commit: `fix: log core bridge parsing and history failures` (hash: `05c0d6cd8`)
+7. [DONE] Заменить silent best-effort catches в supervisor/status reconnect paths без изменения UX; scope: `src/client/ui/src/core-bridge/supervisor-requests.ts`, `src/client/ui/src/core-bridge/core-bridge.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: log core bridge supervisor failures`
+8. [IN_PROGRESS] Git Commit: `fix: log core bridge supervisor failures` (hash: TBD)
 
 ### Stream: Runtime Factory Wiring Safety
 9. [TODO] Убрать definite assignment assertions из runtime-core factory через safe lazy refs без поведения change; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`, `doc/TODO/todo-plan.md`; expected commit message: `refactor: make session runtime wiring explicit`
