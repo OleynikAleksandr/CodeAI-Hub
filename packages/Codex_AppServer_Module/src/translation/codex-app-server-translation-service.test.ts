@@ -19,6 +19,13 @@ class FakeCodexProcess {
   >();
   started = false;
   stopped = false;
+  private readonly options: {
+    readonly emitTurnCompletion?: boolean;
+  };
+
+  constructor(options: { readonly emitTurnCompletion?: boolean } = {}) {
+    this.options = options;
+  }
 
   onNotification(
     listener: (notification: {
@@ -43,6 +50,9 @@ class FakeCodexProcess {
       } as TResult);
     }
     if (method === "turn/start") {
+      if (this.options.emitTurnCompletion === false) {
+        return Promise.resolve({ turn: { id: "translation-turn" } } as TResult);
+      }
       queueMicrotask(() => {
         this.emit("item/completed", {
           item: {
@@ -150,4 +160,35 @@ test("CodexAppServerTranslationService omits summary for Spark translation turns
   >;
   assert.equal(turnStart.model, "gpt-5.3-codex-spark");
   assert.equal("summary" in turnStart, false);
+});
+
+test("CodexAppServerTranslationService falls back and cleans up when translation turn times out", async () => {
+  const processes: FakeCodexProcess[] = [];
+  const service = new CodexAppServerTranslationService({
+    modelId: "gpt-5.4-mini",
+    processFactory: () => {
+      const process = new FakeCodexProcess({ emitTurnCompletion: false });
+      processes.push(process);
+      return process;
+    },
+    turnTimeoutMs: 1,
+  });
+
+  const result = await service.translate({
+    sourceLanguage: "en",
+    targetLanguage: "es",
+    text: "Timeout",
+    timeoutMs: 1,
+  });
+
+  assert.equal(result.status, "fallback");
+  assert.equal(result.errorCode, "request_failed");
+  assert.equal(result.finalText, "Timeout");
+  assert.equal(processes[0]?.started, true);
+  assert.equal(processes[0]?.stopped, true);
+  const threadStart = processes[0]?.requests[0]?.params as Record<
+    string,
+    unknown
+  >;
+  await assert.rejects(() => access(threadStart.cwd as string));
 });
