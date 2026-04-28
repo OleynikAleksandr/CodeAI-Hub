@@ -88,9 +88,9 @@
 9. [DONE] Добавить Codex provider-local TTL cache для reasoning summary settings read; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `fix: cache codex reasoning summary settings`
 10. [DONE] Git Commit: `fix: cache codex reasoning summary settings` (hash: `e13adc7f2`)
 11. [DONE] Покрыть Codex settings cache behavior; scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover codex settings cache`
-12. [IN_PROGRESS] Git Commit: `test: cover codex settings cache` (hash: TBD)
-13. [TODO] Добавить Claude provider-local TTL cache для SDK query settings snapshot; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: cache claude settings snapshots`
-14. [TODO] Git Commit: `fix: cache claude settings snapshots` (hash: TBD)
+12. [DONE] Git Commit: `test: cover codex settings cache` (hash: `fd3638998`)
+13. [DONE] Добавить Claude provider-local TTL cache для SDK query settings snapshot; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: cache claude settings snapshots`
+14. [IN_PROGRESS] Git Commit: `fix: cache claude settings snapshots` (hash: TBD)
 15. [TODO] Покрыть Claude settings cache behavior; scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover claude settings cache`
 16. [TODO] Git Commit: `test: cover claude settings cache` (hash: TBD)
 17. [TODO] Добавить Gemini provider-local TTL cache для session settings resolver; scope: `packages/Gemini_Module/src/session/gemini-session-settings-resolver.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`, `doc/TODO/todo-plan.md`; expected commit message: `fix: cache gemini session settings snapshot`

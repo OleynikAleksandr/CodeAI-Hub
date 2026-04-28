@@ -26,6 +26,7 @@ export type QueryFunction = (payload: {
 
 const SHORT_ID_LENGTH = 8;
 const TEMP_SESSION_PREFIX = "temp_";
+const SETTINGS_SNAPSHOT_CACHE_TTL_MS = 500;
 
 interface ClaudeManagerDependencies {
   readonly authManager: SDKAuthManager;
@@ -92,6 +93,11 @@ export class ClaudeSDKManager {
   private initialized = false;
   private readonly deps: ClaudeManagerDependencies;
   private contextReaderConfigured = false;
+  private settingsSnapshotCache: {
+    readonly expiresAtMs: number;
+    readonly settingsPath: string;
+    readonly snapshot: ClaudeSettingsSnapshot | null;
+  } | null = null;
 
   constructor(deps: ClaudeManagerDependencies) {
     this.deps = deps;
@@ -360,6 +366,25 @@ export class ClaudeSDKManager {
     if (!settingsPath) {
       return null;
     }
+    const nowMs = Date.now();
+    if (
+      this.settingsSnapshotCache?.settingsPath === settingsPath &&
+      this.settingsSnapshotCache.expiresAtMs > nowMs
+    ) {
+      return this.settingsSnapshotCache.snapshot;
+    }
+    const snapshot = this.readClaudeSettingsSnapshot(settingsPath);
+    this.settingsSnapshotCache = {
+      expiresAtMs: nowMs + SETTINGS_SNAPSHOT_CACHE_TTL_MS,
+      settingsPath,
+      snapshot,
+    };
+    return snapshot;
+  }
+
+  private readClaudeSettingsSnapshot(
+    settingsPath: string
+  ): ClaudeSettingsSnapshot | null {
     try {
       const raw = readFileSync(settingsPath, "utf8");
       return JSON.parse(raw) as ClaudeSettingsSnapshot;
