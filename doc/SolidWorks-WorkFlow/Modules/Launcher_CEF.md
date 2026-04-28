@@ -56,6 +56,7 @@
 ## PM Supervisor Bridge Boundary
 - Launcher bridge now exposes PM supervisor intents for both `ensureCoreRunning` and explicit `restartCore`.
 - PM Settings `Restart Core` must not fallback to plain `ensure-started` when running inside standalone CEF host: the injected browser bridge routes restart requests to `codeai://core-restart`, `LauncherHandler::OnBeforeBrowse` cancels Chromium navigation, and the launcher host executes `RestartCoreProcess()` on the background thread.
+- Browser-side standalone calls to `ensureCoreRunning` / `restartCore` are best-effort recovery intents. Failed bridge calls are logged by `src/client/ui/src/core-bridge/core-bridge-logger.ts` as sanitized diagnostics; they do not make Launcher a UI-state owner and do not expose raw provider payloads.
 - `RestartCoreProcess()` is layered on top of the same shutdown/start primitives as the normal launcher lifecycle:
   - detect the active Core endpoint from current launcher environment;
   - if Core is reachable, request graceful `/shutdown`, fall back to force-kill when needed, and wait for port release;

@@ -146,9 +146,9 @@
 
 ### Stream: Documentation Audit Addendum
 1. [DONE] По требованию пользователя дополнительно сверить активные contract docs, связанные с runtime remediation refactoring; scope: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit message: `docs: sync runtime remediation contracts`
-2. [IN_PROGRESS] Git Commit: `docs: sync runtime remediation contracts` (hash: TBD)
-3. [TODO] По требованию пользователя дополнительно сверить recovery/launcher docs, связанные с Core Bridge supervisor diagnostics; scope: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: sync core bridge recovery docs`
-4. [TODO] Git Commit: `docs: sync core bridge recovery docs` (hash: TBD)
+2. [DONE] Git Commit: `docs: sync runtime remediation contracts` (hash: `bad0abe01`)
+3. [DONE] По требованию пользователя дополнительно сверить recovery/launcher docs, связанные с Core Bridge supervisor diagnostics; scope: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`, `doc/SolidWorks-WorkFlow/Modules/Launcher_CEF.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: sync core bridge recovery docs`
+4. [IN_PROGRESS] Git Commit: `docs: sync core bridge recovery docs` (hash: TBD)
 
 ### Stream: Release Build and Package
 5. [TODO] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.103`

@@ -527,6 +527,11 @@ PM должен стать отдельным guardian слоем поверх �
   - шлёт `core:connection`
   - просит supervisor `ensure-started` / `restart`
 
+- `src/client/ui/src/core-bridge/core-bridge-logger.ts`
+  - пишет sanitized diagnostics для status/history/supervisor request failures
+  - не логирует raw provider payloads или user message content
+  - не блокирует UX recovery: reconnect/live stream/snapshot hydration остаются recovery path
+
 - `src/client/ui/src/core-bridge/core-bridge-reconnect.ts`
   - формирует user-facing reconnect states
 
@@ -936,6 +941,7 @@ Recovery является одной из причин switch, а не отде�
 
 - явный crash/unavailable banner;
 - статус попытки reconnect/restart;
+- sanitized non-blocking diagnostic events for failed status snapshot, history hydration, or supervisor bridge calls;
 - CTA:
   - `Retry connection`
   - `Restart core`
@@ -1028,6 +1034,9 @@ Recovery является одной из причин switch, а не отде�
 
 - `src/client/ui/src/core-bridge/core-bridge.ts`
   - expose stronger connection state to PM/UI
+
+- `src/client/ui/src/core-bridge/core-bridge-logger.ts`
+  - sanitized browser-side diagnostics for best-effort Core Bridge recovery paths
 
 - `src/client/ui/src/core-bridge/core-bridge-reconnect.ts`
   - PM-facing degraded status messages
