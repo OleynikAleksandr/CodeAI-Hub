@@ -1,7 +1,7 @@
 # Shared Runtime Translation Module - Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-14
+**Updated:** 2026-04-28
 **Owner:** Oleksandr + Codex
 **Validated on:** `main` (`v1.1.854`)
 
@@ -91,6 +91,7 @@ Implementation notes:
 - The facade depends on the engine contract, not on Google-specific code directly.
 - The request/response helpers stay split into small files so no single utility file becomes a new runtime god module.
 - `google-gtx` remains the zero-config default; Core-owned Codex engines use provider-owned App Server translation sessions, while the shared package retains the isolated `codex exec` runtime as fallback.
+- provider-owned Codex App Server translation instructions are translation-only: they instruct the model to translate only supplied text, return only translated text, avoid workflow-agent behavior, and not use tools, shell commands, files, patches, web search, planning, or user-input requests.
 - long requests are no longer sent as one monolithic string by default for generic/document translation; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract, while `reasoning` defaults to one translate call per provider-emitted block.
 - safe boundary priority is paragraph break -> list boundary -> sentence boundary -> clause boundary -> hard split outside protected regions.
 - protected regions currently include fenced code, inline code, Markdown links, `{placeholders}`, and glossary markers such as `[[CAIHUB_TERM_n]]`.

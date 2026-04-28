@@ -33,11 +33,11 @@
 
 ### Stream: Evidence Baseline
 1. [DONE] Зафиксировать текущий translation tool/profile baseline перед изменениями — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; expected commit message: `test: document codex translation tool baseline`.
-2. [IN_PROGRESS] Git Commit: `test: document codex translation tool baseline` (hash: TBD)
+2. [DONE] Git Commit: `test: document codex translation tool baseline` (hash: `b19cb4372`)
 
 ### Stream: Translation Prompt Contract
-3. [TODO] Сделать Codex translation prompt минимальным translator-only contract — scope: `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `feat: harden codex translation prompt profile`.
-4. [TODO] Git Commit: `feat: harden codex translation prompt profile` (hash: TBD)
+3. [DONE] Сделать Codex translation prompt минимальным translator-only contract — scope: `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `node --test packages/Codex_AppServer_Module/dist/translation/codex-translation-prompt-profile.test.js` + `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; expected commit message: `feat: harden codex translation prompt profile`.
+4. [IN_PROGRESS] Git Commit: `feat: harden codex translation prompt profile` (hash: TBD)
 
 ### Stream: Translation Process Profile
 5. [TODO] Выделить самостоятельный `codex:translation` process/tool profile и проверить Spark summary omission — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `feat: isolate codex translation process profile`.

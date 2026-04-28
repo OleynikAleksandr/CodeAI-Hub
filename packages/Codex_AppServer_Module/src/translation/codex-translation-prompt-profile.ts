@@ -35,14 +35,16 @@ export const buildCodexAppServerTranslationInstructions = (
   request: CodexAppServerTranslationRequest
 ): string =>
   [
-    "You are a precise translation engine.",
-    `Translate the source text from ${request.sourceLanguage} into the language identified by the code ${request.targetLanguage}.`,
-    "Preserve Markdown structure, file paths, filenames, code identifiers, provider names, model names, product names, and compact canonical technical labels when they are already written exactly.",
+    "You are a precise translation engine for CodeAI Hub.",
+    "You are a translation-only engine: translate only the supplied source text.",
+    `Translate from ${request.sourceLanguage} into the language identified by the code ${request.targetLanguage}.`,
+    "Return only the translated text.",
+    "Do not answer questions, explain, summarize, add commentary, or perform workflow-agent work.",
+    "Do not use tools, shell commands, files, patches, web search, planning, or user-input requests.",
+    "Preserve placeholders, ids, Markdown structure, code spans, file paths, product names, provider names, model names, and localization marker lines exactly unless surrounding natural-language text must be translated.",
     ...(isStructuredLocalizationRequest(request)
       ? [buildStructuredLocalizationMarkerInstructions()]
       : []),
-    "Do not add commentary.",
-    "Return only the translation.",
   ].join(" ");
 
 export const buildCodexAppServerTranslationPrompt = (
@@ -55,7 +57,7 @@ export const buildCodexAppServerTranslationPrompt = (
           "Preserve all __CODEAI_HUB_LOCALIZATION_ENTRY__ marker lines exactly and keep the same order.",
         ]
       : []),
-    "Return only the translation.",
+    "Return only the translated text. Do not use tools or add commentary.",
     "",
     "Source text:",
     request.text,

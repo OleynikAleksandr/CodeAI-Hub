@@ -6,7 +6,7 @@ import {
   buildCodexAppServerTranslationPromptProfile,
 } from "./codex-translation-prompt-profile";
 
-test("Codex app-server translation profile mirrors generic Codex CLI prompt rules", () => {
+test("Codex app-server translation profile is translator-only", () => {
   const request = {
     sourceLanguage: "en",
     targetLanguage: "es",
@@ -16,15 +16,22 @@ test("Codex app-server translation profile mirrors generic Codex CLI prompt rule
   const instructions = buildCodexAppServerTranslationInstructions(request);
   const prompt = buildCodexAppServerTranslationPrompt(request);
 
-  assert.equal(instructions.includes("precise translation engine"), true);
+  assert.equal(
+    instructions.includes("precise translation engine for CodeAI Hub"),
+    true
+  );
+  assert.equal(instructions.includes("translation-only engine"), true);
   assert.equal(
     instructions.includes(
       "from en into the language identified by the code es"
     ),
     true
   );
-  assert.equal(instructions.includes("Do not add commentary"), true);
-  assert.equal(prompt.includes("Return only the translation."), true);
+  assert.equal(instructions.includes("Do not use tools"), true);
+  assert.equal(instructions.includes("workflow-agent work"), true);
+  assert.equal(instructions.includes("Return only the translated text"), true);
+  assert.equal(prompt.includes("Do not use tools"), true);
+  assert.equal(prompt.includes("Return only the translated text"), true);
   assert.equal(prompt.endsWith(request.text), true);
 });
 
@@ -44,6 +51,7 @@ test("Codex app-server translation profile preserves structured localization mar
   const prompt = buildCodexAppServerTranslationPrompt(request);
 
   assert.equal(instructions.includes("Preserve every marker line"), true);
+  assert.equal(instructions.includes("Do not remove, rename, reorder"), true);
   assert.equal(
     prompt.includes("Preserve all __CODEAI_HUB_LOCALIZATION_ENTRY__"),
     true
