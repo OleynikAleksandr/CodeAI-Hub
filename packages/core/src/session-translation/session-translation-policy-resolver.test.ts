@@ -7,6 +7,7 @@ import {
   type LocalizationRuntimeBootstrapSnapshot,
   resolveLocalizationPaths,
 } from "@codeai-hub/localization";
+import { providerSettingsSnapshotCache } from "../config/json-file-snapshot-cache";
 import { SessionTranslationPolicyResolver } from "./session-translation-policy-resolver";
 
 const createTempHomeDirectory = async (): Promise<string> =>
@@ -14,6 +15,14 @@ const createTempHomeDirectory = async (): Promise<string> =>
 
 const buildSettingsPath = (homeDirectory: string): string =>
   path.join(homeDirectory, ".codeai-hub", "settings", "settings.json");
+
+const writeJsonSnapshot = async (
+  filePath: string,
+  snapshot: unknown
+): Promise<void> => {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
+};
 
 const createSettingsSnapshot = (
   overrides?: Record<string, unknown>
@@ -41,6 +50,17 @@ const createSettingsSnapshot = (
     },
   },
 });
+
+const createSettingsSnapshotWithReasoningLanguage = (
+  language: string
+): Record<string, unknown> => {
+  const snapshot = createSettingsSnapshot();
+  const localization = (snapshot.general as Record<string, unknown>)
+    .localization as Record<string, unknown>;
+  const categories = localization.categories as Record<string, unknown>;
+  categories.reasoning = language;
+  return snapshot;
+};
 
 const createBootstrapSnapshot = (): LocalizationRuntimeBootstrapSnapshot => ({
   cacheKey: "session-translation-bootstrap",
@@ -233,6 +253,79 @@ test("SessionTranslationPolicyResolver falls back to the Messages for the User l
     assert.equal(policy.targetLanguage, "ru");
     assert.equal(policy.engineId, "google-gtx");
   } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});
+
+test("SessionTranslationPolicyResolver keeps cached settings until the settings snapshot is invalidated", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  const settingsPath = buildSettingsPath(homeDirectory);
+  const bootstrapPath =
+    resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+
+  try {
+    providerSettingsSnapshotCache.clear(settingsPath);
+    providerSettingsSnapshotCache.clear(bootstrapPath);
+    await writeJsonSnapshot(settingsPath, createSettingsSnapshot());
+    await writeJsonSnapshot(bootstrapPath, createBootstrapSnapshot());
+
+    const resolver = new SessionTranslationPolicyResolver();
+    const firstPolicy = resolver.resolve(settingsPath);
+
+    await writeJsonSnapshot(
+      settingsPath,
+      createSettingsSnapshotWithReasoningLanguage("fr")
+    );
+    const cachedPolicy = resolver.resolve(settingsPath);
+
+    providerSettingsSnapshotCache.clear(settingsPath);
+    const invalidatedPolicy = resolver.resolve(settingsPath);
+
+    assert.equal(firstPolicy.targetLanguage, "ru");
+    assert.equal(cachedPolicy.targetLanguage, "ru");
+    assert.equal(invalidatedPolicy.targetLanguage, "fr");
+  } finally {
+    providerSettingsSnapshotCache.clear(settingsPath);
+    providerSettingsSnapshotCache.clear(bootstrapPath);
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
+});
+
+test("SessionTranslationPolicyResolver keeps cached missing bootstrap until the bootstrap snapshot is invalidated", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  const settingsPath = buildSettingsPath(homeDirectory);
+  const bootstrapPath =
+    resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+
+  try {
+    providerSettingsSnapshotCache.clear(settingsPath);
+    providerSettingsSnapshotCache.clear(bootstrapPath);
+    await writeJsonSnapshot(settingsPath, createSettingsSnapshot());
+
+    const resolver = new SessionTranslationPolicyResolver();
+    const missingBootstrapPolicy = resolver.resolve(settingsPath);
+
+    await writeJsonSnapshot(bootstrapPath, createBootstrapSnapshot());
+    const cachedMissingBootstrapPolicy = resolver.resolve(settingsPath);
+
+    providerSettingsSnapshotCache.clear(bootstrapPath);
+    const invalidatedBootstrapPolicy = resolver.resolve(settingsPath);
+
+    assert.equal(missingBootstrapPolicy.enabled, false);
+    assert.equal(
+      missingBootstrapPolicy.skipReason,
+      "localization_sync_pending"
+    );
+    assert.equal(cachedMissingBootstrapPolicy.enabled, false);
+    assert.equal(
+      cachedMissingBootstrapPolicy.skipReason,
+      "localization_sync_pending"
+    );
+    assert.equal(invalidatedBootstrapPolicy.enabled, true);
+    assert.equal(invalidatedBootstrapPolicy.skipReason, null);
+  } finally {
+    providerSettingsSnapshotCache.clear(settingsPath);
+    providerSettingsSnapshotCache.clear(bootstrapPath);
     await rm(homeDirectory, { force: true, recursive: true });
   }
 });
