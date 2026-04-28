@@ -8,6 +8,12 @@ import {
   CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
 } from "../app-server/process/codex-app-server-process-profile";
 import { CodexNativeRequestCaptureService } from "./codex-native-request-capture-service";
+import {
+  buildCodexNativeTranslationCapturePromptProfile,
+  buildCodexNativeTranslationThreadStartParams,
+  buildCodexNativeTranslationTurnStartParams,
+  isCodexNativeTranslationCapture,
+} from "./codex-native-translation-capture-profile";
 
 const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
 const TRANSLATION_ENGINE_INSTRUCTIONS_PATTERN = /precise translation engine/;
@@ -82,6 +88,65 @@ class FakeCodexProcess {
     }
   }
 }
+
+test("Codex native translation capture builders document the pre-hardening baseline", () => {
+  assert.equal(
+    isCodexNativeTranslationCapture({ invocationPurpose: "translation" }),
+    true
+  );
+  assert.equal(
+    isCodexNativeTranslationCapture({ scenarioId: "translation" }),
+    true
+  );
+  assert.equal(
+    isCodexNativeTranslationCapture({ scenarioId: "description" }),
+    false
+  );
+
+  const promptProfile =
+    buildCodexNativeTranslationCapturePromptProfile("gpt-5.4-mini");
+  const threadStart = buildCodexNativeTranslationThreadStartParams({
+    promptProfile,
+    workspacePath: "/workspace/capture",
+  });
+  assert.deepEqual(threadStart, {
+    approvalPolicy: "never",
+    baseInstructions: promptProfile.baseInstructions,
+    config: {
+      project_doc_max_bytes: 0,
+    },
+    cwd: "/workspace/capture",
+    model: "gpt-5.4-mini",
+    persistExtendedHistory: false,
+    sandbox: "read-only",
+  });
+  assert.match(
+    promptProfile.baseInstructions,
+    TRANSLATION_ENGINE_INSTRUCTIONS_PATTERN
+  );
+
+  const turnStart = buildCodexNativeTranslationTurnStartParams({
+    promptProfile,
+    threadId: "diagnostic-thread",
+    workspacePath: "/workspace/capture",
+  });
+  assert.deepEqual(turnStart, {
+    cwd: "/workspace/capture",
+    effort: "low",
+    input: [
+      {
+        text: promptProfile.userPrompt,
+        text_elements: [],
+        type: "text",
+      },
+    ],
+    model: "gpt-5.4-mini",
+    summary: "none",
+    threadId: "diagnostic-thread",
+  });
+  assert.match(promptProfile.userPrompt, TRANSLATION_PROMPT_TARGET_PATTERN);
+  assert.match(promptProfile.userPrompt, TRANSLATION_SAMPLE_PATTERN);
+});
 
 test("CodexNativeRequestCaptureService starts an isolated app-server process with proxy and certificate env", async () => {
   const tempDir = await mkdtemp(

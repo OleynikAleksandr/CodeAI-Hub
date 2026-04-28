@@ -32,8 +32,8 @@
 ## Phase 1 — Codex Translation-Only Hardening (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Evidence Baseline
-1. [IN_PROGRESS] Зафиксировать текущий translation tool/profile baseline перед изменениями — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; expected commit message: `test: document codex translation tool baseline`.
-2. [TODO] Git Commit: `test: document codex translation tool baseline` (hash: TBD)
+1. [DONE] Зафиксировать текущий translation tool/profile baseline перед изменениями — scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; expected commit message: `test: document codex translation tool baseline`.
+2. [IN_PROGRESS] Git Commit: `test: document codex translation tool baseline` (hash: TBD)
 
 ### Stream: Translation Prompt Contract
 3. [TODO] Сделать Codex translation prompt минимальным translator-only contract — scope: `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; expected commit message: `feat: harden codex translation prompt profile`.

@@ -250,6 +250,8 @@ Translation `turn/start` uses:
 - `summary = "none"` for non-Spark translation models;
 - no explicit `summary` field for `gpt-5.3-codex-spark`.
 
+TL-001 pre-hardening baseline (2026-04-28): translation native capture is now covered by a dedicated builder test before changing behavior. The current translation capture envelope is `processProfileKey = "codex:translation"`, `approvalPolicy = "never"`, `sandbox = "read-only"`, `persistExtendedHistory = false`, `config.project_doc_max_bytes = 0`, fixed small translation sample, `effort = "low"`, and `summary = "none"` for non-Spark. This baseline does not claim zero provider-visible tools; the last confirmed residual App Server tool surface from the documentation profile experiment was `exec_command`, `write_stdin`, `update_plan`, `request_user_input`, `apply_patch`, `web_search`, and `view_image`. Translation-specific tool removal must be proven by fresh native capture before this SSOT describes any tool as removed.
+
 ## Native Request Capture Parity
 
 Settings -> General -> `Capture Codex Native Request` starts an isolated temporary App Server process with the same startup args as normal runtime, plus proxy/certificate env:
