@@ -28,6 +28,7 @@ const isNativeRequestCaptureScenarioId = (
   value === "description" ||
   value === "virtual_simulation" ||
   value === "diagram_modules" ||
+  value === "translation" ||
   value === "diagnostic_probe";
 
 export const handleProjectManagerSettingsHostMessage = (params: {

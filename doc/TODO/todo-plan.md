@@ -112,7 +112,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 5. [DONE] Register provider-owned Codex GPT translation engines through Core translation facade composition while keeping the shared `codex exec` engine as fallback during migration (scope: `packages/core/src/translation/*`, `packages/translation/src/*`, `packages/Codex_AppServer_Module/src/index.ts`; checks: `npx ultracite check`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/translation/core-translation-facade-factory.test.js`; commit: `feat: register codex app-server translation engines`)
 6. [DONE] Git Commit: `feat: register codex app-server translation engines` (hash: `05460b34b`)
 7. [DONE] Add tests for translation success, timeout/fallback, engine registration, and no silent fallback when explicit engines are unavailable (scope: `packages/core/src/translation/*.test.ts`, `packages/Codex_AppServer_Module/src/translation/*.test.ts`, `packages/translation/src/*.test.ts`; checks: `npx ultracite check`, `npm run build --workspace=@codeai-hub/translation`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/Codex_AppServer_Module/dist/translation/codex-app-server-translation-service.test.js`, `node --test packages/core/dist/translation/core-translation-facade-factory.test.js`, `node --test packages/translation/dist/translation-engine-registry.test.js`; commit: `test: cover codex app-server translation engines`)
-8. [IN_PROGRESS] Git Commit: `test: cover codex app-server translation engines` (hash: TBD)
+8. [DONE] Git Commit: `test: cover codex app-server translation engines` (hash: `0015bf22b`)
 
 ---
 
@@ -120,8 +120,8 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Capture Scenario
 
-1. [TODO] Add `Translation` to Provider Native Request Capture scenario types and UI selector without persisting it as a setting (scope: `src/client/ui/src/components/settings/*`, `src/client/project-manager/services/*`; commit: `feat: add translation native capture scenario`)
-2. [TODO] Git Commit: `feat: add translation native capture scenario` (hash: TBD)
+1. [DONE] Add `Translation` to Provider Native Request Capture scenario types and UI selector without persisting it as a setting (scope: `src/client/ui/src/components/settings/*`, `src/client/project-manager/services/*`; checks: `npx ultracite check`, `npm run typecheck:webview`, `npm run build:project-manager`, `npm run build:webview`; commit: `feat: add translation native capture scenario`)
+2. [IN_PROGRESS] Git Commit: `feat: add translation native capture scenario` (hash: TBD)
 3. [TODO] Extend Core native capture command metadata/options so scenario `translation` selects `purpose="translation"` instead of building a workflow prompt (scope: `packages/core/src/provider-network-capture/*`, `packages/core/src/remote-bridge/*`; commit: `feat: route native capture through translation profile`)
 4. [TODO] Git Commit: `feat: route native capture through translation profile` (hash: TBD)
 5. [TODO] Update Codex native capture service so workflow scenarios use workflow profiles and `Translation` uses the Codex translation profile with a fixed small translation sample (scope: `packages/Codex_AppServer_Module/src/diagnostics/*`, `packages/Codex_AppServer_Module/src/translation/*`; commit: `feat: capture codex translation native request`)

@@ -164,6 +164,7 @@ const SCENARIO_OPTIONS: readonly {
   { id: "description", label: "Description" },
   { id: "virtual_simulation", label: "Virtual Simulation" },
   { id: "diagram_modules", label: "Diagram Modules" },
+  { id: "translation", label: "Translation" },
 ];
 
 const getScenarioLabel = (scenarioId: NativeRequestCaptureScenarioId): string =>

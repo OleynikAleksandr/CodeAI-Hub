@@ -220,6 +220,7 @@ export type SettingsNativeRequestCaptureScenarioId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
+  | "translation"
   | "diagnostic_probe";
 export type SettingsNativeRequestCaptureOptions = {
   readonly scenarioId?: SettingsNativeRequestCaptureScenarioId | null;

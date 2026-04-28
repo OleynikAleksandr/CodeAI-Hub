@@ -7,6 +7,7 @@ export type NativeRequestCaptureScenarioId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules"
+  | "translation"
   | "diagnostic_probe";
 export type NativeRequestCaptureStatus =
   | "idle"

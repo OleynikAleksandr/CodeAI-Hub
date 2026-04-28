@@ -37,6 +37,13 @@ const runProjectManagerNativeRequestCapture = async (
     api.captureNativeRequest(params.providerId, params.modelId);
     return;
   }
+  if (params.scenarioId === "translation") {
+    api.captureNativeRequest(params.providerId, params.modelId, {
+      scenarioId: params.scenarioId,
+      scenarioLabel: "Translation",
+    });
+    return;
+  }
   if (!(params.workspacePath && params.workspaceSlug)) {
     throw new Error("Select a workspace before running workflow capture.");
   }
