@@ -69,9 +69,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Invocation Instruction Templates
 
 5. [DONE] Add bundled text-only invocation instruction templates and a loader for user-overridden `.md` fragments (scope: `packages/core/src/templates/*`, `packages/core/src/model-invocation/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: add invocation instruction templates`)
-6. [IN_PROGRESS] Git Commit: `feat: add invocation instruction templates` (hash: TBD)
-7. [TODO] Add tests proving text templates can change instructions without exposing flags/tools/sandbox/approval controls (scope: `packages/core/src/templates/*.test.ts`, `packages/core/src/model-invocation/*.test.ts`; commit: `test: cover invocation template overrides`)
-8. [TODO] Git Commit: `test: cover invocation template overrides` (hash: TBD)
+6. [DONE] Git Commit: `feat: add invocation instruction templates` (hash: `903a99035`)
+7. [DONE] Add tests proving text templates can change instructions without exposing flags/tools/sandbox/approval controls (scope: `packages/core/src/templates/*.test.ts`, `packages/core/src/model-invocation/*.test.ts`; commit: `test: cover invocation template overrides`)
+8. [IN_PROGRESS] Git Commit: `test: cover invocation template overrides` (hash: TBD)
 
 ---
 
