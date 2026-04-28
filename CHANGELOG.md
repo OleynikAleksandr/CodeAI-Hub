@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.99] - 2026-04-28
+### Added
+- **Model invocation profiles now separate workflow-agent and translation purposes.** Core resolves provider/model/step profiles with compatible model lists, keeps `diagnostic` as a capture mode rather than a profile, and loads user-editable text-only instruction fragments without exposing process flags, tools, sandbox, or approval policy.
+- **Template sync now preserves user-modified instruction templates.** Clean bundled templates update in place, user edits are preserved, incoming bundled candidates are staged under `.incoming/<version>/`, and Project Manager settings can resolve updates by group or file.
+- **Codex GPT translation engines now use the Codex App Server path first.** Core registers provider-owned Codex translation wrappers for the public Codex GPT translation ids, uses the translation-specific App Server profile, and keeps the shared `codex exec` engine as fallback during migration.
+- **Provider Native Request Capture includes a real Translation scenario.** The Settings capture card adds `Translation`; Core routes it through the translation invocation profile with a small fixed sample instead of a workflow first-turn prompt.
+
+### Tests
+- **Targeted profile and release checks passed before release packaging.** Passed Codex App Server, Core, translation, webview typecheck/build, Project Manager build, and focused regression tests for profile resolution, template overrides, Codex translation fallback, engine registration, and translation native request capture.
+
 ## [1.2.98] - 2026-04-27
 ### Changed
 - **Main repository release rebuilt after retest merge.** This release packages the merged `main` line after `1.2.97`, combining the main-line Codex reasoning paragraph/translation timeout work with the retest-line Spark compatibility, progress-update guard, provider SDK/raw log removal, and provider-home summary config materialization.
