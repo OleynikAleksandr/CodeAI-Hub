@@ -1,6 +1,6 @@
 # SMB-002 — Persistent Session Model Binding Refactor
 
-**Status:** APPROVED FOR EXECUTION
+**Status:** COMPLETED — archived after implementation closeout
 **Date:** 2026-04-28
 **Planning owner:** Codex
 **User contract:** confirmed in retest triage after release `1.2.101`
@@ -97,6 +97,10 @@ Targeted manual/build verification:
 
 ## 7. Execution Owner
 
-Active execution plan: `doc/TODO/todo-plan.md`.
+Archived execution plan: `doc/TODO/Archive/todo-plan-phase5-SMB-002-persistent-session-model-binding.md`.
 
-When this scope is complete, stable conclusions must be moved into canonical SSOT documents before archiving this planning-doc.
+Stable conclusions were moved into canonical SSOT documents:
+
+- `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
+- `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`
