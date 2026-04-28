@@ -130,11 +130,11 @@
 3. [DONE] Сверить Module SSOT provider/UI updates with implemented behavior; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `docs: sync provider and ui stability contracts`
 4. [DONE] Git Commit: `docs: sync provider and ui stability contracts` (hash: `93b362faa`)
 5. [DONE] Сверить Claude docs and Docs Index references, keeping active planning-doc visible until archive; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: sync runtime remediation navigation`
-6. [IN_PROGRESS] Git Commit: `docs: sync runtime remediation navigation` (hash: TBD)
+6. [DONE] Git Commit: `docs: sync runtime remediation navigation` (hash: `19f05cba5`)
 
 ### Stream: Pre-Release Verification
-7. [TODO] Запустить финальные targeted builds/checks before release phase: `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`, provider package builds; scope: UI bundle, Core package, provider packages; expected commit message: `chore: verify runtime remediation before release`
-8. [TODO] Git Commit: `chore: verify runtime remediation before release` (hash: TBD)
+7. [DONE] Запустить финальные targeted builds/checks before release phase: `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`, provider package builds; scope: UI bundle, Core package, provider packages; expected commit message: `chore: verify runtime remediation before release`
+8. [IN_PROGRESS] Git Commit: `chore: verify runtime remediation before release` (hash: TBD)
 
 ## Phase 5 — Release Build 1.2.103 (owner: Codex, updated: 2026-04-28)
 
