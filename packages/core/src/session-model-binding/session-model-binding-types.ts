@@ -1,4 +1,5 @@
 export type SessionModelBindingSource =
+  | "continuity_inherited"
   | "settings_default"
   | "start_step_selection"
   | "switch_request"

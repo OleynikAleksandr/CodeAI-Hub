@@ -61,6 +61,30 @@ export class SessionModelBindingResolver {
     });
   }
 
+  inheritBinding(
+    options: SessionModelBindingKey & {
+      readonly sourceBinding: SessionModelBinding;
+    }
+  ): SessionModelBinding {
+    return this.#facade.updateBinding({
+      providerId: options.providerId,
+      sessionId: options.sessionId,
+      continuityRootId: options.continuityRootId,
+      dialogId: options.dialogId,
+      workspacePath: options.workspacePath,
+      workspaceSlug: options.workspaceSlug,
+      initiativeSlug: options.initiativeSlug,
+      stage: options.stage,
+      runSlug: options.runSlug,
+      baseModelId: options.sourceBinding.baseModelId,
+      modelId: options.sourceBinding.modelId,
+      reasoningEffort: options.sourceBinding.reasoningEffort,
+      thinkingEnabled: options.sourceBinding.thinkingEnabled,
+      thinkingLevel: options.sourceBinding.thinkingLevel,
+      source: "continuity_inherited",
+    });
+  }
+
   private resolveAndStore(options: {
     readonly key: SessionModelBindingKey;
     readonly source: SessionModelBindingSource;

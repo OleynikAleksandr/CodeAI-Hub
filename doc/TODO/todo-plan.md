@@ -44,7 +44,7 @@
 1. [DONE] Extend continuity data structures to persist session model binding; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-store.test.ts`; expected commit: `fix: persist session model binding in continuity store`.
 2. [DONE] Git Commit: `fix: persist session model binding in continuity store` (hash: `36fe30854`)
 3. [DONE] Persist binding when outbound user turns are tracked for a logical session; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-tracker.test.ts`; expected commit: `fix: record model binding during continuity tracking`.
-4. [DONE] Git Commit: `fix: record model binding during continuity tracking` (hash: TBD)
+4. [DONE] Git Commit: `fix: record model binding during continuity tracking` (hash: `34ce33c08`)
 
 ## Phase 3 — Restore, Dialog, Workspace Hydration (owner: Codex, updated: 2026-04-28)
 
@@ -57,8 +57,8 @@
 ## Phase 4 — Rollover Inheritance (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Clone binding for continuation sessions
-1. [TODO] Add explicit inherit/clone binding API for continuation-created sessions; scope: `packages/core/src/session-model-binding/session-model-binding-types.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.ts`, `packages/core/src/session-model-binding/session-model-binding-resolver.ts`; expected commit: `fix: clone model binding for continuation sessions`.
-2. [TODO] Git Commit: `fix: clone model binding for continuation sessions` (hash: TBD)
+1. [DONE] Add explicit inherit/clone binding API for continuation-created sessions; scope: `packages/core/src/session-model-binding/session-model-binding-types.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.ts`, `packages/core/src/session-model-binding/session-model-binding-resolver.ts`; expected commit: `fix: clone model binding for continuation sessions`.
+2. [DONE] Git Commit: `fix: clone model binding for continuation sessions` (hash: TBD)
 3. [TODO] Ensure `Remaining context threshold (%)` rollover uses inherited binding for provider requests; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-turn-arbitration.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix: keep rollover sessions on bound model`.
 4. [TODO] Git Commit: `fix: keep rollover sessions on bound model` (hash: TBD)
 
