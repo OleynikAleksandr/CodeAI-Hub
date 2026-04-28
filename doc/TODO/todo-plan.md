@@ -53,7 +53,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 3. [DONE] Add focused resolver tests for workflow step profiles, translation profiles, and compatible model lists (scope: `packages/core/src/model-invocation/*.test.ts`, `packages/core/src/config/*.test.ts`; commit: `test: cover model invocation profile resolution`)
 4. [DONE] Git Commit: `test: cover model invocation profile resolution` (hash: `b80b71d0e`)
 5. [DONE] Update architecture docs for the new profile contract and the rule that native request capture is diagnostic mode over real profiles (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: define model invocation profile contract`)
-6. [IN_PROGRESS] Git Commit: `docs: define model invocation profile contract` (hash: TBD)
+6. [DONE] Git Commit: `docs: define model invocation profile contract` (hash: `8f8e83567`)
 
 ---
 
@@ -61,8 +61,8 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Template Sync Safety
 
-1. [TODO] Add template sync state, bundled-content hashing, user-modified detection, and `.incoming/<version>/...` preservation for changed bundled templates (scope: `packages/core/src/templates/*`, `packages/core/src/templates/*.test.ts`; commit: `feat: preserve user-modified templates`)
-2. [TODO] Git Commit: `feat: preserve user-modified templates` (hash: TBD)
+1. [DONE] Add template sync state, bundled-content hashing, user-modified detection, and `.incoming/<version>/...` preservation for changed bundled templates (scope: `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: preserve user-modified templates`)
+2. [IN_PROGRESS] Git Commit: `feat: preserve user-modified templates` (hash: TBD)
 3. [TODO] Add backup + explicit resolution actions for pending template updates, keeping flags/tools unavailable to user templates (scope: `packages/core/src/templates/*`, `packages/core/src/remote-bridge/*`; commit: `feat: add template update resolution actions`)
 4. [TODO] Git Commit: `feat: add template update resolution actions` (hash: TBD)
 

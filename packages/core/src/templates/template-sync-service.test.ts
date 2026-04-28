@@ -11,6 +11,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { Logger } from "../telemetry/logger";
+import type { BundledTemplateSource } from "./bundled-templates";
 import { TemplateSyncService } from "./template-sync-service";
 
 const LEGACY_DIAGRAM_TEMPLATE_PATHS = [
@@ -109,6 +110,34 @@ const POLYGON_TEMPLATE_CONTENT_CHECKS = [
   },
 ] as const;
 
+const encodeTemplateContent = (content: string): string =>
+  Buffer.from(content, "utf8").toString("base64");
+
+const createTestTemplateSource = (content: string): BundledTemplateSource => ({
+  id: "test-template",
+  audience: "internal_agent_instructions",
+  destinationRelativePath:
+    ".codeai-hub/templates/invocation/codex/workflow-agent.system.md",
+  base64: encodeTemplateContent(content),
+});
+
+const withTempHome = async (run: (tempHome: string) => Promise<void>) => {
+  const tempHome = await mkdtemp(path.join(os.tmpdir(), "template-sync-"));
+  const previousHome = process.env.HOME;
+  process.env.HOME = tempHome;
+
+  try {
+    await run(tempHome);
+  } finally {
+    if (previousHome === undefined) {
+      process.env.HOME = undefined;
+    } else {
+      process.env.HOME = previousHome;
+    }
+    await rm(tempHome, { recursive: true, force: true });
+  }
+};
+
 test("TemplateSyncService removes legacy diagram templates during sync", async () => {
   const tempHome = await mkdtemp(path.join(os.tmpdir(), "template-sync-"));
   const previousHome = process.env.HOME;
@@ -167,4 +196,82 @@ test("TemplateSyncService installs visible diagram templates for appendix resolu
     }
     await rm(tempHome, { recursive: true, force: true });
   }
+});
+
+test("TemplateSyncService updates clean bundled templates in place", async () => {
+  await withTempHome(async (tempHome) => {
+    const destinationPath = path.join(
+      tempHome,
+      ".codeai-hub/templates/invocation/codex/workflow-agent.system.md"
+    );
+
+    await new TemplateSyncService(new Logger("error"), {
+      sources: [createTestTemplateSource("bundled v1")],
+      syncVersion: "1.2.98-test",
+    }).sync();
+    await new TemplateSyncService(new Logger("error"), {
+      sources: [createTestTemplateSource("bundled v2")],
+      syncVersion: "1.2.99-test",
+    }).sync();
+
+    assert.equal(await readFile(destinationPath, "utf8"), "bundled v2\n");
+    await assert.rejects(
+      access(
+        path.join(
+          tempHome,
+          ".codeai-hub/templates/.incoming/1.2.99-test/invocation/codex/workflow-agent.system.md"
+        )
+      )
+    );
+  });
+});
+
+test("TemplateSyncService preserves user edits and writes incoming bundled update", async () => {
+  await withTempHome(async (tempHome) => {
+    const destinationPath = path.join(
+      tempHome,
+      ".codeai-hub/templates/invocation/codex/workflow-agent.system.md"
+    );
+    const incomingPath = path.join(
+      tempHome,
+      ".codeai-hub/templates/.incoming/1.2.99-test/invocation/codex/workflow-agent.system.md"
+    );
+    const statePath = path.join(
+      tempHome,
+      ".codeai-hub/templates/.template-sync-state.json"
+    );
+
+    await new TemplateSyncService(new Logger("error"), {
+      sources: [createTestTemplateSource("bundled v1")],
+      syncVersion: "1.2.98-test",
+    }).sync();
+    await writeFile(destinationPath, "user custom instructions\n", "utf8");
+
+    await new TemplateSyncService(new Logger("error"), {
+      sources: [createTestTemplateSource("bundled v2")],
+      syncVersion: "1.2.99-test",
+    }).sync();
+
+    assert.equal(
+      await readFile(destinationPath, "utf8"),
+      "user custom instructions\n"
+    );
+    assert.equal(await readFile(incomingPath, "utf8"), "bundled v2\n");
+
+    const state = JSON.parse(await readFile(statePath, "utf8")) as {
+      readonly templates?: Record<
+        string,
+        {
+          readonly incomingRelativePath?: string;
+          readonly pendingBundledHash?: string;
+        }
+      >;
+    };
+    const record = state.templates?.["test-template"];
+    assert.equal(
+      record?.incomingRelativePath,
+      ".codeai-hub/templates/.incoming/1.2.99-test/invocation/codex/workflow-agent.system.md"
+    );
+    assert.equal(typeof record?.pendingBundledHash, "string");
+  });
 });
