@@ -7,6 +7,7 @@ import {
 import type {
   SessionBindingInfo,
   SessionMessage,
+  SessionModelBindingInfo,
   SessionRecord,
 } from "../../../../types/session";
 import { normalizeBinding, providerIdSet } from "../session/helpers";
@@ -27,6 +28,11 @@ const toNumberTimestamp = (value?: string): number => {
   const parsed = value ? Date.parse(value) : Number.NaN;
   return Number.isNaN(parsed) ? Date.now() : parsed;
 };
+
+const readOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
 
 const sanitizeProvider = (
   provider: ServerProvider | undefined
@@ -50,6 +56,47 @@ const sanitizeProvider = (
       typeof provider.statusMessage === "string"
         ? provider.statusMessage
         : null,
+  };
+};
+
+const sanitizeSessionModelBinding = (
+  binding: ServerSession["modelBinding"] | undefined
+): SessionModelBindingInfo | null => {
+  if (!isRecord(binding)) {
+    return null;
+  }
+  const providerId = binding.providerId;
+  const modelId = readOptionalString(binding.modelId);
+  if (!(typeof providerId === "string" && modelId)) {
+    return null;
+  }
+  const normalizedProviderId = providerId as ProviderStackId;
+  if (!providerIdSet.has(normalizedProviderId)) {
+    return null;
+  }
+
+  const normalized: SessionModelBindingInfo = {
+    providerId: normalizedProviderId,
+    modelId,
+  };
+  const baseModelId = readOptionalString(binding.baseModelId);
+  const reasoningEffort = readOptionalString(binding.reasoningEffort);
+  const source = readOptionalString(binding.source);
+  const thinkingLevel = readOptionalString(binding.thinkingLevel);
+  const boundAt = readOptionalString(binding.boundAt);
+  const updatedAt = readOptionalString(binding.updatedAt);
+
+  return {
+    ...normalized,
+    ...(baseModelId ? { baseModelId } : {}),
+    ...(reasoningEffort ? { reasoningEffort } : {}),
+    ...(source ? { source } : {}),
+    ...(typeof binding.thinkingEnabled === "boolean"
+      ? { thinkingEnabled: binding.thinkingEnabled }
+      : {}),
+    ...(thinkingLevel ? { thinkingLevel } : {}),
+    ...(boundAt ? { boundAt } : {}),
+    ...(updatedAt ? { updatedAt } : {}),
   };
 };
 
@@ -190,6 +237,7 @@ export const sanitizeSession = (
         : null,
     createdAt: toNumberTimestamp(session.createdAt),
     binding: normalizeBinding(bindingCandidate),
+    modelBinding: sanitizeSessionModelBinding(session.modelBinding),
   };
 };
 

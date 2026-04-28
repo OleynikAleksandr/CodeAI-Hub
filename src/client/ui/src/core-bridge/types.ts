@@ -6,6 +6,7 @@ import type {
   SessionMessage,
   SessionMessageEmissionVisibility,
   SessionMessageRole,
+  SessionModelBindingInfo,
   SessionRecord,
 } from "../../../../types/session";
 
@@ -39,6 +40,7 @@ export interface ServerSession {
   readonly createdAt?: string;
   readonly id?: string;
   readonly initiativeSlug?: string | null;
+  readonly modelBinding?: SessionModelBindingInfo | null;
   readonly providerId?: ProviderStackId | string;
   readonly providerSessionId?: string | null;
   readonly providerSessionStatus?: "pending" | "ready" | "failed";
