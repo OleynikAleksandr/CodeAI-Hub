@@ -4,6 +4,7 @@ import path from "node:path";
 import type {
   ProviderAdapter,
   ProviderNativeRequestCaptureAppliedTurnConfig,
+  ProviderNativeRequestCaptureInvocationPurpose,
 } from "../provider-registry/provider-module-loader.types";
 import { NativeRequestCaptureCertificateStore } from "./native-request-capture-certificates";
 import { NativeRequestCapturePreflight } from "./native-request-capture-preflight";
@@ -26,6 +27,7 @@ const DEFAULT_OUTPUT_DIR = path.join(
 );
 const DIAGNOSTIC_PROBE_PROMPT =
   "CodeAI Hub native request capture probe. This request must not be sent upstream.";
+const TRANSLATION_SCENARIO_ID = "translation";
 
 const PROVIDER_RUNTIME_IDS: Readonly<
   Record<NativeRequestCaptureProviderId, string>
@@ -61,7 +63,9 @@ type ProxyFactory = (
   options: ConstructorParameters<typeof NativeRequestCaptureProxy>[0]
 ) => Pick<NativeRequestCaptureProxy, "start">;
 type AppliedTurnConfigResolver = (options: {
+  readonly invocationPurpose: ProviderNativeRequestCaptureInvocationPurpose;
   readonly providerId: string;
+  readonly scenarioId?: string | null;
   readonly targetModelId?: string | null;
 }) => ProviderNativeRequestCaptureAppliedTurnConfig | null;
 
@@ -171,9 +175,12 @@ export class NativeRequestCaptureFacade {
     }
 
     const captureId = this.#captureIdFactory();
+    const invocationPurpose = resolveInvocationPurpose(command.scenarioId);
     const appliedTurnConfig =
       this.#resolveAppliedTurnConfig?.({
+        invocationPurpose,
         providerId: runtimeProviderId,
+        scenarioId: command.scenarioId ?? null,
         targetModelId: command.modelId ?? null,
       }) ?? null;
     const writer = await NativeRequestCaptureWriter.create({
@@ -181,7 +188,7 @@ export class NativeRequestCaptureFacade {
       captureId,
       outputDir: this.#outputDir,
       providerId: command.providerId,
-      scenarioMetadata: buildScenarioMetadata(command),
+      scenarioMetadata: buildScenarioMetadata(command, invocationPurpose),
       selectedModelId: command.modelId ?? null,
     });
     const eventWrites: Promise<void>[] = [];
@@ -267,6 +274,7 @@ export class NativeRequestCaptureFacade {
         certificateEnv: params.certificateBundle.envHints,
         certificatePath: params.certificateBundle.certificatePath,
         appliedTurnConfig: params.appliedTurnConfig,
+        invocationPurpose: resolveInvocationPurpose(params.command.scenarioId),
         probePrompt: DIAGNOSTIC_PROBE_PROMPT,
         proxyUrl: params.handle.proxyUrl,
         recordDiagnosticContext: (record) => {
@@ -275,8 +283,12 @@ export class NativeRequestCaptureFacade {
           );
         },
         selectedModelId: params.command.modelId ?? null,
+        scenarioId: params.command.scenarioId ?? null,
         workspacePath: params.command.workspacePath,
-        workflowPrompt: params.command.scenarioPrompt ?? null,
+        workflowPrompt:
+          resolveInvocationPurpose(params.command.scenarioId) === "translation"
+            ? null
+            : (params.command.scenarioPrompt ?? null),
       })
       .then(() => ({ type: "provider_done" as const }))
       .catch((error: unknown) => ({ type: "provider_failed" as const, error }));
@@ -333,7 +345,8 @@ export const createCapturedProxyResult = (
 ): NativeRequestCaptureProxyResult => ({ status: "captured", request });
 
 const buildScenarioMetadata = (
-  command: NativeRequestCaptureCommand
+  command: NativeRequestCaptureCommand,
+  invocationPurpose: ProviderNativeRequestCaptureInvocationPurpose
 ): Record<string, unknown> | null => {
   if (!command.scenarioId) {
     return null;
@@ -342,7 +355,13 @@ const buildScenarioMetadata = (
     id: command.scenarioId,
     inputPath: command.scenarioInputPath ?? null,
     label: command.scenarioLabel ?? command.scenarioId,
+    purpose: invocationPurpose,
     promptLength: command.scenarioPrompt?.length ?? 0,
     targetPath: command.scenarioTargetPath ?? null,
   };
 };
+
+const resolveInvocationPurpose = (
+  scenarioId?: string | null
+): ProviderNativeRequestCaptureInvocationPurpose =>
+  scenarioId === TRANSLATION_SCENARIO_ID ? "translation" : "workflow-agent";

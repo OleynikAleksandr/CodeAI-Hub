@@ -99,17 +99,23 @@ export interface ProviderNativeRequestCaptureAppliedTurnConfig {
   readonly translationEngineId?: string;
 }
 
+export type ProviderNativeRequestCaptureInvocationPurpose =
+  | "translation"
+  | "workflow-agent";
+
 export interface ProviderNativeRequestCaptureOptions {
   readonly appliedTurnConfig?: ProviderNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
   readonly certificateEnv: Readonly<Record<string, string>>;
   readonly certificatePath: string;
+  readonly invocationPurpose?: ProviderNativeRequestCaptureInvocationPurpose;
   readonly probePrompt: string;
   readonly proxyUrl: string;
   readonly recordDiagnosticContext?: (record: {
     readonly kind: string;
     readonly payload: unknown;
   }) => Promise<void> | void;
+  readonly scenarioId?: string | null;
   readonly selectedModelId?: string | null;
   readonly workflowPrompt?: string | null;
   readonly workspacePath: string;

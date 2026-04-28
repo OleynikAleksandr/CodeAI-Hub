@@ -121,9 +121,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Capture Scenario
 
 1. [DONE] Add `Translation` to Provider Native Request Capture scenario types and UI selector without persisting it as a setting (scope: `src/client/ui/src/components/settings/*`, `src/client/project-manager/services/*`; checks: `npx ultracite check`, `npm run typecheck:webview`, `npm run build:project-manager`, `npm run build:webview`; commit: `feat: add translation native capture scenario`)
-2. [IN_PROGRESS] Git Commit: `feat: add translation native capture scenario` (hash: TBD)
-3. [TODO] Extend Core native capture command metadata/options so scenario `translation` selects `purpose="translation"` instead of building a workflow prompt (scope: `packages/core/src/provider-network-capture/*`, `packages/core/src/remote-bridge/*`; commit: `feat: route native capture through translation profile`)
-4. [TODO] Git Commit: `feat: route native capture through translation profile` (hash: TBD)
+2. [DONE] Git Commit: `feat: add translation native capture scenario` (hash: `ce47a79ac`)
+3. [DONE] Extend Core native capture command metadata/options so scenario `translation` selects `purpose="translation"` instead of building a workflow prompt (scope: `packages/core/src/provider-network-capture/*`, `packages/core/src/remote-bridge/*`; checks: `npx ultracite check`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`; commit: `feat: route native capture through translation profile`)
+4. [IN_PROGRESS] Git Commit: `feat: route native capture through translation profile` (hash: TBD)
 5. [TODO] Update Codex native capture service so workflow scenarios use workflow profiles and `Translation` uses the Codex translation profile with a fixed small translation sample (scope: `packages/Codex_AppServer_Module/src/diagnostics/*`, `packages/Codex_AppServer_Module/src/translation/*`; commit: `feat: capture codex translation native request`)
 6. [TODO] Git Commit: `feat: capture codex translation native request` (hash: TBD)
 7. [TODO] Add UI/Core/Codex tests for Translation capture scenario metadata and payload selection (scope: `src/client/ui/src/components/settings/*.test.tsx`, `packages/core/src/provider-network-capture/*.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/*.test.ts`; commit: `test: cover translation native request capture`)
