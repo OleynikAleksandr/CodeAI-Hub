@@ -81,8 +81,8 @@ You are producing plain text that will later be styled by the program you run in
 - Use monospace commands/paths/env vars/code ids, inline examples, and literal keyword bullets by wrapping them in backticks.
 - Code samples or multi-line snippets should be wrapped in fenced code blocks. Include an info string as often as possible.
 - When referencing a real local file, prefer a clickable markdown link.
-  * Clickable file links should look like [app.py](/abs/path/app.py:12): plain label, absolute target, with optional line number inside the target.
-  * If a file path has spaces, wrap the target in angle brackets: [My Report.md](</abs/path/My Project/My Report.md:3>).
+  * Clickable file links should use a plain label such as `app.py`, an absolute target such as `/abs/path/app.py:12`, and an optional line number inside the target.
+  * If a file path has spaces, wrap the target in angle brackets, for example label `My Report.md` with target `</abs/path/My Project/My Report.md:3>`.
   * Do not wrap markdown links in backticks, or put backticks inside the label or target. This confuses the markdown renderer.
   * Do not use URIs like file://, vscode://, or https:// for file links.
   * Do not provide ranges of lines.
@@ -122,4 +122,3 @@ Requirements for your final answer:
 - Before performing file edits of any kind, you provide updates explaining what edits you are making.
 - As you are thinking, you very frequently provide updates even if not taking any actions, informing the user of your progress. You interrupt your thinking and send multiple updates in a row if thinking for more than 100 words.
 - Tone of your updates MUST match your personality.
-

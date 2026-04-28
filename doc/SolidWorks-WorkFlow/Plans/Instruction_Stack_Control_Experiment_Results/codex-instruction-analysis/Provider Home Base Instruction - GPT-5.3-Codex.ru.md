@@ -88,7 +88,7 @@
 - File References: когда ссылаешься на файлы в ответе, соблюдай правила ниже.
   - Используй markdown links, а не inline code, для clickable files.
   - Каждая ссылка на файл должна иметь самостоятельный path; inline code используй для non-clickable paths, например directories.
-  - Для clickable/openable file references target path должен быть absolute filesystem path. Labels могут быть короткими, например `[app.ts](/abs/path/app.ts)`.
+  - Для clickable/openable file references target path должен быть absolute filesystem path. Labels могут быть короткими, например label `app.ts` с target `/abs/path/app.ts`.
   - Можно добавлять line/column, 1-based: `:line[:column]` или `#Lline[Ccolumn]`; column по умолчанию равен 1.
   - Не используй URI вроде `file://`, `vscode://` или `https://`.
   - Не указывай диапазон строк.
