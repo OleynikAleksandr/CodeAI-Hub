@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.103] - 2026-04-28
+### Fixed
+- **Runtime WebSocket boundaries are now explicit and validated.** Project Manager Core stream connection is idempotent with intentional disconnect cleanup, PM/Core incoming WebSocket frames pass structural validators before dispatch, and malformed frames fail at the boundary instead of relying on raw casts.
+- **Core Bridge and provider runtime stability diagnostics are safer.** Browser/Core Bridge best-effort failures now emit sanitized diagnostics for server-message parsing, session history hydration, status snapshots, and supervisor requests without changing reconnect UX.
+- **Hot-path settings reads are cached without moving settings ownership.** Core settings/default/translation reads use path-scoped short TTL snapshots with invalidation after settings writes, and Claude/Codex/Gemini provider-local fallback reads use short path-scoped caches instead of repeated synchronous `settings.json` reads.
+- **Gemini and Core runtime lifecycle wiring is more deterministic.** Gemini adapter-owned session listeners are disposed/reassigned on close/session id changes, and Core runtime factory callback cycles now use explicit deferred refs instead of definite assignment assertions.
+
+### Tests
+- **Runtime remediation verification passed before release packaging.** Passed focused PM/Core/provider regression tests plus webview typecheck/build, Project Manager build, Claude/Codex/Gemini provider builds, and Core build.
+
 ## [1.2.102] - 2026-04-28
 ### Fixed
 - **Session model binding now survives real workflow continuity.** Core persists `session.modelBinding` into continuity segment/index data, hydrates restored Project Manager dialogs from that binding, and clones it for `Remaining context threshold (%)` continuation sessions instead of rereading the current Settings default.

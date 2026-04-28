@@ -134,13 +134,13 @@
 
 ### Stream: Pre-Release Verification
 7. [DONE] Запустить финальные targeted builds/checks before release phase: `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`, provider package builds; scope: UI bundle, Core package, provider packages; expected commit message: `chore: verify runtime remediation before release`
-8. [IN_PROGRESS] Git Commit: `chore: verify runtime remediation before release` (hash: TBD)
+8. [DONE] Git Commit: `chore: verify runtime remediation before release` (hash: `1af44d793`)
 
 ## Phase 5 — Release Build 1.2.103 (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Release Preparation
-1. [TODO] Определить будущую версию from current `package.json` + 1 and update release-facing docs before build; expected target if unchanged: `1.2.103`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare release 1.2.103`
-2. [TODO] Git Commit: `docs: prepare release 1.2.103` (hash: TBD)
+1. [DONE] Определить будущую версию from current `package.json` + 1 and update release-facing docs before build; expected target if unchanged: `1.2.103`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare release 1.2.103`
+2. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.103` (hash: TBD)
 3. [TODO] Убедиться, что working tree clean и зависимости установлены (`npm install` только если node_modules/deps отсутствуют); scope: repo workspace, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify release prerequisites`
 4. [TODO] Git Commit: `chore: verify release prerequisites` (hash: TBD)
 
