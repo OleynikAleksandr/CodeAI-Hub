@@ -18,7 +18,7 @@ import {
   loadGeminiSettingsSnapshot,
 } from "./provider-settings-snapshot";
 
-interface ProviderTurnConfigResolverOptions {
+export interface ProviderTurnConfigResolverOptions {
   readonly env: NodeJS.ProcessEnv;
   readonly fallbackClaudeModel: string;
   readonly fallbackCodexModel: string;
@@ -73,6 +73,15 @@ export interface ResolvedProviderTurnConfig {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
+}
+
+export interface ResolvedProviderEffectiveModelIdentity {
+  readonly baseModelId?: string;
+  readonly modelId: string;
+  readonly reasoningEffort?: string;
+  readonly thinkingDisplaySyncEnabled?: boolean;
+  readonly thinkingEnabled?: boolean;
+  readonly thinkingLevel?: string;
 }
 
 const normalizeOptionalString = (
@@ -297,3 +306,45 @@ export const resolveProviderTurnConfigEntry = (
   }
 ): ResolvedProviderTurnConfigEntry | null =>
   resolveProviderTurnConfig(options).byProviderId[options.providerId] ?? null;
+
+export const resolveProviderEffectiveModelIdentity = (options: {
+  readonly providerId: string;
+  readonly resolved: ResolvedProviderTurnConfigEntry;
+  readonly targetModelId?: string;
+}): ResolvedProviderEffectiveModelIdentity | null => {
+  const baseModelId =
+    normalizeOptionalString(options.targetModelId) ??
+    options.resolved.baseModelId ??
+    options.resolved.defaultModel;
+  const reasoningEffort =
+    baseModelId && options.resolved.reasoningByModel
+      ? (options.resolved.reasoningByModel[baseModelId] ??
+        options.resolved.defaultReasoningEffort)
+      : (options.resolved.reasoningEffort ??
+        options.resolved.defaultReasoningEffort);
+  const thinkingLevel =
+    baseModelId && options.resolved.thinkingLevelByModel
+      ? options.resolved.thinkingLevelByModel[baseModelId]
+      : undefined;
+  const modelId =
+    buildProviderEffectiveModelId({
+      providerId: options.providerId,
+      baseModelId,
+      reasoningEffort,
+      thinkingEnabled: options.resolved.thinkingEnabled,
+      thinkingLevel,
+    }) ?? options.resolved.effectiveModelId;
+
+  if (!modelId) {
+    return null;
+  }
+
+  return {
+    baseModelId,
+    modelId,
+    reasoningEffort,
+    thinkingDisplaySyncEnabled: options.resolved.thinkingDisplaySyncEnabled,
+    thinkingEnabled: options.resolved.thinkingEnabled,
+    thinkingLevel,
+  };
+};

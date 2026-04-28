@@ -86,7 +86,9 @@ export class SessionModelBindingFacade {
   }
 
   getBinding(options: SessionModelBindingLookup): SessionModelBinding | null {
-    return this.#bindingsByKey.get(buildSessionModelBindingKey(options)) ?? null;
+    return (
+      this.#bindingsByKey.get(buildSessionModelBindingKey(options)) ?? null
+    );
   }
 
   listBindings(): SessionModelBinding[] {

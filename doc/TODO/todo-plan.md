@@ -33,11 +33,11 @@
 
 ### Stream: New Core Module
 1. [DONE] Создать Core-модуль `session-model-binding` с фасадом, типами и единой точкой входа — scope: `packages/core/src/session-model-binding/session-model-binding-types.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.ts`, `packages/core/src/session-model-binding/index.ts`; expected commit message: `feat: add session model binding facade`.
-2. [IN_PROGRESS] Git Commit: `feat: add session model binding facade` (hash: TBD)
+2. [DONE] Git Commit: `feat: add session model binding facade` (hash: `cdbe60003`)
 
 ### Stream: Binding Resolver
-3. [TODO] Добавить резолв binding из Settings/default или explicit model selection с тестами effective identity — scope: `packages/core/src/session-model-binding/session-model-binding-resolver.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.test.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`; expected commit message: `feat: resolve session model binding identity`.
-4. [TODO] Git Commit: `feat: resolve session model binding identity` (hash: TBD)
+3. [DONE] Добавить резолв binding из Settings/default или explicit model selection с тестами effective identity — scope: `packages/core/src/session-model-binding/session-model-binding-resolver.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.test.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`; expected commit message: `feat: resolve session model binding identity`.
+4. [IN_PROGRESS] Git Commit: `feat: resolve session model binding identity` (hash: TBD)
 
 ## Phase 2 — Core Session Integration (owner: Codex, updated: 2026-04-28)
 
