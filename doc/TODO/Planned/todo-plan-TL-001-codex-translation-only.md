@@ -49,8 +49,8 @@
 
 ### Stream: Native Capture Verification
 9. [DONE] Проверить `Translation` native request capture и зафиксировать provider-visible result — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `npm run build --workspace @codeai-hub/core` + `node --test packages/core/dist/provider-network-capture/native-request-capture-facade.test.js` + `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js` + `node --test packages/core/dist/model-invocation/model-invocation-profile-resolver.smoke.test.js`; expected commit message: `test: verify codex translation capture profile`.
-10. [IN_PROGRESS] Git Commit: `test: verify codex translation capture profile` (hash: TBD)
+10. [DONE] Git Commit: `test: verify codex translation capture profile` (hash: `7ce4d58f5`)
 
 ### Stream: Targeted Builds And Closeout
-11. [TODO] Прогнать таргетные сборки Codex/Core, обновить этот execution plan результатами и закрыть scope — scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/Planned/todo-plan-TL-001-codex-translation-only.md`; expected commit message: `chore: verify codex translation-only profile`.
-12. [TODO] Git Commit: `chore: verify codex translation-only profile` (hash: TBD)
+11. [DONE] Прогнать таргетные сборки Codex/Core, обновить этот execution plan результатами и закрыть scope — scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/Planned/todo-plan-TL-001-codex-translation-only.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `npm run build --workspace @codeai-hub/core`; expected commit message: `chore: verify codex translation-only profile`.
+12. [IN_PROGRESS] Git Commit: `chore: verify codex translation-only profile` (hash: TBD)
