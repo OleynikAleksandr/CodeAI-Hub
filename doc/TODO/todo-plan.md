@@ -67,11 +67,11 @@
 
 ### Stream: Snapshot Seeding
 17. [DONE] Сделать initial snapshots binding-first в runtime/dialog controllers — scope: `src/client/ui/src/session/helpers.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit message: `feat: seed session snapshots from model binding`.
-18. [IN_PROGRESS] Git Commit: `feat: seed session snapshots from model binding` (hash: TBD)
+18. [DONE] Git Commit: `feat: seed session snapshots from model binding` (hash: `e7f7ad47b`)
 
 ### Stream: Settings Sync Guard
-19. [TODO] Запретить `useSettingsModelsSync` переписывать bound/runtime sessions после изменения Settings — scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; expected commit message: `fix: keep settings sync from rewriting bound session models`.
-20. [TODO] Git Commit: `fix: keep settings sync from rewriting bound session models` (hash: TBD)
+19. [DONE] Запретить `useSettingsModelsSync` переписывать bound/runtime sessions после изменения Settings — scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; expected commit message: `fix: keep settings sync from rewriting bound session models`.
+20. [IN_PROGRESS] Git Commit: `fix: keep settings sync from rewriting bound session models` (hash: TBD)
 
 ### Stream: PM Regression Coverage
 21. [TODO] Добавить UI regression: две сессии одного provider показывают разные bound models — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit message: `test: cover session-scoped model labels`.
