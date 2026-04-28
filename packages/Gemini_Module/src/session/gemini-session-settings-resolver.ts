@@ -9,6 +9,7 @@ import type { SessionCreationOptions } from "./types";
 const DEFAULT_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 300_000;
 const MIN_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 10_000;
 const MAX_GEMINI_CONTEXT_WINDOW_TOKEN_LIMIT = 1_000_000;
+const SETTINGS_SNAPSHOT_CACHE_TTL_MS = 500;
 
 export interface GeminiSettingsSnapshot {
   readonly providers?: {
@@ -38,6 +39,11 @@ export interface ResolvedGeminiSessionSettings {
 
 export class GeminiSessionSettingsResolver {
   private readonly modules: GeminiCliModules;
+  private settingsSnapshotCache: {
+    readonly expiresAtMs: number;
+    readonly settingsPath: string;
+    readonly snapshot: GeminiSettingsSnapshot | null;
+  } | null = null;
 
   constructor(modules: GeminiCliModules) {
     this.modules = modules;
@@ -141,6 +147,26 @@ export class GeminiSessionSettingsResolver {
     if (!settingsPath) {
       return null;
     }
+    const resolvedSettingsPath = path.resolve(settingsPath);
+    const nowMs = Date.now();
+    if (
+      this.settingsSnapshotCache?.settingsPath === resolvedSettingsPath &&
+      this.settingsSnapshotCache.expiresAtMs > nowMs
+    ) {
+      return this.settingsSnapshotCache.snapshot;
+    }
+    const snapshot = this.readSettingsSnapshot(resolvedSettingsPath);
+    this.settingsSnapshotCache = {
+      expiresAtMs: nowMs + SETTINGS_SNAPSHOT_CACHE_TTL_MS,
+      settingsPath: resolvedSettingsPath,
+      snapshot,
+    };
+    return snapshot;
+  }
+
+  private readSettingsSnapshot(
+    settingsPath: string
+  ): GeminiSettingsSnapshot | null {
     try {
       const raw = readFileSync(settingsPath, "utf8");
       return JSON.parse(raw) as GeminiSettingsSnapshot;
