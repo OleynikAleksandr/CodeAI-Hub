@@ -81,8 +81,14 @@
 
 ### Stream: SSOT Documentation
 23. [DONE] Обновить SSOT по session-scoped model binding и Settings-as-seed contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit message: `docs: document session-scoped model binding`.
-24. [IN_PROGRESS] Git Commit: `docs: document session-scoped model binding` (hash: TBD)
+24. [DONE] Git Commit: `docs: document session-scoped model binding` (hash: `66b54f91c`)
 
 ### Stream: Targeted Builds And Closeout
-25. [TODO] Прогнать таргетные сборки Core/Webview, обновить активный todo-plan результатами и закрыть queued scope после активации — scope: `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify session-scoped model binding`.
-26. [TODO] Git Commit: `chore: verify session-scoped model binding` (hash: TBD)
+25. [DONE] Прогнать таргетные сборки Core/Webview, обновить активный todo-plan результатами и закрыть queued scope после активации — scope: `@codeai-hub/core`, `webview`, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify session-scoped model binding`.
+26. [IN_PROGRESS] Git Commit: `chore: verify session-scoped model binding` (hash: TBD)
+
+## Verification Results
+- `npm run build --workspace @codeai-hub/core` — PASS (2026-04-28)
+- `npm run build:webview` — PASS (2026-04-28)
+- `npm run typecheck:webview` — PASS (2026-04-28)
+- Release build intentionally skipped by user request.
