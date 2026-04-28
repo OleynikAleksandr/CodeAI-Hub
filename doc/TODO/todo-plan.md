@@ -98,13 +98,13 @@
 19. [DONE] Покрыть Gemini settings cache behavior; scope: `packages/Gemini_Module/src/session/gemini-session-settings-resolver.ts`, `packages/Gemini_Module/src/session/gemini-session-settings-resolver.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover gemini settings cache`
 20. [DONE] Git Commit: `test: cover gemini settings cache` (hash: `f0ca8e46f`)
 21. [DONE] Закрыть Phase 2 таргетными сборками Core + provider packages; scope: Core, Claude module, Codex module, Gemini module; expected commit message: `chore: verify settings cache remediation`
-22. [IN_PROGRESS] Git Commit: `chore: verify settings cache remediation` (hash: TBD)
+22. [DONE] Git Commit: `chore: verify settings cache remediation` (hash: `9b48a9cbd`)
 
 ## Phase 3 — Listener Cleanup, Diagnostics, and Runtime Wiring (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Gemini Listener Cleanup
-1. [TODO] Сделать cleanup adapter-registered Gemini session event listeners deterministic on close/sessionIdChanged; scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `fix: clean up gemini session listeners`
-2. [TODO] Git Commit: `fix: clean up gemini session listeners` (hash: TBD)
+1. [DONE] Сделать cleanup adapter-registered Gemini session event listeners deterministic on close/sessionIdChanged; scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `fix: clean up gemini session listeners`
+2. [IN_PROGRESS] Git Commit: `fix: clean up gemini session listeners` (hash: TBD)
 3. [TODO] Добавить regression coverage на отсутствие duplicate forwarding/listener retention after close; scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.stop-resume.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover gemini listener cleanup`
 4. [TODO] Git Commit: `test: cover gemini listener cleanup` (hash: TBD)
 

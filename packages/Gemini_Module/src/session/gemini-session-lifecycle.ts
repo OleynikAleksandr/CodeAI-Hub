@@ -121,6 +121,7 @@ export class GeminiSessionLifecycle {
         content: "Gemini session closed.",
       },
     ]);
+    session.eventEmitter.removeAllListeners();
   }
 
   createIdleWatchdog(abortController: AbortController): {

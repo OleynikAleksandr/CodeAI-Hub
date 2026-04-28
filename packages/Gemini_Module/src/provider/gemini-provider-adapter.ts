@@ -34,6 +34,7 @@ export class GeminiProviderAdapter {
   private readonly installer: GeminiInstaller;
   private sessionManager: GeminiSessionManager | null = null;
   private cliBridge: GeminiCliBridge | null = null;
+  private readonly sessionEventDisposers = new Map<string, () => void>();
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly options: GeminiModuleOptions;
   private readonly usageLimitsFacade?: GeminiUsageLimitsFacadeBridge;
@@ -135,22 +136,30 @@ export class GeminiProviderAdapter {
     const forwardError = (payload: unknown): void => {
       this.dispatchMessage(currentSessionId, payload);
     };
-    session.eventEmitter.on("message", forwardMessage);
-    session.eventEmitter.on("error", forwardError);
-    session.eventEmitter.on("realSessionId", forwardMessage);
-    session.eventEmitter.on("sessionIdChanged", (payload) => {
+    const forwardSessionIdChanged = (payload: unknown): void => {
       const candidate = payload as {
         readonly oldId?: string;
         readonly newId?: string;
       };
       if (candidate?.oldId && candidate?.newId) {
         this.reassignListeners(candidate.oldId, candidate.newId);
+        this.reassignSessionEventDisposer(candidate.oldId, candidate.newId);
         currentSessionId = candidate.newId;
         this.dispatchMessage(candidate.newId, {
           type: "sessionIdChanged",
           payload: candidate,
         });
       }
+    };
+    session.eventEmitter.on("message", forwardMessage);
+    session.eventEmitter.on("error", forwardError);
+    session.eventEmitter.on("realSessionId", forwardMessage);
+    session.eventEmitter.on("sessionIdChanged", forwardSessionIdChanged);
+    this.registerSessionEventDisposer(sessionId, () => {
+      session.eventEmitter.off("message", forwardMessage);
+      session.eventEmitter.off("error", forwardError);
+      session.eventEmitter.off("realSessionId", forwardMessage);
+      session.eventEmitter.off("sessionIdChanged", forwardSessionIdChanged);
     });
     this.refreshUsageLimitsOnBind(session, sessionId).catch(() => {
       // Proactive refresh is best-effort; failures are non-blocking.
@@ -276,6 +285,7 @@ export class GeminiProviderAdapter {
   closeSession(sessionId: string): Promise<void> {
     const manager = this.requireSessionManager();
     manager.closeSession(sessionId);
+    this.cleanupSessionEventDisposer(sessionId);
     this.listeners.delete(sessionId);
     return Promise.resolve();
   }
@@ -369,6 +379,36 @@ export class GeminiProviderAdapter {
       target.add(listener);
     }
     this.listeners.set(newId, target);
+  }
+
+  private registerSessionEventDisposer(
+    sessionId: string,
+    disposer: () => void
+  ): void {
+    this.cleanupSessionEventDisposer(sessionId);
+    this.sessionEventDisposers.set(sessionId, disposer);
+  }
+
+  private cleanupSessionEventDisposer(sessionId: string): void {
+    const disposer = this.sessionEventDisposers.get(sessionId);
+    if (!disposer) {
+      return;
+    }
+    this.sessionEventDisposers.delete(sessionId);
+    disposer();
+  }
+
+  private reassignSessionEventDisposer(oldId: string, newId: string): void {
+    if (oldId === newId) {
+      return;
+    }
+    const disposer = this.sessionEventDisposers.get(oldId);
+    if (!disposer) {
+      return;
+    }
+    this.sessionEventDisposers.delete(oldId);
+    this.cleanupSessionEventDisposer(newId);
+    this.sessionEventDisposers.set(newId, disposer);
   }
 
   private requireSessionManager(): GeminiSessionManager {
