@@ -439,3 +439,60 @@ test("SessionRequestHandler applies localized user-message language from live se
     await rm(tempDir, { recursive: true, force: true });
   }
 });
+
+test("SessionRequestHandler applies session-bound model identity instead of live settings snapshot", async () => {
+  const tempDir = await mkdtemp(
+    path.join(tmpdir(), "codeai-hub-bound-model-sync-")
+  );
+
+  try {
+    await writeFile(
+      path.join(tempDir, "settings.json"),
+      '{"providers":{"codex":{"defaultModel":"gpt-5.4-mini","reasoningByModel":{"gpt-5.4-mini":"low"}}}}\n',
+      "utf8"
+    );
+
+    const harness = createHarness({
+      claudeSettingsPath: path.join(tempDir, "claude.json"),
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    const session = harness.sessionManager.createSession(
+      "codexCli",
+      "/tmp/codex-bound-model-update"
+    );
+    harness.sessionManager.setModelBinding(session.id, {
+      key: "test-binding",
+      providerId: "codexCli",
+      baseModelId: "gpt-5.3-codex",
+      modelId: "gpt-5.3-codex reasoning:xhigh",
+      reasoningEffort: "xhigh",
+      source: "settings_default",
+      boundAt: "2026-04-28T12:00:00.000Z",
+      updatedAt: "2026-04-28T12:00:00.000Z",
+    });
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _id: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-bound-codex",
+      unsubscribe: noop,
+    });
+
+    await harness.handler.handleMessage(session.id, "use bound model");
+
+    const turnConfig = readAppliedProviderTurnConfig(sentTurnOptions[0]);
+    assert.equal(turnConfig?.baseModelId, "gpt-5.3-codex");
+    assert.equal(turnConfig?.effectiveModelId, "gpt-5.3-codex reasoning:xhigh");
+    assert.equal(turnConfig?.reasoningEffort, "xhigh");
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
