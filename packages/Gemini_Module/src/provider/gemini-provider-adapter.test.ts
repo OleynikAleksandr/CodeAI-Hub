@@ -149,3 +149,39 @@ test("GeminiProviderAdapter applies shared runtime overrides before send", async
     "high"
   );
 });
+
+test("GeminiProviderAdapter reassigns and cleans session event listeners", async () => {
+  const { adapter, eventEmitter } = createAdapterHarness();
+  const resumedSessionId = await adapter.resumeSession(
+    "resume-id-42",
+    "/workspace/path"
+  );
+  const received: unknown[] = [];
+  adapter.subscribe(resumedSessionId, (payload) => {
+    received.push(payload);
+  });
+
+  assert.equal(eventEmitter.listenerCount("message"), 1);
+  assert.equal(eventEmitter.listenerCount("error"), 1);
+  assert.equal(eventEmitter.listenerCount("realSessionId"), 1);
+  assert.equal(eventEmitter.listenerCount("sessionIdChanged"), 1);
+
+  eventEmitter.emit("sessionIdChanged", {
+    oldId: resumedSessionId,
+    newId: "provider-real-999",
+  });
+  const payload = { type: "assistant", content: "after-rebind" };
+  eventEmitter.emit("message", payload);
+
+  assert.equal(received.length, 2);
+  assert.deepEqual(received.at(-1), payload);
+
+  await adapter.closeSession("provider-real-999");
+  assert.equal(eventEmitter.listenerCount("message"), 0);
+  assert.equal(eventEmitter.listenerCount("error"), 0);
+  assert.equal(eventEmitter.listenerCount("realSessionId"), 0);
+  assert.equal(eventEmitter.listenerCount("sessionIdChanged"), 0);
+
+  eventEmitter.emit("message", { type: "assistant", content: "late" });
+  assert.equal(received.length, 2);
+});

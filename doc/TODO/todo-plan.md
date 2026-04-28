@@ -104,9 +104,9 @@
 
 ### Stream: Gemini Listener Cleanup
 1. [DONE] Сделать cleanup adapter-registered Gemini session event listeners deterministic on close/sessionIdChanged; scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`, `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `fix: clean up gemini session listeners`
-2. [IN_PROGRESS] Git Commit: `fix: clean up gemini session listeners` (hash: TBD)
-3. [TODO] Добавить regression coverage на отсутствие duplicate forwarding/listener retention after close; scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.stop-resume.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover gemini listener cleanup`
-4. [TODO] Git Commit: `test: cover gemini listener cleanup` (hash: TBD)
+2. [DONE] Git Commit: `fix: clean up gemini session listeners` (hash: `45b197fbc`)
+3. [DONE] Добавить regression coverage на отсутствие duplicate forwarding/listener retention after close; scope: `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `packages/Gemini_Module/src/session/gemini-session-manager.stop-resume.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover gemini listener cleanup`
+4. [IN_PROGRESS] Git Commit: `test: cover gemini listener cleanup` (hash: TBD)
 
 ### Stream: UI Core Bridge Diagnostics
 5. [TODO] Добавить sanitized diagnostics helper для `src/client/ui/src/core-bridge` и заменить silent catches в server/history paths; scope: `src/client/ui/src/core-bridge/core-bridge-logger.ts`, `src/client/ui/src/core-bridge/server-message-handler.ts`, `src/client/ui/src/core-bridge/session-history.ts`; expected commit message: `fix: log core bridge parsing and history failures`

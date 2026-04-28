@@ -145,6 +145,14 @@ test("GeminiSessionManager.closeSession does not reset provider chat history", a
     workspacePath: "/tmp/stop-resume",
   });
   assert.equal(result.sessionId, "provider-123");
+  result.session.eventEmitter.on("message", () => {
+    // noop
+  });
+  result.session.eventEmitter.on("error", () => {
+    // noop
+  });
+  assert.equal(result.session.eventEmitter.listenerCount("message"), 1);
+  assert.equal(result.session.eventEmitter.listenerCount("error"), 1);
 
   manager.closeSession("provider-123");
 
@@ -153,6 +161,8 @@ test("GeminiSessionManager.closeSession does not reset provider chat history", a
     0,
     "closeSession must not call client.resetChat() on Stop"
   );
+  assert.equal(result.session.eventEmitter.listenerCount("message"), 0);
+  assert.equal(result.session.eventEmitter.listenerCount("error"), 0);
   assert.equal(manager.listSessions().length, 0);
 });
 
