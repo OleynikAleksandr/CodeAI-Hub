@@ -20,6 +20,11 @@ interface SessionRequestHandlerSessionBootstrapDependencies {
     readonly stageId: string;
     readonly silent: boolean;
   }) => Promise<void>;
+  readonly bindSessionModel: (options: {
+    readonly continuityRootSessionId: string;
+    readonly session: Session;
+    readonly targetModelId?: string | null;
+  }) => void;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly broadcastSessionBinding: (sessionId: string) => void;
   readonly continuity: SessionContinuityFacade;
@@ -69,6 +74,7 @@ export class SessionRequestHandlerSessionBootstrap {
       continuityRootBySessionId: this.deps.continuityRootBySessionId,
       providerSessions: this.deps.providerSessions,
       broadcaster: this.deps.broadcaster,
+      bindSessionModel: (options) => this.deps.bindSessionModel(options),
       broadcastSessionBinding: (sessionId) =>
         this.deps.broadcastSessionBinding(sessionId),
       notifyRuntimeSessionCreated: (session) =>

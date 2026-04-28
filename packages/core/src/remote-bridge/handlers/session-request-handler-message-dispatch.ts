@@ -384,9 +384,11 @@ export class SessionRequestHandlerMessageDispatch {
     providerId: string,
     turnOptions?: Record<string, unknown>
   ): Record<string, unknown> | undefined {
+    const session = this.deps.sessionManager.getSession(sessionId);
     const providerTurnOptions = this.deps.appliedTurnConfig.attachToTurnOptions(
       {
         providerId,
+        sessionModelBinding: session?.modelBinding ?? null,
         turnOptions,
       }
     );

@@ -4,6 +4,7 @@ import type {
 } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
+  ModelInfo,
   SessionBindingInfo,
   SessionMessage,
   SessionRecord,
@@ -11,7 +12,10 @@ import type {
   SessionStatusInfo,
 } from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
-import { buildModelInfoList } from "./model-info-builder";
+import {
+  buildModelInfoFromBinding,
+  buildModelInfoList,
+} from "./model-info-builder";
 import { readLastKnownTokenUsage } from "./token-usage-cache";
 
 export type ProviderCatalog = Partial<
@@ -111,6 +115,29 @@ const resolveSessionUsageLimitScopeKey = (
   session: Pick<SessionRecord, "providerIds">
 ): string | null => buildUsageLimitScopeKey(session.providerIds[0] ?? null);
 
+const resolveSessionSnapshotModels = (
+  session: Pick<SessionRecord, "modelBinding" | "providerIds">,
+  settings?: Settings | null
+): readonly ModelInfo[] => {
+  if (session.modelBinding) {
+    return [buildModelInfoFromBinding(session.modelBinding, settings ?? null)];
+  }
+
+  return buildModelInfoList(session.providerIds, settings ?? null);
+};
+
+export const applySessionModelBindingToSnapshot = (
+  snapshot: SessionSnapshot,
+  session: Pick<SessionRecord, "modelBinding" | "providerIds">,
+  settings?: Settings | null
+): SessionSnapshot => ({
+  ...snapshot,
+  status: {
+    ...snapshot.status,
+    models: resolveSessionSnapshotModels(session, settings),
+  },
+});
+
 export const resolveStatusUsageLimitScopeKey = (
   status: Pick<SessionStatusInfo, "models" | "providerScopeKey">,
   _binding?: Pick<SessionBindingInfo, "providerSessionId"> | null
@@ -173,7 +200,7 @@ export const createInitialSnapshot = (
     .join(" + ");
 
   const now = Date.now();
-  const models = buildModelInfoList(session.providerIds, settings ?? null);
+  const models = resolveSessionSnapshotModels(session, settings);
   const providerScopeKey = resolveSessionUsageLimitScopeKey(session);
 
   const cachedTokenUsage = session.binding.providerSessionId

@@ -3,7 +3,7 @@ import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
-import { createInitialSnapshot, resolveSessionThinkingDisplayEnabled, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { applySessionModelBindingToSnapshot, createInitialSnapshot, resolveSessionThinkingDisplayEnabled, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import {
@@ -289,10 +289,15 @@ export const useProjectManagerDialogSessionController = (
                 settingsRef.current
               )
             );
+          const baseWithModelBinding = applySessionModelBindingToSnapshot(
+            base,
+            created,
+            settingsRef.current
+          );
           let next: SessionSnapshots = {
             ...previous,
             [created.id]: {
-              ...base,
+              ...baseWithModelBinding,
               binding: created.binding,
               messages: carriedMessages,
               todos: carriedTodos,

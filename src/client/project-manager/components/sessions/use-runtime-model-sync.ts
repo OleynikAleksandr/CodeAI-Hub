@@ -9,25 +9,20 @@
 
 import { useEffect, useRef } from "react";
 import type { Dispatch, SetStateAction } from "react";
+import type { ModelInfo } from "../../../../types/session";
 import { api } from "../../api";
 import { buildModelInfo } from "../../../ui/src/session/model-info-builder";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 
 const modelInfoChanged = (
-  left: {
-    readonly modelDisplayName: string;
-    readonly modelId: string;
-    readonly providerId: string;
-    readonly reasoning?: string;
-    readonly source?: "settings" | "runtime";
-  },
-  right: {
-    readonly modelDisplayName: string;
-    readonly modelId: string;
-    readonly providerId: string;
-    readonly reasoning?: string;
-    readonly source?: "settings" | "runtime";
-  }
+  left: Pick<
+    ModelInfo,
+    "modelDisplayName" | "modelId" | "providerId" | "reasoning" | "source"
+  >,
+  right: Pick<
+    ModelInfo,
+    "modelDisplayName" | "modelId" | "providerId" | "reasoning" | "source"
+  >
 ): boolean =>
   left.modelId !== right.modelId ||
   left.modelDisplayName !== right.modelDisplayName ||

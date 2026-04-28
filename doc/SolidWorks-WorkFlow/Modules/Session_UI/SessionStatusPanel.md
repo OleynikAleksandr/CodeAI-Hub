@@ -31,8 +31,9 @@
 - `core:state` rehydrate.
 
 ### Models side
-- `useSettingsModelsSync()` на change provider settings;
-- `useRuntimeModelSync()` на `session:model:update`.
+- initial snapshot строится из `SessionRecord.modelBinding`, если он есть; такой label помечается `ModelInfo.source = "binding"`;
+- `useSettingsModelsSync()` на change provider settings обновляет только settings-owned snapshots и не переписывает `binding`/`runtime` sources;
+- `useRuntimeModelSync()` на `session:model:update` применяет Core-confirmed runtime identity и помечает её `ModelInfo.source = "runtime"`.
 - для нового trunk-step dialog/bootstrap snapshot provider/model seed сначала берётся из explicit `pm:dialog:open` / startup intent provider, если dialog list payload ещё не дал нормализованный provider;
 - после materialization runtime session панель обязана converge-иться к live provider/model identity через обычный `useRuntimeModelSync()` path.
 
@@ -46,7 +47,7 @@
 
 - при старте PM/workspace hydrate;
 - при restart/reconnect Core;
-- при change настроек модели/reasoning;
+- при change настроек модели/reasoning только для snapshots без `binding`/`runtime` ownership;
 - при `session:model:update`;
 - при новых token usage/history данных.
 
@@ -62,4 +63,5 @@
 
 - в dialog mode `useRuntimeModelSync()` умеет fallback-обновлять snapshot по `activeSessionId`, если runtime broadcast пришёл с другим `sessionId`;
 - панель зависит сразу от двух truth-lines: Core connection и active snapshot status.
+- две logical sessions одного provider могут одновременно показывать разные модели, потому что label принадлежит session binding, а не текущему provider default в Settings.
 - для `Virtual Simulation` / `Diagram Modules`, стартующих с confirmation card, нижняя панель не должна сохранять provider/model summary предыдущего trunk step: выбранный на карточке provider seed-ит bootstrap snapshot сразу, а затем live runtime model update уточняет effective model без возврата к старому provider context.

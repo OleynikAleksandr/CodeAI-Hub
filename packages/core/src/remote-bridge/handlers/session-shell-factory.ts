@@ -18,6 +18,11 @@ interface SessionShellFactoryDependencies {
     readonly stageId: string;
     readonly silent: boolean;
   }) => Promise<void>;
+  readonly bindSessionModel: (options: {
+    readonly continuityRootSessionId: string;
+    readonly session: Session;
+    readonly targetModelId?: string | null;
+  }) => void;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly broadcastSessionBinding: (sessionId: string) => void;
   readonly continuity: SessionContinuityFacade;
@@ -98,6 +103,11 @@ export class SessionShellFactory {
       session.id,
       continuityRootSessionId
     );
+    this.deps.bindSessionModel({
+      session,
+      continuityRootSessionId,
+      targetModelId: options.targetModelId,
+    });
 
     this.deps.sessionStorage.register(session, {
       historySessionId: continuityRootSessionId,
@@ -164,6 +174,11 @@ export class SessionShellFactory {
       session.id,
       continuityRootSessionId
     );
+    this.deps.bindSessionModel({
+      session,
+      continuityRootSessionId,
+      targetModelId: options.targetModelId,
+    });
     if (!supportsImmediateBinding) {
       this.deps.sessionManager.seedProviderSessionId(
         session.id,

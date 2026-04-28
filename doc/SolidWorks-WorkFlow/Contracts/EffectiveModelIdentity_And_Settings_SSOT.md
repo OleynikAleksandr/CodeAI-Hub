@@ -9,13 +9,14 @@
 
 ## 1. Назначение
 
-Этот контракт фиксирует single source of truth для следующего turn-а и для effective model identity во всём runtime stack CodeAI Hub.
+Этот контракт фиксирует ownership effective model identity для новой и уже существующей logical session во всём runtime stack CodeAI Hub.
 
 Ключевая идея:
 
 - `modelId` в transport/runtime/UI contract означает полную effective model identity, а не только base model.
 - `reasoning` и `thinking` являются частью identity, а не декоративным metadata.
-- единственным source of truth для next-turn identity остаётся persisted settings snapshot в `~/.codeai-hub/settings/settings.json`.
+- persisted settings snapshot в `~/.codeai-hub/settings/settings.json` остаётся source of truth для defaults/seed на новую session и для presentation-only flags.
+- после создания logical session source of truth для next-turn identity становится `session.modelBinding`; live Settings saves не переписывают уже bound session.
 - legacy `~/.codeai-hub/settings/claude.json` is not part of the supported runtime contract anymore: no live read/write path may depend on it.
 - `ModelInvocationProfile` controls the provider process/session/turn envelope around that identity; it is a separate contract from effective model identity.
 
@@ -27,7 +28,8 @@
 
 Контракт покрывает:
 
-- resolution effective identity из persisted settings snapshot;
+- resolution effective identity из explicit selection / persisted settings snapshot into `session.modelBinding`;
+- creation, serialization and mutation of session-scoped model binding;
 - delivery applied turn config от Core к provider modules;
 - runtime/UI sync для label/model display;
 - provider-specific last-mile adaptation без локального ownership над identity.
@@ -61,12 +63,12 @@ Canonical runtime identity. Должен включать всё, что мен�
 
 ### 3.3. `applied turn config`
 
-Provider-neutral payload, вычисленный Core-ом из settings snapshot и отправленный в provider path как authoritative next-turn instruction.
+Provider-neutral payload, вычисленный Core-ом из `session.modelBinding` или new-session settings seed и отправленный в provider path как authoritative next-turn instruction.
 
 ### 3.4. `settings snapshot`
 
-Persisted user-facing settings state, из которого Core вычисляет next-turn identity.  
-Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth.
+Persisted user-facing settings state, из которого Core вычисляет default identity for a new session binding and presentation/localization policy.
+Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth for a bound session identity.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled` and `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity.
 
@@ -80,13 +82,21 @@ Provider-neutral profile resolved by Core before a provider call. It describes t
 
 Allowed purposes are only `workflow-agent` and `translation`. `diagnostic` is not a purpose; Provider Native Request Capture is a one-shot diagnostic mode over a real workflow-agent or translation profile.
 
+### 3.6. `session.modelBinding`
+
+Frozen logical-session identity snapshot. It contains provider id, effective `modelId`, optional `baseModelId`, reasoning/thinking metadata and timestamps. Core creates it before `session:created` from explicit create selection or Settings defaults, serializes it with `Session`, and uses it for existing turns. The only normal mutation path is explicit `switch_model`.
+
 ---
 
 ## 4. Runtime Contract
 
 ### 4.1. Core owns resolution
 
-Core обязана вычислять effective turn config из `~/.codeai-hub/settings/settings.json` через `provider-turn-config-resolver.ts`.
+Core обязана вычислять effective turn config through the session binding path:
+
+- new session: resolve `session.modelBinding` from explicit selection or `~/.codeai-hub/settings/settings.json`;
+- existing session: read identity from serialized `Session.modelBinding`;
+- explicit switch: replace `Session.modelBinding` and broadcast the updated effective identity.
 
 Core then:
 
@@ -117,7 +127,9 @@ Project Manager и shared UI должны отображать applied config, �
 Это означает:
 
 - label sync происходит после Core-confirmed applied config events;
+- initial runtime/dialog snapshots prefer `SessionRecord.modelBinding` when present and mark the resulting `ModelInfo.source` as `binding`;
 - `session:model:update` используется как runtime identity signal;
+- `useSettingsModelsSync()` may refresh settings-owned snapshots only; it must preserve `binding` and `runtime` model sources.
 - display logic не восстанавливает `reasoning/thinking` из локального speculation path.
 
 ### 4.4. Provider-specific examples
@@ -143,7 +155,7 @@ Runtime rules:
 
 ## 5. Invariants
 
-1. `settings.json` is the single source of truth for the next turn.
+1. `settings.json` is the single source of truth for new-session defaults/seed; `session.modelBinding` is the single source of truth for an existing bound session.
 2. `modelId` always means full effective identity.
 3. `baseModelId` is auxiliary metadata and must not replace `modelId` in runtime contracts.
 4. Reasoning/thinking changes are identity changes, not cosmetic decorations.
@@ -156,6 +168,7 @@ Runtime rules:
 11. `diagnostic` is not an invocation purpose; native request capture uses the selected workflow-agent or translation profile.
 12. In-turn model switching must be filtered by process/session profile compatibility.
 13. User-editable invocation templates may change instruction text only, never flags, tools, sandbox, or approval policy.
+14. Live Settings saves must not rewrite existing bound/runtime session labels or outbound identities.
 
 ---
 
@@ -166,6 +179,10 @@ Runtime rules:
   - `packages/core/src/config/provider-turn-config-resolver.ts`
   - `packages/core/src/config/provider-defaults-resolver.ts`
   - `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`
+- Core session model binding:
+  - `packages/core/src/session-model-binding/session-model-binding-facade.ts`
+  - `packages/core/src/session-model-binding/session-model-binding-resolver.ts`
+  - `packages/core/src/session-manager/index.ts`
 - Core model invocation profiles:
   - `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`
 - Core outbound bridge:
@@ -178,6 +195,8 @@ Runtime rules:
   - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
 - UI sync:
   - `src/extension-module/settings/settings-storage.ts`
+  - `src/client/ui/src/session/model-info-builder.ts`
+  - `src/client/ui/src/session/helpers.ts`
   - `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
   - `src/client/ui/src/app-host/use-settings-models-sync.ts`
 

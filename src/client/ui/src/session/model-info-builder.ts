@@ -1,6 +1,9 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
-import type { ModelInfo } from "../../../../types/session";
+import type {
+  ModelInfo,
+  SessionModelBindingInfo,
+} from "../../../../types/session";
 import type { Settings } from "../components/settings/settings-state-model";
 
 type ProviderKey = "claude" | "codex" | "gemini";
@@ -144,6 +147,12 @@ export const buildModelInfo = (
     source,
   };
 };
+
+export const buildModelInfoFromBinding = (
+  binding: SessionModelBindingInfo,
+  settings: Settings | null
+): ModelInfo =>
+  buildModelInfo(binding.providerId, settings, binding.modelId, "binding");
 
 /**
  * Build ModelInfo array from session provider IDs and settings.

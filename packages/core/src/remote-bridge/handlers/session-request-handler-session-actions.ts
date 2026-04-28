@@ -3,7 +3,7 @@ import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
-import type { BridgeEvent } from "../types";
+import { type BridgeEvent, readAppliedProviderTurnConfig } from "../types";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
 import {
@@ -64,6 +64,10 @@ export class SessionRequestHandlerSessionActions {
       });
       return;
     }
+    const switchTurnOptions =
+      options.mode === "switch_model" && options.targetModelId
+        ? this.applySwitchModelBinding(session, options.targetModelId)
+        : undefined;
     const adapter = this.deps.providerRegistry.getAdapter(session.providerId);
     if (!adapter) {
       this.deps.logger.warn("Switch request: provider adapter unavailable", {
@@ -79,14 +83,6 @@ export class SessionRequestHandlerSessionActions {
         this.deps.logger.info("Switch request: model override applied", {
           sessionId: options.sessionId,
           targetModelId: options.targetModelId,
-        });
-        this.deps.broadcaster({
-          type: "session:model:update",
-          payload: {
-            sessionId: options.sessionId,
-            providerId: session.providerId,
-            modelId: options.targetModelId,
-          },
         });
       }
     }
@@ -106,12 +102,50 @@ export class SessionRequestHandlerSessionActions {
     });
     await this.handleMessage(options.sessionId, {
       content: lastUserMessage.content,
-      turnOptions: this.deps.appliedTurnConfig.attachToTurnOptions({
-        providerId: session.providerId,
-        targetModelId:
-          options.mode === "switch_model" ? options.targetModelId : undefined,
-      }),
+      turnOptions: switchTurnOptions,
     });
+  }
+
+  private applySwitchModelBinding(
+    session: Session,
+    targetModelId: string
+  ): Record<string, unknown> | undefined {
+    const turnOptions = this.deps.appliedTurnConfig.attachToTurnOptions({
+      providerId: session.providerId,
+      targetModelId,
+    });
+    const turnConfig = readAppliedProviderTurnConfig(turnOptions);
+    const modelId = turnConfig?.effectiveModelId ?? turnConfig?.modelId;
+    if (!(turnConfig && modelId)) {
+      return turnOptions;
+    }
+
+    const now = new Date().toISOString();
+    const modelBinding = {
+      key: session.modelBinding?.key ?? `session:${session.id}`,
+      providerId: session.providerId,
+      baseModelId: turnConfig.baseModelId ?? turnConfig.modelId,
+      modelId,
+      reasoningEffort: turnConfig.reasoningEffort,
+      thinkingEnabled: turnConfig.thinkingEnabled,
+      thinkingLevel: turnConfig.thinkingLevel,
+      source: "switch_request" as const,
+      boundAt: session.modelBinding?.boundAt ?? now,
+      updatedAt: now,
+    };
+    this.deps.sessionManager.setModelBinding(session.id, modelBinding);
+    this.deps.broadcaster({
+      type: "session:model:update",
+      payload: {
+        sessionId: session.id,
+        providerId: session.providerId,
+        baseModelId: modelBinding.baseModelId,
+        modelId,
+        modelBinding,
+        source: "switch_request",
+      },
+    });
+    return turnOptions;
   }
 
   async handleMessage(

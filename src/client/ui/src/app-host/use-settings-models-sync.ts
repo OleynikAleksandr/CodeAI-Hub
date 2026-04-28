@@ -20,19 +20,32 @@ const rebuildReadySessionModels = (
     )
   );
 
-const applySettingsModels = (
+const hasSessionOwnedModel = (models: readonly ModelInfo[]): boolean =>
+  models.some(
+    (model) => model.source === "binding" || model.source === "runtime"
+  );
+
+const shouldPreserveSnapshotModels = (
+  session: SessionRecord,
+  models: readonly ModelInfo[]
+): boolean => Boolean(session.modelBinding) || hasSessionOwnedModel(models);
+
+export const applySettingsModels = (
   previous: SessionSnapshots,
   sessions: readonly SessionRecord[],
   settings: Settings
 ): SessionSnapshots => {
-  let hasChanges = false;
-  const next: SessionSnapshots = {};
+  let next = previous;
   for (const session of sessions) {
     const snapshot = previous[session.id];
     if (!snapshot) {
       continue;
     }
     const currentModels = snapshot.status.models ?? [];
+    if (shouldPreserveSnapshotModels(session, currentModels)) {
+      continue;
+    }
+
     const sessionReady = snapshot.binding.status === "ready";
     const newModels =
       sessionReady && currentModels.length > 0
@@ -41,16 +54,16 @@ const applySettingsModels = (
     const modelsChanged =
       JSON.stringify(newModels) !== JSON.stringify(snapshot.status.models);
     if (modelsChanged) {
-      hasChanges = true;
+      if (next === previous) {
+        next = { ...previous };
+      }
       next[session.id] = {
         ...snapshot,
         status: { ...snapshot.status, models: newModels },
       };
-    } else {
-      next[session.id] = snapshot;
     }
   }
-  return hasChanges ? next : previous;
+  return next;
 };
 
 /**

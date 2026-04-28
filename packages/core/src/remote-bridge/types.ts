@@ -31,6 +31,7 @@ export type {
   DialogSwitchTarget,
   ProviderFailureClass,
   SerializedSession,
+  SerializedSessionModelBinding,
   SessionBridgeEvent,
   SessionIncomingMessage,
   SessionMessageTranslationPayload,

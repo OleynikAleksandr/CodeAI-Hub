@@ -1,9 +1,9 @@
 # Session-Scoped Model Binding - Architecture Plan
 
-**Status:** Draft for discussion  
-**Created:** 2026-04-28  
-**Owner:** Oleksandr + Codex  
-**Scope type:** design intake before `todo-plan.md`  
+**Status:** Archived after SMB-001 implementation
+**Created:** 2026-04-28
+**Owner:** Oleksandr + Codex
+**Scope type:** completed design intake / execution reference
 **Related release baseline:** `1.2.99`
 
 ---

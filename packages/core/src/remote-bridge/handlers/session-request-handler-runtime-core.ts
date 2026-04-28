@@ -2,6 +2,8 @@ import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
+import { SessionModelBindingFacade } from "../../session-model-binding";
+import { SessionModelBindingResolver } from "../../session-model-binding/session-model-binding-resolver";
 import { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import { createCoreTranslationFacade } from "../../translation/core-translation-facade-factory";
 import { SessionContinuityLockService } from "./session-continuity-lock-service";
@@ -48,6 +50,8 @@ export interface SessionRequestHandlerRuntimeCore {
 interface ClaudeTranslationServiceOwner {
   readonly getHaikuTranslationService?: () => ClaudeHaikuTranslationService;
 }
+
+const SETTINGS_FILE_NAME = "settings.json";
 
 export const resolveClaudeHaikuTranslationServiceForRuntime = (
   options: SessionRequestHandlerRuntimeDependencies
@@ -126,7 +130,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     logger: options.logger,
     settingsPath: path.join(
       path.dirname(options.config.claudeSettingsPath),
-      "settings.json"
+      SETTINGS_FILE_NAME
     ),
     translationFacadeFactory: ({ reporter }) =>
       createCoreTranslationFacade({
@@ -164,6 +168,21 @@ export const createSessionRequestHandlerRuntimeCore = (
   const appliedTurnConfig = new SessionRequestHandlerAppliedTurnConfig(
     options.config
   );
+  const sessionModelBindingResolver = new SessionModelBindingResolver({
+    facade: new SessionModelBindingFacade(),
+    providerTurnConfig: {
+      env: process.env,
+      fallbackClaudeModel: options.config.claudeDefaultModel,
+      fallbackCodexModel: options.config.codexDefaultModel ?? "gpt-5.3-codex",
+      fallbackCodexReasoningEffort:
+        options.config.codexDefaultReasoningEffort ?? "medium",
+      fallbackGeminiModel: options.config.geminiDefaultModel,
+      settingsPath: path.join(
+        path.dirname(options.config.claudeSettingsPath),
+        SETTINGS_FILE_NAME
+      ),
+    },
+  });
   const providerEventRouter = new SessionProviderEventRouter({
     sessionManager: options.sessionManager,
     broadcaster: options.broadcaster,
@@ -241,6 +260,34 @@ export const createSessionRequestHandlerRuntimeCore = (
     broadcaster: options.broadcaster,
     broadcastSessionBinding: (sessionId) =>
       providerBindingService.broadcastSessionBinding(sessionId),
+    bindSessionModel: (bindingOptions) => {
+      const binding = bindingOptions.targetModelId
+        ? sessionModelBindingResolver.bindFromExplicitSelection({
+            providerId: bindingOptions.session.providerId,
+            sessionId: bindingOptions.session.id,
+            continuityRootId: bindingOptions.continuityRootSessionId,
+            workspacePath: bindingOptions.session.workspacePath,
+            workspaceSlug: bindingOptions.session.initiativeSlug,
+            stage: bindingOptions.session.stage,
+            runSlug: bindingOptions.session.runSlug,
+            targetModelId: bindingOptions.targetModelId,
+          })
+        : sessionModelBindingResolver.bindFromSettingsDefault({
+            providerId: bindingOptions.session.providerId,
+            sessionId: bindingOptions.session.id,
+            continuityRootId: bindingOptions.continuityRootSessionId,
+            workspacePath: bindingOptions.session.workspacePath,
+            workspaceSlug: bindingOptions.session.initiativeSlug,
+            stage: bindingOptions.session.stage,
+            runSlug: bindingOptions.session.runSlug,
+          });
+      if (binding) {
+        options.sessionManager.setModelBinding(
+          bindingOptions.session.id,
+          binding
+        );
+      }
+    },
     resolveContinuityRootSessionId:
       options.callbacks.resolveContinuityRootSessionId,
     resolveDescriptionDialog: (dialogOptions) =>

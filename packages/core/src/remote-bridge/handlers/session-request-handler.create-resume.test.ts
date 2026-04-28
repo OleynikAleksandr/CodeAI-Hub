@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { readAppliedProviderTurnConfig } from "../types";
 import {
   collectTurnStateSequence,
   createHarness,
@@ -105,6 +106,50 @@ test("SessionRequestHandler keeps internal sends in provider turn lifecycle", as
       scenario.name
     );
   }
+});
+
+test("SessionRequestHandler routes switch_model through session model binding", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-switch-model-binding"
+  );
+  const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+  const overrides: string[] = [];
+  harness.sessionManager.appendMessage(session.id, "user", "retry this prompt");
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-switch",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    setModelOverride: (modelId: string) => {
+      overrides.push(modelId);
+    },
+    sendMessage: (
+      _providerSessionId: string,
+      _content: string,
+      turnOptions?: Record<string, unknown>
+    ) => {
+      sentTurnOptions.push(turnOptions);
+      return Promise.resolve();
+    },
+  });
+
+  await harness.handler.handleSwitchRequest({
+    sessionId: session.id,
+    mode: "switch_model",
+    targetModelId: "gpt-5.4-mini",
+  });
+
+  assert.deepEqual(overrides, ["gpt-5.4-mini"]);
+  assert.equal(session.modelBinding?.source, "switch_request");
+  assert.equal(session.modelBinding?.baseModelId, "gpt-5.4-mini");
+  assert.equal(session.modelBinding?.modelId, "gpt-5.4-mini reasoning:medium");
+  assert.equal(
+    readAppliedProviderTurnConfig(sentTurnOptions[0])?.effectiveModelId,
+    "gpt-5.4-mini reasoning:medium"
+  );
 });
 
 test("SessionRequestHandler updates provider binding on sessionIdChanged", () => {

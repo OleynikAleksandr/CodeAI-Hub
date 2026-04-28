@@ -35,7 +35,19 @@ export interface ModelInfo {
   readonly providerId: ProviderStackId;
   readonly providerName: string;
   readonly reasoning?: string;
-  readonly source?: "settings" | "runtime";
+  readonly source?: "binding" | "settings" | "runtime";
+}
+
+export interface SessionModelBindingInfo {
+  readonly baseModelId?: string;
+  readonly boundAt?: string;
+  readonly modelId: string;
+  readonly providerId: ProviderStackId;
+  readonly reasoningEffort?: string;
+  readonly source?: string;
+  readonly thinkingEnabled?: boolean;
+  readonly thinkingLevel?: string;
+  readonly updatedAt?: string;
 }
 
 export type SessionUsageLimitLabels = {
@@ -115,6 +127,7 @@ export interface SessionRecord {
   readonly createdAt: number;
   readonly id: string;
   readonly initiativeSlug?: string | null;
+  readonly modelBinding?: SessionModelBindingInfo | null;
   readonly providerIds: readonly ProviderStackId[];
   readonly runSlug?: string | null;
   readonly sessionKind?: SessionKind | null;

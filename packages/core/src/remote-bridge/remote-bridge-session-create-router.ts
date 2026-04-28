@@ -27,16 +27,26 @@ export class RemoteBridgeSessionCreateRouter {
       this.deps.getManager()?.getWorkspaceScope(clientId)?.workspacePath ??
       undefined;
     const initiativeSlug = incoming.payload?.initiativeSlug ?? null;
+    const requestedProviderId =
+      incoming.payload?.providerId ??
+      incoming.payload?.modelSelection?.providerId ??
+      undefined;
+    const targetModelId =
+      incoming.payload?.targetModelId ??
+      incoming.payload?.modelSelection?.modelId ??
+      null;
+    const createContext = {
+      initiativeSlug,
+      providerSessionId: incoming.payload?.providerSessionId ?? null,
+      stage: incoming.payload?.stage ?? null,
+      runSlug: incoming.payload?.runSlug ?? null,
+      targetModelId,
+    };
 
     await this.deps.sessionHandler.handleCreate(
-      incoming.payload?.providerId,
+      requestedProviderId,
       resolvedWorkspacePath,
-      {
-        initiativeSlug,
-        providerSessionId: incoming.payload?.providerSessionId ?? null,
-        stage: incoming.payload?.stage ?? null,
-        runSlug: incoming.payload?.runSlug ?? null,
-      }
+      createContext
     );
     if (!(resolvedWorkspacePath && initiativeSlug)) {
       return;
