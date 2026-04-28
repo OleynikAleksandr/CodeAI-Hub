@@ -93,9 +93,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Codex App Server Profiles
 
 1. [DONE] Introduce Codex App Server process profile keys while preserving current workflow startup flags as `codex:workflow-documentation` (scope: `packages/Codex_AppServer_Module/src/app-server/process/*`, `packages/Codex_AppServer_Module/src/app-server/*`; checks: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/process/codex-app-server-process.test.js`; commit: `feat: add codex app-server process profiles`)
-2. [IN_PROGRESS] Git Commit: `feat: add codex app-server process profiles` (hash: TBD)
-3. [TODO] Route Codex workflow `thread/start` and native capture workflow scenarios through the resolved workflow profile without changing current workflow behavior (scope: `packages/Codex_AppServer_Module/src/app-server/*`, `packages/Codex_AppServer_Module/src/diagnostics/*`; commit: `feat: apply codex workflow invocation profile`)
-4. [TODO] Git Commit: `feat: apply codex workflow invocation profile` (hash: TBD)
+2. [DONE] Git Commit: `feat: add codex app-server process profiles` (hash: `ad713d9b5`)
+3. [DONE] Route Codex workflow `thread/start` and native capture workflow scenarios through the resolved workflow profile without changing current workflow behavior (scope: `packages/Codex_AppServer_Module/src/app-server/*`, `packages/Codex_AppServer_Module/src/diagnostics/*`; checks: `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/app-server/codex-app-server-facade.test.js`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`, `node --test packages/Codex_AppServer_Module/dist/app-server/process/codex-app-server-process.test.js`; commit: `feat: apply codex workflow invocation profile`)
+4. [IN_PROGRESS] Git Commit: `feat: apply codex workflow invocation profile` (hash: TBD)
 5. [TODO] Add Codex tests for profile-selected base instructions, project-doc config, summary omission for Spark, and compatible model list behavior (scope: `packages/Codex_AppServer_Module/src/**/*.test.ts`; commit: `test: cover codex workflow invocation profiles`)
 6. [TODO] Git Commit: `test: cover codex workflow invocation profiles` (hash: TBD)
 

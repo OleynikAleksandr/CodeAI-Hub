@@ -14,10 +14,7 @@ import {
   CodexAppServerEventRouter,
 } from "./codex-app-server-event-router";
 import { buildCodexReasoningSummaryParams } from "./codex-reasoning-summary-params";
-import {
-  CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
-  CODEAI_CODEX_THREAD_CONFIG,
-} from "./codex-workflow-instruction-profile";
+import { resolveCodexWorkflowInvocationProfile } from "./codex-workflow-instruction-profile";
 import { CodexAppServerProcess } from "./process/codex-app-server-process";
 
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
@@ -84,8 +81,12 @@ export class CodexAppServerFacade {
   private readonly workspace: CodexModuleOptions["workspace"];
 
   constructor(options: CodexModuleOptions) {
+    const workflowProfile = resolveCodexWorkflowInvocationProfile();
     this.workspace = options.workspace;
-    this.process = new CodexAppServerProcess(options.reporter);
+    this.process = new CodexAppServerProcess({
+      processProfileKey: workflowProfile.processProfileKey,
+      reporter: options.reporter,
+    });
     this.eventRouter = new CodexAppServerEventRouter({
       emit: (threadId, payload) => this.emit(threadId, payload),
       ensureSessionState: (threadId) => this.ensureSessionState(threadId),
@@ -104,6 +105,7 @@ export class CodexAppServerFacade {
   }
 
   async createSession(workspacePath?: string): Promise<string> {
+    const workflowProfile = resolveCodexWorkflowInvocationProfile();
     const response = await this.process.request<Record<string, unknown>>(
       "thread/start",
       {
@@ -112,8 +114,8 @@ export class CodexAppServerFacade {
         sandbox: this.workspace.defaultSandboxMode,
         model: this.workspace.defaultModel,
         persistExtendedHistory: true,
-        baseInstructions: CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
-        config: CODEAI_CODEX_THREAD_CONFIG,
+        baseInstructions: workflowProfile.baseInstructions,
+        config: workflowProfile.threadConfig,
       }
     );
     const thread = isRecord(response.thread) ? response.thread : null;

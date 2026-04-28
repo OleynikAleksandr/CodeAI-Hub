@@ -4,10 +4,11 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { buildCodexReasoningSummaryParams } from "../app-server/codex-reasoning-summary-params";
 import {
-  CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
-  CODEAI_CODEX_THREAD_CONFIG,
+  type CodexWorkflowInvocationProfile,
+  resolveCodexWorkflowInvocationProfile,
 } from "../app-server/codex-workflow-instruction-profile";
 import { CodexAppServerProcess } from "../app-server/process/codex-app-server-process";
+import type { CodexAppServerProcessProfileKey } from "../app-server/process/codex-app-server-process-profile";
 import type {
   CodexReasoningEffort,
   CodexReasoningSummaryMode,
@@ -67,6 +68,7 @@ interface CodexProcessLike {
 
 type CodexProcessFactory = (options: {
   readonly environment: Readonly<Record<string, string>>;
+  readonly processProfileKey: CodexAppServerProcessProfileKey;
   readonly reporter?: ModuleReporter;
 }) => CodexProcessLike;
 
@@ -143,14 +145,16 @@ export class CodexNativeRequestCaptureService {
   async captureNativeRequest(
     options: CodexNativeRequestCaptureOptions
   ): Promise<void> {
+    const workflowProfile = resolveCodexWorkflowInvocationProfile();
     const process = this.#processFactory({
       environment: this.#buildEnvironment(options),
+      processProfileKey: workflowProfile.processProfileKey,
       reporter: this.#reporter,
     });
     const turnCompletion = this.#waitForTurnCompletion(process);
     try {
       await process.start();
-      const thread = await this.#startThread(process, options);
+      const thread = await this.#startThread(process, options, workflowProfile);
       turnCompletion.bindThread(thread.id);
       await this.#startTurn(process, thread.id, options);
       await turnCompletion.done;
@@ -180,7 +184,8 @@ export class CodexNativeRequestCaptureService {
 
   async #startThread(
     process: CodexProcessLike,
-    options: CodexNativeRequestCaptureOptions
+    options: CodexNativeRequestCaptureOptions,
+    workflowProfile: CodexWorkflowInvocationProfile
   ): Promise<CodexDiagnosticThread> {
     const params = {
       cwd: options.workspacePath,
@@ -188,8 +193,8 @@ export class CodexNativeRequestCaptureService {
       sandbox: this.#workspace.defaultSandboxMode,
       model: this.#resolveModelId(options),
       persistExtendedHistory: false,
-      baseInstructions: CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
-      config: CODEAI_CODEX_THREAD_CONFIG,
+      baseInstructions: workflowProfile.baseInstructions,
+      config: workflowProfile.threadConfig,
     };
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_thread_start_request",

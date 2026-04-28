@@ -3,6 +3,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY } from "../app-server/process/codex-app-server-process-profile";
 import { CodexNativeRequestCaptureService } from "./codex-native-request-capture-service";
 
 const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
@@ -93,9 +94,11 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
   const processes: FakeCodexProcess[] = [];
   const diagnosticRecords: { kind: string; payload: unknown }[] = [];
   let capturedEnvironment: Readonly<Record<string, string>> | null = null;
+  let capturedProcessProfileKey: string | null = null;
   const service = new CodexNativeRequestCaptureService({
-    processFactory: ({ environment }) => {
+    processFactory: ({ environment, processProfileKey }) => {
       capturedEnvironment = environment;
+      capturedProcessProfileKey = processProfileKey;
       const process = new FakeCodexProcess();
       process.threadPath = rolloutPath;
       processes.push(process);
@@ -131,6 +134,10 @@ test("CodexNativeRequestCaptureService starts an isolated app-server process wit
   }
 
   assert.equal(processes.length, 1);
+  assert.equal(
+    capturedProcessProfileKey,
+    CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY
+  );
   assert.equal(processes[0]?.started, true);
   assert.equal(processes[0]?.stopped, true);
   assert.deepEqual(capturedEnvironment, {

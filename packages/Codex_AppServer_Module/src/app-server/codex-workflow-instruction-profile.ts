@@ -1,8 +1,19 @@
-export const CODEAI_CODEX_THREAD_CONFIG = {
+import {
+  CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+  type CodexAppServerProcessProfileKey,
+} from "./process/codex-app-server-process-profile";
+
+const CODEAI_CODEX_THREAD_CONFIG = {
   project_doc_max_bytes: 0,
 } as const;
 
-export const CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT = `You are Codex, an AI agent operating inside CodeAI Hub during the early architecture workflow.
+export interface CodexWorkflowInvocationProfile {
+  readonly baseInstructions: string;
+  readonly processProfileKey: CodexAppServerProcessProfileKey;
+  readonly threadConfig: typeof CODEAI_CODEX_THREAD_CONFIG;
+}
+
+const CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT = `You are Codex, an AI agent operating inside CodeAI Hub during the early architecture workflow.
 
 Your current role is to help the user turn an idea into clear project artifacts. In the early workflow steps, the work is primarily architectural and analytical, not implementation-driven.
 
@@ -87,3 +98,14 @@ Your current role is to help the user turn an idea into clear project artifacts.
 - Include file paths, evidence, hashes, or commands only when they help the user verify the result.
 - If you could not verify something, say that clearly.
 `;
+
+const CODEAI_CODEX_WORKFLOW_INVOCATION_PROFILE: CodexWorkflowInvocationProfile =
+  {
+    baseInstructions: CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT,
+    processProfileKey: CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+    threadConfig: CODEAI_CODEX_THREAD_CONFIG,
+  };
+
+export const resolveCodexWorkflowInvocationProfile =
+  (): CodexWorkflowInvocationProfile =>
+    CODEAI_CODEX_WORKFLOW_INVOCATION_PROFILE;

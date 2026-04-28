@@ -21,6 +21,7 @@ This document records the actual CodeAI Hub Codex invocation surface that shapes
 Normal runtime and Codex native request capture both start the same long-lived App Server executable:
 
 Current process profile key: `codex:workflow-documentation`. The old `CODEAI_CODEX_APP_SERVER_ARGS` export is a compatibility alias for this profile's `appServerArgs`.
+The workflow invocation profile resolves to the same process profile key plus `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` and `threadConfig = { project_doc_max_bytes: 0 }`.
 
 ```text
 codex app-server
@@ -254,6 +255,8 @@ The temporary translation `config.toml` includes:
 ## Native Request Capture Parity
 
 Settings -> General -> `Capture Codex Native Request` starts an isolated temporary App Server process with the same startup args as normal runtime, plus proxy/certificate env:
+
+Workflow capture scenarios use the same resolved workflow invocation profile as normal runtime thread creation; native capture only overrides `persistExtendedHistory` to `false` and uses the selected capture prompt/model.
 
 - `ALL_PROXY`
 - `HTTP_PROXY`
