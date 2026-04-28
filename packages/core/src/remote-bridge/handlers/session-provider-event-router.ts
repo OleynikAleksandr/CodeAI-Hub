@@ -1,7 +1,7 @@
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
-import type { BridgeEvent } from "../types";
+import { type BridgeEvent, serializeSessionModelBinding } from "../types";
 
 interface ProviderEventEnvelope {
   readonly payload?: unknown;
@@ -228,11 +228,19 @@ export class SessionProviderEventRouter {
       return;
     }
     const rawModelId = modelId.trim();
+    const bindingEffectiveModelId =
+      session.modelBinding?.providerId === session.providerId &&
+      (session.modelBinding.baseModelId === rawModelId ||
+        session.modelBinding.modelId === rawModelId)
+        ? session.modelBinding.modelId
+        : null;
     const effectiveModelId =
+      bindingEffectiveModelId ??
       this.deps.resolveEffectiveModelId?.({
         providerId: session.providerId,
         targetModelId: rawModelId,
-      }) ?? rawModelId;
+      }) ??
+      rawModelId;
     this.deps.broadcaster({
       type: "session:model:update",
       payload: {
@@ -240,19 +248,7 @@ export class SessionProviderEventRouter {
         providerId: session.providerId,
         baseModelId: rawModelId,
         modelId: effectiveModelId,
-        modelBinding: session.modelBinding
-          ? {
-              providerId: session.modelBinding.providerId,
-              baseModelId: session.modelBinding.baseModelId,
-              modelId: session.modelBinding.modelId,
-              reasoningEffort: session.modelBinding.reasoningEffort,
-              thinkingEnabled: session.modelBinding.thinkingEnabled,
-              thinkingLevel: session.modelBinding.thinkingLevel,
-              source: session.modelBinding.source,
-              boundAt: session.modelBinding.boundAt,
-              updatedAt: session.modelBinding.updatedAt,
-            }
-          : undefined,
+        modelBinding: serializeSessionModelBinding(session) ?? undefined,
       },
     });
   }

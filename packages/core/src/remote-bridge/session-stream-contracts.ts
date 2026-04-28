@@ -30,7 +30,7 @@ export interface SerializedSession {
   readonly workspacePath: string;
 }
 
-const serializeSessionModelBinding = (
+export const serializeSessionModelBinding = (
   session: Session
 ): SerializedSessionModelBinding | null => {
   const binding = session.modelBinding;

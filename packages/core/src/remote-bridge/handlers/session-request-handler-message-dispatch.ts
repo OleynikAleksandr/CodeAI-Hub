@@ -7,6 +7,7 @@ import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import {
   type BridgeEvent,
   readAppliedProviderTurnConfig,
+  serializeSessionModelBinding,
   shouldBroadcastAppliedProviderModelUpdate,
 } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
@@ -413,6 +414,9 @@ export class SessionRequestHandlerMessageDispatch {
         providerId: turnConfig.providerId,
         baseModelId,
         modelId,
+        modelBinding: session
+          ? (serializeSessionModelBinding(session) ?? undefined)
+          : undefined,
       },
     });
     return providerTurnOptions;

@@ -39,7 +39,10 @@ export type {
   TurnFailedPayload,
   TurnStateStreamData,
 } from "./session-stream-contracts";
-export { serializeSession } from "./session-stream-contracts";
+export {
+  serializeSession,
+  serializeSessionModelBinding,
+} from "./session-stream-contracts";
 export type {
   WorkspaceBridgeEvent,
   WorkspaceIncomingMessage,

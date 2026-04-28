@@ -81,3 +81,78 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
     true
   );
 });
+
+test("SessionProviderEventRouter keeps model_info updates on session binding", () => {
+  const broadcasts: unknown[] = [];
+
+  const router = new SessionProviderEventRouter({
+    appendDialogMessage: () => {
+      // noop
+    },
+    appendProviderMessage: () => {
+      // noop
+    },
+    broadcaster: (event) => {
+      broadcasts.push(event);
+    },
+    clearPostTurnContextDecision: () => {
+      // noop
+    },
+    emitTurnStateEvent: () => {
+      // noop
+    },
+    finalizeFlowNodeContinuityLockOnBootstrapGate: () => {
+      // noop
+    },
+    handleFlowNodeContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleSessionContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleTurnCompletedWithFlowNodeArbitration: () => {
+      // noop
+    },
+    logger: new Logger("error"),
+    markPostTurnContextDecisionPending: () => {
+      // noop
+    },
+    resolveEffectiveModelId: () => "gpt-5.3-codex-spark reasoning:medium",
+    sessionManager: {
+      getSession: () => ({
+        id: "session-1",
+        workspacePath: "/tmp/workspace",
+        stage: "description",
+        providerId: "codexCli",
+        modelBinding: {
+          key: "provider\u001fcodexCli\u001fsession\u001fsession-1",
+          providerId: "codexCli",
+          baseModelId: "gpt-5.3-codex-spark",
+          modelId: "gpt-5.3-codex-spark reasoning:xhigh",
+          reasoningEffort: "xhigh",
+          source: "settings_default",
+          boundAt: "2026-04-28T12:00:00.000Z",
+          updatedAt: "2026-04-28T12:00:00.000Z",
+        },
+      }),
+    } as never,
+    updateBindingWithResolvedId: () => {
+      // noop
+    },
+  });
+
+  router.handleProviderEvent("session-1", {
+    type: "model_info",
+    data: { model: "gpt-5.3-codex-spark" },
+  });
+
+  const update = broadcasts.find(
+    (event) => (event as { type?: string }).type === "session:model:update"
+  ) as { payload?: { modelId?: string; modelBinding?: { modelId?: string } } };
+
+  assert.equal(update?.payload?.modelId, "gpt-5.3-codex-spark reasoning:xhigh");
+  assert.equal(
+    update?.payload?.modelBinding?.modelId,
+    "gpt-5.3-codex-spark reasoning:xhigh"
+  );
+});
