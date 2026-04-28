@@ -37,13 +37,13 @@
 
 ### Stream: Binding Resolver
 3. [DONE] Добавить резолв binding из Settings/default или explicit model selection с тестами effective identity — scope: `packages/core/src/session-model-binding/session-model-binding-resolver.ts`, `packages/core/src/session-model-binding/session-model-binding-facade.test.ts`, `packages/core/src/config/provider-turn-config-resolver.ts`; expected commit message: `feat: resolve session model binding identity`.
-4. [IN_PROGRESS] Git Commit: `feat: resolve session model binding identity` (hash: TBD)
+4. [DONE] Git Commit: `feat: resolve session model binding identity` (hash: `0c8eaf020`)
 
 ## Phase 2 — Core Session Integration (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Transport And Serialization
-5. [TODO] Расширить session model binding в Core session/transport contract — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat: serialize session model bindings`.
-6. [TODO] Git Commit: `feat: serialize session model bindings` (hash: TBD)
+5. [DONE] Расширить session model binding в Core session/transport contract — scope: `packages/core/src/session-manager/index.ts`, `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/types.ts`; expected commit message: `feat: serialize session model bindings`.
+6. [IN_PROGRESS] Git Commit: `feat: serialize session model bindings` (hash: TBD)
 
 ### Stream: Session Creation
 7. [TODO] Протянуть explicit model selection через `session:create` и bind на создании logical session — scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`; expected commit message: `feat: bind model during session creation`.

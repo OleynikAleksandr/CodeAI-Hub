@@ -1,4 +1,17 @@
 import type { Session } from "../session-manager";
+import type { SessionModelBindingSource } from "../session-model-binding";
+
+export interface SerializedSessionModelBinding {
+  readonly baseModelId?: string;
+  readonly boundAt: string;
+  readonly modelId: string;
+  readonly providerId: string;
+  readonly reasoningEffort?: string;
+  readonly source: SessionModelBindingSource;
+  readonly thinkingEnabled?: boolean;
+  readonly thinkingLevel?: string;
+  readonly updatedAt: string;
+}
 
 export interface SerializedSession {
   readonly continuationIndex: number;
@@ -6,6 +19,7 @@ export interface SerializedSession {
   readonly createdAt: string;
   readonly id: string;
   readonly initiativeSlug: string | null;
+  readonly modelBinding?: SerializedSessionModelBinding | null;
   readonly providerId: string;
   readonly providerSessionId: string | null;
   readonly providerSessionStatus: "pending" | "ready" | "failed";
@@ -16,11 +30,33 @@ export interface SerializedSession {
   readonly workspacePath: string;
 }
 
+const serializeSessionModelBinding = (
+  session: Session
+): SerializedSessionModelBinding | null => {
+  const binding = session.modelBinding;
+  if (!binding) {
+    return null;
+  }
+
+  return {
+    providerId: binding.providerId,
+    baseModelId: binding.baseModelId,
+    modelId: binding.modelId,
+    reasoningEffort: binding.reasoningEffort,
+    thinkingEnabled: binding.thinkingEnabled,
+    thinkingLevel: binding.thinkingLevel,
+    source: binding.source,
+    boundAt: binding.boundAt,
+    updatedAt: binding.updatedAt,
+  };
+};
+
 export const serializeSession = (session: Session): SerializedSession => ({
   id: session.id,
   providerId: session.providerId,
   workspacePath: session.workspacePath,
   initiativeSlug: session.initiativeSlug,
+  modelBinding: serializeSessionModelBinding(session),
   stage: session.stage,
   runSlug: session.runSlug ?? null,
   continuationParentId: session.continuationParentId,
@@ -102,9 +138,11 @@ export interface TurnFailedPayload {
 
 export interface SessionModelUpdatePayload {
   readonly baseModelId?: string;
+  readonly modelBinding?: SerializedSessionModelBinding;
   readonly modelId: string;
   readonly providerId: string;
   readonly sessionId: string;
+  readonly source?: SessionModelBindingSource;
 }
 
 export interface SessionMessageTranslationPayload {
@@ -163,9 +201,14 @@ export type SessionIncomingMessage =
         readonly providerId?: string;
         readonly workspacePath?: string;
         readonly initiativeSlug?: string | null;
+        readonly modelSelection?: {
+          readonly modelId?: string | null;
+          readonly providerId?: string | null;
+        } | null;
         readonly providerSessionId?: string | null;
         readonly stage?: string | null;
         readonly runSlug?: string | null;
+        readonly targetModelId?: string | null;
       };
     }
   | {

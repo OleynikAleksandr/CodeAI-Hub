@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { SessionModelBinding } from "../session-model-binding";
 
 export type SessionRole = "user" | "assistant" | "system" | "thinking";
 
@@ -22,6 +23,7 @@ export interface Session {
   readonly id: string;
   readonly initiativeSlug: string | null;
   messages: SessionMessage[];
+  modelBinding?: SessionModelBinding;
   readonly providerId: string;
   providerSessionId?: string;
   providerSessionStatus: "pending" | "ready" | "failed";
@@ -217,6 +219,15 @@ export class SessionManager {
     }
     this.stopInvalidatedBindingSessionIds.delete(sessionId);
     session.providerSessionStatus = "failed";
+    session.updatedAt = new Date().toISOString();
+  }
+
+  setModelBinding(sessionId: string, modelBinding: SessionModelBinding): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return;
+    }
+    session.modelBinding = modelBinding;
     session.updatedAt = new Date().toISOString();
   }
 
