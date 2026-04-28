@@ -186,6 +186,34 @@ export type SettingsUserGlossaryFilePayload = {
   readonly path: string | null;
 };
 
+export type SettingsTemplateUpdateResolutionAction =
+  | "backup-and-replace"
+  | "preserve-current"
+  | "replace-with-incoming";
+
+export type SettingsPendingTemplateUpdate = {
+  readonly destinationPath: string;
+  readonly destinationRelativePath: string;
+  readonly id: string;
+  readonly incomingPath: string;
+  readonly incomingRelativePath: string;
+  readonly pendingBundledHash: string;
+};
+
+export type SettingsTemplateUpdatesPayload = {
+  readonly error?: string | null;
+  readonly updates: readonly SettingsPendingTemplateUpdate[];
+};
+
+export type SettingsTemplateUpdateResolutionPayload = {
+  readonly action: SettingsTemplateUpdateResolutionAction;
+  readonly backupPath?: string;
+  readonly error?: string | null;
+  readonly id: string;
+  readonly pendingUpdates: readonly SettingsPendingTemplateUpdate[];
+  readonly status: "error" | "not_found" | "resolved";
+};
+
 export type SettingsNativeRequestCaptureProviderId = "claude" | "codex";
 export type SettingsNativeRequestCaptureModelId = NativeRequestCaptureModelId;
 export type SettingsNativeRequestCaptureScenarioId =
@@ -277,6 +305,14 @@ export type OutgoingMessage =
       readonly payload: { readonly settings: unknown };
     }
   | { readonly type: "settings:reset" }
+  | { readonly type: "settings:template-updates" }
+  | {
+      readonly type: "settings:template-update:resolve";
+      readonly payload: {
+        readonly action: SettingsTemplateUpdateResolutionAction;
+        readonly id: string;
+      };
+    }
   | {
       readonly type: "settings:native-request-capture";
       readonly payload: SettingsNativeRequestCaptureOptions & {
@@ -382,6 +418,14 @@ export type IncomingMessage =
   | {
       readonly type: "settings:user-glossary-file";
       readonly payload: SettingsUserGlossaryFilePayload;
+    }
+  | {
+      readonly type: "settings:template-updates:result";
+      readonly payload: SettingsTemplateUpdatesPayload;
+    }
+  | {
+      readonly type: "settings:template-update:resolve:result";
+      readonly payload: SettingsTemplateUpdateResolutionPayload;
     }
   | {
       readonly type: "settings:native-request-capture:result";

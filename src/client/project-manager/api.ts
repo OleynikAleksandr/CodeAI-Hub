@@ -22,6 +22,7 @@ import type {
   SettingsNativeRequestCaptureProviderId,
   SettingsProviderTarget,
   SettingsSaveErrorPayload,
+  SettingsTemplateUpdateResolutionAction,
   SettingsUserGlossaryFilePayload,
   SettingsVersionsPayload,
   WorkspaceSelectPayload,
@@ -180,29 +181,17 @@ class ProjectManagerApi {
     return false;
   }
 
-  listProjects(): void {
-    this.send({ type: "projects:list" });
-  }
+  listProjects(): void { this.send({ type: "projects:list" }); }
 
-  loadSettings(): void {
-    this.send({ type: "settings:load" });
-  }
+  loadSettings(): void { this.send({ type: "settings:load" }); }
 
-  loadSettingsVersions(): void {
-    this.send({ type: "settings:versions" });
-  }
+  loadSettingsVersions(): void { this.send({ type: "settings:versions" }); }
 
-  getLastSettingsPayload(): SettingsLoadedPayload | null {
-    return this.lastSettingsPayload;
-  }
+  getLastSettingsPayload(): SettingsLoadedPayload | null { return this.lastSettingsPayload; }
 
-  getLastSettingsSaveError(): string | null {
-    return this.lastSettingsSaveError;
-  }
+  getLastSettingsSaveError(): string | null { return this.lastSettingsSaveError; }
 
-  getLastSettingsVersionsPayload(): SettingsVersionsPayload | null {
-    return this.lastSettingsVersionsPayload;
-  }
+  getLastSettingsVersionsPayload(): SettingsVersionsPayload | null { return this.lastSettingsVersionsPayload; }
 
   getLastUserGlossaryFilePayload(): SettingsUserGlossaryFilePayload | null {
     return this.lastUserGlossaryFilePayload;
@@ -235,6 +224,17 @@ class ProjectManagerApi {
   openUserGlossaryFile(): void {
     this.lastUserGlossaryFilePayload = null;
     this.send({ type: "settings:open-user-glossary-file" });
+  }
+
+  loadTemplateUpdates(): void {
+    this.send({ type: "settings:template-updates" });
+  }
+
+  resolveTemplateUpdate(
+    id: string,
+    action: SettingsTemplateUpdateResolutionAction
+  ): void {
+    this.send({ type: "settings:template-update:resolve", payload: { id, action } });
   }
 
   captureNativeRequest(
@@ -367,12 +367,11 @@ class ProjectManagerApi {
     return typeof this.config.httpUrl === "string" ? this.config.httpUrl : null;
   }
 
-  getWsUrl(): string | null {
-    return typeof this.config.wsUrl === "string" ? this.config.wsUrl : null;
-  }
-
   getWsStreamUrl(): string {
-    const wsUrl = this.getWsUrl() ?? "ws://127.0.0.1:8080";
+    const wsUrl =
+      typeof this.config.wsUrl === "string"
+        ? this.config.wsUrl
+        : "ws://127.0.0.1:8080";
     return `${wsUrl}/api/v1/stream`;
   }
 
@@ -395,9 +394,6 @@ class ProjectManagerApi {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));
     } else {
-      // PM may call into the API before the WS is fully connected (e.g. during
-      // cold start after Core restart). Queue messages so scope selection and
-      // restore flows don't silently drop and break the UI.
       this.outgoingQueue.enqueue(message);
       console.warn(
         "[ProjectManagerApi] Socket not ready, message queued",

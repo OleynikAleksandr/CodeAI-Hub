@@ -18,6 +18,9 @@ import type {
   SettingsProviderTarget,
   SettingsSaveErrorPayload,
   SettingsSnapshotPayload,
+  SettingsTemplateUpdateResolutionAction,
+  SettingsTemplateUpdateResolutionPayload,
+  SettingsTemplateUpdatesPayload,
   SettingsUserGlossaryFilePayload,
   SettingsVersionsPayload,
 } from "../../core-stream-message-types";
@@ -35,6 +38,14 @@ const createVersionsState = (
 });
 
 type SettingsPayload = SettingsLoadedPayload | SettingsSnapshotPayload;
+
+type TemplateUpdatesState = {
+  readonly error: string | null;
+  readonly loading: boolean;
+  readonly resolving: boolean;
+  readonly lastResolution: SettingsTemplateUpdateResolutionPayload | null;
+  readonly updates: SettingsTemplateUpdatesPayload["updates"];
+};
 
 const resolveSettingsPayloadError = (payload: SettingsPayload): string | null =>
   "error" in payload && typeof payload.error === "string"
@@ -80,6 +91,12 @@ export type UseProjectManagerSettingsResult = {
     provider: ProviderId,
     target: SettingsProviderTarget
   ) => void;
+  readonly templateUpdates: TemplateUpdatesState;
+  readonly loadTemplateUpdates: () => void;
+  readonly resolveTemplateUpdate: (
+    id: string,
+    action: SettingsTemplateUpdateResolutionAction
+  ) => void;
   readonly userGlossaryFile: SettingsUserGlossaryFilePayload | null;
   readonly versions: VersionsState;
   readonly openUserGlossaryFile: () => void;
@@ -111,6 +128,13 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
     useState<SettingsUserGlossaryFilePayload | null>(() =>
       api.getLastUserGlossaryFilePayload()
     );
+  const [templateUpdates, setTemplateUpdates] = useState<TemplateUpdatesState>({
+    error: null,
+    loading: false,
+    resolving: false,
+    lastResolution: null,
+    updates: [],
+  });
 
   const reload = useCallback(() => {
     api.loadSettings();
@@ -155,6 +179,27 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
     api.openUserGlossaryFile();
   }, []);
 
+  const loadTemplateUpdates = useCallback(() => {
+    setTemplateUpdates((current) => ({
+      ...current,
+      error: null,
+      loading: true,
+    }));
+    api.loadTemplateUpdates();
+  }, []);
+
+  const resolveTemplateUpdate = useCallback(
+    (id: string, action: SettingsTemplateUpdateResolutionAction) => {
+      setTemplateUpdates((current) => ({
+        ...current,
+        error: null,
+        resolving: true,
+      }));
+      api.resolveTemplateUpdate(id, action);
+    },
+    []
+  );
+
   useEffect(() => {
     const unsubscribe = api.onCoreEvent((message: IncomingMessage) => {
       switch (message.type) {
@@ -198,6 +243,28 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
           setUserGlossaryFile(message.payload as SettingsUserGlossaryFilePayload);
           return;
         }
+        case "settings:template-updates:result": {
+          const payload = message.payload as SettingsTemplateUpdatesPayload;
+          setTemplateUpdates((current) => ({
+            ...current,
+            error: payload.error ?? null,
+            loading: false,
+            updates: payload.updates,
+          }));
+          return;
+        }
+        case "settings:template-update:resolve:result": {
+          const payload =
+            message.payload as SettingsTemplateUpdateResolutionPayload;
+          setTemplateUpdates({
+            error: payload.error ?? null,
+            lastResolution: payload,
+            loading: false,
+            resolving: false,
+            updates: payload.pendingUpdates,
+          });
+          return;
+        }
         default: {
           return;
         }
@@ -238,6 +305,9 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
     resetting,
     versions,
     updateProvider,
+    templateUpdates,
+    loadTemplateUpdates,
+    resolveTemplateUpdate,
     userGlossaryFile,
     openUserGlossaryFile,
   };

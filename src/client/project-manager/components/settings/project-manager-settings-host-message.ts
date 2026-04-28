@@ -4,6 +4,7 @@ import type {
   NativeRequestCaptureScenarioId,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
+import type { SettingsTemplateUpdateResolutionAction } from "../../core-stream-message-types";
 import type { UseProjectManagerSettingsResult } from "./use-project-manager-settings";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -13,6 +14,13 @@ export const isNativeRequestCaptureProviderId = (
   value: unknown
 ): value is NativeRequestCaptureProviderId =>
   value === "claude" || value === "codex";
+
+const isTemplateUpdateResolutionAction = (
+  value: unknown
+): value is SettingsTemplateUpdateResolutionAction =>
+  value === "backup-and-replace" ||
+  value === "preserve-current" ||
+  value === "replace-with-incoming";
 
 const isNativeRequestCaptureScenarioId = (
   value: unknown
@@ -37,6 +45,19 @@ export const handleProjectManagerSettingsHostMessage = (params: {
   }
   if (params.message.type === "settings:open-user-glossary-file") {
     params.transport.openUserGlossaryFile();
+  }
+  if (params.message.type === "settings:template-updates") {
+    params.transport.loadTemplateUpdates();
+  }
+  if (
+    params.message.type === "settings:template-update:resolve" &&
+    typeof params.message.id === "string" &&
+    isTemplateUpdateResolutionAction(params.message.action)
+  ) {
+    params.transport.resolveTemplateUpdate(
+      params.message.id,
+      params.message.action
+    );
   }
   if (
     params.message.type === "settings:native-request-capture" &&

@@ -71,7 +71,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 5. [DONE] Add bundled text-only invocation instruction templates and a loader for user-overridden `.md` fragments (scope: `packages/core/src/templates/*`, `packages/core/src/model-invocation/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: add invocation instruction templates`)
 6. [DONE] Git Commit: `feat: add invocation instruction templates` (hash: `903a99035`)
 7. [DONE] Add tests proving text templates can change instructions without exposing flags/tools/sandbox/approval controls (scope: `packages/core/src/templates/*.test.ts`, `packages/core/src/model-invocation/*.test.ts`; commit: `test: cover invocation template overrides`)
-8. [IN_PROGRESS] Git Commit: `test: cover invocation template overrides` (hash: TBD)
+8. [DONE] Git Commit: `test: cover invocation template overrides` (hash: `032ecef6b`)
 
 ---
 
@@ -79,8 +79,8 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Template Update UI
 
-1. [TODO] Add Project Manager/Core bridge support for loading pending template updates and applying grouped decisions (scope: `src/client/project-manager/*`, `packages/core/src/remote-bridge/*`, `packages/core/src/templates/*`; commit: `feat: expose template update decisions`)
-2. [TODO] Git Commit: `feat: expose template update decisions` (hash: TBD)
+1. [DONE] Add Project Manager/Core bridge support for loading pending template updates and applying grouped decisions (scope: `src/client/project-manager/*`, `packages/core/src/remote-bridge/*`, `packages/core/src/templates/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: expose template update decisions`)
+2. [IN_PROGRESS] Git Commit: `feat: expose template update decisions` (hash: TBD)
 3. [TODO] Add Settings UI surface for grouped template decisions: preserve, replace, backup+replace, and review file-by-file (scope: `src/client/ui/src/components/settings/*`, `src/client/project-manager/components/settings/*`; commit: `feat: add template update settings UI`)
 4. [TODO] Git Commit: `feat: add template update settings UI` (hash: TBD)
 5. [TODO] Run webview checks and fix UI type/style regressions if any (scope: `src/client/ui`, `src/client/project-manager`; commit: `fix: stabilize template update settings UI`)
