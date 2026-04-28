@@ -8536,17 +8536,53 @@
     createdAt: Date.now()
   });
 
+  // src/client/ui/src/core-bridge/core-bridge-logger.ts
+  var MAX_DIAGNOSTIC_STRING_LENGTH = 180;
+  var truncateDiagnosticString = (value) => value.length > MAX_DIAGNOSTIC_STRING_LENGTH ? `${value.slice(0, MAX_DIAGNOSTIC_STRING_LENGTH)}...` : value;
+  var toDiagnosticPrimitive = (value) => {
+    if (value === null || value === void 0) {
+      return null;
+    }
+    if (typeof value === "string") {
+      return truncateDiagnosticString(value);
+    }
+    if (typeof value === "number" || typeof value === "boolean") {
+      return value;
+    }
+    if (value instanceof Error) {
+      return truncateDiagnosticString(`${value.name}: ${value.message}`);
+    }
+    return Object.prototype.toString.call(value);
+  };
+  var logCoreBridgeDiagnostic = (eventName, details = {}) => {
+    const sanitized = Object.fromEntries(
+      Object.entries(details).map(([key, value]) => [
+        key,
+        toDiagnosticPrimitive(value)
+      ])
+    );
+    globalThis.console?.warn?.(
+      `[CodeAI Hub core bridge] ${eventName}`,
+      sanitized
+    );
+  };
+
   // src/client/ui/src/core-bridge/server-message-handler.ts
   var parseEnvelope = (raw) => {
     try {
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed.type !== "string") {
+        logCoreBridgeDiagnostic("server-message:missing-type");
         return null;
       }
       if (parsed.type === "session:message" || parsed.type === "session:created" || parsed.type === "session:deleted" || parsed.type === "session:stream" || parsed.type === "session:error" || parsed.type === "core:loading-status" || parsed.type === "session:binding" || parsed.type === "session:model:update") {
         return { type: parsed.type, payload: parsed.payload };
       }
-    } catch {
+      logCoreBridgeDiagnostic("server-message:unsupported-type", {
+        type: parsed.type
+      });
+    } catch (error) {
+      logCoreBridgeDiagnostic("server-message:parse-failed", { error });
       return null;
     }
     return null;
@@ -8558,6 +8594,9 @@
     const handleSessionMessage = (payload) => {
       const normalized = sanitizeSessionMessagePayload(payload);
       if (!normalized) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:message"
+        });
         return;
       }
       notify({
@@ -8568,6 +8607,9 @@
     const handleSessionCreated = (payload) => {
       const normalized = sanitizeSession(payload);
       if (!normalized) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:created"
+        });
         return;
       }
       notify({
@@ -8577,6 +8619,9 @@
     };
     const handleSessionDeleted = (payload) => {
       if (!isDeletedPayload(payload)) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:deleted"
+        });
         return;
       }
       notify({
@@ -8586,6 +8631,9 @@
     };
     const handleSessionStream = (payload) => {
       if (!isStreamPayload(payload)) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:stream"
+        });
         return;
       }
       notify({
@@ -8598,6 +8646,9 @@
     };
     const handleSessionModelUpdate = (payload) => {
       if (!isModelUpdatePayload(payload)) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:model:update"
+        });
         return;
       }
       notify({
@@ -8619,6 +8670,9 @@
     const handleSessionError = (payload) => {
       const normalized = sanitizeSessionErrorPayload(payload);
       if (!normalized) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:error"
+        });
         return;
       }
       notify({
@@ -8644,6 +8698,9 @@
       "session:binding": (payload) => {
         const normalized = sanitizeSessionBindingPayload(payload);
         if (!normalized) {
+          logCoreBridgeDiagnostic("server-message:invalid-payload", {
+            type: "session:binding"
+          });
           return;
         }
         notify({
@@ -8695,6 +8752,10 @@
         { method: "GET" }
       );
       if (!response.ok) {
+        logCoreBridgeDiagnostic("session-history:http-error", {
+          sessionId,
+          status: response.status
+        });
         return;
       }
       const data = await response.json();
@@ -8704,7 +8765,11 @@
         sessionId: historySessionId,
         messages
       });
-    } catch {
+    } catch (error) {
+      logCoreBridgeDiagnostic("session-history:fetch-failed", {
+        error,
+        sessionId
+      });
     }
   };
   var loadSessionHistories = async (config, sessions, notify) => {

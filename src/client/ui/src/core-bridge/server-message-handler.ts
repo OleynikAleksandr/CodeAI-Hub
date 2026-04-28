@@ -1,3 +1,4 @@
+import { logCoreBridgeDiagnostic } from "./core-bridge-logger";
 import {
   createSystemSessionMessage,
   sanitizeSession,
@@ -49,6 +50,7 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
       readonly payload?: unknown;
     };
     if (!parsed || typeof parsed.type !== "string") {
+      logCoreBridgeDiagnostic("server-message:missing-type");
       return null;
     }
     if (
@@ -63,7 +65,11 @@ const parseEnvelope = (raw: string): ServerEnvelope | null => {
     ) {
       return { type: parsed.type, payload: parsed.payload };
     }
-  } catch {
+    logCoreBridgeDiagnostic("server-message:unsupported-type", {
+      type: parsed.type,
+    });
+  } catch (error) {
+    logCoreBridgeDiagnostic("server-message:parse-failed", { error });
     return null;
   }
   return null;
@@ -95,6 +101,9 @@ export const createServerMessageHandler = (
   const handleSessionMessage = (payload: unknown): void => {
     const normalized = sanitizeSessionMessagePayload(payload);
     if (!normalized) {
+      logCoreBridgeDiagnostic("server-message:invalid-payload", {
+        type: "session:message",
+      });
       return;
     }
     notify({
@@ -106,6 +115,9 @@ export const createServerMessageHandler = (
   const handleSessionCreated = (payload: unknown): void => {
     const normalized = sanitizeSession(payload as ServerSession | undefined);
     if (!normalized) {
+      logCoreBridgeDiagnostic("server-message:invalid-payload", {
+        type: "session:created",
+      });
       return;
     }
     notify({
@@ -116,6 +128,9 @@ export const createServerMessageHandler = (
 
   const handleSessionDeleted = (payload: unknown): void => {
     if (!isDeletedPayload(payload)) {
+      logCoreBridgeDiagnostic("server-message:invalid-payload", {
+        type: "session:deleted",
+      });
       return;
     }
     notify({
@@ -126,6 +141,9 @@ export const createServerMessageHandler = (
 
   const handleSessionStream = (payload: unknown): void => {
     if (!isStreamPayload(payload)) {
+      logCoreBridgeDiagnostic("server-message:invalid-payload", {
+        type: "session:stream",
+      });
       return;
     }
     notify({
@@ -139,6 +157,9 @@ export const createServerMessageHandler = (
 
   const handleSessionModelUpdate = (payload: unknown): void => {
     if (!isModelUpdatePayload(payload)) {
+      logCoreBridgeDiagnostic("server-message:invalid-payload", {
+        type: "session:model:update",
+      });
       return;
     }
     notify({
@@ -163,6 +184,9 @@ export const createServerMessageHandler = (
   const handleSessionError = (payload: unknown): void => {
     const normalized = sanitizeSessionErrorPayload(payload);
     if (!normalized) {
+      logCoreBridgeDiagnostic("server-message:invalid-payload", {
+        type: "session:error",
+      });
       return;
     }
 
@@ -190,6 +214,9 @@ export const createServerMessageHandler = (
     "session:binding": (payload) => {
       const normalized = sanitizeSessionBindingPayload(payload);
       if (!normalized) {
+        logCoreBridgeDiagnostic("server-message:invalid-payload", {
+          type: "session:binding",
+        });
         return;
       }
       notify({

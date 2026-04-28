@@ -1,4 +1,5 @@
 import type { SessionRecord } from "../../../../types/session";
+import { logCoreBridgeDiagnostic } from "./core-bridge-logger";
 import type { CoreBridgeConfig } from "./types";
 
 type HistoryNotifier = (payload: {
@@ -17,6 +18,10 @@ const fetchSessionHistory = async (
       { method: "GET" }
     );
     if (!response.ok) {
+      logCoreBridgeDiagnostic("session-history:http-error", {
+        sessionId,
+        status: response.status,
+      });
       return;
     }
     const data = (await response.json()) as {
@@ -30,8 +35,11 @@ const fetchSessionHistory = async (
       sessionId: historySessionId,
       messages,
     });
-  } catch {
-    // Ignore individual history fetch failures.
+  } catch (error) {
+    logCoreBridgeDiagnostic("session-history:fetch-failed", {
+      error,
+      sessionId,
+    });
   }
 };
 
