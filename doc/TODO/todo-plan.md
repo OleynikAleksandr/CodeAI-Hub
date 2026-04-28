@@ -56,13 +56,13 @@
 1. [DONE] Сделать `ProjectManagerApi.connect()` idempotent для `OPEN`/`CONNECTING`, добавить intentional `disconnect()` и cleanup из `MainLayout`; scope: `src/client/project-manager/api.ts`, `src/client/project-manager/services/project-manager-api-lifecycle.ts`, `src/client/project-manager/components/layout/main-layout.tsx`; expected commit message: `fix: harden project manager websocket lifecycle`
 2. [DONE] Git Commit: `fix: harden project manager websocket lifecycle` (hash: `09432d779`)
 3. [DONE] Добавить/обновить PM lifecycle regression coverage без расширения runtime surface; scope: `src/client/project-manager/services/project-manager-api-lifecycle.ts`, `src/client/project-manager/services/project-manager-api-lifecycle.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket lifecycle`
-4. [IN_PROGRESS] Git Commit: `test: cover project manager websocket lifecycle` (hash: TBD)
+4. [DONE] Git Commit: `test: cover project manager websocket lifecycle` (hash: `a8ff9d8b0`)
 
 ### Stream: Project Manager Incoming Message Validation
-5. [TODO] Ввести PM-side parser/type guards для incoming Core WS messages и заменить прямой `JSON.parse(...) as IncomingMessage`; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/api.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: validate project manager websocket messages`
-6. [TODO] Git Commit: `fix: validate project manager websocket messages` (hash: TBD)
-7. [TODO] Покрыть PM parser malformed JSON / malformed payload / accepted known message cases; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/services/core-stream-message-validator.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket validation`
-8. [TODO] Git Commit: `test: cover project manager websocket validation` (hash: TBD)
+5. [DONE] Ввести PM-side parser/type guards для incoming Core WS messages и заменить прямой `JSON.parse(...) as IncomingMessage`; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/api.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix: validate project manager websocket messages`
+6. [DONE] Git Commit: `fix: validate project manager websocket messages` (hash: `94ef9e9ff`)
+7. [DONE] Покрыть PM parser malformed JSON / malformed payload / accepted known message cases; scope: `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/services/core-stream-message-validator.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover project manager websocket validation`
+8. [IN_PROGRESS] Git Commit: `test: cover project manager websocket validation` (hash: TBD)
 
 ### Stream: Core Incoming Command Validation
 9. [TODO] Ввести Core-side incoming WS command parser перед router dispatch; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix: validate core websocket commands`
