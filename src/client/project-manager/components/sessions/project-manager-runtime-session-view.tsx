@@ -5,7 +5,7 @@ import { api } from "../../api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
-import { applyBindingToSessionSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, resolveSessionThinkingDisplayEnabled, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { applyBindingToSessionSnapshot, applySessionModelBindingToSnapshot, buildProviderLabels, createInitialSnapshot, mergeCatalog, mergeHistoryIntoSnapshots, removeSnapshot, resolveSessionThinkingDisplayEnabled, type ProviderCatalog, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
 import { useSettingsModelsSync } from "../../../ui/src/app-host/use-settings-models-sync";
 import SessionView from "../../../ui/src/session/session-view";
@@ -138,9 +138,17 @@ const ProjectManagerRuntimeSessionView = ({
       setSnapshots((previous) => {
         const existing = previous[session.id];
         if (existing) {
+          const withBinding = applyBindingToSessionSnapshot(
+            existing,
+            session.binding
+          );
           return {
             ...previous,
-            [session.id]: applyBindingToSessionSnapshot(existing, session.binding),
+            [session.id]: applySessionModelBindingToSnapshot(
+              withBinding,
+              session,
+              settings
+            ),
           };
         }
         return {

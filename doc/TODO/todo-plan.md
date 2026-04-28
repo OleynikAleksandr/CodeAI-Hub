@@ -63,11 +63,11 @@
 
 ### Stream: Shared UI ModelInfo
 15. [DONE] Расширить `SessionRecord`/`ModelInfo` binding source и builder fallback — scope: `src/types/session.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/ui/src/session/model-info-builder.test.ts`; expected commit message: `feat: display session-bound model identity`.
-16. [IN_PROGRESS] Git Commit: `feat: display session-bound model identity` (hash: TBD)
+16. [DONE] Git Commit: `feat: display session-bound model identity` (hash: `bd4c1e83d`)
 
 ### Stream: Snapshot Seeding
-17. [TODO] Сделать initial snapshots binding-first в runtime/dialog controllers — scope: `src/client/ui/src/session/helpers.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit message: `feat: seed session snapshots from model binding`.
-18. [TODO] Git Commit: `feat: seed session snapshots from model binding` (hash: TBD)
+17. [DONE] Сделать initial snapshots binding-first в runtime/dialog controllers — scope: `src/client/ui/src/session/helpers.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit message: `feat: seed session snapshots from model binding`.
+18. [IN_PROGRESS] Git Commit: `feat: seed session snapshots from model binding` (hash: TBD)
 
 ### Stream: Settings Sync Guard
 19. [TODO] Запретить `useSettingsModelsSync` переписывать bound/runtime sessions после изменения Settings — scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; expected commit message: `fix: keep settings sync from rewriting bound session models`.
