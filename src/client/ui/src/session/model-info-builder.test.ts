@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { ClaudeThinkingEffort } from "../../../../types/claude-model-registry";
 import { createDefaultSettings } from "../components/settings/settings-state-model";
-import { buildModelInfo } from "./model-info-builder";
+import {
+  buildModelInfo,
+  buildModelInfoFromBinding,
+} from "./model-info-builder";
 
 test("buildModelInfo uses Claude thinking effort from settings when no runtime override exists", () => {
   const settings = createDefaultSettings();
@@ -35,4 +38,21 @@ test("buildModelInfo preserves explicit Claude effective reasoning identity", ()
 
   assert.equal(modelInfo.modelDisplayName, "Sonnet");
   assert.equal(modelInfo.reasoning, "max");
+});
+
+test("buildModelInfoFromBinding marks session-scoped identity as binding-owned", () => {
+  const modelInfo = buildModelInfoFromBinding(
+    {
+      providerId: "codexCli",
+      baseModelId: "gpt-5.3-codex",
+      modelId: "gpt-5.3-codex reasoning:xhigh",
+      reasoningEffort: "xhigh",
+    },
+    createDefaultSettings()
+  );
+
+  assert.equal(modelInfo.modelId, "gpt-5.3-codex reasoning:xhigh");
+  assert.equal(modelInfo.modelDisplayName, "GPT 5.3 Codex");
+  assert.equal(modelInfo.reasoning, "xhigh");
+  assert.equal(modelInfo.source, "binding");
 });

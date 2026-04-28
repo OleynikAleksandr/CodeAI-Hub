@@ -57,13 +57,13 @@
 
 ### Stream: Explicit Switch Path
 13. [DONE] Сделать `switch_model` явной mutation path для session binding и сохранить effective broadcast contract — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit message: `feat: route model switches through session binding`.
-14. [IN_PROGRESS] Git Commit: `feat: route model switches through session binding` (hash: TBD)
+14. [DONE] Git Commit: `feat: route model switches through session binding` (hash: `a66d62a1f`)
 
 ## Phase 3 — PM/UI Binding Display (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Shared UI ModelInfo
-15. [TODO] Расширить `SessionRecord`/`ModelInfo` binding source и builder fallback — scope: `src/types/session.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/ui/src/session/model-info-builder.test.ts`; expected commit message: `feat: display session-bound model identity`.
-16. [TODO] Git Commit: `feat: display session-bound model identity` (hash: TBD)
+15. [DONE] Расширить `SessionRecord`/`ModelInfo` binding source и builder fallback — scope: `src/types/session.ts`, `src/client/ui/src/session/model-info-builder.ts`, `src/client/ui/src/session/model-info-builder.test.ts`; expected commit message: `feat: display session-bound model identity`.
+16. [IN_PROGRESS] Git Commit: `feat: display session-bound model identity` (hash: TBD)
 
 ### Stream: Snapshot Seeding
 17. [TODO] Сделать initial snapshots binding-first в runtime/dialog controllers — scope: `src/client/ui/src/session/helpers.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; expected commit message: `feat: seed session snapshots from model binding`.
