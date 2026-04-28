@@ -27,6 +27,7 @@ interface TemplateSyncResult {
 interface TemplateSyncStateRecord {
   readonly bundledHash?: string;
   readonly destinationRelativePath: string;
+  readonly dismissedBundledHash?: string;
   readonly incomingRelativePath?: string;
   readonly pendingBundledHash?: string;
   readonly updatedAt: string;
@@ -182,13 +183,19 @@ export class TemplateSyncService {
 
     const existingHash =
       normalizedExisting === null ? null : hashContent(normalizedExisting);
-    const previousBundledHash = state.templates[source.id]?.bundledHash;
+    const existingStateRecord = state.templates[source.id];
+    const previousBundledHash = existingStateRecord?.bundledHash;
     const isUserModified =
       existingHash !== null &&
       (!previousBundledHash || existingHash !== previousBundledHash);
 
     try {
       if (isUserModified) {
+        if (existingStateRecord?.dismissedBundledHash === bundledHash) {
+          this.recordDismissedTemplate(state, source, existingStateRecord);
+          return { id: source.id, path: destinationPath, outcome: "preserved" };
+        }
+
         const incomingRelativePath = await this.preserveIncomingTemplate(
           home,
           source,
@@ -328,6 +335,19 @@ export class TemplateSyncService {
       destinationRelativePath: source.destinationRelativePath,
       incomingRelativePath,
       pendingBundledHash,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  private recordDismissedTemplate(
+    state: TemplateSyncStateFile,
+    source: BundledTemplateSource,
+    previous: TemplateSyncStateRecord
+  ): void {
+    state.templates[source.id] = {
+      bundledHash: previous.bundledHash,
+      destinationRelativePath: source.destinationRelativePath,
+      dismissedBundledHash: previous.dismissedBundledHash,
       updatedAt: new Date().toISOString(),
     };
   }

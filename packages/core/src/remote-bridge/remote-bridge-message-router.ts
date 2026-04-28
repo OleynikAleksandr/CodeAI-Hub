@@ -116,6 +116,14 @@ export class RemoteBridgeMessageRouter {
       case "settings:open-user-glossary-file":
         await this.deps.settingsHandler.handleOpenUserGlossaryFile();
         break;
+      case "settings:template-updates":
+        await this.deps.settingsHandler.handleListTemplateUpdates();
+        break;
+      case "settings:template-update:resolve":
+        await this.deps.settingsHandler.handleResolveTemplateUpdate(
+          incoming.payload
+        );
+        break;
       case "settings:native-request-capture":
         await this.handleNativeRequestCapture(clientId, incoming.payload);
         break;

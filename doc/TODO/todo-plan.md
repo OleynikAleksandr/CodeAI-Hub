@@ -62,9 +62,9 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 ### Stream: Template Sync Safety
 
 1. [DONE] Add template sync state, bundled-content hashing, user-modified detection, and `.incoming/<version>/...` preservation for changed bundled templates (scope: `packages/core/src/templates/template-sync-service.ts`, `packages/core/src/templates/template-sync-service.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: preserve user-modified templates`)
-2. [IN_PROGRESS] Git Commit: `feat: preserve user-modified templates` (hash: TBD)
-3. [TODO] Add backup + explicit resolution actions for pending template updates, keeping flags/tools unavailable to user templates (scope: `packages/core/src/templates/*`, `packages/core/src/remote-bridge/*`; commit: `feat: add template update resolution actions`)
-4. [TODO] Git Commit: `feat: add template update resolution actions` (hash: TBD)
+2. [DONE] Git Commit: `feat: preserve user-modified templates` (hash: `585a3f9fd`)
+3. [DONE] Add backup + explicit resolution actions for pending template updates, keeping flags/tools unavailable to user templates (scope: `packages/core/src/templates/*`, `packages/core/src/remote-bridge/*`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit: `feat: add template update resolution actions`)
+4. [IN_PROGRESS] Git Commit: `feat: add template update resolution actions` (hash: TBD)
 
 ### Stream: Invocation Instruction Templates
 

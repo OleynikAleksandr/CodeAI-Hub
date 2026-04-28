@@ -51,3 +51,33 @@ test("RemoteBridgeMessageRouter exposes native request capture command and resul
     "bridge event contract must include capture result"
   );
 });
+
+test("RemoteBridgeMessageRouter exposes template update commands and results", async () => {
+  const [routerSource, typesSource] = await Promise.all([
+    readFile(ROUTER_SOURCE_PATH, "utf8"),
+    readFile(TYPES_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    routerSource.includes('case "settings:template-updates":'),
+    true,
+    "message router must handle template update listing"
+  );
+  assert.equal(
+    routerSource.includes('case "settings:template-update:resolve":'),
+    true,
+    "message router must handle template update resolution"
+  );
+  assert.equal(
+    typesSource.includes('readonly type: "settings:template-updates"'),
+    true,
+    "incoming bridge contract must include template update listing"
+  );
+  assert.equal(
+    typesSource.includes(
+      'readonly type: "settings:template-update:resolve:result"'
+    ),
+    true,
+    "bridge event contract must include template update resolution result"
+  );
+});

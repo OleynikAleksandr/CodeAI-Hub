@@ -4,6 +4,11 @@ import type { NativeRequestCaptureProviderId } from "../provider-network-capture
 import type { ProviderRegistry } from "../provider-registry";
 import type { WorkspaceProject } from "../services/project-registry/types";
 import type { RuntimeStatusEvent } from "../status/runtime-status-reporter";
+import type {
+  PendingTemplateUpdate,
+  TemplateUpdateResolutionRequest,
+  TemplateUpdateResolutionResult,
+} from "../templates/template-update-resolution-service";
 import type { CommandErrorPayload } from "../workspace-runtime/workspace-wire-types";
 import type {
   SerializedSession,
@@ -209,6 +214,17 @@ type CoreBridgeEvent =
       };
     }
   | {
+      readonly type: "settings:template-updates:result";
+      readonly payload: {
+        readonly error?: string | null;
+        readonly updates: readonly PendingTemplateUpdate[];
+      };
+    }
+  | {
+      readonly type: "settings:template-update:resolve:result";
+      readonly payload: TemplateUpdateResolutionResult;
+    }
+  | {
       readonly type: "settings:native-request-capture:result";
       readonly payload: NativeRequestCaptureCommandResult;
     }
@@ -318,6 +334,11 @@ type CoreIncomingMessage =
         readonly provider: "claude" | "codex" | "gemini";
         readonly target: "cli" | "core" | "sdk";
       };
+    }
+  | { readonly type: "settings:template-updates" }
+  | {
+      readonly type: "settings:template-update:resolve";
+      readonly payload: TemplateUpdateResolutionRequest;
     }
   | { readonly type: "settings:open-user-glossary-file" };
 

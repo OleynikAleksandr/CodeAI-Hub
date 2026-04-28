@@ -4,6 +4,11 @@ import {
 } from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
+import { TemplateSyncFacade } from "../../templates/template-sync-facade";
+import type {
+  PendingTemplateUpdate,
+  TemplateUpdateResolutionRequest,
+} from "../../templates/template-update-resolution-service";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 import type { BridgeEvent } from "../types";
 import { SettingsLoadedBroadcaster } from "./settings-loaded-broadcaster";
@@ -26,6 +31,7 @@ export class SettingsRequestHandler {
   private readonly settingsLoadedBroadcaster: SettingsLoadedBroadcaster;
   private readonly settingsPersistenceService: SettingsPersistenceService;
   private readonly settingsProviderVersionService: SettingsProviderVersionService;
+  private readonly templateSyncFacade: TemplateSyncFacade;
 
   constructor(options: {
     readonly broadcaster: (event: BridgeEvent) => void;
@@ -47,6 +53,7 @@ export class SettingsRequestHandler {
       logger: options.logger,
     });
     this.settingsProviderVersionService = new SettingsProviderVersionService();
+    this.templateSyncFacade = new TemplateSyncFacade(options.logger);
   }
 
   async handleSave(settings: unknown): Promise<void> {
@@ -139,6 +146,38 @@ export class SettingsRequestHandler {
     }
   }
 
+  async handleListTemplateUpdates(): Promise<void> {
+    try {
+      this.broadcastTemplateUpdates(
+        await this.templateSyncFacade.listPendingUpdates()
+      );
+    } catch (error) {
+      this.broadcastTemplateUpdatesError(toErrorMessage(error));
+    }
+  }
+
+  async handleResolveTemplateUpdate(
+    request: TemplateUpdateResolutionRequest
+  ): Promise<void> {
+    try {
+      this.broadcaster({
+        type: "settings:template-update:resolve:result",
+        payload: await this.templateSyncFacade.resolvePendingUpdate(request),
+      });
+    } catch (error) {
+      this.broadcaster({
+        type: "settings:template-update:resolve:result",
+        payload: {
+          action: request.action,
+          id: request.id,
+          pendingUpdates: [],
+          status: "error",
+          error: toErrorMessage(error),
+        },
+      });
+    }
+  }
+
   private async publishSaved(result: SettingsWriteResult): Promise<void> {
     if (result.syncMode === "strict") {
       this.broadcastLocalizationSyncStatus({
@@ -202,6 +241,22 @@ export class SettingsRequestHandler {
     this.broadcaster({
       type: "settings:user-glossary-file",
       payload: { error, path: null },
+    });
+  }
+
+  private broadcastTemplateUpdates(
+    updates: readonly PendingTemplateUpdate[]
+  ): void {
+    this.broadcaster({
+      type: "settings:template-updates:result",
+      payload: { updates },
+    });
+  }
+
+  private broadcastTemplateUpdatesError(error: string): void {
+    this.broadcaster({
+      type: "settings:template-updates:result",
+      payload: { error, updates: [] },
     });
   }
 }
