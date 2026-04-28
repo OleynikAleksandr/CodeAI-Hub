@@ -47,9 +47,9 @@
 
 ### Stream: Session Creation
 7. [DONE] Протянуть explicit model selection из `session:create` до bootstrap options — scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-types.ts`; expected commit message: `feat: pass session model selection through create`.
-8. [IN_PROGRESS] Git Commit: `feat: pass session model selection through create` (hash: TBD)
-9. [TODO] Создать session model binding в shell factory до `session:created` broadcast — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`; expected commit message: `feat: bind model during session creation`.
-10. [TODO] Git Commit: `feat: bind model during session creation` (hash: TBD)
+8. [DONE] Git Commit: `feat: pass session model selection through create` (hash: `10fde8e43`)
+9. [DONE] Создать session model binding в shell factory до `session:created` broadcast — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts`, `packages/core/src/remote-bridge/handlers/session-shell-factory.ts`; expected commit message: `feat: bind model during session creation`.
+10. [IN_PROGRESS] Git Commit: `feat: bind model during session creation` (hash: TBD)
 
 ### Stream: Applied Turn Config
 11. [TODO] Перевести outbound applied turn config на session-bound identity вместо live Settings для существующих сессий — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `feat: use session-bound model for turns`.
