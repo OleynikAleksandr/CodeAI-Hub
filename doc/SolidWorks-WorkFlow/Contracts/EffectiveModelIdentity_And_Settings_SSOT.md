@@ -3,7 +3,7 @@
 **Status:** Implemented on `main`
 **Updated:** 2026-04-28
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.1.854`)
+**Validated on:** `main` (`v1.2.101`)
 
 ---
 
@@ -30,6 +30,7 @@
 
 - resolution effective identity из explicit selection / persisted settings snapshot into `session.modelBinding`;
 - creation, serialization and mutation of session-scoped model binding;
+- persistence and inheritance of bound identity across continuity restore and threshold-created continuation sessions;
 - delivery applied turn config от Core к provider modules;
 - runtime/UI sync для label/model display;
 - provider-specific last-mile adaptation без локального ownership над identity.
@@ -39,7 +40,7 @@
 
 - provider-native raw reasoning stream shape;
 - UI layout;
-- session continuity rollout mechanics;
+- session continuity rollout scheduling mechanics beyond preserving bound identity;
 - translation/localization logic;
 - provider process startup flag implementation details;
 - provider debugging telemetry beyond applied identity semantics.
@@ -86,6 +87,10 @@ Allowed purposes are only `workflow-agent` and `translation`. `diagnostic` is no
 
 Frozen logical-session identity snapshot. It contains provider id, effective `modelId`, optional `baseModelId`, reasoning/thinking metadata and timestamps. Core creates it before `session:created` from explicit create selection or Settings defaults, serializes it with `Session`, and uses it for existing turns. The only normal mutation path is explicit `switch_model`.
 
+### 3.7. Continuity-inherited binding
+
+Clone of an existing `session.modelBinding` assigned to a restored or threshold-created continuation session. The clone keeps provider id, effective `modelId`, optional `baseModelId`, reasoning/thinking metadata and display identity, but receives a new session key and `source = "continuity_inherited"`. It must not be recomputed from current Settings defaults.
+
 ---
 
 ## 4. Runtime Contract
@@ -96,6 +101,8 @@ Core обязана вычислять effective turn config through the session
 
 - new session: resolve `session.modelBinding` from explicit selection or `~/.codeai-hub/settings/settings.json`;
 - existing session: read identity from serialized `Session.modelBinding`;
+- restored session: hydrate identity from continuity index/segment `modelBinding`;
+- threshold-created continuation session: clone the previous binding as a continuity-inherited binding;
 - explicit switch: replace `Session.modelBinding` and broadcast the updated effective identity.
 
 Core then:
@@ -132,13 +139,23 @@ Project Manager и shared UI должны отображать applied config, �
 - `useSettingsModelsSync()` may refresh settings-owned snapshots only; it must preserve `binding` and `runtime` model sources.
 - display logic не восстанавливает `reasoning/thinking` из локального speculation path.
 
-### 4.4. Provider-specific examples
+### 4.4. Continuity binding persistence
+
+Session continuity must preserve the model chosen at logical session start:
+
+- outbound user turns store the current `session.modelBinding` into continuity segment/index data;
+- dialog list and materialized runtime placeholders include the persisted binding before provider hydration;
+- post-threshold rollover uses the previous session binding as the inherited binding for the new provider session;
+- SDK `model_info` events may confirm compatible runtime state, but an unbound SDK/base-model event must not replace a binding-owned identity;
+- changing Settings after a session starts can affect only future new sessions, not restored dialogs, existing sessions, or continuation sessions created by `Remaining context threshold (%)`.
+
+### 4.5. Provider-specific examples
 
 - **Codex**: `reasoningByModel` may require per-turn thread refresh, but the refresh still consumes Core-applied identity.
 - **Gemini**: `thinking` входит в effective identity; `gpt-5.3-codex reasoning:xhigh` и `gpt-5.3-codex reasoning:high` are different runtime identities.
 - **Claude**: `thinking` off remains `sonnet thinking:off`, while enabled Claude turns now expose explicit effort through identities such as `sonnet reasoning:high` and `sonnet reasoning:max`; this is how Session UI learns that the next Claude turn will use a different effort level.
 
-### 4.5. Model invocation profile compatibility
+### 4.6. Model invocation profile compatibility
 
 Effective model identity answers "what model/effective reasoning will the next turn use". `ModelInvocationProfile` answers "under which provider process/session/turn envelope will it run". Core must keep these boundaries explicit.
 
@@ -169,6 +186,9 @@ Runtime rules:
 12. In-turn model switching must be filtered by process/session profile compatibility.
 13. User-editable invocation templates may change instruction text only, never flags, tools, sandbox, or approval policy.
 14. Live Settings saves must not rewrite existing bound/runtime session labels or outbound identities.
+15. Continuity restore must hydrate `session.modelBinding` from persisted continuity data before the next user turn.
+16. Threshold-created continuation sessions must inherit the previous binding and must not resolve current Settings defaults.
+17. Unbound runtime/model SDK events must not overwrite an existing binding-owned UI/runtime identity.
 
 ---
 
@@ -183,11 +203,19 @@ Runtime rules:
   - `packages/core/src/session-model-binding/session-model-binding-facade.ts`
   - `packages/core/src/session-model-binding/session-model-binding-resolver.ts`
   - `packages/core/src/session-manager/index.ts`
+- Core continuity binding persistence:
+  - `packages/core/src/session-continuity/continuity-types.ts`
+  - `packages/core/src/session-continuity/continuity-tracker.ts`
+  - `packages/core/src/session-continuity/index-registry.ts`
+  - `packages/core/src/session-continuity/session-continuity-facade.ts`
 - Core model invocation profiles:
   - `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`
 - Core outbound bridge:
   - `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-rollover.ts`
+  - `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`
+  - `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`
   - `packages/core/src/remote-bridge/types.ts`
 - Provider adapters:
   - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (consumes the applied-turn-config envelope under `CODEX_APPLIED_TURN_CONFIG_KEY` on `thread/start` / `thread/resume` / `turn/start`)

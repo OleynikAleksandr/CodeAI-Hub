@@ -66,8 +66,8 @@
 
 ### Stream: Prove behavior and document final contract
 1. [DONE] Add regression coverage for two same-provider sessions with different Settings defaults, Settings change isolation, and restored dialog binding; scope: `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test: cover persistent session model binding regressions`.
-2. [DONE] Git Commit: `test: cover persistent session model binding regressions` (hash: TBD)
-3. [TODO] Update canonical SSOT for persistent binding contract; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `docs: document persistent session model binding`.
+2. [DONE] Git Commit: `test: cover persistent session model binding regressions` (hash: `bbdb98422`)
+3. [DONE] Update canonical SSOT for persistent binding contract; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `docs: document persistent session model binding`.
 4. [TODO] Git Commit: `docs: document persistent session model binding` (hash: TBD)
 5. [TODO] Run targeted verification and record results in this plan; scope: package `@codeai-hub/core`, package `webview`, package `project-manager`; expected commit: `test: verify persistent session model binding scope`.
 6. [TODO] Git Commit: `test: verify persistent session model binding scope` (hash: TBD)
