@@ -93,6 +93,10 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - `workflow-state-store` — singleton внутри browser runtime, чтобы `MainArea` и соседние subscribers не плодили независимые workflow polling loops;
   - для workflow state/events normal cadence разрешена только в `foreground`, `background` замедляется до `30s`, `hidden` паркует polling до возврата окна и делает immediate catch-up при возврате в `foreground`;
   - artifact availability и diagram progress probes используют тот же `foreground/background/hidden` режим и не должны продолжать frequent polling у скрытого окна.
+- PM WebSocket runtime boundary:
+  - `ProjectManagerApi.connect()` обязан быть idempotent для уже `OPEN`/`CONNECTING` socket state, чтобы React remount/recovery path не плодил параллельные Core stream sockets;
+  - `ProjectManagerApi.disconnect()` — intentional lifecycle cleanup для unmount/window teardown; он закрывает socket, сбрасывает reconnect timer, снимает window-message listener и не должен планировать новый reconnect после intentional disconnect;
+  - incoming Core stream frames проходят через `src/client/project-manager/services/core-stream-message-validator.ts` до dispatch в PM handlers. Invalid JSON, malformed known payloads and non-object envelopes reject at the boundary; unknown structurally valid event names remain forward-compatible and do not crash the runtime.
 
 Канон: `DescriptionStep_SingleAgent.md`, `ProjectManager_DescriptionEntry_CopyRefactor.md`.
 

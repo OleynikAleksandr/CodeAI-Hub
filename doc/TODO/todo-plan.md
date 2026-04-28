@@ -120,13 +120,13 @@
 11. [DONE] Добавить/обновить lightweight coverage для runtime factory construction if feasible; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover session runtime wiring`
 12. [DONE] Git Commit: `test: cover session runtime wiring` (hash: `722d90674`)
 13. [DONE] Закрыть Phase 3 таргетными сборками UI/Core/Gemini; scope: UI bundle, Core package, Gemini module; expected commit message: `chore: verify listener and diagnostics remediation`
-14. [IN_PROGRESS] Git Commit: `chore: verify listener and diagnostics remediation` (hash: TBD)
+14. [DONE] Git Commit: `chore: verify listener and diagnostics remediation` (hash: `ed7653ecf`)
 
 ## Phase 4 — SSOT Closeout Before Release (owner: Codex, updated: 2026-04-28)
 
 ### Stream: Documentation Synchronization
-1. [TODO] Сверить System/Cluster SSOT с фактической реализацией remediation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `docs: document runtime stability remediation`
-2. [TODO] Git Commit: `docs: document runtime stability remediation` (hash: TBD)
+1. [DONE] Сверить System/Cluster SSOT с фактической реализацией remediation scope; scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `docs: document runtime stability remediation`
+2. [IN_PROGRESS] Git Commit: `docs: document runtime stability remediation` (hash: TBD)
 3. [TODO] Сверить Module SSOT provider/UI updates with implemented behavior; scope: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Gemini.md`; expected commit message: `docs: sync provider and ui stability contracts`
 4. [TODO] Git Commit: `docs: sync provider and ui stability contracts` (hash: TBD)
 5. [TODO] Сверить Claude docs and Docs Index references, keeping active planning-doc visible until archive; scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: sync runtime remediation navigation`
