@@ -4,7 +4,18 @@ import { homedir } from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import type { ModuleReporter } from "../../types";
+import {
+  CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS,
+  type CodexAppServerProcessProfile,
+  type CodexAppServerProcessProfileKey,
+  resolveCodexAppServerProcessProfile,
+} from "./codex-app-server-process-profile";
 import { materializeCodexProviderHomeSummaryConfig } from "./codex-provider-home-config";
+
+export {
+  CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+  resolveCodexAppServerProcessProfile,
+} from "./codex-app-server-process-profile";
 
 interface JsonRpcError {
   readonly code?: number;
@@ -33,29 +44,8 @@ interface JsonRpcLogRecord {
 type JsonRpcLine = JsonRpcNotification | JsonRpcResponse | JsonRpcLogRecord;
 
 const CODEX_EXECUTABLE = process.platform === "win32" ? "codex.cmd" : "codex";
-export const CODEAI_CODEX_APP_SERVER_ARGS = [
-  "app-server",
-  "--disable",
-  "multi_agent",
-  "--disable",
-  "browser_use",
-  "--disable",
-  "in_app_browser",
-  "--disable",
-  "computer_use",
-  "--disable",
-  "image_generation",
-  "--disable",
-  "plugins",
-  "--disable",
-  "apps",
-  "--disable",
-  "tool_search",
-  "-c",
-  "mcp_servers.codex.enabled=false",
-  "-c",
-  "mcp_servers.playwright.enabled=false",
-] as const;
+export const CODEAI_CODEX_APP_SERVER_ARGS =
+  CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS;
 // Common user-level install locations for the `codex` CLI. Core inherits PATH
 // from its parent (VS Code extension host) which on macOS GUI apps often ships
 // without the user's npm-global / Homebrew directories even when the shell
@@ -153,17 +143,24 @@ const extractResponseError = (response: JsonRpcResponse): Error | null => {
 
 interface CodexAppServerProcessOptions {
   readonly environment?: Readonly<Record<string, string>>;
+  readonly processProfileKey?: CodexAppServerProcessProfileKey;
   readonly reporter?: ModuleReporter;
 }
 
 const isProcessOptions = (
   value: ModuleReporter | CodexAppServerProcessOptions | undefined
 ): value is CodexAppServerProcessOptions =>
-  Boolean(value && ("environment" in value || "reporter" in value));
+  Boolean(
+    value &&
+      ("environment" in value ||
+        "processProfileKey" in value ||
+        "reporter" in value)
+  );
 
 export class CodexAppServerProcess {
   private child: ChildProcessWithoutNullStreams | null = null;
   private readonly environment: Readonly<Record<string, string>>;
+  private readonly processProfile: CodexAppServerProcessProfile;
   private stdoutReader: readline.Interface | null = null;
   private readonly notificationListeners = new Set<
     (notification: {
@@ -187,6 +184,9 @@ export class CodexAppServerProcess {
     this.environment = isProcessOptions(options)
       ? (options.environment ?? {})
       : {};
+    this.processProfile = resolveCodexAppServerProcessProfile(
+      isProcessOptions(options) ? options.processProfileKey : undefined
+    );
   }
 
   async start(): Promise<void> {
@@ -246,15 +246,19 @@ export class CodexAppServerProcess {
 
   private async startInternal(): Promise<void> {
     const providerCodexHome = await prepareProviderCodexHome();
-    const child = spawn(CODEX_EXECUTABLE, [...CODEAI_CODEX_APP_SERVER_ARGS], {
-      env: {
-        ...process.env,
-        ...this.environment,
-        CODEX_HOME: providerCodexHome,
-        PATH: buildAugmentedPath(this.environment.PATH),
-      },
-      stdio: ["pipe", "pipe", "pipe"],
-    });
+    const child = spawn(
+      CODEX_EXECUTABLE,
+      [...this.processProfile.appServerArgs],
+      {
+        env: {
+          ...process.env,
+          ...this.environment,
+          CODEX_HOME: providerCodexHome,
+          PATH: buildAugmentedPath(this.environment.PATH),
+        },
+        stdio: ["pipe", "pipe", "pipe"],
+      }
+    );
     this.child = child;
     this.attachProcessHandlers(child);
     await this.initializeHandshake();

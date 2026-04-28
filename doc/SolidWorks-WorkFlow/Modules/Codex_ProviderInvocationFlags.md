@@ -20,6 +20,8 @@ This document records the actual CodeAI Hub Codex invocation surface that shapes
 
 Normal runtime and Codex native request capture both start the same long-lived App Server executable:
 
+Current process profile key: `codex:workflow-documentation`. The old `CODEAI_CODEX_APP_SERVER_ARGS` export is a compatibility alias for this profile's `appServerArgs`.
+
 ```text
 codex app-server
   --disable multi_agent
