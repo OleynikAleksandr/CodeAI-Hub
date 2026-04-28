@@ -68,9 +68,9 @@
 9. [DONE] Ввести Core-side incoming WS command parser перед router dispatch; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix: validate core websocket commands`
 10. [DONE] Git Commit: `fix: validate core websocket commands` (hash: `67ab20130`)
 11. [DONE] Покрыть Core validation/rejection path в WebSocketManager tests; scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `test: cover core websocket command validation`
-12. [IN_PROGRESS] Git Commit: `test: cover core websocket command validation` (hash: TBD)
-13. [TODO] Закрыть Phase 1 таргетными проверками `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`; scope: UI bundle, Core package, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify websocket hardening`
-14. [TODO] Git Commit: `chore: verify websocket hardening` (hash: TBD)
+12. [DONE] Git Commit: `test: cover core websocket command validation` (hash: `d8e9f40ed`)
+13. [DONE] Закрыть Phase 1 таргетными проверками `npm run build:webview`, `npm run typecheck:webview`, `npm run build --workspace @codeai-hub/core`; scope: UI bundle, Core package, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify websocket hardening`
+14. [IN_PROGRESS] Git Commit: `chore: verify websocket hardening` (hash: TBD)
 
 ## Phase 2 — Settings Snapshot Caching (owner: Codex, updated: 2026-04-28)
 
