@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { ModelInvocationProfileResolver } from "../model-invocation/model-invocation-profile-resolver";
 import type {
   ProviderAdapter,
   ProviderNativeRequestCaptureOptions,
@@ -27,6 +28,7 @@ const PROVIDER_DIAGNOSTIC_CONTEXT_SECTION_PATTERN =
   /Provider Diagnostic Context/;
 const TRANSLATION_PROMPT_LENGTH_PATTERN = /"promptLength":0/;
 const TRANSLATION_PURPOSE_METADATA_PATTERN = /"purpose":"translation"/;
+const WORKFLOW_PROMPT_LEAK_PATTERN = /workflow prompt must not reach provider/;
 
 const createNoopAdapter = (): ProviderAdapter => ({
   closeSession: () => Promise.resolve(),
@@ -100,6 +102,13 @@ const createCodexCapturedRequest = (
   target: "chatgpt.com:443",
   timestamp: "2026-04-24T10:00:00.000Z",
 });
+
+const parseJsonlRecords = (jsonl: string): readonly Record<string, unknown>[] =>
+  jsonl
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => JSON.parse(line) as Record<string, unknown>);
 
 test("NativeRequestCaptureFacade returns provider_not_supported for missing adapter method", async () => {
   assert.equal(isNativeRequestCaptureProviderId("claude"), true);
@@ -226,6 +235,15 @@ test("NativeRequestCaptureFacade routes translation scenario as translation purp
     readonly scenarioId?: string | null;
     readonly targetModelId?: string | null;
   } | null = null;
+  let resolvedInvocationProfile: {
+    readonly omitSummary: boolean;
+    readonly persistExtendedHistory: boolean;
+    readonly processProfileKey: string;
+    readonly sessionProfileKey: string;
+    readonly summary?: string | null;
+    readonly toolProfileKey: string;
+  } | null = null;
+  const modelInvocationResolver = new ModelInvocationProfileResolver();
   const facade = new NativeRequestCaptureFacade({
     captureIdFactory: () => "capture-translation-scenario-test",
     outputDir,
@@ -235,6 +253,19 @@ test("NativeRequestCaptureFacade routes translation scenario as translation purp
     },
     resolveAppliedTurnConfig: (options) => {
       resolverOptions = options;
+      const profile = modelInvocationResolver.resolve({
+        modelId: options.targetModelId ?? "gpt-5.4-mini",
+        providerId: "codex",
+        purpose: options.invocationPurpose,
+      });
+      resolvedInvocationProfile = {
+        omitSummary: profile.turnProfile.omitSummary ?? false,
+        persistExtendedHistory: profile.sessionProfile.persistExtendedHistory,
+        processProfileKey: profile.processProfile.processProfileKey,
+        sessionProfileKey: profile.sessionProfile.sessionProfileKey,
+        summary: profile.turnProfile.summary,
+        toolProfileKey: profile.processProfile.toolProfileKey,
+      };
       return {
         modelId: options.targetModelId ?? undefined,
         providerId: options.providerId,
@@ -304,8 +335,21 @@ test("NativeRequestCaptureFacade routes translation scenario as translation purp
     scenarioId: "translation",
     targetModelId: "gpt-5.4-mini",
   });
+  assert.deepEqual(resolvedInvocationProfile, {
+    omitSummary: false,
+    persistExtendedHistory: false,
+    processProfileKey: "codex:translation",
+    sessionProfileKey: "codex:translation",
+    summary: "none",
+    toolProfileKey: "codex:translation-tools-minimal",
+  });
   const capturedOptions = adapter.providerOptions[0];
   assert.ok(capturedOptions);
+  assert.deepEqual(capturedOptions.appliedTurnConfig, {
+    modelId: "gpt-5.4-mini",
+    providerId: "codexCli",
+    source: "switch_request",
+  });
   assert.equal(capturedOptions.invocationPurpose, "translation");
   assert.equal(capturedOptions.scenarioId, "translation");
   assert.equal(capturedOptions.workflowPrompt, null);
@@ -313,6 +357,24 @@ test("NativeRequestCaptureFacade routes translation scenario as translation purp
   const jsonl = await fs.readFile(result.jsonlPath, "utf8");
   assert.match(jsonl, TRANSLATION_PURPOSE_METADATA_PATTERN);
   assert.match(jsonl, TRANSLATION_PROMPT_LENGTH_PATTERN);
+  assert.doesNotMatch(jsonl, WORKFLOW_PROMPT_LEAK_PATTERN);
+  const captureStart = parseJsonlRecords(jsonl).find(
+    (record) => record.type === "capture_start"
+  );
+  assert.ok(captureStart);
+  assert.deepEqual(captureStart.appliedTurnConfig, {
+    modelId: "gpt-5.4-mini",
+    providerId: "codexCli",
+    source: "switch_request",
+  });
+  assert.deepEqual(captureStart.scenarioMetadata, {
+    id: "translation",
+    inputPath: null,
+    label: "Translation",
+    promptLength: 0,
+    purpose: "translation",
+    targetPath: null,
+  });
 });
 
 test("NativeRequestCaptureFacade records provider runtime errors in artifacts", async () => {

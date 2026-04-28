@@ -89,7 +89,7 @@ class FakeCodexProcess {
   }
 }
 
-test("Codex native translation capture builders document the pre-hardening baseline", () => {
+test("Codex native translation capture builders document the translation-only baseline", () => {
   assert.equal(
     isCodexNativeTranslationCapture({ invocationPurpose: "translation" }),
     true

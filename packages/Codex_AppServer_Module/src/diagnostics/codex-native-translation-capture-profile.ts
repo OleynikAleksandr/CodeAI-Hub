@@ -5,8 +5,14 @@ import {
 } from "../translation/codex-translation-prompt-profile";
 
 const TRANSLATION_CAPTURE_APPROVAL_POLICY = "never";
+const TRANSLATION_CAPTURE_PROCESS_PROFILE_KEY = "codex:translation";
 const TRANSLATION_CAPTURE_SANDBOX = "read-only";
 const TRANSLATION_CAPTURE_SCENARIO_ID = "translation";
+const TRANSLATION_ONLY_INSTRUCTIONS_PATTERN = /\btranslation-only engine\b/;
+const TRANSLATION_TOOL_FREE_INSTRUCTIONS_PATTERN =
+  /Do not use tools, shell commands, files, patches, web search, planning, or user-input requests\./;
+const TRANSLATION_TOOL_FREE_PROMPT_PATTERN =
+  /Do not use tools or add commentary\./;
 const TRANSLATION_CAPTURE_SAMPLE = {
   category: "generic",
   sourceLanguage: "en",
@@ -27,11 +33,14 @@ export const isCodexNativeTranslationCapture = (options: {
 
 export const buildCodexNativeTranslationCapturePromptProfile = (
   modelId: string
-): CodexAppServerTranslationPromptProfile =>
-  buildCodexAppServerTranslationPromptProfile({
+): CodexAppServerTranslationPromptProfile => {
+  const promptProfile = buildCodexAppServerTranslationPromptProfile({
     modelId,
     request: TRANSLATION_CAPTURE_SAMPLE,
   });
+  assertCodexNativeTranslationCaptureProfile(promptProfile);
+  return promptProfile;
+};
 
 export const buildCodexNativeTranslationThreadStartParams = (options: {
   readonly promptProfile: CodexAppServerTranslationPromptProfile;
@@ -69,3 +78,50 @@ export const buildCodexNativeTranslationTurnStartParams = (options: {
         options.promptProfile.summary ?? "none"
       )),
 });
+
+const assertCodexNativeTranslationCaptureProfile = (
+  promptProfile: CodexAppServerTranslationPromptProfile
+): void => {
+  if (
+    promptProfile.processProfileKey !== TRANSLATION_CAPTURE_PROCESS_PROFILE_KEY
+  ) {
+    throw new Error(
+      "Codex native translation capture must use codex:translation"
+    );
+  }
+  if (promptProfile.persistExtendedHistory !== false) {
+    throw new Error(
+      "Codex native translation capture must not persist history"
+    );
+  }
+  if (promptProfile.threadConfig.project_doc_max_bytes !== 0) {
+    throw new Error(
+      "Codex native translation capture must disable project docs"
+    );
+  }
+  assertPromptMatches(
+    promptProfile.baseInstructions,
+    TRANSLATION_ONLY_INSTRUCTIONS_PATTERN,
+    "translation-only base instructions"
+  );
+  assertPromptMatches(
+    promptProfile.baseInstructions,
+    TRANSLATION_TOOL_FREE_INSTRUCTIONS_PATTERN,
+    "tool-free base instructions"
+  );
+  assertPromptMatches(
+    promptProfile.userPrompt,
+    TRANSLATION_TOOL_FREE_PROMPT_PATTERN,
+    "tool-free user prompt"
+  );
+};
+
+const assertPromptMatches = (
+  value: string,
+  pattern: RegExp,
+  label: string
+): void => {
+  if (!pattern.test(value)) {
+    throw new Error(`Codex native translation capture missing ${label}`);
+  }
+};

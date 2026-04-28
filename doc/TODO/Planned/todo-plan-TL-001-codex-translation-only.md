@@ -45,11 +45,11 @@
 
 ### Stream: Core Invocation Profile Alignment
 7. [DONE] Синхронизировать Core `translation` invocation profile с новым Codex translation-only profile — scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`, `packages/core/src/model-invocation/model-invocation-profile-resolver.smoke.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; verification: `npm run build --workspace @codeai-hub/core` + `node --test packages/core/dist/model-invocation/model-invocation-profile-resolver.smoke.test.js`; expected commit message: `feat: align codex translation invocation profile`.
-8. [IN_PROGRESS] Git Commit: `feat: align codex translation invocation profile` (hash: TBD)
+8. [DONE] Git Commit: `feat: align codex translation invocation profile` (hash: `b72248d21`)
 
 ### Stream: Native Capture Verification
-9. [TODO] Проверить `Translation` native request capture и зафиксировать provider-visible result — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `test: verify codex translation capture profile`.
-10. [TODO] Git Commit: `test: verify codex translation capture profile` (hash: TBD)
+9. [DONE] Проверить `Translation` native request capture и зафиксировать provider-visible result — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `npm run build --workspace @codeai-hub/core` + `node --test packages/core/dist/provider-network-capture/native-request-capture-facade.test.js` + `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js` + `node --test packages/core/dist/model-invocation/model-invocation-profile-resolver.smoke.test.js`; expected commit message: `test: verify codex translation capture profile`.
+10. [IN_PROGRESS] Git Commit: `test: verify codex translation capture profile` (hash: TBD)
 
 ### Stream: Targeted Builds And Closeout
 11. [TODO] Прогнать таргетные сборки Codex/Core, обновить этот execution plan результатами и закрыть scope — scope: `@codeai-hub/codex-app-server-module`, `@codeai-hub/core`, `doc/TODO/Planned/todo-plan-TL-001-codex-translation-only.md`; expected commit message: `chore: verify codex translation-only profile`.
