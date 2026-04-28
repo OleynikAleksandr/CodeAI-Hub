@@ -2,7 +2,7 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/ModelInvocationProfiles_And_TemplateSync_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/ModelInvocationProfiles_And_TemplateSync_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
@@ -39,7 +39,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Scope Activation
 
-1. [DONE] Create accepted planning document, activate execution `todo-plan.md`, and register the active planning document in `Docs_Index.md` (scope: `doc/SolidWorks-WorkFlow/Plans/ModelInvocationProfiles_And_TemplateSync_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: start model invocation profile execution plan`)
+1. [DONE] Create accepted planning document, activate execution `todo-plan.md`, and register the active planning document in `Docs_Index.md` (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/ModelInvocationProfiles_And_TemplateSync_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: start model invocation profile execution plan`)
 2. [DONE] Git Commit: `docs: start model invocation profile execution plan` (hash: `c5c48d521`)
 
 ---
@@ -146,6 +146,6 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 9. [DONE] Fix release-time bundled template generation so invocation/system templates survive `build-core.sh` regeneration (scope: `scripts/generate-bundled-templates.js`, `packages/core/src/templates/source/model-invocation-templates.json`, `packages/core/src/templates/bundled-templates.ts`; checks: `node scripts/generate-bundled-templates.js`, `npx ultracite check`, `npm run build --workspace=@codeai-hub/core`, `node --test packages/core/dist/templates/template-sync-service.test.js`; commit: `fix: include invocation templates in release generation`)
 10. [DONE] Git Commit: `fix: include invocation templates in release generation` (hash: `2bbb90de9`)
 11. [DONE] Re-run `./scripts/build-all.sh --version 1.2.99`, refresh release manifests, and verify the Core generated bundle contains 17 templates including invocation/system entries (scope: `assets/*/manifest.json`, release artifacts; checks: `./scripts/build-all.sh --version 1.2.99`, `node -e ... BUNDLED_TEMPLATE_SOURCES.length`; commit: `chore: refresh invocation profile release manifests`)
-12. [IN_PROGRESS] Git Commit: `chore: refresh invocation profile release manifests` (hash: TBD)
-13. [TODO] Run `./scripts/build-release.sh --use-current-version`, move release artifacts as required, archive/close planning docs if the cycle is complete, and create the session closeout report (scope: release docs/scripts output/session report; commit: `chore: build invocation profile release`)
-14. [TODO] Git Commit: `chore: build invocation profile release` (hash: TBD)
+12. [DONE] Git Commit: `chore: refresh invocation profile release manifests` (hash: `e8ad179e5`)
+13. [DONE] Run `./scripts/build-release.sh --use-current-version`, move release artifacts as required, archive/close planning docs if the cycle is complete, and create the session closeout report (scope: release docs/scripts output/session report; checks: `./scripts/build-release.sh --use-current-version`; artifact: `codeai-hub-1.2.99.vsix`; advisory: `check:links` still reports pre-existing sample links in archived provider-base-prompt docs; commit: `chore: build invocation profile release`)
+14. [IN_PROGRESS] Git Commit: `chore: build invocation profile release` (hash: TBD)

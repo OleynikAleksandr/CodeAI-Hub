@@ -1,6 +1,6 @@
 # Model Invocation Profiles And Template Sync Architecture
 
-**Status:** Accepted for execution  
+**Status:** Archived after release `1.2.99`
 **Created:** 2026-04-28  
 **Owner:** Oleksandr + Codex  
 **Planning source:** Session 020 discussion and follow-up clarification  
