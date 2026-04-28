@@ -8352,6 +8352,7 @@
     const parsed = value ? Date.parse(value) : Number.NaN;
     return Number.isNaN(parsed) ? Date.now() : parsed;
   };
+  var readOptionalString = (value) => typeof value === "string" && value.trim().length > 0 ? value.trim() : void 0;
   var sanitizeProvider = (provider) => {
     if (!provider || typeof provider.id !== "string") {
       return null;
@@ -8366,6 +8367,40 @@
       description: provider.description ?? getDefaultProviderDescription(providerId),
       connected: provider.status === "active",
       statusMessage: typeof provider.statusMessage === "string" ? provider.statusMessage : null
+    };
+  };
+  var sanitizeSessionModelBinding = (binding) => {
+    if (!isRecord4(binding)) {
+      return null;
+    }
+    const providerId = binding.providerId;
+    const modelId = readOptionalString(binding.modelId);
+    if (!(typeof providerId === "string" && modelId)) {
+      return null;
+    }
+    const normalizedProviderId = providerId;
+    if (!providerIdSet.has(normalizedProviderId)) {
+      return null;
+    }
+    const normalized = {
+      providerId: normalizedProviderId,
+      modelId
+    };
+    const baseModelId = readOptionalString(binding.baseModelId);
+    const reasoningEffort = readOptionalString(binding.reasoningEffort);
+    const source = readOptionalString(binding.source);
+    const thinkingLevel = readOptionalString(binding.thinkingLevel);
+    const boundAt = readOptionalString(binding.boundAt);
+    const updatedAt = readOptionalString(binding.updatedAt);
+    return {
+      ...normalized,
+      ...baseModelId ? { baseModelId } : {},
+      ...reasoningEffort ? { reasoningEffort } : {},
+      ...source ? { source } : {},
+      ...typeof binding.thinkingEnabled === "boolean" ? { thinkingEnabled: binding.thinkingEnabled } : {},
+      ...thinkingLevel ? { thinkingLevel } : {},
+      ...boundAt ? { boundAt } : {},
+      ...updatedAt ? { updatedAt } : {}
     };
   };
   var sanitizeMessage = (message) => {
@@ -8444,7 +8479,8 @@
       continuationParentId: typeof session.continuationParentId === "string" ? session.continuationParentId : null,
       continuationIndex: typeof session.continuationIndex === "number" ? session.continuationIndex : null,
       createdAt: toNumberTimestamp(session.createdAt),
-      binding: normalizeBinding(bindingCandidate)
+      binding: normalizeBinding(bindingCandidate),
+      modelBinding: sanitizeSessionModelBinding(session.modelBinding)
     };
   };
   var convertStatusResponse = (status, fallbackProviders) => {
