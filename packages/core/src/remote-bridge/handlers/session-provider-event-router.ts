@@ -238,7 +238,21 @@ export class SessionProviderEventRouter {
       payload: {
         sessionId,
         providerId: session.providerId,
+        baseModelId: rawModelId,
         modelId: effectiveModelId,
+        modelBinding: session.modelBinding
+          ? {
+              providerId: session.modelBinding.providerId,
+              baseModelId: session.modelBinding.baseModelId,
+              modelId: session.modelBinding.modelId,
+              reasoningEffort: session.modelBinding.reasoningEffort,
+              thinkingEnabled: session.modelBinding.thinkingEnabled,
+              thinkingLevel: session.modelBinding.thinkingLevel,
+              source: session.modelBinding.source,
+              boundAt: session.modelBinding.boundAt,
+              updatedAt: session.modelBinding.updatedAt,
+            }
+          : undefined,
       },
     });
   }

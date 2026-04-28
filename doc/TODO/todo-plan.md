@@ -53,11 +53,11 @@
 
 ### Stream: Applied Turn Config
 11. [DONE] Перевести outbound applied turn config на session-bound identity вместо live Settings для существующих сессий — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit message: `feat: use session-bound model for turns`.
-12. [IN_PROGRESS] Git Commit: `feat: use session-bound model for turns` (hash: TBD)
+12. [DONE] Git Commit: `feat: use session-bound model for turns` (hash: `60b7f294f`)
 
 ### Stream: Explicit Switch Path
-13. [TODO] Сделать `switch_model` явной mutation path для session binding и сохранить effective broadcast contract — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit message: `feat: route model switches through session binding`.
-14. [TODO] Git Commit: `feat: route model switches through session binding` (hash: TBD)
+13. [DONE] Сделать `switch_model` явной mutation path для session binding и сохранить effective broadcast contract — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit message: `feat: route model switches through session binding`.
+14. [IN_PROGRESS] Git Commit: `feat: route model switches through session binding` (hash: TBD)
 
 ## Phase 3 — PM/UI Binding Display (owner: Codex, updated: 2026-04-28)
 
