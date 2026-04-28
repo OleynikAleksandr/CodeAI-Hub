@@ -78,6 +78,7 @@ const TRANSLATION_THREAD_CONFIG = {
 } as const;
 
 const SPARK_MODEL_ID = "gpt-5.3-codex-spark";
+const CODEX_TRANSLATION_TOOL_PROFILE_KEY = "codex:translation-tools-minimal";
 
 const normalizeOptionalString = (value: string | undefined): string | null =>
   value?.trim() ? value.trim() : null;
@@ -163,7 +164,7 @@ const buildCodexTranslationProfile = (
     approvalPolicy: "never",
     processProfileKey: "codex:translation",
     sandbox: "read-only",
-    toolProfileKey: "codex:translation-tools-disabled",
+    toolProfileKey: CODEX_TRANSLATION_TOOL_PROFILE_KEY,
   },
   selector,
   sessionProfile: {

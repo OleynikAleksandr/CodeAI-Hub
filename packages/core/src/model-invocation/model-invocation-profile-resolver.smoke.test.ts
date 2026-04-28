@@ -74,10 +74,20 @@ test("ModelInvocationProfileResolver resolves Codex non-Spark translation summar
   });
 
   assert.equal(profile.processProfile.approvalPolicy, "never");
+  assert.equal(profile.processProfile.processProfileKey, "codex:translation");
   assert.equal(profile.processProfile.sandbox, "read-only");
   assert.equal(
     profile.processProfile.toolProfileKey,
-    "codex:translation-tools-disabled"
+    "codex:translation-tools-minimal"
+  );
+  assert.equal(profile.sessionProfile.sessionProfileKey, "codex:translation");
+  assert.equal(profile.sessionProfile.persistExtendedHistory, false);
+  assert.deepEqual(
+    profile.sessionProfile.instructionFragments.map((fragment) => fragment.key),
+    [
+      "codex:translation-system-prompt",
+      "invocation/codex/translation.system.md",
+    ]
   );
   assert.deepEqual(profile.compatibleModelIds, [
     "gpt-5.4-mini",
@@ -181,7 +191,7 @@ test("ModelInvocationInstructionLoader cannot mutate process controls through te
     assert.equal(profile.processProfile.sandbox, "read-only");
     assert.equal(
       profile.processProfile.toolProfileKey,
-      "codex:translation-tools-disabled"
+      "codex:translation-tools-minimal"
     );
   } finally {
     await rm(templateRoot, { recursive: true, force: true });

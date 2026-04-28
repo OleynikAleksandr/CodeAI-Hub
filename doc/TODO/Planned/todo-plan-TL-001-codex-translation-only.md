@@ -41,11 +41,11 @@
 
 ### Stream: Translation Process Profile
 5. [DONE] Выделить самостоятельный `codex:translation` process/tool profile и проверить Spark summary omission — scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.test.ts`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; verification: `npm run build --workspace @codeai-hub/codex-app-server-module` + `node --test packages/Codex_AppServer_Module/dist/translation/codex-app-server-translation-service.test.js`; expected commit message: `feat: isolate codex translation process profile`.
-6. [IN_PROGRESS] Git Commit: `feat: isolate codex translation process profile` (hash: TBD)
+6. [DONE] Git Commit: `feat: isolate codex translation process profile` (hash: `645c86443`)
 
 ### Stream: Core Invocation Profile Alignment
-7. [TODO] Синхронизировать Core `translation` invocation profile с новым Codex translation-only profile — scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`, `packages/core/src/model-invocation/model-invocation-profile-resolver.smoke.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit message: `feat: align codex translation invocation profile`.
-8. [TODO] Git Commit: `feat: align codex translation invocation profile` (hash: TBD)
+7. [DONE] Синхронизировать Core `translation` invocation profile с новым Codex translation-only profile — scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`, `packages/core/src/model-invocation/model-invocation-profile-resolver.smoke.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; verification: `npm run build --workspace @codeai-hub/core` + `node --test packages/core/dist/model-invocation/model-invocation-profile-resolver.smoke.test.js`; expected commit message: `feat: align codex translation invocation profile`.
+8. [IN_PROGRESS] Git Commit: `feat: align codex translation invocation profile` (hash: TBD)
 
 ### Stream: Native Capture Verification
 9. [TODO] Проверить `Translation` native request capture и зафиксировать provider-visible result — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `test: verify codex translation capture profile`.

@@ -136,7 +136,7 @@ Runtime rules:
 - changing to a model that requires different startup flags, system tools, sandbox, approval policy, or session-level instruction stack requires a new logical step/session;
 - workflow-agent profiles require a workflow `stepId`; translation profiles do not;
 - workflow-agent profiles may resolve tree/step-specific instruction fragments for Documentation Tree and future Development Tree steps;
-- translation profiles use translation-specific instructions and tool policy, not workflow step prompts;
+- translation profiles use translation-specific instructions and tool policy, not workflow step prompts; Codex translation specifically resolves to `processProfileKey = "codex:translation"` and `toolProfileKey = "codex:translation-tools-minimal"`, a code-owned minimal/residual tool policy whose actual provider-visible tool surface must be proven by native capture before any "removed tool" claim is documented;
 - user-editable templates may override text instruction fragments only; flags, system tools, sandbox and approval policy remain code-owned.
 
 ---
