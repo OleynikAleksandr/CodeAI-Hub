@@ -8,6 +8,7 @@ import type {
   IncomingMessage,
   WorkspaceScopeAckPayload,
 } from "../types";
+import { parseIncomingClientMessage } from "./incoming-message-validator";
 import {
   finalizeSessionWorkspaceSnapshot,
   parseWorkspaceScopeSetPayload,
@@ -263,9 +264,19 @@ export class WebSocketManager {
     socket: WebSocket,
     raw: string
   ): Promise<void> {
+    const parsed = parseIncomingClientMessage(raw);
+    if (!parsed.ok) {
+      this.deps.logger.warn("Rejected invalid client WebSocket message", {
+        clientId,
+        ...(parsed.errorMessage ? { error: parsed.errorMessage } : {}),
+        reason: parsed.reason,
+      });
+      this.sendInvalidClientMessage(socket, parsed.reason);
+      return;
+    }
+
     try {
-      const incoming = JSON.parse(raw) as IncomingMessage;
-      await this.deps.onIncomingMessage(clientId, socket, incoming);
+      await this.deps.onIncomingMessage(clientId, socket, parsed.message);
     } catch (error) {
       this.deps.logger.error(
         "Failed to process client message",
@@ -275,10 +286,19 @@ export class WebSocketManager {
       socket.send(
         JSON.stringify({
           type: "session:error",
-          payload: { message: "Invalid JSON payload" },
+          payload: { message: "Failed to process client message" },
         })
       );
     }
+  }
+
+  private sendInvalidClientMessage(socket: WebSocket, reason: string): void {
+    socket.send(
+      JSON.stringify({
+        type: "session:error",
+        payload: { message: "Invalid WebSocket message", reason },
+      })
+    );
   }
 
   private recordTokenUsageSnapshot(event: BridgeEvent): void {
