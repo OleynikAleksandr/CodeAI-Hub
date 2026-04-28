@@ -45,6 +45,31 @@ const createManager = (settingsPath?: string): ClaudeSDKManager =>
     },
   } as never);
 
+const writeClaudeThinkingSettings = async (
+  settingsPath: string,
+  thinking: {
+    readonly effort?: string;
+    readonly enabled: boolean;
+    readonly maxTokens?: number;
+  }
+): Promise<void> => {
+  await writeFile(
+    settingsPath,
+    `${JSON.stringify(
+      {
+        providers: {
+          claude: {
+            thinking,
+          },
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
 const buildQueryOptions = (
   manager: ClaudeSDKManager,
   session: ActiveSession,
@@ -188,6 +213,51 @@ test("ClaudeSDKManager maps legacy Claude maxTokens snapshots to effort", async 
     });
     assert.equal(options.effort, "max");
     assert.equal("maxThinkingTokens" in options, false);
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("ClaudeSDKManager reuses cached fallback settings until cache expiry", async () => {
+  const tempDir = await mkdtemp(path.join(tmpdir(), "claude-sdk-cache-"));
+  const settingsPath = path.join(tempDir, "settings.json");
+
+  try {
+    await writeClaudeThinkingSettings(settingsPath, {
+      enabled: true,
+      effort: "high",
+    });
+    const manager = createManager(settingsPath);
+    const session = {
+      sessionId: "session-123",
+      workspacePath: "/tmp/codeai-workspace",
+    } as ActiveSession;
+
+    const firstOptions = buildQueryOptions(manager, session);
+
+    await writeClaudeThinkingSettings(settingsPath, { enabled: false });
+    const cachedOptions = buildQueryOptions(manager, session);
+
+    const cacheOwner = manager as unknown as {
+      settingsSnapshotCache: { expiresAtMs: number } | null;
+    };
+    if (cacheOwner.settingsSnapshotCache) {
+      cacheOwner.settingsSnapshotCache.expiresAtMs = 0;
+    }
+    const expiredOptions = buildQueryOptions(manager, session);
+
+    assert.deepEqual(firstOptions.thinking, {
+      type: "adaptive",
+      display: "summarized",
+    });
+    assert.equal(firstOptions.effort, "high");
+    assert.deepEqual(cachedOptions.thinking, {
+      type: "adaptive",
+      display: "summarized",
+    });
+    assert.equal(cachedOptions.effort, "high");
+    assert.deepEqual(expiredOptions.thinking, { type: "disabled" });
+    assert.equal("effort" in expiredOptions, false);
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
