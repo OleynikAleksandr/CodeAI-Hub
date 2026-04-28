@@ -142,7 +142,7 @@
 1. [DONE] Определить будущую версию from current `package.json` + 1 and update release-facing docs before build; expected target if unchanged: `1.2.103`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare release 1.2.103`
 2. [DONE] Git Commit: `docs: prepare release 1.2.103` (hash: `065e570e8`)
 3. [DONE] Убедиться, что working tree clean и зависимости установлены (`npm install` только если node_modules/deps отсутствуют); verified clean tree after `4f4235383`, `node_modules` present, Node `v22.17.0`, npm `10.9.2`; scope: repo workspace, `doc/TODO/todo-plan.md`; expected commit message: `chore: verify release prerequisites`
-4. [IN_PROGRESS] Git Commit: `chore: verify release prerequisites` (hash: TBD)
+4. [DONE] Git Commit: `chore: verify release prerequisites` (hash: `77eec0f4f`)
 
 ### Stream: Documentation Audit Addendum
 1. [DONE] По требованию пользователя дополнительно сверить активные contract docs, связанные с runtime remediation refactoring; scope: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit message: `docs: sync runtime remediation contracts`
@@ -151,8 +151,8 @@
 4. [DONE] Git Commit: `docs: sync core bridge recovery docs` (hash: `4f4235383`)
 
 ### Stream: Release Build and Package
-5. [TODO] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.103`
-6. [TODO] Git Commit: `chore: build release 1.2.103` (hash: TBD)
+5. [DONE] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; verified 7 tarballs in `~/.codeai-hub/releases` and `doc/tmp/releases`; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.103`
+6. [IN_PROGRESS] Git Commit: `chore: build release 1.2.103` (hash: TBD)
 7. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.103`
 8. [TODO] Git Commit: `chore: package release 1.2.103` (hash: TBD)
 
