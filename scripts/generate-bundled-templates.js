@@ -15,6 +15,10 @@ const OUTPUT = path.join(
   ROOT,
   "packages/core/src/templates/bundled-templates.ts"
 );
+const MODEL_INVOCATION_MANIFEST = path.join(
+  ROOT,
+  "packages/core/src/templates/source/model-invocation-templates.json"
+);
 
 // Manifest: id, source asset path (relative to repo root), destination path (relative to home dir).
 // Diagram workflow assets are bundled from dedicated agent packages into visible home templates.
@@ -82,18 +86,57 @@ const TEMPLATES = [
   },
 ];
 
+function loadModelInvocationTemplates() {
+  if (!fs.existsSync(MODEL_INVOCATION_MANIFEST)) {
+    return [];
+  }
+
+  const raw = fs.readFileSync(MODEL_INVOCATION_MANIFEST, "utf8");
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed)) {
+    throw new Error("model-invocation-templates.json must contain an array");
+  }
+
+  return parsed.map((entry) => {
+    const contentLines = entry.contentLines;
+    if (
+      typeof entry.id !== "string" ||
+      typeof entry.audience !== "string" ||
+      typeof entry.dest !== "string" ||
+      !Array.isArray(contentLines) ||
+      !contentLines.every((line) => typeof line === "string")
+    ) {
+      throw new Error(`Invalid model invocation template entry: ${entry.id}`);
+    }
+
+    return {
+      audience: entry.audience,
+      id: entry.id,
+      dest: entry.dest,
+      content: `${contentLines.join("\n")}\n`,
+    };
+  });
+}
+
 function generate() {
   const entries = [];
   let missing = false;
 
-  for (const t of TEMPLATES) {
-    const absSource = path.join(ROOT, t.source);
-    if (!fs.existsSync(absSource)) {
-      console.error(`❌ Missing source: ${t.source}`);
-      missing = true;
-      continue;
+  const templates = [...loadModelInvocationTemplates(), ...TEMPLATES];
+
+  for (const t of templates) {
+    let content;
+    if (typeof t.content === "string") {
+      content = Buffer.from(t.content, "utf8");
+    } else {
+      const absSource = path.join(ROOT, t.source);
+      if (!fs.existsSync(absSource)) {
+        console.error(`❌ Missing source: ${t.source}`);
+        missing = true;
+        continue;
+      }
+      content = fs.readFileSync(absSource);
     }
-    const content = fs.readFileSync(absSource);
     const b64 = content.toString("base64");
     entries.push(
       `  {\n    id: "${t.id}",\n    audience: "${t.audience}",\n    destinationRelativePath:\n      "${t.dest}",\n    base64:\n      "${b64}",\n  }`
@@ -122,7 +165,7 @@ ${entries.join(",\n")},
 
   fs.writeFileSync(OUTPUT, output, "utf8");
   console.log(
-    `✅ Generated bundled-templates.ts (${TEMPLATES.length} templates)`
+    `✅ Generated bundled-templates.ts (${templates.length} templates)`
   );
 }
 

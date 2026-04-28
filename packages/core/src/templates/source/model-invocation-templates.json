@@ -1,0 +1,101 @@
+[
+  {
+    "id": "codex-workflow-agent-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/invocation/codex/workflow-agent.system.md",
+    "contentLines": [
+      "# Codex Workflow Agent System Instructions",
+      "",
+      "These instructions are text-only additions for CodeAI Hub workflow-agent sessions.",
+      "They may refine agent behavior, but they must not describe or request process flags, system tools, sandbox, approval policy, or provider startup settings.",
+      "",
+      "Apply the active workflow step instructions and preserve the current step/session boundary."
+    ]
+  },
+  {
+    "id": "codex-translation-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/invocation/codex/translation.system.md",
+    "contentLines": [
+      "# Codex Translation System Instructions",
+      "",
+      "Translate only the provided runtime text.",
+      "Preserve placeholders, ids, markdown structure, code spans, and localization markers exactly.",
+      "Do not use workflow-agent instructions or project workflow steps for translation calls."
+    ]
+  },
+  {
+    "id": "claude-workflow-agent-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/invocation/claude/workflow-agent.system.md",
+    "contentLines": [
+      "# Claude Workflow Agent System Instructions",
+      "",
+      "These instructions are text-only additions for CodeAI Hub workflow-agent sessions.",
+      "They may refine agent behavior, but they must not describe or request process flags, system tools, sandbox, approval policy, or provider startup settings.",
+      "",
+      "Apply the active workflow step instructions and preserve the current step/session boundary."
+    ]
+  },
+  {
+    "id": "claude-translation-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/invocation/claude/translation.system.md",
+    "contentLines": [
+      "# Claude Translation System Instructions",
+      "",
+      "Translate only the provided runtime text.",
+      "Preserve placeholders, ids, markdown structure, code spans, and localization markers exactly.",
+      "Do not use workflow-agent instructions or project workflow steps for translation calls."
+    ]
+  },
+  {
+    "id": "gemini-workflow-agent-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/invocation/gemini/workflow-agent.system.md",
+    "contentLines": [
+      "# Gemini Workflow Agent System Instructions",
+      "",
+      "These instructions are text-only additions for CodeAI Hub workflow-agent sessions.",
+      "They may refine agent behavior, but they must not describe or request process flags, system tools, sandbox, approval policy, or provider startup settings.",
+      "",
+      "Apply the active workflow step instructions and preserve the current step/session boundary."
+    ]
+  },
+  {
+    "id": "documentation-description-step-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/workflow_steps/documentation/description.system.md",
+    "contentLines": [
+      "# Documentation Step: Description",
+      "",
+      "Use this text-only fragment only for the Description workflow step.",
+      "Focus on producing and refining the user-readable product baseline artifact for the current workspace.",
+      "Do not change provider flags, system tools, sandbox, approval policy, or model selection from this template."
+    ]
+  },
+  {
+    "id": "documentation-virtual-simulation-step-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/workflow_steps/documentation/virtual_simulation.system.md",
+    "contentLines": [
+      "# Documentation Step: Virtual Simulation",
+      "",
+      "Use this text-only fragment only for the Virtual Simulation workflow step.",
+      "Focus on turning the accepted description into a user-readable simulation of major product behavior and boundaries.",
+      "Do not change provider flags, system tools, sandbox, approval policy, or model selection from this template."
+    ]
+  },
+  {
+    "id": "documentation-diagram-modules-step-system",
+    "audience": "internal_agent_instructions",
+    "dest": ".codeai-hub/templates/workflow_steps/documentation/diagram_modules.system.md",
+    "contentLines": [
+      "# Documentation Step: Diagram Modules",
+      "",
+      "Use this text-only fragment only for the Diagram Modules workflow step.",
+      "Focus on maintaining staged product-part and module artifacts without replacing user-owned structure silently.",
+      "Do not change provider flags, system tools, sandbox, approval policy, or model selection from this template."
+    ]
+  }
+]
