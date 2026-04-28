@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.102] - 2026-04-28
+### Fixed
+- **Session model binding now survives real workflow continuity.** Core persists `session.modelBinding` into continuity segment/index data, hydrates restored Project Manager dialogs from that binding, and clones it for `Remaining context threshold (%)` continuation sessions instead of rereading the current Settings default.
+- **Project Manager no longer relabels bound sessions from unbound runtime fallbacks.** Client bridge normalization preserves Core `modelBinding`, dialog bootstrap carries it into placeholders, and runtime model sync refuses to overwrite a binding-owned label with a Settings-derived update.
+
+### Tests
+- **Persistent binding regression coverage passed before release packaging.** Passed Core build, webview build/typecheck, Project Manager build, and focused regressions for same-provider sessions with different bound models, restored dialog binding, continuity persistence, and rollover inheritance.
+
 ## [1.2.101] - 2026-04-28
 ### Added
 - **Workflow sessions now bind their model identity at creation time.** Core stores a session-scoped effective model binding, serializes it through session/runtime snapshots, and uses it for later turns instead of letting Settings changes rewrite existing sessions.
