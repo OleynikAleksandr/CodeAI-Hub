@@ -50,9 +50,9 @@
 
 ### Stream: Hydrate bound identity after materialization
 1. [DONE] Hydrate restored/materialized sessions from persisted binding instead of current Settings; scope: `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`; expected commit: `fix: hydrate restored sessions with persisted model binding`.
-2. [DONE] Git Commit: `fix: hydrate restored sessions with persisted model binding` (hash: TBD)
-3. [TODO] Thread model binding through Project Manager dialog bootstrap placeholders; scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-core-events.test.ts`; expected commit: `fix: restore project manager dialog model binding`.
-4. [TODO] Git Commit: `fix: restore project manager dialog model binding` (hash: TBD)
+2. [DONE] Git Commit: `fix: hydrate restored sessions with persisted model binding` (hash: `d710db044`)
+3. [DONE] Thread model binding through Project Manager dialog bootstrap placeholders; scope: `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`, `src/client/project-manager/components/sessions/use-project-manager-dialog-core-events.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-core-events.test.ts`; expected commit: `fix: restore project manager dialog model binding`.
+4. [DONE] Git Commit: `fix: restore project manager dialog model binding` (hash: TBD)
 
 ## Phase 4 — Rollover Inheritance (owner: Codex, updated: 2026-04-28)
 

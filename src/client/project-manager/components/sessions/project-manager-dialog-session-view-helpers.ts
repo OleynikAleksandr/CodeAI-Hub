@@ -1,6 +1,10 @@
 import type { ProviderStackId } from "../../../../types/provider";
 import { getDefaultProviderTitle } from "../../../../types/provider";
-import type { SessionMessage, SessionRecord } from "../../../../types/session";
+import type {
+  SessionMessage,
+  SessionModelBindingInfo,
+  SessionRecord,
+} from "../../../../types/session";
 import { providerIdSet } from "../../../ui/src/session/helpers";
 
 export type DialogOpenIntent = {
@@ -20,6 +24,7 @@ export type DialogIndexEntry = {
   readonly dialogId: string;
   readonly updatedAt: string;
   readonly latestSessionId: string | null;
+  readonly modelBinding: SessionModelBindingInfo | null;
   readonly providerId: string | null;
   readonly providerSessionId: string | null;
 };
@@ -35,6 +40,43 @@ type DialogHistoryRecord = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readOptionalString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+
+const sanitizeDialogModelBinding = (
+  value: unknown
+): SessionModelBindingInfo | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+  const providerId = resolveProviderId(readOptionalString(value.providerId) ?? null);
+  const modelId = readOptionalString(value.modelId);
+  if (!(providerId && modelId)) {
+    return null;
+  }
+  const baseModelId = readOptionalString(value.baseModelId);
+  const reasoningEffort = readOptionalString(value.reasoningEffort);
+  const source = readOptionalString(value.source);
+  const thinkingLevel = readOptionalString(value.thinkingLevel);
+  const boundAt = readOptionalString(value.boundAt);
+  const updatedAt = readOptionalString(value.updatedAt);
+  return {
+    providerId,
+    modelId,
+    ...(baseModelId ? { baseModelId } : {}),
+    ...(reasoningEffort ? { reasoningEffort } : {}),
+    ...(source ? { source } : {}),
+    ...(typeof value.thinkingEnabled === "boolean"
+      ? { thinkingEnabled: value.thinkingEnabled }
+      : {}),
+    ...(thinkingLevel ? { thinkingLevel } : {}),
+    ...(boundAt ? { boundAt } : {}),
+    ...(updatedAt ? { updatedAt } : {}),
+  };
+};
 
 export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | null => {
   if (!isRecord(value)) {
@@ -60,12 +102,14 @@ export const sanitizeDialogIndexEntry = (value: unknown): DialogIndexEntry | nul
     value.providerSessionId === null || typeof value.providerSessionId === "string"
       ? (value.providerSessionId as string | null)
       : null;
+  const modelBinding = sanitizeDialogModelBinding(value.modelBinding);
   return {
     stage: value.stage,
     rootSessionId: value.rootSessionId,
     dialogId: value.dialogId,
     updatedAt: value.updatedAt,
     latestSessionId,
+    modelBinding,
     providerId,
     providerSessionId,
   };
@@ -154,6 +198,7 @@ export const buildDialogSessionRecord = (options: {
   readonly runtimeSessionId?: string | null;
   readonly providerId: ProviderStackId | null;
   readonly providerSessionId: string | null;
+  readonly modelBinding?: SessionModelBindingInfo | null;
   readonly intent: DialogOpenIntent;
 }): SessionRecord => ({
   id: options.runtimeSessionId ?? options.dialogId,
@@ -171,6 +216,7 @@ export const buildDialogSessionRecord = (options: {
     providerSessionId: options.providerSessionId,
     status: "ready",
   },
+  modelBinding: options.modelBinding ?? null,
 });
 
 export const convertHistoryToMessages = (records: readonly unknown[]): SessionMessage[] => {

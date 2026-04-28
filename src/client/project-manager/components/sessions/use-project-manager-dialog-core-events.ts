@@ -180,6 +180,7 @@ export const useProjectManagerDialogCoreEvents = (options: {
         const bootstrapSession = buildDialogSessionRecord({
           runtimeSessionId: runtimeSession.runtimeSessionId,
           dialogId: match.dialogId,
+          modelBinding: match.modelBinding,
           providerId,
           providerSessionId: match.providerSessionId,
           intent,

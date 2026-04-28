@@ -90,6 +90,7 @@ const reconcileLatestSessionIds = (
     return {
       ...entry,
       latestSessionId: runtime.id,
+      modelBinding: runtime.modelBinding ?? entry.modelBinding ?? null,
     };
   });
   return changed ? reconciled : entries;
@@ -235,6 +236,7 @@ export class DialogListService {
             dialogId: chain.dialogId ?? chain.rootSessionId,
             updatedAt: chain.updatedAt,
             latestSessionId: last?.sessionId ?? null,
+            modelBinding: last?.modelBinding ?? null,
             providerId: last?.providerId ?? null,
             providerSessionId: last?.providerSessionId ?? null,
           };
