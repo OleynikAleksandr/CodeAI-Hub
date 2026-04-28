@@ -42,9 +42,9 @@
 
 ### Stream: Store binding with continuity state
 1. [DONE] Extend continuity data structures to persist session model binding; scope: `packages/core/src/session-continuity/continuity-types.ts`, `packages/core/src/session-continuity/continuity-store.ts`, `packages/core/src/session-continuity/continuity-store.test.ts`; expected commit: `fix: persist session model binding in continuity store`.
-2. [DONE] Git Commit: `fix: persist session model binding in continuity store` (hash: TBD)
-3. [TODO] Persist binding when outbound user turns are tracked for a logical session; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-tracker.test.ts`; expected commit: `fix: record model binding during continuity tracking`.
-4. [TODO] Git Commit: `fix: record model binding during continuity tracking` (hash: TBD)
+2. [DONE] Git Commit: `fix: persist session model binding in continuity store` (hash: `36fe30854`)
+3. [DONE] Persist binding when outbound user turns are tracked for a logical session; scope: `packages/core/src/session-continuity/continuity-tracker.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/continuity-tracker.test.ts`; expected commit: `fix: record model binding during continuity tracking`.
+4. [DONE] Git Commit: `fix: record model binding during continuity tracking` (hash: TBD)
 
 ## Phase 3 — Restore, Dialog, Workspace Hydration (owner: Codex, updated: 2026-04-28)
 

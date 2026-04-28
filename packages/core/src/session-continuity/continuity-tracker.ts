@@ -1,4 +1,5 @@
 import type { Session } from "../session-manager";
+import type { SessionModelBinding } from "../session-model-binding";
 import type { Logger } from "../telemetry/logger";
 import { ContinuityChainStore, readContinuityChains } from "./continuity-store";
 import type {
@@ -21,6 +22,10 @@ const buildProviderSessionKey = (options: {
     options.stage,
     options.providerSessionId,
   ].join("|");
+
+const cloneModelBinding = (
+  binding: SessionModelBinding | undefined
+): SessionModelBinding | null => (binding ? { ...binding } : null);
 
 export class ContinuityTracker {
   private readonly logger: Logger;
@@ -201,6 +206,7 @@ export class ContinuityTracker {
   ): Promise<void> {
     const segment: ContinuitySegment = {
       sessionId: context.session.id,
+      modelBinding: cloneModelBinding(context.session.modelBinding),
       providerId: context.session.providerId,
       providerSessionId: context.providerSessionId,
       createdAt: context.session.createdAt,
@@ -222,7 +228,11 @@ export class ContinuityTracker {
         : false;
 
       if (isDuplicate) {
-        await store.save({ ...existing, updatedAt: this.clock() });
+        const segments = this.updateLastSegmentModelBinding(
+          existing.segments,
+          context.session.modelBinding
+        );
+        await store.save({ ...existing, segments, updatedAt: this.clock() });
         this.hasPersistedInitialSegment.add(context.session.id);
         return;
       }
@@ -242,6 +252,33 @@ export class ContinuityTracker {
         }
       );
     }
+  }
+
+  private updateLastSegmentModelBinding(
+    segments: readonly ContinuitySegment[],
+    binding: SessionModelBinding | undefined
+  ): readonly ContinuitySegment[] {
+    if (segments.length === 0 || !binding) {
+      return segments;
+    }
+    const last = segments.at(-1);
+    if (!last) {
+      return segments;
+    }
+    const current = last.modelBinding;
+    if (
+      current?.modelId === binding.modelId &&
+      current.updatedAt === binding.updatedAt
+    ) {
+      return segments;
+    }
+    return [
+      ...segments.slice(0, -1),
+      {
+        ...last,
+        modelBinding: cloneModelBinding(binding),
+      },
+    ];
   }
 
   private createStore(

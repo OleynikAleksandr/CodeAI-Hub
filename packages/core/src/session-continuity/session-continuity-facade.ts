@@ -1,4 +1,5 @@
 import type { Session } from "../session-manager";
+import type { SessionModelBinding } from "../session-model-binding";
 import type { Logger } from "../telemetry/logger";
 import { ContinuityMonitor } from "./continuity-monitor";
 import { readContinuityChains } from "./continuity-store";
@@ -98,6 +99,38 @@ export class SessionContinuityFacade {
     }
 
     return best;
+  }
+
+  static async readLastModelBindingSnapshot(options: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+    readonly providerSessionId: string;
+  }): Promise<SessionModelBinding | null> {
+    const chains = await readContinuityChains({
+      workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
+    });
+
+    let best: SessionModelBinding | null = null;
+    let bestUpdatedAt = "";
+    for (const chain of chains) {
+      for (const segment of chain.segments) {
+        if (segment.providerSessionId !== options.providerSessionId) {
+          continue;
+        }
+        const binding = segment.modelBinding ?? null;
+        if (!binding) {
+          continue;
+        }
+        const updatedAt = binding.updatedAt || segment.createdAt;
+        if (!best || updatedAt > bestUpdatedAt) {
+          best = binding;
+          bestUpdatedAt = updatedAt;
+        }
+      }
+    }
+
+    return best ? { ...best } : null;
   }
 
   private readonly logger: Logger;
