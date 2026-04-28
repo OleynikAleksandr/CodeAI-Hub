@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { SessionModelBinding } from "../session-model-binding";
 import type { ContinuityChain, ContinuityStageId } from "./continuity-types";
 
 const CONTINUITY_ROOT = ".codeai-hub";
@@ -14,6 +15,7 @@ export interface ContinuityIndexEntry {
    * while loading messages by `dialogId`.
    */
   readonly latestSessionId?: string | null;
+  readonly modelBinding?: SessionModelBinding | null;
   readonly providerId: string | null;
   readonly providerSessionId: string | null;
   readonly rootSessionId: string;
@@ -97,6 +99,7 @@ export class ContinuityIndexRegistry {
       dialogId: chain.dialogId ?? chain.rootSessionId,
       updatedAt: chain.updatedAt,
       latestSessionId: last?.sessionId ?? null,
+      modelBinding: last?.modelBinding ?? null,
       providerId: last?.providerId ?? null,
       providerSessionId: last?.providerSessionId ?? null,
     };

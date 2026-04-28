@@ -1,3 +1,5 @@
+import type { SessionModelBinding } from "../session-model-binding";
+
 type KnownContinuityStageId =
   | "description"
   | "virtual_simulation"
@@ -42,6 +44,7 @@ export interface TokenUsageDecision {
 export interface ContinuitySegment {
   readonly createdAt: string;
   readonly handoffReportPath?: string;
+  readonly modelBinding?: SessionModelBinding | null;
   readonly providerId: string;
   readonly providerSessionId: string;
   readonly sessionId: string;

@@ -22,6 +22,16 @@ test("ContinuityChainStore persists diagram modules chains under the canonical s
     sessionId: "session-1",
     providerId: "claude-code",
     providerSessionId: "provider-session-1",
+    modelBinding: {
+      key: "provider\u001fcodexCli\u001fsession\u001froot-session",
+      providerId: "codexCli",
+      baseModelId: "gpt-5.3-codex-spark",
+      modelId: "gpt-5.3-codex-spark reasoning:xhigh",
+      reasoningEffort: "xhigh",
+      source: "settings_default",
+      boundAt: "2026-04-05T12:39:00.000Z",
+      updatedAt: "2026-04-05T12:39:00.000Z",
+    },
     createdAt: "2026-04-05T12:39:00.000Z",
   });
 
@@ -55,7 +65,14 @@ test("ContinuityChainStore persists diagram modules chains under the canonical s
   const saved = JSON.parse(await readFile(chainPath, "utf8")) as {
     readonly stage: string;
     readonly rootSessionId: string;
+    readonly segments: readonly {
+      readonly modelBinding?: { readonly modelId?: string };
+    }[];
   };
   assert.equal(saved.stage, "diagram_modules");
   assert.equal(saved.rootSessionId, "root-session");
+  assert.equal(
+    saved.segments[0]?.modelBinding?.modelId,
+    "gpt-5.3-codex-spark reasoning:xhigh"
+  );
 });
