@@ -42,6 +42,11 @@ type CodexWorkspaceOptions = CodexWorkspaceOptionsType;
 type ModuleProgressEvent = ModuleProgressEventType;
 type ModuleReporter = ModuleReporterType;
 
+export {
+  CodexAppServerTranslationService,
+  type CodexAppServerTranslationServiceRequest,
+  type CodexAppServerTranslationServiceResult,
+} from "./translation/codex-app-server-translation-service";
 export { CODEX_APPLIED_TURN_CONFIG_KEY } from "./types";
 export type {
   CodexAppliedTurnConfig,
