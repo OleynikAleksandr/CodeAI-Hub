@@ -152,9 +152,9 @@
 
 ### Stream: Release Build and Package
 5. [DONE] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; verified 7 tarballs in `~/.codeai-hub/releases` and `doc/tmp/releases`; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.103`
-6. [IN_PROGRESS] Git Commit: `chore: build release 1.2.103` (hash: TBD)
-7. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.103`
-8. [TODO] Git Commit: `chore: package release 1.2.103` (hash: TBD)
+6. [DONE] Git Commit: `chore: build release 1.2.103` (hash: `f114708e6`)
+7. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`; created `codeai-hub-1.2.103.vsix` (2.6M, sha1 `18a97f7141447cc77db9ffe72eef8fe6641e36dc`); advisory `check:links` reported only pre-existing `/abs/path/...` example links in instruction-stack experiment results; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.103`
+8. [IN_PROGRESS] Git Commit: `chore: package release 1.2.103` (hash: TBD)
 
 ### Stream: Scope Archive and Session Report
 9. [TODO] После успешного релиза архивировать completed todo-plan и planning-doc, обновить `Docs_Index.md`, создать новый no-active-scope `doc/TODO/todo-plan.md`; scope: `doc/TODO/Archive/todo-plan-phase5-runtime-stability-remediation.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Stability_Remediation_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive runtime stability remediation plan`
