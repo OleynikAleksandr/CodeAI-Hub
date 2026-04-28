@@ -72,7 +72,7 @@ Current source files:
 - `packages/translation/src/google-translate-client.ts` - HTTP client for `translate.googleapis.com`.
 - `packages/translation/src/codex-cli-path-resolver.ts` - resolves the production Codex CLI executable for translation-backed engines.
 - `packages/translation/src/codex-translation-runtime-home-facade.ts` - builds isolated provider-owned Codex homes for translation-only runs.
-- `packages/translation/src/codex-cli-translation-engine.ts` - Codex-backed translation engine for `gpt-5.4-mini` and `gpt-5.3-codex-spark`.
+- `packages/translation/src/codex-cli-translation-engine.ts` - shared Codex `codex exec` translation fallback for `gpt-5.4-mini` and `gpt-5.3-codex-spark`.
 
 Current bundled engines:
 
@@ -83,13 +83,14 @@ Current bundled engines:
 Externally-composed provider-owned engines registered by Core (not bundled inside this package):
 
 - `anthropic-claude-haiku-4-5` — provider-owned wrapper around `ClaudeHaikuTranslationService`; the shared package stays engine-neutral and only carries the chunk profile for this engine, while the runtime adapter lives beside the Claude provider. Core builds the translation facade with this engine through `createCoreTranslationFacade(...)` and passes the shared built-in engines plus the Haiku wrapper together.
-- explicit selection of a provider-owned engine is fail-closed. If Core or Localization requests `anthropic-claude-haiku-4-5` but the active runtime did not register it, the shared facade must return a fallback result with `errorCode = "no_engine"` instead of silently substituting the default engine.
+- `codex-gpt-5.4-mini` and `codex-gpt-5.3-codex-spark` — Core replaces the shared Codex CLI entries with `CodexAppServerTranslationEngine` wrappers backed by `CodexAppServerTranslationService`. The shared `codex exec` engine stays as each wrapper's internal fallback during migration, so the public engine ids do not change.
+- explicit selection of a provider-owned engine is fail-closed when the engine is unavailable. If Core or Localization requests an explicit engine id that the active runtime did not register, the shared facade must return a fallback result with `errorCode = "no_engine"` instead of silently substituting the default engine.
 
 Implementation notes:
 
 - The facade depends on the engine contract, not on Google-specific code directly.
 - The request/response helpers stay split into small files so no single utility file becomes a new runtime god module.
-- `google-gtx` remains the zero-config default; the two Codex-backed engines reuse an isolated translation-only Codex runtime instead of the full workspace agent surface.
+- `google-gtx` remains the zero-config default; Core-owned Codex engines use provider-owned App Server translation sessions, while the shared package retains the isolated `codex exec` runtime as fallback.
 - long requests are no longer sent as one monolithic string by default for generic/document translation; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract, while `reasoning` defaults to one translate call per provider-emitted block.
 - safe boundary priority is paragraph break -> list boundary -> sentence boundary -> clause boundary -> hard split outside protected regions.
 - protected regions currently include fenced code, inline code, Markdown links, `{placeholders}`, and glossary markers such as `[[CAIHUB_TERM_n]]`.
@@ -98,7 +99,7 @@ Implementation notes:
   - `codex-gpt-5.4-mini` = `soft 260 / hard 380`
   - `codex-gpt-5.3-codex-spark` = `soft 180 / hard 260`
   - `anthropic-claude-haiku-4-5` = `soft 400 / hard 600` (registry placeholder — live localization/reasoning paths currently dispatch without chunking)
-- the isolated Codex translation runtime resolves authentication artifacts from provider home first and falls back to legacy `~/.codex` artifacts when the provider-owned home has not been materialized yet; missing `models_cache.json` is tolerated, but missing auth is still a hard failure.
+- the shared isolated Codex `codex exec` fallback resolves authentication artifacts from provider home first and falls back to legacy `~/.codex` artifacts when the provider-owned home has not been materialized yet; missing `models_cache.json` is tolerated, but missing auth is still a hard failure.
 - The package stays engine-pluggable so a different backend can be added later without changing consumer contracts.
 
 ---
@@ -233,7 +234,7 @@ This invariant exists because provider bundles are loaded outside the repo works
 6. Installed provider bundles that use runtime translation must remain runnable without the repo workspace dependency tree.
    Required shared runtime dependencies are copied into the provider bundle root by the build pipeline.
 7. Codex-backed translation runtimes must not assume the provider-owned Codex home already exists on disk.
-   Translation-only isolated homes must be able to bootstrap from legacy `~/.codex` authentication artifacts so cold-start and freshly migrated installs do not fail before the first translation request.
+   The active App Server path uses the provider-owned Codex home; the shared `codex exec` fallback must still be able to bootstrap from legacy `~/.codex` authentication artifacts so cold-start and freshly migrated installs do not fail before the first translation request.
 8. Long translation requests must degrade per chunk, not per whole string.
    If one chunk times out, neighbouring chunks are still allowed to translate and the final assembled surface must not contain holes.
 9. Safe chunking must respect protected text regions.

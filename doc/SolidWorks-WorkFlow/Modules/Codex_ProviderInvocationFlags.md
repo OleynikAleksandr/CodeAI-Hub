@@ -1,7 +1,7 @@
 # Codex Provider Invocation Flags - Module SSOT
 
 **Status:** implemented SSOT  
-**Last verified:** 2026-04-27, release `1.2.97`  
+**Last verified:** 2026-04-28, release `1.2.98`
 **Owner module:** `packages/Codex_AppServer_Module/`
 
 This document records the actual CodeAI Hub Codex invocation surface that shapes model behavior for all current Codex models. It is a runtime contract, not a proposal.
@@ -12,13 +12,15 @@ This document records the actual CodeAI Hub Codex invocation surface that shapes
 - `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-config.ts` - runtime provider-home `config.toml` summary materialization before App Server startup.
 - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` - normal `thread/start`, `thread/resume`, `turn/start`, `turn/interrupt`, reasoning-summary policy.
 - `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` - CodeAI Hub-owned early-architecture `baseInstructions` and thread config.
+- `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.ts` and `src/translation/codex-translation-prompt-profile.ts` - provider-owned Codex App Server translation runtime and prompt profile.
 - `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts` - isolated native request capture path and parity with normal runtime payloads.
+- `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts` - native request capture translation sample and app-server translation thread/turn payload builders.
 - `packages/core/src/config/provider-turn-config-resolver.ts` and `packages/core/src/config/provider-defaults-resolver.ts` - effective model/reasoning settings resolution.
 - `src/extension-module/settings/codex-provider-config-sync.ts` - extension-side provider-home `config.toml` compatibility sync after settings saves.
 
 ## Process Startup
 
-Normal runtime and Codex native request capture both start the same long-lived App Server executable:
+Normal runtime, provider-owned Codex translation, and Codex native request capture all start the same App Server executable through named process profiles:
 
 Current process profile keys: `codex:workflow-documentation` for normal workflow sessions and `codex:translation` for provider-owned app-server translation. The old `CODEAI_CODEX_APP_SERVER_ARGS` export is a compatibility alias for the workflow profile's `appServerArgs`; the translation profile currently uses the same disabled-tool startup args under a separate key so future translation-specific startup controls do not mutate workflow sessions.
 The workflow invocation profile resolves to the same process profile key plus `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` and `threadConfig = { project_doc_max_bytes: 0 }`.
@@ -223,40 +225,37 @@ Two paths keep this state current:
 
 For non-Spark models, this persisted provider-home state is not the only live runtime source of truth: normal `turn/start.summary` is still sent explicitly from the shared settings snapshot as `detailed` or `none`. For `gpt-5.3-codex-spark`, the explicit turn field is omitted and provider-home `model_reasoning_summary` is the readable-summary control.
 
-## Translation `codex exec` Runtime
+## Translation App Server Runtime
 
-Localization and reasoning translation do not use `codex app-server`. Codex translation engines run `codex exec` with an isolated temporary `CODEX_HOME` built by `packages/translation/src/codex-translation-runtime-home-facade.ts`.
+Core registers provider-owned Codex GPT translation engines with the same public ids as the old shared engines:
 
-The translation command shape is:
+- `codex-gpt-5.4-mini` -> `gpt-5.4-mini`
+- `codex-gpt-5.3-codex-spark` -> `gpt-5.3-codex-spark`
 
-```text
-codex exec
-  --skip-git-repo-check
-  --ephemeral
-  -C <temporary workspace>
-  -m <translation model id>
-  -s read-only
-  --json
-  <translation prompt>
-```
+The active Core path is `packages/core/src/translation/codex-app-server-translation-engine.ts` -> `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.ts`. The shared `packages/translation/src/codex-cli-translation-engine.ts` remains available as an internal `codex exec` fallback during migration; Core removes the shared Codex entries from the registry and replaces them with provider-owned wrappers that call the fallback only when the App Server translation path returns fallback or throws.
 
-The temporary translation `config.toml` includes:
+Translation `thread/start` uses:
 
-- `approval_policy = "never"`
-- `model = "<translation model id>"`
-- `model_reasoning_effort = "low"` by default
-- `model_reasoning_summary = "none"` for models that accept explicit summary config
-- `model_instructions_file = "<temporary translation instructions file>"`
-- `sandbox_mode = "read-only"`
-- `[features] unified_exec = false`, `shell_snapshot = false`, `steer = false`, `apps = false`, `multi_agent = false`
+- `processProfileKey = "codex:translation"`
+- `approvalPolicy = "never"`
+- `sandbox = "read-only"`
+- `persistExtendedHistory = false`
+- `baseInstructions` from `buildCodexAppServerTranslationInstructions(...)`
+- `config.project_doc_max_bytes = 0`
 
-`gpt-5.3-codex-spark` is the exception: translation runtime omits `model_reasoning_summary` entirely. Its model cache already declares `default_reasoning_summary = "none"`, and omitting the explicit config avoids the same class of provider-side `reasoning.summary` rejection seen on the App Server `turn/start` path.
+Translation `turn/start` uses:
+
+- one text input from `buildCodexAppServerTranslationPrompt(...)`;
+- `effort = "low"`;
+- `summary = "none"` for non-Spark translation models;
+- no explicit `summary` field for `gpt-5.3-codex-spark`.
 
 ## Native Request Capture Parity
 
 Settings -> General -> `Capture Codex Native Request` starts an isolated temporary App Server process with the same startup args as normal runtime, plus proxy/certificate env:
 
 Workflow capture scenarios use the same resolved workflow invocation profile as normal runtime thread creation; native capture only overrides `persistExtendedHistory` to `false` and uses the selected capture prompt/model.
+The `Translation` scenario is not a synthetic diagnostic profile: Core sends `invocationPurpose = "translation"` and Codex uses the translation process/thread/turn profile with a fixed small translation sample. Core deliberately sets `workflowPrompt = null` for that scenario, and the native capture artifact records scenario metadata with `purpose = "translation"`.
 
 - `ALL_PROXY`
 - `HTTP_PROXY`

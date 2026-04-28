@@ -127,7 +127,7 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 5. [DONE] Update Codex native capture service so workflow scenarios use workflow profiles and `Translation` uses the Codex translation profile with a fixed small translation sample (scope: `packages/Codex_AppServer_Module/src/diagnostics/*`, `packages/Codex_AppServer_Module/src/translation/*`; checks: `npx ultracite check`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`; commit: `feat: capture codex translation native request`)
 6. [DONE] Git Commit: `feat: capture codex translation native request` (hash: `d094c2266`)
 7. [DONE] Add UI/Core/Codex tests for Translation capture scenario metadata and payload selection (scope: `src/client/ui/src/components/settings/*.test.tsx`, `packages/core/src/provider-network-capture/*.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/*.test.ts`; checks: `npx ultracite check`, `npm run typecheck:webview`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/core`, `node --import tsx --test src/client/ui/src/components/settings/native-request-capture-card.test.tsx`, `node --test packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`, `node --test packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-service.test.js`, `npm run build:webview`, `npm run build:project-manager`; commit: `test: cover translation native request capture`)
-8. [IN_PROGRESS] Git Commit: `test: cover translation native request capture` (hash: TBD)
+8. [DONE] Git Commit: `test: cover translation native request capture` (hash: `71be59c12`)
 
 ---
 
@@ -135,8 +135,8 @@ Status values: `TODO`, `IN_PROGRESS`, `DONE`, `BLOCKED`.
 
 ### Stream: Documentation And Verification
 
-1. [TODO] Update final SSOT docs for implemented profile resolver, template sync safety, Codex translation App Server path, and capture Translation scenario (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; commit: `docs: document invocation profiles and codex translation`)
-2. [TODO] Git Commit: `docs: document invocation profiles and codex translation` (hash: TBD)
+1. [DONE] Update final SSOT docs for implemented profile resolver, template sync safety, Codex translation App Server path, and capture Translation scenario (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`; checks: `npx ultracite check`; commit: `docs: document invocation profiles and codex translation`)
+2. [IN_PROGRESS] Git Commit: `docs: document invocation profiles and codex translation` (hash: TBD)
 3. [TODO] Update remaining affected docs and index entries, then move or archive the planning document according to closeout rules if the execution cycle is complete (scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; commit: `docs: close invocation profile planning docs`)
 4. [TODO] Git Commit: `docs: close invocation profile planning docs` (hash: TBD)
 5. [TODO] Run targeted builds for Core, Codex module, translation, webview, and Project Manager typecheck/build surfaces; fix any failures in scoped follow-up tasks before release (scope: `packages/core`, `packages/Codex_AppServer_Module`, `packages/translation`, `src/client`; commit: `fix: stabilize invocation profile release checks`)
