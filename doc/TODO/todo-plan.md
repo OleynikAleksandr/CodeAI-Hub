@@ -71,11 +71,11 @@
 
 ### Stream: Settings Sync Guard
 19. [DONE] Запретить `useSettingsModelsSync` переписывать bound/runtime sessions после изменения Settings — scope: `src/client/ui/src/app-host/use-settings-models-sync.ts`, `src/client/ui/src/app-host/use-settings-models-sync.test.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`; expected commit message: `fix: keep settings sync from rewriting bound session models`.
-20. [IN_PROGRESS] Git Commit: `fix: keep settings sync from rewriting bound session models` (hash: TBD)
+20. [DONE] Git Commit: `fix: keep settings sync from rewriting bound session models` (hash: `6ea67513c`)
 
 ### Stream: PM Regression Coverage
-21. [TODO] Добавить UI regression: две сессии одного provider показывают разные bound models — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit message: `test: cover session-scoped model labels`.
-22. [TODO] Git Commit: `test: cover session-scoped model labels` (hash: TBD)
+21. [DONE] Добавить UI regression: две сессии одного provider показывают разные bound models — scope: `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `src/client/project-manager/components/sessions/session-stream.test.ts`, `src/client/project-manager/core-stream-message-types.ts`; expected commit message: `test: cover session-scoped model labels`.
+22. [IN_PROGRESS] Git Commit: `test: cover session-scoped model labels` (hash: TBD)
 
 ## Phase 4 — Documentation And Verification (owner: Codex, updated: 2026-04-28)
 

@@ -23,6 +23,10 @@ const RUNTIME_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx"
 );
+const CORE_STREAM_TYPES_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/core-stream-message-types.ts"
+);
 const SESSION_ID_BAR_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/ui/src/session/session-id-bar.tsx"
@@ -64,6 +68,32 @@ test("project-manager-runtime-session-view keeps runtime and settings model sync
   );
   assert.equal(source.includes("api.refreshUsageLimits("), false);
   assert.equal(source.includes("onRefreshUsageLimits={"), false);
+});
+
+test("project-manager session surfaces keep binding-owned model labels wired", async () => {
+  const runtimeSource = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+  const dialogControllerSource = await readFile(
+    DIALOG_SESSION_CONTROLLER_SOURCE_PATH,
+    "utf8"
+  );
+  const coreStreamTypesSource = await readFile(
+    CORE_STREAM_TYPES_SOURCE_PATH,
+    "utf8"
+  );
+
+  assert.equal(
+    runtimeSource.includes("applySessionModelBindingToSnapshot("),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes("applySessionModelBindingToSnapshot("),
+    true
+  );
+  assert.equal(
+    coreStreamTypesSource.includes('readonly type: "session:created";'),
+    true
+  );
+  assert.equal(coreStreamTypesSource.includes("payload: SessionRecord"), true);
 });
 
 test("project-manager-session-view restores dialog mode only from live PM intents", async () => {

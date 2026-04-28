@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { SessionSnapshot } from "../../../../types/session";
+import type { ProviderStackId } from "../../../../types/provider";
+import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import type {
   WorkspaceSnapshotContinuityLockReason,
   WorkspaceSnapshotPushPayload,
 } from "../../core-stream-message-types";
-import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import {
+  createInitialSnapshot,
+  type SessionSnapshots,
+} from "../../../ui/src/session/helpers";
 
 type ApplyWorkspaceSnapshotToSnapshots = typeof import("./session-stream")["applyWorkspaceSnapshotToSnapshots"];
 
@@ -122,6 +126,53 @@ const createWorkspaceSnapshotPayload = (params: {
     sessions: params.sessions,
     artifacts: { currentByNodeId: {} },
   },
+});
+
+const createBoundSessionRecord = (
+  id: string,
+  modelId: string
+): SessionRecord => ({
+  binding: {
+    providerSessionId: id,
+    status: "ready",
+  },
+  createdAt: 1,
+  id,
+  modelBinding: {
+    modelId,
+    providerId: "codexCli",
+  },
+  providerIds: ["codexCli"],
+  title: id,
+  workspacePath: "/workspace",
+});
+
+test("createInitialSnapshot keeps same-provider sessions on distinct bound models", () => {
+  const providerLabels = new Map<ProviderStackId, string>([
+    ["codexCli", "Codex"],
+  ]);
+  const first = createInitialSnapshot(
+    createBoundSessionRecord("first", "gpt-5.3-codex reasoning:xhigh"),
+    providerLabels,
+    null
+  );
+  const second = createInitialSnapshot(
+    createBoundSessionRecord("second", "gpt-5.4 reasoning:medium"),
+    providerLabels,
+    null
+  );
+
+  assert.equal(first.status.models?.[0]?.source, "binding");
+  assert.equal(second.status.models?.[0]?.source, "binding");
+  assert.equal(
+    first.status.models?.[0]?.modelId,
+    "gpt-5.3-codex reasoning:xhigh"
+  );
+  assert.equal(second.status.models?.[0]?.modelId, "gpt-5.4 reasoning:medium");
+  assert.notEqual(
+    first.status.models?.[0]?.modelId,
+    second.status.models?.[0]?.modelId
+  );
 });
 
 test("applyWorkspaceSnapshotToSnapshots keeps source/target locked until resume_ready after bootstrap gate", async () => {

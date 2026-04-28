@@ -1,4 +1,5 @@
 import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
+import type { SessionRecord } from "../../types/session";
 import type {
   ProviderId,
   ProviderVersions,
@@ -241,6 +242,14 @@ export type SettingsNativeRequestCaptureResultPayload = {
   readonly reason?: string | null;
 };
 
+export type SessionModelUpdatePayload = {
+  readonly baseModelId?: string | null;
+  readonly modelBinding?: SessionRecord["modelBinding"];
+  readonly modelId: string;
+  readonly providerId?: string;
+  readonly sessionId: string;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -344,6 +353,11 @@ export type OutgoingMessage =
 
 
 export type IncomingMessage =
+  | { readonly type: "session:created"; readonly payload: SessionRecord }
+  | {
+      readonly type: "session:model:update";
+      readonly payload: SessionModelUpdatePayload;
+    }
   | { readonly type: "workspace:scope:ack"; readonly payload: WorkspaceScopeAckPayload }
   | {
       readonly type: "workspace:select:ack";
