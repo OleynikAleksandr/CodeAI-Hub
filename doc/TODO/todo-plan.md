@@ -81,9 +81,9 @@
 ### Stream: Settings Save Plus Binding Update
 
 23. [DONE] Add PM controller for selection -> settings save -> `session:model:set` (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`; commit: `feat(pm): orchestrate session model selections`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
-24. [IN_PROGRESS] Git Commit: `feat(pm): orchestrate session model selections` (hash: TBD)
-25. [TODO] Add React hook for runtime and dialog session switch wiring (scope: `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `feat(pm): add session model switch hook`)
-26. [TODO] Git Commit: `feat(pm): add session model switch hook` (hash: TBD)
+24. [DONE] Git Commit: `feat(pm): orchestrate session model selections` (hash: `53d63c454`)
+25. [DONE] Add React hook for runtime and dialog session switch wiring (scope: `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `feat(pm): add session model switch hook`; verified: `npx tsx --test src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
+26. [IN_PROGRESS] Git Commit: `feat(pm): add session model switch hook` (hash: TBD)
 27. [TODO] Wire runtime and reopened dialog views to the shared switch hook (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `feat(pm): wire status panel model switching`)
 28. [TODO] Git Commit: `feat(pm): wire status panel model switching` (hash: TBD)
 
