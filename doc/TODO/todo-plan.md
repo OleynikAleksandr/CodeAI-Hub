@@ -112,9 +112,9 @@
 35. [DONE] Prepare release docs for future version before build-all (scope: `README.md`, `CHANGELOG.md`, relevant `doc/` release notes if needed; commit: `docs: prepare release 1.2.112`; verified: README current release and changelog section set to `1.2.112`)
 36. [DONE] Git Commit: `docs: prepare release 1.2.112` (hash: `6a0514a82`)
 37. [DONE] Run `./scripts/build-all.sh` from a clean tree and move/verify release tarballs (scope: versioned package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.112`; verified: `./scripts/build-all.sh`, `doc/tmp/releases/*1.2.112*`, `~/.codeai-hub/releases/*1.2.112*`, package version `1.2.112`)
-38. [IN_PROGRESS] Git Commit: `chore: build release 1.2.112` (hash: TBD)
-39. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.112`)
-40. [TODO] Git Commit: `chore: package release 1.2.112` (hash: TBD)
+38. [DONE] Git Commit: `chore: build release 1.2.112` (hash: `3ceab8fcf`)
+39. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.112`; verified: `./scripts/build-release.sh --use-current-version`, `codeai-hub-1.2.112.vsix` package created, SDK exclusions verified, VSIX runtime package surface verified)
+40. [IN_PROGRESS] Git Commit: `chore: package release 1.2.112` (hash: TBD)
 
 ### Stream: Archive Completed Scope
 
