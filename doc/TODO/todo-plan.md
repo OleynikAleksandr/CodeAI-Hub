@@ -51,11 +51,11 @@
 
 ### Stream: Core WebSocket Error Boundary
 1. [DONE] Добавить server/client WS error handlers и stop-time replay map cleanup; scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.errors.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): handle websocket error events`
-2. [IN_PROGRESS] Git Commit: `fix(core): handle websocket error events` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): handle websocket error events` (hash: `e3268746e`)
 
 ### Stream: Startup Best-Effort Diagnostics
-3. [TODO] Заменить silent startup/workspace best-effort catches на sanitized logs; scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): log startup best-effort failures`
-4. [TODO] Git Commit: `fix(core): log startup best-effort failures` (hash: TBD)
+3. [DONE] Заменить silent startup/workspace best-effort catches на sanitized logs; scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): log startup best-effort failures`
+4. [IN_PROGRESS] Git Commit: `fix(core): log startup best-effort failures` (hash: TBD)
 
 ### Stream: Core Bridge Notification Dedupe
 5. [TODO] Дедуплицировать reconnect status notifications без изменения schedule semantics; scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/core-bridge/core-bridge-reconnect.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix(ui): dedupe core bridge reconnect status`

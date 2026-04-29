@@ -25,6 +25,9 @@ const readOptionalString = (value: unknown): string | null => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+const toErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 const parseWorkspaceSessionPayload = (
   payload: unknown
 ):
@@ -88,16 +91,24 @@ export const handleWorkspaceSessionCreate = (params: {
           parsed.value.initiativeSlug
         ),
         { recursive: true }
-      ).catch(() => {
-        /* best effort */
+      ).catch((error: unknown) => {
+        params.logger.warn("Failed to prepare workspace session directory", {
+          error: toErrorMessage(error),
+          workspacePath: parsed.value.workspacePath,
+          workspaceSlug: parsed.value.initiativeSlug,
+        });
       });
       Promise.resolve(
         params.onWorkspaceSessionCreated?.(
           parsed.value.workspacePath,
           parsed.value.initiativeSlug
         )
-      ).catch(() => {
-        /* best effort */
+      ).catch((error: unknown) => {
+        params.logger.warn("Failed to notify workspace session creation", {
+          error: toErrorMessage(error),
+          workspacePath: parsed.value.workspacePath,
+          workspaceSlug: parsed.value.initiativeSlug,
+        });
       });
     }
 

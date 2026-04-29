@@ -154,7 +154,12 @@ export class SettingsPersistenceService {
   }) {
     this.config = options.config;
     this.logger = options.logger;
-    this.primeDefaultsIfMissing().catch(() => undefined);
+    this.primeDefaultsIfMissing().catch((error: unknown) => {
+      this.logger.warn("Failed to prime default settings on startup", {
+        error: toErrorMessage(error),
+        settingsPath: this.config.claudeSettingsPath,
+      });
+    });
   }
 
   async load(): Promise<Record<string, unknown>> {
