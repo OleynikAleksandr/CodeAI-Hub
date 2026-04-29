@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.107] - 2026-04-29
+### Fixed
+- **Idle workflow steps now render neutral.** A regression in v1.2.106 caused workflow steps without any continuity attribution (never been worked on by any provider) to inherit the `codex` cyan tint via the resolver's default fallback. The `useStepProviderResolver` hook now returns `SidebarProviderId | null` and `workspace-tree.tsx` omits the `data-provider` attribute when the resolver returns null, so unattributed steps fall back to the existing neutral `--pm-text-primary` label and stay free of any provider color until they receive their first provider segment. The `fallbackProviderId` parameter remains available for callers that explicitly want a tint default.
+
 ## [1.2.106] - 2026-04-29
 ### Added
 - **Workflow Tree sidebar tinted per provider.** Each row of the Project Manager sidebar (trunk Documentation Tree stages and Development Tree branch nodes — Product Part / Cluster / Module) now carries a `data-provider` attribute resolved from `WorkflowStateSnapshot.continuity.chains[].segments[].providerId`, so unselected steps render their label in the provider's accent hue and selected steps render with a soft provider fill + provider border + muted text. Branch nodes inherit the provider of the latest `diagram_modules` chain until per-branch sessions exist; idle stages fall back to the resolver's default provider.
