@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CodeAI Hub — Corporate Design (черновик)</title>
+    <style>
+    :root {
+      --bg: #0b1118;
+      --panel: #111922;
+      --panel-2: #0e1620;
+      --border: rgba(255, 255, 255, 0.08);
+      --text-primary: #dbe4ee;
+      --text-muted: #7a8796;
+      --selected-text: #cfcfcf;
+
+      /* Confirmed provider tokens — see §1 */
+      --claude-accent: rgba(240, 188, 132, 0.62);
+      --claude-fill: rgba(255, 145, 5, 0.1);
+      --claude-fill-hover: rgba(255, 145, 5, 0.16);
+      --claude-border: rgba(255, 145, 5, 0.4);
+      --claude-soft: rgba(255, 145, 5, 0.3);
+
+      --codex-accent: rgba(1, 240, 216, 0.6);
+      --codex-fill: rgba(1, 240, 216, 0.1);
+      --codex-fill-hover: rgba(1, 240, 216, 0.16);
+      --codex-border: rgba(1, 240, 216, 0.4);
+      --codex-soft: rgba(1, 240, 216, 0.3);
+
+      --gemini-accent: rgba(202, 178, 210, 0.62);
+      --gemini-fill: rgba(171, 52, 203, 0.08);
+      --gemini-fill-hover: rgba(171, 52, 203, 0.13);
+      --gemini-border: rgba(171, 52, 203, 0.3);
+      --gemini-soft: rgba(171, 52, 203, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Text", Helvetica,
+        Arial, sans-serif;
+      font-weight: 300;
+      line-height: 1.55;
+      color: var(--text-primary);
+      background: var(--bg);
+    }
+
+    .doc {
+      max-width: 980px;
+      padding: 32px 40px 80px;
+      margin: 0 auto;
+    }
+
+    .doc__title {
+      margin: 0 0 6px;
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    .doc__subtitle {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .doc__status {
+      display: inline-block;
+      padding: 3px 10px;
+      margin: 0 0 28px;
+      font-size: 10px;
+      font-weight: 500;
+      color: #f0c878;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      background: rgba(240, 200, 120, 0.08);
+      border: 1px solid rgba(240, 200, 120, 0.32);
+      border-radius: 999px;
+    }
+
+    .section {
+      padding: 22px 0 6px;
+      margin: 28px 0 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section__title {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .section__intro {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    h3.subsection__title {
+      margin: 22px 0 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* -------- Provider color tables -------- */
+    .provider-block {
+      padding: 18px 20px 20px;
+      margin: 14px 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .provider-block__title {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 0 0 14px;
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    .provider-block__chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border: 1px solid;
+      border-radius: 999px;
+    }
+
+    .provider-block__chip--claude {
+      color: var(--claude-accent);
+      border-color: var(--claude-border);
+    }
+    .provider-block__chip--codex {
+      color: var(--codex-accent);
+      border-color: var(--codex-border);
+    }
+    .provider-block__chip--gemini {
+      color: var(--gemini-accent);
+      border-color: var(--gemini-border);
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: 130px 1fr 220px;
+      gap: 0;
+      font-size: 13px;
+    }
+
+    .token-grid__head {
+      padding: 8px 12px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .token-grid__cell {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .token-grid__cell:nth-last-child(-n + 3) {
+      border-bottom: none;
+    }
+
+    .token-grid__role {
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    .token-grid__rgba {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 100%;
+      height: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+    }
+
+    .swatch--text-on-dark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 28px;
+      font-size: 13px;
+      font-weight: 300;
+      background: var(--bg);
+      border: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    /* -------- Sidebar sample -------- */
+    .sample-frame {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      margin: 22px 0;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .sample-sidebar {
+      padding: 14px 0;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+    }
+
+    .sample-sidebar__provider-title {
+      padding: 0 16px 10px;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .sample-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 6px 12px;
+      margin: 2px 8px;
+      font-size: 13px;
+      font-weight: 300;
+      border: 1px solid transparent;
+      border-radius: 10px;
+    }
+
+    .sample-row__dot {
+      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      background: #6b7483;
+      border-radius: 999px;
+    }
+
+    .sample-row--claude {
+      color: var(--claude-accent);
+    }
+    .sample-row--codex {
+      color: var(--codex-accent);
+    }
+    .sample-row--gemini {
+      color: var(--gemini-accent);
+    }
+
+    .sample-row--selected.sample-row--claude {
+      color: var(--selected-text);
+      background: var(--claude-fill);
+      border-color: var(--claude-border);
+    }
+    .sample-row--selected.sample-row--codex {
+      color: var(--selected-text);
+      background: var(--codex-fill);
+      border-color: var(--codex-border);
+    }
+    .sample-row--selected.sample-row--gemini {
+      color: var(--selected-text);
+      background: var(--gemini-fill);
+      border-color: var(--gemini-border);
+    }
+
+    .sample-info {
+      padding: 18px 22px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sample-info code {
+      padding: 1px 6px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 11px;
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 4px;
+    }
+
+    .neutral-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr 220px;
+      gap: 0;
+      margin: 18px 0;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .neutral-grid__head {
+      padding: 10px 14px;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .neutral-grid__cell {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .neutral-grid__cell:nth-last-child(-n + 3) {
+      border-bottom: none;
+    }
+
+    .open-questions {
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 13px;
+      background: rgba(240, 200, 120, 0.04);
+      border: 1px solid rgba(240, 200, 120, 0.16);
+      border-radius: 10px;
+    }
+
+    .open-questions ul {
+      padding-left: 18px;
+      margin: 8px 0 0;
+    }
+
+    .open-questions li + li {
+      margin-top: 4px;
+    }
+
+    a.ref {
+      color: var(--codex-accent);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(1, 240, 216, 0.3);
+    }
+    a.ref:hover {
+      color: rgba(1, 240, 216, 0.85);
+    }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <h1 class="doc__title">CodeAI Hub — Corporate Design</h1>
+      <p class="doc__subtitle">
+        Утверждённые цветовые токены и UI-договорённости. Документ растёт по
+        мере утверждения новых разделов; начат с провайдерской цветовой схемы.
+      </p>
+      <div class="doc__status">Draft · color section v1</div>
+
+      <!-- ============================================================ -->
+      <section class="section">
+        <h2 class="section__title">1. Provider color tokens</h2>
+        <p class="section__intro">
+          Каждый провайдер имеет один accent (цвет шрифта на тёмном фоне для
+          невыбранного состояния) и набор поверхностных токенов (fill / hover
+          fill / border / soft) для заливок, обводок и connector-линий.
+          Утверждено визуальной валидацией в прототипе
+          <code>doc/tmp/prototypes/development-tree-sidebar.html</code>.
+        </p>
+
+        <!-- Claude -->
+        <div class="provider-block">
+          <h3 class="provider-block__title">
+            Claude
+            <span class="provider-block__chip provider-block__chip--claude">
+              accent
+            </span>
+          </h3>
+          <div class="token-grid">
+            <div class="token-grid__head">Token</div>
+            <div class="token-grid__head">Sample (на черном)</div>
+            <div class="token-grid__head">RGBA</div>
+
+            <div class="token-grid__cell token-grid__role">accent (label)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch--text-on-dark"
+                style="color: rgba(240, 188, 132, 0.62)"
+              >
+                Description · Virtual Simulation · Diagram Modules
+              </span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(240, 188, 132, 0.62)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">fill (selected)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(255, 145, 5, 0.1)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(255, 145, 5, 0.10)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">fill (hover)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(255, 145, 5, 0.16)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(255, 145, 5, 0.16)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">border</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: transparent; border-color: rgba(255, 145, 5, 0.4)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(255, 145, 5, 0.40)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">
+              soft (connectors)
+            </div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(255, 145, 5, 0.3)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(255, 145, 5, 0.30)
+            </div>
+          </div>
+        </div>
+
+        <!-- Codex -->
+        <div class="provider-block">
+          <h3 class="provider-block__title">
+            Codex
+            <span class="provider-block__chip provider-block__chip--codex">
+              accent
+            </span>
+          </h3>
+          <div class="token-grid">
+            <div class="token-grid__head">Token</div>
+            <div class="token-grid__head">Sample (на черном)</div>
+            <div class="token-grid__head">RGBA</div>
+
+            <div class="token-grid__cell token-grid__role">accent (label)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch--text-on-dark"
+                style="color: rgba(1, 240, 216, 0.6)"
+              >
+                Description · Virtual Simulation · Diagram Modules
+              </span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(1, 240, 216, 0.60)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">fill (selected)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(1, 240, 216, 0.1)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(1, 240, 216, 0.10)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">fill (hover)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(1, 240, 216, 0.16)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(1, 240, 216, 0.16)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">border</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: transparent; border-color: rgba(1, 240, 216, 0.4)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(1, 240, 216, 0.40)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">
+              soft (connectors)
+            </div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(1, 240, 216, 0.3)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(1, 240, 216, 0.30)
+            </div>
+          </div>
+        </div>
+
+        <!-- Gemini -->
+        <div class="provider-block">
+          <h3 class="provider-block__title">
+            Gemini
+            <span class="provider-block__chip provider-block__chip--gemini">
+              accent
+            </span>
+          </h3>
+          <div class="token-grid">
+            <div class="token-grid__head">Token</div>
+            <div class="token-grid__head">Sample (на черном)</div>
+            <div class="token-grid__head">RGBA</div>
+
+            <div class="token-grid__cell token-grid__role">accent (label)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch--text-on-dark"
+                style="color: rgba(202, 178, 210, 0.62)"
+              >
+                Description · Virtual Simulation · Diagram Modules
+              </span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(202, 178, 210, 0.62)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">fill (selected)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(171, 52, 203, 0.08)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(171, 52, 203, 0.08)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">fill (hover)</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(171, 52, 203, 0.13)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(171, 52, 203, 0.13)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">border</div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: transparent; border-color: rgba(171, 52, 203, 0.3)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(171, 52, 203, 0.30)
+            </div>
+
+            <div class="token-grid__cell token-grid__role">
+              soft (connectors)
+            </div>
+            <div class="token-grid__cell">
+              <span
+                class="swatch"
+                style="background: rgba(171, 52, 203, 0.22)"
+              ></span>
+            </div>
+            <div class="token-grid__cell token-grid__rgba">
+              rgba(171, 52, 203, 0.22)
+            </div>
+          </div>
+        </div>
+
+        <p class="section__intro" style="margin-top: 16px">
+          <strong style="color: var(--text-primary); font-weight: 400">
+            Notes по accent-токенам:
+          </strong>
+          для Claude взят desaturated тёплый peach (R=240, G=188, B=132) с
+          альфой 0.62 — родной оранжевый <code>#ff9105</code> сохранён только в
+          fill/border/soft. Для Gemini взят desaturated сиреневый (R=202, G=178,
+          B=210) с альфой 0.62 — родной пурпур
+          <code>#ab34cb</code>
+          сохранён в fill/border/soft. Codex использует родной cyan
+          <code>#01f0d8</code>
+          с альфой 0.60 во всех ролях.
+        </p>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="section">
+        <h2 class="section__title">2. Sidebar sample (применённые токены)</h2>
+        <p class="section__intro">
+          Демонстрация: невыбранные шаги в accent цвета провайдера, выбранный
+          шаг — fill + border + текст #cfcfcf. Шрифт — light (300).
+        </p>
+
+        <h3 class="subsection__title">Claude</h3>
+        <div class="sample-frame">
+          <div class="sample-sidebar">
+            <div class="sample-sidebar__provider-title">Documentation Tree</div>
+            <div class="sample-row sample-row--claude">
+              <span class="sample-row__dot"></span>Description
+            </div>
+            <div class="sample-row sample-row--claude sample-row--selected">
+              <span class="sample-row__dot"></span>Virtual Simulation
+            </div>
+            <div class="sample-row sample-row--claude">
+              <span class="sample-row__dot"></span>Diagram Modules
+            </div>
+          </div>
+          <div class="sample-info">
+            Selected: <code>--claude-fill</code> +
+            <code>--claude-border</code>
+            +
+            <code>color: #cfcfcf</code><br>
+            Unselected: <code>--claude-accent</code>, без fill, без border
+          </div>
+        </div>
+
+        <h3 class="subsection__title">Codex</h3>
+        <div class="sample-frame">
+          <div class="sample-sidebar">
+            <div class="sample-sidebar__provider-title">Documentation Tree</div>
+            <div class="sample-row sample-row--codex">
+              <span class="sample-row__dot"></span>Description
+            </div>
+            <div class="sample-row sample-row--codex sample-row--selected">
+              <span class="sample-row__dot"></span>Virtual Simulation
+            </div>
+            <div class="sample-row sample-row--codex">
+              <span class="sample-row__dot"></span>Diagram Modules
+            </div>
+          </div>
+          <div class="sample-info">
+            Selected: <code>--codex-fill</code> +
+            <code>--codex-border</code>
+            +
+            <code>color: #cfcfcf</code><br>
+            Unselected: <code>--codex-accent</code>, без fill, без border
+          </div>
+        </div>
+
+        <h3 class="subsection__title">Gemini</h3>
+        <div class="sample-frame">
+          <div class="sample-sidebar">
+            <div class="sample-sidebar__provider-title">Documentation Tree</div>
+            <div class="sample-row sample-row--gemini">
+              <span class="sample-row__dot"></span>Description
+            </div>
+            <div class="sample-row sample-row--gemini sample-row--selected">
+              <span class="sample-row__dot"></span>Virtual Simulation
+            </div>
+            <div class="sample-row sample-row--gemini">
+              <span class="sample-row__dot"></span>Diagram Modules
+            </div>
+          </div>
+          <div class="sample-info">
+            Selected: <code>--gemini-fill</code> +
+            <code>--gemini-border</code>
+            +
+            <code>color: #cfcfcf</code><br>
+            Unselected: <code>--gemini-accent</code>, без fill, без border
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="section">
+        <h2 class="section__title">3. Neutral & typography tokens</h2>
+        <p class="section__intro">
+          Общие нейтральные токены, применяемые поверх provider-схемы.
+        </p>
+        <div class="neutral-grid">
+          <div class="neutral-grid__head">Role</div>
+          <div class="neutral-grid__head">Sample</div>
+          <div class="neutral-grid__head">Value</div>
+
+          <div class="neutral-grid__cell">selected text (на fill)</div>
+          <div class="neutral-grid__cell">
+            <span style="color: #cfcfcf; font-weight: 300">
+              Selected step label
+            </span>
+          </div>
+          <div
+            class="neutral-grid__cell"
+            style="
+              font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+              font-size: 11px;
+              color: var(--text-muted);
+            "
+          >
+            #cfcfcf
+          </div>
+
+          <div class="neutral-grid__cell">font-weight (sidebar tree)</div>
+          <div class="neutral-grid__cell">
+            <span style="font-weight: 300">Light · Description</span>
+          </div>
+          <div
+            class="neutral-grid__cell"
+            style="
+              font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+              font-size: 11px;
+              color: var(--text-muted);
+            "
+          >
+            300
+          </div>
+
+          <div class="neutral-grid__cell">font-weight (provider pills)</div>
+          <div class="neutral-grid__cell">
+            <span style="font-weight: 300; letter-spacing: 0.06em">
+              CLAUDE · CODEX · GEMINI
+            </span>
+          </div>
+          <div
+            class="neutral-grid__cell"
+            style="
+              font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+              font-size: 11px;
+              color: var(--text-muted);
+            "
+          >
+            300
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="section">
+        <h2 class="section__title">
+          4. Применение по продукту (rollout checklist)
+        </h2>
+        <p class="section__intro">
+          Места, где утверждённые токены должны заменить текущие захардкоженные
+          значения. Список будет вычеркиваться по мере реализации.
+        </p>
+        <div class="open-questions">
+          <strong style="color: var(--text-primary); font-weight: 400">
+            UI-поверхности с provider-цветом:
+          </strong>
+          <ul>
+            <li>
+              Workflow Tree sidebar — Documentation Tree + Development Tree
+              (текущая работа в прототипе)
+            </li>
+            <li>
+              <code>session-status-button--claude/codex/gemini</code>
+              в
+              <code>media/session-view.css</code>
+              — кнопки модели и reasoning в Session info-card. Сейчас используют
+              свой набор alpha (0.08 / 0.16 / 0.32 для default/hover/active);
+              решить, синхронизировать ли с новыми token'ами или оставить
+              отдельным contract'ом.
+            </li>
+            <li>
+              Session tabs (вкладки сессий с провайдерским tint у имени
+              провайдера в табе)
+            </li>
+            <li>
+              Provider pills в Settings → Models / в любых будущих
+              provider-pickers
+            </li>
+            <li>
+              Bubble chrome: <code>Claude · Thinking</code> /
+              <code>Codex · Thinking</code>
+              / <code>Gemini · Thinking</code>
+              header tint (живёт сейчас в bubble visual contract)
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="section">
+        <h2 class="section__title">5. Open questions / следующие шаги</h2>
+        <div class="open-questions">
+          <ul>
+            <li>
+              Typography scale (font sizes / line heights / weights для
+              остальных поверхностей PM) — TBD
+            </li>
+            <li>Spacing scale (4 / 6 / 8 / 12 / 16 / 24 / 32) — TBD</li>
+            <li>
+              Surface hierarchy: <code>--bg</code> / <code>--panel</code> /
+              <code>--panel-2</code>
+              и условия применения каждого — TBD
+            </li>
+            <li>
+              Semantic colors (success / warning / error / info) поверх
+              нейтральной палитры — TBD
+            </li>
+            <li>
+              Decision: остаются ли
+              <code>session-status-button--*</code>
+              чипы со своими alpha-каналами (сейчас 0.08/0.16/0.32) как
+              отдельный sub-contract, или унифицируются с этими token'ами
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <section class="section">
+        <h2 class="section__title">References</h2>
+        <p class="section__intro" style="margin: 0">
+          Прототип-источник:
+          <a
+            class="ref"
+            href="../../tmp/prototypes/development-tree-sidebar.html"
+          >
+            doc/tmp/prototypes/development-tree-sidebar.html
+          </a>
+          <br>
+          Связанные SSOT:
+          <code>doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md</code>,
+          <code
+            >doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md</code
+          >,
+          <code>media/session-view.css</code>
+          (existing
+          <code>session-status-button--*</code>
+          chips).
+        </p>
+      </section>
+    </div>
+  </body>
+</html>
