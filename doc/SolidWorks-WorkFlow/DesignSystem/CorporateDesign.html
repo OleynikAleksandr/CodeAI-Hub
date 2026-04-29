@@ -774,8 +774,19 @@
           </strong>
           <ul>
             <li>
-              Workflow Tree sidebar — Documentation Tree + Development Tree
-              (текущая работа в прототипе)
+              <strong style="color: #5fe3ba">[DONE 1.2.106]</strong>
+              Workflow Tree sidebar — Documentation Tree + Development Tree.
+              Реализовано через
+              <code>useStepProviderResolver</code>
+              +
+              <code>.pm-tree__item[data-provider]</code>
+              в
+              <code>packages/ui/project-manager/styles.css</code>; legacy
+              <code>#d9a441</code>
+              (in-progress) и
+              <code>--pm-accent-strong</code>
+              (done + has-children outline) hardcodes заменены на
+              provider-tokens.
             </li>
             <li>
               <code>session-status-button--claude/codex/gemini</code>
