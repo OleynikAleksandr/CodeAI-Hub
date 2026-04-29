@@ -1423,7 +1423,7 @@
 
 .session-status-chip--limits .session-status-chip__value {
   font-variant-numeric: tabular-nums;
-  color: rgba(220, 220, 220, 1);
+  color: #b0b0b0;
 }
 
 .session-status-button {

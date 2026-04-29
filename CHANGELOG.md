@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.105] - 2026-04-29
+### Changed
+- **Tokens chip metric is muted to match the model/reasoning chips.** The numeric `used (remaining%)` value inside the right-most session status chip now uses the same neutral grey `#b0b0b0` as the default-state model and reasoning button chips, so the digits stop pulling visual attention away from the model identity.
+
 ## [1.2.104] - 2026-04-29
 ### Changed
 - **Session status row split into four chips.** The status surface directly under `InputPanel` now renders as a label chip (`Модель:`), a provider-tinted button chip carrying the model display name, an optional provider-tinted button chip carrying the reasoning value, and a right-most tokens chip with the `used (remaining%)` metric and a free right edge reserved for future per-session signals. The component now returns nothing when Core is not ready or `models[0]` is missing; the legacy `Core Supervisor: starting…` and single-line summary fallbacks were removed.
