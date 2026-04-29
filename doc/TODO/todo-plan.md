@@ -55,9 +55,9 @@
 ### Stream: Reasoning/Thinking Parity
 
 11. [DONE] Align Claude runtime applied-config effort type with `xhigh` (scope: `packages/Claude_Module/src/session/types.ts`, `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`; commit: `fix(claude): align applied thinking runtime levels`; verified: `npm run build --workspace=@codeai-hub/claude-module`)
-12. [IN_PROGRESS] Git Commit: `fix(claude): align applied thinking runtime levels` (hash: TBD)
-13. [TODO] Pass Claude `xhigh` through SDK manager and tests (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`; commit: `fix(claude): pass xhigh effort to sdk`)
-14. [TODO] Git Commit: `fix(claude): pass xhigh effort to sdk` (hash: TBD)
+12. [DONE] Git Commit: `fix(claude): align applied thinking runtime levels` (hash: `63954c275`)
+13. [DONE] Pass Claude `xhigh` through SDK manager and tests (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`; commit: `fix(claude): pass xhigh effort to sdk`; verified: `npx tsx --test packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `npm run build --workspace=@codeai-hub/claude-module`)
+14. [IN_PROGRESS] Git Commit: `fix(claude): pass xhigh effort to sdk` (hash: TBD)
 15. [TODO] Add provider applied-config compatibility tests for Codex/Gemini selected model and reasoning payloads (scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`; commit: `test(providers): verify selected model reasoning payloads`)
 16. [TODO] Git Commit: `test(providers): verify selected model reasoning payloads` (hash: TBD)
 
