@@ -1377,6 +1377,142 @@
   border-radius: 4px;
 }
 
+/* ============================================================
+   Four-chip session status row
+   See doc/SolidWorks-WorkFlow/Plans/SessionStatus_FourChipSplit_Architecture.md
+   ============================================================ */
+.session-status-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.session-status-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(204, 204, 204, 1);
+  white-space: nowrap;
+  background-color: rgba(40, 41, 42, 1);
+  border: 1px solid rgba(67, 68, 70, 1);
+  border-radius: 6px;
+}
+
+.session-status-chip--label {
+  color: var(--session-hint-color);
+}
+
+.session-status-chip--limits {
+  flex: 1 1 0;
+  gap: 10px;
+  justify-content: flex-start;
+  min-width: 0;
+  min-height: 32px;
+  padding: 4px 12px;
+}
+
+.session-status-chip--limits .session-status-chip__label {
+  color: var(--session-hint-color);
+}
+
+.session-status-chip--limits .session-status-chip__value {
+  font-variant-numeric: tabular-nums;
+  color: rgba(220, 220, 220, 1);
+}
+
+.session-status-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent);
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.05s ease;
+}
+
+.session-status-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.session-status-button:hover {
+  color: var(--accent-hover);
+  background-color: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+
+.session-status-button:active {
+  color: var(--accent-active);
+  background-color: var(--bg-active);
+  border-color: var(--border-active);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  transform: translateY(1px);
+}
+
+.session-status-button--claude {
+  --accent: #b0b0b0;
+  --bg: rgba(255, 145, 5, 0.08);
+  --border: rgba(255, 145, 5, 0.35);
+  --accent-hover: #ffa733;
+  --bg-hover: rgba(255, 145, 5, 0.16);
+  --border-hover: rgba(255, 145, 5, 0.55);
+  --accent-active: #ffffff;
+  --bg-active: rgba(255, 145, 5, 0.32);
+  --border-active: rgba(255, 145, 5, 0.75);
+}
+
+.session-status-button--codex {
+  --accent: #b0b0b0;
+  --bg: rgba(1, 240, 216, 0.08);
+  --border: rgba(1, 240, 216, 0.35);
+  --accent-hover: #5cf6e4;
+  --bg-hover: rgba(1, 240, 216, 0.16);
+  --border-hover: rgba(1, 240, 216, 0.55);
+  --accent-active: #ffffff;
+  --bg-active: rgba(1, 240, 216, 0.55);
+  --border-active: rgba(1, 240, 216, 0.85);
+}
+
+.session-status-button--gemini {
+  --accent: #b0b0b0;
+  --bg: rgba(171, 52, 203, 0.1);
+  --border: rgba(171, 52, 203, 0.4);
+  --accent-hover: #c25fde;
+  --bg-hover: rgba(171, 52, 203, 0.18);
+  --border-hover: rgba(171, 52, 203, 0.6);
+  --accent-active: #ffffff;
+  --bg-active: rgba(171, 52, 203, 0.45);
+  --border-active: rgba(171, 52, 203, 0.8);
+}
+
+.session-status__debug-strip {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--session-hint-color);
+  text-align: right;
+  white-space: nowrap;
+}
+
 .session-empty {
   display: flex;
   flex-direction: column;

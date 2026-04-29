@@ -41,14 +41,15 @@
 1. [DONE] Добавить ключ `session.status.model_label = "Model"` в approved dict `assets/localization/source/en/messages_for_the_user.json` и в legacy mirror `assets/localization/source/en/system_feedback.json` (оба обязаны оставаться в синхроне до завершения transition).
    - scope: 2 файла (`messages_for_the_user.json`, `system_feedback.json`).
    - commit message: `feat(localization): add session.status.model_label key`.
-2. [DONE] Git Commit: `feat(localization): add session.status.model_label key` (hash: TBD — будет проставлен в коммите Stream 1.2).
+2. [DONE] Git Commit: `feat(localization): add session.status.model_label key` (hash: `473f7a4e9`).
 
 ### Stream 1.2: Status row CSS
 
-1. [TODO] В `packages/ui/project-manager/styles.css` добавить блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}` (default/hover/active фазы). Цвета — из existing `session-tab--*` / `session-banner--*` set. Default text grey `#b0b0b0`, active white `#ffffff`. Размеры: chips 1–3 `flex: 0 0 auto`, chip 4 `flex: 1 1 0; min-width: 0`. Внешняя ширина ряда фиксирована родителем (`width: 100%`).
-   - scope: 1 файл (`packages/ui/project-manager/styles.css`).
-   - commit message: `feat(pm-ui): add 4-chip session status row styles`.
-2. [TODO] Git Commit: `feat(pm-ui): add 4-chip session status row styles` (hash: TBD).
+1. [DONE] В canonical session styles SSOT (`media/session-view.css`) добавлен блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}` плюс `.session-status__debug-strip` для опционального tokenDebugSummary. Цвета — из existing `session-tab--*` / `session-banner--*` set. Default text grey `#b0b0b0`, active white `#ffffff`. Размеры: chips 1–3 `flex: 0 0 auto`, chip 4 `flex: 1 1 0; min-width: 0`. Внешняя ширина ряда фиксирована родителем (`width: 100%`).
+   - scope: 1 файл (`media/session-view.css`).
+   - actual scope note: путь оказался `media/session-view.css`, а не `packages/ui/project-manager/styles.css`, потому что live session styles SSOT исторически живёт под `media/` (см. `.session-panel`, `.session-id-bar`, `.session-status__*` блоки в этом же файле).
+   - commit message: `feat(session-ui): add four-chip status row styles`.
+2. [DONE] Git Commit: `feat(session-ui): add four-chip status row styles` (hash: TBD — будет проставлен в коммите Stream 1.3).
 
 ### Stream 1.3: StatusPanel rewrite
 
