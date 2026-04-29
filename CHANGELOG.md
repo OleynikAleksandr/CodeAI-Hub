@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.104] - 2026-04-29
+### Changed
+- **Session status row split into four chips.** The status surface directly under `InputPanel` now renders as a label chip (`Модель:`), a provider-tinted button chip carrying the model display name, an optional provider-tinted button chip carrying the reasoning value, and a right-most tokens chip with the `used (remaining%)` metric and a free right edge reserved for future per-session signals. The component now returns nothing when Core is not ready or `models[0]` is missing; the legacy `Core Supervisor: starting…` and single-line summary fallbacks were removed.
+- **Localization key for the new label.** Added `session.status.model_label` to the approved `messages_for_the_user.json` dictionary and the legacy `system_feedback.json` mirror.
+
+### Tests
+- **Four-chip status panel is covered by unit tests.** `status-panel.test.tsx` asserts the four-chip layout per provider, the reasoning chip omission rule, the tokens metric, the not-ready and missing-models null returns, and the optional debug strip.
+
 ## [1.2.103] - 2026-04-28
 ### Fixed
 - **Runtime WebSocket boundaries are now explicit and validated.** Project Manager Core stream connection is idempotent with intentional disconnect cleanup, PM/Core incoming WebSocket frames pass structural validators before dispatch, and malformed frames fail at the boundary instead of relying on raw casts.
