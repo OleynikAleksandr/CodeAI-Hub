@@ -183,7 +183,7 @@ Scope: в первую очередь для resume-сессий.
    - После bootstrap ввод разблокирован.
 
 5. **Status panels follow active segment**
-   - После rollover StatusPanel/SessionIdBar показывают текущий `sessionId`.
+   - После rollover SessionIdBar показывает текущий `providerSessionId` и actual usage limits, а StatusPanel рендерит четырёх-chip ряд с model identity (`Модель:` + provider-tinted кнопки имени модели и reasoning) и token usage активной session.
 
 6. **Cold start idle snapshot without reason**
    - `turnState="idle"`, `continuityLockActive=false`, без `continuityLockReason`.
