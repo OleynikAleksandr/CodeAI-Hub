@@ -774,7 +774,7 @@
           </strong>
           <ul>
             <li>
-              <strong style="color: #5fe3ba">[DONE 1.2.106]</strong>
+              <strong style="color: #5fe3ba">[DONE 1.2.110]</strong>
               Workflow Tree sidebar — Documentation Tree + Development Tree.
               Реализовано через
               <code>useStepProviderResolver</code>
@@ -786,7 +786,22 @@
               (in-progress) и
               <code>--pm-accent-strong</code>
               (done + has-children outline) hardcodes заменены на
-              provider-tokens.
+              provider-tokens. Финальный контракт после серии hardening'ов
+              (1.2.107 idle-neutral / 1.2.108 branch-neutral / 1.2.109 neutral
+              selected idle / 1.2.110 strict per-step attribution): tint
+              отражает только own-chain — VS/DM не наследуют upstream,
+              branch-узлы (P/C/M) остаются нейтральными до per-branch sessions,
+              selected idle без
+              <code>data-provider</code>
+              рендерится нейтральной подсветкой.
+            </li>
+            <li>
+              <strong style="color: #5fe3ba">[DONE 1.2.109]</strong>
+              <code>StageConfirmationCard</code>
+              provider radio pills используют corporate tokens (Claude warm
+              peach / Codex cyan / Gemini cool lavender) через
+              <code>stage-confirmation-card-provider-tint.ts</code>
+              вместо legacy hardcoded зелёного selection state.
             </li>
             <li>
               <code>session-status-button--claude/codex/gemini</code>
