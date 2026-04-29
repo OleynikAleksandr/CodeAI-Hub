@@ -9,6 +9,7 @@ interface ProviderRecoverySchedulerOptions {
 }
 
 export class ProviderRecoveryScheduler {
+  private disposed = false;
   private readonly options: ProviderRecoverySchedulerOptions;
   private readonly retryTimers = new Map<string, NodeJS.Timeout>();
 
@@ -25,11 +26,14 @@ export class ProviderRecoveryScheduler {
   }
 
   scheduleRetry(providerId: string): void {
-    if (this.retryTimers.has(providerId)) {
+    if (this.disposed || this.retryTimers.has(providerId)) {
       return;
     }
 
     const timer = setTimeout(() => {
+      if (this.disposed) {
+        return;
+      }
       this.retryTimers.delete(providerId);
       this.options.retry(providerId).catch((error) => {
         this.options.logger.warn("Provider retry failed", {
@@ -40,6 +44,15 @@ export class ProviderRecoveryScheduler {
       });
     }, this.options.intervalMs ?? DEFAULT_RECOVERY_INTERVAL_MS);
 
+    timer.unref?.();
     this.retryTimers.set(providerId, timer);
+  }
+
+  dispose(): void {
+    this.disposed = true;
+    for (const timer of this.retryTimers.values()) {
+      clearTimeout(timer);
+    }
+    this.retryTimers.clear();
   }
 }
