@@ -24,6 +24,7 @@ import { useDescriptionArtifactAvailability } from "./use-description-artifact-a
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import { useStepProviderResolver } from "./use-step-provider-resolver";
+import { renderTypeMarker } from "./workspace-tree-type-marker";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
@@ -252,31 +253,13 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       : [];
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
 
-  const TYPE_MARKER_LABELS: Record<string, string> = {
-    "product-part": "P",
-    cluster: "C",
-    module: "M",
-  };
-
-  const renderTypeMarker = (node: TreeNode) => {
-    const letter = TYPE_MARKER_LABELS[node.nodeType ?? ""];
-    if (!letter) return <span className="pm-tree__status" />;
-    const hasChildren = (node.children?.length ?? 0) > 0;
-    return (
-      <span
-        className={`pm-tree__type-marker${hasChildren ? " pm-tree__type-marker--has-children" : ""}`}
-      >
-        {letter}
-      </span>
-    );
-  };
-
   const renderItemClass = (node: TreeNode) =>
     `pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`;
 
   const renderModuleRow = (node: TreeNode) => (
     <li
       className={renderItemClass(node)}
+      data-provider={providerResolver.forBranchModule(node.id)}
       key={node.id}
       onClick={node.onSelect}
       role={node.onSelect ? "button" : undefined}
@@ -291,6 +274,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const renderClusterNode = (node: TreeNode) => {
     const isOpen = openClusterId === node.id;
     const clusterModules = node.children ?? [];
+    const clusterProvider = providerResolver.forBranchCluster(node.id);
     return (
       <li
         className={`pm-tree__cluster-wrapper${isOpen ? " pm-tree__cluster-wrapper--open" : ""}`}
@@ -298,6 +282,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       >
         <div
           className={renderItemClass(node)}
+          data-provider={clusterProvider}
           onClick={() => {
             node.onSelect?.();
             if (node.isCollapsible) toggleCluster(node.id);
@@ -324,13 +309,16 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       node.children?.filter((c) => c.nodeType === "cluster") ?? [];
     const standaloneModules =
       node.children?.filter((c) => c.nodeType === "module") ?? [];
+    const partProvider = providerResolver.forBranchPart(node.id);
     return (
       <li
         className={`pm-tree__pp-wrapper${isOpen ? " pm-tree__pp-wrapper--open" : ""}`}
+        data-provider={partProvider}
         key={node.id}
       >
         <div
           className={renderItemClass(node)}
+          data-provider={partProvider}
           onClick={() => {
             node.onSelect?.();
             if (node.isCollapsible) togglePart(node.id);
