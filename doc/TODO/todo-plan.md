@@ -46,7 +46,7 @@
 7. [DONE] Route `session:model:set` command and cover no-resend behavior (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; commit: `feat(core): route session model set command`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npm run build --workspace=@codeai-hub/core`)
 8. [DONE] Git Commit: `feat(core): route session model set command` (hash: `e688ecc6e`)
 9. [DONE] Add PM API sender for active-session model binding update (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat(pm): expose session model set command`)
-10. [IN_PROGRESS] Git Commit: `feat(pm): expose session model set command` (hash: TBD)
+10. [DONE] Git Commit: `feat(pm): expose session model set command` (hash: `a729a5340`)
 
 ---
 
@@ -54,10 +54,12 @@
 
 ### Stream: Reasoning/Thinking Parity
 
-11. [TODO] Fix Claude `xhigh` applied-turn parity or explicitly filter it from switcher options (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`; commit: `fix(claude): align applied thinking effort levels`)
-12. [TODO] Git Commit: `fix(claude): align applied thinking effort levels` (hash: TBD)
-13. [TODO] Add provider applied-config compatibility tests for Codex/Gemini selected model and reasoning payloads (scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`; commit: `test(providers): verify selected model reasoning payloads`)
-14. [TODO] Git Commit: `test(providers): verify selected model reasoning payloads` (hash: TBD)
+11. [DONE] Align Claude runtime applied-config effort type with `xhigh` (scope: `packages/Claude_Module/src/session/types.ts`, `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`; commit: `fix(claude): align applied thinking runtime levels`; verified: `npm run build --workspace=@codeai-hub/claude-module`)
+12. [IN_PROGRESS] Git Commit: `fix(claude): align applied thinking runtime levels` (hash: TBD)
+13. [TODO] Pass Claude `xhigh` through SDK manager and tests (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`; commit: `fix(claude): pass xhigh effort to sdk`)
+14. [TODO] Git Commit: `fix(claude): pass xhigh effort to sdk` (hash: TBD)
+15. [TODO] Add provider applied-config compatibility tests for Codex/Gemini selected model and reasoning payloads (scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`; commit: `test(providers): verify selected model reasoning payloads`)
+16. [TODO] Git Commit: `test(providers): verify selected model reasoning payloads` (hash: TBD)
 
 ---
 
@@ -65,12 +67,12 @@
 
 ### Stream: Option Facade
 
-15. [TODO] Add provider-neutral status-panel switcher option facade (scope: `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`; commit: `feat(ui): add session model switcher facade`)
-16. [TODO] Git Commit: `feat(ui): add session model switcher facade` (hash: TBD)
-17. [TODO] Add picker card components for model and reasoning choices (scope: `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/ui/src/session/model-switcher/session-reasoning-picker-card.tsx`, `media/session-view.css`; commit: `feat(ui): add session model picker cards`)
-18. [TODO] Git Commit: `feat(ui): add session model picker cards` (hash: TBD)
-19. [TODO] Wire StatusPanel callbacks and picker rendering without PM imports (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.test.tsx`; commit: `feat(ui): make status model chips interactive`)
-20. [TODO] Git Commit: `feat(ui): make status model chips interactive` (hash: TBD)
+17. [TODO] Add provider-neutral status-panel switcher option facade (scope: `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`; commit: `feat(ui): add session model switcher facade`)
+18. [TODO] Git Commit: `feat(ui): add session model switcher facade` (hash: TBD)
+19. [TODO] Add picker card components for model and reasoning choices (scope: `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/ui/src/session/model-switcher/session-reasoning-picker-card.tsx`, `media/session-view.css`; commit: `feat(ui): add session model picker cards`)
+20. [TODO] Git Commit: `feat(ui): add session model picker cards` (hash: TBD)
+21. [TODO] Wire StatusPanel callbacks and picker rendering without PM imports (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.test.tsx`; commit: `feat(ui): make status model chips interactive`)
+22. [TODO] Git Commit: `feat(ui): make status model chips interactive` (hash: TBD)
 
 ---
 
@@ -78,12 +80,12 @@
 
 ### Stream: Settings Save Plus Binding Update
 
-21. [TODO] Add PM controller for selection -> settings save -> `session:model:set` (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`; commit: `feat(pm): orchestrate session model selections`)
-22. [TODO] Git Commit: `feat(pm): orchestrate session model selections` (hash: TBD)
-23. [TODO] Add React hook for runtime and dialog session switch wiring (scope: `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `feat(pm): add session model switch hook`)
-24. [TODO] Git Commit: `feat(pm): add session model switch hook` (hash: TBD)
-25. [TODO] Wire runtime and reopened dialog views to the shared switch hook (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `feat(pm): wire status panel model switching`)
-26. [TODO] Git Commit: `feat(pm): wire status panel model switching` (hash: TBD)
+23. [TODO] Add PM controller for selection -> settings save -> `session:model:set` (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`; commit: `feat(pm): orchestrate session model selections`)
+24. [TODO] Git Commit: `feat(pm): orchestrate session model selections` (hash: TBD)
+25. [TODO] Add React hook for runtime and dialog session switch wiring (scope: `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `feat(pm): add session model switch hook`)
+26. [TODO] Git Commit: `feat(pm): add session model switch hook` (hash: TBD)
+27. [TODO] Wire runtime and reopened dialog views to the shared switch hook (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `feat(pm): wire status panel model switching`)
+28. [TODO] Git Commit: `feat(pm): wire status panel model switching` (hash: TBD)
 
 ---
 
@@ -91,15 +93,15 @@
 
 ### Stream: Canonical Docs
 
-27. [TODO] Update canonical architecture docs for status-panel model switching (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel model switching`)
-28. [TODO] Git Commit: `docs: document status panel model switching` (hash: TBD)
-29. [TODO] Update Docs Index and active planning status after implementation (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: index status panel model switcher`)
-30. [TODO] Git Commit: `docs: index status panel model switcher` (hash: TBD)
+29. [TODO] Update canonical architecture docs for status-panel model switching (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel model switching`)
+30. [TODO] Git Commit: `docs: document status panel model switching` (hash: TBD)
+31. [TODO] Update Docs Index and active planning status after implementation (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: index status panel model switcher`)
+32. [TODO] Git Commit: `docs: index status panel model switcher` (hash: TBD)
 
 ### Stream: Targeted Verification
 
-31. [TODO] Run targeted unit/build checks for Core, PM UI, and provider compatibility (scope: `packages/core`, `src/client`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`, `packages/Gemini_Module`; commit: `test: verify status panel model switching`)
-32. [TODO] Git Commit: `test: verify status panel model switching` (hash: TBD)
+33. [TODO] Run targeted unit/build checks for Core, PM UI, and provider compatibility (scope: `packages/core`, `src/client`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`, `packages/Gemini_Module`; commit: `test: verify status panel model switching`)
+34. [TODO] Git Commit: `test: verify status panel model switching` (hash: TBD)
 
 ---
 
@@ -107,14 +109,14 @@
 
 ### Stream: Release Preparation
 
-33. [TODO] Prepare release docs for future version before build-all (scope: `README.md`, `CHANGELOG.md`, relevant `doc/` release notes if needed; commit: `docs: prepare release 1.2.112`)
-34. [TODO] Git Commit: `docs: prepare release 1.2.112` (hash: TBD)
-35. [TODO] Run `./scripts/build-all.sh` from a clean tree and move/verify release tarballs (scope: versioned package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.112`)
-36. [TODO] Git Commit: `chore: build release 1.2.112` (hash: TBD)
-37. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.112`)
-38. [TODO] Git Commit: `chore: package release 1.2.112` (hash: TBD)
+35. [TODO] Prepare release docs for future version before build-all (scope: `README.md`, `CHANGELOG.md`, relevant `doc/` release notes if needed; commit: `docs: prepare release 1.2.112`)
+36. [TODO] Git Commit: `docs: prepare release 1.2.112` (hash: TBD)
+37. [TODO] Run `./scripts/build-all.sh` from a clean tree and move/verify release tarballs (scope: versioned package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.112`)
+38. [TODO] Git Commit: `chore: build release 1.2.112` (hash: TBD)
+39. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.112`)
+40. [TODO] Git Commit: `chore: package release 1.2.112` (hash: TBD)
 
 ### Stream: Archive Completed Scope
 
-39. [TODO] Archive completed todo-plan and planning-doc, update Docs Index/session report (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher`)
-40. [TODO] Git Commit: `docs: archive status panel model switcher` (hash: TBD)
+41. [TODO] Archive completed todo-plan and planning-doc, update Docs Index/session report (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher`)
+42. [TODO] Git Commit: `docs: archive status panel model switcher` (hash: TBD)

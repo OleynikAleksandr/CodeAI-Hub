@@ -1,11 +1,11 @@
-import type { ActiveSession } from "../session/types";
+import type { ActiveSession, ClaudeReasoningEffort } from "../session/types";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 export interface AppliedClaudeTurnConfig {
   readonly messagesForTheUserLanguage?: string;
-  readonly reasoningEffort?: "low" | "medium" | "high" | "max";
+  readonly reasoningEffort?: ClaudeReasoningEffort;
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly translationEngineId?: string;
@@ -19,7 +19,11 @@ const readOptionalTrimmedString = (value: unknown): string | undefined =>
 const readClaudeReasoningEffort = (
   value: unknown
 ): AppliedClaudeTurnConfig["reasoningEffort"] =>
-  value === "low" || value === "medium" || value === "high" || value === "max"
+  value === "low" ||
+  value === "medium" ||
+  value === "high" ||
+  value === "xhigh" ||
+  value === "max"
     ? value
     : undefined;
 
