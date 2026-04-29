@@ -81,13 +81,14 @@
 
 ### Stream: Writer Close and Dead Queue Cleanup
 1. [DONE] Сохранить storage entry до завершения close promises и убрать dead queue/flushQueue path; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/storage.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix(core): harden unified session storage close`
-2. [IN_PROGRESS] Git Commit: `fix(core): harden unified session storage close` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): harden unified session storage close` (hash: `ca91b5f00`)
 
 ## Phase 4 — Verification and Deferred Cleanup Recording (owner: Codex, updated: 2026-04-29)
 
 ### Stream: Targeted Verification
-1. [TODO] Запустить targeted builds/checks for touched surfaces; scope: UI bundle, Core package; expected commit message: `chore: verify runtime reliability follow-up`
-2. [TODO] Git Commit: `chore: verify runtime reliability follow-up` (hash: TBD)
+1. [DONE] Запустить targeted builds/checks for touched surfaces; scope: UI bundle, Core package; expected commit message: `chore: verify runtime reliability follow-up`
+   - Verification 2026-04-29: `npm run build --workspace @codeai-hub/core`, `npm run typecheck:webview`, `npm run build:webview`, targeted `node --test` suite for websocket errors, continuity retry, session runtime dispose, provider recovery scheduler, runtime factory wiring, and unified-session storage close.
+2. [IN_PROGRESS] Git Commit: `chore: verify runtime reliability follow-up` (hash: TBD)
 
 ### Stream: Deferred Cleanup Note
 3. [TODO] Зафиксировать deferred low-priority cleanup/facade audit decision in navigation docs; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record deferred cleanup audit scope`
