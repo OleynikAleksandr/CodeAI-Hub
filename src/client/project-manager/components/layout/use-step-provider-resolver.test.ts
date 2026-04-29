@@ -19,7 +19,13 @@ const baseSnapshot = (
   continuity: { chains: [] },
   lastActive: null,
   description: null,
-  gating: { stages: {} },
+  gating: {
+    blocked: {
+      description: false,
+      virtual_simulation: false,
+      diagram_modules: false,
+    },
+  },
   ...override,
 });
 
