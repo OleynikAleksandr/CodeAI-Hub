@@ -1212,4 +1212,92 @@ body {
   }
 }
 
+/* -------- Sidebar provider tint scheme --------
+   Per-row provider attribution; tokens mirror
+   doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html.
+   The legacy --pm-accent-strong rules above remain as fallback
+   when [data-provider] is absent. */
+
+.pm-tree__item[data-provider="claude"] {
+  --row-accent: rgba(240, 188, 132, 0.62);
+  --row-fill: rgba(255, 145, 5, 0.1);
+  --row-fill-hover: rgba(255, 145, 5, 0.16);
+  --row-border: rgba(255, 145, 5, 0.4);
+  --row-soft: rgba(255, 145, 5, 0.3);
+}
+
+.pm-tree__item[data-provider="codex"] {
+  --row-accent: rgba(1, 240, 216, 0.6);
+  --row-fill: rgba(1, 240, 216, 0.1);
+  --row-fill-hover: rgba(1, 240, 216, 0.16);
+  --row-border: rgba(1, 240, 216, 0.4);
+  --row-soft: rgba(1, 240, 216, 0.3);
+}
+
+.pm-tree__item[data-provider="gemini"] {
+  --row-accent: rgba(202, 178, 210, 0.62);
+  --row-fill: rgba(171, 52, 203, 0.08);
+  --row-fill-hover: rgba(171, 52, 203, 0.13);
+  --row-border: rgba(171, 52, 203, 0.3);
+  --row-soft: rgba(171, 52, 203, 0.22);
+}
+
+.pm-tree__item[data-provider] .pm-tree__label {
+  font-weight: 300;
+  color: var(--row-accent);
+}
+
+.pm-tree__item[data-provider].pm-tree__item--selected {
+  color: #cfcfcf;
+  background: var(--row-fill);
+  border-color: var(--row-border);
+}
+
+.pm-tree__item[data-provider].pm-tree__item--selected .pm-tree__label {
+  font-weight: 300;
+  color: #cfcfcf;
+}
+
+.pm-tree__item[data-provider].pm-tree__item--selected:hover {
+  background: var(--row-fill-hover);
+}
+
+.pm-tree__item[data-provider].pm-tree__item--selected .pm-tree__toggle {
+  color: #cfcfcf;
+}
+
+/* Type markers (P/C/M cubes) — replace yellow #d9a441 (in-progress)
+   and green --pm-accent-strong (done + has-children outline). */
+.pm-tree__item[data-provider].pm-tree__item--in-progress .pm-tree__type-marker {
+  color: #1a1207;
+  background: var(--row-soft);
+}
+
+.pm-tree__item[data-provider].pm-tree__item--done .pm-tree__type-marker {
+  color: #cfcfcf;
+  background: var(--row-border);
+  border-color: var(--row-border);
+}
+
+.pm-tree__item[data-provider] .pm-tree__type-marker--has-children {
+  outline-color: var(--row-accent);
+}
+
+/* PP frame (open Product Part wrapper) inherits provider border. */
+.pm-tree__pp-wrapper--open[data-provider] {
+  border-color: var(--row-border);
+}
+
+/* Cluster connector lines and open cluster label inherit provider tint. */
+.pm-tree__cluster-children > .pm-tree__item[data-provider]::before,
+.pm-tree__cluster-children > .pm-tree__item[data-provider]::after {
+  background: var(--row-soft);
+}
+
+.pm-tree__cluster-wrapper--open
+  > .pm-tree__item.pm-tree__item--type-cl[data-provider]
+  .pm-tree__label {
+  color: var(--row-accent);
+}
+
 /* Session UI styles are sourced from media/session-view.css. */
