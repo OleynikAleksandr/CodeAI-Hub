@@ -56,14 +56,14 @@
 1. [DONE] Переписан `src/client/ui/src/session/status-panel.tsx`: рендерим 4 chip-ряд из `models[0]`. Удалены legacy single-line render и `Core Supervisor: starting…` fallback (component возвращает `null` при `connectionStatus !== "ready"` или отсутствии `models[0]`). Удалены неиспользуемый `formatModelSummary`, `STATUS_SEPARATOR`, `describeConnectionStatus`. Reasoning chip скрывается при `model.reasoning` отсутствующем/пустом. Provider class берётся из `models[0].providerId` (`session-status-button--{claude,codex,gemini}`). Локализуем `session.status.model_label` через `useLocalization()`. `tokenDebugSummary` сохранён как опциональный muted-strip ниже ряда.
    - scope: 1 файл (`src/client/ui/src/session/status-panel.tsx`).
    - commit message: `feat(session-ui): split status panel into four chips`.
-2. [DONE] Git Commit: `feat(session-ui): split status panel into four chips` (hash: TBD — будет проставлен в коммите Stream 1.4).
+2. [DONE] Git Commit: `feat(session-ui): split status panel into four chips` (hash: `0f4274480`).
 
 ### Stream 1.4: Tests
 
-1. [TODO] Обновить (или создать) `src/client/ui/src/session/status-panel.test.tsx`: assertions — рендерит 4 chip ряд для каждого провайдера (применяется правильный `session-status-button--{provider}` класс), reasoning chip скрывается при `undefined`, токен-чип показывает `used (remaining%)`, component возвращает `null` при `connectionStatus !== "ready"` или `models` пусто.
+1. [DONE] Создан `src/client/ui/src/session/status-panel.test.tsx`: assertions — рендер 4 chip ряд для каждого провайдера (применяется правильный `session-status-button--{provider}` класс), reasoning chip скрывается при `undefined`, токен-чип показывает `used (remaining%)`, component возвращает `null` при `connectionStatus !== "ready"` или `models` пусто, опциональный `tokenDebugSummary` strip отрисовывается только при наличии данных.
    - scope: 1 файл (`src/client/ui/src/session/status-panel.test.tsx`).
    - commit message: `test(session-ui): cover four-chip status panel`.
-2. [TODO] Git Commit: `test(session-ui): cover four-chip status panel` (hash: TBD).
+2. [DONE] Git Commit: `test(session-ui): cover four-chip status panel` (hash: TBD — будет проставлен в коммите Stream 1.5).
 
 ### Stream 1.5: SSOT docs sync
 
