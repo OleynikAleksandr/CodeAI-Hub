@@ -1,50 +1,32 @@
-# Plans/Archive — compressed
+# Plans/Archive
 
-Historical planning documents for closed execution cycles are stored in
-`Archive.zip` alongside this file. The original batch of 76 `.md` files
-was migrated from individual files in `doc/SolidWorks-WorkFlow/Plans/Archive/`
-during the Phase 3 cleanup (Session025, 2026-04-09). The count grows
-each time a completed planning-doc is archived from a new execution cycle.
+Историческое хранилище planning-доков для уже закрытых execution cycles.
 
-## Why compressed
+## Структура
 
-Archived planning documents historically reference file paths and source
-code identifiers that were later moved, renamed, or removed. Those
-references are valid as historical artifacts, but they created ~62
-stale hits in grep-based dead-code / dead-links audits, forcing future
-sessions to read historical noise.
+`Plans/Archive/` — flat-директория `.md` файлов. Каждый завершённый planning-док переносится сюда без сжатия, чтобы оставаться доступным через обычный `cat` / `Read` / `grep` без распаковки.
 
-Compressing the directory into a single `.zip` keeps the content
-available through `git show` and on-demand extraction, while removing
-the grep fallout from day-to-day work. The git history for the original
-files remains intact — `git log --all --follow <old path>` still finds
-each archived plan.
+## Когда переносить planning-док в Archive
 
-## How to access a specific archived plan
+Когда соответствующий execution cycle закрыт И planning-док не превратился в живой SSOT (`System/` / `Clusters/` / `Modules/` / `Contracts/`). См. `doc/SolidWorks-WorkFlow/Plans/README.md` §4.
+
+## Как переносить
 
 ```bash
-cd doc/SolidWorks-WorkFlow/Plans/
-unzip -p Archive.zip Archive/<filename>.md | less
+git mv doc/SolidWorks-WorkFlow/Plans/<CompletedPlan>.md \
+       doc/SolidWorks-WorkFlow/Plans/Archive/<CompletedPlan>.md
 ```
 
-Or extract the whole archive into a scratch location:
+Затем обновить `doc/SolidWorks-WorkFlow/Docs_Index.md` — заменить запись в active section на запись в archived section с описанием, в каком релизе план был закрыт и где сейчас живёт canonical SSOT.
+
+## Историческая заметка
+
+В Session 025 (2026-04-09) старый набор archived plans был временно сжат в `Archive.zip`, чтобы убрать grep-fallout из dead-code/dead-links аудитов. Сжатый snapshot устарел уже к Session 028 (2026-04-29), когда количество archived plans значительно превысило содержимое zip. С этого момента zip-based pipeline отменён и единственный поддерживаемый путь — flat-директория `Archive/`.
+
+## Доступ к старому zip-snapshot'у
+
+Содержимое `Archive.zip` полностью покрывается текущими `.md` файлами в `Archive/`. Если по какой-то причине нужна именно старая версия конкретного файла, она доступна через git history:
 
 ```bash
-unzip doc/SolidWorks-WorkFlow/Plans/Archive.zip -d /tmp/codeai-archive/
-```
-
-## How to add a new archived plan later
-
-When closing out a new execution cycle that needs its planning-doc
-archived, take the temporary route:
-
-```bash
-cd doc/SolidWorks-WorkFlow/Plans/
-unzip -q Archive.zip
-mv /path/to/NewCompletedPlan.md Archive/
-rm Archive.zip
-zip -r -q Archive.zip Archive/
-rm -rf Archive/
-git add Archive.zip
-git commit -m "docs(archive): add <NewCompletedPlan> to Plans/Archive.zip"
+git log --all --follow -- doc/SolidWorks-WorkFlow/Plans/Archive/<filename>.md
 ```
