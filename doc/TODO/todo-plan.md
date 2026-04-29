@@ -1,44 +1,21 @@
-# План разработки
+# План разработки (Development TODO Plan)
 
-## Context Pack
+## Current Status
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Sidebar_AndStageCard_TintAlignment_Architecture.md`
-- **Read context:**
-  - `doc/SolidWorks-WorkFlow/Plans/Sidebar_AndStageCard_TintAlignment_Architecture.md`
-  - SystemArchitecture.md §3 Invariant 36
-  - Project_Manager.md Workflow Tree provider tint subsection
-  - DesignSystem/CorporateDesign.html
-  - `src/client/project-manager/components/layout/use-step-provider-resolver.ts`
-  - `src/client/project-manager/components/layout/use-step-provider-resolver.test.ts`
-  - `src/client/project-manager/components/shared/stage-confirmation-card.tsx`
-  - `src/client/project-manager/services/workflow-provider-resolver.ts` (reference for inheritance chain)
-  - `packages/ui/project-manager/styles.css` (sidebar tree section)
+- **Execution Scope Status:** COMPLETED
+- Активный execution scope отсутствует.
+- Последний завершённый план: `doc/TODO/Archive/todo-plan-phase2-sidebar-tint-alignment.md`
+- Последний завершённый planning-doc: `doc/SolidWorks-WorkFlow/Plans/Archive/Sidebar_AndStageCard_TintAlignment_Architecture.md` (canonical results: SystemArchitecture.md §3 Invariant 36, Project_Manager.md Workflow Tree provider tint subsection).
+- Выпущенный артефакт: `codeai-hub-1.2.109.vsix` (sha1 `27e3c4a8aff66a2733c13ab23710d48a03fd39ce`).
 
-## Phase 1 — Tint alignment
+## Context Pack For Next Cycle
 
-### Stream A — Scope opening
-1. [DONE] Planning + todo-plan written.
-2. [TODO] Git Commit: `docs: open sidebar + stage card tint alignment scope`
+- **Base SSOT:** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- **Scope Discovery Index:** `doc/SolidWorks-WorkFlow/Docs_Index.md`
+- До согласования нового scope этот файл не является активным execution checklist.
 
-### Stream B — Resolver upstream inheritance + tests
-1. [TODO] `use-step-provider-resolver.ts`: добавить upstream-inheritance в `resolveStageProviderId` (VS → Description, DM → VS chain → Description). `use-step-provider-resolver.test.ts`: добавить тесты VS-inherits-from-Description, DM-inherits-from-VS, DM-inherits-from-Description-when-VS-empty. Scope: 2 файла.
-2. [TODO] Git Commit: `feat(pm-sidebar): inherit upstream provider for idle trunk stages`
+## Правила следующего scope
 
-### Stream C — Neutral selected for idle items
-1. [TODO] `packages/ui/project-manager/styles.css`: добавить `.pm-tree__item:not([data-provider]).pm-tree__item--selected` правило с нейтральными tokens. Scope: 1 файл.
-2. [TODO] Git Commit: `feat(pm-sidebar): neutral selection state for idle items`
-
-### Stream D — Stage card provider-tinted buttons
-1. [TODO] `stage-confirmation-card.tsx`: заменить hardcoded green selection styles на provider-specific tokens (Claude warm peach / Codex cyan / Gemini cool lavender). Inherited badge too. Scope: 1 файл.
-2. [TODO] Git Commit: `feat(pm-stage-card): tint provider radio pills per provider`
-
-### Stream E — SSOT docs sync
-1. [TODO] SystemArchitecture invariant 36 + Project_Manager.md (upstream inheritance + neutral selected). Scope: 2 файла.
-2. [TODO] Git Commit: `docs(ssot): document upstream provider inheritance and neutral selected state`
-
-## Phase 2 — Release 1.2.109
-1. [TODO] README + CHANGELOG bump → Git Commit: `docs: prepare release 1.2.109`
-2. [TODO] `./scripts/build-all.sh` → Git Commit: `chore: build release 1.2.109`
-3. [TODO] `./scripts/build-release.sh --use-current-version` + tarballs to doc/tmp/releases/.
-4. [TODO] Архивировать → Git Commit: `docs: archive sidebar tint alignment scope`
-5. [TODO] Session032 report.
+- Новый scope сначала согласуется с пользователем.
+- После согласования нужно открыть `doc/SolidWorks-WorkFlow/Docs_Index.md`, выбрать релевантные документы и создать новый planning-doc в `doc/SolidWorks-WorkFlow/Plans/`.
+- Новый активный execution checklist в этом файле создаётся только после утверждения planning-doc.
