@@ -59,6 +59,7 @@ UI бандлы, доставляемые как tarball’ы и устанав�
 - `src/client/ui/src/session/session-id-bar.tsx` is display-only for `usageLimits`: it renders the current `status.usageLimits` / `usageLimitLabels` snapshot and no longer triggers provider refresh on mount or rebind.
 - `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` and `project-manager-runtime-session-view.tsx` no longer wire `api.refreshUsageLimits(...)` into `SessionView`. Automatic usage refresh ownership is intentionally outside the bundle mount lifecycle; the PM/UI layer only displays telemetry already delivered by runtime snapshots or stream events.
 - `src/client/ui/src/core-bridge/core-bridge-logger.ts` owns sanitized Core Bridge diagnostics for webview/standalone UI runtime failures. Server-message parsing, session history hydration, status snapshot, and supervisor request failures must log only short event names plus sanitized metadata, never raw provider payloads or full message bodies, and must not change the user-facing reconnect UX.
+- Browser-side Core Bridge reconnect status is scheduler-owned. WebSocket `error` events log sanitized diagnostics and then delegate to `scheduleCoreBridgeReconnect(...)`; they must not emit an additional independent connection-status notification before the scheduler because `close`/`error` can arrive back-to-back. `notifyConnectionStatus(...)` also dedupes repeated `status + detail` pairs.
 
 ## Related Docs
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`

@@ -8875,17 +8875,10 @@
       scheduleReconnect(config);
     });
     websocket.addEventListener("error", () => {
-      if (hasSuccessfulConnection) {
-        notifyConnectionStatus(
-          "error",
-          "Unable to reach CodeAI Hub core. Supervisor will retry automatically."
-        );
-      } else {
-        notifyConnectionStatus(
-          "connecting",
-          "Waiting for CodeAI Hub core to respond\u2026"
-        );
-      }
+      logCoreBridgeDiagnostic("websocket:error", {
+        hasSuccessfulConnection,
+        readyState: websocket?.readyState ?? null
+      });
       scheduleReconnect(config);
     });
   };

@@ -55,11 +55,11 @@
 
 ### Stream: Startup Best-Effort Diagnostics
 3. [DONE] Заменить silent startup/workspace best-effort catches на sanitized logs; scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): log startup best-effort failures`
-4. [IN_PROGRESS] Git Commit: `fix(core): log startup best-effort failures` (hash: TBD)
+4. [DONE] Git Commit: `fix(core): log startup best-effort failures` (hash: `1b6ce2c9c`)
 
 ### Stream: Core Bridge Notification Dedupe
-5. [TODO] Дедуплицировать reconnect status notifications без изменения schedule semantics; scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `src/client/ui/src/core-bridge/core-bridge-reconnect.ts`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix(ui): dedupe core bridge reconnect status`
-6. [TODO] Git Commit: `fix(ui): dedupe core bridge reconnect status` (hash: TBD)
+5. [DONE] Дедуплицировать reconnect status notifications без изменения schedule semantics; scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `media/react-chat.js`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix(ui): dedupe core bridge reconnect status`
+6. [IN_PROGRESS] Git Commit: `fix(ui): dedupe core bridge reconnect status` (hash: TBD)
 
 ## Phase 2 — Runtime Cleanup and Continuity Safety (owner: Codex, updated: 2026-04-29)
 
