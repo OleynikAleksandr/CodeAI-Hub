@@ -23,6 +23,7 @@ import {
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
+import { useStepProviderResolver } from "./use-step-provider-resolver";
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
@@ -249,6 +250,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     selectedWorkspaceId && devTree?.parts.length
       ? buildDevelopmentTreeNodes(devTree, 0)
       : [];
+  const providerResolver = useStepProviderResolver({ snapshot: workflowState });
 
   const TYPE_MARKER_LABELS: Record<string, string> = {
     "product-part": "P",
@@ -365,10 +367,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           </li>
           {trunkNodes.map((node) => {
             const isExpanded = resolveNodeExpanded(node.id);
+            const trunkProvider = node.stage
+              ? providerResolver.forStage(node.stage)
+              : undefined;
             return (
               <li
                 aria-current={node.isSelected ? "true" : undefined}
                 className={renderItemClass(node)}
+                data-provider={trunkProvider}
                 onClick={node.onSelect}
                 key={node.id}
                 role={node.onSelect ? "button" : undefined}
