@@ -70,16 +70,38 @@
 1. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`: новая роль (4 chip), источники данных по chip, provider tint contract, `null` при not-ready, layout-инвариант (`flex: 0 0 auto` chips 1–3 + `flex: 1 1 0` limits chip + фиксированный `width: 100%` ряда), buttons чисто визуальные в MVP, reasoning chip omission, локализационный ключ. `UI_Bundles.md` менять не пришлось — там single-line variant не упоминался.
    - scope: 1 файл (`SessionStatusPanel.md`).
    - commit message: `docs(session-ui): document four-chip status panel`.
-2. [DONE] Git Commit: `docs(session-ui): document four-chip status panel` (hash: TBD — будет проставлен в коммите Stream 1.6 / release).
+2. [DONE] Git Commit: `docs(session-ui): document four-chip status panel` (hash: `596b82565`).
 
 ### Stream 1.6: Verification
 
-1. [TODO] Прогнать `npm run typecheck:webview` и `npm run build:webview`. При зелёных гейтах — записать в этот файл результат прогонов и закрыть Phase 1 как `DONE`.
-   - scope: только проверка, без изменений в коде; если что-то падает — открыть отдельную микрозадачу/коммит на фикс.
-   - commit message (если нужен фикс): `chore(session-ui): verify four-chip status panel build`.
-2. [TODO] Git Commit (опционально, если был фикс): `chore(session-ui): verify four-chip status panel build` (hash: TBD).
+1. [DONE] Прогнаны `npm run typecheck:webview`, `npm run build:webview`, `npm run build:project-manager` — все три выполнились без ошибок (typecheck чист, webview/project-manager bundles собраны успешно). Husky pre-commit гейты автоматически прогонялись на каждом коммите Stream 1.0–1.5 (architecture / lint / knip / format) и тоже зелёные. Отдельный fix-commit не понадобился.
+   - scope: проверка без изменений в коде.
+2. [DONE] Git Commit: не требуется (verification без фикса).
 
-## После Phase 1
+## Phase 2 — Release `1.2.104` (owner: agent, updated: 2026-04-29)
 
-- Если пользователь утвердит — отдельной фазой собираем релиз (`./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`), готовим Session report (Type A или B в зависимости от того, остаётся ли активный scope).
+### Stream 2.1: Pre-build version sync
+
+1. [TODO] Bump `README.md` (`Current Release — v1.2.104`) и `CHANGELOG.md` (`## [1.2.104]` с описанием Session Status Four-Chip Split) на будущую версию ДО запуска `build-all.sh`, по правилу `CLAUDE.md §7.0`.
+   - scope: 2 файла (`README.md`, `CHANGELOG.md`).
+   - commit message: `docs: prepare release 1.2.104`.
+2. [TODO] Git Commit: `docs: prepare release 1.2.104` (hash: TBD).
+
+### Stream 2.2: build-all + build-release
+
+1. [TODO] Прогнать `./scripts/build-all.sh` (повышает версии, пересобирает provider tarballs, core, UI, launcher; копирует tarballs в `~/.codeai-hub/releases` и `doc/tmp/releases/`). Скрипт сам сделает release commits.
+   - scope: автоматический скрипт.
+2. [TODO] Git Commit: автоматический коммит от `build-all.sh` (hash: TBD).
+3. [TODO] Прогнать `./scripts/build-release.sh --use-current-version` (финальные гейты + VSIX `codeai-hub-1.2.104.vsix`).
+   - scope: автоматический скрипт.
+4. [TODO] Git Commit: автоматические коммиты от `build-release.sh` (hash: TBD).
+
+### Stream 2.3: Closeout
+
+1. [TODO] Финализировать `doc/Sessions/Session028.md` как Type A Completion Report: внести все hashes Phase 1 + Phase 2, изменить `Execution Scope Status: COMPLETED`, обновить Plans for next session под no-active-scope shell. Заархивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-phase1-session-status-four-chip-split.md` и создать новый `doc/TODO/todo-plan.md` no-active-scope shell. Перенести planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/SessionStatus_FourChipSplit_Architecture.md`. Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`.
+   - scope: до 5 файлов (Session028.md, todo-plan.md новый, todo-plan archive, planning-doc archive, Docs_Index.md). Если затронет > 3 — разбить на два коммита (closeout-docs + closeout-archive).
+2. [TODO] Git Commit (или серия коммитов): `docs: archive session status four-chip split scope` (hash: TBD).
+
+## После Phase 2
+
 - Click-handlers для кнопок (выбор модели / reasoning), provider-collapse surface и right-edge per-session percent rotation — отдельные циклы, не входят в этот scope.
