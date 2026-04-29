@@ -314,6 +314,25 @@ test("CodexAppServerFacade omits reasoning summary for Codex Spark turns", async
   assert.equal("summary" in params, false);
 });
 
+test("CodexAppServerFacade applies selected model and reasoning turn config", async () => {
+  const threadId = "thread-selected-model";
+  const { facade, requests } = createSendMessageFacadeHarness(threadId);
+
+  await facade.sendMessage(threadId, "use selected runtime", {
+    [CODEX_APPLIED_TURN_CONFIG_KEY]: {
+      modelId: "gpt-5.4-mini",
+      providerId: "codexCli",
+      reasoningEffort: "xhigh",
+      source: "settings_snapshot",
+    },
+  });
+
+  assert.equal(requests[0]?.method, "turn/start");
+  const params = requests[0]?.params as Record<string, unknown>;
+  assert.equal(params.model, "gpt-5.4-mini");
+  assert.equal(params.effort, "xhigh");
+});
+
 test("CodexAppServerFacade keeps explicit reasoning summary for non-Spark turns", async () => {
   const previousCodeSettingsPath = process.env.CODEX_SETTINGS_PATH;
   const tempDir = await mkdtemp(path.join(tmpdir(), "codex-facade-settings-"));
