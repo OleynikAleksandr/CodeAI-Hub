@@ -31,6 +31,7 @@
 - Core обязан эмитить `turnState="running"` сразу после принятия user submit.
 - При send failure Core обязан сделать rollback: `turnState="idle"` + `turn_failed`.
 - Normalization (release `1.1.646`): для `resume_in_place` idle/unlocked-сессий Core эмитит явный unlock-reason `no_rollover_needed` вместо `undefined`.
+- `SessionRuntime.dispose()` является lifecycle boundary: он обязан остановить watchdog timer и очистить per-session runtime entries, чтобы новый runtime owner не наследовал stale turn/lock/final-turn state.
 
 ## Связанные контракты
 - Dialog routing: `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`

@@ -156,3 +156,23 @@ test("SessionRuntime invokes callback with latest heartbeat state", () => {
   assert.deepEqual(heartbeatTimestamps, [100, 150]);
   runtime.dispose();
 });
+
+test("SessionRuntime clears per-session state on dispose", () => {
+  const runtime = new SessionRuntime();
+
+  runtime.markRunning(sessionKey);
+  runtime.setLock(sessionKey, true);
+  runtime.setFinalTurnCompleted(sessionKey, true);
+
+  runtime.dispose();
+
+  const snapshot = runtime.getState(sessionKey);
+  assert.deepEqual(snapshot, {
+    continuityLockActive: false,
+    continuityLockReason: null,
+    continuityLockTransition: null,
+    finalTurnCompleted: false,
+    lastHeartbeatAt: null,
+    turnState: "idle",
+  });
+});

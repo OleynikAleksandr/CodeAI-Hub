@@ -184,6 +184,7 @@ export class SessionRuntime {
     if (this.timer) {
       clearInterval(this.timer);
     }
+    this.entriesBySessionId.clear();
   }
 
   private getOrCreateEntry(key: SessionKey): SessionRuntimeEntry {

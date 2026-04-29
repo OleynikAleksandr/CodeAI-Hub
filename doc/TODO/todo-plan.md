@@ -65,11 +65,11 @@
 
 ### Stream: Legacy Continuity Retry Safety
 1. [DONE] Сбрасывать legacy ContinuityMonitor state on failure/success и покрыть retry-after-failure; scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/session-continuity-facade.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit message: `fix(core): reset legacy continuity handoff state`
-2. [IN_PROGRESS] Git Commit: `fix(core): reset legacy continuity handoff state` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): reset legacy continuity handoff state` (hash: `2af2cfa2e`)
 
 ### Stream: Runtime Dispose Ownership
-3. [TODO] Очищать SessionRuntime entries on dispose и покрыть тестом; scope: `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit message: `fix(core): clear session runtime entries on dispose`
-4. [TODO] Git Commit: `fix(core): clear session runtime entries on dispose` (hash: TBD)
+3. [DONE] Очищать SessionRuntime entries on dispose и покрыть тестом; scope: `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit message: `fix(core): clear session runtime entries on dispose`
+4. [IN_PROGRESS] Git Commit: `fix(core): clear session runtime entries on dispose` (hash: TBD)
 5. [TODO] Добавить ProviderRecoveryScheduler bulk dispose и wire через provider registry/orchestrator stop; scope: `packages/core/src/provider-registry/provider-recovery-scheduler.ts`, `packages/core/src/provider-registry/index.ts`, `packages/core/src/orchestrator/core-orchestrator.ts`; expected commit message: `fix(core): dispose provider recovery timers`
 6. [TODO] Git Commit: `fix(core): dispose provider recovery timers` (hash: TBD)
 7. [TODO] Убрать оставшийся definite-assignment bypass из runtime factory; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `refactor(core): make rollover runtime wiring explicit`
