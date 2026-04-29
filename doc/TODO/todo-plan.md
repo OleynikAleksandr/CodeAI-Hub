@@ -94,9 +94,9 @@
 ### Stream: Canonical Docs
 
 29. [DONE] Update canonical architecture docs for status-panel model switching (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel model switching`; verified: documentation diff reviewed)
-30. [IN_PROGRESS] Git Commit: `docs: document status panel model switching` (hash: TBD)
-31. [TODO] Update Docs Index and active planning status after implementation (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: index status panel model switcher`)
-32. [TODO] Git Commit: `docs: index status panel model switcher` (hash: TBD)
+30. [DONE] Git Commit: `docs: document status panel model switching` (hash: `62bdce231`)
+31. [DONE] Update Docs Index and active planning status after implementation (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: index status panel model switcher`; verified: docs index and planning diff reviewed)
+32. [IN_PROGRESS] Git Commit: `docs: index status panel model switcher` (hash: TBD)
 
 ### Stream: Targeted Verification
 

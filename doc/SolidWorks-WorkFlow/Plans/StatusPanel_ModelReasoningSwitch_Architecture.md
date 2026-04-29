@@ -1,6 +1,6 @@
 # Status Panel Model/Reasoning Switch - Architecture
 
-**Status:** Approved for implementation
+**Status:** Implemented; targeted verification and release pending
 **Date:** 2026-04-29
 **Branch:** `codex/status-panel-model-switcher`
 **Owner:** Oleksandr + Codex
@@ -15,7 +15,7 @@ The Session Status Panel already renders two button-shaped chips under the input
 - current provider model;
 - current reasoning/thinking level.
 
-They are intentionally read-only today. Users can change default provider model/reasoning only through Project Manager Settings. That changes `~/.codeai-hub/settings/settings.json`, but it does not provide an ergonomic next-turn switch directly inside an active session.
+Before this scope, those chips were intentionally read-only. Users could change default provider model/reasoning only through Project Manager Settings. That changed `~/.codeai-hub/settings/settings.json`, but did not provide an ergonomic next-turn switch directly inside an active session.
 
 The required behavior:
 
@@ -77,11 +77,11 @@ Reading `settings.json` on every turn as the only model source is rejected becau
 
 ### 4.1 Shared UI module
 
-Add a small closed module under:
+Implemented as a small closed module under:
 
 `src/client/ui/src/session/model-switcher/`
 
-Proposed files:
+Implemented files:
 
 - `session-model-switcher-facade.ts`
   - provider-neutral option resolver;
@@ -89,8 +89,7 @@ Proposed files:
   - filters Gemini thinking levels by selected model;
   - exposes stable value objects for picker UI.
 - `session-model-picker-card.tsx`
-  - compact card/popover with model options for the active provider.
-- `session-reasoning-picker-card.tsx`
+  - compact card/popover with model options for the active provider;
   - compact card/popover with valid reasoning/thinking choices for current provider/model.
 
 `status-panel.tsx` remains mostly presentational. It receives optional callbacks/props and renders the cards only when provided. It must not import Project Manager API directly.
@@ -177,8 +176,30 @@ Reasoning-only changes use the current base model and still call `session:model:
 
 - Model list comes from `CLAUDE_MODEL_ALIASES`.
 - Reasoning picker includes `thinking off` plus enabled efforts.
-- `xhigh` is exposed only after provider-side readers accept it end-to-end. If not fixed in this scope, the UI must hide or disable it with a compatibility note.
+- `xhigh` is accepted end-to-end by the provider-side applied-config and SDK manager paths.
 - Effective identity remains `sonnet thinking:off` or `<alias> reasoning:<effort>`.
+
+---
+
+## 5.1. Implementation Status
+
+Implemented in the active `v1.2.112` cycle:
+
+- Core transport command `session:model:set` and non-resend binding mutation path.
+- Provider compatibility fixes/tests for Claude `xhigh`, Codex selected `effort`, and Gemini selected thinking level.
+- Shared UI model-switcher facade and picker cards.
+- StatusPanel interactive model/reasoning chips with accessible dialog cards.
+- Project Manager controller/hook that saves canonical Settings and updates the current logical session binding.
+- Runtime and reopened-dialog SessionView wiring through the same hook.
+- Canonical docs updated in `SystemArchitecture.md`, `EffectiveModelIdentity_And_Settings_SSOT.md`, and `SessionStatusPanel.md`.
+
+Pending after this document update:
+
+- consolidated targeted verification commit;
+- release docs preparation;
+- `build-all.sh`;
+- `build-release.sh --use-current-version`;
+- final archive of this planning-doc and todo-plan.
 
 ---
 
