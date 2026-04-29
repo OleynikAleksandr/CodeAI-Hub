@@ -68,9 +68,9 @@
 ### Stream: Option Facade
 
 17. [DONE] Add provider-neutral status-panel switcher option facade (scope: `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`; commit: `feat(ui): add session model switcher facade`; verified: `npx tsx --test src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`, `npm run typecheck:webview`)
-18. [IN_PROGRESS] Git Commit: `feat(ui): add session model switcher facade` (hash: TBD)
-19. [TODO] Add picker card components for model and reasoning choices (scope: `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/ui/src/session/model-switcher/session-reasoning-picker-card.tsx`, `media/session-view.css`; commit: `feat(ui): add session model picker cards`)
-20. [TODO] Git Commit: `feat(ui): add session model picker cards` (hash: TBD)
+18. [DONE] Git Commit: `feat(ui): add session model switcher facade` (hash: `33e575471`)
+19. [DONE] Add picker card components for model and reasoning choices (scope: `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx`, `media/session-view.css`; commit: `feat(ui): add session model picker cards`; verified: `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
+20. [IN_PROGRESS] Git Commit: `feat(ui): add session model picker cards` (hash: TBD)
 21. [TODO] Wire StatusPanel callbacks and picker rendering without PM imports (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.test.tsx`; commit: `feat(ui): make status model chips interactive`)
 22. [TODO] Git Commit: `feat(ui): make status model chips interactive` (hash: TBD)
 

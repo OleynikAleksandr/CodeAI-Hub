@@ -1505,6 +1505,97 @@
   --border-active: rgba(171, 52, 203, 0.8);
 }
 
+.session-status-picker-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.session-model-switch-card {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 30;
+  box-sizing: border-box;
+  width: min(340px, calc(100vw - 32px));
+  max-height: 320px;
+  overflow: hidden;
+  color: rgba(204, 204, 204, 1);
+  background-color: rgba(31, 32, 35, 0.98);
+  border: 1px solid rgba(84, 86, 90, 1);
+  border-radius: 8px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.42);
+}
+
+.session-model-switch-card--compact {
+  width: min(260px, calc(100vw - 32px));
+}
+
+.session-model-switch-card__title {
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(232, 232, 232, 1);
+  border-bottom: 1px solid rgba(84, 86, 90, 0.75);
+}
+
+.session-model-switch-card__options {
+  display: flex;
+  flex-direction: column;
+  max-height: 274px;
+  overflow-y: auto;
+}
+
+.session-model-switch-card__option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  font: inherit;
+  color: rgba(204, 204, 204, 1);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(84, 86, 90, 0.42);
+}
+
+.session-model-switch-card__option:last-child {
+  border-bottom: 0;
+}
+
+.session-model-switch-card__option:hover,
+.session-model-switch-card__option:focus-visible {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.session-model-switch-card__option--selected {
+  background-color: rgba(1, 240, 216, 0.12);
+}
+
+.session-model-switch-card__option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.session-model-switch-card__option-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--session-hint-color);
+}
+
 .session-status__debug-strip {
   margin-top: 4px;
   font-size: 11px;
