@@ -49,14 +49,14 @@
    - scope: 1 файл (`media/session-view.css`).
    - actual scope note: путь оказался `media/session-view.css`, а не `packages/ui/project-manager/styles.css`, потому что live session styles SSOT исторически живёт под `media/` (см. `.session-panel`, `.session-id-bar`, `.session-status__*` блоки в этом же файле).
    - commit message: `feat(session-ui): add four-chip status row styles`.
-2. [DONE] Git Commit: `feat(session-ui): add four-chip status row styles` (hash: TBD — будет проставлен в коммите Stream 1.3).
+2. [DONE] Git Commit: `feat(session-ui): add four-chip status row styles` (hash: `ebf026751`).
 
 ### Stream 1.3: StatusPanel rewrite
 
-1. [TODO] Переписать `src/client/ui/src/session/status-panel.tsx`: рендерим 4 chip-ряд из `models[0]`. Удаляем legacy single-line render и `Core Supervisor: starting…` fallback (component возвращает `null` при `connectionStatus !== "ready"` или отсутствии `models[0]`). Удаляем неиспользуемый `formatModelSummary`. Reasoning chip скрывается при `model.reasoning === undefined`. Provider class берётся из `models[0].providerId`. Локализуем `session.status.model_label` через `useLocalization()`. `tokenDebugSummary` оставляем как опциональный muted-strip ниже ряда.
+1. [DONE] Переписан `src/client/ui/src/session/status-panel.tsx`: рендерим 4 chip-ряд из `models[0]`. Удалены legacy single-line render и `Core Supervisor: starting…` fallback (component возвращает `null` при `connectionStatus !== "ready"` или отсутствии `models[0]`). Удалены неиспользуемый `formatModelSummary`, `STATUS_SEPARATOR`, `describeConnectionStatus`. Reasoning chip скрывается при `model.reasoning` отсутствующем/пустом. Provider class берётся из `models[0].providerId` (`session-status-button--{claude,codex,gemini}`). Локализуем `session.status.model_label` через `useLocalization()`. `tokenDebugSummary` сохранён как опциональный muted-strip ниже ряда.
    - scope: 1 файл (`src/client/ui/src/session/status-panel.tsx`).
    - commit message: `feat(session-ui): split status panel into four chips`.
-2. [TODO] Git Commit: `feat(session-ui): split status panel into four chips` (hash: TBD).
+2. [DONE] Git Commit: `feat(session-ui): split status panel into four chips` (hash: TBD — будет проставлен в коммите Stream 1.4).
 
 ### Stream 1.4: Tests
 
