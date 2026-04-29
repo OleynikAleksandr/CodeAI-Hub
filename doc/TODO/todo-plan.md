@@ -101,7 +101,7 @@
 ### Stream: Targeted Verification
 
 33. [DONE] Run targeted unit/build checks for Core, PM UI, and provider compatibility (scope: `packages/core`, `src/client`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`, `packages/Gemini_Module`; commit: `test: verify status panel model switching`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npm run build --workspace=@codeai-hub/core`, `npx tsx --test packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `npm run build --workspace=@codeai-hub/claude-module`, `npx tsx --test packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npx tsx --test packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `npm run build --workspace=@codeai-hub/gemini-module`, `npx tsx --test src/client/ui/src/session/status-panel.test.tsx src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
-34. [IN_PROGRESS] Git Commit: `test: verify status panel model switching` (hash: TBD)
+34. [DONE] Git Commit: `test: verify status panel model switching` (hash: `ed3e72308`)
 
 ---
 
@@ -109,8 +109,8 @@
 
 ### Stream: Release Preparation
 
-35. [TODO] Prepare release docs for future version before build-all (scope: `README.md`, `CHANGELOG.md`, relevant `doc/` release notes if needed; commit: `docs: prepare release 1.2.112`)
-36. [TODO] Git Commit: `docs: prepare release 1.2.112` (hash: TBD)
+35. [DONE] Prepare release docs for future version before build-all (scope: `README.md`, `CHANGELOG.md`, relevant `doc/` release notes if needed; commit: `docs: prepare release 1.2.112`; verified: README current release and changelog section set to `1.2.112`)
+36. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.112` (hash: TBD)
 37. [TODO] Run `./scripts/build-all.sh` from a clean tree and move/verify release tarballs (scope: versioned package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.112`)
 38. [TODO] Git Commit: `chore: build release 1.2.112` (hash: TBD)
 39. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.112`)
