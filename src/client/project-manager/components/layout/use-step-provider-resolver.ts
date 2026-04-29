@@ -32,7 +32,7 @@ export const resolveSidebarProviderIdForStage = (
   mapStackToDesignId(resolveStageProviderId(snapshot, stage)) ??
   fallbackProviderId;
 
-const resolveStageProviderId = (
+const resolveLatestChainProviderId = (
   snapshot: WorkflowStateSnapshot | null,
   stage: WorkflowStageId
 ): ProviderStackId | null => {
@@ -52,14 +52,40 @@ const resolveStageProviderId = (
       best = { updatedAt: chain.updatedAt, providerId };
     }
   }
-  if (best) {
-    return best.providerId;
+  return best?.providerId ?? null;
+};
+
+const resolveDescriptionProviderId = (
+  snapshot: WorkflowStateSnapshot | null
+): ProviderStackId | null => {
+  const fromDescription = snapshot?.description?.primarySession?.providerId;
+  return isProviderStackId(fromDescription) ? fromDescription : null;
+};
+
+// Resolution chain for trunk stages mirrors `resolveInheritedProviderId`
+// in `workflow-provider-resolver.ts` — the same logic that
+// `StageConfirmationCard` uses to preselect a provider for the next step.
+// Idle stages without their own chain inherit upstream attribution so the
+// sidebar tint stays consistent with the stage-confirmation card.
+const resolveStageProviderId = (
+  snapshot: WorkflowStateSnapshot | null,
+  stage: WorkflowStageId
+): ProviderStackId | null => {
+  const own = resolveLatestChainProviderId(snapshot, stage);
+  if (own) {
+    return own;
   }
   if (stage === "description") {
-    const fromDescription = snapshot?.description?.primarySession?.providerId;
-    if (isProviderStackId(fromDescription)) {
-      return fromDescription;
-    }
+    return resolveDescriptionProviderId(snapshot);
+  }
+  if (stage === "virtual_simulation") {
+    return resolveDescriptionProviderId(snapshot);
+  }
+  if (stage === "diagram_modules") {
+    return (
+      resolveLatestChainProviderId(snapshot, "virtual_simulation") ??
+      resolveDescriptionProviderId(snapshot)
+    );
   }
   return null;
 };

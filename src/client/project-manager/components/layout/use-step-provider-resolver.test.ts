@@ -157,6 +157,94 @@ test("when multiple chains exist, latest updatedAt wins", () => {
   );
 });
 
+test("idle virtual_simulation inherits provider from description.primarySession", () => {
+  const snapshot = baseSnapshot({
+    description: {
+      updatedAt: "2026-04-29T00:00:00.000Z",
+      primarySession: {
+        providerId: "claudeCodeCli",
+        providerSessionId: "ps",
+        jsonlPath: "/tmp/p.jsonl",
+      },
+    },
+  });
+
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "virtual_simulation"),
+    "claude"
+  );
+});
+
+test("idle diagram_modules inherits from latest virtual_simulation chain when present", () => {
+  const snapshot = baseSnapshot({
+    continuity: {
+      chains: [
+        {
+          rootSessionId: "r1",
+          workspaceSlug: "ws",
+          stage: "virtual_simulation",
+          updatedAt: "2026-04-29T01:00:00.000Z",
+          segments: [
+            {
+              sessionId: "s1",
+              providerId: "geminiCli",
+              providerSessionId: "ps1",
+              createdAt: "2026-04-29T00:30:00.000Z",
+            },
+          ],
+        },
+      ],
+    },
+    description: {
+      updatedAt: "2026-04-28T00:00:00.000Z",
+      primarySession: {
+        providerId: "claudeCodeCli",
+        providerSessionId: "ps",
+        jsonlPath: "/tmp/p.jsonl",
+      },
+    },
+  });
+
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
+    "gemini"
+  );
+});
+
+test("idle diagram_modules falls back to description when virtual_simulation also empty", () => {
+  const snapshot = baseSnapshot({
+    description: {
+      updatedAt: "2026-04-29T00:00:00.000Z",
+      primarySession: {
+        providerId: "codexCli",
+        providerSessionId: "ps",
+        jsonlPath: "/tmp/p.jsonl",
+      },
+    },
+  });
+
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
+    "codex"
+  );
+});
+
+test("fresh workspace with no chains and no description returns null for all trunk stages", () => {
+  const snapshot = baseSnapshot();
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "description"),
+    null
+  );
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "virtual_simulation"),
+    null
+  );
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
+    null
+  );
+});
+
 test("branch resolvers always return null until per-branch sessions exist", async () => {
   const source = await readFile(RESOLVER_SOURCE_PATH, "utf8");
   assert.equal(
