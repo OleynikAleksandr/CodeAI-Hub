@@ -1,21 +1,31 @@
-# План разработки (Development TODO Plan)
+# План разработки
 
-## Current Status
+## Context Pack
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Sidebar_RevertUpstreamInheritance_Architecture.md`
+- **Read context:**
+  - `doc/SolidWorks-WorkFlow/Plans/Sidebar_RevertUpstreamInheritance_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Sidebar_AndStageCard_TintAlignment_Architecture.md`
+  - SystemArchitecture.md §3 Invariant 36
+  - `src/client/project-manager/components/layout/use-step-provider-resolver.ts`
+  - `src/client/project-manager/components/layout/use-step-provider-resolver.test.ts`
 
-- **Execution Scope Status:** COMPLETED
-- Активный execution scope отсутствует.
-- Последний завершённый план: `doc/TODO/Archive/todo-plan-phase2-sidebar-tint-alignment.md`
-- Последний завершённый planning-doc: `doc/SolidWorks-WorkFlow/Plans/Archive/Sidebar_AndStageCard_TintAlignment_Architecture.md` (canonical results: SystemArchitecture.md §3 Invariant 36, Project_Manager.md Workflow Tree provider tint subsection).
-- Выпущенный артефакт: `codeai-hub-1.2.109.vsix` (sha1 `27e3c4a8aff66a2733c13ab23710d48a03fd39ce`).
+## Phase 1 — Revert upstream inheritance
 
-## Context Pack For Next Cycle
+### Stream A — Scope opening
+1. [DONE] Planning + todo-plan.
+2. [TODO] Git Commit: `docs: open sidebar revert upstream inheritance scope`
 
-- **Base SSOT:** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-- **Scope Discovery Index:** `doc/SolidWorks-WorkFlow/Docs_Index.md`
-- До согласования нового scope этот файл не является активным execution checklist.
+### Stream B — Resolver fix + test update
+1. [TODO] `use-step-provider-resolver.ts`: убрать VS-from-description и DM-from-VS/description fallback из `resolveStageProviderId`. Оставить только description own chain → primarySession. `use-step-provider-resolver.test.ts`: переделать upstream inheritance тесты (теперь они должны утверждать null-возврат для VS/DM без своих chain'ов даже когда Description имеет primarySession). Scope: 2 файла.
+2. [TODO] Git Commit: `fix(pm-sidebar): revert upstream inheritance — idle stages stay neutral`
 
-## Правила следующего scope
+### Stream C — SSOT docs sync
+1. [TODO] SystemArchitecture invariant 36 + Project_Manager.md: убрать упоминание upstream inheritance, явно зафиксировать «strict per-step own-chain attribution». Scope: 2 файла.
+2. [TODO] Git Commit: `docs(ssot): clarify strict per-step provider attribution`
 
-- Новый scope сначала согласуется с пользователем.
-- После согласования нужно открыть `doc/SolidWorks-WorkFlow/Docs_Index.md`, выбрать релевантные документы и создать новый planning-doc в `doc/SolidWorks-WorkFlow/Plans/`.
-- Новый активный execution checklist в этом файле создаётся только после утверждения planning-doc.
+## Phase 2 — Release 1.2.110
+1. [TODO] README + CHANGELOG → Git Commit: `docs: prepare release 1.2.110`
+2. [TODO] `./scripts/build-all.sh` → Git Commit: `chore: build release 1.2.110`
+3. [TODO] `./scripts/build-release.sh --use-current-version` + tarballs.
+4. [TODO] Архивировать → Git Commit: `docs: archive sidebar revert upstream inheritance scope`
+5. [TODO] Session033 report.
