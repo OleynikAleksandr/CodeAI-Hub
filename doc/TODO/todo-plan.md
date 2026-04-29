@@ -92,13 +92,13 @@
 
 ### Stream: Deferred Cleanup Note
 3. [DONE] Зафиксировать deferred low-priority cleanup/facade audit decision in navigation docs; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record deferred cleanup audit scope`
-4. [IN_PROGRESS] Git Commit: `docs: record deferred cleanup audit scope` (hash: TBD)
+4. [DONE] Git Commit: `docs: record deferred cleanup audit scope` (hash: `fd392a2e5`)
 
 ## Phase 5 — Release Build 1.2.111 (owner: Codex, updated: 2026-04-29)
 
 ### Stream: Release Preparation
-1. [TODO] Обновить release-facing docs на будущую версию `1.2.111`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare release 1.2.111`
-2. [TODO] Git Commit: `docs: prepare release 1.2.111` (hash: TBD)
+1. [DONE] Обновить release-facing docs на будущую версию `1.2.111`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare release 1.2.111`
+2. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.111` (hash: TBD)
 3. [TODO] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.111`
 4. [TODO] Git Commit: `chore: build release 1.2.111` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify package output; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.111`

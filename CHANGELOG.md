@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.111] - 2026-04-29
+### Fixed
+- **Runtime reliability follow-up hardens teardown and diagnostics.** Core WebSocket server/client error events are now owned and logged, startup/workspace best-effort failures produce sanitized diagnostics, runtime dispose/stop paths clear owned maps and provider recovery timers, legacy continuity handoff state can retry after failure, unified-session close keeps writer ownership until terminal close promises settle, and the remaining rollover runtime factory definite-assignment bypass is replaced by an explicit deferred reference.
+- **Core Bridge reconnect status avoids error/close churn.** Browser-side websocket `error` events now log diagnostics and delegate reconnect status ownership to the scheduler/dedupe path.
+
+### Tests
+- **Targeted runtime reliability verification passed.** Passed Core build, webview typecheck/build, and focused Node tests for WebSocket error handling, continuity retry, session runtime dispose, provider recovery scheduler dispose, runtime factory wiring, and unified-session storage close.
+
 ## [1.2.110] - 2026-04-29
 ### Fixed
 - **Sidebar tint reflects strict per-step attribution.** The 1.2.109 upstream inheritance (virtual_simulation falling back to Description's provider, diagram_modules falling back to VS chain or Description) was a regression: the StageConfirmationCard inherited-provider badge is a preselect hint the user can change, not a binding, so the sidebar tint must not anticipate that hint. `useStepProviderResolver.forStage` now returns `null` for idle VS/DM stages even when an upstream chain has provider attribution; the row renders neutral until the step's own session actually attaches. The legitimate `description.primarySession.providerId` fallback for the description stage itself is preserved (it is description's own session, not upstream inheritance).
