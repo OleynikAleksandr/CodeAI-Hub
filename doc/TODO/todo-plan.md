@@ -83,9 +83,9 @@
 23. [DONE] Add PM controller for selection -> settings save -> `session:model:set` (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`; commit: `feat(pm): orchestrate session model selections`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
 24. [DONE] Git Commit: `feat(pm): orchestrate session model selections` (hash: `53d63c454`)
 25. [DONE] Add React hook for runtime and dialog session switch wiring (scope: `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `feat(pm): add session model switch hook`; verified: `npx tsx --test src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
-26. [IN_PROGRESS] Git Commit: `feat(pm): add session model switch hook` (hash: TBD)
+26. [DONE] Git Commit: `feat(pm): add session model switch hook` (hash: `e83f29178`)
 27. [DONE] Wire runtime and reopened dialog views to the shared switch hook (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `feat(pm): wire status panel model switching`; verified: `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`, `npx tsx --test src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`)
-28. [IN_PROGRESS] Git Commit: `feat(pm): wire status panel model switching` (hash: TBD)
+28. [DONE] Git Commit: `feat(pm): wire status panel model switching` (hash: `c21f49437`)
 
 ---
 
@@ -93,8 +93,8 @@
 
 ### Stream: Canonical Docs
 
-29. [TODO] Update canonical architecture docs for status-panel model switching (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel model switching`)
-30. [TODO] Git Commit: `docs: document status panel model switching` (hash: TBD)
+29. [DONE] Update canonical architecture docs for status-panel model switching (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel model switching`; verified: documentation diff reviewed)
+30. [IN_PROGRESS] Git Commit: `docs: document status panel model switching` (hash: TBD)
 31. [TODO] Update Docs Index and active planning status after implementation (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: index status panel model switcher`)
 32. [TODO] Git Commit: `docs: index status panel model switcher` (hash: TBD)
 

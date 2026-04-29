@@ -1,9 +1,9 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
 
-**Status:** Implemented on `main`
-**Updated:** 2026-04-28
+**Status:** Implemented on `codex/status-panel-model-switcher`
+**Updated:** 2026-04-29
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (`v1.2.101`)
+**Validated on:** targeted Core/provider/PM/UI checks during `v1.2.112` cycle
 
 ---
 
@@ -17,6 +17,7 @@
 - `reasoning` и `thinking` являются частью identity, а не декоративным metadata.
 - persisted settings snapshot в `~/.codeai-hub/settings/settings.json` остаётся source of truth для defaults/seed на новую session и для presentation-only flags.
 - после создания logical session source of truth для next-turn identity становится `session.modelBinding`; live Settings saves не переписывают уже bound session.
+- status-panel model/reasoning selection is an explicit session-binding mutation path: it saves the same provider defaults to Settings for future sessions and sends a Core command for the current session.
 - legacy `~/.codeai-hub/settings/claude.json` is not part of the supported runtime contract anymore: no live read/write path may depend on it.
 - `ModelInvocationProfile` controls the provider process/session/turn envelope around that identity; it is a separate contract from effective model identity.
 
@@ -31,6 +32,7 @@
 - resolution effective identity из explicit selection / persisted settings snapshot into `session.modelBinding`;
 - creation, serialization and mutation of session-scoped model binding;
 - persistence and inheritance of bound identity across continuity restore and threshold-created continuation sessions;
+- status-panel same-provider model/reasoning selection for the active logical session;
 - delivery applied turn config от Core к provider modules;
 - runtime/UI sync для label/model display;
 - provider-specific last-mile adaptation без локального ownership над identity.
@@ -92,6 +94,10 @@ Frozen logical-session identity snapshot. It contains provider id, effective `mo
 
 Clone of an existing `session.modelBinding` assigned to a restored or threshold-created continuation session. The clone keeps provider id, effective `modelId`, optional `baseModelId`, reasoning/thinking metadata and display identity, but receives a new session key and `source = "continuity_inherited"`. It must not be recomputed from current Settings defaults.
 
+### 3.8. Status-panel selection
+
+User-driven same-provider model or reasoning change from the lower session status panel. This is not a provider switch. The Project Manager persists the selected provider default/reasoning into canonical Settings for future sessions, then sends `session:model:set` with the selected base model id for the current logical session. Core resolves the effective identity from that target plus the saved provider settings and treats the command as the explicit `switch_model` mutation path for `session.modelBinding`.
+
 ---
 
 ## 4. Runtime Contract
@@ -105,6 +111,7 @@ Core обязана вычислять effective turn config through the session
 - restored session: hydrate identity from continuity index/segment `modelBinding`;
 - threshold-created continuation session: clone the previous binding as a continuity-inherited binding;
 - explicit switch: replace `Session.modelBinding` and broadcast the updated effective identity.
+- status-panel selection: accept `session:model:set`, update `Session.modelBinding` without sending a provider message, and emit `session:model:update` so the next user turn uses the selected identity.
 
 Core then:
 
@@ -139,6 +146,8 @@ Project Manager и shared UI должны отображать applied config, �
 - `session:model:update` используется как runtime identity signal;
 - `useSettingsModelsSync()` may refresh settings-owned snapshots only; it must preserve `binding` and `runtime` model sources.
 - display logic не восстанавливает `reasoning/thinking` из локального speculation path.
+- status-panel model/reasoning cards build their options from the current provider settings and selected binding, never from another provider catalog;
+- after a picker selection PM writes canonical Settings first, then sends `session:model:set`; UI label convergence still happens through Core-confirmed `session:model:update`.
 
 ### 4.4. Continuity binding persistence
 
@@ -169,6 +178,20 @@ Runtime rules:
 - translation profiles use translation-specific instructions and tool policy, not workflow step prompts; Codex translation specifically resolves to `processProfileKey = "codex:translation"` and `toolProfileKey = "codex:translation-tools-minimal"`, a code-owned minimal/residual tool policy whose actual provider-visible tool surface must be proven by native capture before any "removed tool" claim is documented;
 - user-editable templates may override text instruction fragments only; flags, system tools, sandbox and approval policy remain code-owned.
 
+### 4.7. Status-panel same-provider switch flow
+
+The lower status panel exposes two picker buttons when a runtime/dialog snapshot has model status:
+
+- model picker: lists models from the current provider only;
+- reasoning picker: lists reasoning/thinking levels valid for the current provider/model;
+- selection closes the picker and calls Project Manager orchestration;
+- PM saves the selected default/reasoning to `~/.codeai-hub/settings/settings.json`;
+- PM sends `session:model:set` with the selected base model id;
+- Core updates the existing logical session binding and broadcasts `session:model:update`;
+- the next user turn consumes the updated binding through normal applied turn config resolution.
+
+This flow intentionally avoids "read Settings at every turn" as the live-session owner. Settings remain the persisted default/seed path, while `session.modelBinding` remains the authoritative identity for the current logical session.
+
 ---
 
 ## 5. Invariants
@@ -191,6 +214,8 @@ Runtime rules:
 16. Threshold-created continuation sessions must inherit the previous binding and must not resolve current Settings defaults.
 17. Unbound runtime/model SDK events must not overwrite an existing binding-owned UI/runtime identity.
 18. Settings snapshot caches must be path-scoped, short-lived, and invalidated by Core write/reset/default-materialization paths; cache reuse is a performance detail and must not change settings ownership.
+19. Status-panel model/reasoning selection may mutate only the current provider family; provider changes must use the provider-switch contract.
+20. A status-panel selection must persist Settings for future sessions and update `session.modelBinding` for the current session before the next user turn.
 
 ---
 
@@ -218,6 +243,10 @@ Runtime rules:
 - Core outbound bridge:
   - `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`
   - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`
+  - `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`
+  - `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+  - `packages/core/src/remote-bridge/remote-bridge-message-router.ts`
+  - `packages/core/src/remote-bridge/session-stream-contracts.ts`
   - `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-rollover.ts`
   - `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`
   - `packages/core/src/remote-bridge/handlers/dialog-list-service.ts`
@@ -228,6 +257,10 @@ Runtime rules:
   - `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
 - UI sync:
   - `src/extension-module/settings/settings-storage.ts`
+  - `src/client/project-manager/components/sessions/session-model-switch-controller.ts`
+  - `src/client/project-manager/components/sessions/use-session-model-switch.ts`
+  - `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`
+  - `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`
   - `src/client/ui/src/session/model-info-builder.ts`
   - `src/client/ui/src/session/helpers.ts`
   - `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
