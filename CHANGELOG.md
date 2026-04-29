@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.108] - 2026-04-29
+### Fixed
+- **Development Tree branch nodes stay neutral.** Until v1.2.107, the P/C/M branch nodes (Product Part / Cluster / Module) inherited the provider tint of the latest `diagram_modules` trunk chain — but the Development Tree skeleton is materialized from that artifact and the individual branch items do not have a provider session of their own yet. `useStepProviderResolver.forBranchPart` / `forBranchCluster` / `forBranchModule` now always return `null` for v1, so branch nodes render with the neutral `--pm-text-primary` label and no `data-provider` attribute. When per-branch sessions (`Cluster Design` / `Module Design`) materialize, the resolver will be extended to return real attribution per `partId` / `clusterId` / `moduleId` without changing the call-site contract.
+
 ## [1.2.107] - 2026-04-29
 ### Fixed
 - **Idle workflow steps now render neutral.** A regression in v1.2.106 caused workflow steps without any continuity attribution (never been worked on by any provider) to inherit the `codex` cyan tint via the resolver's default fallback. The `useStepProviderResolver` hook now returns `SidebarProviderId | null` and `workspace-tree.tsx` omits the `data-provider` attribute when the resolver returns null, so unattributed steps fall back to the existing neutral `--pm-text-primary` label and stay free of any provider color until they receive their first provider segment. The `fallbackProviderId` parameter remains available for callers that explicitly want a tint default.
