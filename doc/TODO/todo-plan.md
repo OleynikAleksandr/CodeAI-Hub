@@ -31,17 +31,17 @@
 
 ### Stream 1.0: Scope opening
 
-1. [IN_PROGRESS] Зафиксировать утверждённый planning-doc и активный execution scope: `doc/SolidWorks-WorkFlow/Plans/SessionStatus_FourChipSplit_Architecture.md` + переписанный `doc/TODO/todo-plan.md` под Phase 1.
+1. [DONE] Зафиксировать утверждённый planning-doc и активный execution scope: `doc/SolidWorks-WorkFlow/Plans/SessionStatus_FourChipSplit_Architecture.md` + переписанный `doc/TODO/todo-plan.md` под Phase 1.
    - scope: 2 файла (`SessionStatus_FourChipSplit_Architecture.md`, `todo-plan.md`).
    - commit message: `docs: open four-chip status split scope`.
-2. [IN_PROGRESS] Git Commit: `docs: open four-chip status split scope` (hash: TBD).
+2. [DONE] Git Commit: `docs: open four-chip status split scope` (hash: `e67f9bd03`).
 
 ### Stream 1.1: Localization
 
-1. [IN_PROGRESS] Добавить ключ `session.status.model_label = "Model"` в approved dict `assets/localization/source/en/messages_for_the_user.json` и в legacy mirror `assets/localization/source/en/system_feedback.json` (оба обязаны оставаться в синхроне до завершения transition).
+1. [DONE] Добавить ключ `session.status.model_label = "Model"` в approved dict `assets/localization/source/en/messages_for_the_user.json` и в legacy mirror `assets/localization/source/en/system_feedback.json` (оба обязаны оставаться в синхроне до завершения transition).
    - scope: 2 файла (`messages_for_the_user.json`, `system_feedback.json`).
    - commit message: `feat(localization): add session.status.model_label key`.
-2. [IN_PROGRESS] Git Commit: `feat(localization): add session.status.model_label key` (hash: TBD).
+2. [DONE] Git Commit: `feat(localization): add session.status.model_label key` (hash: TBD — будет проставлен в коммите Stream 1.2).
 
 ### Stream 1.2: Status row CSS
 

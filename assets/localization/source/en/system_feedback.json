@@ -1,6 +1,7 @@
 {
   "session.dialog.empty_label": "No messages yet.",
   "session.status.supervisor_label": "Core Supervisor",
+  "session.status.model_label": "Model",
   "session.status.models_label": "Models",
   "session.status.tokens_label": "Tokens",
   "session.status.ready_connection_label": "Core online",
