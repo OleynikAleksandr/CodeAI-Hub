@@ -101,9 +101,10 @@
 2. [DONE] Git Commit: `docs: prepare release 1.2.111` (hash: `68f630e57`)
 3. [DONE] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.111`
    - Build output 2026-04-29: provider/core/UI/launcher tarballs for `1.2.111` present in `doc/tmp/releases/`; package and asset manifests bumped to `1.2.111`.
-4. [IN_PROGRESS] Git Commit: `chore: build release 1.2.111` (hash: TBD)
-5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify package output; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.111`
-6. [TODO] Git Commit: `chore: package release 1.2.111` (hash: TBD)
+4. [DONE] Git Commit: `chore: build release 1.2.111` (hash: `f16efe659`)
+5. [DONE] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify package output; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.111`
+   - Package output 2026-04-29: `codeai-hub-1.2.111.vsix` (2.6M), SDK exclusions verified, local artefacts validated, VSIX runtime package surface verified.
+6. [IN_PROGRESS] Git Commit: `chore: package release 1.2.111` (hash: TBD)
 
 ### Stream: Scope Archive and Session Report
 7. [TODO] После успешного релиза архивировать completed todo-plan и planning-doc, обновить `Docs_Index.md`, создать no-active-scope `doc/TODO/todo-plan.md`; scope: `doc/TODO/Archive/todo-plan-phase1-runtime-reliability-followup.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Reliability_Followup_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive runtime reliability follow-up`
