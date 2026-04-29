@@ -63,14 +63,14 @@
 1. [DONE] Создан `src/client/ui/src/session/status-panel.test.tsx`: assertions — рендер 4 chip ряд для каждого провайдера (применяется правильный `session-status-button--{provider}` класс), reasoning chip скрывается при `undefined`, токен-чип показывает `used (remaining%)`, component возвращает `null` при `connectionStatus !== "ready"` или `models` пусто, опциональный `tokenDebugSummary` strip отрисовывается только при наличии данных.
    - scope: 1 файл (`src/client/ui/src/session/status-panel.test.tsx`).
    - commit message: `test(session-ui): cover four-chip status panel`.
-2. [DONE] Git Commit: `test(session-ui): cover four-chip status panel` (hash: TBD — будет проставлен в коммите Stream 1.5).
+2. [DONE] Git Commit: `test(session-ui): cover four-chip status panel` (hash: `10391afad`).
 
 ### Stream 1.5: SSOT docs sync
 
-1. [TODO] Обновить `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md` (новая структура — 4 chip, источники данных по chip, provider tint contract, `null` при not-ready), плюс короткий ref-update в `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`, если там упоминался single-line вариант.
-   - scope: до 2 файлов (`SessionStatusPanel.md`, опционально `UI_Bundles.md`).
+1. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`: новая роль (4 chip), источники данных по chip, provider tint contract, `null` при not-ready, layout-инвариант (`flex: 0 0 auto` chips 1–3 + `flex: 1 1 0` limits chip + фиксированный `width: 100%` ряда), buttons чисто визуальные в MVP, reasoning chip omission, локализационный ключ. `UI_Bundles.md` менять не пришлось — там single-line variant не упоминался.
+   - scope: 1 файл (`SessionStatusPanel.md`).
    - commit message: `docs(session-ui): document four-chip status panel`.
-2. [TODO] Git Commit: `docs(session-ui): document four-chip status panel` (hash: TBD).
+2. [DONE] Git Commit: `docs(session-ui): document four-chip status panel` (hash: TBD — будет проставлен в коммите Stream 1.6 / release).
 
 ### Stream 1.6: Verification
 
