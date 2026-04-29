@@ -97,6 +97,12 @@ export class WebSocketManager {
     this.wsServer.on("connection", (socket: WebSocket) => {
       this.handleConnection(socket);
     });
+    this.wsServer.on("error", (error) => {
+      this.deps.logger.error(
+        "Core WebSocket server error",
+        error instanceof Error ? error : new Error(String(error))
+      );
+    });
   }
 
   stop(): void {
@@ -108,6 +114,9 @@ export class WebSocketManager {
       }
     }
     this.clients.clear();
+    this.lastTokenUsageBySessionId.clear();
+    this.lastUsageLimitsEventBySessionId.clear();
+    this.sessionWorkspaceById.clear();
 
     if (this.wsServer) {
       this.wsServer.close();
@@ -234,9 +243,15 @@ export class WebSocketManager {
       await this.processMessage(clientId, socket, data.toString());
     });
 
-    socket.on("close", () => {
-      this.clients.delete(clientId);
-      this.deps.onClientDisconnected(clientId, this.clients.size);
+    socket.on("close", () => this.disconnectClient(clientId));
+
+    socket.on("error", (error) => {
+      this.deps.logger.warn("Core WebSocket client socket error", {
+        clientId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      this.disconnectClient(clientId);
+      socket.terminate();
     });
 
     // Send initial state
@@ -290,6 +305,13 @@ export class WebSocketManager {
         })
       );
     }
+  }
+
+  private disconnectClient(clientId: string): void {
+    if (!this.clients.delete(clientId)) {
+      return;
+    }
+    this.deps.onClientDisconnected(clientId, this.clients.size);
   }
 
   private sendInvalidClientMessage(socket: WebSocket, reason: string): void {

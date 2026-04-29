@@ -42,16 +42,16 @@
 ## Phase 0 — Planning and Pre-Implementation Report (owner: Codex, updated: 2026-04-29)
 
 ### Stream: Scope Setup
-1. [IN_PROGRESS] Создать planning-doc, активный todo-plan и Docs Index entry для runtime reliability follow-up; scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: plan runtime reliability follow-up`
-2. [TODO] Git Commit: `docs: plan runtime reliability follow-up` (hash: TBD)
-3. [TODO] Создать pre-implementation `doc/Sessions/Session034.md` по просьбе пользователя; scope: `doc/Sessions/Session034.md`; expected commit message: `N/A — session report remains uncommitted by closeout rule`
-4. [TODO] Git Commit: `N/A — session report remains uncommitted by closeout rule` (hash: N/A)
+1. [DONE] Создать planning-doc, активный todo-plan и Docs Index entry для runtime reliability follow-up; scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: plan runtime reliability follow-up`
+2. [DONE] Git Commit: `docs: plan runtime reliability follow-up` (hash: `19175db90`)
+3. [DONE] Создать pre-implementation `doc/Sessions/Session034.md` по просьбе пользователя; scope: `doc/Sessions/Session034.md`; expected commit message: `N/A — session report remains uncommitted by closeout rule`
+4. [DONE] Git Commit: `N/A — session report remains uncommitted by closeout rule` (hash: N/A)
 
 ## Phase 1 — Transport Errors and Startup Diagnostics (owner: Codex, updated: 2026-04-29)
 
 ### Stream: Core WebSocket Error Boundary
-1. [TODO] Добавить server/client WS error handlers и stop-time replay map cleanup; scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): handle websocket error events`
-2. [TODO] Git Commit: `fix(core): handle websocket error events` (hash: TBD)
+1. [DONE] Добавить server/client WS error handlers и stop-time replay map cleanup; scope: `packages/core/src/remote-bridge/handlers/websocket-manager.ts`, `packages/core/src/remote-bridge/handlers/websocket-manager.errors.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): handle websocket error events`
+2. [IN_PROGRESS] Git Commit: `fix(core): handle websocket error events` (hash: TBD)
 
 ### Stream: Startup Best-Effort Diagnostics
 3. [TODO] Заменить silent startup/workspace best-effort catches на sanitized logs; scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts`, `packages/core/src/remote-bridge/handlers/workspace-session-service.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `fix(core): log startup best-effort failures`
