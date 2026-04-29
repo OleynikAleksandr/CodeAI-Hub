@@ -150,6 +150,17 @@ runtime failure hardening would make regression analysis harder. They should be
 handled through a separate PeriodicAudit-style cleanup cycle with its own
 planning document and package-lock strategy.
 
+Deferred backlog record (confirmed 2026-04-29):
+- dependency cleanup: stale `lefthook` / `lint-staged` entries must be audited
+  package-by-package together with lockfile impact;
+- dead facade/package cleanup: null-returning agent package surfaces require
+  reachability proof before deletion;
+- facade-boundary cleanup: broad imports across `remote-bridge/handlers` and
+  package `index.ts` surfaces require facade graph ownership decisions before
+  code movement.
+
+Navigation owner for the deferred cycle: `doc/SolidWorks-WorkFlow/Checklists/PeriodicAudit.md`.
+
 ## 4. Architecture Decisions
 
 ### 4.1 Transport errors are observed at ownership boundaries

@@ -88,11 +88,11 @@
 ### Stream: Targeted Verification
 1. [DONE] Запустить targeted builds/checks for touched surfaces; scope: UI bundle, Core package; expected commit message: `chore: verify runtime reliability follow-up`
    - Verification 2026-04-29: `npm run build --workspace @codeai-hub/core`, `npm run typecheck:webview`, `npm run build:webview`, targeted `node --test` suite for websocket errors, continuity retry, session runtime dispose, provider recovery scheduler, runtime factory wiring, and unified-session storage close.
-2. [IN_PROGRESS] Git Commit: `chore: verify runtime reliability follow-up` (hash: TBD)
+2. [DONE] Git Commit: `chore: verify runtime reliability follow-up` (hash: `c1ef6ee20`)
 
 ### Stream: Deferred Cleanup Note
-3. [TODO] Зафиксировать deferred low-priority cleanup/facade audit decision in navigation docs; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record deferred cleanup audit scope`
-4. [TODO] Git Commit: `docs: record deferred cleanup audit scope` (hash: TBD)
+3. [DONE] Зафиксировать deferred low-priority cleanup/facade audit decision in navigation docs; scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: record deferred cleanup audit scope`
+4. [IN_PROGRESS] Git Commit: `docs: record deferred cleanup audit scope` (hash: TBD)
 
 ## Phase 5 — Release Build 1.2.111 (owner: Codex, updated: 2026-04-29)
 
