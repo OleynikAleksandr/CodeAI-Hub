@@ -10,8 +10,8 @@
 ## Status checkpoint
 
 - `Gemini` thoughts больше не переводятся внутри blocking provider pipeline: Gemini emit-ит source text сразу, а Core делает async translation overlay поверх уже сохранённого сообщения.
-- Текущая engine path использует бесплатный Google Translate HTTP endpoint `translate.googleapis.com`, но уже через `TranslationFacade` + `GoogleTranslateClient`, а не как отдельный provider-only helper.
-- Направление перевода больше не жёстко зашито в Gemini layer: target language берётся из Core-threaded `messagesForTheUserLanguage`.
+- Текущая default engine path использует бесплатный Google Translate HTTP endpoint `translate.googleapis.com`, но уже через `TranslationFacade` + `GoogleTranslateClient`, а не как отдельный provider-only helper. Реальный engine для конкретного turn'а задаётся вызывающей стороной через `translationEngineId` параметр adapter'а; `"google-gtx"` остаётся только fallback'ом.
+- Направление перевода больше не жёстко зашито в Gemini layer: target language передаётся через `targetLanguage` параметр adapter'а. После UI/Reasoning translation split (см. `Modules/Localization.md` §3.5 и `EffectiveModelIdentity_And_Settings_SSOT.md`) канонический источник — Core-threaded `reasoningLanguage`; `messagesForTheUserLanguage` остаётся как deprecated legacy alias с тем же resolved value до завершения миграции provider adapters.
 - Переведённая мысль больше не хранится как второй dialog message; она persist-ится как sidecar overlay (`*.translations.jsonl`) и попадает в UI как `localizedContent` patch для уже существующего `assistant` + `tag: "thinking"` сообщения.
 - UI рендерит это сообщение как обычный видимый assistant bubble с label `Gemini · Thinking`, используя `localizedContent ?? content`.
 - Реализация намеренно маленькая: без rewrite native transcript, без retry queue, без user-locale negotiation внутри Gemini provider и без generic translation module в Core UI layer.
@@ -56,7 +56,7 @@ Code owners:
 
 Текущее поведение:
 - Adapter строит input как `subject: description`, если есть `subject`, иначе использует `description`.
-- Adapter отправляет один `TranslationFacade.translate()` request с `category: "reasoning"`, `providerId: "gemini"`, `engineId: "google-gtx"`, `sourceLanguage: "en"`, `targetLanguage: "ru"` и timeout `3000ms`.
+- Adapter отправляет один `TranslationFacade.translate()` request с `category: "reasoning"`, `providerId: "gemini"`, `engineId = caller-provided translationEngineId ?? "google-gtx"`, `sourceLanguage: "en"`, `targetLanguage = caller-provided ISO code (нормализованный к нижнему регистру; `en` короткозамыкается в `null` без перевода)` и `timeoutMs: 3000`.
 - Shared facade normalizes request, resolves engine, and delegates to `GoogleTranslateClient`.
 - `GoogleTranslateClient` вызывает free Google Translate endpoint `translate.googleapis.com`.
 - Если shared translation возвращает non-translated/fallback/skipped result, adapter возвращает `null`, а caller falls back to original formatted thought text.
