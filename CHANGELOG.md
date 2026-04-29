@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.109] - 2026-04-29
+### Fixed
+- **Idle workflow steps inherit upstream provider tint.** Until v1.2.108, an idle workflow step (no own continuity chain) rendered fully neutral, even when an upstream step had already established a provider. Now `useStepProviderResolver.forStage` mirrors `resolveInheritedProviderId` from `workflow-provider-resolver.ts`: virtual_simulation falls back to `description.primarySession.providerId`; diagram_modules falls back to the latest virtual_simulation chain and then to description. The sidebar tint stays consistent with the inherited-provider badge that `StageConfirmationCard` already shows when preselecting the next step.
+- **Selected idle step no longer inherits legacy green.** A truly idle step (no own chain AND no upstream attribution) selected in the sidebar previously showed `--pm-accent-strong` (green) fill + border via the legacy selection rules. An explicit `:not([data-provider]).pm-tree__item--selected` override now applies a neutral `rgba(255,255,255,0.04)` fill, `rgba(255,255,255,0.18)` border, and `var(--pm-text-primary)` label so fresh-workspace selections stay color-free.
+
+### Changed
+- **Stage Confirmation Card provider radio pills tinted per provider.** The Claude / Codex / Gemini selection pills (and the inherited-provider badge) now use the same corporate tokens as the sidebar tree and the model/reasoning chips — Claude warm peach, Codex cyan, Gemini cool lavender — instead of the legacy hardcoded `rgba(95,227,186,*)` (green) selection state. Tokens live in `src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts` and mirror `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html`.
+
 ## [1.2.108] - 2026-04-29
 ### Fixed
 - **Development Tree branch nodes stay neutral.** Until v1.2.107, the P/C/M branch nodes (Product Part / Cluster / Module) inherited the provider tint of the latest `diagram_modules` trunk chain — but the Development Tree skeleton is materialized from that artifact and the individual branch items do not have a provider session of their own yet. `useStepProviderResolver.forBranchPart` / `forBranchCluster` / `forBranchModule` now always return `null` for v1, so branch nodes render with the neutral `--pm-text-primary` label and no `data-provider` attribute. When per-branch sessions (`Cluster Design` / `Module Design`) materialize, the resolver will be extended to return real attribution per `partId` / `clusterId` / `moduleId` without changing the call-site contract.
