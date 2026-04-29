@@ -157,7 +157,7 @@ test("when multiple chains exist, latest updatedAt wins", () => {
   );
 });
 
-test("idle virtual_simulation inherits provider from description.primarySession", () => {
+test("idle virtual_simulation does NOT inherit from description (strict per-step attribution)", () => {
   const snapshot = baseSnapshot({
     description: {
       updatedAt: "2026-04-29T00:00:00.000Z",
@@ -171,11 +171,12 @@ test("idle virtual_simulation inherits provider from description.primarySession"
 
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "virtual_simulation"),
-    "claude"
+    null,
+    "VS without own chain stays neutral even when Description has Claude"
   );
 });
 
-test("idle diagram_modules inherits from latest virtual_simulation chain when present", () => {
+test("idle diagram_modules does NOT inherit from virtual_simulation chain", () => {
   const snapshot = baseSnapshot({
     continuity: {
       chains: [
@@ -195,23 +196,16 @@ test("idle diagram_modules inherits from latest virtual_simulation chain when pr
         },
       ],
     },
-    description: {
-      updatedAt: "2026-04-28T00:00:00.000Z",
-      primarySession: {
-        providerId: "claudeCodeCli",
-        providerSessionId: "ps",
-        jsonlPath: "/tmp/p.jsonl",
-      },
-    },
   });
 
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
-    "gemini"
+    null,
+    "DM without own chain stays neutral even when VS has Gemini"
   );
 });
 
-test("idle diagram_modules falls back to description when virtual_simulation also empty", () => {
+test("idle diagram_modules does NOT fall back to description either", () => {
   const snapshot = baseSnapshot({
     description: {
       updatedAt: "2026-04-29T00:00:00.000Z",
@@ -225,7 +219,8 @@ test("idle diagram_modules falls back to description when virtual_simulation als
 
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
-    "codex"
+    null,
+    "DM without own chain stays neutral even when Description has Codex"
   );
 });
 

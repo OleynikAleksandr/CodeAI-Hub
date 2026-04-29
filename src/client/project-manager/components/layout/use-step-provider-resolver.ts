@@ -62,11 +62,12 @@ const resolveDescriptionProviderId = (
   return isProviderStackId(fromDescription) ? fromDescription : null;
 };
 
-// Resolution chain for trunk stages mirrors `resolveInheritedProviderId`
-// in `workflow-provider-resolver.ts` — the same logic that
-// `StageConfirmationCard` uses to preselect a provider for the next step.
-// Idle stages without their own chain inherit upstream attribution so the
-// sidebar tint stays consistent with the stage-confirmation card.
+// Strict per-step own-chain attribution. Sidebar tint reflects ONLY who
+// actually worked on this step. Upstream inheritance (e.g., VS adopting
+// Description's provider) is intentionally NOT done here — the
+// StageConfirmationCard preselect is a hint the user can change, not a
+// binding. An idle step with no chain stays neutral until its own session
+// attaches.
 const resolveStageProviderId = (
   snapshot: WorkflowStateSnapshot | null,
   stage: WorkflowStageId
@@ -75,17 +76,10 @@ const resolveStageProviderId = (
   if (own) {
     return own;
   }
+  // description.primarySession is description's OWN session (not upstream),
+  // so it is a legitimate fallback when the chain hasn't materialized yet.
   if (stage === "description") {
     return resolveDescriptionProviderId(snapshot);
-  }
-  if (stage === "virtual_simulation") {
-    return resolveDescriptionProviderId(snapshot);
-  }
-  if (stage === "diagram_modules") {
-    return (
-      resolveLatestChainProviderId(snapshot, "virtual_simulation") ??
-      resolveDescriptionProviderId(snapshot)
-    );
   }
   return null;
 };
