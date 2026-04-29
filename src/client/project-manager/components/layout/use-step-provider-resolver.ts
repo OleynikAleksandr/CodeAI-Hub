@@ -96,15 +96,15 @@ export const useStepProviderResolver = ({
       stageCache.set(stage, resolved);
       return resolved;
     };
-    const branchDefault = resolveSidebarProviderIdForStage(
-      snapshot,
-      "diagram_modules",
-      fallbackProviderId
-    );
+    // Branch nodes (P/C/M) stay neutral until a per-branch session
+    // (Cluster Design / Module Design) materializes. Inheriting the
+    // diagram_modules trunk provider would lie about attribution: the
+    // tree skeleton is generated from that artifact, but the individual
+    // P/C/M items have no provider of their own yet.
     return {
       forStage: resolveStage,
-      forBranchPart: () => branchDefault,
-      forBranchCluster: () => branchDefault,
-      forBranchModule: () => branchDefault,
+      forBranchPart: () => null,
+      forBranchCluster: () => null,
+      forBranchModule: () => null,
     };
   }, [snapshot, fallbackProviderId]);

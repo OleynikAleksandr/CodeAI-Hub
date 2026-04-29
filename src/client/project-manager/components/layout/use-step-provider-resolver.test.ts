@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import test from "node:test";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import {
   PROVIDER_STACK_TO_DESIGN_ID,
   resolveSidebarProviderIdForStage,
 } from "./use-step-provider-resolver";
+
+const RESOLVER_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/use-step-provider-resolver.ts"
+);
 
 const baseSnapshot = (
   override: Partial<WorkflowStateSnapshot> = {}
@@ -147,6 +154,30 @@ test("when multiple chains exist, latest updatedAt wins", () => {
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "diagram_modules", "claude"),
     "codex"
+  );
+});
+
+test("branch resolvers always return null until per-branch sessions exist", async () => {
+  const source = await readFile(RESOLVER_SOURCE_PATH, "utf8");
+  assert.equal(
+    source.includes("forBranchPart: () => null"),
+    true,
+    "forBranchPart must return null for v1 (no per-branch session attribution)"
+  );
+  assert.equal(
+    source.includes("forBranchCluster: () => null"),
+    true,
+    "forBranchCluster must return null for v1"
+  );
+  assert.equal(
+    source.includes("forBranchModule: () => null"),
+    true,
+    "forBranchModule must return null for v1"
+  );
+  assert.equal(
+    source.includes("const branchDefault"),
+    false,
+    "legacy diagram_modules-inheritance for branch nodes must be removed"
   );
 });
 
