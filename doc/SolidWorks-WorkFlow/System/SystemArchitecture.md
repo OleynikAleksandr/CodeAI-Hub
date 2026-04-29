@@ -211,6 +211,7 @@
 - Core-owned session translation overlay cluster: `packages/core/src/session-translation/`, `packages/core/src/unified-session/storage.ts`, `packages/unified-session/src/session-translation-overlay-store.ts`
   - providers now emit source-first thinking/reasoning with stable `messageId`, and Core owns async translation scheduling, persistence, and live bridge patching (`session:message_translation`, `dialog:message_translation`)
   - canonical session/dialog transcript stays native-only; translated text is stored separately in per-session `*.translations.jsonl` overlays and merged back into history as `localizedContent` only when `messageId + sourceHash` still match
+  - `UnifiedSessionStorage.close(sessionId, reason)` retains the in-memory session entry until owned writer and translation-overlay close promises settle; close must not delete the entry before the append-only writers finish their terminal records, and the removed legacy `PendingSession.queue` path must not reappear without non-lossy retry semantics
   - UI renders `localizedContent ?? content`, so late translation completion upgrades already-visible messages in place without delaying the original thinking stream
   - live overlay translation now resolves settings per dispatch, serializes execution through one shared worker queue, deduplicates identical in-flight jobs by `engineId + targetLanguage + sourceHash`, and refuses to start while the persisted localization bootstrap snapshot does not match current settings
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`

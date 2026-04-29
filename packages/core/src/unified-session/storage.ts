@@ -30,7 +30,6 @@ interface PendingSession {
   readonly historySessionIdLocked: boolean;
   readonly providerId: string;
   providerSessionId?: string;
-  readonly queue: SessionMessage[];
   translationWriter?: SessionTranslationOverlayWriter;
   readonly workspaceSlug: string;
   writer?: UnifiedSessionWriter;
@@ -83,7 +82,6 @@ export class UnifiedSessionStorage {
       providerSessionId: session.providerSessionId,
       historySessionId: initialHistorySessionId,
       historySessionIdLocked: Boolean(overrideHistorySessionId),
-      queue: [],
     };
     this.sessions.set(session.id, entry);
   }
@@ -102,11 +100,10 @@ export class UnifiedSessionStorage {
       : sanitizeSessionId(providerSessionId);
     entry.historySessionId = desiredHistorySessionId;
     // Avoid creating empty JSONL files that only contain the session-open marker.
-    // A writer is initialized lazily (on first message) unless we already have a
-    // writer handle or queued messages that need flushing.
-    if (entry.writer || entry.queue.length > 0) {
+    // A writer is initialized lazily on first message unless a writer already
+    // exists and must follow the promoted history id.
+    if (entry.writer) {
       this.initializeWriter(
-        sessionId,
         entry,
         entry.workspaceSlug,
         desiredHistorySessionId
@@ -130,12 +127,7 @@ export class UnifiedSessionStorage {
       return;
     }
     if (!entry.writer) {
-      this.initializeWriter(
-        sessionId,
-        entry,
-        entry.workspaceSlug,
-        entry.historySessionId
-      );
+      this.initializeWriter(entry, entry.workspaceSlug, entry.historySessionId);
       if (!entry.writer) {
         throw new Error(
           `Unified session writer missing for ${entry.providerId} session ${sessionId}`
@@ -221,29 +213,44 @@ export class UnifiedSessionStorage {
     if (!entry) {
       return;
     }
-    this.sessions.delete(sessionId);
+    const closeTasks: Promise<void>[] = [];
     const writer = entry.writer;
     if (writer) {
-      writer.close({ reason }).catch((error: unknown) => {
-        this.logger.error(
-          "Failed to close unified session writer",
-          error as Error,
-          {
-            sessionId,
-            providerId: entry.providerId,
-          }
-        );
-      });
-    }
-    entry.translationWriter?.close().catch((error: unknown) => {
-      this.logger.error(
-        "Failed to close unified session translation overlay writer",
-        error as Error,
-        {
-          sessionId,
-          providerId: entry.providerId,
-        }
+      closeTasks.push(
+        writer.close({ reason }).catch((error: unknown) => {
+          this.logger.error(
+            "Failed to close unified session writer",
+            error as Error,
+            {
+              sessionId,
+              providerId: entry.providerId,
+            }
+          );
+        })
       );
+    }
+    if (entry.translationWriter) {
+      closeTasks.push(
+        entry.translationWriter.close().catch((error: unknown) => {
+          this.logger.error(
+            "Failed to close unified session translation overlay writer",
+            error as Error,
+            {
+              sessionId,
+              providerId: entry.providerId,
+            }
+          );
+        })
+      );
+    }
+    if (closeTasks.length === 0) {
+      this.sessions.delete(sessionId);
+      return;
+    }
+    Promise.all(closeTasks).finally(() => {
+      if (this.sessions.get(sessionId) === entry) {
+        this.sessions.delete(sessionId);
+      }
     });
   }
 
@@ -254,19 +261,6 @@ export class UnifiedSessionStorage {
     );
     if (!historySessionId) {
       return [];
-    }
-
-    if (entry?.writer) {
-      await this.flushQueue(entry).catch((error: unknown) => {
-        this.logger.error(
-          "Failed to flush unified session record",
-          error as Error,
-          {
-            sessionId: session.id,
-            providerId: entry.providerId,
-          }
-        );
-      });
     }
 
     const preferredWorkspaceSlug =
@@ -372,7 +366,6 @@ export class UnifiedSessionStorage {
   }
 
   private initializeWriter(
-    sessionId: string,
     entry: PendingSession,
     workspaceSlug: string,
     historySessionId: string
@@ -383,16 +376,6 @@ export class UnifiedSessionStorage {
       entry.writerSessionId === sanitizedHistorySessionId &&
       entry.historySessionId === historySessionId
     ) {
-      this.flushQueue(entry).catch((error: unknown) => {
-        this.logger.error(
-          "Failed to flush unified session record",
-          error as Error,
-          {
-            sessionId,
-            providerId: entry.providerId,
-          }
-        );
-      });
       return;
     }
 
@@ -407,16 +390,6 @@ export class UnifiedSessionStorage {
       }
       entry.writerSessionId = sanitizedHistorySessionId;
 
-      this.flushQueue(entry).catch((error: unknown) => {
-        this.logger.error(
-          "Failed to flush unified session record",
-          error as Error,
-          {
-            sessionId,
-            providerId: entry.providerId,
-          }
-        );
-      });
       return;
     }
 
@@ -427,16 +400,6 @@ export class UnifiedSessionStorage {
       sessionId: sanitizedHistorySessionId,
     });
     entry.writerSessionId = sanitizedHistorySessionId;
-    this.flushQueue(entry).catch((error: unknown) => {
-      this.logger.error(
-        "Failed to flush unified session record",
-        error as Error,
-        {
-          sessionId,
-          providerId: entry.providerId,
-        }
-      );
-    });
   }
 
   private callPromoteSessionFile(options: {
@@ -450,27 +413,6 @@ export class UnifiedSessionStorage {
       rootDirectory: this.rootDirectory,
       logger: this.logger,
     });
-  }
-
-  private async flushQueue(entry: PendingSession): Promise<void> {
-    if (!entry.writer || entry.queue.length === 0) {
-      return;
-    }
-    const queue = entry.queue.splice(0, entry.queue.length);
-    for (const message of queue) {
-      try {
-        await this.writeMessage(entry, message);
-      } catch (error) {
-        this.logger.error(
-          "Failed to flush unified session record",
-          error as Error,
-          {
-            sessionId: message.sessionId,
-            providerId: entry.providerId,
-          }
-        );
-      }
-    }
   }
 
   private async writeMessage(

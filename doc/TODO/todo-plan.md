@@ -75,13 +75,13 @@
 7. [DONE] Wire provider recovery scheduler disposal через registry/orchestrator stop; scope: `packages/core/src/provider-registry/index.ts`, `packages/core/src/orchestrator/core-orchestrator.ts`, `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`; expected commit message: `fix(core): stop provider recovery scheduler`
 8. [DONE] Git Commit: `fix(core): stop provider recovery scheduler` (hash: `0df918fc5`)
 9. [DONE] Убрать оставшийся definite-assignment bypass из runtime factory; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `refactor(core): make rollover runtime wiring explicit`
-10. [IN_PROGRESS] Git Commit: `refactor(core): make rollover runtime wiring explicit` (hash: TBD)
+10. [DONE] Git Commit: `refactor(core): make rollover runtime wiring explicit` (hash: `d4e7d105f`)
 
 ## Phase 3 — Unified Session Storage Lifecycle (owner: Codex, updated: 2026-04-29)
 
 ### Stream: Writer Close and Dead Queue Cleanup
-1. [TODO] Сохранить storage entry до завершения close promises и убрать dead queue/flushQueue path; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/storage.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix(core): harden unified session storage close`
-2. [TODO] Git Commit: `fix(core): harden unified session storage close` (hash: TBD)
+1. [DONE] Сохранить storage entry до завершения close promises и убрать dead queue/flushQueue path; scope: `packages/core/src/unified-session/storage.ts`, `packages/core/src/unified-session/storage.test.ts`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit message: `fix(core): harden unified session storage close`
+2. [IN_PROGRESS] Git Commit: `fix(core): harden unified session storage close` (hash: TBD)
 
 ## Phase 4 — Verification and Deferred Cleanup Recording (owner: Codex, updated: 2026-04-29)
 
