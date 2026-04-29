@@ -42,9 +42,9 @@
 3. [DONE] Add `session:model:set` transport contract and validation (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat(core): add session model set command contract`)
 4. [DONE] Git Commit: `feat(core): add session model set command contract` (hash: `c083d02cc`)
 5. [DONE] Implement non-resend Core binding update action and public handler (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit: `feat(core): update session model binding without resend`)
-6. [IN_PROGRESS] Git Commit: `feat(core): update session model binding without resend` (hash: TBD)
-7. [TODO] Route `session:model:set` command and cover no-resend behavior (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; commit: `feat(core): route session model set command`)
-8. [TODO] Git Commit: `feat(core): route session model set command` (hash: TBD)
+6. [DONE] Git Commit: `feat(core): update session model binding without resend` (hash: `7675d7bd0`)
+7. [DONE] Route `session:model:set` command and cover no-resend behavior (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; commit: `feat(core): route session model set command`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npm run build --workspace=@codeai-hub/core`)
+8. [IN_PROGRESS] Git Commit: `feat(core): route session model set command` (hash: TBD)
 9. [TODO] Add PM API sender for active-session model binding update (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat(pm): expose session model set command`)
 10. [TODO] Git Commit: `feat(pm): expose session model set command` (hash: TBD)
 

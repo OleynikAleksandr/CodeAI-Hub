@@ -133,6 +133,9 @@ export class RemoteBridgeMessageRouter {
           incoming.payload.content
         );
         break;
+      case "session:model:set":
+        await this.deps.sessionHandler.handleSetModelBinding(incoming.payload);
+        break;
       case "session:delete":
         await this.deps.sessionHandler.handleDelete(incoming.payload.sessionId);
         break;
