@@ -259,7 +259,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const renderModuleRow = (node: TreeNode) => (
     <li
       className={renderItemClass(node)}
-      data-provider={providerResolver.forBranchModule(node.id)}
+      data-provider={providerResolver.forBranchModule(node.id) ?? undefined}
       key={node.id}
       onClick={node.onSelect}
       role={node.onSelect ? "button" : undefined}
@@ -274,7 +274,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const renderClusterNode = (node: TreeNode) => {
     const isOpen = openClusterId === node.id;
     const clusterModules = node.children ?? [];
-    const clusterProvider = providerResolver.forBranchCluster(node.id);
+    const clusterProvider =
+      providerResolver.forBranchCluster(node.id) ?? undefined;
     return (
       <li
         className={`pm-tree__cluster-wrapper${isOpen ? " pm-tree__cluster-wrapper--open" : ""}`}
@@ -309,7 +310,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       node.children?.filter((c) => c.nodeType === "cluster") ?? [];
     const standaloneModules =
       node.children?.filter((c) => c.nodeType === "module") ?? [];
-    const partProvider = providerResolver.forBranchPart(node.id);
+    const partProvider =
+      providerResolver.forBranchPart(node.id) ?? undefined;
     return (
       <li
         className={`pm-tree__pp-wrapper${isOpen ? " pm-tree__pp-wrapper--open" : ""}`}
@@ -355,9 +357,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           </li>
           {trunkNodes.map((node) => {
             const isExpanded = resolveNodeExpanded(node.id);
-            const trunkProvider = node.stage
-              ? providerResolver.forStage(node.stage)
-              : undefined;
+            const trunkProvider =
+              (node.stage && providerResolver.forStage(node.stage)) ||
+              undefined;
             return (
               <li
                 aria-current={node.isSelected ? "true" : undefined}

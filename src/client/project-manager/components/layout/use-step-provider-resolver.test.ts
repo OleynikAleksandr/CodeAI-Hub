@@ -81,7 +81,15 @@ test("description stage uses primarySession when no chain exists", () => {
   );
 });
 
-test("idle stage with no chain falls back to provided fallback", () => {
+test("idle stage with no chain returns null when no fallback is provided", () => {
+  const snapshot = baseSnapshot();
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "diagram_modules"),
+    null
+  );
+});
+
+test("idle stage with no chain falls back to explicit fallback when provided", () => {
   const snapshot = baseSnapshot();
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "diagram_modules", "claude"),
@@ -89,7 +97,11 @@ test("idle stage with no chain falls back to provided fallback", () => {
   );
 });
 
-test("null snapshot returns fallback for any stage", () => {
+test("null snapshot returns null for any stage when no fallback is provided", () => {
+  assert.equal(resolveSidebarProviderIdForStage(null, "description"), null);
+});
+
+test("null snapshot honors explicit fallback when provided", () => {
   assert.equal(
     resolveSidebarProviderIdForStage(null, "description", "gemini"),
     "gemini"

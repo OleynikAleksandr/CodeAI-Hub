@@ -27,8 +27,8 @@ const mapStackToDesignId = (
 export const resolveSidebarProviderIdForStage = (
   snapshot: WorkflowStateSnapshot | null,
   stage: WorkflowStageId,
-  fallbackProviderId: SidebarProviderId
-): SidebarProviderId =>
+  fallbackProviderId: SidebarProviderId | null = null
+): SidebarProviderId | null =>
   mapStackToDesignId(resolveStageProviderId(snapshot, stage)) ??
   fallbackProviderId;
 
@@ -66,28 +66,27 @@ const resolveStageProviderId = (
 
 export interface UseStepProviderResolverParams {
   readonly snapshot: WorkflowStateSnapshot | null;
-  readonly fallbackProviderId?: SidebarProviderId;
+  readonly fallbackProviderId?: SidebarProviderId | null;
 }
 
 export interface StepProviderResolver {
-  readonly forStage: (stage: WorkflowStageId) => SidebarProviderId;
-  readonly forBranchPart: (partId: string) => SidebarProviderId;
-  readonly forBranchCluster: (clusterId: string) => SidebarProviderId;
-  readonly forBranchModule: (moduleId: string) => SidebarProviderId;
+  readonly forStage: (stage: WorkflowStageId) => SidebarProviderId | null;
+  readonly forBranchPart: (partId: string) => SidebarProviderId | null;
+  readonly forBranchCluster: (clusterId: string) => SidebarProviderId | null;
+  readonly forBranchModule: (moduleId: string) => SidebarProviderId | null;
 }
-
-const DEFAULT_FALLBACK: SidebarProviderId = "codex";
 
 export const useStepProviderResolver = ({
   snapshot,
-  fallbackProviderId = DEFAULT_FALLBACK,
+  fallbackProviderId = null,
 }: UseStepProviderResolverParams): StepProviderResolver =>
   useMemo(() => {
-    const stageCache = new Map<WorkflowStageId, SidebarProviderId>();
-    const resolveStage = (stage: WorkflowStageId): SidebarProviderId => {
-      const cached = stageCache.get(stage);
-      if (cached) {
-        return cached;
+    const stageCache = new Map<WorkflowStageId, SidebarProviderId | null>();
+    const resolveStage = (
+      stage: WorkflowStageId
+    ): SidebarProviderId | null => {
+      if (stageCache.has(stage)) {
+        return stageCache.get(stage) ?? null;
       }
       const resolved = resolveSidebarProviderIdForStage(
         snapshot,
