@@ -59,13 +59,13 @@
 
 ### Stream: Core Bridge Notification Dedupe
 5. [DONE] Дедуплицировать reconnect status notifications без изменения schedule semantics; scope: `src/client/ui/src/core-bridge/core-bridge.ts`, `media/react-chat.js`, `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit message: `fix(ui): dedupe core bridge reconnect status`
-6. [IN_PROGRESS] Git Commit: `fix(ui): dedupe core bridge reconnect status` (hash: TBD)
+6. [DONE] Git Commit: `fix(ui): dedupe core bridge reconnect status` (hash: `cdc2f236e`)
 
 ## Phase 2 — Runtime Cleanup and Continuity Safety (owner: Codex, updated: 2026-04-29)
 
 ### Stream: Legacy Continuity Retry Safety
-1. [TODO] Сбрасывать legacy ContinuityMonitor state on failure/success и покрыть retry-after-failure; scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/session-continuity-facade.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit message: `fix(core): reset legacy continuity handoff state`
-2. [TODO] Git Commit: `fix(core): reset legacy continuity handoff state` (hash: TBD)
+1. [DONE] Сбрасывать legacy ContinuityMonitor state on failure/success и покрыть retry-after-failure; scope: `packages/core/src/session-continuity/session-continuity-facade.ts`, `packages/core/src/session-continuity/session-continuity-facade.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit message: `fix(core): reset legacy continuity handoff state`
+2. [IN_PROGRESS] Git Commit: `fix(core): reset legacy continuity handoff state` (hash: TBD)
 
 ### Stream: Runtime Dispose Ownership
 3. [TODO] Очищать SessionRuntime entries on dispose и покрыть тестом; scope: `packages/core/src/workspace-runtime/session-runtime.ts`, `packages/core/src/workspace-runtime/session-runtime.test.ts`, `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`; expected commit message: `fix(core): clear session runtime entries on dispose`

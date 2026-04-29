@@ -278,12 +278,17 @@ export class SessionContinuityFacade {
     try {
       await this.callbacks.sendMessage(session.id, prompt);
     } catch (error) {
-      this.pending.delete(session.id);
+      this.resetHandoffState(session.id);
       this.logger.warn("Failed to send handoff prompt", {
         sessionId: session.id,
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  private resetHandoffState(sessionId: string): void {
+    this.pending.delete(sessionId);
+    this.monitor.reset(sessionId);
   }
 
   private async finalizeHandoff(
@@ -307,6 +312,7 @@ export class SessionContinuityFacade {
         content,
       });
     } catch (error) {
+      this.resetHandoffState(session.id);
       this.logger.warn("Failed to write handoff report", {
         sessionId: session.id,
         error: error instanceof Error ? error.message : String(error),
@@ -334,17 +340,28 @@ export class SessionContinuityFacade {
       });
     }
 
-    const nextSession = await this.callbacks.createSession({
-      providerId: session.providerId,
-      workspacePath: session.workspacePath,
-      context: {
-        initiativeSlug: session.initiativeSlug,
-        stage: session.stage,
-      },
-      rootSessionId: pending.rootSessionId,
-    });
+    let nextSession: Session | null;
+    try {
+      nextSession = await this.callbacks.createSession({
+        providerId: session.providerId,
+        workspacePath: session.workspacePath,
+        context: {
+          initiativeSlug: session.initiativeSlug,
+          stage: session.stage,
+        },
+        rootSessionId: pending.rootSessionId,
+      });
+    } catch (error) {
+      this.resetHandoffState(session.id);
+      this.logger.warn("Failed to create handoff continuation session", {
+        sessionId: session.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
 
     if (!nextSession) {
+      this.resetHandoffState(session.id);
       return;
     }
 
@@ -361,6 +378,8 @@ export class SessionContinuityFacade {
         sessionId: nextSession.id,
         error: error instanceof Error ? error.message : String(error),
       });
+    } finally {
+      this.resetHandoffState(session.id);
     }
   }
 }

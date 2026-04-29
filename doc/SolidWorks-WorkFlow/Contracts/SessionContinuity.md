@@ -12,6 +12,7 @@
 - Если provider отдаёт `turn_completed` раньше финального usage snapshot, session остаётся в pending-arbitration до появления trailing `token_usage`; отсутствие usage прямо в `turn_completed` не считается автоматическим `no_rollover`.
 - Если provider может доказуемо сказать, что trailing usage snapshot для уже завершённого turn-а не придёт, он обязан эмитить explicit signal `postTurnTokenUsageUnavailable: true` вместе с `turn_completed`. Только этот explicit signal разрешает Core завершить pending-arbitration как `no_rollover` без trailing `token_usage`; просто отсутствие usage этого по-прежнему не означает.
 - Cached token-usage snapshot обязан очищаться при старте нового outbound user turn и после финального post-turn arbitration, чтобы usage предыдущего turn-а не протекал в следующий.
+- Legacy threshold-trigger handoff path сейчас отключен в production runtime (`enableLegacyHandoff=false`), но при включении обязан быть retry-safe: `ContinuityMonitor` и pending handoff state сбрасываются после неудачной отправки handoff prompt, невозможности записать report, невозможности создать continuation session и после финальной попытки resume prompt.
 
 ## Порог
 - Запуск continuity привязан к remaining% threshold per-provider (дефолт 30%).
