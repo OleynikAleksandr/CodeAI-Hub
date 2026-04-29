@@ -174,6 +174,10 @@ export class ProviderRegistry {
     );
   }
 
+  dispose(): void {
+    this.recoveryScheduler.dispose();
+  }
+
   private async ensureGeminiAdapter(): Promise<void> {
     const descriptor = this.providers.find(
       (provider) => provider.id === "geminiCli"

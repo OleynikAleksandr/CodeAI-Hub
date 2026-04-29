@@ -207,6 +207,8 @@ Core должен различать как минимум 4 класса:
 
 Transient server-side failure не должен автоматически удалять binding и не должен автоматически закрывать unified dialog history.
 
+Provider recovery retry timers принадлежат `ProviderRegistry` lifecycle. При `CoreOrchestrator.stop()` registry обязан вызывать scheduler dispose и очищать все pending retry timers, включая сценарий, где `RemoteBridge.stop()` завершается с ошибкой.
+
 ### 4.4. Source of truth для provider switch
 
 Canonical source для передачи контекста новому провайдеру:

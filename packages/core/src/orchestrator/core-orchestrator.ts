@@ -129,7 +129,11 @@ export class CoreOrchestrator {
 
   async stop(): Promise<void> {
     this.logger.info("Stopping core orchestrator...");
-    await this.remoteBridge.stop();
+    try {
+      await this.remoteBridge.stop();
+    } finally {
+      this.providerRegistry.dispose();
+    }
     this.logger.info("Core orchestrator stopped");
   }
 
