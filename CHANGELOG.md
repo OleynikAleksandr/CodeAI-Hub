@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.106] - 2026-04-29
+### Added
+- **Workflow Tree sidebar tinted per provider.** Each row of the Project Manager sidebar (trunk Documentation Tree stages and Development Tree branch nodes — Product Part / Cluster / Module) now carries a `data-provider` attribute resolved from `WorkflowStateSnapshot.continuity.chains[].segments[].providerId`, so unselected steps render their label in the provider's accent hue and selected steps render with a soft provider fill + provider border + muted text. Branch nodes inherit the provider of the latest `diagram_modules` chain until per-branch sessions exist; idle stages fall back to the resolver's default provider.
+- **Corporate design system folder.** New `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html` documents the canonical provider color tokens (Claude warm peach, Codex cyan, Gemini cool lavender) and the neutral selected-text + light font-weight tokens; this is the first SSOT entry for the corporate design and will grow with future sections (typography, spacing, semantic colors).
+
+### Changed
+- **Sidebar legacy hardcodes replaced.** The `pm-tree__type-marker` in-progress `#d9a441` (yellow) and done `--pm-accent-strong` (green), the `pm-tree__type-marker--has-children` outline, the `pm-tree__pp-wrapper--open` PP frame border, and the `pm-tree__cluster-children` connector lines now all read from per-row provider variables (`--row-soft`, `--row-border`, `--row-accent`) instead of the old uniform tokens. Sidebar font-weight is now `300` (light) regardless of node type. Legacy `--pm-accent-strong` rules remain as a defensive fallback when `[data-provider]` is absent.
+
 ## [1.2.105] - 2026-04-29
 ### Changed
 - **Tokens chip metric is muted to match the model/reasoning chips.** The numeric `used (remaining%)` value inside the right-most session status chip now uses the same neutral grey `#b0b0b0` as the default-state model and reasoning button chips, so the digits stop pulling visual attention away from the model identity.
