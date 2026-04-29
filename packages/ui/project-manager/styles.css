@@ -1247,6 +1247,24 @@ body {
   color: var(--row-accent);
 }
 
+/* Idle items without provider attribution must stay fully neutral
+   even when selected — the legacy --pm-accent-strong (green) selection
+   rules above would otherwise paint untouched steps in Codex-like green. */
+.pm-tree__item:not([data-provider]).pm-tree__item--selected {
+  color: var(--pm-text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.pm-tree__item:not([data-provider]).pm-tree__item--selected:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.pm-tree__item:not([data-provider]).pm-tree__item--selected .pm-tree__label {
+  font-weight: 400;
+  color: var(--pm-text-primary);
+}
+
 .pm-tree__item[data-provider].pm-tree__item--selected {
   color: #cfcfcf;
   background: var(--row-fill);
