@@ -1,11 +1,12 @@
 # Runtime Reliability Follow-up — Architecture Plan
 
-**Status:** Active planning for release `1.2.111`
+**Status:** Archived / completed in release `1.2.111`
 **Created:** 2026-04-29 18:29 CEST
 **Accepted:** 2026-04-29 18:29 CEST by user request in session
+**Completed:** 2026-04-29 19:01 CEST
 **Branch at planning time:** `main`
 **Current version at planning time:** `1.2.110`
-**Target release:** `1.2.111` unless package version changes before execution
+**Released artifact:** `codeai-hub-1.2.111.vsix`
 
 ## 1. Source and Goal
 
