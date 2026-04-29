@@ -61,6 +61,7 @@
 
 ### Checklists (periodic workflows)
 - `Checklists/PeriodicAudit.md` — чек-лист периодического аудита кодовой базы (раз в 3-5 релизов): parallel audit passes для dead code + broken docs links, jscpd классификация top-20 клонов по 6 категориям (LEGIT-PROVIDER / LEGIT-BOUNDARY / LEGIT-SIMILAR-BUT-DIVERGING / EXTRACT-EASY / EXTRACT-COMPLEX / WITHIN-FILE-BUG), trzy-проход grep для локализационных ключей перед deletion, execution через отдельный cycle с planning-doc + todo-plan. Precedent: 1.2.10 Audit Cleanup.
+- `Checklists/RuntimeReliabilityReviewRemediation.md` — обобщение двух runtime reliability review-пакетов (`message (1).txt`, `review.txt`) и двух remediation циклов (`1.2.103`, `1.2.111`): finding matrix, причины повторных замечаний после первого refactor, triage protocol, runtime reliability closeout checklist, reporting template для будущих overlapping reviews.
 
 ### Contracts (compat / legacy filenames)
 - `Contracts/DescriptionNode_ReviewSession.md` — legacy filename; redirect/compat note для узла `description`, без restart/reviewer semantics как активной возможности продукта.
