@@ -98,9 +98,10 @@
 
 ### Stream: Release Preparation
 1. [DONE] Обновить release-facing docs на будущую версию `1.2.111`; scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit message: `docs: prepare release 1.2.111`
-2. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.111` (hash: TBD)
-3. [TODO] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.111`
-4. [TODO] Git Commit: `chore: build release 1.2.111` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare release 1.2.111` (hash: `68f630e57`)
+3. [DONE] Выполнить `./scripts/build-all.sh` из repo root, проверить tarball outputs and version bump results; scope: release scripts output, package manifests, `doc/tmp/releases/`; expected commit message: `chore: build release 1.2.111`
+   - Build output 2026-04-29: provider/core/UI/launcher tarballs for `1.2.111` present in `doc/tmp/releases/`; package and asset manifests bumped to `1.2.111`.
+4. [IN_PROGRESS] Git Commit: `chore: build release 1.2.111` (hash: TBD)
 5. [TODO] Выполнить `./scripts/build-release.sh --use-current-version` on clean tree and verify package output; scope: VSIX artifact, release output, `doc/tmp/releases/`; expected commit message: `chore: package release 1.2.111`
 6. [TODO] Git Commit: `chore: package release 1.2.111` (hash: TBD)
 
