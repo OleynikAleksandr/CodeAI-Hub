@@ -31,7 +31,7 @@
 ### Stream: Planning And Session Open
 
 1. [DONE] Create approved planning-doc and active execution plan (scope: `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: plan status panel model switcher`)
-2. [IN_PROGRESS] Git Commit: `docs: plan status panel model switcher` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan status panel model switcher` (hash: `03b7cefcb`)
 
 ---
 
@@ -39,8 +39,8 @@
 
 ### Stream: Non-Resend Model Binding Update
 
-3. [TODO] Add `session:model:set` transport contract and validation (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat(core): add session model set command contract`)
-4. [TODO] Git Commit: `feat(core): add session model set command contract` (hash: TBD)
+3. [DONE] Add `session:model:set` transport contract and validation (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat(core): add session model set command contract`)
+4. [IN_PROGRESS] Git Commit: `feat(core): add session model set command contract` (hash: TBD)
 5. [TODO] Implement non-resend Core binding update and route command (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; commit: `feat(core): update session model binding without resend`)
 6. [TODO] Git Commit: `feat(core): update session model binding without resend` (hash: TBD)
 7. [TODO] Add PM API sender for active-session model binding update (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `feat(pm): expose session model set command`)

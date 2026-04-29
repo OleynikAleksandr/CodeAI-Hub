@@ -219,6 +219,13 @@ export type SessionIncomingMessage =
       };
     }
   | {
+      readonly type: "session:model:set";
+      readonly payload: {
+        readonly sessionId: string;
+        readonly targetModelId: string;
+      };
+    }
+  | {
       readonly type: "session:delete";
       readonly payload: {
         readonly sessionId: string;

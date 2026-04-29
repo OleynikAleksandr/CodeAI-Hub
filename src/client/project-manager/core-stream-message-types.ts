@@ -285,6 +285,13 @@ export type OutgoingMessage =
       };
     }
   | {
+      readonly type: "session:model:set";
+      readonly payload: {
+        readonly sessionId: string;
+        readonly targetModelId: string;
+      };
+    }
+  | {
       readonly type: "session:stop";
       readonly payload: { readonly sessionId: string };
     }
