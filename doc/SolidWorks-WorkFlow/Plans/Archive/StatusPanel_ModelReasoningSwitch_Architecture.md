@@ -1,10 +1,10 @@
 # Status Panel Model/Reasoning Switch - Architecture
 
-**Status:** Implemented; targeted verification and release pending
+**Status:** Completed and archived after release `1.2.112`
 **Date:** 2026-04-29
 **Branch:** `codex/status-panel-model-switcher`
 **Owner:** Oleksandr + Codex
-**Current version:** `1.2.111`
+**Current version:** `1.2.112`
 
 ---
 
@@ -193,7 +193,7 @@ Implemented in the active `v1.2.112` cycle:
 - Runtime and reopened-dialog SessionView wiring through the same hook.
 - Canonical docs updated in `SystemArchitecture.md`, `EffectiveModelIdentity_And_Settings_SSOT.md`, and `SessionStatusPanel.md`.
 
-Pending after this document update:
+Closed in this cycle:
 
 - consolidated targeted verification commit;
 - release docs preparation;
