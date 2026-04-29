@@ -106,6 +106,27 @@ export class SessionRequestHandlerSessionActions {
     });
   }
 
+  handleSetModelBinding(options: {
+    readonly sessionId: string;
+    readonly targetModelId: string;
+  }): void {
+    const targetModelId = options.targetModelId.trim();
+    if (!targetModelId) {
+      this.deps.logger.warn("Session model set: target model missing", {
+        sessionId: options.sessionId,
+      });
+      return;
+    }
+    const session = this.deps.sessionManager.getSession(options.sessionId);
+    if (!session) {
+      this.deps.logger.warn("Session model set: session not found", {
+        sessionId: options.sessionId,
+      });
+      return;
+    }
+    this.applySwitchModelBinding(session, targetModelId);
+  }
+
   private applySwitchModelBinding(
     session: Session,
     targetModelId: string
