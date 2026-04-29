@@ -6,6 +6,7 @@ import { api } from "../../api";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { PROVIDER_TINT_TOKENS } from "./stage-confirmation-card-provider-tint";
 
 type ConfirmableStageId = "virtual_simulation" | "diagram_modules";
 
@@ -399,22 +400,26 @@ export const StageConfirmationCard: React.FC<{
               const isSelected = provider.id === selectedProviderId;
               const isInherited = provider.id === inheritedProviderId;
               const isDisabled = !provider.connected || startInFlight;
+              const tint =
+                isSelected && isProviderStackId(provider.id)
+                  ? PROVIDER_TINT_TOKENS[provider.id]
+                  : null;
+              const pillFill = tint?.fill ?? "rgba(255,255,255,0.03)";
+              const pillBorder = tint?.border ?? "rgba(255,255,255,0.08)";
+              const pillColor = tint?.accent ?? "var(--pm-text-muted)";
+              const badgeFill =
+                tint?.badgeBackground ?? "rgba(255,255,255,0.06)";
+              const badgeColor = tint?.accent ?? "rgba(219, 228, 238, 0.56)";
               return (
                 <label
                   key={provider.id}
                   aria-disabled={isDisabled}
                   style={{
                     alignItems: "center",
-                    background: isSelected
-                      ? "rgba(95, 227, 186, 0.1)"
-                      : "rgba(255,255,255,0.03)",
-                    border: isSelected
-                      ? "1px solid rgba(95, 227, 186, 0.36)"
-                      : "1px solid rgba(255,255,255,0.08)",
+                    background: pillFill,
+                    border: `1px solid ${pillBorder}`,
                     borderRadius: 999,
-                    color: isSelected
-                      ? "var(--pm-accent-strong)"
-                      : "var(--pm-text-muted)",
+                    color: pillColor,
                     cursor: isDisabled ? "not-allowed" : "pointer",
                     display: "inline-flex",
                     gap: 8,
@@ -427,7 +432,11 @@ export const StageConfirmationCard: React.FC<{
                     disabled={isDisabled}
                     name={`pm-stage-provider-${stage}`}
                     onChange={() => setSelectedProviderId(provider.id)}
-                    style={{ opacity: 0, pointerEvents: "none", position: "absolute" }}
+                    style={{
+                      opacity: 0,
+                      pointerEvents: "none",
+                      position: "absolute",
+                    }}
                     type="radio"
                   />
                   <span style={{ fontSize: 13, fontWeight: 600 }}>
@@ -437,13 +446,9 @@ export const StageConfirmationCard: React.FC<{
                     <span
                       style={{
                         alignItems: "center",
-                        background: isSelected
-                          ? "rgba(95, 227, 186, 0.12)"
-                          : "rgba(255,255,255,0.06)",
+                        background: badgeFill,
                         borderRadius: 999,
-                        color: isSelected
-                          ? "var(--pm-accent-strong)"
-                          : "rgba(219, 228, 238, 0.56)",
+                        color: badgeColor,
                         display: "inline-flex",
                         fontSize: 10,
                         fontWeight: 600,
