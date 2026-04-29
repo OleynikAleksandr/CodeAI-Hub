@@ -59,7 +59,7 @@
 13. [DONE] Pass Claude `xhigh` through SDK manager and tests (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`; commit: `fix(claude): pass xhigh effort to sdk`; verified: `npx tsx --test packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `npm run build --workspace=@codeai-hub/claude-module`)
 14. [DONE] Git Commit: `fix(claude): pass xhigh effort to sdk` (hash: `78ea9517d`)
 15. [DONE] Add provider applied-config compatibility tests for Codex/Gemini selected model and reasoning payloads (scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`; commit: `test(providers): verify selected model reasoning payloads`; verified: `npx tsx --test packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `npx tsx --test packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/gemini-module`)
-16. [IN_PROGRESS] Git Commit: `test(providers): verify selected model reasoning payloads` (hash: TBD)
+16. [DONE] Git Commit: `test(providers): verify selected model reasoning payloads` (hash: `efadebf8c`)
 
 ---
 
@@ -67,8 +67,8 @@
 
 ### Stream: Option Facade
 
-17. [TODO] Add provider-neutral status-panel switcher option facade (scope: `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`; commit: `feat(ui): add session model switcher facade`)
-18. [TODO] Git Commit: `feat(ui): add session model switcher facade` (hash: TBD)
+17. [DONE] Add provider-neutral status-panel switcher option facade (scope: `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`; commit: `feat(ui): add session model switcher facade`; verified: `npx tsx --test src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`, `npm run typecheck:webview`)
+18. [IN_PROGRESS] Git Commit: `feat(ui): add session model switcher facade` (hash: TBD)
 19. [TODO] Add picker card components for model and reasoning choices (scope: `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/ui/src/session/model-switcher/session-reasoning-picker-card.tsx`, `media/session-view.css`; commit: `feat(ui): add session model picker cards`)
 20. [TODO] Git Commit: `feat(ui): add session model picker cards` (hash: TBD)
 21. [TODO] Wire StatusPanel callbacks and picker rendering without PM imports (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.test.tsx`; commit: `feat(ui): make status model chips interactive`)
