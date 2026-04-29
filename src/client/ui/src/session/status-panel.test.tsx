@@ -39,6 +39,9 @@ test("StatusPanel renders four chips for a Claude session", () => {
   assert.equal(html.includes("22,328"), true);
   assert.equal(html.includes("session-status-button--claude"), true);
   assert.equal(html.includes("session-status-chip--limits"), true);
+  assert.equal(html.includes('aria-haspopup="dialog"'), true);
+  assert.equal(html.includes('aria-expanded="false"'), true);
+  assert.equal(html.includes("session-model-switch-card__title"), false);
 });
 
 test("StatusPanel applies the Codex provider class", () => {

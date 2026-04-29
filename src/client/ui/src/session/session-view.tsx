@@ -61,6 +61,11 @@ interface SessionViewProps {
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
   readonly onSelectSession: (sessionId: string) => void;
+  readonly onSelectSessionModel?: (sessionId: string, modelId: string) => void;
+  readonly onSelectSessionReasoning?: (
+    sessionId: string,
+    reasoningId: string
+  ) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly sessions: readonly SessionRecord[];
@@ -92,6 +97,8 @@ const SessionViewBody = ({
   onCloseSession,
   onFileLinkActivate,
   onRefreshUsageLimits,
+  onSelectSessionModel,
+  onSelectSessionReasoning,
   onSendMessage,
   showThinkingMessages,
 }: SessionViewProps) => {
@@ -217,6 +224,17 @@ const SessionViewBody = ({
           <StatusPanel
             connectionDetail={coreConnectionDetail}
             connectionStatus={coreConnectionStatus}
+            onModelSelect={
+              onSelectSessionModel
+                ? (modelId) => onSelectSessionModel(activeSessionId, modelId)
+                : undefined
+            }
+            onReasoningSelect={
+              onSelectSessionReasoning
+                ? (reasoningId) =>
+                    onSelectSessionReasoning(activeSessionId, reasoningId)
+                : undefined
+            }
             status={activeSession.status}
             tokenDebugSummary={tokenDebugSummary}
           />
