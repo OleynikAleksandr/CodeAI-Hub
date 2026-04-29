@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
+import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import { useProjectManagerCoreStatusHydrator } from "./status-hydrator";
 import { applySessionModelBindingToSnapshot, createInitialSnapshot, resolveSessionThinkingDisplayEnabled, type SessionSnapshots } from "../../../ui/src/session/helpers";
 import { SessionMessageLocalizationFacade } from "../../../ui/src/session/session-message-localization-facade";
@@ -28,7 +29,10 @@ type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefin
 export type ProjectManagerDialogSessionController = {
   readonly connection: ReturnType<typeof useProjectManagerCoreStatusHydrator>;
   readonly providerLabels: ReturnType<typeof buildProviderLabels>;
+  readonly saveSettings: (settings: Settings) => void;
   readonly session: SessionRecord | null;
+  readonly setSessionModel: (sessionId: string, targetModelId: string) => void;
+  readonly settings: Settings;
   readonly showThinkingMessages: boolean;
   readonly snapshots: SessionSnapshots;
   readonly setSnapshots: React.Dispatch<React.SetStateAction<SessionSnapshots>>;
@@ -59,7 +63,7 @@ export const useProjectManagerDialogSessionController = (
   const dialogIdRef = useRef<string | null>(null);
   const lastProviderSessionIdRef = useRef<string | null>(null);
 
-  const { settings, reload } = useProjectManagerSettings();
+  const { settings, reload, save } = useProjectManagerSettings();
   const settingsRef = useRef(settings);
   useEffect(() => {
     settingsRef.current = settings;
@@ -426,11 +430,20 @@ export const useProjectManagerDialogSessionController = (
     const currentSessionId = sessionRef.current?.id ?? currentDialogId;
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
+  const setSessionModel = useCallback(
+    (sessionId: string, targetModelId: string) => {
+      api.setSessionModel(sessionId, targetModelId);
+    },
+    []
+  );
 
   return {
     connection,
     providerLabels,
+    saveSettings: save,
     session,
+    setSessionModel,
+    settings,
     showThinkingMessages,
     snapshots,
     setSnapshots,

@@ -3,6 +3,7 @@ import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
+import { useSessionModelSwitch } from "./use-session-model-switch";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 const ProjectManagerDialogSessionView = (props: {
@@ -14,7 +15,10 @@ const ProjectManagerDialogSessionView = (props: {
   const {
     connection,
     providerLabels,
+    saveSettings,
     session,
+    setSessionModel,
+    settings,
     showThinkingMessages,
     snapshots,
     setSnapshots,
@@ -22,6 +26,12 @@ const ProjectManagerDialogSessionView = (props: {
     sendMessage,
   } = useProjectManagerDialogSessionController(props.intent);
   useRuntimeModelSync(session?.id ?? null, setSnapshots);
+  const modelSwitch = useSessionModelSwitch({
+    saveSettings,
+    setSessionModel,
+    settings,
+    snapshots,
+  });
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;
@@ -54,6 +64,8 @@ const ProjectManagerDialogSessionView = (props: {
       onCloseSession={() => props.onExit()}
       onFileLinkActivate={props.onFileLinkActivate}
       onSelectSession={() => {}}
+      onSelectSessionModel={modelSwitch.onSelectSessionModel}
+      onSelectSessionReasoning={modelSwitch.onSelectSessionReasoning}
       onSendMessage={(_sessionId, content) => sendMessage(content)}
       providerLabels={providerLabels}
       sessions={[session]}
