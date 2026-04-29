@@ -96,12 +96,12 @@
 29. [DONE] Update canonical architecture docs for status-panel model switching (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel model switching`; verified: documentation diff reviewed)
 30. [DONE] Git Commit: `docs: document status panel model switching` (hash: `62bdce231`)
 31. [DONE] Update Docs Index and active planning status after implementation (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/TODO/todo-plan.md`; commit: `docs: index status panel model switcher`; verified: docs index and planning diff reviewed)
-32. [IN_PROGRESS] Git Commit: `docs: index status panel model switcher` (hash: TBD)
+32. [DONE] Git Commit: `docs: index status panel model switcher` (hash: `ee7dafe61`)
 
 ### Stream: Targeted Verification
 
-33. [TODO] Run targeted unit/build checks for Core, PM UI, and provider compatibility (scope: `packages/core`, `src/client`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`, `packages/Gemini_Module`; commit: `test: verify status panel model switching`)
-34. [TODO] Git Commit: `test: verify status panel model switching` (hash: TBD)
+33. [DONE] Run targeted unit/build checks for Core, PM UI, and provider compatibility (scope: `packages/core`, `src/client`, `packages/Claude_Module`, `packages/Codex_AppServer_Module`, `packages/Gemini_Module`; commit: `test: verify status panel model switching`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npm run build --workspace=@codeai-hub/core`, `npx tsx --test packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `npm run build --workspace=@codeai-hub/claude-module`, `npx tsx --test packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npx tsx --test packages/Gemini_Module/src/provider/gemini-provider-adapter.test.ts`, `npm run build --workspace=@codeai-hub/gemini-module`, `npx tsx --test src/client/ui/src/session/status-panel.test.tsx src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
+34. [IN_PROGRESS] Git Commit: `test: verify status panel model switching` (hash: TBD)
 
 ---
 
