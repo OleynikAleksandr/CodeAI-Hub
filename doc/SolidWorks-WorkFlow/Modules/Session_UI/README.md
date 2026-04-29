@@ -21,7 +21,7 @@
 2. `SessionIdUsageBar.md` — `providerSessionId` + usage limits
 3. `SessionDialogPanel.md` — история диалога, thinking, segment boundaries, file links
 4. `SessionInputPanel.md` — textarea, send/stop, wait-copy, timers, lock behavior
-5. `SessionStatusPanel.md` — Core status, models, tokens, token debug summary
+5. `SessionStatusPanel.md` — четыре chip ряд (label `Модель:` + provider-tinted кнопки имени модели и reasoning + правая `Токены:` плашка), плюс опциональный token debug summary; рендерится только при готовом Core и наличии `models[0]`
 
 ## Важный архитектурный нюанс
 

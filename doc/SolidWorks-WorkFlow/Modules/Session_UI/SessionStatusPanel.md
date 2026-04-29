@@ -12,7 +12,7 @@
 3. опциональный `(reasoning)` (тот же button shape; скрывается при отсутствующем `model.reasoning`);
 4. правая `Токены:` плашка с `used (remaining%)` и свободным правым краем под будущие per-session signals.
 
-Панель возвращает `null`, если Core не `ready` или в `status.models` нет хотя бы одного элемента; legacy single-line fallback и `Core Supervisor: starting…` снят с обороты в этом surface.
+Панель возвращает `null`, если Core не `ready` или в `status.models` нет хотя бы одного элемента; legacy single-line fallback и `Core Supervisor: starting…` сняты с оборота на этом surface.
 
 ## Что принимает
 
