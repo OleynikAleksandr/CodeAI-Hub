@@ -72,7 +72,7 @@
 19. [DONE] Add picker card components for model and reasoning choices (scope: `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx`, `media/session-view.css`; commit: `feat(ui): add session model picker cards`; verified: `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
 20. [DONE] Git Commit: `feat(ui): add session model picker cards` (hash: `d1f553dab`)
 21. [DONE] Wire StatusPanel callbacks and picker rendering without PM imports (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/session-view.tsx`, `src/client/ui/src/session/status-panel.test.tsx`; commit: `feat(ui): make status model chips interactive`; verified: `npx tsx --test src/client/ui/src/session/status-panel.test.tsx src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/model-switcher/session-model-switcher-facade.test.ts`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
-22. [IN_PROGRESS] Git Commit: `feat(ui): make status model chips interactive` (hash: TBD)
+22. [DONE] Git Commit: `feat(ui): make status model chips interactive` (hash: `c91d148fa`)
 
 ---
 
@@ -80,8 +80,8 @@
 
 ### Stream: Settings Save Plus Binding Update
 
-23. [TODO] Add PM controller for selection -> settings save -> `session:model:set` (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`; commit: `feat(pm): orchestrate session model selections`)
-24. [TODO] Git Commit: `feat(pm): orchestrate session model selections` (hash: TBD)
+23. [DONE] Add PM controller for selection -> settings save -> `session:model:set` (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`; commit: `feat(pm): orchestrate session model selections`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `npm run typecheck:webview`, `npm run build:webview`, `npm run check:knip`)
+24. [IN_PROGRESS] Git Commit: `feat(pm): orchestrate session model selections` (hash: TBD)
 25. [TODO] Add React hook for runtime and dialog session switch wiring (scope: `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `feat(pm): add session model switch hook`)
 26. [TODO] Git Commit: `feat(pm): add session model switch hook` (hash: TBD)
 27. [TODO] Wire runtime and reopened dialog views to the shared switch hook (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `feat(pm): wire status panel model switching`)
