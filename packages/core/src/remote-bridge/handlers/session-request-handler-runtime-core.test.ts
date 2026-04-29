@@ -7,6 +7,7 @@ import type { ProviderAdapter } from "../../provider-registry/provider-module-lo
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
+import { createSessionRequestHandlerRuntime } from "./session-request-handler-runtime";
 import {
   createSessionRequestHandlerRuntimeCore,
   resolveClaudeHaikuTranslationServiceForRuntime,
@@ -171,4 +172,16 @@ test("createSessionRequestHandlerRuntimeCore wires deferred continuity callbacks
   });
 
   assert.equal(createdSession, null);
+});
+
+test("createSessionRequestHandlerRuntime wires rollover bridge after construction", () => {
+  const events: BridgeEvent[] = [];
+  const sessionManager = new SessionManager();
+  const runtime = createSessionRequestHandlerRuntime(
+    createRuntimeDependencies({ events, sessionManager })
+  );
+
+  assert.doesNotThrow(() =>
+    runtime.resumeLifecycle.clearPostTurnContextDecision("session-1")
+  );
 });

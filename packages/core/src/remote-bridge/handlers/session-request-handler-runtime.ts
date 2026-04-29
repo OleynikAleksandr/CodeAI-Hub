@@ -7,15 +7,44 @@ import { SessionRequestHandlerTurnArbitration } from "./session-request-handler-
 import { SessionRequestHandlerTurnCompletion } from "./session-request-handler-turn-completion";
 import { SessionRequestHandlerTurnThresholdResolver } from "./session-request-handler-turn-threshold-resolver";
 
+interface DeferredRuntimeRef<TDependency> {
+  get(): TDependency;
+  set(value: TDependency): void;
+}
+
+const createDeferredRuntimeRef = <TDependency>(
+  name: string
+): DeferredRuntimeRef<TDependency> => {
+  let value: TDependency | undefined;
+  return {
+    get: () => {
+      if (value === undefined) {
+        throw new Error(
+          `Session request runtime dependency "${name}" was used before initialization`
+        );
+      }
+      return value;
+    },
+    set: (nextValue) => {
+      value = nextValue;
+    },
+  };
+};
+
 export const createSessionRequestHandlerRuntime = (
   options: SessionRequestHandlerRuntimeDependencies
 ) => {
-  let continuityRolloverOrchestrator!: SessionContinuityRolloverOrchestrator;
+  const continuityRolloverOrchestratorRef =
+    createDeferredRuntimeRef<SessionContinuityRolloverOrchestrator>(
+      "continuityRolloverOrchestrator"
+    );
   const core = createSessionRequestHandlerRuntimeCore(options, {
     clearPendingState: (sessionId) =>
-      continuityRolloverOrchestrator.clearPendingState(sessionId),
+      continuityRolloverOrchestratorRef.get().clearPendingState(sessionId),
     clearTokenUsageSnapshot: (sessionId) =>
-      continuityRolloverOrchestrator.clearTokenUsageSnapshot(sessionId),
+      continuityRolloverOrchestratorRef
+        .get()
+        .clearTokenUsageSnapshot(sessionId),
   });
   const flowNodeReportState = new SessionRequestHandlerFlowNodeReportState({
     broadcaster: options.broadcaster,
@@ -34,40 +63,44 @@ export const createSessionRequestHandlerRuntime = (
     finalizeFlowNodeContinuityLock:
       options.callbacks.finalizeFlowNodeContinuityLock,
   });
-  continuityRolloverOrchestrator = new SessionContinuityRolloverOrchestrator({
-    logger: options.logger,
-    registerPostTurnRolloverRequiredDecision: (sessionId) =>
-      core.resumeLifecycle.registerPostTurnRolloverRequiredDecision(sessionId),
-    elevateSessionToRolloverResumeMode: (session) =>
-      core.resumeLifecycle.elevateSessionToRolloverResumeMode(session),
-    registerFlowNodeContinuityLockContext:
-      options.callbacks.registerFlowNodeContinuityLockContext,
-    emitContinuityLockEvent: options.callbacks.emitContinuityLockEvent,
-    emitFlowNodeRolloverNotification: (sessionId, notification) =>
-      flowNodeReportState.emitFlowNodeRolloverNotification(
-        sessionId,
-        notification
-      ),
-    rolloverFlowNodeSession: (session, rollover, rolloverOptions) =>
-      flowNodeRollover.rolloverFlowNodeSession(
-        session,
-        rollover,
-        rolloverOptions
-      ),
-    getCreateReportRequest: (sessionId) =>
-      flowNodeReportState.getCreateReportRequest(sessionId),
-    deleteCreateReportRequest: (sessionId) =>
-      flowNodeReportState.deleteCreateReportRequest(sessionId),
-    finalizeFlowNodeContinuityLock:
-      options.callbacks.finalizeFlowNodeContinuityLock,
-    updateSessionResumeLifecycleState: (session, patch) =>
-      core.resumeLifecycle.updateSessionResumeLifecycleState(session, patch),
-    emitTurnStateEvent: options.callbacks.emitTurnStateEvent,
-    emitContinuityFailedEvent: (failureOptions) =>
-      flowNodeReportState.emitContinuityFailedEvent(failureOptions),
-    isContinuityReportTimeoutError: (error) =>
-      flowNodeReportState.isContinuityReportTimeoutError(error),
-  });
+  const continuityRolloverOrchestrator =
+    new SessionContinuityRolloverOrchestrator({
+      logger: options.logger,
+      registerPostTurnRolloverRequiredDecision: (sessionId) =>
+        core.resumeLifecycle.registerPostTurnRolloverRequiredDecision(
+          sessionId
+        ),
+      elevateSessionToRolloverResumeMode: (session) =>
+        core.resumeLifecycle.elevateSessionToRolloverResumeMode(session),
+      registerFlowNodeContinuityLockContext:
+        options.callbacks.registerFlowNodeContinuityLockContext,
+      emitContinuityLockEvent: options.callbacks.emitContinuityLockEvent,
+      emitFlowNodeRolloverNotification: (sessionId, notification) =>
+        flowNodeReportState.emitFlowNodeRolloverNotification(
+          sessionId,
+          notification
+        ),
+      rolloverFlowNodeSession: (session, rollover, rolloverOptions) =>
+        flowNodeRollover.rolloverFlowNodeSession(
+          session,
+          rollover,
+          rolloverOptions
+        ),
+      getCreateReportRequest: (sessionId) =>
+        flowNodeReportState.getCreateReportRequest(sessionId),
+      deleteCreateReportRequest: (sessionId) =>
+        flowNodeReportState.deleteCreateReportRequest(sessionId),
+      finalizeFlowNodeContinuityLock:
+        options.callbacks.finalizeFlowNodeContinuityLock,
+      updateSessionResumeLifecycleState: (session, patch) =>
+        core.resumeLifecycle.updateSessionResumeLifecycleState(session, patch),
+      emitTurnStateEvent: options.callbacks.emitTurnStateEvent,
+      emitContinuityFailedEvent: (failureOptions) =>
+        flowNodeReportState.emitContinuityFailedEvent(failureOptions),
+      isContinuityReportTimeoutError: (error) =>
+        flowNodeReportState.isContinuityReportTimeoutError(error),
+    });
+  continuityRolloverOrchestratorRef.set(continuityRolloverOrchestrator);
   const turnCompletion = new SessionRequestHandlerTurnCompletion({
     continuityLockService: core.continuityLockService,
     emitTurnStateEvent: options.callbacks.emitTurnStateEvent,

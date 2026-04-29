@@ -73,9 +73,9 @@
 5. [DONE] Добавить ProviderRecoveryScheduler bulk dispose и unit coverage; scope: `packages/core/src/provider-registry/provider-recovery-scheduler.ts`, `packages/core/src/provider-registry/provider-recovery-scheduler.test.ts`, `doc/TODO/todo-plan.md`; expected commit message: `fix(core): dispose provider recovery timers`
 6. [DONE] Git Commit: `fix(core): dispose provider recovery timers` (hash: `a6bf22f45`)
 7. [DONE] Wire provider recovery scheduler disposal через registry/orchestrator stop; scope: `packages/core/src/provider-registry/index.ts`, `packages/core/src/orchestrator/core-orchestrator.ts`, `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`; expected commit message: `fix(core): stop provider recovery scheduler`
-8. [IN_PROGRESS] Git Commit: `fix(core): stop provider recovery scheduler` (hash: TBD)
-9. [TODO] Убрать оставшийся definite-assignment bypass из runtime factory; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `refactor(core): make rollover runtime wiring explicit`
-10. [TODO] Git Commit: `refactor(core): make rollover runtime wiring explicit` (hash: TBD)
+8. [DONE] Git Commit: `fix(core): stop provider recovery scheduler` (hash: `0df918fc5`)
+9. [DONE] Убрать оставшийся definite-assignment bypass из runtime factory; scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; expected commit message: `refactor(core): make rollover runtime wiring explicit`
+10. [IN_PROGRESS] Git Commit: `refactor(core): make rollover runtime wiring explicit` (hash: TBD)
 
 ## Phase 3 — Unified Session Storage Lifecycle (owner: Codex, updated: 2026-04-29)
 
