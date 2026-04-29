@@ -67,11 +67,10 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - CSS transform zoom: Cmd/Ctrl+scroll (25–200%, шаг 1%); reset — Cmd/Ctrl+0 или clickable badge в bottom-left при scale ≠ 100%.
 - Выбранные layout params сразу уходят в `module-map.flow.json` v2 через `onNodesChange` и переживают reload: read-path применяет их поверх projection defaults через `applyFlowSidecarLayoutParams`. Backwards compat с v1 sidecar (без секции `layoutParams`) сохраняется — такой sidecar трактуется как «defaults повсюду».
 - CSS Grid контейнеры (Product Part, Cluster) сами рассчитывают размер и расположение card'ов браузером; нет `containerConstraints` / `resizeContainersToFit` / collision avoidance в JS.
-- При открытии workspace/switch/reconnect PM временно всегда стартует в `Description`:
-  - toolbar highlight = `Description`,
-  - левая workflow tree branch = highlighted `Description`, раскрыта только ветка `Description`,
-  - правая панель открывает `Final_Description.md`, если он существует, иначе `questionnaire.md`,
-  - левая Session panel автоматически показывает только Description-scoped session state или Description Help.
+- При открытии workspace/switch/reconnect PM auto-select-ит последний non-idle trunk stage (`diagram_modules` → `virtual_simulation` → `description`) на основе `resolveLastActiveStage` и `resolveStartupTool` (см. SystemArchitecture §3.20). Workflow Tree является единственной навигационной поверхностью; верхний stage toolbar удалён в `v1.1.924`. Если все trunk stages idle, fallback — `Description`:
+  - sidebar workflow tree branch = highlighted активный stage, раскрыта только эта ветка,
+  - правая панель открывает canonical артефакт активного stage (например `Final_Description.md` для `description`, `virtual-simulation.md` для `virtual_simulation`, `product-parts.index.md` / part artifact для `diagram_modules`); для idle `description` без `Final_Description.md` открывается `questionnaire.md`,
+  - левая Session panel автоматически показывает session state активного stage или его Help.
 - В PM agent dialog markdown local file links работают как editor-aware route только для dialog surface:
   - абсолютные local file targets (`/abs/path.md`, `...:line:column`, `#LlineCcolumn`) перехватываются только в Session UI dialog bubbles;
   - если PM работает внутри VS Code webview, открытие файла идёт через standard editor API (`workspace.openTextDocument` + `window.showTextDocument`) на стороне extension host;
