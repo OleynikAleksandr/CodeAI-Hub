@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.110] - 2026-04-29
+### Fixed
+- **Sidebar tint reflects strict per-step attribution.** The 1.2.109 upstream inheritance (virtual_simulation falling back to Description's provider, diagram_modules falling back to VS chain or Description) was a regression: the StageConfirmationCard inherited-provider badge is a preselect hint the user can change, not a binding, so the sidebar tint must not anticipate that hint. `useStepProviderResolver.forStage` now returns `null` for idle VS/DM stages even when an upstream chain has provider attribution; the row renders neutral until the step's own session actually attaches. The legitimate `description.primarySession.providerId` fallback for the description stage itself is preserved (it is description's own session, not upstream inheritance).
+
 ## [1.2.109] - 2026-04-29
 ### Fixed
 - **Idle workflow steps inherit upstream provider tint.** Until v1.2.108, an idle workflow step (no own continuity chain) rendered fully neutral, even when an upstream step had already established a provider. Now `useStepProviderResolver.forStage` mirrors `resolveInheritedProviderId` from `workflow-provider-resolver.ts`: virtual_simulation falls back to `description.primarySession.providerId`; diagram_modules falls back to the latest virtual_simulation chain and then to description. The sidebar tint stays consistent with the inherited-provider badge that `StageConfirmationCard` already shows when preselecting the next step.
