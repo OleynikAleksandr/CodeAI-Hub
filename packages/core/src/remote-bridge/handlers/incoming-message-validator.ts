@@ -24,6 +24,7 @@ const DIALOG_SWITCH_MODES = new Set([
   "switch_model",
   "switch_provider",
 ]);
+const CODEX_REASONING_EFFORTS = new Set(["low", "medium", "high", "xhigh"]);
 
 const NATIVE_CAPTURE_PROVIDERS = new Set(["claude", "codex"]);
 const PROVIDER_IDS = new Set(["claude", "codex", "gemini"]);
@@ -100,6 +101,14 @@ const isSessionMessagePayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.sessionId === "string" &&
   isMessageContentPayload(payload.content);
+
+const isCodexModelSwitchPayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  typeof payload.sessionId === "string" &&
+  typeof payload.targetModelId === "string" &&
+  (payload.targetReasoningEffort === undefined ||
+    (typeof payload.targetReasoningEffort === "string" &&
+      CODEX_REASONING_EFFORTS.has(payload.targetReasoningEffort)));
 
 const isUsageRefreshPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
@@ -224,6 +233,7 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "pm:diag:log": isDiagnosticLogPayload,
   "projects:add": isProjectAddPayload,
   "projects:remove": isProjectRemovePayload,
+  "session:codex:model-switch": isCodexModelSwitchPayload,
   "session:create": isSessionCreatePayload,
   "session:delete": isSessionIdPayload,
   "session:message": isSessionMessagePayload,

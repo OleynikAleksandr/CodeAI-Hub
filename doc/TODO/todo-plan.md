@@ -102,14 +102,14 @@
 ### Stream C — Replace slug-based hardcode in payload helper
 
 1. [DONE] В `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts` заменить `CODEX_MODELS_WITHOUT_REASONING_SUMMARY` Set lookup на Codex module runtime helper `getCodexModelCapabilities(modelId).supportsReasoningSummary === false`. Сохранить existing public signature `buildCodexReasoningSummaryParams(modelId, summary)`. Расширить existing unit-test'ы (или создать если не было) — assert: вызов с Spark slug возвращает empty object; вызов с non-Spark — `{ summary }`; вызов с unknown slug — defaults retain (см. open question 11.2 если потребуется). Scope: ≤2 файла (helper + test). Никаких новых call sites — `codex-app-server-facade.ts:225` уже вызывает helper; behavior unchanged for non-Spark. Commit message: `refactor(codex): replace slug-based hardcode with capability registry`.
-2. [DONE] Git Commit: `refactor(codex): replace slug-based hardcode with capability registry` (hash: pending current commit)
+2. [DONE] Git Commit: `refactor(codex): replace slug-based hardcode with capability registry` (hash: 9a7dde344)
 
 ### Stream D — Switch transport + Core handler (компилируемые микро-задачи)
 
 #### D1 — Server-side contract + validation
 
-1. [TODO] `packages/core/src/remote-bridge/session-stream-contracts.ts` (payload type + outbound update type), `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` (register `session:codex:model-switch` validator alongside existing `dialog:switch:*` / `session:*` entries на line 217-231). Router dispatch не добавлять в этом commit, чтобы промежуточный typecheck не ссылался на еще не wired handler method. Scope: 2 файла; commit message: `feat(core): add codex model switch command contract`.
-2. [TODO] Git Commit: `feat(core): add codex model switch command contract` (hash: TBD)
+1. [DONE] `packages/core/src/remote-bridge/session-stream-contracts.ts` (payload type + outbound update type), `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` (register `session:codex:model-switch` validator alongside existing `dialog:switch:*` / `session:*` entries на line 217-231). Router dispatch не добавлять в этом commit, чтобы промежуточный typecheck не ссылался на еще не wired handler method. Scope: 2 файла; commit message: `feat(core): add codex model switch command contract`.
+2. [DONE] Git Commit: `feat(core): add codex model switch command contract` (hash: pending current commit)
 
 #### D1b — Provider-neutral switch seam (types only, Codex-only active)
 

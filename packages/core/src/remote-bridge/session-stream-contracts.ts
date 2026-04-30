@@ -145,6 +145,18 @@ export interface SessionModelUpdatePayload {
   readonly source?: SessionModelBindingSource;
 }
 
+export type CodexModelSwitchReasoningEffort =
+  | "low"
+  | "medium"
+  | "high"
+  | "xhigh";
+
+export interface CodexModelSwitchRequestPayload {
+  readonly sessionId: string;
+  readonly targetModelId: string;
+  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
+}
+
 export interface SessionMessageTranslationPayload {
   readonly localizedContent: string;
   readonly messageId: string;
@@ -217,6 +229,10 @@ export type SessionIncomingMessage =
         readonly sessionId: string;
         readonly content: string;
       };
+    }
+  | {
+      readonly type: "session:codex:model-switch";
+      readonly payload: CodexModelSwitchRequestPayload;
     }
   | {
       readonly type: "session:delete";
