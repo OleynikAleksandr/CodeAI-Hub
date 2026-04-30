@@ -5,6 +5,7 @@ import type {
 } from "./session-model-switcher-facade";
 
 interface SessionModelPickerCardProps {
+  readonly alignToFollowingChip?: boolean;
   readonly onSelectModel: (modelId: string) => void;
   readonly options: readonly SessionModelSwitcherModelOption[];
   readonly title?: string;
@@ -17,6 +18,7 @@ interface SessionReasoningPickerCardProps {
 }
 
 interface PickerCardProps {
+  readonly alignToFollowingChip?: boolean;
   readonly compact?: boolean;
   readonly onSelect: (id: string) => void;
   readonly options: readonly {
@@ -32,7 +34,13 @@ const joinClassNames = (
   ...classes: ReadonlyArray<false | string | undefined>
 ): string => classes.filter(Boolean).join(" ");
 
-const PickerCard = ({ compact, onSelect, options, title }: PickerCardProps) => {
+const PickerCard = ({
+  alignToFollowingChip,
+  compact,
+  onSelect,
+  options,
+  title,
+}: PickerCardProps) => {
   if (options.length === 0) {
     return null;
   }
@@ -42,6 +50,8 @@ const PickerCard = ({ compact, onSelect, options, title }: PickerCardProps) => {
       aria-label={title}
       className={joinClassNames(
         "session-model-switch-card",
+        alignToFollowingChip &&
+          "session-model-switch-card--align-following-chip",
         compact && "session-model-switch-card--compact"
       )}
       role="dialog"
@@ -74,11 +84,17 @@ const PickerCard = ({ compact, onSelect, options, title }: PickerCardProps) => {
 
 export const SessionModelPickerCard = memo(
   ({
+    alignToFollowingChip,
     onSelectModel,
     options,
     title = "Model",
   }: SessionModelPickerCardProps) => (
-    <PickerCard onSelect={onSelectModel} options={options} title={title} />
+    <PickerCard
+      alignToFollowingChip={alignToFollowingChip}
+      onSelect={onSelectModel}
+      options={options}
+      title={title}
+    />
   )
 );
 

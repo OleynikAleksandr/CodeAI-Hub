@@ -146,12 +146,12 @@
 53. [DONE] Preserve pending selected model in PM and send explicit reasoning with `session:model:set` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`; commit: `fix(pm): preserve pending status panel model selection`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`)
 54. [DONE] Git Commit: `fix(pm): preserve pending status panel model selection` (hash: `05009d3c0`)
 55. [DONE] Cover sequential model -> reasoning picker selection in PM tests (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `test(pm): cover sequential status panel selection`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`)
-56. [IN_PROGRESS] Git Commit: `test(pm): cover sequential status panel selection` (hash: TBD)
+56. [DONE] Git Commit: `test(pm): cover sequential status panel selection` (hash: `f0a35d957`)
 
 ### Stream: Picker Positioning Fix
 
-57. [TODO] Align only the model picker card so its left edge starts at the Reasoning picker/chip area; leave Reasoning card positioning unchanged (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `media/session-view.css`; commit: `fix(ui): align status model picker card`)
-58. [TODO] Git Commit: `fix(ui): align status model picker card` (hash: TBD)
+57. [DONE] Align only the model picker card so its left edge starts at the Reasoning picker/chip area; leave Reasoning card positioning unchanged (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `media/session-view.css`; commit: `fix(ui): align status model picker card`; verified: `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/status-panel.test.tsx`)
+58. [IN_PROGRESS] Git Commit: `fix(ui): align status model picker card` (hash: TBD)
 
 ### Stream: Targeted Verification
 

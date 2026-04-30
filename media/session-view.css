@@ -1526,6 +1526,11 @@
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.42);
 }
 
+.session-model-switch-card--align-following-chip {
+  right: auto;
+  left: calc(100% + 8px);
+}
+
 .session-model-switch-card--compact {
   width: min(260px, calc(100vw - 32px));
 }

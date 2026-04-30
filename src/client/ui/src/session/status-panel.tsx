@@ -130,6 +130,7 @@ const StatusPanel = ({
           </button>
           {openPicker === "model" ? (
             <SessionModelPickerCard
+              alignToFollowingChip
               onSelectModel={handleModelSelect}
               options={switcherState.modelOptions}
             />
