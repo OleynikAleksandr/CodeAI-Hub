@@ -59,7 +59,7 @@ test("Codex app-server translation profile preserves structured localization mar
   assert.equal(prompt.endsWith(request.text), true);
 });
 
-test("Codex app-server translation profile omits explicit summary for Spark only", () => {
+test("Codex app-server translation profile keeps explicit summary none for Spark", () => {
   const request = {
     sourceLanguage: "en",
     targetLanguage: "es",
@@ -80,6 +80,6 @@ test("Codex app-server translation profile omits explicit summary for Spark only
   assert.deepEqual(mini.threadConfig, { project_doc_max_bytes: 0 });
   assert.equal(mini.summary, "none");
   assert.equal(mini.omitSummary, false);
-  assert.equal(spark.summary, null);
-  assert.equal(spark.omitSummary, true);
+  assert.equal(spark.summary, "none");
+  assert.equal(spark.omitSummary, false);
 });

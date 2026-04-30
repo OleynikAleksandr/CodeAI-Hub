@@ -2,7 +2,6 @@ const DEFAULT_REASONING_EFFORT = "low";
 const PROJECT_DOC_DISABLED_CONFIG = {
   project_doc_max_bytes: 0,
 } as const;
-const SPARK_MODEL_ID = "gpt-5.3-codex-spark";
 const STRUCTURED_LOCALIZATION_CATEGORY = "localization_bundle";
 
 export interface CodexAppServerTranslationRequest {
@@ -19,7 +18,7 @@ export interface CodexAppServerTranslationPromptProfile {
   readonly omitSummary: boolean;
   readonly persistExtendedHistory: false;
   readonly processProfileKey: "codex:translation";
-  readonly summary: "none" | null;
+  readonly summary: "none";
   readonly threadConfig: typeof PROJECT_DOC_DISABLED_CONFIG;
   readonly userPrompt: string;
 }
@@ -67,17 +66,16 @@ export const buildCodexAppServerTranslationPromptProfile = (options: {
   readonly modelId: string;
   readonly request: CodexAppServerTranslationRequest;
 }): CodexAppServerTranslationPromptProfile => {
-  const omitSummary = options.modelId === SPARK_MODEL_ID;
   return {
     baseInstructions: buildCodexAppServerTranslationInstructions(
       options.request
     ),
     effort: DEFAULT_REASONING_EFFORT,
     modelId: options.modelId,
-    omitSummary,
+    omitSummary: false,
     persistExtendedHistory: false,
     processProfileKey: "codex:translation",
-    summary: omitSummary ? null : "none",
+    summary: "none",
     threadConfig: PROJECT_DOC_DISABLED_CONFIG,
     userPrompt: buildCodexAppServerTranslationPrompt(options.request),
   };
