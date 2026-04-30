@@ -268,8 +268,8 @@
 4. [DONE] Update `README.md` and `CHANGELOG.md` for `1.2.118`. Scope: 2 файла; commit message: `docs: prepare release 1.2.118`.
 5. [DONE] Git Commit: `docs: prepare release 1.2.118` (hash: 8662b5570)
 6. [DONE] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Result: provider/core/UI/CEF launcher artifacts built for `1.2.118` and copied to `~/.codeai-hub/releases/` / `doc/tmp/releases/`. Scope: generated release files; commit message: `chore: build release 1.2.118`.
-7. [TODO] Git Commit: `chore: build release 1.2.118` (hash: TBD)
-8. [TODO] Run `./scripts/build-release.sh --use-current-version`; produce `codeai-hub-1.2.118.vsix`; update session report as ACTIVE for user retest. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.118`.
+7. [DONE] Git Commit: `chore: build release 1.2.118` (hash: 9fea90aab)
+8. [IN_PROGRESS] Run `./scripts/build-release.sh --use-current-version`; produce `codeai-hub-1.2.118.vsix`; update session report as ACTIVE for user retest. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.118`.
 9. [TODO] Git Commit: `chore: finalize release 1.2.118` (hash: TBD)
 
 ### Stream S — User verification retry
