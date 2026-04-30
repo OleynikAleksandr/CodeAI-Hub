@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
+import { ContinuityChainStore } from "../../session-continuity/continuity-store";
 import { readAppliedProviderTurnConfig } from "../types";
 import {
   collectTurnStateSequence,
@@ -150,6 +153,100 @@ test("SessionRequestHandler routes switch_model through session model binding", 
     readAppliedProviderTurnConfig(sentTurnOptions[0])?.effectiveModelId,
     "gpt-5.4-mini reasoning:medium"
   );
+});
+
+test("SessionRequestHandler keeps live dialog model binding on dialog send", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-dialog-binding-")
+  );
+  try {
+    const harness = createHarness();
+    const workspaceSlug = "demo";
+    const dialogId = "dialog-description";
+    const providerSessionId = "provider-dialog-1";
+    const staleBinding = {
+      baseModelId: "gpt-5.3-codex-spark",
+      boundAt: "2026-04-30T06:00:00.000Z",
+      key: "session:stale",
+      modelId: "gpt-5.3-codex-spark reasoning:low",
+      providerId: "codexCli",
+      reasoningEffort: "low",
+      source: "start_step_selection" as const,
+      updatedAt: "2026-04-30T06:00:00.000Z",
+    };
+    const liveBinding = {
+      ...staleBinding,
+      key: "session:live",
+      modelId: "gpt-5.4-mini reasoning:xhigh",
+      baseModelId: "gpt-5.4-mini",
+      reasoningEffort: "xhigh",
+      source: "switch_request" as const,
+      updatedAt: "2026-04-30T06:05:00.000Z",
+    };
+    const store = new ContinuityChainStore({
+      workspaceRoot,
+      workspaceSlug,
+      stage: "description",
+      rootSessionId: dialogId,
+    });
+    await store.appendSegment({
+      createdAt: staleBinding.boundAt,
+      modelBinding: staleBinding,
+      providerId: "codexCli",
+      providerSessionId,
+      sessionId: "stale-session",
+    });
+    const session = harness.sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      providerSessionId,
+      {
+        initiativeSlug: workspaceSlug,
+        stage: "description",
+        runSlug: "description",
+      }
+    );
+    harness.sessionManager.setModelBinding(session.id, liveBinding);
+    harness.providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId,
+      unsubscribe: noop,
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+
+    const result = await harness.handler.handleDialogSend({
+      workspaceRoot,
+      workspaceSlug,
+      dialogId,
+      content: "answers",
+    });
+
+    assert.deepEqual(result, { ok: true });
+    assert.equal(
+      harness.sessionManager.getSession(session.id)?.modelBinding?.modelId,
+      liveBinding.modelId
+    );
+    assert.equal(
+      readAppliedProviderTurnConfig(sentTurnOptions[0])?.effectiveModelId,
+      liveBinding.modelId
+    );
+    assert.equal(
+      readAppliedProviderTurnConfig(sentTurnOptions[0])?.reasoningEffort,
+      "xhigh"
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
 });
 
 test("SessionRequestHandler updates provider binding on sessionIdChanged", () => {

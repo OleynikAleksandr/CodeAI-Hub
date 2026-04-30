@@ -123,6 +123,31 @@ test("project-manager-dialog-session-view keeps runtime model sync and dialog se
   assert.equal(source.includes("activeSessionId={session.id}"), true);
 });
 
+test("project-manager session surfaces forward explicit reasoning to core model binding", async () => {
+  const runtimeSource = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+  const dialogControllerSource = await readFile(
+    DIALOG_SESSION_CONTROLLER_SOURCE_PATH,
+    "utf8"
+  );
+
+  assert.equal(
+    runtimeSource.includes(
+      "api.setSessionModel(sessionId, targetModelId, targetReasoningId);"
+    ),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes(
+      "api.setSessionModel(sessionId, targetModelId, targetReasoningId);"
+    ),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes("targetReasoningId?: string | null"),
+    true
+  );
+});
+
 test("project-manager-runtime-session-view does not seed empty state from browser-local dialog cache", async () => {
   const source = await readFile(RUNTIME_SOURCE_PATH, "utf8");
 
