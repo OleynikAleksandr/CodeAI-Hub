@@ -156,12 +156,12 @@
 #### F1 — Status panel + picker component
 
 1. [DONE] `src/client/ui/src/session/status-panel.tsx` (line 87-104 area — добавить `onClick` к двум визуальным кнопкам, состояние `openPicker: "model" | "reasoning" | null`, рендеринг picker popup'а), new file `src/client/ui/src/session/status-panel-model-picker.tsx` (picker UI компонент — в этом цикле показывает только Codex models; non-Codex sessions — chips остаются visually, click no-op), new file `src/client/ui/src/session/status-panel-model-picker.test.tsx` (component test: click → picker open → option click → callback fires). Scope: 3 файла; commit message: `feat(ui): add status panel model picker component`.
-2. [DONE] Git Commit: `feat(ui): add status panel model picker component` (hash: pending current commit)
+2. [DONE] Git Commit: `feat(ui): add status panel model picker component` (hash: e9e82c489)
 
 #### F2 — Callback bridge + symmetric PM views
 
-1. [TODO] `src/client/ui/src/session/session-view.tsx` (пробросить onSelectModel / onSelectReasoning из props в StatusPanel), `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` (wiring callbacks через PM controller), `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` (symmetric wiring). Scope: 3 файла; commit message: `feat(pm-status-panel): wire model picker callbacks through session views`.
-2. [TODO] Git Commit: `feat(pm-status-panel): wire model picker callbacks through session views` (hash: TBD)
+1. [DONE] `src/client/ui/src/session/session-view.tsx` (пробросить onSelectModel / onSelectReasoning из props в StatusPanel), `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` (wiring callbacks через PM controller), `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` (symmetric wiring). Scope: 3 файла; commit message: `feat(pm-status-panel): wire model picker callbacks through session views`.
+2. [DONE] Git Commit: `feat(pm-status-panel): wire model picker callbacks through session views` (hash: pending current commit)
 
 #### F3 — Controller dispatch + non-Codex guard
 

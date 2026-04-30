@@ -1,5 +1,6 @@
 import SessionView from "../../../ui/src/session/session-view";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
+import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
@@ -22,6 +23,15 @@ const ProjectManagerDialogSessionView = (props: {
     sendMessage,
   } = useProjectManagerDialogSessionController(props.intent);
   useRuntimeModelSync(session?.id ?? null, setSnapshots);
+  const handleSelectModel = (
+    _sessionId: string,
+    _modelId: string,
+    _reasoning: CodexReasoningLevel
+  ): void => undefined;
+  const handleSelectReasoning = (
+    _sessionId: string,
+    _reasoning: CodexReasoningLevel
+  ): void => undefined;
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;
@@ -33,6 +43,8 @@ const ProjectManagerDialogSessionView = (props: {
         coreConnectionStatus={connection.status}
         onCloseSession={() => props.onExit()}
         onFileLinkActivate={props.onFileLinkActivate}
+        onSelectModel={handleSelectModel}
+        onSelectReasoning={handleSelectReasoning}
         onSelectSession={() => {}}
         onSendMessage={() => {}}
         emptyStatePending={shouldShowPending}
@@ -53,6 +65,8 @@ const ProjectManagerDialogSessionView = (props: {
       coreConnectionStatus={connection.status}
       onCloseSession={() => props.onExit()}
       onFileLinkActivate={props.onFileLinkActivate}
+      onSelectModel={handleSelectModel}
+      onSelectReasoning={handleSelectReasoning}
       onSelectSession={() => {}}
       onSendMessage={(_sessionId, content) => sendMessage(content)}
       providerLabels={providerLabels}

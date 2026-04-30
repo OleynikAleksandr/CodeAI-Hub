@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
@@ -347,6 +348,18 @@ const ProjectManagerRuntimeSessionView = ({
     workspacePath,
     reload
   );
+  const handleSelectModel = useCallback(
+    (
+      _sessionId: string,
+      _modelId: string,
+      _reasoning: CodexReasoningLevel
+    ) => undefined,
+    []
+  );
+  const handleSelectReasoning = useCallback(
+    (_sessionId: string, _reasoning: CodexReasoningLevel) => undefined,
+    []
+  );
   const activeRecord = sessions.find((session) => session.id === scopedActiveSessionId) ?? null;
   const showThinkingMessages = resolveSessionThinkingDisplayEnabled({
     providerId: activeRecord?.providerIds[0] ?? null,
@@ -360,6 +373,8 @@ const ProjectManagerRuntimeSessionView = ({
       coreConnectionStatus={connection.status}
       onCloseSession={hideSession}
       onFileLinkActivate={onFileLinkActivate}
+      onSelectModel={handleSelectModel}
+      onSelectReasoning={handleSelectReasoning}
       onSelectSession={setActiveSessionId}
       onSendMessage={handleSendMessage}
       emptyStatePending={emptyStatePending}

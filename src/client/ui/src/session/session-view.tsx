@@ -1,3 +1,4 @@
+import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
@@ -60,6 +61,15 @@ interface SessionViewProps {
   readonly onCloseSession: (sessionId: string) => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
+  readonly onSelectModel?: (
+    sessionId: string,
+    modelId: string,
+    reasoning: CodexReasoningLevel
+  ) => void;
+  readonly onSelectReasoning?: (
+    sessionId: string,
+    reasoning: CodexReasoningLevel
+  ) => void;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
@@ -92,6 +102,8 @@ const SessionViewBody = ({
   onCloseSession,
   onFileLinkActivate,
   onRefreshUsageLimits,
+  onSelectModel,
+  onSelectReasoning,
   onSendMessage,
   showThinkingMessages,
 }: SessionViewProps) => {
@@ -217,6 +229,17 @@ const SessionViewBody = ({
           <StatusPanel
             connectionDetail={coreConnectionDetail}
             connectionStatus={coreConnectionStatus}
+            onSelectModel={
+              onSelectModel
+                ? (modelId, reasoning) =>
+                    onSelectModel(activeSessionId, modelId, reasoning)
+                : undefined
+            }
+            onSelectReasoning={
+              onSelectReasoning
+                ? (reasoning) => onSelectReasoning(activeSessionId, reasoning)
+                : undefined
+            }
             status={activeSession.status}
             tokenDebugSummary={tokenDebugSummary}
           />
