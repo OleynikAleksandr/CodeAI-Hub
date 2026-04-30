@@ -176,8 +176,45 @@
 
 ### Stream: User Visual Acceptance Testing
 
-71. [IN_PROGRESS] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`; status: release ready for user install/retest, acceptance pending)
-72. [IN_PROGRESS] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: TBD)
+71. [DONE] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`; status: user retest failed on 2026-04-30: in Shaga Description, changing Reasoning from Low to X-High reverts to Low when the answer is sent; changing the model also applies visually first but reverts to the initially selected session model on next turn submit)
+72. [DONE] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: `7d4f6251d`)
+
+---
+
+## Phase 8 - Post-Release 1.2.113 Submit Retest Fix (owner: Codex, updated: 2026-04-30)
+
+### Stream: Submit-Time Reasoning Reset Fix
+
+75. [IN_PROGRESS] Record failed `1.2.113` retest and root-cause route for submit-time model/reasoning reset (scope: `doc/TODO/todo-plan.md`; commit: `docs: plan submit-time model reset fix`; confirmed failure: in Shaga Description, status-panel model and Reasoning apply visually but revert to the initial model/Low when the answer is sent)
+76. [TODO] Git Commit: `docs: plan submit-time model reset fix` (hash: TBD)
+77. [TODO] Preserve live session `modelBinding` during dialog submit and forward explicit `targetReasoningId` through PM runtime/dialog `setSessionModel` wrappers before `api.setSessionModel` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `fix(pm): preserve status panel binding on dialog submit`)
+78. [TODO] Git Commit: `fix(pm): preserve status panel binding on dialog submit` (hash: TBD)
+79. [TODO] Add regression guards that dialog submit preserves live Core `modelBinding` and PM runtime/dialog wrappers preserve `targetReasoningId` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; commit: `test: guard submit-time model binding preservation`)
+80. [TODO] Git Commit: `test: guard submit-time model binding preservation` (hash: TBD)
+
+### Stream: Targeted Verification
+
+81. [TODO] Run targeted PM/Core/UI checks for submit-time model/reasoning preservation (scope: `src/client/project-manager`, `packages/core`, `webview`; commit: `test: verify submit-time model reset fix`)
+82. [TODO] Git Commit: `test: verify submit-time model reset fix` (hash: TBD)
+
+### Stream: Canonical Docs
+
+83. [TODO] Update canonical docs for dialog submit preserving live status-panel `modelBinding` and PM wrappers preserving explicit reasoning (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document submit-time model reset fix`)
+84. [TODO] Git Commit: `docs: document submit-time model reset fix` (hash: TBD)
+
+### Stream: Release Build
+
+85. [TODO] Prepare release docs for future version `1.2.114` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.114`)
+86. [TODO] Git Commit: `docs: prepare release 1.2.114` (hash: TBD)
+87. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.114`)
+88. [TODO] Git Commit: `chore: build release 1.2.114` (hash: TBD)
+89. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.114`)
+90. [TODO] Git Commit: `chore: package release 1.2.114` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+91. [TODO] Hand off `codeai-hub-1.2.114.vsix` for user installation/retest and verify: Shaga Description keeps the changed model and keeps GPT 5.3 Codex Spark / X-High when the first answer is sent after changing Reasoning from Low to X-High (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.114 visual retest status`)
+92. [TODO] Git Commit: `docs: record release 1.2.114 visual retest status` (hash: TBD)
 
 ### Stream: Scope Closeout
 
