@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.118] - 2026-04-30
+### Fixed
+- **Codex Spark model switch now sends explicit `summary: "none"`.** Runtime logs showed that omitting `turn/start.summary` lets Codex app-server default Spark turns to `detailed`, which then becomes unsupported native `reasoning.summary`. Spark now receives explicit `summary: "none"` in workflow turns, model-switch turns, native capture, translation capture, and Core invocation profiles.
+
+### Tests
+- **Spark summary-none contract covered across runtime paths.** Passed focused Codex App Server facade/helper/capture/translation tests, Core model invocation profile smoke tests, and targeted Codex/Core workspace builds before release packaging.
+
 ## [1.2.117] - 2026-04-30
 ### Fixed
 - **Codex Spark model switch no longer inherits provider-home reasoning summary fallback.** Provider-home `model_reasoning_summary` is now forced to `none` by both runtime startup materialization and extension-side settings sync, so switching an active Codex session from `gpt-5.2` to `gpt-5.3-codex-spark` cannot reintroduce unsupported native `reasoning.summary` through global config.

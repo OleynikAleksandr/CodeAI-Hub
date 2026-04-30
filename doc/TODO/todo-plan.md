@@ -263,9 +263,9 @@
 ### Stream R — SSOT docs and release 1.2.118
 
 1. [DONE] Update SSOT docs: Spark does not support visible reasoning summary, but CodeAI Hub must send explicit `summary: "none"` because app-server omission defaults to `detailed`. Scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document spark summary none contract`.
-2. [TODO] Git Commit: `docs(ssot): document spark summary none contract` (hash: TBD)
-3. [TODO] Targeted verification: run Codex app-server summary/facade/capture/translation tests, Core profile smoke test, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/core`; record results here. Scope: verification only; commit message: N/A.
-4. [TODO] Update `README.md` and `CHANGELOG.md` for `1.2.118`. Scope: 2 файла; commit message: `docs: prepare release 1.2.118`.
+2. [DONE] Git Commit: `docs(ssot): document spark summary none contract` (hash: 232904c88)
+3. [DONE] Targeted verification passed: `npx tsx --test packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.test.ts packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade-model-switch.test.ts packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.test.ts packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.test.ts packages/core/src/model-invocation/model-invocation-profile-resolver.smoke.test.ts` (31 tests), `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/core` (rerun sequentially after Codex build to avoid `dist` clean race). Scope: verification only; commit message: N/A.
+4. [DONE] Update `README.md` and `CHANGELOG.md` for `1.2.118`. Scope: 2 файла; commit message: `docs: prepare release 1.2.118`.
 5. [TODO] Git Commit: `docs: prepare release 1.2.118` (hash: TBD)
 6. [TODO] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Scope: generated release files; commit message: `chore: build release 1.2.118`.
 7. [TODO] Git Commit: `chore: build release 1.2.118` (hash: TBD)
