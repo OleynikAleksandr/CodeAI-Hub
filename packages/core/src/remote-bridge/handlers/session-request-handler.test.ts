@@ -492,6 +492,7 @@ test("SessionRequestHandler applies session-bound model identity instead of live
     assert.equal(turnConfig?.baseModelId, "gpt-5.3-codex");
     assert.equal(turnConfig?.effectiveModelId, "gpt-5.3-codex reasoning:xhigh");
     assert.equal(turnConfig?.reasoningEffort, "xhigh");
+    assert.equal(turnConfig?.source, "session_binding");
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }

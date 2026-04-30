@@ -136,9 +136,9 @@
 #### D4 — Applied turn config расширение (предотвращение регрессии 1.2.114)
 
 1. [DONE] В `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`: add `targetReasoningEffort?: string` к resolver-пути, сделать live `Session.modelBinding` первичным источником applied config, расширить source literal на `"session_binding"` и обновить `readAppliedProviderTurnConfig()` normalization. Native request capture type входит в тот же контракт applied config, поэтому это отдельная микро-задача на 3 файла. Scope: 3 файла; commit message: `fix(core): pin reasoning effort to session binding in applied turn config`.
-2. [DONE] Git Commit: `fix(core): pin reasoning effort to session binding in applied turn config` (hash: pending current commit)
-3. [TODO] Расширить существующий unit-test session-bound model identity: assert source=`"session_binding"` и что live binding не теряется в пользу Settings. Scope: 1 файл; commit message: `test(core): assert session binding applied config source`.
-4. [TODO] Git Commit: `test(core): assert session binding applied config source` (hash: TBD)
+2. [DONE] Git Commit: `fix(core): pin reasoning effort to session binding in applied turn config` (hash: a49711590)
+3. [DONE] Расширить существующий unit-test session-bound model identity: assert source=`"session_binding"` и что live binding не теряется в пользу Settings. Scope: 1 файл; commit message: `test(core): assert session binding applied config source`.
+4. [DONE] Git Commit: `test(core): assert session binding applied config source` (hash: pending current commit)
 
 ### Stream E — `<model_switch>` developer message injection (bridge через turnOptions)
 
