@@ -109,12 +109,12 @@
 #### D1 — Server-side contract + validation
 
 1. [DONE] `packages/core/src/remote-bridge/session-stream-contracts.ts` (payload type + outbound update type), `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` (register `session:codex:model-switch` validator alongside existing `dialog:switch:*` / `session:*` entries на line 217-231). Router dispatch не добавлять в этом commit, чтобы промежуточный typecheck не ссылался на еще не wired handler method. Scope: 2 файла; commit message: `feat(core): add codex model switch command contract`.
-2. [DONE] Git Commit: `feat(core): add codex model switch command contract` (hash: pending current commit)
+2. [DONE] Git Commit: `feat(core): add codex model switch command contract` (hash: b77b64af3)
 
 #### D1b — Provider-neutral switch seam (types only, Codex-only active)
 
-1. [TODO] New file `packages/core/src/remote-bridge/handlers/session-request-handler-model-switch-types.ts` (or equivalent): define shared `SessionModelSwitchTarget`, `SessionModelSwitchResult`, `ProviderModelSwitchStrategy` / helper types for provider-neutral Core plumbing. Shape includes `providerId`, `targetModelId`, optional `targetReasoningEffort`, optional future `targetThinkingLevel` / `thinkingEnabled`, normalized `SessionModelBinding`, optional injection payload, and model-update broadcast data. No Claude/Gemini behavior yet; Codex is the only strategy implemented later in D2. Scope: 1 файл; commit message: `feat(core): add provider-neutral model switch seam types`.
-2. [TODO] Git Commit: `feat(core): add provider-neutral model switch seam types` (hash: TBD)
+1. [DONE] New file `packages/core/src/remote-bridge/handlers/session-request-handler-model-switch-types.ts` (or equivalent) + type re-export from `session-request-handler-types.ts` so architecture gates keep the seam reachable: define shared `SessionModelSwitchTarget`, `SessionModelSwitchResult`, `ProviderModelSwitchStrategy` / helper types for provider-neutral Core plumbing. Shape includes `providerId`, `targetModelId`, optional `targetReasoningEffort`, optional future `targetThinkingLevel` / `thinkingEnabled`, normalized `SessionModelBinding`, optional injection payload, and model-update broadcast data. No Claude/Gemini behavior yet; Codex is the only strategy implemented later in D2. Scope: 2 файла; commit message: `feat(core): add provider-neutral model switch seam types`.
+2. [DONE] Git Commit: `feat(core): add provider-neutral model switch seam types` (hash: pending current commit)
 
 #### D2 — Core handler + Session field + clearPending method
 

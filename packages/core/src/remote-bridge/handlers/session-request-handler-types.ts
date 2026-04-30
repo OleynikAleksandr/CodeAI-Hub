@@ -8,6 +8,15 @@ import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-r
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { BridgeEvent } from "../types";
 
+export type {
+  ProviderModelSwitchStrategy,
+  SessionModelSwitchContext,
+  SessionModelSwitchInjectionPayload,
+  SessionModelSwitchResult,
+  SessionModelSwitchTarget,
+  SessionModelSwitchValidationResult,
+} from "./session-request-handler-model-switch-types";
+
 export interface ProviderSessionBinding {
   readonly providerId: string;
   providerSessionId: string;
