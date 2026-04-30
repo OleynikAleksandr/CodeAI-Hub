@@ -5,6 +5,7 @@ import type {
   CodexCapabilityReasoningEffort as CodexCapabilityReasoningEffortType,
   CodexInstallerPaths as CodexInstallerPathsType,
   CodexModelCapabilities as CodexModelCapabilitiesType,
+  CodexModelSwitchInjectionPayload as CodexModelSwitchInjectionPayloadType,
   CodexModuleOptions as CodexModuleOptionsType,
   CodexReasoningEffort as CodexReasoningEffortType,
   CodexResponseMode as CodexResponseModeType,
@@ -29,6 +30,7 @@ type CodexAppliedTurnConfig = CodexAppliedTurnConfigType;
 type CodexCapabilityReasoningEffort = CodexCapabilityReasoningEffortType;
 type CodexInstallerPaths = CodexInstallerPathsType;
 type CodexModelCapabilities = CodexModelCapabilitiesType;
+type CodexModelSwitchInjectionPayload = CodexModelSwitchInjectionPayloadType;
 type CodexModuleOptions = CodexModuleOptionsType;
 type CodexReasoningEffort = CodexReasoningEffortType;
 type CodexResponseMode = CodexResponseModeType;
@@ -47,6 +49,10 @@ type ModuleProgressEvent = ModuleProgressEventType;
 type ModuleReporter = ModuleReporterType;
 
 export {
+  type CodexWorkflowInvocationProfile,
+  resolveCodexWorkflowInvocationProfile,
+} from "./app-server/codex-workflow-instruction-profile";
+export {
   CodexAppServerTranslationService,
   type CodexAppServerTranslationServiceRequest,
   type CodexAppServerTranslationServiceResult,
@@ -54,6 +60,7 @@ export {
 export {
   CODEX_APPLIED_TURN_CONFIG_KEY,
   CODEX_MODEL_CAPABILITIES,
+  CODEX_MODEL_SWITCH_INJECTION_KEY,
   CODEX_REASONING_EFFORT_OPTIONS,
   findCodexModelCapabilities,
   getCodexModelCapabilities,
@@ -66,6 +73,7 @@ export type {
   CodexCapabilityReasoningEffort,
   CodexInstallerPaths,
   CodexModelCapabilities,
+  CodexModelSwitchInjectionPayload,
   CodexModuleOptions,
   CodexReasoningEffort,
   CodexResponseMode,
