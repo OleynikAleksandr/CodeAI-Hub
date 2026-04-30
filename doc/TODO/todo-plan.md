@@ -168,9 +168,9 @@
 63. [DONE] Prepare release docs for future version `1.2.113` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.113`; verified: README current release and changelog section set to `1.2.113`)
 64. [DONE] Git Commit: `docs: prepare release 1.2.113` (hash: `fe9813c34`)
 65. [DONE] Fix Core public handler signature after first `build-all.sh` compile failure (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit: `fix(core): expose explicit model set reasoning handler`; verified: `npm run build --workspace=@codeai-hub/core`, `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; note: first `./scripts/build-all.sh` failed at Core `tsc` before this fix)
-66. [IN_PROGRESS] Git Commit: `fix(core): expose explicit model set reasoning handler` (hash: TBD)
-67. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`)
-68. [TODO] Git Commit: `chore: build release 1.2.113` (hash: TBD)
+66. [DONE] Git Commit: `fix(core): expose explicit model set reasoning handler` (hash: `605e29ae9`)
+67. [DONE] Resume `./scripts/build-all.sh --allow-dirty --version 1.2.113` after the first compile failure and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`; verified: `./scripts/build-all.sh --allow-dirty --version 1.2.113`, `doc/tmp/releases/*1.2.113*`, `~/.codeai-hub/releases/*1.2.113*`, package version `1.2.113`)
+68. [IN_PROGRESS] Git Commit: `chore: build release 1.2.113` (hash: TBD)
 69. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`)
 70. [TODO] Git Commit: `chore: package release 1.2.113` (hash: TBD)
 
