@@ -236,8 +236,46 @@
 
 ### Stream O — User verification retry
 
-1. [IN_PROGRESS] Передать VSIX `codeai-hub-1.2.117.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
-2. [TODO] User must retest `gpt-5.2` → `gpt-5.3-codex-spark` next-turn switch and confirm no `reasoning.summary` error.
+1. [DONE] Передать VSIX `codeai-hub-1.2.117.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
+2. [DONE] 2026-04-30 user retest failed: `gpt-5.4-mini` → `gpt-5.3-codex-spark` next-turn switch still produced `400 unsupported_parameter` for `reasoning.summary`.
+3. [DONE] Runtime log analysis: provider-home already has `model_reasoning_summary = "none"`, but failed rollout `rollout-2026-04-30T20-24-32-019ddfa2-a908-79d2-8b40-2a368ef1247c.jsonl` recorded `turn_context.summary = "detailed"` for Spark. Controlled app-server probe with explicit `summary: "none"` completed successfully. Root cause: omitting `turn/start.summary` lets Codex app-server default Spark turns to `detailed`; Spark must receive explicit `summary: "none"`.
+
+## Phase 5 — Spark explicit summary none hotfix (owner: Codex provider/Core, updated: 2026-04-30)
+
+### Stream P — Codex app-server runtime turn contract
+
+1. [DONE] Change `buildCodexReasoningSummaryParams(...)` so models without visible reasoning summaries, currently Spark, return explicit `{ summary: "none" }` instead of omitting the field; update direct unit coverage. Verification: `npx tsx --test packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.test.ts`. Scope: `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.test.ts`, `doc/TODO/todo-plan.md`; commit message: `fix(codex): force summary none for spark turns`.
+2. [TODO] Git Commit: `fix(codex): force summary none for spark turns` (hash: TBD)
+3. [TODO] Update facade model-switch/runtime tests to assert Spark `turn/start.summary === "none"` while non-Spark summary remains explicit. Scope: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade-model-switch.test.ts`, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`, `doc/TODO/todo-plan.md`; commit message: `test(codex): assert spark turns send summary none`.
+4. [TODO] Git Commit: `test(codex): assert spark turns send summary none` (hash: TBD)
+5. [TODO] Update native request capture regression to assert Spark capture sends `summary: "none"` and preserve the runtime-log root-cause note in todo. Scope: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/TODO/todo-plan.md`; commit message: `test(codex): assert native capture sends spark summary none`.
+6. [TODO] Git Commit: `test(codex): assert native capture sends spark summary none` (hash: TBD)
+
+### Stream Q — Translation and profile paths
+
+1. [TODO] Change Codex translation prompt profile so Spark also uses explicit `summary: "none"` and `omitSummary: false`; update direct profile test. Scope: `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.ts`, `packages/Codex_AppServer_Module/src/translation/codex-translation-prompt-profile.test.ts`, `doc/TODO/todo-plan.md`; commit message: `fix(codex): keep translation spark summary explicit none`.
+2. [TODO] Git Commit: `fix(codex): keep translation spark summary explicit none` (hash: TBD)
+3. [TODO] Update translation service/native translation capture tests for explicit Spark summary none. Scope: `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.test.ts`, `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.test.ts`, `doc/TODO/todo-plan.md`; commit message: `test(codex): cover translation spark summary none`.
+4. [TODO] Git Commit: `test(codex): cover translation spark summary none` (hash: TBD)
+5. [TODO] Change Core model invocation profile resolver so Spark profiles never advertise omitted summary; update smoke coverage. Scope: `packages/core/src/model-invocation/model-invocation-profile-resolver.ts`, `packages/core/src/model-invocation/model-invocation-profile-resolver.smoke.test.ts`, `doc/TODO/todo-plan.md`; commit message: `fix(core): model spark profiles use summary none`.
+6. [TODO] Git Commit: `fix(core): model spark profiles use summary none` (hash: TBD)
+
+### Stream R — SSOT docs and release 1.2.118
+
+1. [TODO] Update SSOT docs: Spark does not support visible reasoning summary, but CodeAI Hub must send explicit `summary: "none"` because app-server omission defaults to `detailed`. Scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document spark summary none contract`.
+2. [TODO] Git Commit: `docs(ssot): document spark summary none contract` (hash: TBD)
+3. [TODO] Targeted verification: run Codex app-server summary/facade/capture/translation tests, Core profile smoke test, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npm run build --workspace=@codeai-hub/core`; record results here. Scope: verification only; commit message: N/A.
+4. [TODO] Update `README.md` and `CHANGELOG.md` for `1.2.118`. Scope: 2 файла; commit message: `docs: prepare release 1.2.118`.
+5. [TODO] Git Commit: `docs: prepare release 1.2.118` (hash: TBD)
+6. [TODO] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Scope: generated release files; commit message: `chore: build release 1.2.118`.
+7. [TODO] Git Commit: `chore: build release 1.2.118` (hash: TBD)
+8. [TODO] Run `./scripts/build-release.sh --use-current-version`; produce `codeai-hub-1.2.118.vsix`; update session report as ACTIVE for user retest. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.118`.
+9. [TODO] Git Commit: `chore: finalize release 1.2.118` (hash: TBD)
+
+### Stream S — User verification retry
+
+1. [TODO] Передать VSIX `codeai-hub-1.2.118.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
+2. [TODO] User must retest `gpt-5.4-mini` / `gpt-5.2` → `gpt-5.3-codex-spark` next-turn switch and confirm no `reasoning.summary` error.
 
 ### Stream L — Closeout (только после user OK)
 

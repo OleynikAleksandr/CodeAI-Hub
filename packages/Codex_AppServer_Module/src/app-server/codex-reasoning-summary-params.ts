@@ -6,9 +6,9 @@ import {
 export const buildCodexReasoningSummaryParams = (
   modelId: string | null | undefined,
   summary: CodexReasoningSummaryMode
-): { readonly summary: CodexReasoningSummaryMode } | Record<string, never> => {
+): { readonly summary: CodexReasoningSummaryMode } => {
   if (!getCodexModelCapabilities(modelId).supportsReasoningSummary) {
-    return {};
+    return { summary: "none" };
   }
 
   return { summary };

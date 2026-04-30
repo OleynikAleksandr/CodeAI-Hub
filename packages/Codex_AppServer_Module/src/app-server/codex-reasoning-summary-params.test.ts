@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { buildCodexReasoningSummaryParams } from "./codex-reasoning-summary-params";
 
-test("Codex reasoning summary params omit summary for Spark", () => {
+test("Codex reasoning summary params force summary none for Spark", () => {
   assert.deepEqual(
     buildCodexReasoningSummaryParams("gpt-5.3-codex-spark", "detailed"),
-    {}
+    {
+      summary: "none",
+    }
   );
 });
 
