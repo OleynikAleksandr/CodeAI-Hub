@@ -32,13 +32,22 @@ export interface CodexResponsePolicy {
 }
 
 export const CODEX_APPLIED_TURN_CONFIG_KEY = "__codeaiAppliedTurnConfig";
+export const CODEX_MODEL_SWITCH_INJECTION_KEY = "__codeaiModelSwitchInjection";
 
 export interface CodexAppliedTurnConfig {
   readonly modelId?: string;
   readonly providerId: "codexCli";
   readonly reasoningEffort?: CodexReasoningEffort;
-  readonly source: "settings_snapshot" | "switch_request";
+  readonly source: "session_binding" | "settings_snapshot" | "switch_request";
   readonly translationEngineId?: string;
+}
+
+export interface CodexModelSwitchInjectionPayload {
+  readonly baseInstructions: string;
+  readonly kind: "model_switch";
+  readonly previousModelId?: string;
+  readonly targetModelId?: string;
+  readonly targetReasoningEffort?: string;
 }
 
 export interface CodexWorkspaceOptions {
@@ -115,6 +124,7 @@ export interface CodexThreadOptions {
 export interface CodexTurnOptions {
   readonly outputSchema?: unknown;
   readonly [CODEX_APPLIED_TURN_CONFIG_KEY]?: CodexAppliedTurnConfig;
+  readonly [CODEX_MODEL_SWITCH_INJECTION_KEY]?: CodexModelSwitchInjectionPayload;
   readonly [key: string]: unknown;
 }
 

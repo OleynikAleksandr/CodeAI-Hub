@@ -3,12 +3,18 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { CODEX_APPLIED_TURN_CONFIG_KEY } from "../types";
+import {
+  CODEX_APPLIED_TURN_CONFIG_KEY,
+  CODEX_MODEL_SWITCH_INJECTION_KEY,
+} from "../types";
 import { CodexAppServerFacade } from "./codex-app-server-facade";
 import { resolveCodexWorkflowInvocationProfile } from "./codex-workflow-instruction-profile";
 import { CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY } from "./process/codex-app-server-process-profile";
 
 const EARLY_ARCHITECTURE_WORKFLOW_PATTERN = /early architecture workflow/;
+const MODEL_SWITCH_TAG_PATTERN = /<model_switch>/;
+const MODEL_SWITCH_PROFILE_PATTERN =
+  /Use the new Codex Spark instruction profile/;
 
 const writeCodexSettings = async (
   settingsPath: string,
@@ -414,6 +420,29 @@ test("CodexAppServerFacade keeps explicit reasoning summary for non-Spark turns"
       process.env.CODEX_SETTINGS_PATH = previousCodeSettingsPath;
     }
   }
+});
+
+test("CodexAppServerFacade prepends model switch instructions to turn input", async () => {
+  const threadId = "thread-model-switch";
+  const { facade, requests } = createSendMessageFacadeHarness(threadId);
+
+  await facade.sendMessage(threadId, "continue after switch", {
+    [CODEX_MODEL_SWITCH_INJECTION_KEY]: {
+      kind: "model_switch",
+      baseInstructions: "Use the new Codex Spark instruction profile.",
+    },
+  });
+
+  const params = requests[0]?.params as {
+    readonly input?: ReadonlyArray<{
+      readonly text?: string;
+      readonly type?: string;
+    }>;
+  };
+  assert.equal(params.input?.[0]?.type, "text");
+  assert.match(params.input?.[0]?.text ?? "", MODEL_SWITCH_TAG_PATTERN);
+  assert.match(params.input?.[0]?.text ?? "", MODEL_SWITCH_PROFILE_PATTERN);
+  assert.equal(params.input?.[1]?.text, "continue after switch");
 });
 
 test("CodexAppServerFacade caches non-Spark reasoning summary settings by path for rapid turns", async () => {

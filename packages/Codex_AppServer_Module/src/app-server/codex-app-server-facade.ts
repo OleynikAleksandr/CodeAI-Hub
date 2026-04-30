@@ -4,6 +4,7 @@ import path from "node:path";
 import { CodexSessionStaleBindingError } from "../provider/codex-session-stale-binding-error";
 import {
   CODEX_APPLIED_TURN_CONFIG_KEY,
+  CODEX_MODEL_SWITCH_INJECTION_KEY,
   type CodexModuleOptions,
   type CodexReasoningSummaryMode,
   type CodexTurnOptions,
@@ -41,6 +42,33 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const asString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const buildModelSwitchInputItem = (
+  turnOptions: CodexTurnOptions | undefined
+): {
+  readonly text: string;
+  readonly text_elements: [];
+  readonly type: "text";
+} | null => {
+  const payload = turnOptions?.[CODEX_MODEL_SWITCH_INJECTION_KEY];
+  if (!isRecord(payload) || payload.kind !== "model_switch") {
+    return null;
+  }
+  const baseInstructions = asString(payload.baseInstructions);
+  if (!baseInstructions) {
+    return null;
+  }
+  return {
+    type: "text",
+    text: [
+      "<model_switch>",
+      "The user was previously using a different model. Please continue the conversation according to the following instructions:",
+      baseInstructions,
+      "</model_switch>",
+    ].join("\n"),
+    text_elements: [],
+  };
+};
 
 const resolveSettingsPath = (): string =>
   asString(process.env.CODEX_SETTINGS_PATH) ??
@@ -222,11 +250,13 @@ export class CodexAppServerFacade {
       turnOptions && isRecord(turnOptions) && "outputSchema" in turnOptions
         ? turnOptions.outputSchema
         : undefined;
+    const modelSwitchInputItem = buildModelSwitchInputItem(turnOptions);
     const response = await this.process.request<Record<string, unknown>>(
       "turn/start",
       {
         threadId,
         input: [
+          ...(modelSwitchInputItem ? [modelSwitchInputItem] : []),
           {
             type: "text",
             text: content,
