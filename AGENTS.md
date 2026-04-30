@@ -130,7 +130,7 @@
 `todo-plan.md` - может содержать несколько фаз и в каждой фазе несколько Stream с перечнем микро задач - не более 3-х файлов исправлений или вновь созданных.
 Полностью реализованный `todo-plan.md` переименовывается с префиксом последней реализованной Фазы (например - todo-plan-phase3.md) и кладется в `doc/TODO/Archive/` только после User Acceptance Gate.
 На его месте создается новый `todo-plan.md` под новые задачи.
-- **Обязательный Stream пользовательского визуального тестирования:** после Stream сборки релиза в каждом release `todo-plan.md` должен быть отдельный Stream `User Visual Acceptance Testing`. В нем фиксируются передача релиза пользователю, ожидание/результат визуального тестирования, найденные регрессии или явное acceptance. Пока этот Stream не завершен acceptance от пользователя, scope остается `ACTIVE`.
+- **Обязательные финальные Stream в каждом новом `doc/TODO/todo-plan.md`:** `Release Build`, `User Visual Acceptance Testing`, `Scope Closeout` (закрытие todo-plan, planning-doc и session report). `Scope Closeout` выполняется только после явного acceptance пользователя.
 - **Обязательный closeout Plans после User Acceptance Gate:** как только `doc/TODO/todo-plan.md` полностью закрыт, релиз принят пользователем и план переносится в `doc/TODO/Archive/`, необходимо в той же сессии провести ревизию `doc/SolidWorks-WorkFlow/Plans/` по этому execution cycle.
   Для каждого planning-документа, на который опирался завершенный `todo-plan`, обязательно принять одно из решений:
   1. перенести его стабильные итоговые выводы в канонические SSOT-документы (`System/`, `Clusters/`, `Modules/`, `Contracts/`);
@@ -171,7 +171,7 @@
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
-  - После Stream сборки релиза обязательно добавляется Stream `User Visual Acceptance Testing`; до явного acceptance от пользователя session report остается `ACTIVE`, а `todo-plan.md` и planning-документ не архивируются.
+  - Каждый новый `doc/TODO/todo-plan.md` обязан содержать финальные Stream: `Release Build`, `User Visual Acceptance Testing`, `Scope Closeout` (todo-plan, planning-doc, session report).
   - Релизная Phase не завершается на сборке: на чистом дереве запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`, передаем релиз пользователю, оставляем scope `ACTIVE`, получаем явное acceptance и только потом закрываем scope.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
