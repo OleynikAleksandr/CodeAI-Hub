@@ -440,7 +440,7 @@ test("CodexNativeRequestCaptureService uses translation profile for translation 
   );
 });
 
-test("CodexNativeRequestCaptureService omits reasoning summary for Codex Spark", async () => {
+test("CodexNativeRequestCaptureService sends summary none for Codex Spark", async () => {
   const processes: FakeCodexProcess[] = [];
   const service = new CodexNativeRequestCaptureService({
     processFactory: () => {
@@ -478,5 +478,5 @@ test("CodexNativeRequestCaptureService omits reasoning summary for Codex Spark",
   const params = requests?.[1]?.params as Record<string, unknown>;
   assert.equal(params.model, "gpt-5.3-codex-spark");
   assert.equal(params.effort, "medium");
-  assert.equal("summary" in params, false);
+  assert.equal(params.summary, "none");
 });
