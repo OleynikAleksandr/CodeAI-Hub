@@ -108,6 +108,7 @@ export class SessionRequestHandlerSessionActions {
 
   handleSetModelBinding(options: {
     readonly sessionId: string;
+    readonly targetReasoningId?: string | null;
     readonly targetModelId: string;
   }): void {
     const targetModelId = options.targetModelId.trim();
@@ -124,15 +125,21 @@ export class SessionRequestHandlerSessionActions {
       });
       return;
     }
-    this.applySwitchModelBinding(session, targetModelId);
+    this.applySwitchModelBinding(
+      session,
+      targetModelId,
+      options.targetReasoningId
+    );
   }
 
   private applySwitchModelBinding(
     session: Session,
-    targetModelId: string
+    targetModelId: string,
+    targetReasoningId?: string | null
   ): Record<string, unknown> | undefined {
     const turnOptions = this.deps.appliedTurnConfig.attachToTurnOptions({
       providerId: session.providerId,
+      targetReasoningId,
       targetModelId,
     });
     const turnConfig = readAppliedProviderTurnConfig(turnOptions);

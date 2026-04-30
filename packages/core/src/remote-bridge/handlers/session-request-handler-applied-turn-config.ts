@@ -2,6 +2,7 @@ import path from "node:path";
 import type { CoreConfig } from "../../config";
 import {
   buildProviderEffectiveModelId,
+  type ResolvedProviderTurnConfigEntry,
   resolveProviderTurnConfigEntry,
 } from "../../config/provider-turn-config-resolver";
 import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
@@ -14,6 +15,12 @@ import {
 
 const SETTINGS_FILE_NAME = "settings.json";
 const translationPolicyResolver = new SessionTranslationPolicyResolver();
+const CLAUDE_THINKING_OFF_ID = "off";
+
+const normalizeOptionalString = (value: string | null | undefined) => {
+  const normalized = value?.trim();
+  return normalized ? normalized : undefined;
+};
 
 export class SessionRequestHandlerAppliedTurnConfig {
   private readonly config: CoreConfig;
@@ -25,6 +32,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
   attachToTurnOptions(options: {
     readonly providerId: string;
     readonly sessionModelBinding?: SessionModelBinding | null;
+    readonly targetReasoningId?: string | null;
     readonly targetModelId?: string;
     readonly turnOptions?: Record<string, unknown>;
   }): Record<string, unknown> | undefined {
@@ -33,6 +41,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       this.resolveForProvider({
         providerId: options.providerId,
         sessionModelBinding: options.sessionModelBinding,
+        targetReasoningId: options.targetReasoningId,
         targetModelId: options.targetModelId,
       })
     );
@@ -49,6 +58,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
   private resolveForProvider(options: {
     readonly providerId: string;
     readonly sessionModelBinding?: SessionModelBinding | null;
+    readonly targetReasoningId?: string | null;
     readonly targetModelId?: string;
   }): AppliedProviderTurnConfig | null {
     const providerId = options.providerId;
@@ -82,15 +92,30 @@ export class SessionRequestHandlerAppliedTurnConfig {
 
     const baseModelId =
       options.targetModelId ?? resolved.baseModelId ?? resolved.defaultModel;
-    const reasoningEffort =
-      baseModelId && resolved.reasoningByModel
-        ? (resolved.reasoningByModel[baseModelId] ??
-          resolved.defaultReasoningEffort)
-        : (resolved.reasoningEffort ?? resolved.defaultReasoningEffort);
-    const thinkingLevel =
-      baseModelId && resolved.thinkingLevelByModel
-        ? resolved.thinkingLevelByModel[baseModelId]
-        : undefined;
+    const explicitReasoningId = normalizeOptionalString(
+      options.targetReasoningId
+    );
+    const settingsReasoningEffort = this.resolveSettingsReasoningEffort(
+      resolved,
+      baseModelId
+    );
+    const thinkingEnabled = this.resolveThinkingEnabled({
+      explicitReasoningId,
+      providerId,
+      resolved,
+    });
+    const reasoningEffort = this.resolveReasoningEffort({
+      explicitReasoningId,
+      providerId,
+      settingsReasoningEffort,
+      thinkingEnabled,
+    });
+    const thinkingLevel = this.resolveThinkingLevel({
+      baseModelId,
+      explicitReasoningId,
+      providerId,
+      resolved,
+    });
     const translationPolicy = translationPolicyResolver.resolve(settingsPath);
     const reasoningLanguage =
       translationPolicy.targetLanguage ?? translationPolicy.sourceLanguage;
@@ -104,7 +129,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
           providerId,
           baseModelId,
           reasoningEffort,
-          thinkingEnabled: resolved.thinkingEnabled,
+          thinkingEnabled,
           thinkingLevel,
         }) ?? resolved.effectiveModelId,
       messagesForTheUserLanguage: reasoningLanguage,
@@ -114,9 +139,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       reasoningLanguage,
       source: options.targetModelId ? "switch_request" : "settings_snapshot",
       translationEngineId: reasoningEngineId,
-      ...(resolved.thinkingEnabled === undefined
-        ? {}
-        : { thinkingEnabled: resolved.thinkingEnabled }),
+      ...(thinkingEnabled === undefined ? {} : { thinkingEnabled }),
       thinkingLevel,
       ...(resolved.thinkingDisplaySyncEnabled === undefined
         ? {}
@@ -124,6 +147,66 @@ export class SessionRequestHandlerAppliedTurnConfig {
             thinkingDisplaySyncEnabled: resolved.thinkingDisplaySyncEnabled,
           }),
     };
+  }
+
+  private resolveSettingsReasoningEffort(
+    resolved: ResolvedProviderTurnConfigEntry,
+    baseModelId: string | undefined
+  ): string | undefined {
+    if (baseModelId && resolved.reasoningByModel) {
+      return (
+        resolved.reasoningByModel[baseModelId] ??
+        resolved.defaultReasoningEffort
+      );
+    }
+    return resolved.reasoningEffort ?? resolved.defaultReasoningEffort;
+  }
+
+  private resolveThinkingEnabled(options: {
+    readonly explicitReasoningId: string | undefined;
+    readonly providerId: string;
+    readonly resolved: ResolvedProviderTurnConfigEntry;
+  }): boolean | undefined {
+    if (options.providerId === "claudeCodeCli" && options.explicitReasoningId) {
+      return options.explicitReasoningId !== CLAUDE_THINKING_OFF_ID;
+    }
+    return options.resolved.thinkingEnabled;
+  }
+
+  private resolveReasoningEffort(options: {
+    readonly explicitReasoningId: string | undefined;
+    readonly providerId: string;
+    readonly settingsReasoningEffort: string | undefined;
+    readonly thinkingEnabled: boolean | undefined;
+  }): string | undefined {
+    if (options.providerId === "geminiCli") {
+      return options.settingsReasoningEffort;
+    }
+    if (
+      options.explicitReasoningId &&
+      options.explicitReasoningId !== CLAUDE_THINKING_OFF_ID
+    ) {
+      return options.explicitReasoningId;
+    }
+    if (options.thinkingEnabled === false) {
+      return undefined;
+    }
+    return options.settingsReasoningEffort;
+  }
+
+  private resolveThinkingLevel(options: {
+    readonly baseModelId: string | undefined;
+    readonly explicitReasoningId: string | undefined;
+    readonly providerId: string;
+    readonly resolved: ResolvedProviderTurnConfigEntry;
+  }): string | undefined {
+    if (options.providerId === "geminiCli" && options.explicitReasoningId) {
+      return options.explicitReasoningId;
+    }
+    if (options.baseModelId && options.resolved.thinkingLevelByModel) {
+      return options.resolved.thinkingLevelByModel[options.baseModelId];
+    }
+    return undefined;
   }
 
   private resolveFromSessionBinding(options: {

@@ -61,3 +61,39 @@ test("SessionRequestHandler updates model binding without resending last user me
     await rm(tempDir, { recursive: true, force: true });
   }
 });
+
+test("SessionRequestHandler uses explicit reasoning from model set payload", async () => {
+  const tempDir = await mkdtemp(
+    path.join(tmpdir(), "codeai-hub-model-set-explicit-")
+  );
+  try {
+    await writeFile(
+      path.join(tempDir, "settings.json"),
+      '{"providers":{"codex":{"defaultModel":"gpt-5.3-codex","reasoningByModel":{"gpt-5.4-mini":"low"}}}}\n',
+      "utf8"
+    );
+
+    const harness = createHarness({
+      claudeSettingsPath: path.join(tempDir, "claude.json"),
+    });
+    const session = harness.sessionManager.createSession(
+      "codexCli",
+      "/tmp/model-set-explicit"
+    );
+
+    await harness.handler.handleSetModelBinding({
+      sessionId: session.id,
+      targetModelId: "gpt-5.4-mini",
+      targetReasoningId: "xhigh",
+    });
+
+    const updatedSession = harness.sessionManager.getSession(session.id);
+    assert.equal(
+      updatedSession?.modelBinding?.modelId,
+      "gpt-5.4-mini reasoning:xhigh"
+    );
+    assert.equal(updatedSession?.modelBinding?.reasoningEffort, "xhigh");
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
