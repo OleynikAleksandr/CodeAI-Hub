@@ -26,9 +26,7 @@ const MODEL_REASONING_SUMMARY_LINE_REGEX =
 const MODEL_REASONING_EFFORT_LINE_REGEX =
   /^\s*model_reasoning_effort\s*=\s*.+$/mu;
 const FIRST_SECTION_LINE_REGEX = /^\s*\[.+\]\s*$/mu;
-
-const toReasoningSummaryLiteral = (enabled: boolean): string =>
-  enabled ? '"auto"' : '"none"';
+const PROVIDER_HOME_REASONING_SUMMARY_LITERAL = '"none"';
 
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
@@ -58,12 +56,11 @@ const resolveCodexDefaultModel = async (): Promise<string | undefined> => {
   }
 };
 
-const normalizeConfigToml = (
+export const normalizeCodexProviderConfigToml = (
   raw: string,
-  enabled: boolean,
   model?: string
 ): string => {
-  const reasoningSummaryLine = `model_reasoning_summary = ${toReasoningSummaryLiteral(enabled)}`;
+  const reasoningSummaryLine = `model_reasoning_summary = ${PROVIDER_HOME_REASONING_SUMMARY_LITERAL}`;
   const next = raw.replace(LEGACY_REASONING_SUMMARY_LINE_REGEX, "").trimEnd();
   const modelLine =
     typeof model === "string" && model.trim().length > 0
@@ -142,14 +139,13 @@ const readProviderConfigToml = async (
 };
 
 export const syncCodexProviderReasoningSummaryConfig = async (
-  enabled: boolean = DEFAULT_REASONING_SUMMARY_ENABLED
+  _enabled: boolean = DEFAULT_REASONING_SUMMARY_ENABLED
 ): Promise<void> => {
   await mkdir(PROVIDER_CODEX_HOME, { recursive: true });
   const destination = path.join(PROVIDER_CODEX_HOME, CODEX_CONFIG_FILE);
   const { raw, shouldUnlink } = await readProviderConfigToml(destination);
-  const next = normalizeConfigToml(
+  const next = normalizeCodexProviderConfigToml(
     raw,
-    enabled,
     await resolveCodexDefaultModel()
   );
 
