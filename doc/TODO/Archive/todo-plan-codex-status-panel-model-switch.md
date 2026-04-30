@@ -284,6 +284,6 @@
 ### Stream L — Closeout (только после user OK)
 
 1. [DONE] После явного user approval: архивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-codex-status-panel-model-switch.md`; перенести planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`; создать новый active planning-intake `doc/TODO/todo-plan.md` для Claude provider continuation. Scope: 4 файла + дельта; commit message: `docs: archive codex switch scope and open claude planning intake`.
-2. [TODO] Git Commit: `docs: archive codex switch scope and open claude planning intake` (hash: TBD)
+2. [DONE] Git Commit: `docs: archive codex switch scope and open claude planning intake` (hash: 181a13f3a)
 3. [DONE] Обновить `doc/Sessions/Session037.md` как ACTIVE handoff на Claude planning scope. Scope: 1 файл (uncommitted per CLAUDE.md convention).
 4. [DONE] Push на GitHub не выполнялся в этом локальном closeout; next session can push/continue per user direction.
