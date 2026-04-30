@@ -23,7 +23,7 @@
 - `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→6), артефактов, OUTDATED propagation.
 
 ### System
-- `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics, model invocation profile boundaries, and status-panel same-provider model/reasoning switching.
+- `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, or release-time regressions.
 
 ### Clusters
@@ -41,7 +41,6 @@
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
 - `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager), включая Settings -> General card для provider native request capture commands and the `Translation` capture scenario.
 - `Modules/Session_UI/README.md` — factual inventory of the five Session UI panels inside Project Manager, including truth-paths, update channels, outputs, side effects, and code ownership.
-- `Modules/Session_UI/SessionStatusPanel.md` — SSOT нижней status panel: model/reasoning chips, token chip, picker cards, settings persistence callback boundary, and Core-confirmed model label sync.
 
 ### Contracts (активные)
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
@@ -54,7 +53,7 @@
 - `Contracts/SessionUI_Behavior.md` — Session UI laws (happy path) + lock/unlock rules.
 - `Contracts/SessionInputLock_SSOT_StateMachine.md` — SSOT/state machine для input lock/unlock.
 - `Contracts/Codex_ResponseMode_Settings_Architecture.md` — response modes (`Strict` / `Hybrid` / `Debug/Raw`) + raw provider diagnostics contract для Codex.
-- `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` — canonical effective model identity, next-turn settings SSOT, status-panel same-provider switching, and model invocation profile compatibility boundary.
+- `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` — canonical effective model identity, next-turn settings SSOT, and model invocation profile compatibility boundary.
 - `Contracts/Gemini_ThoughtTranslation.md` — реализованный контракт перевода Gemini `Thought` событий в видимые tagged assistant messages.
 - `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` — deferred SSOT для provider failure classification, recovery и provider-neutral switch transfer.
 - `Contracts/UserFacing_Text_Localization_Boundary.md` — SSOT text-ownership contract for `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, and English-only `Internal Agent Instructions`.
@@ -73,7 +72,6 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/StatusPanel_ModelReasoningSwitch_Architecture.md` — active reopened planning-doc для status-panel model/reasoning switcher: release `1.2.112` was packaged, but user retest reported behavior does not match the plan; keep this scope active until reproduction, fix, rebuild, and user acceptance.
 - `Plans/Archive/Runtime_Reliability_Followup_Architecture.md` — archived planning-doc для release `1.2.111`: follow-up remediation по `review.txt` после Session027 runtime stability cycle; implemented Core WS error events, startup/workspace diagnostics, runtime dispose/map cleanup, legacy continuity monitor reset, unified-session writer lifecycle cleanup, remaining runtime factory definite-assignment bypass, Core Bridge reconnect notification dedupe, and `codeai-hub-1.2.111.vsix`. Low-priority package/dead-code/facade-boundary cleanup remains deferred to a separate audit cycle owned by `Checklists/PeriodicAudit.md`; next cleanup scope must create its own planning-doc and package-lock strategy.
 - `Plans/Archive/Sidebar_ProviderTint_Architecture.md` — archived planning-doc для release `1.2.106`: per-row provider attribution в Workflow Tree sidebar (trunk + Development Tree branches) через `useStepProviderResolver`; legacy `--pm-accent-strong` (green) и `#d9a441` (in-progress yellow) hardcodes заменены на provider-tokens из `DesignSystem/CorporateDesign.html`; type markers (P/C/M), PP frame border и cluster connectors также tinted per provider; canonical results живут в `System/SystemArchitecture.md` §3 Invariant 36, `Clusters/Project_Manager.md` Workflow Tree provider tint subsection и `DesignSystem/CorporateDesign.html` §1 + §4.
 - `Plans/Archive/Sidebar_IdleStepNeutralTone_Architecture.md` — archived hotfix planning-doc для release `1.2.107`: убирает регрессию из 1.2.106, где idle workflow steps без continuity attribution получали Codex cyan tint по default fallback. `useStepProviderResolver` now returns `SidebarProviderId | null`, `workspace-tree.tsx` омитит `data-provider` атрибут на null, idle строки рендерятся в нейтральном `--pm-text-primary` без provider tint; canonical results в SystemArchitecture §3 Invariant 36 (idle-neutral hardening) и Clusters/Project_Manager.md.

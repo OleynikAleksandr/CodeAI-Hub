@@ -330,14 +330,6 @@ export class SessionRequestHandler {
     await this.sessionActions.handleSwitchRequest(options);
   }
 
-  async handleSetModelBinding(options: {
-    readonly sessionId: string;
-    readonly targetReasoningId?: string | null;
-    readonly targetModelId: string;
-  }): Promise<void> {
-    await this.sessionActions.handleSetModelBinding(options);
-  }
-
   async createSessionForWorkflow(options: {
     readonly providerId: string;
     readonly workspacePath: string;

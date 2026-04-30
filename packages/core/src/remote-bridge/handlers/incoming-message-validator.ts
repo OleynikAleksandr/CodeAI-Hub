@@ -101,13 +101,6 @@ const isSessionMessagePayload = (payload: unknown): boolean =>
   typeof payload.sessionId === "string" &&
   isMessageContentPayload(payload.content);
 
-const isSessionModelSetPayload = (payload: unknown): boolean =>
-  isRecord(payload) &&
-  typeof payload.sessionId === "string" &&
-  typeof payload.targetModelId === "string" &&
-  payload.targetModelId.trim().length > 0 &&
-  isOptionalStringOrNull(payload.targetReasoningId);
-
 const isUsageRefreshPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.providerId === "string" &&
@@ -234,7 +227,6 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "session:create": isSessionCreatePayload,
   "session:delete": isSessionIdPayload,
   "session:message": isSessionMessagePayload,
-  "session:model:set": isSessionModelSetPayload,
   "session:refreshUsageLimits": isUsageRefreshPayload,
   "session:stop": isSessionIdPayload,
   "settings:native-request-capture": isNativeRequestCapturePayload,

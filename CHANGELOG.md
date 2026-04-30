@@ -4,32 +4,6 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.2.114] - 2026-04-30
-### Fixed
-- **Status-panel model/reasoning changes survive Shaga dialog submit.** Core dialog send now preserves the live `Session.modelBinding` instead of restoring an older continuity segment binding when the next answer is sent, and PM runtime/dialog wrappers forward explicit reasoning to Core.
-
-### Tests
-- **Submit-time binding regression verification passed.** Passed the focused dialog-submit model binding guard, Core model-set binding tests, PM status-panel wrapper/controller/hook tests, Core build, webview typecheck, and webview build.
-
-## [1.2.113] - 2026-04-30
-### Fixed
-- **Status-panel model/reasoning changes now stick for the next active-session turn.** `session:model:set` carries the explicit selected reasoning/thinking value, Core updates `session.modelBinding` from that command payload instead of rereading potentially stale Settings, and Project Manager keeps a pending selected model per session so a fast model -> reasoning click sequence cannot fall back to the old model.
-- **Model picker placement is aligned with the reasoning area.** The model picker uses a dedicated alignment modifier so its left edge starts at the following Reasoning chip/card area, while the existing Reasoning picker positioning remains unchanged.
-
-### Tests
-- **Retest regression verification passed.** Passed Core model-set binding tests, PM sequential model/reasoning selection tests, UI picker/status-panel tests, webview typecheck, and webview build.
-
-## [1.2.112] - 2026-04-29
-### Added
-- **Session status panel can switch model and reasoning for the active provider.** The lower model and reasoning chips now open provider-scoped picker cards. Selecting an option persists the provider default/reasoning to canonical Settings and sends `session:model:set` so the current logical session uses the new binding on the next turn without changing provider.
-
-### Changed
-- **Effective model identity ownership stays session-scoped.** Settings remain the default seed for future sessions, while the active session changes through explicit `session.modelBinding` mutation and Core-confirmed `session:model:update` labels. Other open sessions are not silently relabeled by a status-panel selection.
-- **Claude reasoning effort accepts `xhigh` end-to-end.** Claude applied-config and SDK manager types now pass the selected high-effort value through the provider path instead of dropping it before execution.
-
-### Tests
-- **Targeted status-panel switching verification passed.** Passed Core no-resend binding update test/build, Claude/Codex/Gemini provider applied-config tests/builds, UI picker/status-panel tests, PM controller/hook/session-view tests, webview typecheck/build, and Knip.
-
 ## [1.2.111] - 2026-04-29
 ### Fixed
 - **Runtime reliability follow-up hardens teardown and diagnostics.** Core WebSocket server/client error events are now owned and logged, startup/workspace best-effort failures produce sanitized diagnostics, runtime dispose/stop paths clear owned maps and provider recovery timers, legacy continuity handoff state can retry after failure, unified-session close keeps writer ownership until terminal close promises settle, and the remaining rollover runtime factory definite-assignment bypass is replaced by an explicit deferred reference.

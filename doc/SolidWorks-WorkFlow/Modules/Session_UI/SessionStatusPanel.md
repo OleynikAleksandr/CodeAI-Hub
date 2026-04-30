@@ -1,15 +1,15 @@
 # Session Status Panel — Factual Module Inventory
 
 **Surface:** нижняя статусная строка  
-**Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`
-**Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}`, `.session-status-picker-anchor`, `.session-model-switch-card`, `.session-status__debug-strip`.
+**Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
+**Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}`, `.session-status__debug-strip`.
 
 ## Роль
 
 Показывает live state одной logical session в виде четырёх-chip ряда:
 1. label `Модель:`;
-2. имя выбранной модели (provider-tinted button, открывает picker моделей текущего provider);
-3. опциональный `(reasoning)` (тот же button shape, открывает picker reasoning/thinking уровней текущего provider/model; скрывается при отсутствующем `model.reasoning`);
+2. имя выбранной модели (provider-tinted button shape, click handler пока не подключён);
+3. опциональный `(reasoning)` (тот же button shape; скрывается при отсутствующем `model.reasoning`);
 4. правая `Токены:` плашка с `used (remaining%)` и свободным правым краем под будущие per-session signals.
 
 Панель возвращает `null`, если Core не `ready` или в `status.models` нет хотя бы одного элемента; legacy single-line fallback и `Core Supervisor: starting…` сняты с оборота на этом surface.
@@ -19,16 +19,12 @@
 - `connectionStatus`
 - `connectionDetail` (зарезервирован для совместимости caller'а; в текущей разметке не используется)
 - `status`
-- `settings` snapshot для построения provider-local picker options
-- `sessionId`
-- `onModelSelect(sessionId, modelId)` и `onReasoningSelect(sessionId, reasoningId)` как опциональные callbacks PM orchestration
 - `tokenDebugSummary` — опционально, рендерится отдельным muted strip ниже chip-ряда.
 
 ## Откуда берет правду
 
 - `connectionStatus` / `connectionDetail` из `useProjectManagerCoreStatusHydrator()`;
 - `status.models[0]` (single-model invariant per SystemArchitecture §3.14 / SMB-001/002): `modelDisplayName`, `reasoning`, `providerId` (`claudeCodeCli` / `codexCli` / `geminiCli`) → `session-status-button--{provider}` tint class;
-- `SessionModelSwitcherFacade` строит список моделей/reasoning из текущего provider и current effective binding; cross-provider options не показываются;
 - `status.tokenUsage.used` / `.limit` → токен-плашка (used + remaining percent);
 - `tokenDebugSummary` либо вычисляется по chain/messages, либо в dialog mode приходит как override из parsed dialog history.
 
@@ -47,16 +43,6 @@
 - для нового trunk-step dialog/bootstrap snapshot provider/model seed сначала берётся из explicit `pm:dialog:open` / startup intent provider, если dialog list payload ещё не дал нормализованный provider;
 - после materialization runtime session панель обязана converge-иться к live provider/model identity через обычный `useRuntimeModelSync()` path.
 
-### Picker side
-- click по model chip открывает `SessionModelPickerCard` под chip-row; выбор вызывает `onModelSelect(sessionId, modelId)` и закрывает card;
-- click по reasoning chip открывает `SessionReasoningPickerCard`; выбор вызывает `onReasoningSelect(sessionId, reasoningId)` и закрывает card;
-- Project Manager controller сохраняет выбранный provider default/reasoning в canonical `~/.codeai-hub/settings/settings.json`, затем отправляет `session:model:set` в Core с explicit `targetModelId` и `targetReasoningId`;
-- если пользователь выбирает модель и сразу выбирает reasoning/thinking до прихода `session:model:update`, PM hook использует pending selected model for this session, а не stale snapshot model;
-- runtime и dialog PM wrappers обязаны прокидывать optional `targetReasoningId` в `api.setSessionModel`; иначе Core получит model-only команду и может собрать binding из старого Settings snapshot;
-- Core обновляет `session.modelBinding` без provider resend и emits `session:model:update`; визуальная смена label считается подтверждённой только после runtime sync;
-- при отправке следующего сообщения в dialog/Shaga path Core не имеет права восстанавливать старый continuity segment `modelBinding` поверх уже live `Session.modelBinding`; persisted binding используется только для hydrate, когда live binding отсутствует;
-- смена provider через эту панель запрещена; для этого существует отдельный provider-switch flow.
-
 ### Token side
 - `session:stream` token-usage events -> `updateSnapshotsWithTokenUsage(...)`.
 
@@ -73,16 +59,11 @@
 
 ## Что отдает наружу
 
-Опциональные selection callbacks:
-
-- `onModelSelect(sessionId, modelId)`
-- `onReasoningSelect(sessionId, reasoningId)`
-
-Shared UI не знает о Settings persistence или Core API. Эти callbacks реализует Project Manager.
+Ничего. Это read-only projection panel.
 
 ## Локальный state
 
-`openPicker: "model" | "reasoning" | null` внутри `StatusPanel`; state не является source of truth для выбранной identity и используется только для открытия/закрытия cards.
+Отсутствует.
 
 ## Особенности
 
@@ -92,8 +73,7 @@ Shared UI не знает о Settings persistence или Core API. Эти callba
 - continuation session, созданная после `Remaining context threshold (%)`, должна показывать inherited binding предыдущей logical session, даже если Settings default у provider уже изменён.
 - для `Virtual Simulation` / `Diagram Modules`, стартующих с confirmation card, нижняя панель не должна сохранять provider/model summary предыдущего trunk step: выбранный на карточке provider seed-ит bootstrap snapshot сразу, а затем live runtime model update уточняет effective model без возврата к старому provider context.
 - 4-chip layout инвариант: chips 1–3 (`flex: 0 0 auto`) hug свой текст, правая `--limits` плашка (`flex: 1 1 0; min-width: 0`) поглощает весь оставшийся горизонт; внешняя ширина ряда фиксирована родителем (`width: 100%`). При смене модели (например Sonnet → Opus 4.7) reflow происходит только внутри ряда — токен-плашка автоматически меняет ширину, остальной layout остаётся стабильным.
-- buttons (chips 2 и 3) являются интерактивными `<button type="button">`; cards рендерятся как `role="dialog"` и закрываются после выбора.
-- reasoning chip скрывается, когда `model.reasoning` — `undefined` или пустая строка. Для Claude `thinking off` уже приходит как непустая строка `"thinking off"` и попадает в плашку как `(thinking off)`; эта же строка доступна как один из выборов в reasoning picker.
-- model picker card использует отдельный alignment modifier и открывается с левым краем в области следующего Reasoning chip/card; Reasoning picker card сохраняет прежнее позиционирование.
+- buttons (chips 2 и 3) в этом релизе остаются чисто визуальными: `<button type="button">` без `onClick`. Click-handlers (выбор модели / reasoning) — отдельный будущий scope.
+- reasoning chip скрывается, когда `model.reasoning` — `undefined` или пустая строка. Для Claude `thinking off` уже приходит как непустая строка `"thinking off"` и попадает в плашку как `(thinking off)`; в будущем эта же строка станет одним из выборов в click-driven dropdown.
 - localization: ключ `session.status.model_label` лежит в approved dict `assets/localization/source/en/messages_for_the_user.json` и legacy mirror `system_feedback.json`; `session.status.tokens_label` переиспользуется без изменений.
 - цветовой контракт правой `Токены:` плашки: метрика `used (remaining%)` рендерится тем же нейтральным серым `#b0b0b0`, что и default-фаза кнопок имени модели и reasoning (`color` для `.session-status-chip--limits .session-status-chip__value` в `media/session-view.css`). Цифры не должны притягивать визуальное внимание к себе сильнее, чем имя модели.

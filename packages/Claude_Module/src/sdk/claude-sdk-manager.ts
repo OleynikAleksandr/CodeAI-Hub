@@ -5,7 +5,7 @@ import type { SDKMessageProcessor } from "../messaging/message-processor";
 import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
 import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
 import type { SDKSessionManager } from "../session/session-manager";
-import type { ActiveSession, ClaudeReasoningEffort } from "../session/types";
+import type { ActiveSession } from "../session/types";
 import type {
   ClaudeStreamMessage,
   ClaudeWorkspaceOptions,
@@ -39,7 +39,7 @@ interface ClaudeManagerDependencies {
 }
 
 interface ThinkingSettings {
-  readonly effort: ClaudeReasoningEffort;
+  readonly effort: "low" | "medium" | "high" | "max";
   readonly enabled: boolean;
 }
 
@@ -66,7 +66,7 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
   additionalDirectories: string[];
   allowDangerouslySkipPermissions: boolean;
   cwd: string;
-  effort?: ClaudeReasoningEffort;
+  effort?: "low" | "medium" | "high" | "xhigh" | "max";
   env: NodeJS.ProcessEnv;
   includePartialMessages: boolean;
   model?: string;
@@ -317,7 +317,7 @@ export class ClaudeSDKManager {
     snapshot: ClaudeSettingsSnapshot | null,
     turnOptions?: Record<string, unknown>
   ): {
-    readonly effort?: ClaudeReasoningEffort;
+    readonly effort?: "low" | "medium" | "high" | "xhigh" | "max";
     readonly thinking?: {
       readonly display?: "summarized" | "omitted";
       readonly type: "adaptive" | "disabled";
@@ -426,27 +426,20 @@ const readAppliedClaudeModelId = (
     : undefined;
 };
 
-const CLAUDE_THINKING_EFFORTS = new Set([
-  "low",
-  "medium",
-  "high",
-  "xhigh",
-  "max",
-]);
+const CLAUDE_THINKING_EFFORTS = new Set(["low", "medium", "high", "max"]);
 const LEGACY_THINKING_TOKEN_ANCHORS: readonly {
-  readonly effort: ClaudeReasoningEffort;
+  readonly effort: "low" | "medium" | "high" | "max";
   readonly maxTokens: number;
 }[] = [
   { effort: "low", maxTokens: 2000 },
   { effort: "medium", maxTokens: 4000 },
   { effort: "high", maxTokens: 10_000 },
-  { effort: "xhigh", maxTokens: 20_000 },
   { effort: "max", maxTokens: 32_000 },
 ];
 
 const resolveLegacyClaudeThinkingEffort = (
   value: unknown
-): ClaudeReasoningEffort => {
+): "low" | "medium" | "high" | "max" => {
   const numericValue = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(numericValue)) {
     return "medium";
@@ -462,15 +455,17 @@ const resolveLegacyClaudeThinkingEffort = (
   ).effort;
 };
 
-const resolveClaudeThinkingEffort = (value: unknown): ClaudeReasoningEffort =>
+const resolveClaudeThinkingEffort = (
+  value: unknown
+): "low" | "medium" | "high" | "max" =>
   typeof value === "string" && CLAUDE_THINKING_EFFORTS.has(value)
-    ? (value as ClaudeReasoningEffort)
+    ? (value as "low" | "medium" | "high" | "max")
     : resolveLegacyClaudeThinkingEffort(value);
 
 const readAppliedClaudeThinkingConfig = (
   turnOptions?: Record<string, unknown>
 ): {
-  readonly reasoningEffort?: ClaudeReasoningEffort;
+  readonly reasoningEffort?: "low" | "medium" | "high" | "max";
   readonly thinkingEnabled: boolean;
 } | null => {
   if (!turnOptions) {

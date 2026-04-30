@@ -228,28 +228,6 @@ class ProjectManagerApi {
     this.send({ type: "session:stop", payload: { sessionId } });
   }
 
-  setSessionModel(
-    sessionId: string,
-    targetModelId: string,
-    targetReasoningId?: string | null
-  ): void {
-    const normalizedTargetModelId = targetModelId.trim();
-    if (!normalizedTargetModelId) {
-      return;
-    }
-    const normalizedTargetReasoningId = targetReasoningId?.trim();
-    this.send({
-      type: "session:model:set",
-      payload: {
-        sessionId,
-        targetModelId: normalizedTargetModelId,
-        ...(normalizedTargetReasoningId
-          ? { targetReasoningId: normalizedTargetReasoningId }
-          : {}),
-      },
-    });
-  }
-
   refreshUsageLimits(params: {
     readonly lifecycleTrigger?:
       | "binding_ready"

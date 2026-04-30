@@ -119,7 +119,7 @@ test("GeminiProviderAdapter applies shared runtime overrides before send", async
       messagesForTheUserLanguage: "ru",
       providerId: "geminiCli",
       modelId: "gemini-3-pro",
-      thinkingLevel: "low",
+      thinkingLevel: "high",
       source: "settings_snapshot",
     },
   });
@@ -146,7 +146,7 @@ test("GeminiProviderAdapter applies shared runtime overrides before send", async
   assert.equal(
     (manager as unknown as { pendingThinkingLevelOverride?: string })
       .pendingThinkingLevelOverride,
-    "low"
+    "high"
   );
 });
 

@@ -23,7 +23,6 @@ import {
 } from "./usage-limits-stream";
 import { normalizeSessionHistoryMessages, resolveMostRecentVisibleSessionId, resolveMostRecentWorkspaceSessionId } from "./runtime-session-auto-select";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
-import { useSessionModelSwitch } from "./use-session-model-switch";
 
 type ProjectManagerSessionViewProps = {
   readonly workspacePath?: string;
@@ -46,7 +45,7 @@ const ProjectManagerRuntimeSessionView = ({
   );
   const [providerCatalog, setProviderCatalog] = useState<ProviderCatalog>({});
   const providerLabels = useMemo(() => buildProviderLabels(providerCatalog), [providerCatalog]);
-  const { settings, reload, save } = useProjectManagerSettings();
+  const { settings, reload } = useProjectManagerSettings();
   const [sessions, setSessions] = useState<readonly SessionRecord[]>([]);
   const [snapshots, setSnapshots] = useState<SessionSnapshots>({});
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -348,22 +347,6 @@ const ProjectManagerRuntimeSessionView = ({
     workspacePath,
     reload
   );
-  const setSessionModel = useCallback(
-    (
-      sessionId: string,
-      targetModelId: string,
-      targetReasoningId?: string | null
-    ) => {
-      api.setSessionModel(sessionId, targetModelId, targetReasoningId);
-    },
-    []
-  );
-  const modelSwitch = useSessionModelSwitch({
-    saveSettings: save,
-    setSessionModel,
-    settings,
-    snapshots,
-  });
   const activeRecord = sessions.find((session) => session.id === scopedActiveSessionId) ?? null;
   const showThinkingMessages = resolveSessionThinkingDisplayEnabled({
     providerId: activeRecord?.providerIds[0] ?? null,
@@ -378,8 +361,6 @@ const ProjectManagerRuntimeSessionView = ({
       onCloseSession={hideSession}
       onFileLinkActivate={onFileLinkActivate}
       onSelectSession={setActiveSessionId}
-      onSelectSessionModel={modelSwitch.onSelectSessionModel}
-      onSelectSessionReasoning={modelSwitch.onSelectSessionReasoning}
       onSendMessage={handleSendMessage}
       emptyStatePending={emptyStatePending}
       providerLabels={providerLabels}

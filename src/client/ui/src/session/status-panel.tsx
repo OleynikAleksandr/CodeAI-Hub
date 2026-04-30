@@ -1,13 +1,6 @@
-import { useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
 import { useLocalization } from "../app-host/use-localization";
-import { createDefaultSettings } from "../components/settings/settings-state-model";
-import {
-  SessionModelPickerCard,
-  SessionReasoningPickerCard,
-} from "./model-switcher/session-model-picker-card";
-import { SessionModelSwitcherFacade } from "./model-switcher/session-model-switcher-facade";
 
 const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
@@ -19,8 +12,6 @@ type CoreConnectionStatus = "connecting" | "ready" | "error";
 interface StatusPanelProps {
   readonly connectionDetail?: string;
   readonly connectionStatus: CoreConnectionStatus;
-  readonly onModelSelect?: (modelId: string) => void;
-  readonly onReasoningSelect?: (reasoningId: string) => void;
   readonly status: SessionStatusInfo | null;
   readonly tokenDebugSummary?: string;
 }
@@ -33,9 +24,6 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
 
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>
   PROVIDER_BUTTON_CLASS[providerId] ?? "";
-
-const DEFAULT_SWITCHER_SETTINGS = createDefaultSettings();
-const SWITCHER_FACADE = new SessionModelSwitcherFacade();
 
 const computeRemainingPercentage = (
   used: number,
@@ -52,14 +40,9 @@ const computeRemainingPercentage = (
 const StatusPanel = ({
   status,
   connectionStatus,
-  onModelSelect,
-  onReasoningSelect,
   tokenDebugSummary,
 }: StatusPanelProps) => {
   const { t } = useLocalization();
-  const [openPicker, setOpenPicker] = useState<"model" | "reasoning" | null>(
-    null
-  );
 
   if (!status || connectionStatus !== "ready") {
     return null;
@@ -94,20 +77,6 @@ const StatusPanel = ({
     typeof model.reasoning === "string" && model.reasoning.length > 0
       ? `(${model.reasoning})`
       : null;
-  const switcherState = SWITCHER_FACADE.buildState({
-    modelInfo: model,
-    providerId: model.providerId,
-    settings: DEFAULT_SWITCHER_SETTINGS,
-  });
-
-  const handleModelSelect = (modelId: string) => {
-    onModelSelect?.(modelId);
-    setOpenPicker(null);
-  };
-  const handleReasoningSelect = (reasoningId: string) => {
-    onReasoningSelect?.(reasoningId);
-    setOpenPicker(null);
-  };
 
   return (
     <section className="session-status session-panel">
@@ -115,50 +84,21 @@ const StatusPanel = ({
         <span className="session-status-chip session-status-chip--label">
           {`${modelLabel}:`}
         </span>
-        <span className="session-status-picker-anchor">
+        <button
+          aria-label={`${modelLabel}: ${model.modelDisplayName}`}
+          className={`session-status-button ${providerButtonClass}`}
+          type="button"
+        >
+          {model.modelDisplayName}
+        </button>
+        {reasoningText ? (
           <button
-            aria-expanded={openPicker === "model"}
-            aria-haspopup="dialog"
-            aria-label={`${modelLabel}: ${model.modelDisplayName}`}
+            aria-label={`Reasoning ${reasoningText}`}
             className={`session-status-button ${providerButtonClass}`}
-            onClick={() =>
-              setOpenPicker((current) => (current === "model" ? null : "model"))
-            }
             type="button"
           >
-            {model.modelDisplayName}
+            {reasoningText}
           </button>
-          {openPicker === "model" ? (
-            <SessionModelPickerCard
-              alignToFollowingChip
-              onSelectModel={handleModelSelect}
-              options={switcherState.modelOptions}
-            />
-          ) : null}
-        </span>
-        {reasoningText ? (
-          <span className="session-status-picker-anchor">
-            <button
-              aria-expanded={openPicker === "reasoning"}
-              aria-haspopup="dialog"
-              aria-label={`Reasoning ${reasoningText}`}
-              className={`session-status-button ${providerButtonClass}`}
-              onClick={() =>
-                setOpenPicker((current) =>
-                  current === "reasoning" ? null : "reasoning"
-                )
-              }
-              type="button"
-            >
-              {reasoningText}
-            </button>
-            {openPicker === "reasoning" ? (
-              <SessionReasoningPickerCard
-                onSelectReasoning={handleReasoningSelect}
-                options={switcherState.reasoningOptions}
-              />
-            ) : null}
-          </span>
         ) : null}
         <span className="session-status-chip session-status-chip--limits">
           <span className="session-status-chip__label">{`${tokensLabel}:`}</span>

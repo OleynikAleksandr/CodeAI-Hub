@@ -106,40 +106,12 @@ export class SessionRequestHandlerSessionActions {
     });
   }
 
-  handleSetModelBinding(options: {
-    readonly sessionId: string;
-    readonly targetReasoningId?: string | null;
-    readonly targetModelId: string;
-  }): void {
-    const targetModelId = options.targetModelId.trim();
-    if (!targetModelId) {
-      this.deps.logger.warn("Session model set: target model missing", {
-        sessionId: options.sessionId,
-      });
-      return;
-    }
-    const session = this.deps.sessionManager.getSession(options.sessionId);
-    if (!session) {
-      this.deps.logger.warn("Session model set: session not found", {
-        sessionId: options.sessionId,
-      });
-      return;
-    }
-    this.applySwitchModelBinding(
-      session,
-      targetModelId,
-      options.targetReasoningId
-    );
-  }
-
   private applySwitchModelBinding(
     session: Session,
-    targetModelId: string,
-    targetReasoningId?: string | null
+    targetModelId: string
   ): Record<string, unknown> | undefined {
     const turnOptions = this.deps.appliedTurnConfig.attachToTurnOptions({
       providerId: session.providerId,
-      targetReasoningId,
       targetModelId,
     });
     const turnConfig = readAppliedProviderTurnConfig(turnOptions);

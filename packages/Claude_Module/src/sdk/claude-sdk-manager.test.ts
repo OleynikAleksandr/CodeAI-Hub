@@ -164,7 +164,7 @@ test("ClaudeSDKManager uses applied Claude effort instead of deprecated maxThink
       __codeaiAppliedTurnConfig: {
         providerId: "claudeCodeCli",
         thinkingEnabled: true,
-        reasoningEffort: "xhigh",
+        reasoningEffort: "high",
       },
     }
   );
@@ -173,7 +173,7 @@ test("ClaudeSDKManager uses applied Claude effort instead of deprecated maxThink
     type: "adaptive",
     display: "summarized",
   });
-  assert.equal(options.effort, "xhigh");
+  assert.equal(options.effort, "high");
   assert.equal("maxThinkingTokens" in options, false);
 });
 
@@ -190,7 +190,7 @@ test("ClaudeSDKManager maps legacy Claude maxTokens snapshots to effort", async 
             claude: {
               thinking: {
                 enabled: true,
-                maxTokens: 20_000,
+                maxTokens: 32_000,
               },
             },
           },
@@ -211,7 +211,7 @@ test("ClaudeSDKManager maps legacy Claude maxTokens snapshots to effort", async 
       type: "adaptive",
       display: "summarized",
     });
-    assert.equal(options.effort, "xhigh");
+    assert.equal(options.effort, "max");
     assert.equal("maxThinkingTokens" in options, false);
   } finally {
     await rm(tempDir, { recursive: true, force: true });
@@ -225,7 +225,7 @@ test("ClaudeSDKManager reuses cached fallback settings until cache expiry", asyn
   try {
     await writeClaudeThinkingSettings(settingsPath, {
       enabled: true,
-      effort: "xhigh",
+      effort: "high",
     });
     const manager = createManager(settingsPath);
     const session = {
@@ -250,12 +250,12 @@ test("ClaudeSDKManager reuses cached fallback settings until cache expiry", asyn
       type: "adaptive",
       display: "summarized",
     });
-    assert.equal(firstOptions.effort, "xhigh");
+    assert.equal(firstOptions.effort, "high");
     assert.deepEqual(cachedOptions.thinking, {
       type: "adaptive",
       display: "summarized",
     });
-    assert.equal(cachedOptions.effort, "xhigh");
+    assert.equal(cachedOptions.effort, "high");
     assert.deepEqual(expiredOptions.thinking, { type: "disabled" });
     assert.equal("effort" in expiredOptions, false);
   } finally {

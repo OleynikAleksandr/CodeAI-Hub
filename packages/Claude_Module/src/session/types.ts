@@ -11,11 +11,9 @@ export interface ClaudeTurnLifecycleState {
   started: boolean;
 }
 
-export type ClaudeReasoningEffort = "low" | "medium" | "high" | "xhigh" | "max";
-
 export interface ClaudeRuntimeTurnConfig {
   messagesForTheUserLanguage?: string;
-  reasoningEffort?: ClaudeReasoningEffort;
+  reasoningEffort?: "low" | "medium" | "high" | "max";
   thinkingDisplaySyncEnabled?: boolean;
   thinkingEnabled?: boolean;
   translationEngineId?: string;

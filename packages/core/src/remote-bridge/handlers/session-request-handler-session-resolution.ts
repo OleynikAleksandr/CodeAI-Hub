@@ -163,7 +163,7 @@ export class SessionRequestHandlerSessionResolution {
           candidate.providerId === last.providerId &&
           candidate.providerSessionId === last.providerSessionId
       );
-    if (existingSession && !existingSession.modelBinding && last.modelBinding) {
+    if (existingSession && last.modelBinding) {
       this.deps.sessionManager.setModelBinding(
         existingSession.id,
         last.modelBinding
