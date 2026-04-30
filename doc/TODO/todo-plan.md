@@ -207,9 +207,9 @@
 ### Stream: Release Build
 
 87. [DONE] Prepare release docs for future version `1.2.114` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.114`; verified: README current release and changelog section set to `1.2.114`)
-88. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.114` (hash: TBD)
-89. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.114`)
-90. [TODO] Git Commit: `chore: build release 1.2.114` (hash: TBD)
+88. [DONE] Git Commit: `docs: prepare release 1.2.114` (hash: `87e7c5377`)
+89. [DONE] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.114`; verified: `./scripts/build-all.sh`, `doc/tmp/releases/*1.2.114*`, `~/.codeai-hub/releases/*1.2.114*`, package version `1.2.114`)
+90. [IN_PROGRESS] Git Commit: `chore: build release 1.2.114` (hash: TBD)
 91. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.114`)
 92. [TODO] Git Commit: `chore: package release 1.2.114` (hash: TBD)
 
