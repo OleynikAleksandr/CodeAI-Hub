@@ -170,9 +170,9 @@
 65. [DONE] Fix Core public handler signature after first `build-all.sh` compile failure (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`; commit: `fix(core): expose explicit model set reasoning handler`; verified: `npm run build --workspace=@codeai-hub/core`, `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; note: first `./scripts/build-all.sh` failed at Core `tsc` before this fix)
 66. [DONE] Git Commit: `fix(core): expose explicit model set reasoning handler` (hash: `605e29ae9`)
 67. [DONE] Resume `./scripts/build-all.sh --allow-dirty --version 1.2.113` after the first compile failure and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`; verified: `./scripts/build-all.sh --allow-dirty --version 1.2.113`, `doc/tmp/releases/*1.2.113*`, `~/.codeai-hub/releases/*1.2.113*`, package version `1.2.113`)
-68. [IN_PROGRESS] Git Commit: `chore: build release 1.2.113` (hash: TBD)
-69. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`)
-70. [TODO] Git Commit: `chore: package release 1.2.113` (hash: TBD)
+68. [DONE] Git Commit: `chore: build release 1.2.113` (hash: `79c1d2d87`)
+69. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`; verified: `./scripts/build-release.sh --use-current-version`, `codeai-hub-1.2.113.vsix` package created, SDK exclusions verified, dev dependencies pruned before packaging/restored, VSIX runtime package surface verified, sha1 `6f29dfbbefb90037b9c2b5669d8c392bd8867a69`)
+70. [IN_PROGRESS] Git Commit: `chore: package release 1.2.113` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 
