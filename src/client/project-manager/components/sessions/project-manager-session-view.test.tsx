@@ -96,6 +96,60 @@ test("project-manager session surfaces keep binding-owned model labels wired", a
   assert.equal(coreStreamTypesSource.includes("payload: SessionRecord"), true);
 });
 
+test("project-manager model switch callbacks dispatch through codex session command", async () => {
+  const runtimeSource = await readFile(RUNTIME_SOURCE_PATH, "utf8");
+  const dialogControllerSource = await readFile(
+    DIALOG_SESSION_CONTROLLER_SOURCE_PATH,
+    "utf8"
+  );
+  const dialogSource = await readFile(DIALOG_SOURCE_PATH, "utf8");
+
+  assert.equal(
+    runtimeSource.includes(
+      "api.requestCodexModelSwitch(sessionId, modelId, reasoning);"
+    ),
+    true
+  );
+  assert.equal(
+    runtimeSource.includes('session?.providerIds[0] !== "codexCli"'),
+    true
+  );
+  assert.equal(runtimeSource.includes("resolveCodexBaseModelId"), true);
+  assert.equal(runtimeSource.includes("EFFECTIVE_MODEL_SUFFIX_PATTERN"), true);
+
+  assert.equal(
+    dialogControllerSource.includes("requestCodexModelSwitch"),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes("requestCodexReasoningSwitch"),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes(
+      "api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);"
+    ),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes('currentSession?.providerIds[0] !== "codexCli"'),
+    true
+  );
+  assert.equal(
+    dialogControllerSource.includes("resolveCodexBaseModelId"),
+    true
+  );
+
+  assert.equal(
+    dialogSource.includes("requestCodexModelSwitch(modelId, reasoning)"),
+    true
+  );
+  assert.equal(
+    dialogSource.includes("requestCodexReasoningSwitch(reasoning)"),
+    true
+  );
+});
+
 test("project-manager-session-view restores dialog mode only from live PM intents", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 
