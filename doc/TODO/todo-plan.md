@@ -206,12 +206,38 @@
 
 ### Stream K — Hand off for user verification
 
-1. [BLOCKED on user] Передать VSIX `codeai-hub-1.2.116.vsix` пользователю. Scope **не закрывается**, пока пользователь явно не подтвердит:
+1. [BLOCKED: retest failed] Передать VSIX `codeai-hub-1.2.116.vsix` пользователю. Scope **не закрывается**, пока пользователь явно не подтвердит:
    - Switch на Codex session работает (`gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → следующий user message processes без error / без `400 unsupported_parameter`).
    - Chips correctly disabled / no-op для Claude и Gemini sessions.
    - UI behaviour satisfying (picker UX, reasoning options derivation, default selection logic).
    - SSOT documentation accurate (user reviews и подтверждает).
-2. [BLOCKED on user] Stream K статус IN_PROGRESS до явного «ОК / закрываем».
+2. [BLOCKED: retest failed] 2026-04-30 user retest failed: session started on `gpt-5.2`, next-turn switch to `gpt-5.3-codex-spark` still produced `400 unsupported_parameter` for `reasoning.summary`. Root cause under investigation: provider-home `model_reasoning_summary = "auto"` can leak into native Spark request even when CodeAI Hub omits `turn/start.summary`.
+
+## Phase 4 — Spark provider-home summary hardening (owner: Codex provider/Core, updated: 2026-04-30)
+
+### Stream M — Remove unsafe global reasoning summary fallback
+
+1. [DONE] Runtime provider-home materializer: force `model_reasoning_summary = "none"` before App Server startup, independent of user reasoning visibility setting, and update regression tests. Scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-config.ts`, `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-config.test.ts`, `doc/TODO/todo-plan.md`; commit message: `fix(codex): neutralize provider-home reasoning summary fallback`.
+2. [IN_PROGRESS] Git Commit: `fix(codex): neutralize provider-home reasoning summary fallback` (hash: TBD)
+3. [TODO] Extension settings sync: keep provider-home `model` sync, but always write `model_reasoning_summary = "none"` so settings save cannot reintroduce unsafe global summary fallback. Scope: `src/extension-module/settings/codex-provider-config-sync.ts`, `doc/TODO/todo-plan.md`; commit message: `fix(extension): keep codex provider-home summary neutral`.
+4. [TODO] Git Commit: `fix(extension): keep codex provider-home summary neutral` (hash: TBD)
+5. [TODO] SSOT docs sync: update Codex/provider invocation docs and SystemArchitecture to state that provider-home summary is neutralized; non-Spark live reasoning visibility comes only from explicit turn-level `summary`, Spark receives no summary field. Scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document codex provider-home summary neutralization`.
+6. [TODO] Git Commit: `docs(ssot): document codex provider-home summary neutralization` (hash: TBD)
+7. [TODO] Targeted verification: run provider-home config tests, Spark raw payload regression, Codex App Server build, and affected webview/project-manager builds/typechecks as needed. Scope: verification only; commit message: N/A.
+
+### Stream N — Release 1.2.117
+
+1. [TODO] Update `README.md` and `CHANGELOG.md` for `1.2.117` retest fix. Scope: 2 файла; commit message: `docs: prepare release 1.2.117`.
+2. [TODO] Git Commit: `docs: prepare release 1.2.117` (hash: TBD)
+3. [TODO] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Scope: generated release files; commit message: `chore: build release 1.2.117`.
+4. [TODO] Git Commit: `chore: build release 1.2.117` (hash: TBD)
+5. [TODO] Run `./scripts/build-release.sh --use-current-version`; produce `codeai-hub-1.2.117.vsix`; update active session report as ACTIVE for user retest. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.117`.
+6. [TODO] Git Commit: `chore: finalize release 1.2.117` (hash: TBD)
+
+### Stream O — User verification retry
+
+1. [TODO] Передать VSIX `codeai-hub-1.2.117.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
+2. [TODO] User must retest `gpt-5.2` → `gpt-5.3-codex-spark` next-turn switch and confirm no `reasoning.summary` error.
 
 ### Stream L — Closeout (только после user OK)
 
