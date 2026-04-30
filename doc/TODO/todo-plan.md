@@ -177,9 +177,9 @@
    - applied turn config остаётся из `session_binding`: `modelId === target.modelId`, `reasoningEffort === target.reasoningEffort`, без возврата к Settings defaults;
    - после dispatch switch'а Core уже имеет `session:model:update` с новым effective identity.
    Scope: 3 файла; commit message: `test(core): cover dialog send model switch continuity`.
-2. [DONE] Git Commit: `test(core): cover dialog send model switch continuity` (hash: pending current commit)
-3. [TODO] Добавить Codex raw payload regression test: switch `gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → send turn → captured `turn/start` payload не содержит `summary` field, содержит `<model_switch>` в input array. Scope: ≤2 файла; commit message: `test(codex): cover spark model switch raw payload`.
-4. [TODO] Git Commit: `test(codex): cover spark model switch raw payload` (hash: TBD)
+2. [DONE] Git Commit: `test(core): cover dialog send model switch continuity` (hash: cef1c5171)
+3. [DONE] Добавить Codex raw payload regression test: switch `gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → send turn → captured `turn/start` payload не содержит `summary` field, содержит `<model_switch>` в input array. Scope: ≤2 файла; commit message: `test(codex): cover spark model switch raw payload`.
+4. [DONE] Git Commit: `test(codex): cover spark model switch raw payload` (hash: pending current commit)
 
 ### Stream H — SSOT docs sync
 
