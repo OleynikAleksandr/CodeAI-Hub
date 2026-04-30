@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.115] - 2026-04-30
+### Changed
+- **Release rebuilt from the rollback point after the failed status-panel switcher scope.** The in-place status-panel model/reasoning switching implementation from releases `1.2.112` through `1.2.114` has been removed. The lower Session Status Panel keeps the passive model and reasoning chips that existed in `1.2.111`; future provider/model/reasoning switching will be redesigned around provider-segment handoff compatibility instead of mutating an incompatible native provider thread in place.
+- **Release process guardrails are retained.** The User Visual Acceptance Gate remains documented so built artifacts are not treated as completed scope until the user installs/runs the release and explicitly confirms acceptance.
+
+### Tests
+- **Rollback verification passed before release packaging.** Passed webview typecheck/build, Claude/Codex/Gemini provider builds, Core build after provider modules, focused Session Status Panel and Project Manager session-view tests, plus commit-hook architecture/lint/knip checks.
+
 ## [1.2.111] - 2026-04-29
 ### Fixed
 - **Runtime reliability follow-up hardens teardown and diagnostics.** Core WebSocket server/client error events are now owned and logged, startup/workspace best-effort failures produce sanitized diagnostics, runtime dispose/stop paths clear owned maps and provider recovery timers, legacy continuity handoff state can retry after failure, unified-session close keeps writer ownership until terminal close promises settle, and the remaining rollover runtime factory definite-assignment bypass is replaced by an explicit deferred reference.
