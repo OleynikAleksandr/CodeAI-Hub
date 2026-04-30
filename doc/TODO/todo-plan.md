@@ -230,9 +230,9 @@
 1. [DONE] Update `README.md` and `CHANGELOG.md` for `1.2.117` retest fix. Scope: 2 файла; commit message: `docs: prepare release 1.2.117`.
 2. [DONE] Git Commit: `docs: prepare release 1.2.117` (hash: 8e8c3ca89)
 3. [DONE] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Scope: generated release files; commit message: `chore: build release 1.2.117`.
-4. [IN_PROGRESS] Git Commit: `chore: build release 1.2.117` (hash: TBD)
-5. [TODO] Run `./scripts/build-release.sh --use-current-version`; produce `codeai-hub-1.2.117.vsix`; update active session report as ACTIVE for user retest. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.117`.
-6. [TODO] Git Commit: `chore: finalize release 1.2.117` (hash: TBD)
+4. [DONE] Git Commit: `chore: build release 1.2.117` (hash: 8fec5553d)
+5. [DONE] Run `./scripts/build-release.sh --use-current-version`; produced `codeai-hub-1.2.117.vsix`; release gates passed: architecture, typecheck, compile, SDK exclusions, artefact validation, markdown links, duplication check, VSIX surface verification. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.117`.
+6. [IN_PROGRESS] Git Commit: `chore: finalize release 1.2.117` (hash: TBD)
 
 ### Stream O — User verification retry
 
