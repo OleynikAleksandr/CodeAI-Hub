@@ -332,6 +332,7 @@ export class SessionRequestHandler {
 
   async handleSetModelBinding(options: {
     readonly sessionId: string;
+    readonly targetReasoningId?: string | null;
     readonly targetModelId: string;
   }): Promise<void> {
     await this.sessionActions.handleSetModelBinding(options);
