@@ -1,6 +1,12 @@
+import { useRef, useState } from "react";
+import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
 import { useLocalization } from "../app-host/use-localization";
+import {
+  StatusPanelModelPicker,
+  type StatusPanelPickerMode,
+} from "./status-panel-model-picker";
 
 const MAX_PERCENTAGE = 100;
 const MIN_TOKEN_LIMIT = 1;
@@ -12,6 +18,11 @@ type CoreConnectionStatus = "connecting" | "ready" | "error";
 interface StatusPanelProps {
   readonly connectionDetail?: string;
   readonly connectionStatus: CoreConnectionStatus;
+  readonly onSelectModel?: (
+    modelId: string,
+    reasoning: CodexReasoningLevel
+  ) => void;
+  readonly onSelectReasoning?: (reasoning: CodexReasoningLevel) => void;
   readonly status: SessionStatusInfo | null;
   readonly tokenDebugSummary?: string;
 }
@@ -40,9 +51,17 @@ const computeRemainingPercentage = (
 const StatusPanel = ({
   status,
   connectionStatus,
+  onSelectModel,
+  onSelectReasoning,
   tokenDebugSummary,
 }: StatusPanelProps) => {
   const { t } = useLocalization();
+  const modelButtonRef = useRef<HTMLButtonElement | null>(null);
+  const reasoningButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [openPicker, setOpenPicker] = useState<{
+    readonly anchorLeft: number;
+    readonly mode: StatusPanelPickerMode;
+  } | null>(null);
 
   if (!status || connectionStatus !== "ready") {
     return null;
@@ -73,13 +92,30 @@ const StatusPanel = ({
   const tokensValue = `${status.tokenUsage.used.toLocaleString()} (${remainingPercentage}%)`;
 
   const providerButtonClass = resolveProviderButtonClass(model.providerId);
+  const canOpenPicker = model.providerId === "codexCli";
   const reasoningText =
     typeof model.reasoning === "string" && model.reasoning.length > 0
       ? `(${model.reasoning})`
       : null;
+  const openPickerForMode = (mode: StatusPanelPickerMode): void => {
+    if (!canOpenPicker) {
+      return;
+    }
+    const anchorElement =
+      mode === "model"
+        ? (reasoningButtonRef.current ?? modelButtonRef.current)
+        : reasoningButtonRef.current;
+    setOpenPicker({
+      mode,
+      anchorLeft: anchorElement?.offsetLeft ?? 0,
+    });
+  };
 
   return (
-    <section className="session-status session-panel">
+    <section
+      className="session-status session-panel"
+      style={{ position: "relative" }}
+    >
       <div className="session-status-row">
         <span className="session-status-chip session-status-chip--label">
           {`${modelLabel}:`}
@@ -87,6 +123,8 @@ const StatusPanel = ({
         <button
           aria-label={`${modelLabel}: ${model.modelDisplayName}`}
           className={`session-status-button ${providerButtonClass}`}
+          onClick={() => openPickerForMode("model")}
+          ref={modelButtonRef}
           type="button"
         >
           {model.modelDisplayName}
@@ -95,6 +133,8 @@ const StatusPanel = ({
           <button
             aria-label={`Reasoning ${reasoningText}`}
             className={`session-status-button ${providerButtonClass}`}
+            onClick={() => openPickerForMode("reasoning")}
+            ref={reasoningButtonRef}
             type="button"
           >
             {reasoningText}
@@ -107,6 +147,17 @@ const StatusPanel = ({
       </div>
       {tokenDebugSummary ? (
         <div className="session-status__debug-strip">{tokenDebugSummary}</div>
+      ) : null}
+      {openPicker && canOpenPicker ? (
+        <StatusPanelModelPicker
+          anchorLeft={openPicker.anchorLeft}
+          currentModelId={model.modelId}
+          currentReasoning={model.reasoning}
+          mode={openPicker.mode}
+          onClose={() => setOpenPicker(null)}
+          onSelectModel={onSelectModel}
+          onSelectReasoning={onSelectReasoning}
+        />
       ) : null}
     </section>
   );

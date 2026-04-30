@@ -149,14 +149,14 @@
 3. [DONE] `packages/Codex_AppServer_Module/src/index.ts`: re-export `CODEX_MODEL_SWITCH_INJECTION_KEY`, `CodexModelSwitchInjectionPayload`, and `resolveCodexWorkflowInvocationProfile` для Core bridge. Scope: 1 файл; commit message: `chore(codex): export model switch injection bridge api`.
 4. [DONE] Git Commit: `chore(codex): export model switch injection bridge api` (hash: 43b067c7b)
 5. [DONE] В Core dispatch path (`packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` + new helper `session-request-handler-model-switch-injection.ts` + existing test `session-request-handler-codex-model-switch.test.ts`): перед `adapter.sendMessage` — если `Session.pendingModelSwitchInjection === true`, build injection object (с `baseInstructions` для new model), кладём в `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]`. **После успешного `dispatch`** — call `sessionManager.clearPendingModelSwitchInjection(sessionId)`. Reset делает Core, не facade — потому что facade не знает финального outcome dispatch'а (HTTP error / abort). Unit-тест: bridge entry попадает в turnOptions при флаге=true; flag clear только после resolved promise. Scope: 3 файла; commit message: `feat(core): bridge pending model switch injection through turn options`.
-6. [DONE] Git Commit: `feat(core): bridge pending model switch injection through turn options` (hash: pending current commit)
+6. [DONE] Git Commit: `feat(core): bridge pending model switch injection through turn options` (hash: b86c98786)
 
 ### Stream F — Status panel UI (3 микро-задачи)
 
 #### F1 — Status panel + picker component
 
-1. [TODO] `src/client/ui/src/session/status-panel.tsx` (line 87-104 area — добавить `onClick` к двум визуальным кнопкам, состояние `openPicker: "model" | "reasoning" | null`, рендеринг picker popup'а), new file `src/client/ui/src/session/status-panel-model-picker.tsx` (picker UI компонент — в этом цикле показывает только Codex models; non-Codex sessions — chips остаются visually, click no-op), new file `src/client/ui/src/session/status-panel-model-picker.test.tsx` (component test: click → picker open → option click → callback fires). Scope: 3 файла; commit message: `feat(ui): add status panel model picker component`.
-2. [TODO] Git Commit: `feat(ui): add status panel model picker component` (hash: TBD)
+1. [DONE] `src/client/ui/src/session/status-panel.tsx` (line 87-104 area — добавить `onClick` к двум визуальным кнопкам, состояние `openPicker: "model" | "reasoning" | null`, рендеринг picker popup'а), new file `src/client/ui/src/session/status-panel-model-picker.tsx` (picker UI компонент — в этом цикле показывает только Codex models; non-Codex sessions — chips остаются visually, click no-op), new file `src/client/ui/src/session/status-panel-model-picker.test.tsx` (component test: click → picker open → option click → callback fires). Scope: 3 файла; commit message: `feat(ui): add status panel model picker component`.
+2. [DONE] Git Commit: `feat(ui): add status panel model picker component` (hash: pending current commit)
 
 #### F2 — Callback bridge + symmetric PM views
 
