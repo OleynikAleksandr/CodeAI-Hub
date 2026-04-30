@@ -1,6 +1,6 @@
 # Codex Status Panel Model Switch — Planning Doc
 
-**Status:** Approved for implementation
+**Status:** Implemented and accepted in release `1.2.118`; archived as reference for future provider work
 **Owner:** UI / Codex provider
 **Related SSOT:**
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
@@ -9,6 +9,20 @@
 - `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`
 - `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html`
 - открытый Codex CLI (исследовано в этой сессии): `codex-rs/core/src/{client.rs, session/handlers.rs, session/turn.rs, compact.rs, context/model_switch_instructions.rs}`, `codex-rs/protocol/src/openai_models.rs`
+
+## 0. Final outcome after release `1.2.118`
+
+План был реализован и принят пользователем после retest `1.2.118`.
+
+Итоговая важная поправка к исходной гипотезе: для `gpt-5.3-codex-spark` нельзя **опускать** `turn/start.summary`. Практический runtime-log показал, что Codex app-server при omitted field подставляет `summary = "detailed"`, и это снова приводит к native `400 unsupported_parameter` для `reasoning.summary`. Финальный контракт:
+
+- non-Spark Codex models получают explicit `summary = "detailed" | "none"` из shared settings snapshot;
+- Spark всегда получает explicit `summary = "none"`;
+- Spark никогда не должен получать `summary = "detailed"`;
+- provider-home `model_reasoning_summary` остается принудительно `none`, но это только compatibility guard, не live source of truth;
+- native rollout retest подтвердил три turn'а в одной сессии на разных моделях: `gpt-5.4-mini` -> `gpt-5.3-codex-spark` -> `gpt-5.5`, при этом Spark turn имел `summary = "none"`.
+
+Этот документ остается как архитектурный precedent для Claude/Gemini status-panel switch scopes. Перед переносом паттерна на Claude нужно читать его вместе с archived `doc/TODO/Archive/todo-plan-codex-status-panel-model-switch.md`, потому что именно todo фиксирует фактическую последовательность failed retest -> root cause -> final hotfix.
 
 ## 1. Problem
 
@@ -75,7 +89,7 @@ Per-model fields:
 
 Эти флаги — **self-contained per model**, никаких pairwise сравнений. Никаких `match model_slug` в payload builder'е.
 
-**Stream B заменяет существующий slug-based hardcode** в `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts:3` (`CODEX_MODELS_WITHOUT_REASONING_SUMMARY = new Set(["gpt-5.3-codex-spark"])`) на runtime capability registry lookup from Codex module. Существующий unit-test для `buildCodexReasoningSummaryParams` сохраняется и расширяется (assert через registry, не через hardcoded Set).
+**Stream B заменил существующий slug-based hardcode** в `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts:3` (`CODEX_MODELS_WITHOUT_REASONING_SUMMARY = new Set(["gpt-5.3-codex-spark"])`) на runtime capability registry lookup from Codex module. Финальный `buildCodexReasoningSummaryParams(...)` не возвращает empty object для Spark: он возвращает explicit `{ summary: "none" }`, потому что omission небезопасен.
 
 ### 6.2 Pure payload rebuild каждый turn (existing pattern, extending)
 
@@ -249,14 +263,14 @@ F3: `src/client/project-manager/components/sessions/use-project-manager-dialog-s
 ## 8. Test plan
 
 - **Unit (registry):** assert runtime helper `supportsReasoningSummary === false` для Spark, `=== true` для non-Spark; `reasoningEffortOptions` per model — non-empty array для non-Spark; UI mirror and runtime registry share the same current Codex model slug set.
-- **Unit (payload builder):** существующий test для `buildCodexReasoningSummaryParams` расширяется — assert через registry lookup, не через старый Set; Spark turn payload **не содержит** `summary` поля; non-Spark **содержит** его.
+- **Unit (payload builder):** существующий test для `buildCodexReasoningSummaryParams` расширяется — assert через registry lookup, не через старый Set; Spark turn payload содержит explicit `summary = "none"`; non-Spark содержит выбранную policy (`detailed` / `none`).
 - **Unit (Core handler):** `Session.modelBinding` mutates корректно; `pendingModelSwitchInjection` flips от false к true; broadcast `session:model:update` emitted **синхронно** до возврата handler'а; **adapter.sendMessage НЕ вызван**.
 - **Unit (provider-neutral seam):** shared switch target/result types are used by Codex handler; Claude/Gemini remain unsupported/no-op in this cycle and cannot accidentally route through Codex strategy.
 - **Integration (transport):** new `session:codex:model-switch` command routes correctly через `incoming-message-validator` → `remote-bridge-message-router` → handler.
 - **Component (UI):** click on model chip → picker open; selection → correct `session:codex:model-switch` payload dispatched; non-Codex session — chip click no-op / disabled.
 - **Settings independence assertion:** после `session:codex:model-switch` (без последующего turn'а) — следующий `dialog:send` собирает applied turn config с `modelId === target.modelId` и `reasoningEffort === target.reasoningEffort`, **БЕЗ** чтения Settings defaults. Этот тест критичен — он защищает от регрессии типа 1.2.114, где Settings перетирали binding.
 - **UI immediate update assertion:** UI получает `session:model:update` event с новым effective identity в **том же tick**, что и dispatch switch'а — без race с Settings save / reload.
-- **Native request capture (end-to-end):** switch from `gpt-5.2` to `gpt-5.3-codex-spark` с reasoning low → следующий turn → captured raw payload **не содержит** `summary` поле, **содержит** `<model_switch>` developer message в начале `input` array.
+- **Native request capture / provider rollout (end-to-end):** switch from `gpt-5.2` / `gpt-5.4-mini` to `gpt-5.3-codex-spark` → следующий turn → captured raw payload содержит explicit `summary = "none"` and `<model_switch>` developer message в начале `input` array.
 - **User retest:** обязательный stream Phase 3 (см. todo-plan). Без явного approval цикл не закрывается.
 
 ## 9. Risks
@@ -271,7 +285,7 @@ F3: `src/client/project-manager/components/sessions/use-project-manager-dialog-s
 ## 10. Definition of done
 
 1. Switch model на Codex session (`gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low) и следующий user message успешно processes без provider rejection.
-2. Native request capture показывает clean payload для Spark (no `reasoning.summary`) и `<model_switch>` developer message present.
+2. Native request capture / provider rollout показывает clean payload для Spark (`summary = "none"`, не `detailed`) и `<model_switch>` developer message present.
 3. Non-Codex session: model/reasoning chips no-op или disabled, UX не путает пользователя.
 4. Session continuity preserved — switch не создаёт новый thread, история сохраняется, `usage_limits` widget продолжает работать.
 5. SSOT обновлён: `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Session_UI/SessionStatusPanel.md`. SystemArchitecture invariant добавлен / расширен по результатам review.
