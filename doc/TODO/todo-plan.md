@@ -200,7 +200,7 @@
 1. [DONE] `./scripts/build-all.sh` поднял workspace/provider/core/UI/launcher версию до `1.2.116`, пересобрал tracked manifests и `media/react-chat.js`, скопировал 7 tarballs в `doc/tmp/releases/`. Scope: generated release metadata + bundle; commit message: `chore: build release 1.2.116`.
 2. [DONE] Git Commit: `chore: build release 1.2.116` (hash: cfa87b0eb)
 3. [DONE] `./scripts/build-release.sh --use-current-version` на чистом дереве. Артефакт: `codeai-hub-1.2.116.vsix`. Scope: VSIX packaging; commit message: `chore: finalize release 1.2.116`.
-4. [DONE] Git Commit: `chore: finalize release 1.2.116` (hash: pending current commit)
+4. [DONE] Git Commit: `chore: finalize release 1.2.116` (hash: 3c9b3c9e1)
 
 ## Phase 3 — User acceptance (owner: User retest, updated: 2026-04-30)
 
