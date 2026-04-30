@@ -58,7 +58,7 @@
 
 - `supportsReasoningSummary: boolean` — Spark = `false`; non-Spark = `true`.
 - `supportsVerbosity: boolean` — пока что `true` для всех Codex models (refine при первом провайдер-rejection).
-- `reasoningEffortOptions: readonly ReasoningEffort[]` — список разрешённых effort levels per model. Spark: TBD по результатам провайдер-experiment (open question 11.2); non-Spark: `["low", "medium", "high"]`.
+- `reasoningEffortOptions: readonly CodexReasoningLevel[]` — список разрешённых effort levels per model. Type `CodexReasoningLevel = "low" | "medium" | "high" | "xhigh"` уже определён в registry (line 148); default `"medium"` (line 184). **non-Spark Codex models: `["low", "medium", "high", "xhigh"]`** — `xhigh` входит в текущий контракт SystemArchitecture §3 Invariant 27 (effort whitelist в lockstep между Extension/Core/UI) и активно используется пользователем; **terminating его в этом цикле — регрессия**. Spark: TBD по результатам провайдер-experiment (open question 11.2; если Spark не принимает effort level вовсе — empty array, UI hide reasoning chip когда выбран Spark).
 - `contextWindow: number` — для будущего ModelDownshift.
 - `autoCompactTokenLimit: number` (optional) — для будущего ModelDownshift.
 
@@ -80,10 +80,22 @@
 
 Новый `session:codex:model-switch` — **отдельный путь**, config-only:
 1. Validate target (model в Codex registry, reasoning ∈ `reasoningEffortOptions`).
-2. Mutate `Session.modelBinding` через `SessionManager.setModelBinding` (`packages/core/src/session-manager/index.ts:225`) — provider stays `codexCli`, меняются model + reasoning.
+2. Mutate `Session.modelBinding` через `SessionManager.setModelBinding` (`packages/core/src/session-manager/index.ts:225`) — provider stays `codexCli`, меняются `model` **и** `reasoning`. Передаётся **полный** binding `(modelId, reasoning)` как одна атомарная операция.
 3. Set `Session.pendingModelSwitchInjection = true` (in-memory, см. §6.4).
 4. Broadcast `session:model:update` с новым effective identity (через существующий `session-request-handler-applied-turn-config.ts` contract).
 5. **STOP.** Никакого `adapter.sendMessage`, никакого resend. Следующий user-initiated `dialog:send` / `session:message` подхватит новый binding и triggernet `<model_switch>` injection.
+
+**Критично — расширение `SessionRequestHandlerAppliedTurnConfig` (предотвращение регрессии 1.2.114):**
+
+Существующее API `applied-turn-config.ts:28` принимает только `targetModelId?: string`, а reasoning подтягивается из `settings/defaults`. Это **ровно та регрессионная поверхность**, которая порвала binding в 1.2.114 — Settings перетирали выбранный пользователем reasoning при следующем outbound turn.
+
+**Stream D2 расширяет API** (этот файл уже в Context Pack):
+- Add `targetReasoningEffort?: CodexReasoningLevel` к параметру `resolveForProvider` / `resolveEffectiveModelId` / dispatch payload.
+- Когда live `Session.modelBinding.reasoning` существует — оно **первичный источник** для applied config (`source: "session_binding"`). Settings consultation происходит только если binding ещё не materialized (initial seed).
+- Resolver строит `modelBinding` из пары `(targetModelId, targetReasoning)` атомарно, не из Settings.
+- Существующий flag `source: "switch_request" | "settings_snapshot"` (line 115) расширяется новым literal `"session_binding"` для post-switch outbound turns.
+
+Это закрывает регрессионную поверхность: после switch'а live binding **никогда** не теряется в пользу Settings.
 
 **Полный список transport touchpoints (Stream D разбивается на 3 микро-задачи ≤3 файлов):**
 
@@ -100,24 +112,44 @@ D3 (client transport):
 - `src/client/project-manager/core-stream-message-types.ts` — outbound type def
 - `src/client/project-manager/api.ts` — `requestCodexModelSwitch(sessionId, targetModelId, targetReasoning)` method
 
-### 6.4 `pendingModelSwitchInjection` storage — explicit decision
+### 6.4 Switch persistence + `pendingModelSwitchInjection` storage — honest scope
 
-**Решение: in-memory only на Session объекте** в `SessionManager`. **НЕ persisted** в continuity chain или sidecar.
+**`Session.modelBinding`** (verified `packages/core/src/session-manager/index.ts:225-232` `setModelBinding`):
+- `setModelBinding` это **in-memory only** mutation: `session.modelBinding = modelBinding; session.updatedAt = ...`. **No filesystem write.**
+- Continuity persistence (`packages/core/src/session-continuity/continuity-tracker.ts:209,233,279`) пишет `modelBinding` в continuity segment **только** при tracked outbound user turn (на dispatch). До этого момента binding живёт **только** в `SessionManager.sessions` Map.
+- ⚠️ **Important consequence:** если user переключил модель и закрыл PM / Core до отправки следующего turn'а — **and** Core process actually restart'ит — **новый modelBinding теряется**. Restored session берёт modelBinding из последнего записанного continuity segment'а (т.е. provider, который был на момент последнего dispatch).
 
-Trade-off (явный, не скрыт):
+**`pendingModelSwitchInjection`** — in-memory only flag на Session объекте.
 
-- **PM webview reload (Core стабилен):** flag сохраняется, injection срабатывает корректно на следующий user turn.
-- **Core restart между switch'ом и user-turn'ом:** flag теряется. `Session.modelBinding` восстанавливается из continuity (она persisted), то есть **model всё равно переключён** на следующий turn, но `<model_switch>` developer message **не injected**. Capability gating обеспечивает payload validity. Единственная потеря — explicit explanatory hint для LLM (LLM видит slug change в payload + старая history с reasoning items, server принимает их).
+**Сводная таблица сценариев (явный trade-off, не скрыт):**
 
-Если по результатам user retest потребуется persistent injection — отдельный follow-up scope, расширяющий `ContinuityChainSnapshot`.
+- **PM webview reload, Core alive:** modelBinding ✓ pendingFlag ✓ — switch + injection работают как ожидается.
+- **Core restart ПОСЛЕ user-turn после switch'а:** modelBinding ✓ (записан в continuity на predыдущем dispatch), pendingFlag — N/A (уже сброшен на том dispatch).
+- **Core restart ДО user-turn'а после switch'а:** modelBinding ✗ (не записан), pendingFlag ✗ (in-memory). После рестарта user видит **старую** model identity; switch фактически потерян.
 
-### 6.5 `<model_switch>` developer message injection
+**Решение для этого цикла:** acceptable degradation. Window vulnerability мала на практике (switch и user-turn обычно следуют один за другим), Core restart между ними редок. Документация в Stream H явно фиксирует этот gap.
 
-На первый dispatch после `Session.pendingModelSwitchInjection === true`:
-- В `codex-app-server-facade.ts` (path `executeTurn` или upstream caller, который собирает `turn/start.input`) embed developer-style message в начало `input` массива. Точная форма embedding'а — open question 11.3 (Codex App Server JSON-RPC может потребовать specific role / type marker; вариант: extra item с `type: "text"` и meta-tag, или отдельный pre-turn `developer/message` если App Server поддерживает).
-- Контент по образцу Codex CLI `context/model_switch_instructions.rs:21-26`:
-  > "The user was previously using a different model. Please continue the conversation according to the following instructions: [base instructions новой модели]"
-- После successful dispatch — `Session.pendingModelSwitchInjection = false` (через `SessionManager`).
+**Если retest покажет, что gap критичен** — отдельный follow-up scope:
+- Вариант 1: новый persistence layer (sidecar `session-pending-switch.json` или extended continuity segment) для **switch без turn'а**.
+- Вариант 2: на switch'е сразу записывать "ghost segment" в continuity с new binding, без provider state.
+- Defer оба варианта до user feedback.
+
+### 6.5 `<model_switch>` developer message injection — bridge через turnOptions
+
+**Архитектурное ограничение (verified):** `CodexAppServerFacade.executeTurn(content, turnOptions?)` (`codex-app-server-facade.ts:206`) — facade **не имеет** прямого доступа к `SessionManager`. Existing pattern: Core читает state, кладёт его в `turnOptions` (через ключ типа `CODEX_APPLIED_TURN_CONFIG_KEY` — line 212-213), facade читает оттуда. Этот тот же mechanism, который уже используется для applied turn config.
+
+**Поэтому injection делается bridge'ом через `turnOptions`:**
+
+1. **Core dispatch path** (`session-request-handler-message-dispatch.ts` или upstream — `provider-send.ts`): перед вызовом `adapter.sendMessage`, читает `Session.pendingModelSwitchInjection`. Если `true`:
+   - Builds internal model-switch instruction object (e.g. `{ kind: "model_switch", baseInstructions: <new model's base instructions> }`).
+   - Кладёт его в `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]` (новый exported ключ из Codex App Server module).
+2. **Codex App Server facade** (`codex-app-server-facade.ts:206-228` `executeTurn`): читает `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]` (как уже читает applied config). Если present:
+   - Embed developer-style item в начало `turn/start.input` array (точная форма — open question 11.3; вариант: extra `type: "text"` item с meta-маркером, или separate developer notification если App Server поддерживает).
+   - Контент по образцу Codex CLI `context/model_switch_instructions.rs:21-26`:
+     > "The user was previously using a different model. Please continue the conversation according to the following instructions: [base instructions новой модели]"
+3. **Flag reset делает Core, НЕ facade.** После успешного `providerSend.dispatch(...)` Core вызывает `sessionManager.clearPendingModelSwitchInjection(sessionId)` (новый method). Facade остаётся stateless относительно session lifecycle — он только consumer'ит turnOptions.
+
+**Why not flag reset в facade:** facade не знает, действительно ли dispatch завершился успешно (HTTP error, abort, etc.). Если facade сбросит flag preemptively, а dispatch упадёт — следующий retry потеряет injection. Reset в Core после `providerSend.dispatch` resolved successfully — единственная корректная позиция.
 
 ### 6.6 UI behaviour
 
@@ -153,12 +185,15 @@ F3 (controller dispatch):
 ### D. Switch transport (3 микро-задачи)
 
 D1: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `incoming-message-validator.ts`, `remote-bridge-message-router.ts`
-D2: new `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts`, `src/types/session.ts` (pendingModelSwitchInjection field), `packages/core/src/session-manager/index.ts` (Session interface)
+D2: new `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts`, `src/types/session.ts` (pendingModelSwitchInjection field), `packages/core/src/session-manager/index.ts` (Session interface + new method `clearPendingModelSwitchInjection`)
 D3: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts` + handler unit-test
+D4 (applied config расширение): `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts` — добавить `targetReasoningEffort` параметр + source `"session_binding"` (предотвращает регрессию 1.2.114)
 
-### E. Injection
-- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (executeTurn / turn/start input building)
-- snapshot test of post-switch первого turn
+### E. Injection (bridge через turnOptions)
+- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (читает `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]`, embed item в начало `turn/start.input`)
+- exported ключ-константа: либо в `packages/Codex_AppServer_Module/src/types/index.ts`, либо в новом small file
+- `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` (или `session-request-handler-provider-send.ts`) — read flag, set turnOptions bridge entry, call dispatch, clear flag после success
+- snapshot test of post-switch первого turn (assert `<model_switch>` item в начале `input`)
 
 ### F. UI (3 микро-задачи)
 

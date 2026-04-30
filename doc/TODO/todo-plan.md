@@ -48,8 +48,7 @@
   ### G. Client-side anchors
   - `src/client/project-manager/api.ts` — client-side API layer (Stream F adds new method).
   - `src/client/ui/src/session/status-panel.tsx` — render двух кнопок (Stream F wiring).
-  - `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx` — picker card render (Stream F filter Codex-only options).
-  - `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts` — option state builder (Stream F derives `reasoningEffortOptions` per model).
+  - `src/client/ui/src/session/status-panel-model-picker.tsx` — **новый файл**, создаётся в Stream F1 (предыдущие `model-switcher/session-model-picker-card.tsx` + `session-model-switcher-facade.ts` физически отсутствуют после rollback). До его создания читать только при Stream F1 implementation.
   - `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` — dialog session controller (Stream F switch dispatch from UI to Core).
   - `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` — runtime session view (Stream F symmetric wiring).
   - `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` — dialog session view (Stream F symmetric wiring).
@@ -100,22 +99,37 @@
 1. [TODO] `packages/core/src/remote-bridge/session-stream-contracts.ts` (payload type + outbound update type), `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` (register `session:codex:model-switch` validator alongside existing `dialog:switch:*` / `session:*` entries на line 217-231), `packages/core/src/remote-bridge/remote-bridge-message-router.ts` (routing dispatch). Scope: 3 файла; commit message: `feat(core): register codex model switch transport`.
 2. [TODO] Git Commit: `feat(core): register codex model switch transport` (hash: TBD)
 
-#### D2 — Core handler + Session field
+#### D2 — Core handler + Session field + clearPending method
 
-1. [TODO] New file `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts` (отдельный handler, **не** reuse `handleSwitchRequest` который resends user message). Handler: validate target via `getCodexModelCapabilities` → call `sessionManager.setModelBinding(sessionId, newBinding)` → set `Session.pendingModelSwitchInjection = true` → broadcast `session:model:update` через existing applied-turn-config contract. **STOP — никакого `adapter.sendMessage`.** Add `pendingModelSwitchInjection?: boolean` field в `src/types/session.ts` (line 130 area) и `packages/core/src/session-manager/index.ts:26-32` Session interface — оба слоя in sync в одном коммите. Scope: 3 файла; commit message: `feat(core): add codex model switch handler with session pending injection field`.
+1. [TODO] New file `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts` (отдельный handler, **не** reuse `handleSwitchRequest` который resends user message). Handler: validate target via `getCodexModelCapabilities` → call `sessionManager.setModelBinding(sessionId, newBinding)` с **полным** binding `(modelId, reasoning)` → set `Session.pendingModelSwitchInjection = true` → broadcast `session:model:update` через existing applied-turn-config contract. **STOP — никакого `adapter.sendMessage`.** Add `pendingModelSwitchInjection?: boolean` field в `src/types/session.ts` (line 130 area) и `packages/core/src/session-manager/index.ts:26-32` Session interface (оба слоя in sync в одном коммите) + новый method `SessionManager.clearPendingModelSwitchInjection(sessionId)`. Scope: 3 файла; commit message: `feat(core): add codex model switch handler with session pending injection field`.
 2. [TODO] Git Commit: `feat(core): add codex model switch handler with session pending injection field` (hash: TBD)
-3. [TODO] Unit-тест handler: validates target, mutates binding via setModelBinding, flips pendingModelSwitchInjection, broadcasts session:model:update в том же tick, **adapter.sendMessage не вызван**. Scope: 1 файл; commit message: `test(core): cover codex model switch handler state mutation`.
+3. [TODO] Unit-тест handler: validates target, mutates binding via setModelBinding (full pair), flips pendingModelSwitchInjection, broadcasts session:model:update в том же tick, **adapter.sendMessage не вызван**. Scope: 1 файл; commit message: `test(core): cover codex model switch handler state mutation`.
 4. [TODO] Git Commit: `test(core): cover codex model switch handler state mutation` (hash: TBD)
 
 #### D3 — Client-side transport
 
-1. [TODO] `src/client/project-manager/core-stream-message-types.ts` (outbound type def matching server contract), `src/client/project-manager/api.ts` (`requestCodexModelSwitch(sessionId, targetModelId, targetReasoning)` method). Scope: 2 файла; commit message: `feat(pm): add codex model switch client api`.
+1. [TODO] `src/client/project-manager/core-stream-message-types.ts` (outbound type def matching server contract — payload carries `sessionId`, `targetModelId`, `targetReasoning`), `src/client/project-manager/api.ts` (`requestCodexModelSwitch(sessionId, targetModelId, targetReasoning)` method). Scope: 2 файла; commit message: `feat(pm): add codex model switch client api`.
 2. [TODO] Git Commit: `feat(pm): add codex model switch client api` (hash: TBD)
 
-### Stream E — `<model_switch>` developer message injection
+#### D4 — Applied turn config расширение (предотвращение регрессии 1.2.114)
 
-1. [TODO] В `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (executeTurn / `turn/start.input` building, line 225 area): при `Session.pendingModelSwitchInjection === true` embed `<model_switch>` developer message в начало `input` array (точная форма embedding — open question 11.3, экспериментировать через native capture); по образцу Codex CLI `context/model_switch_instructions.rs:21-26`. После successful dispatch — сбросить flag через SessionManager. Snapshot-test первого turn after switch (assert входной item содержит `<model_switch>` маркер). Если файл-size близок к лимиту — extract injection в helper file (рассматривается во время implementation). Scope: ≤3 файла; commit message: `feat(codex): inject model switch developer message on first turn after switch`.
-2. [TODO] Git Commit: `feat(codex): inject model switch developer message on first turn after switch` (hash: TBD)
+1. [TODO] В `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`:
+   - Add `targetReasoningEffort?: CodexReasoningLevel` (или общий `ReasoningEffort` type) к параметрам `resolveForProvider` / `resolveEffectiveModelId` / outbound dispatch.
+   - Когда live `Session.modelBinding.reasoning` существует — оно **первичный источник** для applied config.
+   - Resolver строит `modelBinding` из пары `(targetModelId, targetReasoning)` атомарно, **не из Settings**.
+   - Расширить `source` literal на `"session_binding"` (line 115 area) для post-switch outbound turns.
+   Закрывает регрессионную поверхность: после switch'а live binding **никогда** не теряется в пользу Settings.
+   Scope: 1 файл + расширение существующего unit-теста (всего ≤2 файла); commit message: `fix(core): pin reasoning effort to session binding in applied turn config`.
+2. [TODO] Git Commit: `fix(core): pin reasoning effort to session binding in applied turn config` (hash: TBD)
+
+### Stream E — `<model_switch>` developer message injection (bridge через turnOptions)
+
+**Архитектурное ограничение:** `CodexAppServerFacade.executeTurn(content, turnOptions?)` — facade не имеет прямого доступа к `SessionManager`. Existing pattern: Core кладёт state в `turnOptions`, facade читает (тот же mechanism, что для applied config через `CODEX_APPLIED_TURN_CONFIG_KEY`).
+
+1. [TODO] В Codex App Server module (`packages/Codex_AppServer_Module/src/types/index.ts` или new small file): экспортировать константу-ключ `CODEX_MODEL_SWITCH_INJECTION_KEY` + type для injection payload. В `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts:206-228` (`executeTurn`): читать `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]` (по образцу existing reading `CODEX_APPLIED_TURN_CONFIG_KEY`); если present — embed developer-style item в начало `turn/start.input` array (точная форма — open question 11.3). Snapshot-test первого turn after switch (assert входной item содержит `<model_switch>` маркер). Scope: ≤3 файла; commit message: `feat(codex): consume model switch injection from turn options`.
+2. [TODO] Git Commit: `feat(codex): consume model switch injection from turn options` (hash: TBD)
+3. [TODO] В Core dispatch path (`packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` или `session-request-handler-provider-send.ts`): перед `adapter.sendMessage` — если `Session.pendingModelSwitchInjection === true`, build injection object (с `baseInstructions` для new model), кладём в `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]`. **После успешного `dispatch`** — call `sessionManager.clearPendingModelSwitchInjection(sessionId)`. Reset делает Core, не facade — потому что facade не знает финального outcome dispatch'а (HTTP error / abort). Unit-тест: bridge entry попадает в turnOptions при флаге=true; flag clear только после resolved promise. Scope: ≤3 файла (dispatch + test + maybe types); commit message: `feat(core): bridge pending model switch injection through turn options`.
+4. [TODO] Git Commit: `feat(core): bridge pending model switch injection through turn options` (hash: TBD)
 
 ### Stream F — Status panel UI (3 микро-задачи)
 
