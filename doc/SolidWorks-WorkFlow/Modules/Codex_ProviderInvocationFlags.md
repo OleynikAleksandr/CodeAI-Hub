@@ -46,7 +46,7 @@ Runtime facts:
 - `CODEX_HOME` is set to `~/.codeai-hub/providers/codex/home` by default.
 - If `process.env.CODEX_HOME` is already set before provider startup, that value is used as the provider home.
 - Missing `auth.json` and `config.toml` are copy-migrated from legacy `~/.codex/` into provider home.
-- Before spawning App Server, CodeAI Hub normalizes provider-home `config.toml`: removes legacy `default_reasoning_summary` and writes `model_reasoning_summary = "auto" | "none"` from shared Codex reasoning settings.
+- Before spawning App Server, CodeAI Hub normalizes provider-home `config.toml`: removes legacy `default_reasoning_summary` and writes neutral `model_reasoning_summary = "none"` regardless of the shared Codex reasoning setting. Per-turn `summary` is the only live reasoning-summary control for models that support it.
 - `PATH` is inherited and augmented with common user-level install locations:
   - POSIX: `~/.npm-global/bin`, `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`
   - Windows: `%APPDATA%\npm`
@@ -167,7 +167,7 @@ Behavioral meaning:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
 - The live summary toggle read is cached inside the Codex App Server facade by normalized settings path with a `500ms` TTL. Settings changes can therefore affect the next non-Spark turn immediately after cache expiry, while avoiding one synchronous `settings.json` read per turn-start call under rapid sends.
-- `summary` is gated by `getCodexModelCapabilities(modelId).supportsReasoningSummary`; `gpt-5.3-codex-spark` has `supportsReasoningSummary=false`, so the field is omitted entirely, not sent as `none`. Its readable reasoning summaries are controlled by provider-home `model_reasoning_summary = "auto" | "none"` instead.
+- `summary` is gated by `getCodexModelCapabilities(modelId).supportsReasoningSummary`; `gpt-5.3-codex-spark` has `supportsReasoningSummary=false`, so the field is omitted entirely, not sent as `none`. Provider-home is also forced to `model_reasoning_summary = "none"` so Spark cannot inherit a process-global native `reasoning.summary` fallback.
 - `outputSchema` is passed through only when the workflow/core turn supplied one.
 - `approvalPolicy`, `sandbox`, `baseInstructions`, and `config.project_doc_max_bytes` are not turn-level fields; they belong to thread startup/resume.
 
@@ -241,14 +241,14 @@ That file is intentionally kept as raw prompt text so it can be compared byte-fo
 Provider-home `config.toml` carries restart-safe compatibility state:
 
 - `model = "<selected Codex default model>"`
-- `model_reasoning_summary = "auto" | "none"`
+- `model_reasoning_summary = "none"`
 
 Two paths keep this state current:
 
-- Extension-side settings save sync writes `model` and `model_reasoning_summary`.
-- Runtime App Server startup materializes `model_reasoning_summary` again from shared settings immediately before `codex app-server` starts.
+- Extension-side settings save sync writes `model` and neutral `model_reasoning_summary`.
+- Runtime App Server startup materializes neutral `model_reasoning_summary` immediately before `codex app-server` starts.
 
-For non-Spark models, this persisted provider-home state is not the only live runtime source of truth: normal `turn/start.summary` is still sent explicitly from the shared settings snapshot as `detailed` or `none`. For `gpt-5.3-codex-spark`, the explicit turn field is omitted and provider-home `model_reasoning_summary` is the readable-summary control.
+For non-Spark models, normal `turn/start.summary` is sent explicitly from the shared settings snapshot as `detailed` or `none`; provider-home remains neutral and must not be used as the live visibility source. For `gpt-5.3-codex-spark`, the explicit turn field is omitted and provider-home also stays `none`, so the native request contains no CodeAI Hub-owned `reasoning.summary`.
 
 ## Translation App Server Runtime
 
