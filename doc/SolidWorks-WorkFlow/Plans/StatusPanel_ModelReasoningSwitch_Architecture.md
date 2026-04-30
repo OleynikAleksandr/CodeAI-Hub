@@ -1,6 +1,6 @@
 # Status Panel Model/Reasoning Switch - Architecture
 
-**Status:** Completed and archived after release `1.2.112`
+**Status:** Active again after failed user retest of release `1.2.112`
 **Date:** 2026-04-29
 **Branch:** `codex/status-panel-model-switcher`
 **Owner:** Oleksandr + Codex
@@ -193,13 +193,19 @@ Implemented in the active `v1.2.112` cycle:
 - Runtime and reopened-dialog SessionView wiring through the same hook.
 - Canonical docs updated in `SystemArchitecture.md`, `EffectiveModelIdentity_And_Settings_SSOT.md`, and `SessionStatusPanel.md`.
 
-Closed in this cycle:
+Completed before user retest:
 
 - consolidated targeted verification commit;
 - release docs preparation;
 - `build-all.sh`;
 - `build-release.sh --use-current-version`;
-- final archive of this planning-doc and todo-plan.
+- release `1.2.112` packaging.
+
+Reopened on 2026-04-30:
+
+- User retest reported that release `1.2.112` does not behave as planned.
+- The planning-doc and todo-plan must stay active until the failing behavior is reproduced, fixed, rebuilt, and accepted by user feedback.
+- Do not archive this scope or mark `Session035` as completed again before user acceptance of the corrected release.
 
 ---
 
