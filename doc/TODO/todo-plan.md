@@ -232,11 +232,11 @@
 3. [DONE] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Scope: generated release files; commit message: `chore: build release 1.2.117`.
 4. [DONE] Git Commit: `chore: build release 1.2.117` (hash: 8fec5553d)
 5. [DONE] Run `./scripts/build-release.sh --use-current-version`; produced `codeai-hub-1.2.117.vsix`; release gates passed: architecture, typecheck, compile, SDK exclusions, artefact validation, markdown links, duplication check, VSIX surface verification. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.117`.
-6. [IN_PROGRESS] Git Commit: `chore: finalize release 1.2.117` (hash: TBD)
+6. [DONE] Git Commit: `chore: finalize release 1.2.117` (hash: 9b43789c2)
 
 ### Stream O — User verification retry
 
-1. [TODO] Передать VSIX `codeai-hub-1.2.117.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
+1. [IN_PROGRESS] Передать VSIX `codeai-hub-1.2.117.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
 2. [TODO] User must retest `gpt-5.2` → `gpt-5.3-codex-spark` next-turn switch and confirm no `reasoning.summary` error.
 
 ### Stream L — Closeout (только после user OK)
