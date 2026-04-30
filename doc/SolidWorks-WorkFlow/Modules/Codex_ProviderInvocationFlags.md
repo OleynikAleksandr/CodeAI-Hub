@@ -1,7 +1,7 @@
 # Codex Provider Invocation Flags - Module SSOT
 
 **Status:** implemented SSOT  
-**Last verified:** 2026-04-28, release `1.2.98`
+**Last verified:** 2026-04-30, release `1.2.115`
 **Owner module:** `packages/Codex_AppServer_Module/`
 
 This document records the actual CodeAI Hub Codex invocation surface that shapes model behavior for all current Codex models. It is a runtime contract, not a proposal.
@@ -12,6 +12,7 @@ This document records the actual CodeAI Hub Codex invocation surface that shapes
 - `packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-config.ts` - runtime provider-home `config.toml` summary materialization before App Server startup.
 - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` - normal `thread/start`, `thread/resume`, `turn/start`, `turn/interrupt`, reasoning-summary policy.
 - `packages/Codex_AppServer_Module/src/app-server/codex-workflow-instruction-profile.ts` - CodeAI Hub-owned early-architecture `baseInstructions` and thread config.
+- `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts` - runtime capability registry for Codex models, including `supportsReasoningSummary` and reasoning effort options.
 - `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.ts` and `src/translation/codex-translation-prompt-profile.ts` - provider-owned Codex App Server translation runtime and prompt profile.
 - `packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts` - isolated native request capture path and parity with normal runtime payloads.
 - `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts` - native request capture translation sample and app-server translation thread/turn payload builders.
@@ -139,6 +140,11 @@ Every user turn is sent with:
     "input": [
       {
         "type": "text",
+        "text": "<optional <model_switch> instructions; first turn after switch only>",
+        "text_elements": []
+      },
+      {
+        "type": "text",
         "text": "<workflow/user prompt>",
         "text_elements": []
       }
@@ -156,11 +162,12 @@ Behavioral meaning:
 
 - `model` is the base model id, not the UI effective label. Example: `gpt-5.2`, not `gpt-5.2 reasoning:medium`.
 - `effort` is the applied Codex reasoning effort: `low`, `medium`, `high`, `xhigh`, or `null`.
+- `input` normally contains one user/workflow text item. On the first successful turn after `session:codex:model-switch`, Core passes `CODEX_MODEL_SWITCH_INJECTION_KEY` and the Codex facade prepends a `<model_switch>` text item before the user prompt. The marker follows Codex CLI's same-thread switch pattern and tells the new model to continue under the new instruction profile.
 - `summary` is live-resolved from shared settings for models that support provider-native reasoning summaries:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
 - The live summary toggle read is cached inside the Codex App Server facade by normalized settings path with a `500ms` TTL. Settings changes can therefore affect the next non-Spark turn immediately after cache expiry, while avoiding one synchronous `settings.json` read per turn-start call under rapid sends.
-- `gpt-5.3-codex-spark` rejects explicit turn-level `reasoning.summary`; for this model the `summary` field is omitted entirely, not sent as `none`. Its readable reasoning summaries are controlled by provider-home `model_reasoning_summary = "auto" | "none"` instead.
+- `summary` is gated by `getCodexModelCapabilities(modelId).supportsReasoningSummary`; `gpt-5.3-codex-spark` has `supportsReasoningSummary=false`, so the field is omitted entirely, not sent as `none`. Its readable reasoning summaries are controlled by provider-home `model_reasoning_summary = "auto" | "none"` instead.
 - `outputSchema` is passed through only when the workflow/core turn supplied one.
 - `approvalPolicy`, `sandbox`, `baseInstructions`, and `config.project_doc_max_bytes` are not turn-level fields; they belong to thread startup/resume.
 
@@ -168,12 +175,14 @@ Behavioral meaning:
 
 Current supported Codex model ids:
 
-- `gpt-5.2`
-- `gpt-5.3-codex-spark`
-- `gpt-5.3-codex`
-- `gpt-5.4-mini`
-- `gpt-5.4`
-- `gpt-5.5`
+| Model id | Supports turn-level `summary` | Reasoning efforts |
+| --- | --- | --- |
+| `gpt-5.2` | yes | `low`, `medium`, `high`, `xhigh` |
+| `gpt-5.3-codex-spark` | no | `low`, `medium`, `high`, `xhigh` |
+| `gpt-5.3-codex` | yes | `low`, `medium`, `high`, `xhigh` |
+| `gpt-5.4-mini` | yes | `low`, `medium`, `high`, `xhigh` |
+| `gpt-5.4` | yes | `low`, `medium`, `high`, `xhigh` |
+| `gpt-5.5` | yes | `low`, `medium`, `high`, `xhigh` |
 
 Default resolution order:
 
@@ -195,6 +204,21 @@ Effective model identity shown in Core/UI is derived as:
 ```
 
 The provider call still receives the base model id and `effort` as separate fields.
+
+## Status Panel Model Switch Runtime
+
+`session:codex:model-switch` is the Status Panel chip command for Codex sessions. It is not the older `dialog:switch:*` resend path.
+
+Runtime sequence:
+
+1. Core validates target model and reasoning effort against the Codex runtime capability registry.
+2. Core updates live `Session.modelBinding` and broadcasts `session:model:update` in the same command turn.
+3. Core sets `pendingModelSwitchInjection = true`.
+4. The next `session:message` or `dialog:send` attaches applied config from live binding with `source = "session_binding"` and injects `CODEX_MODEL_SWITCH_INJECTION_KEY` into `turnOptions`.
+5. Codex facade prepends `<model_switch>` to `turn/start.input`, rebuilds the rest of the payload from current model capabilities, and omits `summary` when the selected model does not support it.
+6. Core clears `pendingModelSwitchInjection` only after provider send resolves successfully.
+
+If dialog continuity has an older stored `modelBinding`, it must not overwrite a newer live switch binding when resuming an already registered runtime session.
 
 ## Progress-Update Behavior
 
@@ -294,5 +318,6 @@ The diagnostic path records app-server `thread/start` and `turn/start` request/r
 
 - If `CODEAI_CODEX_APP_SERVER_ARGS` changes, update this document and `Modules/Codex.md`.
 - If `thread/start`, `thread/resume`, or `turn/start` params change, update this document in the same commit as the code.
+- If Codex model capability metadata changes, update `codex-model-capabilities.ts`, the UI mirror registry, and this table in the same execution cycle.
 - If the shared prompt changes, keep `Codex_My_System_Prompt.md` byte-for-byte synchronized with `CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`.
 - Do not describe provider-owned SDK transport logs as runtime evidence; they are intentionally removed from the Codex runtime path.

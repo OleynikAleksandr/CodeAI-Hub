@@ -1,15 +1,15 @@
 # Session Status Panel — Factual Module Inventory
 
 **Surface:** нижняя статусная строка  
-**Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
+**Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/status-panel-model-picker.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`
 **Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}`, `.session-status__debug-strip`.
 
 ## Роль
 
 Показывает live state одной logical session в виде четырёх-chip ряда:
 1. label `Модель:`;
-2. имя выбранной модели (provider-tinted button shape, click handler пока не подключён);
-3. опциональный `(reasoning)` (тот же button shape; скрывается при отсутствующем `model.reasoning`);
+2. имя выбранной модели (provider-tinted button shape; для Codex открывает picker модели);
+3. опциональный `(reasoning)` (тот же button shape; для Codex открывает picker reasoning; скрывается при отсутствующем `model.reasoning`);
 4. правая `Токены:` плашка с `used (remaining%)` и свободным правым краем под будущие per-session signals.
 
 Панель возвращает `null`, если Core не `ready` или в `status.models` нет хотя бы одного элемента; legacy single-line fallback и `Core Supervisor: starting…` сняты с оборота на этом surface.
@@ -20,6 +20,8 @@
 - `connectionDetail` (зарезервирован для совместимости caller'а; в текущей разметке не используется)
 - `status`
 - `tokenDebugSummary` — опционально, рендерится отдельным muted strip ниже chip-ряда.
+- `onSelectModel(sessionId, modelId, reasoningEffort)` — optional callback; активный runtime/PM слой dispatch'ит его только для Codex sessions.
+- `onSelectReasoning(sessionId, reasoningEffort)` — optional callback; reasoning-only selection resolves current base model before dispatch.
 
 ## Откуда берет правду
 
@@ -54,16 +56,20 @@
 - при старте PM/workspace hydrate;
 - при restart/reconnect Core;
 - при change настроек модели/reasoning только для snapshots без `binding`/`runtime` ownership;
+- при пользовательском выборе Codex model/reasoning через chips: Core отдаёт `session:model:update` сразу после `session:codex:model-switch`, а следующий turn подтверждает binding через runtime path;
 - при `session:model:update`;
 - при новых token usage/history данных.
 
 ## Что отдает наружу
 
-Ничего. Это read-only projection panel.
+- Для Codex sessions вызывает `onSelectModel` / `onSelectReasoning`, если callback прокинут caller'ом.
+- Для non-Codex sessions selection no-op: chips остаются визуальной частью status row, но не dispatch'ят provider command в этом scope.
 
 ## Локальный state
 
-Отсутствует.
+- `openPicker: "model" | "reasoning" | null` внутри `status-panel.tsx`.
+- picker закрывается после выбора или close action.
+- Model picker использует тот же floating card component, что reasoning picker; левый край model card выравнивается по левому краю reasoning card anchor, чтобы карточка не выходила за visible session zone.
 
 ## Особенности
 
@@ -73,7 +79,10 @@
 - continuation session, созданная после `Remaining context threshold (%)`, должна показывать inherited binding предыдущей logical session, даже если Settings default у provider уже изменён.
 - для `Virtual Simulation` / `Diagram Modules`, стартующих с confirmation card, нижняя панель не должна сохранять provider/model summary предыдущего trunk step: выбранный на карточке provider seed-ит bootstrap snapshot сразу, а затем live runtime model update уточняет effective model без возврата к старому provider context.
 - 4-chip layout инвариант: chips 1–3 (`flex: 0 0 auto`) hug свой текст, правая `--limits` плашка (`flex: 1 1 0; min-width: 0`) поглощает весь оставшийся горизонт; внешняя ширина ряда фиксирована родителем (`width: 100%`). При смене модели (например Sonnet → Opus 4.7) reflow происходит только внутри ряда — токен-плашка автоматически меняет ширину, остальной layout остаётся стабильным.
-- buttons (chips 2 и 3) в этом релизе остаются чисто визуальными: `<button type="button">` без `onClick`. Click-handlers (выбор модели / reasoning) — отдельный будущий scope.
+- buttons (chips 2 и 3) интерактивны для Codex sessions. Runtime и dialog PM views прокидывают callbacks симметрично; оба пути вызывают `api.requestCodexModelSwitch(...)`.
+- для non-Codex sessions callbacks guard'ятся до dispatch: Claude/Gemini strategy seam пока отсутствует, поэтому selection is no-op.
+- model picker показывает текущий Codex registry order; reasoning picker показывает `reasoningEffortOptions` выбранной/current Codex модели.
+- при выборе новой модели reasoning сохраняется, если он поддержан target model; иначе выбирается первый effort из `reasoningEffortOptions`.
 - reasoning chip скрывается, когда `model.reasoning` — `undefined` или пустая строка. Для Claude `thinking off` уже приходит как непустая строка `"thinking off"` и попадает в плашку как `(thinking off)`; в будущем эта же строка станет одним из выборов в click-driven dropdown.
 - localization: ключ `session.status.model_label` лежит в approved dict `assets/localization/source/en/messages_for_the_user.json` и legacy mirror `system_feedback.json`; `session.status.tokens_label` переиспользуется без изменений.
 - цветовой контракт правой `Токены:` плашки: метрика `used (remaining%)` рендерится тем же нейтральным серым `#b0b0b0`, что и default-фаза кнопок имени модели и reasoning (`color` для `.session-status-chip--limits .session-status-chip__value` в `media/session-view.css`). Цифры не должны притягивать визуальное внимание к себе сильнее, чем имя модели.

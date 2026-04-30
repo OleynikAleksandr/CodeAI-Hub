@@ -9,6 +9,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Internal transport façade: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
 - Internal notification normalization: `packages/Codex_AppServer_Module/src/app-server/codex-app-server-event-router.ts`
 - Long-lived process bridge: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts`
+- Runtime model capability registry: `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts`
 - Provider-owned GPT translation path: `packages/Codex_AppServer_Module/src/translation/codex-app-server-translation-service.ts`
 - Translation native-capture profile: `packages/Codex_AppServer_Module/src/diagnostics/codex-native-translation-capture-profile.ts`
 - Current App Server startup/thread/turn invocation flags are canonical in `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`.
@@ -21,6 +22,19 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Core работает через `ProviderAdapter` / `CodexModuleOptions` seam и provider-loader path (`CODEX_MODULE_PATH`, bundled provider slot `providers/codex/latest`).
 - `modelId` в Core/UI contract — полная effective model identity; applied turn config приходит из shared settings/Core resolver, а не из локального source-of-truth внутри провайдера.
 - User-facing Codex model order in Settings is numeric/provider-family ascending: `gpt-5.2`, `gpt-5.3-codex-spark`, `gpt-5.3-codex`, `gpt-5.4-mini`, `gpt-5.4`, `gpt-5.5`. The default remains `gpt-5.3-codex`.
+- Codex in-session model/reasoning switch uses `session:codex:model-switch`; it is config-only and does not resend the last user message.
+- The legacy `dialog:switch:*` / `handleSwitchRequest` path remains the manual retry/switch flow that can resend content. It is not the Status Panel chip path.
+
+## In-session model switch
+
+- Scope is Codex-only for this release. Claude/Gemini Status Panel chips remain visually present but their selection callbacks no-op until provider-native strategies are verified by capture.
+- Switch target validation is capability-driven through `getCodexModelCapabilities(modelId)`: target model must be known and target reasoning effort must be in that model's `reasoningEffortOptions`.
+- Core mutates the live `Session.modelBinding` atomically as `(baseModelId, effective modelId, reasoningEffort, source="switch_request")`, sets `pendingModelSwitchInjection = true`, and broadcasts `session:model:update` immediately.
+- Next outbound `session:message` or `dialog:send` attaches applied turn config from live session binding with `source="session_binding"`. Settings defaults are not consulted while the binding belongs to the session/provider.
+- On the first successful turn after switch, Core passes `CODEX_MODEL_SWITCH_INJECTION_KEY` through `turnOptions`; the Codex facade prepends a `<model_switch>` text item to `turn/start.input` and Core clears the pending flag only after provider send resolves.
+- If provider send fails, the pending injection flag is retained for retry.
+- Dialog resume must not overwrite a newer live switch with an older continuity `modelBinding`; continuity hydration is applied to an existing runtime session only when the continuity binding timestamp is newer than the live binding.
+- Persistence boundary: a switch made before the next outbound turn is in-memory only. PM/webview reload while Core is alive preserves it; a Core restart before the next user turn loses the unpersisted switch and the restored session falls back to the last continuity segment.
 
 ## Provider-home (канон)
 - `CODEX_HOME=~/.codeai-hub/providers/codex/home`
@@ -43,7 +57,7 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Normal `thread/start` теперь является CodeAI Hub-owned instruction profile boundary: запрос получает `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT` и `config.project_doc_max_bytes = 0` из `src/app-server/codex-workflow-instruction-profile.ts`. Это заменяет provider/model default base prompt узким early-architecture profile и отключает project `AGENTS.md` discovery для новых runtime threads; workflow step template по-прежнему остается в `turn/start.input[0].text`.
 - Translation `thread/start` является отдельной profile boundary: запрос получает translation-only `baseInstructions`, не получает workflow step/user project instructions, не включает project-doc discovery, and sends only the strict translation prompt assembled by `codex-translation-prompt-profile`.
 - Progress-update wording in this instruction profile must ask Codex for ordinary user-visible assistant chat messages, not hidden commentary/reasoning/tool-adjacent notes. The `1.2.85` prompt tuning fixed the visibility class; the `1.2.86` cadence tuning additionally requires a visible update about every 30 seconds or, when elapsed time is hard to estimate, after 3-5 substantial tool/file-reading/internal-analysis cycles without a visible update. The `1.2.95` guard makes those progress updates explicitly non-terminal: after one is sent, Codex must continue the same turn until the promised work or requested artifact is complete instead of treating the update as the final answer.
-- Turn execution идёт через `turn/start` с `input[{ type: "text", text, text_elements: [] }]`, `model`, `effort`, optional `outputSchema` и turn-level `summary = "detailed" | "none"`, который читается из shared settings snapshot через provider-local path-scoped TTL cache (`500ms`, keyed by resolved settings path; not a second long-lived settings owner); `detailed` является live-capable baseline для reasoning stream, а `none` сохраняет user toggle `Reasoning in dialog`. For `gpt-5.3-codex-spark`, `summary` is omitted entirely because that model rejects provider-native `reasoning.summary`; the Spark readable-summary path depends on provider-home `model_reasoning_summary`.
+- Turn execution идёт через `turn/start` с `input`, `model`, `effort`, optional `outputSchema` и capability-gated turn-level `summary = "detailed" | "none"`. Normal user turns have one text input; the first turn after Status Panel switch has an additional first text item containing `<model_switch>` and the new model instruction profile, followed by the actual user prompt. `summary` читается из shared settings snapshot через provider-local path-scoped TTL cache (`500ms`, keyed by resolved settings path; not a second long-lived settings owner); `detailed` является live-capable baseline для reasoning stream, а `none` сохраняет user toggle `Reasoning in dialog`. For `gpt-5.3-codex-spark`, `summary` is omitted entirely because the capability registry marks `supportsReasoningSummary=false`; the Spark readable-summary path depends on provider-home `model_reasoning_summary`.
 - Stop/cancel path идёт через `turn/interrupt(threadId, turnId)`; если последняя logical session закрыта, CodeAI Hub останавливает сам `codex app-server` process.
 - Process layer no longer has a Codex SDK transport logger. Starting with release `1.2.94`, the app-server hot path has no `codex-app-server-session-logger.ts` shim, creates no `~/.codeai-hub/logs/codex/*` files, and performs no SDK-log serialization before `child.stdin.write(...)` or notification fan-out. Runtime behavior must come from the live app-server JSON-RPC stream, not from SDK transport logs.
 - Usage limits читаются через `account/rateLimits/read` и live notifications `account/rateLimits/updated`; token usage приходит через `thread/tokenUsage/updated`.
@@ -84,6 +98,8 @@ Codex provider module для Core: long-lived app-server transport, threaded con
 - Lifecycle обязателен: `turn_started` → `turn_completed | turn_failed`.
 - Internal transport notifications не должны напрямую протекать в UI; только нормализованный provider event surface является user-facing contract.
 - Codex больше не имеет права держать второй локальный source-of-truth для next-turn model/reasoning identity поверх Core-applied config.
+- Codex request payload shaping is capability-gated per model, not slug-branch-gated at call sites. Spark must never receive explicit turn-level `summary`.
+- In-session switch is same-thread/same-provider-session. It changes live binding and next-turn payload; it does not create a new provider thread and does not replay the previous user message.
 - `turn/interrupt` — единственный корректный Stop path для active turn; legacy kill-path через `codex exec` subprocess больше не является каноническим runtime contract.
 - Released Codex runtime обязан оставаться self-contained: installed provider bundle должен содержать всё, что нужно Core, включая `@codeai-hub/translation` и app-server module payload.
 - Release packaging собирает `packages/Codex_AppServer_Module` в artifact `codex-module-<version>.tar.bz2`; artifact name — стабильный installer contract и не меняется.

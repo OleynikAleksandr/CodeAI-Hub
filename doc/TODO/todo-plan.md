@@ -179,14 +179,14 @@
    Scope: 3 файла; commit message: `test(core): cover dialog send model switch continuity`.
 2. [DONE] Git Commit: `test(core): cover dialog send model switch continuity` (hash: cef1c5171)
 3. [DONE] Добавить Codex raw payload regression test: switch `gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → send turn → captured `turn/start` payload не содержит `summary` field, содержит `<model_switch>` в input array. Scope: ≤2 файла; commit message: `test(codex): cover spark model switch raw payload`.
-4. [DONE] Git Commit: `test(codex): cover spark model switch raw payload` (hash: pending current commit)
+4. [DONE] Git Commit: `test(codex): cover spark model switch raw payload` (hash: b978656bb)
 
 ### Stream H — SSOT docs sync
 
-1. [TODO] Обновить `Modules/Codex.md` (capability registry + switch behaviour + clarification что existing `handleSwitchRequest` остаётся для cross-session manual flow, а новый `session:codex:model-switch` — для in-session config switch), `Modules/Codex_ProviderInvocationFlags.md` (per-model flags table + capability gating через registry), `Modules/Session_UI/SessionStatusPanel.md` (switch UI semantic + non-Codex guard + provider-neutral seam note: Claude/Gemini disabled/no-op until their provider-native strategies are verified). Scope: 3 файла; commit message: `docs(ssot): document codex model switch architecture`.
-2. [TODO] Git Commit: `docs(ssot): document codex model switch architecture` (hash: TBD)
-3. [TODO] Если по результатам review требуется new SystemArchitecture invariant для capability-gated payload contract — добавить. Scope: 1 файл; commit message: `docs(ssot): add system invariant for codex capability-gated payload`.
-4. [TODO] Git Commit: `docs(ssot): add system invariant for codex capability-gated payload` (hash: TBD, may be skipped)
+1. [DONE] Обновить `Modules/Codex.md` (capability registry + switch behaviour + clarification что existing `handleSwitchRequest` остаётся для cross-session manual flow, а новый `session:codex:model-switch` — для in-session config switch), `Modules/Codex_ProviderInvocationFlags.md` (per-model flags table + capability gating через registry), `Modules/Session_UI/SessionStatusPanel.md` (switch UI semantic + non-Codex guard + provider-neutral seam note: Claude/Gemini disabled/no-op until their provider-native strategies are verified). Scope: 3 файла; commit message: `docs(ssot): document codex model switch architecture`.
+2. [DONE] Git Commit: `docs(ssot): document codex model switch architecture` (hash: pending current commit)
+3. [DONE] Skipped: отдельный new SystemArchitecture invariant не требуется; существующие инварианты §3.14/§3.23/§3.27/§3.35 уже покрывают effective model identity, reasoning visibility, effort whitelist и invocation profile boundary. Scope: 0 файлов; commit message: N/A.
+4. [DONE] Git Commit: N/A (hash: N/A, skipped)
 
 ## Phase 2 — Release 1.2.111 (owner: Build, updated: 2026-04-30)
 
