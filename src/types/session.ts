@@ -128,6 +128,7 @@ export interface SessionRecord {
   readonly id: string;
   readonly initiativeSlug?: string | null;
   readonly modelBinding?: SessionModelBindingInfo | null;
+  readonly pendingModelSwitchInjection?: boolean;
   readonly providerIds: readonly ProviderStackId[];
   readonly runSlug?: string | null;
   readonly sessionKind?: SessionKind | null;

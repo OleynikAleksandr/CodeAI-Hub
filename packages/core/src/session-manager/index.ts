@@ -24,6 +24,7 @@ export interface Session {
   readonly initiativeSlug: string | null;
   messages: SessionMessage[];
   modelBinding?: SessionModelBinding;
+  pendingModelSwitchInjection?: boolean;
   readonly providerId: string;
   providerSessionId?: string;
   providerSessionStatus: "pending" | "ready" | "failed";
@@ -228,6 +229,15 @@ export class SessionManager {
       return;
     }
     session.modelBinding = modelBinding;
+    session.updatedAt = new Date().toISOString();
+  }
+
+  clearPendingModelSwitchInjection(sessionId: string): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return;
+    }
+    session.pendingModelSwitchInjection = false;
     session.updatedAt = new Date().toISOString();
   }
 
