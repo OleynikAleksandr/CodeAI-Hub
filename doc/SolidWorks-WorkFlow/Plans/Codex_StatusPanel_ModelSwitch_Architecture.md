@@ -1,6 +1,6 @@
 # Codex Status Panel Model Switch — Planning Doc
 
-**Status:** Draft (awaiting user approval)
+**Status:** Approved for implementation
 **Owner:** UI / Codex provider
 **Related SSOT:**
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
@@ -41,11 +41,12 @@
 3. Per-model capability flags на Codex side — payload builder gate'ит `reasoning.summary` / `summary` / `verbosity` etc. Никакого in-place transform старого payload — pure rebuild каждый turn.
 4. `<model_switch>` developer message injected once на первый turn после switch.
 5. Native request capture тест подтверждает чистый payload для Spark после switch'а.
+6. Add a **minimal provider-neutral Core switch seam** reused by future Claude/Gemini work: normalized switch target shape, binding mutation/broadcast helpers, `session_binding` applied-config path, pending-injection bridge shape. Codex is the only active strategy in this cycle; Claude/Gemini remain disabled/no-op at the UI surface.
 
 ## 5. Non-goals
 
 - Cross-provider switch (Codex → Claude → Gemini) — отдельный future scope, требует history sanitization design.
-- Claude / Gemini in-provider switch — следующие циклы, по образцу этого.
+- Claude / Gemini in-provider switch — следующие циклы. В этом цикле допускается только provider-neutral seam/stub wiring, без provider-native payload behavior for Claude/Gemini.
 - Context-window rollover redesign / unification with switch — остаётся как отдельный механизм.
 - Deterministic handoff packet (из `DocumentationTree_ProfileBoundary_ModelProviderSwitch_Planning.md`) — out of scope для этого цикла; планинг тот теперь **переосмысливается** в свете Codex CLI findings и не является execution input'ом для текущего цикла.
 - ModelDownshift pre-emptive compaction — defer, реализуем follow-up'ом после verification основного path'а.
@@ -54,7 +55,17 @@
 
 ### 6.1 Capability flags на Codex models
 
-Расширяем `src/types/codex-model-registry.ts` (или эквивалент) per-model:
+Capability registry имеет **два слоя**, потому что package-level TypeScript projects (`packages/core`, `packages/Codex_AppServer_Module`) не должны импортировать root UI file `src/types/codex-model-registry.ts` напрямую (`rootDir: "src"` / package `include: ["src/**/*"]` сделает такой импорт compile-risk).
+
+Runtime/provider source of truth:
+- new `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts` (или equivalent inside module `src/types/`) — exports `getCodexModelCapabilities(modelId)` и typed capability descriptors.
+- `packages/Codex_AppServer_Module/src/types/index.ts` / package root export re-export'ит helper so Core can import from `@codeai-hub/codex-app-server-module`.
+
+UI/settings mirror:
+- `src/types/codex-model-registry.ts` получает те же per-model display/capability fields для Settings/Session UI.
+- Tests must assert runtime registry and UI mirror stay aligned for known Codex model ids, or at minimum assert both contain the same current model slug set.
+
+Per-model fields:
 
 - `supportsReasoningSummary: boolean` — Spark = `false`; non-Spark = `true`.
 - `supportsVerbosity: boolean` — пока что `true` для всех Codex models (refine при первом провайдер-rejection).
@@ -64,13 +75,13 @@
 
 Эти флаги — **self-contained per model**, никаких pairwise сравнений. Никаких `match model_slug` в payload builder'е.
 
-**Stream B заменяет существующий slug-based hardcode** в `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts:3` (`CODEX_MODELS_WITHOUT_REASONING_SUMMARY = new Set(["gpt-5.3-codex-spark"])`) на capability registry lookup. Существующий unit-test для `buildCodexReasoningSummaryParams` сохраняется и расширяется (assert через registry, не через hardcoded Set).
+**Stream B заменяет существующий slug-based hardcode** в `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts:3` (`CODEX_MODELS_WITHOUT_REASONING_SUMMARY = new Set(["gpt-5.3-codex-spark"])`) на runtime capability registry lookup from Codex module. Существующий unit-test для `buildCodexReasoningSummaryParams` сохраняется и расширяется (assert через registry, не через hardcoded Set).
 
 ### 6.2 Pure payload rebuild каждый turn (existing pattern, extending)
 
 **Существующее состояние:** `codex-app-server-facade.ts:225` уже вызывает `buildCodexReasoningSummaryParams(modelId, mode)` на каждый `turn/start`, то есть payload пересобирается fresh per turn. Pattern уже соответствует Codex CLI.
 
-**Stream C** меняет ТОЛЬКО внутренности `buildCodexReasoningSummaryParams`: вместо `CODEX_MODELS_WITHOUT_REASONING_SUMMARY.has(modelId)` — lookup `getCodexModelCapabilities(modelId).supportsReasoningSummary`. Никаких новых call sites не создаётся; existing turn/start dispatch не меняется.
+**Stream C** меняет ТОЛЬКО внутренности `buildCodexReasoningSummaryParams`: вместо `CODEX_MODELS_WITHOUT_REASONING_SUMMARY.has(modelId)` — lookup local/exported Codex module helper `getCodexModelCapabilities(modelId).supportsReasoningSummary`. Никаких новых call sites не создаётся; existing turn/start dispatch не меняется.
 
 Если в будущем потребуется gate'ить дополнительные поля (напр. `verbosity`) — добавляется analogous helper, gated на `supportsVerbosity`. В этом цикле — только `summary`.
 
@@ -80,7 +91,7 @@
 
 Новый `session:codex:model-switch` — **отдельный путь**, config-only:
 1. Validate target (model в Codex registry, reasoning ∈ `reasoningEffortOptions`).
-2. Mutate `Session.modelBinding` через `SessionManager.setModelBinding` (`packages/core/src/session-manager/index.ts:225`) — provider stays `codexCli`, меняются `model` **и** `reasoning`. Передаётся **полный** binding `(modelId, reasoning)` как одна атомарная операция.
+2. Mutate `Session.modelBinding` через `SessionManager.setModelBinding` (`packages/core/src/session-manager/index.ts:225`) — provider stays `codexCli`, меняются `model` **и** `reasoningEffort`. Передаётся **полный** binding `(modelId, reasoningEffort)` как одна атомарная операция.
 3. Set `Session.pendingModelSwitchInjection = true` (in-memory, см. §6.4).
 4. Broadcast `session:model:update` с новым effective identity (через существующий `session-request-handler-applied-turn-config.ts` contract).
 5. **STOP.** Никакого `adapter.sendMessage`, никакого resend. Следующий user-initiated `dialog:send` / `session:message` подхватит новый binding и triggernet `<model_switch>` injection.
@@ -89,28 +100,31 @@
 
 Существующее API `applied-turn-config.ts:28` принимает только `targetModelId?: string`, а reasoning подтягивается из `settings/defaults`. Это **ровно та регрессионная поверхность**, которая порвала binding в 1.2.114 — Settings перетирали выбранный пользователем reasoning при следующем outbound turn.
 
-**Stream D2 расширяет API** (этот файл уже в Context Pack):
+**Stream D4 расширяет API** (этот файл уже в Context Pack):
 - Add `targetReasoningEffort?: CodexReasoningLevel` к параметру `resolveForProvider` / `resolveEffectiveModelId` / dispatch payload.
-- Когда live `Session.modelBinding.reasoning` существует — оно **первичный источник** для applied config (`source: "session_binding"`). Settings consultation происходит только если binding ещё не materialized (initial seed).
-- Resolver строит `modelBinding` из пары `(targetModelId, targetReasoning)` атомарно, не из Settings.
-- Существующий flag `source: "switch_request" | "settings_snapshot"` (line 115) расширяется новым literal `"session_binding"` для post-switch outbound turns.
+- Когда live `Session.modelBinding.reasoningEffort` существует — оно **первичный источник** для applied config (`source: "session_binding"`). Settings consultation происходит только если binding ещё не materialized (initial seed).
+- Resolver строит `modelBinding` из пары `(targetModelId, targetReasoningEffort)` атомарно, не из Settings.
+- Существующий flag `source: "switch_request" | "settings_snapshot"` расширяется новым literal `"session_binding"` для post-switch outbound turns. Обязательно обновить `packages/core/src/remote-bridge/types.ts`: `AppliedProviderTurnConfig.source` union и `readAppliedProviderTurnConfig()` сейчас нормализует всё, кроме `"switch_request"`, в `"settings_snapshot"`; без этой правки `"session_binding"` silently потеряется.
 
 Это закрывает регрессионную поверхность: после switch'а live binding **никогда** не теряется в пользу Settings.
 
-**Полный список transport touchpoints (Stream D разбивается на 3 микро-задачи ≤3 файлов):**
+**Полный список transport touchpoints (Stream D разбивается на компилируемые микро-задачи ≤3 файлов):**
 
-D1 (server-side transport):
+D1 (server-side contract + validation; no router call yet):
 - `packages/core/src/remote-bridge/session-stream-contracts.ts` — payload type + outbound update type
 - `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` — register `session:codex:model-switch` validator (текущий registry на line 217-231 содержит `dialog:switch:*`, `session:create/delete/message/refreshUsageLimits/stop` — этот новый command нужно явно добавить)
-- `packages/core/src/remote-bridge/remote-bridge-message-router.ts` — routing
 
 D2 (handler + Session type):
-- new file `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts` (отдельный handler, чтобы не разрастать `session-actions.ts`)
+- new file `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts` (отдельный handler, чтобы не разрастать `session-actions.ts`); validates target via exported Codex module capability helper, not root `src/types/*`
 - `src/types/session.ts` (line 130 area) + `packages/core/src/session-manager/index.ts:26` — добавить `pendingModelSwitchInjection?: boolean` field
+
+D2b (wiring owner + router):
+- `packages/core/src/remote-bridge/handlers/session-request-handler.ts` — создаёт `SessionRequestHandlerCodexModelSwitch` в constructor, держит private field и экспортирует public method `handleCodexModelSwitch(...)`
+- `packages/core/src/remote-bridge/remote-bridge-message-router.ts` — routing + `ensureMessageAllowedForScope` guard. Новый command должен проверять workspace scope так же, как `session:message/delete/stop`, иначе PM client сможет переключить session вне текущего workspace scope. Router вызывает `sessionHandler.handleCodexModelSwitch(...)`, но не владеет handler dependencies.
 
 D3 (client transport):
 - `src/client/project-manager/core-stream-message-types.ts` — outbound type def
-- `src/client/project-manager/api.ts` — `requestCodexModelSwitch(sessionId, targetModelId, targetReasoning)` method
+- `src/client/project-manager/api.ts` — `requestCodexModelSwitch(sessionId, targetModelId, targetReasoningEffort)` method
 
 ### 6.4 Switch persistence + `pendingModelSwitchInjection` storage — honest scope
 
@@ -168,26 +182,47 @@ F2 (callback bridge + symmetric PM views):
 - `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` — symmetric wiring
 
 F3 (controller dispatch):
-- `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` — invoke `api.requestCodexModelSwitch(...)` с target из callback
+- `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` **и runtime path** (`project-manager-runtime-session-view.tsx` / соответствующий runtime callback owner) — invoke `api.requestCodexModelSwitch(...)` с target из callback. Обе поверхности обязательны: dialog session и runtime session должны вести себя одинаково.
 - guard: для non-Codex sessions callback no-op (chip остаётся visually, но click ничего не делает)
 
 **Default reasoning** при выборе нового model: previous reasoning level если он ∈ нового `reasoningEffortOptions`, иначе первое из options.
 
+### 6.7 Provider-neutral switch seam (Codex-only active implementation)
+
+Чтобы не повторять Core plumbing для Claude/Gemini, Stream D создаёт минимальный provider-neutral seam, но **не** расширяет runtime behavior beyond Codex:
+
+- Shared target shape: `SessionModelSwitchTarget` / equivalent with `providerId`, `targetModelId`, optional `targetReasoningEffort`, optional future `targetThinkingLevel` / `thinkingEnabled`. Codex fills `targetReasoningEffort`; Claude/Gemini fields remain unused in this cycle.
+- Shared result shape: normalized `SessionModelBinding` + optional pending injection payload + `session:model:update` broadcast payload.
+- Shared lifecycle helpers in Core: set model binding, set/clear pending injection flag, broadcast effective identity, scope-check the session command, and attach applied config from `source: "session_binding"`.
+- Provider strategy seam: a small interface such as `ProviderModelSwitchStrategy` with `providerId`, `validateTarget`, `buildModelBinding`, and optional `buildSwitchInjection`. Only `CodexModelSwitchStrategy` is implemented. Claude/Gemini strategies are **not implemented**; UI still exposes disabled/no-op chips for them.
+- Public transport remains `session:codex:model-switch` for this release. Do **not** introduce a public `session:model-switch` command until at least one more provider has verified native payload behavior.
+
+Future provider work should add:
+- Claude capability registry + Claude strategy, after native payload capture proves which model/thinking changes are same-session safe.
+- Gemini capability registry + Gemini strategy, after native payload capture proves thinking-level/session behavior.
+- Cross-provider switch/handoff strategy as a separate provider-segment/new-session scope.
+
 ## 7. Files affected (verified existence; ≤3 per micro-task — enforced via todo-plan)
 
 ### B. Capability registry
-- `src/types/codex-model-registry.ts` — capability flags expansion + extending existing tests
+- `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts` (new) — runtime capability descriptors + `getCodexModelCapabilities`
+- `packages/Codex_AppServer_Module/src/types/index.ts` / package export — expose helper for Core/Codex consumers
+- `src/types/codex-model-registry.ts` — UI/settings mirror fields + tests/alignment guard
 
 ### C. Payload gating
 - `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts` — replace slug Set с registry lookup
 - `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.test.ts` (если существует — расширить; если нет — создать)
 
-### D. Switch transport (3 микро-задачи)
+### D. Switch transport (компилируемые микро-задачи)
 
-D1: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `incoming-message-validator.ts`, `remote-bridge-message-router.ts`
+D1: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `incoming-message-validator.ts`
+D1b: new provider-neutral Core switch seam file(s), e.g. `packages/core/src/remote-bridge/handlers/session-request-handler-model-switch-types.ts` / `session-request-handler-model-switch-strategy.ts`, containing shared target/result/strategy types only
 D2: new `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts`, `src/types/session.ts` (pendingModelSwitchInjection field), `packages/core/src/session-manager/index.ts` (Session interface + new method `clearPendingModelSwitchInjection`)
-D3: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts` + handler unit-test
-D4 (applied config расширение): `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts` — добавить `targetReasoningEffort` параметр + source `"session_binding"` (предотвращает регрессию 1.2.114)
+D2b: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts` + routing test
+D3: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`
+D4 (applied config расширение):
+- `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts` — добавить `targetReasoningEffort` параметр + source `"session_binding"` (предотвращает регрессию 1.2.114)
+- `packages/core/src/remote-bridge/types.ts` — расширить `AppliedProviderTurnConfig.source` union и `readAppliedProviderTurnConfig()` normalization на `"session_binding"`
 
 ### E. Injection (bridge через turnOptions)
 - `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts` (читает `turnOptions[CODEX_MODEL_SWITCH_INJECTION_KEY]`, embed item в начало `turn/start.input`)
@@ -213,12 +248,13 @@ F3: `src/client/project-manager/components/sessions/use-project-manager-dialog-s
 
 ## 8. Test plan
 
-- **Unit (registry):** assert `supportsReasoningSummary === false` для Spark, `=== true` для non-Spark; `reasoningEffortOptions` per model — non-empty array для non-Spark.
+- **Unit (registry):** assert runtime helper `supportsReasoningSummary === false` для Spark, `=== true` для non-Spark; `reasoningEffortOptions` per model — non-empty array для non-Spark; UI mirror and runtime registry share the same current Codex model slug set.
 - **Unit (payload builder):** существующий test для `buildCodexReasoningSummaryParams` расширяется — assert через registry lookup, не через старый Set; Spark turn payload **не содержит** `summary` поля; non-Spark **содержит** его.
 - **Unit (Core handler):** `Session.modelBinding` mutates корректно; `pendingModelSwitchInjection` flips от false к true; broadcast `session:model:update` emitted **синхронно** до возврата handler'а; **adapter.sendMessage НЕ вызван**.
+- **Unit (provider-neutral seam):** shared switch target/result types are used by Codex handler; Claude/Gemini remain unsupported/no-op in this cycle and cannot accidentally route through Codex strategy.
 - **Integration (transport):** new `session:codex:model-switch` command routes correctly через `incoming-message-validator` → `remote-bridge-message-router` → handler.
 - **Component (UI):** click on model chip → picker open; selection → correct `session:codex:model-switch` payload dispatched; non-Codex session — chip click no-op / disabled.
-- **Settings independence assertion:** после `session:codex:model-switch` (без последующего turn'а) — следующий `dialog:send` собирает applied turn config с `modelId === target.modelId` и `reasoning === target.reasoning`, **БЕЗ** чтения Settings defaults. Этот тест критичен — он защищает от регрессии типа 1.2.114, где Settings перетирали binding.
+- **Settings independence assertion:** после `session:codex:model-switch` (без последующего turn'а) — следующий `dialog:send` собирает applied turn config с `modelId === target.modelId` и `reasoningEffort === target.reasoningEffort`, **БЕЗ** чтения Settings defaults. Этот тест критичен — он защищает от регрессии типа 1.2.114, где Settings перетирали binding.
 - **UI immediate update assertion:** UI получает `session:model:update` event с новым effective identity в **том же tick**, что и dispatch switch'а — без race с Settings save / reload.
 - **Native request capture (end-to-end):** switch from `gpt-5.2` to `gpt-5.3-codex-spark` с reasoning low → следующий turn → captured raw payload **не содержит** `summary` поле, **содержит** `<model_switch>` developer message в начале `input` array.
 - **User retest:** обязательный stream Phase 3 (см. todo-plan). Без явного approval цикл не закрывается.
@@ -230,6 +266,7 @@ F3: `src/client/project-manager/components/sessions/use-project-manager-dialog-s
 3. **Tooltip localization.** Любой новый user-facing text → approved dictionary (`messages_for_the_user.json` или `ui_helper_text.json` в зависимости от категории).
 4. **`Session.pendingModelSwitchInjection` API contract.** Field добавляется в Session interface (`packages/core/src/session-manager/index.ts:26`) и в shared `src/types/session.ts:130`. Оба слоя должны быть в sync, иначе TypeScript drift между Core и client. Stream D2 закрывает оба в одном коммите.
 5. **Existing `handleSwitchRequest` остаётся:** в этом цикле не трогаем. Он используется для cross-session manual `dialog:switch:*` flow (не путать с нашим in-session config switch). Stream H docs syncs explicit clarification: два разных contract'а сосуществуют.
+6. **Over-generalizing seam risk.** Provider-neutral seam must stay type/lifecycle-level only. Do not add unverified Claude/Gemini payload behavior, public transport, or hidden strategy fallbacks in this cycle.
 
 ## 10. Definition of done
 
@@ -247,4 +284,4 @@ F3: `src/client/project-manager/components/sessions/use-project-manager-dialog-s
 2. **Spark reasoning effort levels** — поддерживает ли Spark `low/medium/high`? Если нет — `reasoningEffortOptions` пустой, reasoning chip hidden когда выбран Spark.
 3. **`<model_switch>` developer message embedding format** — Codex App Server JSON-RPC `turn/start.input` принимает массив items с `type: "text" | ...`. Точная форма developer message: extra item с `type: "text"` и meta-tag в начале text? Или отдельный `developer/message` notification, если App Server поддерживает? Решается на этапе Stream E через эксперимент с native request capture.
 4. **Default reasoning при выборе model** — first из options vs previous level если совместим? Solution в §6.6 — previous-if-supported, else first.
-5. **`pendingModelSwitchInjection` lifecycle** — резолвлено в §6.4: in-memory only. PM webview reload — flag сохраняется. Core restart — flag теряется, model всё равно переключён через persisted modelBinding, injection skip'ается. Soft degradation acceptable.
+5. **`pendingModelSwitchInjection` lifecycle** — резолвлено в §6.4: in-memory only. PM webview reload при живом Core — modelBinding и flag сохраняются. Core restart **до следующего user turn** теряет и pending flag, и новый in-memory modelBinding; после рестарта пользователь увидит старую persisted identity. Core restart **после user turn** безопасен: binding уже записан continuity dispatch'ем, а pending flag уже сброшен. Этот pre-turn restart gap consciously deferred.
