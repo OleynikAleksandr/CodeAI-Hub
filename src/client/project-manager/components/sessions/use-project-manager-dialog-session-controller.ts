@@ -31,7 +31,11 @@ export type ProjectManagerDialogSessionController = {
   readonly providerLabels: ReturnType<typeof buildProviderLabels>;
   readonly saveSettings: (settings: Settings) => void;
   readonly session: SessionRecord | null;
-  readonly setSessionModel: (sessionId: string, targetModelId: string) => void;
+  readonly setSessionModel: (
+    sessionId: string,
+    targetModelId: string,
+    targetReasoningId?: string | null
+  ) => void;
   readonly settings: Settings;
   readonly showThinkingMessages: boolean;
   readonly snapshots: SessionSnapshots;
@@ -431,8 +435,12 @@ export const useProjectManagerDialogSessionController = (
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
   const setSessionModel = useCallback(
-    (sessionId: string, targetModelId: string) => {
-      api.setSessionModel(sessionId, targetModelId);
+    (
+      sessionId: string,
+      targetModelId: string,
+      targetReasoningId?: string | null
+    ) => {
+      api.setSessionModel(sessionId, targetModelId, targetReasoningId);
     },
     []
   );

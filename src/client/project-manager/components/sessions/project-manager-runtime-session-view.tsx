@@ -349,8 +349,12 @@ const ProjectManagerRuntimeSessionView = ({
     reload
   );
   const setSessionModel = useCallback(
-    (sessionId: string, targetModelId: string) => {
-      api.setSessionModel(sessionId, targetModelId);
+    (
+      sessionId: string,
+      targetModelId: string,
+      targetReasoningId?: string | null
+    ) => {
+      api.setSessionModel(sessionId, targetModelId, targetReasoningId);
     },
     []
   );

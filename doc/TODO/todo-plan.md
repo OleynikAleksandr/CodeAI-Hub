@@ -188,9 +188,9 @@
 75. [DONE] Record failed `1.2.113` retest and root-cause route for submit-time model/reasoning reset (scope: `doc/TODO/todo-plan.md`; commit: `docs: plan submit-time model reset fix`; confirmed failure: in Shaga Description, status-panel model and Reasoning apply visually but revert to the initial model/Low when the answer is sent)
 76. [DONE] Git Commit: `docs: plan submit-time model reset fix` (hash: `39120d28b`)
 77. [DONE] Preserve live session `modelBinding` during dialog submit instead of overwriting it from stale continuity segment metadata (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`; commit: `fix(core): preserve dialog submit model binding`; verified: source diff reviewed, targeted regression test added in next task)
-78. [IN_PROGRESS] Git Commit: `fix(core): preserve dialog submit model binding` (hash: TBD)
-79. [TODO] Forward explicit `targetReasoningId` through PM runtime/dialog `setSessionModel` wrappers before `api.setSessionModel` (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `fix(pm): forward status panel reasoning through views`)
-80. [TODO] Git Commit: `fix(pm): forward status panel reasoning through views` (hash: TBD)
+78. [DONE] Git Commit: `fix(core): preserve dialog submit model binding` (hash: `6673ff4e5`)
+79. [DONE] Forward explicit `targetReasoningId` through PM runtime/dialog `setSessionModel` wrappers before `api.setSessionModel` (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `fix(pm): forward status panel reasoning through views`; verified: source diff reviewed, targeted regression test added in next task)
+80. [IN_PROGRESS] Git Commit: `fix(pm): forward status panel reasoning through views` (hash: TBD)
 81. [TODO] Add regression guards that dialog submit preserves live Core `modelBinding` and PM runtime/dialog wrappers preserve `targetReasoningId` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; commit: `test: guard submit-time model binding preservation`)
 82. [TODO] Git Commit: `test: guard submit-time model binding preservation` (hash: TBD)
 
