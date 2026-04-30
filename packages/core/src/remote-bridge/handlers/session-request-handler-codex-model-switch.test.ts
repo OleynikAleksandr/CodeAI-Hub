@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { CODEX_MODEL_SWITCH_INJECTION_KEY } from "@codeai-hub/codex-app-server-module";
 import {
   buildSessionModelBindingKey,
   type SessionModelBinding,
 } from "../../session-model-binding";
 import { RemoteBridgeMessageRouter } from "../remote-bridge-message-router";
 import { createHarness, noop } from "./session-request-handler.test-helpers";
+
+const MODEL_SWITCH_INSTRUCTION_PROFILE_PATTERN = /early architecture workflow/;
 
 const createRouter = (
   harness: ReturnType<typeof createHarness>
@@ -137,4 +140,98 @@ test("Codex model switch command rejects unknown models without mutating binding
   assert.deepEqual(updatedSession?.modelBinding, previousBinding);
   assert.equal(updatedSession?.pendingModelSwitchInjection, undefined);
   assert.deepEqual(harness.events, []);
+});
+
+test("pending Codex model switch injection is bridged once after successful send", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/codex-model-switch-injection",
+    "provider-session-codex"
+  );
+  const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+  harness.sessionManager.setModelBinding(session.id, {
+    ...createPreviousBinding(session.id, session.workspacePath),
+    baseModelId: "gpt-5.3-codex-spark",
+    modelId: "gpt-5.3-codex-spark reasoning:xhigh",
+    reasoningEffort: "xhigh",
+    source: "switch_request",
+  });
+  session.pendingModelSwitchInjection = true;
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-codex",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    sendMessage: (
+      _providerSessionId: string,
+      _content: string,
+      turnOptions?: Record<string, unknown>
+    ) => {
+      sentTurnOptions.push(turnOptions);
+      return Promise.resolve();
+    },
+  });
+
+  await harness.handler.handleMessage(session.id, "next user turn");
+
+  const injection = sentTurnOptions[0]?.[CODEX_MODEL_SWITCH_INJECTION_KEY] as
+    | Record<string, unknown>
+    | undefined;
+  assert.equal(injection?.kind, "model_switch");
+  assert.equal(injection?.targetModelId, "gpt-5.3-codex-spark");
+  assert.equal(injection?.targetReasoningEffort, "xhigh");
+  assert.match(
+    String(injection?.baseInstructions),
+    MODEL_SWITCH_INSTRUCTION_PROFILE_PATTERN
+  );
+  assert.equal(
+    harness.sessionManager.getSession(session.id)?.pendingModelSwitchInjection,
+    false
+  );
+});
+
+test("pending Codex model switch injection is retained when provider send fails", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/codex-model-switch-injection-fail",
+    "provider-session-codex"
+  );
+  const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+  harness.sessionManager.setModelBinding(session.id, {
+    ...createPreviousBinding(session.id, session.workspacePath),
+    baseModelId: "gpt-5.3-codex-spark",
+    modelId: "gpt-5.3-codex-spark reasoning:xhigh",
+    reasoningEffort: "xhigh",
+    source: "switch_request",
+  });
+  session.pendingModelSwitchInjection = true;
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-codex",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    sendMessage: (
+      _providerSessionId: string,
+      _content: string,
+      turnOptions?: Record<string, unknown>
+    ) => {
+      sentTurnOptions.push(turnOptions);
+      return Promise.reject(new Error("simulated provider failure"));
+    },
+  });
+
+  await harness.handler.handleMessage(session.id, "next user turn");
+
+  assert.equal(
+    sentTurnOptions[0]?.[CODEX_MODEL_SWITCH_INJECTION_KEY] !== undefined,
+    true
+  );
+  assert.equal(
+    harness.sessionManager.getSession(session.id)?.pendingModelSwitchInjection,
+    true
+  );
 });

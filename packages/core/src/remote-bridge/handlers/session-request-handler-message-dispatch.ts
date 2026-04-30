@@ -12,6 +12,10 @@ import {
 } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import {
+  attachPendingCodexModelSwitchInjection,
+  clearPendingCodexModelSwitchInjectionAfterDispatch,
+} from "./session-request-handler-model-switch-injection";
 import { triggerPostRebindUsageLimitsRefresh } from "./session-request-handler-post-rebind-usage-limits";
 import { SessionRequestHandlerProviderSend } from "./session-request-handler-provider-send";
 import { stripInternalWorkflowTurnOptions } from "./workflow-turn-control";
@@ -126,6 +130,11 @@ export class SessionRequestHandlerMessageDispatch {
         providerTurnOptions,
         sessionId,
       });
+      clearPendingCodexModelSwitchInjectionAfterDispatch(
+        this.deps.sessionManager,
+        sessionId,
+        providerTurnOptions
+      );
     } catch (error) {
       this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
       this.deps.logger.warn("Provider sendMessage failed", {
@@ -195,6 +204,11 @@ export class SessionRequestHandlerMessageDispatch {
         providerTurnOptions,
         sessionId,
       });
+      clearPendingCodexModelSwitchInjectionAfterDispatch(
+        this.deps.sessionManager,
+        sessionId,
+        providerTurnOptions
+      );
     } catch (error) {
       const staleProviderSessionId = extractStaleProviderSessionId(error);
       if (staleProviderSessionId) {
@@ -284,6 +298,11 @@ export class SessionRequestHandlerMessageDispatch {
         providerTurnOptions,
         sessionId,
       });
+      clearPendingCodexModelSwitchInjectionAfterDispatch(
+        this.deps.sessionManager,
+        sessionId,
+        providerTurnOptions
+      );
       triggerPostRebindUsageLimitsRefresh({
         adapter: retryResolved.adapter,
         broadcaster: this.deps.broadcaster,
@@ -393,14 +412,22 @@ export class SessionRequestHandlerMessageDispatch {
         turnOptions,
       }
     );
+    const providerTurnOptionsWithInjection =
+      attachPendingCodexModelSwitchInjection({
+        providerId,
+        session,
+        turnOptions: providerTurnOptions,
+      });
     const modelUpdateEligibility = {
-      turnConfig: readAppliedProviderTurnConfig(providerTurnOptions),
+      turnConfig: readAppliedProviderTurnConfig(
+        providerTurnOptionsWithInjection
+      ),
       syncsLabelFromAppliedConfig:
         resolveProviderModelSyncCapabilities(providerId)
           .syncsLabelFromAppliedConfig,
     };
     if (!shouldBroadcastAppliedProviderModelUpdate(modelUpdateEligibility)) {
-      return providerTurnOptions;
+      return providerTurnOptionsWithInjection;
     }
     const { turnConfig } = modelUpdateEligibility;
     const modelId = turnConfig.effectiveModelId ?? turnConfig.modelId;
@@ -419,7 +446,7 @@ export class SessionRequestHandlerMessageDispatch {
           : undefined,
       },
     });
-    return providerTurnOptions;
+    return providerTurnOptionsWithInjection;
   }
 
   private logMissingProviderBindingForIncomingMessage(
