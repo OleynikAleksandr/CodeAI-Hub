@@ -144,9 +144,9 @@
 51. [DONE] Resolve explicit status-panel model/reasoning in Core binding without rereading stale Settings (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; commit: `fix(core): bind status panel reasoning without settings race`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`)
 52. [DONE] Git Commit: `fix(core): bind status panel reasoning without settings race` (hash: `aa13e1c30`)
 53. [DONE] Preserve pending selected model in PM and send explicit reasoning with `session:model:set` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`; commit: `fix(pm): preserve pending status panel model selection`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`)
-54. [IN_PROGRESS] Git Commit: `fix(pm): preserve pending status panel model selection` (hash: TBD)
-55. [TODO] Cover sequential model -> reasoning picker selection in PM tests (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `test(pm): cover sequential status panel selection`)
-56. [TODO] Git Commit: `test(pm): cover sequential status panel selection` (hash: TBD)
+54. [DONE] Git Commit: `fix(pm): preserve pending status panel model selection` (hash: `05009d3c0`)
+55. [DONE] Cover sequential model -> reasoning picker selection in PM tests (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `test(pm): cover sequential status panel selection`; verified: `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`)
+56. [IN_PROGRESS] Git Commit: `test(pm): cover sequential status panel selection` (hash: TBD)
 
 ### Stream: Picker Positioning Fix
 

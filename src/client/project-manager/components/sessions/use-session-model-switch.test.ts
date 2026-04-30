@@ -39,12 +39,13 @@ const createHarness = (snapshots: Record<string, SessionSnapshot>) => {
   const savedSettings: Settings[] = [];
   const modelUpdates: Array<{
     readonly sessionId: string;
+    readonly targetReasoningId?: string | null;
     readonly targetModelId: string;
   }> = [];
   const handlers = createSessionModelSwitchHandlers({
     saveSettings: (settings) => savedSettings.push(settings),
-    setSessionModel: (sessionId, targetModelId) =>
-      modelUpdates.push({ sessionId, targetModelId }),
+    setSessionModel: (sessionId, targetModelId, targetReasoningId) =>
+      modelUpdates.push({ sessionId, targetModelId, targetReasoningId }),
     settings: createDefaultSettings(),
     snapshots,
   });
@@ -68,7 +69,11 @@ test("createSessionModelSwitchHandlers routes reasoning changes through current 
     "xhigh"
   );
   assert.deepEqual(modelUpdates, [
-    { sessionId: "session-1", targetModelId: "gpt-5.3-codex-spark" },
+    {
+      sessionId: "session-1",
+      targetModelId: "gpt-5.3-codex-spark",
+      targetReasoningId: "xhigh",
+    },
   ]);
 });
 
@@ -83,8 +88,34 @@ test("createSessionModelSwitchHandlers routes model changes to selected model", 
 
   assert.equal(savedSettings[0]?.providers.codex.defaultModel, "gpt-5.4-mini");
   assert.deepEqual(modelUpdates, [
-    { sessionId: "session-2", targetModelId: "gpt-5.4-mini" },
+    {
+      sessionId: "session-2",
+      targetModelId: "gpt-5.4-mini",
+      targetReasoningId:
+        savedSettings[0]?.providers.codex.reasoningByModel["gpt-5.4-mini"],
+    },
   ]);
+});
+
+test("createSessionModelSwitchHandlers keeps pending model for immediate reasoning change", () => {
+  const { handlers, modelUpdates, savedSettings } = createHarness({
+    "session-3": createSnapshot(
+      createCodexModel("gpt-5.3-codex reasoning:medium", "medium")
+    ),
+  });
+
+  handlers.onSelectSessionModel("session-3", "gpt-5.4-mini");
+  handlers.onSelectSessionReasoning("session-3", "xhigh");
+
+  assert.equal(
+    savedSettings[1]?.providers.codex.reasoningByModel["gpt-5.4-mini"],
+    "xhigh"
+  );
+  assert.deepEqual(modelUpdates.at(-1), {
+    sessionId: "session-3",
+    targetModelId: "gpt-5.4-mini",
+    targetReasoningId: "xhigh",
+  });
 });
 
 test("createSessionModelSwitchHandlers ignores missing session snapshots", () => {
