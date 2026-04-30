@@ -270,11 +270,11 @@
 6. [DONE] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Result: provider/core/UI/CEF launcher artifacts built for `1.2.118` and copied to `~/.codeai-hub/releases/` / `doc/tmp/releases/`. Scope: generated release files; commit message: `chore: build release 1.2.118`.
 7. [DONE] Git Commit: `chore: build release 1.2.118` (hash: 9fea90aab)
 8. [DONE] Run `./scripts/build-release.sh --use-current-version`; produced `codeai-hub-1.2.118.vsix` (2.6M). Release gates passed: architecture, typecheck, compile, SDK exclusions, artifact validation, markdown links, duplication check, VSIX runtime package surface verification. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.118`.
-9. [TODO] Git Commit: `chore: finalize release 1.2.118` (hash: TBD)
+9. [DONE] Git Commit: `chore: finalize release 1.2.118` (hash: 8f2fd4e78)
 
 ### Stream S — User verification retry
 
-1. [TODO] Передать VSIX `codeai-hub-1.2.118.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
+1. [IN_PROGRESS] Передать VSIX `codeai-hub-1.2.118.vsix` пользователю. Scope остается ACTIVE до явного acceptance.
 2. [TODO] User must retest `gpt-5.4-mini` / `gpt-5.2` → `gpt-5.3-codex-spark` next-turn switch and confirm no `reasoning.summary` error.
 
 ### Stream L — Closeout (только после user OK)
