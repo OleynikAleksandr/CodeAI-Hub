@@ -211,14 +211,14 @@
 89. [DONE] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.114`; verified: `./scripts/build-all.sh`, `doc/tmp/releases/*1.2.114*`, `~/.codeai-hub/releases/*1.2.114*`, package version `1.2.114`)
 90. [DONE] Git Commit: `chore: build release 1.2.114` (hash: `fc59ef093`)
 91. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.114`; verified: `./scripts/build-release.sh --use-current-version`, `codeai-hub-1.2.114.vsix` package created, SDK exclusions verified, dev dependencies pruned before packaging/restored, VSIX runtime package surface verified, sha1 `46b7045383d0a8366149a619413246b3d557acbb`)
-92. [IN_PROGRESS] Git Commit: `chore: package release 1.2.114` (hash: TBD)
+92. [DONE] Git Commit: `chore: package release 1.2.114` (hash: `02605592f`)
 
 ### Stream: User Visual Acceptance Testing
 
-93. [TODO] Hand off `codeai-hub-1.2.114.vsix` for user installation/retest and verify: Shaga Description keeps the changed model and keeps GPT 5.3 Codex Spark / X-High when the first answer is sent after changing Reasoning from Low to X-High (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.114 visual retest status`)
-94. [TODO] Git Commit: `docs: record release 1.2.114 visual retest status` (hash: TBD)
+93. [IN_PROGRESS] Hand off `codeai-hub-1.2.114.vsix` for user installation/retest and verify: Shaga Description keeps the changed model and keeps GPT 5.3 Codex Spark / X-High when the first answer is sent after changing Reasoning from Low to X-High (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.114 visual retest status`; status: release package ready, user visual retest pending)
+94. [IN_PROGRESS] Git Commit: `docs: record release 1.2.114 visual retest status` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-73. [BLOCKED] Archive todo-plan and planning-doc only after explicit user acceptance of release `1.2.113` (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher retest`)
+73. [BLOCKED] Archive todo-plan and planning-doc only after explicit user acceptance of release `1.2.114` (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher retest`)
 74. [TODO] Git Commit: `docs: archive status panel model switcher retest` (hash: TBD)
