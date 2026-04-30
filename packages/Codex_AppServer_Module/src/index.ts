@@ -2,7 +2,9 @@ import { CodexProviderAdapter as CodexProviderAdapterImpl } from "./provider/cod
 import type {
   CodexAppliedTurnConfig as CodexAppliedTurnConfigType,
   CodexApprovalMode as CodexApprovalModeType,
+  CodexCapabilityReasoningEffort as CodexCapabilityReasoningEffortType,
   CodexInstallerPaths as CodexInstallerPathsType,
+  CodexModelCapabilities as CodexModelCapabilitiesType,
   CodexModuleOptions as CodexModuleOptionsType,
   CodexReasoningEffort as CodexReasoningEffortType,
   CodexResponseMode as CodexResponseModeType,
@@ -24,7 +26,9 @@ import type {
 const CodexProviderAdapter = CodexProviderAdapterImpl;
 type CodexApprovalMode = CodexApprovalModeType;
 type CodexAppliedTurnConfig = CodexAppliedTurnConfigType;
+type CodexCapabilityReasoningEffort = CodexCapabilityReasoningEffortType;
 type CodexInstallerPaths = CodexInstallerPathsType;
+type CodexModelCapabilities = CodexModelCapabilitiesType;
 type CodexModuleOptions = CodexModuleOptionsType;
 type CodexReasoningEffort = CodexReasoningEffortType;
 type CodexResponseMode = CodexResponseModeType;
@@ -47,11 +51,21 @@ export {
   type CodexAppServerTranslationServiceRequest,
   type CodexAppServerTranslationServiceResult,
 } from "./translation/codex-app-server-translation-service";
-export { CODEX_APPLIED_TURN_CONFIG_KEY } from "./types";
+export {
+  CODEX_APPLIED_TURN_CONFIG_KEY,
+  CODEX_MODEL_CAPABILITIES,
+  CODEX_REASONING_EFFORT_OPTIONS,
+  findCodexModelCapabilities,
+  getCodexModelCapabilities,
+  isKnownCodexModelId,
+  listCodexModelCapabilities,
+} from "./types";
 export type {
   CodexAppliedTurnConfig,
   CodexApprovalMode,
+  CodexCapabilityReasoningEffort,
   CodexInstallerPaths,
+  CodexModelCapabilities,
   CodexModuleOptions,
   CodexReasoningEffort,
   CodexResponseMode,

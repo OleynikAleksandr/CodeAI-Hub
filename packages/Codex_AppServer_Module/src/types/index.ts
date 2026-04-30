@@ -4,6 +4,19 @@ export interface CodexInstallerPaths {
   readonly windows: string;
 }
 
+export type {
+  CodexCapabilityReasoningEffort,
+  CodexModelCapabilities,
+} from "./codex-model-capabilities";
+export {
+  CODEX_MODEL_CAPABILITIES,
+  CODEX_REASONING_EFFORT_OPTIONS,
+  findCodexModelCapabilities,
+  getCodexModelCapabilities,
+  isKnownCodexModelId,
+  listCodexModelCapabilities,
+} from "./codex-model-capabilities";
+
 export type CodexReasoningEffort = "low" | "medium" | "high" | "xhigh";
 export type CodexReasoningSummaryMode =
   | "auto"
