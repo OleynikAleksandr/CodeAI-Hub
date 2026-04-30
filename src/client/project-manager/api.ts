@@ -10,6 +10,7 @@ import {
   type WorkflowStateSnapshot,
 } from "./services/workflow-state-client";
 import type {
+  CodexModelSwitchReasoningEffort,
   CoreStatePayload,
   IncomingMessage,
   OutgoingMessage,
@@ -226,6 +227,17 @@ class ProjectManagerApi {
 
   stopSession(sessionId: string): void {
     this.send({ type: "session:stop", payload: { sessionId } });
+  }
+
+  requestCodexModelSwitch(
+    sessionId: string,
+    targetModelId: string,
+    targetReasoningEffort?: CodexModelSwitchReasoningEffort
+  ): void {
+    this.send({
+      type: "session:codex:model-switch",
+      payload: { sessionId, targetModelId, targetReasoningEffort },
+    });
   }
 
   refreshUsageLimits(params: {

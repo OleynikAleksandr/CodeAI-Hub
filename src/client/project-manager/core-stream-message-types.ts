@@ -250,6 +250,18 @@ export type SessionModelUpdatePayload = {
   readonly sessionId: string;
 };
 
+export type CodexModelSwitchReasoningEffort =
+  | "low"
+  | "medium"
+  | "high"
+  | "xhigh";
+
+export type CodexModelSwitchRequestPayload = {
+  readonly sessionId: string;
+  readonly targetModelId: string;
+  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -271,6 +283,10 @@ export type OutgoingMessage =
         readonly sessionKind?: "collector" | null;
         readonly runSlug?: string | null;
       };
+    }
+  | {
+      readonly type: "session:codex:model-switch";
+      readonly payload: CodexModelSwitchRequestPayload;
     }
   | {
       readonly type: "session:message";

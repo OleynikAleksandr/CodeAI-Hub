@@ -126,12 +126,12 @@
 1. [DONE] New file `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts` (отдельный handler, **не** reuse `handleSwitchRequest` который resends user message). Handler implements/uses the D1b provider-neutral seam with Codex as the only active strategy: validate target via Codex module exported `getCodexModelCapabilities` (не root UI `src/types/*`) → call `sessionManager.setModelBinding(sessionId, newBinding)` с **полным** binding `(modelId, reasoningEffort)` → set `Session.pendingModelSwitchInjection = true` → broadcast `session:model:update` через existing applied-turn-config contract. **STOP — никакого `adapter.sendMessage`.** `packages/core/src/remote-bridge/handlers/session-request-handler.ts`: instantiate handler in constructor, keep a private field, expose public `handleCodexModelSwitch(...)`. `packages/core/src/remote-bridge/remote-bridge-message-router.ts`: route `session:codex:model-switch` to that public method and add `ensureMessageAllowedForScope` guard for the new command, matching `session:message/delete/stop`. Router must not own handler dependencies directly. Scope: 3 файла; commit message: `feat(core): wire codex model switch handler through session router`.
 2. [DONE] Git Commit: `feat(core): wire codex model switch handler through session router` (hash: cbb42565a)
 3. [DONE] Unit-тест handler/router path: validates target, mutates binding via setModelBinding (full pair), flips pendingModelSwitchInjection, broadcasts session:model:update в том же tick, **adapter.sendMessage не вызван**. Scope: 1 файл; commit message: `test(core): cover codex model switch handler state mutation`.
-4. [DONE] Git Commit: `test(core): cover codex model switch handler state mutation` (hash: pending current commit)
+4. [DONE] Git Commit: `test(core): cover codex model switch handler state mutation` (hash: 6d7259c25)
 
 #### D3 — Client-side transport
 
-1. [TODO] `src/client/project-manager/core-stream-message-types.ts` (outbound type def matching server contract — payload carries `sessionId`, `targetModelId`, `targetReasoningEffort`), `src/client/project-manager/api.ts` (`requestCodexModelSwitch(sessionId, targetModelId, targetReasoningEffort)` method). Scope: 2 файла; commit message: `feat(pm): add codex model switch client api`.
-2. [TODO] Git Commit: `feat(pm): add codex model switch client api` (hash: TBD)
+1. [DONE] `src/client/project-manager/core-stream-message-types.ts` (outbound type def matching server contract — payload carries `sessionId`, `targetModelId`, `targetReasoningEffort`), `src/client/project-manager/api.ts` (`requestCodexModelSwitch(sessionId, targetModelId, targetReasoningEffort)` method). Scope: 2 файла; commit message: `feat(pm): add codex model switch client api`.
+2. [DONE] Git Commit: `feat(pm): add codex model switch client api` (hash: pending current commit)
 
 #### D4 — Applied turn config расширение (предотвращение регрессии 1.2.114)
 
