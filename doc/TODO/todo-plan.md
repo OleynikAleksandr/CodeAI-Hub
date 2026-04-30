@@ -128,9 +128,51 @@
 ### Stream: Reopen Active Scope
 
 43. [DONE] Reopen status-panel model switcher scope after failed user retest (scope: `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Plans/StatusPanel_ModelReasoningSwitch_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: reopen status panel model switcher scope`; note: do not close/archive again until user confirms the fixed release works)
-44. [IN_PROGRESS] Git Commit: `docs: reopen status panel model switcher scope` (hash: TBD)
+44. [DONE] Git Commit: `docs: reopen status panel model switcher scope` (hash: `ba2adee2c`)
+45. [DONE] Record User Acceptance Gate process update after premature archive (scope: `AGENTS.md`; commit: `docs: require user acceptance before scope closeout`; note: existing commit added mandatory visual acceptance before completion/archive)
+46. [DONE] Git Commit: `docs: require user acceptance before scope closeout` (hash: `4c8e3e911`)
 
-### Stream: Regression Investigation
+### Stream: Regression Fix Plan
 
-45. [TODO] Investigate the user-reported `1.2.112` status-panel model/reasoning switch failure and define the smallest fix stream (scope: TBD after reproduction; commit: TBD)
-46. [TODO] Git Commit: TBD (hash: TBD)
+47. [IN_PROGRESS] Record confirmed `1.2.112` retest regressions and split the fix stream (scope: `doc/TODO/todo-plan.md`; commit: `docs: plan status panel retest fixes`; confirmed failures: selected model/reasoning reset to the previous identity on next turn; model picker card needs left-edge alignment with the Reasoning picker/chip area)
+48. [TODO] Git Commit: `docs: plan status panel retest fixes` (hash: TBD)
+
+### Stream: Binding Regression Fix
+
+49. [TODO] Extend `session:model:set` transport payload to carry explicit selected reasoning/thinking (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `fix(core): carry explicit status panel reasoning selection`)
+50. [TODO] Git Commit: `fix(core): carry explicit status panel reasoning selection` (hash: TBD)
+51. [TODO] Resolve explicit status-panel model/reasoning in Core binding without rereading stale Settings (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; commit: `fix(core): bind status panel reasoning without settings race`)
+52. [TODO] Git Commit: `fix(core): bind status panel reasoning without settings race` (hash: TBD)
+53. [TODO] Preserve pending selected model in PM and send explicit reasoning with `session:model:set` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`; commit: `fix(pm): preserve pending status panel model selection`)
+54. [TODO] Git Commit: `fix(pm): preserve pending status panel model selection` (hash: TBD)
+55. [TODO] Cover sequential model -> reasoning picker selection in PM tests (scope: `src/client/project-manager/components/sessions/session-model-switch-controller.test.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.test.ts`; commit: `test(pm): cover sequential status panel selection`)
+56. [TODO] Git Commit: `test(pm): cover sequential status panel selection` (hash: TBD)
+
+### Stream: Picker Positioning Fix
+
+57. [TODO] Align only the model picker card so its left edge starts at the Reasoning picker/chip area; leave Reasoning card positioning unchanged (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `media/session-view.css`; commit: `fix(ui): align status model picker card`)
+58. [TODO] Git Commit: `fix(ui): align status model picker card` (hash: TBD)
+
+### Stream: Targeted Verification
+
+59. [TODO] Run targeted regression checks for Core binding, PM sequential selection, UI picker rendering, and affected builds (scope: `packages/core`, `src/client/project-manager`, `src/client/ui`, `webview`; commit: `test: verify status panel retest fixes`; expected commands: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/status-panel.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`)
+60. [TODO] Git Commit: `test: verify status panel retest fixes` (hash: TBD)
+
+### Stream: Release Build
+
+61. [TODO] Prepare release docs for future version `1.2.113` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.113`)
+62. [TODO] Git Commit: `docs: prepare release 1.2.113` (hash: TBD)
+63. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`)
+64. [TODO] Git Commit: `chore: build release 1.2.113` (hash: TBD)
+65. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`)
+66. [TODO] Git Commit: `chore: package release 1.2.113` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+67. [TODO] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`)
+68. [TODO] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: TBD)
+
+### Stream: Scope Closeout
+
+69. [BLOCKED] Archive todo-plan and planning-doc only after explicit user acceptance of release `1.2.113` (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher retest`)
+70. [TODO] Git Commit: `docs: archive status panel model switcher retest` (hash: TBD)
