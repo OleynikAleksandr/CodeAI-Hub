@@ -131,18 +131,14 @@
 #### D3 — Client-side transport
 
 1. [DONE] `src/client/project-manager/core-stream-message-types.ts` (outbound type def matching server contract — payload carries `sessionId`, `targetModelId`, `targetReasoningEffort`), `src/client/project-manager/api.ts` (`requestCodexModelSwitch(sessionId, targetModelId, targetReasoningEffort)` method). Scope: 2 файла; commit message: `feat(pm): add codex model switch client api`.
-2. [DONE] Git Commit: `feat(pm): add codex model switch client api` (hash: pending current commit)
+2. [DONE] Git Commit: `feat(pm): add codex model switch client api` (hash: 3c48bf45a)
 
 #### D4 — Applied turn config расширение (предотвращение регрессии 1.2.114)
 
-1. [TODO] В `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts` + `packages/core/src/remote-bridge/types.ts`:
-   - Add `targetReasoningEffort?: CodexReasoningLevel` (или общий `ReasoningEffort` type) к параметрам `resolveForProvider` / `resolveEffectiveModelId` / outbound dispatch.
-   - Когда live `Session.modelBinding.reasoningEffort` существует — оно **первичный источник** для applied config.
-   - Resolver строит `modelBinding` из пары `(targetModelId, targetReasoningEffort)` атомарно, **не из Settings**.
-   - Расширить `AppliedProviderTurnConfig.source` literal на `"session_binding"` и обновить `readAppliedProviderTurnConfig()` normalization, иначе `"session_binding"` silently превратится обратно в `"settings_snapshot"`.
-   Закрывает регрессионную поверхность: после switch'а live binding **никогда** не теряется в пользу Settings.
-   Scope: 2 файла + расширение существующего unit-теста (всего ≤3 файла); commit message: `fix(core): pin reasoning effort to session binding in applied turn config`.
-2. [TODO] Git Commit: `fix(core): pin reasoning effort to session binding in applied turn config` (hash: TBD)
+1. [DONE] В `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/types.ts`, `packages/core/src/provider-registry/provider-module-loader.types.ts`: add `targetReasoningEffort?: string` к resolver-пути, сделать live `Session.modelBinding` первичным источником applied config, расширить source literal на `"session_binding"` и обновить `readAppliedProviderTurnConfig()` normalization. Native request capture type входит в тот же контракт applied config, поэтому это отдельная микро-задача на 3 файла. Scope: 3 файла; commit message: `fix(core): pin reasoning effort to session binding in applied turn config`.
+2. [DONE] Git Commit: `fix(core): pin reasoning effort to session binding in applied turn config` (hash: pending current commit)
+3. [TODO] Расширить существующий unit-test session-bound model identity: assert source=`"session_binding"` и что live binding не теряется в пользу Settings. Scope: 1 файл; commit message: `test(core): assert session binding applied config source`.
+4. [TODO] Git Commit: `test(core): assert session binding applied config source` (hash: TBD)
 
 ### Stream E — `<model_switch>` developer message injection (bridge через turnOptions)
 

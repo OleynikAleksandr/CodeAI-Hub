@@ -65,7 +65,7 @@ export interface AppliedProviderTurnConfig {
   readonly reasoningEffort?: string;
   readonly reasoningEngineId?: string;
   readonly reasoningLanguage?: string;
-  readonly source: "settings_snapshot" | "switch_request";
+  readonly source: "session_binding" | "settings_snapshot" | "switch_request";
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevel?: string;
@@ -112,8 +112,9 @@ export const readAppliedProviderTurnConfig = (
   return {
     providerId: candidate.providerId,
     source:
-      candidate.source === "switch_request"
-        ? "switch_request"
+      candidate.source === "switch_request" ||
+      candidate.source === "session_binding"
+        ? candidate.source
         : "settings_snapshot",
     baseModelId:
       typeof candidate.baseModelId === "string"

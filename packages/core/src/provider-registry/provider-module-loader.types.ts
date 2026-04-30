@@ -92,7 +92,7 @@ export interface ProviderNativeRequestCaptureAppliedTurnConfig {
   readonly reasoningEffort?: string;
   readonly reasoningEngineId?: string;
   readonly reasoningLanguage?: string;
-  readonly source: "settings_snapshot" | "switch_request";
+  readonly source: "session_binding" | "settings_snapshot" | "switch_request";
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
   readonly thinkingLevel?: string;

@@ -26,6 +26,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
     readonly providerId: string;
     readonly sessionModelBinding?: SessionModelBinding | null;
     readonly targetModelId?: string;
+    readonly targetReasoningEffort?: string;
     readonly turnOptions?: Record<string, unknown>;
   }): Record<string, unknown> | undefined {
     return withAppliedProviderTurnConfig(
@@ -34,22 +35,28 @@ export class SessionRequestHandlerAppliedTurnConfig {
         providerId: options.providerId,
         sessionModelBinding: options.sessionModelBinding,
         targetModelId: options.targetModelId,
+        targetReasoningEffort: options.targetReasoningEffort,
       })
     );
   }
 
   resolveEffectiveModelId(
     providerId: string,
-    targetModelId?: string
+    targetModelId?: string,
+    targetReasoningEffort?: string
   ): string | undefined {
-    return this.resolveForProvider({ providerId, targetModelId })
-      ?.effectiveModelId;
+    return this.resolveForProvider({
+      providerId,
+      targetModelId,
+      targetReasoningEffort,
+    })?.effectiveModelId;
   }
 
   private resolveForProvider(options: {
     readonly providerId: string;
     readonly sessionModelBinding?: SessionModelBinding | null;
     readonly targetModelId?: string;
+    readonly targetReasoningEffort?: string;
   }): AppliedProviderTurnConfig | null {
     const providerId = options.providerId;
     const capabilities = resolveProviderModelSyncCapabilities(providerId);
@@ -58,7 +65,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
     }
 
     const settingsPath = this.resolveSharedSettingsPath();
-    if (!options.targetModelId && options.sessionModelBinding) {
+    if (options.sessionModelBinding?.providerId === providerId) {
       return this.resolveFromSessionBinding({
         binding: options.sessionModelBinding,
         providerId,
@@ -83,10 +90,11 @@ export class SessionRequestHandlerAppliedTurnConfig {
     const baseModelId =
       options.targetModelId ?? resolved.baseModelId ?? resolved.defaultModel;
     const reasoningEffort =
-      baseModelId && resolved.reasoningByModel
+      options.targetReasoningEffort ??
+      (baseModelId && resolved.reasoningByModel
         ? (resolved.reasoningByModel[baseModelId] ??
           resolved.defaultReasoningEffort)
-        : (resolved.reasoningEffort ?? resolved.defaultReasoningEffort);
+        : (resolved.reasoningEffort ?? resolved.defaultReasoningEffort));
     const thinkingLevel =
       baseModelId && resolved.thinkingLevelByModel
         ? resolved.thinkingLevelByModel[baseModelId]
@@ -147,7 +155,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
       reasoningEffort: options.binding.reasoningEffort,
       reasoningEngineId,
       reasoningLanguage,
-      source: "settings_snapshot",
+      source: "session_binding",
       translationEngineId: reasoningEngineId,
       thinkingEnabled: options.binding.thinkingEnabled,
       thinkingLevel: options.binding.thinkingLevel,
