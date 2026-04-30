@@ -184,27 +184,27 @@
 ### Stream H — SSOT docs sync
 
 1. [DONE] Обновить `Modules/Codex.md` (capability registry + switch behaviour + clarification что existing `handleSwitchRequest` остаётся для cross-session manual flow, а новый `session:codex:model-switch` — для in-session config switch), `Modules/Codex_ProviderInvocationFlags.md` (per-model flags table + capability gating через registry), `Modules/Session_UI/SessionStatusPanel.md` (switch UI semantic + non-Codex guard + provider-neutral seam note: Claude/Gemini disabled/no-op until their provider-native strategies are verified). Scope: 3 файла; commit message: `docs(ssot): document codex model switch architecture`.
-2. [DONE] Git Commit: `docs(ssot): document codex model switch architecture` (hash: pending current commit)
+2. [DONE] Git Commit: `docs(ssot): document codex model switch architecture` (hash: 1c1a13eae)
 3. [DONE] Skipped: отдельный new SystemArchitecture invariant не требуется; существующие инварианты §3.14/§3.23/§3.27/§3.35 уже покрывают effective model identity, reasoning visibility, effort whitelist и invocation profile boundary. Scope: 0 файлов; commit message: N/A.
 4. [DONE] Git Commit: N/A (hash: N/A, skipped)
 
-## Phase 2 — Release 1.2.111 (owner: Build, updated: 2026-04-30)
+## Phase 2 — Release 1.2.116 (owner: Build, updated: 2026-04-30)
 
 ### Stream I — Pre-build version sync
 
-1. [TODO] Обновить `README.md` («Current Release — v1.2.111») и `CHANGELOG.md` (новая секция `## [1.2.111]`) с описанием Codex switch. Scope: 2 файла; commit message: `docs: prepare release 1.2.111`.
-2. [TODO] Git Commit: `docs: prepare release 1.2.111` (hash: TBD)
+1. [DONE] Обновить `README.md` («Current Release — v1.2.116») и `CHANGELOG.md` (новая секция `## [1.2.116]`) с описанием Codex switch. Scope: 2 файла; commit message: `docs: prepare release 1.2.116`.
+2. [DONE] Git Commit: `docs: prepare release 1.2.116` (hash: pending current commit)
 
 ### Stream J — Build new release
 
-1. [TODO] `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version` → копирование 7 tarballs в `doc/tmp/releases/`. Артефакт: `codeai-hub-1.2.111.vsix`. Scope: scripts; commit message: `chore: build release 1.2.111`.
-2. [TODO] Git Commit: `chore: build release 1.2.111` (hash: TBD)
+1. [TODO] `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version` → копирование 7 tarballs в `doc/tmp/releases/`. Артефакт: `codeai-hub-1.2.116.vsix`. Scope: scripts; commit message: `chore: build release 1.2.116`.
+2. [TODO] Git Commit: `chore: build release 1.2.116` (hash: TBD)
 
 ## Phase 3 — User acceptance (owner: User retest, updated: 2026-04-30)
 
 ### Stream K — Hand off for user verification
 
-1. [BLOCKED on user] Передать VSIX `codeai-hub-1.2.111.vsix` пользователю. Scope **не закрывается**, пока пользователь явно не подтвердит:
+1. [BLOCKED on user] Передать VSIX `codeai-hub-1.2.116.vsix` пользователю. Scope **не закрывается**, пока пользователь явно не подтвердит:
    - Switch на Codex session работает (`gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → следующий user message processes без error / без `400 unsupported_parameter`).
    - Chips correctly disabled / no-op для Claude и Gemini sessions.
    - UI behaviour satisfying (picker UX, reasoning options derivation, default selection logic).

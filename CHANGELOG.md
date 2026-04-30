@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.116] - 2026-04-30
+### Added
+- **Codex Status Panel model/reasoning switch is restored with a capability-gated same-session path.** Codex sessions can switch model and reasoning from the lower status chips without resending the previous user message. Core updates the live session binding, broadcasts `session:model:update`, injects one `<model_switch>` instruction item on the next turn, and keeps Settings defaults from overwriting the selected model/reasoning.
+
+### Fixed
+- **Spark switch payloads no longer send unsupported reasoning summary fields.** Codex turn payloads are rebuilt from the runtime model capability registry, so `gpt-5.3-codex-spark` omits explicit `summary` while non-Spark models keep the shared reasoning summary policy.
+- **Dialog resume no longer overwrites a newer live switch with stale continuity binding.** Existing runtime sessions only hydrate continuity `modelBinding` snapshots when the continuity timestamp is newer than the live binding.
+
+### Tests
+- **Model switch regression coverage added before release packaging.** Added registry parity tests, Core switch transport and dialog-send continuity tests, PM dispatch wiring tests, UI picker tests, and Codex raw turn payload coverage for Spark model switch without `summary`.
+
 ## [1.2.115] - 2026-04-30
 ### Changed
 - **Release rebuilt from the rollback point after the failed status-panel switcher scope.** The in-place status-panel model/reasoning switching implementation from releases `1.2.112` through `1.2.114` has been removed. The lower Session Status Panel keeps the passive model and reasoning chips that existed in `1.2.111`; future provider/model/reasoning switching will be redesigned around provider-segment handoff compatibility instead of mutating an incompatible native provider thread in place.
