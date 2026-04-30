@@ -95,9 +95,9 @@
 1. [DONE] Создать runtime registry в Codex module: `packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts` + export из `packages/Codex_AppServer_Module/src/types/index.ts` + package root export. Helper `getCodexModelCapabilities(modelId)` returns `supportsReasoningSummary`, `supportsVerbosity`, `reasoningEffortOptions`, `contextWindow`, `autoCompactTokenLimit`. Spark получает `supportsReasoningSummary: false`; non-Spark reasoning options include `["low", "medium", "high", "xhigh"]`. Scope: 3 файла; commit message: `feat(codex): add runtime model capability registry`.
 2. [DONE] Git Commit: `feat(codex): add runtime model capability registry` (hash: 827293e87)
 3. [DONE] Добавить unit-test runtime registry в Codex module: assert Spark `supportsReasoningSummary === false`, non-Spark `=== true`, reasoning options include `xhigh`, unknown model keeps summary enabled. Scope: 1 файл; commit message: `test(codex): cover runtime model capability registry`.
-4. [DONE] Git Commit: `test(codex): cover runtime model capability registry` (hash: pending current commit)
-5. [TODO] Расширить UI/settings mirror `src/types/codex-model-registry.ts` теми же capability fields. Добавить / расширить root/UI unit-test: assert UI mirror and runtime registry share the same current Codex model slug set; assert Spark/non-Spark capability parity for known slugs. Scope: ≤2 файла; commit message: `feat(ui): mirror codex model capability metadata`.
-6. [TODO] Git Commit: `feat(ui): mirror codex model capability metadata` (hash: TBD)
+4. [DONE] Git Commit: `test(codex): cover runtime model capability registry` (hash: 904d2bf2f)
+5. [DONE] Расширить UI/settings mirror `src/types/codex-model-registry.ts` теми же capability fields. Добавить / расширить root/UI unit-test: assert UI mirror and runtime registry share the same current Codex model slug set; assert Spark/non-Spark capability parity for known slugs. Scope: ≤2 файла; commit message: `feat(ui): mirror codex model capability metadata`.
+6. [DONE] Git Commit: `feat(ui): mirror codex model capability metadata` (hash: pending current commit)
 
 ### Stream C — Replace slug-based hardcode in payload helper
 
