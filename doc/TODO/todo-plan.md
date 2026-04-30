@@ -192,12 +192,12 @@
 79. [DONE] Forward explicit `targetReasoningId` through PM runtime/dialog `setSessionModel` wrappers before `api.setSessionModel` (scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`; commit: `fix(pm): forward status panel reasoning through views`; verified: source diff reviewed, targeted regression test added in next task)
 80. [DONE] Git Commit: `fix(pm): forward status panel reasoning through views` (hash: `6dd984d83`)
 81. [DONE] Add regression guards that dialog submit preserves live Core `modelBinding` and PM runtime/dialog wrappers preserve `targetReasoningId` (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; commit: `test: guard submit-time model binding preservation`; verified: `npx tsx --test --test-name-pattern "keeps live dialog model binding" packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; note: full `session-request-handler.create-resume.test.ts` currently also loads legacy `session-request-handler.test.ts` and has unrelated existing harness/assertion failures)
-82. [IN_PROGRESS] Git Commit: `test: guard submit-time model binding preservation` (hash: TBD)
+82. [DONE] Git Commit: `test: guard submit-time model binding preservation` (hash: `a57eb76a6`)
 
 ### Stream: Targeted Verification
 
-83. [TODO] Run targeted PM/Core/UI checks for submit-time model/reasoning preservation (scope: `src/client/project-manager`, `packages/core`, `webview`; commit: `test: verify submit-time model reset fix`)
-84. [TODO] Git Commit: `test: verify submit-time model reset fix` (hash: TBD)
+83. [DONE] Run targeted PM/Core/UI checks for submit-time model/reasoning preservation (scope: `src/client/project-manager`, `packages/core`, `webview`; commit: `test: verify submit-time model reset fix`; verified: `npx tsx --test --test-name-pattern "keeps live dialog model binding" packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/project-manager-session-view.test.tsx src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, `npm run build:webview`)
+84. [IN_PROGRESS] Git Commit: `test: verify submit-time model reset fix` (hash: TBD)
 
 ### Stream: Canonical Docs
 
