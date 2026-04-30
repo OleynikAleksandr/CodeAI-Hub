@@ -88,7 +88,7 @@
 1. [DONE] Создать `doc/SolidWorks-WorkFlow/Plans/Codex_StatusPanel_ModelSwitch_Architecture.md` + этот todo-plan. Scope: 2 файла; commit message: `docs: open codex status panel model switch scope`.
 2. [DONE] Git Commit: `docs: open codex status panel model switch scope` (hash: c9931048b)
 3. [DONE] Добавить approved provider-neutral seam amendment в planning-doc и todo-plan: reusable target/result/strategy types, Codex-only active implementation, Claude/Gemini disabled/no-op until provider-native strategies are verified. Scope: 2 файла; commit message: `docs: add provider-neutral switch seam to codex plan`.
-4. [DONE] Git Commit: `docs: add provider-neutral switch seam to codex plan` (hash: pending current commit)
+4. [DONE] Git Commit: `docs: add provider-neutral switch seam to codex plan` (hash: 2ca14d551)
 
 ### Stream B — Codex capability registry expansion
 
