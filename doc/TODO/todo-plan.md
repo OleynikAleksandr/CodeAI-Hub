@@ -197,12 +197,12 @@
 ### Stream: Targeted Verification
 
 83. [DONE] Run targeted PM/Core/UI checks for submit-time model/reasoning preservation (scope: `src/client/project-manager`, `packages/core`, `webview`; commit: `test: verify submit-time model reset fix`; verified: `npx tsx --test --test-name-pattern "keeps live dialog model binding" packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`, `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/project-manager-session-view.test.tsx src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npm run build --workspace=@codeai-hub/core`, `npm run typecheck:webview`, `npm run build:webview`)
-84. [IN_PROGRESS] Git Commit: `test: verify submit-time model reset fix` (hash: TBD)
+84. [DONE] Git Commit: `test: verify submit-time model reset fix` (hash: `0ccd2d683`)
 
 ### Stream: Canonical Docs
 
-85. [TODO] Update canonical docs for dialog submit preserving live status-panel `modelBinding` and PM wrappers preserving explicit reasoning (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document submit-time model reset fix`)
-86. [TODO] Git Commit: `docs: document submit-time model reset fix` (hash: TBD)
+85. [DONE] Update canonical docs for dialog submit preserving live status-panel `modelBinding` and PM wrappers preserving explicit reasoning (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document submit-time model reset fix`; verified: documentation diff reviewed)
+86. [IN_PROGRESS] Git Commit: `docs: document submit-time model reset fix` (hash: TBD)
 
 ### Stream: Release Build
 

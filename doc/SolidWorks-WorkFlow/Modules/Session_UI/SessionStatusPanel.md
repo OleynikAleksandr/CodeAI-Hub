@@ -1,7 +1,7 @@
 # Session Status Panel — Factual Module Inventory
 
 **Surface:** нижняя статусная строка  
-**Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`
+**Primary code:** `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-switcher-facade.ts`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `src/client/project-manager/components/sessions/status-hydrator.ts`, `src/client/project-manager/components/sessions/use-runtime-model-sync.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`
 **Canonical styles:** `media/session-view.css` блок `.session-status-row`, `.session-status-chip`, `.session-status-chip--label`, `.session-status-chip--limits`, `.session-status-button`, `.session-status-button--{claude,codex,gemini}`, `.session-status-picker-anchor`, `.session-model-switch-card`, `.session-status__debug-strip`.
 
 ## Роль
@@ -52,7 +52,9 @@
 - click по reasoning chip открывает `SessionReasoningPickerCard`; выбор вызывает `onReasoningSelect(sessionId, reasoningId)` и закрывает card;
 - Project Manager controller сохраняет выбранный provider default/reasoning в canonical `~/.codeai-hub/settings/settings.json`, затем отправляет `session:model:set` в Core с explicit `targetModelId` и `targetReasoningId`;
 - если пользователь выбирает модель и сразу выбирает reasoning/thinking до прихода `session:model:update`, PM hook использует pending selected model for this session, а не stale snapshot model;
+- runtime и dialog PM wrappers обязаны прокидывать optional `targetReasoningId` в `api.setSessionModel`; иначе Core получит model-only команду и может собрать binding из старого Settings snapshot;
 - Core обновляет `session.modelBinding` без provider resend и emits `session:model:update`; визуальная смена label считается подтверждённой только после runtime sync;
+- при отправке следующего сообщения в dialog/Shaga path Core не имеет права восстанавливать старый continuity segment `modelBinding` поверх уже live `Session.modelBinding`; persisted binding используется только для hydrate, когда live binding отсутствует;
 - смена provider через эту панель запрещена; для этого существует отдельный provider-switch flow.
 
 ### Token side

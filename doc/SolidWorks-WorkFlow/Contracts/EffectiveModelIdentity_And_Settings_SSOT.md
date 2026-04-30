@@ -1,7 +1,7 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
 
 **Status:** Implemented on `codex/status-panel-model-switcher`
-**Updated:** 2026-04-29
+**Updated:** 2026-04-30
 **Owner:** Oleksandr + Codex
 **Validated on:** targeted Core/provider/PM/UI checks during `v1.2.112` cycle
 
@@ -112,6 +112,7 @@ Core обязана вычислять effective turn config through the session
 - threshold-created continuation session: clone the previous binding as a continuity-inherited binding;
 - explicit switch: replace `Session.modelBinding` and broadcast the updated effective identity.
 - status-panel selection: accept `session:model:set`, update `Session.modelBinding` without sending a provider message, and emit `session:model:update` so the next user turn uses the selected identity.
+- dialog submit for an already-live session: preserve the live `Session.modelBinding`; continuity segment `modelBinding` may hydrate a missing binding but must not overwrite a fresher in-memory status-panel switch immediately before the outbound user turn.
 
 Core then:
 
@@ -156,6 +157,7 @@ Session continuity must preserve the model chosen at logical session start:
 
 - outbound user turns store the current `session.modelBinding` into continuity segment/index data;
 - dialog list and materialized runtime placeholders include the persisted binding before provider hydration;
+- reopened dialog send uses persisted segment binding only as a hydration fallback; if the logical session is already live and has `session.modelBinding`, that live binding remains authoritative for the submitted turn;
 - post-threshold rollover uses the previous session binding as the inherited binding for the new provider session;
 - SDK `model_info` events may confirm compatible runtime state, but an unbound SDK/base-model event must not replace a binding-owned identity;
 - changing Settings after a session starts can affect only future new sessions, not restored dialogs, existing sessions, or continuation sessions created by `Remaining context threshold (%)`.
@@ -188,6 +190,7 @@ The lower status panel exposes two picker buttons when a runtime/dialog snapshot
 - selection closes the picker and calls Project Manager orchestration;
 - PM saves the selected default/reasoning to `~/.codeai-hub/settings/settings.json`;
 - PM sends `session:model:set` with the selected base model id and selected reasoning/thinking id;
+- PM runtime and dialog view wrappers must forward both values to Core; losing the optional reasoning/thinking argument reintroduces a Settings-save race;
 - Core updates the existing logical session binding and broadcasts `session:model:update`;
 - the next user turn consumes the updated binding through normal applied turn config resolution.
 
@@ -217,6 +220,7 @@ This flow intentionally avoids "read Settings at every turn" as the live-session
 18. Settings snapshot caches must be path-scoped, short-lived, and invalidated by Core write/reset/default-materialization paths; cache reuse is a performance detail and must not change settings ownership.
 19. Status-panel model/reasoning selection may mutate only the current provider family; provider changes must use the provider-switch contract.
 20. A status-panel selection must persist Settings for future sessions and update `session.modelBinding` for the current session before the next user turn.
+21. A dialog submit must not restore an older continuity segment binding over an already-live session binding.
 
 ---
 
