@@ -1,16 +1,13 @@
-import type { CodexReasoningSummaryMode } from "../types";
-
-const CODEX_MODELS_WITHOUT_REASONING_SUMMARY = new Set(["gpt-5.3-codex-spark"]);
+import {
+  type CodexReasoningSummaryMode,
+  getCodexModelCapabilities,
+} from "../types";
 
 export const buildCodexReasoningSummaryParams = (
   modelId: string | null | undefined,
   summary: CodexReasoningSummaryMode
 ): { readonly summary: CodexReasoningSummaryMode } | Record<string, never> => {
-  const normalizedModelId = modelId?.trim();
-  if (
-    normalizedModelId &&
-    CODEX_MODELS_WITHOUT_REASONING_SUMMARY.has(normalizedModelId)
-  ) {
+  if (!getCodexModelCapabilities(modelId).supportsReasoningSummary) {
     return {};
   }
 

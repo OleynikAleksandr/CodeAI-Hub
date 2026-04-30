@@ -97,12 +97,12 @@
 3. [DONE] Добавить unit-test runtime registry в Codex module: assert Spark `supportsReasoningSummary === false`, non-Spark `=== true`, reasoning options include `xhigh`, unknown model keeps summary enabled. Scope: 1 файл; commit message: `test(codex): cover runtime model capability registry`.
 4. [DONE] Git Commit: `test(codex): cover runtime model capability registry` (hash: 904d2bf2f)
 5. [DONE] Расширить UI/settings mirror `src/types/codex-model-registry.ts` теми же capability fields. Добавить / расширить root/UI unit-test: assert UI mirror and runtime registry share the same current Codex model slug set; assert Spark/non-Spark capability parity for known slugs. Scope: ≤2 файла; commit message: `feat(ui): mirror codex model capability metadata`.
-6. [DONE] Git Commit: `feat(ui): mirror codex model capability metadata` (hash: pending current commit)
+6. [DONE] Git Commit: `feat(ui): mirror codex model capability metadata` (hash: 96c3ca0df)
 
 ### Stream C — Replace slug-based hardcode in payload helper
 
-1. [TODO] В `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts` заменить `CODEX_MODELS_WITHOUT_REASONING_SUMMARY` Set lookup на Codex module runtime helper `getCodexModelCapabilities(modelId).supportsReasoningSummary === false`. Сохранить existing public signature `buildCodexReasoningSummaryParams(modelId, summary)`. Расширить existing unit-test'ы (или создать если не было) — assert: вызов с Spark slug возвращает empty object; вызов с non-Spark — `{ summary }`; вызов с unknown slug — defaults retain (см. open question 11.2 если потребуется). Scope: ≤2 файла (helper + test). Никаких новых call sites — `codex-app-server-facade.ts:225` уже вызывает helper; behavior unchanged for non-Spark. Commit message: `refactor(codex): replace slug-based hardcode with capability registry`.
-2. [TODO] Git Commit: `refactor(codex): replace slug-based hardcode with capability registry` (hash: TBD)
+1. [DONE] В `packages/Codex_AppServer_Module/src/app-server/codex-reasoning-summary-params.ts` заменить `CODEX_MODELS_WITHOUT_REASONING_SUMMARY` Set lookup на Codex module runtime helper `getCodexModelCapabilities(modelId).supportsReasoningSummary === false`. Сохранить existing public signature `buildCodexReasoningSummaryParams(modelId, summary)`. Расширить existing unit-test'ы (или создать если не было) — assert: вызов с Spark slug возвращает empty object; вызов с non-Spark — `{ summary }`; вызов с unknown slug — defaults retain (см. open question 11.2 если потребуется). Scope: ≤2 файла (helper + test). Никаких новых call sites — `codex-app-server-facade.ts:225` уже вызывает helper; behavior unchanged for non-Spark. Commit message: `refactor(codex): replace slug-based hardcode with capability registry`.
+2. [DONE] Git Commit: `refactor(codex): replace slug-based hardcode with capability registry` (hash: pending current commit)
 
 ### Stream D — Switch transport + Core handler (компилируемые микро-задачи)
 
