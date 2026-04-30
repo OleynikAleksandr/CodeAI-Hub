@@ -7382,55 +7382,133 @@
   var DEFAULT_CLAUDE_THINKING_EFFORT = "medium";
 
   // src/types/codex-model-registry.ts
-  var CODEX_SETTINGS_MODELS = [
-    {
+  var CODEX_REASONING_LEVEL_OPTIONS = [
+    "low",
+    "medium",
+    "high",
+    "xhigh"
+  ];
+  var DEFAULT_CODEX_MODEL_CAPABILITIES = {
+    autoCompactTokenLimit: 18e4,
+    contextWindow: 2e5,
+    reasoningEffortOptions: CODEX_REASONING_LEVEL_OPTIONS,
+    supportsReasoningSummary: true,
+    supportsVerbosity: true
+  };
+  var withCodexModelCapabilities = (descriptor, overrides) => ({
+    ...descriptor,
+    ...DEFAULT_CODEX_MODEL_CAPABILITIES,
+    ...overrides
+  });
+  var CODEX_RECOMMENDED_MODELS = [
+    withCodexModelCapabilities({
       id: "gpt-5.2",
       displayName: "GPT-5.2",
       description: "Optimized for professional work and long-running agents",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
-    },
-    {
-      id: "gpt-5.3-codex-spark",
-      displayName: "GPT-5.3-Codex-Spark",
-      description: "Ultra-fast coding model for lower-latency engineering tasks",
-      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
-      status: "active",
-      tier: "mini"
-    },
-    {
+    }),
+    withCodexModelCapabilities(
+      {
+        id: "gpt-5.3-codex-spark",
+        displayName: "GPT-5.3-Codex-Spark",
+        description: "Ultra-fast coding model for lower-latency engineering tasks",
+        platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+        status: "active",
+        tier: "mini"
+      },
+      {
+        supportsReasoningSummary: false
+      }
+    ),
+    withCodexModelCapabilities({
       id: "gpt-5.3-codex",
       displayName: "GPT-5.3-Codex",
       description: "Most advanced agentic coding model for real-world engineering",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "flagship"
-    },
-    {
+    }),
+    withCodexModelCapabilities({
       id: "gpt-5.4-mini",
       displayName: "GPT-5.4 Mini",
       description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "mini"
-    },
-    {
+    }),
+    withCodexModelCapabilities({
       id: "gpt-5.4",
       displayName: "GPT-5.4",
       description: "Best general agentic model for tasks across industries",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
-    },
-    {
+    }),
+    withCodexModelCapabilities({
       id: "gpt-5.5",
       displayName: "GPT-5.5",
       description: "Best general agentic model for tasks across industries",
       platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
       status: "active",
       tier: "general"
-    }
+    })
+  ];
+  var CODEX_SETTINGS_MODELS = [
+    withCodexModelCapabilities({
+      id: "gpt-5.2",
+      displayName: "GPT-5.2",
+      description: "Optimized for professional work and long-running agents",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    }),
+    withCodexModelCapabilities(
+      {
+        id: "gpt-5.3-codex-spark",
+        displayName: "GPT-5.3-Codex-Spark",
+        description: "Ultra-fast coding model for lower-latency engineering tasks",
+        platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+        status: "active",
+        tier: "mini"
+      },
+      {
+        supportsReasoningSummary: false
+      }
+    ),
+    withCodexModelCapabilities({
+      id: "gpt-5.3-codex",
+      displayName: "GPT-5.3-Codex",
+      description: "Most advanced agentic coding model for real-world engineering",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "flagship"
+    }),
+    withCodexModelCapabilities({
+      id: "gpt-5.4-mini",
+      displayName: "GPT-5.4 Mini",
+      description: "Smaller GPT-5.4 variant for faster everyday coding tasks",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "mini"
+    }),
+    withCodexModelCapabilities({
+      id: "gpt-5.4",
+      displayName: "GPT-5.4",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    }),
+    withCodexModelCapabilities({
+      id: "gpt-5.5",
+      displayName: "GPT-5.5",
+      description: "Best general agentic model for tasks across industries",
+      platforms: ["CLI", "SDK", "IDE Extension", "Cloud", "API"],
+      status: "active",
+      tier: "general"
+    })
   ];
   var DEFAULT_CODEX_MODEL_ID = "gpt-5.3-codex";
   var CODEX_REASONING_LEVELS = [

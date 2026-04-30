@@ -193,12 +193,14 @@
 ### Stream I — Pre-build version sync
 
 1. [DONE] Обновить `README.md` («Current Release — v1.2.116») и `CHANGELOG.md` (новая секция `## [1.2.116]`) с описанием Codex switch. Scope: 2 файла; commit message: `docs: prepare release 1.2.116`.
-2. [DONE] Git Commit: `docs: prepare release 1.2.116` (hash: pending current commit)
+2. [DONE] Git Commit: `docs: prepare release 1.2.116` (hash: da8396cc8)
 
 ### Stream J — Build new release
 
-1. [TODO] `./scripts/build-all.sh` → `./scripts/build-release.sh --use-current-version` → копирование 7 tarballs в `doc/tmp/releases/`. Артефакт: `codeai-hub-1.2.116.vsix`. Scope: scripts; commit message: `chore: build release 1.2.116`.
-2. [TODO] Git Commit: `chore: build release 1.2.116` (hash: TBD)
+1. [DONE] `./scripts/build-all.sh` поднял workspace/provider/core/UI/launcher версию до `1.2.116`, пересобрал tracked manifests и `media/react-chat.js`, скопировал 7 tarballs в `doc/tmp/releases/`. Scope: generated release metadata + bundle; commit message: `chore: build release 1.2.116`.
+2. [DONE] Git Commit: `chore: build release 1.2.116` (hash: pending current commit)
+3. [TODO] `./scripts/build-release.sh --use-current-version` на чистом дереве. Артефакт: `codeai-hub-1.2.116.vsix`. Scope: VSIX packaging; commit message: `chore: finalize release 1.2.116`.
+4. [TODO] Git Commit: `chore: finalize release 1.2.116` (hash: TBD)
 
 ## Phase 3 — User acceptance (owner: User retest, updated: 2026-04-30)
 
