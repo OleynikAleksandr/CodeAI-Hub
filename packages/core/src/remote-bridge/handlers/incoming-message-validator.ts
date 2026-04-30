@@ -105,7 +105,8 @@ const isSessionModelSetPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.sessionId === "string" &&
   typeof payload.targetModelId === "string" &&
-  payload.targetModelId.trim().length > 0;
+  payload.targetModelId.trim().length > 0 &&
+  isOptionalStringOrNull(payload.targetReasoningId);
 
 const isUsageRefreshPayload = (payload: unknown): boolean =>
   isRecord(payload) &&

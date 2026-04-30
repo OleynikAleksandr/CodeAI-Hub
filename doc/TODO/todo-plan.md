@@ -134,13 +134,13 @@
 
 ### Stream: Regression Fix Plan
 
-47. [IN_PROGRESS] Record confirmed `1.2.112` retest regressions and split the fix stream (scope: `doc/TODO/todo-plan.md`; commit: `docs: plan status panel retest fixes`; confirmed failures: selected model/reasoning reset to the previous identity on next turn; model picker card needs left-edge alignment with the Reasoning picker/chip area)
-48. [TODO] Git Commit: `docs: plan status panel retest fixes` (hash: TBD)
+47. [DONE] Record confirmed `1.2.112` retest regressions and split the fix stream (scope: `doc/TODO/todo-plan.md`; commit: `docs: plan status panel retest fixes`; confirmed failures: selected model/reasoning reset to the previous identity on next turn; model picker card needs left-edge alignment with the Reasoning picker/chip area)
+48. [DONE] Git Commit: `docs: plan status panel retest fixes` (hash: `3b6a7d729`)
 
 ### Stream: Binding Regression Fix
 
-49. [TODO] Extend `session:model:set` transport payload to carry explicit selected reasoning/thinking (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `fix(core): carry explicit status panel reasoning selection`)
-50. [TODO] Git Commit: `fix(core): carry explicit status panel reasoning selection` (hash: TBD)
+49. [DONE] Extend `session:model:set` transport payload to carry explicit selected reasoning/thinking (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `src/client/project-manager/core-stream-message-types.ts`; commit: `fix(core): carry explicit status panel reasoning selection`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`)
+50. [IN_PROGRESS] Git Commit: `fix(core): carry explicit status panel reasoning selection` (hash: TBD)
 51. [TODO] Resolve explicit status-panel model/reasoning in Core binding without rereading stale Settings (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`; commit: `fix(core): bind status panel reasoning without settings race`)
 52. [TODO] Git Commit: `fix(core): bind status panel reasoning without settings race` (hash: TBD)
 53. [TODO] Preserve pending selected model in PM and send explicit reasoning with `session:model:set` (scope: `src/client/project-manager/api.ts`, `src/client/project-manager/components/sessions/session-model-switch-controller.ts`, `src/client/project-manager/components/sessions/use-session-model-switch.ts`; commit: `fix(pm): preserve pending status panel model selection`)

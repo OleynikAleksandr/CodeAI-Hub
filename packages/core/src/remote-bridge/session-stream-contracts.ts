@@ -222,6 +222,7 @@ export type SessionIncomingMessage =
       readonly type: "session:model:set";
       readonly payload: {
         readonly sessionId: string;
+        readonly targetReasoningId?: string | null;
         readonly targetModelId: string;
       };
     }
