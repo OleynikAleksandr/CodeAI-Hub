@@ -43,7 +43,7 @@
 ### Stream A — Scope opening
 
 1. [DONE] Создать `doc/SolidWorks-WorkFlow/Plans/Codex_StatusPanel_ModelSwitch_Architecture.md` + этот todo-plan. Scope: 2 файла; commit message: `docs: open codex status panel model switch scope`.
-2. [TODO] Git Commit: `docs: open codex status panel model switch scope` (hash: TBD)
+2. [DONE] Git Commit: `docs: open codex status panel model switch scope` (hash: c9931048b)
 
 ### Stream B — Codex capability flags + model registry
 
