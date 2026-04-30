@@ -202,12 +202,12 @@
 ### Stream: Canonical Docs
 
 85. [DONE] Update canonical docs for dialog submit preserving live status-panel `modelBinding` and PM wrappers preserving explicit reasoning (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document submit-time model reset fix`; verified: documentation diff reviewed)
-86. [IN_PROGRESS] Git Commit: `docs: document submit-time model reset fix` (hash: TBD)
+86. [DONE] Git Commit: `docs: document submit-time model reset fix` (hash: `a14b61147`)
 
 ### Stream: Release Build
 
-87. [TODO] Prepare release docs for future version `1.2.114` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.114`)
-88. [TODO] Git Commit: `docs: prepare release 1.2.114` (hash: TBD)
+87. [DONE] Prepare release docs for future version `1.2.114` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.114`; verified: README current release and changelog section set to `1.2.114`)
+88. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.114` (hash: TBD)
 89. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.114`)
 90. [TODO] Git Commit: `chore: build release 1.2.114` (hash: TBD)
 91. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.114`)

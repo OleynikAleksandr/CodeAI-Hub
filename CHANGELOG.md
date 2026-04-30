@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.114] - 2026-04-30
+### Fixed
+- **Status-panel model/reasoning changes survive Shaga dialog submit.** Core dialog send now preserves the live `Session.modelBinding` instead of restoring an older continuity segment binding when the next answer is sent, and PM runtime/dialog wrappers forward explicit reasoning to Core.
+
+### Tests
+- **Submit-time binding regression verification passed.** Passed the focused dialog-submit model binding guard, Core model-set binding tests, PM status-panel wrapper/controller/hook tests, Core build, webview typecheck, and webview build.
+
 ## [1.2.113] - 2026-04-30
 ### Fixed
 - **Status-panel model/reasoning changes now stick for the next active-session turn.** `session:model:set` carries the explicit selected reasoning/thinking value, Core updates `session.modelBinding` from that command payload instead of rereading potentially stale Settings, and Project Manager keeps a pending selected model per session so a fast model -> reasoning click sequence cannot fall back to the old model.
