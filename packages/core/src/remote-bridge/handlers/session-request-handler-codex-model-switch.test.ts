@@ -1,23 +1,29 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { CODEX_MODEL_SWITCH_INJECTION_KEY } from "@codeai-hub/codex-app-server-module";
+import { ContinuityChainStore } from "../../session-continuity/continuity-store";
 import {
   buildSessionModelBindingKey,
   type SessionModelBinding,
 } from "../../session-model-binding";
 import { RemoteBridgeMessageRouter } from "../remote-bridge-message-router";
+import { readAppliedProviderTurnConfig } from "../types";
 import { createHarness, noop } from "./session-request-handler.test-helpers";
 
 const MODEL_SWITCH_INSTRUCTION_PROFILE_PATTERN = /early architecture workflow/;
 
 const createRouter = (
-  harness: ReturnType<typeof createHarness>
+  harness: ReturnType<typeof createHarness>,
+  getManager: () => unknown = () => undefined
 ): RemoteBridgeMessageRouter =>
   new RemoteBridgeMessageRouter({
     dialogHistoryService: {} as never,
     dialogListService: {} as never,
     dialogOpenService: {} as never,
-    getManager: () => undefined,
+    getManager: getManager as never,
     logger: { error: noop, info: noop, warn: noop } as never,
     nativeRequestCaptureFacade: {} as never,
     projectHandler: {} as never,
@@ -27,6 +33,133 @@ const createRouter = (
     workflowRuntime: {} as never,
     workspaceRuntime: {} as never,
   });
+
+test("Codex model switch remains authoritative across dialog send resume", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codex-dialog-model-switch-")
+  );
+  try {
+    await writeFile(
+      path.join(workspaceRoot, "settings.json"),
+      '{"providers":{"codex":{"defaultModel":"gpt-5.2","reasoningByModel":{"gpt-5.2":"low"}}}}\n',
+      "utf8"
+    );
+    const harness = createHarness({
+      claudeSettingsPath: path.join(workspaceRoot, "claude-settings.json"),
+    });
+    const workspaceSlug = "workspace";
+    const dialogId = "dialog-codex-switch";
+    const session = harness.sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-codex",
+      {
+        initiativeSlug: workspaceSlug,
+        stage: "description",
+        runSlug: null,
+      }
+    );
+    const previousBinding = createPreviousBinding(session.id, workspaceRoot);
+    harness.sessionManager.setModelBinding(session.id, previousBinding);
+    await new ContinuityChainStore({
+      workspaceRoot,
+      workspaceSlug,
+      rootSessionId: dialogId,
+      stage: "description",
+      clock: () => "2026-04-30T06:00:00.000Z",
+    }).appendSegment({
+      sessionId: session.id,
+      providerId: "codexCli",
+      providerSessionId: "provider-session-codex",
+      modelBinding: previousBinding,
+      createdAt: "2026-04-30T06:00:00.000Z",
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-codex",
+      unsubscribe: noop,
+    });
+    const sentTurnOptions: Array<Record<string, unknown> | undefined> = [];
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (
+        _providerSessionId: string,
+        _content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sentTurnOptions.push(turnOptions);
+        return Promise.resolve();
+      },
+    });
+    const clientMessages: unknown[] = [];
+    const router = createRouter(harness, () => ({
+      getWorkspaceScope: () => ({
+        enabled: true,
+        workspacePath: workspaceRoot,
+      }),
+      sendToClient: (_clientId: string, message: unknown) => {
+        clientMessages.push(message);
+      },
+    }));
+
+    await router.handleIncomingMessage("client-1", {
+      type: "session:codex:model-switch",
+      payload: {
+        sessionId: session.id,
+        targetModelId: "gpt-5.3-codex-spark",
+        targetReasoningEffort: "low",
+      },
+    });
+    await router.handleIncomingMessage("client-1", {
+      type: "dialog:send",
+      payload: {
+        requestId: "request-dialog-send",
+        workspaceSlug,
+        dialogId,
+        content: "next dialog answer",
+      },
+    });
+
+    const turnConfig = readAppliedProviderTurnConfig(sentTurnOptions[0]);
+    const injection = sentTurnOptions[0]?.[CODEX_MODEL_SWITCH_INJECTION_KEY] as
+      | Record<string, unknown>
+      | undefined;
+    assert.equal(turnConfig?.baseModelId, "gpt-5.3-codex-spark");
+    assert.equal(
+      turnConfig?.effectiveModelId,
+      "gpt-5.3-codex-spark reasoning:low"
+    );
+    assert.equal(turnConfig?.reasoningEffort, "low");
+    assert.equal(turnConfig?.source, "session_binding");
+    assert.equal(injection?.kind, "model_switch");
+    assert.equal(injection?.targetModelId, "gpt-5.3-codex-spark");
+    assert.equal(injection?.targetReasoningEffort, "low");
+    assert.equal(
+      harness.sessionManager.getSession(session.id)
+        ?.pendingModelSwitchInjection,
+      false
+    );
+    assert.deepEqual(clientMessages.at(-1), {
+      type: "dialog:send:ack",
+      payload: {
+        requestId: "request-dialog-send",
+        workspaceSlug,
+        dialogId,
+        status: "sent",
+        error: null,
+      },
+    });
+    assert.equal(
+      harness.events.some(
+        (event) =>
+          event.type === "session:model:update" &&
+          event.payload.modelId === "gpt-5.3-codex-spark reasoning:low"
+      ),
+      true
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
 
 const createPreviousBinding = (
   sessionId: string,

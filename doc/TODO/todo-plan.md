@@ -168,16 +168,18 @@
 1. [DONE] `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` **и runtime callback path** (`project-manager-runtime-session-view.tsx` / existing runtime sender owner): invoke `api.requestCodexModelSwitch(...)` from callbacks. Guard: для non-Codex sessions callback no-op (chip click ничего не делает; визуально chip остаётся). Default reasoning при выборе model: previous-if-supported, else first из `reasoningEffortOptions`. Scope: 3 файла; commit message: `feat(pm): dispatch codex model switch with non-codex guard`.
 2. [DONE] Git Commit: `feat(pm): dispatch codex model switch with non-codex guard` (hash: e76282d85)
 3. [DONE] Source/component-test coverage: Codex dialog/runtime session selection routes to `api.requestCodexModelSwitch(...)`; non-Codex guard remains before dispatch; reasoning-only selection resolves current base model before sending. Scope: 1 файл; commit message: `test(pm): assert model switch callback dispatch wiring`.
-4. [DONE] Git Commit: `test(pm): assert model switch callback dispatch wiring` (hash: pending current commit)
+4. [DONE] Git Commit: `test(pm): assert model switch callback dispatch wiring` (hash: 3be281e9d)
 
 ### Stream G — End-to-end native request capture + Settings independence
 
-1. [TODO] Добавить native-capture integration test:
-   - **Test 1:** switch `gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → send turn → captured raw payload не содержит `summary` field, содержит `<model_switch>` в input array.
-   - **Test 2 (Settings independence):** после `session:codex:model-switch` без последующего turn'а → следующий `dialog:send` с applied turn config → assert `modelId === target.modelId` и `reasoningEffort === target.reasoningEffort`, **БЕЗ** чтения Settings defaults (защищает от регрессии 1.2.114).
-   - **Test 3 (UI immediate update):** после dispatch switch'а UI получает `session:model:update` с новым effective identity в том же tick.
-   Scope: ≤2 файла; commit message: `test(codex): cover model switch end-to-end with settings independence`.
-2. [TODO] Git Commit: `test(codex): cover model switch end-to-end with settings independence` (hash: TBD)
+1. [DONE] Добавить Core integration test + fix:
+   - после `session:codex:model-switch` без последующего turn'а следующий `dialog:send` не затирает live switch старым continuity `modelBinding`;
+   - applied turn config остаётся из `session_binding`: `modelId === target.modelId`, `reasoningEffort === target.reasoningEffort`, без возврата к Settings defaults;
+   - после dispatch switch'а Core уже имеет `session:model:update` с новым effective identity.
+   Scope: 3 файла; commit message: `test(core): cover dialog send model switch continuity`.
+2. [DONE] Git Commit: `test(core): cover dialog send model switch continuity` (hash: pending current commit)
+3. [TODO] Добавить Codex raw payload regression test: switch `gpt-5.2` → `gpt-5.3-codex-spark` с reasoning low → send turn → captured `turn/start` payload не содержит `summary` field, содержит `<model_switch>` в input array. Scope: ≤2 файла; commit message: `test(codex): cover spark model switch raw payload`.
+4. [TODO] Git Commit: `test(codex): cover spark model switch raw payload` (hash: TBD)
 
 ### Stream H — SSOT docs sync
 

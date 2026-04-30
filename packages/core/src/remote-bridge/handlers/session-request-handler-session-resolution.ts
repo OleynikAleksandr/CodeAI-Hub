@@ -2,6 +2,7 @@ import path from "node:path";
 import type { ProviderRegistry } from "../../provider-registry";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
 import type { Logger } from "../../telemetry/logger";
 import { type BridgeEvent, serializeSession } from "../types";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
@@ -163,7 +164,11 @@ export class SessionRequestHandlerSessionResolution {
           candidate.providerId === last.providerId &&
           candidate.providerSessionId === last.providerSessionId
       );
-    if (existingSession && last.modelBinding) {
+    if (
+      existingSession &&
+      last.modelBinding &&
+      this.shouldApplyContinuityModelBinding(existingSession, last.modelBinding)
+    ) {
       this.deps.sessionManager.setModelBinding(
         existingSession.id,
         last.modelBinding
@@ -193,6 +198,27 @@ export class SessionRequestHandlerSessionResolution {
 
   private normalizeProviderId(value?: string): string | null {
     return this.normalizeNullableToken(value);
+  }
+
+  private shouldApplyContinuityModelBinding(
+    session: Session,
+    snapshot: SessionModelBinding
+  ): boolean {
+    const current = session.modelBinding ?? null;
+    if (!current) {
+      return true;
+    }
+    const currentTime = this.parseBindingTime(current);
+    const snapshotTime = this.parseBindingTime(snapshot);
+    return snapshotTime !== null && currentTime !== null
+      ? snapshotTime > currentTime
+      : false;
+  }
+
+  private parseBindingTime(binding: SessionModelBinding): number | null {
+    const value = binding.updatedAt || binding.boundAt;
+    const timestamp = Date.parse(value);
+    return Number.isNaN(timestamp) ? null : timestamp;
   }
 
   private resolveWorkspacePath(workspacePath?: string): string {
