@@ -33,6 +33,8 @@ type ProjectManagerSessionViewProps = {
   readonly startupStage?: string;
 };
 
+const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
+
 const ProjectManagerRuntimeSessionView = ({
   workspacePath,
   preferredSessionId,
@@ -348,17 +350,45 @@ const ProjectManagerRuntimeSessionView = ({
     workspacePath,
     reload
   );
+  const resolveCodexBaseModelId = useCallback(
+    (sessionId: string): string | null => {
+      const session = sessionsRef.current.find(
+        (candidate) => candidate.id === sessionId
+      );
+      if (session?.providerIds[0] !== "codexCli") {
+        return null;
+      }
+      const boundModelId =
+        session.modelBinding?.baseModelId ?? session.modelBinding?.modelId;
+      const visibleModelId = snapshots[sessionId]?.status.models?.[0]?.modelId;
+      return (boundModelId ?? visibleModelId ?? "").replace(
+        EFFECTIVE_MODEL_SUFFIX_PATTERN,
+        ""
+      );
+    },
+    [snapshots]
+  );
   const handleSelectModel = useCallback(
-    (
-      _sessionId: string,
-      _modelId: string,
-      _reasoning: CodexReasoningLevel
-    ) => undefined,
+    (sessionId: string, modelId: string, reasoning: CodexReasoningLevel) => {
+      const session = sessionsRef.current.find(
+        (candidate) => candidate.id === sessionId
+      );
+      if (session?.providerIds[0] !== "codexCli") {
+        return;
+      }
+      api.requestCodexModelSwitch(sessionId, modelId, reasoning);
+    },
     []
   );
   const handleSelectReasoning = useCallback(
-    (_sessionId: string, _reasoning: CodexReasoningLevel) => undefined,
-    []
+    (sessionId: string, reasoning: CodexReasoningLevel) => {
+      const modelId = resolveCodexBaseModelId(sessionId);
+      if (!modelId) {
+        return;
+      }
+      api.requestCodexModelSwitch(sessionId, modelId, reasoning);
+    },
+    [resolveCodexBaseModelId]
   );
   const activeRecord = sessions.find((session) => session.id === scopedActiveSessionId) ?? null;
   const showThinkingMessages = resolveSessionThinkingDisplayEnabled({

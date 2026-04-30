@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
@@ -24,6 +25,7 @@ import {
   useProjectManagerDialogCoreEvents,
 } from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
+const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
 
 export type ProjectManagerDialogSessionController = {
   readonly connection: ReturnType<typeof useProjectManagerCoreStatusHydrator>;
@@ -33,6 +35,11 @@ export type ProjectManagerDialogSessionController = {
   readonly snapshots: SessionSnapshots;
   readonly setSnapshots: React.Dispatch<React.SetStateAction<SessionSnapshots>>;
   readonly tokenDebugSummaryOverride: string | undefined;
+  readonly requestCodexModelSwitch: (
+    modelId: string,
+    reasoning: CodexReasoningLevel
+  ) => void;
+  readonly requestCodexReasoningSwitch: (reasoning: CodexReasoningLevel) => void;
   readonly sendMessage: (content: string) => void;
 };
 
@@ -427,9 +434,50 @@ export const useProjectManagerDialogSessionController = (
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
 
+  const resolveCodexBaseModelId = useCallback((): string | null => {
+    const currentSession = sessionRef.current;
+    if (currentSession?.providerIds[0] !== "codexCli") {
+      return null;
+    }
+    const boundModelId =
+      currentSession.modelBinding?.baseModelId ??
+      currentSession.modelBinding?.modelId;
+    const visibleModelId =
+      snapshots[currentSession.id]?.status.models?.[0]?.modelId;
+    return (boundModelId ?? visibleModelId ?? "").replace(
+      EFFECTIVE_MODEL_SUFFIX_PATTERN,
+      ""
+    );
+  }, [snapshots]);
+
+  const requestCodexModelSwitch = useCallback(
+    (modelId: string, reasoning: CodexReasoningLevel) => {
+      const currentSession = sessionRef.current;
+      if (currentSession?.providerIds[0] !== "codexCli") {
+        return;
+      }
+      api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);
+    },
+    []
+  );
+
+  const requestCodexReasoningSwitch = useCallback(
+    (reasoning: CodexReasoningLevel) => {
+      const modelId = resolveCodexBaseModelId();
+      const currentSession = sessionRef.current;
+      if (!(modelId && currentSession)) {
+        return;
+      }
+      api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);
+    },
+    [resolveCodexBaseModelId]
+  );
+
   return {
     connection,
     providerLabels,
+    requestCodexModelSwitch,
+    requestCodexReasoningSwitch,
     session,
     showThinkingMessages,
     snapshots,

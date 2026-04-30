@@ -161,12 +161,14 @@
 #### F2 — Callback bridge + symmetric PM views
 
 1. [DONE] `src/client/ui/src/session/session-view.tsx` (пробросить onSelectModel / onSelectReasoning из props в StatusPanel), `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx` (wiring callbacks через PM controller), `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx` (symmetric wiring). Scope: 3 файла; commit message: `feat(pm-status-panel): wire model picker callbacks through session views`.
-2. [DONE] Git Commit: `feat(pm-status-panel): wire model picker callbacks through session views` (hash: pending current commit)
+2. [DONE] Git Commit: `feat(pm-status-panel): wire model picker callbacks through session views` (hash: fee9d5b64)
 
 #### F3 — Controller dispatch + non-Codex guard
 
-1. [TODO] `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` **и runtime callback path** (`project-manager-runtime-session-view.tsx` / existing runtime sender owner): invoke `api.requestCodexModelSwitch(...)` from callbacks. Guard: для non-Codex sessions callback no-op (chip click ничего не делает; визуально chip остаётся). Default reasoning при выборе model: previous-if-supported, else first из `reasoningEffortOptions`. Component-тест: Codex dialog session selection → correct dispatch с target; Codex runtime session selection → correct dispatch с target; non-Codex no-op. Scope: ≤3 файла; commit message: `feat(pm): dispatch codex model switch with non-codex guard`.
-2. [TODO] Git Commit: `feat(pm): dispatch codex model switch with non-codex guard` (hash: TBD)
+1. [DONE] `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` **и runtime callback path** (`project-manager-runtime-session-view.tsx` / existing runtime sender owner): invoke `api.requestCodexModelSwitch(...)` from callbacks. Guard: для non-Codex sessions callback no-op (chip click ничего не делает; визуально chip остаётся). Default reasoning при выборе model: previous-if-supported, else first из `reasoningEffortOptions`. Scope: 3 файла; commit message: `feat(pm): dispatch codex model switch with non-codex guard`.
+2. [DONE] Git Commit: `feat(pm): dispatch codex model switch with non-codex guard` (hash: pending current commit)
+3. [TODO] Source/component-test coverage: Codex dialog/runtime session selection routes to `api.requestCodexModelSwitch(...)`; non-Codex guard remains before dispatch; reasoning-only selection resolves current base model before sending. Scope: 1 файл; commit message: `test(pm): assert model switch callback dispatch wiring`.
+4. [TODO] Git Commit: `test(pm): assert model switch callback dispatch wiring` (hash: TBD)
 
 ### Stream G — End-to-end native request capture + Settings independence
 
