@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.117] - 2026-04-30
+### Fixed
+- **Codex Spark model switch no longer inherits provider-home reasoning summary fallback.** Provider-home `model_reasoning_summary` is now forced to `none` by both runtime startup materialization and extension-side settings sync, so switching an active Codex session from `gpt-5.2` to `gpt-5.3-codex-spark` cannot reintroduce unsupported native `reasoning.summary` through global config.
+
+### Tests
+- **Spark summary neutralization covered before release packaging.** Added provider-home materializer and settings-sync regression tests, reran the Spark raw `turn/start` payload test, and passed Codex App Server module build plus root TypeScript compilation.
+
 ## [1.2.116] - 2026-04-30
 ### Added
 - **Codex Status Panel model/reasoning switch is restored with a capability-gated same-session path.** Codex sessions can switch model and reasoning from the lower status chips without resending the previous user message. Core updates the live session binding, broadcasts `session:model:update`, injects one `<model_switch>` instruction item on the next turn, and keeps Settings defaults from overwriting the selected model/reasoning.

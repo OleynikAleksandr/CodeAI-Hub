@@ -222,13 +222,13 @@
 3. [DONE] Extension settings sync: keep provider-home `model` sync, but always write `model_reasoning_summary = "none"` so settings save cannot reintroduce unsafe global summary fallback. Scope: `src/extension-module/settings/codex-provider-config-sync.ts`, `src/extension-module/settings/codex-provider-config-sync.test.ts`, `doc/TODO/todo-plan.md`; commit message: `fix(extension): keep codex provider-home summary neutral`.
 4. [DONE] Git Commit: `fix(extension): keep codex provider-home summary neutral` (hash: 6a70f6476)
 5. [DONE] SSOT docs sync: update Codex/provider invocation docs and SystemArchitecture to state that provider-home summary is neutralized; non-Spark live reasoning visibility comes only from explicit turn-level `summary`, Spark receives no summary field. Scope: `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document codex provider-home summary neutralization`.
-6. [IN_PROGRESS] Git Commit: `docs(ssot): document codex provider-home summary neutralization` (hash: TBD)
-7. [TODO] Targeted verification: run provider-home config tests, Spark raw payload regression, Codex App Server build, and affected webview/project-manager builds/typechecks as needed. Scope: verification only; commit message: N/A.
+6. [DONE] Git Commit: `docs(ssot): document codex provider-home summary neutralization` (hash: 50881964b)
+7. [DONE] Targeted verification passed: `npx tsx --test packages/Codex_AppServer_Module/src/app-server/process/codex-provider-home-config.test.ts src/extension-module/settings/codex-provider-config-sync.test.ts packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade-model-switch.test.ts`, `npm run build --workspace=@codeai-hub/codex-app-server-module`, `npx tsc -p . --pretty false`. Scope: verification only; commit message: N/A.
 
 ### Stream N — Release 1.2.117
 
-1. [TODO] Update `README.md` and `CHANGELOG.md` for `1.2.117` retest fix. Scope: 2 файла; commit message: `docs: prepare release 1.2.117`.
-2. [TODO] Git Commit: `docs: prepare release 1.2.117` (hash: TBD)
+1. [DONE] Update `README.md` and `CHANGELOG.md` for `1.2.117` retest fix. Scope: 2 файла; commit message: `docs: prepare release 1.2.117`.
+2. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.117` (hash: TBD)
 3. [TODO] Run `./scripts/build-all.sh` and commit generated release metadata/bundles. Scope: generated release files; commit message: `chore: build release 1.2.117`.
 4. [TODO] Git Commit: `chore: build release 1.2.117` (hash: TBD)
 5. [TODO] Run `./scripts/build-release.sh --use-current-version`; produce `codeai-hub-1.2.117.vsix`; update active session report as ACTIVE for user retest. Scope: VSIX packaging + session report; commit message: `chore: finalize release 1.2.117`.
