@@ -50,7 +50,8 @@
 ### Picker side
 - click по model chip открывает `SessionModelPickerCard` под chip-row; выбор вызывает `onModelSelect(sessionId, modelId)` и закрывает card;
 - click по reasoning chip открывает `SessionReasoningPickerCard`; выбор вызывает `onReasoningSelect(sessionId, reasoningId)` и закрывает card;
-- Project Manager controller сохраняет выбранный provider default/reasoning в canonical `~/.codeai-hub/settings/settings.json`, затем отправляет `session:model:set` в Core;
+- Project Manager controller сохраняет выбранный provider default/reasoning в canonical `~/.codeai-hub/settings/settings.json`, затем отправляет `session:model:set` в Core с explicit `targetModelId` и `targetReasoningId`;
+- если пользователь выбирает модель и сразу выбирает reasoning/thinking до прихода `session:model:update`, PM hook использует pending selected model for this session, а не stale snapshot model;
 - Core обновляет `session.modelBinding` без provider resend и emits `session:model:update`; визуальная смена label считается подтверждённой только после runtime sync;
 - смена provider через эту панель запрещена; для этого существует отдельный provider-switch flow.
 
@@ -91,5 +92,6 @@ Shared UI не знает о Settings persistence или Core API. Эти callba
 - 4-chip layout инвариант: chips 1–3 (`flex: 0 0 auto`) hug свой текст, правая `--limits` плашка (`flex: 1 1 0; min-width: 0`) поглощает весь оставшийся горизонт; внешняя ширина ряда фиксирована родителем (`width: 100%`). При смене модели (например Sonnet → Opus 4.7) reflow происходит только внутри ряда — токен-плашка автоматически меняет ширину, остальной layout остаётся стабильным.
 - buttons (chips 2 и 3) являются интерактивными `<button type="button">`; cards рендерятся как `role="dialog"` и закрываются после выбора.
 - reasoning chip скрывается, когда `model.reasoning` — `undefined` или пустая строка. Для Claude `thinking off` уже приходит как непустая строка `"thinking off"` и попадает в плашку как `(thinking off)`; эта же строка доступна как один из выборов в reasoning picker.
+- model picker card использует отдельный alignment modifier и открывается с левым краем в области следующего Reasoning chip/card; Reasoning picker card сохраняет прежнее позиционирование.
 - localization: ключ `session.status.model_label` лежит в approved dict `assets/localization/source/en/messages_for_the_user.json` и legacy mirror `system_feedback.json`; `session.status.tokens_label` переиспользуется без изменений.
 - цветовой контракт правой `Токены:` плашки: метрика `used (remaining%)` рендерится тем же нейтральным серым `#b0b0b0`, что и default-фаза кнопок имени модели и reasoning (`color` для `.session-status-chip--limits .session-status-chip__value` в `media/session-view.css`). Цифры не должны притягивать визуальное внимание к себе сильнее, чем имя модели.

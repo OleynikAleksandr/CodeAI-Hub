@@ -96,7 +96,7 @@ Clone of an existing `session.modelBinding` assigned to a restored or threshold-
 
 ### 3.8. Status-panel selection
 
-User-driven same-provider model or reasoning change from the lower session status panel. This is not a provider switch. The Project Manager persists the selected provider default/reasoning into canonical Settings for future sessions, then sends `session:model:set` with the selected base model id for the current logical session. Core resolves the effective identity from that target plus the saved provider settings and treats the command as the explicit `switch_model` mutation path for `session.modelBinding`.
+User-driven same-provider model or reasoning change from the lower session status panel. This is not a provider switch. The Project Manager persists the selected provider default/reasoning into canonical Settings for future sessions, then sends `session:model:set` with the selected base model id and explicit selected reasoning/thinking id for the current logical session. Core resolves the effective identity from that command payload and treats the command as the explicit `switch_model` mutation path for `session.modelBinding`.
 
 ---
 
@@ -147,7 +147,8 @@ Project Manager и shared UI должны отображать applied config, �
 - `useSettingsModelsSync()` may refresh settings-owned snapshots only; it must preserve `binding` and `runtime` model sources.
 - display logic не восстанавливает `reasoning/thinking` из локального speculation path.
 - status-panel model/reasoning cards build their options from the current provider settings and selected binding, never from another provider catalog;
-- after a picker selection PM writes canonical Settings first, then sends `session:model:set`; UI label convergence still happens through Core-confirmed `session:model:update`.
+- after a picker selection PM writes canonical Settings first, then sends `session:model:set` with explicit selected reasoning/thinking; UI label convergence still happens through Core-confirmed `session:model:update`.
+- if the user clicks model and immediately clicks reasoning before the first `session:model:update`, PM must keep a pending selected base model per session and apply the reasoning choice to that pending model, not to the stale snapshot model.
 
 ### 4.4. Continuity binding persistence
 
@@ -186,7 +187,7 @@ The lower status panel exposes two picker buttons when a runtime/dialog snapshot
 - reasoning picker: lists reasoning/thinking levels valid for the current provider/model;
 - selection closes the picker and calls Project Manager orchestration;
 - PM saves the selected default/reasoning to `~/.codeai-hub/settings/settings.json`;
-- PM sends `session:model:set` with the selected base model id;
+- PM sends `session:model:set` with the selected base model id and selected reasoning/thinking id;
 - Core updates the existing logical session binding and broadcasts `session:model:update`;
 - the next user turn consumes the updated binding through normal applied turn config resolution.
 

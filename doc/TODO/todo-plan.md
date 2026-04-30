@@ -156,23 +156,28 @@
 ### Stream: Targeted Verification
 
 59. [DONE] Run targeted regression checks for Core binding, PM sequential selection, UI picker rendering, and affected builds (scope: `packages/core`, `src/client/project-manager`, `src/client/ui`, `webview`; commit: `test: verify status panel retest fixes`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/status-panel.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`)
-60. [IN_PROGRESS] Git Commit: `test: verify status panel retest fixes` (hash: TBD)
+60. [DONE] Git Commit: `test: verify status panel retest fixes` (hash: `afd35a568`)
+
+### Stream: Canonical Docs
+
+61. [DONE] Update canonical docs for explicit status-panel model/reasoning binding and model picker alignment (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel retest fixes`; verified: documentation diff reviewed)
+62. [IN_PROGRESS] Git Commit: `docs: document status panel retest fixes` (hash: TBD)
 
 ### Stream: Release Build
 
-61. [TODO] Prepare release docs for future version `1.2.113` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.113`)
-62. [TODO] Git Commit: `docs: prepare release 1.2.113` (hash: TBD)
-63. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`)
-64. [TODO] Git Commit: `chore: build release 1.2.113` (hash: TBD)
-65. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`)
-66. [TODO] Git Commit: `chore: package release 1.2.113` (hash: TBD)
+63. [TODO] Prepare release docs for future version `1.2.113` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.113`)
+64. [TODO] Git Commit: `docs: prepare release 1.2.113` (hash: TBD)
+65. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`)
+66. [TODO] Git Commit: `chore: build release 1.2.113` (hash: TBD)
+67. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`)
+68. [TODO] Git Commit: `chore: package release 1.2.113` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 
-67. [TODO] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`)
-68. [TODO] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: TBD)
+69. [TODO] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`)
+70. [TODO] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: TBD)
 
 ### Stream: Scope Closeout
 
-69. [BLOCKED] Archive todo-plan and planning-doc only after explicit user acceptance of release `1.2.113` (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher retest`)
-70. [TODO] Git Commit: `docs: archive status panel model switcher retest` (hash: TBD)
+71. [BLOCKED] Archive todo-plan and planning-doc only after explicit user acceptance of release `1.2.113` (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/Sessions/Session035.md`; commit: `docs: archive status panel model switcher retest`)
+72. [TODO] Git Commit: `docs: archive status panel model switcher retest` (hash: TBD)
