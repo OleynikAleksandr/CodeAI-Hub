@@ -161,12 +161,12 @@
 ### Stream: Canonical Docs
 
 61. [DONE] Update canonical docs for explicit status-panel model/reasoning binding and model picker alignment (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; commit: `docs: document status panel retest fixes`; verified: documentation diff reviewed)
-62. [IN_PROGRESS] Git Commit: `docs: document status panel retest fixes` (hash: TBD)
+62. [DONE] Git Commit: `docs: document status panel retest fixes` (hash: `168fdecf1`)
 
 ### Stream: Release Build
 
-63. [TODO] Prepare release docs for future version `1.2.113` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.113`)
-64. [TODO] Git Commit: `docs: prepare release 1.2.113` (hash: TBD)
+63. [DONE] Prepare release docs for future version `1.2.113` before build-all (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; commit: `docs: prepare release 1.2.113`; verified: README current release and changelog section set to `1.2.113`)
+64. [IN_PROGRESS] Git Commit: `docs: prepare release 1.2.113` (hash: TBD)
 65. [TODO] Run `./scripts/build-all.sh` from a clean tree and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`)
 66. [TODO] Git Commit: `chore: build release 1.2.113` (hash: TBD)
 67. [TODO] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`)

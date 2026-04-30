@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.113] - 2026-04-30
+### Fixed
+- **Status-panel model/reasoning changes now stick for the next active-session turn.** `session:model:set` carries the explicit selected reasoning/thinking value, Core updates `session.modelBinding` from that command payload instead of rereading potentially stale Settings, and Project Manager keeps a pending selected model per session so a fast model -> reasoning click sequence cannot fall back to the old model.
+- **Model picker placement is aligned with the reasoning area.** The model picker uses a dedicated alignment modifier so its left edge starts at the following Reasoning chip/card area, while the existing Reasoning picker positioning remains unchanged.
+
+### Tests
+- **Retest regression verification passed.** Passed Core model-set binding tests, PM sequential model/reasoning selection tests, UI picker/status-panel tests, webview typecheck, and webview build.
+
 ## [1.2.112] - 2026-04-29
 ### Added
 - **Session status panel can switch model and reasoning for the active provider.** The lower model and reasoning chips now open provider-scoped picker cards. Selecting an option persists the provider default/reasoning to canonical Settings and sends `session:model:set` so the current logical session uses the new binding on the next turn without changing provider.
