@@ -151,12 +151,12 @@
 ### Stream: Picker Positioning Fix
 
 57. [DONE] Align only the model picker card so its left edge starts at the Reasoning picker/chip area; leave Reasoning card positioning unchanged (scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/model-switcher/session-model-picker-card.tsx`, `media/session-view.css`; commit: `fix(ui): align status model picker card`; verified: `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/status-panel.test.tsx`)
-58. [IN_PROGRESS] Git Commit: `fix(ui): align status model picker card` (hash: TBD)
+58. [DONE] Git Commit: `fix(ui): align status model picker card` (hash: `a9929debd`)
 
 ### Stream: Targeted Verification
 
-59. [TODO] Run targeted regression checks for Core binding, PM sequential selection, UI picker rendering, and affected builds (scope: `packages/core`, `src/client/project-manager`, `src/client/ui`, `webview`; commit: `test: verify status panel retest fixes`; expected commands: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/status-panel.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`)
-60. [TODO] Git Commit: `test: verify status panel retest fixes` (hash: TBD)
+59. [DONE] Run targeted regression checks for Core binding, PM sequential selection, UI picker rendering, and affected builds (scope: `packages/core`, `src/client/project-manager`, `src/client/ui`, `webview`; commit: `test: verify status panel retest fixes`; verified: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-model-set.test.ts`, `npx tsx --test src/client/project-manager/components/sessions/session-model-switch-controller.test.ts src/client/project-manager/components/sessions/use-session-model-switch.test.ts`, `npx tsx --test src/client/ui/src/session/model-switcher/session-model-picker-card.test.tsx src/client/ui/src/session/status-panel.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`)
+60. [IN_PROGRESS] Git Commit: `test: verify status panel retest fixes` (hash: TBD)
 
 ### Stream: Release Build
 
