@@ -21,6 +21,7 @@ import type {
 import type { SessionProviderEventRouter } from "./session-provider-event-router";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import { SessionRequestHandlerCodexModelSwitch } from "./session-request-handler-codex-model-switch";
 import {
   normalizeContinuityStageId as normalizeContinuityStageIdValue,
   type SessionRequestHandlerContinuityRoot,
@@ -95,6 +96,7 @@ export class SessionRequestHandler {
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
   private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
   private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
+  private readonly codexModelSwitch: SessionRequestHandlerCodexModelSwitch;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
   private readonly stopAction: SessionRequestHandlerStopAction;
   private readonly stopRebind: SessionRequestHandlerStopRebind;
@@ -227,6 +229,11 @@ export class SessionRequestHandler {
       stopRebind: this.stopRebind,
       workspaceRuntime: this.workspaceRuntime,
     });
+    this.codexModelSwitch = new SessionRequestHandlerCodexModelSwitch({
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+    });
     this.stopAction = new SessionRequestHandlerStopAction({
       continuityLockService: this.continuityLockService,
       emitSessionError: (sessionId, message) => {
@@ -328,6 +335,14 @@ export class SessionRequestHandler {
     readonly targetModelId?: string;
   }): Promise<void> {
     await this.sessionActions.handleSwitchRequest(options);
+  }
+
+  async handleCodexModelSwitch(options: {
+    readonly sessionId: string;
+    readonly targetModelId: string;
+    readonly targetReasoningEffort?: "low" | "medium" | "high" | "xhigh";
+  }): Promise<void> {
+    await this.codexModelSwitch.handle(options);
   }
 
   async createSessionForWorkflow(options: {
