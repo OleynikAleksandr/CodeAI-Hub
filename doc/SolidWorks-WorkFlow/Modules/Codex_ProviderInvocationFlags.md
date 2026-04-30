@@ -152,7 +152,7 @@ Every user turn is sent with:
     "cwd": "<workspace path>",
     "model": "<applied base model id>",
     "effort": "<applied Codex reasoning effort or null>",
-    "summary": "detailed | none (omitted for gpt-5.3-codex-spark)",
+    "summary": "detailed | none (gpt-5.3-codex-spark always none)",
     "outputSchema": "<optional structured output schema>"
   }
 }
@@ -167,7 +167,7 @@ Behavioral meaning:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
 - The live summary toggle read is cached inside the Codex App Server facade by normalized settings path with a `500ms` TTL. Settings changes can therefore affect the next non-Spark turn immediately after cache expiry, while avoiding one synchronous `settings.json` read per turn-start call under rapid sends.
-- `summary` is gated by `getCodexModelCapabilities(modelId).supportsReasoningSummary`; `gpt-5.3-codex-spark` has `supportsReasoningSummary=false`, so the field is omitted entirely, not sent as `none`. Provider-home is also forced to `model_reasoning_summary = "none"` so Spark cannot inherit a process-global native `reasoning.summary` fallback.
+- `summary` is gated by `getCodexModelCapabilities(modelId).supportsReasoningSummary`; `gpt-5.3-codex-spark` has `supportsReasoningSummary=false`, so the payload builder forces explicit `summary = "none"` and never sends `detailed`. Omission is forbidden because Codex app-server can default omitted summary to `detailed`. Provider-home is also forced to `model_reasoning_summary = "none"` so Spark cannot inherit a process-global native `reasoning.summary` fallback.
 - `outputSchema` is passed through only when the workflow/core turn supplied one.
 - `approvalPolicy`, `sandbox`, `baseInstructions`, and `config.project_doc_max_bytes` are not turn-level fields; they belong to thread startup/resume.
 
@@ -175,7 +175,7 @@ Behavioral meaning:
 
 Current supported Codex model ids:
 
-| Model id | Supports turn-level `summary` | Reasoning efforts |
+| Model id | Supports visible turn-level summary | Reasoning efforts |
 | --- | --- | --- |
 | `gpt-5.2` | yes | `low`, `medium`, `high`, `xhigh` |
 | `gpt-5.3-codex-spark` | no | `low`, `medium`, `high`, `xhigh` |
@@ -215,7 +215,7 @@ Runtime sequence:
 2. Core updates live `Session.modelBinding` and broadcasts `session:model:update` in the same command turn.
 3. Core sets `pendingModelSwitchInjection = true`.
 4. The next `session:message` or `dialog:send` attaches applied config from live binding with `source = "session_binding"` and injects `CODEX_MODEL_SWITCH_INJECTION_KEY` into `turnOptions`.
-5. Codex facade prepends `<model_switch>` to `turn/start.input`, rebuilds the rest of the payload from current model capabilities, and omits `summary` when the selected model does not support it.
+5. Codex facade prepends `<model_switch>` to `turn/start.input`, rebuilds the rest of the payload from current model capabilities, and forces `summary = "none"` when the selected model does not support visible reasoning summaries.
 6. Core clears `pendingModelSwitchInjection` only after provider send resolves successfully.
 
 If dialog continuity has an older stored `modelBinding`, it must not overwrite a newer live switch binding when resuming an already registered runtime session.
@@ -248,7 +248,7 @@ Two paths keep this state current:
 - Extension-side settings save sync writes `model` and neutral `model_reasoning_summary`.
 - Runtime App Server startup materializes neutral `model_reasoning_summary` immediately before `codex app-server` starts.
 
-For non-Spark models, normal `turn/start.summary` is sent explicitly from the shared settings snapshot as `detailed` or `none`; provider-home remains neutral and must not be used as the live visibility source. For `gpt-5.3-codex-spark`, the explicit turn field is omitted and provider-home also stays `none`, so the native request contains no CodeAI Hub-owned `reasoning.summary`.
+For non-Spark models, normal `turn/start.summary` is sent explicitly from the shared settings snapshot as `detailed` or `none`; provider-home remains neutral and must not be used as the live visibility source. For `gpt-5.3-codex-spark`, CodeAI Hub sends explicit `turn/start.summary = "none"` and provider-home also stays `none`, so the native request cannot contain a readable CodeAI Hub-owned `reasoning.summary`.
 
 ## Translation App Server Runtime
 
@@ -272,10 +272,9 @@ Translation `turn/start` uses:
 
 - one text input from `buildCodexAppServerTranslationPrompt(...)`;
 - `effort = "low"`;
-- `summary = "none"` for non-Spark translation models;
-- no explicit `summary` field for `gpt-5.3-codex-spark`.
+- `summary = "none"` for all current Codex translation models, including `gpt-5.3-codex-spark`.
 
-TL-001 pre-hardening baseline (2026-04-28): translation native capture is now covered by a dedicated builder test before changing behavior. The current translation capture envelope is `processProfileKey = "codex:translation"`, `approvalPolicy = "never"`, `sandbox = "read-only"`, `persistExtendedHistory = false`, `config.project_doc_max_bytes = 0`, fixed small translation sample, `effort = "low"`, and `summary = "none"` for non-Spark. This baseline does not claim zero provider-visible tools; the last confirmed residual App Server tool surface from the documentation profile experiment was `exec_command`, `write_stdin`, `update_plan`, `request_user_input`, `apply_patch`, `web_search`, and `view_image`. Translation-specific tool removal must be proven by fresh native capture before this SSOT describes any tool as removed.
+TL-001 pre-hardening baseline (2026-04-28): translation native capture is now covered by a dedicated builder test before changing behavior. The current translation capture envelope is `processProfileKey = "codex:translation"`, `approvalPolicy = "never"`, `sandbox = "read-only"`, `persistExtendedHistory = false`, `config.project_doc_max_bytes = 0`, fixed small translation sample, `effort = "low"`, and `summary = "none"` for all current Codex translation models. This baseline does not claim zero provider-visible tools; the last confirmed residual App Server tool surface from the documentation profile experiment was `exec_command`, `write_stdin`, `update_plan`, `request_user_input`, `apply_patch`, `web_search`, and `view_image`. Translation-specific tool removal must be proven by fresh native capture before this SSOT describes any tool as removed.
 
 ## Native Request Capture Parity
 
@@ -303,7 +302,7 @@ Diagnostic `turn/start` mirrors normal runtime fields:
 - `input[0].text`: workflow prompt when available, otherwise probe prompt
 - `model`: selected/applied model
 - `effort`: applied/default Codex reasoning effort
-- `summary`: same shared settings policy, `detailed` or `none`, omitted entirely for `gpt-5.3-codex-spark`
+- `summary`: same shared settings policy, `detailed` or `none`; for `gpt-5.3-codex-spark`, always explicit `none`
 
 The diagnostic path records app-server `thread/start` and `turn/start` request/response payloads into the native capture artifact and copies provider-home rollout JSONL context when available.
 
