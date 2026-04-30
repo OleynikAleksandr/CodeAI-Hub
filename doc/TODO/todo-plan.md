@@ -172,12 +172,12 @@
 67. [DONE] Resume `./scripts/build-all.sh --allow-dirty --version 1.2.113` after the first compile failure and verify release tarballs (scope: package manifests, generated release artifacts, `doc/tmp/releases/`; commit: `chore: build release 1.2.113`; verified: `./scripts/build-all.sh --allow-dirty --version 1.2.113`, `doc/tmp/releases/*1.2.113*`, `~/.codeai-hub/releases/*1.2.113*`, package version `1.2.113`)
 68. [DONE] Git Commit: `chore: build release 1.2.113` (hash: `79c1d2d87`)
 69. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX output (scope: root VSIX artifact, release metadata if generated; commit: `chore: package release 1.2.113`; verified: `./scripts/build-release.sh --use-current-version`, `codeai-hub-1.2.113.vsix` package created, SDK exclusions verified, dev dependencies pruned before packaging/restored, VSIX runtime package surface verified, sha1 `6f29dfbbefb90037b9c2b5669d8c392bd8867a69`)
-70. [IN_PROGRESS] Git Commit: `chore: package release 1.2.113` (hash: TBD)
+70. [DONE] Git Commit: `chore: package release 1.2.113` (hash: `021cd058e`)
 
 ### Stream: User Visual Acceptance Testing
 
-71. [TODO] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`)
-72. [TODO] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: TBD)
+71. [IN_PROGRESS] Hand off `codeai-hub-1.2.113.vsix` for user installation/retest and verify both retest scenarios: next turn keeps selected model/reasoning; model picker is visually aligned and readable (scope: user visual test result, `doc/TODO/todo-plan.md`, `doc/Sessions/Session035.md`; commit: `docs: record release 1.2.113 visual retest status`; status: release ready for user install/retest, acceptance pending)
+72. [IN_PROGRESS] Git Commit: `docs: record release 1.2.113 visual retest status` (hash: TBD)
 
 ### Stream: Scope Closeout
 
