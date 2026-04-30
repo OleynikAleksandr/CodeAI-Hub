@@ -160,7 +160,7 @@ test("CodexAppServerTranslationService uses strict translation thread profile", 
   await assert.rejects(() => access(threadStart.cwd as string));
 });
 
-test("CodexAppServerTranslationService omits summary for Spark translation turns", async () => {
+test("CodexAppServerTranslationService sends summary none for Spark translation turns", async () => {
   const processes: FakeCodexProcess[] = [];
   const service = new CodexAppServerTranslationService({
     modelId: "gpt-5.3-codex-spark",
@@ -183,7 +183,7 @@ test("CodexAppServerTranslationService omits summary for Spark translation turns
     unknown
   >;
   assert.equal(turnStart.model, "gpt-5.3-codex-spark");
-  assert.equal("summary" in turnStart, false);
+  assert.equal(turnStart.summary, "none");
 });
 
 test("CodexAppServerTranslationService falls back and cleans up when translation turn times out", async () => {

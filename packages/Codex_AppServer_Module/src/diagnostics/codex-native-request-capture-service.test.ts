@@ -103,8 +103,9 @@ test("Codex native translation capture builders document the translation-only ba
     false
   );
 
-  const promptProfile =
-    buildCodexNativeTranslationCapturePromptProfile("gpt-5.4-mini");
+  const promptProfile = buildCodexNativeTranslationCapturePromptProfile(
+    "gpt-5.3-codex-spark"
+  );
   const threadStart = buildCodexNativeTranslationThreadStartParams({
     promptProfile,
     workspacePath: "/workspace/capture",
@@ -116,7 +117,7 @@ test("Codex native translation capture builders document the translation-only ba
       project_doc_max_bytes: 0,
     },
     cwd: "/workspace/capture",
-    model: "gpt-5.4-mini",
+    model: "gpt-5.3-codex-spark",
     persistExtendedHistory: false,
     sandbox: "read-only",
   });
@@ -140,7 +141,7 @@ test("Codex native translation capture builders document the translation-only ba
         type: "text",
       },
     ],
-    model: "gpt-5.4-mini",
+    model: "gpt-5.3-codex-spark",
     summary: "none",
     threadId: "diagnostic-thread",
   });
