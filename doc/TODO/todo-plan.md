@@ -4,9 +4,11 @@
 
 - **Execution Scope Status:** COMPLETED
 - Активный execution scope отсутствует.
-- Последний завершённый план: `doc/TODO/Archive/todo-plan-phase5-runtime-reliability-followup.md`
-- Последний завершённый planning-doc: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Reliability_Followup_Architecture.md`
-- Выпущенный артефакт: `codeai-hub-1.2.111.vsix` (sha1 `4fd4962cbb08f890685356a7318e99b7fde2f0af`).
+- Последний закрытый release scope: rollback status-panel model/reasoning switcher scope, release `1.2.115`.
+- Последний завершённый tracked план: `doc/TODO/Archive/todo-plan-phase5-runtime-reliability-followup.md`
+- Последний завершённый tracked planning-doc: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Reliability_Followup_Architecture.md`
+- Выпущенный и принятый пользователем артефакт: `codeai-hub-1.2.115.vsix` (sha1 `c45ffad0fbbfd03c8502aec694742bf6d7ef1431`).
+- Ignored planning memo for the next architecture discussion: `doc/tmp/planning/DocumentationTree_ProfileBoundary_ModelProviderSwitch_Planning.md`.
 
 ## Context Pack For Next Cycle
 
