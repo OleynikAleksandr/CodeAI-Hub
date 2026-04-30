@@ -66,6 +66,18 @@ test("ModelInvocationProfileResolver rejects workflow-agent profiles without a s
   );
 });
 
+test("ModelInvocationProfileResolver resolves Codex Spark workflow summary none", () => {
+  const profile = resolver.resolve({
+    modelId: "gpt-5.3-codex-spark",
+    providerId: "codex",
+    purpose: "workflow-agent",
+    stepId: "description",
+  });
+
+  assert.equal(profile.turnProfile.omitSummary, false);
+  assert.equal(profile.turnProfile.summary, "none");
+});
+
 test("ModelInvocationProfileResolver resolves Codex non-Spark translation summary settings", () => {
   const profile = resolver.resolve({
     modelId: "gpt-5.4-mini",
@@ -97,7 +109,7 @@ test("ModelInvocationProfileResolver resolves Codex non-Spark translation summar
   assert.equal(profile.turnProfile.summary, "none");
 });
 
-test("ModelInvocationProfileResolver resolves Codex Spark translation without explicit summary", () => {
+test("ModelInvocationProfileResolver resolves Codex Spark translation summary none", () => {
   const profile = resolver.resolve({
     modelId: "gpt-5.3-codex-spark",
     providerId: "codex",
@@ -107,8 +119,8 @@ test("ModelInvocationProfileResolver resolves Codex Spark translation without ex
   assert.equal(profile.processProfile.processProfileKey, "codex:translation");
   assert.equal(profile.sessionProfile.persistExtendedHistory, false);
   assert.equal(profile.turnProfile.effort, "low");
-  assert.equal(profile.turnProfile.omitSummary, true);
-  assert.equal(profile.turnProfile.summary, null);
+  assert.equal(profile.turnProfile.omitSummary, false);
+  assert.equal(profile.turnProfile.summary, "none");
 });
 
 test("ModelInvocationProfileResolver resolves provider-owned Claude translation profile", () => {

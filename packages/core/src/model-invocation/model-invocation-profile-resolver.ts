@@ -149,8 +149,8 @@ const buildCodexWorkflowProfile = (
       sessionProfileKey: `codex:workflow-${tree}:${requireWorkflowStep(selector)}`,
     },
     turnProfile: {
-      omitSummary: selector.modelId === SPARK_MODEL_ID,
-      summary: null,
+      omitSummary: false,
+      summary: selector.modelId === SPARK_MODEL_ID ? "none" : null,
       turnProfileKey: "codex:workflow-turn",
     },
   };
@@ -181,8 +181,8 @@ const buildCodexTranslationProfile = (
   },
   turnProfile: {
     effort: "low",
-    omitSummary: selector.modelId === SPARK_MODEL_ID,
-    summary: selector.modelId === SPARK_MODEL_ID ? null : "none",
+    omitSummary: false,
+    summary: "none",
     turnProfileKey: "codex:translation-turn",
   },
 });
