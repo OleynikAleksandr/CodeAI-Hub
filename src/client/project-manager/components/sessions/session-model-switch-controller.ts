@@ -6,10 +6,12 @@ import type {
   CodexModelId,
   CodexReasoningLevel,
 } from "../../../../types/codex-model-registry";
+import { DEFAULT_CODEX_REASONING_LEVEL } from "../../../../types/codex-model-registry";
 import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../types/gemini-model-registry";
+import { DEFAULT_GEMINI_THINKING_LEVEL } from "../../../../types/gemini-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 import {
   updateClaudeDefaultModel,
@@ -23,7 +25,11 @@ import type { Settings } from "../../../ui/src/components/settings/settings-stat
 
 interface SessionModelSwitchControllerDeps {
   readonly saveSettings: (settings: Settings) => void;
-  readonly setSessionModel: (sessionId: string, targetModelId: string) => void;
+  readonly setSessionModel: (
+    sessionId: string,
+    targetModelId: string,
+    targetReasoningId?: string | null
+  ) => void;
 }
 
 export interface SessionModelSwitchRequest {
@@ -44,6 +50,7 @@ export interface SessionReasoningSwitchRequest {
 export interface SessionModelSwitchResult {
   readonly settings: Settings;
   readonly targetModelId: string;
+  readonly targetReasoningId: string;
 }
 
 const CLAUDE_THINKING_OFF_ID = "off";
@@ -87,7 +94,16 @@ export class SessionModelSwitchController {
       providerId: request.providerId,
       settings: request.settings,
     });
-    return this.commit({ modelId, sessionId, settings });
+    return this.commit({
+      modelId,
+      sessionId,
+      settings,
+      targetReasoningId: this.resolveSettingsReasoningId({
+        modelId,
+        providerId: request.providerId,
+        settings,
+      }),
+    });
   }
 
   selectReasoning(
@@ -108,7 +124,12 @@ export class SessionModelSwitchController {
       reasoningId,
       settings: request.settings,
     });
-    return this.commit({ modelId, sessionId, settings });
+    return this.commit({
+      modelId,
+      sessionId,
+      settings,
+      targetReasoningId: reasoningId,
+    });
   }
 
   private updateDefaultModel(options: {
@@ -168,12 +189,40 @@ export class SessionModelSwitchController {
     readonly modelId: string;
     readonly sessionId: string;
     readonly settings: Settings;
+    readonly targetReasoningId: string;
   }): SessionModelSwitchResult {
     this.deps.saveSettings(options.settings);
-    this.deps.setSessionModel(options.sessionId, options.modelId);
+    this.deps.setSessionModel(
+      options.sessionId,
+      options.modelId,
+      options.targetReasoningId
+    );
     return {
       settings: options.settings,
       targetModelId: options.modelId,
+      targetReasoningId: options.targetReasoningId,
     };
+  }
+
+  private resolveSettingsReasoningId(options: {
+    readonly modelId: string;
+    readonly providerId: ProviderStackId;
+    readonly settings: Settings;
+  }): string {
+    if (options.providerId === "claudeCodeCli") {
+      const thinking = options.settings.providers.claude.thinking;
+      return thinking.enabled ? thinking.effort : CLAUDE_THINKING_OFF_ID;
+    }
+    if (options.providerId === "codexCli") {
+      return (
+        options.settings.providers.codex.reasoningByModel[options.modelId] ??
+        DEFAULT_CODEX_REASONING_LEVEL
+      );
+    }
+    return (
+      options.settings.providers.gemini.thinkingLevelByModel[
+        options.modelId
+      ] ?? DEFAULT_GEMINI_THINKING_LEVEL
+    );
   }
 }

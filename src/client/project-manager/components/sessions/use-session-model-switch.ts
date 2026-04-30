@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type { SessionSnapshot } from "../../../../types/session";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import { SessionModelSwitcherFacade } from "../../../ui/src/session/model-switcher/session-model-switcher-facade";
@@ -14,12 +14,21 @@ export interface SessionModelSwitchHandlers {
 
 export interface SessionModelSwitchFactoryOptions {
   readonly saveSettings: (settings: Settings) => void;
-  readonly setSessionModel: (sessionId: string, targetModelId: string) => void;
+  readonly pendingSelectionState?: SessionModelSwitchPendingSelectionState;
+  readonly setSessionModel: (
+    sessionId: string,
+    targetModelId: string,
+    targetReasoningId?: string | null
+  ) => void;
   readonly settings: Settings;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
 }
 
 const modelSwitcherFacade = new SessionModelSwitcherFacade();
+
+interface SessionModelSwitchPendingSelectionState {
+  readonly selectedModelsBySession: Map<string, string>;
+}
 
 export const createSessionModelSwitchHandlers = (
   options: SessionModelSwitchFactoryOptions
@@ -34,12 +43,14 @@ export const createSessionModelSwitchHandlers = (
     if (!modelInfo) {
       return null;
     }
-    return modelSwitcherFacade.buildState({
-      modelInfo,
-      providerId: modelInfo.providerId,
-      settings: options.settings,
-    });
+      return modelSwitcherFacade.buildState({
+        modelInfo,
+        providerId: modelInfo.providerId,
+        settings: options.settings,
+      });
   };
+  const selectedModelsBySession =
+    options.pendingSelectionState?.selectedModelsBySession ?? new Map();
 
   return {
     onSelectSessionModel: (sessionId, modelId) => {
@@ -47,38 +58,54 @@ export const createSessionModelSwitchHandlers = (
       if (!modelState) {
         return;
       }
-      controller.selectModel({
+      const result = controller.selectModel({
         modelId,
         providerId: modelState.providerId,
         sessionId,
         settings: options.settings,
       });
+      if (result) {
+        selectedModelsBySession.set(sessionId, result.targetModelId);
+      }
     },
     onSelectSessionReasoning: (sessionId, reasoningId) => {
       const modelState = resolveModelState(sessionId);
       if (!modelState) {
         return;
       }
+      const selectedModelId =
+        selectedModelsBySession.get(sessionId) ?? modelState.selectedModelId;
       controller.selectReasoning({
-        modelId: modelState.selectedModelId,
+        modelId: selectedModelId,
         providerId: modelState.providerId,
         reasoningId,
         sessionId,
         settings: options.settings,
       });
+      selectedModelsBySession.set(sessionId, selectedModelId);
     },
   };
 };
 
 export const useSessionModelSwitch = (options: {
   readonly saveSettings: (settings: Settings) => void;
-  readonly setSessionModel: (sessionId: string, targetModelId: string) => void;
+  readonly setSessionModel: (
+    sessionId: string,
+    targetModelId: string,
+    targetReasoningId?: string | null
+  ) => void;
   readonly settings: Settings;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
-}): SessionModelSwitchHandlers =>
-  useMemo(
+}): SessionModelSwitchHandlers => {
+  const pendingSelectionStateRef =
+    useRef<SessionModelSwitchPendingSelectionState>({
+      selectedModelsBySession: new Map(),
+    });
+
+  return useMemo(
     () =>
       createSessionModelSwitchHandlers({
+        pendingSelectionState: pendingSelectionStateRef.current,
         saveSettings: options.saveSettings,
         setSessionModel: options.setSessionModel,
         settings: options.settings,
@@ -91,3 +118,4 @@ export const useSessionModelSwitch = (options: {
       options.snapshots,
     ]
   );
+};
