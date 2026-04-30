@@ -82,7 +82,7 @@ const createSendMessageFacadeHarness = (
   return { facade, requests };
 };
 
-test("CodexAppServerFacade sends Spark model switch turns without reasoning summary", async () => {
+test("CodexAppServerFacade sends Spark model switch turns with summary none", async () => {
   const threadId = "thread-spark-model-switch";
   const { facade, requests } = createSendMessageFacadeHarness(threadId);
 
@@ -109,10 +109,11 @@ test("CodexAppServerFacade sends Spark model switch turns without reasoning summ
       readonly type?: string;
     }>;
     readonly model?: string;
+    readonly summary?: string;
   };
   assert.equal(params.model, "gpt-5.3-codex-spark");
   assert.equal(params.effort, "low");
-  assert.equal("summary" in params, false);
+  assert.equal(params.summary, "none");
   assert.equal(params.input?.[0]?.type, "text");
   assert.match(params.input?.[0]?.text ?? "", MODEL_SWITCH_TAG_PATTERN);
   assert.match(params.input?.[0]?.text ?? "", MODEL_SWITCH_PROFILE_PATTERN);

@@ -242,7 +242,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
   assert.deepEqual(params.config, { project_doc_max_bytes: 0 });
 });
 
-test("CodexAppServerFacade omits reasoning summary for Codex Spark turns", async () => {
+test("CodexAppServerFacade sends summary none for Codex Spark turns", async () => {
   const requests: {
     readonly method: string;
     readonly params: unknown;
@@ -317,7 +317,7 @@ test("CodexAppServerFacade omits reasoning summary for Codex Spark turns", async
   const params = requests[0]?.params as Record<string, unknown>;
   assert.equal(params.model, "gpt-5.3-codex-spark");
   assert.equal(params.effort, "medium");
-  assert.equal("summary" in params, false);
+  assert.equal(params.summary, "none");
 });
 
 test("CodexAppServerFacade keeps explicit reasoning summary for non-Spark turns", async () => {
