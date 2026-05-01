@@ -154,7 +154,11 @@ export type CodexModelSwitchReasoningEffort =
 export interface CodexModelSwitchRequestPayload {
   readonly sessionId: string;
   readonly targetModelId: string;
-  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
+}
+
+export interface CodexReasoningSwitchRequestPayload {
+  readonly sessionId: string;
+  readonly targetReasoningEffort: CodexModelSwitchReasoningEffort;
 }
 
 export type ClaudeModelSwitchThinkingEffort =
@@ -167,6 +171,10 @@ export type ClaudeModelSwitchThinkingEffort =
 export interface ClaudeModelSwitchRequestPayload {
   readonly sessionId: string;
   readonly targetModelId: "sonnet" | "opus" | "haiku";
+}
+
+export interface ClaudeThinkingSwitchRequestPayload {
+  readonly sessionId: string;
   readonly targetReasoningEffort?: ClaudeModelSwitchThinkingEffort;
   readonly thinkingEnabled: boolean;
 }
@@ -249,8 +257,16 @@ export type SessionIncomingMessage =
       readonly payload: CodexModelSwitchRequestPayload;
     }
   | {
+      readonly type: "session:codex:reasoning-switch";
+      readonly payload: CodexReasoningSwitchRequestPayload;
+    }
+  | {
       readonly type: "session:claude:model-switch";
       readonly payload: ClaudeModelSwitchRequestPayload;
+    }
+  | {
+      readonly type: "session:claude:thinking-switch";
+      readonly payload: ClaudeThinkingSwitchRequestPayload;
     }
   | {
       readonly type: "session:delete";
