@@ -86,15 +86,15 @@
 17. **[DONE]** Запустить `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт пакеты и manifest'ы, соберёт tarball'ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправить и перезапустить **только** `build-all.sh`.
     - **Scope:** version/package/release manifest files + generated release tarball copies touched by `build-all.sh` (не редактировать версии вручную).
     - **Ожидаемый commit message:** `chore: bump release manifests to 1.2.123`
-18. **[TODO]** Git Commit: `chore: bump release manifests to 1.2.123` (hash: TBD)
-19. **[TODO]** Запустить `./scripts/build-release.sh --use-current-version`. Подтвердить успешное появление `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забрать `codeai-hub-1.2.123.vsix` из корня + tarball'ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`, если они обновились после финальной упаковки.
+18. **[DONE]** Git Commit: `chore: bump release manifests to 1.2.123` (hash: `ef282574d`)
+19. **[DONE]** Запустить `./scripts/build-release.sh --use-current-version`. Подтвердить успешное появление `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забрать `codeai-hub-1.2.123.vsix` из корня + tarball'ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`, если они обновились после финальной упаковки.
     - **Scope:** release artifact/manifests touched by `build-release.sh` and artifact copy verification.
     - **Ожидаемый commit message:** `chore: refresh release artifact manifests 1.2.123`
-20. **[TODO]** Git Commit: `chore: refresh release artifact manifests 1.2.123` (hash: TBD; если `git status` чистый после `build-release.sh`, зафиксировать в этом пункте `n/a — no file changes after build-release`)
-21. **[TODO]** Обновить текущий `doc/Sessions/SessionXXX.md` как Type B / `ACTIVE`: release build выполнен, VSIX `1.2.123` передан на пользовательское визуальное тестирование, closeout ожидает acceptance.
+20. **[DONE]** Git Commit: `chore: refresh release artifact manifests 1.2.123` (hash: n/a — no file changes after build-release; tree clean after `./scripts/build-release.sh --use-current-version`)
+21. **[DONE]** Обновить текущий `doc/Sessions/SessionXXX.md` как Type B / `ACTIVE`: release build выполнен, VSIX `1.2.123` передан на пользовательское визуальное тестирование, closeout ожидает acceptance.
     - **Scope:** 1 файл — текущий session report.
     - **Ожидаемый commit message:** нет — session report может оставаться единственным незакоммиченным файлом в конце сессии.
-22. **[TODO]** Git Commit: `n/a — session report remains uncommitted by lifecycle rule` (hash: n/a)
+22. **[DONE]** Git Commit: `n/a — session report remains uncommitted by lifecycle rule` (hash: n/a)
 
 ### Stream: User Visual Acceptance Testing
 
