@@ -86,5 +86,6 @@
 6. [TODO] Git Commit: `chore: build release 1.2.120` (hash: TBD)
 7. [TODO] Запустить `./scripts/build-release.sh --use-current-version`, проверить SDK exclusions / VSIX surface, забрать `codeai-hub-1.2.120.vsix`. Scope: VSIX artefact.
 8. [TODO] Git Commit: `chore: finalize release 1.2.120` (hash: TBD)
-9. [TODO] Архивировать `Plans/StatusPanel_ModelReasoningDecoupling_Architecture.md` (после миграции итогов в SSOT) в `Plans/Archive/`, архивировать `todo-plan.md` в `doc/TODO/Archive/todo-plan-status-panel-decoupling.md`, обновить `Docs_Index.md`. Scope: ≤3 файла.
-10. [TODO] Git Commit: `docs: close status panel decoupling scope` (hash: TBD)
+9. [BLOCKED-ON-USER] **Передать VSIX пользователю и дождаться явного подтверждения retest'а** (model-only клик не трогает reasoning, reasoning-only клик не трогает модель, активный пункт обеих карт подсвечен провайдерным цветом без слова "active" и без reasoning-суффикса). Closeout/архивирование запрещено до получения подтверждения. При найденных регрессиях — открывать новые micro-задачи перед closeout.
+10. [TODO] Архивировать `Plans/StatusPanel_ModelReasoningDecoupling_Architecture.md` (после миграции итогов в SSOT и после пользовательского подтверждения) в `Plans/Archive/`, архивировать `todo-plan.md` в `doc/TODO/Archive/todo-plan-status-panel-decoupling.md`, обновить `Docs_Index.md`. Scope: ≤3 файла.
+11. [TODO] Git Commit: `docs: close status panel decoupling scope` (hash: TBD)
