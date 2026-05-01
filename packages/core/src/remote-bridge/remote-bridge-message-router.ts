@@ -136,8 +136,18 @@ export class RemoteBridgeMessageRouter {
       case "session:codex:model-switch":
         await this.deps.sessionHandler.handleCodexModelSwitch(incoming.payload);
         break;
+      case "session:codex:reasoning-switch":
+        await this.deps.sessionHandler.handleCodexReasoningSwitch(
+          incoming.payload
+        );
+        break;
       case "session:claude:model-switch":
         await this.deps.sessionHandler.handleClaudeModelSwitch(
+          incoming.payload
+        );
+        break;
+      case "session:claude:thinking-switch":
+        await this.deps.sessionHandler.handleClaudeThinkingSwitch(
           incoming.payload
         );
         break;
@@ -264,7 +274,9 @@ export class RemoteBridgeMessageRouter {
     if (
       incoming.type === "session:message" ||
       incoming.type === "session:claude:model-switch" ||
+      incoming.type === "session:claude:thinking-switch" ||
       incoming.type === "session:codex:model-switch" ||
+      incoming.type === "session:codex:reasoning-switch" ||
       incoming.type === "session:delete" ||
       incoming.type === "session:stop"
     ) {
