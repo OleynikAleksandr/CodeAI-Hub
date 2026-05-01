@@ -10,8 +10,6 @@ import {
   type WorkflowStateSnapshot,
 } from "./services/workflow-state-client";
 import type {
-  ClaudeModelSwitchRequestPayload,
-  CodexModelSwitchReasoningEffort,
   CoreStatePayload,
   IncomingMessage,
   OutgoingMessage,
@@ -31,6 +29,11 @@ import type {
   WorkspaceSnapshotRequestPayload,
 } from "./core-stream-message-types";
 import { OutgoingMessageQueue } from "./services/outgoing-message-queue";
+import { SwitchApi } from "./services/switch-api";
+import type {
+  ClaudeThinkingEffort,
+  CodexModelSwitchReasoningEffort,
+} from "./services/switch-payloads";
 import type { WorkspaceProject } from "./types";
 import {
   resolveLauncherBridge,
@@ -66,6 +69,7 @@ class ProjectManagerApi {
   };
   private providerSnapshot: ProviderSnapshot[] = [];
   private readonly outgoingQueue = new OutgoingMessageQueue();
+  private readonly switchApi = new SwitchApi((message) => this.send(message));
   private readonly coreRestartTracker = new ProjectManagerCoreRestartTracker(
     (message) => this.notifyCoreListeners(message)
   );
@@ -230,27 +234,28 @@ class ProjectManagerApi {
     this.send({ type: "session:stop", payload: { sessionId } });
   }
 
-  requestCodexModelSwitch(
-    sessionId: string,
-    targetModelId: string,
-    targetReasoningEffort?: CodexModelSwitchReasoningEffort
-  ): void {
-    this.send({
-      type: "session:codex:model-switch",
-      payload: { sessionId, targetModelId, targetReasoningEffort },
-    });
+  requestCodexModelSwitch(sessionId: string, targetModelId: string): void {
+    this.switchApi.requestCodexModelSwitch(sessionId, targetModelId);
   }
-
-  requestClaudeModelSwitch(
+  requestCodexReasoningSwitch(
     sessionId: string,
-    targetModelId: ClaudeModelSwitchRequestPayload["targetModelId"],
-    thinkingEnabled: boolean,
-    targetReasoningEffort?: ClaudeModelSwitchRequestPayload["targetReasoningEffort"]
+    targetReasoningEffort: CodexModelSwitchReasoningEffort
   ): void {
-    this.send({
-      type: "session:claude:model-switch",
-      payload: { sessionId, targetModelId, targetReasoningEffort, thinkingEnabled },
-    });
+    this.switchApi.requestCodexReasoningSwitch(sessionId, targetReasoningEffort);
+  }
+  requestClaudeModelSwitch(sessionId: string, targetModelId: "sonnet" | "opus" | "haiku"): void {
+    this.switchApi.requestClaudeModelSwitch(sessionId, targetModelId);
+  }
+  requestClaudeThinkingSwitch(
+    sessionId: string,
+    thinkingEnabled: boolean,
+    targetReasoningEffort?: ClaudeThinkingEffort
+  ): void {
+    this.switchApi.requestClaudeThinkingSwitch(
+      sessionId,
+      thinkingEnabled,
+      targetReasoningEffort
+    );
   }
 
   refreshUsageLimits(params: {

@@ -250,24 +250,12 @@ export type SessionModelUpdatePayload = {
   readonly sessionId: string;
 };
 
-export type CodexModelSwitchReasoningEffort =
-  | "low"
-  | "medium"
-  | "high"
-  | "xhigh";
-
-export type CodexModelSwitchRequestPayload = {
-  readonly sessionId: string;
-  readonly targetModelId: string;
-  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
-};
-
-export type ClaudeModelSwitchRequestPayload = {
-  readonly sessionId: string;
-  readonly targetModelId: "sonnet" | "opus" | "haiku";
-  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort | "max";
-  readonly thinkingEnabled: boolean;
-};
+import type {
+  ClaudeModelSwitchRequestPayload,
+  ClaudeThinkingSwitchRequestPayload,
+  CodexModelSwitchRequestPayload,
+  CodexReasoningSwitchRequestPayload,
+} from "./services/switch-payloads";
 
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
@@ -296,8 +284,16 @@ export type OutgoingMessage =
       readonly payload: CodexModelSwitchRequestPayload;
     }
   | {
+      readonly type: "session:codex:reasoning-switch";
+      readonly payload: CodexReasoningSwitchRequestPayload;
+    }
+  | {
       readonly type: "session:claude:model-switch";
       readonly payload: ClaudeModelSwitchRequestPayload;
+    }
+  | {
+      readonly type: "session:claude:thinking-switch";
+      readonly payload: ClaudeThinkingSwitchRequestPayload;
     }
   | {
       readonly type: "session:message";
