@@ -1505,6 +1505,24 @@
   --border-active: rgba(171, 52, 203, 0.8);
 }
 
+.session-status-picker__option[data-active="true"][data-provider="claudeCodeCli"] {
+  color: #ffffff;
+  background-color: rgba(255, 145, 5, 0.32);
+  border-color: rgba(255, 145, 5, 0.75);
+}
+
+.session-status-picker__option[data-active="true"][data-provider="codexCli"] {
+  color: #ffffff;
+  background-color: rgba(1, 240, 216, 0.55);
+  border-color: rgba(1, 240, 216, 0.85);
+}
+
+.session-status-picker__option[data-active="true"][data-provider="geminiCli"] {
+  color: #ffffff;
+  background-color: rgba(171, 52, 203, 0.45);
+  border-color: rgba(171, 52, 203, 0.8);
+}
+
 .session-status__debug-strip {
   margin-top: 4px;
   font-size: 11px;
