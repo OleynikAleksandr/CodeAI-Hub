@@ -172,3 +172,119 @@ test("ClaudeNativeRequestCaptureService mirrors selected model and applied think
   });
   assert.equal(queryPayload.options.effort, "high");
 });
+
+test("ClaudeNativeRequestCaptureService captures post-switch model and xhigh config in SDK isolation", async () => {
+  const queryPayloads: {
+    readonly options: Record<string, unknown>;
+    readonly prompt: string;
+  }[] = [];
+  const service = new ClaudeNativeRequestCaptureService({
+    authManager: {
+      ensureProviderHomeSessionBootstrap: () => Promise.resolve(),
+      ensureSubscriptionAuth: () => Promise.resolve(),
+      getAuthEnvironment: () => ({}),
+    } as never,
+    installer: {
+      ensureInstalled: () => Promise.resolve(),
+      getExecutablePath: () => "/tmp/claude",
+      loadModule: () =>
+        Promise.resolve({
+          query: (payload: {
+            readonly options: Record<string, unknown>;
+            readonly prompt: string;
+          }) => {
+            queryPayloads.push(payload);
+            return emptyClaudeStream();
+          },
+        }),
+    } as never,
+    workspace: {
+      claudeProjectSlug: "workspace-slug",
+      defaultModel: "sonnet",
+      workspacePath: "/workspace",
+    },
+  });
+
+  await service.captureNativeRequest({
+    appliedTurnConfig: {
+      modelId: "haiku",
+      providerId: "claudeCodeCli",
+      reasoningEffort: "xhigh",
+      source: "switch_request",
+      thinkingEnabled: true,
+    },
+    captureId: "capture-claude-post-switch-xhigh",
+    certificateEnv: {},
+    certificatePath: "/tmp/ca.pem",
+    probePrompt: "probe",
+    proxyUrl: "http://127.0.0.1:4444",
+    selectedModelId: "sonnet",
+    workspacePath: "/workspace",
+  });
+
+  const queryPayload = queryPayloads[0];
+  assert.ok(queryPayload);
+  assert.equal(queryPayload.options.model, "haiku");
+  assert.deepEqual(queryPayload.options.thinking, {
+    type: "adaptive",
+    display: "summarized",
+  });
+  assert.equal(queryPayload.options.effort, "xhigh");
+  assert.deepEqual(queryPayload.options.settingSources, []);
+});
+
+test("ClaudeNativeRequestCaptureService captures post-switch thinking off without effort", async () => {
+  const queryPayloads: {
+    readonly options: Record<string, unknown>;
+    readonly prompt: string;
+  }[] = [];
+  const service = new ClaudeNativeRequestCaptureService({
+    authManager: {
+      ensureProviderHomeSessionBootstrap: () => Promise.resolve(),
+      ensureSubscriptionAuth: () => Promise.resolve(),
+      getAuthEnvironment: () => ({}),
+    } as never,
+    installer: {
+      ensureInstalled: () => Promise.resolve(),
+      getExecutablePath: () => "/tmp/claude",
+      loadModule: () =>
+        Promise.resolve({
+          query: (payload: {
+            readonly options: Record<string, unknown>;
+            readonly prompt: string;
+          }) => {
+            queryPayloads.push(payload);
+            return emptyClaudeStream();
+          },
+        }),
+    } as never,
+    workspace: {
+      claudeProjectSlug: "workspace-slug",
+      defaultModel: "sonnet",
+      workspacePath: "/workspace",
+    },
+  });
+
+  await service.captureNativeRequest({
+    appliedTurnConfig: {
+      modelId: "opus",
+      providerId: "claudeCodeCli",
+      source: "switch_request",
+      thinkingEnabled: false,
+    },
+    captureId: "capture-claude-post-switch-off",
+    certificateEnv: {},
+    certificatePath: "/tmp/ca.pem",
+    probePrompt: "probe",
+    proxyUrl: "http://127.0.0.1:4444",
+    selectedModelId: "haiku",
+    workspacePath: "/workspace",
+  });
+
+  const queryPayload = queryPayloads[0];
+  assert.ok(queryPayload);
+  assert.equal(queryPayload.options.model, "opus");
+  assert.deepEqual(queryPayload.options.thinking, { type: "disabled" });
+  assert.equal("effort" in queryPayload.options, false);
+  assert.deepEqual(queryPayload.options.settingSources, []);
+});
