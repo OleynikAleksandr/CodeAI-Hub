@@ -1,10 +1,12 @@
 # Claude Agent SDK: Анализ возможностей и приоритеты для CodeAI Hub
 
 **Date:** 2026-04-19
-**Updated:** 2026-04-24
+**Updated:** 2026-05-01
 **Status:** Research / Capabilities analysis (исследовательский документ)
 **Source type:** Обзор публичной документации Anthropic (code.claude.com, github.com/anthropics), локальная проверка типов/опций SDK и текущей интеграции CodeAI Hub.
 **Scope:** Исчерпывающий разбор возможностей `@anthropic-ai/claude-agent-sdk` — библиотеки, через которую в CodeAI Hub работает провайдер Claude. Фиксирует, что мы уже используем и что остаётся на столе.
+
+**Current implementation note (2026-05-01):** исходный research baseline был написан до внедрения CodeAI Hub-owned workflow `systemPrompt`. Сейчас normal runtime и diagnostic capture уже передают `CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT` при `settingSources: []`; текущий runtime SSOT находится в `doc/SolidWorks-WorkFlow/Modules/Claude.md`. Разделы ниже остаются полезным каталогом возможностей SDK и историей принятия решения, но фразы вида "пока не используем `systemPrompt`" относятся к baseline 2026-04-24.
 
 ---
 

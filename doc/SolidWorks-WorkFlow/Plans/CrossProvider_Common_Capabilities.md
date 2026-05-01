@@ -1,10 +1,12 @@
 # Пересечение возможностей Claude Agent SDK и Codex App Server: что безопасно внедрять в CodeAI Hub
 
 **Date:** 2026-04-19
-**Updated:** 2026-04-24
+**Updated:** 2026-05-01
 **Status:** Research / Decision-making document (документ для принятия решений)
 **Source type:** Синтез двух provider-документов, актуализированный после полного перехода Codex на App Server и проверки механизмов стартовых инструкций.
 **Scope:** Выделить **только те возможности, которые одинаково доступны** через Codex App Server и через Claude Agent SDK — чтобы в едином UI-слое CodeAI Hub можно было внедрять именно их, без риска расхождения UX между провайдерами.
+
+**Current implementation note (2026-05-01):** первый практический кандидат из этого документа уже частично реализован: workflow-agent startup profile применяется для Claude и Codex, а Codex documentation tool profile валидирован в release `1.2.82`. Этот файл остаётся active research/backlog для следующих общих возможностей (tool/action UI, session lifecycle, MCP/custom tools, usage/error discovery). Текущие runtime-инварианты см. в `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md` и `System/SystemArchitecture.md`.
 
 **Связанные документы:**
 - [Codex App Server — анализ возможностей](./Codex_AppServer_Capabilities_Analysis.md)

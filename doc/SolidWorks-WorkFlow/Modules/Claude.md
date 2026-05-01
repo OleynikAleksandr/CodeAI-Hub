@@ -110,7 +110,7 @@ Important transport mapping:
 ### Current shared workflow system prompt
 
 - Runtime source: `packages/Claude_Module/src/sdk/claude-workflow-system-prompt.ts`
-- Experiment/reference copy: `doc/SolidWorks-WorkFlow/Plans/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md`
+- Experiment/reference copy: `doc/SolidWorks-WorkFlow/Plans/Archive/Instruction_Stack_Control_Experiment_Results/claude-instruction-analysis/Claude_My_System_Prompt.md`
 - The prompt includes CodeAI Hub workflow framing, instruction priority/source-boundary rules, artifact-first behavior, scope control, short communication, and explicit progress-update rules.
 
 ## Auth cluster

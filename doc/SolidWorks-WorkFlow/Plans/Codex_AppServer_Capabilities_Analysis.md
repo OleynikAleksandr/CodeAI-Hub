@@ -1,10 +1,12 @@
 # Codex App Server: анализ возможностей и приоритеты для CodeAI Hub
 
 **Date:** 2026-04-19
-**Updated:** 2026-04-24
+**Updated:** 2026-05-01
 **Status:** Research / Capabilities analysis (исследовательский документ)
 **Source type:** Обзор публичной документации OpenAI, сгенерированной схемы `codex app-server generate-ts`, open-source исходников `openai/codex` и локального runtime CodeAI Hub.
 **Scope:** Анализ Codex App Server как текущей и единственной интеграционной поверхности CodeAI Hub для Codex-провайдера. TypeScript SDK упоминается только как исторический baseline, от которого мы уже ушли.
+
+**Current implementation note (2026-05-01):** исходный research baseline был написан до внедрения CodeAI Hub-owned workflow startup profile. Сейчас normal runtime и diagnostic capture уже отправляют `baseInstructions = CODEAI_CODEX_EARLY_ARCHITECTURE_SYSTEM_PROMPT`, `config.project_doc_max_bytes = 0` и documentation tool-profile startup flags; текущий runtime SSOT находится в `doc/SolidWorks-WorkFlow/Modules/Codex.md` и `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`. Разделы ниже остаются каталогом App Server surface и историей решения, но фразы вида "пока не передаёт `baseInstructions`" относятся к baseline 2026-04-24.
 
 ---
 
