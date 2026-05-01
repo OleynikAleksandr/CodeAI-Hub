@@ -108,7 +108,7 @@
 ### Stream L — SSOT documentation sync
 
 1. [DONE] Update SSOT docs for accepted Claude switch behavior, capability registry, Status Panel semantics, `xhigh` result, and native evidence requirements. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document claude status panel model switch`.
-2. [TODO] Git Commit: `docs(ssot): document claude status panel model switch` (hash: TBD)
+2. [DONE] Git Commit: `docs(ssot): document claude status panel model switch` (hash: 86044859a)
 
 ## Phase 6 — Release Build (owner: Build, updated: 2026-05-01)
 
