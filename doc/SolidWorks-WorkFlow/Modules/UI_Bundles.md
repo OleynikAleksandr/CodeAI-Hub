@@ -3,7 +3,7 @@
 **Status:** Implemented on `main`
 **Updated:** 2026-04-25
 **Owner:** Oleksandr + Codex
-**Validated on:** `main` (2026-04-24)
+**Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: 2026-04-24)
 
 ## Назначение
 UI бандлы, доставляемые как tarball’ы и устанавливаемые в `~/.codeai-hub/packages/ui/**`.

@@ -14,7 +14,7 @@
   - `package-lock.json`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (§4 provider modules list)
-  - `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Formal_Module_Cluster_Facade_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`
   - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
@@ -36,7 +36,7 @@
 ### Stream B: SSOT doc updates (module + architecture + facade diagram)
 3. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Modules/Codex.md`: legacy fallback bullet удалён, раздел `Внешний контракт` переписан под app-server as canonical, release packaging bullet обновлён.
 4. [DONE] Обновлён `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §4 provider-modules bullet.
-5. [DONE] Обновлён `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md` mermaid-диаграмма.
+5. [DONE] Обновлён then-active `doc/SolidWorks-WorkFlow/Contracts/Formal_Module_Cluster_Facade_Architecture.md` mermaid-диаграмма; документ позднее архивирован как `doc/SolidWorks-WorkFlow/Plans/Archive/Formal_Module_Cluster_Facade_Architecture.md`.
 6. [DONE] Git Commit: `docs: retire legacy Codex module from canonical SSOT` (hash: 4c7d30310)
 
 ### Stream C: Contract SSOT path updates

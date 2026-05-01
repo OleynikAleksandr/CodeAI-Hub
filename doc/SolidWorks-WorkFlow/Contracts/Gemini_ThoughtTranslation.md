@@ -3,7 +3,7 @@
 **Статус:** Implemented on `main`  
 **Обновлено:** 2026-04-13  
 **Owner:** Oleksandr + Codex  
-**Validated on:** `main` (`v1.1.854`)
+**Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.854`)
 
 ---
 

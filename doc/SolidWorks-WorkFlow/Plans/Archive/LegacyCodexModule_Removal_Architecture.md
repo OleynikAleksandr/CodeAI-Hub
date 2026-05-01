@@ -22,7 +22,7 @@ Legacy пакет остаётся в репозитории как ~60 TypeScri
 2. Активные SSOT-документы — убрать formulations вида «legacy fallback-only» и обновить пути, которые указывают в удалённый пакет:
    - `Modules/Codex.md` (3 места): legacy package bullet, stable-artifact-name bullet, release packaging bullet — переформулировать так, что app-server это единственная canonical линия, а stable artifact name остаётся product contract'ом.
    - `System/SystemArchitecture.md` строка 173: упростить provider-modules bullet, убрать parenthetical про legacy.
-   - `Contracts/Formal_Module_Cluster_Facade_Architecture.md` строка 428: в mermaid-диаграмме `packages/Claude_Module|Codex_Module|Gemini_Module/src/*` заменить `Codex_Module` на `Codex_AppServer_Module`.
+   - then-active `Contracts/Formal_Module_Cluster_Facade_Architecture.md` строка 428: в mermaid-диаграмме `packages/Claude_Module|Codex_Module|Gemini_Module/src/*` заменить `Codex_Module` на `Codex_AppServer_Module`. На 2026-05-01 этот discussion baseline архивирован как `Plans/Archive/Formal_Module_Cluster_Facade_Architecture.md`.
    - `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` строка 107: путь `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` заменить на app-server эквивалент (например, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`), убедившись, что обновлённый путь реально держит закрепляемый за строкой invariant.
    - `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` строка 139: путь `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts` заменить на app-server эквивалент (`packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts` — точный файл уточняется при правке).
 

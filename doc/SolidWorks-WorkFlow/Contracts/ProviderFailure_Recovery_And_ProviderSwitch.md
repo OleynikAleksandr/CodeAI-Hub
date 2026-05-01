@@ -1,11 +1,31 @@
 # Provider Failure Recovery And Provider Switch — Contract (SSOT)
 
-**Status:** Deferred SSOT / architectural baseline
+**Status:** Partially implemented SSOT / deferred cross-provider takeover baseline
 **Created:** 2026-03-26
+**Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`)
 **Owner:** Oleksandr
 **Scope:** BUG-2026-03-25-01 + архитектура Core-инициируемого восстановления/переключения провайдера для live dialog continuity
 
 ---
+
+## Current implementation status (2026-05-01)
+
+Этот документ остаётся SSOT для целевой архитектуры provider failure recovery, но не весь контракт материализован в коде.
+
+Реализовано на `main`:
+
+- `ProviderFailureClassifier` классифицирует ошибки до destructive cleanup;
+- transient failures сохраняют binding, переводят turn state в `idle`, расходуют retry budget и не деградируют весь provider автоматически;
+- `dialog:switch:*` transport/offer scaffold существует в Core stream contracts, incoming validator/router и `SessionProviderFailureRecovery`;
+- same-provider retry / `switch_model` resend идёт через `Session.modelBinding` и provider-specific model-switch handlers.
+
+Не реализовано как рабочее product behavior:
+
+- настоящий `switch_provider` takeover;
+- provider-neutral transfer package для нового provider (`unified-dialog.prompt.md` + `provider-switch-handoff.md`);
+- PM approval UX для полноценного cross-provider migration flow.
+
+Поэтому разделы ниже нужно читать как смесь implemented baseline и target architecture. Любые утверждения о завершённом `switch_provider` относятся к deferred target, пока код не создаёт новую provider session и не передаёт ей provider-neutral transcript.
 
 ## 1. Контекст
 
@@ -25,7 +45,7 @@
 
 ---
 
-## 2. Подтверждённые факты в текущем коде
+## 2. Подтверждённые факты и статус реализации
 
 ### 2.1. Корневая причина не в watchdog timeout
 
@@ -41,9 +61,9 @@
 - если провайдер просто молчит без exception, Core сейчас скорее зависнет в running state, чем "убьёт" сессию по таймеру.
 - bug triggered path = **exception/error path**, а не "молчание по времени".
 
-### 2.2. Generic failure path слишком грубый
+### 2.2. Generic failure path: исходный gap закрыт частично
 
-Текущий путь:
+Исходный путь, из-за которого появился этот контракт:
 
 - `adapter.sendMessage(...)` throws
 - `SessionRequestHandler.handleMessage()` вызывает `handleProviderFailure(...)`
@@ -55,23 +75,29 @@
   - шлёт `session:error`
 
 Файлы:
-- `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
-- `packages/core/src/session-manager/index.ts`
+- исторически: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+- текущая materialization: `packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.ts`
+- classifier: `packages/core/src/recovery/provider-failure-classifier.ts`
+- retry state: `packages/core/src/remote-bridge/handlers/session-request-handler-retry-state.ts`
 
-Проблема:
-- transient server error и terminal runtime crash сейчас проходят через одну и ту же ветку.
+Текущий статус:
+- transient server error и terminal runtime crash больше не обязаны проходить через одну destructive ветку;
+- classifier решает, удалять ли binding и деградировать ли provider;
+- retry budget и pending intent уже материализованы;
+- cross-provider recovery после offer остаётся deferred.
 
-### 2.3. После потери binding сообщение пользователя может тихо дропнуться
+### 2.3. После потери binding сообщение пользователя: исходный gap закрыт для stale-binding retry, но не для full provider switch
 
-В `handleMessage()` user message уже может быть добавлен в unified dialog history, но если `binding` или `adapter` отсутствует, Core только логирует ситуацию и возвращает управление без retry/recover path.
+Исходно в `handleMessage()` user message уже мог быть добавлен в unified dialog history, но если `binding` или `adapter` отсутствовал, Core только логировал ситуацию и возвращал управление без retry/recover path.
 
 Файл:
-- `packages/core/src/remote-bridge/handlers/session-request-handler.ts`
+- `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`
+- `packages/core/src/remote-bridge/handlers/session-provider-failure-recovery.ts`
 
-Следствие:
-- пользователь видит, что написал в диалог;
-- провайдер это сообщение не получает;
-- error/recovery UX недостаточно явный.
+Текущий статус:
+- typed stale-binding retry (`GEMINI_*`, `CLAUDE_*`, `CODEX_*`) invalidates binding, rebinds and retries once;
+- provider failure path emits `session:error` and may broadcast `dialog:switch:offer`;
+- полноценная user-approved migration to another provider всё ещё deferred.
 
 ### 2.4. Ошибка деградирует не только session, но и весь provider
 
@@ -93,21 +119,24 @@
 Следствие:
 - cross-provider continuation для того же dialog сейчас архитектурно не поддержана.
 
-### 2.6. Смена модели внутри того же провайдера частично уже возможна
+### 2.6. Смена модели внутри того же провайдера уже материализована для supported providers
 
-Текущий код при resume/create уже перечитывает provider defaults из settings:
+Текущий code path:
 
-- Gemini: `defaultModel` / `thinkingLevel`
-- Claude: `resolvedModel` при build query options
-- Codex: `workspaceDefaults.defaultModel` при старте thread
+- `SessionRequestHandlerSessionActions.handleSwitchRequest(...)` применяет `switch_model` к текущей logical session;
+- `Session.modelBinding` становится next-turn SSOT;
+- Claude/Codex имеют provider-specific handlers for model/reasoning-thought switching;
+- UI status panels читают runtime model updates вместо live Settings defaults.
 
 Файлы:
-- `packages/Gemini_Module/src/session/gemini-session-manager.ts`
-- `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`
-- `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`
+- `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`
+- `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts`
+- `packages/core/src/remote-bridge/handlers/session-request-handler-claude-model-switch.ts`
+- `packages/core/src/session-model-binding/`
 
 Следствие:
-- same-provider recovery со сменой модели является самым дешёвым первым шагом.
+- same-provider recovery со сменой модели является реализованным первым шагом;
+- `switch_provider` не должен считаться выполненным по аналогии с `switch_model`.
 
 ### 2.7. Unified dialog history уже существует, но current backfill не cross-provider
 
@@ -1058,7 +1087,7 @@ Recovery является одной из причин switch, а не отде�
 
 ## 11. Execution Plan
 
-Этот документ должен нарезаться в `doc/TODO/todo-plan.md` как **один MVP scope**, а не как серия далёких product releases.
+Этот раздел описывает целевой MVP scope. По состоянию на audit `2026-05-01` он реализован только частично: error classification, retry budget, `dialog:switch:*` scaffold и same-provider `switch_model` уже в коде; полноценный `switch_provider` и provider-neutral handoff package остаются deferred.
 
 То есть:
 
@@ -1068,7 +1097,7 @@ Recovery является одной из причин switch, а не отде�
 
 ### 11.0. MVP Done Criteria
 
-MVP считается завершённым, когда одновременно выполнены все условия:
+Target MVP считается завершённым, когда одновременно выполнены все условия:
 
 - transient provider errors больше не убивают binding и не оставляют UI в вечном running state;
 - один safe silent retry поддержан для transient ошибок;

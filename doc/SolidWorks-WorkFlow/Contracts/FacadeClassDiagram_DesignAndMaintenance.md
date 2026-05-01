@@ -4,7 +4,7 @@
 **Updated:** 2026-03-19 (release 1.1.749)
 **Owner:** Oleksandr + Codex
 **Validated for:** 1.1.749
-**Validated on:** 2026-03-19
+**Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: 2026-03-19)
 
 
 ## Реальный пример: спиннер загрузки UI Сессии (v1.1.622)

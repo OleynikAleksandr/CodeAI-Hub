@@ -60,7 +60,7 @@
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`.
 10. **Provider failure classification before teardown**: Core обязан классифицировать provider error через `ProviderFailureClassifier` до удаления binding. Transient errors (`transient_turn_failure`) не должны удалять binding, деградировать whole provider или молча дропать user message. Retry budget ограничен (1 transient + 1 auto-resume), pending user intent имеет TTL=60s.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`.
-11. **Provider-neutral switch transfer**: cross-provider takeover обязан использовать `unified-dialog.prompt.md` (plain `User:/Assistant:` transcript) и `provider-switch-handoff.md`, а не provider-native JSONL/rollout/SDK logs. `dialog:switch:*` protocol является единственным bridge contract для recovery и manual switch.
+11. **Provider-neutral switch transfer boundary**: текущий `main` реализует classification/retry/switch-offer scaffold, `dialog:switch:*` transport contract и same-provider retry / `switch_model` resend через `Session.modelBinding`. Реальный cross-provider takeover (`switch_provider`) ещё deferred: когда он будет реализован, новый provider обязан получать provider-neutral package (`unified-dialog.prompt.md` + `provider-switch-handoff.md`), а не provider-native JSONL/rollout/SDK logs. До materialization этого package `switch_provider` нельзя описывать как завершённое поведение.
    - Канон: `doc/SolidWorks-WorkFlow/Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md`.
 12. **Quality-gate contract is workflow-critical**: локальный `pre-commit` обязан прогонять architecture gate, repo-wide `npm run lint`, `npm run check:tsprune` и staged-only formatting. Хук не имеет права форматировать весь репозиторий поверх незастейдженных изменений.
    - Канон: `.husky/pre-commit`, `doc/TODO/todo-plan.md`.
@@ -336,7 +336,7 @@
 - Facade specs are deferred to per-cluster and per-module branches (future work) and are not a trunk workflow step.
 
 Канонические документы:
-- `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramWorkflow_UserSurface_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Diagram_Workflow_CompositePrompt_Contract_And_Runtime_Input_Restrictions_Architecture.md`
 - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`
 

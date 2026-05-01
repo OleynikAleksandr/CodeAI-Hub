@@ -3,7 +3,7 @@
 **Status:** Implemented on `main` (current SSOT + design history)  
 **Updated:** 2026-03-13  
 **Owner:** Oleksandr + Codex  
-**Validated on:** `main` (`v1.1.724`)
+**Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.724`)
 
 ---
 
@@ -11,9 +11,9 @@
 
 - `Settings -> General` уже владеет persisted policy `general.responsePolicy`.
 - Карточка `Response Mode` живёт отдельно от `Core Controls`.
-- User-facing Codex settings экспонируют только две активные модели: `gpt-5.3-codex` и `gpt-5.4`.
+- User-facing Codex model catalog больше не ограничен двумя historical моделями `gpt-5.3-codex` / `gpt-5.4`; активный список принадлежит shared Codex model registry (`src/types/codex-model-registry.ts`) и runtime capability mirror (`packages/Codex_AppServer_Module/src/types/codex-model-capabilities.ts`), которые сейчас покрывают `gpt-5.2`, `gpt-5.3-codex-spark`, `gpt-5.3-codex`, `gpt-5.4-mini`, `gpt-5.4`, `gpt-5.5`.
 - Default policy для workflow-сценариев: `hybrid`.
-- Raw provider rollouts и SDK JSONL используются как диагностический SSOT.
+- Active app-server line больше не пишет CodeAI Hub SDK transport JSONL under `~/.codeai-hub/logs/codex`; diagnostic SSOT = live app-server stream during the turn, session-local normalized `*-description.jsonl`, provider-home Codex history/rollout artifacts, and optional Core-owned native request capture.
 - Этот документ сохраняет исходную design-логику, но описывает уже внедрённый контракт, а не будущую baseline-ветку.
 
 ---
