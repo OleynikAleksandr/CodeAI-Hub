@@ -80,12 +80,12 @@
 
 1. [DONE] Обновить SSOT: SystemArchitecture Invariant 14 (1.2.120 entry о raздельных switch-командах) + SessionStatusPanel SSOT (контракт и подсветка активного пункта).
 2. [DONE] Git Commit: `docs(ssot): document decoupled status panel switch transport` (hash: 25cc21086)
-3. [TODO] README + CHANGELOG для версии 1.2.120: "Current Release — v1.2.120" + новая секция в CHANGELOG. Scope: `README.md` + `CHANGELOG.md` (2 файла).
-4. [TODO] Git Commit: `docs: prepare release 1.2.120` (hash: TBD)
-5. [TODO] Запустить `./scripts/build-all.sh` (поднимет версии до `1.2.120`, пересоберёт пакеты, выложит tarball-ы), скопировать tarball-ы в `doc/tmp/releases/`. Scope: build artefacts + version bumps (контролируется скриптом).
-6. [TODO] Git Commit: `chore: build release 1.2.120` (hash: TBD)
-7. [TODO] Запустить `./scripts/build-release.sh --use-current-version`, проверить SDK exclusions / VSIX surface, забрать `codeai-hub-1.2.120.vsix`. Scope: VSIX artefact.
-8. [TODO] Git Commit: `chore: finalize release 1.2.120` (hash: TBD)
+3. [DONE] README + CHANGELOG для версии 1.2.120: "Current Release — v1.2.120" + новая секция в CHANGELOG.
+4. [DONE] Git Commit: `docs: prepare release 1.2.120` (hash: b6872e846)
+5. [DONE] `./scripts/build-all.sh` отработал; tarball-ы скопированы в `doc/tmp/releases/`.
+6. [DONE] Git Commit: `chore: build release 1.2.120` (hash: e972bbb03)
+7. [DONE] `./scripts/build-release.sh --use-current-version` отработал; SDK exclusions verified, VSIX surface verified, `codeai-hub-1.2.120.vsix` (2.7M, sha256 `de64b7ce20c1b934d0f51627e1f0cc2bfc514240ee303618309f4a8f673fedaa`) готов.
+8. [DONE] Git Commit: `chore: finalize release 1.2.120` (hash: ee5d187ea)
 9. [BLOCKED-ON-USER] **Передать VSIX пользователю и дождаться явного подтверждения retest'а** (model-only клик не трогает reasoning, reasoning-only клик не трогает модель, активный пункт обеих карт подсвечен провайдерным цветом без слова "active" и без reasoning-суффикса). Closeout/архивирование запрещено до получения подтверждения. При найденных регрессиях — открывать новые micro-задачи перед closeout.
 10. [TODO] Архивировать `Plans/StatusPanel_ModelReasoningDecoupling_Architecture.md` (после миграции итогов в SSOT и после пользовательского подтверждения) в `Plans/Archive/`, архивировать `todo-plan.md` в `doc/TODO/Archive/todo-plan-status-panel-decoupling.md`, обновить `Docs_Index.md`. Scope: ≤3 файла.
 11. [TODO] Git Commit: `docs: close status panel decoupling scope` (hash: TBD)
