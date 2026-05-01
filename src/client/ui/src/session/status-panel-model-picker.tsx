@@ -39,41 +39,8 @@ interface PickerConfig {
 }
 
 const pickerStyle = (anchorLeft: number): CSSProperties => ({
-  position: "absolute",
-  bottom: "calc(100% + 6px)",
   left: `${Math.max(0, anchorLeft)}px`,
-  zIndex: 25,
-  display: "grid",
-  width: "min(360px, calc(100% - 16px))",
-  maxHeight: "260px",
-  overflowY: "auto",
-  padding: "8px",
-  background: "rgba(30, 31, 32, 0.98)",
-  border: "1px solid rgba(1, 240, 216, 0.35)",
-  borderRadius: "6px",
-  boxShadow: "0 12px 32px rgba(0, 0, 0, 0.35)",
-  gap: "6px",
 });
-
-const optionStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  gap: "12px",
-  minHeight: "30px",
-  padding: "6px 8px",
-  color: "#d7f8f4",
-  textAlign: "left",
-  background: "transparent",
-  border: "1px solid rgba(255, 255, 255, 0.08)",
-  borderRadius: "6px",
-  cursor: "pointer",
-};
-
-const closeStyle: CSSProperties = {
-  ...optionStyle,
-  justifyContent: "center",
-  color: "#b0b0b0",
-};
 
 const normalizeBaseModelId = (modelId: string): string =>
   modelId.replace(EFFECTIVE_MODEL_SUFFIX_PATTERN, "");
@@ -196,14 +163,17 @@ export const StatusPanelModelPicker = ({
                 onSelectReasoning?.(reasoning);
                 onClose();
               }}
-              style={optionStyle}
               type="button"
             >
               <span>{reasoning}</span>
             </button>
           );
         })}
-        <button onClick={onClose} style={closeStyle} type="button">
+        <button
+          className="session-status-picker__option session-status-picker__option--close"
+          onClick={onClose}
+          type="button"
+        >
           Close
         </button>
       </div>
@@ -229,14 +199,17 @@ export const StatusPanelModelPicker = ({
               onSelectModel?.(model.id);
               onClose();
             }}
-            style={optionStyle}
             type="button"
           >
             <span>{model.displayName}</span>
           </button>
         );
       })}
-      <button onClick={onClose} style={closeStyle} type="button">
+      <button
+        className="session-status-picker__option session-status-picker__option--close"
+        onClick={onClose}
+        type="button"
+      >
         Close
       </button>
     </div>
