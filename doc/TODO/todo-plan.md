@@ -122,7 +122,7 @@
 1. [DONE] Confirm clean tree, run `./scripts/build-all.sh`, verify generated tarballs/manifests/bundles, and commit generated release metadata. Scope: generated release files; commit message: `chore: build release 1.2.119`.
 2. [DONE] Git Commit: `chore: build release 1.2.119` (hash: 9515de4cf)
 3. [DONE] Run `./scripts/build-release.sh --use-current-version` on clean tree and verify VSIX packaging output. Result: `codeai-hub-1.2.119.vsix` (2.7M, sha256 `b9a3cc2b4a817ae8d4027906d32d26a262757a39972de4fc99e0ccfafae34fe5`); output confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`. Scope: VSIX packaging artifacts/session notes; commit message: `chore: finalize release 1.2.119`.
-4. [TODO] Git Commit: `chore: finalize release 1.2.119` (hash: TBD)
+4. [DONE] Git Commit: `chore: finalize release 1.2.119` (hash: 1af46dd40)
 
 ## Phase 7 — User Visual Acceptance Testing (owner: User, updated: 2026-05-01)
 
