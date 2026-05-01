@@ -79,12 +79,12 @@ test("Claude model-only switch swaps base model and preserves prior thinking eff
   assert.notEqual(updatedBinding?.updatedAt, previousBinding.updatedAt);
 });
 
-test("Claude model-only switch normalizes effort against new model capabilities", async () => {
+test("Claude model-only switch keeps existing effort when new model supports it", async () => {
   const harness = createHarness();
   const router = createRouter(harness);
   const session = harness.sessionManager.createSession(
     "claudeCodeCli",
-    "/tmp/claude-model-switch-normalize",
+    "/tmp/claude-model-switch-keep-effort",
     "provider-session-claude"
   );
   harness.sessionManager.setModelBinding(session.id, {
@@ -107,7 +107,7 @@ test("Claude model-only switch normalizes effort against new model capabilities"
   )?.modelBinding;
   assert.equal(updatedBinding?.baseModelId, "haiku");
   assert.equal(updatedBinding?.thinkingEnabled, true);
-  assert.notEqual(updatedBinding?.reasoningEffort, "xhigh");
+  assert.equal(updatedBinding?.reasoningEffort, "xhigh");
 });
 
 test("Claude model-only switch rejects unknown models without mutating binding", async () => {
