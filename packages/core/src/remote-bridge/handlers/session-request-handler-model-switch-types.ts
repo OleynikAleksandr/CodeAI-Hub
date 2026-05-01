@@ -4,10 +4,12 @@ import type {
   SessionModelUpdatePayload,
 } from "../session-stream-contracts";
 
-export interface SessionModelSwitchTarget {
+export interface SessionModelSwitchTarget<
+  TReasoningEffort extends string = CodexModelSwitchReasoningEffort,
+> {
   readonly providerId: string;
   readonly targetModelId: string;
-  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
+  readonly targetReasoningEffort?: TReasoningEffort;
   readonly targetThinkingLevel?: string;
   readonly thinkingEnabled?: boolean;
 }
@@ -18,34 +20,40 @@ export interface SessionModelSwitchContext {
   readonly workspacePath: string;
 }
 
-export interface SessionModelSwitchInjectionPayload {
+export interface SessionModelSwitchInjectionPayload<
+  TReasoningEffort extends string = CodexModelSwitchReasoningEffort,
+> {
   readonly baseInstructions?: string;
   readonly previousModelId?: string;
   readonly targetModelId: string;
-  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
+  readonly targetReasoningEffort?: TReasoningEffort;
 }
 
-export interface SessionModelSwitchResult {
+export interface SessionModelSwitchResult<
+  TReasoningEffort extends string = CodexModelSwitchReasoningEffort,
+> {
   readonly broadcastPayload: SessionModelUpdatePayload;
   readonly modelBinding: SessionModelBinding;
-  readonly pendingInjection?: SessionModelSwitchInjectionPayload;
+  readonly pendingInjection?: SessionModelSwitchInjectionPayload<TReasoningEffort>;
 }
 
 export type SessionModelSwitchValidationResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly reason: string };
 
-export interface ProviderModelSwitchStrategy {
+export interface ProviderModelSwitchStrategy<
+  TReasoningEffort extends string = CodexModelSwitchReasoningEffort,
+> {
   buildModelBinding(
-    target: SessionModelSwitchTarget,
+    target: SessionModelSwitchTarget<TReasoningEffort>,
     context: SessionModelSwitchContext
   ): SessionModelBinding;
   buildSwitchInjection?(
-    target: SessionModelSwitchTarget,
+    target: SessionModelSwitchTarget<TReasoningEffort>,
     context: SessionModelSwitchContext
-  ): SessionModelSwitchInjectionPayload | null;
+  ): SessionModelSwitchInjectionPayload<TReasoningEffort> | null;
   readonly providerId: string;
   validateTarget(
-    target: SessionModelSwitchTarget
+    target: SessionModelSwitchTarget<TReasoningEffort>
   ): SessionModelSwitchValidationResult;
 }

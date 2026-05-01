@@ -24,6 +24,14 @@ const DIALOG_SWITCH_MODES = new Set([
   "switch_model",
   "switch_provider",
 ]);
+const CLAUDE_MODEL_ALIASES = new Set(["sonnet", "opus", "haiku"]);
+const CLAUDE_THINKING_EFFORTS = new Set([
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+]);
 const CODEX_REASONING_EFFORTS = new Set(["low", "medium", "high", "xhigh"]);
 
 const NATIVE_CAPTURE_PROVIDERS = new Set(["claude", "codex"]);
@@ -109,6 +117,16 @@ const isCodexModelSwitchPayload = (payload: unknown): boolean =>
   (payload.targetReasoningEffort === undefined ||
     (typeof payload.targetReasoningEffort === "string" &&
       CODEX_REASONING_EFFORTS.has(payload.targetReasoningEffort)));
+
+const isClaudeModelSwitchPayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  typeof payload.sessionId === "string" &&
+  typeof payload.targetModelId === "string" &&
+  CLAUDE_MODEL_ALIASES.has(payload.targetModelId) &&
+  typeof payload.thinkingEnabled === "boolean" &&
+  (payload.targetReasoningEffort === undefined ||
+    (typeof payload.targetReasoningEffort === "string" &&
+      CLAUDE_THINKING_EFFORTS.has(payload.targetReasoningEffort)));
 
 const isUsageRefreshPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
@@ -233,6 +251,7 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "pm:diag:log": isDiagnosticLogPayload,
   "projects:add": isProjectAddPayload,
   "projects:remove": isProjectRemovePayload,
+  "session:claude:model-switch": isClaudeModelSwitchPayload,
   "session:codex:model-switch": isCodexModelSwitchPayload,
   "session:create": isSessionCreatePayload,
   "session:delete": isSessionIdPayload,

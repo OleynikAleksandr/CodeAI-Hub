@@ -157,6 +157,20 @@ export interface CodexModelSwitchRequestPayload {
   readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
 }
 
+export type ClaudeModelSwitchThinkingEffort =
+  | "low"
+  | "medium"
+  | "high"
+  | "xhigh"
+  | "max";
+
+export interface ClaudeModelSwitchRequestPayload {
+  readonly sessionId: string;
+  readonly targetModelId: "sonnet" | "opus" | "haiku";
+  readonly targetReasoningEffort?: ClaudeModelSwitchThinkingEffort;
+  readonly thinkingEnabled: boolean;
+}
+
 export interface SessionMessageTranslationPayload {
   readonly localizedContent: string;
   readonly messageId: string;
@@ -233,6 +247,10 @@ export type SessionIncomingMessage =
   | {
       readonly type: "session:codex:model-switch";
       readonly payload: CodexModelSwitchRequestPayload;
+    }
+  | {
+      readonly type: "session:claude:model-switch";
+      readonly payload: ClaudeModelSwitchRequestPayload;
     }
   | {
       readonly type: "session:delete";
