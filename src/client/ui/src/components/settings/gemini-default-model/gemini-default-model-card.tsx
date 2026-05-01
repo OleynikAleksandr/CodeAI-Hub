@@ -112,7 +112,7 @@ const GeminiDefaultModelCard: FC<GeminiDefaultModelCardProps> = ({
   const description = t(
     UI_HELPER_TEXT_CATEGORY,
     "settings.gemini_default_model.description",
-    "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Gemini_Model_Selection.md"
+    "Select the Gemini model to use for new sessions. Each model can store its own thinking level. More details: doc/SolidWorks-WorkFlow/Modules/Gemini.md"
   );
   const thinkingInDialogDescription = t(
     UI_HELPER_TEXT_CATEGORY,

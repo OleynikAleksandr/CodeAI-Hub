@@ -258,7 +258,7 @@ Current validation surface:
 - `node --test packages/unified-session/dist/session-translation-overlay-store.test.js`
 - `npm run build --workspace=@codeai-hub/gemini-module`
 - `npm run build --workspace=@codeai-hub/claude-module`
-- `npm run build --workspace=@codeai-hub/codex-module`
+- `npm run build --workspace=@codeai-hub/codex-app-server-module`
 - `./scripts/build-all.sh`
 - `./scripts/build-release.sh --use-current-version`
 

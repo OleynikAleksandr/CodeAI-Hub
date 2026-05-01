@@ -3,7 +3,6 @@
   "workspaces": {
     ".": {
       "entry": [
-        "src/extension.ts",
         "src/client/ui/src/index.tsx",
         "src/client/project-manager/index.tsx",
         "src/**/*.test.ts",
@@ -12,26 +11,28 @@
       "project": ["src/**/*.{ts,tsx}"]
     },
     "packages/core": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"]
     },
     "packages/Claude_Module": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"]
+    },
+    "packages/Codex_AppServer_Module": {
+      "entry": ["src/**/*.test.ts"]
     },
     "packages/Gemini_Module": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"]
     },
     "packages/localization": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"]
     },
     "packages/translation": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"]
     },
     "packages/initiatives": {},
     "packages/unified-session": {
-      "entry": ["src/index.ts", "src/**/*.test.ts"]
+      "entry": ["src/**/*.test.ts"]
     },
     "packages/core-supervisor": {
-      "entry": ["src/index.ts"],
       "ignoreDependencies": ["@codeai-hub/core"]
     },
     "packages/agents/shared": {},

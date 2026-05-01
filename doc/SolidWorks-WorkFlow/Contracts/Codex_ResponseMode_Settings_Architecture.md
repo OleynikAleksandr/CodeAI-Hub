@@ -266,8 +266,6 @@ flowchart LR
 
 ## 11) Related files / documents
 
-- `doc/Sessions/Archive/Session061.md`
-- `doc/Sessions/Archive/Session062.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`

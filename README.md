@@ -48,7 +48,7 @@ Open Visual Studio Code and run `Extensions: Install from VSIX...`, then select 
 - The first full build can take a while because it prepares provider bundles, UI bundles, core runtime, and the standalone launcher.
 - Provider CLIs / SDKs are not bundled inside this repository and must be available separately.
 
-Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSOT contracts in `doc/SolidWorks-WorkFlow/Contracts/` (especially `Contracts/Workflow_CLI.md`) to configure provider CLIs and SDKs.
+Before starting, read `doc/SolidWorks-WorkFlow/Docs_Index.md` and follow the SSOT contracts in `doc/SolidWorks-WorkFlow/Contracts/` (especially `doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`) to configure provider CLIs and SDKs.
 
 ## Development Workflow
 1. Install dependencies

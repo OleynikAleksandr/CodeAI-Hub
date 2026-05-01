@@ -16,7 +16,7 @@ src/
 
 ## Current Status
 - Base package scaffold + source layout created.
-- Architecture reference: `doc/SolidWorks-Flow/Stacks/Claude.md`.
+- Architecture reference: `doc/SolidWorks-WorkFlow/Modules/Claude.md`.
 - Task tracker: `doc/TODO/todo-plan.md`.
 
 ## Next Steps

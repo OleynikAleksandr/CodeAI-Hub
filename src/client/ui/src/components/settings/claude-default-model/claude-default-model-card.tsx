@@ -41,7 +41,7 @@ const ClaudeDefaultModelCard: FC<ClaudeDefaultModelCardProps> = ({
   const description = t(
     UI_HELPER_TEXT_CATEGORY,
     "settings.claude_default_model.description",
-    "Choose the Claude alias that will be applied when new sessions start. More details in the knowledge base: doc/SolidWorks-Flow/knowledge/model-reference/Claude_Model_Aliases.md"
+    "Choose the Claude alias that will be applied when new sessions start. More details: doc/SolidWorks-WorkFlow/Modules/Claude.md"
   );
   const note = t(
     UI_HELPER_TEXT_CATEGORY,

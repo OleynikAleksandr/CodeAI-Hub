@@ -6,6 +6,5 @@
   "pm.description.questionnaire.description": "The questionnaire is saved automatically. Click \"Submit questionnaire\", choose a provider, and wait for Description to start. You can continue the dialog in the same session until the final version is ready. The resulting document is saved to `.codeai-hub/<workspace>/description/Final_Description.md`.",
   "pm.description.questionnaire.submit_label": "Submit questionnaire",
   "pm.description.questionnaire.cancel_label": "Close",
-  "pm.description.questionnaire.aria_label": "Idea questionnaire",
   "pm.description.questionnaire.submit_error_default": "Failed to submit the questionnaire."
 }

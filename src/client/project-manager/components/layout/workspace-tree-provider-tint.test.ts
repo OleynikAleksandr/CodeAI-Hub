@@ -57,7 +57,7 @@ test("resolver maps provider stack ids to canonical sidebar design ids", async (
   assert.equal(source.includes('geminiCli: "gemini"'), true);
 });
 
-test("css scheme defines provider variables and removes legacy yellow / green from in-progress / done markers", async () => {
+test("css scheme defines provider variables and removes legacy yellow / green from progress / active markers", async () => {
   const source = await readFile(STYLES_PATH, "utf8");
   assert.equal(
     source.includes('.pm-tree__item[data-provider="claude"]'),
@@ -75,20 +75,18 @@ test("css scheme defines provider variables and removes legacy yellow / green fr
     "gemini provider scope must exist"
   );
   assert.equal(
-    source.includes(
-      ".pm-tree__item[data-provider].pm-tree__item--in-progress"
-    ),
+    source.includes(".pm-tree__item[data-provider].pm-tree__item--progress"),
     true,
-    "in-progress overrides must scope under [data-provider]"
+    "progress overrides must scope under [data-provider]"
   );
   assert.equal(
-    source.includes(".pm-tree__item[data-provider].pm-tree__item--done"),
+    source.includes(".pm-tree__item[data-provider].pm-tree__item--active"),
     true,
-    "done overrides must scope under [data-provider]"
+    "active overrides must scope under [data-provider]"
   );
   assert.equal(
     source.includes("background: var(--row-soft);"),
     true,
-    "in-progress marker must use --row-soft (replaces #d9a441)"
+    "progress marker must use --row-soft (replaces #d9a441)"
   );
 });

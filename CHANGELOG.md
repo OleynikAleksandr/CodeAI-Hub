@@ -211,7 +211,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 ### Changed
 - **Diagnostic retest: Codex app-server logs keep split names but return to the flat log root.** Process-wide logs now use `~/.codeai-hub/logs/codex/sdk-codex-app-server-process-*.jsonl`, while per-thread logs use `~/.codeai-hub/logs/codex/sdk-codex-thread-<threadId>-*.jsonl`.
 - **The split-folder `app-server-process/` and `threads/` layout from `1.2.91` is intentionally removed for this test.** This isolates whether ordinary Codex progress-message loss follows separate log folders / thread-log mkdir timing rather than file naming.
-- **Diagnostic report added.** `doc/SolidWorks-WorkFlow/Plans/Codex_Progress_Message_Regression_Diagnostics_1.2.91.md` records the evidence from `1.2.90` and `1.2.91`, including provider-native confirmation that system instructions were present.
+- **Diagnostic report added.** `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Message_Regression_Diagnostics_1.2.91.md` records the evidence from `1.2.90` and `1.2.91`, including provider-native confirmation that system instructions were present.
 
 ### Tests
 - **Targeted Codex provider build passed before release.** Passed `npm run build --workspace @codeai-hub/codex-app-server-module`; Husky pre-commit gates passed on the implementation commit.

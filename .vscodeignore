@@ -11,7 +11,6 @@ node_modules/@codeai-hub/**
 !node_modules/@codeai-hub/core/**
 !node_modules/@codeai-hub/localization/**
 !node_modules/@codeai-hub/translation/**
-!node_modules/@codeai-hub/idea-collector/assets/**
 !node_modules/@codeai-hub/agent-shared/**
 node_modules/googleapis/**
 node_modules/google-auth-library/**
@@ -20,7 +19,6 @@ node_modules/google-logging-utils/**
 node_modules/tree-sitter-bash/**
 node_modules/web-tree-sitter/**
 node_modules/@codeai-hub/claude-module/**
-node_modules/@codeai-hub/codex-module/**
 node_modules/@codeai-hub/gemini-module/**
 codeai-hub-*/**
 dist/**

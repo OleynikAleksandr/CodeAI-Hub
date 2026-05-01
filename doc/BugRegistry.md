@@ -482,7 +482,7 @@
 - `./scripts/build-cef-launcher.sh --force --launcher-version 1.2.45`
 
 **Planning source:**
-- `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_BootstrapHardening_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/CEF_MacOS_BootstrapHardening_Architecture.md`
 
 ## BUG-2026-04-21-06 — Пустой / фейково-нулевой usage_limits виджет у Claude и Codex до первого turn'а
 

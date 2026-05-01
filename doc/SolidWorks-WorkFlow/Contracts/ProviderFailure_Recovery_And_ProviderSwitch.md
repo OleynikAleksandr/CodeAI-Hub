@@ -1027,18 +1027,7 @@ Recovery является одной из причин switch, а не отде�
 - `packages/core/src/recovery/recovery-target-resolver.ts`
   - выбирает next provider/model
 
-- `packages/core/src/recovery/canonical-session-preamble-resolver.ts`
-  - собирает provider-neutral session preamble
-
-- `packages/core/src/recovery/provider-facing-dialog-builder.ts`
-  - строит `unified-dialog.prompt.md`
-
-- `packages/core/src/recovery/unified-dialog-transfer-builder.ts`
-  - строит `unified-dialog.snapshot.md`
-  - пишет `provider-switch-handoff.md`
-
-- `packages/core/src/recovery/dialog-switch-orchestrator.ts`
-  - единый orchestration layer для recovery switch и manual switch
+- Provider-neutral preamble/dialog transfer builders remain deferred design targets and are not materialized as standalone recovery files in the current codebase.
 
 ### 10.2. Existing файлы, которые нужно изменить
 
