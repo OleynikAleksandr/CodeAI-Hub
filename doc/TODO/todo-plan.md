@@ -121,14 +121,14 @@
 
 1. [DONE] Confirm clean tree, run `./scripts/build-all.sh`, verify generated tarballs/manifests/bundles, and commit generated release metadata. Scope: generated release files; commit message: `chore: build release 1.2.119`.
 2. [DONE] Git Commit: `chore: build release 1.2.119` (hash: 9515de4cf)
-3. [TODO] Run `./scripts/build-release.sh --use-current-version` on clean tree and verify VSIX packaging output. Scope: VSIX packaging artifacts/session notes; commit message: `chore: finalize release <version>`.
-4. [TODO] Git Commit: `chore: finalize release <version>` (hash: TBD)
+3. [DONE] Run `./scripts/build-release.sh --use-current-version` on clean tree and verify VSIX packaging output. Result: `codeai-hub-1.2.119.vsix` (2.7M, sha256 `b9a3cc2b4a817ae8d4027906d32d26a262757a39972de4fc99e0ccfafae34fe5`); output confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`. Scope: VSIX packaging artifacts/session notes; commit message: `chore: finalize release 1.2.119`.
+4. [TODO] Git Commit: `chore: finalize release 1.2.119` (hash: TBD)
 
 ## Phase 7 — User Visual Acceptance Testing (owner: User, updated: 2026-05-01)
 
 ### Stream O — User retest
 
-1. [TODO] Hand off VSIX to user for install and visual/native retest. Required checks: Claude Status Panel switch `sonnet` -> `opus` or `haiku`, thinking on/off, effort change, same logical session/dialog continuity, no Settings overwrite, Codex unchanged, Gemini no misleading dispatch. Scope remains ACTIVE until explicit acceptance.
+1. [IN_PROGRESS] Hand off VSIX to user for install and visual/native retest. Required checks: Claude Status Panel switch `sonnet` -> `opus` or `haiku`, thinking on/off, effort change, same logical session/dialog continuity, no Settings overwrite, Codex unchanged, Gemini no misleading dispatch. Scope remains ACTIVE until explicit acceptance.
 2. [TODO] Record user acceptance or failed retest details. Scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session038.md`; commit message depends on outcome.
 
 ## Phase 8 — Scope Closeout (owner: Docs, updated: 2026-05-01)
