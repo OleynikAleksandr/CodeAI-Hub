@@ -5,6 +5,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 export interface AppliedClaudeTurnConfig {
   readonly messagesForTheUserLanguage?: string;
+  readonly modelId?: string;
   readonly reasoningEffort?: "low" | "medium" | "high" | "xhigh" | "max";
   readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
@@ -27,7 +28,7 @@ const readClaudeReasoningEffort = (
     ? value
     : undefined;
 
-const readAppliedClaudeTurnConfig = (
+export const readAppliedClaudeTurnConfig = (
   turnOptions?: Record<string, unknown>
 ): AppliedClaudeTurnConfig | null => {
   const candidate = turnOptions?.__codeaiAppliedTurnConfig;
@@ -39,6 +40,9 @@ const readAppliedClaudeTurnConfig = (
     messagesForTheUserLanguage:
       readOptionalTrimmedString(candidate.reasoningLanguage) ??
       readOptionalTrimmedString(candidate.messagesForTheUserLanguage),
+    modelId:
+      readOptionalTrimmedString(candidate.modelId) ??
+      readOptionalTrimmedString(candidate.baseModelId),
     reasoningEffort: readClaudeReasoningEffort(candidate.reasoningEffort),
     thinkingEnabled:
       typeof candidate.thinkingEnabled === "boolean"

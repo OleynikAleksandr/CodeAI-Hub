@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import type { SDKMessageProcessor } from "../messaging/message-processor";
-import { applyClaudeTurnRuntimeConfig } from "../provider/claude-applied-turn-config";
+import {
+  type AppliedClaudeTurnConfig,
+  applyClaudeTurnRuntimeConfig,
+  readAppliedClaudeTurnConfig,
+} from "../provider/claude-applied-turn-config";
 import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
 import type { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
@@ -260,11 +264,12 @@ export class ClaudeSDKManager {
   }): ClaudeQueryOptions {
     const { outputSchema, session, turnOptions } = payload;
     const settingsSnapshot = this.loadClaudeSettingsSnapshot();
+    const appliedConfig = readAppliedClaudeTurnConfig(turnOptions);
     const resolvedModel =
-      readAppliedClaudeModelId(turnOptions) ?? this.deps.workspace.defaultModel;
+      appliedConfig?.modelId ?? this.deps.workspace.defaultModel;
     const thinkingOptions = this.resolveThinkingOptions(
       settingsSnapshot,
-      turnOptions
+      appliedConfig
     );
     const resumeSessionId = this.resolveResumeSessionId(session);
     const options: ClaudeQueryOptions = {
@@ -315,7 +320,7 @@ export class ClaudeSDKManager {
 
   private resolveThinkingOptions(
     snapshot: ClaudeSettingsSnapshot | null,
-    turnOptions?: Record<string, unknown>
+    appliedConfig?: AppliedClaudeTurnConfig | null
   ): {
     readonly effort?: "low" | "medium" | "high" | "xhigh" | "max";
     readonly thinking?: {
@@ -323,12 +328,11 @@ export class ClaudeSDKManager {
       readonly type: "adaptive" | "disabled";
     };
   } {
-    const appliedThinking = readAppliedClaudeThinkingConfig(turnOptions);
-    if (appliedThinking) {
-      return appliedThinking.thinkingEnabled
+    if (appliedConfig?.thinkingEnabled !== undefined) {
+      return appliedConfig.thinkingEnabled
         ? {
             thinking: { type: "adaptive", display: "summarized" },
-            effort: appliedThinking.reasoningEffort ?? "medium",
+            effort: appliedConfig.reasoningEffort ?? "medium",
           }
         : { thinking: { type: "disabled" } };
     }
@@ -407,25 +411,6 @@ const readOutputSchema = (
   return isRecord(schema) ? schema : null;
 };
 
-const readAppliedClaudeModelId = (
-  turnOptions?: Record<string, unknown>
-): string | undefined => {
-  if (!turnOptions) {
-    return undefined;
-  }
-  const appliedConfig = turnOptions.__codeaiAppliedTurnConfig;
-  if (
-    !isRecord(appliedConfig) ||
-    appliedConfig.providerId !== "claudeCodeCli"
-  ) {
-    return undefined;
-  }
-  return typeof appliedConfig.modelId === "string" &&
-    appliedConfig.modelId.trim().length > 0
-    ? appliedConfig.modelId.trim()
-    : undefined;
-};
-
 const CLAUDE_THINKING_EFFORTS = new Set([
   "low",
   "medium",
@@ -467,31 +452,3 @@ const resolveClaudeThinkingEffort = (
   typeof value === "string" && CLAUDE_THINKING_EFFORTS.has(value)
     ? (value as "low" | "medium" | "high" | "xhigh" | "max")
     : resolveLegacyClaudeThinkingEffort(value);
-
-const readAppliedClaudeThinkingConfig = (
-  turnOptions?: Record<string, unknown>
-): {
-  readonly reasoningEffort?: "low" | "medium" | "high" | "xhigh" | "max";
-  readonly thinkingEnabled: boolean;
-} | null => {
-  if (!turnOptions) {
-    return null;
-  }
-
-  const appliedConfig = turnOptions.__codeaiAppliedTurnConfig;
-  if (
-    !isRecord(appliedConfig) ||
-    appliedConfig.providerId !== "claudeCodeCli" ||
-    typeof appliedConfig.thinkingEnabled !== "boolean"
-  ) {
-    return null;
-  }
-
-  return {
-    thinkingEnabled: appliedConfig.thinkingEnabled,
-    reasoningEffort:
-      typeof appliedConfig.reasoningEffort === "string"
-        ? resolveClaudeThinkingEffort(appliedConfig.reasoningEffort)
-        : undefined,
-  };
-};
