@@ -3,9 +3,13 @@ export type ClaudeThinkingEffort = "low" | "medium" | "high" | "xhigh" | "max";
 
 export interface ClaudeModelAliasDescriptor {
   readonly alias: ClaudeModelAliasId;
+  readonly defaultThinkingEffort: ClaudeThinkingEffort;
   readonly description: string;
   readonly displayName: string;
   readonly status: "active";
+  readonly supportsThinking: boolean;
+  readonly supportsThinkingDisplaySummarized: boolean;
+  readonly thinkingEffortOptions: readonly ClaudeThinkingEffort[];
 }
 
 export interface ClaudeThinkingEffortDescriptor {
@@ -22,6 +26,10 @@ export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
     description:
       "Best for everyday tasks; Anthropic resolves the latest version automatically.",
     status: "active",
+    supportsThinking: true,
+    supportsThinkingDisplaySummarized: true,
+    thinkingEffortOptions: ["low", "medium", "high", "xhigh", "max"],
+    defaultThinkingEffort: "medium",
   },
   {
     alias: "opus",
@@ -29,6 +37,10 @@ export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
     description:
       "Most capable for complex, agentic workloads; latest version auto-resolved.",
     status: "active",
+    supportsThinking: true,
+    supportsThinkingDisplaySummarized: true,
+    thinkingEffortOptions: ["low", "medium", "high", "xhigh", "max"],
+    defaultThinkingEffort: "medium",
   },
   {
     alias: "haiku",
@@ -36,6 +48,10 @@ export const CLAUDE_MODEL_ALIASES: readonly ClaudeModelAliasDescriptor[] = [
     description:
       "Fastest alias for quick answers and prototyping; latest version auto-resolved.",
     status: "active",
+    supportsThinking: true,
+    supportsThinkingDisplaySummarized: true,
+    thinkingEffortOptions: ["low", "medium", "high", "xhigh", "max"],
+    defaultThinkingEffort: "medium",
   },
 ] as const;
 
