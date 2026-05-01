@@ -90,8 +90,8 @@
 
 1. [DONE] Wire Claude model/thinking callbacks through shared session view and PM runtime/dialog views. Verification: `npm run build:project-manager`, `npm run typecheck:webview`, `npm run lint`. Scope: `src/client/ui/src/session/session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx`, `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`; commit message: `feat(pm): wire claude picker callbacks through session views`.
 2. [DONE] Git Commit: `feat(pm): wire claude picker callbacks through session views` (hash: 83b07a7ed)
-3. [TODO] Dispatch Claude switch from PM controller with provider guard and current-effort preservation. Scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`, related focused controller test if needed; commit message: `feat(pm): dispatch claude model switch with provider guard`.
-4. [TODO] Git Commit: `feat(pm): dispatch claude model switch with provider guard` (hash: TBD)
+3. [DONE] Dispatch Claude switch from PM controller with provider guard and current-effort preservation. Verification: `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-model-switch-helpers.test.ts`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run lint`. Scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-model-switch-helpers.ts`, `src/client/project-manager/components/sessions/project-manager-dialog-model-switch-helpers.test.ts`; commit message: `feat(pm): dispatch claude model switch with provider guard`.
+4. [DONE] Git Commit: `feat(pm): dispatch claude model switch with provider guard` (hash: b533d97bc)
 
 ## Phase 5 — Evidence, Verification, and SSOT (owner: Provider/Core/Docs, updated: 2026-05-01)
 
