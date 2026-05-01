@@ -41,8 +41,8 @@
 
 1. [DONE] Add provider-owned Claude runtime capability registry and exports. Verification: `npm run build --workspace=@codeai-hub/claude-module`. Scope: `packages/Claude_Module/src/types/claude-model-capabilities.ts`, `packages/Claude_Module/src/types/index.ts`, `packages/Claude_Module/src/index.ts`; commit message: `feat(claude): add model capability registry`.
 2. [DONE] Git Commit: `feat(claude): add model capability registry` (hash: a269cbfb5)
-3. [TODO] Add runtime registry tests for alias coverage, thinking off support, effort options, and unknown alias rejection. Scope: `packages/Claude_Module/src/types/claude-model-capabilities.test.ts`; commit message: `test(claude): cover model capability registry`.
-4. [TODO] Git Commit: `test(claude): cover model capability registry` (hash: TBD)
+3. [DONE] Add runtime registry tests for alias coverage, thinking off support, effort options, and unknown alias rejection. Verification: `npx tsx --test packages/Claude_Module/src/types/claude-model-capabilities.test.ts`. Scope: `packages/Claude_Module/src/types/claude-model-capabilities.test.ts`; commit message: `test(claude): cover model capability registry`.
+4. [DONE] Git Commit: `test(claude): cover model capability registry` (hash: 187626b5f)
 
 ### Stream C — UI mirror and effort parity
 
