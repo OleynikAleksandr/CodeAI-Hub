@@ -90,14 +90,14 @@
 
 ### Stream I: button-like picker hover+active highlight (retest fix → release 1.2.121)
 
-1. [TODO] Перевести опции picker'а с inline `optionStyle` на CSS-класс `.session-status-picker__option`, добавить hover/active state через те же провайдерные tokens (`--bg`, `--bg-hover`, `--bg-active`, `--border`, `--border-hover`, `--border-active`, `--accent`, `--accent-hover`, `--accent-active`), что и у `session-status-button--*`. Picker-контейнер получает provider tokens через `data-provider`. Scope: `src/client/ui/src/session/status-panel-model-picker.tsx` + `media/session-view.css` (2 файла).
-2. [TODO] Git Commit: `feat(ui): picker option matches status panel button states` (hash: TBD)
-3. [TODO] README + CHANGELOG для версии 1.2.121: новая секция в CHANGELOG, README "Current Release — v1.2.121". Scope: 2 файла.
-4. [TODO] Git Commit: `docs: prepare release 1.2.121` (hash: TBD)
-5. [TODO] `./scripts/build-all.sh` (1.2.121 tarball-ы → `doc/tmp/releases/`).
-6. [TODO] Git Commit: `chore: build release 1.2.121` (hash: TBD)
-7. [TODO] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.2.121.vsix`.
-8. [TODO] Git Commit: `chore: finalize release 1.2.121` (hash: TBD)
+1. [DONE] Перевод опций picker'а на CSS-класс `.session-status-picker__option` с полным набором состояний (default/hover/focus-visible/active) и провайдерными CSS-переменными на `data-provider` контейнере; transitions; close-кнопка унифицирована.
+2. [DONE] Git Commit: `feat(ui): picker option matches status panel button states` (hash: 39d2d8fa4)
+3. [DONE] README + CHANGELOG для версии 1.2.121.
+4. [DONE] Git Commit: `docs: prepare release 1.2.121` (hash: 196ab900c)
+5. [DONE] `./scripts/build-all.sh` отработал; tarball-ы 1.2.121 в `doc/tmp/releases/`.
+6. [DONE] Git Commit: `chore: build release 1.2.121` (hash: ea3ed6358)
+7. [DONE] `./scripts/build-release.sh --use-current-version` отработал; `codeai-hub-1.2.121.vsix` (sha256 `37b73a9f3604efe1663ff30273e66f45c1aee1dfc6bdf77cb4e1e4576db220d9`).
+8. [DONE] Git Commit: `chore: finalize release 1.2.121` (hash: 770539dcc)
 9. [BLOCKED-ON-USER] **Передать VSIX 1.2.121 и дождаться явного подтверждения retest'а** (default state → hover засвечивается → click переключает active с предыдущего на новое + закрывает карту, в провайдерных цветах для Claude и Codex). Closeout/архивирование запрещено до подтверждения.
 
 ### Closeout (только после подтверждения 1.2.121)
