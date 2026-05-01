@@ -74,8 +74,8 @@
 
 ### Stream G — Provider next-turn option mapping
 
-1. [TODO] Ensure binding-derived applied config maps to Claude SDK `model`, `thinking`, and `effort`, including thinking off and `xhigh`. Scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; commit message: `feat(claude): apply switched model thinking config`.
-2. [TODO] Git Commit: `feat(claude): apply switched model thinking config` (hash: TBD)
+1. [DONE] Ensure binding-derived applied config maps to Claude SDK `model`, `thinking`, and `effort`, including thinking off and `xhigh`. Verification: `npm run build --workspace=@codeai-hub/claude-module`, `npm run lint`. Scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; commit message: `feat(claude): apply switched model thinking config`.
+2. [DONE] Git Commit: `feat(claude): apply switched model thinking config` (hash: d4b3c6791)
 3. [TODO] Add provider tests for applied model/thinking/effort options, including thinking off and `xhigh`. Scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`, `packages/Claude_Module/src/provider/claude-applied-turn-config.test.ts`; commit message: `test(claude): cover switched turn config mapping`.
 4. [TODO] Git Commit: `test(claude): cover switched turn config mapping` (hash: TBD)
 
