@@ -113,16 +113,23 @@ const isSessionMessagePayload = (payload: unknown): boolean =>
 const isCodexModelSwitchPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.sessionId === "string" &&
-  typeof payload.targetModelId === "string" &&
-  (payload.targetReasoningEffort === undefined ||
-    (typeof payload.targetReasoningEffort === "string" &&
-      CODEX_REASONING_EFFORTS.has(payload.targetReasoningEffort)));
+  typeof payload.targetModelId === "string";
+
+const isCodexReasoningSwitchPayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  typeof payload.sessionId === "string" &&
+  typeof payload.targetReasoningEffort === "string" &&
+  CODEX_REASONING_EFFORTS.has(payload.targetReasoningEffort);
 
 const isClaudeModelSwitchPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.sessionId === "string" &&
   typeof payload.targetModelId === "string" &&
-  CLAUDE_MODEL_ALIASES.has(payload.targetModelId) &&
+  CLAUDE_MODEL_ALIASES.has(payload.targetModelId);
+
+const isClaudeThinkingSwitchPayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  typeof payload.sessionId === "string" &&
   typeof payload.thinkingEnabled === "boolean" &&
   (payload.targetReasoningEffort === undefined ||
     (typeof payload.targetReasoningEffort === "string" &&
@@ -252,7 +259,9 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "projects:add": isProjectAddPayload,
   "projects:remove": isProjectRemovePayload,
   "session:claude:model-switch": isClaudeModelSwitchPayload,
+  "session:claude:thinking-switch": isClaudeThinkingSwitchPayload,
   "session:codex:model-switch": isCodexModelSwitchPayload,
+  "session:codex:reasoning-switch": isCodexReasoningSwitchPayload,
   "session:create": isSessionCreatePayload,
   "session:delete": isSessionIdPayload,
   "session:message": isSessionMessagePayload,
