@@ -4,6 +4,15 @@ export interface ClaudeInstallerPaths {
   readonly windows: string;
 }
 
+export {
+  CLAUDE_MODEL_CAPABILITIES,
+  type ClaudeModelAliasId,
+  type ClaudeModelCapabilities,
+  type ClaudeThinkingEffort,
+  findClaudeModelCapabilities,
+  isClaudeModelAliasId,
+} from "./claude-model-capabilities";
+
 export interface ClaudeWorkspaceOptions {
   readonly claudeProjectSlug: string;
   readonly defaultModel?: string;

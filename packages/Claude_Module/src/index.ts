@@ -1,4 +1,14 @@
 import { ClaudeProviderAdapter as ClaudeProviderAdapterImpl } from "./provider/claude-provider-adapter";
+
+export {
+  CLAUDE_MODEL_CAPABILITIES,
+  type ClaudeModelAliasId,
+  type ClaudeModelCapabilities,
+  type ClaudeThinkingEffort,
+  findClaudeModelCapabilities,
+  isClaudeModelAliasId,
+} from "./types";
+
 import type {
   ClaudeInstallerPaths as ClaudeInstallerPathsType,
   ClaudeModuleOptions as ClaudeModuleOptionsType,
