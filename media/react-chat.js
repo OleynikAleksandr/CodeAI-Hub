@@ -7325,19 +7325,31 @@
       alias: "sonnet",
       displayName: "Sonnet",
       description: "Best for everyday tasks; Anthropic resolves the latest version automatically.",
-      status: "active"
+      status: "active",
+      supportsThinking: true,
+      supportsThinkingDisplaySummarized: true,
+      thinkingEffortOptions: ["low", "medium", "high", "xhigh", "max"],
+      defaultThinkingEffort: "medium"
     },
     {
       alias: "opus",
       displayName: "Opus",
       description: "Most capable for complex, agentic workloads; latest version auto-resolved.",
-      status: "active"
+      status: "active",
+      supportsThinking: true,
+      supportsThinkingDisplaySummarized: true,
+      thinkingEffortOptions: ["low", "medium", "high", "xhigh", "max"],
+      defaultThinkingEffort: "medium"
     },
     {
       alias: "haiku",
       displayName: "Haiku",
       description: "Fastest alias for quick answers and prototyping; latest version auto-resolved.",
-      status: "active"
+      status: "active",
+      supportsThinking: true,
+      supportsThinkingDisplaySummarized: true,
+      thinkingEffortOptions: ["low", "medium", "high", "xhigh", "max"],
+      defaultThinkingEffort: "medium"
     }
   ];
   var CLAUDE_MODEL_ALIAS_SET = /* @__PURE__ */ new Set([
