@@ -35,13 +35,13 @@
 
 ### Stream B — User review and planning-doc approval
 
-1. [TODO] Review `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md` with the user. Required decisions before approval:
+1. [DONE] Review `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md` with the user. Required decisions before approval:
    - accept or revise the baseline same-session strategy through next-turn `Session.modelBinding` + Claude SDK `query(..., resume, model, thinking)`;
    - accept or revise provider-specific public command `session:claude:model-switch` instead of generic `session:model-switch`;
    - decide how strict the implementation must be about the pre-turn Core restart gap inherited from Codex;
    - decide whether `xhigh` must be supported end-to-end or hidden from Claude picker until proven.
    Scope: planning doc only; commit message: `docs: approve claude status panel model switch plan`.
-2. [TODO] Apply user corrections to the planning-doc until explicit approval is reached. Scope: planning doc only; commit message: `docs: approve claude status panel model switch plan`.
+2. [DONE] Apply user corrections to the planning-doc until explicit approval is reached. Scope: planning doc only; commit message: `docs: approve claude status panel model switch plan`.
 3. [TODO] Git Commit: `docs: approve claude status panel model switch plan` (hash: TBD)
 
 ### Stream C — Implementation todo slicing after approval

@@ -1,8 +1,12 @@
 # Claude Status Panel Model Switch — Planning Doc
 
-**Status:** Draft for user review
+**Status:** Approved for implementation on 2026-05-01
 **Owner:** Claude provider / Core / Project Manager UI
 **Planning intake:** `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Planning_Intake.md`
+
+## 0. Approval
+
+User approved proceeding from this planning-doc into implementation on 2026-05-01.
 
 ## 1. Problem
 
