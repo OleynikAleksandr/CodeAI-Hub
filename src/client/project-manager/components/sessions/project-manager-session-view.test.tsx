@@ -105,43 +105,39 @@ test("project-manager model switch callbacks dispatch through codex session comm
   const dialogSource = await readFile(DIALOG_SOURCE_PATH, "utf8");
 
   assert.equal(
+    runtimeSource.includes("api.requestCodexModelSwitch(sessionId, modelId)"),
+    true
+  );
+  assert.equal(
     runtimeSource.includes(
-      "api.requestCodexModelSwitch(sessionId, modelId, reasoning);"
+      "api.requestCodexReasoningSwitch(sessionId, reasoning)"
     ),
     true
   );
   assert.equal(
-    runtimeSource.includes('session?.providerIds[0] !== "codexCli"'),
+    runtimeSource.includes("api.requestClaudeThinkingSwitch("),
     true
   );
-  assert.equal(runtimeSource.includes("resolveCodexBaseModelId"), true);
-  assert.equal(runtimeSource.includes("EFFECTIVE_MODEL_SUFFIX_PATTERN"), true);
 
   assert.equal(
-    dialogControllerSource.includes("requestCodexModelSwitch"),
-    true
-  );
-  assert.equal(
-    dialogControllerSource.includes("requestCodexReasoningSwitch"),
+    dialogControllerSource.includes(
+      "api.requestCodexModelSwitch(currentSession.id, modelId)"
+    ),
     true
   );
   assert.equal(
     dialogControllerSource.includes(
-      "api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);"
+      "api.requestCodexReasoningSwitch(currentSession.id, reasoning)"
     ),
     true
   );
   assert.equal(
-    dialogControllerSource.includes('currentSession?.providerIds[0] !== "codexCli"'),
-    true
-  );
-  assert.equal(
-    dialogControllerSource.includes("resolveCodexBaseModelId"),
+    dialogControllerSource.includes("api.requestClaudeThinkingSwitch("),
     true
   );
 
   assert.equal(
-    dialogSource.includes("requestCodexModelSwitch(modelId, reasoning)"),
+    dialogSource.includes("requestCodexModelSwitch(modelId)"),
     true
   );
   assert.equal(

@@ -14,7 +14,9 @@ import {
 
 interface ButtonProps {
   readonly children?: ReactNode;
+  readonly "data-active"?: string;
   readonly "data-model-id"?: string;
+  readonly "data-provider"?: string;
   readonly "data-reasoning"?: string;
   readonly onClick?: () => void;
 }
@@ -37,7 +39,7 @@ const renderPickerButtons = (options: {
   readonly currentReasoning?: string;
   readonly mode: StatusPanelPickerMode;
   readonly onClose?: () => void;
-  readonly onSelectModel?: (modelId: string, reasoning: string) => void;
+  readonly onSelectModel?: (modelId: string) => void;
   readonly onSelectReasoning?: (reasoning: string) => void;
   readonly providerId?: ProviderStackId;
 }): ReactElement<ButtonProps>[] =>
@@ -54,19 +56,17 @@ const renderPickerButtons = (options: {
     })
   );
 
-test("StatusPanelModelPicker selects a model with preserved supported reasoning", () => {
-  let selected: {
-    readonly modelId: string;
-    readonly reasoning: string;
-  } | null = null;
+test("model picker click reports only modelId without reasoning argument", () => {
+  let observed: { readonly modelId: string; readonly extras: number } | null =
+    null;
   let closeCount = 0;
   const buttons = renderPickerButtons({
     mode: "model",
     onClose: () => {
       closeCount += 1;
     },
-    onSelectModel: (modelId, reasoning) => {
-      selected = { modelId, reasoning };
+    onSelectModel: (modelId, ...extras) => {
+      observed = { modelId, extras: extras.length };
     },
   });
   const sparkButton = buttons.find(
@@ -75,14 +75,14 @@ test("StatusPanelModelPicker selects a model with preserved supported reasoning"
 
   sparkButton?.props.onClick?.();
 
-  assert.deepEqual(selected, {
+  assert.deepEqual(observed, {
     modelId: "gpt-5.3-codex-spark",
-    reasoning: "xhigh",
+    extras: 0,
   });
   assert.equal(closeCount, 1);
 });
 
-test("StatusPanelModelPicker selects a reasoning effort", () => {
+test("reasoning picker click reports only reasoning value", () => {
   let selected: string | null = null;
   const buttons = renderPickerButtons({
     mode: "reasoning",
@@ -99,48 +99,39 @@ test("StatusPanelModelPicker selects a reasoning effort", () => {
   assert.equal(selected, "high");
 });
 
-test("StatusPanelModelPicker selects a Claude model with preserved thinking effort", () => {
-  let selected: {
-    readonly modelId: string;
-    readonly reasoning: string;
-  } | null = null;
+test("model picker marks the active model with data-active and provider tint", () => {
   const buttons = renderPickerButtons({
-    currentModelId: "sonnet reasoning:xhigh",
-    currentReasoning: "xhigh",
+    currentModelId: "sonnet reasoning:high",
+    currentReasoning: "high",
     mode: "model",
     providerId: "claudeCodeCli",
-    onSelectModel: (modelId, reasoning) => {
-      selected = { modelId, reasoning };
-    },
   });
+  const sonnetButton = buttons.find(
+    (button) => button.props["data-model-id"] === "sonnet"
+  );
   const opusButton = buttons.find(
     (button) => button.props["data-model-id"] === "opus"
   );
 
-  opusButton?.props.onClick?.();
-
-  assert.deepEqual(selected, {
-    modelId: "opus",
-    reasoning: "xhigh",
-  });
+  assert.equal(sonnetButton?.props["data-active"], "true");
+  assert.equal(sonnetButton?.props["data-provider"], "claudeCodeCli");
+  assert.equal(opusButton?.props["data-active"], undefined);
 });
 
-test("StatusPanelModelPicker selects Claude thinking off", () => {
-  let selected: string | null = null;
+test("reasoning picker marks the active reasoning option only", () => {
   const buttons = renderPickerButtons({
-    currentModelId: "haiku thinking:off",
-    currentReasoning: "thinking off",
+    currentModelId: "gpt-5.3-codex reasoning:high",
+    currentReasoning: "high",
     mode: "reasoning",
-    providerId: "claudeCodeCli",
-    onSelectReasoning: (reasoning) => {
-      selected = reasoning;
-    },
   });
-  const offButton = buttons.find(
-    (button) => button.props["data-reasoning"] === "off"
+  const highButton = buttons.find(
+    (button) => button.props["data-reasoning"] === "high"
+  );
+  const lowButton = buttons.find(
+    (button) => button.props["data-reasoning"] === "low"
   );
 
-  offButton?.props.onClick?.();
-
-  assert.equal(selected, "off");
+  assert.equal(highButton?.props["data-active"], "true");
+  assert.equal(highButton?.props["data-provider"], "codexCli");
+  assert.equal(lowButton?.props["data-active"], undefined);
 });
