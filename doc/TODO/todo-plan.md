@@ -60,8 +60,8 @@
 7. **[DONE]** В `ProjectManagerNativeRequestCaptureRunner` (`native-request-capture-runner.ts:51`) вызов `buildNativeRequestCaptureScenarioPrompt(...)` всегда передаёт `bypassUpstreamGuard: true`. Это **единственное место**, где флаг ставится в `true` — capture по определению является диагностическим режимом. Никаких UI-toggle, никаких user-facing настроек этого флага.
    - **Scope:** 1 файл — `src/client/project-manager/components/settings/native-request-capture-runner.ts`.
    - **Ожидаемый commit message:** `feat: capture runner always bypasses upstream artifact guard`
-8. **[TODO]** Git Commit: `feat: capture runner always bypasses upstream artifact guard` (hash: TBD)
-9. **[TODO]** Юнит-тест на runner: на пустом workspace вызов capture для VS и DM сценариев не падает на upstream guard, доходит до `api.captureNativeRequest()` с непустым `scenarioPrompt` и canonical `scenarioInputPath`. Translation и Description пути не задеваются.
+8. **[DONE]** Git Commit: `feat: capture runner always bypasses upstream artifact guard` (hash: `28b6fb7d0`)
+9. **[DONE]** Юнит-тест на runner: на пустом workspace вызов capture для VS и DM сценариев не падает на upstream guard, доходит до `api.captureNativeRequest()` с непустым `scenarioPrompt` и canonical `scenarioInputPath`. Translation и Description пути не задеваются.
    - **Scope:** 1 файл — новый `src/client/project-manager/components/settings/native-request-capture-runner.test.ts`.
    - **Ожидаемый commit message:** `test: cover capture runner bypass behavior on empty workspace`
 10. **[TODO]** Git Commit: `test: cover capture runner bypass behavior on empty workspace` (hash: TBD)
