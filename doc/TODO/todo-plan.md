@@ -55,8 +55,8 @@
 
 ### Stream D — Contract and shared switch seam
 
-1. [TODO] Add `session:claude:model-switch` payload contract and incoming validator; generalize model-switch seam types for Claude thinking fields without breaking Codex. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-switch-types.ts`; commit message: `feat(core): add claude model switch command contract`.
-2. [TODO] Git Commit: `feat(core): add claude model switch command contract` (hash: TBD)
+1. [DONE] Add `session:claude:model-switch` payload contract and incoming validator; generalize model-switch seam types for Claude thinking fields without breaking Codex. Verification: `npm run build --workspace=@codeai-hub/core`. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-model-switch-types.ts`; commit message: `feat(core): add claude model switch command contract`.
+2. [DONE] Git Commit: `feat(core): add claude model switch command contract` (hash: d44489a33)
 
 ### Stream E — Core handler and router
 
