@@ -6,6 +6,13 @@
 ## Где живёт код
 - `packages/Claude_Module/`
 
+## Model capability registry and switching
+- Provider-owned Claude capability SSOT lives in `src/types/claude-model-capabilities.ts` and is exported through the module public surface. The active aliases are `sonnet`, `opus`, and `haiku`; UI labels intentionally stay versionless because the Claude SDK resolves aliases to current concrete models at query time.
+- The registry exposes `supportsThinking`, `supportsThinkingDisplaySummarized`, `thinkingEffortOptions`, and `defaultThinkingEffort`. The supported effort set is `low | medium | high | xhigh | max`; `xhigh` remains offered end-to-end and must not be dropped from the Status Panel while Core/provider validation accepts it.
+- Status Panel Claude switching is a next-turn `Session.modelBinding` mutation only. Core handles `session:claude:model-switch`, validates the alias/effort against this registry, updates the logical session binding with `source = "switch_request"`, broadcasts `session:model:update`, and does not resend the current turn or call a provider-side `Query.setModel(...)` equivalent.
+- On the next outbound turn, `src/provider/claude-applied-turn-config.ts` reads the Core-applied turn config and `src/sdk/claude-sdk-manager.ts` maps it into SDK `query(...)` options: `model`, `thinking: { type: "adaptive", display: "summarized" }` plus `effort` when thinking is enabled, or `thinking: { type: "disabled" }` with no `effort` when thinking is off.
+- Native proof for this contract is provider-owned: `src/diagnostics/claude-native-request-capture-service.test.ts` covers post-switch SDK-isolation options and asserts the selected model/thinking/effort are present while `settingSources: []` stays empty.
+
 ## Messaging cluster
 - `src/messaging/message-processor.ts` — thin façade для queue/processResponses orchestration; shutdown-aware so late processor/dispatch/processing errors after `session.turnQueue.shutdownRequested` are suppressed instead of being emitted into a torn-down session error channel.
 - `src/messaging/claude-stream-event-router.ts` — routing assistant/result events, source-first thinking emission, live text emission, `tool_use` preamble classification, provider-local thinking translation, and structured output emission. Delegates the live content ingestion path to `ClaudeContentStreamHandler` and reconciles the final assembled thinking AND text blocks against materialized live segments before emitting into the dialog.
@@ -28,6 +35,7 @@
 - Core threads explicit Claude `thinkingEnabled` + `reasoningEffort` through applied turn config; the Claude SDK path now uses `thinking: { type: "adaptive" | "disabled", display?: "summarized" }` plus `effort`, instead of deprecated `maxThinkingTokens`. If applied turn config is absent, the fallback shared settings snapshot read is cached per manager/settings path for `500ms` before building SDK query options; this is a short read-through cache, not a second long-lived settings owner. `thinking.display = "summarized"` is forwarded whenever thinking is enabled — required for Claude Opus 4.7 to surface plain-text `thinking_delta` instead of encrypted `signature_delta` only; safe no-op for Sonnet/Haiku/older Opus that already exposed plain-text reasoning.
 - Effort levels accepted by the SDK are `low | medium | high | xhigh | max`. `xhigh` is documented as "Deeper than high (Opus 4.7 only; falls back to high elsewhere)". Claude model aliases in UI (`Sonnet` / `Opus` / `Haiku`) carry no version numbers — the SDK auto-resolves the alias to the latest concrete model at query time.
 - Effective runtime model identity for Claude is now `thinking:off` when reasoning is disabled and `reasoning:<effort>` when it is enabled, so the client can see Claude effort changes through the normal `session:model:update` path.
+- A Status Panel switch replaces this effective identity through `Session.modelBinding`; persisted Settings remain defaults only and must not be overwritten by the switch.
 - Release packaging must vendor `@codeai-hub/translation` into the Claude installed bundle because the provider-local pre-tool translation adapter still depends on it at runtime.
 
 ## Usage-limits cluster (lives in Core, not in Claude_Module)

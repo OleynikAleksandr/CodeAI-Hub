@@ -102,12 +102,12 @@
 
 ### Stream K — Targeted verification
 
-1. [TODO] Run targeted tests and builds for changed packages/clients: Claude module tests, Core switch tests, PM/UI tests, `npm run build --workspace=@codeai-hub/claude-module`, `npm run build --workspace=@codeai-hub/core`, `npm run build:project-manager`, `npm run typecheck:webview`. Scope: verification only; commit message: N/A.
-2. [TODO] Git Commit: N/A (hash: N/A)
+1. [DONE] Run targeted tests and builds for changed packages/clients: Claude module tests, Core switch tests, PM/UI tests, `npm run build --workspace=@codeai-hub/claude-module`, `npm run build --workspace=@codeai-hub/core`, `npm run build:project-manager`, `npm run typecheck:webview`. Scope: verification only; commit message: N/A.
+2. [DONE] Git Commit: N/A (hash: N/A)
 
 ### Stream L — SSOT documentation sync
 
-1. [TODO] Update SSOT docs for accepted Claude switch behavior, capability registry, Status Panel semantics, `xhigh` result, and native evidence requirements. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document claude status panel model switch`.
+1. [DONE] Update SSOT docs for accepted Claude switch behavior, capability registry, Status Panel semantics, `xhigh` result, and native evidence requirements. Scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`, `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; commit message: `docs(ssot): document claude status panel model switch`.
 2. [TODO] Git Commit: `docs(ssot): document claude status panel model switch` (hash: TBD)
 
 ## Phase 6 — Release Build (owner: Build, updated: 2026-05-01)
