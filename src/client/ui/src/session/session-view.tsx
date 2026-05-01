@@ -1,3 +1,7 @@
+import type {
+  ClaudeModelAliasId,
+  ClaudeThinkingEffort,
+} from "../../../../types/claude-model-registry";
 import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
@@ -22,6 +26,7 @@ import {
 } from "./virtual-conversation";
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
+type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 
 const RESUMING_LOCK_REASONS = new Set([
   "context_check_pending",
@@ -61,6 +66,15 @@ interface SessionViewProps {
   readonly onCloseSession: (sessionId: string) => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
+  readonly onSelectClaudeModel?: (
+    sessionId: string,
+    modelId: ClaudeModelAliasId,
+    thinking: ClaudeThinkingSelection
+  ) => void;
+  readonly onSelectClaudeThinking?: (
+    sessionId: string,
+    thinking: ClaudeThinkingSelection
+  ) => void;
   readonly onSelectModel?: (
     sessionId: string,
     modelId: string,
@@ -102,6 +116,8 @@ const SessionViewBody = ({
   onCloseSession,
   onFileLinkActivate,
   onRefreshUsageLimits,
+  onSelectClaudeModel,
+  onSelectClaudeThinking,
   onSelectModel,
   onSelectReasoning,
   onSendMessage,
@@ -229,6 +245,18 @@ const SessionViewBody = ({
           <StatusPanel
             connectionDetail={coreConnectionDetail}
             connectionStatus={coreConnectionStatus}
+            onSelectClaudeModel={
+              onSelectClaudeModel
+                ? (modelId, thinking) =>
+                    onSelectClaudeModel(activeSessionId, modelId, thinking)
+                : undefined
+            }
+            onSelectClaudeThinking={
+              onSelectClaudeThinking
+                ? (thinking) =>
+                    onSelectClaudeThinking(activeSessionId, thinking)
+                : undefined
+            }
             onSelectModel={
               onSelectModel
                 ? (modelId, reasoning) =>

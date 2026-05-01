@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  ClaudeModelAliasId,
+  ClaudeThinkingEffort,
+} from "../../../../types/claude-model-registry";
 import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
@@ -34,6 +38,19 @@ type ProjectManagerSessionViewProps = {
 };
 
 const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
+type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
+
+const isClaudeModelAliasId = (value: string): value is ClaudeModelAliasId =>
+  value === "sonnet" || value === "opus" || value === "haiku";
+
+const normalizeClaudeModelId = (value: string): ClaudeModelAliasId | null => {
+  const baseModelId = value.replace(EFFECTIVE_MODEL_SUFFIX_PATTERN, "");
+  if (baseModelId === "default") {
+    return "sonnet";
+  }
+  return isClaudeModelAliasId(baseModelId) ? baseModelId : null;
+};
+
 
 const ProjectManagerRuntimeSessionView = ({
   workspacePath,
@@ -368,6 +385,21 @@ const ProjectManagerRuntimeSessionView = ({
     },
     [snapshots]
   );
+  const resolveClaudeBaseModelId = useCallback(
+    (sessionId: string): ClaudeModelAliasId | null => {
+      const session = sessionsRef.current.find(
+        (candidate) => candidate.id === sessionId
+      );
+      if (session?.providerIds[0] !== "claudeCodeCli") {
+        return null;
+      }
+      const boundModelId =
+        session.modelBinding?.baseModelId ?? session.modelBinding?.modelId;
+      const visibleModelId = snapshots[sessionId]?.status.models?.[0]?.modelId;
+      return normalizeClaudeModelId(boundModelId ?? visibleModelId ?? "");
+    },
+    [snapshots]
+  );
   const handleSelectModel = useCallback(
     (sessionId: string, modelId: string, reasoning: CodexReasoningLevel) => {
       const session = sessionsRef.current.find(
@@ -390,6 +422,42 @@ const ProjectManagerRuntimeSessionView = ({
     },
     [resolveCodexBaseModelId]
   );
+  const handleSelectClaudeModel = useCallback(
+    (
+      sessionId: string,
+      modelId: ClaudeModelAliasId,
+      thinking: ClaudeThinkingSelection
+    ) => {
+      const session = sessionsRef.current.find(
+        (candidate) => candidate.id === sessionId
+      );
+      if (session?.providerIds[0] !== "claudeCodeCli") {
+        return;
+      }
+      api.requestClaudeModelSwitch(
+        sessionId,
+        modelId,
+        thinking !== "off",
+        thinking === "off" ? undefined : thinking
+      );
+    },
+    []
+  );
+  const handleSelectClaudeThinking = useCallback(
+    (sessionId: string, thinking: ClaudeThinkingSelection) => {
+      const modelId = resolveClaudeBaseModelId(sessionId);
+      if (!modelId) {
+        return;
+      }
+      api.requestClaudeModelSwitch(
+        sessionId,
+        modelId,
+        thinking !== "off",
+        thinking === "off" ? undefined : thinking
+      );
+    },
+    [resolveClaudeBaseModelId]
+  );
   const activeRecord = sessions.find((session) => session.id === scopedActiveSessionId) ?? null;
   const showThinkingMessages = resolveSessionThinkingDisplayEnabled({
     providerId: activeRecord?.providerIds[0] ?? null,
@@ -403,6 +471,8 @@ const ProjectManagerRuntimeSessionView = ({
       coreConnectionStatus={connection.status}
       onCloseSession={hideSession}
       onFileLinkActivate={onFileLinkActivate}
+      onSelectClaudeModel={handleSelectClaudeModel}
+      onSelectClaudeThinking={handleSelectClaudeThinking}
       onSelectModel={handleSelectModel}
       onSelectReasoning={handleSelectReasoning}
       onSelectSession={setActiveSessionId}
