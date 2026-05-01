@@ -162,7 +162,7 @@ Behavioral meaning:
 
 - `model` is the base model id, not the UI effective label. Example: `gpt-5.2`, not `gpt-5.2 reasoning:medium`.
 - `effort` is the applied Codex reasoning effort: `low`, `medium`, `high`, `xhigh`, or `null`.
-- `input` normally contains one user/workflow text item. On the first successful turn after `session:codex:model-switch`, Core passes `CODEX_MODEL_SWITCH_INJECTION_KEY` and the Codex facade prepends a `<model_switch>` text item before the user prompt. The marker follows Codex CLI's same-thread switch pattern and tells the new model to continue under the new instruction profile.
+- `input` normally contains one user/workflow text item. On the first successful turn after either `session:codex:model-switch` or `session:codex:reasoning-switch`, Core passes `CODEX_MODEL_SWITCH_INJECTION_KEY` and the Codex facade prepends a `<model_switch>` text item before the user prompt. The marker follows Codex CLI's same-thread switch pattern and tells the model to continue under the new instruction profile (whether the swap was a model change, an effort change, or both across consecutive switches).
 - `summary` is live-resolved from shared settings for models that support provider-native reasoning summaries:
   - `detailed` when Codex reasoning/thinking display is enabled;
   - `none` when Codex reasoning/thinking display is disabled.
@@ -207,13 +207,13 @@ The provider call still receives the base model id and `effort` as separate fiel
 
 ## Status Panel Model Switch Runtime
 
-`session:codex:model-switch` is the Status Panel chip command for Codex sessions. It is not the older `dialog:switch:*` resend path.
+The Status Panel exposes two independent transport commands for Codex sessions (release `1.2.120`): `session:codex:model-switch` (`{ sessionId, targetModelId }`, model-only) and `session:codex:reasoning-switch` (`{ sessionId, targetReasoningEffort }`, reasoning-only). Neither is the older `dialog:switch:*` resend path.
 
 Runtime sequence:
 
-1. Core validates target model and reasoning effort against the Codex runtime capability registry.
-2. Core updates live `Session.modelBinding` and broadcasts `session:model:update` in the same command turn.
-3. Core sets `pendingModelSwitchInjection = true`.
+1. Core validates the payload against the Codex runtime capability registry. Model-switch checks the target model id is known; reasoning-switch checks the target effort is in the bound model's `reasoningEffortOptions`.
+2. Core mutates live `Session.modelBinding` atomically: model-switch swaps `baseModelId` and preserves the previous `reasoningEffort` whenever still supported (otherwise falls back to the new model's first allowed effort); reasoning-switch swaps `reasoningEffort` and preserves the previous `baseModelId` unconditionally. Both broadcast `session:model:update` immediately.
+3. Both handlers set `pendingModelSwitchInjection = true`.
 4. The next `session:message` or `dialog:send` attaches applied config from live binding with `source = "session_binding"` and injects `CODEX_MODEL_SWITCH_INJECTION_KEY` into `turnOptions`.
 5. Codex facade prepends `<model_switch>` to `turn/start.input`, rebuilds the rest of the payload from current model capabilities, and forces `summary = "none"` when the selected model does not support visible reasoning summaries.
 6. Core clears `pendingModelSwitchInjection` only after provider send resolves successfully.
