@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/gemini-module",
-  "version": "1.2.121",
+  "version": "1.2.122",
   "description": "Gemini provider integration for CodeAI Hub core (CJS bridge)",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,9 +11,6 @@
   },
   "engines": {
     "node": ">=18.19.0"
-  },
-  "dependencies": {
-    "@codeai-hub/translation": "file:../translation"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.7",
