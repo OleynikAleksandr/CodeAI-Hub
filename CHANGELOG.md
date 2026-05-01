@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.120] - 2026-05-01
+### Changed
+- **Status Panel model/reasoning switches are now decoupled.** Both Claude and Codex Status Panel switches travel as two independent transport commands per provider, never one coupled payload: `session:claude:model-switch` carries only `targetModelId`, the new `session:claude:thinking-switch` carries only `thinkingEnabled` + optional `targetReasoningEffort`; `session:codex:model-switch` carries only `targetModelId`, and the new `session:codex:reasoning-switch` carries only `targetReasoningEffort`. Model-only handlers preserve the previous `reasoningEffort`/`thinkingEnabled` from `Session.modelBinding`; reasoning-only handlers preserve the previous `baseModelId`. This fixes the regression where switching reasoning unintentionally rebound the model (and vice versa) on stale UI snapshots.
+- **Status Panel pickers no longer mix dimensions.** The model card lists only model names, the reasoning card lists only effort levels. The active option in both cards is highlighted through `data-active="true"` + `data-provider` against the same RGBA tokens as the toggle button below the picker; the previous reasoning suffix on each model row and the textual `active` label on the active reasoning row are removed.
+
+### Tests
+- **Decoupled switch coverage across Core and PM/UI.** New tests for `session-request-handler-claude-thinking-switch.ts` and `session-request-handler-codex-reasoning-switch.ts` cover effort transitions, base-model preservation, unsupported-effort/unknown-model rejection, and non-target-provider session ignore. Existing model-switch and dialog-helpers/picker tests rewritten around the model-only callbacks and the new active-highlight contract.
+
 ## [1.2.119] - 2026-05-01
 ### Added
 - **Claude Status Panel model/thinking switch is now active.** Claude sessions can switch `Sonnet` / `Opus` / `Haiku` and thinking `off | low | medium | high | xhigh | max` from the lower status chips. Core updates the logical `Session.modelBinding`, broadcasts `session:model:update`, keeps Settings defaults untouched, and applies the selected model/thinking config on the next Claude SDK turn.
