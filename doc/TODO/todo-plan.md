@@ -75,8 +75,8 @@
 
 ### Stream: Release Build
 
-13. **[DONE]** Manual verify перед релизом: запустить `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`; затем открыть расширение в empty workspace (без `.codeai-hub/<slug>/` артефактов), Settings → General → Provider Native Request Capture, выбрать сценарий `Diagram Modules` + Codex GPT-5.3-Codex и нажать `Capture Codex Native Request`. Раньше падало с `Missing virtual-simulation.md`. Должно успешно создать пару `.jsonl` + `.md` артефактов в `~/.codeai-hub/logs/native-request-capture/`. Аналогично проверить сценарий `Virtual Simulation`. Translation и Description — smoke-проверка, что не сломались.
-    - **Scope:** commands/runtime only — `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`, manual VSIX/dev-run verification.
+13. **[DONE]** Automated verify перед релизом: запущены `npx tsx --test src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts src/client/project-manager/components/settings/native-request-capture-runner.test.ts`, `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`; затем release packaging собрал `codeai-hub-1.2.123.vsix`. Интерактивная проверка установленного VSIX на empty workspace остаётся в Stream `User Visual Acceptance Testing`.
+    - **Scope:** commands/runtime only — `npx tsx --test ...`, `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`.
     - **Ожидаемый commit message:** нет — verification-only, файловых изменений быть не должно.
 14. **[DONE]** Git Commit: `n/a — verification-only, no file changes` (hash: n/a)
 15. **[DONE]** README/CHANGELOG обновить под предстоящую версию (текущая `1.2.122` + 1 = `1.2.123`): в `README.md` секция "Current Release", в `CHANGELOG.md` новый раздел `## [1.2.123]` с описанием Phase 1 фикса. Это коммит ДО `build-all.sh`.
