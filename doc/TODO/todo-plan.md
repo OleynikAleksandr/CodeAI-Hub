@@ -46,8 +46,8 @@
 
 ### Stream C — UI mirror and effort parity
 
-1. [TODO] Mirror Claude capability fields in UI registry and add alignment coverage against runtime registry. Scope: `src/types/claude-model-registry.ts`, `src/client/project-manager/services/claude-model-registry-alignment.test.ts`; commit message: `feat(ui): mirror claude model capability metadata`.
-2. [TODO] Git Commit: `feat(ui): mirror claude model capability metadata` (hash: TBD)
+1. [DONE] Mirror Claude capability fields in UI registry and add alignment coverage against runtime registry. Verification: `npx tsx --test src/client/project-manager/services/claude-model-registry-alignment.test.ts`. Scope: `src/types/claude-model-registry.ts`, `src/client/project-manager/services/claude-model-registry-alignment.test.ts`; commit message: `feat(ui): mirror claude model capability metadata`.
+2. [DONE] Git Commit: `feat(ui): mirror claude model capability metadata` (hash: 2da67268f)
 3. [TODO] Thread `xhigh` through Claude provider applied/runtime effort types or explicitly remove it from Claude capability options if native evidence blocks it. Baseline target: support `xhigh` end-to-end. Scope: `packages/Claude_Module/src/provider/claude-applied-turn-config.ts`, `packages/Claude_Module/src/session/types.ts`, `packages/Claude_Module/src/sdk/claude-sdk-manager.ts`; commit message: `fix(claude): keep thinking effort parity in provider runtime`.
 4. [TODO] Git Commit: `fix(claude): keep thinking effort parity in provider runtime` (hash: TBD)
 
