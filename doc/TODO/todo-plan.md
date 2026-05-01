@@ -82,8 +82,8 @@
 15. **[DONE]** README/CHANGELOG обновить под предстоящую версию (текущая `1.2.122` + 1 = `1.2.123`): в `README.md` секция "Current Release", в `CHANGELOG.md` новый раздел `## [1.2.123]` с описанием Phase 1 фикса. Это коммит ДО `build-all.sh`.
     - **Scope:** 2 файла — `README.md`, `CHANGELOG.md`.
     - **Ожидаемый commit message:** `docs: prepare release 1.2.123`
-16. **[TODO]** Git Commit: `docs: prepare release 1.2.123` (hash: TBD)
-17. **[TODO]** Запустить `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт пакеты и manifest'ы, соберёт tarball'ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправить и перезапустить **только** `build-all.sh`.
+16. **[DONE]** Git Commit: `docs: prepare release 1.2.123` (hash: `914f70cd0`)
+17. **[DONE]** Запустить `./scripts/build-all.sh` из корня. Скрипт поднимет версии, пересоберёт пакеты и manifest'ы, соберёт tarball'ы в `~/.codeai-hub/releases` и `doc/tmp/releases/`. Если что-то упало — исправить и перезапустить **только** `build-all.sh`.
     - **Scope:** version/package/release manifest files + generated release tarball copies touched by `build-all.sh` (не редактировать версии вручную).
     - **Ожидаемый commit message:** `chore: bump release manifests to 1.2.123`
 18. **[TODO]** Git Commit: `chore: bump release manifests to 1.2.123` (hash: TBD)
