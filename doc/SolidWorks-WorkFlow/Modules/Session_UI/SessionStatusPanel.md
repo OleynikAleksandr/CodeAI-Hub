@@ -58,15 +58,16 @@
 - при старте PM/workspace hydrate;
 - при restart/reconnect Core;
 - при change настроек модели/reasoning только для snapshots без `binding`/`runtime` ownership;
-- при пользовательском выборе Codex model/reasoning через chips: Core отдаёт `session:model:update` сразу после `session:codex:model-switch`, а следующий turn подтверждает binding через runtime path;
-- при пользовательском выборе Claude model/thinking через chips: Core отдаёт `session:model:update` сразу после `session:claude:model-switch`, а следующий turn применяет binding в Claude SDK `query(...)`;
+- при пользовательском выборе Codex model/reasoning через chips: контракт раздельный — `session:codex:model-switch` несёт только `targetModelId`, а `session:codex:reasoning-switch` только `targetReasoningEffort`. После каждой команды Core отдаёт `session:model:update`, а следующий turn подтверждает binding через runtime path;
+- при пользовательском выборе Claude model/thinking через chips: контракт раздельный — `session:claude:model-switch` несёт только `targetModelId`, а `session:claude:thinking-switch` только `thinkingEnabled` + опциональный `targetReasoningEffort`. После каждой команды Core отдаёт `session:model:update`, а следующий turn применяет binding в Claude SDK `query(...)`;
+- model-card popup рендерит только список моделей; reasoning-card popup рендерит только список значений reasoning/thinking. Активный пункт обеих карт подсвечен провайдерным цветом через `data-active="true"` + `data-provider`, без отдельного текстового маркера;
 - при `session:model:update`;
 - при новых token usage/history данных.
 
 ## Что отдает наружу
 
-- Для Codex sessions вызывает `onSelectModel` / `onSelectReasoning`, если callback прокинут caller'ом.
-- Для Claude sessions вызывает `onSelectClaudeModel` / `onSelectClaudeThinking`, если callback прокинут caller'ом.
+- Для Codex sessions вызывает `onSelectModel(modelId)` / `onSelectReasoning(reasoning)` — каждый callback несёт только своё поле, без второго аргумента.
+- Для Claude sessions вызывает `onSelectClaudeModel(modelId)` / `onSelectClaudeThinking(thinking)` — model-callback теряет thinking-аргумент, thinking-callback не передаёт модель.
 - Для Gemini sessions selection no-op: chips остаются визуальной частью status row, но не dispatch'ят provider command в этом scope.
 
 ## Локальный state
