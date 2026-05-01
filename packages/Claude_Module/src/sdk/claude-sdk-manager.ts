@@ -39,7 +39,7 @@ interface ClaudeManagerDependencies {
 }
 
 interface ThinkingSettings {
-  readonly effort: "low" | "medium" | "high" | "max";
+  readonly effort: "low" | "medium" | "high" | "xhigh" | "max";
   readonly enabled: boolean;
 }
 
@@ -426,7 +426,13 @@ const readAppliedClaudeModelId = (
     : undefined;
 };
 
-const CLAUDE_THINKING_EFFORTS = new Set(["low", "medium", "high", "max"]);
+const CLAUDE_THINKING_EFFORTS = new Set([
+  "low",
+  "medium",
+  "high",
+  "xhigh",
+  "max",
+]);
 const LEGACY_THINKING_TOKEN_ANCHORS: readonly {
   readonly effort: "low" | "medium" | "high" | "max";
   readonly maxTokens: number;
@@ -457,15 +463,15 @@ const resolveLegacyClaudeThinkingEffort = (
 
 const resolveClaudeThinkingEffort = (
   value: unknown
-): "low" | "medium" | "high" | "max" =>
+): "low" | "medium" | "high" | "xhigh" | "max" =>
   typeof value === "string" && CLAUDE_THINKING_EFFORTS.has(value)
-    ? (value as "low" | "medium" | "high" | "max")
+    ? (value as "low" | "medium" | "high" | "xhigh" | "max")
     : resolveLegacyClaudeThinkingEffort(value);
 
 const readAppliedClaudeThinkingConfig = (
   turnOptions?: Record<string, unknown>
 ): {
-  readonly reasoningEffort?: "low" | "medium" | "high" | "max";
+  readonly reasoningEffort?: "low" | "medium" | "high" | "xhigh" | "max";
   readonly thinkingEnabled: boolean;
 } | null => {
   if (!turnOptions) {

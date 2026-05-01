@@ -13,7 +13,7 @@ export interface ClaudeTurnLifecycleState {
 
 export interface ClaudeRuntimeTurnConfig {
   messagesForTheUserLanguage?: string;
-  reasoningEffort?: "low" | "medium" | "high" | "max";
+  reasoningEffort?: "low" | "medium" | "high" | "xhigh" | "max";
   thinkingDisplaySyncEnabled?: boolean;
   thinkingEnabled?: boolean;
   translationEngineId?: string;
