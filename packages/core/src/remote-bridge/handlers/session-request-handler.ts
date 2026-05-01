@@ -7,7 +7,12 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
-import type { ClaudeModelSwitchRequestPayload } from "../session-stream-contracts";
+import type {
+  ClaudeModelSwitchRequestPayload,
+  ClaudeThinkingSwitchRequestPayload,
+  CodexModelSwitchRequestPayload,
+  CodexReasoningSwitchRequestPayload,
+} from "../session-stream-contracts";
 import type { BridgeEvent } from "../types";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
@@ -23,7 +28,9 @@ import type { SessionProviderEventRouter } from "./session-provider-event-router
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { SessionRequestHandlerClaudeModelSwitch } from "./session-request-handler-claude-model-switch";
+import { SessionRequestHandlerClaudeThinkingSwitch } from "./session-request-handler-claude-thinking-switch";
 import { SessionRequestHandlerCodexModelSwitch } from "./session-request-handler-codex-model-switch";
+import { SessionRequestHandlerCodexReasoningSwitch } from "./session-request-handler-codex-reasoning-switch";
 import {
   normalizeContinuityStageId as normalizeContinuityStageIdValue,
   type SessionRequestHandlerContinuityRoot,
@@ -99,7 +106,9 @@ export class SessionRequestHandler {
   private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
   private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
   private readonly claudeModelSwitch: SessionRequestHandlerClaudeModelSwitch;
+  private readonly claudeThinkingSwitch: SessionRequestHandlerClaudeThinkingSwitch;
   private readonly codexModelSwitch: SessionRequestHandlerCodexModelSwitch;
+  private readonly codexReasoningSwitch: SessionRequestHandlerCodexReasoningSwitch;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
   private readonly stopAction: SessionRequestHandlerStopAction;
   private readonly stopRebind: SessionRequestHandlerStopRebind;
@@ -242,6 +251,16 @@ export class SessionRequestHandler {
       logger: this.logger,
       sessionManager: this.sessionManager,
     });
+    this.claudeThinkingSwitch = new SessionRequestHandlerClaudeThinkingSwitch({
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+    });
+    this.codexReasoningSwitch = new SessionRequestHandlerCodexReasoningSwitch({
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+    });
     this.stopAction = new SessionRequestHandlerStopAction({
       continuityLockService: this.continuityLockService,
       emitSessionError: (sessionId, message) => {
@@ -345,18 +364,24 @@ export class SessionRequestHandler {
     await this.sessionActions.handleSwitchRequest(options);
   }
 
-  async handleCodexModelSwitch(options: {
-    readonly sessionId: string;
-    readonly targetModelId: string;
-    readonly targetReasoningEffort?: "low" | "medium" | "high" | "xhigh";
-  }): Promise<void> {
-    await this.codexModelSwitch.handle(options);
+  handleCodexModelSwitch(options: CodexModelSwitchRequestPayload): void {
+    this.codexModelSwitch.handle(options);
   }
 
-  async handleClaudeModelSwitch(
-    options: ClaudeModelSwitchRequestPayload
-  ): Promise<void> {
-    await this.claudeModelSwitch.handle(options);
+  handleCodexReasoningSwitch(
+    options: CodexReasoningSwitchRequestPayload
+  ): void {
+    this.codexReasoningSwitch.handle(options);
+  }
+
+  handleClaudeModelSwitch(options: ClaudeModelSwitchRequestPayload): void {
+    this.claudeModelSwitch.handle(options);
+  }
+
+  handleClaudeThinkingSwitch(
+    options: ClaudeThinkingSwitchRequestPayload
+  ): void {
+    this.claudeThinkingSwitch.handle(options);
   }
 
   async createSessionForWorkflow(options: {
