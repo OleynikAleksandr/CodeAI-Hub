@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.119] - 2026-05-01
+### Added
+- **Claude Status Panel model/thinking switch is now active.** Claude sessions can switch `Sonnet` / `Opus` / `Haiku` and thinking `off | low | medium | high | xhigh | max` from the lower status chips. Core updates the logical `Session.modelBinding`, broadcasts `session:model:update`, keeps Settings defaults untouched, and applies the selected model/thinking config on the next Claude SDK turn.
+
+### Tests
+- **Claude switch coverage includes native request evidence.** Passed focused Claude capability/provider/SDK/native-capture tests, Core switch tests, PM/UI picker and dispatch tests, plus targeted Claude/Core/Project Manager/webview builds before release packaging.
+
 ## [1.2.118] - 2026-04-30
 ### Fixed
 - **Codex Spark model switch now sends explicit `summary: "none"`.** Runtime logs showed that omitting `turn/start.summary` lets Codex app-server default Spark turns to `detailed`, which then becomes unsupported native `reasoning.summary`. Spark now receives explicit `summary: "none"` in workflow turns, model-switch turns, native capture, translation capture, and Core invocation profiles.

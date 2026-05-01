@@ -114,8 +114,8 @@
 
 ### Stream M — Pre-build version docs
 
-1. [TODO] Determine next version from `package.json` + 1 and update release-facing docs before build. Scope: `README.md`, `CHANGELOG.md`; commit message: `docs: prepare release <version>`.
-2. [TODO] Git Commit: `docs: prepare release <version>` (hash: TBD)
+1. [DONE] Determine next version from `package.json` + 1 and update release-facing docs before build. Scope: `README.md`, `CHANGELOG.md`; commit message: `docs: prepare release 1.2.119`.
+2. [TODO] Git Commit: `docs: prepare release 1.2.119` (hash: TBD)
 
 ### Stream N — Build release artifacts
 
