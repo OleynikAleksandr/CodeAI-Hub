@@ -64,11 +64,11 @@
 9. **[DONE]** Юнит-тест на runner: на пустом workspace вызов capture для VS и DM сценариев не падает на upstream guard, доходит до `api.captureNativeRequest()` с непустым `scenarioPrompt` и canonical `scenarioInputPath`. Translation и Description пути не задеваются.
    - **Scope:** 1 файл — новый `src/client/project-manager/components/settings/native-request-capture-runner.test.ts`.
    - **Ожидаемый commit message:** `test: cover capture runner bypass behavior on empty workspace`
-10. **[TODO]** Git Commit: `test: cover capture runner bypass behavior on empty workspace` (hash: TBD)
+10. **[DONE]** Git Commit: `test: cover capture runner bypass behavior on empty workspace` (hash: `589230660`)
 
 ### Stream 1.3 — SSOT documentation update
 
-11. **[TODO]** Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33 (Settings ownership invariant) — добавить уточнение: "PM-side capture runner всегда передаёт `bypassUpstreamGuard: true` в `buildNativeRequestCaptureScenarioPrompt()`, чтобы диагностическая capture-кнопка работала на пустом workspace без upstream артефактов; product contract из `Workflow_CLI.md` §5 (upstream artifact requirement для обычных workflow turns) этим не отменяется и применяется только к настоящим workflow turns через `workflow-step-start-service.ts`". Параллельно проверить, не требует ли §4 (`Где искать правду в коде`) обновления списка PM-side capture файлов.
+11. **[DONE]** Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33 (Settings ownership invariant) — добавить уточнение: "PM-side capture runner всегда передаёт `bypassUpstreamGuard: true` в `buildNativeRequestCaptureScenarioPrompt()`, чтобы диагностическая capture-кнопка работала на пустом workspace без upstream артефактов; product contract из `Workflow_CLI.md` §5 (upstream artifact requirement для обычных workflow turns) этим не отменяется и применяется только к настоящим workflow turns через `workflow-step-start-service.ts`". Параллельно проверить, не требует ли §4 (`Где искать правду в коде`) обновления списка PM-side capture файлов.
    - **Scope:** 1 файл — `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
    - **Ожидаемый commit message:** `docs: native request capture skips upstream guard in diagnostic mode`
 12. **[TODO]** Git Commit: `docs: native request capture skips upstream guard in diagnostic mode` (hash: TBD)
