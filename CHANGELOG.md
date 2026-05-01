@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.122] - 2026-05-01
+### Changed
+- **Cleanup release for dead-code and stale-reference hygiene.** Removed the unused `diagram-modules-agent` source stub, deleted dead CSS selectors from the legacy webview/session and Project Manager stylesheets, removed stale localization keys, and corrected documentation/config references that no longer matched the current codebase.
+- **Repository analysis config now reflects current packages.** `knip.json`, `.vscodeignore`, and direct workspace dependencies now include the active Codex app-server module and shared translation package edges without legacy package names.
+
+### Tests
+- **Cleanup verification passed before release packaging.** Passed architecture, lint, knip, markdown links, duplication, Project Manager/webview builds, webview typecheck, and targeted Core/Claude/Gemini workspace builds.
+
 ## [1.2.121] - 2026-05-01
 ### Changed
 - **Status Panel pickers behave like provider-tinted buttons.** The model card and the reasoning card now share the same default → hover → active state model as the toggle buttons below them. The active option is highlighted in the provider color (Claude warm peach, Codex cyan, Gemini cool lavender) using the same RGBA tokens as `session-status-button--*`, hover lights the option up in the provider hue, and clicking a different option swaps the active highlight from the previous option to the new one before closing the popup. Smooth 120 ms transitions on background/border/color, plus a `focus-visible` outline for keyboard navigation.
