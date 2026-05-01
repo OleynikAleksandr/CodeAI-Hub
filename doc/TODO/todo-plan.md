@@ -31,7 +31,7 @@
 
 1. [DONE] Read the Context Pack and recover the accepted Codex switch architecture, especially: Core session binding, applied-config `source="session_binding"`, Status Panel picker wiring, and the final Spark `summary = "none"` lesson. Scope: docs only; commit message: N/A.
 2. [DONE] Create `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md` with Claude-native strategy, evidence requirements, capability registry shape, same-session vs resume/new-session decision, Core/UI reuse points, risks, and non-goals. Scope: 1 planning doc; commit message: `docs: draft claude status panel model switch architecture`.
-3. [TODO] Git Commit: `docs: draft claude status panel model switch architecture` (hash: TBD)
+3. [DONE] Git Commit: `docs: draft claude status panel model switch architecture` (hash: d1517ca0a)
 
 ### Stream B — User review and planning-doc approval
 
