@@ -23,6 +23,7 @@ type WorkflowContractLoader = (
 
 interface NativeRequestCaptureScenarioPromptParams {
   readonly artifactLanguage?: string;
+  readonly bypassUpstreamGuard?: boolean;
   readonly getWorkflowState: WorkflowStateGetter;
   readonly loadContract?: WorkflowContractLoader;
   readonly scenarioId: NativeRequestCaptureScenarioId;
@@ -70,6 +71,7 @@ const readDiagramModulesSubstep = (
 };
 
 const resolveScenarioInputPath = (params: {
+  readonly bypassUpstreamGuard?: boolean;
   readonly scenarioId: NativeRequestCaptureScenarioId;
   readonly state: WorkflowStateSnapshot | null;
   readonly workspaceSlug: string;
@@ -84,6 +86,9 @@ const resolveScenarioInputPath = (params: {
   if (params.scenarioId === "virtual_simulation") {
     const finalDescriptionPath = params.state?.description?.finalPath;
     if (!finalDescriptionPath) {
+      if (params.bypassUpstreamGuard) {
+        return `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
+      }
       throw new Error(
         "Missing Final_Description.md. Complete Description step first."
       );
@@ -92,7 +97,7 @@ const resolveScenarioInputPath = (params: {
   }
 
   const modulesBlocked = params.state?.gating.blocked.diagram_modules ?? true;
-  if (modulesBlocked) {
+  if (modulesBlocked && !params.bypassUpstreamGuard) {
     throw new Error(
       "Missing virtual-simulation.md. Complete Virtual Simulation step first."
     );
@@ -111,6 +116,7 @@ export const buildNativeRequestCaptureScenarioPrompt = async (
     params.workspacePath
   );
   const inputPath = resolveScenarioInputPath({
+    bypassUpstreamGuard: params.bypassUpstreamGuard,
     scenarioId: params.scenarioId,
     state,
     workspaceSlug: params.workspaceSlug,

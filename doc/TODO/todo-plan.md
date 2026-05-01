@@ -39,10 +39,10 @@
 
 ### Stream 0 — Planning baseline
 
-1. **[TODO]** Зафиксировать approved planning baseline перед любыми code changes: planning-doc rev4, текущий `todo-plan.md`, а также обновление или явная проверка `Docs_Index.md`, что active planning scope отражён в навигации.
+1. **[DONE]** Зафиксировать approved planning baseline перед любыми code changes: planning-doc rev4, текущий `todo-plan.md`, а также обновление или явная проверка `Docs_Index.md`, что active planning scope отражён в навигации.
    - **Scope:** до 3 файлов — `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`.
    - **Ожидаемый commit message:** `docs: plan provider native capture bypass`
-2. **[TODO]** Git Commit: `docs: plan provider native capture bypass` (hash: TBD)
+2. **[DONE]** Git Commit: `docs: plan provider native capture bypass` (hash: `3f98c04dc`)
 
 ### Stream 1.1 — Scenario prompt resolver bypass
 
