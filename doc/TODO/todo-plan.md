@@ -60,8 +60,8 @@
 
 ### Stream E — Core handler and router
 
-1. [TODO] Implement Claude model switch handler and wire it through SessionRequestHandler/router with workspace scope guard. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-claude-model-switch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`; commit message: `feat(core): wire claude model switch handler`.
-2. [TODO] Git Commit: `feat(core): wire claude model switch handler` (hash: TBD)
+1. [DONE] Implement Claude model switch handler and wire it through SessionRequestHandler/router with workspace scope guard. Verification: `npm run build --workspace=@codeai-hub/core`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-claude-model-switch.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts`; commit message: `feat(core): wire claude model switch handler`.
+2. [DONE] Git Commit: `feat(core): wire claude model switch handler` (hash: 4711e586f)
 3. [TODO] Add Core tests: valid target mutates `Session.modelBinding`, broadcasts `session:model:update`, does not call adapter send; invalid/non-Claude targets are guarded. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-claude-model-switch.test.ts`; commit message: `test(core): cover claude model switch handler`.
 4. [TODO] Git Commit: `test(core): cover claude model switch handler` (hash: TBD)
 
