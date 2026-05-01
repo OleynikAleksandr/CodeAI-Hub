@@ -6,6 +6,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import type { ProviderStackId } from "../../../../types/provider";
 import {
   StatusPanelModelPicker,
   type StatusPanelPickerMode,
@@ -38,6 +39,7 @@ const renderPickerButtons = (options: {
   readonly onClose?: () => void;
   readonly onSelectModel?: (modelId: string, reasoning: string) => void;
   readonly onSelectReasoning?: (reasoning: string) => void;
+  readonly providerId?: ProviderStackId;
 }): ReactElement<ButtonProps>[] =>
   collectButtons(
     StatusPanelModelPicker({
@@ -48,6 +50,7 @@ const renderPickerButtons = (options: {
       onClose: options.onClose ?? (() => undefined),
       onSelectModel: options.onSelectModel,
       onSelectReasoning: options.onSelectReasoning,
+      providerId: options.providerId ?? "codexCli",
     })
   );
 
@@ -94,4 +97,50 @@ test("StatusPanelModelPicker selects a reasoning effort", () => {
   highButton?.props.onClick?.();
 
   assert.equal(selected, "high");
+});
+
+test("StatusPanelModelPicker selects a Claude model with preserved thinking effort", () => {
+  let selected: {
+    readonly modelId: string;
+    readonly reasoning: string;
+  } | null = null;
+  const buttons = renderPickerButtons({
+    currentModelId: "sonnet reasoning:xhigh",
+    currentReasoning: "xhigh",
+    mode: "model",
+    providerId: "claudeCodeCli",
+    onSelectModel: (modelId, reasoning) => {
+      selected = { modelId, reasoning };
+    },
+  });
+  const opusButton = buttons.find(
+    (button) => button.props["data-model-id"] === "opus"
+  );
+
+  opusButton?.props.onClick?.();
+
+  assert.deepEqual(selected, {
+    modelId: "opus",
+    reasoning: "xhigh",
+  });
+});
+
+test("StatusPanelModelPicker selects Claude thinking off", () => {
+  let selected: string | null = null;
+  const buttons = renderPickerButtons({
+    currentModelId: "haiku thinking:off",
+    currentReasoning: "thinking off",
+    mode: "reasoning",
+    providerId: "claudeCodeCli",
+    onSelectReasoning: (reasoning) => {
+      selected = reasoning;
+    },
+  });
+  const offButton = buttons.find(
+    (button) => button.props["data-reasoning"] === "off"
+  );
+
+  offButton?.props.onClick?.();
+
+  assert.equal(selected, "off");
 });

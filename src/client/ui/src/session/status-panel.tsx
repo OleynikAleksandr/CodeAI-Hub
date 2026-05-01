@@ -1,4 +1,8 @@
 import { useRef, useState } from "react";
+import type {
+  ClaudeModelAliasId,
+  ClaudeThinkingEffort,
+} from "../../../../types/claude-model-registry";
 import type { CodexReasoningLevel } from "../../../../types/codex-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
@@ -14,10 +18,16 @@ const PERCENT_SCALE = 100;
 const USER_MESSAGES_CATEGORY = "system_feedback";
 
 type CoreConnectionStatus = "connecting" | "ready" | "error";
+type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 
 interface StatusPanelProps {
   readonly connectionDetail?: string;
   readonly connectionStatus: CoreConnectionStatus;
+  readonly onSelectClaudeModel?: (
+    modelId: ClaudeModelAliasId,
+    thinking: ClaudeThinkingSelection
+  ) => void;
+  readonly onSelectClaudeThinking?: (thinking: ClaudeThinkingSelection) => void;
   readonly onSelectModel?: (
     modelId: string,
     reasoning: CodexReasoningLevel
@@ -36,6 +46,25 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>
   PROVIDER_BUTTON_CLASS[providerId] ?? "";
 
+const isCodexReasoningLevel = (value: string): value is CodexReasoningLevel =>
+  value === "low" ||
+  value === "medium" ||
+  value === "high" ||
+  value === "xhigh";
+
+const isClaudeModelAliasId = (value: string): value is ClaudeModelAliasId =>
+  value === "sonnet" || value === "opus" || value === "haiku";
+
+const isClaudeThinkingSelection = (
+  value: string
+): value is ClaudeThinkingSelection =>
+  value === "off" ||
+  value === "low" ||
+  value === "medium" ||
+  value === "high" ||
+  value === "xhigh" ||
+  value === "max";
+
 const computeRemainingPercentage = (
   used: number,
   limit: number | null
@@ -51,6 +80,8 @@ const computeRemainingPercentage = (
 const StatusPanel = ({
   status,
   connectionStatus,
+  onSelectClaudeModel,
+  onSelectClaudeThinking,
   onSelectModel,
   onSelectReasoning,
   tokenDebugSummary,
@@ -92,7 +123,8 @@ const StatusPanel = ({
   const tokensValue = `${status.tokenUsage.used.toLocaleString()} (${remainingPercentage}%)`;
 
   const providerButtonClass = resolveProviderButtonClass(model.providerId);
-  const canOpenPicker = model.providerId === "codexCli";
+  const canOpenPicker =
+    model.providerId === "codexCli" || model.providerId === "claudeCodeCli";
   const reasoningText =
     typeof model.reasoning === "string" && model.reasoning.length > 0
       ? `(${model.reasoning})`
@@ -109,6 +141,34 @@ const StatusPanel = ({
       mode,
       anchorLeft: anchorElement?.offsetLeft ?? 0,
     });
+  };
+  const handlePickerSelectModel = (
+    modelId: string,
+    reasoning: string
+  ): void => {
+    if (
+      model.providerId === "claudeCodeCli" &&
+      isClaudeModelAliasId(modelId) &&
+      isClaudeThinkingSelection(reasoning)
+    ) {
+      onSelectClaudeModel?.(modelId, reasoning);
+      return;
+    }
+    if (model.providerId === "codexCli" && isCodexReasoningLevel(reasoning)) {
+      onSelectModel?.(modelId, reasoning);
+    }
+  };
+  const handlePickerSelectReasoning = (reasoning: string): void => {
+    if (
+      model.providerId === "claudeCodeCli" &&
+      isClaudeThinkingSelection(reasoning)
+    ) {
+      onSelectClaudeThinking?.(reasoning);
+      return;
+    }
+    if (model.providerId === "codexCli" && isCodexReasoningLevel(reasoning)) {
+      onSelectReasoning?.(reasoning);
+    }
   };
 
   return (
@@ -155,8 +215,9 @@ const StatusPanel = ({
           currentReasoning={model.reasoning}
           mode={openPicker.mode}
           onClose={() => setOpenPicker(null)}
-          onSelectModel={onSelectModel}
-          onSelectReasoning={onSelectReasoning}
+          onSelectModel={handlePickerSelectModel}
+          onSelectReasoning={handlePickerSelectReasoning}
+          providerId={model.providerId}
         />
       ) : null}
     </section>
