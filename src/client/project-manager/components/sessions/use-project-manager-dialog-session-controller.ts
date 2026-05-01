@@ -12,6 +12,13 @@ import {
   createDialogRequestId,
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
+import {
+  type ClaudeModelAliasId,
+  type ClaudeThinkingSelection,
+  resolveDialogClaudeSwitchRequest,
+  resolveDialogCodexBaseModelId,
+  sendDialogClaudeSwitchRequest,
+} from "./project-manager-dialog-model-switch-helpers";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
@@ -25,27 +32,10 @@ import {
   useProjectManagerDialogCoreEvents,
 } from "./use-project-manager-dialog-core-events";
 type DialogHistoryRequestOptions = { readonly force?: boolean } | null | undefined;
-const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
-
-export type ProjectManagerDialogSessionController = {
-  readonly connection: ReturnType<typeof useProjectManagerCoreStatusHydrator>;
-  readonly providerLabels: ReturnType<typeof buildProviderLabels>;
-  readonly session: SessionRecord | null;
-  readonly showThinkingMessages: boolean;
-  readonly snapshots: SessionSnapshots;
-  readonly setSnapshots: React.Dispatch<React.SetStateAction<SessionSnapshots>>;
-  readonly tokenDebugSummaryOverride: string | undefined;
-  readonly requestCodexModelSwitch: (
-    modelId: string,
-    reasoning: CodexReasoningLevel
-  ) => void;
-  readonly requestCodexReasoningSwitch: (reasoning: CodexReasoningLevel) => void;
-  readonly sendMessage: (content: string) => void;
-};
 
 export const useProjectManagerDialogSessionController = (
   intent: DialogOpenIntent | null
-): ProjectManagerDialogSessionController => {
+) => {
   const sessionMessageLocalization = useMemo(
     () => new SessionMessageLocalizationFacade(),
     []
@@ -434,22 +424,6 @@ export const useProjectManagerDialogSessionController = (
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
 
-  const resolveCodexBaseModelId = useCallback((): string | null => {
-    const currentSession = sessionRef.current;
-    if (currentSession?.providerIds[0] !== "codexCli") {
-      return null;
-    }
-    const boundModelId =
-      currentSession.modelBinding?.baseModelId ??
-      currentSession.modelBinding?.modelId;
-    const visibleModelId =
-      snapshots[currentSession.id]?.status.models?.[0]?.modelId;
-    return (boundModelId ?? visibleModelId ?? "").replace(
-      EFFECTIVE_MODEL_SUFFIX_PATTERN,
-      ""
-    );
-  }, [snapshots]);
-
   const requestCodexModelSwitch = useCallback(
     (modelId: string, reasoning: CodexReasoningLevel) => {
       const currentSession = sessionRef.current;
@@ -463,14 +437,50 @@ export const useProjectManagerDialogSessionController = (
 
   const requestCodexReasoningSwitch = useCallback(
     (reasoning: CodexReasoningLevel) => {
-      const modelId = resolveCodexBaseModelId();
       const currentSession = sessionRef.current;
+      const modelId = resolveDialogCodexBaseModelId({
+        session: currentSession,
+        visibleModelId: currentSession
+          ? snapshots[currentSession.id]?.status.models?.[0]?.modelId
+          : undefined,
+      });
       if (!(modelId && currentSession)) {
         return;
       }
       api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);
     },
-    [resolveCodexBaseModelId]
+    [snapshots]
+  );
+
+  const requestClaudeModelSwitch = useCallback(
+    (modelId: ClaudeModelAliasId, thinking: ClaudeThinkingSelection) => {
+      sendDialogClaudeSwitchRequest(
+        api.requestClaudeModelSwitch.bind(api),
+        resolveDialogClaudeSwitchRequest({
+          requestedModelId: modelId,
+          session: sessionRef.current,
+          thinking,
+        })
+      );
+    },
+    []
+  );
+
+  const requestClaudeThinkingSwitch = useCallback(
+    (thinking: ClaudeThinkingSelection) => {
+      const currentSession = sessionRef.current;
+      sendDialogClaudeSwitchRequest(
+        api.requestClaudeModelSwitch.bind(api),
+        resolveDialogClaudeSwitchRequest({
+          session: currentSession,
+          thinking,
+          visibleModelId: currentSession
+            ? snapshots[currentSession.id]?.status.models?.[0]?.modelId
+            : undefined,
+        })
+      );
+    },
+    [snapshots]
   );
 
   return {
@@ -478,6 +488,8 @@ export const useProjectManagerDialogSessionController = (
     providerLabels,
     requestCodexModelSwitch,
     requestCodexReasoningSwitch,
+    requestClaudeModelSwitch,
+    requestClaudeThinkingSwitch,
     session,
     showThinkingMessages,
     snapshots,
