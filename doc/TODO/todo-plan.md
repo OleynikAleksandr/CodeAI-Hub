@@ -97,8 +97,8 @@
 
 ### Stream J — Native evidence
 
-1. [TODO] Add/extend native capture or provider-home evidence path proving post-switch next-turn Claude request carries selected `model`, `thinking`, `effort`, and keeps `settingSources: []`. Scope: ≤3 files selected during implementation; commit message: `test(claude): capture post-switch native request config`.
-2. [TODO] Git Commit: `test(claude): capture post-switch native request config` (hash: TBD)
+1. [DONE] Add/extend native capture or provider-home evidence path proving post-switch next-turn Claude request carries selected `model`, `thinking`, `effort`, and keeps `settingSources: []`. Scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; commit message: `test(claude): capture post-switch native request config`.
+2. [DONE] Git Commit: `test(claude): capture post-switch native request config` (hash: 5dd46b8e9)
 
 ### Stream K — Targeted verification
 
