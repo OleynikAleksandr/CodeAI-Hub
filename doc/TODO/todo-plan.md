@@ -32,8 +32,8 @@
 
 1. [DONE] User approved `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md` and authorized implementation. Scope: planning doc + todo-plan; commit message: `docs: approve claude status panel model switch plan`.
 2. [DONE] Git Commit: `docs: approve claude status panel model switch plan` (hash: 4b74e2f64)
-3. [TODO] Replace planning-control todo with this full implementation plan derived from the approved planning-doc. Scope: `doc/TODO/todo-plan.md`; commit message: `docs: open claude status panel model switch implementation plan`.
-4. [TODO] Git Commit: `docs: open claude status panel model switch implementation plan` (hash: TBD)
+3. [DONE] Replace planning-control todo with this full implementation plan derived from the approved planning-doc. Scope: `doc/TODO/todo-plan.md`; commit message: `docs: open claude status panel model switch implementation plan`.
+4. [DONE] Git Commit: `docs: open claude status panel model switch implementation plan` (hash: 542eb92f7)
 
 ## Phase 1 — Claude Capability Registry and Effort Parity (owner: Claude provider/Core, updated: 2026-05-01)
 
