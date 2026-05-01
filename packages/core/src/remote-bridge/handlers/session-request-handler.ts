@@ -7,6 +7,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
+import type { ClaudeModelSwitchRequestPayload } from "../session-stream-contracts";
 import type { BridgeEvent } from "../types";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
@@ -21,6 +22,7 @@ import type {
 import type { SessionProviderEventRouter } from "./session-provider-event-router";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import { SessionRequestHandlerClaudeModelSwitch } from "./session-request-handler-claude-model-switch";
 import { SessionRequestHandlerCodexModelSwitch } from "./session-request-handler-codex-model-switch";
 import {
   normalizeContinuityStageId as normalizeContinuityStageIdValue,
@@ -96,6 +98,7 @@ export class SessionRequestHandler {
   private readonly flowNodeRollover: SessionRequestHandlerFlowNodeRollover;
   private readonly continuityRoot: SessionRequestHandlerContinuityRoot;
   private readonly turnArbitration: SessionRequestHandlerTurnArbitration;
+  private readonly claudeModelSwitch: SessionRequestHandlerClaudeModelSwitch;
   private readonly codexModelSwitch: SessionRequestHandlerCodexModelSwitch;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
   private readonly stopAction: SessionRequestHandlerStopAction;
@@ -234,6 +237,11 @@ export class SessionRequestHandler {
       logger: this.logger,
       sessionManager: this.sessionManager,
     });
+    this.claudeModelSwitch = new SessionRequestHandlerClaudeModelSwitch({
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+    });
     this.stopAction = new SessionRequestHandlerStopAction({
       continuityLockService: this.continuityLockService,
       emitSessionError: (sessionId, message) => {
@@ -343,6 +351,12 @@ export class SessionRequestHandler {
     readonly targetReasoningEffort?: "low" | "medium" | "high" | "xhigh";
   }): Promise<void> {
     await this.codexModelSwitch.handle(options);
+  }
+
+  async handleClaudeModelSwitch(
+    options: ClaudeModelSwitchRequestPayload
+  ): Promise<void> {
+    await this.claudeModelSwitch.handle(options);
   }
 
   async createSessionForWorkflow(options: {

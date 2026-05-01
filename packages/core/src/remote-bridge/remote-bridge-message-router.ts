@@ -136,6 +136,11 @@ export class RemoteBridgeMessageRouter {
       case "session:codex:model-switch":
         await this.deps.sessionHandler.handleCodexModelSwitch(incoming.payload);
         break;
+      case "session:claude:model-switch":
+        await this.deps.sessionHandler.handleClaudeModelSwitch(
+          incoming.payload
+        );
+        break;
       case "session:delete":
         await this.deps.sessionHandler.handleDelete(incoming.payload.sessionId);
         break;
@@ -258,6 +263,7 @@ export class RemoteBridgeMessageRouter {
     }
     if (
       incoming.type === "session:message" ||
+      incoming.type === "session:claude:model-switch" ||
       incoming.type === "session:codex:model-switch" ||
       incoming.type === "session:delete" ||
       incoming.type === "session:stop"
