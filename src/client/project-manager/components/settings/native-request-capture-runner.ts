@@ -49,6 +49,7 @@ const runProjectManagerNativeRequestCapture = async (
   }
 
   const scenario = await buildNativeRequestCaptureScenarioPrompt({
+    bypassUpstreamGuard: true,
     getWorkflowState: api.getWorkflowState.bind(api),
     scenarioId: params.scenarioId,
     settingsPayload: params.settingsPayload,

@@ -53,11 +53,11 @@
 5. **[DONE]** Юнит-тест на новый bypass-путь: для пустого workflow state с `bypassUpstreamGuard: true` ни VS, ни DM сценарии не throw'ятся, возвращают canonical paths (`Final_Description.md`, `virtual-simulation.md` или `product-parts.index.md` в зависимости от substep). Без флага старое поведение сохраняется (тест на throws).
    - **Scope:** 1 файл — новый `src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts`.
    - **Ожидаемый commit message:** `test: cover bypassUpstreamGuard path in scenario prompt resolver`
-6. **[TODO]** Git Commit: `test: cover bypassUpstreamGuard path in scenario prompt resolver` (hash: TBD)
+6. **[DONE]** Git Commit: `test: cover bypassUpstreamGuard path in scenario prompt resolver` (hash: `147397be4`)
 
 ### Stream 1.2 — Runner unconditional bypass
 
-7. **[TODO]** В `ProjectManagerNativeRequestCaptureRunner` (`native-request-capture-runner.ts:51`) вызов `buildNativeRequestCaptureScenarioPrompt(...)` всегда передаёт `bypassUpstreamGuard: true`. Это **единственное место**, где флаг ставится в `true` — capture по определению является диагностическим режимом. Никаких UI-toggle, никаких user-facing настроек этого флага.
+7. **[DONE]** В `ProjectManagerNativeRequestCaptureRunner` (`native-request-capture-runner.ts:51`) вызов `buildNativeRequestCaptureScenarioPrompt(...)` всегда передаёт `bypassUpstreamGuard: true`. Это **единственное место**, где флаг ставится в `true` — capture по определению является диагностическим режимом. Никаких UI-toggle, никаких user-facing настроек этого флага.
    - **Scope:** 1 файл — `src/client/project-manager/components/settings/native-request-capture-runner.ts`.
    - **Ожидаемый commit message:** `feat: capture runner always bypasses upstream artifact guard`
 8. **[TODO]** Git Commit: `feat: capture runner always bypasses upstream artifact guard` (hash: TBD)
