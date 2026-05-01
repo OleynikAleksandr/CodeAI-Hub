@@ -177,6 +177,58 @@ test("ClaudeSDKManager uses applied Claude effort instead of deprecated maxThink
   assert.equal("maxThinkingTokens" in options, false);
 });
 
+test("ClaudeSDKManager maps switched model and xhigh effort to SDK query options", () => {
+  const manager = createManager();
+
+  const options = buildQueryOptions(
+    manager,
+    {
+      sessionId: "session-123",
+      workspacePath: "/tmp/codeai-workspace",
+    } as ActiveSession,
+    {
+      __codeaiAppliedTurnConfig: {
+        providerId: "claudeCodeCli",
+        modelId: "haiku",
+        thinkingEnabled: true,
+        reasoningEffort: "xhigh",
+      },
+    }
+  );
+
+  assert.equal(options.model, "haiku");
+  assert.deepEqual(options.thinking, {
+    type: "adaptive",
+    display: "summarized",
+  });
+  assert.equal(options.effort, "xhigh");
+  assert.deepEqual(options.settingSources, []);
+});
+
+test("ClaudeSDKManager maps switched thinking off without SDK effort", () => {
+  const manager = createManager();
+
+  const options = buildQueryOptions(
+    manager,
+    {
+      sessionId: "session-123",
+      workspacePath: "/tmp/codeai-workspace",
+    } as ActiveSession,
+    {
+      __codeaiAppliedTurnConfig: {
+        providerId: "claudeCodeCli",
+        baseModelId: "opus",
+        thinkingEnabled: false,
+      },
+    }
+  );
+
+  assert.equal(options.model, "opus");
+  assert.deepEqual(options.thinking, { type: "disabled" });
+  assert.equal("effort" in options, false);
+  assert.deepEqual(options.settingSources, []);
+});
+
 test("ClaudeSDKManager maps legacy Claude maxTokens snapshots to effort", async () => {
   const tempDir = await mkdtemp(path.join(tmpdir(), "claude-sdk-effort-"));
   const settingsPath = path.join(tempDir, "settings.json");
