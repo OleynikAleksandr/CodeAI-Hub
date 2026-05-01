@@ -2,9 +2,9 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_StatusPanel_ModelSwitch_Architecture.md`
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md` — approved architecture for Claude Status Panel model/thinking switch.
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_StatusPanel_ModelSwitch_Architecture.md` — approved architecture for Claude Status Panel model/thinking switch.
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — global invariants: effective model identity, model invocation profile boundary, provider last-mile adaptation.
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md` — Claude provider SSOT, thinking effort parity, SDK isolation, native capture.
   - `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md` — Status Panel chip/picker contract and non-Codex no-op baseline.
@@ -30,7 +30,7 @@
 
 ### Stream A — Approved planning handoff
 
-1. [DONE] User approved `doc/SolidWorks-WorkFlow/Plans/Claude_StatusPanel_ModelSwitch_Architecture.md` and authorized implementation. Scope: planning doc + todo-plan; commit message: `docs: approve claude status panel model switch plan`.
+1. [DONE] User approved `doc/SolidWorks-WorkFlow/Plans/Archive/Claude_StatusPanel_ModelSwitch_Architecture.md` and authorized implementation. Scope: planning doc + todo-plan; commit message: `docs: approve claude status panel model switch plan`.
 2. [DONE] Git Commit: `docs: approve claude status panel model switch plan` (hash: 4b74e2f64)
 3. [DONE] Replace planning-control todo with this full implementation plan derived from the approved planning-doc. Scope: `doc/TODO/todo-plan.md`; commit message: `docs: open claude status panel model switch implementation plan`.
 4. [DONE] Git Commit: `docs: open claude status panel model switch implementation plan` (hash: 542eb92f7)
@@ -128,12 +128,12 @@
 
 ### Stream O — User retest
 
-1. [IN_PROGRESS] Hand off VSIX to user for install and visual/native retest. Required checks: Claude Status Panel switch `sonnet` -> `opus` or `haiku`, thinking on/off, effort change, same logical session/dialog continuity, no Settings overwrite, Codex unchanged, Gemini no misleading dispatch. Scope remains ACTIVE until explicit acceptance.
-2. [TODO] Record user acceptance or failed retest details. Scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session038.md`; commit message depends on outcome.
+1. [DONE] Hand off VSIX to user for install and visual/native retest. Required checks: Claude Status Panel switch `sonnet` -> `opus` or `haiku`, thinking on/off, effort change, same logical session/dialog continuity, no Settings overwrite, Codex unchanged, Gemini no misleading dispatch. User retest confirmed Claude model and reasoning controls appeared and native provider-home JSONL showed real model changes: `claude-sonnet-4-6` -> `claude-haiku-4-5-20251001` -> `claude-opus-4-7`.
+2. [DONE] Record user acceptance or failed retest details. Result: user accepted release `1.2.119` and explicitly authorized closing this session and plan. Scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session038.md`; commit message: `docs: close claude status panel model switch scope`.
 
 ## Phase 8 — Scope Closeout (owner: Docs, updated: 2026-05-01)
 
 ### Stream P — Closeout after user acceptance only
 
-1. [BLOCKED: waiting for user acceptance] Archive completed `doc/TODO/todo-plan.md`, archive or promote planning-doc conclusions, update `Docs_Index.md`, update session report as COMPLETED. Scope: docs only; commit message: `docs: close claude status panel model switch scope`.
-2. [BLOCKED: waiting for user acceptance] Git Commit: `docs: close claude status panel model switch scope` (hash: TBD)
+1. [DONE] Archive completed `doc/TODO/todo-plan.md`, archive or promote planning-doc conclusions, update `Docs_Index.md`, update session report as COMPLETED. Scope: docs only; commit message: `docs: close claude status panel model switch scope`.
+2. [DONE] Git Commit: `docs: close claude status panel model switch scope` (hash: TBD)
