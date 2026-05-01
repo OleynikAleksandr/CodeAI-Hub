@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.121] - 2026-05-01
+### Changed
+- **Status Panel pickers behave like provider-tinted buttons.** The model card and the reasoning card now share the same default → hover → active state model as the toggle buttons below them. The active option is highlighted in the provider color (Claude warm peach, Codex cyan, Gemini cool lavender) using the same RGBA tokens as `session-status-button--*`, hover lights the option up in the provider hue, and clicking a different option swaps the active highlight from the previous option to the new one before closing the popup. Smooth 120 ms transitions on background/border/color, plus a `focus-visible` outline for keyboard navigation.
+
 ## [1.2.120] - 2026-05-01
 ### Changed
 - **Status Panel model/reasoning switches are now decoupled.** Both Claude and Codex Status Panel switches travel as two independent transport commands per provider, never one coupled payload: `session:claude:model-switch` carries only `targetModelId`, the new `session:claude:thinking-switch` carries only `thinkingEnabled` + optional `targetReasoningEffort`; `session:codex:model-switch` carries only `targetModelId`, and the new `session:codex:reasoning-switch` carries only `targetReasoningEffort`. Model-only handlers preserve the previous `reasoningEffort`/`thinkingEnabled` from `Session.modelBinding`; reasoning-only handlers preserve the previous `baseModelId`. This fixes the regression where switching reasoning unintentionally rebound the model (and vice versa) on stale UI snapshots.
