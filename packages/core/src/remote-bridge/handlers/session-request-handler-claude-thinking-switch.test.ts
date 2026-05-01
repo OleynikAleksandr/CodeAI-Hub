@@ -8,14 +8,13 @@ import { RemoteBridgeMessageRouter } from "../remote-bridge-message-router";
 import { createHarness, noop } from "./session-request-handler.test-helpers";
 
 const createRouter = (
-  harness: ReturnType<typeof createHarness>,
-  getManager: () => unknown = () => undefined
+  harness: ReturnType<typeof createHarness>
 ): RemoteBridgeMessageRouter =>
   new RemoteBridgeMessageRouter({
     dialogHistoryService: {} as never,
     dialogListService: {} as never,
     dialogOpenService: {} as never,
-    getManager: getManager as never,
+    getManager: (() => undefined) as never,
     logger: { error: noop, info: noop, warn: noop } as never,
     nativeRequestCaptureFacade: {} as never,
     projectHandler: {} as never,
@@ -36,34 +35,34 @@ const createPreviousBinding = (
     workspacePath,
   }),
   providerId: "claudeCodeCli",
-  baseModelId: "sonnet",
-  modelId: "sonnet reasoning:high",
-  reasoningEffort: "high",
+  baseModelId: "opus",
+  modelId: "opus reasoning:medium",
+  reasoningEffort: "medium",
   thinkingEnabled: true,
   source: "start_step_selection",
   boundAt: "2026-05-01T06:00:00.000Z",
   updatedAt: "2026-05-01T06:00:00.000Z",
 });
 
-test("Claude model-only switch swaps base model and preserves prior thinking effort", async () => {
+test("Claude thinking-switch updates effort and preserves base model", async () => {
   const harness = createHarness();
   const router = createRouter(harness);
   const session = harness.sessionManager.createSession(
     "claudeCodeCli",
-    "/tmp/claude-model-switch",
+    "/tmp/claude-thinking-switch",
     "provider-session-claude"
   );
-  const previousBinding = createPreviousBinding(
+  harness.sessionManager.setModelBinding(
     session.id,
-    session.workspacePath
+    createPreviousBinding(session.id, session.workspacePath)
   );
-  harness.sessionManager.setModelBinding(session.id, previousBinding);
 
   await router.handleIncomingMessage("client-1", {
-    type: "session:claude:model-switch",
+    type: "session:claude:thinking-switch",
     payload: {
       sessionId: session.id,
-      targetModelId: "opus",
+      thinkingEnabled: true,
+      targetReasoningEffort: "xhigh",
     },
   });
 
@@ -71,84 +70,56 @@ test("Claude model-only switch swaps base model and preserves prior thinking eff
     session.id
   )?.modelBinding;
   assert.equal(updatedBinding?.baseModelId, "opus");
-  assert.equal(updatedBinding?.reasoningEffort, "high");
+  assert.equal(updatedBinding?.reasoningEffort, "xhigh");
   assert.equal(updatedBinding?.thinkingEnabled, true);
-  assert.equal(updatedBinding?.modelId, "opus reasoning:high");
-  assert.equal(updatedBinding?.source, "switch_request");
-  assert.equal(updatedBinding?.boundAt, previousBinding.boundAt);
-  assert.notEqual(updatedBinding?.updatedAt, previousBinding.updatedAt);
+  assert.equal(updatedBinding?.modelId, "opus reasoning:xhigh");
 });
 
-test("Claude model-only switch normalizes effort against new model capabilities", async () => {
+test("Claude thinking-switch maps thinking off without retaining effort", async () => {
   const harness = createHarness();
   const router = createRouter(harness);
   const session = harness.sessionManager.createSession(
     "claudeCodeCli",
-    "/tmp/claude-model-switch-normalize",
+    "/tmp/claude-thinking-switch-off",
     "provider-session-claude"
   );
-  harness.sessionManager.setModelBinding(session.id, {
-    ...createPreviousBinding(session.id, session.workspacePath),
-    baseModelId: "opus",
-    modelId: "opus reasoning:xhigh",
-    reasoningEffort: "xhigh",
-  });
+  harness.sessionManager.setModelBinding(
+    session.id,
+    createPreviousBinding(session.id, session.workspacePath)
+  );
 
   await router.handleIncomingMessage("client-1", {
-    type: "session:claude:model-switch",
+    type: "session:claude:thinking-switch",
     payload: {
       sessionId: session.id,
-      targetModelId: "haiku",
+      thinkingEnabled: false,
     },
   });
 
   const updatedBinding = harness.sessionManager.getSession(
     session.id
   )?.modelBinding;
-  assert.equal(updatedBinding?.baseModelId, "haiku");
-  assert.equal(updatedBinding?.thinkingEnabled, true);
-  assert.notEqual(updatedBinding?.reasoningEffort, "xhigh");
+  assert.equal(updatedBinding?.baseModelId, "opus");
+  assert.equal(updatedBinding?.thinkingEnabled, false);
+  assert.equal(updatedBinding?.reasoningEffort, undefined);
+  assert.equal(updatedBinding?.modelId, "opus thinking:off");
 });
 
-test("Claude model-only switch rejects unknown models without mutating binding", async () => {
-  const harness = createHarness();
-  const session = harness.sessionManager.createSession(
-    "claudeCodeCli",
-    "/tmp/claude-model-switch-invalid",
-    "provider-session-claude"
-  );
-  const previousBinding = createPreviousBinding(
-    session.id,
-    session.workspacePath
-  );
-  harness.sessionManager.setModelBinding(session.id, previousBinding);
-
-  await harness.handler.handleClaudeModelSwitch({
-    sessionId: session.id,
-    targetModelId: "missing-claude-model" as never,
-  });
-
-  assert.deepEqual(
-    harness.sessionManager.getSession(session.id)?.modelBinding,
-    previousBinding
-  );
-  assert.deepEqual(harness.events, []);
-});
-
-test("Claude model-only switch ignores non-Claude sessions", async () => {
+test("Claude thinking-switch ignores non-Claude sessions", async () => {
   const harness = createHarness();
   const router = createRouter(harness);
   const session = harness.sessionManager.createSession(
     "codexCli",
-    "/tmp/claude-model-switch-non-claude",
+    "/tmp/claude-thinking-switch-non-claude",
     "provider-session-codex"
   );
 
   await router.handleIncomingMessage("client-1", {
-    type: "session:claude:model-switch",
+    type: "session:claude:thinking-switch",
     payload: {
       sessionId: session.id,
-      targetModelId: "sonnet",
+      thinkingEnabled: true,
+      targetReasoningEffort: "high",
     },
   });
 
