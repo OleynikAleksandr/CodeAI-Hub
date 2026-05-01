@@ -119,8 +119,8 @@
 
 ### Stream N — Build release artifacts
 
-1. [TODO] Confirm clean tree, run `./scripts/build-all.sh`, verify generated tarballs/manifests/bundles, and commit generated release metadata. Scope: generated release files; commit message: `chore: build release <version>`.
-2. [TODO] Git Commit: `chore: build release <version>` (hash: TBD)
+1. [DONE] Confirm clean tree, run `./scripts/build-all.sh`, verify generated tarballs/manifests/bundles, and commit generated release metadata. Scope: generated release files; commit message: `chore: build release 1.2.119`.
+2. [DONE] Git Commit: `chore: build release 1.2.119` (hash: 9515de4cf)
 3. [TODO] Run `./scripts/build-release.sh --use-current-version` on clean tree and verify VSIX packaging output. Scope: VSIX packaging artifacts/session notes; commit message: `chore: finalize release <version>`.
 4. [TODO] Git Commit: `chore: finalize release <version>` (hash: TBD)
 
