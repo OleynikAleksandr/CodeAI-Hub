@@ -31,64 +31,50 @@
 
 ### Stream A: Transport contracts split
 
-1. [TODO] Расширить `session-stream-contracts.ts`: добавить `ClaudeThinkingSwitchRequestPayload`, `CodexReasoningSwitchRequestPayload`, новые члены `SessionIncomingMessage`; сократить `ClaudeModelSwitchRequestPayload` до `{ sessionId; targetModelId }`, `CodexModelSwitchRequestPayload` до `{ sessionId; targetModelId }`. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts` (1 файл).
-2. [TODO] Git Commit: `feat(core): split status panel switch transport types` (hash: TBD)
-3. [TODO] Расширить `incoming-message-validator.ts`: новые валидаторы `isClaudeThinkingSwitchPayload`, `isCodexReasoningSwitchPayload`; обновить existing validators под новые сокращённые типы; зарегистрировать в `PAYLOAD_VALIDATORS`. Scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` (1 файл).
-4. [TODO] Git Commit: `feat(core): validate split status panel switch payloads` (hash: TBD)
-5. [TODO] Обновить `remote-bridge-message-router.ts`: добавить case-ветки для `session:claude:thinking-switch` и `session:codex:reasoning-switch`; включить новые типы в scope-проверку. Scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts` (1 файл).
-6. [TODO] Git Commit: `feat(core): route split status panel switch commands` (hash: TBD)
+1. [DONE] Расширить `session-stream-contracts.ts`: добавить `ClaudeThinkingSwitchRequestPayload`, `CodexReasoningSwitchRequestPayload`, новые члены `SessionIncomingMessage`; сократить `ClaudeModelSwitchRequestPayload` до `{ sessionId; targetModelId }`, `CodexModelSwitchRequestPayload` до `{ sessionId; targetModelId }`. Scope: `packages/core/src/remote-bridge/session-stream-contracts.ts` (1 файл).
+2. [DONE] Git Commit: `feat(core): split status panel switch transport types` (hash: 9f387dfd3)
+3. [DONE] Расширить `incoming-message-validator.ts`: новые валидаторы `isClaudeThinkingSwitchPayload`, `isCodexReasoningSwitchPayload`; обновить existing validators под новые сокращённые типы; зарегистрировать в `PAYLOAD_VALIDATORS`. Scope: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` (1 файл).
+4. [DONE] Git Commit: `feat(core): validate split status panel switch payloads` (hash: 1273224a7)
+5. [DONE] Обновить `remote-bridge-message-router.ts`: добавить case-ветки для `session:claude:thinking-switch` и `session:codex:reasoning-switch`; включить новые типы в scope-проверку. Scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts` (1 файл).
+6. [DONE] Git Commit: `feat(core): route split status panel switch commands` (hash: 2134d8cfe)
 
-### Stream B: Claude handlers split
+### Stream B + Stream C: Claude/Codex handlers split (объединённое исполнение)
 
-1. [TODO] Упростить `session-request-handler-claude-model-switch.ts` до model-only: `targetModelId` остаётся, `thinkingEnabled`/`targetReasoningEffort` берутся из `session.modelBinding`; capability-нормализация current effort на новой модели через `findClaudeModelCapabilities`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-claude-model-switch.ts` (1 файл).
-2. [TODO] Git Commit: `refactor(core): claude model-switch handler is model-only` (hash: TBD)
-3. [TODO] Создать `session-request-handler-claude-thinking-switch.ts`: thinking-only handler, mutates `reasoningEffort`+`thinkingEnabled`, сохраняет `baseModelId` из previous binding, broadcast `session:model:update`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-claude-thinking-switch.ts` (1 файл).
-4. [TODO] Git Commit: `feat(core): add claude thinking-switch handler` (hash: TBD)
-5. [TODO] Wire в `session-request-handler.ts`: новый field `claudeThinkingSwitch`, конструктор + публичный метод `handleClaudeThinkingSwitch`; обновить сигнатуру `handleClaudeModelSwitch` под новый payload. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (1 файл).
-6. [TODO] Git Commit: `feat(core): wire claude thinking-switch through session handler` (hash: TBD)
-
-### Stream C: Codex handlers split
-
-1. [TODO] Упростить `session-request-handler-codex-model-switch.ts` до model-only; effort переносится из `session.modelBinding`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.ts` (1 файл).
-2. [TODO] Git Commit: `refactor(core): codex model-switch handler is model-only` (hash: TBD)
-3. [TODO] Создать `session-request-handler-codex-reasoning-switch.ts`: reasoning-only handler, сохраняет `baseModelId`, взводит `pendingModelSwitchInjection = true`, broadcast `session:model:update`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler-codex-reasoning-switch.ts` (1 файл).
-4. [TODO] Git Commit: `feat(core): add codex reasoning-switch handler` (hash: TBD)
-5. [TODO] Wire в `session-request-handler.ts`: новый field `codexReasoningSwitch` + публичный `handleCodexReasoningSwitch`; обновить сигнатуру `handleCodexModelSwitch`. Scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts` (1 файл).
-6. [TODO] Git Commit: `feat(core): wire codex reasoning-switch through session handler` (hash: TBD)
+1. [DONE] Упростить `session-request-handler-claude-model-switch.ts` до model-only.
+2. [DONE] Git Commit: `refactor(core): claude model-switch handler is model-only` (hash: ce58a2627)
+3. [DONE] Создать `session-request-handler-codex-reasoning-switch.ts` + `session-request-handler-claude-thinking-switch.ts`.
+4. [DONE] Упростить `session-request-handler-codex-model-switch.ts` до model-only.
+5. [DONE] Git Commit: `refactor(core): codex model-switch handler is model-only` (hash: 854337310, заодно added claude-thinking-switch.ts)
+6. [DONE] Wire всех четырёх handlers в `session-request-handler.ts`.
+7. [DONE] Git Commit: `feat(core): wire decoupled status panel switch handlers` (hash: 75680e738)
 
 ### Stream D: PM client API + helpers + controller
 
-1. [TODO] Обновить `core-stream-message-types.ts` и `api.ts`: новые типы в outbound union, новые методы `requestClaudeThinkingSwitch(sessionId, thinkingEnabled, targetReasoningEffort?)` и `requestCodexReasoningSwitch(sessionId, targetReasoningEffort)`, упростить `requestClaudeModelSwitch` и `requestCodexModelSwitch`. Scope: `src/client/project-manager/core-stream-message-types.ts` + `src/client/project-manager/api.ts` (2 файла).
-2. [TODO] Git Commit: `feat(pm): split status panel switch client api` (hash: TBD)
-3. [TODO] Упростить `project-manager-dialog-model-switch-helpers.ts`: `resolveDialogClaudeSwitchRequest` → model-only, `resolveDialogCodexBaseModelId` остаётся для model-switch ветки; убрать `visibleModelId` для reasoning paths; обновить `sendDialogClaudeSwitchRequest`. Scope: `src/client/project-manager/components/sessions/project-manager-dialog-model-switch-helpers.ts` (1 файл).
-4. [TODO] Git Commit: `refactor(pm): decouple dialog switch helpers from reasoning` (hash: TBD)
-5. [TODO] Обновить `use-project-manager-dialog-session-controller.ts`: `requestCodexReasoningSwitch`/`requestClaudeThinkingSwitch` отправляют только reasoning через новые api-методы; `requestCodexModelSwitch`/`requestClaudeModelSwitch` отправляют только модель. Scope: `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts` (1 файл).
-6. [TODO] Git Commit: `refactor(pm): dialog controller dispatches independent switches` (hash: TBD)
+1. [DONE] Обновить `core-stream-message-types.ts` + `api.ts` + новые `services/switch-payloads.ts`, `services/switch-api.ts` (вынесены чтобы api.ts остался ≤500 строк).
+2. [DONE] Git Commit: `feat(pm): split status panel switch client api` (hash: f5abe8198)
+3. [DONE] Упростить helpers + controller + project-manager-runtime-session-view (callers получили model-only/reasoning-only сигнатуры).
+4. [DONE] Git Commit: `refactor(pm): dialog controller dispatches independent switches` (hash: f6351c5b7)
 
 ### Stream E: Status Panel UI cleanup
 
-1. [TODO] Очистить `status-panel-model-picker.tsx`: убрать `nextReasoning` суффикс на model-карте, убрать `<span>active</span>` на reasoning-карте, упростить `onSelectModel` до `(modelId: string) => void`. Scope: `src/client/ui/src/session/status-panel-model-picker.tsx` (1 файл).
-2. [TODO] Git Commit: `feat(ui): status panel pickers no longer mix model and reasoning` (hash: TBD)
-3. [TODO] Обновить `status-panel.tsx`: `handlePickerSelectModel(modelId)` без второго параметра, propы `onSelectClaudeModel(modelId)` и `onSelectModel(modelId)` без reasoning; цепочка callbacks в `SessionView`/`SessionViewHelpers`. Scope: `src/client/ui/src/session/status-panel.tsx` + `src/client/ui/src/session/session-view.tsx` (≤2 файла; при необходимости добавить `session-view-helpers.tsx`).
-4. [TODO] Git Commit: `refactor(ui): status panel select-model callback is model-only` (hash: TBD)
+1. [DONE] `status-panel-model-picker.tsx` без reasoning suffix и слова "active"; `onSelectModel(modelId)` без reasoning; `status-panel.tsx`, `session-view.tsx`, PM dialog session view синхронизированы под новую сигнатуру.
+2. [DONE] Git Commit: `feat(ui): status panel pickers no longer mix model and reasoning` (hash: ca8fe5db2)
 
 ### Stream F: Provider-tinted active highlight
 
-1. [TODO] Добавить `data-provider`/`data-active` атрибуты в опции picker'а; провайдерный класс на корневом контейнере popup для CSS-каскада. Scope: `src/client/ui/src/session/status-panel-model-picker.tsx` (1 файл).
-2. [TODO] Git Commit: `feat(ui): mark active picker option with provider tokens` (hash: TBD)
-3. [TODO] CSS-правила для активной опции в провайдерных токенах (border + soft fill, выравнивание с button class'ами). Scope: `media/session-view.css` (или таргетный bundle CSS — уточнить grep'ом перед правкой) (1 файл).
-4. [TODO] Git Commit: `feat(ui): tint active picker option with provider color` (hash: TBD)
+1. [DONE] CSS-правила для `.session-status-picker__option[data-active="true"][data-provider="..."]` в `media/session-view.css` (RGBA взяты из existing button-tokens).
+2. [DONE] Git Commit: `feat(ui): tint active picker option with provider color` (hash: 9056e0045)
 
 ### Stream G: Tests rewrite
 
-1. [TODO] Обновить `session-request-handler-claude-model-switch.test.ts` под model-only payload + создать `session-request-handler-claude-thinking-switch.test.ts` (thinking on/off, effort transitions, model preserved). Scope: 2 файла.
-2. [TODO] Git Commit: `test(core): cover claude model-only and thinking-only switches` (hash: TBD)
-3. [TODO] Обновить `session-request-handler-codex-model-switch.test.ts` под model-only + создать `session-request-handler-codex-reasoning-switch.test.ts` (reasoning transitions, model preserved, pendingModelSwitchInjection true). Scope: 2 файла.
-4. [TODO] Git Commit: `test(core): cover codex model-only and reasoning-only switches` (hash: TBD)
-5. [TODO] Переписать `project-manager-dialog-model-switch-helpers.test.ts` под упрощённые сигнатуры. Scope: 1 файл.
-6. [TODO] Git Commit: `test(pm): align dialog switch helpers tests with split flow` (hash: TBD)
-7. [TODO] Обновить `status-panel-model-picker.test.tsx`: проверки "model click does not affect reasoning", "reasoning click does not affect model", `data-active` highlight. Scope: 1 файл.
-8. [TODO] Git Commit: `test(ui): cover decoupled status panel picker` (hash: TBD)
+1. [DONE] Переписан `session-request-handler-claude-model-switch.test.ts` под model-only + создан `session-request-handler-claude-thinking-switch.test.ts`.
+2. [DONE] Git Commit: `test(core): cover claude model-only and thinking-only switches` (hash: a480a0357)
+3. [DONE] Переписан `session-request-handler-codex-model-switch.test.ts` + создан `session-request-handler-codex-reasoning-switch.test.ts`.
+4. [DONE] Git Commit: `test(core): cover codex model-only and reasoning-only switches` (hash: b7123827f)
+5. [DONE] Обновлены `project-manager-dialog-model-switch-helpers.test.ts`, `status-panel-model-picker.test.tsx`, `project-manager-session-view.test.tsx` под decoupled API.
+6. [DONE] Git Commit: `test(pm,ui): cover decoupled status panel switch surfaces` (hash: 7bb50bf09)
+7. [DONE] Fix-up: claude effort assertion выровнен под текущие capabilities (все три модели поддерживают xhigh).
+8. [DONE] Git Commit: `test(core): align claude model-switch effort assertion with capabilities` (hash: 7058b3881)
 
 ### Stream H: SSOT update + release prep + build
 
