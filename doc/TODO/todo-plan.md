@@ -78,8 +78,8 @@
 
 ### Stream H: SSOT update + release prep + build
 
-1. [TODO] Обновить SSOT: SystemArchitecture §3 Invariant 14 (Claude/Codex switch contract), SessionStatusPanel SSOT, Modules/Claude.md, Modules/Codex.md (по делу — сократить ссылки на coupled payload). Scope: ≤3 файла за коммит, при необходимости разбить на 2 коммита.
-2. [TODO] Git Commit: `docs(ssot): document decoupled status panel switch transport` (hash: TBD)
+1. [DONE] Обновить SSOT: SystemArchitecture Invariant 14 (1.2.120 entry о raздельных switch-командах) + SessionStatusPanel SSOT (контракт и подсветка активного пункта).
+2. [DONE] Git Commit: `docs(ssot): document decoupled status panel switch transport` (hash: 25cc21086)
 3. [TODO] README + CHANGELOG для версии 1.2.120: "Current Release — v1.2.120" + новая секция в CHANGELOG. Scope: `README.md` + `CHANGELOG.md` (2 файла).
 4. [TODO] Git Commit: `docs: prepare release 1.2.120` (hash: TBD)
 5. [TODO] Запустить `./scripts/build-all.sh` (поднимет версии до `1.2.120`, пересоберёт пакеты, выложит tarball-ы), скопировать tarball-ы в `doc/tmp/releases/`. Scope: build artefacts + version bumps (контролируется скриптом).
