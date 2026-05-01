@@ -262,6 +262,13 @@ export type CodexModelSwitchRequestPayload = {
   readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort;
 };
 
+export type ClaudeModelSwitchRequestPayload = {
+  readonly sessionId: string;
+  readonly targetModelId: "sonnet" | "opus" | "haiku";
+  readonly targetReasoningEffort?: CodexModelSwitchReasoningEffort | "max";
+  readonly thinkingEnabled: boolean;
+};
+
 export type OutgoingMessage =
   | { readonly type: "projects:list" }
   | {
@@ -287,6 +294,10 @@ export type OutgoingMessage =
   | {
       readonly type: "session:codex:model-switch";
       readonly payload: CodexModelSwitchRequestPayload;
+    }
+  | {
+      readonly type: "session:claude:model-switch";
+      readonly payload: ClaudeModelSwitchRequestPayload;
     }
   | {
       readonly type: "session:message";

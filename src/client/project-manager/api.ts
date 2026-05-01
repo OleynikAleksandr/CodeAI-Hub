@@ -10,6 +10,7 @@ import {
   type WorkflowStateSnapshot,
 } from "./services/workflow-state-client";
 import type {
+  ClaudeModelSwitchRequestPayload,
   CodexModelSwitchReasoningEffort,
   CoreStatePayload,
   IncomingMessage,
@@ -237,6 +238,18 @@ class ProjectManagerApi {
     this.send({
       type: "session:codex:model-switch",
       payload: { sessionId, targetModelId, targetReasoningEffort },
+    });
+  }
+
+  requestClaudeModelSwitch(
+    sessionId: string,
+    targetModelId: ClaudeModelSwitchRequestPayload["targetModelId"],
+    thinkingEnabled: boolean,
+    targetReasoningEffort?: ClaudeModelSwitchRequestPayload["targetReasoningEffort"]
+  ): void {
+    this.send({
+      type: "session:claude:model-switch",
+      payload: { sessionId, targetModelId, targetReasoningEffort, thinkingEnabled },
     });
   }
 
