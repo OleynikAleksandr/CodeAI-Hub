@@ -15,9 +15,6 @@ import {
 import {
   type ClaudeModelAliasId,
   type ClaudeThinkingSelection,
-  resolveDialogClaudeSwitchRequest,
-  resolveDialogCodexBaseModelId,
-  sendDialogClaudeSwitchRequest,
 } from "./project-manager-dialog-model-switch-helpers";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
@@ -424,44 +421,32 @@ export const useProjectManagerDialogSessionController = (
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
 
-  const requestCodexModelSwitch = useCallback(
-    (modelId: string, reasoning: CodexReasoningLevel) => {
-      const currentSession = sessionRef.current;
-      if (currentSession?.providerIds[0] !== "codexCli") {
-        return;
-      }
-      api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);
-    },
-    []
-  );
+  const requestCodexModelSwitch = useCallback((modelId: string) => {
+    const currentSession = sessionRef.current;
+    if (currentSession?.providerIds[0] !== "codexCli") {
+      return;
+    }
+    api.requestCodexModelSwitch(currentSession.id, modelId);
+  }, []);
 
   const requestCodexReasoningSwitch = useCallback(
     (reasoning: CodexReasoningLevel) => {
       const currentSession = sessionRef.current;
-      const modelId = resolveDialogCodexBaseModelId({
-        session: currentSession,
-        visibleModelId: currentSession
-          ? snapshots[currentSession.id]?.status.models?.[0]?.modelId
-          : undefined,
-      });
-      if (!(modelId && currentSession)) {
+      if (currentSession?.providerIds[0] !== "codexCli") {
         return;
       }
-      api.requestCodexModelSwitch(currentSession.id, modelId, reasoning);
+      api.requestCodexReasoningSwitch(currentSession.id, reasoning);
     },
-    [snapshots]
+    []
   );
 
   const requestClaudeModelSwitch = useCallback(
-    (modelId: ClaudeModelAliasId, thinking: ClaudeThinkingSelection) => {
-      sendDialogClaudeSwitchRequest(
-        api.requestClaudeModelSwitch.bind(api),
-        resolveDialogClaudeSwitchRequest({
-          requestedModelId: modelId,
-          session: sessionRef.current,
-          thinking,
-        })
-      );
+    (modelId: ClaudeModelAliasId) => {
+      const currentSession = sessionRef.current;
+      if (currentSession?.providerIds[0] !== "claudeCodeCli") {
+        return;
+      }
+      api.requestClaudeModelSwitch(currentSession.id, modelId);
     },
     []
   );
@@ -469,18 +454,17 @@ export const useProjectManagerDialogSessionController = (
   const requestClaudeThinkingSwitch = useCallback(
     (thinking: ClaudeThinkingSelection) => {
       const currentSession = sessionRef.current;
-      sendDialogClaudeSwitchRequest(
-        api.requestClaudeModelSwitch.bind(api),
-        resolveDialogClaudeSwitchRequest({
-          session: currentSession,
-          thinking,
-          visibleModelId: currentSession
-            ? snapshots[currentSession.id]?.status.models?.[0]?.modelId
-            : undefined,
-        })
+      if (currentSession?.providerIds[0] !== "claudeCodeCli") {
+        return;
+      }
+      const thinkingEnabled = thinking !== "off";
+      api.requestClaudeThinkingSwitch(
+        currentSession.id,
+        thinkingEnabled,
+        thinkingEnabled ? thinking : undefined
       );
     },
-    [snapshots]
+    []
   );
 
   return {

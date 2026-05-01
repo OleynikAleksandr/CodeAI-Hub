@@ -37,19 +37,7 @@ type ProjectManagerSessionViewProps = {
   readonly startupStage?: string;
 };
 
-const EFFECTIVE_MODEL_SUFFIX_PATTERN = /\s+(reasoning|thinking):[^\s]+$/;
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
-
-const isClaudeModelAliasId = (value: string): value is ClaudeModelAliasId =>
-  value === "sonnet" || value === "opus" || value === "haiku";
-
-const normalizeClaudeModelId = (value: string): ClaudeModelAliasId | null => {
-  const baseModelId = value.replace(EFFECTIVE_MODEL_SUFFIX_PATTERN, "");
-  if (baseModelId === "default") {
-    return "sonnet";
-  }
-  return isClaudeModelAliasId(baseModelId) ? baseModelId : null;
-};
 
 
 const ProjectManagerRuntimeSessionView = ({
@@ -367,96 +355,58 @@ const ProjectManagerRuntimeSessionView = ({
     workspacePath,
     reload
   );
-  const resolveCodexBaseModelId = useCallback(
-    (sessionId: string): string | null => {
-      const session = sessionsRef.current.find(
-        (candidate) => candidate.id === sessionId
-      );
-      if (session?.providerIds[0] !== "codexCli") {
-        return null;
-      }
-      const boundModelId =
-        session.modelBinding?.baseModelId ?? session.modelBinding?.modelId;
-      const visibleModelId = snapshots[sessionId]?.status.models?.[0]?.modelId;
-      return (boundModelId ?? visibleModelId ?? "").replace(
-        EFFECTIVE_MODEL_SUFFIX_PATTERN,
-        ""
-      );
-    },
-    [snapshots]
-  );
-  const resolveClaudeBaseModelId = useCallback(
-    (sessionId: string): ClaudeModelAliasId | null => {
-      const session = sessionsRef.current.find(
-        (candidate) => candidate.id === sessionId
-      );
-      if (session?.providerIds[0] !== "claudeCodeCli") {
-        return null;
-      }
-      const boundModelId =
-        session.modelBinding?.baseModelId ?? session.modelBinding?.modelId;
-      const visibleModelId = snapshots[sessionId]?.status.models?.[0]?.modelId;
-      return normalizeClaudeModelId(boundModelId ?? visibleModelId ?? "");
-    },
-    [snapshots]
-  );
   const handleSelectModel = useCallback(
-    (sessionId: string, modelId: string, reasoning: CodexReasoningLevel) => {
+    (sessionId: string, modelId: string) => {
       const session = sessionsRef.current.find(
         (candidate) => candidate.id === sessionId
       );
       if (session?.providerIds[0] !== "codexCli") {
         return;
       }
-      api.requestCodexModelSwitch(sessionId, modelId, reasoning);
+      api.requestCodexModelSwitch(sessionId, modelId);
     },
     []
   );
   const handleSelectReasoning = useCallback(
     (sessionId: string, reasoning: CodexReasoningLevel) => {
-      const modelId = resolveCodexBaseModelId(sessionId);
-      if (!modelId) {
+      const session = sessionsRef.current.find(
+        (candidate) => candidate.id === sessionId
+      );
+      if (session?.providerIds[0] !== "codexCli") {
         return;
       }
-      api.requestCodexModelSwitch(sessionId, modelId, reasoning);
+      api.requestCodexReasoningSwitch(sessionId, reasoning);
     },
-    [resolveCodexBaseModelId]
+    []
   );
   const handleSelectClaudeModel = useCallback(
-    (
-      sessionId: string,
-      modelId: ClaudeModelAliasId,
-      thinking: ClaudeThinkingSelection
-    ) => {
+    (sessionId: string, modelId: ClaudeModelAliasId) => {
       const session = sessionsRef.current.find(
         (candidate) => candidate.id === sessionId
       );
       if (session?.providerIds[0] !== "claudeCodeCli") {
         return;
       }
-      api.requestClaudeModelSwitch(
-        sessionId,
-        modelId,
-        thinking !== "off",
-        thinking === "off" ? undefined : thinking
-      );
+      api.requestClaudeModelSwitch(sessionId, modelId);
     },
     []
   );
   const handleSelectClaudeThinking = useCallback(
     (sessionId: string, thinking: ClaudeThinkingSelection) => {
-      const modelId = resolveClaudeBaseModelId(sessionId);
-      if (!modelId) {
+      const session = sessionsRef.current.find(
+        (candidate) => candidate.id === sessionId
+      );
+      if (session?.providerIds[0] !== "claudeCodeCli") {
         return;
       }
-      api.requestClaudeModelSwitch(
+      const thinkingEnabled = thinking !== "off";
+      api.requestClaudeThinkingSwitch(
         sessionId,
-        modelId,
-        thinking !== "off",
-        thinking === "off" ? undefined : thinking
+        thinkingEnabled,
+        thinkingEnabled ? thinking : undefined
       );
     },
-    [resolveClaudeBaseModelId]
+    []
   );
   const activeRecord = sessions.find((session) => session.id === scopedActiveSessionId) ?? null;
   const showThinkingMessages = resolveSessionThinkingDisplayEnabled({
