@@ -67,8 +67,8 @@
 
 ### Stream F — Client transport
 
-1. [TODO] Add Project Manager client outbound type and API method for Claude switch. Scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`; commit message: `feat(pm): add claude model switch client api`.
-2. [TODO] Git Commit: `feat(pm): add claude model switch client api` (hash: TBD)
+1. [DONE] Add Project Manager client outbound type and API method for Claude switch. Verification: `npm run build:project-manager`, `npm run lint`. Scope: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`; commit message: `feat(pm): add claude model switch client api`.
+2. [DONE] Git Commit: `feat(pm): add claude model switch client api` (hash: 1ea735ae2)
 
 ## Phase 3 — Claude Provider Applied Config (owner: Claude provider, updated: 2026-05-01)
 
