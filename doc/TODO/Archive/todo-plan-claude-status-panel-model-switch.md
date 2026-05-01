@@ -136,4 +136,4 @@
 ### Stream P — Closeout after user acceptance only
 
 1. [DONE] Archive completed `doc/TODO/todo-plan.md`, archive or promote planning-doc conclusions, update `Docs_Index.md`, update session report as COMPLETED. Scope: docs only; commit message: `docs: close claude status panel model switch scope`.
-2. [DONE] Git Commit: `docs: close claude status panel model switch scope` (hash: TBD)
+2. [DONE] Git Commit: `docs: close claude status panel model switch scope` (hash: 9803a2151)
