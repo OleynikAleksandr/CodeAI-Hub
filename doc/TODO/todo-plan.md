@@ -83,8 +83,8 @@
 
 ### Stream H — Provider-aware picker UI
 
-1. [TODO] Generalize Status Panel picker/options for Claude model and thinking choices while preserving Codex behavior. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/status-panel-model-picker.tsx`, `src/client/ui/src/session/status-panel-model-picker.test.tsx`; commit message: `feat(ui): add claude status panel picker options`.
-2. [TODO] Git Commit: `feat(ui): add claude status panel picker options` (hash: TBD)
+1. [DONE] Generalize Status Panel picker/options for Claude model and thinking choices while preserving Codex behavior. Verification: `npx tsx --test src/client/ui/src/session/status-panel-model-picker.test.tsx`, `npm run typecheck:webview`, `npm run lint`. Scope: `src/client/ui/src/session/status-panel.tsx`, `src/client/ui/src/session/status-panel-model-picker.tsx`, `src/client/ui/src/session/status-panel-model-picker.test.tsx`; commit message: `feat(ui): add claude status panel picker options`.
+2. [DONE] Git Commit: `feat(ui): add claude status panel picker options` (hash: 752ebb15d)
 
 ### Stream I — PM callback wiring
 
