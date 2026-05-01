@@ -86,6 +86,21 @@
 6. [DONE] Git Commit: `chore: build release 1.2.120` (hash: e972bbb03)
 7. [DONE] `./scripts/build-release.sh --use-current-version` отработал; SDK exclusions verified, VSIX surface verified, `codeai-hub-1.2.120.vsix` (2.7M, sha256 `de64b7ce20c1b934d0f51627e1f0cc2bfc514240ee303618309f4a8f673fedaa`) готов.
 8. [DONE] Git Commit: `chore: finalize release 1.2.120` (hash: ee5d187ea)
-9. [BLOCKED-ON-USER] **Передать VSIX пользователю и дождаться явного подтверждения retest'а** (model-only клик не трогает reasoning, reasoning-only клик не трогает модель, активный пункт обеих карт подсвечен провайдерным цветом без слова "active" и без reasoning-суффикса). Closeout/архивирование запрещено до получения подтверждения. При найденных регрессиях — открывать новые micro-задачи перед closeout.
-10. [TODO] Архивировать `Plans/StatusPanel_ModelReasoningDecoupling_Architecture.md` (после миграции итогов в SSOT и после пользовательского подтверждения) в `Plans/Archive/`, архивировать `todo-plan.md` в `doc/TODO/Archive/todo-plan-status-panel-decoupling.md`, обновить `Docs_Index.md`. Scope: ≤3 файла.
+9. [USER-RETEST-1.2.120] Пользователь подтвердил основной decoupling, но указал на UI gap: подсветка опции в карте должна выглядеть **как настоящая кнопка** (default → hover → active в провайдерных цветах), без "плоской" неизменной подкраски. Открываем Stream I.
+
+### Stream I: button-like picker hover+active highlight (retest fix → release 1.2.121)
+
+1. [TODO] Перевести опции picker'а с inline `optionStyle` на CSS-класс `.session-status-picker__option`, добавить hover/active state через те же провайдерные tokens (`--bg`, `--bg-hover`, `--bg-active`, `--border`, `--border-hover`, `--border-active`, `--accent`, `--accent-hover`, `--accent-active`), что и у `session-status-button--*`. Picker-контейнер получает provider tokens через `data-provider`. Scope: `src/client/ui/src/session/status-panel-model-picker.tsx` + `media/session-view.css` (2 файла).
+2. [TODO] Git Commit: `feat(ui): picker option matches status panel button states` (hash: TBD)
+3. [TODO] README + CHANGELOG для версии 1.2.121: новая секция в CHANGELOG, README "Current Release — v1.2.121". Scope: 2 файла.
+4. [TODO] Git Commit: `docs: prepare release 1.2.121` (hash: TBD)
+5. [TODO] `./scripts/build-all.sh` (1.2.121 tarball-ы → `doc/tmp/releases/`).
+6. [TODO] Git Commit: `chore: build release 1.2.121` (hash: TBD)
+7. [TODO] `./scripts/build-release.sh --use-current-version` → `codeai-hub-1.2.121.vsix`.
+8. [TODO] Git Commit: `chore: finalize release 1.2.121` (hash: TBD)
+9. [BLOCKED-ON-USER] **Передать VSIX 1.2.121 и дождаться явного подтверждения retest'а** (default state → hover засвечивается → click переключает active с предыдущего на новое + закрывает карту, в провайдерных цветах для Claude и Codex). Closeout/архивирование запрещено до подтверждения.
+
+### Closeout (только после подтверждения 1.2.121)
+
+10. [TODO] Архивировать `Plans/StatusPanel_ModelReasoningDecoupling_Architecture.md` → `Plans/Archive/`, `todo-plan.md` → `doc/TODO/Archive/todo-plan-status-panel-decoupling.md`, обновить `Docs_Index.md`. Scope: ≤3 файла.
 11. [TODO] Git Commit: `docs: close status panel decoupling scope` (hash: TBD)
