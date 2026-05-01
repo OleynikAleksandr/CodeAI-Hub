@@ -46,11 +46,11 @@
 
 ### Stream 1.1 — Scenario prompt resolver bypass
 
-3. **[TODO]** Добавить параметр `bypassUpstreamGuard?: boolean` в `NativeRequestCaptureScenarioPromptParams` и пробросить его в `resolveScenarioInputPath()`. При `bypassUpstreamGuard === true`: пропустить throws на строках 87-89 (`Missing Final_Description.md`) и 94-99 (`Missing virtual-simulation.md`), вернуть canonical path даже если соответствующее поле workflow state пустое или `gating.blocked.diagram_modules === true`. Поведение по умолчанию (`bypassUpstreamGuard === false | undefined`) сохраняется.
+3. **[DONE]** Добавить параметр `bypassUpstreamGuard?: boolean` в `NativeRequestCaptureScenarioPromptParams` и пробросить его в `resolveScenarioInputPath()`. При `bypassUpstreamGuard === true`: пропустить throws на строках 87-89 (`Missing Final_Description.md`) и 94-99 (`Missing virtual-simulation.md`), вернуть canonical path даже если соответствующее поле workflow state пустое или `gating.blocked.diagram_modules === true`. Поведение по умолчанию (`bypassUpstreamGuard === false | undefined`) сохраняется.
    - **Scope:** 1 файл — `src/client/project-manager/services/native-request-capture-scenario-prompt.ts`.
    - **Ожидаемый commit message:** `feat: add bypassUpstreamGuard to native request capture scenario prompt resolver`
-4. **[TODO]** Git Commit: `feat: add bypassUpstreamGuard to native request capture scenario prompt resolver` (hash: TBD)
-5. **[TODO]** Юнит-тест на новый bypass-путь: для пустого workflow state с `bypassUpstreamGuard: true` ни VS, ни DM сценарии не throw'ятся, возвращают canonical paths (`Final_Description.md`, `virtual-simulation.md` или `product-parts.index.md` в зависимости от substep). Без флага старое поведение сохраняется (тест на throws).
+4. **[DONE]** Git Commit: `feat: add bypassUpstreamGuard to native request capture scenario prompt resolver` (hash: `aa5add88c`)
+5. **[DONE]** Юнит-тест на новый bypass-путь: для пустого workflow state с `bypassUpstreamGuard: true` ни VS, ни DM сценарии не throw'ятся, возвращают canonical paths (`Final_Description.md`, `virtual-simulation.md` или `product-parts.index.md` в зависимости от substep). Без флага старое поведение сохраняется (тест на throws).
    - **Scope:** 1 файл — новый `src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts`.
    - **Ожидаемый commit message:** `test: cover bypassUpstreamGuard path in scenario prompt resolver`
 6. **[TODO]** Git Commit: `test: cover bypassUpstreamGuard path in scenario prompt resolver` (hash: TBD)
