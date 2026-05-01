@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.123] - 2026-05-01
+### Fixed
+- **Provider Native Request Capture now works on empty workspaces for workflow scenarios.** The Project Manager capture runner bypasses upstream artifact gating only for the diagnostic capture path, so `Virtual Simulation` and `Diagram Modules` captures can generate provider request artifacts before `Final_Description.md` or `virtual-simulation.md` exists. Normal workflow turns still enforce the `Workflow_CLI.md` upstream artifact contract.
+
+### Tests
+- **Capture bypass verification added.** New Project Manager unit coverage checks the resolver default guard behavior, diagnostic bypass canonical paths, runner capture payloads for `Virtual Simulation` / `Diagram Modules`, and the unchanged direct `Translation` path.
+
 ## [1.2.122] - 2026-05-01
 ### Changed
 - **Cleanup release for dead-code and stale-reference hygiene.** Removed the unused `diagram-modules-agent` source stub, deleted dead CSS selectors from the legacy webview/session and Project Manager stylesheets, removed stale localization keys, and corrected documentation/config references that no longer matched the current codebase.

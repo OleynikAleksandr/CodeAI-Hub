@@ -71,15 +71,15 @@
 11. **[DONE]** Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33 (Settings ownership invariant) — добавить уточнение: "PM-side capture runner всегда передаёт `bypassUpstreamGuard: true` в `buildNativeRequestCaptureScenarioPrompt()`, чтобы диагностическая capture-кнопка работала на пустом workspace без upstream артефактов; product contract из `Workflow_CLI.md` §5 (upstream artifact requirement для обычных workflow turns) этим не отменяется и применяется только к настоящим workflow turns через `workflow-step-start-service.ts`". Параллельно проверить, не требует ли §4 (`Где искать правду в коде`) обновления списка PM-side capture файлов.
    - **Scope:** 1 файл — `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`.
    - **Ожидаемый commit message:** `docs: native request capture skips upstream guard in diagnostic mode`
-12. **[TODO]** Git Commit: `docs: native request capture skips upstream guard in diagnostic mode` (hash: TBD)
+12. **[DONE]** Git Commit: `docs: native request capture skips upstream guard in diagnostic mode` (hash: `7131fb9fb`)
 
 ### Stream: Release Build
 
-13. **[TODO]** Manual verify перед релизом: запустить `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`; затем открыть расширение в empty workspace (без `.codeai-hub/<slug>/` артефактов), Settings → General → Provider Native Request Capture, выбрать сценарий `Diagram Modules` + Codex GPT-5.3-Codex и нажать `Capture Codex Native Request`. Раньше падало с `Missing virtual-simulation.md`. Должно успешно создать пару `.jsonl` + `.md` артефактов в `~/.codeai-hub/logs/native-request-capture/`. Аналогично проверить сценарий `Virtual Simulation`. Translation и Description — smoke-проверка, что не сломались.
+13. **[DONE]** Manual verify перед релизом: запустить `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`; затем открыть расширение в empty workspace (без `.codeai-hub/<slug>/` артефактов), Settings → General → Provider Native Request Capture, выбрать сценарий `Diagram Modules` + Codex GPT-5.3-Codex и нажать `Capture Codex Native Request`. Раньше падало с `Missing virtual-simulation.md`. Должно успешно создать пару `.jsonl` + `.md` артефактов в `~/.codeai-hub/logs/native-request-capture/`. Аналогично проверить сценарий `Virtual Simulation`. Translation и Description — smoke-проверка, что не сломались.
     - **Scope:** commands/runtime only — `npm run build:project-manager`, `npm run build:webview`, `npm run typecheck:webview`, manual VSIX/dev-run verification.
     - **Ожидаемый commit message:** нет — verification-only, файловых изменений быть не должно.
-14. **[TODO]** Git Commit: `n/a — verification-only, no file changes` (hash: n/a)
-15. **[TODO]** README/CHANGELOG обновить под предстоящую версию (текущая `1.2.122` + 1 = `1.2.123`): в `README.md` секция "Current Release", в `CHANGELOG.md` новый раздел `## [1.2.123]` с описанием Phase 1 фикса. Это коммит ДО `build-all.sh`.
+14. **[DONE]** Git Commit: `n/a — verification-only, no file changes` (hash: n/a)
+15. **[DONE]** README/CHANGELOG обновить под предстоящую версию (текущая `1.2.122` + 1 = `1.2.123`): в `README.md` секция "Current Release", в `CHANGELOG.md` новый раздел `## [1.2.123]` с описанием Phase 1 фикса. Это коммит ДО `build-all.sh`.
     - **Scope:** 2 файла — `README.md`, `CHANGELOG.md`.
     - **Ожидаемый commit message:** `docs: prepare release 1.2.123`
 16. **[TODO]** Git Commit: `docs: prepare release 1.2.123` (hash: TBD)
