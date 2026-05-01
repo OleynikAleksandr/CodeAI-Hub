@@ -56,14 +56,14 @@ const ProjectManagerDialogSessionView = (props: {
         coreConnectionStatus={connection.status}
         onCloseSession={() => props.onExit()}
         onFileLinkActivate={props.onFileLinkActivate}
-        onSelectClaudeModel={(_sessionId, modelId, thinking) =>
-          requestClaudeModelSwitch?.(modelId, thinking)
+        onSelectClaudeModel={(_sessionId, modelId) =>
+          requestClaudeModelSwitch?.(modelId)
         }
         onSelectClaudeThinking={(_sessionId, thinking) =>
           requestClaudeThinkingSwitch?.(thinking)
         }
-        onSelectModel={(_sessionId, modelId, reasoning) =>
-          requestCodexModelSwitch(modelId, reasoning)
+        onSelectModel={(_sessionId, modelId) =>
+          requestCodexModelSwitch(modelId)
         }
         onSelectReasoning={(_sessionId, reasoning) =>
           requestCodexReasoningSwitch(reasoning)
@@ -88,14 +88,14 @@ const ProjectManagerDialogSessionView = (props: {
       coreConnectionStatus={connection.status}
       onCloseSession={() => props.onExit()}
       onFileLinkActivate={props.onFileLinkActivate}
-      onSelectClaudeModel={(_sessionId, modelId, thinking) =>
-        requestClaudeModelSwitch?.(modelId, thinking)
+      onSelectClaudeModel={(_sessionId, modelId) =>
+        requestClaudeModelSwitch?.(modelId)
       }
       onSelectClaudeThinking={(_sessionId, thinking) =>
         requestClaudeThinkingSwitch?.(thinking)
       }
-      onSelectModel={(_sessionId, modelId, reasoning) =>
-        requestCodexModelSwitch(modelId, reasoning)
+      onSelectModel={(_sessionId, modelId) =>
+        requestCodexModelSwitch(modelId)
       }
       onSelectReasoning={(_sessionId, reasoning) =>
         requestCodexReasoningSwitch(reasoning)

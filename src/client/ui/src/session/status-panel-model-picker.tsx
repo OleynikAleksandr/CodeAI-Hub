@@ -17,7 +17,7 @@ interface StatusPanelModelPickerProps {
   readonly currentReasoning?: string;
   readonly mode: StatusPanelPickerMode;
   readonly onClose: () => void;
-  readonly onSelectModel?: (modelId: string, reasoning: string) => void;
+  readonly onSelectModel?: (modelId: string) => void;
   readonly onSelectReasoning?: (reasoning: string) => void;
   readonly providerId: ProviderStackId;
 }
@@ -178,22 +178,31 @@ export const StatusPanelModelPicker = ({
 
   if (mode === "reasoning") {
     return (
-      <div className="session-status-picker" style={pickerStyle(anchorLeft)}>
-        {config.currentModel.reasoningOptions.map((reasoning) => (
-          <button
-            data-reasoning={reasoning}
-            key={reasoning}
-            onClick={() => {
-              onSelectReasoning?.(reasoning);
-              onClose();
-            }}
-            style={optionStyle}
-            type="button"
-          >
-            <span>{reasoning}</span>
-            {reasoning === config.currentReasoning ? <span>active</span> : null}
-          </button>
-        ))}
+      <div
+        className="session-status-picker"
+        data-provider={providerId}
+        style={pickerStyle(anchorLeft)}
+      >
+        {config.currentModel.reasoningOptions.map((reasoning) => {
+          const isActive = reasoning === config.currentReasoning;
+          return (
+            <button
+              className="session-status-picker__option"
+              data-active={isActive ? "true" : undefined}
+              data-provider={providerId}
+              data-reasoning={reasoning}
+              key={reasoning}
+              onClick={() => {
+                onSelectReasoning?.(reasoning);
+                onClose();
+              }}
+              style={optionStyle}
+              type="button"
+            >
+              <span>{reasoning}</span>
+            </button>
+          );
+        })}
         <button onClick={onClose} style={closeStyle} type="button">
           Close
         </button>
@@ -202,26 +211,28 @@ export const StatusPanelModelPicker = ({
   }
 
   return (
-    <div className="session-status-picker" style={pickerStyle(anchorLeft)}>
+    <div
+      className="session-status-picker"
+      data-provider={providerId}
+      style={pickerStyle(anchorLeft)}
+    >
       {config.models.map((model) => {
-        const nextReasoning = model.reasoningOptions.includes(
-          config.currentReasoning
-        )
-          ? config.currentReasoning
-          : model.defaultReasoning;
+        const isActive = model.id === config.currentModel.id;
         return (
           <button
+            className="session-status-picker__option"
+            data-active={isActive ? "true" : undefined}
             data-model-id={model.id}
+            data-provider={providerId}
             key={model.id}
             onClick={() => {
-              onSelectModel?.(model.id, nextReasoning);
+              onSelectModel?.(model.id);
               onClose();
             }}
             style={optionStyle}
             type="button"
           >
             <span>{model.displayName}</span>
-            <span>{nextReasoning}</span>
           </button>
         );
       })}

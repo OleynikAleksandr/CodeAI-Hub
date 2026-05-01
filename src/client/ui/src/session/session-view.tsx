@@ -68,18 +68,13 @@ interface SessionViewProps {
   readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
   readonly onSelectClaudeModel?: (
     sessionId: string,
-    modelId: ClaudeModelAliasId,
-    thinking: ClaudeThinkingSelection
+    modelId: ClaudeModelAliasId
   ) => void;
   readonly onSelectClaudeThinking?: (
     sessionId: string,
     thinking: ClaudeThinkingSelection
   ) => void;
-  readonly onSelectModel?: (
-    sessionId: string,
-    modelId: string,
-    reasoning: CodexReasoningLevel
-  ) => void;
+  readonly onSelectModel?: (sessionId: string, modelId: string) => void;
   readonly onSelectReasoning?: (
     sessionId: string,
     reasoning: CodexReasoningLevel
@@ -247,8 +242,7 @@ const SessionViewBody = ({
             connectionStatus={coreConnectionStatus}
             onSelectClaudeModel={
               onSelectClaudeModel
-                ? (modelId, thinking) =>
-                    onSelectClaudeModel(activeSessionId, modelId, thinking)
+                ? (modelId) => onSelectClaudeModel(activeSessionId, modelId)
                 : undefined
             }
             onSelectClaudeThinking={
@@ -259,8 +253,7 @@ const SessionViewBody = ({
             }
             onSelectModel={
               onSelectModel
-                ? (modelId, reasoning) =>
-                    onSelectModel(activeSessionId, modelId, reasoning)
+                ? (modelId) => onSelectModel(activeSessionId, modelId)
                 : undefined
             }
             onSelectReasoning={

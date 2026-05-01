@@ -23,15 +23,9 @@ type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 interface StatusPanelProps {
   readonly connectionDetail?: string;
   readonly connectionStatus: CoreConnectionStatus;
-  readonly onSelectClaudeModel?: (
-    modelId: ClaudeModelAliasId,
-    thinking: ClaudeThinkingSelection
-  ) => void;
+  readonly onSelectClaudeModel?: (modelId: ClaudeModelAliasId) => void;
   readonly onSelectClaudeThinking?: (thinking: ClaudeThinkingSelection) => void;
-  readonly onSelectModel?: (
-    modelId: string,
-    reasoning: CodexReasoningLevel
-  ) => void;
+  readonly onSelectModel?: (modelId: string) => void;
   readonly onSelectReasoning?: (reasoning: CodexReasoningLevel) => void;
   readonly status: SessionStatusInfo | null;
   readonly tokenDebugSummary?: string;
@@ -142,20 +136,13 @@ const StatusPanel = ({
       anchorLeft: anchorElement?.offsetLeft ?? 0,
     });
   };
-  const handlePickerSelectModel = (
-    modelId: string,
-    reasoning: string
-  ): void => {
-    if (
-      model.providerId === "claudeCodeCli" &&
-      isClaudeModelAliasId(modelId) &&
-      isClaudeThinkingSelection(reasoning)
-    ) {
-      onSelectClaudeModel?.(modelId, reasoning);
+  const handlePickerSelectModel = (modelId: string): void => {
+    if (model.providerId === "claudeCodeCli" && isClaudeModelAliasId(modelId)) {
+      onSelectClaudeModel?.(modelId);
       return;
     }
-    if (model.providerId === "codexCli" && isCodexReasoningLevel(reasoning)) {
-      onSelectModel?.(modelId, reasoning);
+    if (model.providerId === "codexCli") {
+      onSelectModel?.(modelId);
     }
   };
   const handlePickerSelectReasoning = (reasoning: string): void => {
