@@ -238,7 +238,7 @@
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.127` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reinstall retry`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench reinstall retry` (hash: 53c81543f)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reinstall retry release build`).
-6. [IN_PROGRESS] Git Commit: `docs: record capture workbench reinstall retry release build` (hash: TBD)
+6. [DONE] Git Commit: `docs: record capture workbench reinstall retry release build` (hash: 3e95cda59)
 
 ### Stream 11H — User Visual Acceptance Testing (Fresh Install Retest)
 
