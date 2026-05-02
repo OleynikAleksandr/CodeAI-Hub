@@ -201,7 +201,7 @@
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench crash fix`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench crash fix` (hash: 4084a781b)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench crash fix release build`).
-6. [IN_PROGRESS] Git Commit: `docs: record capture workbench crash fix release build` (hash: TBD)
+6. [DONE] Git Commit: `docs: record capture workbench crash fix release build` (hash: ccc8aba8a)
 
 ### Stream 11C — User Visual Acceptance Testing (Retest)
 
