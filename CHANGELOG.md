@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.126] - 2026-05-02
+### Fixed
+- **Capture Workbench workflow-step captures now keep the Project Manager API receiver bound.** Description, Virtual Simulation, and Diagram Modules managed capture can resolve workflow state without throwing `this.getHttpUrl is not a function`; Translation remains on the direct capture path.
+
+### Tests
+- **Workbench runner coverage now reproduces class-style API receiver binding.** The regression test exercises workflow scenario prompt building with a transport method that depends on `this.getHttpUrl()`.
+
 ## [1.2.125] - 2026-05-02
 ### Fixed
 - **Detached Capture Workbench selectors no longer use native HTML popup controls.** Step, Provider, Model, and Reasoning now render DOM-owned button/listbox controls to avoid the standalone CEF/macOS native popup crash path seen in `1.2.124`.
