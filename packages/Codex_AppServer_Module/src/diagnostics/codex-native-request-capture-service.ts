@@ -1,7 +1,4 @@
-import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { homedir } from "node:os";
-import path from "node:path";
 import { buildCodexReasoningSummaryParams } from "../app-server/codex-reasoning-summary-params";
 import {
   type CodexWorkflowInvocationProfile,
@@ -16,6 +13,13 @@ import type {
   ModuleReporter,
 } from "../types";
 import {
+  buildCodexNativeRequestCaptureAppliedEnvelope,
+  type CodexNativeRequestCaptureAppliedEnvelopeInput,
+  type CodexNativeRequestCaptureAppliedInputEnvelope,
+  parseProviderHomeRolloutJsonl,
+  resolveCodexNativeRequestCaptureTurnReasoningSummaryMode,
+} from "./codex-native-request-capture-applied-envelope";
+import {
   buildCodexNativeTranslationCapturePromptProfile,
   buildCodexNativeTranslationThreadStartParams,
   buildCodexNativeTranslationTurnStartParams,
@@ -24,14 +28,6 @@ import {
 } from "./codex-native-translation-capture-profile";
 
 const DIAGNOSTIC_TURN_TIMEOUT_MS = 35_000;
-const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
-const DEFAULT_REASONING_SUMMARY_ENABLED = true;
-const DEFAULT_SETTINGS_PATH = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
-  "settings.json"
-);
 const PROVIDER_HOME_ROLLOUT_CONTEXT_KIND =
   "codex_provider_home_rollout_context";
 
@@ -43,6 +39,9 @@ export interface CodexNativeRequestCaptureOptions {
   readonly invocationPurpose?: CodexNativeRequestCaptureInvocationPurpose;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly recordAppliedInputEnvelope?: (
+    envelope: CodexNativeRequestCaptureAppliedInputEnvelope
+  ) => Promise<void> | void;
   readonly recordDiagnosticContext?: (record: {
     readonly kind: string;
     readonly payload: unknown;
@@ -87,44 +86,13 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const asString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
-const resolveSettingsPath = (): string =>
-  asString(process.env.CODEX_SETTINGS_PATH) ??
-  asString(process.env.CLAUDE_SETTINGS_PATH) ??
-  DEFAULT_SETTINGS_PATH;
-
-const resolveReasoningSummaryEnabled = (): boolean => {
-  try {
-    const parsed = JSON.parse(
-      readFileSync(resolveSettingsPath(), "utf8")
-    ) as unknown;
-    if (!(isRecord(parsed) && isRecord(parsed.providers))) {
-      return DEFAULT_REASONING_SUMMARY_ENABLED;
-    }
-    const codex = parsed.providers.codex;
-    if (!isRecord(codex)) {
-      return DEFAULT_REASONING_SUMMARY_ENABLED;
-    }
-    if (typeof codex.reasoningSummaryEnabled === "boolean") {
-      return codex.reasoningSummaryEnabled;
-    }
-    if (typeof codex.thinkingDisplaySyncEnabled === "boolean") {
-      return codex.thinkingDisplaySyncEnabled;
-    }
-    return DEFAULT_REASONING_SUMMARY_ENABLED;
-  } catch {
-    return DEFAULT_REASONING_SUMMARY_ENABLED;
-  }
-};
-
-const resolveTurnReasoningSummaryMode = (): CodexReasoningSummaryMode =>
-  resolveReasoningSummaryEnabled() ? DEFAULT_REASONING_SUMMARY : "none";
-
 const createTimeoutError = (): Error =>
   new Error("Timed out waiting for diagnostic Codex turn completion");
 
 interface CodexDiagnosticThread {
   readonly id: string;
   readonly rolloutPath: string | null;
+  readonly startParams: Record<string, unknown>;
 }
 
 export class CodexNativeRequestCaptureService {
@@ -146,7 +114,8 @@ export class CodexNativeRequestCaptureService {
       ((processOptions) => new CodexAppServerProcess(processOptions));
     this.#reporter = options.reporter;
     this.#resolveReasoningSummaryMode =
-      options.resolveReasoningSummaryMode ?? resolveTurnReasoningSummaryMode;
+      options.resolveReasoningSummaryMode ??
+      resolveCodexNativeRequestCaptureTurnReasoningSummaryMode;
     this.#turnTimeoutMs = options.turnTimeoutMs ?? DIAGNOSTIC_TURN_TIMEOUT_MS;
     this.#workspace = options.workspace;
   }
@@ -169,7 +138,10 @@ export class CodexNativeRequestCaptureService {
       await process.start();
       const thread = await this.#startThread(process, options, workflowProfile);
       turnCompletion.bindThread(thread.id);
-      await this.#startTurn(process, thread.id, options);
+      await this.#startTurn(process, thread.id, options, {
+        processProfileKey: workflowProfile.processProfileKey,
+        threadStartParams: thread.startParams,
+      });
       await turnCompletion.done;
       await this.#recordProviderHomeRolloutContext(options, thread.rolloutPath);
     } finally {
@@ -198,12 +170,11 @@ export class CodexNativeRequestCaptureService {
         promptProfile
       );
       turnCompletion.bindThread(thread.id);
-      await this.#startTranslationTurn(
-        process,
-        thread.id,
-        options,
-        promptProfile
-      );
+      await this.#startTranslationTurn(process, thread.id, options, {
+        processProfileKey: promptProfile.processProfileKey,
+        promptProfile,
+        threadStartParams: thread.startParams,
+      });
       await turnCompletion.done;
       await this.#recordProviderHomeRolloutContext(options, thread.rolloutPath);
     } finally {
@@ -263,6 +234,7 @@ export class CodexNativeRequestCaptureService {
     return {
       id: threadId,
       rolloutPath: asString(thread?.path),
+      startParams: params,
     };
   }
 
@@ -297,13 +269,18 @@ export class CodexNativeRequestCaptureService {
     return {
       id: threadId,
       rolloutPath: asString(thread?.path),
+      startParams: params,
     };
   }
 
   async #startTurn(
     process: CodexProcessLike,
     threadId: string,
-    options: CodexNativeRequestCaptureOptions
+    options: CodexNativeRequestCaptureOptions,
+    envelopeInput: Pick<
+      CodexNativeRequestCaptureAppliedEnvelopeInput,
+      "processProfileKey" | "threadStartParams"
+    >
   ): Promise<void> {
     const modelId = this.#resolveModelId(options);
     const params = {
@@ -323,6 +300,10 @@ export class CodexNativeRequestCaptureService {
         this.#resolveReasoningSummaryMode()
       ),
     };
+    await this.#recordAppliedInputEnvelope(options, {
+      ...envelopeInput,
+      turnStartParams: params,
+    });
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_turn_start_request",
       payload: params,
@@ -338,14 +319,24 @@ export class CodexNativeRequestCaptureService {
     process: CodexProcessLike,
     threadId: string,
     options: CodexNativeRequestCaptureOptions,
-    promptProfile: ReturnType<
-      typeof buildCodexNativeTranslationCapturePromptProfile
-    >
+    envelopeInput: Pick<
+      CodexNativeRequestCaptureAppliedEnvelopeInput,
+      "processProfileKey" | "threadStartParams"
+    > & {
+      readonly promptProfile: ReturnType<
+        typeof buildCodexNativeTranslationCapturePromptProfile
+      >;
+    }
   ): Promise<void> {
     const params = buildCodexNativeTranslationTurnStartParams({
-      promptProfile,
+      promptProfile: envelopeInput.promptProfile,
       threadId,
       workspacePath: options.workspacePath,
+    });
+    await this.#recordAppliedInputEnvelope(options, {
+      processProfileKey: envelopeInput.processProfileKey,
+      threadStartParams: envelopeInput.threadStartParams,
+      turnStartParams: params,
     });
     await this.#recordDiagnosticContext(options, {
       kind: "codex_app_server_turn_start_request",
@@ -366,6 +357,15 @@ export class CodexNativeRequestCaptureService {
     }
   ): Promise<void> {
     await options.recordDiagnosticContext?.(record);
+  }
+
+  async #recordAppliedInputEnvelope(
+    options: CodexNativeRequestCaptureOptions,
+    input: CodexNativeRequestCaptureAppliedEnvelopeInput
+  ): Promise<void> {
+    await options.recordAppliedInputEnvelope?.(
+      buildCodexNativeRequestCaptureAppliedEnvelope(input)
+    );
   }
 
   async #recordProviderHomeRolloutContext(
@@ -479,22 +479,3 @@ const asCodexReasoningEffort = (value: unknown): CodexReasoningEffort | null =>
   value === "low" || value === "medium" || value === "high" || value === "xhigh"
     ? value
     : null;
-
-const parseProviderHomeRolloutJsonl = (text: string): readonly unknown[] =>
-  text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .map((line) => parseProviderHomeRolloutLine(line));
-
-const parseProviderHomeRolloutLine = (line: string): unknown => {
-  try {
-    return JSON.parse(line) as unknown;
-  } catch (error) {
-    return {
-      parseError:
-        error instanceof Error ? error.message : "Unknown JSON parse error",
-      rawLine: line,
-    };
-  }
-};
