@@ -141,12 +141,12 @@
 7. [DONE] Создать `src/client/project-manager/components/capture-workbench/snapshot-cards-row.tsx`, подключить его в `detached-capture-workbench.tsx` и передать thin `api` transport из `app.tsx`: pair of cards, `Re-capture Managed` wired to Workbench runner, slot rotation via `workbench-index-store` after successful capture (scope: 3 файла; expected commit: `feat: wire managed recapture and slot rotation`).
 8. [DONE] Git Commit: `feat: wire managed recapture and slot rotation` (hash: d0ee32971)
 9. [DONE] Тесты snapshot cards/runner integration: `snapshot-cards-row.test.tsx` + при необходимости focused runner regression — empty state, successful capture rotates slot, failure leaves previous slot intact, file links call `openProjectManagerFileLink` (scope: ≤2 файла; expected commit: `test: cover capture workbench runner and snapshot cards`).
-10. [IN_PROGRESS] Git Commit: `test: cover capture workbench runner and snapshot cards` (hash: TBD)
+10. [DONE] Git Commit: `test: cover capture workbench runner and snapshot cards` (hash: 9e4ab974c)
 
 ### Stream 8 — Diff Data + Renderer
 
-1. [TODO] Создать shared diff model/helpers: `src/client/project-manager/components/capture-workbench/diff-section-model.ts` + `diff-section-normalizer.ts` — section ids/status normalization, byte-for-byte normalized compare, no filesystem reads (scope: 2 файла; expected commit: `feat: add capture workbench diff section model`).
-2. [TODO] Git Commit: `feat: add capture workbench diff section model` (hash: TBD)
+1. [DONE] Создать shared diff model/helpers: `src/client/project-manager/components/capture-workbench/diff-section-model.ts` + `diff-section-normalizer.ts` + `diff-section-normalizer.test.ts` — section ids/status normalization, byte-for-byte normalized compare, no filesystem reads; focused smoke test keeps helpers used for `check:knip` (scope: 3 файла; expected commit: `feat: add capture workbench diff section model`).
+2. [IN_PROGRESS] Git Commit: `feat: add capture workbench diff section model` (hash: TBD)
 3. [TODO] Создать provider extractors over loaded records, not file paths: `diff-section-extractor-claude.ts` + `diff-section-extractor-codex.ts` — parse artifact records returned by `workbench:artifact:read` into sections from rev4 taxonomy (scope: 2 файла; expected commit: `feat: add claude and codex diff section extractors`).
 4. [TODO] Git Commit: `feat: add claude and codex diff section extractors` (hash: TBD)
 5. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-section.tsx`: one row, collapsed/expanded, side-by-side body, status dot (scope: 1 файл; expected commit: `feat: add capture workbench diff section row`).
