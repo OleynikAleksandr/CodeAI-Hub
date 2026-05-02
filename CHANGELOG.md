@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.129] - 2026-05-02
+### Changed
+- **Capture Workbench accepted build is repackaged under a clean handoff release number.** This release preserves the accepted `1.2.128` behavior and provides a fresh VSIX/runtime tarball set for clean-install archival and external handoff.
+
+### Notes
+- **External handoff still needs the runtime tarballs alongside the VSIX.** The VSIX installs the extension shell; Core, Launcher, and UI runtime archives are resolved from `~/.codeai-hub/releases/` during installation/startup, and provider CLI/auth setup remains user-owned.
+
 ## [1.2.128] - 2026-05-02
 ### Fixed
 - **Capture Workbench reasoning switches now use one parent-owned selection state.** The selector bar and Managed snapshot row no longer keep separate selection copies, so switching Claude reasoning from `thinking-high` to `thinking-off` and immediately re-capturing targets the visible slot on the first click.
