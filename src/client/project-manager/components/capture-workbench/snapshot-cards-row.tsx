@@ -18,6 +18,7 @@ import { CaptureWorkbenchSnapshotCard } from "./snapshot-card";
 interface CaptureWorkbenchSnapshotCardsRowProps {
   readonly captureTransport: CaptureWorkbenchRunnerTransport;
   readonly context: CaptureWorkbenchRunnerContext;
+  readonly onIndexChange?: (index: WorkbenchIndexFile) => void;
   readonly selection: WorkbenchSelectionState;
   readonly stateClient: WorkbenchStateClientApi;
 }
@@ -26,7 +27,7 @@ const EMPTY_INDEX: WorkbenchIndexFile = { version: 1, slots: [] };
 
 export const CaptureWorkbenchSnapshotCardsRow: React.FC<
   CaptureWorkbenchSnapshotCardsRowProps
-> = ({ captureTransport, context, selection, stateClient }) => {
+> = ({ captureTransport, context, onIndexChange, selection, stateClient }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [index, setIndex] = useState<WorkbenchIndexFile>(EMPTY_INDEX);
@@ -50,6 +51,7 @@ export const CaptureWorkbenchSnapshotCardsRow: React.FC<
       .then((nextIndex) => {
         if (!cancelled) {
           setIndex(nextIndex);
+          onIndexChange?.(nextIndex);
         }
       })
       .catch((loadError: unknown) => {
@@ -60,7 +62,7 @@ export const CaptureWorkbenchSnapshotCardsRow: React.FC<
     return () => {
       cancelled = true;
     };
-  }, [indexStore]);
+  }, [indexStore, onIndexChange]);
 
   const slot = resolveWorkbenchSlot(index, selection);
 
@@ -76,6 +78,7 @@ export const CaptureWorkbenchSnapshotCardsRow: React.FC<
         slot: result.slot,
       });
       setIndex(nextIndex);
+      onIndexChange?.(nextIndex);
     } catch (captureError) {
       setError(normalizeError(captureError));
     } finally {

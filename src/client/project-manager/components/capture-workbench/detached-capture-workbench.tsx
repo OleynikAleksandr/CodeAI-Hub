@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import type { CaptureWorkbenchRunnerTransport } from "../../services/capture-workbench-runner";
-import type { WorkbenchSelectionState } from "../../services/workbench-bridge-types";
+import type {
+  WorkbenchIndexFile,
+  WorkbenchSelectionState,
+} from "../../services/workbench-bridge-types";
+import { resolveWorkbenchSlot } from "../../services/workbench-index-store";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
+import { CaptureWorkbenchDiffRenderer } from "./diff-renderer";
 import { CaptureWorkbenchSelectionBar } from "./selection-bar";
 import { CaptureWorkbenchSnapshotCardsRow } from "./snapshot-cards-row";
 
@@ -19,6 +24,8 @@ export const DetachedCaptureWorkbench: React.FC<
   const workbenchTransport = captureTransport ?? EMPTY_CAPTURE_TRANSPORT;
   const [selection, setSelection] =
     useState<WorkbenchSelectionState>(DEFAULT_SELECTION);
+  const [index, setIndex] = useState<WorkbenchIndexFile>(EMPTY_INDEX);
+  const slot = resolveWorkbenchSlot(index, selection);
 
   useEffect(() => {
     document.title = `Capture Workbench - ${workspaceSlug}`;
@@ -53,21 +60,16 @@ export const DetachedCaptureWorkbench: React.FC<
             workspacePath,
             workspaceSlug,
           }}
+          onIndexChange={setIndex}
           selection={selection}
           stateClient={workbenchClient}
         />
-        <section style={styles.diffPanel}>
-          <div style={styles.diffHeader}>
-            <span style={styles.panelTitle}>Managed: current vs previous</span>
-            <span style={styles.mutedText}>No capture selected</span>
-          </div>
-          <div style={styles.diffTable}>
-            <DiffRow label="System Prompt" status="equal" />
-            <DiffRow label="Tools" status="equal" />
-            <DiffRow label="User Prompt" status="equal" />
-            <DiffRow label="Applied Input Envelope" status="equal" />
-          </div>
-        </section>
+        <CaptureWorkbenchDiffRenderer
+          current={slot?.managed.current ?? null}
+          previous={slot?.managed.previous ?? null}
+          provider={selection.provider}
+          stateClient={workbenchClient}
+        />
       </main>
 
       <footer style={styles.footer}>
@@ -85,6 +87,8 @@ const DEFAULT_SELECTION: WorkbenchSelectionState = {
   reasoning: "thinking-high",
 };
 
+const EMPTY_INDEX: WorkbenchIndexFile = { version: 1, slots: [] };
+
 const EMPTY_WORKBENCH_CLIENT: WorkbenchStateClientApi = {
   loadIndex: async () => null,
   loadSelection: async () => null,
@@ -99,17 +103,6 @@ const EMPTY_CAPTURE_TRANSPORT: CaptureWorkbenchRunnerTransport = {
   getWorkflowState: async () => null,
   onCoreEvent: () => () => undefined,
 };
-
-const DiffRow: React.FC<{
-  readonly label: string;
-  readonly status: "equal";
-}> = ({ label, status }) => (
-  <div style={styles.diffRow}>
-    <span style={styles.diffMarker} />
-    <span>{label}</span>
-    <span style={styles.mutedText}>{status}</span>
-  </div>
-);
 
 const styles: Record<string, React.CSSProperties> = {
   root: {
@@ -159,37 +152,6 @@ const styles: Record<string, React.CSSProperties> = {
     gridTemplateRows: "auto 1fr",
     minHeight: 0,
     overflow: "hidden",
-  },
-  panelTitle: { fontSize: 12, fontWeight: 600 },
-  mutedText: { color: "#7e828a", fontSize: 11 },
-  diffPanel: {
-    background: "#20232a",
-    borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-    minHeight: 0,
-    overflow: "hidden",
-  },
-  diffHeader: {
-    alignItems: "center",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px 16px",
-  },
-  diffTable: { display: "grid", gap: 1, padding: 16 },
-  diffRow: {
-    alignItems: "center",
-    background: "#2c313b",
-    display: "grid",
-    gap: 10,
-    gridTemplateColumns: "10px 1fr auto",
-    minHeight: 34,
-    padding: "0 12px",
-  },
-  diffMarker: {
-    background: "#444851",
-    borderRadius: 999,
-    height: 6,
-    width: 6,
   },
   footer: {
     alignItems: "center",
