@@ -325,6 +325,7 @@ type CoreIncomingMessage =
       readonly payload: {
         readonly modelId?: string | null;
         readonly providerId: NativeRequestCaptureProviderId;
+        readonly reasoning?: string | null;
         readonly scenarioId?: string | null;
         readonly scenarioInputPath?: string | null;
         readonly scenarioLabel?: string | null;

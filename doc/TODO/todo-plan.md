@@ -63,12 +63,12 @@
 11. [DONE] Обновить markdown summarizer и тест: `native-request-capture-markdown.ts` + `native-request-capture-markdown.test.ts` (создать test file, если отсутствует) — секция `Applied Input Envelope` под фиксированным заголовком, без credential leakage (scope: 2 файла; expected commit: `feat: render applied envelope in capture markdown`).
 12. [DONE] Git Commit: `feat: render applied envelope in capture markdown` (hash: c7af19476)
 13. [DONE] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33: captured artifact schema включает `applied_input_envelope`, `mode`, `releaseVersion`; Phase 1 всегда `mode: "managed"` (scope: 1 файл; expected commit: `docs: document capture artifact schema extensions`).
-14. [IN_PROGRESS] Git Commit: `docs: document capture artifact schema extensions` (hash: TBD)
+14. [DONE] Git Commit: `docs: document capture artifact schema extensions` (hash: 78d722dfc)
 
 ### Stream 2 — Reasoning Transport Extension
 
-1. [TODO] Расширить Core incoming transport contract: `packages/core/src/remote-bridge/types.ts` + `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` — добавить и валидировать `reasoning?: string | null` в `settings:native-request-capture` payload (scope: 2 файла; expected commit: `feat: accept capture reasoning override in core transport`).
-2. [TODO] Git Commit: `feat: accept capture reasoning override in core transport` (hash: TBD)
+1. [DONE] Расширить Core incoming transport contract: `packages/core/src/remote-bridge/types.ts` + `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` — добавить и валидировать `reasoning?: string | null` в `settings:native-request-capture` payload (scope: 2 файла; expected commit: `feat: accept capture reasoning override in core transport`).
+2. [IN_PROGRESS] Git Commit: `feat: accept capture reasoning override in core transport` (hash: TBD)
 3. [TODO] Прокинуть override в Core capture path: `remote-bridge-message-router.ts`, `native-request-capture-facade.ts`, новый `native-request-capture-reasoning-override.ts` — router читает `payload.reasoning`; facade применяет one-shot override через capture-only helper после resolved appliedTurnConfig; persisted Settings и generic session applied-config resolver не менять, если helper покрывает контракт (scope: 3 файла; expected commit: `feat: apply one-shot reasoning override for capture`).
 4. [TODO] Git Commit: `feat: apply one-shot reasoning override for capture` (hash: TBD)
 5. [TODO] Обновить Core tests: `remote-bridge-message-router.test.ts` + `native-request-capture-facade.test.ts` — override доходит до facade/applied config, persisted Settings не меняются (scope: 2 файла; expected commit: `test: cover capture reasoning override in core path`).

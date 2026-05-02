@@ -205,6 +205,7 @@ const isNativeRequestCapturePayload = (payload: unknown): boolean =>
   typeof payload.providerId === "string" &&
   NATIVE_CAPTURE_PROVIDERS.has(payload.providerId) &&
   isOptionalStringOrNull(payload.modelId) &&
+  isOptionalStringOrNull(payload.reasoning) &&
   isOptionalStringOrNull(payload.scenarioId) &&
   isOptionalStringOrNull(payload.scenarioInputPath) &&
   isOptionalStringOrNull(payload.scenarioLabel) &&
