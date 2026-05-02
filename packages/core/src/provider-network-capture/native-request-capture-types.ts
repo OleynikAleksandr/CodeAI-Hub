@@ -1,5 +1,7 @@
 export type NativeRequestCaptureProviderId = "claude" | "codex";
 
+export type NativeRequestCaptureMode = "managed" | "vanilla";
+
 export type NativeRequestCaptureFailureReason =
   | "provider_not_ready"
   | "provider_not_supported"
@@ -32,6 +34,54 @@ export interface NativeRequestCaptureRequest {
   readonly providerId: NativeRequestCaptureProviderId;
   readonly target: string;
   readonly timestamp: string;
+}
+
+export interface NativeRequestCaptureStartRecord {
+  readonly appliedTurnConfig: unknown;
+  readonly captureId: string;
+  readonly mode: NativeRequestCaptureMode;
+  readonly providerId: NativeRequestCaptureProviderId;
+  readonly releaseVersion: string;
+  readonly scenarioMetadata: unknown;
+  readonly selectedModelId: string | null;
+  readonly sentUpstream: false;
+  readonly timestamp: string;
+  readonly type: "capture_start";
+}
+
+export interface NativeRequestCaptureClaudeAppliedInputEnvelope {
+  readonly allowDangerouslySkipPermissions: boolean | null;
+  readonly cwd: string | null;
+  readonly hasSystemPrompt: boolean;
+  readonly kind: "claude";
+  readonly permissionMode: string | null;
+  readonly settingSources: readonly string[] | null;
+  readonly toolCount: number;
+}
+
+export interface NativeRequestCaptureCodexAppliedInputEnvelope {
+  readonly approvalPolicy: string | null;
+  readonly kind: "codex";
+  readonly modelReasoningSummary: string | null;
+  readonly persistExtendedHistory: boolean | null;
+  readonly processProfileKey: string | null;
+  readonly providerHomeOverrides: Readonly<
+    Record<string, string | null>
+  > | null;
+  readonly sandbox: string | null;
+}
+
+export type NativeRequestCaptureAppliedInputEnvelope =
+  | NativeRequestCaptureClaudeAppliedInputEnvelope
+  | NativeRequestCaptureCodexAppliedInputEnvelope;
+
+export interface NativeRequestCaptureAppliedInputEnvelopeRecord {
+  readonly captureId: string;
+  readonly envelope: NativeRequestCaptureAppliedInputEnvelope;
+  readonly providerId: NativeRequestCaptureProviderId;
+  readonly sentUpstream: false;
+  readonly timestamp: string;
+  readonly type: "applied_input_envelope";
 }
 
 export type NativeRequestCaptureProxyEvent =

@@ -3,6 +3,7 @@ import type {
   ModuleReporter,
 } from "@codeai-hub/claude-module";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
+import type { NativeRequestCaptureAppliedInputEnvelope } from "../provider-network-capture/native-request-capture-types";
 import type { GeminiInstallerPaths } from "./provider-installer-paths";
 
 export interface GeminiModuleOptions {
@@ -103,6 +104,9 @@ export type ProviderNativeRequestCaptureInvocationPurpose =
   | "translation"
   | "workflow-agent";
 
+export type ProviderNativeRequestCaptureAppliedInputEnvelope =
+  NativeRequestCaptureAppliedInputEnvelope;
+
 export interface ProviderNativeRequestCaptureOptions {
   readonly appliedTurnConfig?: ProviderNativeRequestCaptureAppliedTurnConfig | null;
   readonly captureId: string;
@@ -111,6 +115,9 @@ export interface ProviderNativeRequestCaptureOptions {
   readonly invocationPurpose?: ProviderNativeRequestCaptureInvocationPurpose;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly recordAppliedInputEnvelope?: (
+    envelope: ProviderNativeRequestCaptureAppliedInputEnvelope
+  ) => Promise<void> | void;
   readonly recordDiagnosticContext?: (record: {
     readonly kind: string;
     readonly payload: unknown;

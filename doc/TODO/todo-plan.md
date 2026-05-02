@@ -46,12 +46,12 @@
 ### Stream 0 — Parent Phase 3 Pre-Flight Spike (detached transport + localization)
 
 1. [DONE] Выполнить spike по detached `?mode=detached-capture`: подтвердить websocket transport path для `settings:native-request-capture`, `workbench:state:*`, `workbench:artifact:read`; подтвердить delivery `__CODEAI_LOCALIZATION_BOOTSTRAP__`; append-нуть §3.7 «Detached transport & localization plan» в `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` с выбранным mount path и bootstrap delivery (scope: 1 planning-doc; production code не менять; expected commit: `docs: close parent phase 3 detached transport spike`).
-2. [IN_PROGRESS] Git Commit: `docs: close parent phase 3 detached transport spike` (hash: TBD)
+2. [DONE] Git Commit: `docs: close parent phase 3 detached transport spike` (hash: 3ef75b22a)
 
 ### Stream 1 — Capture Artifact Schema Foundation
 
-1. [TODO] Расширить schema/type surface для captured artifacts: `packages/core/src/provider-network-capture/native-request-capture-types.ts` + `packages/core/src/provider-registry/provider-module-loader.types.ts` — добавить `AppliedInputEnvelope` variants для Claude/Codex, `CaptureMode = "managed" | "vanilla"`, `capture_start.mode`, `capture_start.releaseVersion`, provider-facing callback для emission envelope (scope: 2 файла; expected commit: `feat: add capture artifact envelope and mode contracts`).
-2. [TODO] Git Commit: `feat: add capture artifact envelope and mode contracts` (hash: TBD)
+1. [DONE] Расширить schema/type surface для captured artifacts: `packages/core/src/provider-network-capture/native-request-capture-types.ts` + `packages/core/src/provider-registry/provider-module-loader.types.ts` — добавить `AppliedInputEnvelope` variants для Claude/Codex, `CaptureMode = "managed" | "vanilla"`, `capture_start.mode`, `capture_start.releaseVersion`, provider-facing callback для emission envelope (scope: 2 файла; expected commit: `feat: add capture artifact envelope and mode contracts`).
+2. [IN_PROGRESS] Git Commit: `feat: add capture artifact envelope and mode contracts` (hash: TBD)
 3. [TODO] Расширить writer/facade path: `native-request-capture-writer.ts` + `native-request-capture-facade.ts` — writer эмитит `mode`, `releaseVersion`, принимает provider-emitted `applied_input_envelope`; facade передаёт provider callback в `captureNativeRequest` и задаёт `mode: "managed"` для Phase 1 (scope: 2 файла; expected commit: `feat: emit capture envelope, mode and release version`).
 4. [TODO] Git Commit: `feat: emit capture envelope, mode and release version` (hash: TBD)
 5. [TODO] Обновить tests для writer/facade: `native-request-capture-writer.test.ts` + `native-request-capture-facade.test.ts` — проверка `capture_start.mode`, `releaseVersion`, provider-emitted envelope record, backward-compatible missing envelope path (scope: 2 файла; expected commit: `test: cover capture envelope and mode records`).
