@@ -268,7 +268,7 @@
 1. [DONE] Установить reasoning-recapture VSIX `codeai-hub-1.2.128.vsix`, открыть detached Capture Workbench, выбрать `Description + Claude + Sonnet + thinking-high`, выполнить `Re-capture Managed`, затем переключить `Reasoning` на `thinking-off` и убедиться, что первый следующий `Re-capture Managed` показывает capture progress и создаёт/показывает artifact в `thinking-off` slot без второго клика. Пользовательский retest подтвердил, что основной функционал Capture Workbench заработал.
 2. [DONE] Acceptance matrix: повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules`; проверить slot rotation `current → previous` для разных reasoning slots; diff `Managed: current vs previous` рендерит секции с правильными статусами; Gemini Provider option остаётся disabled placeholder; пустой workspace без upstream artifacts — capture не падает. Основной Phase 1 path принят пользователем; дальнейшие улучшения этого модуля остаются scope следующей сессии.
 3. [DONE] Зафиксировать результат reasoning-recapture пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`: основной функционал `1.2.128` работает; scope остаётся ACTIVE только потому, что пользователь явно попросил не архивировать planning-doc и продолжить развитие модуля в следующей сессии (scope: 2 docs; expected commit: `docs: record capture workbench reasoning recapture visual acceptance`).
-4. [TODO] Git Commit: `docs: record capture workbench reasoning recapture visual acceptance` (hash: TBD)
+4. [DONE] Git Commit: `docs: record capture workbench reasoning recapture visual acceptance` (hash: 3efcde6ae)
 
 ### Stream 12 — Scope Closeout
 
