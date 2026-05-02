@@ -7,10 +7,9 @@ import type {
   SettingsNativeRequestCaptureResultPayload,
   SettingsNativeRequestCaptureScenarioId,
 } from "../core-stream-message-types";
-import {
-  buildNativeRequestCaptureScenarioPrompt,
-  type NativeRequestCaptureScenarioPrompt,
-  type NativeRequestCaptureScenarioId as WorkflowCaptureScenarioId,
+import type {
+  NativeRequestCaptureScenarioPrompt,
+  NativeRequestCaptureScenarioId as WorkflowCaptureScenarioId,
 } from "./native-request-capture-scenario-prompt";
 import type { WorkbenchSelectionState } from "./workbench-bridge-types";
 import type { WorkbenchSlotKey } from "./workbench-index-store";
@@ -24,8 +23,19 @@ type WorkflowStateGetter = (
   workspacePath?: string
 ) => Promise<WorkflowStateSnapshot | null>;
 
-export type CaptureWorkbenchScenarioPromptBuilder =
-  typeof buildNativeRequestCaptureScenarioPrompt;
+interface CaptureWorkbenchScenarioPromptParams {
+  readonly bypassUpstreamGuard?: boolean;
+  readonly getWorkflowState: WorkflowStateGetter;
+  readonly scenarioId: WorkflowCaptureScenarioId;
+  readonly settingsPayload?: SettingsLoadedPayload | null;
+  readonly workspaceName?: string;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}
+
+export type CaptureWorkbenchScenarioPromptBuilder = (
+  params: CaptureWorkbenchScenarioPromptParams
+) => Promise<NativeRequestCaptureScenarioPrompt>;
 
 export interface CaptureWorkbenchRunnerTransport {
   readonly captureNativeRequest: (
@@ -63,7 +73,7 @@ export interface CaptureWorkbenchRunnerApi {
 
 class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
   readonly #artifactReader: Pick<WorkbenchStateClientApi, "readArtifactRecords">;
-  readonly #scenarioPromptBuilder: CaptureWorkbenchScenarioPromptBuilder;
+  readonly #scenarioPromptBuilder: CaptureWorkbenchScenarioPromptBuilder | undefined;
   readonly #timeoutMs: number;
   readonly #transport: CaptureWorkbenchRunnerTransport;
 
@@ -76,8 +86,7 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
     } = {}
   ) {
     this.#artifactReader = artifactReader;
-    this.#scenarioPromptBuilder =
-      options.scenarioPromptBuilder ?? buildNativeRequestCaptureScenarioPrompt;
+    this.#scenarioPromptBuilder = options.scenarioPromptBuilder;
     this.#timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.#transport = transport;
   }
@@ -176,7 +185,9 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
     readonly workspacePath: string;
     readonly workspaceSlug: string;
   }): Promise<NativeRequestCaptureScenarioPrompt> {
-    return this.#scenarioPromptBuilder({
+    const scenarioPromptBuilder =
+      this.#scenarioPromptBuilder ?? (await loadScenarioPromptBuilder());
+    return scenarioPromptBuilder({
       bypassUpstreamGuard: true,
       getWorkflowState: this.#transport.getWorkflowState,
       scenarioId: params.scenarioId,
@@ -317,3 +328,9 @@ const parseProviderIdSafe = (
   value: unknown
 ): value is SettingsNativeRequestCaptureProviderId =>
   value === "claude" || value === "codex";
+
+const loadScenarioPromptBuilder =
+  async (): Promise<CaptureWorkbenchScenarioPromptBuilder> => {
+    const module = await import("./native-request-capture-scenario-prompt");
+    return module.buildNativeRequestCaptureScenarioPrompt;
+  };
