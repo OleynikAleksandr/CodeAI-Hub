@@ -154,9 +154,9 @@
 7. [DONE] Создать `src/client/project-manager/components/capture-workbench/diff-renderer.tsx`, подключить selected slot в `detached-capture-workbench.tsx`, добавить `onIndexChange` hook в `snapshot-cards-row.tsx`: mode tabs, `Managed: current vs previous` active, Vanilla modes empty-state, loads JSONL records through `workbench-state-client.readArtifactRecords`, summary, equal-collapsed default; visual hierarchy and spacing follow prototype diff table (scope: 3 файла; expected commit: `feat: add capture workbench diff renderer`).
 8. [DONE] Git Commit: `feat: add capture workbench diff renderer` (hash: 9543a4cea)
 9. [DONE] Тесты diff extractors: расширить `diff-section-extractors.test.ts` — sample loaded records → expected sections, section_extract fallback, output schema, no Provider-home/Auth in Phase 1 (scope: 1 файл; expected commit: `test: cover provider diff section extractors`).
-10. [IN_PROGRESS] Git Commit: `test: cover provider diff section extractors` (hash: TBD)
-11. [TODO] Тесты diff renderer: `diff-renderer.test.tsx` — mode tabs, artifact-read client called with absolute JSONL paths, equal-collapsed default, expand/collapse actions (scope: 1 файл; expected commit: `test: cover capture workbench diff renderer modes`).
-12. [TODO] Git Commit: `test: cover capture workbench diff renderer modes` (hash: TBD)
+10. [DONE] Git Commit: `test: cover provider diff section extractors` (hash: 63a0a86aa)
+11. [DONE] Тесты diff renderer: `diff-renderer.test.tsx` — mode tabs, artifact-read client called with absolute JSONL paths, equal-collapsed default, expand/collapse actions (scope: 1 файл; expected commit: `test: cover capture workbench diff renderer modes`).
+12. [IN_PROGRESS] Git Commit: `test: cover capture workbench diff renderer modes` (hash: TBD)
 
 ### Stream 9 — Settings → General Card Shrink + Launcher
 
