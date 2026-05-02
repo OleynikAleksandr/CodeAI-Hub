@@ -176,14 +176,39 @@
 3. [DONE] Проверить clean tree, затем запустить `./scripts/build-all.sh`; после успеха убедиться, что tarball'ы лежат в `doc/tmp/releases/`, версии/манифесты обновлены штатным скриптом (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench mvp`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench mvp` (hash: dbe1b6405)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить вывод `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE, если acceptance ещё ожидается (scope: release command + session report; expected commit: `docs: record capture workbench mvp release build`).
-6. [IN_PROGRESS] Git Commit: `docs: record capture workbench mvp release build` (hash: TBD)
+6. [DONE] Git Commit: `docs: record capture workbench mvp release build` (hash: 1ff9de05a)
 
 ### Stream 11 — User Visual Acceptance Testing
 
-1. [TODO] Установить собранный `codeai-hub-<version>.vsix` в VS Code, открыть workspace.
-2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
+1. [DONE] Установить собранный `codeai-hub-1.2.124.vsix` в VS Code, открыть workspace.
+2. [BLOCKED] Acceptance matrix: пользовательский retest `2026-05-02` провален — Project Manager падает с OS crash при клике на Step/Provider/любой selector в detached Capture Workbench. Логи macOS `~/Library/Logs/DiagnosticReports/CodeAIHubLauncher-2026-05-02-120256.ips` и `...120349.ips` показывают `NSInvalidArgumentException` / `-[NSApplication ...]: unrecognized selector`, а app/core logs не содержат transport/capture ошибки; вероятная причина — новые native HTML `<select>` в Workbench, что нарушает documented CEF/macOS invariant `BUG-2026-04-22-08`.
 3. [TODO] Зафиксировать результат пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench visual acceptance` (hash: TBD)
+
+### Stream 11A — macOS CEF Selector Crash Fix
+
+1. [DONE] Replace Step/Provider native selectors with DOM-owned listbox controls: add `dom-listbox-selector.tsx`, update `step-selector.tsx`, update `provider-selector.tsx`; preserve prototype compact toolbar visuals and disabled Gemini tooltip, avoid Core/transport changes (scope: 3 files; expected commit: `fix: replace capture workbench step provider native selects`).
+2. [DONE] Git Commit: `fix: replace capture workbench step provider native selects` (hash: 527e45620)
+3. [DONE] Replace Model/Reasoning native selectors and regression tests: update `model-reasoning-selectors.tsx` and `selection-bar.test.tsx` to assert Workbench selector surface is DOM-owned and contains no native `<select>` (scope: 2 files; expected commit: `fix: replace capture workbench model reasoning native selects`).
+4. [DONE] Git Commit: `fix: replace capture workbench model reasoning native selects` (hash: dc7f192f6)
+5. [DONE] Update SSOT for Workbench selector invariant: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` and `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` document that detached Capture Workbench selector controls are DOM-owned button/listbox surfaces because standalone CEF/macOS native popup branches are unsafe (scope: 2 docs; expected commit: `docs: document capture workbench dom-owned selectors`).
+6. [DONE] Git Commit: `docs: document capture workbench dom-owned selectors` (hash: 0d1f9c6a1)
+
+### Stream 11B — Release Build (Crash Fix)
+
+1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.125` after failed `1.2.124`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files; expected commit: `docs: prepare capture workbench crash fix release`).
+2. [DONE] Git Commit: `docs: prepare capture workbench crash fix release` (hash: 415a5d64d)
+3. [IN_PROGRESS] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench crash fix`).
+4. [TODO] Git Commit: `chore: bump release manifests for capture workbench crash fix` (hash: TBD)
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench crash fix release build`).
+6. [TODO] Git Commit: `docs: record capture workbench crash fix release build` (hash: TBD)
+
+### Stream 11C — User Visual Acceptance Testing (Retest)
+
+1. [TODO] Установить crash-fix VSIX (`codeai-hub-1.2.125.vsix`, если release version не изменится иначе), открыть workspace, повторить сценарий клика по Step/Provider/Model/Reasoning selectors и убедиться, что Project Manager не падает.
+2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
+3. [TODO] Зафиксировать результат crash-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench crash fix visual acceptance`).
+4. [TODO] Git Commit: `docs: record capture workbench crash fix visual acceptance` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
 
