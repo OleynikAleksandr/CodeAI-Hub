@@ -12,7 +12,6 @@ import {
 import type {
   CoreStatePayload,
   IncomingMessage,
-  OutgoingMessage,
   ProjectManagerDiagnosticLogPayload,
   ProjectUpdatePayload,
   SettingsLoadedPayload,
@@ -28,7 +27,7 @@ import type {
   WorkspaceSelectPayload,
   WorkspaceSnapshotRequestPayload,
 } from "./core-stream-message-types";
-import { OutgoingMessageQueue } from "./services/outgoing-message-queue";
+import { type QueuedOutgoingMessage, OutgoingMessageQueue } from "./services/outgoing-message-queue";
 import { SwitchApi } from "./services/switch-api";
 import type {
   ClaudeThinkingEffort,
@@ -46,6 +45,7 @@ import {
   createProjectManagerWindowMessageHandler,
   ProjectManagerSocketLifecycle,
 } from "./services/project-manager-api-lifecycle";
+import type { WorkbenchOutgoingMessage } from "./services/workbench-bridge-types";
 
 type ProjectListener = (projects: readonly WorkspaceProject[]) => void;
 type CoreEventListener = (message: IncomingMessage) => void;
@@ -288,6 +288,7 @@ class ProjectManagerApi {
       payload,
     });
   }
+  sendWorkbenchMessage(message: WorkbenchOutgoingMessage): void { this.send(message); }
 
   sendSessionMessage(
     sessionId: string,
@@ -361,7 +362,7 @@ class ProjectManagerApi {
     return fetchWorkflowState({ httpUrl, workspaceSlug, workspacePath });
   }
 
-  private send(message: OutgoingMessage): void {
+  private send(message: QueuedOutgoingMessage): void {
     if (this.socketLifecycle.send(JSON.stringify(message))) {
       return;
     }

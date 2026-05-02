@@ -1,14 +1,17 @@
 import type { OutgoingMessage } from "../core-stream-message-types";
+import type { WorkbenchOutgoingMessage } from "./workbench-bridge-types";
+
+export type QueuedOutgoingMessage = OutgoingMessage | WorkbenchOutgoingMessage;
 
 export class OutgoingMessageQueue {
-  private pending: OutgoingMessage[] = [];
+  private pending: QueuedOutgoingMessage[] = [];
   private readonly maxPending: number;
 
   constructor(options?: { readonly maxPending?: number }) {
     this.maxPending = options?.maxPending ?? 200;
   }
 
-  enqueue(message: OutgoingMessage): void {
+  enqueue(message: QueuedOutgoingMessage): void {
     if (message.type === "workspace:select") {
       // Keep only the most recent selection intent.
       this.pending = this.pending.filter(
@@ -22,7 +25,7 @@ export class OutgoingMessageQueue {
     this.pending.push(message);
   }
 
-  flush(send: (message: OutgoingMessage) => void): void {
+  flush(send: (message: QueuedOutgoingMessage) => void): void {
     if (this.pending.length === 0) {
       return;
     }
@@ -38,4 +41,3 @@ export class OutgoingMessageQueue {
     }
   }
 }
-
