@@ -104,9 +104,9 @@
 3. [DONE] Создать `src/client/project-manager/services/workbench-state-client.ts` + `workbench-state-client.test.ts`: promise/subscribe wrapper over injected `sendWorkbenchMessage` + `onCoreEvent` transport for `loadIndex`, `saveIndex`, `loadSelection`, `saveSelection`, `readArtifactRecords`; no filesystem access in browser; request matching by `kind`/`jsonlPath` follows Core event contract; test keeps the new client used before UI wiring (scope: 2 файла; expected commit: `feat: add project manager workbench state client`).
 4. [DONE] Git Commit: `feat: add project manager workbench state client` (hash: 7861b8608)
 5. [DONE] Создать `src/client/project-manager/services/workbench-index-store.ts` + `workbench-index-store.test.ts`: slot resolution by `(step, provider, model, reasoning)`, `current → previous` rotation, materialize `SlotEntryRecord` from capture result + loaded `capture_start`; when index is missing/corrupted, call Core load/rebuild path instead of scanning filesystem locally; test keeps store used before UI wiring (scope: 2 файла; expected commit: `feat: add workbench index store with slot rotation`).
-6. [IN_PROGRESS] Git Commit: `feat: add workbench index store with slot rotation` (hash: TBD)
-7. [TODO] Stream 4 targeted verification: `npm run typecheck:webview`, `npx tsx --test src/client/project-manager/services/workbench-state-client.test.ts src/client/project-manager/services/workbench-index-store.test.ts` and record result in this plan; no production code changes expected (scope: docs-only status update; expected commit: `test: verify workbench bridge and index store`).
-8. [TODO] Git Commit: `test: verify workbench bridge and index store` (hash: TBD)
+6. [DONE] Git Commit: `feat: add workbench index store with slot rotation` (hash: 9ee7cc88d)
+7. [DONE] Stream 4 targeted verification: `npm run typecheck:webview`, `npx tsx --test src/client/project-manager/services/workbench-state-client.test.ts src/client/project-manager/services/workbench-index-store.test.ts` — passed on 2026-05-02, 6 PM service tests green; no production code changes expected (scope: docs-only status update; expected commit: `test: verify workbench bridge and index store`).
+8. [IN_PROGRESS] Git Commit: `test: verify workbench bridge and index store` (hash: TBD)
 
 ### Stream 5 — Detached Workbench Entry
 
