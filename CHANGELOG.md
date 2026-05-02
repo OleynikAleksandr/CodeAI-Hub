@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.130] - 2026-05-02
+### Fixed
+- **Gemini provider module is bundled in the clean Core runtime.** The Core runtime now carries `@codeai-hub/gemini-module` as an explicit dependency, so a VSIX plus matching runtime release folder can load Gemini before checking CLI authentication instead of reporting `Gemini provider module is not installed`.
+
+### Tests
+- **Release validation now fails if Core runtime is missing the Gemini provider module.** `build-release.sh` checks and loads the bundled Gemini module from the staged Core runtime alongside the existing provider and localization bundle checks.
+
 ## [1.2.129] - 2026-05-02
 ### Changed
 - **Capture Workbench accepted build is repackaged under a clean handoff release number.** This release preserves the accepted `1.2.128` behavior and provides a fresh VSIX/runtime tarball set for clean-install archival and external handoff.
