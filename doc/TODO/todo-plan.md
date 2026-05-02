@@ -250,9 +250,9 @@
 ### Stream 11I — Reasoning Selection Recapture Fix
 
 1. [DONE] Зафиксировать новый пользовательский retest blocker `1.2.127`: reasoning switch recapture UI выглядит как no-op на первом клике из-за duplicated selection ownership между `CaptureWorkbenchSelectionBar` и detached parent; capture artifacts подтверждают, что Core/capture path пишет `thinking-off` records (scope: 1 doc; expected commit: `docs: record capture workbench reasoning recapture blocker`).
-2. [IN_PROGRESS] Git Commit: `docs: record capture workbench reasoning recapture blocker` (hash: TBD)
-3. [TODO] Сделать selection bar controlled component от detached parent и обновить regression coverage: `selection-bar.tsx`, `detached-capture-workbench.tsx`, `selection-bar.test.tsx`; snapshot row должен получать тот же committed selection, который видит selector UI (scope: 3 files; expected commit: `fix: make capture workbench selection parent-owned`).
-4. [TODO] Git Commit: `fix: make capture workbench selection parent-owned` (hash: TBD)
+2. [DONE] Git Commit: `docs: record capture workbench reasoning recapture blocker` (hash: 44be1772b)
+3. [DONE] Сделать selection bar controlled component от detached parent и обновить regression coverage: `selection-bar.tsx`, `detached-capture-workbench.tsx`, `selection-bar.test.tsx`; snapshot row должен получать тот же committed selection, который видит selector UI (scope: 3 files; expected commit: `fix: make capture workbench selection parent-owned`).
+4. [DONE] Git Commit: `fix: make capture workbench selection parent-owned` (hash: c8cbcedb0)
 
 ### Stream 12 — Scope Closeout
 
