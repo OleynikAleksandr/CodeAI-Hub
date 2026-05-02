@@ -16,6 +16,7 @@ import type { SettingsRequestHandler } from "./handlers/settings-request-handler
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-router";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
+import { RemoteBridgeWorkbenchCommandRouter } from "./remote-bridge-workbench-command-router";
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
 
@@ -41,6 +42,7 @@ export class RemoteBridgeMessageRouter {
   private readonly deps: RemoteBridgeMessageRouterDependencies;
   private readonly dialogCommandRouter: RemoteBridgeDialogCommandRouter;
   private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
+  private readonly workbenchCommandRouter: RemoteBridgeWorkbenchCommandRouter;
   private readonly workspaceCommandRouter: RemoteBridgeWorkspaceCommandRouter;
 
   constructor(deps: RemoteBridgeMessageRouterDependencies) {
@@ -63,6 +65,9 @@ export class RemoteBridgeMessageRouter {
       logger: deps.logger,
       sessionHandler: deps.sessionHandler,
       workflowRuntime: deps.workflowRuntime,
+    });
+    this.workbenchCommandRouter = new RemoteBridgeWorkbenchCommandRouter({
+      getManager: deps.getManager,
     });
     this.workspaceCommandRouter = new RemoteBridgeWorkspaceCommandRouter({
       getManager: deps.getManager,
@@ -126,6 +131,24 @@ export class RemoteBridgeMessageRouter {
         break;
       case "settings:native-request-capture":
         await this.handleNativeRequestCapture(clientId, incoming.payload);
+        break;
+      case "workbench:state:load":
+        await this.workbenchCommandRouter.handleStateLoad(
+          clientId,
+          incoming.payload
+        );
+        break;
+      case "workbench:state:save":
+        await this.workbenchCommandRouter.handleStateSave(
+          clientId,
+          incoming.payload
+        );
+        break;
+      case "workbench:artifact:read":
+        await this.workbenchCommandRouter.handleArtifactRead(
+          clientId,
+          incoming.payload
+        );
         break;
       case "session:message":
         await this.deps.sessionHandler.handleMessage(

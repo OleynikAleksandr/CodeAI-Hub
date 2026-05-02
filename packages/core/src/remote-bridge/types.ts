@@ -11,6 +11,12 @@ import type {
 } from "../templates/template-update-resolution-service";
 import type { CommandErrorPayload } from "../workspace-runtime/workspace-wire-types";
 import type {
+  WorkbenchArtifactReadPayload,
+  WorkbenchIndexFile,
+  WorkbenchSelectionFile,
+  WorkbenchStateKind,
+} from "./handlers/workbench-state-types";
+import type {
   SerializedSession,
   SessionBridgeEvent,
   SessionIncomingMessage,
@@ -183,6 +189,8 @@ interface SettingsLoadedPayload {
   readonly settings: Record<string, unknown> | null;
 }
 
+type WorkbenchStateFile = WorkbenchIndexFile | WorkbenchSelectionFile;
+
 type CoreBridgeEvent =
   | { readonly type: "core:state"; readonly payload: CoreStatePayload }
   | {
@@ -232,6 +240,42 @@ type CoreBridgeEvent =
   | {
       readonly type: "settings:native-request-capture:result";
       readonly payload: NativeRequestCaptureCommandResult;
+    }
+  | {
+      readonly type: "workbench:state:loaded";
+      readonly payload: {
+        readonly error: string | null;
+        readonly kind: WorkbenchStateKind;
+        readonly state: WorkbenchStateFile | null;
+      };
+    }
+  | {
+      readonly type: "workbench:state:saved";
+      readonly payload: {
+        readonly error: string | null;
+        readonly kind: WorkbenchStateKind;
+      };
+    }
+  | {
+      readonly type: "workbench:state:save-error";
+      readonly payload: {
+        readonly error: string;
+        readonly kind: WorkbenchStateKind;
+      };
+    }
+  | {
+      readonly type: "workbench:artifact:loaded";
+      readonly payload: {
+        readonly jsonlPath: string;
+        readonly records: readonly unknown[];
+      };
+    }
+  | {
+      readonly type: "workbench:artifact:error";
+      readonly payload: {
+        readonly error: string;
+        readonly jsonlPath: string;
+      };
     }
   | { readonly type: "core:notification"; readonly payload: unknown }
   | {
@@ -346,7 +390,22 @@ type CoreIncomingMessage =
       readonly type: "settings:template-update:resolve";
       readonly payload: TemplateUpdateResolutionRequest;
     }
-  | { readonly type: "settings:open-user-glossary-file" };
+  | { readonly type: "settings:open-user-glossary-file" }
+  | {
+      readonly type: "workbench:state:load";
+      readonly payload: { readonly kind: WorkbenchStateKind };
+    }
+  | {
+      readonly type: "workbench:state:save";
+      readonly payload: {
+        readonly kind: WorkbenchStateKind;
+        readonly state: WorkbenchStateFile;
+      };
+    }
+  | {
+      readonly type: "workbench:artifact:read";
+      readonly payload: WorkbenchArtifactReadPayload;
+    };
 
 interface ProjectManagerDiagnosticLogIncomingMessage {
   readonly payload: {
