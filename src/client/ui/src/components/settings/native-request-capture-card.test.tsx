@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { NATIVE_REQUEST_CAPTURE_SCENARIO_OPTIONS } from "./native-request-capture-card";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import NativeRequestCaptureCard, {
+  NATIVE_REQUEST_CAPTURE_SCENARIO_OPTIONS,
+} from "./native-request-capture-card";
 
 test("NativeRequestCaptureCard exposes Translation as a selectable capture scenario", () => {
   assert.equal(
@@ -10,4 +14,17 @@ test("NativeRequestCaptureCard exposes Translation as a selectable capture scena
     ),
     true
   );
+});
+
+test("NativeRequestCaptureCard renders only the Capture Workbench launcher", () => {
+  (globalThis as typeof globalThis & { React: typeof React }).React = React;
+  const markup = renderToStaticMarkup(
+    <NativeRequestCaptureCard onOpenWorkbench={() => undefined} />
+  );
+
+  assert.equal(markup.includes("Provider Native Request Capture"), true);
+  assert.equal(markup.includes("Open Capture Workbench"), true);
+  assert.equal(markup.includes("<select"), false);
+  assert.equal(markup.includes("Translation"), false);
+  assert.equal(markup.includes("Virtual Simulation"), false);
 });
