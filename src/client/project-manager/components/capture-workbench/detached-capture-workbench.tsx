@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
 import { CaptureWorkbenchSelectionBar } from "./selection-bar";
+import { CaptureWorkbenchSnapshotCard } from "./snapshot-card";
 
 interface DetachedCaptureWorkbenchProps {
   readonly stateClient?: Pick<
@@ -41,8 +42,17 @@ export const DetachedCaptureWorkbench: React.FC<
 
       <main style={styles.main}>
         <section style={styles.snapshotRow}>
-          <SnapshotPanel mode="Vanilla" state="disabled" />
-          <SnapshotPanel mode="Managed" state="empty" />
+          <CaptureWorkbenchSnapshotCard
+            current={null}
+            disabled={true}
+            mode="vanilla"
+            previous={null}
+          />
+          <CaptureWorkbenchSnapshotCard
+            current={null}
+            mode="managed"
+            previous={null}
+          />
         </section>
         <section style={styles.diffPanel}>
           <div style={styles.diffHeader}>
@@ -73,30 +83,6 @@ const EMPTY_SELECTION_CLIENT: Pick<
   loadSelection: async () => null,
   saveSelection: async () => undefined,
 };
-
-const SnapshotPanel: React.FC<{
-  readonly mode: "Managed" | "Vanilla";
-  readonly state: "disabled" | "empty";
-}> = ({ mode, state }) => (
-  <article style={styles.snapshotPanel}>
-    <div style={styles.panelHeader}>
-      <span style={styles.panelTitle}>{mode}</span>
-      <span style={styles.mutedText}>
-        {state === "disabled" ? "Deferred" : "No artifact"}
-      </span>
-    </div>
-    <div style={styles.snapshotBody}>
-      <div style={styles.snapshotSlot}>
-        <span>Current</span>
-        <span style={styles.mutedText}>empty</span>
-      </div>
-      <div style={styles.snapshotSlot}>
-        <span>Previous</span>
-        <span style={styles.mutedText}>empty</span>
-      </div>
-    </div>
-  </article>
-);
 
 const DiffRow: React.FC<{
   readonly label: string;
@@ -159,41 +145,15 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: "hidden",
   },
   snapshotRow: {
+    background: "#20232a",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
     display: "grid",
     gap: 12,
     gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    padding: 16,
-  },
-  snapshotPanel: {
-    background: "#20232a",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    borderRadius: 6,
-    minHeight: 130,
-  },
-  panelHeader: {
-    alignItems: "center",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px 12px",
+    padding: "14px 16px",
   },
   panelTitle: { fontSize: 12, fontWeight: 600 },
   mutedText: { color: "#7e828a", fontSize: 11 },
-  snapshotBody: {
-    display: "grid",
-    gap: 8,
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    padding: 12,
-  },
-  snapshotSlot: {
-    background: "#2c313b",
-    border: "1px solid rgba(255, 255, 255, 0.08)",
-    borderRadius: 6,
-    display: "grid",
-    gap: 8,
-    minHeight: 72,
-    padding: 10,
-  },
   diffPanel: {
     background: "#20232a",
     borderTop: "1px solid rgba(255, 255, 255, 0.08)",
