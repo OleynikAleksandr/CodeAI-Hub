@@ -306,6 +306,10 @@ if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/translation/package.
   echo "❌ Missing bundled @codeai-hub/translation package in $CORE_INSTALL_ROOT" >&2
   exit 1
 fi
+if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/gemini-module/package.json" ]]; then
+  echo "❌ Missing bundled @codeai-hub/gemini-module package in $CORE_INSTALL_ROOT" >&2
+  exit 1
+fi
 if [[ ! -f "$CORE_SOURCE_DICTIONARY_PATH" ]]; then
   echo "❌ Missing bundled localization source dictionaries in $CORE_INSTALL_ROOT/app/assets" >&2
   exit 1
@@ -317,6 +321,9 @@ fi
 
 CORE_HANDLER_PATH="$CORE_HANDLER_PATH" "$CORE_NODE_PATH" -e "require(process.env.CORE_HANDLER_PATH)"
 echo "✅ Core runtime bundle loads the localization-backed settings bridge"
+CORE_GEMINI_MODULE_PATH="$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/gemini-module/dist/index.js" \
+"$CORE_NODE_PATH" -e "require(process.env.CORE_GEMINI_MODULE_PATH)"
+echo "✅ Core runtime bundle includes Gemini provider module"
 
 if ! VERSION="$VERSION" \
 CORE_KEY="$CORE_PLATFORM_KEY" \

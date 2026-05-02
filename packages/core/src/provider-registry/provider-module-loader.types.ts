@@ -1,27 +1,9 @@
-import type {
-  ClaudeModuleOptions,
-  ModuleReporter,
-} from "@codeai-hub/claude-module";
+import type { ClaudeModuleOptions } from "@codeai-hub/claude-module";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
+import type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
 import type { NativeRequestCaptureAppliedInputEnvelope } from "../provider-network-capture/native-request-capture-types";
-import type { GeminiInstallerPaths } from "./provider-installer-paths";
 
-export interface GeminiModuleOptions {
-  readonly credentials?: {
-    readonly directory?: string;
-    readonly requiredFiles?: readonly string[];
-  };
-  readonly enableDebugLogging?: boolean;
-  readonly installerPaths: GeminiInstallerPaths;
-  readonly reporter?: ModuleReporter;
-  readonly usageLimitsFacade?: GeminiUsageLimitsFacadeBridge;
-  readonly workspace: {
-    readonly workspacePath: string;
-    readonly defaultModel?: string;
-    readonly thinkingLevelByModel?: Record<string, string>;
-    readonly settingsPath?: string;
-  };
-}
+export type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
 
 export interface GeminiUsageLimitBucket {
   readonly percentUsed: number;
