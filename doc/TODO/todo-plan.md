@@ -106,12 +106,12 @@
 5. [DONE] Создать `src/client/project-manager/services/workbench-index-store.ts` + `workbench-index-store.test.ts`: slot resolution by `(step, provider, model, reasoning)`, `current → previous` rotation, materialize `SlotEntryRecord` from capture result + loaded `capture_start`; when index is missing/corrupted, call Core load/rebuild path instead of scanning filesystem locally; test keeps store used before UI wiring (scope: 2 файла; expected commit: `feat: add workbench index store with slot rotation`).
 6. [DONE] Git Commit: `feat: add workbench index store with slot rotation` (hash: 9ee7cc88d)
 7. [DONE] Stream 4 targeted verification: `npm run typecheck:webview`, `npx tsx --test src/client/project-manager/services/workbench-state-client.test.ts src/client/project-manager/services/workbench-index-store.test.ts` — passed on 2026-05-02, 6 PM service tests green; no production code changes expected (scope: docs-only status update; expected commit: `test: verify workbench bridge and index store`).
-8. [IN_PROGRESS] Git Commit: `test: verify workbench bridge and index store` (hash: TBD)
+8. [DONE] Git Commit: `test: verify workbench bridge and index store` (hash: 069a42b05)
 
 ### Stream 5 — Detached Workbench Entry
 
-1. [TODO] Расширить detached route и shell: `src/client/project-manager/app.tsx` + `src/client/project-manager/components/capture-workbench/detached-capture-workbench.tsx` — распознать `?mode=detached-capture`, query params `workspaceSlug`/`workspacePath`, shell layout (header/body/footer placeholders) по prototype rev2 grid/header/footer contract (scope: 2 файла; expected commit: `feat: route detached capture workbench shell`).
-2. [TODO] Git Commit: `feat: route detached capture workbench shell` (hash: TBD)
+1. [DONE] Расширить detached route и shell: `src/client/project-manager/app.tsx` + `src/client/project-manager/components/capture-workbench/detached-capture-workbench.tsx` — распознать `?mode=detached-capture`, query params `workspaceSlug`/`workspacePath`, shell layout (header/body/footer placeholders) по prototype rev2 grid/header/footer contract (scope: 2 файла; expected commit: `feat: route detached capture workbench shell`).
+2. [IN_PROGRESS] Git Commit: `feat: route detached capture workbench shell` (hash: TBD)
 3. [TODO] Реализовать api/localization mount path по результату Stream 0: обновить detached entry files так, чтобы окно получало same Core websocket bridge, `LocalizationProvider`, settings/bootstrap runtime; точные файлы зависят от §3.7 parent plan, лимит ≤3 файлов обязателен (scope: ≤3 файла; expected commit: `feat: mount transport and localization in detached capture window`).
 4. [TODO] Git Commit: `feat: mount transport and localization in detached capture window` (hash: TBD)
 5. [TODO] Тесты detached entry: route resolution, shell render, missing query params fallback, localization/bootstrap path smoke (scope: ≤2 файла; expected commit: `test: cover detached capture workbench entry`).
