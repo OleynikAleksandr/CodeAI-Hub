@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { WorkbenchSelectionState } from "../../services/workbench-bridge-types";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
+import { CaptureWorkbenchProviderSelector } from "./provider-selector";
 import { CaptureWorkbenchStepSelector } from "./step-selector";
 
 const DEFAULT_SELECTION: WorkbenchSelectionState = {
@@ -9,12 +10,6 @@ const DEFAULT_SELECTION: WorkbenchSelectionState = {
   model: "sonnet",
   reasoning: "thinking-high",
 };
-
-const PROVIDER_OPTIONS = [
-  { value: "claude", label: "Claude", disabled: false },
-  { value: "codex", label: "Codex", disabled: false },
-  { value: "gemini", label: "Gemini", disabled: true },
-] as const;
 
 const PROVIDER_DEFAULTS: Record<
   string,
@@ -98,11 +93,8 @@ export const CaptureWorkbenchSelectionBar: React.FC<
         onChange={(step) => updateSelection({ ...selection, step })}
         value={selection.step}
       />
-      <SelectField
-        label="Provider"
+      <CaptureWorkbenchProviderSelector
         onChange={updateProvider}
-        options={PROVIDER_OPTIONS}
-        tone={selection.provider === "claude" ? "claude" : "codex"}
         value={selection.provider}
       />
       <SelectField
