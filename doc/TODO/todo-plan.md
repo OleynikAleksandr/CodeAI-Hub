@@ -296,7 +296,7 @@
 4. [DONE] Git Commit: `chore: bump release manifests for gemini packaging fix` (hash: 0807662c2)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить Step 7.5 failsafe for bundled Gemini module, `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.130.vsix` (scope: release command + session report; expected commit: `docs: record gemini packaging fix release build`).
 6. [DONE] Git Commit: `docs: record gemini packaging fix release build` (hash: 3ec5d873d)
-7. [TODO] Создать локальный user-space handoff archive с `codeai-hub-1.2.130.vsix` и fresh `1.2.130` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record gemini packaging fix handoff bundle`).
+7. [DONE] Создать локальную user-space handoff folder с `codeai-hub-1.2.130.vsix` и fresh `1.2.130` tarball'ами из `~/.codeai-hub/releases/`; архив не создавать и не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record gemini packaging fix handoff bundle`). Folder: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.130-darwin-arm64`; contents verified: VSIX + seven `1.2.130` runtime tarballs; Core tarball includes `@codeai-hub/gemini-module/dist/index.js`.
 8. [TODO] Git Commit: `docs: record gemini packaging fix handoff bundle` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
