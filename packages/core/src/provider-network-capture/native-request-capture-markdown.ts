@@ -1,5 +1,6 @@
 import { redactCaptureHeaders } from "./native-request-capture-redaction";
 import type {
+  NativeRequestCaptureAppliedInputEnvelopeRecord,
   NativeRequestCaptureProviderId,
   NativeRequestCaptureProxyEvent,
   NativeRequestCaptureRequest,
@@ -62,6 +63,7 @@ export const buildNativeRequestCaptureMarkdown = (
   const diagnosticContext = findProviderDiagnosticContextRecords(
     options.records
   );
+  const appliedInputEnvelope = findAppliedInputEnvelopeRecord(options.records);
   const providerRuntimeError = findProviderRuntimeError(options.records);
   return [
     `# ${title}`,
@@ -82,6 +84,10 @@ export const buildNativeRequestCaptureMarkdown = (
       appliedTurnConfig: options.appliedTurnConfig,
       scenarioMetadata: options.scenarioMetadata,
     }),
+    "",
+    "## Applied Input Envelope",
+    "",
+    fencedJson(appliedInputEnvelope?.envelope ?? null),
     "",
     "## Provider Diagnostic Context",
     "",
@@ -199,6 +205,11 @@ const findProviderRuntimeError = (
   records: readonly unknown[]
 ): ProviderRuntimeErrorRecord | null =>
   records.find(isProviderRuntimeErrorRecord) ?? null;
+
+const findAppliedInputEnvelopeRecord = (
+  records: readonly unknown[]
+): NativeRequestCaptureAppliedInputEnvelopeRecord | null =>
+  records.find(isAppliedInputEnvelopeRecord) ?? null;
 
 export const sanitizeIgnoredRequest = (
   event: NativeRequestCaptureIgnoredRecord
@@ -443,6 +454,13 @@ const isProviderRuntimeErrorRecord = (
   isRecord(record) &&
   record.type === "provider_runtime_error" &&
   typeof record.message === "string";
+
+const isAppliedInputEnvelopeRecord = (
+  record: unknown
+): record is NativeRequestCaptureAppliedInputEnvelopeRecord =>
+  isRecord(record) &&
+  record.type === "applied_input_envelope" &&
+  isRecord(record.envelope);
 
 const isIgnoredRequestRecord = (
   record: unknown
