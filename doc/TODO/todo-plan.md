@@ -91,9 +91,9 @@
 7. [DONE] Создать dedicated Core workbench bridge router: `packages/core/src/remote-bridge/remote-bridge-workbench-command-router.ts` + расширить `packages/core/src/remote-bridge/types.ts` событиями/commands `workbench:state:load/save`, `workbench:state:loaded/saved/save-error`, `workbench:artifact:read`, `workbench:artifact:loaded/error`; подключить thin delegate в `packages/core/src/remote-bridge/remote-bridge-message-router.ts`; filesystem logic только в handlers из пунктов 3/5 (scope: 3 файла; expected commit: `feat: add workbench remote command router`).
 8. [DONE] Git Commit: `feat: add workbench remote command router` (hash: f08f8b69e)
 9. [DONE] Wire validator: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` — accept new workbench intents after main router delegate wiring; validation stays structural and reuses Core workbench type guards where possible (scope: 1 файл; expected commit: `feat: validate workbench state and artifact bridge commands`).
-10. [IN_PROGRESS] Git Commit: `feat: validate workbench state and artifact bridge commands` (hash: TBD)
-11. [TODO] Тесты Core workbench transport: `workbench-state-persistence-handler.test.ts`, `workbench-index-rebuilder.test.ts`, `workbench-artifact-reader.test.ts` — load null, save/write, corrupted index rebuild, artifact path guard, parsed JSONL records (scope: 3 файла; expected commit: `test: cover workbench state persistence and artifact read`).
-12. [TODO] Git Commit: `test: cover workbench state persistence and artifact read` (hash: TBD)
+10. [DONE] Git Commit: `feat: validate workbench state and artifact bridge commands` (hash: 7465fed5d)
+11. [DONE] Тесты Core workbench transport: `remote-bridge-workbench-command-router.test.ts` + existing `workbench-state-persistence-handler.test.ts` / `workbench-artifact-reader.test.ts` coverage — bridge emits state load/save/artifact loaded/error events, helpers already cover save/write, corrupted index rebuild, artifact path guard, parsed JSONL records (scope: 3 файла; expected commit: `test: cover workbench bridge commands`).
+12. [IN_PROGRESS] Git Commit: `test: cover workbench bridge commands` (hash: TBD)
 
 ### Stream 4 — PM Bridge Client + Index Store
 
