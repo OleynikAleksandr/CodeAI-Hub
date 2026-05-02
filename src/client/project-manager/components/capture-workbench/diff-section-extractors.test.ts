@@ -92,6 +92,48 @@ test("Provider diff extractors do not emit empty no-data sections", () => {
   assert.deepEqual(extractCodexDiffSections([]), {});
 });
 
+test("Provider diff extractors use section_extract fallback records", () => {
+  const sections = extractClaudeDiffSections([
+    captureStart("claude"),
+    {
+      type: "section_extract",
+      section: "system",
+      content: "fallback system",
+    },
+    {
+      type: "section_extract",
+      section: "tools",
+      payload: [{ name: "FallbackTool" }],
+    },
+  ]);
+
+  assert.equal(sections.system_prompt, "fallback system");
+  assert.deepEqual(sections.tools, [{ name: "FallbackTool" }]);
+  assert.deepEqual(sections.workflow_context, {
+    scenarioId: "description",
+    scenarioTargetPath: ".codeai-hub/demo/description/Final_Description.md",
+  });
+});
+
+test("Codex diff extractor includes output schema when present", () => {
+  const sections = extractCodexDiffSections([
+    captureStart("codex"),
+    {
+      type: "request_captured",
+      providerId: "codex",
+      method: "WS",
+      path: "/api/codex",
+      target: "127.0.0.1",
+      body: {
+        instructions: "Codex instructions",
+        output_schema: { type: "object" },
+      },
+    },
+  ]);
+
+  assert.deepEqual(sections.output_schema, { type: "object" });
+});
+
 const captureStart = (providerId: "claude" | "codex") => ({
   type: "capture_start",
   providerId,
