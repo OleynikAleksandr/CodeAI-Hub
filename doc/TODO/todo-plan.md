@@ -291,7 +291,7 @@
 ### Stream 11N — Release Build (Gemini Packaging Fix)
 
 1. [DONE] Подготовить новый release number `1.2.130` после Gemini packaging blocker in `1.2.129`: обновить README.md и CHANGELOG.md, кодовые изменения уже внесены в Stream 11M (scope: 2 release docs + todo-plan; expected commit: `docs: prepare gemini packaging fix release`).
-2. [TODO] Git Commit: `docs: prepare gemini packaging fix release` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare gemini packaging fix release` (hash: f899b7622)
 3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить, что `~/.codeai-hub/core/darwin-arm64/1.2.130/app/node_modules/@codeai-hub/gemini-module/package.json` существует, а tarball'ы `1.2.130` лежат в `~/.codeai-hub/releases/` и `doc/tmp/releases/` (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for gemini packaging fix`).
 4. [TODO] Git Commit: `chore: bump release manifests for gemini packaging fix` (hash: TBD)
 5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить Step 7.5 failsafe for bundled Gemini module, `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.130.vsix` (scope: release command + session report; expected commit: `docs: record gemini packaging fix release build`).
