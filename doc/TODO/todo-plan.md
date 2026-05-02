@@ -78,12 +78,12 @@
 9. [DONE] Обновить PM tests для reasoning transport: `native-request-capture-runner.test.ts` + `core-stream-message-validator.test.ts` при необходимости — runner сохраняет старый no-override path и новый override path (scope: ≤2 файла; expected commit: `test: cover project manager capture reasoning override`).
 10. [DONE] Git Commit: `test: cover project manager capture reasoning override` (hash: b1da80a24)
 11. [DONE] Обновить `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`: capture-scoped reasoning override как explicit diagnostic exception от persisted Settings/session-binding ownership (scope: 1 файл; expected commit: `docs: document capture-scoped reasoning override exception`).
-12. [IN_PROGRESS] Git Commit: `docs: document capture-scoped reasoning override exception` (hash: TBD)
+12. [DONE] Git Commit: `docs: document capture-scoped reasoning override exception` (hash: 7ebe9c995)
 
 ### Stream 3 — Core Workbench State + Artifact Read Transport
 
-1. [TODO] Создать `packages/core/src/remote-bridge/handlers/workbench-state-types.ts`: `WorkbenchStateKind`, `WorkbenchIndexFile`, `WorkbenchSelectionFile`, `SlotEntryRecord`, `WorkbenchArtifactReadPayload`, validator helpers для persisted workbench state (scope: 1 файл; expected commit: `feat: add workbench state and artifact read types`).
-2. [TODO] Git Commit: `feat: add workbench state and artifact read types` (hash: TBD)
+1. [DONE] Создать `packages/core/src/remote-bridge/handlers/workbench-state-types.ts` + `workbench-state-types.test.ts`: `WorkbenchStateKind`, `WorkbenchIndexFile`, `WorkbenchSelectionFile`, `SlotEntryRecord`, `WorkbenchArtifactReadPayload`, validator helpers для persisted workbench state; smoke test нужен, чтобы новый helper не был unused до router wiring (scope: 2 файла; expected commit: `feat: add workbench state and artifact read types`).
+2. [IN_PROGRESS] Git Commit: `feat: add workbench state and artifact read types` (hash: TBD)
 3. [TODO] Создать Core persistence/rebuild internals: `workbench-state-persistence-handler.ts` + `workbench-index-rebuilder.ts` — load/save `~/.codeai-hub/settings/workbench-index.json` и `capture-workbench.json`; при missing/corrupted index handler rebuild'ит index из `capture_start` JSONL records under `~/.codeai-hub/logs/native-request-capture/` (scope: 2 файла; expected commit: `feat: add core workbench state persistence and rebuild`).
 4. [TODO] Git Commit: `feat: add core workbench state persistence and rebuild` (hash: TBD)
 5. [TODO] Создать `packages/core/src/remote-bridge/handlers/workbench-artifact-reader.ts`: read-only loader для captured JSONL artifacts by absolute path, path must resolve under `~/.codeai-hub/logs/native-request-capture/`, returns parsed records or typed error; browser/PM layer не читает filesystem напрямую (scope: 1 файл; expected commit: `feat: add core workbench artifact reader`).
