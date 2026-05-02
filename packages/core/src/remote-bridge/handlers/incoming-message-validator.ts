@@ -1,4 +1,9 @@
 import type { IncomingMessage } from "../types";
+import {
+  isWorkbenchArtifactReadPayload,
+  isWorkbenchStateKind,
+  isWorkbenchStatePayload,
+} from "./workbench-state-types";
 
 export type IncomingMessageValidationResult =
   | { readonly message: IncomingMessage; readonly ok: true }
@@ -213,6 +218,14 @@ const isNativeRequestCapturePayload = (payload: unknown): boolean =>
   isOptionalStringOrNull(payload.scenarioTargetPath) &&
   isOptionalStringOrNull(payload.workspacePath);
 
+const isWorkbenchStateLoadPayload = (payload: unknown): boolean =>
+  isRecord(payload) && isWorkbenchStateKind(payload.kind);
+
+const isWorkbenchStateSavePayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  isWorkbenchStateKind(payload.kind) &&
+  isWorkbenchStatePayload(payload.kind, payload.state);
+
 const isProjectAddPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.path === "string" &&
@@ -272,6 +285,9 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "settings:save": isSettingsSavePayload,
   "settings:template-update:resolve": isSettingsTemplateResolutionPayload,
   "settings:update-provider": isSettingsUpdateProviderPayload,
+  "workbench:artifact:read": isWorkbenchArtifactReadPayload,
+  "workbench:state:load": isWorkbenchStateLoadPayload,
+  "workbench:state:save": isWorkbenchStateSavePayload,
   "workspace:scope:set": isWorkspaceScopeSetPayload,
   "workspace:select": isWorkspaceSelectPayload,
   "workspace:snapshot:request": isWorkspaceSnapshotRequestPayload,
