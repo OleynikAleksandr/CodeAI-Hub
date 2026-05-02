@@ -198,14 +198,14 @@
 
 1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.125` after failed `1.2.124`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files; expected commit: `docs: prepare capture workbench crash fix release`).
 2. [DONE] Git Commit: `docs: prepare capture workbench crash fix release` (hash: 415a5d64d)
-3. [IN_PROGRESS] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench crash fix`).
-4. [TODO] Git Commit: `chore: bump release manifests for capture workbench crash fix` (hash: TBD)
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench crash fix release build`).
-6. [TODO] Git Commit: `docs: record capture workbench crash fix release build` (hash: TBD)
+3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench crash fix`).
+4. [DONE] Git Commit: `chore: bump release manifests for capture workbench crash fix` (hash: 4084a781b)
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench crash fix release build`).
+6. [IN_PROGRESS] Git Commit: `docs: record capture workbench crash fix release build` (hash: TBD)
 
 ### Stream 11C — User Visual Acceptance Testing (Retest)
 
-1. [TODO] Установить crash-fix VSIX (`codeai-hub-1.2.125.vsix`, если release version не изменится иначе), открыть workspace, повторить сценарий клика по Step/Provider/Model/Reasoning selectors и убедиться, что Project Manager не падает.
+1. [IN_PROGRESS] Установить crash-fix VSIX (`codeai-hub-1.2.125.vsix`, если release version не изменится иначе), открыть workspace, повторить сценарий клика по Step/Provider/Model/Reasoning selectors и убедиться, что Project Manager не падает.
 2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
 3. [TODO] Зафиксировать результат crash-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench crash fix visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench crash fix visual acceptance` (hash: TBD)
