@@ -10,6 +10,18 @@ const SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/capture-workbench/selection-bar.tsx"
 );
+const SELECTOR_SOURCE_PATHS = [
+  "dom-listbox-selector.tsx",
+  "step-selector.tsx",
+  "provider-selector.tsx",
+  "model-reasoning-selectors.tsx",
+].map((fileName) =>
+  path.resolve(
+    process.cwd(),
+    "src/client/project-manager/components/capture-workbench",
+    fileName
+  )
+);
 
 test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini disabled", () => {
   const markup = renderToStaticMarkup(
@@ -27,7 +39,22 @@ test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini di
   assert.equal(markup.includes("Reasoning"), true);
   assert.equal(markup.includes("Gemini"), true);
   assert.equal(markup.includes("disabled=\"\""), true);
-  assert.equal(markup.includes("thinking-high"), true);
+  assert.equal(markup.includes("thinking high"), true);
+  assert.equal(markup.includes("aria-haspopup=\"listbox\""), true);
+  assert.equal(markup.includes("<select"), false);
+  assert.equal(markup.includes("<option"), false);
+});
+
+test("CaptureWorkbenchSelectionBar selector source avoids native HTML selects", async () => {
+  const sources = await Promise.all(
+    SELECTOR_SOURCE_PATHS.map((sourcePath) => readFile(sourcePath, "utf8"))
+  );
+
+  for (const source of sources) {
+    assert.equal(source.includes("<select"), false);
+    assert.equal(source.includes("<option"), false);
+    assert.equal(source.includes("<optgroup"), false);
+  }
 });
 
 test("CaptureWorkbenchSelectionBar keeps sticky load/save and selection callback wiring", async () => {
