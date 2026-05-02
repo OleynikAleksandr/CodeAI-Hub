@@ -164,9 +164,9 @@
 2. [DONE] Git Commit: `feat: shrink native capture settings card to launcher` (hash: 9134c12a1)
 3. [DONE] Добавить PM launcher owner: `src/client/project-manager/services/capture-workbench-launcher.ts` + `src/client/project-manager/components/settings/use-project-manager-settings-state.ts` — handler builds `?mode=detached-capture&workspaceSlug=...&workspacePath=...` and calls `window.open(..., "popup,width=1280,height=900")`; shared UI does not import PM services directly (scope: 2 файла; expected commit: `feat: wire capture workbench launcher from project manager settings`).
 4. [DONE] Git Commit: `feat: wire capture workbench launcher from project manager settings` (hash: 66275abcf)
-5. [IN_PROGRESS] Обновить launcher tests: `native-request-capture-card.test.tsx` + `capture-workbench-launcher.test.ts` — launcher button visible, old controls absent, URL/query/features correct (scope: 2 файла; expected commit: `test: cover capture workbench launcher migration`).
-6. [TODO] Git Commit: `test: cover capture workbench launcher migration` (hash: TBD)
-7. [TODO] Обновить SSOT: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` + `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` — Settings General owns launcher only; detached Capture Workbench is PM diagnostic surface with Core-owned state/artifact read transport (scope: 2 файла; expected commit: `docs: document capture workbench launcher and detached surface`).
+5. [DONE] Обновить launcher tests: `native-request-capture-card.test.tsx` + `capture-workbench-launcher.test.ts` — launcher button visible, old controls absent, URL/query/features correct (scope: 2 файла; expected commit: `test: cover capture workbench launcher migration`).
+6. [DONE] Git Commit: `test: cover capture workbench launcher migration` (hash: 4c0a49e8f)
+7. [IN_PROGRESS] Обновить SSOT: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` + `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` — Settings General owns launcher only; detached Capture Workbench is PM diagnostic surface with Core-owned state/artifact read transport (scope: 2 файла; expected commit: `docs: document capture workbench launcher and detached surface`).
 8. [TODO] Git Commit: `docs: document capture workbench launcher and detached surface` (hash: TBD)
 
 ### Stream 10 — Release Build

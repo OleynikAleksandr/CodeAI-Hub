@@ -60,6 +60,8 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
   - settings mode reuses shared `SettingsView`, but runs through PM-owned transport/state hooks and sends write intents directly into Core remote bridge;
   - закрытие Settings возвращает предыдущий right-panel context вместо закрытия PM window;
   - PM settings general tab снова показывает shared `Core Controls`, а `Restart Core` routed through PM host bridge for both VS Code-host and standalone launcher-host;
+  - PM settings general tab exposes provider native request diagnostics only as `Open Capture Workbench`; `src/client/project-manager/services/capture-workbench-launcher.ts` opens the detached `?mode=detached-capture&workspaceSlug=...&workspacePath=...` popup, while shared Settings UI receives only a thin callback and does not import PM services;
+  - detached Capture Workbench is PM-owned diagnostic UI over existing Core transports: managed capture still uses `settings:native-request-capture`, sticky selection/index use Core-owned `workbench:state:*`, artifact records use Core-owned `workbench:artifact:read`, and file-open buttons reuse the host-side `openProjectManagerFileLink()` bridge instead of adding a Core file-open intent;
   - blocking localization overlay inside Settings показывается только при реальном strict localization sync busy-state, а provider-only saves не должны отображаться как localization rebuild.
 - Видимая diagram surface в PM больше не показывает `Auto-layout`, profile chooser, inline semantic editors, zoom/fit controls или bottom-right minimap. Пользователь композирует диаграмму через:
   - right-click context menu на ProductPart: `columns` (`auto` | 2..5), `targetAspectRatio` (`landscape` | `wide` | `square`);
