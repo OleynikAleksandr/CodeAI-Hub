@@ -205,10 +205,31 @@
 
 ### Stream 11C — User Visual Acceptance Testing (Retest)
 
-1. [IN_PROGRESS] Установить crash-fix VSIX (`codeai-hub-1.2.125.vsix`, если release version не изменится иначе), открыть workspace, повторить сценарий клика по Step/Provider/Model/Reasoning selectors и убедиться, что Project Manager не падает.
-2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
+1. [DONE] Установить crash-fix VSIX (`codeai-hub-1.2.125.vsix`, если release version не изменится иначе), открыть workspace, повторить сценарий клика по Step/Provider/Model/Reasoning selectors и убедиться, что Project Manager не падает.
+2. [BLOCKED] Acceptance matrix: пользовательский retest `1.2.125` подтвердил, что selector crash устранён и `Translation` capture пишет artifacts, но workflow steps (`Description`, `Virtual Simulation`, `Diagram Modules`) падают до capture с ошибкой `this.getHttpUrl is not a function`. Диагноз: Workbench runner передаёт `api.getWorkflowState` в workflow scenario prompt builder как unbound callback; `Translation` не падает, потому что идёт direct capture path без workflow state lookup.
 3. [TODO] Зафиксировать результат crash-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench crash fix visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench crash fix visual acceptance` (hash: TBD)
+
+### Stream 11D — Workflow Capture Binding Fix
+
+1. [DONE] Bind Workbench workflow-state transport before handing it to the scenario prompt builder and add regression coverage for class-style API receivers: `capture-workbench-runner.ts`, `capture-workbench-runner.test.ts`; keep Translation direct path unchanged and avoid Core/provider changes (scope: 2 files; expected commit: `fix: bind capture workbench workflow state transport`).
+2. [DONE] Git Commit: `fix: bind capture workbench workflow state transport` (hash: ed856db0b)
+
+### Stream 11E — Release Build (Workflow Capture Fix)
+
+1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.126` after failed workflow-step retest in `1.2.125`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files; expected commit: `docs: prepare capture workbench workflow fix release`).
+2. [DONE] Git Commit: `docs: prepare capture workbench workflow fix release` (hash: df081de7e)
+3. [IN_PROGRESS] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench workflow fix`).
+4. [TODO] Git Commit: `chore: bump release manifests for capture workbench workflow fix` (hash: TBD)
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench workflow fix release build`).
+6. [TODO] Git Commit: `docs: record capture workbench workflow fix release build` (hash: TBD)
+
+### Stream 11F — User Visual Acceptance Testing (Workflow Fix Retest)
+
+1. [TODO] Установить workflow-fix VSIX (`codeai-hub-1.2.126.vsix`, если release version не изменится иначе), открыть workspace, повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules` и убедиться, что workflow steps больше не падают с `this.getHttpUrl is not a function`.
+2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
+3. [TODO] Зафиксировать результат workflow-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench workflow fix visual acceptance`).
+4. [TODO] Git Commit: `docs: record capture workbench workflow fix visual acceptance` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
 
