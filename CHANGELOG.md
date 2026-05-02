@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.127] - 2026-05-02
+### Changed
+- **Capture Workbench workflow fix is repackaged under a fresh release number.** This release preserves the `1.2.126` workflow-state transport fix and provides a clean install target after an interrupted local VSIX installation.
+
 ## [1.2.126] - 2026-05-02
 ### Fixed
 - **Capture Workbench workflow-step captures now keep the Project Manager API receiver bound.** Description, Virtual Simulation, and Diagram Modules managed capture can resolve workflow state without throwing `this.getHttpUrl is not a function`; Translation remains on the direct capture path.
