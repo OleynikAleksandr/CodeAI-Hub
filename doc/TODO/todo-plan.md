@@ -284,7 +284,7 @@
 ### Stream 11M — Gemini Runtime Packaging Fix
 
 1. [DONE] Зафиксировать clean-install blocker `1.2.129`: `gemini-module-1.2.129.tar.bz2` есть в `~/.codeai-hub/releases/`, но Core runtime не содержит `@codeai-hub/gemini-module`, а `~/.codeai-hub/providers/gemini/<version>/install.json` не создаётся из releases автоматически; UI показывает `Gemini provider module is not installed` до CLI/auth stage (scope: 1 doc; expected commit: `docs: record gemini clean install packaging blocker`).
-2. [TODO] Git Commit: `docs: record gemini clean install packaging blocker` (hash: TBD)
+2. [DONE] Git Commit: `docs: record gemini clean install packaging blocker` (hash: 6a0d2a835)
 3. [TODO] Включить Gemini module в Core runtime dependency graph и release gate: `packages/core/package.json`, `package-lock.json`, `scripts/build-release.sh` — добавить `@codeai-hub/gemini-module` dependency в Core, обновить lockfile, и проверять наличие `CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/gemini-module/package.json` в Step 7.5 (scope: 3 files; expected commit: `fix: bundle gemini module in core runtime`).
 4. [TODO] Git Commit: `fix: bundle gemini module in core runtime` (hash: TBD)
 
