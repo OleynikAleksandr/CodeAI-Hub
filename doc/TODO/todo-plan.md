@@ -3,8 +3,9 @@
 ## Context Pack For This Cycle
 
 - **Planning source (child):** `doc/SolidWorks-WorkFlow/Plans/Capture_Workbench_UI_Architecture.md` rev4
-- **Planning source (parent):** `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` rev5
+- **Planning source (parent):** `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` rev6
 - **Visual contract:** `doc/tmp/prototypes/capture-workbench.html` rev2
+- **Prototype source of UI truth:** `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/prototypes/capture-workbench.html`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariants 5/14/33/35)
   - `doc/SolidWorks-WorkFlow/Plans/Capture_Workbench_UI_Architecture.md`
@@ -22,18 +23,21 @@
 ## Правила выполнения (Execution Rules)
 
 - **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- **TODO Plan** состоит из Phase. В каждой Phase некоторое количество Stream, в каждом Stream — некоторое количество подзадач.
-- Каждая подзадача должна затрагивать не более 3 файлов. Если по факту разработки задача разрастается — её нужно разбить на более мелкие и список задач переписать.
-- Каждая подзадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` (отдельной строкой).
+- **TODO Plan** состоит из Phase. В каждой Phase некоторое количество Stream, в каждом Stream — микрозадачи.
+- Каждая микрозадача должна затрагивать не более 3 файлов. Если по факту разработки задача разрастается — её нужно разбить на более мелкие и список задач переписать до реализации.
+- Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
+- **Cluster-modular / minimal-touch invariant:** новую логику добавлять в новые micro-services / handlers / components; существующие рабочие файлы трогать только как additive facade/router/type/prop hooks. Не переносить и не переписывать действующий Settings, provider, session или capture flow, если это прямо не указано в конкретной микрозадаче.
+- **Facade boundary invariant:** `api.ts`, remote-bridge routers, validators, provider facade и Settings shared components не должны получать новую бизнес-логику. Если hook перестаёт быть thin delegation, перед реализацией разбить микрозадачу и вынести поведение в новый файл.
+- **Prototype invariant:** UI Streams 5-9 обязаны воспроизводить структуру, плотность, цвета/tokens и interaction states из `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/prototypes/capture-workbench.html`; prototype является visual contract, а не справочной иллюстрацией.
 - **Gates (автоматически через Husky hooks):**
   - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:knip`, `npm run format:fix`
   - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
-  - Ручной прогон обычно не нужен (только для диагностики).
+  - Ручной прогон обычно не нужен, только для диагностики.
 - **Таргетные сборки** перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
 - **Real-time документация:** любое изменение архитектуры/логики требует синхронного обновления `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и/или canonical SSOT-документов до коммита, чтобы изменения попали в тот же Git Commit.
-- **Phase завершение:** запустить `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), перенести tarball'ы в `doc/tmp/releases/`, зафиксировать результаты в `doc/Sessions/`. Перед сборкой релиза обновить README.md и CHANGELOG.md на будущую версию.
-- **Постоянное обновление:** после каждого коммита обновлять статус задачи и заносить hash в `doc/TODO/todo-plan.md`.
-- **Ordering invariant:** Stream 0 → Streams 1/2/3 (pre-UI, любой порядок) → Stream 4 (PM plumbing, после 1+3) → Stream 5 (detached entry, после 0) → Streams 6/7/8 (UI surface, после 4+5) → Stream 9 (launcher) → Stream 10 (release) → Stream 11 (acceptance) → Stream 12 (closeout).
+- **Release Build:** перед релизной сборкой обновить README.md и CHANGELOG.md на будущую версию = текущая версия из `package.json` + 1. Затем выполнить release checklist из AGENTS.md.
+- **Постоянное обновление:** после каждого коммита обновлять статус задачи и заносить hash в этот `doc/TODO/todo-plan.md`.
+- **Ordering invariant:** Stream 0 → Streams 1/2/3 (pre-UI, любой порядок) → Stream 4 (PM bridge/store, после 3; часть Stream 4, зависящая от capture result, также после 1/2) → Stream 5 (detached entry, после 0) → Streams 6/7/8 (UI surface, после 4+5; Stream 7 также после 1/2) → Stream 9 (launcher, после 5) → Stream 10 (release) → Stream 11 (acceptance) → Stream 12 (closeout).
 
 ---
 
@@ -41,165 +45,155 @@
 
 ### Stream 0 — Parent Phase 3 Pre-Flight Spike (detached transport + localization)
 
-1. [TODO] Spike: подтвердить websocket transport path для detached `?mode=detached-capture` окна — где именно монтируется `useProjectManagerApi()` / settings hook, чтобы кнопки могли отправить `settings:native-request-capture` и `workbench:state:save`. Проверить через grep+read; результат — заметки. Scope: research only, no production code.
-2. [TODO] Spike: подтвердить delivery `__CODEAI_LOCALIZATION_BOOTSTRAP__` для popup-окна — query param vs separate fetch vs postMessage от parent. Scope: research only.
-3. [TODO] Записать §3.7 «Detached transport & localization plan» в `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` — короткий append с выбранным mount path и bootstrap delivery (scope: 1 файл).
-4. [TODO] Git Commit: `docs: close parent phase 3 detached transport spike` (hash: TBD)
+1. [DONE] Выполнить spike по detached `?mode=detached-capture`: подтвердить websocket transport path для `settings:native-request-capture`, `workbench:state:*`, `workbench:artifact:read`; подтвердить delivery `__CODEAI_LOCALIZATION_BOOTSTRAP__`; append-нуть §3.7 «Detached transport & localization plan» в `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` с выбранным mount path и bootstrap delivery (scope: 1 planning-doc; production code не менять; expected commit: `docs: close parent phase 3 detached transport spike`).
+2. [IN_PROGRESS] Git Commit: `docs: close parent phase 3 detached transport spike` (hash: TBD)
 
-### Stream 1 — Writer + Provider Services Foundation (envelope, releaseVersion, mode)
+### Stream 1 — Capture Artifact Schema Foundation
 
-1. [TODO] Расширить `packages/core/src/provider-network-capture/native-request-capture-types.ts`: добавить `AppliedInputEnvelope` (Claude и Codex варианты, `kind: "applied_input_envelope"`), `CaptureMode = "managed" | "vanilla"`, обновить `capture_start` record type с полями `mode`, `releaseVersion` (scope: 1 файл).
-2. [TODO] Git Commit: `feat: add applied-input-envelope and capture mode types to native-request-capture` (hash: TBD)
-3. [TODO] Расширить writer (`native-request-capture-writer.ts`): принять `appliedInputEnvelope` параметр, эмитить `applied_input_envelope` record после `capture_start`, добавить `mode` и `releaseVersion` в `capture_start` payload, читать version из `package.json` через injected resolver (scope: 1 файл).
-4. [TODO] Git Commit: `feat: writer emits applied_input_envelope, mode, releaseVersion` (hash: TBD)
-5. [TODO] Обновить `native-request-capture-writer.test.ts`: тесты на envelope emission, `mode` и `releaseVersion` в `capture_start`, обратная совместимость для отсутствующего envelope (scope: 1 файл).
-6. [TODO] Git Commit: `test: cover writer envelope, mode, releaseVersion contract` (hash: TBD)
-7. [TODO] Расширить Claude diagnostic service (`packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts`): сериализовать SDK `query(...)` options в `AppliedInputEnvelope` (`settingSources`, `permissionMode`, `cwd`, `allowDangerouslySkipPermissions`, `hasSystemPrompt`, `toolCount`) и передать writer'у (scope: 1 файл).
-8. [TODO] Git Commit: `feat: claude diagnostic service emits applied input envelope` (hash: TBD)
-9. [TODO] Обновить `claude-native-request-capture-service.test.ts`: assertion на envelope shape, проверка что `hasSystemPrompt` и `toolCount` корректны (scope: 1 файл).
-10. [TODO] Git Commit: `test: cover claude applied input envelope shape` (hash: TBD)
-11. [TODO] Расширить Codex diagnostic service (`packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-service.ts`): сериализовать `processProfileKey`, `approvalPolicy`, `sandbox`, `persistExtendedHistory`, `providerHomeOverrides`, `modelReasoningSummary` в envelope (scope: 1 файл).
-12. [TODO] Git Commit: `feat: codex diagnostic service emits applied input envelope` (hash: TBD)
-13. [TODO] Обновить `codex-native-request-capture-service.test.ts`: assertion на envelope shape (scope: 1 файл).
-14. [TODO] Git Commit: `test: cover codex applied input envelope shape` (hash: TBD)
-15. [TODO] Обновить `native-request-capture-markdown.ts`: добавить секцию `Applied Input Envelope` под фиксированным заголовком, печать ключевых полей envelope в `.md` артефакте (scope: 1 файл).
-16. [TODO] Git Commit: `feat: markdown summarizer prints applied input envelope section` (hash: TBD)
-17. [TODO] Обновить `native-request-capture-markdown.test.ts` (или создать, если отсутствует) — тесты на новую секцию (scope: 1 файл).
-18. [TODO] Git Commit: `test: cover markdown applied input envelope section` (hash: TBD)
-19. [TODO] Обновить SystemArchitecture.md §33 (Settings ownership invariant): добавить упоминание `applied_input_envelope`, `mode`, `releaseVersion` как части captured artifact schema. Scope: 1 файл.
-20. [TODO] Git Commit: `docs: extend system architecture for capture artifact schema` (hash: TBD)
+1. [TODO] Расширить schema/type surface для captured artifacts: `packages/core/src/provider-network-capture/native-request-capture-types.ts` + `packages/core/src/provider-registry/provider-module-loader.types.ts` — добавить `AppliedInputEnvelope` variants для Claude/Codex, `CaptureMode = "managed" | "vanilla"`, `capture_start.mode`, `capture_start.releaseVersion`, provider-facing callback для emission envelope (scope: 2 файла; expected commit: `feat: add capture artifact envelope and mode contracts`).
+2. [TODO] Git Commit: `feat: add capture artifact envelope and mode contracts` (hash: TBD)
+3. [TODO] Расширить writer/facade path: `native-request-capture-writer.ts` + `native-request-capture-facade.ts` — writer эмитит `mode`, `releaseVersion`, принимает provider-emitted `applied_input_envelope`; facade передаёт provider callback в `captureNativeRequest` и задаёт `mode: "managed"` для Phase 1 (scope: 2 файла; expected commit: `feat: emit capture envelope, mode and release version`).
+4. [TODO] Git Commit: `feat: emit capture envelope, mode and release version` (hash: TBD)
+5. [TODO] Обновить tests для writer/facade: `native-request-capture-writer.test.ts` + `native-request-capture-facade.test.ts` — проверка `capture_start.mode`, `releaseVersion`, provider-emitted envelope record, backward-compatible missing envelope path (scope: 2 файла; expected commit: `test: cover capture envelope and mode records`).
+6. [TODO] Git Commit: `test: cover capture envelope and mode records` (hash: TBD)
+7. [TODO] Расширить Claude diagnostic service и тест: `claude-native-request-capture-service.ts` + `claude-native-request-capture-service.test.ts` — сериализовать SDK `query(...)` options в envelope (`settingSources`, `permissionMode`, `cwd`, `allowDangerouslySkipPermissions`, `hasSystemPrompt`, `toolCount`) перед SDK invoke (scope: 2 файла; expected commit: `feat: claude diagnostic capture emits applied envelope`).
+8. [TODO] Git Commit: `feat: claude diagnostic capture emits applied envelope` (hash: TBD)
+9. [TODO] Расширить Codex diagnostic service и тест: `codex-native-request-capture-service.ts` + `codex-native-request-capture-service.test.ts` — сериализовать `processProfileKey`, `approvalPolicy`, `sandbox`, `persistExtendedHistory`, `providerHomeOverrides`, `modelReasoningSummary` перед App Server invoke (scope: 2 файла; expected commit: `feat: codex diagnostic capture emits applied envelope`).
+10. [TODO] Git Commit: `feat: codex diagnostic capture emits applied envelope` (hash: TBD)
+11. [TODO] Обновить markdown summarizer и тест: `native-request-capture-markdown.ts` + `native-request-capture-markdown.test.ts` (создать test file, если отсутствует) — секция `Applied Input Envelope` под фиксированным заголовком, без credential leakage (scope: 2 файла; expected commit: `feat: render applied envelope in capture markdown`).
+12. [TODO] Git Commit: `feat: render applied envelope in capture markdown` (hash: TBD)
+13. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33: captured artifact schema включает `applied_input_envelope`, `mode`, `releaseVersion`; Phase 1 всегда `mode: "managed"` (scope: 1 файл; expected commit: `docs: document capture artifact schema extensions`).
+14. [TODO] Git Commit: `docs: document capture artifact schema extensions` (hash: TBD)
 
 ### Stream 2 — Reasoning Transport Extension
 
-1. [TODO] Расширить `packages/core/src/remote-bridge/types.ts`: добавить `reasoning?: string | null` в `settings:native-request-capture` payload (scope: 1 файл).
-2. [TODO] Git Commit: `feat: native-request-capture transport accepts reasoning override` (hash: TBD)
-3. [TODO] Расширить `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`: validator для нового поля `reasoning` (scope: 1 файл).
-4. [TODO] Git Commit: `feat: validate reasoning field in native-request-capture payload` (hash: TBD)
-5. [TODO] Расширить facade и applied-config resolver (`packages/core/src/provider-network-capture/native-request-capture-facade.ts` + `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts` если нужно ещё там): принять reasoning override и применить к `appliedTurnConfig` для capture-only пути, без записи в persisted Settings (scope: ≤2 файлов).
-6. [TODO] Git Commit: `feat: capture facade applies one-shot reasoning override` (hash: TBD)
-7. [TODO] Обновить `native-request-capture-facade.test.ts`: override применяется к envelope/wire payload, persisted Settings не меняются (scope: 1 файл).
-8. [TODO] Git Commit: `test: cover one-shot reasoning override in capture facade` (hash: TBD)
-9. [TODO] Обновить `EffectiveModelIdentity_And_Settings_SSOT.md`: добавить упоминание capture-scoped reasoning override как allowed exception от persisted-binding contract (scope: 1 файл).
-10. [TODO] Git Commit: `docs: document capture-scoped reasoning override exception` (hash: TBD)
+1. [TODO] Расширить Core incoming transport contract: `packages/core/src/remote-bridge/types.ts` + `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` — добавить и валидировать `reasoning?: string | null` в `settings:native-request-capture` payload (scope: 2 файла; expected commit: `feat: accept capture reasoning override in core transport`).
+2. [TODO] Git Commit: `feat: accept capture reasoning override in core transport` (hash: TBD)
+3. [TODO] Прокинуть override в Core capture path: `remote-bridge-message-router.ts`, `native-request-capture-facade.ts`, новый `native-request-capture-reasoning-override.ts` — router читает `payload.reasoning`; facade применяет one-shot override через capture-only helper после resolved appliedTurnConfig; persisted Settings и generic session applied-config resolver не менять, если helper покрывает контракт (scope: 3 файла; expected commit: `feat: apply one-shot reasoning override for capture`).
+4. [TODO] Git Commit: `feat: apply one-shot reasoning override for capture` (hash: TBD)
+5. [TODO] Обновить Core tests: `remote-bridge-message-router.test.ts` + `native-request-capture-facade.test.ts` — override доходит до facade/applied config, persisted Settings не меняются (scope: 2 файла; expected commit: `test: cover capture reasoning override in core path`).
+6. [TODO] Git Commit: `test: cover capture reasoning override in core path` (hash: TBD)
+7. [TODO] Расширить PM outgoing transport: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/api.ts`, `src/client/project-manager/components/settings/native-request-capture-runner.ts` — options принимают/pass-through `reasoning`; существующий Settings runner может не задавать override, Workbench runner задаёт явно (scope: 3 файла; expected commit: `feat: pass capture reasoning override from project manager`).
+8. [TODO] Git Commit: `feat: pass capture reasoning override from project manager` (hash: TBD)
+9. [TODO] Обновить PM tests для reasoning transport: `native-request-capture-runner.test.ts` + `core-stream-message-validator.test.ts` при необходимости — runner сохраняет старый no-override path и новый override path (scope: ≤2 файла; expected commit: `test: cover project manager capture reasoning override`).
+10. [TODO] Git Commit: `test: cover project manager capture reasoning override` (hash: TBD)
+11. [TODO] Обновить `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`: capture-scoped reasoning override как explicit diagnostic exception от persisted Settings/session-binding ownership (scope: 1 файл; expected commit: `docs: document capture-scoped reasoning override exception`).
+12. [TODO] Git Commit: `docs: document capture-scoped reasoning override exception` (hash: TBD)
 
-### Stream 3 — Core Persistence Transport (`workbench:state:*`)
+### Stream 3 — Core Workbench State + Artifact Read Transport
 
-1. [TODO] Добавить типы `WorkbenchStateKind = "index" | "selection"`, `WorkbenchIndexFile`, `WorkbenchSelectionFile`, `SlotEntryRecord` в новый файл `packages/core/src/remote-bridge/handlers/workbench-state-types.ts` (scope: 1 файл).
-2. [TODO] Git Commit: `feat: add workbench-state types and slot-entry record schema` (hash: TBD)
-3. [TODO] Расширить `packages/core/src/remote-bridge/types.ts`: добавить incoming intents `workbench:state:load` / `workbench:state:save` и outgoing events `workbench:state:loaded` / `workbench:state:saved` / `workbench:state:save-error` (scope: 1 файл).
-4. [TODO] Git Commit: `feat: add workbench-state remote-bridge intent types` (hash: TBD)
-5. [TODO] Расширить `incoming-message-validator.ts`: validators для `workbench:state:load` и `workbench:state:save` (scope: 1 файл).
-6. [TODO] Git Commit: `feat: validate workbench-state load and save payloads` (hash: TBD)
-7. [TODO] Создать новый handler `packages/core/src/remote-bridge/handlers/workbench-state-persistence-handler.ts`: `mkdir` + `writeFile` через `node:fs/promises`, два файла под `~/.codeai-hub/settings/`, дискриминатор по `kind` (scope: 1 файл).
-8. [TODO] Git Commit: `feat: add workbench-state persistence handler` (hash: TBD)
-9. [TODO] Зарегистрировать handler в `packages/core/src/remote-bridge/remote-bridge-message-router.ts` (scope: 1 файл).
-10. [TODO] Git Commit: `feat: register workbench-state handler in remote bridge router` (hash: TBD)
-11. [TODO] Тесты для handler: load несуществующего файла → null, load валидного файла, save → file written, save corrupted JSON → error event (scope: 1 файл, новый `workbench-state-persistence-handler.test.ts`).
-12. [TODO] Git Commit: `test: cover workbench-state persistence load/save/error paths` (hash: TBD)
+1. [TODO] Создать `packages/core/src/remote-bridge/handlers/workbench-state-types.ts`: `WorkbenchStateKind`, `WorkbenchIndexFile`, `WorkbenchSelectionFile`, `SlotEntryRecord`, `WorkbenchArtifactReadPayload`, validator helpers для persisted workbench state (scope: 1 файл; expected commit: `feat: add workbench state and artifact read types`).
+2. [TODO] Git Commit: `feat: add workbench state and artifact read types` (hash: TBD)
+3. [TODO] Создать Core persistence/rebuild internals: `workbench-state-persistence-handler.ts` + `workbench-index-rebuilder.ts` — load/save `~/.codeai-hub/settings/workbench-index.json` и `capture-workbench.json`; при missing/corrupted index handler rebuild'ит index из `capture_start` JSONL records under `~/.codeai-hub/logs/native-request-capture/` (scope: 2 файла; expected commit: `feat: add core workbench state persistence and rebuild`).
+4. [TODO] Git Commit: `feat: add core workbench state persistence and rebuild` (hash: TBD)
+5. [TODO] Создать `packages/core/src/remote-bridge/handlers/workbench-artifact-reader.ts`: read-only loader для captured JSONL artifacts by absolute path, path must resolve under `~/.codeai-hub/logs/native-request-capture/`, returns parsed records or typed error; browser/PM layer не читает filesystem напрямую (scope: 1 файл; expected commit: `feat: add core workbench artifact reader`).
+6. [TODO] Git Commit: `feat: add core workbench artifact reader` (hash: TBD)
+7. [TODO] Wire Core remote bridge: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts`, `packages/core/src/remote-bridge/remote-bridge-message-router.ts` — intents/events `workbench:state:load/save`, `workbench:state:loaded/saved/save-error`, `workbench:artifact:read`, `workbench:artifact:loaded/error`; router only delegates to the new handlers, no persistence/read logic inline (scope: 3 файла; expected commit: `feat: wire workbench state and artifact remote bridge`).
+8. [TODO] Git Commit: `feat: wire workbench state and artifact remote bridge` (hash: TBD)
+9. [TODO] Тесты Core workbench transport: `workbench-state-persistence-handler.test.ts`, `workbench-index-rebuilder.test.ts`, `workbench-artifact-reader.test.ts` — load null, save/write, corrupted index rebuild, artifact path guard, parsed JSONL records (scope: 3 файла; expected commit: `test: cover workbench state persistence and artifact read`).
+10. [TODO] Git Commit: `test: cover workbench state persistence and artifact read` (hash: TBD)
 
-### Stream 4 — PM-side Index Store + Sticky Selection Plumbing
+### Stream 4 — PM Bridge Client + Index Store
 
-1. [TODO] Создать `src/client/project-manager/services/workbench-state-client.ts`: thin client поверх websocket bridge, методы `loadIndex()`, `saveIndex(file)`, `loadSelection()`, `saveSelection(value)` (scope: 1 файл).
-2. [TODO] Git Commit: `feat: add workbench state client service` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/services/workbench-index-store.ts`: slot resolution by `(step, provider, model, reasoning)`, current→previous rotation, materialize `SlotEntryRecord` from capture result (scope: 1 файл).
-4. [TODO] Git Commit: `feat: add workbench index store with slot rotation` (hash: TBD)
-5. [TODO] Создать `src/client/project-manager/services/workbench-index-rebuild.ts`: lazy rebuild через scan `~/.codeai-hub/logs/native-request-capture/`, parse `capture_start` JSONL records (scope: 1 файл).
-6. [TODO] Git Commit: `feat: add workbench index rebuild from capture_start records` (hash: TBD)
-7. [TODO] Тесты для index store: rotation, no-op rebuild при наличии index, rebuild при missing/corrupted index (scope: 1 файл).
-8. [TODO] Git Commit: `test: cover workbench index store and rebuild` (hash: TBD)
+1. [TODO] Расширить PM bridge typing/API: `src/client/project-manager/core-stream-message-types.ts`, `src/client/project-manager/services/core-stream-message-validator.ts`, `src/client/project-manager/api.ts` — outgoing/incoming types, validators, cached event accessors and thin send methods for `workbench:state:*` and `workbench:artifact:*`; PM API не содержит state/index/diff logic (scope: 3 файла; expected commit: `feat: expose workbench state and artifact bridge in project manager`).
+2. [TODO] Git Commit: `feat: expose workbench state and artifact bridge in project manager` (hash: TBD)
+3. [TODO] Создать `src/client/project-manager/services/workbench-state-client.ts`: promise/subscribe wrapper over `api` methods for `loadIndex`, `saveIndex`, `loadSelection`, `saveSelection`, `readArtifactRecords`; no filesystem access in browser (scope: 1 файл; expected commit: `feat: add project manager workbench state client`).
+4. [TODO] Git Commit: `feat: add project manager workbench state client` (hash: TBD)
+5. [TODO] Создать `src/client/project-manager/services/workbench-index-store.ts`: slot resolution by `(step, provider, model, reasoning)`, `current → previous` rotation, materialize `SlotEntryRecord` from capture result + loaded `capture_start`; when index is missing/corrupted, call Core load/rebuild path instead of scanning filesystem locally (scope: 1 файл; expected commit: `feat: add workbench index store with slot rotation`).
+6. [TODO] Git Commit: `feat: add workbench index store with slot rotation` (hash: TBD)
+7. [TODO] Тесты PM bridge/index store: `workbench-state-client.test.ts` + `workbench-index-store.test.ts` — state load/save events, artifact read event, slot rotation, rebuild-loaded index path (scope: 2 файла; expected commit: `test: cover workbench state client and index store`).
+8. [TODO] Git Commit: `test: cover workbench state client and index store` (hash: TBD)
 
 ### Stream 5 — Detached Workbench Entry
 
-1. [TODO] Расширить `src/client/project-manager/app.tsx`: распознать `?mode=detached-capture`, прочитать `workspaceSlug` и `workspacePath` из query params, отрендерить `<DetachedCaptureWorkbench />` вместо `MainLayout` (scope: 1 файл).
-2. [TODO] Git Commit: `feat: route detached-capture mode in project manager app` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/components/capture-workbench/detached-capture-workbench.tsx`: shell layout (header, body slot, footer), пустые place-holders для selection/snapshots/diff (scope: 1 файл).
-4. [TODO] Git Commit: `feat: add detached capture workbench shell` (hash: TBD)
-5. [TODO] Реализовать api/transport mount path для detached окна (per Stream 0 spike результат): `LocalizationProvider` + `useProjectManagerApi()` mount внутри detached entry (scope: ≤2 файла, точные пути зависят от spike).
-6. [TODO] Git Commit: `feat: mount api transport and localization in detached capture window` (hash: TBD)
-7. [TODO] Реализовать localization bootstrap delivery для popup-окна per spike (scope: ≤2 файла, точные пути зависят от spike).
-8. [TODO] Git Commit: `feat: deliver localization bootstrap to detached capture popup` (hash: TBD)
-9. [TODO] Тесты: route resolution, shell renders для detached mode, missing query params → fallback (scope: 1 файл).
-10. [TODO] Git Commit: `test: cover detached capture workbench routing and shell` (hash: TBD)
+1. [TODO] Расширить detached route и shell: `src/client/project-manager/app.tsx` + `src/client/project-manager/components/capture-workbench/detached-capture-workbench.tsx` — распознать `?mode=detached-capture`, query params `workspaceSlug`/`workspacePath`, shell layout (header/body/footer placeholders) по prototype rev2 grid/header/footer contract (scope: 2 файла; expected commit: `feat: route detached capture workbench shell`).
+2. [TODO] Git Commit: `feat: route detached capture workbench shell` (hash: TBD)
+3. [TODO] Реализовать api/localization mount path по результату Stream 0: обновить detached entry files так, чтобы окно получало same Core websocket bridge, `LocalizationProvider`, settings/bootstrap runtime; точные файлы зависят от §3.7 parent plan, лимит ≤3 файлов обязателен (scope: ≤3 файла; expected commit: `feat: mount transport and localization in detached capture window`).
+4. [TODO] Git Commit: `feat: mount transport and localization in detached capture window` (hash: TBD)
+5. [TODO] Тесты detached entry: route resolution, shell render, missing query params fallback, localization/bootstrap path smoke (scope: ≤2 файла; expected commit: `test: cover detached capture workbench entry`).
+6. [TODO] Git Commit: `test: cover detached capture workbench entry` (hash: TBD)
 
 ### Stream 6 — Selection Bar UI
 
-1. [TODO] Создать `src/client/project-manager/components/capture-workbench/selection-bar.tsx`: layout строки селекторов, sticky-load на mount, sticky-save на change через `workbench-state-client` (scope: 1 файл).
+1. [TODO] Создать `src/client/project-manager/components/capture-workbench/selection-bar.tsx`: orchestration shell для Step/Provider/Model/Reasoning по prototype toolbar layout; sticky load/save через `workbench-state-client`, emits selection including explicit `reasoning` override (scope: 1 файл; expected commit: `feat: add capture workbench selection bar shell`).
 2. [TODO] Git Commit: `feat: add capture workbench selection bar shell` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/components/capture-workbench/step-selector.tsx`: dropdown с группировкой `Trunk Workflow` / `Translation` / `Development Tree (disabled future)` (scope: 1 файл).
+3. [TODO] Создать `src/client/project-manager/components/capture-workbench/step-selector.tsx`: dropdown с группировкой `Trunk Workflow` / `Translation` / `Development Tree (disabled future)` (scope: 1 файл; expected commit: `feat: add capture workbench step selector`).
 4. [TODO] Git Commit: `feat: add capture workbench step selector` (hash: TBD)
-5. [TODO] Создать `src/client/project-manager/components/capture-workbench/provider-selector.tsx`: dropdown с tinted Claude/Codex selected items, Gemini disabled placeholder с tooltip `Gemini support arrives with parent Phase 2` (scope: 1 файл).
-6. [TODO] Git Commit: `feat: add capture workbench provider selector with gemini placeholder` (hash: TBD)
-7. [TODO] Создать `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx`: один компонент-параметризованный (model/reasoning) с provider-specific опциями (scope: 1 файл).
+5. [TODO] Создать `src/client/project-manager/components/capture-workbench/provider-selector.tsx`: dropdown с tinted Claude/Codex items, Gemini disabled placeholder с tooltip `Gemini support arrives with parent Phase 2` (scope: 1 файл; expected commit: `feat: add capture workbench provider selector`).
+6. [TODO] Git Commit: `feat: add capture workbench provider selector` (hash: TBD)
+7. [TODO] Создать `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx`: provider-specific model/reasoning option rendering; no Gemini selectable path in Phase 1 (scope: 1 файл; expected commit: `feat: add capture workbench model and reasoning selectors`).
 8. [TODO] Git Commit: `feat: add capture workbench model and reasoning selectors` (hash: TBD)
-9. [TODO] Тесты selection-bar: sticky load/save, четыре селектора рендерятся, Gemini disabled (scope: 1 файл).
+9. [TODO] Тесты selection UI: `selection-bar.test.tsx` — sticky load/save, four selectors render, Gemini disabled, selected reasoning reaches callback (scope: 1 файл; expected commit: `test: cover capture workbench selection bar behavior`).
 10. [TODO] Git Commit: `test: cover capture workbench selection bar behavior` (hash: TBD)
 
-### Stream 7 — Snapshot Cards UI
+### Stream 7 — Capture Run Orchestration + Snapshot Cards
 
-1. [TODO] Создать `src/client/project-manager/components/capture-workbench/snapshot-card.tsx`: managed/vanilla layout, file-link buttons использующие `openProjectManagerFileLink`, Vanilla card disabled с tooltip (scope: 1 файл).
-2. [TODO] Git Commit: `feat: add capture workbench snapshot card` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/components/capture-workbench/snapshot-cards-row.tsx`: pair of cards, `Re-capture Managed` button wired to existing `native-request-capture-runner`, slot rotation после успешного capture (scope: 1 файл).
-4. [TODO] Git Commit: `feat: wire re-capture managed button and slot rotation` (hash: TBD)
-5. [TODO] Тесты snapshot cards: empty state, slot rotation после capture, file-link button calls `openProjectManagerFileLink` (scope: 1 файл).
-6. [TODO] Git Commit: `test: cover capture workbench snapshot cards and re-capture` (hash: TBD)
+1. [TODO] Создать `src/client/project-manager/services/capture-workbench-runner.ts`: reusable Workbench runner over existing `buildNativeRequestCaptureScenarioPrompt` + `api.captureNativeRequest`, sends explicit `reasoning`, waits for `settings:native-request-capture:result`, returns artifact paths and metadata to index store; old Settings runner is not duplicated at provider/Core level (scope: 1 файл; expected commit: `feat: add capture workbench managed runner`).
+2. [TODO] Git Commit: `feat: add capture workbench managed runner` (hash: TBD)
+3. [TODO] Создать `src/client/project-manager/components/capture-workbench/snapshot-card.tsx`: managed/vanilla card layout по prototype snapshot area, file-link buttons use `openProjectManagerFileLink`, Vanilla disabled with tooltip (scope: 1 файл; expected commit: `feat: add capture workbench snapshot card`).
+4. [TODO] Git Commit: `feat: add capture workbench snapshot card` (hash: TBD)
+5. [TODO] Создать `src/client/project-manager/components/capture-workbench/snapshot-cards-row.tsx`: pair of cards, `Re-capture Managed` wired to Workbench runner, slot rotation via `workbench-index-store` after successful capture (scope: 1 файл; expected commit: `feat: wire managed recapture and slot rotation`).
+6. [TODO] Git Commit: `feat: wire managed recapture and slot rotation` (hash: TBD)
+7. [TODO] Тесты runner/snapshot cards: `capture-workbench-runner.test.ts` + `snapshot-cards-row.test.tsx` — empty state, successful capture rotates slot, failure leaves previous slot intact, file links call `openProjectManagerFileLink` (scope: 2 файла; expected commit: `test: cover capture workbench runner and snapshot cards`).
+8. [TODO] Git Commit: `test: cover capture workbench runner and snapshot cards` (hash: TBD)
 
-### Stream 8 — Diff Renderer
+### Stream 8 — Diff Data + Renderer
 
-1. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-section-extractor-claude.ts`: парсит JSONL артефакт, возвращает массив секций (System Prompt / Tools / SDK Isolation / Model & Reasoning / Endpoint / Project Doc Reference / Output Schema) (scope: 1 файл).
-2. [TODO] Git Commit: `feat: add claude diff section extractor` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-section-extractor-codex.ts`: то же для Codex (System Prompt / Tools / Process Profile & Sandbox / Model & Reasoning / Endpoint / Project Doc Reference / Output Schema) (scope: 1 файл).
-4. [TODO] Git Commit: `feat: add codex diff section extractor` (hash: TBD)
-5. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-section.tsx`: один section row (collapsed/expanded, side-by-side body, status dot) (scope: 1 файл).
+1. [TODO] Создать shared diff model/helpers: `src/client/project-manager/components/capture-workbench/diff-section-model.ts` + `diff-section-normalizer.ts` — section ids/status normalization, byte-for-byte normalized compare, no filesystem reads (scope: 2 файла; expected commit: `feat: add capture workbench diff section model`).
+2. [TODO] Git Commit: `feat: add capture workbench diff section model` (hash: TBD)
+3. [TODO] Создать provider extractors over loaded records, not file paths: `diff-section-extractor-claude.ts` + `diff-section-extractor-codex.ts` — parse artifact records returned by `workbench:artifact:read` into sections from rev4 taxonomy (scope: 2 файла; expected commit: `feat: add claude and codex diff section extractors`).
+4. [TODO] Git Commit: `feat: add claude and codex diff section extractors` (hash: TBD)
+5. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-section.tsx`: one row, collapsed/expanded, side-by-side body, status dot (scope: 1 файл; expected commit: `feat: add capture workbench diff section row`).
 6. [TODO] Git Commit: `feat: add capture workbench diff section row` (hash: TBD)
-7. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-renderer.tsx`: orchestration layer, mode tabs (Managed vs Vanilla disabled / Managed current vs previous active / Vanilla current vs previous disabled), summary, equal-collapsed (scope: 1 файл).
+7. [TODO] Создать `src/client/project-manager/components/capture-workbench/diff-renderer.tsx`: mode tabs, `Managed: current vs previous` active, Vanilla modes empty-state, loads JSONL records through `workbench-state-client.readArtifactRecords`, summary, equal-collapsed default; visual hierarchy and spacing follow prototype diff table (scope: 1 файл; expected commit: `feat: add capture workbench diff renderer`).
 8. [TODO] Git Commit: `feat: add capture workbench diff renderer` (hash: TBD)
-9. [TODO] Тесты extractors: Claude и Codex sample JSONL → expected sections (scope: ≤2 файла, два отдельных test файла).
-10. [TODO] Git Commit: `test: cover claude and codex diff section extractors` (hash: TBD)
-11. [TODO] Тесты diff-renderer: mode tabs, equal-collapsed default, expand on click (scope: 1 файл).
+9. [TODO] Тесты diff extractors: `diff-section-extractor-claude.test.ts` + `diff-section-extractor-codex.test.ts` — sample loaded records → expected sections, no Provider-home/Auth in Phase 1 (scope: 2 файла; expected commit: `test: cover provider diff section extractors`).
+10. [TODO] Git Commit: `test: cover provider diff section extractors` (hash: TBD)
+11. [TODO] Тесты diff renderer: `diff-renderer.test.tsx` — mode tabs, artifact-read client called with absolute JSONL paths, equal-collapsed default, expand/collapse actions (scope: 1 файл; expected commit: `test: cover capture workbench diff renderer modes`).
 12. [TODO] Git Commit: `test: cover capture workbench diff renderer modes` (hash: TBD)
 
 ### Stream 9 — Settings → General Card Shrink + Launcher
 
-1. [TODO] Заменить содержимое `src/client/ui/src/components/settings/native-request-capture-card.tsx` на launcher-кнопку `Open Capture Workbench` + одну строку описания. Удалить старые селекторы, кнопки capture, status surface, artifact list (scope: 1 файл).
-2. [TODO] Git Commit: `feat: shrink native-request-capture card to workbench launcher` (hash: TBD)
-3. [TODO] Wire launcher: `window.open("?mode=detached-capture&workspaceSlug=...&workspacePath=...", "_blank", "popup,width=1280,height=900")` через PM bridge helper (scope: 1 файл, новый `src/client/project-manager/services/capture-workbench-launcher.ts`).
-4. [TODO] Git Commit: `feat: wire capture workbench launcher window.open` (hash: TBD)
-5. [TODO] Обновить `native-request-capture-card.test.tsx`: проверка launcher button, removal of old controls (scope: 1 файл).
-6. [TODO] Git Commit: `test: cover settings card launcher migration` (hash: TBD)
-7. [TODO] Обновить SSOT: `Modules/UI_Bundles.md` (Settings General → launcher only) и `Clusters/Project_Manager.md` (detached capture window pattern) (scope: 2 файла).
-8. [TODO] Git Commit: `docs: document capture workbench launcher and detached window` (hash: TBD)
+1. [TODO] Обновить shared Settings UI prop contract: `native-request-capture-card.tsx`, `general-settings.tsx`, `settings-view.tsx` — card renders launcher button + one-line description, accepts `onOpenWorkbench`, old selectors/capture buttons/status/artifact list removed from visible Settings surface (scope: 3 файла; expected commit: `feat: shrink native capture settings card to launcher`).
+2. [TODO] Git Commit: `feat: shrink native capture settings card to launcher` (hash: TBD)
+3. [TODO] Добавить PM launcher owner: `src/client/project-manager/services/capture-workbench-launcher.ts` + `src/client/project-manager/components/settings/use-project-manager-settings-state.ts` — handler builds `?mode=detached-capture&workspaceSlug=...&workspacePath=...` and calls `window.open(..., "popup,width=1280,height=900")`; shared UI does not import PM services directly (scope: 2 файла; expected commit: `feat: wire capture workbench launcher from project manager settings`).
+4. [TODO] Git Commit: `feat: wire capture workbench launcher from project manager settings` (hash: TBD)
+5. [TODO] Обновить launcher tests: `native-request-capture-card.test.tsx` + `capture-workbench-launcher.test.ts` — launcher button visible, old controls absent, URL/query/features correct (scope: 2 файла; expected commit: `test: cover capture workbench launcher migration`).
+6. [TODO] Git Commit: `test: cover capture workbench launcher migration` (hash: TBD)
+7. [TODO] Обновить SSOT: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` + `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` — Settings General owns launcher only; detached Capture Workbench is PM diagnostic surface with Core-owned state/artifact read transport (scope: 2 файла; expected commit: `docs: document capture workbench launcher and detached surface`).
+8. [TODO] Git Commit: `docs: document capture workbench launcher and detached surface` (hash: TBD)
 
 ### Stream 10 — Release Build
 
-1. [TODO] Перед сборкой обновить README.md (`Current Release — vX.Y.Z`) и CHANGELOG.md (`## [X.Y.Z]`) на будущую версию = текущая `1.2.123` + 1 → `1.2.124` (scope: 2 файла).
-2. [TODO] Git Commit: `docs: prepare release 1.2.124 capture workbench mvp` (hash: TBD)
-3. [TODO] Запустить `./scripts/build-all.sh` — поднимет версии, пересоберёт provider/core/UI/CEF, соберёт tarball'ы. Перенести tarball'ы в `doc/tmp/releases/`.
-4. [TODO] Git Commit: `chore: bump release manifests to 1.2.124` (если build-all не закоммитит сам — обычно он это делает) (hash: TBD)
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`. Проверить вывод: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забрать `codeai-hub-1.2.124.vsix`.
-6. [TODO] Git Commit: `docs: record release build 1.2.124` (если требуется обновить release docs) (hash: TBD)
+1. [TODO] Перед сборкой определить будущую версию из текущего `package.json` + 1; обновить README.md (`Current Release — vX.Y.Z`) и CHANGELOG.md (`## [X.Y.Z]`) на эту будущую версию (scope: 2 файла; expected commit: `docs: prepare capture workbench mvp release`).
+2. [TODO] Git Commit: `docs: prepare capture workbench mvp release` (hash: TBD)
+3. [TODO] Проверить clean tree, затем запустить `./scripts/build-all.sh`; после успеха убедиться, что tarball'ы лежат в `doc/tmp/releases/`, версии/манифесты обновлены штатным скриптом (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench mvp`).
+4. [TODO] Git Commit: `chore: bump release manifests for capture workbench mvp` (hash: TBD)
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить вывод `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE, если acceptance ещё ожидается (scope: release command + session report; expected commit: `docs: record capture workbench mvp release build`).
+6. [TODO] Git Commit: `docs: record capture workbench mvp release build` (hash: TBD)
 
 ### Stream 11 — User Visual Acceptance Testing
 
-1. [TODO] Установить `codeai-hub-1.2.124.vsix` в VS Code, открыть workspace.
-2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет два timestamped artifact'а; slot rotation `current → previous`; кнопки `managed.md` / `managed.jsonl` открывают файлы в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace (без upstream artefacts) — capture не падает (bypassUpstreamGuard).
-3. [TODO] Зафиксировать результаты приёмочного тестирования и подтверждение пользователя в session report.
+1. [TODO] Установить собранный `codeai-hub-<version>.vsix` в VS Code, открыть workspace.
+2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
+3. [TODO] Зафиксировать результат пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench visual acceptance`).
+4. [TODO] Git Commit: `docs: record capture workbench visual acceptance` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
 
-1. [TODO] Перенести завершённый `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-capture-workbench-mvp-1.2.124.md`.
-2. [TODO] Обсудить со scope owner: какие planning-документы остаются active vs deferred vs archive после Phase 1. Принять решение по каждому затронутому планинг-документу:
-   - `Plans/Capture_Workbench_UI_Architecture.md` — переезжает либо в каноничные SSOT (`Clusters/Project_Manager.md`, `Modules/UI_Bundles.md`), либо в `Plans/Archive/Capture_Workbench_UI_Architecture.md`. Решить.
-   - `Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` — остаётся active (Phase 2/3/4 deferred).
-3. [TODO] Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`: статусы обоих planning-документов после closeout (scope: 1 файл).
-4. [TODO] Git Commit: `docs: archive capture workbench mvp todo-plan and refresh docs index` (hash: TBD)
-5. [TODO] Создать новый пустой `doc/TODO/todo-plan.md` в reset-состоянии (как сейчас).
-6. [TODO] Git Commit: `chore: reset todo-plan after capture workbench mvp closeout` (hash: TBD)
-7. [TODO] Создать session report `doc/Sessions/SessionXXX.md` (тип A — Completion Report, поскольку active scope закрыт).
+1. [TODO] После explicit user acceptance перенести завершённый active plan в `doc/TODO/Archive/todo-plan-capture-workbench-mvp-<version>.md`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`; зафиксировать, какие planning-docs остаются active/deferred/archive: `Capture_Workbench_UI_Architecture.md` и `Provider_Native_Request_Capture_Workbench_Architecture.md` (scope: ≤3 docs; expected commit: `docs: archive capture workbench mvp plan and refresh docs index`).
+2. [TODO] Git Commit: `docs: archive capture workbench mvp plan and refresh docs index` (hash: TBD)
+3. [TODO] Создать новый reset-state `doc/TODO/todo-plan.md` для отсутствующего active scope (scope: 1 файл; expected commit: `chore: reset todo-plan after capture workbench mvp closeout`).
+4. [TODO] Git Commit: `chore: reset todo-plan after capture workbench mvp closeout` (hash: TBD)
+5. [TODO] Создать/обновить `doc/Sessions/SessionXXX.md` как Completion Report: `Execution Scope Status: COMPLETED`, реальные commit hashes, explicit user acceptance после визуального тестирования. Session report может остаться единственным незакоммиченным файлом по closeout rules.
 
 ---
 
 ## Notes
 
-- **Phase 1 first-stream invariant:** Stream 1, Stream 2 и Stream 3 не зависят друг от друга и могут идти параллельно или в любом порядке. Stream 4 требует Stream 1 (для `SlotEntryRecord` shape) и Stream 3 (для transport). Stream 5 требует Stream 0 (spike результат). Streams 6/7/8 требуют Stream 4 + Stream 5. Stream 9 требует Stream 5. Stream 10/11/12 идут последовательно после всех остальных.
-- **Vanilla, Gemini, Development Tree, search в Step dropdown, code reference navigation, editable envelope** — out of scope этого Phase. Не добавлять микрозадачи.
-- **Микрозадачи могут быть пересмотрены:** если по факту разработки задача затрагивает >3 файлов, она разбивается на более мелкие, и список переписывается. Это обязательная процедура из CLAUDE.md.
+- **Phase 1 first-stream invariant:** Stream 1, Stream 2 и Stream 3 не зависят друг от друга и могут идти параллельно или в любом порядке. Stream 4 требует Stream 3; capture-result/index части Stream 4 также требуют Stream 1/2. Stream 5 требует Stream 0. Streams 6/7/8 требуют Stream 4 + Stream 5; Stream 7 также требует Stream 1/2. Stream 9 требует Stream 5. Stream 10/11/12 идут последовательно после всех остальных.
+- **Filesystem boundary:** PM/CEF/browser code не читает и не пишет `~/.codeai-hub` напрямую. Index/selection persistence, lazy rebuild из JSONL и чтение captured artifact records принадлежат Core remote bridge handlers.
+- **Minimal-change boundary:** существующий Settings capture runner, provider diagnostic services, native capture writer/facade, PM api и Core routers остаются действующими contracts. В этом plan они получают только новые optional fields/callbacks/delegations; основная Workbench логика живёт в новых `capture-workbench-*`, `workbench-*` и diff files.
+- **Prototype boundary:** `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/prototypes/capture-workbench.html` является обязательным визуальным источником для shell, selection bar, snapshot cards и diff renderer; отклонения допустимы только если они явно зафиксированы в `todo-plan.md` перед реализацией.
+- **Out of scope:** Vanilla, Gemini enablement, Development Tree activation, search в Step dropdown, code reference navigation, editable envelope, artifact pruning.
+- **Микрозадачи могут быть пересмотрены:** если по факту разработки задача затрагивает >3 файлов, она разбивается на более мелкие, и список задач переписывается до реализации.

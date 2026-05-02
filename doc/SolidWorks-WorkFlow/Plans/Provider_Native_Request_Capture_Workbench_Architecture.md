@@ -1,8 +1,8 @@
 # Provider Native Request Capture Workbench — Architecture
 
-**Status:** Draft rev5 (fourth review revision, approved as planning source for Phase 1 todo-plan)
+**Status:** Draft rev6 (Phase 1 implementation planning source)
 **Created:** 2026-05-01
-**Updated:** 2026-05-01 — rev2 учёл P1.1/P1.2/P1.3/P2.4/P2.5/P2.6; rev3 учёл P1 (Product Goal contract), P2 (Codex CLI hypothesis), P2 (Translation comparison contract), P3 (Gemini Phase 2 file ownership); rev4 учёл P3 (internal section refs), P3 (Translation wording precision); 2026-05-02 rev5 — UI-scope ownership for Phase 1 Workbench moved to child plan `Capture_Workbench_UI_Architecture.md`: §3.4 run history wording and §3.5 first-iteration provider scope are explicitly superseded by the child rev2.
+**Updated:** 2026-05-01 — rev2 учёл P1.1/P1.2/P1.3/P2.4/P2.5/P2.6; rev3 учёл P1 (Product Goal contract), P2 (Codex CLI hypothesis), P2 (Translation comparison contract), P3 (Gemini Phase 2 file ownership); rev4 учёл P3 (internal section refs), P3 (Translation wording precision); 2026-05-02 rev5 — UI-scope ownership for Phase 1 Workbench moved to child plan `Capture_Workbench_UI_Architecture.md`: §3.4 run history wording and §3.5 first-iteration provider scope are explicitly superseded by the child rev2; rev6 — §3.7 closes the detached transport/localization pre-flight spike for Phase 1 implementation.
 **Owner:** Oleksandr + Codex
 **Scope:** Эволюция модуля `Provider Native Request Capture` из карточки в Settings → General в полноценный исследовательский полигон. Главная цель — сравнение `Vanilla CLI baseline` (provider bridge с дефолтами) и `CodeAI Hub Managed` (текущий applied turn config) в идентичных условиях `(provider, model, reasoning, userPrompt, workspace)` для одного и того же пользовательского запроса.
 
@@ -126,6 +126,36 @@ Long-term scope of the Workbench covers all three providers (Claude, Codex, Gemi
 - **Vanilla Translation:** sample + bridge с дефолтами провайдера (без translator-only system, без processProfile, без guards).
 
 Это **не нарушает** Product Goal п.2 — sample стабилен и одинаков для обоих режимов; «scenario определяет user prompt» расширяется до «scenario определяет либо workflow prompt (Description/VS/DM), либо fixed sample (Translation)». Workflow scenarios остаются прямым отражением реальных workflow turns; Translation — отдельный диагностический контракт под существующее поведение.
+
+### 3.7 Detached transport & localization plan (Phase 1 spike result)
+
+Current facts from the codebase:
+
+- `src/client/project-manager/app.tsx` handles `mode=detached-diagram` before rendering `ProjectManagerWorkbenchApp`.
+- `ProjectManagerWorkbenchApp` is the path that calls `useProjectManagerSettings()` and wraps the main surface in `LocalizationProvider`.
+- The websocket connection is currently started by `MainLayout` (`api.connect()`), so detached diagram does not connect to Core through `api`.
+- `src/client/project-manager/index.tsx` clears `window.__CODEAI_LOCALIZATION_BOOTSTRAP__ = null` before rendering the PM app. Detached capture therefore cannot rely on inherited bootstrap globals from the opener window.
+- Core already exposes `GET /api/v1/localization/bootstrap` through `localization-bootstrap-http-handler.ts`; PM already resolves `wsUrl` / `httpUrl` from `window.codeaiBridgeConfig` with localhost fallback.
+
+Phase 1 detached Capture Workbench must **not** reuse the detached diagram bypass. It uses a small PM-owned runtime wrapper:
+
+- `app.tsx` parses `mode=detached-capture`, `workspaceSlug`, and `workspacePath`.
+- The detached capture branch renders a new `DetachedCaptureRuntime` (or equivalent name) rather than rendering `DetachedCaptureWorkbench` directly.
+- `DetachedCaptureRuntime` owns `api.connect()` / `api.disconnect({ dispose: true })`, calls `useProjectManagerSettings()`, resolves `useResolvedLocalization(settings, localizationRuntime)`, wraps the workbench with `LocalizationProvider`, and passes only the workspace context plus service clients into the Workbench.
+- The existing `MainLayout` connection ownership remains unchanged for the normal PM shell. Do not move `api.connect()` into the global entrypoint unless a later implementation spike proves the wrapper cannot isolate it safely.
+
+Transport decision:
+
+- `settings:native-request-capture`, `workbench:state:*`, and `workbench:artifact:read` all travel over the existing PM websocket stream (`api` singleton → `ProjectManagerSocketLifecycle` → Core `/api/v1/stream`).
+- `api.ts` stays a thin facade with send/event accessors only. State persistence, artifact reading, slot rotation, and diff logic live in new Workbench services.
+- The detached window may queue messages before socket open because `api.send()` already queues through `OutgoingMessageQueue`, but user-facing run buttons should still render a connecting/disabled state until the Workbench state client has completed its first load.
+
+Localization bootstrap decision:
+
+- Primary localization source is the live `settings:loaded` payload delivered by `useProjectManagerSettings()` after websocket connect.
+- Initial detached capture render may seed from the existing Core HTTP endpoint `GET /api/v1/localization/bootstrap` using `resolveBridgeConfig().httpUrl` before or during the detached runtime mount. This is a seed only; live `settings:loaded` remains authoritative and may replace it.
+- Do not use parent-window `postMessage` as the bootstrap delivery path. Detached capture must be reloadable as a standalone URL and must not depend on the opener window staying alive.
+- Do not change Settings save/reset/load ownership. Capture Workbench consumes settings/localization runtime for labels and capture defaults; it does not become a Settings persistence surface.
 
 ---
 
@@ -270,4 +300,3 @@ UI vehicle для будущего Vanilla режима.
 - `Plans/Claude_Agent_SDK_Capabilities_Analysis.md` — что доступно в Claude SDK для Vanilla опций.
 - `Plans/Codex_AppServer_Capabilities_Analysis.md` — managed Codex baseline для контраста с Vanilla `codex exec`.
 - `Plans/CrossProvider_Common_Capabilities.md` — общие инварианты, которые должны соблюсти все три провайдера в обоих режимах.
-
