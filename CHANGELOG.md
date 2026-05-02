@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.124] - 2026-05-02
+### Added
+- **Capture Workbench MVP is ready for release packaging.** Settings → General now opens a detached Project Manager workbench for managed provider-native request snapshots, explicit Step/Provider/Model/Reasoning selection, two-generation slot rotation, artifact links, and semantic `Managed: current vs previous` diff sections over Core-owned capture artifacts.
+
+### Changed
+- **Native request capture diagnostics moved out of the Settings card.** The shared Settings surface now owns only the launcher button, while Project Manager owns the detached workbench UI, PM bridge/index store, Core-backed `workbench:state:*` persistence, and `workbench:artifact:read` records path.
+
+### Tests
+- **Capture Workbench coverage added across Core, providers, PM bridge, and UI.** Focused tests cover applied capture envelopes, reasoning override transport, Core state/artifact bridge, Workbench selection persistence, managed recapture slot rotation, provider diff extractors, diff renderer modes, and Settings launcher migration.
+
 ## [1.2.123] - 2026-05-01
 ### Fixed
 - **Provider Native Request Capture now works on empty workspaces for workflow scenarios.** The Project Manager capture runner bypasses upstream artifact gating only for the diagnostic capture path, so `Virtual Simulation` and `Diagram Modules` captures can generate provider request artifacts before `Final_Description.md` or `virtual-simulation.md` exists. Normal workflow turns still enforce the `Workflow_CLI.md` upstream artifact contract.

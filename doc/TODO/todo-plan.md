@@ -166,12 +166,12 @@
 4. [DONE] Git Commit: `feat: wire capture workbench launcher from project manager settings` (hash: 66275abcf)
 5. [DONE] Обновить launcher tests: `native-request-capture-card.test.tsx` + `capture-workbench-launcher.test.ts` — launcher button visible, old controls absent, URL/query/features correct (scope: 2 файла; expected commit: `test: cover capture workbench launcher migration`).
 6. [DONE] Git Commit: `test: cover capture workbench launcher migration` (hash: 4c0a49e8f)
-7. [IN_PROGRESS] Обновить SSOT: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` + `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` — Settings General owns launcher only; detached Capture Workbench is PM diagnostic surface with Core-owned state/artifact read transport (scope: 2 файла; expected commit: `docs: document capture workbench launcher and detached surface`).
-8. [TODO] Git Commit: `docs: document capture workbench launcher and detached surface` (hash: TBD)
+7. [DONE] Обновить SSOT: `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` + `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md` — Settings General owns launcher only; detached Capture Workbench is PM diagnostic surface with Core-owned state/artifact read transport (scope: 2 файла; expected commit: `docs: document capture workbench launcher and detached surface`).
+8. [DONE] Git Commit: `docs: document capture workbench launcher and detached surface` (hash: 6790f1d89)
 
 ### Stream 10 — Release Build
 
-1. [TODO] Перед сборкой определить будущую версию из текущего `package.json` + 1; обновить README.md (`Current Release — vX.Y.Z`) и CHANGELOG.md (`## [X.Y.Z]`) на эту будущую версию (scope: 2 файла; expected commit: `docs: prepare capture workbench mvp release`).
+1. [IN_PROGRESS] Перед сборкой определить будущую версию из текущего `package.json` + 1; обновить README.md (`Current Release — vX.Y.Z`) и CHANGELOG.md (`## [X.Y.Z]`) на эту будущую версию (scope: 2 файла; expected commit: `docs: prepare capture workbench mvp release`).
 2. [TODO] Git Commit: `docs: prepare capture workbench mvp release` (hash: TBD)
 3. [TODO] Проверить clean tree, затем запустить `./scripts/build-all.sh`; после успеха убедиться, что tarball'ы лежат в `doc/tmp/releases/`, версии/манифесты обновлены штатным скриптом (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench mvp`).
 4. [TODO] Git Commit: `chore: bump release manifests for capture workbench mvp` (hash: TBD)
