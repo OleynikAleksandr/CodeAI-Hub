@@ -20,6 +20,8 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     readonly options: Record<string, unknown>;
     readonly prompt: string;
   }[] = [];
+  const appliedInputEnvelopes: unknown[] = [];
+  const callOrder: string[] = [];
   const service = new ClaudeNativeRequestCaptureService({
     authManager: {
       ensureProviderHomeSessionBootstrap: (
@@ -43,6 +45,7 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
             readonly options: Record<string, unknown>;
             readonly prompt: string;
           }) => {
+            callOrder.push("query");
             queryPayloads.push(payload);
             return emptyClaudeStream();
           },
@@ -64,6 +67,10 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     certificatePath: "/tmp/ca.pem",
     probePrompt: "probe",
     proxyUrl: "http://127.0.0.1:4444",
+    recordAppliedInputEnvelope: (envelope) => {
+      callOrder.push("envelope");
+      appliedInputEnvelopes.push(envelope);
+    },
     workflowPrompt: "workflow prompt",
     workspacePath: "/workspace",
   });
@@ -74,6 +81,18 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
   assert.equal(queryPayload.options.cwd, "/workspace");
   assert.deepEqual(queryPayload.options.additionalDirectories, ["/workspace"]);
   assert.deepEqual(queryPayload.options.settingSources, []);
+  assert.deepEqual(callOrder, ["envelope", "query"]);
+  assert.deepEqual(appliedInputEnvelopes, [
+    {
+      allowDangerouslySkipPermissions: true,
+      cwd: "/workspace",
+      hasSystemPrompt: true,
+      kind: "claude",
+      permissionMode: "bypassPermissions",
+      settingSources: [],
+      toolCount: 3,
+    },
+  ]);
   assert.equal(typeof queryPayload.options.systemPrompt, "string");
   assert.equal(
     (queryPayload.options.systemPrompt as string).includes(

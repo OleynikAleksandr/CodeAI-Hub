@@ -14,6 +14,9 @@ export interface ClaudeNativeRequestCaptureOptions {
   readonly certificatePath: string;
   readonly probePrompt: string;
   readonly proxyUrl: string;
+  readonly recordAppliedInputEnvelope?: (
+    envelope: ClaudeNativeRequestCaptureAppliedInputEnvelope
+  ) => Promise<void> | void;
   readonly selectedModelId?: string | null;
   readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
@@ -25,6 +28,16 @@ interface ClaudeNativeRequestCaptureAppliedTurnConfig {
   readonly reasoningEffort?: string;
   readonly source: "settings_snapshot" | "switch_request";
   readonly thinkingEnabled?: boolean;
+}
+
+interface ClaudeNativeRequestCaptureAppliedInputEnvelope {
+  readonly allowDangerouslySkipPermissions: boolean | null;
+  readonly cwd: string | null;
+  readonly hasSystemPrompt: boolean;
+  readonly kind: "claude";
+  readonly permissionMode: string | null;
+  readonly settingSources: readonly string[] | null;
+  readonly toolCount: number;
 }
 
 interface ClaudeCaptureThinkingOptions {
@@ -68,9 +81,13 @@ export class ClaudeNativeRequestCaptureService {
     const sdkModule = await this.#installer.loadModule<{
       readonly query: QueryFunction;
     }>();
+    const queryOptions = this.buildQueryOptions(options);
+    await options.recordAppliedInputEnvelope?.(
+      buildAppliedInputEnvelope(queryOptions)
+    );
     const iterator = sdkModule.query({
       prompt: resolveCapturePrompt(options),
-      options: this.buildQueryOptions(options),
+      options: queryOptions,
     });
     for await (const _message of iterator) {
       // Drain until the capture proxy aborts the diagnostic request.
@@ -141,3 +158,31 @@ const readNonEmptyString = (value: unknown): string | undefined =>
 const resolveCapturePrompt = (
   options: ClaudeNativeRequestCaptureOptions
 ): string => readNonEmptyString(options.workflowPrompt) ?? options.probePrompt;
+
+const buildAppliedInputEnvelope = (
+  queryOptions: Record<string, unknown>
+): ClaudeNativeRequestCaptureAppliedInputEnvelope => ({
+  allowDangerouslySkipPermissions: readBooleanOrNull(
+    queryOptions.allowDangerouslySkipPermissions
+  ),
+  cwd: readStringOrNull(queryOptions.cwd),
+  hasSystemPrompt: readNonEmptyString(queryOptions.systemPrompt) !== undefined,
+  kind: "claude",
+  permissionMode: readStringOrNull(queryOptions.permissionMode),
+  settingSources: readStringArrayOrNull(queryOptions.settingSources),
+  toolCount: Array.isArray(queryOptions.tools) ? queryOptions.tools.length : 0,
+});
+
+const readBooleanOrNull = (value: unknown): boolean | null =>
+  typeof value === "boolean" ? value : null;
+
+const readStringOrNull = (value: unknown): string | null =>
+  readNonEmptyString(value) ?? null;
+
+const readStringArrayOrNull = (value: unknown): readonly string[] | null =>
+  Array.isArray(value)
+    ? value.flatMap((entry) => {
+        const item = readNonEmptyString(entry);
+        return item ? [item] : [];
+      })
+    : null;
