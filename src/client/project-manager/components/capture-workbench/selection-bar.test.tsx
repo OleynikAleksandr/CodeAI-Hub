@@ -26,6 +26,12 @@ const SELECTOR_SOURCE_PATHS = [
 test("CaptureWorkbenchSelectionBar renders four selector controls with Gemini disabled", () => {
   const markup = renderToStaticMarkup(
     <CaptureWorkbenchSelectionBar
+      selection={{
+        step: "description",
+        provider: "claude",
+        model: "sonnet",
+        reasoning: "thinking-high",
+      }}
       stateClient={{
         loadSelection: async () => null,
         saveSelection: async () => undefined,
@@ -61,7 +67,16 @@ test("CaptureWorkbenchSelectionBar keeps sticky load/save and selection callback
   const source = await readFile(SOURCE_PATH, "utf8");
 
   assert.equal(source.includes(".loadSelection()"), true);
-  assert.equal(source.includes("stateClient.saveSelection({"), true);
+  assert.equal(source.includes(".saveSelection({"), true);
   assert.equal(source.includes("onSelectionChange?.(nextSelection)"), true);
   assert.equal(source.includes("onReasoningChange={(reasoning) =>"), true);
+  assert.equal(source.includes("useState<WorkbenchSelectionState>"), false);
+  assert.equal(
+    source.includes("readonly selection: WorkbenchSelectionState"),
+    true
+  );
+  assert.equal(
+    source.includes("> = ({ onSelectionChange, selection, stateClient }) =>"),
+    true
+  );
 });

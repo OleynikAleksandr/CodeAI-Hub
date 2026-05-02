@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import type { WorkbenchSelectionState } from "../../services/workbench-bridge-types";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
 import { CaptureWorkbenchModelReasoningSelectors } from "./model-reasoning-selectors";
@@ -22,6 +22,7 @@ const PROVIDER_DEFAULTS: Record<
 
 interface CaptureWorkbenchSelectionBarProps {
   readonly onSelectionChange?: (selection: WorkbenchSelectionState) => void;
+  readonly selection: WorkbenchSelectionState;
   readonly stateClient: Pick<
     WorkbenchStateClientApi,
     "loadSelection" | "saveSelection"
@@ -30,10 +31,7 @@ interface CaptureWorkbenchSelectionBarProps {
 
 export const CaptureWorkbenchSelectionBar: React.FC<
   CaptureWorkbenchSelectionBarProps
-> = ({ onSelectionChange, stateClient }) => {
-  const [selection, setSelection] =
-    useState<WorkbenchSelectionState>(DEFAULT_SELECTION);
-
+> = ({ onSelectionChange, selection, stateClient }) => {
   useEffect(() => {
     let cancelled = false;
     stateClient
@@ -43,7 +41,6 @@ export const CaptureWorkbenchSelectionBar: React.FC<
           return;
         }
         const nextSelection = file?.selection ?? DEFAULT_SELECTION;
-        setSelection(nextSelection);
         onSelectionChange?.(nextSelection);
       })
       .catch(() => {
@@ -57,13 +54,14 @@ export const CaptureWorkbenchSelectionBar: React.FC<
   }, [onSelectionChange, stateClient]);
 
   const updateSelection = (nextSelection: WorkbenchSelectionState): void => {
-    setSelection(nextSelection);
     onSelectionChange?.(nextSelection);
-    stateClient.saveSelection({
-      version: 1,
-      selection: nextSelection,
-      updatedAt: new Date().toISOString(),
-    });
+    void stateClient
+      .saveSelection({
+        version: 1,
+        selection: nextSelection,
+        updatedAt: new Date().toISOString(),
+      })
+      .catch(() => undefined);
   };
 
   const updateProvider = (provider: string): void => {

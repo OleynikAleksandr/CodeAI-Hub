@@ -50,6 +50,7 @@ export const DetachedCaptureWorkbench: React.FC<
 
       <CaptureWorkbenchSelectionBar
         onSelectionChange={setSelection}
+        selection={selection}
         stateClient={workbenchClient}
       />
 
