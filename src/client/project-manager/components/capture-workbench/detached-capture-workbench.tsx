@@ -1,21 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import type { CaptureWorkbenchRunnerTransport } from "../../services/capture-workbench-runner";
+import type { WorkbenchSelectionState } from "../../services/workbench-bridge-types";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
 import { CaptureWorkbenchSelectionBar } from "./selection-bar";
-import { CaptureWorkbenchSnapshotCard } from "./snapshot-card";
+import { CaptureWorkbenchSnapshotCardsRow } from "./snapshot-cards-row";
 
 interface DetachedCaptureWorkbenchProps {
-  readonly stateClient?: Pick<
-    WorkbenchStateClientApi,
-    "loadSelection" | "saveSelection"
-  >;
+  readonly captureTransport?: CaptureWorkbenchRunnerTransport;
+  readonly stateClient?: WorkbenchStateClientApi;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }
 
 export const DetachedCaptureWorkbench: React.FC<
   DetachedCaptureWorkbenchProps
-> = ({ stateClient, workspacePath, workspaceSlug }) => {
-  const selectionClient = stateClient ?? EMPTY_SELECTION_CLIENT;
+> = ({ captureTransport, stateClient, workspacePath, workspaceSlug }) => {
+  const workbenchClient = stateClient ?? EMPTY_WORKBENCH_CLIENT;
+  const workbenchTransport = captureTransport ?? EMPTY_CAPTURE_TRANSPORT;
+  const [selection, setSelection] =
+    useState<WorkbenchSelectionState>(DEFAULT_SELECTION);
 
   useEffect(() => {
     document.title = `Capture Workbench - ${workspaceSlug}`;
@@ -38,22 +41,21 @@ export const DetachedCaptureWorkbench: React.FC<
         </div>
       </header>
 
-      <CaptureWorkbenchSelectionBar stateClient={selectionClient} />
+      <CaptureWorkbenchSelectionBar
+        onSelectionChange={setSelection}
+        stateClient={workbenchClient}
+      />
 
       <main style={styles.main}>
-        <section style={styles.snapshotRow}>
-          <CaptureWorkbenchSnapshotCard
-            current={null}
-            disabled={true}
-            mode="vanilla"
-            previous={null}
-          />
-          <CaptureWorkbenchSnapshotCard
-            current={null}
-            mode="managed"
-            previous={null}
-          />
-        </section>
+        <CaptureWorkbenchSnapshotCardsRow
+          captureTransport={workbenchTransport}
+          context={{
+            workspacePath,
+            workspaceSlug,
+          }}
+          selection={selection}
+          stateClient={workbenchClient}
+        />
         <section style={styles.diffPanel}>
           <div style={styles.diffHeader}>
             <span style={styles.panelTitle}>Managed: current vs previous</span>
@@ -76,12 +78,26 @@ export const DetachedCaptureWorkbench: React.FC<
   );
 };
 
-const EMPTY_SELECTION_CLIENT: Pick<
-  WorkbenchStateClientApi,
-  "loadSelection" | "saveSelection"
-> = {
+const DEFAULT_SELECTION: WorkbenchSelectionState = {
+  step: "description",
+  provider: "claude",
+  model: "sonnet",
+  reasoning: "thinking-high",
+};
+
+const EMPTY_WORKBENCH_CLIENT: WorkbenchStateClientApi = {
+  loadIndex: async () => null,
   loadSelection: async () => null,
+  readArtifactRecords: async () => [],
+  saveIndex: async () => undefined,
   saveSelection: async () => undefined,
+};
+
+const EMPTY_CAPTURE_TRANSPORT: CaptureWorkbenchRunnerTransport = {
+  captureNativeRequest: () => undefined,
+  getLastSettingsPayload: () => null,
+  getWorkflowState: async () => null,
+  onCoreEvent: () => () => undefined,
 };
 
 const DiffRow: React.FC<{
@@ -143,14 +159,6 @@ const styles: Record<string, React.CSSProperties> = {
     gridTemplateRows: "auto 1fr",
     minHeight: 0,
     overflow: "hidden",
-  },
-  snapshotRow: {
-    background: "#20232a",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-    display: "grid",
-    gap: 12,
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    padding: "14px 16px",
   },
   panelTitle: { fontSize: 12, fontWeight: 600 },
   mutedText: { color: "#7e828a", fontSize: 11 },

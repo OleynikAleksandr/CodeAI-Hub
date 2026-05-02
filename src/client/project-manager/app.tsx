@@ -66,6 +66,7 @@ const DetachedCaptureWorkbenchApp: React.FC<{
   return (
     <LocalizationProvider value={localization}>
       <DetachedCaptureWorkbench
+        captureTransport={api}
         stateClient={stateClient}
         workspacePath={workspacePath}
         workspaceSlug={workspaceSlug}
