@@ -139,9 +139,9 @@
 5. [DONE] Сделать default prompt builder в `capture-workbench-runner.ts` lazy import, чтобы row/SSR imports не тянули browser `api` через existing Settings service chain; injected builder path и runtime behavior сохранить (scope: 1 файл; expected commit: `fix: lazy load capture workbench scenario prompt`).
 6. [DONE] Git Commit: `fix: lazy load capture workbench scenario prompt` (hash: 72a1b1ea9)
 7. [DONE] Создать `src/client/project-manager/components/capture-workbench/snapshot-cards-row.tsx`, подключить его в `detached-capture-workbench.tsx` и передать thin `api` transport из `app.tsx`: pair of cards, `Re-capture Managed` wired to Workbench runner, slot rotation via `workbench-index-store` after successful capture (scope: 3 файла; expected commit: `feat: wire managed recapture and slot rotation`).
-8. [IN_PROGRESS] Git Commit: `feat: wire managed recapture and slot rotation` (hash: TBD)
-9. [TODO] Тесты snapshot cards/runner integration: `snapshot-cards-row.test.tsx` + при необходимости focused runner regression — empty state, successful capture rotates slot, failure leaves previous slot intact, file links call `openProjectManagerFileLink` (scope: ≤2 файла; expected commit: `test: cover capture workbench runner and snapshot cards`).
-10. [TODO] Git Commit: `test: cover capture workbench runner and snapshot cards` (hash: TBD)
+8. [DONE] Git Commit: `feat: wire managed recapture and slot rotation` (hash: d0ee32971)
+9. [DONE] Тесты snapshot cards/runner integration: `snapshot-cards-row.test.tsx` + при необходимости focused runner regression — empty state, successful capture rotates slot, failure leaves previous slot intact, file links call `openProjectManagerFileLink` (scope: ≤2 файла; expected commit: `test: cover capture workbench runner and snapshot cards`).
+10. [IN_PROGRESS] Git Commit: `test: cover capture workbench runner and snapshot cards` (hash: TBD)
 
 ### Stream 8 — Diff Data + Renderer
 
