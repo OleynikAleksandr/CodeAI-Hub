@@ -161,8 +161,8 @@
 ### Stream 9 — Settings → General Card Shrink + Launcher
 
 1. [DONE] Обновить shared Settings UI prop contract: `native-request-capture-card.tsx`, `general-settings.tsx`, `settings-view.tsx` — card renders launcher button + one-line description, accepts `onOpenWorkbench`, old selectors/capture buttons/status/artifact list removed from visible Settings surface (scope: 3 файла; expected commit: `feat: shrink native capture settings card to launcher`).
-2. [IN_PROGRESS] Git Commit: `feat: shrink native capture settings card to launcher` (hash: TBD)
-3. [TODO] Добавить PM launcher owner: `src/client/project-manager/services/capture-workbench-launcher.ts` + `src/client/project-manager/components/settings/use-project-manager-settings-state.ts` — handler builds `?mode=detached-capture&workspaceSlug=...&workspacePath=...` and calls `window.open(..., "popup,width=1280,height=900")`; shared UI does not import PM services directly (scope: 2 файла; expected commit: `feat: wire capture workbench launcher from project manager settings`).
+2. [DONE] Git Commit: `feat: shrink native capture settings card to launcher` (hash: 9134c12a1)
+3. [IN_PROGRESS] Добавить PM launcher owner: `src/client/project-manager/services/capture-workbench-launcher.ts` + `src/client/project-manager/components/settings/use-project-manager-settings-state.ts` — handler builds `?mode=detached-capture&workspaceSlug=...&workspacePath=...` and calls `window.open(..., "popup,width=1280,height=900")`; shared UI does not import PM services directly (scope: 2 файла; expected commit: `feat: wire capture workbench launcher from project manager settings`).
 4. [TODO] Git Commit: `feat: wire capture workbench launcher from project manager settings` (hash: TBD)
 5. [TODO] Обновить launcher tests: `native-request-capture-card.test.tsx` + `capture-workbench-launcher.test.ts` — launcher button visible, old controls absent, URL/query/features correct (scope: 2 файла; expected commit: `test: cover capture workbench launcher migration`).
 6. [TODO] Git Commit: `test: cover capture workbench launcher migration` (hash: TBD)

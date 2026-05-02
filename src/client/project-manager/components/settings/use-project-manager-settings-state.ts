@@ -55,6 +55,7 @@ import {
   updateThinkingDisplaySyncEnabled,
   updateThinkingSettings,
 } from "../../../ui/src/components/settings/settings-state-helpers";
+import { openCaptureWorkbench } from "../../services/capture-workbench-launcher";
 import { openProjectManagerFileLink } from "../../services/project-manager-file-link-opener";
 import { api } from "../../api";
 import type { SettingsNativeRequestCaptureResultPayload } from "../../core-stream-message-types";
@@ -102,6 +103,7 @@ const isNativeRequestCaptureResultPayload = (
 export type UseProjectManagerSettingsStateResult =
   UseSettingsStateResult &
     TemplateUpdateSettingsControls & {
+      readonly handleNativeRequestCaptureWorkbenchOpen: () => void;
       readonly hostPostMessage: (message: unknown) => void;
       readonly supportsCoreRestart: false;
     };
@@ -425,6 +427,13 @@ export const useProjectManagerSettingsState =
       ]
     );
 
+    const handleNativeRequestCaptureWorkbenchOpen = useCallback(() => {
+      openCaptureWorkbench({
+        workspacePath: context.activeWorkspacePath,
+        workspaceSlug: context.activeWorkspaceSlug,
+      });
+    }, [context.activeWorkspacePath, context.activeWorkspaceSlug]);
+
     const handleHostMessage = useCallback(
       (message: unknown) => {
         handleProjectManagerSettingsHostMessage({
@@ -466,6 +475,7 @@ export const useProjectManagerSettingsState =
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
       handleNativeRequestCapture,
+      handleNativeRequestCaptureWorkbenchOpen,
       handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
       handleRestartCore: () => api.restartCore(),
