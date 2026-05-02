@@ -242,10 +242,17 @@
 
 ### Stream 11H — User Visual Acceptance Testing (Fresh Install Retest)
 
-1. [IN_PROGRESS] Установить fresh-install VSIX `codeai-hub-1.2.127.vsix`, открыть workspace, повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules` и убедиться, что workflow steps больше не падают с `this.getHttpUrl is not a function`.
-2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
+1. [BLOCKED] Установить fresh-install VSIX `codeai-hub-1.2.127.vsix`, открыть workspace, повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules` и убедиться, что workflow steps больше не падают с `this.getHttpUrl is not a function`. Пользовательский retest подтвердил, что workflow steps работают, но выявил UI race при последовательном `Managed Snapshot` с разным reasoning: после переключения `thinking-high -> thinking-off` первый `Re-capture Managed` фактически создаёт artifact, но UI может выглядеть как no-op до второго клика.
+2. [BLOCKED] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
 3. [TODO] Зафиксировать результат fresh-install пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench fresh install visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench fresh install visual acceptance` (hash: TBD)
+
+### Stream 11I — Reasoning Selection Recapture Fix
+
+1. [DONE] Зафиксировать новый пользовательский retest blocker `1.2.127`: reasoning switch recapture UI выглядит как no-op на первом клике из-за duplicated selection ownership между `CaptureWorkbenchSelectionBar` и detached parent; capture artifacts подтверждают, что Core/capture path пишет `thinking-off` records (scope: 1 doc; expected commit: `docs: record capture workbench reasoning recapture blocker`).
+2. [IN_PROGRESS] Git Commit: `docs: record capture workbench reasoning recapture blocker` (hash: TBD)
+3. [TODO] Сделать selection bar controlled component от detached parent и обновить regression coverage: `selection-bar.tsx`, `detached-capture-workbench.tsx`, `selection-bar.test.tsx`; snapshot row должен получать тот же committed selection, который видит selector UI (scope: 3 files; expected commit: `fix: make capture workbench selection parent-owned`).
+4. [TODO] Git Commit: `fix: make capture workbench selection parent-owned` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
 
