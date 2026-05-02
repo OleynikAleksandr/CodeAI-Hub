@@ -219,9 +219,9 @@
 
 1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.126` after failed workflow-step retest in `1.2.125`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files; expected commit: `docs: prepare capture workbench workflow fix release`).
 2. [DONE] Git Commit: `docs: prepare capture workbench workflow fix release` (hash: df081de7e)
-3. [IN_PROGRESS] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench workflow fix`).
-4. [TODO] Git Commit: `chore: bump release manifests for capture workbench workflow fix` (hash: TBD)
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench workflow fix release build`).
+3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench workflow fix`).
+4. [DONE] Git Commit: `chore: bump release manifests for capture workbench workflow fix` (hash: fd9f4f651)
+5. [IN_PROGRESS] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench workflow fix release build`).
 6. [TODO] Git Commit: `docs: record capture workbench workflow fix release build` (hash: TBD)
 
 ### Stream 11F — User Visual Acceptance Testing (Workflow Fix Retest)
