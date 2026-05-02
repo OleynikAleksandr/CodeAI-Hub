@@ -1,4 +1,6 @@
 import React from "react";
+import { CaptureWorkbenchDomListboxSelector } from "./dom-listbox-selector";
+import type { CaptureWorkbenchListboxOption } from "./dom-listbox-selector";
 
 interface StepOption {
   readonly disabled?: boolean;
@@ -36,54 +38,18 @@ interface CaptureWorkbenchStepSelectorProps {
 export const CaptureWorkbenchStepSelector: React.FC<
   CaptureWorkbenchStepSelectorProps
 > = ({ onChange, value }) => (
-  <label style={styles.selector}>
-    <span style={styles.selectorLabel}>Step</span>
-    <select
-      onChange={(event) => onChange(event.currentTarget.value)}
-      style={styles.select}
-      value={value}
-    >
-      {STEP_GROUPS.map((group) => (
-        <optgroup key={group.label} label={group.label}>
-          {group.options.map((option) => (
-            <option
-              disabled={option.disabled}
-              key={option.value}
-              value={option.value}
-            >
-              {option.label}
-            </option>
-          ))}
-        </optgroup>
-      ))}
-    </select>
-  </label>
+  <CaptureWorkbenchDomListboxSelector
+    label="Step"
+    onChange={onChange}
+    options={STEP_OPTIONS}
+    value={value}
+  />
 );
 
-const styles: Record<string, React.CSSProperties> = {
-  selector: {
-    alignItems: "center",
-    background: "#2c313b",
-    border: "1px solid rgba(255, 255, 255, 0.18)",
-    borderRadius: 6,
-    display: "inline-flex",
-    gap: 8,
-    minWidth: 0,
-    padding: "7px 10px",
-  },
-  selectorLabel: {
-    color: "#7e828a",
-    fontSize: 10,
-    fontWeight: 600,
-    textTransform: "uppercase",
-  },
-  select: {
-    appearance: "none",
-    background: "transparent",
-    border: 0,
-    color: "#e6e8eb",
-    fontSize: 13,
-    fontWeight: 500,
-    outline: "none",
-  },
-};
+const STEP_OPTIONS: readonly CaptureWorkbenchListboxOption[] =
+  STEP_GROUPS.flatMap((group) =>
+    group.options.map((option) => ({
+      ...option,
+      groupLabel: group.label,
+    }))
+  );
