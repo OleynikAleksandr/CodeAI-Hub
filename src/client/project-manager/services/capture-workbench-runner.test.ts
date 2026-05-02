@@ -198,6 +198,56 @@ test("CaptureWorkbenchRunner keeps translation on the direct capture path", asyn
   });
 });
 
+test("CaptureWorkbenchRunner binds workflow-state transport for API receivers", async () => {
+  const { createCaptureWorkbenchRunner } = await loadRunnerModule();
+  const harness = createHarness((call) =>
+    captureResult(call, {
+      jsonlPath: "/tmp/description.jsonl",
+      markdownPath: "/tmp/description.md",
+    })
+  );
+  let observedHttpUrl: string | null = null;
+  const transport = {
+    ...harness.transport,
+    getHttpUrl: () => "http://127.0.0.1:8080",
+    getWorkflowState: async function (
+      workspaceSlug: string,
+      workspacePath?: string
+    ) {
+      observedHttpUrl =
+        (this as { getHttpUrl?: () => string }).getHttpUrl?.() ?? null;
+      assert.equal(workspaceSlug, "demo");
+      assert.equal(workspacePath, "/workspace/demo");
+      return null;
+    },
+  };
+  const promptBuilder: CaptureWorkbenchScenarioPromptBuilder = async (
+    params
+  ) => {
+    await params.getWorkflowState(params.workspaceSlug, params.workspacePath);
+    return workflowPromptBuilder(params);
+  };
+  const runner = createCaptureWorkbenchRunner(
+    {
+      artifactReader: {
+        readArtifactRecords: async () => [{ type: "capture_start" }],
+      },
+      transport: transport as CaptureWorkbenchRunnerTransport,
+    },
+    { scenarioPromptBuilder: promptBuilder }
+  );
+
+  await runner.runManagedCapture({
+    context: {
+      workspacePath: "/workspace/demo",
+      workspaceSlug: "demo",
+    },
+    selection: SELECTION,
+  });
+
+  assert.equal(observedHttpUrl, "http://127.0.0.1:8080");
+});
+
 test("CaptureWorkbenchRunner rejects failed capture before reading artifacts", async () => {
   const { createCaptureWorkbenchRunner } = await loadRunnerModule();
   const harness = createHarness((call) =>

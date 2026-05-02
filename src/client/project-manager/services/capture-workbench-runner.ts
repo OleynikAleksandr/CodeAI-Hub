@@ -189,7 +189,7 @@ class CaptureWorkbenchRunner implements CaptureWorkbenchRunnerApi {
       this.#scenarioPromptBuilder ?? (await loadScenarioPromptBuilder());
     return scenarioPromptBuilder({
       bypassUpstreamGuard: true,
-      getWorkflowState: this.#transport.getWorkflowState,
+      getWorkflowState: this.#transport.getWorkflowState.bind(this.#transport),
       scenarioId: params.scenarioId,
       settingsPayload: this.#transport.getLastSettingsPayload(),
       workspaceName: params.context.workspaceName,
