@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.128] - 2026-05-02
+### Fixed
+- **Capture Workbench reasoning switches now use one parent-owned selection state.** The selector bar and Managed snapshot row no longer keep separate selection copies, so switching Claude reasoning from `thinking-high` to `thinking-off` and immediately re-capturing targets the visible slot on the first click.
+
+### Tests
+- **Selection bar regression coverage now rejects duplicate local selection state.** The Workbench selector test asserts the bar is controlled by the detached parent and still preserves sticky load/save wiring.
+
 ## [1.2.127] - 2026-05-02
 ### Changed
 - **Capture Workbench workflow fix is repackaged under a fresh release number.** This release preserves the `1.2.126` workflow-state transport fix and provides a clean install target after an interrupted local VSIX installation.

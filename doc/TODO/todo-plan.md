@@ -254,6 +254,22 @@
 3. [DONE] Сделать selection bar controlled component от detached parent и обновить regression coverage: `selection-bar.tsx`, `detached-capture-workbench.tsx`, `selection-bar.test.tsx`; snapshot row должен получать тот же committed selection, который видит selector UI (scope: 3 files; expected commit: `fix: make capture workbench selection parent-owned`).
 4. [DONE] Git Commit: `fix: make capture workbench selection parent-owned` (hash: c8cbcedb0)
 
+### Stream 11J — Release Build (Reasoning Recapture Fix)
+
+1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.128` after failed reasoning-switch retest in `1.2.127`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files + todo-plan; expected commit: `docs: prepare capture workbench reasoning recapture release`).
+2. [IN_PROGRESS] Git Commit: `docs: prepare capture workbench reasoning recapture release` (hash: TBD)
+3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.128` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reasoning recapture`).
+4. [TODO] Git Commit: `chore: bump release manifests for capture workbench reasoning recapture` (hash: TBD)
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reasoning recapture release build`).
+6. [TODO] Git Commit: `docs: record capture workbench reasoning recapture release build` (hash: TBD)
+
+### Stream 11K — User Visual Acceptance Testing (Reasoning Recapture Retest)
+
+1. [TODO] Установить reasoning-recapture VSIX `codeai-hub-1.2.128.vsix`, открыть detached Capture Workbench, выбрать `Description + Claude + Sonnet + thinking-high`, выполнить `Re-capture Managed`, затем переключить `Reasoning` на `thinking-off` и убедиться, что первый следующий `Re-capture Managed` показывает capture progress и создаёт/показывает artifact в `thinking-off` slot без второго клика.
+2. [TODO] Acceptance matrix: повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules`; проверить slot rotation `current → previous` для разных reasoning slots; diff `Managed: current vs previous` рендерит секции с правильными статусами; Gemini Provider option остаётся disabled placeholder; пустой workspace без upstream artifacts — capture не падает.
+3. [TODO] Зафиксировать результат reasoning-recapture пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench reasoning recapture visual acceptance`).
+4. [TODO] Git Commit: `docs: record capture workbench reasoning recapture visual acceptance` (hash: TBD)
+
 ### Stream 12 — Scope Closeout
 
 1. [TODO] После explicit user acceptance перенести завершённый active plan в `doc/TODO/Archive/todo-plan-capture-workbench-mvp-<version>.md`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`; зафиксировать, какие planning-docs остаются active/deferred/archive: `Capture_Workbench_UI_Architecture.md` и `Provider_Native_Request_Capture_Workbench_Architecture.md` (scope: ≤3 docs; expected commit: `docs: archive capture workbench mvp plan and refresh docs index`).
