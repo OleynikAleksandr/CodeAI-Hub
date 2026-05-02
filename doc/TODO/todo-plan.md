@@ -61,9 +61,9 @@
 9. [DONE] Расширить Codex diagnostic capture envelope: `codex-native-request-capture-service.ts` + новый `codex-native-request-capture-applied-envelope.ts` + новый `codex-native-request-capture-applied-envelope.test.ts` — service делает только thin delegation/callback, helper сериализует `processProfileKey`, `approvalPolicy`, `sandbox`, `persistExtendedHistory`, `providerHomeOverrides`, `modelReasoningSummary` перед `turn/start`; существующий 483-line service test не расширять (scope: 3 файла; expected commit: `feat: codex diagnostic capture emits applied envelope`).
 10. [DONE] Git Commit: `feat: codex diagnostic capture emits applied envelope` (hash: 0c3b7d5d3)
 11. [DONE] Обновить markdown summarizer и тест: `native-request-capture-markdown.ts` + `native-request-capture-markdown.test.ts` (создать test file, если отсутствует) — секция `Applied Input Envelope` под фиксированным заголовком, без credential leakage (scope: 2 файла; expected commit: `feat: render applied envelope in capture markdown`).
-12. [IN_PROGRESS] Git Commit: `feat: render applied envelope in capture markdown` (hash: TBD)
-13. [TODO] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33: captured artifact schema включает `applied_input_envelope`, `mode`, `releaseVersion`; Phase 1 всегда `mode: "managed"` (scope: 1 файл; expected commit: `docs: document capture artifact schema extensions`).
-14. [TODO] Git Commit: `docs: document capture artifact schema extensions` (hash: TBD)
+12. [DONE] Git Commit: `feat: render applied envelope in capture markdown` (hash: c7af19476)
+13. [DONE] Обновить `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` §33: captured artifact schema включает `applied_input_envelope`, `mode`, `releaseVersion`; Phase 1 всегда `mode: "managed"` (scope: 1 файл; expected commit: `docs: document capture artifact schema extensions`).
+14. [IN_PROGRESS] Git Commit: `docs: document capture artifact schema extensions` (hash: TBD)
 
 ### Stream 2 — Reasoning Transport Extension
 
