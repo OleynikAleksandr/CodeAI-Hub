@@ -174,9 +174,9 @@
 1. [DONE] Перед сборкой определить будущую версию из текущего `package.json` + 1; обновить README.md (`Current Release — vX.Y.Z`) и CHANGELOG.md (`## [X.Y.Z]`) на эту будущую версию (scope: 2 файла; expected commit: `docs: prepare capture workbench mvp release`).
 2. [DONE] Git Commit: `docs: prepare capture workbench mvp release` (hash: 34be8d03b)
 3. [DONE] Проверить clean tree, затем запустить `./scripts/build-all.sh`; после успеха убедиться, что tarball'ы лежат в `doc/tmp/releases/`, версии/манифесты обновлены штатным скриптом (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench mvp`).
-4. [IN_PROGRESS] Git Commit: `chore: bump release manifests for capture workbench mvp` (hash: TBD)
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить вывод `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE, если acceptance ещё ожидается (scope: release command + session report; expected commit: `docs: record capture workbench mvp release build`).
-6. [TODO] Git Commit: `docs: record capture workbench mvp release build` (hash: TBD)
+4. [DONE] Git Commit: `chore: bump release manifests for capture workbench mvp` (hash: dbe1b6405)
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить вывод `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE, если acceptance ещё ожидается (scope: release command + session report; expected commit: `docs: record capture workbench mvp release build`).
+6. [IN_PROGRESS] Git Commit: `docs: record capture workbench mvp release build` (hash: TBD)
 
 ### Stream 11 — User Visual Acceptance Testing
 
