@@ -126,9 +126,9 @@
 5. [DONE] Создать `src/client/project-manager/components/capture-workbench/provider-selector.tsx` и подключить его в `selection-bar.tsx`: dropdown с tinted Claude/Codex items, Gemini disabled placeholder с tooltip `Gemini support arrives with parent Phase 2` (scope: 2 файла; expected commit: `feat: add capture workbench provider selector`).
 6. [DONE] Git Commit: `feat: add capture workbench provider selector` (hash: 5147fa392)
 7. [DONE] Создать `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx` и подключить его в `selection-bar.tsx`: provider-specific model/reasoning option rendering; no Gemini selectable path in Phase 1 (scope: 2 файла; expected commit: `feat: add capture workbench model and reasoning selectors`).
-8. [IN_PROGRESS] Git Commit: `feat: add capture workbench model and reasoning selectors` (hash: TBD)
-9. [TODO] Тесты selection UI: `selection-bar.test.tsx` — sticky load/save, four selectors render, Gemini disabled, selected reasoning reaches callback (scope: 1 файл; expected commit: `test: cover capture workbench selection bar behavior`).
-10. [TODO] Git Commit: `test: cover capture workbench selection bar behavior` (hash: TBD)
+8. [DONE] Git Commit: `feat: add capture workbench model and reasoning selectors` (hash: d02d36814)
+9. [DONE] Тесты selection UI: `selection-bar.test.tsx` — sticky load/save, four selectors render, Gemini disabled, selected reasoning reaches callback (scope: 1 файл; expected commit: `test: cover capture workbench selection bar behavior`).
+10. [IN_PROGRESS] Git Commit: `test: cover capture workbench selection bar behavior` (hash: TBD)
 
 ### Stream 7 — Capture Run Orchestration + Snapshot Cards
 
