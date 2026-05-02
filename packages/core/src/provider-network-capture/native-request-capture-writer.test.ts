@@ -32,6 +32,13 @@ const MARKDOWN_DIAGNOSTIC_CONTEXT_KIND_PATTERN =
 const MARKDOWN_DIAGNOSTIC_CONTEXT_PROMPT_PATTERN = /workflow prompt/;
 const MARKDOWN_SELECTED_MODEL_PATTERN = /gpt-5\.3-codex/;
 
+const parseJsonlRecords = (jsonl: string): readonly Record<string, unknown>[] =>
+  jsonl
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => JSON.parse(line) as Record<string, unknown>);
+
 test("redactCaptureHeaders removes credential-bearing values", () => {
   const redacted = redactCaptureHeaders({
     authorization: "Bearer secret",
@@ -89,6 +96,61 @@ test("NativeRequestCaptureWriter writes JSONL and Markdown artifacts", async () 
   assert.match(markdown, MARKDOWN_TITLE_PATTERN);
   assert.match(markdown, MARKDOWN_SYSTEM_PROMPT_HEADING_PATTERN);
   assert.match(markdown, MARKDOWN_SYSTEM_PROMPT_PATTERN);
+});
+
+test("NativeRequestCaptureWriter records mode, release version and applied envelope", async () => {
+  const outputDir = await fs.mkdtemp(
+    path.join(os.tmpdir(), "native-capture-writer-")
+  );
+  const writer = await NativeRequestCaptureWriter.create({
+    captureId: "capture-writer-envelope-test",
+    mode: "vanilla",
+    outputDir,
+    providerId: "claude",
+    releaseVersion: "test-release",
+    clock: () => FIXED_DATE,
+  });
+
+  let records = parseJsonlRecords(
+    await fs.readFile(writer.artifacts.jsonlPath, "utf8")
+  );
+  const captureStart = records.find(
+    (record) => record.type === "capture_start"
+  );
+  assert.ok(captureStart);
+  assert.equal(captureStart.mode, "vanilla");
+  assert.equal(captureStart.releaseVersion, "test-release");
+  assert.equal(
+    records.some((record) => record.type === "applied_input_envelope"),
+    false
+  );
+
+  await writer.recordAppliedInputEnvelope({
+    allowDangerouslySkipPermissions: false,
+    cwd: "/workspace",
+    hasSystemPrompt: true,
+    kind: "claude",
+    permissionMode: "acceptEdits",
+    settingSources: [],
+    toolCount: 2,
+  });
+
+  records = parseJsonlRecords(
+    await fs.readFile(writer.artifacts.jsonlPath, "utf8")
+  );
+  const envelopeRecord = records.find(
+    (record) => record.type === "applied_input_envelope"
+  );
+  assert.ok(envelopeRecord);
+  assert.deepEqual(envelopeRecord.envelope, {
+    allowDangerouslySkipPermissions: false,
+    cwd: "/workspace",
+    hasSystemPrompt: true,
+    kind: "claude",
+    permissionMode: "acceptEdits",
+    settingSources: [],
+    toolCount: 2,
+  });
 });
 
 test("NativeRequestCaptureWriter records ignored request details", async () => {

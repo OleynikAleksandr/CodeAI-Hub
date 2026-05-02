@@ -49,6 +49,15 @@ class BoundSensitiveCaptureAdapter implements ProviderAdapter {
       kind: "facade_test_context",
       payload: { note: "provider diagnostic context" },
     });
+    await options.recordAppliedInputEnvelope?.({
+      allowDangerouslySkipPermissions: false,
+      cwd: "/workspace",
+      hasSystemPrompt: true,
+      kind: "claude",
+      permissionMode: "acceptEdits",
+      settingSources: [],
+      toolCount: 2,
+    });
     await new Promise<void>((resolve) => {
       setTimeout(resolve, 5);
     });
@@ -219,6 +228,29 @@ test("NativeRequestCaptureFacade starts proxy and passes capture env to provider
   assert.equal(Boolean(result.markdownPath), true);
   assert.equal(Boolean(result.jsonlPath), true);
   assert.ok(result.markdownPath);
+  assert.ok(result.jsonlPath);
+  const jsonl = await fs.readFile(result.jsonlPath, "utf8");
+  const records = parseJsonlRecords(jsonl);
+  const captureStart = records.find(
+    (record) => record.type === "capture_start"
+  );
+  assert.ok(captureStart);
+  assert.equal(captureStart.mode, "managed");
+  assert.equal(typeof captureStart.releaseVersion, "string");
+  assert.notEqual(captureStart.releaseVersion, "");
+  const appliedEnvelope = records.find(
+    (record) => record.type === "applied_input_envelope"
+  );
+  assert.ok(appliedEnvelope);
+  assert.deepEqual(appliedEnvelope.envelope, {
+    allowDangerouslySkipPermissions: false,
+    cwd: "/workspace",
+    hasSystemPrompt: true,
+    kind: "claude",
+    permissionMode: "acceptEdits",
+    settingSources: [],
+    toolCount: 2,
+  });
   const markdown = await fs.readFile(result.markdownPath, "utf8");
   assert.match(markdown, PROVIDER_DIAGNOSTIC_CONTEXT_SECTION_PATTERN);
   assert.match(markdown, PROVIDER_DIAGNOSTIC_CONTEXT_PATTERN);
