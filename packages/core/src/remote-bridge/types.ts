@@ -246,14 +246,14 @@ type CoreBridgeEvent =
       readonly payload: {
         readonly error: string | null;
         readonly kind: WorkbenchStateKind;
-        readonly state: WorkbenchStateFile | null;
+        readonly payload: WorkbenchStateFile | null;
       };
     }
   | {
       readonly type: "workbench:state:saved";
       readonly payload: {
-        readonly error: string | null;
         readonly kind: WorkbenchStateKind;
+        readonly ok: true;
       };
     }
   | {

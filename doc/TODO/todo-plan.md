@@ -93,7 +93,9 @@
 9. [DONE] Wire validator: `packages/core/src/remote-bridge/handlers/incoming-message-validator.ts` — accept new workbench intents after main router delegate wiring; validation stays structural and reuses Core workbench type guards where possible (scope: 1 файл; expected commit: `feat: validate workbench state and artifact bridge commands`).
 10. [DONE] Git Commit: `feat: validate workbench state and artifact bridge commands` (hash: 7465fed5d)
 11. [DONE] Тесты Core workbench transport: `remote-bridge-workbench-command-router.test.ts` + existing `workbench-state-persistence-handler.test.ts` / `workbench-artifact-reader.test.ts` coverage — bridge emits state load/save/artifact loaded/error events, helpers already cover save/write, corrupted index rebuild, artifact path guard, parsed JSONL records (scope: 3 файла; expected commit: `test: cover workbench bridge commands`).
-12. [IN_PROGRESS] Git Commit: `test: cover workbench bridge commands` (hash: TBD)
+12. [DONE] Git Commit: `test: cover workbench bridge commands` (hash: 49dab63a5)
+13. [DONE] Align Core workbench state event contract with approved architecture doc: `packages/core/src/remote-bridge/types.ts`, `packages/core/src/remote-bridge/remote-bridge-workbench-command-router.ts`, `packages/core/src/remote-bridge/remote-bridge-workbench-command-router.test.ts` — `workbench:state:loaded` carries nested `payload`, `workbench:state:saved` carries `{ kind, ok: true }`, PM client will not depend on a divergent `state` field (scope: 3 файла; expected commit: `fix: align workbench state event payload contract`).
+14. [IN_PROGRESS] Git Commit: `fix: align workbench state event payload contract` (hash: TBD)
 
 ### Stream 4 — PM Bridge Client + Index Store
 

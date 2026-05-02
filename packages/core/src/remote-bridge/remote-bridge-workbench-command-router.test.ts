@@ -30,11 +30,15 @@ test("RemoteBridgeWorkbenchCommandRouter emits state load and save events", asyn
   assert.deepEqual(events, [
     {
       type: "workbench:state:loaded",
-      payload: { kind: "index", state: { version: 1, slots: [] }, error: null },
+      payload: {
+        kind: "index",
+        payload: { version: 1, slots: [] },
+        error: null,
+      },
     },
     {
       type: "workbench:state:saved",
-      payload: { kind: "selection", error: null },
+      payload: { kind: "selection", ok: true },
     },
   ]);
   assert.deepEqual(saves, [{ version: 1, selection: null }]);

@@ -72,7 +72,7 @@ export class RemoteBridgeWorkbenchCommandRouter {
         type: "workbench:state:loaded",
         payload: {
           kind: payload.kind,
-          state: await this.#stateHandler.load(payload.kind),
+          payload: await this.#stateHandler.load(payload.kind),
           error: null,
         },
       });
@@ -81,7 +81,7 @@ export class RemoteBridgeWorkbenchCommandRouter {
         type: "workbench:state:loaded",
         payload: {
           kind: payload.kind,
-          state: null,
+          payload: null,
           error: toErrorMessage(error),
         },
       });
@@ -99,7 +99,7 @@ export class RemoteBridgeWorkbenchCommandRouter {
       await this.#saveState(payload.kind, payload.state);
       this.#sendToClient(clientId, {
         type: "workbench:state:saved",
-        payload: { kind: payload.kind, error: null },
+        payload: { kind: payload.kind, ok: true },
       });
     } catch (error) {
       this.#sendToClient(clientId, {
