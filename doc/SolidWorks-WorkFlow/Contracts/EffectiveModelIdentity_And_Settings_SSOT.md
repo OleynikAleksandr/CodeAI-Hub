@@ -1,7 +1,7 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-28
+**Updated:** 2026-05-02
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.2.101`)
 
@@ -169,6 +169,17 @@ Runtime rules:
 - translation profiles use translation-specific instructions and tool policy, not workflow step prompts; Codex translation specifically resolves to `processProfileKey = "codex:translation"` and `toolProfileKey = "codex:translation-tools-minimal"`, a code-owned minimal/residual tool policy whose actual provider-visible tool surface must be proven by native capture before any "removed tool" claim is documented;
 - user-editable templates may override text instruction fragments only; flags, system tools, sandbox and approval policy remain code-owned.
 
+### 4.7. Capture-scoped reasoning override
+
+Provider Native Request Capture Workbench is allowed one explicit diagnostic exception: `settings:native-request-capture` may carry `reasoning?: string | null` to compare artifacts by `(step, provider, model, reasoning)` without writing persisted Settings or mutating `session.modelBinding`.
+
+Rules:
+
+- Core must apply this value only inside the one-shot native capture command after the normal applied-turn-config resolver has produced its snapshot.
+- The override may alter the provider-facing `appliedTurnConfig` passed to `captureNativeRequest(...)` and the emitted capture artifact metadata, but it must not call settings save/update handlers and must not broadcast `session:model:update`.
+- PM/UI may persist the selector as Workbench sticky state, but that sticky state is not Settings SSOT and cannot seed normal sessions.
+- A missing or `null` override means "use the resolved Settings/session capture snapshot as-is".
+
 ---
 
 ## 5. Invariants
@@ -191,6 +202,7 @@ Runtime rules:
 16. Threshold-created continuation sessions must inherit the previous binding and must not resolve current Settings defaults.
 17. Unbound runtime/model SDK events must not overwrite an existing binding-owned UI/runtime identity.
 18. Settings snapshot caches must be path-scoped, short-lived, and invalidated by Core write/reset/default-materialization paths; cache reuse is a performance detail and must not change settings ownership.
+19. Capture-scoped reasoning override is a diagnostic-only exception; it may affect native capture artifacts for one command but must never write Settings, mutate `session.modelBinding`, or become a provider-local identity source.
 
 ---
 

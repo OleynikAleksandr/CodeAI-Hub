@@ -76,9 +76,9 @@
 7. [DONE] Расширить PM outgoing transport: `src/client/project-manager/core-stream-message-types.ts` + `src/client/project-manager/components/settings/native-request-capture-runner.ts` — options принимают `reasoning?: string | null`; `api.captureNativeRequest(...)` уже pass-through'ит `options` через spread, поэтому 498-line `api.ts` не трогать; существующий Settings runner может не задавать override, Workbench runner задаёт явно (scope: 2 файла; expected commit: `feat: pass capture reasoning override from project manager`).
 8. [DONE] Git Commit: `feat: pass capture reasoning override from project manager` (hash: 5abcaf6bc)
 9. [DONE] Обновить PM tests для reasoning transport: `native-request-capture-runner.test.ts` + `core-stream-message-validator.test.ts` при необходимости — runner сохраняет старый no-override path и новый override path (scope: ≤2 файла; expected commit: `test: cover project manager capture reasoning override`).
-10. [IN_PROGRESS] Git Commit: `test: cover project manager capture reasoning override` (hash: TBD)
-11. [TODO] Обновить `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`: capture-scoped reasoning override как explicit diagnostic exception от persisted Settings/session-binding ownership (scope: 1 файл; expected commit: `docs: document capture-scoped reasoning override exception`).
-12. [TODO] Git Commit: `docs: document capture-scoped reasoning override exception` (hash: TBD)
+10. [DONE] Git Commit: `test: cover project manager capture reasoning override` (hash: b1da80a24)
+11. [DONE] Обновить `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`: capture-scoped reasoning override как explicit diagnostic exception от persisted Settings/session-binding ownership (scope: 1 файл; expected commit: `docs: document capture-scoped reasoning override exception`).
+12. [IN_PROGRESS] Git Commit: `docs: document capture-scoped reasoning override exception` (hash: TBD)
 
 ### Stream 3 — Core Workbench State + Artifact Read Transport
 
