@@ -278,7 +278,7 @@
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench clean handoff` (hash: 79dce7a9e)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, VSIX runtime package surface verification; итоговый VSIX `codeai-hub-1.2.129.vsix` (scope: release command + session report; expected commit: `docs: record capture workbench clean handoff release build`).
 6. [DONE] Git Commit: `docs: record capture workbench clean handoff release build` (hash: 7ef6ecb70)
-7. [TODO] Создать локальный user-space handoff archive с `codeai-hub-1.2.129.vsix` и fresh `1.2.129` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record capture workbench clean handoff bundle`).
+7. [DONE] Создать локальный user-space handoff archive с `codeai-hub-1.2.129.vsix` и fresh `1.2.129` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record capture workbench clean handoff bundle`). Archive: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.129-darwin-arm64-handoff.tar.bz2`; contents verified: VSIX + seven `1.2.129` runtime tarballs.
 8. [TODO] Git Commit: `docs: record capture workbench clean handoff bundle` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
