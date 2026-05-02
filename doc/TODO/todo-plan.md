@@ -111,9 +111,9 @@
 ### Stream 5 — Detached Workbench Entry
 
 1. [DONE] Расширить detached route и shell: `src/client/project-manager/app.tsx` + `src/client/project-manager/components/capture-workbench/detached-capture-workbench.tsx` — распознать `?mode=detached-capture`, query params `workspaceSlug`/`workspacePath`, shell layout (header/body/footer placeholders) по prototype rev2 grid/header/footer contract (scope: 2 файла; expected commit: `feat: route detached capture workbench shell`).
-2. [IN_PROGRESS] Git Commit: `feat: route detached capture workbench shell` (hash: TBD)
-3. [TODO] Реализовать api/localization mount path по результату Stream 0: обновить detached entry files так, чтобы окно получало same Core websocket bridge, `LocalizationProvider`, settings/bootstrap runtime; точные файлы зависят от §3.7 parent plan, лимит ≤3 файлов обязателен (scope: ≤3 файла; expected commit: `feat: mount transport and localization in detached capture window`).
-4. [TODO] Git Commit: `feat: mount transport and localization in detached capture window` (hash: TBD)
+2. [DONE] Git Commit: `feat: route detached capture workbench shell` (hash: 9e7e3bdd9)
+3. [DONE] Реализовать api/localization mount path по результату Stream 0: обновить detached entry files так, чтобы окно получало same Core websocket bridge, `LocalizationProvider`, settings/bootstrap runtime; точные файлы зависят от §3.7 parent plan, лимит ≤3 файлов обязателен (scope: ≤3 файла; expected commit: `feat: mount transport and localization in detached capture window`).
+4. [IN_PROGRESS] Git Commit: `feat: mount transport and localization in detached capture window` (hash: TBD)
 5. [TODO] Тесты detached entry: route resolution, shell render, missing query params fallback, localization/bootstrap path smoke (scope: ≤2 файла; expected commit: `test: cover detached capture workbench entry`).
 6. [TODO] Git Commit: `test: cover detached capture workbench entry` (hash: TBD)
 

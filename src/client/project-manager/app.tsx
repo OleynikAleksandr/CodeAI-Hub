@@ -1,8 +1,10 @@
 import type React from "react";
+import { useEffect } from "react";
 import {
   LocalizationProvider,
   useResolvedLocalization,
 } from "../ui/src/app-host/use-localization";
+import { api } from "./api";
 import { MainLayout } from "./components/layout/main-layout";
 import { useProjectManagerSettings } from "./components/settings/use-project-manager-settings";
 import { DetachedCaptureWorkbench } from "./components/capture-workbench/detached-capture-workbench";
@@ -45,6 +47,30 @@ const ProjectManagerWorkbenchApp: React.FC = () => {
   );
 };
 
+const DetachedCaptureWorkbenchApp: React.FC<{
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}> = ({ workspacePath, workspaceSlug }) => {
+  const { settings, localizationRuntime } = useProjectManagerSettings();
+  const localization = useResolvedLocalization(settings, localizationRuntime);
+
+  useEffect(() => {
+    api.connect();
+    return () => {
+      api.disconnect({ dispose: true });
+    };
+  }, []);
+
+  return (
+    <LocalizationProvider value={localization}>
+      <DetachedCaptureWorkbench
+        workspacePath={workspacePath}
+        workspaceSlug={workspaceSlug}
+      />
+    </LocalizationProvider>
+  );
+};
+
 /**
  * Project Manager root application component
  */
@@ -61,7 +87,7 @@ export const App: React.FC = () => {
   }
   if (detached?.mode === "detached-capture") {
     return (
-      <DetachedCaptureWorkbench
+      <DetachedCaptureWorkbenchApp
         workspacePath={detached.workspacePath}
         workspaceSlug={detached.workspaceSlug}
       />
