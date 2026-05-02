@@ -100,13 +100,13 @@
 ### Stream 4 — PM Bridge Client + Index Store
 
 1. [DONE] Создать PM Workbench bridge contracts без роста near-limit общих файлов: `src/client/project-manager/services/workbench-bridge-types.ts`, `src/client/project-manager/services/outgoing-message-queue.ts`, `src/client/project-manager/api.ts` — локальные Workbench outgoing/incoming/event types, public `sendWorkbenchMessage(...)` как thin websocket hook, queue accepts Workbench messages; `core-stream-message-types.ts` не расширять, так как он уже 495 строк и имеет catch-all IncomingMessage; event guards добавляются в следующей микрозадаче вместе с client usage, чтобы не создавать unused exports (scope: 3 файла; expected commit: `feat: add project manager workbench bridge contracts`).
-2. [IN_PROGRESS] Git Commit: `feat: add project manager workbench bridge contracts` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/services/workbench-state-client.ts`: promise/subscribe wrapper over `api.sendWorkbenchMessage` + `api.onCoreEvent` for `loadIndex`, `saveIndex`, `loadSelection`, `saveSelection`, `readArtifactRecords`; no filesystem access in browser; request matching by `kind`/`jsonlPath` follows Core event contract (scope: 1 файл; expected commit: `feat: add project manager workbench state client`).
-4. [TODO] Git Commit: `feat: add project manager workbench state client` (hash: TBD)
+2. [DONE] Git Commit: `feat: add project manager workbench bridge contracts` (hash: 28780a740)
+3. [DONE] Создать `src/client/project-manager/services/workbench-state-client.ts` + `workbench-state-client.test.ts`: promise/subscribe wrapper over injected `sendWorkbenchMessage` + `onCoreEvent` transport for `loadIndex`, `saveIndex`, `loadSelection`, `saveSelection`, `readArtifactRecords`; no filesystem access in browser; request matching by `kind`/`jsonlPath` follows Core event contract; test keeps the new client used before UI wiring (scope: 2 файла; expected commit: `feat: add project manager workbench state client`).
+4. [IN_PROGRESS] Git Commit: `feat: add project manager workbench state client` (hash: TBD)
 5. [TODO] Создать `src/client/project-manager/services/workbench-index-store.ts`: slot resolution by `(step, provider, model, reasoning)`, `current → previous` rotation, materialize `SlotEntryRecord` from capture result + loaded `capture_start`; when index is missing/corrupted, call Core load/rebuild path instead of scanning filesystem locally (scope: 1 файл; expected commit: `feat: add workbench index store with slot rotation`).
 6. [TODO] Git Commit: `feat: add workbench index store with slot rotation` (hash: TBD)
-7. [TODO] Тесты PM bridge/index store: `workbench-state-client.test.ts` + `workbench-index-store.test.ts` — state load/save events, artifact read event, slot rotation, rebuild-loaded index path (scope: 2 файла; expected commit: `test: cover workbench state client and index store`).
-8. [TODO] Git Commit: `test: cover workbench state client and index store` (hash: TBD)
+7. [TODO] Тесты PM index store: `workbench-index-store.test.ts` — slot rotation, rebuild-loaded index path, malformed artifact records ignored without filesystem reads (scope: 1 файл; expected commit: `test: cover workbench index store`).
+8. [TODO] Git Commit: `test: cover workbench index store` (hash: TBD)
 
 ### Stream 5 — Detached Workbench Entry
 
