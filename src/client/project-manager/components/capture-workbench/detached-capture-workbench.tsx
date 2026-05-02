@@ -1,13 +1,21 @@
 import React, { useEffect } from "react";
+import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
+import { CaptureWorkbenchSelectionBar } from "./selection-bar";
 
 interface DetachedCaptureWorkbenchProps {
+  readonly stateClient?: Pick<
+    WorkbenchStateClientApi,
+    "loadSelection" | "saveSelection"
+  >;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }
 
 export const DetachedCaptureWorkbench: React.FC<
   DetachedCaptureWorkbenchProps
-> = ({ workspacePath, workspaceSlug }) => {
+> = ({ stateClient, workspacePath, workspaceSlug }) => {
+  const selectionClient = stateClient ?? EMPTY_SELECTION_CLIENT;
+
   useEffect(() => {
     document.title = `Capture Workbench - ${workspaceSlug}`;
   }, [workspaceSlug]);
@@ -29,12 +37,7 @@ export const DetachedCaptureWorkbench: React.FC<
         </div>
       </header>
 
-      <section aria-label="Capture selection" style={styles.selectionBar}>
-        <Selector label="Step" value="Description" />
-        <Selector label="Provider" tone="claude" value="Claude" />
-        <Selector label="Model" value="Sonnet" />
-        <Selector label="Reasoning" value="thinking high" />
-      </section>
+      <CaptureWorkbenchSelectionBar stateClient={selectionClient} />
 
       <main style={styles.main}>
         <section style={styles.snapshotRow}>
@@ -63,24 +66,13 @@ export const DetachedCaptureWorkbench: React.FC<
   );
 };
 
-const Selector: React.FC<{
-  readonly label: string;
-  readonly tone?: "claude";
-  readonly value: string;
-}> = ({ label, tone, value }) => (
-  <button
-    data-provider={tone}
-    style={{
-      ...styles.selector,
-      ...(tone === "claude" ? styles.selectorClaude : {}),
-    }}
-    type="button"
-  >
-    <span style={styles.selectorLabel}>{label}</span>
-    <span style={styles.selectorValue}>{value}</span>
-    <span style={styles.selectorCaret}>v</span>
-  </button>
-);
+const EMPTY_SELECTION_CLIENT: Pick<
+  WorkbenchStateClientApi,
+  "loadSelection" | "saveSelection"
+> = {
+  loadSelection: async () => null,
+  saveSelection: async () => undefined,
+};
 
 const SnapshotPanel: React.FC<{
   readonly mode: "Managed" | "Vanilla";
@@ -160,39 +152,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 11,
     padding: "5px 10px",
   },
-  selectionBar: {
-    alignItems: "center",
-    background: "#20232a",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 10,
-    padding: "12px 16px",
-  },
-  selector: {
-    alignItems: "center",
-    background: "#2c313b",
-    border: "1px solid rgba(255, 255, 255, 0.18)",
-    borderRadius: 6,
-    color: "#e6e8eb",
-    cursor: "pointer",
-    display: "inline-flex",
-    gap: 8,
-    minWidth: 0,
-    padding: "7px 10px",
-  },
-  selectorClaude: {
-    background: "rgba(230, 166, 116, 0.18)",
-    borderColor: "rgba(230, 166, 116, 0.55)",
-  },
-  selectorLabel: {
-    color: "#7e828a",
-    fontSize: 10,
-    fontWeight: 600,
-    textTransform: "uppercase",
-  },
-  selectorValue: { color: "#e6e8eb", fontSize: 13, fontWeight: 500 },
-  selectorCaret: { color: "#7e828a", fontSize: 9 },
   main: {
     display: "grid",
     gridTemplateRows: "auto 1fr",

@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   LocalizationProvider,
   useResolvedLocalization,
@@ -10,6 +10,7 @@ import { useProjectManagerSettings } from "./components/settings/use-project-man
 import { DetachedCaptureWorkbench } from "./components/capture-workbench/detached-capture-workbench";
 import { DetachedDiagramView } from "./components/diagram-editor/detached-diagram-view";
 import { usePreventFileDropNavigation } from "./hooks/use-prevent-file-drop-navigation";
+import { createWorkbenchStateClient } from "./services/workbench-state-client";
 
 type DetachedMode =
   | {
@@ -53,6 +54,7 @@ const DetachedCaptureWorkbenchApp: React.FC<{
 }> = ({ workspacePath, workspaceSlug }) => {
   const { settings, localizationRuntime } = useProjectManagerSettings();
   const localization = useResolvedLocalization(settings, localizationRuntime);
+  const stateClient = useMemo(() => createWorkbenchStateClient(api), []);
 
   useEffect(() => {
     api.connect();
@@ -64,6 +66,7 @@ const DetachedCaptureWorkbenchApp: React.FC<{
   return (
     <LocalizationProvider value={localization}>
       <DetachedCaptureWorkbench
+        stateClient={stateClient}
         workspacePath={workspacePath}
         workspaceSlug={workspaceSlug}
       />

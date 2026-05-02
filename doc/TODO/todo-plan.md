@@ -115,12 +115,12 @@
 3. [DONE] Реализовать api/localization mount path по результату Stream 0: обновить detached entry files так, чтобы окно получало same Core websocket bridge, `LocalizationProvider`, settings/bootstrap runtime; точные файлы зависят от §3.7 parent plan, лимит ≤3 файлов обязателен (scope: ≤3 файла; expected commit: `feat: mount transport and localization in detached capture window`).
 4. [DONE] Git Commit: `feat: mount transport and localization in detached capture window` (hash: 0f380139c)
 5. [DONE] Тесты detached entry: route resolution, shell render, missing query params fallback, localization/bootstrap path smoke (scope: ≤2 файла; expected commit: `test: cover detached capture workbench entry`).
-6. [IN_PROGRESS] Git Commit: `test: cover detached capture workbench entry` (hash: TBD)
+6. [DONE] Git Commit: `test: cover detached capture workbench entry` (hash: 6da79976b)
 
 ### Stream 6 — Selection Bar UI
 
-1. [TODO] Создать `src/client/project-manager/components/capture-workbench/selection-bar.tsx`: orchestration shell для Step/Provider/Model/Reasoning по prototype toolbar layout; sticky load/save через `workbench-state-client`, emits selection including explicit `reasoning` override (scope: 1 файл; expected commit: `feat: add capture workbench selection bar shell`).
-2. [TODO] Git Commit: `feat: add capture workbench selection bar shell` (hash: TBD)
+1. [DONE] Создать `src/client/project-manager/components/capture-workbench/selection-bar.tsx` и подключить его через `detached-capture-workbench.tsx` / `app.tsx`: orchestration shell для Step/Provider/Model/Reasoning по prototype toolbar layout; sticky load/save через `workbench-state-client`, emits selection including explicit `reasoning` override (scope: 3 файла; expected commit: `feat: add capture workbench selection bar shell`).
+2. [IN_PROGRESS] Git Commit: `feat: add capture workbench selection bar shell` (hash: TBD)
 3. [TODO] Создать `src/client/project-manager/components/capture-workbench/step-selector.tsx`: dropdown с группировкой `Trunk Workflow` / `Translation` / `Development Tree (disabled future)` (scope: 1 файл; expected commit: `feat: add capture workbench step selector`).
 4. [TODO] Git Commit: `feat: add capture workbench step selector` (hash: TBD)
 5. [TODO] Создать `src/client/project-manager/components/capture-workbench/provider-selector.tsx`: dropdown с tinted Claude/Codex items, Gemini disabled placeholder с tooltip `Gemini support arrives with parent Phase 2` (scope: 1 файл; expected commit: `feat: add capture workbench provider selector`).
