@@ -120,9 +120,9 @@
 ### Stream 6 — Selection Bar UI
 
 1. [DONE] Создать `src/client/project-manager/components/capture-workbench/selection-bar.tsx` и подключить его через `detached-capture-workbench.tsx` / `app.tsx`: orchestration shell для Step/Provider/Model/Reasoning по prototype toolbar layout; sticky load/save через `workbench-state-client`, emits selection including explicit `reasoning` override (scope: 3 файла; expected commit: `feat: add capture workbench selection bar shell`).
-2. [IN_PROGRESS] Git Commit: `feat: add capture workbench selection bar shell` (hash: TBD)
-3. [TODO] Создать `src/client/project-manager/components/capture-workbench/step-selector.tsx`: dropdown с группировкой `Trunk Workflow` / `Translation` / `Development Tree (disabled future)` (scope: 1 файл; expected commit: `feat: add capture workbench step selector`).
-4. [TODO] Git Commit: `feat: add capture workbench step selector` (hash: TBD)
+2. [DONE] Git Commit: `feat: add capture workbench selection bar shell` (hash: 85f4169b4)
+3. [DONE] Создать `src/client/project-manager/components/capture-workbench/step-selector.tsx` и подключить его в `selection-bar.tsx`: dropdown с группировкой `Trunk Workflow` / `Translation` / `Development Tree (disabled future)` (scope: 2 файла; expected commit: `feat: add capture workbench step selector`).
+4. [IN_PROGRESS] Git Commit: `feat: add capture workbench step selector` (hash: TBD)
 5. [TODO] Создать `src/client/project-manager/components/capture-workbench/provider-selector.tsx`: dropdown с tinted Claude/Codex items, Gemini disabled placeholder с tooltip `Gemini support arrives with parent Phase 2` (scope: 1 файл; expected commit: `feat: add capture workbench provider selector`).
 6. [TODO] Git Commit: `feat: add capture workbench provider selector` (hash: TBD)
 7. [TODO] Создать `src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx`: provider-specific model/reasoning option rendering; no Gemini selectable path in Phase 1 (scope: 1 файл; expected commit: `feat: add capture workbench model and reasoning selectors`).

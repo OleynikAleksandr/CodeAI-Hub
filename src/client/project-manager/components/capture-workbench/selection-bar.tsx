@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { WorkbenchSelectionState } from "../../services/workbench-bridge-types";
 import type { WorkbenchStateClientApi } from "../../services/workbench-state-client";
+import { CaptureWorkbenchStepSelector } from "./step-selector";
 
 const DEFAULT_SELECTION: WorkbenchSelectionState = {
   step: "description",
@@ -8,13 +9,6 @@ const DEFAULT_SELECTION: WorkbenchSelectionState = {
   model: "sonnet",
   reasoning: "thinking-high",
 };
-
-const STEP_OPTIONS = [
-  { value: "description", label: "Description" },
-  { value: "virtual_simulation", label: "Virtual Simulation" },
-  { value: "diagram_modules", label: "Diagram Modules" },
-  { value: "translation", label: "Translation" },
-] as const;
 
 const PROVIDER_OPTIONS = [
   { value: "claude", label: "Claude", disabled: false },
@@ -100,10 +94,8 @@ export const CaptureWorkbenchSelectionBar: React.FC<
 
   return (
     <section aria-label="Capture selection" style={styles.selectionBar}>
-      <SelectField
-        label="Step"
+      <CaptureWorkbenchStepSelector
         onChange={(step) => updateSelection({ ...selection, step })}
-        options={STEP_OPTIONS}
         value={selection.step}
       />
       <SelectField
