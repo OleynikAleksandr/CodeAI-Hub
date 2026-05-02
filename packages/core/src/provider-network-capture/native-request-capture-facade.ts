@@ -186,6 +186,7 @@ export class NativeRequestCaptureFacade {
     const writer = await NativeRequestCaptureWriter.create({
       appliedTurnConfig,
       captureId,
+      mode: "managed",
       outputDir: this.#outputDir,
       providerId: command.providerId,
       scenarioMetadata: buildScenarioMetadata(command, invocationPurpose),
@@ -280,6 +281,11 @@ export class NativeRequestCaptureFacade {
         recordDiagnosticContext: (record) => {
           params.eventWrites.push(
             params.writer.recordProviderDiagnosticContext(record)
+          );
+        },
+        recordAppliedInputEnvelope: (envelope) => {
+          params.eventWrites.push(
+            params.writer.recordAppliedInputEnvelope(envelope)
           );
         },
         selectedModelId: params.command.modelId ?? null,

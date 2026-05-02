@@ -8,18 +8,28 @@ import {
 } from "./native-request-capture-markdown";
 import { redactCaptureHeaders } from "./native-request-capture-redaction";
 import type {
+  NativeRequestCaptureAppliedInputEnvelope,
+  NativeRequestCaptureAppliedInputEnvelopeRecord,
   NativeRequestCaptureFailureReason,
+  NativeRequestCaptureMode,
   NativeRequestCaptureProviderId,
   NativeRequestCaptureProxyEvent,
   NativeRequestCaptureRequest,
+  NativeRequestCaptureStartRecord,
 } from "./native-request-capture-types";
+
+const pkg = require("../../package.json") as { version?: string };
+const DEFAULT_CAPTURE_MODE: NativeRequestCaptureMode = "managed";
+const UNKNOWN_RELEASE_VERSION = "unknown";
 
 interface NativeRequestCaptureWriterOptions {
   readonly appliedTurnConfig?: unknown;
   readonly captureId: string;
   readonly clock?: () => Date;
+  readonly mode?: NativeRequestCaptureMode;
   readonly outputDir: string;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly releaseVersion?: string | null;
   readonly scenarioMetadata?: unknown;
   readonly selectedModelId?: string | null;
 }
@@ -34,7 +44,9 @@ export class NativeRequestCaptureWriter {
   readonly #appliedTurnConfig: unknown;
   readonly #captureId: string;
   readonly #clock: () => Date;
+  readonly #mode: NativeRequestCaptureMode;
   readonly #providerId: NativeRequestCaptureProviderId;
+  readonly #releaseVersion: string;
   readonly #records: unknown[] = [];
   readonly #scenarioMetadata: unknown;
   readonly #selectedModelId: string | null;
@@ -48,7 +60,10 @@ export class NativeRequestCaptureWriter {
     this.#appliedTurnConfig = options.appliedTurnConfig ?? null;
     this.#captureId = options.captureId;
     this.#clock = options.clock ?? (() => new Date());
+    this.#mode = options.mode ?? DEFAULT_CAPTURE_MODE;
     this.#providerId = options.providerId;
+    this.#releaseVersion =
+      options.releaseVersion ?? pkg.version ?? UNKNOWN_RELEASE_VERSION;
     this.#scenarioMetadata = options.scenarioMetadata ?? null;
     this.#selectedModelId = options.selectedModelId ?? null;
   }
@@ -66,16 +81,19 @@ export class NativeRequestCaptureWriter {
       markdownPath: path.join(options.outputDir, `${stem}.md`),
     };
     const writer = new NativeRequestCaptureWriter(options, artifacts);
-    await writer.appendRecord({
+    const captureStartRecord: NativeRequestCaptureStartRecord = {
       type: "capture_start",
       captureId: options.captureId,
       appliedTurnConfig: options.appliedTurnConfig ?? null,
+      mode: writer.#mode,
       providerId: options.providerId,
+      releaseVersion: writer.#releaseVersion,
       scenarioMetadata: options.scenarioMetadata ?? null,
       selectedModelId: options.selectedModelId ?? null,
       sentUpstream: false,
       timestamp: writer.#clock().toISOString(),
-    });
+    };
+    await writer.appendRecord(captureStartRecord);
     return writer;
   }
 
@@ -124,6 +142,21 @@ export class NativeRequestCaptureWriter {
       sentUpstream: false,
       timestamp: this.#clock().toISOString(),
     });
+    await this.writeMarkdown();
+  }
+
+  async recordAppliedInputEnvelope(
+    envelope: NativeRequestCaptureAppliedInputEnvelope
+  ): Promise<void> {
+    const record: NativeRequestCaptureAppliedInputEnvelopeRecord = {
+      type: "applied_input_envelope",
+      captureId: this.#captureId,
+      envelope,
+      providerId: this.#providerId,
+      sentUpstream: false,
+      timestamp: this.#clock().toISOString(),
+    };
+    await this.appendRecord(record);
     await this.writeMarkdown();
   }
 
