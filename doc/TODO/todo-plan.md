@@ -281,6 +281,24 @@
 7. [DONE] Создать локальный user-space handoff archive с `codeai-hub-1.2.129.vsix` и fresh `1.2.129` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record capture workbench clean handoff bundle`). Archive: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.129-darwin-arm64-handoff.tar.bz2`; contents verified: VSIX + seven `1.2.129` runtime tarballs.
 8. [DONE] Git Commit: `docs: record capture workbench clean handoff bundle` (hash: 2a78e9484)
 
+### Stream 11M — Gemini Runtime Packaging Fix
+
+1. [DONE] Зафиксировать clean-install blocker `1.2.129`: `gemini-module-1.2.129.tar.bz2` есть в `~/.codeai-hub/releases/`, но Core runtime не содержит `@codeai-hub/gemini-module`, а `~/.codeai-hub/providers/gemini/<version>/install.json` не создаётся из releases автоматически; UI показывает `Gemini provider module is not installed` до CLI/auth stage (scope: 1 doc; expected commit: `docs: record gemini clean install packaging blocker`).
+2. [TODO] Git Commit: `docs: record gemini clean install packaging blocker` (hash: TBD)
+3. [TODO] Включить Gemini module в Core runtime dependency graph и release gate: `packages/core/package.json`, `package-lock.json`, `scripts/build-release.sh` — добавить `@codeai-hub/gemini-module` dependency в Core, обновить lockfile, и проверять наличие `CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/gemini-module/package.json` в Step 7.5 (scope: 3 files; expected commit: `fix: bundle gemini module in core runtime`).
+4. [TODO] Git Commit: `fix: bundle gemini module in core runtime` (hash: TBD)
+
+### Stream 11N — Release Build (Gemini Packaging Fix)
+
+1. [TODO] Подготовить новый release number `1.2.130` после Gemini packaging blocker in `1.2.129`: обновить README.md и CHANGELOG.md, кодовые изменения уже внесены в Stream 11M (scope: 2 release docs + todo-plan; expected commit: `docs: prepare gemini packaging fix release`).
+2. [TODO] Git Commit: `docs: prepare gemini packaging fix release` (hash: TBD)
+3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить, что `~/.codeai-hub/core/darwin-arm64/1.2.130/app/node_modules/@codeai-hub/gemini-module/package.json` существует, а tarball'ы `1.2.130` лежат в `~/.codeai-hub/releases/` и `doc/tmp/releases/` (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for gemini packaging fix`).
+4. [TODO] Git Commit: `chore: bump release manifests for gemini packaging fix` (hash: TBD)
+5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить Step 7.5 failsafe for bundled Gemini module, `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.130.vsix` (scope: release command + session report; expected commit: `docs: record gemini packaging fix release build`).
+6. [TODO] Git Commit: `docs: record gemini packaging fix release build` (hash: TBD)
+7. [TODO] Создать локальный user-space handoff archive с `codeai-hub-1.2.130.vsix` и fresh `1.2.130` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record gemini packaging fix handoff bundle`).
+8. [TODO] Git Commit: `docs: record gemini packaging fix handoff bundle` (hash: TBD)
+
 ### Stream 12 — Scope Closeout
 
 1. [BLOCKED] После explicit user acceptance перенести завершённый active plan в `doc/TODO/Archive/todo-plan-capture-workbench-mvp-<version>.md`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`; зафиксировать, какие planning-docs остаются active/deferred/archive: `Capture_Workbench_UI_Architecture.md` и `Provider_Native_Request_Capture_Workbench_Architecture.md` (scope: ≤3 docs; expected commit: `docs: archive capture workbench mvp plan and refresh docs index`). Blocker: пользователь подтвердил основной функционал, но явно попросил не архивировать planning document, потому что Capture Workbench будет дорабатываться в следующей сессии.
