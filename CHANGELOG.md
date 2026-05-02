@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.125] - 2026-05-02
+### Fixed
+- **Detached Capture Workbench selectors no longer use native HTML popup controls.** Step, Provider, Model, and Reasoning now render DOM-owned button/listbox controls to avoid the standalone CEF/macOS native popup crash path seen in `1.2.124`.
+
+### Tests
+- **Capture Workbench selector regression coverage now rejects native selects.** The selection bar test verifies the rendered selector surface and selector source files do not reintroduce `<select>`, `<option>`, or `<optgroup>`.
+
 ## [1.2.124] - 2026-05-02
 ### Added
 - **Capture Workbench MVP is ready for release packaging.** Settings → General now opens a detached Project Manager workbench for managed provider-native request snapshots, explicit Step/Provider/Model/Reasoning selection, two-generation slot rotation, artifact links, and semantic `Managed: current vs previous` diff sections over Core-owned capture artifacts.
