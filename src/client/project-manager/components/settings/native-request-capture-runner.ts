@@ -16,6 +16,7 @@ import { buildNativeRequestCaptureScenarioPrompt } from "../../services/native-r
 interface ProjectManagerNativeRequestCaptureParams {
   readonly modelId: NativeRequestCaptureModelId;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly reasoning?: string | null;
   readonly scenarioId: NativeRequestCaptureScenarioId;
   readonly settingsPayload: SettingsLoadedPayload | null;
   readonly workspaceName?: string;
@@ -34,11 +35,14 @@ const runProjectManagerNativeRequestCapture = async (
   params: ProjectManagerNativeRequestCaptureParams
 ): Promise<void> => {
   if (params.scenarioId === "diagnostic_probe") {
-    api.captureNativeRequest(params.providerId, params.modelId);
+    api.captureNativeRequest(params.providerId, params.modelId, {
+      reasoning: params.reasoning,
+    });
     return;
   }
   if (params.scenarioId === "translation") {
     api.captureNativeRequest(params.providerId, params.modelId, {
+      reasoning: params.reasoning,
       scenarioId: params.scenarioId,
       scenarioLabel: "Translation",
     });
@@ -58,6 +62,7 @@ const runProjectManagerNativeRequestCapture = async (
     workspaceSlug: params.workspaceSlug,
   });
   api.captureNativeRequest(params.providerId, params.modelId, {
+    reasoning: params.reasoning,
     scenarioId: scenario.scenarioId,
     scenarioInputPath: scenario.inputPath,
     scenarioLabel: scenario.scenarioLabel,
@@ -75,6 +80,7 @@ export const startProjectManagerNativeRequestCapture = (params: {
   };
   readonly modelId: NativeRequestCaptureModelId;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly reasoning?: string | null;
   readonly scenarioId: NativeRequestCaptureScenarioId;
   readonly setNativeRequestCapture: NativeRequestCaptureStateSetter;
 }): void => {
@@ -88,6 +94,7 @@ export const startProjectManagerNativeRequestCapture = (params: {
   void runProjectManagerNativeRequestCapture({
     modelId: params.modelId,
     providerId: params.providerId,
+    reasoning: params.reasoning,
     scenarioId: params.scenarioId,
     settingsPayload: api.getLastSettingsPayload(),
     workspaceName: params.context.activeWorkspaceName,

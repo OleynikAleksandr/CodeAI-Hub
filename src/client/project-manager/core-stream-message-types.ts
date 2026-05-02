@@ -224,6 +224,7 @@ export type SettingsNativeRequestCaptureScenarioId =
   | "translation"
   | "diagnostic_probe";
 export type SettingsNativeRequestCaptureOptions = {
+  readonly reasoning?: string | null;
   readonly scenarioId?: SettingsNativeRequestCaptureScenarioId | null;
   readonly scenarioInputPath?: string | null;
   readonly scenarioLabel?: string | null;
