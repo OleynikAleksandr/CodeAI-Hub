@@ -355,6 +355,7 @@ export class RemoteBridgeMessageRouter {
     payload: {
       readonly modelId?: unknown;
       readonly providerId?: unknown;
+      readonly reasoning?: unknown;
       readonly scenarioId?: unknown;
       readonly scenarioInputPath?: unknown;
       readonly scenarioLabel?: unknown;
@@ -392,6 +393,7 @@ export class RemoteBridgeMessageRouter {
     const result = await this.deps.nativeRequestCaptureFacade.capture({
       modelId,
       providerId,
+      reasoning: readOptionalString(payload.reasoning),
       scenarioId: readOptionalString(payload.scenarioId),
       scenarioInputPath: readOptionalString(payload.scenarioInputPath),
       scenarioLabel: readOptionalString(payload.scenarioLabel),

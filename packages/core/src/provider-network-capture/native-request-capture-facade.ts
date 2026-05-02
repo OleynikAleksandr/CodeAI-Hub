@@ -9,6 +9,7 @@ import type {
 import { NativeRequestCaptureCertificateStore } from "./native-request-capture-certificates";
 import { NativeRequestCapturePreflight } from "./native-request-capture-preflight";
 import { NativeRequestCaptureProxy } from "./native-request-capture-proxy";
+import { applyNativeRequestCaptureReasoningOverride } from "./native-request-capture-reasoning-override";
 import type {
   NativeRequestCaptureFailureReason,
   NativeRequestCaptureProviderId,
@@ -100,6 +101,7 @@ interface NativeRequestCaptureFacadeOptions {
 export interface NativeRequestCaptureCommand {
   readonly modelId?: string | null;
   readonly providerId: NativeRequestCaptureProviderId;
+  readonly reasoning?: string | null;
   readonly scenarioId?: string | null;
   readonly scenarioInputPath?: string | null;
   readonly scenarioLabel?: string | null;
@@ -176,13 +178,18 @@ export class NativeRequestCaptureFacade {
 
     const captureId = this.#captureIdFactory();
     const invocationPurpose = resolveInvocationPurpose(command.scenarioId);
-    const appliedTurnConfig =
+    const resolvedAppliedTurnConfig =
       this.#resolveAppliedTurnConfig?.({
         invocationPurpose,
         providerId: runtimeProviderId,
         scenarioId: command.scenarioId ?? null,
         targetModelId: command.modelId ?? null,
       }) ?? null;
+    const appliedTurnConfig = applyNativeRequestCaptureReasoningOverride({
+      appliedTurnConfig: resolvedAppliedTurnConfig,
+      providerId: runtimeProviderId,
+      reasoning: command.reasoning,
+    });
     const writer = await NativeRequestCaptureWriter.create({
       appliedTurnConfig,
       captureId,
