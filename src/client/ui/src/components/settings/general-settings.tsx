@@ -17,9 +17,6 @@ import type {
   CoreControlState,
   LocalizationCategoryKey,
   LocalizationWorkflowTermsPolicy,
-  NativeRequestCaptureProviderId,
-  NativeRequestCaptureScenarioId,
-  NativeRequestCaptureState,
 } from "./use-settings-state-support";
 
 const wrapperStyles: CSSProperties = {
@@ -79,11 +76,6 @@ const USER_MESSAGES_CATEGORY = "system_feedback";
 interface GeneralSettingsProps {
   readonly coreControl: CoreControlState;
   readonly localization: Settings["general"]["localization"];
-  readonly nativeRequestCapture: NativeRequestCaptureState;
-  readonly nativeRequestCaptureModels: {
-    readonly claude: Settings["providers"]["claude"]["defaultModel"];
-    readonly codex: Settings["providers"]["codex"]["defaultModel"];
-  };
   readonly onLocalizationCategoryLanguageChange: (
     category: LocalizationCategoryKey,
     language: string
@@ -96,13 +88,7 @@ interface GeneralSettingsProps {
   readonly onLocalizationWorkflowTermsPolicyChange: (
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
-  readonly onNativeRequestCapture: (
-    providerId: NativeRequestCaptureProviderId,
-    modelId:
-      | Settings["providers"]["claude"]["defaultModel"]
-      | Settings["providers"]["codex"]["defaultModel"],
-    scenarioId: NativeRequestCaptureScenarioId
-  ) => void;
+  readonly onNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly onReasoningTranslationEngineIdChange: (engineId: string) => void;
   readonly onResponsePolicyModeChange: (mode: GeneralResponseMode) => void;
   readonly onRestartCore: () => void;
@@ -263,9 +249,7 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
         </div>
       </SettingsCard>
       <NativeRequestCaptureCard
-        defaultModels={props.nativeRequestCaptureModels}
-        onCapture={props.onNativeRequestCapture}
-        state={props.nativeRequestCapture}
+        onOpenWorkbench={props.onNativeRequestCaptureWorkbenchOpen}
       />
     </div>
   );

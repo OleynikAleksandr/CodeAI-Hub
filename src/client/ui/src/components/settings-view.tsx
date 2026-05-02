@@ -24,6 +24,7 @@ import type { UseSettingsStateResult } from "./settings/use-settings-state";
 type SettingsMode = "full" | "project-manager" | "settings-only";
 
 type SettingsViewState = UseSettingsStateResult & {
+  readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
   readonly supportsCoreRestart?: boolean;
 } & Partial<TemplateUpdateSettingsControls>;
@@ -152,7 +153,6 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     saving,
     resetting,
     versions,
-    nativeRequestCapture,
     handleThinkingSettingsChange,
     handleClaudeContinuityRemainingPercentThresholdChange,
     handleCodexContinuityRemainingPercentThresholdChange,
@@ -170,7 +170,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
-    handleNativeRequestCapture,
+    handleNativeRequestCaptureWorkbenchOpen,
     handleReasoningTranslationEngineIdChange,
     handleCodexReasoningChange,
     handleProviderAutoUpdateChange,
@@ -315,11 +315,6 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                     <GeneralSettings
                       coreControl={coreControl}
                       localization={settings.general.localization}
-                      nativeRequestCapture={nativeRequestCapture}
-                      nativeRequestCaptureModels={{
-                        claude: settings.providers.claude.defaultModel,
-                        codex: settings.providers.codex.defaultModel,
-                      }}
                       onLocalizationCategoryLanguageChange={
                         handleLocalizationCategoryLanguageChange
                       }
@@ -335,7 +330,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                       onLocalizationWorkflowTermsPolicyChange={
                         handleLocalizationWorkflowTermsPolicyChange
                       }
-                      onNativeRequestCapture={handleNativeRequestCapture}
+                      onNativeRequestCaptureWorkbenchOpen={
+                        handleNativeRequestCaptureWorkbenchOpen
+                      }
                       onReasoningTranslationEngineIdChange={
                         handleReasoningTranslationEngineIdChange
                       }
