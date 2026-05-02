@@ -234,7 +234,7 @@
 ### Stream 11G — Release Build (Fresh Install Retry Version)
 
 1. [DONE] Подготовить новый release number `1.2.127` после прерванной локальной установки `1.2.126`: обновить README.md и CHANGELOG.md, код не менять, workflow capture fix остаётся тем же (scope: 2 release docs + todo-plan; expected commit: `docs: prepare capture workbench reinstall retry release`).
-2. [IN_PROGRESS] Git Commit: `docs: prepare capture workbench reinstall retry release` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare capture workbench reinstall retry release` (hash: 55835cca2)
 3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.127` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reinstall retry`).
 4. [TODO] Git Commit: `chore: bump release manifests for capture workbench reinstall retry` (hash: TBD)
 5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reinstall retry release build`).
