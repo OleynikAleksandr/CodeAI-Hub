@@ -74,7 +74,8 @@ const createStateSetter = (): ((
 
 const runCapture = async (
   scenarioId: NativeRequestCaptureScenarioId,
-  state = createWorkflowState()
+  state = createWorkflowState(),
+  reasoning?: string | null
 ): Promise<CaptureCall> => {
   installBrowserStubs();
   const [{ startProjectManagerNativeRequestCapture }, { api }] =
@@ -104,6 +105,7 @@ const runCapture = async (
       },
       modelId: "gpt-5.3-codex",
       providerId: "codex",
+      reasoning,
       scenarioId,
       setNativeRequestCapture: createStateSetter(),
     });
@@ -122,6 +124,7 @@ test("capture runner bypasses upstream guard for virtual simulation on empty wor
   assert.equal(captured.providerId, "codex");
   assert.equal(captured.modelId, "gpt-5.3-codex");
   assert.equal(captured.options?.scenarioId, "virtual_simulation");
+  assert.equal(captured.options?.reasoning, undefined);
   assert.equal(
     captured.options?.scenarioInputPath,
     ".codeai-hub/demo-workspace/description/Final_Description.md"
@@ -156,4 +159,15 @@ test("capture runner keeps translation on direct settings capture path", async (
   assert.equal(captured.options?.scenarioId, "translation");
   assert.equal(captured.options?.scenarioLabel, "Translation");
   assert.equal(captured.options?.scenarioPrompt, undefined);
+});
+
+test("capture runner forwards explicit reasoning override without changing settings path", async () => {
+  const captured = await runCapture(
+    "description",
+    createWorkflowState(),
+    "reasoning-high"
+  );
+
+  assert.equal(captured.options?.scenarioId, "description");
+  assert.equal(captured.options?.reasoning, "reasoning-high");
 });
