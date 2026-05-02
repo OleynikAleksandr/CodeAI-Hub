@@ -258,8 +258,8 @@
 
 1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.128` after failed reasoning-switch retest in `1.2.127`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files + todo-plan; expected commit: `docs: prepare capture workbench reasoning recapture release`).
 2. [DONE] Git Commit: `docs: prepare capture workbench reasoning recapture release` (hash: 930c3fcb3)
-3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.128` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reasoning recapture`).
-4. [TODO] Git Commit: `chore: bump release manifests for capture workbench reasoning recapture` (hash: TBD)
+3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.128` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reasoning recapture`).
+4. [DONE] Git Commit: `chore: bump release manifests for capture workbench reasoning recapture` (hash: 65c29af66)
 5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reasoning recapture release build`).
 6. [TODO] Git Commit: `docs: record capture workbench reasoning recapture release build` (hash: TBD)
 
