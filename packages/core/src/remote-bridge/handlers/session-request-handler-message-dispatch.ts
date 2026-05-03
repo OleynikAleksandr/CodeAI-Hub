@@ -12,10 +12,8 @@ import {
 } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
-import type {
-  DocumentationRolloverContext,
-  SessionRequestHandlerDocumentationRolloverState,
-} from "./session-request-handler-documentation-rollover-state";
+import { buildDocumentationContinuationEnvelope } from "./session-request-handler-documentation-continuation-envelope";
+import type { SessionRequestHandlerDocumentationRolloverState } from "./session-request-handler-documentation-rollover-state";
 import {
   attachPendingCodexModelSwitchInjection,
   clearPendingCodexModelSwitchInjectionAfterDispatch,
@@ -91,23 +89,6 @@ export class SessionRequestHandlerMessageDispatch {
     state: SessionRequestHandlerDocumentationRolloverState
   ): void {
     this.documentationRolloverState = state;
-  }
-
-  getDocumentationRolloverContext(
-    sessionId: string
-  ): DocumentationRolloverContext | null {
-    return (
-      this.documentationRolloverState?.getByTargetSessionId(sessionId) ?? null
-    );
-  }
-
-  consumeDocumentationRolloverContext(
-    sessionId: string
-  ): DocumentationRolloverContext | null {
-    return (
-      this.documentationRolloverState?.consumeByTargetSessionId(sessionId) ??
-      null
-    );
   }
 
   constructor(deps: SessionRequestHandlerMessageDispatchDependencies) {
@@ -215,7 +196,15 @@ export class SessionRequestHandlerMessageDispatch {
     }
 
     this.deps.emitTurnStateEvent({ sessionId, state: "running" });
+    let providerContent = content;
     try {
+      providerContent = await buildDocumentationContinuationEnvelope({
+        context:
+          this.documentationRolloverState?.consumeByTargetSessionId(
+            sessionId
+          ) ?? null,
+        userMessage: content,
+      });
       await this.deps.continuity.ensureTrackedOnOutboundMessage({
         sessionId,
         providerSessionId: resolved.binding.providerSessionId,
@@ -227,7 +216,7 @@ export class SessionRequestHandlerMessageDispatch {
       );
       await this.providerSend.dispatch({
         adapter: resolved.adapter,
-        content,
+        content: providerContent,
         providerId: resolved.binding.providerId,
         providerSessionId: resolved.binding.providerSessionId,
         providerTurnOptions,
@@ -242,7 +231,7 @@ export class SessionRequestHandlerMessageDispatch {
       const staleProviderSessionId = extractStaleProviderSessionId(error);
       if (staleProviderSessionId) {
         const retried = await this.retryAfterStaleBinding({
-          content,
+          content: providerContent,
           session,
           sessionId,
           staleProviderSessionId,
