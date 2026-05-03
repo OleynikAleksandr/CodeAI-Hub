@@ -345,8 +345,8 @@
 2. [DONE] Git Commit: `fix: refresh continuity model binding on outbound turns` (hash: 3d72dce54)
 3. [DONE] Cover inherited model/reasoning after rollover-created session: update `packages/core/src/remote-bridge/handlers/session-request-handler.resume-embedding.test.ts` to assert `inheritedModelBinding` reaches the target session and provider turn options still carry the selected Codex model/reasoning. Verification: `npx tsx --test --test-name-pattern "inherits Codex model binding" packages/core/src/remote-bridge/handlers/session-request-handler.resume-embedding.test.ts` (scope: ≤2 files; expected commit: `test: cover inherited model binding across continuity rollover`).
 4. [DONE] Git Commit: `test: cover inherited model binding across continuity rollover` (hash: 62738c357)
-5. [TODO] Update model identity SSOT for the persistence boundary: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` and `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; clarify that session-bound model/reasoning is live for the next turn and refreshed into continuity chain before outbound dispatch (scope: 2 docs; expected commit: `docs: document model binding continuity persistence`).
-6. [TODO] Git Commit: `docs: document model binding continuity persistence` (hash: TBD)
+5. [DONE] Update model identity SSOT for the persistence boundary: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, and `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; clarify that session-bound model/reasoning is live for the next turn and refreshed into continuity chain before outbound dispatch. Verification: `git diff --check` (scope: 3 docs; expected commit: `docs: document model binding continuity persistence`).
+6. [IN_PROGRESS] Git Commit: `docs: document model binding continuity persistence` (hash: TBD)
 
 ### Stream 11T — Stale Binding Recovery Safety
 

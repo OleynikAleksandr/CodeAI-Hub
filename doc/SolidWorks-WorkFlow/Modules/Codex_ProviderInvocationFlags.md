@@ -219,6 +219,7 @@ Runtime sequence:
 6. Core clears `pendingModelSwitchInjection` only after provider send resolves successfully.
 
 If dialog continuity has an older stored `modelBinding`, it must not overwrite a newer live switch binding when resuming an already registered runtime session.
+On the next outbound turn after a same-session Codex model/reasoning switch, Core refreshes the latest matching continuity segment with the current `session.modelBinding`. If a remaining-context rollover happens later, the new Codex session receives `source = "continuity_inherited"` binding cloned from that current segment/session binding, while the resume `turn/start` still carries provider-native `model` and `effort` from applied config (`source = "session_binding"`).
 
 ## Progress-Update Behavior
 

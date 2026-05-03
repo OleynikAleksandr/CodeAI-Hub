@@ -145,6 +145,7 @@ Project Manager и shared UI должны отображать applied config, �
 Session continuity must preserve the model chosen at logical session start:
 
 - outbound user turns store the current `session.modelBinding` into continuity segment/index data;
+- if `session.modelBinding` changes after the initial continuity segment was persisted, the next outbound turn refreshes the matching latest segment's `modelBinding` instead of leaving the switch memory-only;
 - dialog list and materialized runtime placeholders include the persisted binding before provider hydration;
 - post-threshold rollover uses the previous session binding as the inherited binding for the new provider session;
 - SDK `model_info` events may confirm compatible runtime state, but an unbound SDK/base-model event must not replace a binding-owned identity;
