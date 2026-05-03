@@ -217,7 +217,7 @@ export class SessionContinuityLockService {
     if (context.targetSessionId) {
       this.lockContexts.delete(context.targetSessionId);
     }
-    this.finalizePostBootstrapRolloverLifecycle(context);
+    this.finalizeRolloverLifecycle(context);
   }
 
   finalizeFlowNodeContinuityLockOnBootstrapGate(options: {
@@ -252,7 +252,7 @@ export class SessionContinuityLockService {
     });
   }
 
-  private finalizePostBootstrapRolloverLifecycle(
+  private finalizeRolloverLifecycle(
     context: FlowNodeContinuityLockContext
   ): void {
     const sessionIds = [

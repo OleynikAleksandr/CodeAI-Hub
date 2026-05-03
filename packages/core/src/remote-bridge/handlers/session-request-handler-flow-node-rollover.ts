@@ -364,6 +364,10 @@ export class SessionRequestHandlerFlowNodeRollover {
       },
       options.options
     );
+    this.deps.finalizeFlowNodeContinuityLock({
+      sessionId: nextSession.id,
+      reason: "resume_ready",
+    });
   }
 
   private emitNotification(

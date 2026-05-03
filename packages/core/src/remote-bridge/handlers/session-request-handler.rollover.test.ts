@@ -364,6 +364,21 @@ test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover
   assert.equal(context.stageId, "diagram_modules");
   assert.equal(context.targetSessionId, targetSession.id);
   assert.equal(context.workspaceSlug, "demo");
+  assert.equal(countContinuityUnlocks(harness, "resume_ready"), 2);
+  assert.equal(
+    internals(harness.handler).continuityLockService.hasContext(
+      sourceSession.id
+    ),
+    false
+  );
+  assert.equal(
+    internals(harness.handler).continuityLockService.hasContext(
+      targetSession.id
+    ),
+    false
+  );
+  assert.equal(harness.runtimeLockUpdates.at(-1)?.active, false);
+  assert.equal(harness.runtimeLockUpdates.at(-1)?.reason, "resume_ready");
 });
 
 test("SessionRequestHandler resolves explicit post-turn usage unavailable to no-rollover", async () => {
