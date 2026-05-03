@@ -23,7 +23,9 @@ export const materializeContinuityEntries = (options: {
   readonly deps: SessionContinuityMaterializerDependencies;
   readonly entries: readonly ContinuityIndexEntry[];
   readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
 }): void => {
+  const initiativeSlug = options.workspaceSlug.trim();
   for (const entry of options.entries) {
     const sessionId = entry.latestSessionId?.trim();
     const providerId = entry.providerId?.trim();
@@ -40,6 +42,7 @@ export const materializeContinuityEntries = (options: {
       workspacePath: options.workspaceRoot,
       providerSessionId,
       stage: entry.stage,
+      initiativeSlug,
     });
     if (entry.modelBinding) {
       options.deps.sessionManager.setModelBinding(

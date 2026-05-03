@@ -56,6 +56,7 @@ const entry: ContinuityIndexEntry = {
   stage: "diagram_modules",
   updatedAt: new Date().toISOString(),
 };
+const workspaceSlug = "solidworks-workflow";
 
 test("materializeContinuityEntries registers stub session + binding + hydrates workspace runtime", () => {
   const sessionManager = new SessionManager();
@@ -77,6 +78,7 @@ test("materializeContinuityEntries registers stub session + binding + hydrates w
     },
     entries: [entry],
     workspaceRoot: "/tmp/ws",
+    workspaceSlug,
   });
 
   const session = sessionManager.getSession("abc-session-id");
@@ -85,6 +87,7 @@ test("materializeContinuityEntries registers stub session + binding + hydrates w
   assert.equal(session.providerSessionId, "019d-provider-session");
   assert.equal(session.providerSessionStatus, "ready");
   assert.equal(session.stage, "diagram_modules");
+  assert.equal(session.initiativeSlug, workspaceSlug);
   assert.equal(session.workspacePath, "/tmp/ws");
   assert.equal(
     session.modelBinding?.modelId,
@@ -130,6 +133,7 @@ test("materializeContinuityEntries is idempotent on repeated dialog:list", () =>
     },
     entries: [entry],
     workspaceRoot: "/tmp/ws",
+    workspaceSlug,
   });
   materializeContinuityEntries({
     deps: {
@@ -139,6 +143,7 @@ test("materializeContinuityEntries is idempotent on repeated dialog:list", () =>
     },
     entries: [entry],
     workspaceRoot: "/tmp/ws",
+    workspaceSlug,
   });
 
   assert.equal(sessionManager.listSessions().length, 1);
@@ -177,6 +182,7 @@ test("materialized continuity session satisfies handleStop preconditions", () =>
     },
     entries: [entry],
     workspaceRoot: "/tmp/ws",
+    workspaceSlug,
   });
 
   // Guard 1 of handleStop: sessionManager.getSession(sessionId).
@@ -217,6 +223,7 @@ test("materializeContinuityEntries skips entries without latestSessionId or prov
       { ...entry, providerId: null },
     ],
     workspaceRoot: "/tmp/ws",
+    workspaceSlug,
   });
 
   assert.equal(sessionManager.listSessions().length, 0);

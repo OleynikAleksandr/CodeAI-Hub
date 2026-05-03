@@ -127,6 +127,7 @@ export class RemoteBridgeDialogCommandRouter {
       },
       entries: dialogs,
       workspaceRoot: scoped.workspaceRoot,
+      workspaceSlug,
     });
     scoped.wsManager.sendToClient(clientId, {
       type: "dialog:list:result",
