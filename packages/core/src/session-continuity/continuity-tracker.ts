@@ -90,16 +90,16 @@ export class ContinuityTracker {
     readonly sessionId: string;
     readonly providerSessionId?: string | null;
   }): Promise<void> {
-    if (this.hasPersistedInitialSegment.has(options.sessionId)) {
-      return;
-    }
-
     const context = this.resolveOutboundContext(options);
     if (!context) {
       return;
     }
 
     const rootSessionId = await this.resolveRootSessionId(context);
+    if (this.hasPersistedInitialSegment.has(options.sessionId)) {
+      await this.refreshPersistedSegmentModelBinding(context, rootSessionId);
+      return;
+    }
     await this.persistInitialSegment(context, rootSessionId);
   }
 
@@ -251,6 +251,40 @@ export class ContinuityTracker {
           error: error instanceof Error ? error.message : String(error),
         }
       );
+    }
+  }
+
+  private async refreshPersistedSegmentModelBinding(
+    context: {
+      readonly session: Session;
+      readonly providerSessionId: string;
+    },
+    rootSessionId: string
+  ): Promise<void> {
+    try {
+      const store = this.createStore(context.session, rootSessionId);
+      const existing = await store.read();
+      const lastSegment = existing?.segments.at(-1);
+      if (
+        !(existing && lastSegment) ||
+        lastSegment.sessionId !== context.session.id ||
+        lastSegment.providerSessionId !== context.providerSessionId
+      ) {
+        return;
+      }
+      const segments = this.updateLastSegmentModelBinding(
+        existing.segments,
+        context.session.modelBinding
+      );
+      if (segments === existing.segments) {
+        return;
+      }
+      await store.save({ ...existing, segments, updatedAt: this.clock() });
+    } catch (error: unknown) {
+      this.logger.warn("Failed to refresh continuity model binding", {
+        sessionId: context.session.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 

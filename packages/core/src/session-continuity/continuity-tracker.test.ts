@@ -80,3 +80,60 @@ test("ContinuityTracker persists session model binding on outbound tracking", as
   });
   assert.equal(binding?.modelId, "gpt-5.3-codex-spark reasoning:xhigh");
 });
+
+test("ContinuityTracker refreshes persisted model binding after same-session switch", async () => {
+  const workspaceRoot = mkdtempSync(
+    path.join(os.tmpdir(), "continuity-model-binding-refresh-")
+  );
+  const session = createSession(workspaceRoot);
+  const tracker = new ContinuityTracker({
+    logger: new Logger("error"),
+    clock: () => "2026-04-28T12:02:00.000Z",
+    sessionLookup: (sessionId) =>
+      sessionId === session.id ? session : undefined,
+  });
+
+  await tracker.ensureTrackedOnOutboundMessage({
+    sessionId: session.id,
+    providerSessionId: "provider-session-1",
+  });
+  session.modelBinding = {
+    ...session.modelBinding,
+    baseModelId: "gpt-5.4-mini",
+    modelId: "gpt-5.4-mini reasoning:high",
+    reasoningEffort: "high",
+    source: "switch_request",
+    updatedAt: "2026-04-28T12:02:00.000Z",
+  };
+  await tracker.ensureTrackedOnOutboundMessage({
+    sessionId: session.id,
+    providerSessionId: "provider-session-1",
+  });
+
+  const chainPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    "workspace",
+    "continuity",
+    "description",
+    "session-1",
+    "chain.json"
+  );
+  const saved = JSON.parse(await readFile(chainPath, "utf8")) as {
+    readonly segments: readonly {
+      readonly modelBinding?: {
+        readonly modelId?: string;
+        readonly reasoningEffort?: string;
+        readonly source?: string;
+      };
+    }[];
+  };
+
+  assert.equal(saved.segments.length, 1);
+  assert.equal(saved.segments[0]?.modelBinding?.source, "switch_request");
+  assert.equal(
+    saved.segments[0]?.modelBinding?.modelId,
+    "gpt-5.4-mini reasoning:high"
+  );
+  assert.equal(saved.segments[0]?.modelBinding?.reasoningEffort, "high");
+});
