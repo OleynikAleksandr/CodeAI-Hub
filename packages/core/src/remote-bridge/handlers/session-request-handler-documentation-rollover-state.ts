@@ -101,6 +101,7 @@ export class SessionRequestHandlerDocumentationRolloverState {
     return (
       message.role === "assistant" &&
       message.tag !== "thinking" &&
+      message.tag !== "translation" &&
       message.visibilityAtEmission !== "hidden" &&
       content.length > 0 &&
       !INTERNAL_ASSISTANT_PATTERNS.some((pattern) => pattern.test(content))

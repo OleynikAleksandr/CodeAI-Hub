@@ -38,6 +38,23 @@ test("Documentation Tree continuation envelope is attached to the first real use
       "assistant",
       "Какие ОС поддерживаем в MVP?"
     );
+    harness.sessionManager.appendMessage(
+      sourceSession.id,
+      "system",
+      "System notice after the visible assistant question"
+    );
+    harness.sessionManager.appendMessage(
+      sourceSession.id,
+      "assistant",
+      "Translation overlay after the visible assistant question",
+      { tag: "translation" }
+    );
+    harness.sessionManager.appendMessage(
+      sourceSession.id,
+      "assistant",
+      "Hidden thinking after the visible assistant question",
+      { tag: "thinking", visibilityAtEmission: "hidden" }
+    );
     harness.providerRegistry.getAdapter = () => ({
       createSession: async () => "provider-target-documentation-envelope",
       sendMessage: (providerSessionId: string, content: string) => {
