@@ -129,6 +129,40 @@ const createPostResumePayload = (
   },
 });
 
+const createTerminalUnlockPayload = (
+  sequence: number,
+  options: {
+    readonly finalTurnCompleted: boolean;
+    readonly reason:
+      | "no_rollover_needed"
+      | "resume_ready"
+      | "resume_failed"
+      | "resume_timeout";
+    readonly resumeMode: "resume_in_place" | "resume_via_rollover";
+  }
+): WorkspaceSnapshotPushPayload => ({
+  workspaceRoot: "/workspace",
+  selectionId: "selection-1",
+  sequence,
+  generatedAt: "2026-01-01T00:00:00.000Z",
+  snapshot: {
+    workspaceRoot: "/workspace",
+    loadState: "ready",
+    workflow: { nodes: {} },
+    sessions: {
+      source: {
+        nodeId: "node-1",
+        turnState: "idle",
+        continuityLockActive: false,
+        continuityLockReason: options.reason,
+        resumeMode: options.resumeMode,
+        finalTurnCompleted: options.finalTurnCompleted,
+      },
+    },
+    artifacts: { currentByNodeId: {} },
+  },
+});
+
 test("applyWorkspaceSnapshotToSnapshots keeps resume_via_rollover blocked until resume_ready", async () => {
   const applyWorkspaceSnapshotToSnapshots =
     await loadApplyWorkspaceSnapshotToSnapshots();
@@ -201,4 +235,66 @@ test("applyWorkspaceSnapshotToSnapshots keeps session unlocked after resume_read
     firstNormalTurn.source.status.continuityLock?.reason,
     "no_rollover_needed"
   );
+});
+
+test("applyWorkspaceSnapshotToSnapshots returns terminal continuity decisions to idle", async () => {
+  const applyWorkspaceSnapshotToSnapshots =
+    await loadApplyWorkspaceSnapshotToSnapshots();
+
+  const scenarios = [
+    {
+      finalTurnCompleted: true,
+      label: "resume-in-place no rollover",
+      reason: "no_rollover_needed",
+      resumeMode: "resume_in_place",
+    },
+    {
+      finalTurnCompleted: true,
+      label: "rollover resume ready",
+      reason: "resume_ready",
+      resumeMode: "resume_via_rollover",
+    },
+    {
+      finalTurnCompleted: true,
+      label: "rollover resume failed",
+      reason: "resume_failed",
+      resumeMode: "resume_via_rollover",
+    },
+    {
+      finalTurnCompleted: true,
+      label: "rollover resume timeout",
+      reason: "resume_timeout",
+      resumeMode: "resume_via_rollover",
+    },
+    {
+      finalTurnCompleted: false,
+      label: "aborted plain turn",
+      reason: "resume_failed",
+      resumeMode: "resume_in_place",
+    },
+  ] as const;
+
+  for (const [index, scenario] of scenarios.entries()) {
+    const base: SessionSnapshots = { source: createSnapshot() };
+    const unlocked = applyWorkspaceSnapshotToSnapshots(
+      base,
+      createTerminalUnlockPayload(10 + index, scenario)
+    );
+
+    assert.equal(
+      unlocked.source.status.connectionState,
+      "idle",
+      scenario.label
+    );
+    assert.equal(
+      unlocked.source.status.continuityLock?.active,
+      false,
+      scenario.label
+    );
+    assert.equal(
+      unlocked.source.status.continuityLock?.reason,
+      scenario.reason,
+      scenario.label
+    );
+  }
 });
