@@ -6,6 +6,7 @@ import type {
   SessionTerminalLockReason,
 } from "../../workspace-runtime/workspace-runtime-types";
 import type { EmitContinuityLockEventOptions } from "./session-continuity-lock-service";
+import { isDocumentationTreeRolloverStage } from "./session-request-handler-documentation-rollover-state";
 
 export interface SessionResumeLifecycleState {
   readonly finalTurnCompleted: boolean;
@@ -218,6 +219,13 @@ export class SessionRequestHandlerResumeLifecycle {
     readonly runSlug: string | null;
     readonly explicitMode?: SessionResumeMode | null;
   }): SessionResumeMode {
+    if (
+      options.explicitMode === "resume_via_rollover" &&
+      options.stage &&
+      isDocumentationTreeRolloverStage(options.stage)
+    ) {
+      return "resume_in_place";
+    }
     if (options.explicitMode) {
       return options.explicitMode;
     }

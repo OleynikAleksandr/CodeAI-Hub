@@ -5,8 +5,10 @@ import path from "node:path";
 import test from "node:test";
 import type { Session } from "../../session-manager";
 import type { SessionModelBinding } from "../../session-model-binding";
-import { readAppliedProviderTurnConfig } from "../types";
-import { createHarness, internals } from "./session-request-handler.test";
+import {
+  createHarness,
+  internals,
+} from "./session-request-handler.test-helpers";
 
 interface RecordedInternalMessage {
   readonly content: string;
@@ -43,7 +45,7 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
     "provider-source",
     {
       initiativeSlug: "CodeAI-Hub-test",
-      stage: "description",
+      stage: "implementation",
       runSlug: "reviewer",
     }
   );
@@ -89,7 +91,7 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
   assert.equal(resume.content.includes("[...truncated...]"), true);
 });
 
-test("rolloverFlowNodeSession inherits Codex model binding into resume turn", async () => {
+test("Documentation Tree synthetic rollover inherits Codex model binding without bootstrap resume turn", async () => {
   const workspacePath = "/tmp/continuity-resume-model-binding";
   const reportsDir = createTempDir("codeai-hub-resume-binding-report-");
   const reportPath = path.join(reportsDir, "report.md");
@@ -169,18 +171,14 @@ test("rolloverFlowNodeSession inherits Codex model binding into resume turn", as
     nextSession.modelBinding?.modelId,
     "gpt-5.3-codex-spark reasoning:xhigh"
   );
-
-  const resumeSend = providerSends.find((send) =>
-    send.content.includes("# Flow Node Continuity — Resume")
-  );
-  assert.ok(resumeSend, "Expected resume prompt provider send");
-  assert.equal(resumeSend.providerSessionId, "provider-next");
-  const turnConfig = readAppliedProviderTurnConfig(resumeSend.turnOptions);
-  assert.equal(turnConfig?.source, "session_binding");
-  assert.equal(turnConfig?.baseModelId, "gpt-5.3-codex-spark");
+  const lifecycleReader = api.resumeLifecycle as unknown as {
+    readonly getSessionResumeLifecycleState: (session: Session) => {
+      readonly mode: string;
+    };
+  };
   assert.equal(
-    turnConfig?.effectiveModelId,
-    "gpt-5.3-codex-spark reasoning:xhigh"
+    lifecycleReader.getSessionResumeLifecycleState(nextSession).mode,
+    "resume_in_place"
   );
-  assert.equal(turnConfig?.reasoningEffort, "xhigh");
+  assert.equal(providerSends.length, 0);
 });

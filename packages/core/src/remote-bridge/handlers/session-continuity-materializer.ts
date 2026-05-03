@@ -16,9 +16,9 @@ export interface SessionContinuityMaterializerDependencies {
 // reconciliation loop never finds a matching session id to flip to idle.
 //
 // The stub is intentionally paper-only: Session object with ready status
-// and provider session binding, but no adapter turn is started. Real
-// provider resume happens lazily on the first user message through the
-// existing resolveProviderSessionId dispatch path.
+// and provider session binding, but no adapter turn or report/resume
+// bootstrap is started. Synthetic Documentation Tree continuation
+// instructions are attached lazily to the first real user message.
 export const materializeContinuityEntries = (options: {
   readonly deps: SessionContinuityMaterializerDependencies;
   readonly entries: readonly ContinuityIndexEntry[];
