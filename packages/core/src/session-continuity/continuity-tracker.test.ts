@@ -97,8 +97,10 @@ test("ContinuityTracker refreshes persisted model binding after same-session swi
     sessionId: session.id,
     providerSessionId: "provider-session-1",
   });
+  const previousBinding = session.modelBinding;
+  assert.ok(previousBinding);
   session.modelBinding = {
-    ...session.modelBinding,
+    ...previousBinding,
     baseModelId: "gpt-5.4-mini",
     modelId: "gpt-5.4-mini reasoning:high",
     reasoningEffort: "high",

@@ -205,19 +205,29 @@ test("SessionRequestHandler starts Codex virtual simulation rollover after delay
   }> = [];
   internals(
     harness.handler
-  ).continuityRolloverOrchestrator.startFlowNodeRolloverFromUsage = (options: {
-    readonly remainingPercentThreshold: number;
-    readonly runSlug: string | null;
-    readonly sessionId: string;
-    readonly stageId: string;
-    readonly usage: { readonly used: number };
-  }) => {
+  ).continuityRolloverOrchestrator.startFlowNodeRolloverFromUsage = (
+    options
+  ) => {
+    const remainingPercentThreshold = options.remainingPercentThreshold;
+    const runSlug =
+      options.runSlug === null || typeof options.runSlug === "string"
+        ? options.runSlug
+        : null;
+    const stageId = options.stageId;
+    const usage = options.usage as { readonly used?: unknown } | undefined;
+    if (
+      typeof remainingPercentThreshold !== "number" ||
+      typeof stageId !== "string" ||
+      typeof usage?.used !== "number"
+    ) {
+      throw new Error("Invalid rollover start test options");
+    }
     rolloverStarts.push({
-      remainingPercentThreshold: options.remainingPercentThreshold,
-      runSlug: options.runSlug,
+      remainingPercentThreshold,
+      runSlug,
       sessionId: options.sessionId,
-      stageId: options.stageId,
-      used: options.usage.used,
+      stageId,
+      used: usage.used,
     });
     internals(harness.handler).resumeLifecycle.recordPostTurnContextDecision(
       options.sessionId,
