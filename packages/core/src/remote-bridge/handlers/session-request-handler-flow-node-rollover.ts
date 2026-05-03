@@ -11,7 +11,7 @@ import type { FlowNodeRolloverNotification } from "./session-continuity-rollover
 import {
   type DocumentationRolloverContext,
   isDocumentationTreeRolloverStage,
-  SessionRequestHandlerDocumentationRolloverState,
+  type SessionRequestHandlerDocumentationRolloverState,
 } from "./session-request-handler-documentation-rollover-state";
 import type { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
@@ -19,6 +19,7 @@ import type { SessionRequestHandlerSessionBootstrap } from "./session-request-ha
 
 interface SessionRequestHandlerFlowNodeRolloverDependencies {
   readonly continuityRootBySessionId: Map<string, string>;
+  readonly documentationRolloverState: SessionRequestHandlerDocumentationRolloverState;
   readonly emitContinuityLockEvent: (
     options: EmitContinuityLockEventOptions
   ) => void;
@@ -45,8 +46,6 @@ interface SessionRequestHandlerFlowNodeRolloverDependencies {
 
 export class SessionRequestHandlerFlowNodeRollover {
   private readonly deps: SessionRequestHandlerFlowNodeRolloverDependencies;
-  private readonly documentationRolloverState =
-    new SessionRequestHandlerDocumentationRolloverState();
 
   constructor(deps: SessionRequestHandlerFlowNodeRolloverDependencies) {
     this.deps = deps;
@@ -56,8 +55,8 @@ export class SessionRequestHandlerFlowNodeRollover {
     sessionId: string
   ): DocumentationRolloverContext | null {
     return (
-      this.documentationRolloverState.getByTargetSessionId(sessionId) ??
-      this.documentationRolloverState.getBySourceSessionId(sessionId)
+      this.deps.documentationRolloverState.getByTargetSessionId(sessionId) ??
+      this.deps.documentationRolloverState.getBySourceSessionId(sessionId)
     );
   }
 
@@ -338,7 +337,7 @@ export class SessionRequestHandlerFlowNodeRollover {
     }
 
     const context =
-      this.documentationRolloverState.registerMaterializedRollover({
+      this.deps.documentationRolloverState.registerMaterializedRollover({
         rolloverId: rollover.rolloverId,
         sourceSession: session,
         targetSession: nextSession,

@@ -1,4 +1,5 @@
 import { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
+import { SessionRequestHandlerDocumentationRolloverState } from "./session-request-handler-documentation-rollover-state";
 import { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
 import { createSessionRequestHandlerRuntimeCore } from "./session-request-handler-runtime-core";
@@ -46,12 +47,18 @@ export const createSessionRequestHandlerRuntime = (
         .get()
         .clearTokenUsageSnapshot(sessionId),
   });
+  const documentationRolloverState =
+    new SessionRequestHandlerDocumentationRolloverState();
+  core.messageDispatch.setDocumentationRolloverState(
+    documentationRolloverState
+  );
   const flowNodeReportState = new SessionRequestHandlerFlowNodeReportState({
     broadcaster: options.broadcaster,
   });
   const flowNodeRollover = new SessionRequestHandlerFlowNodeRollover({
     continuityRootBySessionId: options.continuityRootBySessionId,
     providerRegistry: options.providerRegistry,
+    documentationRolloverState,
     flowNodeContinuity: core.flowNodeContinuity,
     sessionBootstrap: core.sessionBootstrap,
     messageDispatch: core.messageDispatch,

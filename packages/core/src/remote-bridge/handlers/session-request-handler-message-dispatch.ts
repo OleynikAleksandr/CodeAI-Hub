@@ -12,6 +12,10 @@ import {
 } from "../types";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
+import type {
+  DocumentationRolloverContext,
+  SessionRequestHandlerDocumentationRolloverState,
+} from "./session-request-handler-documentation-rollover-state";
 import {
   attachPendingCodexModelSwitchInjection,
   clearPendingCodexModelSwitchInjectionAfterDispatch,
@@ -75,10 +79,26 @@ export interface StaleBindingRecoveryHooks {
 export class SessionRequestHandlerMessageDispatch {
   private readonly deps: SessionRequestHandlerMessageDispatchDependencies;
   private readonly providerSend: SessionRequestHandlerProviderSend;
+  private documentationRolloverState: SessionRequestHandlerDocumentationRolloverState | null =
+    null;
   private staleBindingRecoveryHooks: StaleBindingRecoveryHooks | null = null;
 
   setStaleBindingRecoveryHooks(hooks: StaleBindingRecoveryHooks): void {
     this.staleBindingRecoveryHooks = hooks;
+  }
+
+  setDocumentationRolloverState(
+    state: SessionRequestHandlerDocumentationRolloverState
+  ): void {
+    this.documentationRolloverState = state;
+  }
+
+  getDocumentationRolloverContext(
+    sessionId: string
+  ): DocumentationRolloverContext | null {
+    return (
+      this.documentationRolloverState?.getByTargetSessionId(sessionId) ?? null
+    );
   }
 
   constructor(deps: SessionRequestHandlerMessageDispatchDependencies) {
