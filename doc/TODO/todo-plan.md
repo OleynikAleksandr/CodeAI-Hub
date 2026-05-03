@@ -313,7 +313,7 @@
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.131` в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, включая Codex provider artifact with updated startup profile (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex startup hotfix`). Verified: seven tarballs present in both release locations (`claude-module`, `codex-module`, `gemini-module`, `codeai-hub-core-darwin-arm64`, `CodeAIHubLauncher-macos-arm64`, `vscode-webview`, `project-manager`).
 4. [DONE] Git Commit: `chore: bump release manifests for codex startup hotfix` (hash: 04d681354)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, Step 7.5 Gemini failsafe, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.131.vsix`; scope остаётся ACTIVE до пользовательского retest reopened Codex session next turn (scope: release command + session report; expected commit: `docs: record codex startup hotfix release build`). Verified: release build completed; package `codeai-hub-1.2.131.vsix` (2.8M); Step 7 SDK exclusions, Step 7.5 artefacts including bundled Gemini, markdown links, duplication, production dependency prune, and VSIX runtime package surface verification passed.
-6. [TODO] Git Commit: `docs: record codex startup hotfix release build` (hash: TBD)
+6. [DONE] Git Commit: `docs: record codex startup hotfix release build` (hash: ef5081a40)
 
 ### Stream 12 — Scope Closeout
 

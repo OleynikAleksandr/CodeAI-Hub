@@ -31,6 +31,7 @@
 - `fabdce274 docs: record codex startup hotfix release prep hash`
 - `04d681354 chore: bump release manifests for codex startup hotfix`
 - `c88a95c04 docs: record codex startup hotfix build-all hash`
+- `ef5081a40 docs: record codex startup hotfix release build`
 
 ---
 
