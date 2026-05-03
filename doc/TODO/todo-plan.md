@@ -336,8 +336,8 @@
 2. [DONE] Git Commit: `feat: enable continuity rollover for trunk workflow nodes` (hash: dd075d245)
 3. [DONE] Add production-path rollover regression for Codex delayed token usage: update `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts` so `virtual_simulation` with `initiativeSlug`, `turn_completed`, delayed `token_usage` below threshold triggers `startFlowNodeRolloverFromUsage`; existing unavailable-usage coverage remains as no-rollover guard. Verification: `npx tsx --test --test-name-pattern "starts Codex virtual simulation rollover" packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts` (scope: 1 file; expected commit: `test: cover codex virtual simulation rollover arbitration`).
 4. [DONE] Git Commit: `test: cover codex virtual simulation rollover arbitration` (hash: d7570af43)
-5. [TODO] Update continuity/runtime SSOT for the widened trunk-node rollover contract: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; document that `description`, `virtual_simulation`, and `diagram_modules` share the same create-report/resume lifecycle (scope: 3 docs; expected commit: `docs: document trunk workflow continuity rollover`).
-6. [TODO] Git Commit: `docs: document trunk workflow continuity rollover` (hash: TBD)
+5. [DONE] Update continuity/runtime SSOT for the widened trunk-node rollover contract: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; document that `description`, `virtual_simulation`, and `diagram_modules` share the same create-report/resume lifecycle. Verification: `git diff --check` (scope: 3 docs; expected commit: `docs: document trunk workflow continuity rollover`).
+6. [IN_PROGRESS] Git Commit: `docs: document trunk workflow continuity rollover` (hash: TBD)
 
 ### Stream 11S — Per-Turn Model/Reasoning Continuity Durability
 
