@@ -242,7 +242,7 @@ test("Documentation Tree production rollover waits for next user turn before con
       await flushAsyncWork();
 
       assert.deepEqual(internalMessages, []);
-      assert.deepEqual(providerSends, []);
+      assert.equal(providerSends.length, 0);
       assert.equal(countContinuityUnlocks(harness, "resume_ready"), 2);
 
       const targetSession = harness.sessionManager
@@ -255,25 +255,16 @@ test("Documentation Tree production rollover waits for next user turn before con
       await flushAsyncWork();
 
       assert.equal(providerSends.length, 1);
+      const firstSend = providerSends.at(0);
+      assert.ok(firstSend);
+      assert.equal(firstSend.providerSessionId, `provider-target-${stage}`);
+      assert.equal(firstSend.content.includes("## Continuation Mode"), true);
+      assert.equal(firstSend.content.includes("not a cold start"), true);
       assert.equal(
-        providerSends[0]?.providerSessionId,
-        `provider-target-${stage}`
-      );
-      assert.equal(
-        providerSends[0]?.content.includes("## Continuation Mode"),
+        firstSend.content.includes(`Question before rollover for ${stage}?`),
         true
       );
-      assert.equal(
-        providerSends[0]?.content.includes("not a cold start"),
-        true
-      );
-      assert.equal(
-        providerSends[0]?.content.includes(
-          `Question before rollover for ${stage}?`
-        ),
-        true
-      );
-      assert.equal(providerSends[0]?.content.includes(userMessage), true);
+      assert.equal(firstSend.content.includes(userMessage), true);
       assert.equal(targetSession.messages.at(-1)?.content, userMessage);
     }
   } finally {
