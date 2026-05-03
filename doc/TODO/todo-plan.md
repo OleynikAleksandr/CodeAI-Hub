@@ -355,7 +355,7 @@
 3. [DONE] If the test exposes a production gap, patch the smallest owner file in the stale binding path (`session-request-handler-message-dispatch.ts` or stop/rebind helper) so stale rebind cannot silently bypass context preservation or model/reasoning turn options. Result: no production gap exposed; current retry path already invalidates the stale provider binding, rebinds, re-tracks continuity on the new provider session, re-attaches the current `session.modelBinding`, and preserves workflow context (scope: ≤2 files; expected commit: `fix: preserve continuity context during stale rebind retry`).
 4. [DONE] Git Commit: `fix: preserve continuity context during stale rebind retry` (hash: not required; no production patch was needed after `d32aff953`)
 5. [DONE] Add no-indefinite-resuming regression for lock/unlock decisions: updated `src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts` for `no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`, and aborted plain turns; PM snapshot reconciliation returns `connectionState: "idle"` with `continuityLock.active=false` instead of leaving input in `Agent is resuming your session... Please wait`. Verification: `npx tsx --test src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts` (scope: ≤3 files; expected commit: `test: prevent indefinite resuming lock after continuity decisions`).
-6. [IN_PROGRESS] Git Commit: `test: prevent indefinite resuming lock after continuity decisions` (hash: TBD)
+6. [DONE] Git Commit: `test: prevent indefinite resuming lock after continuity decisions` (hash: d841f8699)
 
 ### Stream 11U — Release Build (Codex Continuity Rollover Fix)
 
