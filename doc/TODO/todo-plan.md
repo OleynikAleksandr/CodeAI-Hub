@@ -4,18 +4,26 @@
 
 - **Planning source (child):** `doc/SolidWorks-WorkFlow/Plans/Capture_Workbench_UI_Architecture.md` rev4
 - **Planning source (parent):** `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` rev6
+- **Planning source (continuity hotfix):** `doc/SolidWorks-WorkFlow/Plans/Codex_FlowNode_Continuity_Rollover_Architecture.md` rev1
 - **Visual contract:** `doc/tmp/prototypes/capture-workbench.html` rev2
 - **Prototype source of UI truth:** `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/prototypes/capture-workbench.html`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariants 5/14/33/35)
   - `doc/SolidWorks-WorkFlow/Plans/Capture_Workbench_UI_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Codex_FlowNode_Continuity_Rollover_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
   - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
   - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
+  - `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`
   - `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`
   - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
   - `doc/tmp/prototypes/capture-workbench.html`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
@@ -37,7 +45,7 @@
 - **Real-time документация:** любое изменение архитектуры/логики требует синхронного обновления `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и/или canonical SSOT-документов до коммита, чтобы изменения попали в тот же Git Commit.
 - **Release Build:** перед релизной сборкой обновить README.md и CHANGELOG.md на будущую версию = текущая версия из `package.json` + 1. Затем выполнить release checklist из AGENTS.md.
 - **Постоянное обновление:** после каждого коммита обновлять статус задачи и заносить hash в этот `doc/TODO/todo-plan.md`.
-- **Ordering invariant:** Stream 0 → Streams 1/2/3 (pre-UI, любой порядок) → Stream 4 (PM bridge/store, после 3; часть Stream 4, зависящая от capture result, также после 1/2) → Stream 5 (detached entry, после 0) → Streams 6/7/8 (UI surface, после 4+5; Stream 7 также после 1/2) → Stream 9 (launcher, после 5) → Stream 10 (release) → Stream 11 (acceptance) → Stream 12 (closeout).
+- **Ordering invariant:** Stream 0 → Streams 1/2/3 (pre-UI, любой порядок) → Stream 4 (PM bridge/store, после 3; часть Stream 4, зависящая от capture result, также после 1/2) → Stream 5 (detached entry, после 0) → Streams 6/7/8 (UI surface, после 4+5; Stream 7 также после 1/2) → Stream 9 (launcher, после 5) → Stream 10 (release) → Stream 11 (acceptance) → Stream 11Q/11R/11S/11T (Codex continuity hotfix) → Stream 11U (release) → Stream 11V (user visual acceptance) → Stream 12 (closeout).
 
 ---
 
@@ -314,6 +322,59 @@
 4. [DONE] Git Commit: `chore: bump release manifests for codex startup hotfix` (hash: 04d681354)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, Step 7.5 Gemini failsafe, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.131.vsix`; scope остаётся ACTIVE до пользовательского retest reopened Codex session next turn (scope: release command + session report; expected commit: `docs: record codex startup hotfix release build`). Verified: release build completed; package `codeai-hub-1.2.131.vsix` (2.8M); Step 7 SDK exclusions, Step 7.5 artefacts including bundled Gemini, markdown links, duplication, production dependency prune, and VSIX runtime package surface verification passed.
 6. [DONE] Git Commit: `docs: record codex startup hotfix release build` (hash: ef5081a40)
+
+### Stream 11Q — Codex Flow-Node Context Materialization Fix
+
+1. [TODO] Preserve workspace slug in materialized continuity sessions: update `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`, `packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts`; materialized runtime sessions must register `initiativeSlug = workspaceSlug` while keeping provider/session binding behavior unchanged (scope: 3 files; expected commit: `fix: preserve workspace slug in materialized continuity sessions`).
+2. [TODO] Git Commit: `fix: preserve workspace slug in materialized continuity sessions` (hash: TBD)
+3. [TODO] Repair already-materialized sessions before `dialog:send`: add a minimal context update path in `packages/core/src/session-manager/index.ts`, use it in `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, and cover missing-initiative reuse in the existing create/resume test surface; existing runtime sessions with matching providerSessionId must not stay `initiativeSlug: null` (scope: ≤3 files; expected commit: `fix: repair restored dialog workflow context before send`).
+4. [TODO] Git Commit: `fix: repair restored dialog workflow context before send` (hash: TBD)
+
+### Stream 11R — Flow-Node Rollover Eligibility And Codex Usage Arbitration
+
+1. [TODO] Extend flow-node rollover eligibility from description-only to trunk workflow nodes: `packages/core/src/flow-node-continuity/flow-node-continuity-types.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.ts`, `packages/core/src/flow-node-continuity/flow-node-continuity-facade.test.ts`; eligible nodes are `description`, `virtual_simulation`, `diagram_modules` with `runSlug: null`; collector/reviewer/branch run slugs remain rejected (scope: 3 files; expected commit: `feat: enable continuity rollover for trunk workflow nodes`).
+2. [TODO] Git Commit: `feat: enable continuity rollover for trunk workflow nodes` (hash: TBD)
+3. [TODO] Add production-path rollover regression for Codex delayed token usage: update `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts` so `virtual_simulation` with `initiativeSlug`, `turn_completed`, delayed `token_usage` below threshold triggers `startFlowNodeRolloverFromUsage`; also assert no rollover when post-turn usage remains unavailable (scope: 1 file; expected commit: `test: cover codex virtual simulation rollover arbitration`).
+4. [TODO] Git Commit: `test: cover codex virtual simulation rollover arbitration` (hash: TBD)
+5. [TODO] Update continuity/runtime SSOT for the widened trunk-node rollover contract: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; document that `description`, `virtual_simulation`, and `diagram_modules` share the same create-report/resume lifecycle (scope: 3 docs; expected commit: `docs: document trunk workflow continuity rollover`).
+6. [TODO] Git Commit: `docs: document trunk workflow continuity rollover` (hash: TBD)
+
+### Stream 11S — Per-Turn Model/Reasoning Continuity Durability
+
+1. [TODO] Refresh persisted continuity model binding on every outbound message after a same-session switch: update `packages/core/src/session-continuity/continuity-tracker.ts` and `packages/core/src/session-continuity/continuity-tracker.test.ts`; when initial segment already exists, `ensureTrackedOnOutboundMessage` must update the last matching segment with current `session.modelBinding` instead of returning without persistence (scope: 2 files; expected commit: `fix: refresh continuity model binding on outbound turns`).
+2. [TODO] Git Commit: `fix: refresh continuity model binding on outbound turns` (hash: TBD)
+3. [TODO] Cover inherited model/reasoning after rollover-created session: update `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts` or a focused resume embedding test to assert `inheritedModelBinding` reaches the target session and provider turn options still carry the selected Codex model/reasoning (scope: ≤2 files; expected commit: `test: cover inherited model binding across continuity rollover`).
+4. [TODO] Git Commit: `test: cover inherited model binding across continuity rollover` (hash: TBD)
+5. [TODO] Update model identity SSOT for the persistence boundary: `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` and `doc/SolidWorks-WorkFlow/Modules/Codex_ProviderInvocationFlags.md`; clarify that session-bound model/reasoning is live for the next turn and refreshed into continuity chain before outbound dispatch (scope: 2 docs; expected commit: `docs: document model binding continuity persistence`).
+6. [TODO] Git Commit: `docs: document model binding continuity persistence` (hash: TBD)
+
+### Stream 11T — Stale Binding Recovery Safety
+
+1. [TODO] Add stale-binding retry coverage that preserves restored workflow context and applied Codex turn config: update `packages/core/src/remote-bridge/handlers/session-request-handler-codex-model-switch.test.ts` or create a focused message-dispatch test; stale binding recovery must re-dispatch with current `session.modelBinding` and must not clear/lose `initiativeSlug` (scope: ≤2 files; expected commit: `test: cover codex stale rebind with continuity context`).
+2. [TODO] Git Commit: `test: cover codex stale rebind with continuity context` (hash: TBD)
+3. [TODO] If the test exposes a production gap, patch the smallest owner file in the stale binding path (`session-request-handler-message-dispatch.ts` or stop/rebind helper) so stale rebind cannot silently bypass context preservation or model/reasoning turn options (scope: ≤2 files; expected commit: `fix: preserve continuity context during stale rebind retry`).
+4. [TODO] Git Commit: `fix: preserve continuity context during stale rebind retry` (hash: TBD)
+5. [TODO] Add no-indefinite-resuming regression for lock/unlock decisions: update the smallest existing session stream / input lock test surface for `no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`, and aborted plain turns; UI snapshot/input lock must return to idle instead of staying on `Agent is resuming your session... Please wait` (scope: ≤3 files; expected commit: `test: prevent indefinite resuming lock after continuity decisions`).
+6. [TODO] Git Commit: `test: prevent indefinite resuming lock after continuity decisions` (hash: TBD)
+
+### Stream 11U — Release Build (Codex Continuity Rollover Fix)
+
+1. [TODO] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.132` after failed resume/continuity retest in `1.2.131`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 release docs + todo-plan; expected commit: `docs: prepare codex continuity rollover fix release`).
+2. [TODO] Git Commit: `docs: prepare codex continuity rollover fix release` (hash: TBD)
+3. [TODO] На clean tree запустить targeted verification: `npm test --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/codex-app-server-module`; если UI lock behavior touched, also `npm run typecheck:webview` (scope: commands only; expected commit: `test: verify codex continuity rollover fix`).
+4. [TODO] Git Commit: `test: verify codex continuity rollover fix` (hash: TBD)
+5. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы future version в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, включая Core and Codex provider artifacts (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex continuity rollover fix`).
+6. [TODO] Git Commit: `chore: bump release manifests for codex continuity rollover fix` (hash: TBD)
+7. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, Step 7.5 Gemini failsafe, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX передать пользователю для retest; scope остаётся ACTIVE до visual acceptance (scope: release command + session report; expected commit: `docs: record codex continuity rollover fix release build`).
+8. [TODO] Git Commit: `docs: record codex continuity rollover fix release build` (hash: TBD)
+
+### Stream 11V — User Visual Acceptance Testing (Codex Continuity Rollover Retest)
+
+1. [TODO] Установить continuity-fix VSIX future version, открыть тот же workspace и reopened `Virtual Simulation Codex` dialog, отправить следующий turn и проверить, что нет `Provider codexCli unavailable`, нет stale-binding loop, и UI не остаётся навсегда на `Agent is resuming your session... Please wait`.
+2. [TODO] Проверить per-turn model/reasoning: после завершённого turn сменить Codex model/reasoning в Status Panel, отправить следующий turn и подтвердить по Codex rollout `turn_context` / app-server request evidence, что выбранные `model` и `effort` применились.
+3. [TODO] Проверить threshold rollover: выставить/использовать remaining-percent threshold, довести flow-node до срабатывания, подтвердить Core phases `threshold_reached` → `report_in_progress` → `report_ready` → `new_session_created` → `resume_sent`, появление continuity report на диске и resume prompt в новой session.
+4. [TODO] Зафиксировать пользовательский visual retest в `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`, и при необходимости `doc/BugRegistry.md`; без explicit acceptance Scope Closeout не выполнять (scope: ≤3 docs; expected commit: `docs: record codex continuity rollover visual acceptance`).
+5. [TODO] Git Commit: `docs: record codex continuity rollover visual acceptance` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
 
