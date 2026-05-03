@@ -1,9 +1,11 @@
 # Plan Orchestrator — Architecture
 
-**Status:** accepted rev1 — approved by user on 2026-05-03
+**Status:** accepted rev2 — MVP scope narrowed by user on 2026-05-03
 **Created:** 2026-05-03
 **Owner:** Process automation / Git hooks / Codex execution lifecycle
-**Scope:** заменить ручное ведение session reports и ручные отметки прогресса в `doc/TODO/todo-plan.md` на детерминированный Plan Orchestrator, который управляет состоянием active plan, commit workflow, recovery и closeout.
+**Scope:** заменить ручное ведение session reports и ручные отметки прогресса в `doc/TODO/todo-plan.md` на локальный deterministic Plan Orchestrator для работы пользователя с Codex в этом repo: новый `AGENTS.md`, scripts under `scripts/plan-orchestrator/`, automatic `pre-commit` / `post-commit` plan-state handling, and minimal repair/status commands.
+
+**MVP boundary:** это не feature приложения CodeAI Hub и не runtime/VSIX integration. Product release build, app packaging, provider modules, Project Manager UI, pre-push enforcement, snapshot automation and generic closeout automation are out of scope for this first implementation unless the user explicitly reopens them.
 
 ---
 
@@ -68,16 +70,13 @@ Plan Orchestrator:
 
 ### 2.3 Closeout
 
-Session reports удаляются из обязательного процесса.
+Session reports удаляются из обязательного recovery-процесса after `AGENTS.md` migration.
 
-Closeout делает Plan Orchestrator:
+MVP closeout remains intentionally small:
 
-- требует explicit user acceptance;
-- архивирует завершённый active plan;
-- создаёт reset-state `doc/TODO/todo-plan.md`;
-- обновляет planning-doc disposition;
-- обновляет `Docs_Index.md` при перемещении planning-docs;
-- создаёт committed closeout snapshot, но не создаёт `doc/Sessions/SessionXXX.md`.
+- active work recovery belongs to `doc/TODO/todo-plan.md`;
+- final historical closeout can be an archived plan snapshot;
+- generic `plan:closeout` automation is deferred until pre/post commit automation is proven.
 
 Исторические `doc/Sessions/*.md` остаются как legacy archive, но `AGENTS.md` больше не должен ссылаться на них как на recovery mechanism.
 
@@ -219,9 +218,11 @@ Supported repairs:
 
 If repair cannot prove a single safe transition, it leaves status `BLOCKED` and prints exact manual recovery instructions.
 
-### 4.5 `npm run plan:snapshot`
+### 4.5 Deferred: `npm run plan:snapshot`
 
-Creates a tracked snapshot of active plan at explicit checkpoints:
+Tracked snapshots are useful, but they are not part of the MVP requested by the user.
+
+Deferred future command may create a tracked snapshot of active plan at explicit checkpoints:
 
 - stream boundary;
 - tooling verification boundary;
@@ -237,9 +238,11 @@ doc/TODO/Snapshots/
 
 Snapshot filenames include timestamp, branch, and last recorded commit.
 
-### 4.6 `npm run plan:closeout`
+### 4.6 Deferred: `npm run plan:closeout`
 
-Closeout command.
+Generic closeout automation is useful, but it is not part of the MVP requested by the user.
+
+Deferred future command may accept:
 
 Inputs:
 
@@ -307,9 +310,9 @@ Responsibilities:
 
 ### 5.4 `pre-push`
 
-Add `npm run plan:hook:pre-push` before existing duplication/link checks.
+Pre-push enforcement is deferred out of the MVP. Existing `pre-push` duplication/link checks remain unchanged.
 
-Blocks when:
+Future pre-push plan guard may block when:
 
 - plan debt exists;
 - active plan is inconsistent;
@@ -321,9 +324,9 @@ Then existing checks still run:
 - `npm run check:dup`;
 - `npm run check:links`.
 
-### 5.5 Optional lifecycle hooks
+### 5.5 Deferred lifecycle hooks
 
-`post-checkout`, `post-merge`, `post-rewrite` can warn or set blocked state when branch/head binding changes.
+`post-checkout`, `post-merge`, `post-rewrite` are deferred out of the MVP. In the future they can warn or set blocked state when branch/head binding changes.
 
 They should not mutate plan destructively. Their job is to make branch mismatch visible early.
 
@@ -428,9 +431,9 @@ Existing historical `doc/Sessions/` files remain in the repository/workspace as 
 
 ### Phase 3 - Hook enforcement
 
-- Wire `pre-commit`, `commit-msg`, `post-commit`, `pre-push`.
+- Wire `pre-commit`, minimal `commit-msg` if needed, and `post-commit`.
 - Block direct commit while active plan is `ACTIVE`.
-- Preserve existing architecture/lint/knip/dup/link gates.
+- Preserve existing architecture/lint/knip gates.
 
 ### Phase 4 - AGENTS.md simplification
 
@@ -444,7 +447,7 @@ Existing historical `doc/Sessions/` files remain in the repository/workspace as 
 - If active plan becomes ignored, add mandatory tracked snapshots and closeout archive flow.
 - If active plan stays tracked, document two-commit hash recording model.
 
-Recommended path: ignored active plan plus tracked snapshots/archive.
+Recommended path for MVP: ignored active plan plus existing archived plans. Full snapshot automation is deferred.
 
 ---
 
@@ -468,6 +471,6 @@ Recommended path: ignored active plan plus tracked snapshots/archive.
 - A direct `git commit` is blocked while active plan is `ACTIVE`.
 - `npm run plan:commit -- "<message>"` updates status/hash/current pointer automatically.
 - Simulated crash after commit leaves `.git/codeai-plan-debt`; `plan:repair` completes recovery.
-- `pre-push` blocks if plan debt or inconsistent state exists.
+- `pre-commit` blocks if plan debt or inconsistent state exists.
 - `AGENTS.md` no longer describes session reports as recovery mechanism.
 - Closeout archives the plan and resets `doc/TODO/todo-plan.md` without creating a session report.
