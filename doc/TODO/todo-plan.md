@@ -21,9 +21,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 1 / Stream 1 / Task 1.
-- **Next action:** update planning-doc scope to accepted rev2 and implement plan-state parser.
-- **Last completed commit in this cycle:** `d55072a56 docs: align plan orchestrator scope with tooling`
+- **Current phase/stream/task:** Phase 1 / Stream 1 / Task 3.
+- **Next action:** implement plan-state parser.
+- **Last completed commit in this cycle:** `788ed3ec4 docs: narrow plan orchestrator automation scope`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -42,8 +42,8 @@
 
 ### Stream 1 — Parser Foundation
 
-1. [TODO] Обновить planning-doc на accepted rev2 с narrowed MVP scope: `doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; зафиксировать, что scope = `AGENTS.md` + scripts + `pre-commit`/`post-commit`, без release/app integration/pre-push/snapshot automation (scope: 3 docs; expected commit: `docs: narrow plan orchestrator automation scope`).
-2. [TODO] Git Commit: `docs: narrow plan orchestrator automation scope` (hash: TBD)
+1. [DONE] Обновить planning-doc на accepted rev2 с narrowed MVP scope: `doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; зафиксировать, что scope = `AGENTS.md` + scripts + `pre-commit`/`post-commit`, без release/app integration/pre-push/snapshot automation. Verification: `git diff --check`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 docs; expected commit: `docs: narrow plan orchestrator automation scope`).
+2. [DONE] Git Commit: `docs: narrow plan orchestrator automation scope` (hash: 788ed3ec4)
 3. [TODO] Создать parser/types для machine-owned `codeai-plan-state` block: `scripts/plan-orchestrator/plan-state-types.mjs`, `scripts/plan-orchestrator/plan-state-parser.mjs`, `scripts/plan-orchestrator/plan-state-parser.test.mjs`; покрыть valid/missing/malformed JSON block and schema version checks (scope: 3 files; expected commit: `feat: add plan state parser`).
 4. [TODO] Git Commit: `feat: add plan state parser` (hash: TBD)
 
