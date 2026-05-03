@@ -170,6 +170,5 @@
 
 ## Notes
 
-- `AGENTS.md.zip` в рабочем дереве не относится к этому scope и не должен затрагиваться без отдельного решения пользователя.
 - Phase 5 может быть перенесена после release, если ignored active plan migration окажется слишком рискованной для первого Plan Orchestrator релиза.
 - Если hook enforcement мешает текущему development workflow, временно разрешается advisory mode, но только через явный плановый task and commit.
