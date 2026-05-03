@@ -180,6 +180,75 @@ test("SessionRequestHandler resolves delayed no-rollover on the production token
   assert.equal(countNoRolloverUnlockEvents(harness.events), 1);
 });
 
+test("SessionRequestHandler starts Codex virtual simulation rollover after delayed token usage", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-codex-virtual-simulation-rollover",
+    "provider-session-codex-vs-rollover",
+    {
+      initiativeSlug: "demo",
+      stage: "virtual_simulation",
+      runSlug: null,
+    }
+  );
+  setLifecycle(harness, session.id, "resume_in_place");
+  useProductionFlowNodeHandler(harness);
+  internals(harness.handler).resolveLiveContinuityRemainingPercentThreshold =
+    async () => 30;
+  const rolloverStarts: Array<{
+    readonly remainingPercentThreshold: number;
+    readonly runSlug: string | null;
+    readonly sessionId: string;
+    readonly stageId: string;
+    readonly used: number;
+  }> = [];
+  internals(
+    harness.handler
+  ).continuityRolloverOrchestrator.startFlowNodeRolloverFromUsage = (options: {
+    readonly remainingPercentThreshold: number;
+    readonly runSlug: string | null;
+    readonly sessionId: string;
+    readonly stageId: string;
+    readonly usage: { readonly used: number };
+  }) => {
+    rolloverStarts.push({
+      remainingPercentThreshold: options.remainingPercentThreshold,
+      runSlug: options.runSlug,
+      sessionId: options.sessionId,
+      stageId: options.stageId,
+      used: options.usage.used,
+    });
+    internals(harness.handler).resumeLifecycle.recordPostTurnContextDecision(
+      options.sessionId,
+      "rollover_required"
+    );
+    return Promise.resolve();
+  };
+
+  emitProviderEvent(harness, session.id, { type: "turn_completed" });
+  await flushAsyncWork();
+  assert.equal(countContextCheckPendingLockEvents(harness.events), 1);
+  assert.deepEqual(rolloverStarts, []);
+
+  emitProviderEvent(harness, session.id, {
+    type: "stream_event",
+    data: { kind: "token_usage", used: 100_000, limit: 120_000 },
+    tokenUsage: { used: 100_000, limit: 120_000 },
+  });
+  await flushAsyncWork();
+  assert.deepEqual(rolloverStarts, [
+    {
+      remainingPercentThreshold: 30,
+      runSlug: null,
+      sessionId: session.id,
+      stageId: "virtual_simulation",
+      used: 100_000,
+    },
+  ]);
+  assert.equal(countNoRolloverUnlockEvents(harness.events), 0);
+});
+
 test("SessionRequestHandler resolves explicit post-turn usage unavailable to no-rollover", async () => {
   const harness = createHarness();
   const session = createDescriptionSession(
