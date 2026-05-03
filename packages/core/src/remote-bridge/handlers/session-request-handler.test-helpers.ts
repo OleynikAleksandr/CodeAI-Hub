@@ -48,6 +48,7 @@ interface MutableSessionStorage {
 }
 interface MutableProviderRegistry {
   getAdapter: (...args: unknown[]) => unknown;
+  getDescriptor: (...args: unknown[]) => unknown;
   handleRuntimeFailure: (...args: unknown[]) => void;
 }
 
@@ -112,6 +113,7 @@ export const createHarness = (
 
   const providerRegistry: MutableProviderRegistry = {
     getAdapter: () => null,
+    getDescriptor: () => ({ capabilities: {} }),
     handleRuntimeFailure: noop,
   };
   const sessionStorage: MutableSessionStorage = {

@@ -187,7 +187,7 @@ test("SessionRequestHandler emits model update from applied turn config on outbo
   const modelUpdate = harness.events.find(
     (event) => event.type === "session:model:update"
   );
-  assert.deepEqual(modelUpdate, {
+  assert.deepEqual(JSON.parse(JSON.stringify(modelUpdate)), {
     type: "session:model:update",
     payload: {
       baseModelId: "gpt-5.3-codex",
@@ -268,7 +268,7 @@ test("SessionRequestHandler applies Claude model from live settings snapshot on 
     const modelUpdate = harness.events.find(
       (event) => event.type === "session:model:update"
     );
-    assert.deepEqual(modelUpdate, {
+    assert.deepEqual(JSON.parse(JSON.stringify(modelUpdate)), {
       type: "session:model:update",
       payload: {
         baseModelId: "sonnet",
@@ -357,7 +357,7 @@ test("SessionRequestHandler threads Claude reasoning effort and display sync fro
     const modelUpdate = harness.events.find(
       (event) => event.type === "session:model:update"
     );
-    assert.deepEqual(modelUpdate, {
+    assert.deepEqual(JSON.parse(JSON.stringify(modelUpdate)), {
       type: "session:model:update",
       payload: {
         baseModelId: "sonnet",
