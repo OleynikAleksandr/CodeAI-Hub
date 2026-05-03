@@ -8,10 +8,7 @@
 - **Target outcome:** локальный Plan Orchestrator для нашей работы в обычном Codex workflow: новый `AGENTS.md`, scripts under `scripts/plan-orchestrator/`, automatic `pre-commit` / `post-commit` plan-state handling.
 - **Out of scope:** product runtime, VSIX/release build, `build-all.sh`, `build-release.sh`, app integration, provider modules, Project Manager UI, pre-push enforcement, snapshot/closeout automation commands beyond what is needed for this local workflow MVP.
 - **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `.husky/pre-commit`
   - `.husky/commit-msg`
   - `scripts/check-commit-message.sh`
@@ -28,7 +25,7 @@
 
 ## Правила выполнения (Execution Rules)
 
-- **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+- **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md`
 - Каждая микрозадача должна затрагивать не более 3 файлов. Если задача разрастается — разбить её до реализации.
 - Каждая микрозадача оформляется парой пунктов: (1) реализация/изменения, (2) `Git Commit: ...` отдельной строкой.
 - **Scope boundary:** это repo/process tooling, а не фича приложения. Не менять runtime/app packages unless a test utility absolutely requires package scripts.
