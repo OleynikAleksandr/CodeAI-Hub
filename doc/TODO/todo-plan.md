@@ -367,8 +367,8 @@
 6. [DONE] Git Commit: `test: repair continuity rollover verification types` (hash: ec2f876e5)
 7. [DONE] На clean tree запустить targeted verification: `npm test --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/codex-app-server-module`; UI lock behavior touched, therefore also `npm run typecheck:webview`. Result: all commands passed on clean tree after verification repair commits (scope: commands + todo-plan; expected commit: `test: verify codex continuity rollover fix`).
 8. [DONE] Git Commit: `test: verify codex continuity rollover fix` (hash: e4eba8930)
-9. [IN_PROGRESS] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы future version в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, включая Core and Codex provider artifacts (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex continuity rollover fix`).
-10. [TODO] Git Commit: `chore: bump release manifests for codex continuity rollover fix` (hash: TBD)
+9. [DONE] На clean tree запустить `./scripts/build-all.sh`; verified fresh `1.2.132` tarball'ы in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, project-manager (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex continuity rollover fix`).
+10. [IN_PROGRESS] Git Commit: `chore: bump release manifests for codex continuity rollover fix` (hash: TBD)
 11. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, Step 7.5 Gemini failsafe, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX передать пользователю для retest; scope остаётся ACTIVE до visual acceptance (scope: release command + session report; expected commit: `docs: record codex continuity rollover fix release build`).
 12. [TODO] Git Commit: `docs: record codex continuity rollover fix release build` (hash: TBD)
 
