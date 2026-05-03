@@ -309,7 +309,7 @@
 ### Stream 11P — Release Build (Codex App Server Startup Hotfix)
 
 1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.131` after failed Codex continuation in `1.2.130`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 files + todo-plan; expected commit: `docs: prepare codex app-server startup hotfix release`).
-2. [TODO] Git Commit: `docs: prepare codex app-server startup hotfix release` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare codex app-server startup hotfix release` (hash: 2b1924c20)
 3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.131` в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, включая Codex provider artifact with updated startup profile (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex startup hotfix`).
 4. [TODO] Git Commit: `chore: bump release manifests for codex startup hotfix` (hash: TBD)
 5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, Step 7.5 Gemini failsafe, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.131.vsix`; scope остаётся ACTIVE до пользовательского retest reopened Codex session next turn (scope: release command + session report; expected commit: `docs: record codex startup hotfix release build`).
