@@ -5,6 +5,7 @@
 - **Planning source (child):** `doc/SolidWorks-WorkFlow/Plans/Capture_Workbench_UI_Architecture.md` rev4
 - **Planning source (parent):** `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md` rev6
 - **Planning source (continuity hotfix):** `doc/SolidWorks-WorkFlow/Plans/Codex_FlowNode_Continuity_Rollover_Architecture.md` rev1
+- **Planning source (Documentation Tree fast rollover):** `doc/SolidWorks-WorkFlow/Plans/DocumentationTree_FastSyntheticRollover_Architecture.md` rev2
 - **Visual contract:** `doc/tmp/prototypes/capture-workbench.html` rev2
 - **Prototype source of UI truth:** `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/doc/tmp/prototypes/capture-workbench.html`
 - **Read this context before implementation:**
@@ -12,6 +13,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Capture_Workbench_UI_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Workbench_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Codex_FlowNode_Continuity_Rollover_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/DocumentationTree_FastSyntheticRollover_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
@@ -45,7 +47,7 @@
 - **Real-time документация:** любое изменение архитектуры/логики требует синхронного обновления `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и/или canonical SSOT-документов до коммита, чтобы изменения попали в тот же Git Commit.
 - **Release Build:** перед релизной сборкой обновить README.md и CHANGELOG.md на будущую версию = текущая версия из `package.json` + 1. Затем выполнить release checklist из AGENTS.md.
 - **Постоянное обновление:** после каждого коммита обновлять статус задачи и заносить hash в этот `doc/TODO/todo-plan.md`.
-- **Ordering invariant:** Stream 0 → Streams 1/2/3 (pre-UI, любой порядок) → Stream 4 (PM bridge/store, после 3; часть Stream 4, зависящая от capture result, также после 1/2) → Stream 5 (detached entry, после 0) → Streams 6/7/8 (UI surface, после 4+5; Stream 7 также после 1/2) → Stream 9 (launcher, после 5) → Stream 10 (release) → Stream 11 (acceptance) → Stream 11Q/11R/11S/11T (Codex continuity hotfix) → Stream 11U (release) → Stream 11V (user visual acceptance) → Stream 12 (closeout).
+- **Ordering invariant:** Stream 0 → Streams 1/2/3 (pre-UI, любой порядок) → Stream 4 (PM bridge/store, после 3; часть Stream 4, зависящая от capture result, также после 1/2) → Stream 5 (detached entry, после 0) → Streams 6/7/8 (UI surface, после 4+5; Stream 7 также после 1/2) → Stream 9 (launcher, после 5) → Stream 10 (release) → Stream 11 (acceptance) → Stream 11Q/11R/11S/11T (Codex continuity hotfix) → Stream 11U (release) → Stream 11V (user visual acceptance) → Stream 11W/11X/11Y/11Z (Documentation Tree fast synthetic rollover + legacy cleanup + continuation contract) → Stream 11AA (release) → Stream 11AB (user visual acceptance) → Stream 12 (closeout).
 
 ---
 
@@ -374,11 +376,61 @@
 
 ### Stream 11V — User Visual Acceptance Testing (Codex Continuity Rollover Retest)
 
-1. [TODO] Установить continuity-fix VSIX future version, открыть тот же workspace и reopened `Virtual Simulation Codex` dialog, отправить следующий turn и проверить, что нет `Provider codexCli unavailable`, нет stale-binding loop, и UI не остаётся навсегда на `Agent is resuming your session... Please wait`.
-2. [TODO] Проверить per-turn model/reasoning: после завершённого turn сменить Codex model/reasoning в Status Panel, отправить следующий turn и подтвердить по Codex rollout `turn_context` / app-server request evidence, что выбранные `model` и `effort` применились.
-3. [TODO] Проверить threshold rollover: выставить/использовать remaining-percent threshold, довести flow-node до срабатывания, подтвердить Core phases `threshold_reached` → `report_in_progress` → `report_ready` → `new_session_created` → `resume_sent`, появление continuity report на диске и resume prompt в новой session.
-4. [TODO] Зафиксировать пользовательский visual retest в `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`, и при необходимости `doc/BugRegistry.md`; без explicit acceptance Scope Closeout не выполнять (scope: ≤3 docs; expected commit: `docs: record codex continuity rollover visual acceptance`).
-5. [TODO] Git Commit: `docs: record codex continuity rollover visual acceptance` (hash: TBD)
+1. [DONE] Установить continuity-fix VSIX `1.2.132`, открыть workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.5` и проверить Codex Description flow-node continuity. Result: provider startup работает, первый create-report/resume цикл с `gpt-5.5` прошёл, source segment достиг `remainingPercent` около `75%`.
+2. [BLOCKED] Проверить per-turn model/reasoning после continuity resume. Result: переключение на `gpt-5.3-codex-spark` применилось (`turn_context.model = "gpt-5.3-codex-spark"`, `effort = "high"`, `summary = "none"`), но окно модели стало `121600` вместо `258400`; первый реальный Spark-turn перечитал большой source pack и быстро пересёк remaining-percent threshold.
+3. [BLOCKED] Проверить threshold rollover. Result: Core увидел final report path до завершения Create Report turn и создал следующую session с промежуточным report body; source turn позже дочистил report. Дополнительный анализ показал более сильное решение для Documentation Tree: не создавать agent-authored reports вообще, а делать lazy synthetic rollover через existing workflow start prompt + last visible assistant message + next user message. Root cause and target design moved to `doc/SolidWorks-WorkFlow/Plans/DocumentationTree_FastSyntheticRollover_Architecture.md` rev2 and Streams 11W-11AB, including explicit old Documentation Tree report/resume cleanup and continuation-vs-cold-start instruction contract.
+4. [TODO] Зафиксировать финальный пользовательский visual retest после Documentation Tree fast synthetic rollover fix в `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`, и при необходимости `doc/BugRegistry.md`; без explicit acceptance Scope Closeout не выполнять (scope: ≤3 docs; expected commit: `docs: record documentation rollover visual acceptance`).
+5. [TODO] Git Commit: `docs: record documentation rollover visual acceptance` (hash: TBD)
+
+### Stream 11W — Documentation Tree Synthetic Rollover State
+
+1. [TODO] Добавить Core owner для pending Documentation Tree synthetic rollover: новый `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-rollover-state.ts`, update `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-rollover.ts`, and focused `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`; для `description`, `virtual_simulation`, `diagram_modules` skip Create Report/resume bootstrap, capture source/target session ids, stage/workspace/provider binding, and last user-visible assistant message (scope: 3 files; expected commit: `fix: add documentation tree synthetic rollover state`).
+2. [TODO] Git Commit: `fix: add documentation tree synthetic rollover state` (hash: TBD)
+3. [TODO] Разблокировать input после materialized continuation state, not after report/resume: update `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-rollover.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-lock-service.ts`, and focused lock regression test so Documentation Tree fast path emits unlock without `report_in_progress` wait (scope: ≤3 files; expected commit: `fix: unlock documentation rollover without report bootstrap`).
+4. [TODO] Git Commit: `fix: unlock documentation rollover without report bootstrap` (hash: TBD)
+
+### Stream 11X — Lazy Continuation Prompt Envelope
+
+1. [TODO] Добавить lazy next-user-message envelope: новый `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, update `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`, and focused dispatch test so first real user send after synthetic rollover prepends existing workflow start prompt/step contract + `Continuation Mode` + `Last Assistant Message Before Rollover` + user text (scope: 3 files; expected commit: `fix: attach documentation continuation envelope to next user turn`).
+2. [TODO] Git Commit: `fix: attach documentation continuation envelope to next user turn` (hash: TBD)
+3. [TODO] Ensure envelope content excludes thinking/internal/translation/system messages: update `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, `packages/core/src/unified-session/storage.ts` or existing session message access owner if needed, and focused unit test; only user-visible assistant text is eligible (scope: ≤3 files; expected commit: `fix: filter documentation rollover assistant context`).
+4. [TODO] Git Commit: `fix: filter documentation rollover assistant context` (hash: TBD)
+
+### Stream 11Y — Documentation Tree Legacy Rollover Cleanup
+
+1. [TODO] Очистить Documentation Tree stages from old Create Report/resume eligibility: update `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-rollover.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-flow-node-report-state.ts`, and focused `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts`; `description`, `virtual_simulation`, `diagram_modules` must no longer enter report-ready/report-wait state after synthetic rollover is selected (scope: 3 files; expected commit: `fix: remove documentation tree report rollover path`).
+2. [TODO] Git Commit: `fix: remove documentation tree report rollover path` (hash: TBD)
+3. [TODO] Очистить resume-bootstrap side effects for Documentation Tree synthetic path: update `packages/core/src/remote-bridge/handlers/session-request-handler-resume-lifecycle.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`, and focused `packages/core/src/remote-bridge/handlers/session-request-handler.resume-embedding.test.ts`; no standalone internal bootstrap/`Ready to continue working` turn for Documentation Tree fast rollover (scope: 3 files; expected commit: `fix: remove documentation tree resume bootstrap path`).
+4. [TODO] Git Commit: `fix: remove documentation tree resume bootstrap path` (hash: TBD)
+
+### Stream 11Z — Continuation Contract Regression Coverage And SSOT
+
+1. [TODO] Add production-path regression for Documentation Tree fast path: update `packages/core/src/remote-bridge/handlers/session-request-handler.rollover.test.ts` and `packages/core/src/remote-bridge/handlers/session-request-handler.resume-embedding.test.ts` so `description`/`virtual_simulation`/`diagram_modules` rollover never sends Create Report, never waits for report path, and sends the combined continuation envelope only with the next real user message (scope: ≤2 files; expected commit: `test: cover documentation tree fast synthetic rollover`).
+2. [TODO] Git Commit: `test: cover documentation tree fast synthetic rollover` (hash: TBD)
+3. [TODO] Add continuation-instruction regression: update `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, focused envelope test, and `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` if needed; assert continuation prompt contains explicit continuation semantics (`not a cold start`, existing artifacts authoritative, user's text answers the last visible assistant message) while still reusing the normal workflow start/step contract (scope: ≤3 files; expected commit: `test: cover documentation continuation instruction contract`).
+4. [TODO] Git Commit: `test: cover documentation continuation instruction contract` (hash: TBD)
+5. [TODO] Update continuity SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; document Documentation Tree synthetic rollover, lazy prompt envelope, last-visible-assistant-message injection, continuation-vs-cold-start instruction differences, and report-based fallback boundary for implementation-heavy flows (scope: 3 docs; expected commit: `docs: document documentation tree fast rollover`).
+6. [TODO] Git Commit: `docs: document documentation tree fast rollover` (hash: TBD)
+
+### Stream 11AA — Release Build (Documentation Tree Fast Rollover)
+
+1. [TODO] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (current `1.2.132`, future expected `1.2.133`); обновить `README.md` and `CHANGELOG.md` на будущую версию (scope: 2 release docs + todo-plan; expected commit: `docs: prepare documentation rollover fix release`).
+2. [TODO] Git Commit: `docs: prepare documentation rollover fix release` (hash: TBD)
+3. [TODO] На clean tree запустить targeted verification: `npm test --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/codex-app-server-module`, and `npm run typecheck:webview` if UI lock/stream contracts are touched (scope: commands + todo-plan; expected commit: `test: verify documentation rollover fix`).
+4. [TODO] Git Commit: `test: verify documentation rollover fix` (hash: TBD)
+5. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `~/.codeai-hub/releases/` and `doc/tmp/releases/` (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for documentation rollover fix`).
+6. [TODO] Git Commit: `chore: bump release manifests for documentation rollover fix` (hash: TBD)
+7. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Step 7.5: Validating local artefacts`, `Removing dev dependencies before packaging`, `✅ Package created`; scope remains ACTIVE until user retest (scope: release command + session report; expected commit: `docs: record documentation rollover fix release build`).
+8. [TODO] Git Commit: `docs: record documentation rollover fix release build` (hash: TBD)
+
+### Stream 11AB — User Visual Acceptance Testing (Documentation Tree Fast Rollover)
+
+1. [TODO] Установить fast-rollover fix VSIX, открыть workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.5`, повторить Codex Description flow-node continuity with `remainingPercentThreshold: 80`, and verify Documentation Tree rollover skips Create Report/report file creation.
+2. [TODO] Ответить на последний видимый вопрос старого агента after rollover and verify the next provider turn includes the normal stage contract, `Continuation Mode`, `Last Assistant Message Before Rollover`, and the real user answer; continuation instructions must make clear this is not a cold start, existing artifacts are authoritative, and the user answer belongs to the old assistant question.
+3. [TODO] Переключить continuation session на `gpt-5.3-codex-spark` / selected reasoning and verify new turn context/app-server rollout uses the selected model/reasoning while the smaller `121600` window is handled predictably.
+4. [TODO] Verify failure behavior: stale binding/provider failure must not leave UI stuck on `Agent is resuming your session... Please wait`; no `Provider codexCli unavailable`.
+5. [TODO] Зафиксировать пользовательский fast-rollover visual retest в `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`, and `doc/BugRegistry.md` if still failing; without explicit acceptance Scope Closeout remains blocked (scope: ≤3 docs; expected commit: `docs: record documentation rollover visual acceptance`).
+6. [TODO] Git Commit: `docs: record documentation rollover visual acceptance` (hash: TBD)
 
 ### Stream 12 — Scope Closeout
 
