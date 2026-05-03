@@ -8,6 +8,11 @@ import type {
   FlowNodeContinuityLockContext,
 } from "./session-continuity-lock-service";
 import type { FlowNodeRolloverNotification } from "./session-continuity-rollover-orchestrator";
+import {
+  type DocumentationRolloverContext,
+  isDocumentationTreeRolloverStage,
+  SessionRequestHandlerDocumentationRolloverState,
+} from "./session-request-handler-documentation-rollover-state";
 import type { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
@@ -40,9 +45,20 @@ interface SessionRequestHandlerFlowNodeRolloverDependencies {
 
 export class SessionRequestHandlerFlowNodeRollover {
   private readonly deps: SessionRequestHandlerFlowNodeRolloverDependencies;
+  private readonly documentationRolloverState =
+    new SessionRequestHandlerDocumentationRolloverState();
 
   constructor(deps: SessionRequestHandlerFlowNodeRolloverDependencies) {
     this.deps = deps;
+  }
+
+  getDocumentationRolloverContext(
+    sessionId: string
+  ): DocumentationRolloverContext | null {
+    return (
+      this.documentationRolloverState.getByTargetSessionId(sessionId) ??
+      this.documentationRolloverState.getBySourceSessionId(sessionId)
+    );
   }
 
   async rolloverFlowNodeSession(
@@ -61,6 +77,17 @@ export class SessionRequestHandlerFlowNodeRollover {
       this.deps.finalizeFlowNodeContinuityLock({
         sessionId: session.id,
         reason: "resume_failed",
+      });
+      return;
+    }
+    if (isDocumentationTreeRolloverStage(stageId)) {
+      await this.rolloverDocumentationTreeSession({
+        session,
+        rollover,
+        workspaceSlug,
+        stageId,
+        adapter,
+        options,
       });
       return;
     }
@@ -258,6 +285,84 @@ export class SessionRequestHandlerFlowNodeRollover {
         reportPath: reportPaths.reportPath,
       },
       options
+    );
+  }
+
+  private async rolloverDocumentationTreeSession(options: {
+    readonly adapter: NonNullable<ReturnType<ProviderRegistry["getAdapter"]>>;
+    readonly rollover: {
+      readonly remainingPercent: number;
+      readonly thresholdPercent: number;
+      readonly rolloverId: string;
+    };
+    readonly session: Session;
+    readonly stageId: string;
+    readonly workspaceSlug: string;
+    readonly options?: { readonly silent: boolean };
+  }): Promise<void> {
+    const { session, rollover, workspaceSlug, stageId, adapter } = options;
+    const runSlug = session.runSlug ?? null;
+    const notificationBase = {
+      kind: "flow_node_rollover",
+      sourceSessionId: session.id,
+      providerId: session.providerId,
+      stageId,
+      runSlug,
+      remainingPercent: rollover.remainingPercent,
+      thresholdPercent: rollover.thresholdPercent,
+    } as const;
+    const nextSession =
+      await this.deps.sessionBootstrap.createAndRegisterSession({
+        providerId: session.providerId,
+        workspacePath: session.workspacePath,
+        adapter,
+        resumeMode: "resume_via_rollover",
+        silent: options.options?.silent === true,
+        context: {
+          initiativeSlug: workspaceSlug,
+          stage: stageId,
+          runSlug: session.runSlug,
+          providerSessionId: null,
+        },
+        inheritedModelBinding: session.modelBinding ?? null,
+        rootSessionId:
+          this.deps.continuityRootBySessionId.get(session.id) ?? session.id,
+        continuationParentId: session.id,
+      });
+    if (!nextSession) {
+      this.deps.finalizeFlowNodeContinuityLock({
+        sessionId: session.id,
+        reason: "resume_failed",
+      });
+      return;
+    }
+
+    const context =
+      this.documentationRolloverState.registerMaterializedRollover({
+        rolloverId: rollover.rolloverId,
+        sourceSession: session,
+        targetSession: nextSession,
+        workspaceSlug,
+      });
+    this.deps.registerFlowNodeContinuityLockContext({
+      rolloverId: context.rolloverId,
+      sourceSessionId: context.sourceSessionId,
+      targetSessionId: context.targetSessionId,
+      stageId: context.stageId,
+      runSlug: context.runSlug,
+      awaitingBootstrapTurn: false,
+    });
+    this.deps.emitTurnStateEvent({ sessionId: session.id, state: "idle" });
+    this.emitNotification(
+      session.id,
+      {
+        ...notificationBase,
+        phase: "new_session_created",
+        continuityRequestId: rollover.rolloverId,
+        continuityAttempt: 1,
+        nextSessionId: nextSession.id,
+      },
+      options.options
     );
   }
 
