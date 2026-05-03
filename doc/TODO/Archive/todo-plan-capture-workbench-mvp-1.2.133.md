@@ -436,14 +436,14 @@
 3. [DONE] Переключить continuation session на `gpt-5.3-codex-spark` / selected reasoning and verify new turn context/app-server rollout uses the selected model/reasoning while the smaller `121600` window is handled predictably. User acceptance 2026-05-03: релиз работает идеально.
 4. [DONE] Verify failure behavior: stale binding/provider failure must not leave UI stuck on `Agent is resuming your session... Please wait`; no `Provider codexCli unavailable`. User acceptance 2026-05-03: новых сбоев не замечено.
 5. [DONE] Зафиксировать пользовательский fast-rollover visual retest в `doc/TODO/todo-plan.md`, `doc/Sessions/Session047.md`; `doc/BugRegistry.md` не менялся, потому что retest passed and no new bug/failure was reported (scope: docs; expected commit: `docs: close capture workbench and documentation rollover scope`).
-6. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: TBD)
+6. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: 009ba5b39)
 
 ### Stream 12 — Scope Closeout
 
 1. [DONE] После explicit user acceptance перенести завершённый active plan в `doc/TODO/Archive/todo-plan-capture-workbench-mvp-1.2.133.md`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`; зафиксировать planning-doc disposition: `Provider_Native_Request_Capture_Workbench_Architecture.md` и `Capture_Workbench_UI_Architecture.md` остаются active/deferred для следующих Workbench phases, `Codex_FlowNode_Continuity_Rollover_Architecture.md` и `DocumentationTree_FastSyntheticRollover_Architecture.md` archived after release acceptance, `Implementation_Continuity_Deterministic_Snapshot_Architecture.md` remains deferred future scope (scope: docs; expected commit: `docs: close capture workbench and documentation rollover scope`).
-2. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: TBD)
+2. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: 009ba5b39)
 3. [DONE] Создать новый reset-state `doc/TODO/todo-plan.md` для отсутствующего active scope (scope: 1 файл; expected commit: `docs: close capture workbench and documentation rollover scope`).
-4. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: TBD)
+4. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: 009ba5b39)
 5. [DONE] Создать/обновить `doc/Sessions/Session047.md` как Completion Report: `Execution Scope Status: COMPLETED`, реальные commit hashes, explicit user acceptance после визуального тестирования. Session report остается единственным незакоммиченным файлом по closeout rules.
 
 ---
