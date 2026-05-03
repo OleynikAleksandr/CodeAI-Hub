@@ -416,11 +416,11 @@
 3. [DONE] Add continuation-instruction regression: update focused envelope test; assert continuation prompt contains explicit continuation semantics (`not a cold start`, existing artifacts authoritative, user's text answers the last visible assistant message, no continuity reports) while still reusing the normal workflow start/step contract. Verification: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts` (scope: 1 test file; expected commit: `test: cover documentation continuation instruction contract`).
 4. [DONE] Git Commit: `test: cover documentation continuation instruction contract` (hash: b8bb33780)
 5. [DONE] Update continuity SSOT: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`, `doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`; document Documentation Tree synthetic rollover, lazy prompt envelope, last-visible-assistant-message injection, continuation-vs-cold-start instruction differences, and report-based fallback boundary for implementation-heavy flows. Verification: `git diff --check` (scope: 3 docs; expected commit: `docs: document documentation tree fast rollover`).
-6. [TODO] Git Commit: `docs: document documentation tree fast rollover` (hash: TBD)
+6. [DONE] Git Commit: `docs: document documentation tree fast rollover` (hash: 025b0f116)
 
 ### Stream 11AA — Release Build (Documentation Tree Fast Rollover)
 
-1. [TODO] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (current `1.2.132`, future expected `1.2.133`); обновить `README.md` and `CHANGELOG.md` на будущую версию (scope: 2 release docs + todo-plan; expected commit: `docs: prepare documentation rollover fix release`).
+1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (current `1.2.132`, future expected `1.2.133`); обновить `README.md` and `CHANGELOG.md` на будущую версию. Verification: `rg -n "Current Release|1\\.2\\.133|^## \\[" README.md CHANGELOG.md package.json` (scope: 2 release docs + todo-plan; expected commit: `docs: prepare documentation rollover fix release`).
 2. [TODO] Git Commit: `docs: prepare documentation rollover fix release` (hash: TBD)
 3. [TODO] На clean tree запустить targeted verification: `npm test --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/codex-app-server-module`, and `npm run typecheck:webview` if UI lock/stream contracts are touched (scope: commands + todo-plan; expected commit: `test: verify documentation rollover fix`).
 4. [TODO] Git Commit: `test: verify documentation rollover fix` (hash: TBD)

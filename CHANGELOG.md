@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.133] - 2026-05-03
+### Fixed
+- **Documentation Tree continuity rollover no longer blocks on agent-authored reports.** `Description`, `Virtual Simulation`, and `Diagram Modules` now use a fast synthetic rollover path that creates the next session, unlocks input after target materialization, skips Create Report/report polling/resume bootstrap, and attaches the continuation contract only to the next real user message.
+- **Continuation turns now preserve the user's visible conversation context.** The first user turn after rollover carries the normal workflow start/step contract, explicit `Continuation Mode`, the last user-visible assistant message from the previous session, and the user's answer while UI/history keep showing only the original user text.
+
+### Tests
+- **Fast rollover coverage added across direct and production paths.** Targeted Core tests cover stale report-state cleanup, no internal bootstrap turn, inherited Codex model/reasoning binding, all three Documentation Tree stages through post-turn token usage, and the continuation instruction envelope contract.
+
 ## [1.2.132] - 2026-05-03
 ### Fixed
 - **Codex flow-node continuity rollover now preserves workflow context and per-turn model/reasoning.** Reopened `Description`, `Virtual Simulation`, and `Diagram Modules` trunk sessions materialize with their workspace/stage context, rollover-created Codex sessions inherit the current session binding, and stale-provider retry re-sends with the active Codex turn config instead of falling back to stale defaults.
