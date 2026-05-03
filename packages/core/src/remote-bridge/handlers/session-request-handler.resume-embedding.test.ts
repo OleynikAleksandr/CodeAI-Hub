@@ -4,11 +4,19 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Session } from "../../session-manager";
+import type { SessionModelBinding } from "../../session-model-binding";
+import { readAppliedProviderTurnConfig } from "../types";
 import { createHarness, internals } from "./session-request-handler.test";
 
 interface RecordedInternalMessage {
   readonly content: string;
   readonly sessionId: string;
+}
+
+interface RecordedProviderSend {
+  readonly content: string;
+  readonly providerSessionId: string;
+  readonly turnOptions: Record<string, unknown> | undefined;
 }
 
 const createTempDir = (prefix: string): string =>
@@ -79,4 +87,100 @@ test("rolloverFlowNodeSession embeds continuity report body into resume prompt",
   );
   assert.equal(resume.content.includes("# Continuity Report"), true);
   assert.equal(resume.content.includes("[...truncated...]"), true);
+});
+
+test("rolloverFlowNodeSession inherits Codex model binding into resume turn", async () => {
+  const workspacePath = "/tmp/continuity-resume-model-binding";
+  const reportsDir = createTempDir("codeai-hub-resume-binding-report-");
+  const reportPath = path.join(reportsDir, "report.md");
+  const tmpReportPath = path.join(reportsDir, "report.tmp.md");
+  mkdirSync(path.dirname(reportPath), { recursive: true });
+  writeFileSync(reportPath, "# Continuity Report\n\nReady.\n", "utf8");
+
+  const harness = createHarness({
+    templatesDir: createTempDir("codeai-hub-templates-"),
+    continuityPreemptRemainingPercentThreshold: 0,
+  });
+  const sourceSession = harness.sessionManager.createSession(
+    "codexCli",
+    workspacePath,
+    "provider-source",
+    {
+      initiativeSlug: "CodeAI-Hub-test",
+      stage: "virtual_simulation",
+      runSlug: null,
+    }
+  );
+  const sourceBinding: SessionModelBinding = {
+    key: "provider\u001fcodexCli\u001fsession\u001fsource-session",
+    providerId: "codexCli",
+    baseModelId: "gpt-5.3-codex-spark",
+    modelId: "gpt-5.3-codex-spark reasoning:xhigh",
+    reasoningEffort: "xhigh",
+    source: "switch_request",
+    boundAt: "2026-05-03T08:00:00.000Z",
+    updatedAt: "2026-05-03T08:00:00.000Z",
+  };
+  harness.sessionManager.setModelBinding(sourceSession.id, sourceBinding);
+  harness.providerSessions.set(sourceSession.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-source",
+    unsubscribe: () => {
+      // no provider subscription in this focused test
+    },
+  });
+
+  const api = internals(harness.handler);
+  const providerSends: RecordedProviderSend[] = [];
+  harness.providerRegistry.getAdapter = () => ({
+    createSession: () => Promise.resolve("provider-next"),
+    sendMessage: (
+      providerSessionId: string,
+      content: string,
+      turnOptions?: Record<string, unknown>
+    ) => {
+      providerSends.push({
+        providerSessionId,
+        content,
+        turnOptions,
+      });
+      return Promise.resolve();
+    },
+    subscribe: () => () => {
+      // no provider subscription in this focused test
+    },
+  });
+  Object.assign(api.flowNodeContinuity, {
+    buildReportPaths: () => ({ reportPath, tmpReportPath }),
+  });
+
+  await api.flowNodeRollover.rolloverFlowNodeSession(
+    harness.sessionManager.getSession(sourceSession.id) ?? sourceSession,
+    { remainingPercent: 1, thresholdPercent: 2, rolloverId: "rollover-1" },
+    { silent: true }
+  );
+
+  const nextSession = harness.sessionManager
+    .listSessions()
+    .find((session) => session.id !== sourceSession.id);
+  assert.ok(nextSession, "Expected rollover target session");
+  assert.equal(nextSession.modelBinding?.source, "continuity_inherited");
+  assert.equal(
+    nextSession.modelBinding?.modelId,
+    "gpt-5.3-codex-spark reasoning:xhigh"
+  );
+
+  const resumeSend = providerSends.find((send) =>
+    send.content.includes("# Flow Node Continuity — Resume")
+  );
+  assert.ok(resumeSend, "Expected resume prompt provider send");
+  assert.equal(resumeSend.providerSessionId, "provider-next");
+  const turnConfig = readAppliedProviderTurnConfig(resumeSend.turnOptions);
+  assert.equal(turnConfig?.source, "session_binding");
+  assert.equal(turnConfig?.baseModelId, "gpt-5.3-codex-spark");
+  assert.equal(
+    turnConfig?.effectiveModelId,
+    "gpt-5.3-codex-spark reasoning:xhigh"
+  );
+  assert.equal(turnConfig?.reasoningEffort, "xhigh");
 });
