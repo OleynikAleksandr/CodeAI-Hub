@@ -427,7 +427,7 @@
 5. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `~/.codeai-hub/releases/` and `doc/tmp/releases/`. Verification: `./scripts/build-all.sh`; `find /Users/oleksandroliinyk/.codeai-hub/releases -maxdepth 1 -type f -name '*1.2.133*' | sort`; `find doc/tmp/releases -maxdepth 1 -type f -name '*1.2.133*' | sort` (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for documentation rollover fix`).
 6. [DONE] Git Commit: `chore: bump release manifests for documentation rollover fix` (hash: fe3045209)
 7. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Step 7.5: Validating local artefacts`, `Removing dev dependencies before packaging`, `✅ Package created`; scope remains ACTIVE until user retest. Verification: `./scripts/build-release.sh --use-current-version`; package created: `codeai-hub-1.2.133.vsix` (2.8M); confirmed required output lines: `Step 7: Verifying SDK exclusions`, `Step 7.5: Validating local artefacts`, `Removing dev dependencies before packaging`, `✅ Package created` (scope: release command + session report; expected commit: `docs: record documentation rollover fix release build`).
-8. [TODO] Git Commit: `docs: record documentation rollover fix release build` (hash: TBD)
+8. [DONE] Git Commit: `docs: record documentation rollover fix release build` (hash: 836652d91)
 
 ### Stream 11AB — User Visual Acceptance Testing (Documentation Tree Fast Rollover)
 
