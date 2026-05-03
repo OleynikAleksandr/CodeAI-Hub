@@ -98,7 +98,7 @@
 - Updated Codex invocation SSOT to mark standalone `mcp_servers.<name>.enabled=false` as an invalid contract for `codex-cli 0.128.0`.
 
 **Commits:**
-- TBD
+- `2b48db841 fix: start codex app-server with 0.128 config schema`
 
 **Release:** `1.2.131`
 
