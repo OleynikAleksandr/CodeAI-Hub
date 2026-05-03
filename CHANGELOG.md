@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.132] - 2026-05-03
+### Fixed
+- **Codex flow-node continuity rollover now preserves workflow context and per-turn model/reasoning.** Reopened `Description`, `Virtual Simulation`, and `Diagram Modules` trunk sessions materialize with their workspace/stage context, rollover-created Codex sessions inherit the current session binding, and stale-provider retry re-sends with the active Codex turn config instead of falling back to stale defaults.
+- **Post-turn continuity decisions no longer leave PM input stuck in resuming state.** Terminal snapshot reasons (`no_rollover_needed`, `resume_ready`, `resume_failed`, `resume_timeout`) return the session stream to idle, including aborted plain turns.
+
+### Tests
+- **Continuity hotfix coverage added across Core and PM snapshot reconciliation.** Targeted tests cover Codex restored dialog context hydration, trunk rollover eligibility, delayed usage arbitration for `Virtual Simulation`, continuity model-binding refresh, inherited rollover binding, stale rebind retry, and no-indefinite-resuming terminal decisions.
+
 ## [1.2.131] - 2026-05-03
 ### Fixed
 - **Codex app-server startup is compatible with `codex-cli 0.128.0`.** CodeAI Hub no longer passes legacy partial `mcp_servers.*.enabled=false` config overrides that make Codex reject startup with `invalid transport in mcp_servers.codex` and leave reopened Codex sessions at `Provider codexCli unavailable`.

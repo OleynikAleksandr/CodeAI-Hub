@@ -359,8 +359,8 @@
 
 ### Stream 11U — Release Build (Codex Continuity Rollover Fix)
 
-1. [TODO] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (expected `1.2.132` after failed resume/continuity retest in `1.2.131`); обновить README.md и CHANGELOG.md на будущую версию (scope: 2 release docs + todo-plan; expected commit: `docs: prepare codex continuity rollover fix release`).
-2. [TODO] Git Commit: `docs: prepare codex continuity rollover fix release` (hash: TBD)
+1. [DONE] Перед новой сборкой определить будущую версию из текущего `package.json` + 1 (current `1.2.131`, future `1.2.132` after failed resume/continuity retest in `1.2.131`); обновлены `README.md` и `CHANGELOG.md` на будущую версию (scope: 2 release docs + todo-plan; expected commit: `docs: prepare codex continuity rollover fix release`).
+2. [IN_PROGRESS] Git Commit: `docs: prepare codex continuity rollover fix release` (hash: TBD)
 3. [TODO] На clean tree запустить targeted verification: `npm test --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/core`, `npm run build --workspace @codeai-hub/codex-app-server-module`; если UI lock behavior touched, also `npm run typecheck:webview` (scope: commands only; expected commit: `test: verify codex continuity rollover fix`).
 4. [TODO] Git Commit: `test: verify codex continuity rollover fix` (hash: TBD)
 5. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы future version в `~/.codeai-hub/releases/` и `doc/tmp/releases/`, включая Core and Codex provider artifacts (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex continuity rollover fix`).
