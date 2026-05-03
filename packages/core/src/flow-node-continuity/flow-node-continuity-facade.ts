@@ -1,9 +1,8 @@
 import type {
-  FlowNodeContinuityRolloverFilter,
   FlowNodeContinuityTemplateId,
   FlowNodeContinuityTemplateVariables,
 } from "./flow-node-continuity-types";
-import { FLOW_NODE_CONTINUITY_MVP_FILTER } from "./flow-node-continuity-types";
+import { FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS } from "./flow-node-continuity-types";
 import type { ContinuityReportPaths } from "./report-path";
 import { buildContinuityReportPaths } from "./report-path";
 import type { WaitForReportResult } from "./report-waiter";
@@ -22,7 +21,6 @@ export interface FlowNodeContinuityFacadeOptions {
 export class FlowNodeContinuityFacade {
   readonly #templateLoader: TemplateLoader;
   readonly #reportWaiter: ContinuityReportWaiter;
-  readonly #filter: FlowNodeContinuityRolloverFilter;
   readonly #preemptRemainingPercentThreshold: number;
 
   constructor(options: FlowNodeContinuityFacadeOptions) {
@@ -30,7 +28,6 @@ export class FlowNodeContinuityFacade {
       templatesDir: options.templatesDir,
     });
     this.#reportWaiter = new ContinuityReportWaiter(options.clock);
-    this.#filter = FLOW_NODE_CONTINUITY_MVP_FILTER;
     this.#preemptRemainingPercentThreshold = Math.min(
       100,
       Math.max(0, Math.round(options.preemptRemainingPercentThreshold))
@@ -79,8 +76,11 @@ export class FlowNodeContinuityFacade {
     readonly runSlug: string | null;
   }): boolean {
     return (
-      options.stageId === this.#filter.stageId &&
-      options.runSlug === this.#filter.runSlug
+      options.stageId !== null &&
+      options.runSlug === null &&
+      FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS.includes(
+        options.stageId as (typeof FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS)[number]
+      )
     );
   }
 

@@ -11,19 +11,33 @@ const createFacade = (): FlowNodeContinuityFacade =>
     preemptRemainingPercentThreshold: 80,
   });
 
-test("FlowNodeContinuityFacade matches modern description sessions (runSlug=null)", () => {
+test("FlowNodeContinuityFacade matches trunk workflow sessions (runSlug=null)", () => {
   const facade = createFacade();
-  assert.equal(
-    facade.isEligibleForRollover({
-      stageId: "description",
-      runSlug: null,
-    }),
-    true
-  );
+  for (const stageId of [
+    "description",
+    "virtual_simulation",
+    "diagram_modules",
+  ]) {
+    assert.equal(
+      facade.isEligibleForRollover({
+        stageId,
+        runSlug: null,
+      }),
+      true,
+      stageId
+    );
+  }
   assert.equal(
     facade.isEligibleForRollover({
       stageId: "description",
       runSlug: "collector",
+    }),
+    false
+  );
+  assert.equal(
+    facade.isEligibleForRollover({
+      stageId: "unknown",
+      runSlug: null,
     }),
     false
   );
@@ -53,6 +67,14 @@ test("FlowNodeContinuityFacade starts preemptive rollover only for eligible sess
       runSlug: null,
       remainingPercent: 10,
     }),
-    false
+    true
+  );
+  assert.equal(
+    facade.shouldStartSilentPreemptiveRollover({
+      stageId: "diagram_modules",
+      runSlug: null,
+      remainingPercent: 80,
+    }),
+    true
   );
 });
