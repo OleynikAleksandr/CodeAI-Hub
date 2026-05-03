@@ -1,15 +1,22 @@
 # Session Continuity — Contract (SSOT)
 
 ## Назначение
-Механика непрерывности для долгоживущих workflow-сессий: handoff report → rollover → resume bootstrap без потери контекста.
+Механика непрерывности для долгоживущих workflow-сессий: post-turn threshold arbitration → rollover → продолжение без потери контекста.
+
+В production есть два разных continuity path:
+- **Documentation Tree synthetic rollover** для `description`, `virtual_simulation`, `diagram_modules`: без continuity report, без internal resume turn; Core создаёт новый provider segment, сохраняет lightweight continuation context и добавляет continuation envelope только к следующему реальному user message.
+- **Report-based fallback** для implementation-heavy / non-Documentation-Tree flows с отдельным contract: handoff report → новая session → internal `Flow Node Continuity — Resume`.
 
 ## Инварианты
-- Handoff report delivery обязателен (ack + retry). При failure UI должен получить явный failure, а не stuck working.
-- Bootstrap новой сессии выполняется internal turn’ом `Flow Node Continuity — Resume`.
+- Для report-based fallback handoff report delivery обязателен (ack + retry). При failure UI должен получить явный failure, а не stuck working.
+- Для report-based fallback bootstrap новой сессии выполняется internal turn’ом `Flow Node Continuity — Resume`.
+- Для Documentation Tree synthetic rollover Core не создаёт, не ждёт и не читает continuity report. Новая session считается готовой после materialized continuation state + lock unlock; `resumeMode` target lifecycle нормализуется в `resume_in_place`, чтобы UI не показывал standalone resuming.
+- Documentation Tree continuation envelope строится лениво при первом реальном `dialog:send`/user turn target session. Envelope обязан включать normal workflow start/step contract, `Continuation Mode`, last user-visible assistant message from source session и текущий user message; visible history message пользователя остаётся без служебной обёртки.
+- Last assistant context для Documentation Tree берётся только из user-visible assistant messages; `thinking`, `translation`, hidden/system/internal и ready-to-continue placeholders не имеют права становиться continuation question.
 - UI не должен показывать continuity-инфраструктуру как отдельные узлы; пользователь видит только актуальный диалог.
 - Любая continuity-фаза не должна приводить к “вечному resuming”: lock/unlock SSOT описан в `doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md`.
 - Для flow-node/document sessions threshold-trigger continuity разрешён только на post-turn boundary: `token_usage` во время активного user turn может только кешировать snapshot и не имеет права немедленно запускать rollover.
-- Flow-node rollover в текущем production scope разрешён только для trunk workflow stages `description`, `virtual_simulation`, `diagram_modules` при `runSlug=null`. Collector/reviewer/Development Tree branch agents остаются ineligible до отдельного artifact-specific continuity contract.
+- Flow-node rollover в текущем production scope разрешён для trunk Documentation Tree stages `description`, `virtual_simulation`, `diagram_modules` при `runSlug=null` и идёт через synthetic path. Collector/reviewer/Development Tree branch agents остаются ineligible до отдельного artifact-specific continuity contract.
 - Для eligible flow-node session обязательны `initiativeSlug` и `stage`. Restored dialog materialization и `dialog:send` reuse обязаны восстанавливать `initiativeSlug=workspaceSlug`, иначе Core обязан завершать arbitration как `no_rollover` и разблокировать UI.
 - Continuity chain обязана хранить актуальный `session.modelBinding`: initial outbound turn создаёт segment с binding snapshot, а каждый последующий outbound после same-session model/reasoning switch refresh-ит latest matching segment без создания duplicate segment. Threshold-created continuation session наследует именно этот persisted/current binding.
 - Если provider отдаёт `turn_completed` раньше финального usage snapshot, session остаётся в pending-arbitration до появления trailing `token_usage`; отсутствие usage прямо в `turn_completed` не считается автоматическим `no_rollover`.
