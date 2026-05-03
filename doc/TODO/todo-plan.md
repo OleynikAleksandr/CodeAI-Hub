@@ -20,7 +20,7 @@
 
 - **Current phase/stream/task:** Phase 1 / Stream 1 / Task 3.
 - **Next action:** implement plan-state parser.
-- **Last completed commit in this cycle:** `788ed3ec4 docs: narrow plan orchestrator automation scope`
+- **Last completed commit in this cycle:** `9c433c463 docs: trim plan orchestrator context pack`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -41,8 +41,10 @@
 
 1. [DONE] Обновить planning-doc на accepted rev2 с narrowed MVP scope: `doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/todo-plan.md`; зафиксировать, что scope = `AGENTS.md` + scripts + `pre-commit`/`post-commit`, без release/app integration/pre-push/snapshot automation. Verification: `git diff --check`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 docs; expected commit: `docs: narrow plan orchestrator automation scope`).
 2. [DONE] Git Commit: `docs: narrow plan orchestrator automation scope` (hash: 788ed3ec4)
-3. [TODO] Создать parser/types для machine-owned `codeai-plan-state` block: `scripts/plan-orchestrator/plan-state-types.mjs`, `scripts/plan-orchestrator/plan-state-parser.mjs`, `scripts/plan-orchestrator/plan-state-parser.test.mjs`; покрыть valid/missing/malformed JSON block and schema version checks (scope: 3 files; expected commit: `feat: add plan state parser`).
-4. [TODO] Git Commit: `feat: add plan state parser` (hash: TBD)
+3. [DONE] Уточнить context pack for local tooling scope: remove product SSOT required reads (`SystemArchitecture`, facade contract, `Docs_Index`) and keep only planning/hook/script/package/`AGENTS.md` context. Verification: Husky pre-commit passed with existing near-limit warnings only (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: trim plan orchestrator context pack`).
+4. [DONE] Git Commit: `docs: trim plan orchestrator context pack` (hash: 9c433c463)
+5. [TODO] Создать parser/types для machine-owned `codeai-plan-state` block: `scripts/plan-orchestrator/plan-state-types.mjs`, `scripts/plan-orchestrator/plan-state-parser.mjs`, `scripts/plan-orchestrator/plan-state-parser.test.mjs`; покрыть valid/missing/malformed JSON block and schema version checks (scope: 3 files; expected commit: `feat: add plan state parser`).
+6. [TODO] Git Commit: `feat: add plan state parser` (hash: TBD)
 
 ### Stream 2 — Validator And Status
 
