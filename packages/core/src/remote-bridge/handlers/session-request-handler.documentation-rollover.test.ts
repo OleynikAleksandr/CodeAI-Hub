@@ -71,6 +71,25 @@ test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover
       return Promise.resolve();
     },
   });
+  const reportStateReader = api as unknown as {
+    readonly flowNodeReportState: {
+      readonly getCreateReportRequest: (sessionId: string) => unknown;
+      readonly registerCreateReportRequest: (options: {
+        readonly attempt: number;
+        readonly reportPath: string;
+        readonly requestId: string;
+        readonly sessionId: string;
+        readonly tmpReportPath: string;
+      }) => void;
+    };
+  };
+  reportStateReader.flowNodeReportState.registerCreateReportRequest({
+    sessionId: sourceSession.id,
+    requestId: "stale-report-request",
+    attempt: 1,
+    reportPath: "/tmp/stale-report.md",
+    tmpReportPath: "/tmp/stale-report.tmp.md",
+  });
 
   await api.flowNodeRollover.rolloverFlowNodeSession(
     sourceSession,
@@ -79,6 +98,12 @@ test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover
   );
 
   assert.equal(internalMessages.length, 0);
+  assert.equal(
+    reportStateReader.flowNodeReportState.getCreateReportRequest(
+      sourceSession.id
+    ),
+    null
+  );
   assert.equal(createSessionCalls.length, 1);
   assert.equal(createSessionCalls[0]?.resumeMode, "resume_via_rollover");
   assert.deepEqual(createSessionCalls[0]?.context, {

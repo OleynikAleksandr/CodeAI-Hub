@@ -301,6 +301,7 @@ export class SessionRequestHandlerFlowNodeRollover {
   }): Promise<void> {
     const { session, rollover, workspaceSlug, stageId, adapter } = options;
     const runSlug = session.runSlug ?? null;
+    this.deps.reportState.deleteCreateReportRequest(session.id);
     const notificationBase = {
       kind: "flow_node_rollover",
       sourceSessionId: session.id,

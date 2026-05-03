@@ -29,8 +29,8 @@ export class SessionRequestHandlerFlowNodeReportState {
     return this.createReportRequests.get(sessionId) ?? null;
   }
 
-  deleteCreateReportRequest(sessionId: string): void {
-    this.createReportRequests.delete(sessionId);
+  deleteCreateReportRequest(sessionId: string): boolean {
+    return this.createReportRequests.delete(sessionId);
   }
 
   registerCreateReportRequest(options: {
