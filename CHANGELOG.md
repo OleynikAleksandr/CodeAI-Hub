@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.131] - 2026-05-03
+### Fixed
+- **Codex app-server startup is compatible with `codex-cli 0.128.0`.** CodeAI Hub no longer passes legacy partial `mcp_servers.*.enabled=false` config overrides that make Codex reject startup with `invalid transport in mcp_servers.codex` and leave reopened Codex sessions at `Provider codexCli unavailable`.
+
+### Tests
+- **Codex startup profile now has targeted regression coverage and a direct process smoke.** The app-server process profile test covers the updated startup args, and the built `CodexAppServerProcess.start()` path was smoke-tested against local `codex-cli 0.128.0`.
+
 ## [1.2.130] - 2026-05-02
 ### Fixed
 - **Gemini provider module is bundled in the clean Core runtime.** The Core runtime now carries `@codeai-hub/gemini-module` as an explicit dependency, so a VSIX plus matching runtime release folder can load Gemini before checking CLI authentication instead of reporting `Gemini provider module is not installed`.
