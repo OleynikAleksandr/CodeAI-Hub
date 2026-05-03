@@ -232,6 +232,36 @@ export class SessionManager {
     session.updatedAt = new Date().toISOString();
   }
 
+  hydrateSessionContext(
+    sessionId: string,
+    context: SessionInitiativeContext
+  ): Session | null {
+    const session = this.sessions.get(sessionId);
+    if (!session) {
+      return null;
+    }
+    const nextInitiativeSlug =
+      session.initiativeSlug ?? context.initiativeSlug ?? null;
+    const nextStage = session.stage ?? context.stage ?? null;
+    const nextRunSlug = session.runSlug ?? context.runSlug ?? null;
+    if (
+      session.initiativeSlug === nextInitiativeSlug &&
+      session.stage === nextStage &&
+      session.runSlug === nextRunSlug
+    ) {
+      return session;
+    }
+    const next: Session = {
+      ...session,
+      initiativeSlug: nextInitiativeSlug,
+      stage: nextStage,
+      runSlug: nextRunSlug,
+      updatedAt: new Date().toISOString(),
+    };
+    this.sessions.set(sessionId, next);
+    return next;
+  }
+
   clearPendingModelSwitchInjection(sessionId: string): void {
     const session = this.sessions.get(sessionId);
     if (!session) {

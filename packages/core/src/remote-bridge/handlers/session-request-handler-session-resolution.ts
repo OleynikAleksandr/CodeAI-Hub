@@ -164,26 +164,38 @@ export class SessionRequestHandlerSessionResolution {
           candidate.providerId === last.providerId &&
           candidate.providerSessionId === last.providerSessionId
       );
+    const context = {
+      initiativeSlug: options.workspaceSlug,
+      stage: chain.stage === "unknown" ? null : chain.stage,
+      runSlug: this.inferRunSlugFromDialogId(options.dialogId),
+    };
+    const hydratedExistingSession = existingSession
+      ? this.deps.sessionManager.hydrateSessionContext(
+          existingSession.id,
+          context
+        )
+      : null;
     if (
-      existingSession &&
+      hydratedExistingSession &&
       last.modelBinding &&
-      this.shouldApplyContinuityModelBinding(existingSession, last.modelBinding)
+      this.shouldApplyContinuityModelBinding(
+        hydratedExistingSession,
+        last.modelBinding
+      )
     ) {
       this.deps.sessionManager.setModelBinding(
-        existingSession.id,
+        hydratedExistingSession.id,
         last.modelBinding
       );
     }
     const resolvedSession =
-      existingSession ??
+      hydratedExistingSession ??
       (await this.deps.sessionBootstrap.createAndRegisterSession({
         providerId: last.providerId,
         workspacePath: options.workspaceRoot,
         adapter,
         context: {
-          initiativeSlug: options.workspaceSlug,
-          stage: chain.stage === "unknown" ? null : chain.stage,
-          runSlug: this.inferRunSlugFromDialogId(options.dialogId),
+          ...context,
           providerSessionId: last.providerSessionId,
         },
         inheritedModelBinding: last.modelBinding ?? null,

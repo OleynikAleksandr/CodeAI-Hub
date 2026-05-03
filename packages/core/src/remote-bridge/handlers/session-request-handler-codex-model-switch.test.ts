@@ -160,6 +160,86 @@ test("Codex model switch remains authoritative across dialog send resume", async
   }
 });
 
+test("dialog send hydrates contextless restored Codex runtime sessions", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codex-dialog-context-hydration-")
+  );
+  try {
+    const harness = createHarness({
+      claudeSettingsPath: path.join(workspaceRoot, "claude-settings.json"),
+    });
+    const workspaceSlug = "workflow-context";
+    const dialogId = "dialog-virtual-simulation";
+    const session = harness.sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-contextless"
+    );
+    await new ContinuityChainStore({
+      workspaceRoot,
+      workspaceSlug,
+      rootSessionId: dialogId,
+      stage: "virtual_simulation",
+      clock: () => "2026-05-03T07:30:00.000Z",
+    }).appendSegment({
+      sessionId: session.id,
+      providerId: "codexCli",
+      providerSessionId: "provider-session-contextless",
+      createdAt: "2026-05-03T07:30:00.000Z",
+    });
+    harness.providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-contextless",
+      unsubscribe: noop,
+    });
+    const sentMessages: string[] = [];
+    harness.providerRegistry.getAdapter = () => ({
+      sendMessage: (_providerSessionId: string, content: string) => {
+        sentMessages.push(content);
+        return Promise.resolve();
+      },
+    });
+    const clientMessages: unknown[] = [];
+    const router = createRouter(harness, () => ({
+      getWorkspaceScope: () => ({
+        enabled: true,
+        workspacePath: workspaceRoot,
+      }),
+      sendToClient: (_clientId: string, message: unknown) => {
+        clientMessages.push(message);
+      },
+    }));
+
+    await router.handleIncomingMessage("client-1", {
+      type: "dialog:send",
+      payload: {
+        requestId: "request-dialog-send",
+        workspaceSlug,
+        dialogId,
+        content: "continue virtual simulation",
+      },
+    });
+
+    const hydratedSession = harness.sessionManager.getSession(session.id);
+    assert.equal(hydratedSession?.initiativeSlug, workspaceSlug);
+    assert.equal(hydratedSession?.stage, "virtual_simulation");
+    assert.equal(hydratedSession?.runSlug, null);
+    assert.deepEqual(sentMessages, ["continue virtual simulation"]);
+    assert.deepEqual(clientMessages.at(-1), {
+      type: "dialog:send:ack",
+      payload: {
+        requestId: "request-dialog-send",
+        workspaceSlug,
+        dialogId,
+        status: "sent",
+        error: null,
+      },
+    });
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 const createPreviousBinding = (
   sessionId: string,
   workspacePath: string
