@@ -1,9 +1,20 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
+import {
+  useProductionFlowNodeHandler as activateProductionFlowNodeHandler,
+  emitProviderEvent,
+  setLifecycle,
+  stubDescriptionDialogSync,
+} from "./session-request-handler.test-continuity-helpers";
 import { countContinuityUnlocks } from "./session-request-handler.test-event-helpers";
 import {
   createHarness,
+  flushAsyncWork,
   internals,
+  noop,
 } from "./session-request-handler.test-helpers";
 
 test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover state without report turn", async () => {
@@ -151,4 +162,126 @@ test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover
   );
   assert.equal(harness.runtimeLockUpdates.at(-1)?.active, false);
   assert.equal(harness.runtimeLockUpdates.at(-1)?.reason, "resume_ready");
+});
+
+test("Documentation Tree production rollover waits for next user turn before continuation envelope", async () => {
+  const previousHome = process.env.HOME;
+  const tempHome = await mkdtemp(path.join(tmpdir(), "codeai-doc-prod-"));
+  try {
+    process.env.HOME = tempHome;
+    for (const stage of [
+      "description",
+      "virtual_simulation",
+      "diagram_modules",
+    ] as const) {
+      const harness = createHarness();
+      stubDescriptionDialogSync(harness);
+      const providerSends: Array<{
+        readonly content: string;
+        readonly providerSessionId: string;
+      }> = [];
+      const internalMessages: string[] = [];
+      const sourceSession = harness.sessionManager.createSession(
+        "codexCli",
+        `/tmp/core-documentation-production-${stage}`,
+        `provider-source-${stage}`,
+        {
+          initiativeSlug: "demo",
+          stage,
+          runSlug: null,
+        }
+      );
+      harness.sessionManager.appendMessage(
+        sourceSession.id,
+        "assistant",
+        `Question before rollover for ${stage}?`
+      );
+      setLifecycle(harness, sourceSession.id, "resume_in_place");
+      activateProductionFlowNodeHandler(harness);
+      const api = internals(harness.handler);
+      api.resolveLiveContinuityRemainingPercentThreshold = async () => 80;
+      api.turnArbitration.resolveLiveContinuityRemainingPercentThreshold =
+        async () => 80;
+      Object.assign(api.flowNodeContinuity, {
+        buildReportPaths: () => {
+          throw new Error(
+            "Documentation Tree production rollover must not build report paths"
+          );
+        },
+        waitForReport: () => {
+          throw new Error(
+            "Documentation Tree production rollover must not wait for report"
+          );
+        },
+      });
+      Object.assign(api.messageDispatch, {
+        sendInternalMessage: (_sessionId: string, content: string) => {
+          internalMessages.push(content);
+          return Promise.resolve();
+        },
+      });
+      harness.providerRegistry.getAdapter = () => ({
+        createSession: async () => `provider-target-${stage}`,
+        sendMessage: (providerSessionId: string, content: string) => {
+          providerSends.push({ providerSessionId, content });
+          return Promise.resolve();
+        },
+        subscribe: () => noop,
+      });
+
+      emitProviderEvent(harness, sourceSession.id, {
+        type: "turn_completed",
+      });
+      await flushAsyncWork();
+      emitProviderEvent(harness, sourceSession.id, {
+        type: "stream_event",
+        data: { kind: "token_usage", used: 95_000, limit: 100_000 },
+        tokenUsage: { used: 95_000, limit: 100_000 },
+      });
+      await flushAsyncWork();
+      await flushAsyncWork();
+
+      assert.deepEqual(internalMessages, []);
+      assert.deepEqual(providerSends, []);
+      assert.equal(countContinuityUnlocks(harness, "resume_ready"), 2);
+
+      const targetSession = harness.sessionManager
+        .listSessions()
+        .find((session) => session.id !== sourceSession.id);
+      assert.ok(targetSession, `Expected target session for ${stage}`);
+
+      const userMessage = `User answer after rollover for ${stage}.`;
+      await harness.handler.handleMessage(targetSession.id, userMessage);
+      await flushAsyncWork();
+
+      assert.equal(providerSends.length, 1);
+      assert.equal(
+        providerSends[0]?.providerSessionId,
+        `provider-target-${stage}`
+      );
+      assert.equal(
+        providerSends[0]?.content.includes("## Continuation Mode"),
+        true
+      );
+      assert.equal(
+        providerSends[0]?.content.includes("not a cold start"),
+        true
+      );
+      assert.equal(
+        providerSends[0]?.content.includes(
+          `Question before rollover for ${stage}?`
+        ),
+        true
+      );
+      assert.equal(providerSends[0]?.content.includes(userMessage), true);
+      assert.equal(targetSession.messages.at(-1)?.content, userMessage);
+    }
+  } finally {
+    if (previousHome === undefined) {
+      process.env.HOME = undefined;
+    } else {
+      process.env.HOME = previousHome;
+    }
+    await rm(tempHome, { recursive: true, force: true });
+  }
 });
