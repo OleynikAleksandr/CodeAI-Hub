@@ -101,6 +101,15 @@ export class SessionRequestHandlerMessageDispatch {
     );
   }
 
+  consumeDocumentationRolloverContext(
+    sessionId: string
+  ): DocumentationRolloverContext | null {
+    return (
+      this.documentationRolloverState?.consumeByTargetSessionId(sessionId) ??
+      null
+    );
+  }
+
   constructor(deps: SessionRequestHandlerMessageDispatchDependencies) {
     this.deps = deps;
     this.providerSend = new SessionRequestHandlerProviderSend(deps.logger);

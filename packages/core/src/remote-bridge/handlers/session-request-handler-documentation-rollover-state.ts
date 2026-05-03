@@ -49,6 +49,18 @@ export class SessionRequestHandlerDocumentationRolloverState {
     return this.contextsByTargetSessionId.get(sessionId) ?? null;
   }
 
+  consumeByTargetSessionId(
+    sessionId: string
+  ): DocumentationRolloverContext | null {
+    const context = this.contextsByTargetSessionId.get(sessionId) ?? null;
+    if (!context) {
+      return null;
+    }
+    this.contextsByTargetSessionId.delete(context.targetSessionId);
+    this.contextsBySourceSessionId.delete(context.sourceSessionId);
+    return context;
+  }
+
   registerMaterializedRollover(options: {
     readonly rolloverId: string;
     readonly sourceSession: Session;
