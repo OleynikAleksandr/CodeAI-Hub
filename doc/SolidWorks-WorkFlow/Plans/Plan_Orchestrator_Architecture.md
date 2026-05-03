@@ -115,7 +115,7 @@ Recommended implementation:
 - active `doc/TODO/todo-plan.md` выводится из tracked Git state и становится ignored local execution state;
 - committed history сохраняется через archived/snapshot plans;
 - closeout archive всегда tracked;
-- optional stream/release snapshots tracked через explicit `npm run plan:snapshot`.
+- optional stream/tooling-checkpoint snapshots tracked через explicit `npm run plan:snapshot`.
 
 Если проект решит оставить active plan tracked, Orchestrator обязан использовать two-commit model: feature commit, затем отдельный docs commit с hash. Это менее удобно и хуже автоматизируется.
 
@@ -224,7 +224,7 @@ If repair cannot prove a single safe transition, it leaves status `BLOCKED` and 
 Creates a tracked snapshot of active plan at explicit checkpoints:
 
 - stream boundary;
-- release build boundary;
+- tooling verification boundary;
 - before risky refactor;
 - before user acceptance wait;
 - before closeout.
@@ -243,7 +243,7 @@ Closeout command.
 
 Inputs:
 
-- release version;
+- scope/checkpoint label;
 - explicit user acceptance text;
 - planning-doc disposition list.
 
@@ -313,7 +313,7 @@ Blocks when:
 
 - plan debt exists;
 - active plan is inconsistent;
-- release/acceptance state is partially closed;
+- acceptance/closeout state is partially closed;
 - active branch does not match plan binding.
 
 Then existing checks still run:
@@ -452,7 +452,7 @@ Recommended path: ignored active plan plus tracked snapshots/archive.
 
 | Risk | Control |
 | --- | --- |
-| Active plan lost locally | tracked snapshots at stream/release boundaries; closeout archive |
+| Active plan lost locally | tracked snapshots at stream/tooling-checkpoint boundaries; closeout archive |
 | Branch switched with stale plan | branch/head binding plus hook blocking |
 | Script crash after commit | `.git/codeai-plan-debt` plus `plan:repair` |
 | Agent bypasses Orchestrator | `pre-commit` and `commit-msg` block direct commit |

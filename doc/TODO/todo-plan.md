@@ -40,9 +40,9 @@
   - После Phase 3 в hooks добавляются `plan:hook:*`.
 - **Таргетные проверки** перед закрытием Stream/Phase: focused Node tests для `scripts/plan-orchestrator`, `npm run plan:validate`, `npm run check:architecture`, `npm run lint`, `npm run check:knip`.
 - **Real-time документация:** изменения process lifecycle требуют синхронного обновления `AGENTS.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md` и planning-doc/SSOT, указанных в задачах.
-- **Release Build:** перед релизной сборкой обновить README.md и CHANGELOG.md на будущую версию = текущая версия из `package.json` + 1. Затем выполнить release checklist из AGENTS.md.
+- **No product release boundary:** Plan Orchestrator — repo/process tooling для нашей работы в обычном Codex workflow, не runtime feature CodeAI Hub. `build-all.sh`, `build-release.sh`, VSIX packaging, README/CHANGELOG version bump для этого scope не являются обязательным финальным gate, если пользователь отдельно не попросит продуктовый release.
 - **Постоянное обновление:** до внедрения Plan Orchestrator статусы и hash обновляются вручную по старому процессу; после внедрения — только через `npm run plan:*`.
-- **Финальные Stream обязательны:** `Release Build`, `User Visual Acceptance Testing`, `Scope Closeout`.
+- **Финальные Stream обязательны:** `Tooling Verification`, `User Workflow Acceptance Testing`, `Scope Closeout`.
 
 ---
 
@@ -141,34 +141,32 @@
 
 ---
 
-## Phase 7 — Release And Acceptance (owner: Codex + Oleksandr, updated: 2026-05-03)
+## Phase 7 — Tooling Verification And Acceptance (owner: Codex + Oleksandr, updated: 2026-05-03)
 
-### Stream 12 — Release Build
+### Stream 12 — Tooling Verification
 
-1. [TODO] Перед релизной сборкой определить будущую версию из текущего `package.json` + 1; обновить `README.md` и `CHANGELOG.md` на будущую версию; обновить связанные docs if needed (scope: 2 release docs + docs if needed; expected commit: `docs: prepare plan orchestrator release`).
-2. [TODO] Git Commit: `docs: prepare plan orchestrator release` (hash: TBD)
-3. [TODO] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `~/.codeai-hub/releases/` and `doc/tmp/releases/`; зафиксировать version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for plan orchestrator`).
-4. [TODO] Git Commit: `chore: bump release manifests for plan orchestrator` (hash: TBD)
-5. [TODO] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Step 7.5: Validating local artefacts`, `Removing dev dependencies before packaging`, `✅ Package created`; записать VSIX path and keep scope ACTIVE until user retest (scope: release command + todo/session docs; expected commit: `docs: record plan orchestrator release build`).
-6. [TODO] Git Commit: `docs: record plan orchestrator release build` (hash: TBD)
+1. [TODO] На clean tree запустить full tooling verification без product packaging: `node --test scripts/plan-orchestrator/*.test.mjs`, `npm run plan:status`, `npm run plan:validate`, `npm run check:architecture`, `npm run lint`, `npm run check:knip`, `npm run check:dup`, `npm run check:links`; записать результаты в `doc/TODO/todo-plan.md` (scope: commands + todo-plan; expected commit: `test: verify plan orchestrator tooling gates`).
+2. [TODO] Git Commit: `test: verify plan orchestrator tooling gates` (hash: TBD)
+3. [TODO] Провести controlled dogfood scenario в текущем repo: создать временный sandbox/worktree или fixture repo, проверить direct commit block, `plan:commit`, forced debt, `plan:repair`, `pre-push` block, and closeout dry-run без изменения product runtime (scope: test fixture + todo-plan; expected commit: `test: dogfood plan orchestrator workflow`).
+4. [TODO] Git Commit: `test: dogfood plan orchestrator workflow` (hash: TBD)
 
-### Stream 13 — User Visual Acceptance Testing
+### Stream 13 — User Workflow Acceptance Testing
 
-1. [TODO] Пользователь устанавливает VSIX релиза Plan Orchestrator и проверяет обычный development flow: старт новой сессии с чтения `doc/TODO/todo-plan.md`, active recovery without session report, `plan:status` clarity, and expected next action.
+1. [TODO] Пользователь проверяет Plan Orchestrator как repo/process tooling, без установки VSIX: старт новой сессии с чтения `doc/TODO/todo-plan.md`, active recovery without session report, `plan:status` clarity, and expected next action.
 2. [TODO] Пользователь проверяет commit workflow: попытка direct `git commit` при ACTIVE plan блокируется, `npm run plan:commit -- "<message>"` двигает task/commit/hash/current pointer автоматически.
 3. [TODO] Пользователь проверяет failure behavior: simulated/forced debt blocks next commit/push and `npm run plan:repair` restores consistent plan state.
-4. [TODO] Пользователь даёт explicit acceptance или failed-retest feedback; результат фиксируется в `doc/TODO/todo-plan.md` and old-style session report until Plan Orchestrator closeout replaces it (scope: docs; expected commit: `docs: record plan orchestrator visual acceptance`).
-5. [TODO] Git Commit: `docs: record plan orchestrator visual acceptance` (hash: TBD)
+4. [TODO] Пользователь даёт explicit acceptance или failed-retest feedback по удобству и надёжности workflow; результат фиксируется в `doc/TODO/todo-plan.md` and old-style session report until Plan Orchestrator closeout replaces it (scope: docs; expected commit: `docs: record plan orchestrator workflow acceptance`).
+5. [TODO] Git Commit: `docs: record plan orchestrator workflow acceptance` (hash: TBD)
 
 ### Stream 14 — Scope Closeout
 
 1. [BLOCKED] После explicit user acceptance выполнить closeout по текущему старому процессу или, если Plan Orchestrator уже accepted enough, через `npm run plan:closeout`: archive active plan, update planning-doc disposition, update `Docs_Index.md`, reset active plan state (scope: docs; expected commit: `docs: archive plan orchestrator scope`).
 2. [TODO] Git Commit: `docs: archive plan orchestrator scope` (hash: TBD)
-3. [TODO] Создать final session report по старому процессу только если `AGENTS.md` migration ещё не принята в установленном релизе; иначе closeout report belongs to archived plan snapshot, not `doc/Sessions/`.
+3. [TODO] Создать final session report по старому процессу только если `AGENTS.md` migration ещё не принята в рабочем процессе; иначе closeout report belongs to archived plan snapshot, not `doc/Sessions/`.
 
 ---
 
 ## Notes
 
-- Phase 5 может быть перенесена после release, если ignored active plan migration окажется слишком рискованной для первого Plan Orchestrator релиза.
+- Phase 5 может быть перенесена в follow-up scope, если ignored active plan migration окажется слишком рискованной для первой dogfood-итерации Plan Orchestrator.
 - Если hook enforcement мешает текущему development workflow, временно разрешается advisory mode, но только через явный плановый task and commit.
