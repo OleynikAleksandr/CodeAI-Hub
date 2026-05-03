@@ -94,6 +94,30 @@ test("Documentation Tree continuation envelope is attached to the first real use
     assert.equal(providerSends[0]?.content.includes("not a cold start"), true);
     assert.equal(
       providerSends[0]?.content.includes(
+        "existing canonical workflow artifacts as the authoritative current state"
+      ),
+      true
+    );
+    assert.equal(
+      providerSends[0]?.content.includes(
+        "Do not create, read, or update continuity report files"
+      ),
+      true
+    );
+    assert.equal(
+      providerSends[0]?.content.includes(
+        "The user's message after this block is the user's answer or next instruction"
+      ),
+      true
+    );
+    assert.equal(
+      providerSends[0]?.content.includes(
+        "## Workflow Start / Step Contract Context"
+      ),
+      true
+    );
+    assert.equal(
+      providerSends[0]?.content.includes(
         "## Last Assistant Message Before Rollover"
       ),
       true
