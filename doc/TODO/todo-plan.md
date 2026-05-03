@@ -370,7 +370,7 @@
 9. [DONE] На clean tree запустить `./scripts/build-all.sh`; verified fresh `1.2.132` tarball'ы in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, project-manager (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for codex continuity rollover fix`).
 10. [DONE] Git Commit: `chore: bump release manifests for codex continuity rollover fix` (hash: e8153a3ac)
 11. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; verified output contains `Step 7: Verifying SDK exclusions`, `Step 7.5: Validating local artefacts`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ Release build complete`; итоговый VSIX: `codeai-hub-1.2.132.vsix` (2.8M). Scope remains ACTIVE until user visual acceptance (scope: release command + session report; expected commit: `docs: record codex continuity rollover fix release build`).
-12. [IN_PROGRESS] Git Commit: `docs: record codex continuity rollover fix release build` (hash: TBD)
+12. [DONE] Git Commit: `docs: record codex continuity rollover fix release build` (hash: 62c57b463)
 
 ### Stream 11V — User Visual Acceptance Testing (Codex Continuity Rollover Retest)
 
