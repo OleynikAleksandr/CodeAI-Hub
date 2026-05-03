@@ -1,7 +1,7 @@
 # Codex Provider Invocation Flags - Module SSOT
 
 **Status:** implemented SSOT  
-**Last verified:** 2026-04-30, release `1.2.115`
+**Last verified:** 2026-05-03, release `1.2.131`
 **Owner module:** `packages/Codex_AppServer_Module/`
 
 This document records the actual CodeAI Hub Codex invocation surface that shapes model behavior for all current Codex models. It is a runtime contract, not a proposal.
@@ -36,8 +36,6 @@ codex app-server
   --disable plugins
   --disable apps
   --disable tool_search
-  -c mcp_servers.codex.enabled=false
-  -c mcp_servers.playwright.enabled=false
 ```
 
 Runtime facts:
@@ -51,10 +49,12 @@ Runtime facts:
   - POSIX: `~/.npm-global/bin`, `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`
   - Windows: `%APPDATA%\npm`
 - Provider-owned SDK transport JSONL logs are not created. Since `1.2.94`, the Codex app-server hot path has no file-backed SDK transport logger.
+- `codex-cli 0.128.0` rejects partial MCP server overrides such as `-c mcp_servers.codex.enabled=false` with `invalid transport in mcp_servers.codex`. CodeAI Hub no longer passes those overrides in the app-server startup profile; any future attempt to suppress configured MCP servers must first establish a valid current Codex CLI config contract.
 
 Known boundary:
 
 - There is no confirmed App Server startup knob for removing `request_user_input`. That tool is tracked as evidence-gated follow-up work, not as an implemented flag.
+- There is no current verified startup knob for disabling named `mcp_servers.*` entries without also providing their full current schema. Do not reintroduce `mcp_servers.<name>.enabled=false` as a standalone override.
 
 ## Initialize Handshake
 

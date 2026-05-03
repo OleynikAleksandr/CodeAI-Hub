@@ -14,6 +14,7 @@
 
 | ID | Status | Area | Симптом (кратко) | Fixed in |
 |---:|:------:|------|------------------|----------|
+| BUG-2026-05-03-01 | FIXED | Codex Runtime | reopened Codex session gets `Provider codexCli unavailable`; `codex-cli 0.128.0` rejects `mcp_servers.*.enabled=false` startup overrides with `invalid transport` | 1.2.131 |
 | BUG-2026-04-27-02 | DEFERRED | Codex Runtime/UI | `gpt-5.3-codex-spark` runs after 1.2.96 but still shows no reasoning bubbles even after provider-home summary materialization | TBD |
 | BUG-2026-04-27-01 | FIXED | Codex Runtime/Translation | `gpt-5.3-codex-spark` падает с `unsupported_parameter` по `reasoning.summary` при выборе модели в Settings Codex; translation runtime also had explicit summary config risk | 1.2.96 |
 | BUG-2026-04-23-01 | FIXED | PM/Diagram Modules/Launcher | закрытие detached Digital Models popup закрывает весь Project Manager; popup также наследует full-width geometry main окна | 1.2.56 |
@@ -70,6 +71,41 @@
 | BUG-2026-02-16-03 | FIXED | UI | one‑shot `description` collector: input свободен до первых сообщений | 1.1.615 |
 | BUG-2026-02-16-02 | FIXED | PM/UI | one‑shot `description`: wait‑copy показывает `resuming` вместо `working` | 1.1.614 |
 | BUG-2026-02-16-01 | FIXED | Core/PM | one‑shot `description`: input «unlock gap»/возможность второго запроса | 1.1.613 |
+
+---
+## BUG-2026-05-03-01 — Codex app-server startup fails on CLI 0.128 MCP config schema
+
+**Status:** FIXED
+
+**Symptom:**
+- В релизе `1.2.130` reopened Codex workflow session принимает user message, но вместо provider turn UI пишет `System: Provider codexCli unavailable`.
+- Core recovery loop каждую минуту повторяет provider init и снова получает `Provider initialization failed`.
+
+**Evidence:**
+- Screenshot `2026-05-03 08:36 CEST`: `Virtual Simulation Codex`, model `Gpt 5.3 Codex Spark`, user sends next turn, UI receives `Provider codexCli unavailable`.
+- Core log: `[codex] codex app-server stderr: error loading default config after config error: invalid transport in mcp_servers.codex`, followed by `codex app-server exited with code 1`.
+- Local repro with `codex-cli 0.128.0`:
+  `CODEX_HOME=~/.codeai-hub/providers/codex/home codex app-server -c mcp_servers.codex.enabled=false -c mcp_servers.playwright.enabled=false` fails with the same `invalid transport`.
+- Managed provider-home `config.toml` is clean (`model_reasoning_summary = "none"`), so the failure comes from CodeAI Hub startup args, not from persisted user config.
+
+**Root cause:**
+- CodeAI Hub `1.2.130` passes legacy app-server startup overrides `-c mcp_servers.codex.enabled=false` and `-c mcp_servers.playwright.enabled=false`.
+- `codex-cli 0.128.0` validates `mcp_servers.<name>` config as requiring a valid `transport`; setting only `enabled=false` now creates an invalid partial MCP server entry before app-server initialize.
+
+**Fix:**
+- Removed the legacy `-c mcp_servers.codex.enabled=false` and `-c mcp_servers.playwright.enabled=false` overrides from the Codex app-server startup profile.
+- Kept the verified feature disables for `multi_agent`, `browser_use`, `in_app_browser`, `computer_use`, `image_generation`, `plugins`, `apps`, and `tool_search`.
+- Updated Codex invocation SSOT to mark standalone `mcp_servers.<name>.enabled=false` as an invalid contract for `codex-cli 0.128.0`.
+
+**Commits:**
+- TBD
+
+**Release:** `1.2.131`
+
+**Guards:**
+- `npx tsx --test packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.test.ts`
+- `npm run build --workspace @codeai-hub/codex-app-server-module`
+- Direct built-process smoke: `CodexAppServerProcess.start()` reaches `codex-process-start-ok` with `codex-cli 0.128.0`
 
 ---
 ## BUG-2026-04-27-02 — Codex Runtime/UI: Spark runs but visible reasoning is absent

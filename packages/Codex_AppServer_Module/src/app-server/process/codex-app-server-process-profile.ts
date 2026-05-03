@@ -29,10 +29,6 @@ export const CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS = [
   "apps",
   "--disable",
   "tool_search",
-  "-c",
-  "mcp_servers.codex.enabled=false",
-  "-c",
-  "mcp_servers.playwright.enabled=false",
 ] as const;
 const CODEAI_CODEX_TRANSLATION_APP_SERVER_ARGS = [
   ...CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS,

@@ -26,10 +26,6 @@ test("CodexAppServerProcess applies the documentation workflow tool profile at a
     "apps",
     "--disable",
     "tool_search",
-    "-c",
-    "mcp_servers.codex.enabled=false",
-    "-c",
-    "mcp_servers.playwright.enabled=false",
   ]);
 });
 
