@@ -1,6 +1,6 @@
 # Codex Flow Node Continuity Rollover — Architecture
 
-**Status:** active planning-doc rev1
+**Status:** archived planning-doc rev1 — accepted in releases `1.2.132` / `1.2.133`
 **Created:** 2026-05-03
 **Owner:** Codex continuity / Project Manager runtime
 **Target release:** next patch release after `1.2.131` (expected `1.2.132` unless version changes)

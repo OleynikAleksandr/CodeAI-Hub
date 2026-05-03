@@ -1,6 +1,6 @@
 # Documentation Tree Fast Synthetic Rollover — Architecture
 
-**Status:** active planning-doc rev2
+**Status:** archived planning-doc rev2 — accepted in release `1.2.133`
 **Created:** 2026-05-03
 **Owner:** Core continuity / Documentation Tree workflow runtime
 **Supersedes:** `doc/SolidWorks-WorkFlow/Plans/Codex_FlowNode_ReportCompletionGate_Architecture.md`
