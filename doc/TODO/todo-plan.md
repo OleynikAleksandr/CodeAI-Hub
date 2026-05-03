@@ -326,7 +326,7 @@
 ### Stream 11Q — Codex Flow-Node Context Materialization Fix
 
 1. [DONE] Preserve workspace slug in materialized continuity sessions: update `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts`, `packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts`, `packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts`; materialized runtime sessions must register `initiativeSlug = workspaceSlug` while keeping provider/session binding behavior unchanged. Verification: `npx tsx --test packages/core/src/remote-bridge/handlers/session-continuity-materializer.test.ts` (scope: 3 files; expected commit: `fix: preserve workspace slug in materialized continuity sessions`).
-2. [IN_PROGRESS] Git Commit: `fix: preserve workspace slug in materialized continuity sessions` (hash: TBD)
+2. [DONE] Git Commit: `fix: preserve workspace slug in materialized continuity sessions` (hash: 447e24972)
 3. [TODO] Repair already-materialized sessions before `dialog:send`: add a minimal context update path in `packages/core/src/session-manager/index.ts`, use it in `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts`, and cover missing-initiative reuse in the existing create/resume test surface; existing runtime sessions with matching providerSessionId must not stay `initiativeSlug: null` (scope: ≤3 files; expected commit: `fix: repair restored dialog workflow context before send`).
 4. [TODO] Git Commit: `fix: repair restored dialog workflow context before send` (hash: TBD)
 
