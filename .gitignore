@@ -18,6 +18,8 @@ doc/TODO/*
 !doc/TODO/Archive/
 !doc/TODO/Archive/*.md
 !doc/TODO/Archive.zip
+!doc/TODO/OrchestratorTest/
+!doc/TODO/OrchestratorTest/*.md
 !doc/TODO/Planned/
 !doc/TODO/Planned/*.md
 
