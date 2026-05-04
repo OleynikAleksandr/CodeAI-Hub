@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 2 / Stream 5 / Task 5.
-- **Next action:** implement `plan:repair` for debt recovery.
-- **Last completed commit in this cycle:** `ef3c34928 feat: finalize plan state after commit`
+- **Current phase/stream/task:** Phase 3 / Stream 6 / Task 1.
+- **Next action:** migrate `AGENTS.md` and active plan recovery to plan-first workflow without session reports.
+- **Last completed commit in this cycle:** `a01c48521 feat: add plan repair command`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -77,8 +77,8 @@
 2. [DONE] Git Commit: `feat: add plan commit command` (hash: b69985596)
 3. [DONE] Добавить post-commit finalization hook: `scripts/plan-orchestrator/plan-hook-post-commit.mjs`, `.husky/post-commit`, `scripts/plan-orchestrator/plan-hook-post-commit.test.mjs`; hook writes current commit hash, advances plan state, never amends and never creates commits. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: finalize plan state after commit`).
 4. [DONE] Git Commit: `feat: finalize plan state after commit` (hash: ef3c34928)
-5. [TODO] Реализовать `plan:repair` for debt recovery: `scripts/plan-orchestrator/plan-repair.mjs`, `scripts/plan-orchestrator/plan-repair.test.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`; support commit-succeeded/hash-missing, pending commit, next pointer missing, and unsafe BLOCKED fallback (scope: 3 files; expected commit: `feat: add plan repair command`).
-6. [TODO] Git Commit: `feat: add plan repair command` (hash: TBD)
+5. [DONE] Реализовать `plan:repair` for debt recovery: `scripts/plan-orchestrator/plan-repair.mjs`, `scripts/plan-orchestrator/plan-repair.test.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`; support commit-succeeded/hash-missing, pending commit, next pointer missing, and unsafe BLOCKED fallback. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; `npm run plan:repair` reports `no_debt`; Husky pre-commit passed with existing near-limit warnings only (scope: 4 files because `package.json` exposes `npm run plan:repair`; expected commit: `feat: add plan repair command`).
+6. [DONE] Git Commit: `feat: add plan repair command` (hash: a01c48521)
 
 ---
 
