@@ -1,0 +1,101 @@
+import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
+import { DraftTemplateRegistry } from "./draft-template-registry";
+
+export interface NodeFirstMessageBuildRequest {
+  readonly node: DevelopmentTreeDetectedNode;
+  readonly technologyBase?: string;
+}
+
+export interface NodeFirstMessageBuildResult {
+  readonly content: string;
+  readonly draftFileNames: readonly string[];
+  readonly requiresTechnologyBaseAnswer: boolean;
+}
+
+const NODE_KIND_LABELS = {
+  cluster: "Cluster",
+  module: "Module",
+  product_part: "Product Part",
+} as const;
+
+const formatClusterLine = (node: DevelopmentTreeDetectedNode): string =>
+  node.clusterId
+    ? `- Cluster ID: ${node.clusterId}`
+    : "- Cluster ID: standalone";
+
+const createTechnologyInstruction = (
+  technologyBase: string | undefined
+): {
+  readonly line: string;
+  readonly requiresTechnologyBaseAnswer: boolean;
+} => {
+  if (technologyBase?.trim()) {
+    return {
+      line: `- Technology base: ${technologyBase.trim()}`,
+      requiresTechnologyBaseAnswer: false,
+    };
+  }
+  return {
+    line: "- Technology base: unknown. Ask the user to confirm the stack before making framework-specific decisions.",
+    requiresTechnologyBaseAnswer: true,
+  };
+};
+
+const createNodeSpecificRules = (
+  node: DevelopmentTreeDetectedNode
+): string[] => {
+  if (node.kind === "module") {
+    return [
+      "- Keep implementation details in ModuleSpec.draft.md.",
+      "- Keep public methods/events and consumed events in ModuleFacadeContract.draft.md.",
+      "- Do not add Inputs/Outputs sections to ModuleSpec.draft.md.",
+    ];
+  }
+  if (node.kind === "cluster") {
+    return [
+      "- Define cluster coordination and responsibility in ClusterDescription.draft.md.",
+      "- Define the cluster public boundary in ClusterFacadeContract.draft.md.",
+    ];
+  }
+  return [
+    "- Define product-part responsibility in PartDescription.draft.md.",
+    "- Keep child cluster/module ownership aligned with the materialized tree.",
+  ];
+};
+
+export class NodeFirstMessageBuilder {
+  private readonly templateRegistry = new DraftTemplateRegistry();
+
+  build(request: NodeFirstMessageBuildRequest): NodeFirstMessageBuildResult {
+    const draftFileNames = this.templateRegistry.getFileNamesForNode(
+      request.node
+    );
+    const technology = createTechnologyInstruction(request.technologyBase);
+    const content = [
+      `You are responsible for the ${NODE_KIND_LABELS[request.node.kind]} node "${request.node.id}".`,
+      "",
+      "Node context:",
+      `- Part ID: ${request.node.partId}`,
+      formatClusterLine(request.node),
+      `- Folder: ${request.node.relativePath}`,
+      technology.line,
+      "",
+      "Draft files to fill:",
+      ...draftFileNames.map((fileName) => `- ${fileName}`),
+      "",
+      "Editing rules:",
+      "- Do not edit YAML frontmatter.",
+      "- Do not edit content inside <!-- generated --> blocks.",
+      "- Write only inside <!-- agent-fill --> blocks.",
+      "- Leave unresolved assumptions as explicit Open questions.",
+      "",
+      "Node-specific work:",
+      ...createNodeSpecificRules(request.node),
+    ].join("\n");
+    return {
+      content,
+      draftFileNames,
+      requiresTechnologyBaseAnswer: technology.requiresTechnologyBaseAnswer,
+    };
+  }
+}

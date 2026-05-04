@@ -211,6 +211,12 @@ export class DraftTemplateRegistry {
     return TEMPLATE_MAP[node.kind];
   }
 
+  getFileNamesForNode(
+    node: DevelopmentTreeDetectedNode
+  ): readonly DevelopmentTreeDraftFileName[] {
+    return this.getTemplatesForNode(node).map((template) => template.fileName);
+  }
+
   renderDrafts(
     request: DevelopmentTreeDraftRenderRequest
   ): readonly DevelopmentTreeRenderedDraft[] {
