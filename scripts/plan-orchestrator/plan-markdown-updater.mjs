@@ -11,6 +11,7 @@ import {
 const RESULT_PATTERN = /\s+Result:\s*.*$/u;
 const RESERVED_POST_CLOSEOUT_PATTERN =
   /Reserved post-closeout handoff anchor/iu;
+const TODO_ARCHIVE_DIR = "doc/TODO/Archive";
 
 const replaceLine = (lines, lineIndex, nextLine) => {
   const nextLines = [...lines];
@@ -22,6 +23,54 @@ const normalizeResult = (result) => result.trim().replace(/\s+/gu, " ");
 
 const isReservedPostCloseoutTask = (task) =>
   RESERVED_POST_CLOSEOUT_PATTERN.test(task?.text ?? "");
+
+const sanitizePathPart = (value) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
+
+const getCloseoutArchivePath = (state) =>
+  `${TODO_ARCHIVE_DIR}/todo-plan-closeout-${sanitizePathPart(state.planId)}.md`;
+
+const createTerminalNoneTemplate = ({
+  commitHash,
+  state,
+}) => `# Development TODO Plan
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+${JSON.stringify(
+  {
+    ...state,
+    currentTaskId: null,
+    debt: null,
+    executionScopeStatus: "NONE",
+    expectedCommitMessage: null,
+    lastRecordedCommit: commitHash,
+  },
+  null,
+  2
+)}
+\`\`\`
+<!-- codeai-plan-state:end -->
+
+## No Active Execution Scope
+
+- **Execution Scope Status:** NONE
+- **Latest closeout archive:** \`${getCloseoutArchivePath(state)}\`
+- **Planning source:** \`${state.planningSource}\`
+- **Last recorded commit:** \`${commitHash}\`
+
+## Start Next Scope
+
+There is no active execution scope. Before starting new implementation work:
+
+- read \`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md\`;
+- use \`doc/SolidWorks-WorkFlow/Docs_Index.md\` to choose relevant documents;
+- create or update a planning document under \`doc/SolidWorks-WorkFlow/Plans/\`;
+- create a new active \`doc/TODO/todo-plan.md\` only after the new scope is accepted.
+`;
 
 const replaceTaskResult = (line, result) => {
   const cleanResult = normalizeResult(result);
@@ -77,6 +126,14 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
   const nextTask = locateNextTask(items, pairedCommit.lineIndex);
   let lines = markdown.split("\n");
   const closesScope = nextTask === null || isReservedPostCloseoutTask(nextTask);
+
+  if (closesScope) {
+    const parsed = parsePlanStateMarkdown(markdown);
+    return createTerminalNoneTemplate({
+      commitHash,
+      state: parsed.state,
+    });
+  }
 
   lines = replaceLine(
     lines,

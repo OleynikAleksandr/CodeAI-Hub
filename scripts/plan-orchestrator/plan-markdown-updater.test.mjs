@@ -13,8 +13,11 @@ const COMMIT_HASH_PATTERN =
   /Git Commit: `feat: add plan markdown updater` \(hash: abc1234\)/u;
 const NEXT_TASK_IN_PROGRESS_PATTERN =
   /3\. \[IN_PROGRESS\] `phase2\.stream3\.task2`/u;
-const CLOSEOUT_RESERVED_DONE_PATTERN =
-  /3\. \[DONE\] `phase6\.stream1\.task2` Reserved post-closeout handoff anchor/u;
+const CLOSEOUT_ARCHIVE_PATTERN =
+  /Latest closeout archive:\*\* `doc\/TODO\/Archive\/todo-plan-closeout-closeout-test\.md`/u;
+const NO_ACTIVE_SCOPE_PATTERN = /## No Active Execution Scope/u;
+const AGENTS_PATH_PATTERN = /AGENTS\.md/u;
+const RESERVED_HANDOFF_PATTERN = /Reserved post-closeout handoff anchor/u;
 
 const createMarkdown = () => `# План разработки
 
@@ -65,6 +68,12 @@ const createCloseoutMarkdown = () => `# План разработки
 }
 \`\`\`
 <!-- codeai-plan-state:end -->
+
+## Context Pack For This Cycle
+
+- **Read this context before implementation:**
+  - \`AGENTS.md\`
+  - \`doc/SolidWorks-WorkFlow/Plans/Plan_Example.md\`
 
 ## Phase 6 - Scope Closeout
 
@@ -124,7 +133,10 @@ test("finalizes closeout commit into NONE state instead of reserved handoff", ()
   });
   const parsed = parsePlanStateMarkdown(markdown);
 
-  assert.match(markdown, CLOSEOUT_RESERVED_DONE_PATTERN);
+  assert.match(markdown, NO_ACTIVE_SCOPE_PATTERN);
+  assert.match(markdown, CLOSEOUT_ARCHIVE_PATTERN);
+  assert.doesNotMatch(markdown, AGENTS_PATH_PATTERN);
+  assert.doesNotMatch(markdown, RESERVED_HANDOFF_PATTERN);
   assert.equal(parsed.state.executionScopeStatus, "NONE");
   assert.equal(parsed.state.currentTaskId, null);
   assert.equal(parsed.state.expectedCommitMessage, null);
