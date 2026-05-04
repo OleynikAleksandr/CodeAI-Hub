@@ -89,7 +89,12 @@ ModuleFacadeContract — только публичная граница (Methods
 
 Единого толстого фасада для всего development-tree scope не создаём: state, filesystem layout и draft lifecycle имеют разные причины изменения.
 
-**3.10. Event-driven, не request-driven.**
+**3.10. Closed-module implementation boundary.**
+Phase 1 реализуется как новый закрытый Core-модуль, а не как переписывание работающих workflow/PM контуров. Существующие файлы `workflow-watcher`, `WorkflowStateService`, `development-tree-snapshot.ts` и PM `workflow-state-client.ts` остаются интеграционными adapters/compatibility wrappers: они могут получить тонкие аддитивные вызовы в новый фасад, но не становятся владельцами новой business logic.
+
+Новая логика canon registry, cache, layout planning/apply, draft writing, orphan tracking и readiness classification должна жить внутри `packages/core/src/development-tree/` за фасадными входами. Внешние контуры не импортируют внутренние классы `filesystem-structurator/` или `draft-materializer/` напрямую.
+
+**3.11. Event-driven, не request-driven.**
 Sidebar читалка переводится с per-request парсинга на in-memory cache, обновляемый по событию watcher. Файловая материализация подписана на тот же event. На «возвращение в шаг» ничего не пересчитывается, если ничего не изменилось.
 
 ---
@@ -108,7 +113,7 @@ canon: node-package | node-monorepo-root-extension | cef-native-binary | nested-
 Закрытый список. Schema-валидация в Diagram Modules pipeline отказывает в принятии artifact без поля `canon` или с неизвестным значением. Известный набор канонов — registry в коде, не свободная строка.
 
 **4.2. `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts` (текущая читалка).**
-- Текущий parser переносится/расщепляется в новый Core-модуль `packages/core/src/development-tree/`.
+- Текущий public helper остаётся compatibility wrapper; новая parsing/cache логика добавляется в Core-модуль `packages/core/src/development-tree/`.
 - `DevelopmentTreePartNode` получает `canon: DevelopmentTreeCanonId | null` для materialized part; planned-only skeleton part может оставаться `canon: null`.
 - `DevelopmentTreePartNode`, `DevelopmentTreeClusterNode` и `DevelopmentTreeModuleNode` получают `readiness: "idle" | "in_progress" | "ready"`.
 - `readDevelopmentTreeSnapshot()` сохраняется как compatibility wrapper для существующего `WorkflowStateService`, но его реализация должна читать `DevelopmentTreeStateFacade.currentSnapshot(...)`, а не парсить markdown на каждый request.
