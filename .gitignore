@@ -13,9 +13,7 @@ tmp/
 .gemini/
 .codeai-hub/
 GEMINI.md
-doc/Sessions/*
-!doc/Sessions/Session044.md
-!doc/Sessions/Archive/
+doc/Sessions/
 doc/TODO/*
 !doc/TODO/Archive/
 !doc/TODO/Archive/*.md
