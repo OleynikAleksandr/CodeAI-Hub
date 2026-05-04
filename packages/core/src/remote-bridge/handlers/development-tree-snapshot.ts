@@ -6,6 +6,7 @@ import type {
 
 export type {
   DevelopmentTreeClusterNode,
+  DevelopmentTreeDraftReadiness,
   DevelopmentTreeModuleNode,
   DevelopmentTreePartNode,
   DevelopmentTreeSnapshot,

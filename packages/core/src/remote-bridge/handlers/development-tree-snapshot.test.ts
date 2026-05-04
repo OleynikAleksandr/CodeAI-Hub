@@ -45,6 +45,19 @@ const PART_CONTENT = `# Product Part: UI Shell
 - None
 `;
 
+const createReadyDraft = (title: string): string => `---
+status: draft
+outdated: false
+orphaned: false
+---
+# ${title}
+
+## Responsibility
+<!-- agent-fill -->
+Defined.
+<!-- /agent-fill -->
+`;
+
 test("readDevelopmentTreeSnapshot returns skeleton for planned-only parts", async () => {
   const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
   try {
@@ -114,6 +127,80 @@ test("readDevelopmentTreeSnapshot extracts clusters and standalone modules from 
     assert.equal(part.standaloneModules.length, 1);
     assert.equal(part.standaloneModules[0]?.id, "theme-engine");
     assert.equal(part.standaloneModules[0]?.title, "Theme Engine");
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("readDevelopmentTreeSnapshot includes aggregated draft readiness", async () => {
+  const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
+  try {
+    const partDir = path.join(
+      tmpDir,
+      ".codeai-hub/demo/diagram_modules/product-parts"
+    );
+    await mkdir(partDir, { recursive: true });
+    await writeFile(path.join(partDir, "ui-shell.md"), PART_CONTENT, "utf8");
+
+    const materializedPart = path.join(
+      tmpDir,
+      ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell"
+    );
+    await mkdir(
+      path.join(materializedPart, "clusters/layout-cluster/modules/main-area"),
+      { recursive: true }
+    );
+    await writeFile(
+      path.join(materializedPart, "PartDescription.draft.md"),
+      createReadyDraft("PartDescription"),
+      "utf8"
+    );
+    await writeFile(
+      path.join(
+        materializedPart,
+        "clusters/layout-cluster/ClusterDescription.draft.md"
+      ),
+      createReadyDraft("ClusterDescription"),
+      "utf8"
+    );
+    await writeFile(
+      path.join(
+        materializedPart,
+        "clusters/layout-cluster/ClusterFacadeContract.draft.md"
+      ),
+      createReadyDraft("ClusterFacadeContract"),
+      "utf8"
+    );
+    await writeFile(
+      path.join(
+        materializedPart,
+        "clusters/layout-cluster/modules/main-area/ModuleSpec.draft.md"
+      ),
+      createReadyDraft("ModuleSpec"),
+      "utf8"
+    );
+    await writeFile(
+      path.join(
+        materializedPart,
+        "clusters/layout-cluster/modules/main-area/ModuleFacadeContract.draft.md"
+      ),
+      createReadyDraft("ModuleFacadeContract"),
+      "utf8"
+    );
+
+    const result = await readDevelopmentTreeSnapshot({
+      workspaceRoot: tmpDir,
+      workspaceSlug: "demo",
+      plannedPartIds: ["ui-shell"],
+      generatedPartIds: ["ui-shell"],
+    });
+
+    const part = result.parts[0];
+    assert.ok(part);
+    assert.equal(part.readiness, "in_progress");
+    assert.equal(part.clusters[0]?.readiness, "in_progress");
+    assert.equal(part.clusters[0]?.modules[0]?.readiness, "ready");
+    assert.equal(part.clusters[0]?.modules[1]?.readiness, "idle");
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
   }

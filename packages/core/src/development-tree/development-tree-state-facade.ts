@@ -1,12 +1,17 @@
 import { readFile, stat } from "node:fs/promises";
+import path from "node:path";
 import { resolveWorkflowArtifactPaths } from "../workflow/paths/workflow-artifact-paths";
 import type {
   DevelopmentTreeClusterNode,
+  DevelopmentTreeDraftReadiness,
+  DevelopmentTreeDraftReadinessKind,
   DevelopmentTreeModuleNode,
   DevelopmentTreePartNode,
   DevelopmentTreeSnapshot,
   DevelopmentTreeSnapshotRequest,
 } from "./development-tree-types";
+import { createDevelopmentTreeMaterializedRoot } from "./filesystem-structurator/development-tree-filesystem-paths";
+import { DraftReadinessClassifier } from "./node-bootstrap/draft-readiness-classifier";
 
 export interface DevelopmentTreeSnapshotListenerParams
   extends DevelopmentTreeSnapshotRequest {
@@ -26,6 +31,14 @@ const createModuleRowRegex = (): RegExp =>
   /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*([^|\n]+?)\s*\|[ \t]*$/gm;
 const STANDALONE_SECTION_RE = /^##\s+(?:Direct\s+)?Standalone\s+Modules/im;
 const NEXT_SECTION_SEARCH_RE = /^##\s+/m;
+const DRAFT_FILES = {
+  cluster: ["ClusterDescription.draft.md", "ClusterFacadeContract.draft.md"],
+  module: ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"],
+  product_part: ["PartDescription.draft.md"],
+} as const satisfies Record<
+  DevelopmentTreeDraftReadinessKind,
+  readonly string[]
+>;
 
 const humanizeKebabId = (id: string): string =>
   id
@@ -131,6 +144,152 @@ const createMaterializedPart = async (
   };
 };
 
+const aggregateReadiness = (
+  self: DevelopmentTreeDraftReadiness,
+  children: readonly DevelopmentTreeDraftReadiness[]
+): DevelopmentTreeDraftReadiness => {
+  const values = [self, ...children];
+  if (values.every((value) => value === "ready")) {
+    return "ready";
+  }
+  if (values.every((value) => value === "idle")) {
+    return "idle";
+  }
+  return "in_progress";
+};
+
+const readDraftFiles = async (params: {
+  readonly folderAbsolutePath: string;
+  readonly kind: DevelopmentTreeDraftReadinessKind;
+}): Promise<
+  readonly { readonly content: string; readonly fileName: string }[]
+> => {
+  const files: Array<{ readonly content: string; readonly fileName: string }> =
+    [];
+  for (const fileName of DRAFT_FILES[params.kind]) {
+    const content = await readExistingFile(
+      path.join(params.folderAbsolutePath, fileName)
+    );
+    if (content) {
+      files.push({ fileName, content });
+    }
+  }
+  return files;
+};
+
+const createReadinessReader = (params: DevelopmentTreeSnapshotRequest) => {
+  const classifier = new DraftReadinessClassifier();
+  const root = createDevelopmentTreeMaterializedRoot({
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  });
+  return async (options: {
+    readonly clusterId?: string;
+    readonly kind: DevelopmentTreeDraftReadinessKind;
+    readonly moduleId?: string;
+    readonly partId: string;
+  }): Promise<DevelopmentTreeDraftReadiness> => {
+    const folderSegments = createReadinessFolderSegments(options);
+    return classifier.classify({
+      kind: options.kind,
+      files: await readDraftFiles({
+        folderAbsolutePath: path.join(root.absolutePath, ...folderSegments),
+        kind: options.kind,
+      }),
+    }).readiness;
+  };
+};
+
+const createReadinessFolderSegments = (options: {
+  readonly clusterId?: string;
+  readonly kind: DevelopmentTreeDraftReadinessKind;
+  readonly moduleId?: string;
+  readonly partId: string;
+}): readonly string[] => {
+  if (options.kind === "product_part") {
+    return ["product-parts", options.partId];
+  }
+  if (options.kind === "cluster") {
+    return [
+      "product-parts",
+      options.partId,
+      "clusters",
+      options.clusterId ?? "",
+    ];
+  }
+  if (options.clusterId) {
+    return [
+      "product-parts",
+      options.partId,
+      "clusters",
+      options.clusterId,
+      "modules",
+      options.moduleId ?? "",
+    ];
+  }
+  return ["product-parts", options.partId, "modules", options.moduleId ?? ""];
+};
+
+const applyReadiness = async (
+  part: DevelopmentTreePartNode,
+  params: DevelopmentTreeSnapshotRequest
+): Promise<DevelopmentTreePartNode> => {
+  const readReadiness = createReadinessReader(params);
+  const clusters: DevelopmentTreeClusterNode[] = [];
+  for (const cluster of part.clusters) {
+    const modules: DevelopmentTreeModuleNode[] = [];
+    for (const module of cluster.modules) {
+      modules.push({
+        ...module,
+        readiness: await readReadiness({
+          kind: "module",
+          partId: part.id,
+          clusterId: cluster.id,
+          moduleId: module.id,
+        }),
+      });
+    }
+    const selfReadiness = await readReadiness({
+      kind: "cluster",
+      partId: part.id,
+      clusterId: cluster.id,
+    });
+    clusters.push({
+      ...cluster,
+      modules,
+      readiness: aggregateReadiness(
+        selfReadiness,
+        modules.map((module) => module.readiness ?? "idle")
+      ),
+    });
+  }
+
+  const standaloneModules: DevelopmentTreeModuleNode[] = [];
+  for (const module of part.standaloneModules) {
+    standaloneModules.push({
+      ...module,
+      readiness: await readReadiness({
+        kind: "module",
+        partId: part.id,
+        moduleId: module.id,
+      }),
+    });
+  }
+  const selfReadiness = await readReadiness({
+    kind: "product_part",
+    partId: part.id,
+  });
+  return {
+    ...part,
+    clusters,
+    standaloneModules,
+    readiness: aggregateReadiness(selfReadiness, [
+      ...clusters.map((cluster) => cluster.readiness ?? "idle"),
+      ...standaloneModules.map((module) => module.readiness ?? "idle"),
+    ]),
+  };
+};
+
 export class DevelopmentTreeStateFacade {
   private readonly snapshotListeners: DevelopmentTreeSnapshotListener[] = [];
 
@@ -150,9 +309,12 @@ export class DevelopmentTreeStateFacade {
     const parts: DevelopmentTreePartNode[] = [];
     for (const partId of params.plannedPartIds) {
       parts.push(
-        params.generatedPartIds.includes(partId)
-          ? await createMaterializedPart(params, partId)
-          : createSkeletonPart(partId)
+        await applyReadiness(
+          params.generatedPartIds.includes(partId)
+            ? await createMaterializedPart(params, partId)
+            : createSkeletonPart(partId),
+          params
+        )
       );
     }
     const snapshot = { parts };
