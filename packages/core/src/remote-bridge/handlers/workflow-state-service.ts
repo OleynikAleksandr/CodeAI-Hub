@@ -3,6 +3,8 @@ import path from "node:path";
 import type { Request, Response } from "express";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
+import { DevelopmentTreeNodeBootstrapFacade } from "../../development-tree/node-bootstrap/development-tree-node-bootstrap-facade";
+import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -49,8 +51,19 @@ type WorkspaceSlugResult =
   | { readonly ok: true; readonly value: string }
   | { readonly ok: false; readonly status: number; readonly error: string };
 
+interface DevelopmentTreeAgentSessionOptions {
+  readonly gateway: DevelopmentTreeAgentSessionGateway;
+  readonly providerId: string;
+  readonly technologyBase?: string;
+}
+
 export class WorkflowStateService {
+  private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
   private readonly logger: Logger;
+  private readonly nodeBootstraps = new Map<
+    string,
+    DevelopmentTreeNodeBootstrapFacade
+  >();
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
@@ -60,9 +73,11 @@ export class WorkflowStateService {
   private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
+    readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
     readonly logger: Logger;
     readonly sessionManager?: SessionManager;
   }) {
+    this.developmentTreeAgentSessions = options.developmentTreeAgentSessions;
     this.logger = options.logger;
     this.sessionManager = options.sessionManager;
     this.developmentTreeState.subscribeSnapshot(
@@ -73,9 +88,13 @@ export class WorkflowStateService {
             workspaceRoot,
             workspaceSlug,
           });
+          await this.getNodeBootstrap({
+            workspaceRoot,
+            workspaceSlug,
+          }).consumeNewNodes({ workspaceRoot, workspaceSlug });
         } catch (error) {
           this.logger.warn(
-            "Failed to materialize development tree filesystem",
+            "Failed to materialize development tree filesystem or node drafts",
             {
               workspaceSlug,
               error: error instanceof Error ? error.message : String(error),
@@ -266,6 +285,30 @@ export class WorkflowStateService {
     const store = new WorkflowStateFacade({ workspaceSlug });
     this.stores.set(workspaceSlug, store);
     return store;
+  }
+
+  private getNodeBootstrap(params: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): DevelopmentTreeNodeBootstrapFacade {
+    const key = `${params.workspaceRoot}\0${params.workspaceSlug}`;
+    const existing = this.nodeBootstraps.get(key);
+    if (existing) {
+      return existing;
+    }
+    const bootstrap = new DevelopmentTreeNodeBootstrapFacade({
+      ...(this.developmentTreeAgentSessions
+        ? {
+            agentSessionOptions: {
+              ...this.developmentTreeAgentSessions,
+              workspacePath: params.workspaceRoot,
+              workspaceSlug: params.workspaceSlug,
+            },
+          }
+        : {}),
+    });
+    this.nodeBootstraps.set(key, bootstrap);
+    return bootstrap;
   }
 
   private resolveWorkspaceRoot(

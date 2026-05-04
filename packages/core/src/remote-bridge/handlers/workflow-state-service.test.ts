@@ -1,11 +1,22 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Request, Response } from "express";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
+
+const AGENT_FILL_MARKER_PATTERN = /<!-- agent-fill -->/;
+const DEVELOPMENT_TREE_STAGE_PATTERN = /^development-tree\./;
+const TECHNOLOGY_BASE_QUESTION_PATTERN = /Technology base: unknown/;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -176,8 +187,34 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
       createProductPartMarkdown("local-core-runtime")
     );
+    const createdSessions: Array<{
+      readonly context: {
+        readonly initiativeSlug: string;
+        readonly runSlug?: string | null;
+        readonly stage: string;
+      };
+      readonly providerId: string;
+      readonly workspacePath: string;
+    }> = [];
+    const sentMessages: Array<{
+      readonly content: string;
+      readonly sessionId: string;
+    }> = [];
     const service = new WorkflowStateService({
       logger: new Logger("error"),
+      developmentTreeAgentSessions: {
+        providerId: "codexCli",
+        gateway: {
+          createSessionForWorkflow: (options) => {
+            createdSessions.push(options);
+            return Promise.resolve({ id: `session-${createdSessions.length}` });
+          },
+          handleMessage: (sessionId, content) => {
+            sentMessages.push({ sessionId, content });
+            return Promise.resolve();
+          },
+        },
+      },
     });
     const result = await readWorkflowStatePayload({
       service,
@@ -219,6 +256,25 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
         )
       ).isDirectory(),
       true
+    );
+    const draftPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-core-runtime/PartDescription.draft.md"
+    );
+    assert.match(await readFile(draftPath, "utf8"), AGENT_FILL_MARKER_PATTERN);
+    assert.equal(createdSessions.length, 2);
+    assert.equal(sentMessages.length, 2);
+    assert.equal(createdSessions[0]?.providerId, "codexCli");
+    assert.equal(createdSessions[0]?.workspacePath, workspaceRoot);
+    assert.equal(createdSessions[0]?.context.initiativeSlug, workspaceSlug);
+    assert.equal(createdSessions[0]?.context.runSlug, "development-tree");
+    assert.match(
+      createdSessions[0]?.context.stage ?? "",
+      DEVELOPMENT_TREE_STAGE_PATTERN
+    );
+    assert.match(
+      sentMessages[0]?.content ?? "",
+      TECHNOLOGY_BASE_QUESTION_PATTERN
     );
     assert.equal(
       payload.state?.stages.virtual_simulation?.artifacts?.some(

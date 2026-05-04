@@ -17,6 +17,13 @@ import { WorkflowEventsService } from "./handlers/workflow-events-service";
 import { WorkflowStateService } from "./handlers/workflow-state-service";
 import type { BridgeEvent, CoreStatePayload } from "./types";
 
+const resolveDevelopmentTreeBootstrapProviderId = (
+  providerRegistry: ProviderRegistry
+): string | null =>
+  providerRegistry
+    .listProviders()
+    .find((provider) => providerRegistry.getAdapter(provider.id))?.id ?? null;
+
 export interface RemoteBridgeBootstrapResult {
   readonly dialogHistoryService: DialogHistoryService;
   readonly dialogListService: DialogListService;
@@ -45,10 +52,6 @@ export const createRemoteBridgeBootstrap = (options: {
 }): RemoteBridgeBootstrapResult => {
   const workflowEventsService = new WorkflowEventsService({
     logger: options.logger,
-  });
-  const workflowStateService = new WorkflowStateService({
-    logger: options.logger,
-    sessionManager: options.sessionManager,
   });
   const sessionStorage = new UnifiedSessionStorage({
     workspaceSlug: options.config.claudeProjectSlug,
@@ -93,6 +96,21 @@ export const createRemoteBridgeBootstrap = (options: {
         type: "core:state",
         payload: options.buildInitialState(),
       }),
+  });
+  const developmentTreeProviderId = resolveDevelopmentTreeBootstrapProviderId(
+    options.providerRegistry
+  );
+  const workflowStateService = new WorkflowStateService({
+    logger: options.logger,
+    sessionManager: options.sessionManager,
+    ...(developmentTreeProviderId
+      ? {
+          developmentTreeAgentSessions: {
+            gateway: sessionHandler,
+            providerId: developmentTreeProviderId,
+          },
+        }
+      : {}),
   });
   const systemHandler = new SystemRequestHandler(
     options.config,
