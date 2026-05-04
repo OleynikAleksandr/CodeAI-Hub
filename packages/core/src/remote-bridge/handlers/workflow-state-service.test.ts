@@ -85,7 +85,20 @@ interface DiagramModulesProgressPayload {
   readonly substep: string;
 }
 
+interface DevelopmentTreePayload {
+  readonly parts: readonly {
+    readonly clusters: readonly {
+      readonly id: string;
+      readonly modules: readonly { readonly id: string }[];
+    }[];
+    readonly id: string;
+    readonly standaloneModules: readonly { readonly id: string }[];
+    readonly status: string;
+  }[];
+}
+
 interface WorkflowStatePayload {
+  readonly developmentTree?: DevelopmentTreePayload;
   readonly diagramModulesProgress?: DiagramModulesProgressPayload | null;
   readonly gating: { readonly blocked: Record<string, boolean> };
   readonly lastActive?: {
@@ -187,6 +200,15 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
     assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
     assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
+    assert.equal(payload.developmentTree?.parts.length, 1);
+    assert.equal(payload.developmentTree?.parts[0]?.id, "local-core-runtime");
+    assert.equal(payload.developmentTree?.parts[0]?.status, "materialized");
+    assert.deepEqual(
+      payload.developmentTree?.parts[0]?.standaloneModules.map(
+        (module) => module.id
+      ),
+      ["local-core-runtime-module"]
+    );
     assert.equal(
       payload.state?.stages.virtual_simulation?.artifacts?.some(
         (artifact) =>
@@ -276,6 +298,16 @@ test("workflow-state tracks diagram modules progress when not all product parts 
       "local-core-runtime"
     );
     assert.equal(payload.diagramModulesProgress?.aggregateReady, false);
+    assert.deepEqual(
+      payload.developmentTree?.parts.map((part) => ({
+        id: part.id,
+        status: part.status,
+      })),
+      [
+        { id: "local-core-runtime", status: "skeleton" },
+        { id: "project-manager", status: "skeleton" },
+      ]
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -1,6 +1,7 @@
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
+import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -21,7 +22,6 @@ import type {
   WorkflowStageId,
   WorkflowWatcherEvent,
 } from "../../workflow/watcher/watcher-types";
-import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 import {
   type DiagramModulesProgressSnapshot,
   readDiagramModulesProgressSnapshot,
@@ -53,6 +53,7 @@ export class WorkflowStateService {
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
+  private readonly developmentTreeState = new DevelopmentTreeStateFacade();
   private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
@@ -143,37 +144,39 @@ export class WorkflowStateService {
               })
             )
             .then((validatedState) =>
-              readDevelopmentTreeSnapshot({
-                workspaceRoot,
-                workspaceSlug: workspaceSlugResult.value,
-                plannedPartIds: diagramModulesProgress?.plannedPartIds ?? [],
-                generatedPartIds:
-                  diagramModulesProgress?.generatedPartIds ?? [],
-              }).then((developmentTree) => {
-                const canonicalLastActive = resolveCanonicalLastActive({
-                  chains,
-                  description,
-                  lastActive,
-                  state: validatedState,
+              this.developmentTreeState
+                .currentSnapshot({
+                  workspaceRoot,
                   workspaceSlug: workspaceSlugResult.value,
-                });
-                const gating = {
-                  blocked: resolveWorkflowBlockedStages({
-                    state: validatedState,
+                  plannedPartIds: diagramModulesProgress?.plannedPartIds ?? [],
+                  generatedPartIds:
+                    diagramModulesProgress?.generatedPartIds ?? [],
+                })
+                .then((developmentTree) => {
+                  const canonicalLastActive = resolveCanonicalLastActive({
+                    chains,
                     description,
+                    lastActive,
+                    state: validatedState,
+                    workspaceSlug: workspaceSlugResult.value,
+                  });
+                  const gating = {
+                    blocked: resolveWorkflowBlockedStages({
+                      state: validatedState,
+                      description,
+                      diagramModulesProgress,
+                    }),
+                  };
+                  res.json({
+                    state: validatedState,
+                    continuity: { chains },
+                    description,
+                    lastActive: canonicalLastActive,
+                    gating,
                     diagramModulesProgress,
-                  }),
-                };
-                res.json({
-                  state: validatedState,
-                  continuity: { chains },
-                  description,
-                  lastActive: canonicalLastActive,
-                  gating,
-                  diagramModulesProgress,
-                  developmentTree,
-                });
-              })
+                    developmentTree,
+                  });
+                })
             );
         }
       )

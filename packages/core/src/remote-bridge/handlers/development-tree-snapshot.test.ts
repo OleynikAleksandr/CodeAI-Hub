@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import { readDevelopmentTreeSnapshot } from "./development-tree-snapshot";
 
 // Canonical two-column module table per agent template:
@@ -57,6 +58,25 @@ test("readDevelopmentTreeSnapshot returns skeleton for planned-only parts", asyn
     assert.equal(result.parts[0]?.status, "skeleton");
     assert.equal(result.parts[0]?.clusters.length, 0);
     assert.equal(result.parts[1]?.status, "skeleton");
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("readDevelopmentTreeSnapshot stays compatible with DevelopmentTreeStateFacade output", async () => {
+  const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
+  try {
+    const params = {
+      workspaceRoot: tmpDir,
+      workspaceSlug: "demo",
+      plannedPartIds: ["ui-shell"],
+      generatedPartIds: [],
+    };
+    const facade = new DevelopmentTreeStateFacade();
+    assert.deepEqual(
+      await readDevelopmentTreeSnapshot(params),
+      await facade.currentSnapshot(params)
+    );
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
   }
