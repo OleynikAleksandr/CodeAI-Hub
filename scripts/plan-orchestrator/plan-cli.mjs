@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { runPlanCommit } from "./plan-commit.mjs";
 import { getGitState } from "./plan-git-state.mjs";
+import { runPlanRepair } from "./plan-repair.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
 
 const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -91,8 +92,13 @@ const main = () => {
     return;
   }
 
+  if (command === "repair") {
+    runPlanRepair();
+    return;
+  }
+
   console.error(
-    "Usage: node scripts/plan-orchestrator/plan-cli.mjs <status|validate|commit>"
+    "Usage: node scripts/plan-orchestrator/plan-cli.mjs <status|validate|commit|repair>"
   );
   process.exitCode = 2;
 };
