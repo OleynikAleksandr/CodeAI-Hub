@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+
+./scripts/check-commit-message.sh "$1"
+node ./scripts/plan-orchestrator/plan-hook-commit-msg.mjs "$1"

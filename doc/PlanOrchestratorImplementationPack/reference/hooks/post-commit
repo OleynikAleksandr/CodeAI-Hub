@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+node ./scripts/plan-orchestrator/plan-hook-post-commit.mjs

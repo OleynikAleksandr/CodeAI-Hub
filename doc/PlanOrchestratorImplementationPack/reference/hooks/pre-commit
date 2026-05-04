@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+node ./scripts/plan-orchestrator/plan-hook-pre-commit.mjs
+./scripts/check-architecture.sh
+npm run lint
+npm run check:knip
+
+STAGED_FILE_LIST=$(mktemp)
+git diff --cached --name-only --diff-filter=ACMR -z > "$STAGED_FILE_LIST"
+
+if [ ! -s "$STAGED_FILE_LIST" ]; then
+  rm -f "$STAGED_FILE_LIST"
+  echo "No staged files to format"
+  exit 0
+fi
+
+STASH_MESSAGE="pre-commit-stash-$$"
+git stash push --quiet --keep-index --include-untracked --message "$STASH_MESSAGE" || true
+STASHED=0
+if git stash list -n 1 | grep -F -q "$STASH_MESSAGE"; then
+  STASHED=1
+fi
+
+set +e
+xargs -0 npx ultracite fix < "$STAGED_FILE_LIST"
+FORMAT_EXIT_CODE=$?
+set -e
+
+git add --pathspec-from-file="$STAGED_FILE_LIST" --pathspec-file-nul
+rm -f "$STAGED_FILE_LIST"
+
+if [ "$STASHED" -eq 1 ]; then
+  if ! git stash pop --quiet; then
+    echo "Failed to restore unstaged changes from pre-commit stash"
+    exit 1
+  fi
+fi
+
+if [ "$FORMAT_EXIT_CODE" -eq 0 ]; then
+  echo "✨ Staged files formatted by Ultracite"
+fi
+
+exit $FORMAT_EXIT_CODE
