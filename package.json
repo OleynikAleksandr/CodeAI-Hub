@@ -69,6 +69,7 @@
     "check:links": "node ./scripts/check-markdown-links.js",
     "plan:complete": "node ./scripts/plan-orchestrator/plan-cli.mjs complete",
     "plan:commit": "node ./scripts/plan-orchestrator/plan-cli.mjs commit",
+    "plan:closeout": "node ./scripts/plan-orchestrator/plan-closeout.mjs",
     "plan:repair": "node ./scripts/plan-orchestrator/plan-cli.mjs repair",
     "plan:snapshot": "node ./scripts/plan-orchestrator/plan-snapshot.mjs",
     "plan:status": "node ./scripts/plan-orchestrator/plan-cli.mjs status",
