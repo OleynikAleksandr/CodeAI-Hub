@@ -48,10 +48,11 @@
 - Завершённый `todo-plan.md`: `doc/TODO/Archive/`
 - Завершённый planning-док: либо переезд в `System/` / `Clusters/` / `Modules/` / `Contracts/`, либо `doc/SolidWorks-WorkFlow/Plans/Archive/`, либо удаление, если это был временный refactoring/cleanup-док
 
-**Перед тем как создать или обновить `todo-plan.md`, необходимо:**
-1. **Создать или обновить planning-документ** в `doc/SolidWorks-WorkFlow/Plans/` (например, `doc/SolidWorks-WorkFlow/Plans/NewFeature_Architecture.md`).
-2. В этом документе утвердить: проблему, решение, структуру классов, контракты.
-3. Только **после утверждения** этого документа пользователем, мы берем его за основу и нарезаем на Фазы и Стримы в `todo-plan.md`.
+**Перед созданием или редактированием любого tracked-документа:**
+1. Сначала проверь active `doc/TODO/todo-plan.md`.
+2. Если active plan отсутствует или имеет `Execution Scope Status: NONE`, создай минимальный active `todo-plan.md` для Planning/Documentation Intake; уже появившиеся tracked-документы от пользователя, другого агента или внешнего процесса сначала проходят adoption/review через этот plan.
+3. Только после этого создавай/редактируй tracked-документ и фиксируй изменение через `plan:commit`. Исключение — ignored/local scratch files, которые не должны попасть в Git.
+4. Для feature scope planning-документ утверждается в intake-фазе и затем используется для нарезки implementation phases.
 
 ## 4. Этап Планирования (Execution Planning)
 - **Источник правды**: `doc/TODO/todo-plan.md` содержит Стратегию.
