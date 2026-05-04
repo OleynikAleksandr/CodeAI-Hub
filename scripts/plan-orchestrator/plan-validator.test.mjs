@@ -46,6 +46,32 @@ const cleanGitState = {
   head: "f654ad055",
 };
 
+const createUserCheckPlanMarkdown = () => `# План разработки
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "plan-orchestrator-2026-05-03",
+  "branch": "main",
+  "baseHead": "0debb4a32",
+  "lastRecordedCommit": "0debb4a32",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md",
+  "currentTaskId": "phase4.stream8.task1",
+  "expectedCommitMessage": null,
+  "debt": null
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+
+1. [IN_PROGRESS] \`phase4.stream8.task1\` User checks recovery behavior.
+2. [TODO] \`phase4.stream8.task2\` User checks commit workflow.
+3. [TODO] \`phase4.stream8.task3\` User gives acceptance.
+   - expected commit: \`docs: record plan orchestrator workflow acceptance\`
+4. [TODO] \`phase4.stream8.commit3\` Git Commit: \`docs: record plan orchestrator workflow acceptance\` (hash: TBD)
+`;
+
 test("validates current task, paired commit item, branch and debt absence", () => {
   const result = validatePlanMarkdown(createPlanMarkdown(), {
     gitState: cleanGitState,
@@ -54,6 +80,17 @@ test("validates current task, paired commit item, branch and debt absence", () =
   assert.equal(result.ok, true);
   assert.deepEqual(result.issues, []);
   assert.equal(result.state.currentTaskId, "phase1.stream2.task1");
+});
+
+test("validates active user-check task without paired commit", () => {
+  const result = validatePlanMarkdown(createUserCheckPlanMarkdown(), {
+    gitState: cleanGitState,
+  });
+
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.issues, []);
+  assert.equal(result.state.currentTaskId, "phase4.stream8.task1");
+  assert.equal(result.state.expectedCommitMessage, null);
 });
 
 test("reports missing machine state block as a validation issue", () => {

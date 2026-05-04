@@ -90,13 +90,16 @@ const validateCurrentTask = (state, items) => {
   }
 
   if (!nextItem?.isCommitItem) {
-    issues.push(
-      createIssue(
-        "PLAN_PAIRED_COMMIT_MISSING",
-        `Current task "${state.currentTaskId}" must be followed by Git Commit item.`,
-        { currentTaskId: state.currentTaskId }
-      )
-    );
+    if (state.expectedCommitMessage !== null) {
+      issues.push(
+        createIssue(
+          "PLAN_PAIRED_COMMIT_MISSING",
+          `Current task "${state.currentTaskId}" must be followed by Git Commit item.`,
+          { currentTaskId: state.currentTaskId }
+        )
+      );
+    }
+
     return issues;
   }
 

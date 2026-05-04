@@ -73,7 +73,6 @@ export const validatePlanState = (state) => {
 
   if (state.executionScopeStatus === "ACTIVE") {
     validateNonEmptyString(state, "currentTaskId");
-    validateNonEmptyString(state, "expectedCommitMessage");
   }
 
   if (!Object.hasOwn(state, "debt")) {
