@@ -1,0 +1,117 @@
+import type {
+  DevelopmentTreeDraftReadiness,
+  DevelopmentTreeDraftReadinessFile,
+  DevelopmentTreeDraftReadinessKind,
+} from "../development-tree-types";
+
+export interface DraftReadinessClassification {
+  readonly files: readonly DevelopmentTreeDraftReadinessFile[];
+  readonly readiness: DevelopmentTreeDraftReadiness;
+}
+
+export interface DraftReadinessClassifierRequest {
+  readonly files: readonly {
+    readonly content: string;
+    readonly fileName: string;
+  }[];
+  readonly kind: DevelopmentTreeDraftReadinessKind;
+}
+
+const AGENT_FILL_BLOCK_PATTERN =
+  /<!-- agent-fill -->([\s\S]*?)<!-- \/agent-fill -->/g;
+const TODO_PATTERN = /\bTODO\b/i;
+const OUTDATED_TRUE_PATTERN = /^outdated:\s*true\s*$/im;
+const ORPHANED_TRUE_PATTERN = /^orphaned:\s*true\s*$/im;
+
+const REQUIRED_FILES = {
+  cluster: ["ClusterDescription.draft.md", "ClusterFacadeContract.draft.md"],
+  module: ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"],
+  product_part: ["PartDescription.draft.md"],
+} as const satisfies Record<
+  DevelopmentTreeDraftReadinessKind,
+  readonly string[]
+>;
+
+const resolveFileReadiness = (params: {
+  readonly filledBlockCount: number;
+  readonly hasBlockingFlag: boolean;
+  readonly hasTodo: boolean;
+  readonly requiredBlockCount: number;
+}): DevelopmentTreeDraftReadiness => {
+  const hasMissingAgentFillContent =
+    params.requiredBlockCount > 0 &&
+    params.filledBlockCount < params.requiredBlockCount;
+  if (
+    !(params.hasBlockingFlag || params.hasTodo || hasMissingAgentFillContent)
+  ) {
+    return "ready";
+  }
+  if (
+    params.filledBlockCount === 0 &&
+    !params.hasBlockingFlag &&
+    !params.hasTodo
+  ) {
+    return "idle";
+  }
+  return "in_progress";
+};
+
+const classifyFile = (file: {
+  readonly content: string;
+  readonly fileName: string;
+}): DevelopmentTreeDraftReadinessFile => {
+  const blocks = Array.from(file.content.matchAll(AGENT_FILL_BLOCK_PATTERN));
+  const filledBlockCount = blocks.filter(
+    (block) => (block[1] ?? "").trim().length > 0
+  ).length;
+  const hasBlockingFlag =
+    OUTDATED_TRUE_PATTERN.test(file.content) ||
+    ORPHANED_TRUE_PATTERN.test(file.content);
+  const hasTodo = TODO_PATTERN.test(file.content);
+  const requiredBlockCount = blocks.length;
+  const readiness = resolveFileReadiness({
+    filledBlockCount,
+    hasBlockingFlag,
+    hasTodo,
+    requiredBlockCount,
+  });
+  return {
+    fileName: file.fileName,
+    filledAgentFillSections: filledBlockCount,
+    readiness,
+    requiredAgentFillSections: requiredBlockCount,
+  };
+};
+
+const aggregateReadiness = (
+  files: readonly DevelopmentTreeDraftReadinessFile[],
+  requiredFileNames: readonly string[]
+): DevelopmentTreeDraftReadiness => {
+  if (
+    files.length === 0 ||
+    requiredFileNames.some(
+      (fileName) => !files.some((file) => file.fileName === fileName)
+    )
+  ) {
+    return "idle";
+  }
+  if (files.every((file) => file.readiness === "ready")) {
+    return "ready";
+  }
+  if (files.some((file) => file.readiness === "in_progress")) {
+    return "in_progress";
+  }
+  return "idle";
+};
+
+export class DraftReadinessClassifier {
+  classify(
+    request: DraftReadinessClassifierRequest
+  ): DraftReadinessClassification {
+    const files = request.files.map(classifyFile);
+    return {
+      files,
+      readiness: aggregateReadiness(files, REQUIRED_FILES[request.kind]),
+    };
+  }
+}
