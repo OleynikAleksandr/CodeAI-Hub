@@ -41,7 +41,7 @@ Phase 1 создаёт нейтральную P/C/M структуру. Phase 3 
 
 **3.1. Каскад из двух независимых модулей.**
 Каскад делится на два модуля с разной ответственностью:
-- **Модуль 1: Development Tree Structurator.** Читает Diagram Modules artifacts, строит Development Tree snapshot для Project Manager и синхронно создаёт соответствующее дерево папок в файловой системе. На этом его ответственность заканчивается.
+- **Модуль 1: Development Tree Structurator.** Это не новый продуктовый контур с нуля: сегодня уже существует текущая читалка/построитель Development Tree для Project Manager (`development-tree-snapshot.ts` + интеграция через `WorkflowStateService` / PM parser). Phase 1 расширяет именно этот существующий контур: он по-прежнему читает Diagram Modules artifacts и строит Development Tree snapshot для Project Manager, но дополнительно синхронно создаёт соответствующее дерево папок в файловой системе. На этом его ответственность заканчивается.
 - **Модуль 2: Development Tree Node Bootstrap.** Не читает Diagram Modules. Он ждёт появления папок Product Part / Cluster / Module в materialized filesystem tree и для новых узлов создаёт draft-артефакты, агентские сессии и первое сообщение по шаблону.
 
 Физическая файловая система является промежуточным источником правды между этими модулями. Между ними нет общей памяти — только диск.
@@ -101,7 +101,8 @@ Sidebar читалка переводится с per-request парсинга н
 - Product Part artifact с одним только заголовком не считается готовым.
 
 **4.2. `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts` (текущая читалка).**
-- Текущий public helper остаётся compatibility wrapper; новая parsing/cache логика добавляется в Core-модуль `packages/core/src/development-tree/`.
+- Текущий public helper остаётся compatibility wrapper; новая parsing/cache/filesystem-structuring логика добавляется в Core-модуль `packages/core/src/development-tree/`.
+- Это evolution текущего Project Manager Development Tree read-model, а не параллельная новая читалка: существующий `WorkflowStateService` продолжает получать snapshot через совместимый public entrypoint.
 - `DevelopmentTreePartNode`, `DevelopmentTreeClusterNode` и `DevelopmentTreeModuleNode` получают `readiness: "idle" | "in_progress" | "ready"`.
 - `readDevelopmentTreeSnapshot()` сохраняется как compatibility wrapper для существующего `WorkflowStateService`, но его реализация должна читать `DevelopmentTreeStateFacade.currentSnapshot(...)`, а не парсить markdown на каждый request.
 - PM parser в `src/client/project-manager/services/workflow-state-client.ts` становится backward-compatible: если `readiness` отсутствует, UI ведёт себя как до Phase 1.
@@ -116,9 +117,9 @@ Cache key: `workspaceRoot + workspaceSlug`. Snapshot нельзя ключева
 
 ---
 
-## 5. Новые модули (Phase 1 scope)
+## 5. Расширяемые и новые модули (Phase 1 scope)
 
-**5.1. Module 1 — Development Tree Filesystem Structurator.**
+**5.1. Module 1 — Existing Development Tree Structurator Extension.**
 `packages/core/src/development-tree/filesystem-structurator/` — фасад-класс `DevelopmentTreeFilesystemStructuratorFacade` плюс микро-классы:
 - `DevelopmentTreeFilesystemPathPlanner` — берёт snapshot Development Tree (из cache) и материализует нейтральный P/C/M path plan.
 - `WorkspaceLayoutApplier` — сравнивает `desired` с `actual` (читает диск), создаёт недостающие папки, помечает исчезнувшие как `_orphaned/<original>` (не удаляет).
@@ -207,17 +208,18 @@ Sidebar читалка получает readiness state как часть Develo
 2. `product-parts.index.md` без валидных Product Part IDs не переводит Diagram Modules в completed.
 3. Каждый planned Product Part из index должен иметь matching `product-parts/<part-id>.md` с matching `Part ID` и хотя бы одним валидным Cluster или Module node.
 4. После валидного Diagram Modules ядро автоматически создаёт Development Tree snapshot для Project Manager и нейтральную P/C/M файловую структуру под `.codeai-hub/<workspace-slug>/development_tree/materialized/`.
-5. Module 1 не создаёт draft-файлы, агентские сессии и первые сообщения; он только читает Diagram Modules, обновляет PM tree snapshot и применяет filesystem tree.
-6. Module 2 не читает Diagram Modules; он реагирует на появление папок Product Part / Cluster / Module в materialized filesystem tree.
-7. После появления новой папки Module 2 автоматически создаёт нужные draft-файлы в правильных местах с заполненными derivable полями и пустыми `<!-- agent-fill -->` секциями.
-8. После создания draft-файлов Module 2 автоматически создаёт агентскую сессию для нового узла и отправляет первое сообщение по шаблону соответствующего node type.
-9. Если технологическая база узла неизвестна из предыдущих документов, первое сообщение агента должно привести к явному вопросу пользователю, а не к угадыванию framework/canon ядром.
-10. Изменение Diagram Modules artifact (новый module / новый cluster / новый part) приводит к точечной материализации новых папок, новых драфтов и новых агентских сессий, без перезаписи agent-fill секций существующих драфтов.
-11. Sidebar Development Tree показывает корректный readiness state (gray/orange/green) для каждого узла на основе фактического содержимого драфтов.
-12. Sidebar читалка не парсит Diagram Modules artifacts на каждый запрос — только on cache invalidation / cold-start hydration.
-13. Удаление узла из Diagram Modules не удаляет работу агента — папки/драфты переезжают в `_orphaned/` внутри materialized namespace.
-14. Core cold start после уже выполненной материализации восстанавливает Development Tree snapshot и readiness без ручного действия пользователя.
-15. Тестовый workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.5/` после валидных Diagram Modules artifacts материализуется корректно в `.codeai-hub/<workspace-slug>/development_tree/materialized/`.
+5. Module 1 является расширением существующего Development Tree read-model для Project Manager, а не новым независимым построителем дерева.
+6. Module 1 не создаёт draft-файлы, агентские сессии и первые сообщения; он только читает Diagram Modules, обновляет PM tree snapshot и применяет filesystem tree.
+7. Module 2 не читает Diagram Modules; он реагирует на появление папок Product Part / Cluster / Module в materialized filesystem tree.
+8. После появления новой папки Module 2 автоматически создаёт нужные draft-файлы в правильных местах с заполненными derivable полями и пустыми `<!-- agent-fill -->` секциями.
+9. После создания draft-файлов Module 2 автоматически создаёт агентскую сессию для нового узла и отправляет первое сообщение по шаблону соответствующего node type.
+10. Если технологическая база узла неизвестна из предыдущих документов, первое сообщение агента должно привести к явному вопросу пользователю, а не к угадыванию framework/canon ядром.
+11. Изменение Diagram Modules artifact (новый module / новый cluster / новый part) приводит к точечной материализации новых папок, новых драфтов и новых агентских сессий, без перезаписи agent-fill секций существующих драфтов.
+12. Sidebar Development Tree показывает корректный readiness state (gray/orange/green) для каждого узла на основе фактического содержимого драфтов.
+13. Sidebar читалка не парсит Diagram Modules artifacts на каждый запрос — только on cache invalidation / cold-start hydration.
+14. Удаление узла из Diagram Modules не удаляет работу агента — папки/драфты переезжают в `_orphaned/` внутри materialized namespace.
+15. Core cold start после уже выполненной материализации восстанавливает Development Tree snapshot и readiness без ручного действия пользователя.
+16. Тестовый workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.5/` после валидных Diagram Modules artifacts материализуется корректно в `.codeai-hub/<workspace-slug>/development_tree/materialized/`.
 
 ---
 
@@ -228,9 +230,10 @@ Sidebar читалка получает readiness state как часть Develo
 3. **Neutral filesystem tree:** Phase 1 создаёт нейтральную P/C/M структуру, а не финальный `packages/...`/`src/...` продуктовый layout.
 4. **Core module name:** `packages/core/src/development-tree/`.
 5. **Facade split:** три публичных фасада — state, filesystem structurator, node bootstrap. Без единого общего фасада.
-6. **Responsibility split:** filesystem structurator читает Diagram Modules и создаёт PM tree + folders; node bootstrap читает filesystem tree и создаёт drafts + sessions + first messages.
-7. **Framework/canon discovery:** если технологическая база неизвестна, её выясняет агентская сессия узла через вопрос пользователю; ядро не угадывает.
-8. **Readiness truth:** вычисляется из содержимого draft-файлов, `TODO`, `outdated`, `orphaned` и agent-fill секций. `agentTouched` не является источником истины.
+6. **Existing Module 1:** первый модуль уже существует как текущий Development Tree read-model для Project Manager; Phase 1 расширяет его filesystem materialization, а не создаёт параллельный построитель дерева.
+7. **Responsibility split:** filesystem structurator читает Diagram Modules и создаёт PM tree + folders; node bootstrap читает filesystem tree и создаёт drafts + sessions + first messages.
+8. **Framework/canon discovery:** если технологическая база неизвестна, её выясняет агентская сессия узла через вопрос пользователю; ядро не угадывает.
+9. **Readiness truth:** вычисляется из содержимого draft-файлов, `TODO`, `outdated`, `orphaned` и agent-fill секций. `agentTouched` не является источником истины.
 
 ---
 
