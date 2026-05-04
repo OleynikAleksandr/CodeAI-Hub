@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.134] - 2026-05-04
+### Added
+- **Development Tree now materializes after Diagram Modules.** Core builds the existing Project Manager Development Tree snapshot into a neutral workspace-owned filesystem tree under `.codeai-hub/<workspace-slug>/development_tree/materialized/`, then bootstraps structural draft artifacts and first-message agent session intents for materialized Product Part, Cluster, and Module nodes.
+- **Development Tree readiness now reaches the sidebar.** Draft content is classified as `idle`, `in_progress`, or `ready`, exposed through the Core snapshot payload, parsed by Project Manager, and rendered as gray/orange/green branch-node state.
+
+### Fixed
+- **Diagram Modules completion now requires real Product Part structure.** Product Part artifacts with only headings, missing `Part ID`, mismatched IDs, or no valid Cluster/Module nodes no longer count as completed.
+- **Skeleton-only planned Product Parts no longer create folders, drafts, or sessions.** Planned entries stay visible as skeleton nodes until their matching Product Part artifact exists.
+
+### Tests
+- **Development Tree materialization coverage now spans Core and PM.** Targeted tests cover artifact validation, filesystem planning/apply, draft preservation, first-message session bootstrap, readiness aggregation, Project Manager parsing/rendering, and manual workspace verification.
+
 ## [1.2.133] - 2026-05-03
 ### Fixed
 - **Documentation Tree continuity rollover no longer blocks on agent-authored reports.** `Description`, `Virtual Simulation`, and `Diagram Modules` now use a fast synthetic rollover path that creates the next session, unlocks input after target materialization, skips Create Report/report polling/resume bootstrap, and attaches the continuation contract only to the next real user message.
