@@ -9,6 +9,8 @@ import {
 } from "./plan-task-locator.mjs";
 
 const RESULT_PATTERN = /\s+Result:\s*.*$/u;
+const RESERVED_POST_CLOSEOUT_PATTERN =
+  /Reserved post-closeout handoff anchor/iu;
 
 const replaceLine = (lines, lineIndex, nextLine) => {
   const nextLines = [...lines];
@@ -17,6 +19,9 @@ const replaceLine = (lines, lineIndex, nextLine) => {
 };
 
 const normalizeResult = (result) => result.trim().replace(/\s+/gu, " ");
+
+const isReservedPostCloseoutTask = (task) =>
+  RESERVED_POST_CLOSEOUT_PATTERN.test(task?.text ?? "");
 
 const replaceTaskResult = (line, result) => {
   const cleanResult = normalizeResult(result);
@@ -71,6 +76,7 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
   const { items, pairedCommit } = locateTaskPair(markdown, taskId);
   const nextTask = locateNextTask(items, pairedCommit.lineIndex);
   let lines = markdown.split("\n");
+  const closesScope = nextTask === null || isReservedPostCloseoutTask(nextTask);
 
   lines = replaceLine(
     lines,
@@ -78,7 +84,7 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
     replaceCommitHash(replaceItemStatus(pairedCommit.line, "DONE"), commitHash)
   );
 
-  if (nextTask) {
+  if (nextTask && !closesScope) {
     lines = replaceLine(
       lines,
       nextTask.lineIndex,
@@ -86,13 +92,29 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
     );
   }
 
+  if (nextTask && closesScope) {
+    lines = replaceLine(
+      lines,
+      nextTask.lineIndex,
+      replaceItemStatus(
+        replaceTaskResult(
+          nextTask.line,
+          "Scope closed by Plan Orchestrator; start a new plan only from NONE state."
+        ),
+        "DONE"
+      )
+    );
+  }
+
   return updatePlanState(lines.join("\n"), (state) => ({
     ...state,
-    currentTaskId: nextTask?.id ?? null,
+    currentTaskId: closesScope ? null : (nextTask?.id ?? null),
     debt: null,
-    expectedCommitMessage: nextTask
-      ? findTaskExpectedCommitMessage(lines, nextTask.lineIndex)
-      : null,
+    executionScopeStatus: closesScope ? "NONE" : state.executionScopeStatus,
+    expectedCommitMessage:
+      !closesScope && nextTask
+        ? findTaskExpectedCommitMessage(lines, nextTask.lineIndex)
+        : null,
     lastRecordedCommit: commitHash,
   }));
 };
@@ -118,6 +140,7 @@ export const completeNoCommitTaskAndAdvance = (
 
   const nextTask = locateNextTask(items, task.lineIndex);
   let lines = markdown.split("\n");
+  const closesScope = nextTask === null || isReservedPostCloseoutTask(nextTask);
 
   lines = replaceLine(
     lines,
@@ -125,7 +148,7 @@ export const completeNoCommitTaskAndAdvance = (
     replaceItemStatus(replaceTaskResult(task.line, result), "DONE")
   );
 
-  if (nextTask) {
+  if (nextTask && !closesScope) {
     lines = replaceLine(
       lines,
       nextTask.lineIndex,
@@ -133,13 +156,29 @@ export const completeNoCommitTaskAndAdvance = (
     );
   }
 
+  if (nextTask && closesScope) {
+    lines = replaceLine(
+      lines,
+      nextTask.lineIndex,
+      replaceItemStatus(
+        replaceTaskResult(
+          nextTask.line,
+          "Scope closed by Plan Orchestrator; start a new plan only from NONE state."
+        ),
+        "DONE"
+      )
+    );
+  }
+
   return updatePlanState(lines.join("\n"), (state) => ({
     ...state,
-    currentTaskId: nextTask?.id ?? null,
+    currentTaskId: closesScope ? null : (nextTask?.id ?? null),
     debt: null,
-    expectedCommitMessage: nextTask
-      ? findTaskExpectedCommitMessage(lines, nextTask.lineIndex)
-      : null,
+    executionScopeStatus: closesScope ? "NONE" : state.executionScopeStatus,
+    expectedCommitMessage:
+      !closesScope && nextTask
+        ? findTaskExpectedCommitMessage(lines, nextTask.lineIndex)
+        : null,
   }));
 };
 

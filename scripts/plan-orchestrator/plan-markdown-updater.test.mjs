@@ -13,6 +13,8 @@ const COMMIT_HASH_PATTERN =
   /Git Commit: `feat: add plan markdown updater` \(hash: abc1234\)/u;
 const NEXT_TASK_IN_PROGRESS_PATTERN =
   /3\. \[IN_PROGRESS\] `phase2\.stream3\.task2`/u;
+const CLOSEOUT_RESERVED_DONE_PATTERN =
+  /3\. \[DONE\] `phase6\.stream1\.task2` Reserved post-closeout handoff anchor/u;
 
 const createMarkdown = () => `# План разработки
 
@@ -43,6 +45,33 @@ const createMarkdown = () => `# План разработки
    - scope: \`scripts/plan-orchestrator/*\`
    - expected commit: \`feat: add plan transaction debt state\`
 4. [TODO] \`phase2.stream3.commit2\` Git Commit: \`feat: add plan transaction debt state\` (hash: TBD)
+`;
+
+const createCloseoutMarkdown = () => `# План разработки
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "closeout-test",
+  "branch": "main",
+  "baseHead": "1111111",
+  "lastRecordedCommit": "1111111",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Plan_Example.md",
+  "currentTaskId": "phase6.stream1.task1",
+  "expectedCommitMessage": "docs: close example plan",
+  "debt": null
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+
+## Phase 6 - Scope Closeout
+
+1. [IN_PROGRESS] \`phase6.stream1.task1\` Close accepted scope.
+   - expected commit: \`docs: close example plan\`
+2. [TODO] \`phase6.stream1.commit1\` Git Commit: \`docs: close example plan\` (hash: TBD)
+3. [TODO] \`phase6.stream1.task2\` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
 `;
 
 test("marks current task done and paired commit pending", () => {
@@ -81,5 +110,24 @@ test("finalizes commit hash and advances to next task", () => {
     "feat: add plan transaction debt state"
   );
   assert.equal(parsed.state.lastRecordedCommit, "abc1234");
+  assert.equal(parsed.state.debt, null);
+});
+
+test("finalizes closeout commit into NONE state instead of reserved handoff", () => {
+  const pending = markTaskDoneAndCommitPending(
+    createCloseoutMarkdown(),
+    "phase6.stream1.task1"
+  );
+  const markdown = finalizeCommitAndAdvance(pending, {
+    commitHash: "def5678",
+    taskId: "phase6.stream1.task1",
+  });
+  const parsed = parsePlanStateMarkdown(markdown);
+
+  assert.match(markdown, CLOSEOUT_RESERVED_DONE_PATTERN);
+  assert.equal(parsed.state.executionScopeStatus, "NONE");
+  assert.equal(parsed.state.currentTaskId, null);
+  assert.equal(parsed.state.expectedCommitMessage, null);
+  assert.equal(parsed.state.lastRecordedCommit, "def5678");
   assert.equal(parsed.state.debt, null);
 });

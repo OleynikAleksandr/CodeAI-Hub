@@ -31,7 +31,9 @@
 0. **User Acceptance Gate**: закрытие active scope, архивирование `todo-plan.md` и planning-документа разрешены только после явного acceptance пользователя.
 1. Closeout фиксируется в archived plan / planning-doc disposition, а не в новом обязательном session report.
 2. Если active plan становится ignored local state, перед closeout должен быть создан tracked archive/snapshot в `doc/TODO/Archive/` или другом явно указанном tracked path.
-3. В конце работы не оставляй `.git/codeai-plan-debt`; если он существует, сначала выполни `npm run plan:repair`.
+3. Новый `doc/TODO/todo-plan.md` запрещено создавать или заменять, пока текущий plan имеет `Execution Scope Status: ACTIVE`, любой `IN_PROGRESS` пункт или открытый commit/debt lifecycle. Сначала closeout должен быть завершён оркестратором: финальный closeout commit/complete переводит scope в terminal `NONE` state (`currentTaskId: null`, `expectedCommitMessage: null`) и только потом можно начинать новый planning intake.
+4. Нельзя помечать невыполненные задачи как `DONE` ради закрытия scope. Если пользователь закрывает scope с невыполненной работой, эти пункты должны получить поддержанный terminal disposition (`BLOCKED` с причиной сейчас; `DEFERRED` / `CANCELLED` только после добавления в оркестратор) через отдельный closeout flow, а не ручную замену active plan.
+5. В конце работы не оставляй `.git/codeai-plan-debt`; если он существует, сначала выполни `npm run plan:repair`.
 
 ## 2. Архитектурные принципы (Подход "Кластерно-Модульный")
 - **Микро-классы**: Никаких файлов > 500 строк. Логика должна быть разбита на маленькие классы с единственной ответственностью.
@@ -57,7 +59,7 @@
 - **Операционный вид**: Используй свой 'todo' для отслеживания *текущего* активного пункта из `todo-plan.md`.
 `todo-plan.md` - может содержать несколько фаз и в каждой фазе несколько Stream с перечнем микро задач - не более 3-х файлов исправлений или вновь созданных.
 Полностью реализованный `todo-plan.md` переименовывается с префиксом последней реализованной Фазы (например - todo-plan-phase3.md) и кладется в `doc/TODO/Archive/` только после User Acceptance Gate.
-На его месте создается новый `todo-plan.md` под новые задачи.
+На его месте создается новый `todo-plan.md` под новые задачи только после того, как оркестратор перевёл предыдущий active plan в terminal `NONE` state.
 - **Обязательные финальные Stream в каждом новом `doc/TODO/todo-plan.md`:** `Release Build` или `Tooling Verification` (по scope), `User Visual Acceptance Testing` или `User Workflow Acceptance Testing`, `Scope Closeout` (закрытие todo-plan и planning-doc). `Scope Closeout` выполняется только после явного acceptance пользователя.
 - **Обязательный closeout Plans после User Acceptance Gate:** как только `doc/TODO/todo-plan.md` полностью закрыт, релиз принят пользователем и план переносится в `doc/TODO/Archive/`, необходимо в той же сессии провести ревизию `doc/SolidWorks-WorkFlow/Plans/` по этому execution cycle.
   Для каждого planning-документа, на который опирался завершенный `todo-plan`, обязательно принять одно из решений:
