@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 2 / Stream 3 / Task 3.
-- **Next action:** implement transaction/debt primitives.
-- **Last completed commit in this cycle:** `353c769ee feat: add plan markdown updater`
+- **Current phase/stream/task:** Phase 2 / Stream 4 / Task 1.
+- **Next action:** implement pre-commit plan guard.
+- **Last completed commit in this cycle:** `a4be3c37d feat: add plan transaction debt state`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -61,8 +61,8 @@
 
 1. [DONE] Создать markdown updater для task/commit transitions: `scripts/plan-orchestrator/plan-markdown-updater.mjs`, `scripts/plan-orchestrator/plan-task-locator.mjs`, `scripts/plan-orchestrator/plan-markdown-updater.test.mjs`; поддержать task DONE, commit PENDING/DONE, hash insertion, next task IN_PROGRESS. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: add plan markdown updater`).
 2. [DONE] Git Commit: `feat: add plan markdown updater` (hash: 353c769ee)
-3. [TODO] Реализовать transaction/debt primitives: `scripts/plan-orchestrator/plan-debt.mjs`, `scripts/plan-orchestrator/plan-transaction.mjs`, `scripts/plan-orchestrator/plan-transaction.test.mjs`; debt file path `.git/codeai-plan-debt`, JSON payload with task id, expected message, pre-commit head and transaction stage (scope: 3 files; expected commit: `feat: add plan transaction debt state`).
-4. [TODO] Git Commit: `feat: add plan transaction debt state` (hash: TBD)
+3. [DONE] Реализовать transaction/debt primitives: `scripts/plan-orchestrator/plan-debt.mjs`, `scripts/plan-orchestrator/plan-transaction.mjs`, `scripts/plan-orchestrator/plan-transaction.test.mjs`; debt file path `.git/codeai-plan-debt`, JSON payload with task id, expected message, pre-commit head and transaction stage. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: add plan transaction debt state`).
+4. [DONE] Git Commit: `feat: add plan transaction debt state` (hash: a4be3c37d)
 
 ### Stream 4 — Pre-commit Guard
 
