@@ -3,6 +3,7 @@ import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeModuleNode,
   DevelopmentTreePartNode,
+  DevelopmentTreeReadiness,
   WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
@@ -25,6 +26,22 @@ const dispatchStageActivated = (stage: string): void => {
       detail: { stage, source: "workspace-tree-diagram-branch-node" },
     })
   );
+};
+
+const resolveReadinessStatus = (
+  readiness: DevelopmentTreeReadiness | undefined,
+  fallback: TreeNode["status"]
+): TreeNode["status"] => {
+  if (readiness === "ready") {
+    return "active";
+  }
+  if (readiness === "in_progress") {
+    return "progress";
+  }
+  if (readiness === "idle") {
+    return "todo";
+  }
+  return fallback;
 };
 
 const resolveLatestDiagramChain = (
@@ -134,9 +151,10 @@ const buildModuleTreeNode = (
     ? `devtree:${partId}:${clusterId}:${mod.id}`
     : `devtree:${partId}:standalone:${mod.id}`,
   label: mod.title,
-  status: "todo",
+  status: resolveReadinessStatus(mod.readiness, "todo"),
   visualDepth: depth,
   nodeType: "module",
+  readiness: mod.readiness,
   onSelect: () =>
     dispatchBranchSelected({
       kind: "module",
@@ -154,9 +172,10 @@ const buildClusterTreeNode = (
 ): TreeNode => ({
   id: `devtree:${partId}:${cluster.id}`,
   label: cluster.id,
-  status: "todo",
+  status: resolveReadinessStatus(cluster.readiness, "todo"),
   visualDepth: depth,
   nodeType: "cluster",
+  readiness: cluster.readiness,
   isCollapsible: cluster.modules.length > 0,
   children: cluster.modules.map((mod) =>
     buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
@@ -184,9 +203,13 @@ const buildPartTreeNode = (
   return {
     id: `devtree:${part.id}`,
     label: part.id,
-    status: part.status === "materialized" ? "draft" : "todo",
+    status: resolveReadinessStatus(
+      part.readiness,
+      part.status === "materialized" ? "draft" : "todo"
+    ),
     visualDepth: depth,
     nodeType: "product-part",
+    readiness: part.readiness,
     isCollapsible: children.length > 0,
     children: children.length > 0 ? children : undefined,
     onSelect: () =>

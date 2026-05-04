@@ -204,3 +204,42 @@ test("buildDevelopmentTreeNodes respects custom baseDepth for top-level renderin
   assert.ok(corePart);
   assert.equal(corePart.visualDepth, 0);
 });
+
+test("buildDevelopmentTreeNodes maps readiness to sidebar status colors", () => {
+  const developmentTree = {
+    parts: [
+      {
+        id: "ui-shell",
+        readiness: "in_progress",
+        status: "materialized",
+        clusters: [
+          {
+            id: "layout-cluster",
+            readiness: "ready",
+            modules: [
+              { id: "main-area", readiness: "ready", title: "Main Area" },
+              { id: "sidebar", readiness: "idle", title: "Sidebar" },
+            ],
+          },
+        ],
+        standaloneModules: [
+          { id: "theme-engine", readiness: "idle", title: "Theme Engine" },
+        ],
+      },
+    ],
+  } satisfies NonNullable<WorkflowStateSnapshot["developmentTree"]>;
+
+  const nodes = buildDevelopmentTreeNodes(developmentTree, 0);
+  const part = nodes[0];
+  const cluster = part?.children?.[0];
+  const readyModule = cluster?.children?.[0];
+  const idleModule = cluster?.children?.[1];
+  const standaloneModule = part?.children?.[1];
+
+  assert.equal(part?.status, "progress");
+  assert.equal(part?.readiness, "in_progress");
+  assert.equal(cluster?.status, "active");
+  assert.equal(readyModule?.status, "active");
+  assert.equal(idleModule?.status, "todo");
+  assert.equal(standaloneModule?.status, "todo");
+});

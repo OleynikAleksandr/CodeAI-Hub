@@ -1,4 +1,5 @@
 import type {
+  DevelopmentTreeReadiness,
   WorkflowStageId,
   WorkflowStageStatus,
 } from "../../services/workflow-state-client";
@@ -20,6 +21,7 @@ export type TreeNode = {
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
   readonly nodeType?: TreeNodeType;
+  readonly readiness?: DevelopmentTreeReadiness;
 };
 
 export const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
