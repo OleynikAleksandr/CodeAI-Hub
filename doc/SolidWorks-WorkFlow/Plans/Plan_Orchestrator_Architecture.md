@@ -68,6 +68,21 @@ Plan Orchestrator:
 10. переводит следующую задачу в `IN_PROGRESS`;
 11. снимает transaction debt.
 
+Для no-commit/user-check задач используется отдельный штатный путь:
+
+```bash
+npm run plan:complete -- "result text"
+```
+
+Plan Orchestrator:
+
+1. валидирует active plan и отсутствие debt;
+2. требует `expectedCommitMessage: null`;
+3. записывает краткий `Result: ...` в текущую строку задачи;
+4. переводит текущую задачу в `DONE`;
+5. переводит следующую `TODO` задачу в `IN_PROGRESS`;
+6. обновляет `currentTaskId` и `expectedCommitMessage` без Git commit и без изменения `lastRecordedCommit`.
+
 ### 2.3 Closeout
 
 Session reports удаляются из обязательного recovery-процесса after `AGENTS.md` migration.
@@ -203,7 +218,31 @@ Actions:
 - removes `.git/codeai-plan-debt`;
 - prints next required action.
 
-### 4.4 `npm run plan:repair`
+### 4.4 `npm run plan:complete -- "<result>"`
+
+No-commit/user-check orchestrator command.
+
+Stream 8 verification showed that validating user-check tasks is not enough:
+the orchestrator must also record observations and advance active plan state
+without forcing a Git commit.
+
+Checks before completion:
+
+- active plan status is `ACTIVE`;
+- current task is `IN_PROGRESS`;
+- `expectedCommitMessage` is `null`;
+- no open `.git/codeai-plan-debt`;
+- result text is non-empty.
+
+Actions:
+
+- writes normalized `Result: <result>` into the current task line;
+- marks the current task `DONE`;
+- advances the next `TODO` task to `IN_PROGRESS`;
+- updates `currentTaskId` and next `expectedCommitMessage`;
+- keeps `lastRecordedCommit` unchanged.
+
+### 4.5 `npm run plan:repair`
 
 Crash recovery command.
 
@@ -218,7 +257,7 @@ Supported repairs:
 
 If repair cannot prove a single safe transition, it leaves status `BLOCKED` and prints exact manual recovery instructions.
 
-### 4.5 Deferred: `npm run plan:snapshot`
+### 4.6 Deferred: `npm run plan:snapshot`
 
 Tracked snapshots are useful, but they are not part of the MVP requested by the user.
 
@@ -238,7 +277,7 @@ doc/TODO/Snapshots/
 
 Snapshot filenames include timestamp, branch, and last recorded commit.
 
-### 4.6 Deferred: `npm run plan:closeout`
+### 4.7 Deferred: `npm run plan:closeout`
 
 Generic closeout automation is useful, but it is not part of the MVP requested by the user.
 

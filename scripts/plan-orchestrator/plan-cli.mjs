@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { runPlanCommit } from "./plan-commit.mjs";
+import { runPlanComplete } from "./plan-complete.mjs";
 import { getGitState } from "./plan-git-state.mjs";
 import { runPlanRepair } from "./plan-repair.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
@@ -92,13 +93,18 @@ const main = () => {
     return;
   }
 
+  if (command === "complete") {
+    runPlanComplete({ result: process.argv.slice(3).join(" ") });
+    return;
+  }
+
   if (command === "repair") {
     runPlanRepair();
     return;
   }
 
   console.error(
-    "Usage: node scripts/plan-orchestrator/plan-cli.mjs <status|validate|commit|repair>"
+    "Usage: node scripts/plan-orchestrator/plan-cli.mjs <status|validate|commit|complete|repair>"
   );
   process.exitCode = 2;
 };
