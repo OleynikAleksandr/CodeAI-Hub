@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
+import { normalizeAndValidateWorkflowStageArtifact } from "./http-api-artifact-validation";
 
 const PRODUCT_PART_ID_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
@@ -34,6 +35,16 @@ const readExistingFile = async (
   }
   return readFile(absolutePath, "utf8").catch(() => null);
 };
+
+const isProductPartReady = (params: {
+  readonly content: string;
+  readonly partId: string;
+}): boolean =>
+  normalizeAndValidateWorkflowStageArtifact({
+    expectedPartId: params.partId,
+    fileName: "product-part.md",
+    markdown: params.content,
+  }).ok;
 
 const collectPlannedPartIds = (markdown: string): string[] => {
   const plannedPartIds: string[] = [];
@@ -71,7 +82,7 @@ const resolveGeneratedPartIds = async (params: {
       continue;
     }
     const content = await readExistingFile(artifactPath.value.absolutePath);
-    if (content) {
+    if (content && isProductPartReady({ content, partId })) {
       generatedPartIds.push(partId);
     }
   }

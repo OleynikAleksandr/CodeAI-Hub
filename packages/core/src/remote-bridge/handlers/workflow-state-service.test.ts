@@ -45,6 +45,32 @@ const createProductPartsIndex = (partIds: readonly string[]): string =>
     ]),
   ].join("\n");
 
+const createProductPartMarkdown = (partId: string): string =>
+  [
+    `# Product Part: ${partId}`,
+    "",
+    "## Identity",
+    "",
+    "| Field | Value |",
+    "| ----- | ----- |",
+    `| Part ID | \`${partId}\` |`,
+    `| Product Part | \`${partId}\` |`,
+    `| Purpose | Planned ${partId}. |`,
+    "",
+    "## Purpose",
+    "",
+    `Planned ${partId}.`,
+    "",
+    "## Owned Clusters",
+    "",
+    "## Standalone Modules",
+    "",
+    "| `module-id` | Responsibility |",
+    "| --- | --- |",
+    `| \`${partId}-module\` | Implements ${partId}. |`,
+    "",
+  ].join("\n");
+
 interface WorkflowStageArtifacts {
   readonly artifacts?: readonly { readonly path: string }[];
   readonly gates?: readonly { readonly gateId: string }[];
@@ -135,7 +161,7 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     await writeWorkspaceFile(
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
-      "# Partial Product Part\n"
+      createProductPartMarkdown("local-core-runtime")
     );
     const service = new WorkflowStateService({
       logger: new Logger("error"),
@@ -244,11 +270,67 @@ test("workflow-state tracks diagram modules progress when not all product parts 
       "generate_product_part"
     );
     assert.equal(payload.diagramModulesProgress?.plannedCount, 2);
-    assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
+    assert.equal(payload.diagramModulesProgress?.generatedCount, 0);
     assert.equal(
       payload.diagramModulesProgress?.currentPartId,
-      "project-manager"
+      "local-core-runtime"
     );
+    assert.equal(payload.diagramModulesProgress?.aggregateReady, false);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("workflow-state cold start does not complete diagram modules when index has no valid product part ids", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-service-empty-product-parts-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "# Final Description\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+      `${createDescriptionStepJson({ workspaceRoot, workspaceSlug })}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      [
+        "# Virtual Simulation: Demo Workspace",
+        "",
+        "## Сценарий 1",
+        "Первый сценарий.",
+        "",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      ["# Product Parts Index", "", "## Product Parts", ""].join("\n")
+    );
+
+    const service = new WorkflowStateService({
+      logger: new Logger("error"),
+    });
+    const result = await readWorkflowStatePayload({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(result.statusCode, 200);
+    const payload = result.payload as WorkflowStatePayload;
+
+    assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
+    assert.equal(payload.diagramModulesProgress?.substep, "index");
+    assert.equal(payload.diagramModulesProgress?.plannedCount, 0);
+    assert.equal(payload.diagramModulesProgress?.generatedCount, 0);
     assert.equal(payload.diagramModulesProgress?.aggregateReady, false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
