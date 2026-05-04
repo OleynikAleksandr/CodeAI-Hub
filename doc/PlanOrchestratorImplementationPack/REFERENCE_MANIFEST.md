@@ -11,6 +11,10 @@
 - [reference/hooks/pre-push](reference/hooks/pre-push)
 - [reference/hooks/post-checkout](reference/hooks/post-checkout)
 
+## Agent Instructions
+
+- [reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md](reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md)
+
 ## Plan Orchestrator Scripts
 
 - [reference/scripts/plan-orchestrator/plan-cli.mjs](reference/scripts/plan-orchestrator/plan-cli.mjs)
@@ -70,7 +74,9 @@
 
 ## Archived Plans
 
+Эти файлы не являются runtime dependency.
+Они нужны как examples/fixtures для человека, который переносит систему: по ним видно, как выглядит tracked closeout archive после завершения scope, какие поля state сохраняются, как записывается acceptance, planning source disposition и active plan copy.
+
 - [reference/archives/todo-plan-mixed-orchestrator-test-2026-05-04.md](reference/archives/todo-plan-mixed-orchestrator-test-2026-05-04.md)
 - [reference/archives/todo-plan-closeout-plan-orchestrator-deferred-verification-2026-05-04.md](reference/archives/todo-plan-closeout-plan-orchestrator-deferred-verification-2026-05-04.md)
 - [reference/archives/todo-plan-closeout-plan-orchestrator-closeout-replacement-2026-05-04.md](reference/archives/todo-plan-closeout-plan-orchestrator-closeout-replacement-2026-05-04.md)
-

@@ -13,11 +13,12 @@
 - [MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md) - пошаговый checklist переноса системы в другой репозиторий.
 - [PACKAGE_SCRIPTS.md](PACKAGE_SCRIPTS.md) - нужные `package.json` scripts и команды оператора.
 - [REFERENCE_MANIFEST.md](REFERENCE_MANIFEST.md) - полный список файлов, скопированных в пакет.
+- [reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md](reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md) - переносимый excerpt из `AGENTS.md` про старт сессии, active plan, commit workflow, closeout и запрет bypass hooks.
 - [reference/hooks/](reference/hooks/) - зеркала Husky hooks.
 - [reference/scripts/plan-orchestrator/](reference/scripts/plan-orchestrator/) - зеркала всех скриптов и тестов Plan Orchestrator.
 - [reference/planning/](reference/planning/) - planning-документы трех реализованных этапов.
 - [reference/evidence/](reference/evidence/) - dogfood/evidence-документы проверок.
-- [reference/archives/](reference/archives/) - архивные snapshots завершенных `todo-plan.md`.
+- [reference/archives/](reference/archives/) - optional examples/fixtures архивных snapshots завершенных `todo-plan.md`; это не runtime dependency, а образцы того, как должен выглядеть tracked closeout archive.
 
 ## Минимальная Идея Системы
 
@@ -53,10 +54,11 @@ Plan Orchestrator превращает `doc/TODO/todo-plan.md` в machine-manage
 
 1. Скопировать [reference/scripts/plan-orchestrator/](reference/scripts/plan-orchestrator/) в `scripts/plan-orchestrator/`.
 2. Скопировать [reference/hooks/](reference/hooks/) в `.husky/`.
-3. Добавить scripts из [PACKAGE_SCRIPTS.md](PACKAGE_SCRIPTS.md) в `package.json`.
-4. Создать `doc/TODO/todo-plan.md` по шаблону из [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md).
-5. Убедиться, что `doc/TODO/todo-plan.md` может быть local/ignored machine-managed state, а tracked snapshots пишутся в `doc/TODO/Archive/`.
-6. Запустить:
+3. Встроить session/orchestration rules из [reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md](reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md) в project-level `AGENTS.md` или аналогичный agent bootstrap document.
+4. Добавить scripts из [PACKAGE_SCRIPTS.md](PACKAGE_SCRIPTS.md) в `package.json`.
+5. Создать `doc/TODO/todo-plan.md` по шаблону из [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md).
+6. Убедиться, что `doc/TODO/todo-plan.md` может быть local/ignored machine-managed state, а tracked snapshots пишутся в `doc/TODO/Archive/`.
+7. Запустить:
 
 ```bash
 npm run plan:status
@@ -64,7 +66,7 @@ npm run plan:validate
 node --test scripts/plan-orchestrator/*.test.mjs
 ```
 
-7. Работать только через:
+8. Работать только через:
 
 ```bash
 npm run plan:complete -- "<result>"
@@ -72,4 +74,3 @@ npm run plan:commit -- "<expected commit message>"
 npm run plan:closeout -- "<acceptance evidence>"
 npm run plan:repair
 ```
-

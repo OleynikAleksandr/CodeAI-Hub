@@ -118,6 +118,7 @@ Reference copies:
 
 - [reference/scripts/plan-orchestrator/](reference/scripts/plan-orchestrator/)
 - [reference/hooks/](reference/hooks/)
+- [reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md](reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md)
 - [PACKAGE_SCRIPTS.md](PACKAGE_SCRIPTS.md)
 
 ## 4. Active Plan Как Machine-managed State
@@ -708,6 +709,10 @@ flowchart TD
 ## 13. Session Recovery Lifecycle
 
 В начале новой сессии агент должен открыть `doc/TODO/todo-plan.md` и смотреть на `executionScopeStatus`.
+Эта логика должна быть закреплена не только в scripts/hooks, но и в agent bootstrap instructions.
+Переносимый excerpt лежит здесь:
+
+- [reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md](reference/agent-instructions/AGENTS_SESSION_ORCHESTRATION_EXCERPT.md)
 
 ### 13.1 Если ACTIVE
 
@@ -952,9 +957,26 @@ Evidence documents фиксируют не только "тесты прошли
 - [closeout-replacement-check.md](reference/evidence/closeout-replacement-check.md) - terminal template replacement.
 - [closeout-replacement-acceptance.md](reference/evidence/closeout-replacement-acceptance.md) - final acceptance.
 
-## 22. Practical Operator Workflow
+## 22. Reference Archives
 
-### 22.1 Начать Сессию
+[reference/archives/](reference/archives/) не нужен скриптам для запуска.
+Эта папка нужна человеку, который воспроизводит систему, как набор concrete examples/fixtures.
+
+По этим файлам видно:
+
+- как выглядит tracked closeout archive;
+- где хранится full active plan copy после закрытия scope;
+- как фиксируется acceptance evidence;
+- как записывается `Planning Source Disposition`;
+- как archived plan показывает финальный `currentTaskId`, `expectedCommitMessage`, `lastRecordedCommit`;
+- чем отличается archived full plan от active terminal `NONE` template.
+
+Если переносчик хочет минимальный runtime-only набор, он может не копировать `reference/archives/`.
+Если переносчик хочет воспроизвести тесты, документацию и onboarding "как у нас", папку лучше оставить.
+
+## 23. Practical Operator Workflow
+
+### 23.1 Начать Сессию
 
 ```bash
 npm run plan:status
@@ -962,7 +984,7 @@ npm run plan:status
 
 Если `ACTIVE`, открыть `doc/TODO/todo-plan.md`, прочитать Context Pack, выполнить current task.
 
-### 22.2 Выполнить Commit Task
+### 23.2 Выполнить Commit Task
 
 ```bash
 git add <files>
@@ -977,7 +999,7 @@ npm run plan:status
 - current task advanced;
 - debt none.
 
-### 22.3 Выполнить No-commit Task
+### 23.3 Выполнить No-commit Task
 
 ```bash
 <run required commands>
@@ -985,7 +1007,7 @@ npm run plan:complete -- "<result>"
 npm run plan:status
 ```
 
-### 22.4 Закрыть Scope
+### 23.4 Закрыть Scope
 
 ```bash
 # 1. получить user acceptance
@@ -1005,9 +1027,9 @@ npm run plan:status
 npm run plan:validate
 ```
 
-## 23. Install Notes For Another Repository
+## 24. Install Notes For Another Repository
 
-### 23.1 Dependencies
+### 24.1 Dependencies
 
 Минимально нужны:
 
@@ -1036,7 +1058,7 @@ npm run check:knip
 Если у вас нет `check-architecture.sh`, либо добавьте аналог, либо удалите эту строку из hook.
 Но лучше оставить отдельный architecture gate, потому что Plan Orchestrator контролирует процесс, а не архитектурное качество кода.
 
-### 23.2 Paths To Adapt
+### 24.2 Paths To Adapt
 
 По умолчанию scripts ожидают:
 
@@ -1052,7 +1074,7 @@ npm run check:knip
 - [plan-snapshot.mjs](reference/scripts/plan-orchestrator/plan-snapshot.mjs)
 - [plan-markdown-updater.mjs](reference/scripts/plan-orchestrator/plan-markdown-updater.mjs)
 
-### 23.3 Git Ignore Policy
+### 24.3 Git Ignore Policy
 
 Есть два варианта.
 
@@ -1070,9 +1092,9 @@ npm run check:knip
 
 В CodeAI Hub используется local machine-managed active plan plus tracked archives/evidence.
 
-## 24. Troubleshooting
+## 25. Troubleshooting
 
-### 24.1 `Plan validation: FAILED`
+### 25.1 `Plan validation: FAILED`
 
 Действия:
 
@@ -1090,7 +1112,7 @@ npm run plan:validate
 - branch mismatch;
 - open debt.
 
-### 24.2 `Debt: open`
+### 25.2 `Debt: open`
 
 Действия:
 
@@ -1101,7 +1123,7 @@ npm run plan:status
 
 Если repair перевел plan в `BLOCKED`, не продолжать без ручного решения.
 
-### 24.3 Commit Message Blocked
+### 25.3 Commit Message Blocked
 
 Причина:
 
@@ -1114,7 +1136,7 @@ npm run plan:status
 npm run plan:commit -- "<Expected Commit from status>"
 ```
 
-### 24.4 Direct Commit Blocked
+### 25.4 Direct Commit Blocked
 
 Причина:
 
@@ -1126,7 +1148,7 @@ npm run plan:commit -- "<Expected Commit from status>"
 npm run plan:commit -- "<expected commit message>"
 ```
 
-### 24.5 Push Blocked
+### 25.5 Push Blocked
 
 Проверить:
 
@@ -1144,7 +1166,7 @@ test ! -e .git/codeai-plan-debt
 - invalid plan;
 - last recorded commit unreachable.
 
-### 24.6 Closeout Archive Path Ignored
+### 25.6 Closeout Archive Path Ignored
 
 `plan:closeout` проверяет, что archive path не ignored.
 Если path ignored:
@@ -1153,7 +1175,7 @@ test ! -e .git/codeai-plan-debt
 - выбрать tracked archive path;
 - повторить closeout.
 
-### 24.7 Terminal NONE Template Still Contains Full Old Plan
+### 25.7 Terminal NONE Template Still Contains Full Old Plan
 
 Это старое поведение, исправленное closeout replacement follow-up.
 Проверить, что используется обновленный:
@@ -1173,7 +1195,7 @@ rg -n "No Active Execution Scope|Reserved post-closeout handoff anchor|AGENTS\\.
 - нет `Reserved post-closeout handoff anchor`;
 - нет `AGENTS.md`.
 
-## 25. Проверка Успешной Установки
+## 26. Проверка Успешной Установки
 
 После переноса в новый репозиторий выполнить:
 
@@ -1196,7 +1218,7 @@ node --test scripts/plan-orchestrator/*.test.mjs
 9. Закоммитить closeout через `plan:commit`.
 10. Проверить terminal `NONE`.
 
-## 26. Что Не Делает Plan Orchestrator
+## 27. Что Не Делает Plan Orchestrator
 
 Plan Orchestrator не заменяет:
 
@@ -1215,7 +1237,7 @@ Plan Orchestrator не заменяет:
 - когда scope считается закрытым;
 - как восстановиться после сессии или сбоя transaction.
 
-## 27. Ключевые Инварианты
+## 28. Ключевые Инварианты
 
 1. Active plan - единственный recovery owner.
 2. `plan:commit` - единственный штатный commit path для active commit-task.
@@ -1229,7 +1251,7 @@ Plan Orchestrator не заменяет:
 10. Terminal `NONE` template должен быть коротким и не содержать старый полный план.
 11. `AGENTS.md` не включается в generated terminal template context.
 
-## 28. Итог
+## 29. Итог
 
 Реализованная система делает plan-first workflow воспроизводимым и проверяемым.
 Она связывает Markdown plan, Git history, hooks, quality gates и session recovery в один процесс.
