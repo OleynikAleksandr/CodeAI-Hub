@@ -2,12 +2,13 @@
 
 **Status:** accepted draft for execution planning on 2026-05-04
 **Owner:** Process automation / Git hooks / Codex execution lifecycle
-**Scope:** verify and harden the deferred Plan Orchestrator capabilities that were explicitly left outside the accepted MVP: pre-push plan guard, snapshot automation, generic closeout automation, and branch-switch advisory hooks.
+**Scope:** verify and harden the deferred Plan Orchestrator capabilities that were explicitly left outside the accepted MVP: lifecycle closeout/replacement guard, pre-push plan guard, snapshot automation, generic closeout automation, and branch-switch advisory hooks.
 
 ## 1. Problem
 
 The accepted MVP proved plan-first recovery, `plan:complete`, `plan:commit`, debt repair, and manual closeout. The following deferred safety nets remain unverified:
 
+- lifecycle closeout boundary and replacement guard;
 - generic `plan:closeout`;
 - snapshot automation for ignored active plans;
 - pre-push plan guard;
@@ -23,7 +24,29 @@ The execution plan must keep changes scoped to no more than three files per impl
 
 ## 3. Capability Contracts
 
-### 3.1 Pre-push plan guard
+### 3.1 Lifecycle closeout/replacement guard
+
+The orchestrator must not leave an accepted closed scope in `ACTIVE` state.
+
+When a final closeout commit or no-commit completion reaches the end of a plan
+or a reserved post-closeout handoff anchor, the updater must:
+
+- mark the executed closeout item `DONE`;
+- mark the reserved handoff item `DONE` when present;
+- set `executionScopeStatus` to `NONE`;
+- set `currentTaskId` to `null`;
+- set `expectedCommitMessage` to `null`;
+- keep `debt` cleared.
+
+Agents must not create or replace a new `doc/TODO/todo-plan.md` while the
+previous plan is still `ACTIVE`. A future `plan:closeout` / `plan:init` pair
+should make this non-bypassable for ignored active plans.
+
+Unfinished work must not be marked `DONE` just to close a scope. Until
+additional terminal statuses are implemented, unfinished work must be left
+`BLOCKED` with a reason or handled by a supported closeout command.
+
+### 3.2 Pre-push plan guard
 
 The guard should block push attempts when:
 
@@ -38,7 +61,7 @@ It should allow push attempts when:
 
 Existing `check:dup` and `check:links` must continue to run after the plan guard passes.
 
-### 3.2 Snapshot automation
+### 3.3 Snapshot automation
 
 `plan:snapshot` should create tracked historical evidence without changing the active task pointer.
 
@@ -49,7 +72,7 @@ It must:
 - write a non-ignored tracked snapshot path;
 - include current task, `lastRecordedCommit`, recovery pack, and a short result note.
 
-### 3.3 Generic closeout
+### 3.4 Generic closeout
 
 `plan:closeout` should automate the manual closeout that was proven in the MVP test.
 
@@ -62,7 +85,7 @@ It must:
 - refuse to run with open debt or invalid plan;
 - be idempotent enough to avoid duplicate closeout artifacts on retry.
 
-### 3.4 Branch-switch advisory hooks
+### 3.5 Branch-switch advisory hooks
 
 Branch hooks are advisory-first. They should not destructively mutate plan state unless a safe transition is provable.
 
