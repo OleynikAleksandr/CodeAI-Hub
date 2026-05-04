@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 2 / Stream 4 / Task 3.
-- **Next action:** implement commit-msg plan guard if needed to validate exact expected commit messages.
-- **Last completed commit in this cycle:** `0b4235a28 feat: enforce plan state before commit`
+- **Current phase/stream/task:** Phase 2 / Stream 5 / Task 1.
+- **Next action:** implement `plan:commit` command before post-commit finalization so hooks have a safe transaction entrypoint.
+- **Last completed commit in this cycle:** `76a15d409 feat: enforce plan commit messages`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -68,15 +68,17 @@
 
 1. [DONE] Добавить pre-commit plan guard: `scripts/plan-orchestrator/plan-hook-pre-commit.mjs`, `.husky/pre-commit`, `scripts/plan-orchestrator/plan-hook-pre-commit.test.mjs`; guard runs before existing architecture/lint gates and blocks debt/direct commit/scope mismatch while preserving existing checks. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: enforce plan state before commit`).
 2. [DONE] Git Commit: `feat: enforce plan state before commit` (hash: 0b4235a28)
-3. [TODO] Если pre-commit не может reliably validate commit message, добавить minimal commit-msg composition: `scripts/plan-orchestrator/plan-hook-commit-msg.mjs`, `.husky/commit-msg`, `scripts/check-commit-message.sh`; сохранить Claude co-author cleanup and add exact expected message validation (scope: 3 files; expected commit: `feat: enforce plan commit messages`).
-4. [TODO] Git Commit: `feat: enforce plan commit messages` (hash: TBD)
+3. [DONE] Если pre-commit не может reliably validate commit message, добавить minimal commit-msg composition: `scripts/plan-orchestrator/plan-hook-commit-msg.mjs`, `.husky/commit-msg`, `scripts/check-commit-message.sh`; сохранить Claude co-author cleanup and add exact expected message validation. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; `node ./scripts/plan-orchestrator/plan-hook-commit-msg.mjs <tmp-message>` passes legacy plan without state block; Husky pre-commit passed with existing near-limit warnings only (scope: 2 files; expected commit: `feat: enforce plan commit messages`).
+4. [DONE] Git Commit: `feat: enforce plan commit messages` (hash: 76a15d409)
 
-### Stream 5 — Post-commit Finalization And Repair
+### Stream 5 — Commit Command, Post-commit Finalization And Repair
 
-1. [TODO] Добавить post-commit finalization hook: `scripts/plan-orchestrator/plan-hook-post-commit.mjs`, `.husky/post-commit`, `scripts/plan-orchestrator/plan-hook-post-commit.test.mjs`; hook writes current commit hash, advances plan state, never amends and never creates commits (scope: 3 files; expected commit: `feat: finalize plan state after commit`).
-2. [TODO] Git Commit: `feat: finalize plan state after commit` (hash: TBD)
-3. [TODO] Реализовать `plan:repair` for debt recovery: `scripts/plan-orchestrator/plan-repair.mjs`, `scripts/plan-orchestrator/plan-repair.test.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`; support commit-succeeded/hash-missing, pending commit, next pointer missing, and unsafe BLOCKED fallback (scope: 3 files; expected commit: `feat: add plan repair command`).
-4. [TODO] Git Commit: `feat: add plan repair command` (hash: TBD)
+1. [TODO] Реализовать `plan:commit` transaction entrypoint: `scripts/plan-orchestrator/plan-commit.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`, `package.json`; begin transaction, stage updated plan, run `git commit` with transaction env and leave post-commit to finalize hash (scope: 3 files; expected commit: `feat: add plan commit command`).
+2. [TODO] Git Commit: `feat: add plan commit command` (hash: TBD)
+3. [TODO] Добавить post-commit finalization hook: `scripts/plan-orchestrator/plan-hook-post-commit.mjs`, `.husky/post-commit`, `scripts/plan-orchestrator/plan-hook-post-commit.test.mjs`; hook writes current commit hash, advances plan state, never amends and never creates commits (scope: 3 files; expected commit: `feat: finalize plan state after commit`).
+4. [TODO] Git Commit: `feat: finalize plan state after commit` (hash: TBD)
+5. [TODO] Реализовать `plan:repair` for debt recovery: `scripts/plan-orchestrator/plan-repair.mjs`, `scripts/plan-orchestrator/plan-repair.test.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`; support commit-succeeded/hash-missing, pending commit, next pointer missing, and unsafe BLOCKED fallback (scope: 3 files; expected commit: `feat: add plan repair command`).
+6. [TODO] Git Commit: `feat: add plan repair command` (hash: TBD)
 
 ---
 
