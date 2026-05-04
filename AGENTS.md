@@ -52,7 +52,8 @@
 1. Сначала проверь active `doc/TODO/todo-plan.md`.
 2. Если active plan отсутствует или имеет `Execution Scope Status: NONE`, создай минимальный active `todo-plan.md` для Planning/Documentation Intake; уже появившиеся tracked-документы от пользователя, другого агента или внешнего процесса сначала проходят adoption/review через этот plan.
 3. Только после этого создавай/редактируй tracked-документ и фиксируй изменение через `plan:commit`. Исключение — ignored/local scratch files, которые не должны попасть в Git.
-4. Для feature scope planning-документ утверждается в intake-фазе и затем используется для нарезки implementation phases.
+4. Если active plan уже продвинулся, любое новое tracked изменение кода или документации сначала оформляется новым Stream/Phase с микро-задачей и отдельным `Git Commit: ...`; оркестратор выполняет только задачи, явно внесенные в active plan.
+5. Для feature scope planning-документ утверждается в intake-фазе и затем используется для нарезки implementation phases.
 
 ## 4. Этап Планирования (Execution Planning)
 - **Источник правды**: `doc/TODO/todo-plan.md` содержит Стратегию.
