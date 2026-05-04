@@ -1,8 +1,10 @@
 # Development Tree Skeleton Materialization — Planning Doc
 
-**Status:** draft rev3, awaiting user approval
+**Status:** accepted implementation scope, release verification in progress
 **Author session:** condescending-mayer-3c1b3f
 **Scope:** скриптовая автоматизация после Diagram Modules — безопасная материализация Development Tree в Project Manager, физической файловой структуры проекта в workspace-owned development-tree namespace, а затем downstream bootstrap draft-артефактов и агентских сессий для узлов Development Tree.
+**Implementation plan:** `doc/TODO/todo-plan.md` (`development-tree-materialization-implementation-2026-05-04`)
+**Canonical SSOT sync:** реализованные итоги Phase 1 уже перенесены в `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md` и `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; этот planning-doc остаётся активным до релизного retest acceptance и closeout disposition.
 
 ---
 
@@ -237,7 +239,17 @@ Sidebar читалка получает readiness state как часть Develo
 
 ---
 
-## 10. Context Pack For Future todo-plan
+## 10. Implementation disposition notes
+
+- Execution cycle: `development-tree-materialization-implementation-2026-05-04`.
+- Implemented scope: strict Diagram Modules Product Part validation; cached `DevelopmentTreeStateFacade`; neutral filesystem materialization under `.codeai-hub/<workspace-slug>/development_tree/materialized/`; filesystem-driven node draft/session bootstrap; readiness parsing and sidebar rendering.
+- Canonical documentation target: stable implementation facts live in `System/SystemArchitecture.md`, `Clusters/CoreOrchestrator.md`, and `Clusters/Project_Manager.md`.
+- Lifecycle state: keep this planning-doc in `Plans/` until the release artifact is built, user retest is accepted, and Scope Closeout decides whether to archive or distill any remaining notes.
+- Deferred scope remains unchanged: branch-level workflow execution, cross-cutting session injection, framework-specific layouts, existing-project technology detection, and promote/export into product root require fresh planning/todo cycles.
+
+---
+
+## 11. Context Pack For Future todo-plan
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`
@@ -254,7 +266,7 @@ Sidebar читалка получает readiness state как часть Develo
 
 ---
 
-## 11. Источники, прочитанные при подготовке этого документа
+## 12. Источники, прочитанные при подготовке этого документа
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (первые ~120 строк, инварианты).
 - `doc/SolidWorks-WorkFlow/Docs_Index.md` (первые ~120 строк, навигация).
