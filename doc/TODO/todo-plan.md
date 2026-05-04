@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 1 / Stream 2 / Task 1.
-- **Next action:** implement read-only validator and git-state helper.
-- **Last completed commit in this cycle:** `f654ad055 feat: add plan state parser`
+- **Current phase/stream/task:** Phase 1 / Stream 2 / Task 3.
+- **Next action:** add CLI entrypoint and npm scripts for read-only `plan:status` and `plan:validate`.
+- **Last completed commit in this cycle:** `3089a68d6 feat: add plan state validator`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -48,8 +48,8 @@
 
 ### Stream 2 — Validator And Status
 
-1. [TODO] Создать read-only validator and git-state helper: `scripts/plan-orchestrator/plan-validator.mjs`, `scripts/plan-orchestrator/plan-git-state.mjs`, `scripts/plan-orchestrator/plan-validator.test.mjs`; проверить statuses, current task, paired Git Commit item, branch/head binding and debt absence in normal mode (scope: 3 files; expected commit: `feat: add plan state validator`).
-2. [TODO] Git Commit: `feat: add plan state validator` (hash: TBD)
+1. [DONE] Создать read-only validator and git-state helper: `scripts/plan-orchestrator/plan-validator.mjs`, `scripts/plan-orchestrator/plan-git-state.mjs`, `scripts/plan-orchestrator/plan-validator.test.mjs`; проверить statuses, current task, paired Git Commit item, branch/head binding and debt absence in normal mode. Verification: `node --test scripts/plan-orchestrator/plan-state-parser.test.mjs scripts/plan-orchestrator/plan-validator.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: add plan state validator`).
+2. [DONE] Git Commit: `feat: add plan state validator` (hash: 3089a68d6)
 3. [TODO] Добавить CLI entrypoint and npm scripts: `scripts/plan-orchestrator/plan-cli.mjs`, `package.json`, `package-lock.json`; команды `plan:status` and `plan:validate` read-only (scope: 3 files; expected commit: `feat: add plan status and validate commands`).
 4. [TODO] Git Commit: `feat: add plan status and validate commands` (hash: TBD)
 
