@@ -120,4 +120,4 @@
 ### Stream: Closeout
 45. [DONE] Заархивировать completed TODO и planning-doc после release, обновить Docs Index/links; scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Provider_Native_Request_Capture_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive native request capture plan`
 46. [DONE] Git Commit: `docs: archive native request capture plan` (hash: `dd713a411`)
-47. [DONE] Создать новый session report с release artifacts и итоговыми commit hashes; scope: `doc/Sessions/SessionXXX.md`; expected commit message: not required, session report remains final uncommitted closeout artifact unless user asks otherwise
+47. [DONE] Создать новый session report с release artifacts и итоговыми commit hashes; scope: `legacy session report placeholder (removed)`; expected commit message: not required, session report remains final uncommitted closeout artifact unless user asks otherwise

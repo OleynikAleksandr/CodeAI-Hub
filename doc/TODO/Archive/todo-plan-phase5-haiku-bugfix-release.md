@@ -84,5 +84,5 @@
 24. [DONE] Git Commit: `chore: build haiku bugfix release` (hash: `e4b208fca`)
 
 ### Stream: Final packaging and retest handoff
-25. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и оформить release handoff для повторного пользовательского теста; scope: root VSIX artifact, `doc/tmp/releases/`, `doc/Sessions/SessionXXX.md`; expected commit message: `docs: record haiku bugfix release handoff`
+25. [DONE] Выполнить `./scripts/build-release.sh --use-current-version`, проверить новый VSIX и оформить release handoff для повторного пользовательского теста; scope: root VSIX artifact, `doc/tmp/releases/`, `legacy session report placeholder (removed)`; expected commit message: `docs: record haiku bugfix release handoff`
 26. [TODO] Git Commit: `docs: record haiku bugfix release handoff` (hash: TBD)

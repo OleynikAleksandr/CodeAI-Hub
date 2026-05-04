@@ -502,7 +502,7 @@ Legacy rollout-based readers можно использовать только к
 - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
 - `doc/SolidWorks-WorkFlow/Plans/Codex_AppServer_Module_Architecture.md`
-- `doc/Sessions/Session053.md`
+- `legacy session report (removed)`
 
 ---
 

@@ -17,7 +17,6 @@
 - First execution plan: `doc/TODO/Archive/todo-plan-phase5-runtime-stability-remediation.md`
 - Follow-up remediation scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Reliability_Followup_Architecture.md`
 - Follow-up execution plan: `doc/TODO/Archive/todo-plan-phase5-runtime-reliability-followup.md`
-- Session investigation/final report: `doc/Sessions/Session034.md`
 - Runtime system SSOT: `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
 - Workspace/runtime contract: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
 - Continuity contract: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`

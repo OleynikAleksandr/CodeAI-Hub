@@ -37,5 +37,5 @@
 8. [DONE] Git Commit: `chore: build codex progress cadence release` (hash: `a68019bb1`)
 9. [DONE] Run `./scripts/build-release.sh --use-current-version` and verify VSIX/release artifacts — scope: release packaging output, `doc/TODO/todo-plan.md`; commit: `chore: package codex progress cadence vsix`
 10. [DONE] Git Commit: `chore: package codex progress cadence vsix` (hash: `8892e5ffa`)
-11. [DONE] Close active planning/todo scope and create session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/Archive/todo-plan-phase1-codex-progress-cadence-1.2.86.md`, `doc/Sessions/Session014.md`; commit: `docs: close codex progress cadence release`
-12. [DONE] Git Commit: `docs: close codex progress cadence release` (hash: recorded in `doc/Sessions/Session014.md`)
+11. [DONE] Close active planning/todo scope and create session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_Progress_Updates_Cadence_Tuning_1.2.86.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`, `doc/TODO/Archive/todo-plan-phase1-codex-progress-cadence-1.2.86.md`, `legacy session report (removed)`; commit: `docs: close codex progress cadence release`
+12. [DONE] Git Commit: `docs: close codex progress cadence release` (hash: recorded in `legacy session report (removed)`)

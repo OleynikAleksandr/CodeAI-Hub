@@ -54,5 +54,5 @@
 16. [DONE] Git Commit: `chore: package native capture websocket release` (hash: `e97132466`)
 17. [DONE] Синхронизировать SSOT по WebSocket/ignored diagnostics contract — scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Modules/Codex.md`, `doc/SolidWorks-WorkFlow/Modules/Claude.md`; commit: `docs: document native capture websocket contract`.
 18. [DONE] Git Commit: `docs: document native capture websocket contract` (hash: `4abae1d13`)
-19. [DONE] Closeout: архивировать planning/todo и создать session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `doc/Sessions/Session005.md`; commit: `docs: close native capture websocket session`.
+19. [DONE] Closeout: архивировать planning/todo и создать session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `legacy session report (removed)`; commit: `docs: close native capture websocket session`.
 20. [IN_PROGRESS] Git Commit: `docs: close native capture websocket session` (hash: TBD)

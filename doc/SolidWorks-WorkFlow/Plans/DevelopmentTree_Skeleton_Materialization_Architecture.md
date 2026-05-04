@@ -180,6 +180,5 @@ Sidebar читалка получает readiness state как часть Develo
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (первые ~120 строк, инварианты).
 - `doc/SolidWorks-WorkFlow/Docs_Index.md` (первые ~120 строк, навигация).
-- `doc/Sessions/Session049.md` (предыдущий session report, COMPLETED).
 - Код: `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts`, `packages/core/src/workflow/watcher/workflow-watcher.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`, `packages/core/src/session-continuity/session-continuity-facade.ts` (как образец фасад-класса).
 - Тестовый workspace: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.5/.codeai-hub/codeai-hub-codex-5-5/` (description-step.json, Final_Description.md, virtual-simulation.md, product-parts.index.md, workflow/state.json) — подтвердило отсутствие structured canon поля в текущих artifacts.

@@ -24,7 +24,7 @@
   - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
 - **Таргетные сборки** перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run typecheck:webview`.
 - **Real-time документация:** обновление `SystemArchitecture.md` §6.4 идёт в том же коммите, что и соответствующий код.
-- Phase завершается на чистом дереве: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, tarball'ы в `doc/tmp/releases/`, итог в `doc/Sessions/`.
+- Phase завершается на чистом дереве: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, tarball'ы в `doc/tmp/releases/`, итог в legacy session-report archive (removed).
 
 ## Phase 1 — Core DevTree Parser Stability (owner: claude, updated: 2026-04-21)
 

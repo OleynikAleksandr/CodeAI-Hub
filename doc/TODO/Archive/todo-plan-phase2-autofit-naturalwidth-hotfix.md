@@ -18,7 +18,7 @@
 - **Gates (автоматически через Husky hooks):**
   - `git commit` → `.husky/pre-commit`: `./scripts/check-architecture.sh`, `npm run lint`, `npm run check:knip`, `npm run format:fix`
   - `git push` → `.husky/pre-push`: `npm run check:dup`, `npm run check:links`
-- Phase завершается на чистом дереве: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, tarball'ы в `doc/tmp/releases/`, итог в `doc/Sessions/`.
+- Phase завершается на чистом дереве: `./scripts/build-all.sh` + `./scripts/build-release.sh --use-current-version`, tarball'ы в `doc/tmp/releases/`, итог в legacy session-report archive (removed).
 
 ## Phase 1 — Natural-Width Hotfix (owner: claude, updated: 2026-04-21)
 

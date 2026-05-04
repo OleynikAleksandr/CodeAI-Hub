@@ -42,4 +42,4 @@
 ### Stream E: Closeout
 1. [IN_PROGRESS] Переместить planning-doc и todo-plan в Archive, возобновить stub, обновить Docs_Index. scope: 4 перемещения + 1 stub; commit: `docs: archive 1.2.52 CanClose short-circuit scope`.
 2. [IN_PROGRESS] Git Commit: `docs: archive 1.2.52 CanClose short-circuit scope` (hash: TBD)
-3. [IN_PROGRESS] Написать `doc/Sessions/Session089.md` (1.2.51 retroactive closeout — swizzle failed) и `doc/Sessions/Session090.md` (1.2.52 Completion Report). Оба gitignored.
+3. [IN_PROGRESS] Написать `legacy session report (removed)` (1.2.51 retroactive closeout — swizzle failed) и `legacy session report (removed)` (1.2.52 Completion Report). Оба gitignored.

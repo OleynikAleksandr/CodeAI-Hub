@@ -25,7 +25,7 @@
 - Husky hooks (pre-commit / pre-push) прогоняют архитектуру, lint, knip, format, dup и link checks.
 - Package deletion выполняется как `git rm -r` + правка `knip.json` в том же commit'е; `npm install` регенерирует `package-lock.json` до commit'а.
 - Таргетные сборки только для затронутых пакетов и только перед закрытием Phase (в Stream E это `./scripts/build-all.sh`).
-- Не трогать `CHANGELOG.md` / `doc/TODO/Archive/` / `doc/SolidWorks-WorkFlow/Plans/Archive/` / `doc/Sessions/` / `doc/BugRegistry.md` — historical audit trail.
+- Не трогать `CHANGELOG.md` / `doc/TODO/Archive/` / `doc/SolidWorks-WorkFlow/Plans/Archive/` / legacy session-report archive (removed) / `doc/BugRegistry.md` — historical audit trail.
 
 ## Phase 1 — Legacy Codex Module Removal (owner: CodeAI Hub Bot, updated: 2026-04-21)
 
@@ -60,4 +60,4 @@
 ### Stream F: Cycle closeout
 17. [IN_PROGRESS] Archive planning-doc + todo-plan, update `doc/SolidWorks-WorkFlow/Docs_Index.md`, recreate empty `doc/TODO/todo-plan.md` stub.
 18. [TODO] Git Commit: `docs: archive legacy codex module removal cycle (1.2.38)` (hash: TBD)
-19. [TODO] Create `doc/Sessions/Session075.md` (completion report, type A).
+19. [TODO] Create `legacy session report (removed)` (completion report, type A).

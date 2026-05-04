@@ -44,7 +44,7 @@
 ### Stream: Scope Setup
 1. [DONE] Создать planning-doc, активный todo-plan и Docs Index entry для runtime reliability follow-up; scope: `doc/SolidWorks-WorkFlow/Plans/Runtime_Reliability_Followup_Architecture.md`, `doc/TODO/todo-plan.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: plan runtime reliability follow-up`
 2. [DONE] Git Commit: `docs: plan runtime reliability follow-up` (hash: `19175db90`)
-3. [DONE] Создать pre-implementation `doc/Sessions/Session034.md` по просьбе пользователя; scope: `doc/Sessions/Session034.md`; expected commit message: `N/A — session report remains uncommitted by closeout rule`
+3. [DONE] Создать pre-implementation `legacy session report (removed)` по просьбе пользователя; scope: `legacy session report (removed)`; expected commit message: `N/A — session report remains uncommitted by closeout rule`
 4. [DONE] Git Commit: `N/A — session report remains uncommitted by closeout rule` (hash: N/A)
 
 ## Phase 1 — Transport Errors and Startup Diagnostics (owner: Codex, updated: 2026-04-29)
@@ -109,5 +109,5 @@
 ### Stream: Scope Archive and Session Report
 7. [DONE] После успешного релиза архивировать completed todo-plan и planning-doc, обновить `Docs_Index.md`, создать no-active-scope `doc/TODO/todo-plan.md`; scope: `doc/TODO/Archive/todo-plan-phase5-runtime-reliability-followup.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Reliability_Followup_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive runtime reliability follow-up`
 8. [IN_PROGRESS] Git Commit: `docs: archive runtime reliability follow-up` (hash: TBD)
-9. [TODO] Обновить `doc/Sessions/Session034.md` финальным состоянием после последнего substantive commit; scope: `doc/Sessions/Session034.md`; closeout note: session report remains uncommitted by project rule
+9. [TODO] Обновить `legacy session report (removed)` финальным состоянием после последнего substantive commit; scope: `legacy session report (removed)`; closeout note: session report remains uncommitted by project rule
 10. [TODO] Git Commit: `N/A — session report remains uncommitted by closeout rule` (hash: N/A)

@@ -26,7 +26,7 @@ Legacy пакет остаётся в репозитории как ~60 TypeScri
    - `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` строка 107: путь `packages/Codex_Module/src/sdk/codex-sdk-manager.ts` заменить на app-server эквивалент (например, `packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts`), убедившись, что обновлённый путь реально держит закрепляемый за строкой invariant.
    - `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` строка 139: путь `packages/Codex_Module/src/messaging/codex-applied-turn-config.ts` заменить на app-server эквивалент (`packages/Codex_AppServer_Module/src/provider/codex-provider-adapter.ts` — точный файл уточняется при правке).
 
-3. Не трогать historical материал: `CHANGELOG.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/Sessions/`, `doc/BugRegistry.md`. Эти упоминания — аудит-trail, их сохранение важно для регрессионных расследований.
+3. Не трогать historical материал: `CHANGELOG.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, legacy session-report archive (removed), `doc/BugRegistry.md`. Эти упоминания — аудит-trail, их сохранение важно для регрессионных расследований.
 
 4. Не трогать `Plans/Codex_AppServer_Capabilities_Analysis.md`: этот research-doc обсуждает публичный OpenAI App Server как текущую интеграционную поверхность, а TypeScript SDK — только как исторический baseline, не как наш internal пакет.
 

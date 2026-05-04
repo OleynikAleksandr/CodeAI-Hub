@@ -41,4 +41,4 @@
 ### Stream E: Closeout
 1. [IN_PROGRESS] Переместить planning-doc и todo-plan в Archive, возобновить stub, обновить Docs_Index. scope: 4 перемещения + 1 stub; commit: `docs: archive 1.2.49 rollback scope`.
 2. [IN_PROGRESS] Git Commit: `docs: archive 1.2.49 rollback scope` (hash: TBD)
-3. [IN_PROGRESS] Написать `doc/Sessions/Session087.md` (Completion Report). Файл остаётся uncommitted (gitignored).
+3. [IN_PROGRESS] Написать `legacy session report (removed)` (Completion Report). Файл остаётся uncommitted (gitignored).

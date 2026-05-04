@@ -35,5 +35,5 @@
 
 ### Stream 1.3: Closeout
 
-1. [TODO] Заархивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-phase2-tokens-chip-tone.md`, создать новый no-active-scope shell, обновить `doc/SolidWorks-WorkFlow/Docs_Index.md` (короткая запись о visual hotfix release `1.2.105`). Финализировать `doc/Sessions/Session028.md` под новый итог.
+1. [TODO] Заархивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-phase2-tokens-chip-tone.md`, создать новый no-active-scope shell, обновить `doc/SolidWorks-WorkFlow/Docs_Index.md` (короткая запись о visual hotfix release `1.2.105`). Финализировать `legacy session report (removed)` под новый итог.
 2. [TODO] Git Commit: `docs: archive tokens chip tone scope` (hash: TBD).

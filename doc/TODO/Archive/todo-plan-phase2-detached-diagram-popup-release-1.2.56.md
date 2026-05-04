@@ -22,7 +22,7 @@
 - **Таргетные сборки** выполняем вручную только когда нужно проверить затронутый пакет/клиент, и обязательно перед закрытием Stream/Phase: `npm run build --workspace <package>`, `npm run build:webview`, `npm run build:project-manager`.
 - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
 - **Real-time Документация**: любое изменение архитектуры/логики требует синхронного обновления и `todo-plan.md`, и связанной документации из `doc/` до коммита.
-- Phase завершается на чистом дереве: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, фиксация результатов в `doc/Sessions/`.
+- Phase завершается на чистом дереве: `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, фиксация результатов в legacy session-report archive (removed).
 - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять после каждой подзадачи и каждого коммита.
 
 ## Phase 1 — Detached Diagram Popup Fix (owner: Codex, updated: 2026-04-23)

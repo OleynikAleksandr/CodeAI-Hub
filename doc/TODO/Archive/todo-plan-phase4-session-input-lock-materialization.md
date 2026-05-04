@@ -66,4 +66,4 @@
 ### Stream G: Cycle closeout
 22. [TODO] Archive planning-doc → `doc/SolidWorks-WorkFlow/Plans/Archive/SessionInputLock_RuntimeMaterialization_Architecture.md`; archive todo-plan → `doc/TODO/Archive/todo-plan-phase4-session-input-lock-materialization.md`; update `doc/SolidWorks-WorkFlow/Docs_Index.md`; recreate empty `doc/TODO/todo-plan.md` stub.
 23. [TODO] Git Commit: `docs: archive session input lock materialization cycle (1.2.39)` (hash: TBD)
-24. [TODO] Create `doc/Sessions/Session076.md` (completion report, type A).
+24. [TODO] Create `legacy session report (removed)` (completion report, type A).

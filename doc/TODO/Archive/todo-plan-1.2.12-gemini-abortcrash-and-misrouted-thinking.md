@@ -3,7 +3,7 @@
 ## Context Pack For This Cycle
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Gemini_AbortCrash_And_MisroutedThinking_1.2.12.md`
 - **Read this context before implementation:**
-  - `doc/Sessions/Session043.md`
+  - `legacy session report (removed)`
   - `packages/core/src/index.ts` (Bug A entry point)
   - `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` (Bug B + existing 1.2.9 splitter helpers)
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariant 7 extension; new Invariant 30)

@@ -129,7 +129,7 @@
 ### Stream O — User retest
 
 1. [DONE] Hand off VSIX to user for install and visual/native retest. Required checks: Claude Status Panel switch `sonnet` -> `opus` or `haiku`, thinking on/off, effort change, same logical session/dialog continuity, no Settings overwrite, Codex unchanged, Gemini no misleading dispatch. User retest confirmed Claude model and reasoning controls appeared and native provider-home JSONL showed real model changes: `claude-sonnet-4-6` -> `claude-haiku-4-5-20251001` -> `claude-opus-4-7`.
-2. [DONE] Record user acceptance or failed retest details. Result: user accepted release `1.2.119` and explicitly authorized closing this session and plan. Scope: `doc/TODO/todo-plan.md`, `doc/Sessions/Session038.md`; commit message: `docs: close claude status panel model switch scope`.
+2. [DONE] Record user acceptance or failed retest details. Result: user accepted release `1.2.119` and explicitly authorized closing this session and plan. Scope: `doc/TODO/todo-plan.md`, `legacy session report (removed)`; commit message: `docs: close claude status panel model switch scope`.
 
 ## Phase 8 — Scope Closeout (owner: Docs, updated: 2026-05-01)
 

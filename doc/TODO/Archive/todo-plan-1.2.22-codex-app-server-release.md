@@ -14,7 +14,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`
   - `doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_AppServer_Module_Architecture.md`
-  - `doc/Sessions/Session053.md`
+  - `legacy session report (removed)`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Правила выполнения (Execution Rules):
@@ -30,7 +30,7 @@
 - **Commit**: После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, hash).
 - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке, чтобы локализовать ошибки без запуска `build-all`.
 - **Real-time Документация:** любое изменение архитектуры/логики требует синхронного обновления `todo-plan.md` и связанной документации из `doc/` до коммита.
-- Phase завершается на чистом дереве: `./scripts/build-all.sh`, перенос release-артефактов в `doc/tmp/releases/`, фиксация результатов в `doc/Sessions/`.
+- Phase завершается на чистом дереве: `./scripts/build-all.sh`, перенос release-артефактов в `doc/tmp/releases/`, фиксация результатов в legacy session-report archive (removed).
 - `doc/TODO/todo-plan.md` необходимо постоянно обновлять в реальном времени: после каждой подзадачи и каждого коммита.
 
 ## Phase 1 — Запуск execution cycle (owner: Codex, updated: 2026-04-19)

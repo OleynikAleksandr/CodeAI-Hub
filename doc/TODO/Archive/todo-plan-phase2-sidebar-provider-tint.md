@@ -34,7 +34,7 @@
 - **Commit:** После зеленых гейтов — Git Commit с максимально релевантным описанием (код + доки) и апдейт `todo-plan.md` (дата, статус, хеш).
 - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами.
 - **Real-time Документация:** Любое изменение архитектуры/логики требует синхронного обновления `todo-plan.md` и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита — чтоб измененные документы также попали в Git Commit.
-- Phase завершается на чистом дереве: запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball'ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+- Phase завершается на чистом дереве: запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball'ы в `doc/tmp/releases/`, фиксируем результаты в legacy session-report archive (removed).
 - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять; после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
 ## Phase 1 — Sidebar provider-tint binding (owner: UI / Project Manager, updated: 2026-04-29)
@@ -104,4 +104,4 @@
 4. [TODO] Git Commit: `chore: stage 1.2.106 release tarballs` (hash: TBD)
 5. [TODO] Архивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-phase2-sidebar-provider-tint.md`; ревизия `doc/SolidWorks-WorkFlow/Plans/Sidebar_ProviderTint_Architecture.md` (перенести в `Plans/Archive/` или удалить); создать новый no-active-scope shell для `doc/TODO/todo-plan.md`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`. Scope: 3 файла + дельта (per-cycle planning ревизия). Ожидаемый commit message: `docs: archive sidebar provider tint scope`.
 6. [TODO] Git Commit: `docs: archive sidebar provider tint scope` (hash: TBD)
-7. [TODO] Создать `doc/Sessions/Session029.md` (Type A — Completion Report или Type B — Continuation Report в зависимости от того, остались ли deferred items). Scope: 1 файл; коммитим только session report незакоммиченным согласно CLAUDE.md правилу.
+7. [TODO] Создать `legacy session report (removed)` (Type A — Completion Report или Type B — Continuation Report в зависимости от того, остались ли deferred items). Scope: 1 файл; коммитим только session report незакоммиченным согласно CLAUDE.md правилу.

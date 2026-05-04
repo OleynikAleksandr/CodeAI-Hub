@@ -3,7 +3,7 @@
 ## Context Pack For This Cycle
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Gemini_InitialWatchdog_Bump_1.2.11.md`
 - **Read this context before implementation:**
-  - `doc/Sessions/Session043.md` (предыстория: 1.2.9 retest + 1.2.10 audit cycle)
+  - `legacy session report (removed)` (предыстория: 1.2.9 retest + 1.2.10 audit cycle)
   - `packages/Gemini_Module/src/session/gemini-session-lifecycle.ts` (единственный файл с константой watchdog)
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariant 7 про provider-segment preservation — упоминает stalled-turn watchdog)
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.

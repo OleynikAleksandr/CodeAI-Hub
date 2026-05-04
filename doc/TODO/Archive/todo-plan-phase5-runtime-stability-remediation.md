@@ -159,5 +159,5 @@
 ### Stream: Scope Archive and Session Report
 9. [DONE] После успешного релиза архивировать completed todo-plan и planning-doc, обновить `Docs_Index.md`, создать новый no-active-scope `doc/TODO/todo-plan.md`; scope: `doc/TODO/Archive/todo-plan-phase5-runtime-stability-remediation.md`, `doc/SolidWorks-WorkFlow/Plans/Archive/Runtime_Stability_Remediation_Architecture.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit message: `docs: archive runtime stability remediation plan`
 10. [IN_PROGRESS] Git Commit: `docs: archive runtime stability remediation plan` (hash: TBD)
-11. [TODO] Создать next `doc/Sessions/SessionXXX.md` после последнего substantive commit; scope: `doc/Sessions/SessionXXX.md`; closeout note: session report remains uncommitted by project rule
+11. [TODO] Создать next `legacy session report placeholder (removed)` после последнего substantive commit; scope: `legacy session report placeholder (removed)`; closeout note: session report remains uncommitted by project rule
 12. [TODO] Git Commit: `N/A — session report remains uncommitted by closeout rule` (hash: N/A)

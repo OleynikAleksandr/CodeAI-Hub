@@ -26,7 +26,7 @@
 - Real-time documentation: SSOT-документы синхронизируются ДО коммита (тот же commit содержит и код, и обновлённую документацию).
 - doc/TODO/todo-plan.md обновляется после КАЖДОГО коммита: статус задачи + hash коммита заносится сразу.
 - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов и коммитами.
-- Phase завершается на чистом дереве: `./scripts/build-all.sh` (поднимает версии и вызывает `build-release.sh --use-current-version`) → tarball-ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+- Phase завершается на чистом дереве: `./scripts/build-all.sh` (поднимает версии и вызывает `build-release.sh --use-current-version`) → tarball-ы в `doc/tmp/releases/`, фиксируем результаты в legacy session-report archive (removed).
 - Closeout запрещён до явного пользовательского retest'а финального VSIX.
 
 ---
@@ -97,7 +97,7 @@
     - **Scope:** release artifact/manifests touched by `build-release.sh` and artifact copy verification.
     - **Ожидаемый commit message:** `chore: refresh release artifact manifests 1.2.123`
 20. **[DONE]** Git Commit: `chore: refresh release artifact manifests 1.2.123` (hash: n/a — no file changes after build-release; tree clean after `./scripts/build-release.sh --use-current-version`)
-21. **[DONE]** Обновить текущий `doc/Sessions/SessionXXX.md` как Type B / `ACTIVE`: release build выполнен, VSIX `1.2.123` передан на пользовательское визуальное тестирование, closeout ожидает acceptance.
+21. **[DONE]** Обновить текущий `legacy session report placeholder (removed)` как Type B / `ACTIVE`: release build выполнен, VSIX `1.2.123` передан на пользовательское визуальное тестирование, closeout ожидает acceptance.
     - **Scope:** 1 файл — текущий session report.
     - **Ожидаемый commit message:** нет — session report может оставаться единственным незакоммиченным файлом в конце сессии.
 22. **[DONE]** Git Commit: `n/a — session report remains uncommitted by lifecycle rule` (hash: n/a)
@@ -115,7 +115,7 @@
     - **Scope:** до 3 файлов — `doc/TODO/todo-plan.md`, архивная копия в `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`.
     - **Ожидаемый commit message:** `docs: close provider native capture bypass scope`
 26. **[DONE]** Git Commit: `docs: close provider native capture bypass scope` (hash: pending in closeout commit)
-27. **[DONE]** Создать/обновить `doc/Sessions/SessionXXX.md` как Type A / `COMPLETED`: указать release `1.2.123`, git commits, результаты сборок, пользовательский acceptance и отсутствие активного execution scope.
-    - **Scope:** 1 файл — `doc/Sessions/SessionXXX.md`.
+27. **[DONE]** Создать/обновить `legacy session report placeholder (removed)` как Type A / `COMPLETED`: указать release `1.2.123`, git commits, результаты сборок, пользовательский acceptance и отсутствие активного execution scope.
+    - **Scope:** 1 файл — `legacy session report placeholder (removed)`.
     - **Ожидаемый commit message:** нет — session report остаётся единственным допустимым незакоммиченным файлом финального closeout.
 28. **[DONE]** Git Commit: `n/a — final session report remains uncommitted by lifecycle rule` (hash: n/a)

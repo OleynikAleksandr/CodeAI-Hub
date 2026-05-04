@@ -74,5 +74,5 @@
 26. [DONE] Git Commit: `chore: build native capture app-path release` (hash: `a7afcceee`)
 27. [DONE] Собрать финальный VSIX текущей версии — scope: release artifact; command: `./scripts/build-release.sh --use-current-version`; commit: `chore: package native capture app-path release`.
 28. [DONE] Git Commit: `chore: package native capture app-path release` (hash: `fdc94937d`)
-29. [DONE] Closeout: архивировать planning/todo и создать session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `doc/Sessions/Session006.md`; commit: `docs: close native capture app-path session`.
+29. [DONE] Closeout: архивировать planning/todo и создать session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `legacy session report (removed)`; commit: `docs: close native capture app-path session`.
 30. [IN_PROGRESS] Git Commit: `docs: close native capture app-path session` (hash: TBD)

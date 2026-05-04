@@ -119,5 +119,5 @@
 4. [DONE] Git Commit: `chore: bump version to 1.2.19` (hash: `06d65170d`)
 
 ### Stream 5: Todo-plan closeout
-1. [DONE] Перенести исполненный plan в `doc/TODO/Archive/todo-plan-1.2.19-duplication-and-pm-refresh.md`, вернуть active `doc/TODO/todo-plan.md` в empty placeholder и подготовить neutral session report для закрытого scope. — scope: `doc/TODO/Archive/todo-plan-1.2.19-duplication-and-pm-refresh.md`, `doc/TODO/todo-plan.md`, `doc/Sessions/Session051.md`; commit: `docs: close 1.2.19 duplication and PM refresh todo-plan`
+1. [DONE] Перенести исполненный plan в `doc/TODO/Archive/todo-plan-1.2.19-duplication-and-pm-refresh.md`, вернуть active `doc/TODO/todo-plan.md` в empty placeholder и подготовить neutral session report для закрытого scope. — scope: `doc/TODO/Archive/todo-plan-1.2.19-duplication-and-pm-refresh.md`, `doc/TODO/todo-plan.md`, `legacy session report (removed)`; commit: `docs: close 1.2.19 duplication and PM refresh todo-plan`
 2. [IN_PROGRESS] Git Commit: `docs: close 1.2.19 duplication and PM refresh todo-plan` (hash: TBD)

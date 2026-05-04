@@ -28,7 +28,7 @@ npm run check:dup
 
 1. **Dead-code audit.** Ищет: unused exports которые knip пропускает, orphaned files, stale TODO/FIXME, dead CSS selectors, unused локализационные ключи, dead branches. Отдельное внимание — residue от недавних cleanup-коммитов (удалённые компоненты, feature-flag'ы).
 
-2. **Broken doc links audit.** Ищет: broken markdown ссылки (formatted + backtick mentions), stale references на удалённые артефакты, неверные пути в `Docs_Index.md`, orphaned docs без записи в index. Сессионный архив `doc/Sessions/Session*.md` **не аудируем** (исторический слой).
+2. **Broken doc links audit.** Ищет: broken markdown ссылки (formatted + backtick mentions), stale references на удалённые артефакты, неверные пути в `Docs_Index.md`, orphaned docs без записи в index.
 
 Формат каждой проверки должен требовать компактный структурированный отчёт с `file:line`, категорией и severity. До ~600 слов.
 

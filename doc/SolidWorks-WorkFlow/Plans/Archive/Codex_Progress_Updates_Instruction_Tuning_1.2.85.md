@@ -37,7 +37,7 @@ Release/docs files:
 - `CHANGELOG.md`
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - `doc/TODO/todo-plan.md`
-- `doc/Sessions/Session013.md`
+- `legacy session report (removed)`
 
 ## Acceptance
 - Runtime prompt and agreed prompt artifact stay text-equivalent for the Progress Updates section.

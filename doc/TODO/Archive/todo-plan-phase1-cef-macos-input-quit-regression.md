@@ -49,4 +49,4 @@
 ### Stream F: Session closeout
 1. [TODO] Переместить `doc/SolidWorks-WorkFlow/Plans/CEF_MacOS_Input_And_Quit_Regression_Architecture.md` → `doc/SolidWorks-WorkFlow/Plans/Archive/`. Переименовать этот todo-plan → `doc/TODO/Archive/todo-plan-phase1-cef-macos-input-quit-regression.md`. Создать свежий stub `doc/TODO/todo-plan.md`. Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`. scope: 4 перемещения + 1 stub; commit: `docs: archive 1.2.48 input/quit regression scope`.
 2. [TODO] Git Commit: `docs: archive 1.2.48 input/quit regression scope` (hash: TBD)
-3. [TODO] Написать `doc/Sessions/Session086.md` (Completion Report — Тип A). Файл остаётся uncommitted (gitignored).
+3. [TODO] Написать `legacy session report (removed)` (Completion Report — Тип A). Файл остаётся uncommitted (gitignored).

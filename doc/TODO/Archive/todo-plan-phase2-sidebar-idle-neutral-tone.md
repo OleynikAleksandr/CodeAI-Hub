@@ -47,4 +47,4 @@
 2. [TODO] Git Commit: `chore: build release 1.2.107` (hash: TBD)
 3. [TODO] Архивировать todo-plan и planning-doc; обновить Docs_Index.md; reset активного todo-plan в no-active-scope shell. Scope: 4 файла + дельта.
 4. [TODO] Git Commit: `docs: archive sidebar idle neutral tone scope` (hash: TBD)
-5. [TODO] Создать `doc/Sessions/Session030.md` (Type A Completion Report).
+5. [TODO] Создать `legacy session report (removed)` (Type A Completion Report).

@@ -3,7 +3,7 @@
 ## Context Pack For This Cycle
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Audit_Cleanup_1.2.10.md`
 - **Read this context before implementation:**
-  - `doc/Sessions/Session043.md` (1.2.9 closeout; audit-findings дискуссия)
+  - `legacy session report (removed)` (1.2.9 closeout; audit-findings дискуссия)
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (для C-финального SSOT-апдейта об acceptable duplication)
   - `doc/SolidWorks-WorkFlow/Docs_Index.md` (A: template paths fix; D: index update)
   - `knip.json` (A: exclusion review)

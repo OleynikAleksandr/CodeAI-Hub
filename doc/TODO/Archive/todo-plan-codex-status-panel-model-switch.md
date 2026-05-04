@@ -7,8 +7,8 @@
 
   ### A. Planning + session continuity
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_StatusPanel_ModelSwitch_Architecture.md` — approved planning-doc этого цикла, archived after release `1.2.118`.
-  - `doc/Sessions/Session034.md` — этот session report (scope opening, дискуссия с пользователем, Codex CLI findings).
-  - `doc/Sessions/Session033.md` — последний closed cycle (sidebar tint final hardening 1.2.110), для понимания state на момент старта этого scope.
+  - `legacy session report (removed)` — этот session report (scope opening, дискуссия с пользователем, Codex CLI findings).
+  - `legacy session report (removed)` — последний closed cycle (sidebar tint final hardening 1.2.110), для понимания state на момент старта этого scope.
   - `doc/tmp/planning/DocumentationTree_ProfileBoundary_ModelProviderSwitch_Planning.md` — research-artifact про profile-boundary архитектуру; **переосмыслен** в свете Codex CLI findings, **не является execution input'ом** для этого цикла, но содержит исторический контекст обсуждения.
 
   ### B. Базовый SSOT (читать всегда первым по правилу CLAUDE.md)
@@ -285,5 +285,5 @@
 
 1. [DONE] После явного user approval: архивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-codex-status-panel-model-switch.md`; перенести planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/`; обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`; создать новый active planning-intake `doc/TODO/todo-plan.md` для Claude provider continuation. Scope: 4 файла + дельта; commit message: `docs: archive codex switch scope and open claude planning intake`.
 2. [DONE] Git Commit: `docs: archive codex switch scope and open claude planning intake` (hash: 181a13f3a)
-3. [DONE] Обновить `doc/Sessions/Session037.md` как ACTIVE handoff на Claude planning scope. Scope: 1 файл (uncommitted per CLAUDE.md convention).
+3. [DONE] Обновить `legacy session report (removed)` как ACTIVE handoff на Claude planning scope. Scope: 1 файл (uncommitted per CLAUDE.md convention).
 4. [DONE] Push на GitHub не выполнялся в этом локальном closeout; next session can push/continue per user direction.

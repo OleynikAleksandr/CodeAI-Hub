@@ -3,7 +3,7 @@
 ## Context Pack For This Cycle
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Gemini_InlineThoughtSplit_And_PreToolEnglishText_1.2.9.md`
 - **Read this context before implementation:**
-  - `doc/Sessions/Session042.md` (полный trajectory 1.2.7 retest → 1.2.8 release → 1.2.8 retest → discovery of Bug A/B)
+  - `legacy session report (removed)` (полный trajectory 1.2.7 retest → 1.2.8 release → 1.2.8 retest → discovery of Bug A/B)
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` (Invariant 7 — Provider dialog segment preservation; Invariant 24 — Stop/Resume; Invariant 25 — live content)
   - `doc/SolidWorks-WorkFlow/Modules/Gemini.md`
   - `packages/Gemini_Module/src/messaging/gemini-assistant-event-normalizer.ts` (основной файл для Stream 2 + Stream 3)

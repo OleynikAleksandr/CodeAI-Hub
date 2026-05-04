@@ -185,14 +185,14 @@
 2. [DONE] Git Commit: `docs: prepare capture workbench mvp release` (hash: 34be8d03b)
 3. [DONE] Проверить clean tree, затем запустить `./scripts/build-all.sh`; после успеха убедиться, что tarball'ы лежат в `doc/tmp/releases/`, версии/манифесты обновлены штатным скриптом (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench mvp`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench mvp` (hash: dbe1b6405)
-5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить вывод `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE, если acceptance ещё ожидается (scope: release command + session report; expected commit: `docs: record capture workbench mvp release build`).
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить вывод `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `legacy session report placeholder (removed)` как ACTIVE, если acceptance ещё ожидается (scope: release command + session report; expected commit: `docs: record capture workbench mvp release build`).
 6. [DONE] Git Commit: `docs: record capture workbench mvp release build` (hash: 1ff9de05a)
 
 ### Stream 11 — User Visual Acceptance Testing
 
 1. [DONE] Установить собранный `codeai-hub-1.2.124.vsix` в VS Code, открыть workspace.
 2. [BLOCKED] Acceptance matrix: пользовательский retest `2026-05-02` провален — Project Manager падает с OS crash при клике на Step/Provider/любой selector в detached Capture Workbench. Логи macOS `~/Library/Logs/DiagnosticReports/CodeAIHubLauncher-2026-05-02-120256.ips` и `...120349.ips` показывают `NSInvalidArgumentException` / `-[NSApplication ...]: unrecognized selector`, а app/core logs не содержат transport/capture ошибки; вероятная причина — новые native HTML `<select>` в Workbench, что нарушает documented CEF/macOS invariant `BUG-2026-04-22-08`.
-3. [TODO] Зафиксировать результат пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench visual acceptance`).
+3. [TODO] Зафиксировать результат пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `legacy session report placeholder (removed)`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench visual acceptance` (hash: TBD)
 
 ### Stream 11A — macOS CEF Selector Crash Fix
@@ -210,14 +210,14 @@
 2. [DONE] Git Commit: `docs: prepare capture workbench crash fix release` (hash: 415a5d64d)
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench crash fix`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench crash fix` (hash: 4084a781b)
-5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench crash fix release build`).
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `legacy session report placeholder (removed)` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench crash fix release build`).
 6. [DONE] Git Commit: `docs: record capture workbench crash fix release build` (hash: ccc8aba8a)
 
 ### Stream 11C — User Visual Acceptance Testing (Retest)
 
 1. [DONE] Установить crash-fix VSIX (`codeai-hub-1.2.125.vsix`, если release version не изменится иначе), открыть workspace, повторить сценарий клика по Step/Provider/Model/Reasoning selectors и убедиться, что Project Manager не падает.
 2. [BLOCKED] Acceptance matrix: пользовательский retest `1.2.125` подтвердил, что selector crash устранён и `Translation` capture пишет artifacts, но workflow steps (`Description`, `Virtual Simulation`, `Diagram Modules`) падают до capture с ошибкой `this.getHttpUrl is not a function`. Диагноз: Workbench runner передаёт `api.getWorkflowState` в workflow scenario prompt builder как unbound callback; `Translation` не падает, потому что идёт direct capture path без workflow state lookup.
-3. [TODO] Зафиксировать результат crash-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench crash fix visual acceptance`).
+3. [TODO] Зафиксировать результат crash-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `legacy session report placeholder (removed)`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench crash fix visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench crash fix visual acceptance` (hash: TBD)
 
 ### Stream 11D — Workflow Capture Binding Fix
@@ -231,14 +231,14 @@
 2. [DONE] Git Commit: `docs: prepare capture workbench workflow fix release` (hash: df081de7e)
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench workflow fix`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench workflow fix` (hash: fd9f4f651)
-5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench workflow fix release build`).
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `legacy session report placeholder (removed)` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench workflow fix release build`).
 6. [DONE] Git Commit: `docs: record capture workbench workflow fix release build` (hash: 2e7836312)
 
 ### Stream 11F — User Visual Acceptance Testing (Workflow Fix Retest)
 
 1. [BLOCKED] Установить workflow-fix VSIX (`codeai-hub-1.2.126.vsix`, если release version не изменится иначе), открыть workspace, повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules` и убедиться, что workflow steps больше не падают с `this.getHttpUrl is not a function`. Пользовательский retest не начался: установка `1.2.126` была прервана закрытием VS Code во время доустановки пакетов, поэтому следующий install target выпускается новым номером `1.2.127`.
 2. [TODO] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
-3. [TODO] Зафиксировать результат workflow-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench workflow fix visual acceptance`).
+3. [TODO] Зафиксировать результат workflow-fix пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `legacy session report placeholder (removed)`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench workflow fix visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench workflow fix visual acceptance` (hash: TBD)
 
 ### Stream 11G — Release Build (Fresh Install Retry Version)
@@ -247,14 +247,14 @@
 2. [DONE] Git Commit: `docs: prepare capture workbench reinstall retry release` (hash: 55835cca2)
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.127` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reinstall retry`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench reinstall retry` (hash: 53c81543f)
-5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reinstall retry release build`).
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `legacy session report placeholder (removed)` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reinstall retry release build`).
 6. [DONE] Git Commit: `docs: record capture workbench reinstall retry release build` (hash: 3e95cda59)
 
 ### Stream 11H — User Visual Acceptance Testing (Fresh Install Retest)
 
 1. [BLOCKED] Установить fresh-install VSIX `codeai-hub-1.2.127.vsix`, открыть workspace, повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules` и убедиться, что workflow steps больше не падают с `this.getHttpUrl is not a function`. Пользовательский retest подтвердил, что workflow steps работают, но выявил UI race при последовательном `Managed Snapshot` с разным reasoning: после переключения `thinking-high -> thinking-off` первый `Re-capture Managed` фактически создаёт artifact, но UI может выглядеть как no-op до второго клика.
 2. [BLOCKED] Acceptance matrix: открытие detached окна через Settings → General launcher; выбор `(Description, Claude, Sonnet, thinking high)`; sticky-восстановление выбора после reopen; `Re-capture Managed` пишет timestamped artifact pair; slot rotation `current → previous`; UI-кнопки `managed.md` / `managed.jsonl` открывают реальные `markdownPath` / `jsonlPath` из `SlotEntryRecord` в VS Code; diff `Managed: current vs previous` рендерит секции с правильными статусами; пересборка релиза → `Re-capture Managed` показывает обновлённый `releaseVersion` в diff header; Gemini Provider option видим, но disabled с tooltip; пустой workspace без upstream artifacts — capture не падает.
-3. [TODO] Зафиксировать результат fresh-install пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench fresh install visual acceptance`).
+3. [TODO] Зафиксировать результат fresh-install пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `legacy session report placeholder (removed)`. Если пользователь не дал explicit acceptance, scope остаётся ACTIVE и Stream 12 не выполняется (scope: 2 docs; expected commit: `docs: record capture workbench fresh install visual acceptance`).
 4. [TODO] Git Commit: `docs: record capture workbench fresh install visual acceptance` (hash: TBD)
 
 ### Stream 11I — Reasoning Selection Recapture Fix
@@ -270,14 +270,14 @@
 2. [DONE] Git Commit: `docs: prepare capture workbench reasoning recapture release` (hash: 930c3fcb3)
 3. [DONE] На clean tree запустить `./scripts/build-all.sh`; проверить fresh tarball'ы `1.2.128` в `doc/tmp/releases/` и штатные version/manifest changes (scope: command + generated release artifacts; expected commit: `chore: bump release manifests for capture workbench reasoning recapture`).
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench reasoning recapture` (hash: 65c29af66)
-5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `doc/Sessions/SessionXXX.md` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reasoning recapture release build`).
+5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; обновить `legacy session report placeholder (removed)` как ACTIVE до пользовательского retest (scope: release command + session report; expected commit: `docs: record capture workbench reasoning recapture release build`).
 6. [DONE] Git Commit: `docs: record capture workbench reasoning recapture release build` (hash: 71bf4351d)
 
 ### Stream 11K — User Visual Acceptance Testing (Reasoning Recapture Retest)
 
 1. [DONE] Установить reasoning-recapture VSIX `codeai-hub-1.2.128.vsix`, открыть detached Capture Workbench, выбрать `Description + Claude + Sonnet + thinking-high`, выполнить `Re-capture Managed`, затем переключить `Reasoning` на `thinking-off` и убедиться, что первый следующий `Re-capture Managed` показывает capture progress и создаёт/показывает artifact в `thinking-off` slot без второго клика. Пользовательский retest подтвердил, что основной функционал Capture Workbench заработал.
 2. [DONE] Acceptance matrix: повторить Managed capture для `Translation`, `Description`, `Virtual Simulation`, `Diagram Modules`; проверить slot rotation `current → previous` для разных reasoning slots; diff `Managed: current vs previous` рендерит секции с правильными статусами; Gemini Provider option остаётся disabled placeholder; пустой workspace без upstream artifacts — capture не падает. Основной Phase 1 path принят пользователем; дальнейшие улучшения этого модуля остаются scope следующей сессии.
-3. [DONE] Зафиксировать результат reasoning-recapture пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `doc/Sessions/SessionXXX.md`: основной функционал `1.2.128` работает; scope остаётся ACTIVE только потому, что пользователь явно попросил не архивировать planning-doc и продолжить развитие модуля в следующей сессии (scope: 2 docs; expected commit: `docs: record capture workbench reasoning recapture visual acceptance`).
+3. [DONE] Зафиксировать результат reasoning-recapture пользовательского визуального тестирования в `doc/TODO/todo-plan.md` и `legacy session report placeholder (removed)`: основной функционал `1.2.128` работает; scope остаётся ACTIVE только потому, что пользователь явно попросил не архивировать planning-doc и продолжить развитие модуля в следующей сессии (scope: 2 docs; expected commit: `docs: record capture workbench reasoning recapture visual acceptance`).
 4. [DONE] Git Commit: `docs: record capture workbench reasoning recapture visual acceptance` (hash: 3efcde6ae)
 
 ### Stream 11L — Release Build (Clean Handoff Version)
@@ -288,7 +288,7 @@
 4. [DONE] Git Commit: `chore: bump release manifests for capture workbench clean handoff` (hash: 79dce7a9e)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, VSIX runtime package surface verification; итоговый VSIX `codeai-hub-1.2.129.vsix` (scope: release command + session report; expected commit: `docs: record capture workbench clean handoff release build`).
 6. [DONE] Git Commit: `docs: record capture workbench clean handoff release build` (hash: 7ef6ecb70)
-7. [DONE] Создать локальный user-space handoff archive с `codeai-hub-1.2.129.vsix` и fresh `1.2.129` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record capture workbench clean handoff bundle`). Archive: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.129-darwin-arm64-handoff.tar.bz2`; contents verified: VSIX + seven `1.2.129` runtime tarballs.
+7. [DONE] Создать локальный user-space handoff archive с `codeai-hub-1.2.129.vsix` и fresh `1.2.129` tarball'ами из `~/.codeai-hub/releases/`; архив не коммитить, путь записать в `doc/TODO/todo-plan.md` и `legacy session report (removed)` (scope: local artifact + 2 docs; expected commit: `docs: record capture workbench clean handoff bundle`). Archive: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.129-darwin-arm64-handoff.tar.bz2`; contents verified: VSIX + seven `1.2.129` runtime tarballs.
 8. [DONE] Git Commit: `docs: record capture workbench clean handoff bundle` (hash: 2a78e9484)
 
 ### Stream 11M — Gemini Runtime Packaging Fix
@@ -306,7 +306,7 @@
 4. [DONE] Git Commit: `chore: bump release manifests for gemini packaging fix` (hash: 0807662c2)
 5. [DONE] Запустить `./scripts/build-release.sh --use-current-version`; проверить Step 7.5 failsafe for bundled Gemini module, `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`; итоговый VSIX `codeai-hub-1.2.130.vsix` (scope: release command + session report; expected commit: `docs: record gemini packaging fix release build`).
 6. [DONE] Git Commit: `docs: record gemini packaging fix release build` (hash: 3ec5d873d)
-7. [DONE] Создать локальную user-space handoff folder с `codeai-hub-1.2.130.vsix` и fresh `1.2.130` tarball'ами из `~/.codeai-hub/releases/`; архив не создавать и не коммитить, путь записать в `doc/TODO/todo-plan.md` и `doc/Sessions/Session043.md` (scope: local artifact + 2 docs; expected commit: `docs: record gemini packaging fix handoff bundle`). Folder: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.130-darwin-arm64`; contents verified: VSIX + seven `1.2.130` runtime tarballs; Core tarball includes `@codeai-hub/gemini-module/dist/index.js`.
+7. [DONE] Создать локальную user-space handoff folder с `codeai-hub-1.2.130.vsix` и fresh `1.2.130` tarball'ами из `~/.codeai-hub/releases/`; архив не создавать и не коммитить, путь записать в `doc/TODO/todo-plan.md` и `legacy session report (removed)` (scope: local artifact + 2 docs; expected commit: `docs: record gemini packaging fix handoff bundle`). Folder: `/Users/oleksandroliinyk/.codeai-hub/handoff/codeai-hub-1.2.130-darwin-arm64`; contents verified: VSIX + seven `1.2.130` runtime tarballs; Core tarball includes `@codeai-hub/gemini-module/dist/index.js`.
 8. [DONE] Git Commit: `docs: record gemini packaging fix handoff bundle` (hash: 769aaf993)
 
 ### Stream 11O — Codex CLI 0.128 App Server Startup Hotfix
@@ -379,7 +379,7 @@
 1. [DONE] Установить continuity-fix VSIX `1.2.132`, открыть workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.5` и проверить Codex Description flow-node continuity. Result: provider startup работает, первый create-report/resume цикл с `gpt-5.5` прошёл, source segment достиг `remainingPercent` около `75%`.
 2. [BLOCKED] Проверить per-turn model/reasoning после continuity resume. Result: переключение на `gpt-5.3-codex-spark` применилось (`turn_context.model = "gpt-5.3-codex-spark"`, `effort = "high"`, `summary = "none"`), но окно модели стало `121600` вместо `258400`; первый реальный Spark-turn перечитал большой source pack и быстро пересёк remaining-percent threshold.
 3. [BLOCKED] Проверить threshold rollover. Result: Core увидел final report path до завершения Create Report turn и создал следующую session с промежуточным report body; source turn позже дочистил report. Дополнительный анализ показал более сильное решение для Documentation Tree: не создавать agent-authored reports вообще, а делать lazy synthetic rollover через existing workflow start prompt + last visible assistant message + next user message. Root cause and target design moved to `doc/SolidWorks-WorkFlow/Plans/DocumentationTree_FastSyntheticRollover_Architecture.md` rev2 and Streams 11W-11AB, including explicit old Documentation Tree report/resume cleanup and continuation-vs-cold-start instruction contract.
-4. [TODO] Зафиксировать финальный пользовательский visual retest после Documentation Tree fast synthetic rollover fix в `doc/TODO/todo-plan.md`, `doc/Sessions/SessionXXX.md`, и при необходимости `doc/BugRegistry.md`; без explicit acceptance Scope Closeout не выполнять (scope: ≤3 docs; expected commit: `docs: record documentation rollover visual acceptance`).
+4. [TODO] Зафиксировать финальный пользовательский visual retest после Documentation Tree fast synthetic rollover fix в `doc/TODO/todo-plan.md`, `legacy session report placeholder (removed)`, и при необходимости `doc/BugRegistry.md`; без explicit acceptance Scope Closeout не выполнять (scope: ≤3 docs; expected commit: `docs: record documentation rollover visual acceptance`).
 5. [TODO] Git Commit: `docs: record documentation rollover visual acceptance` (hash: TBD)
 
 ### Stream 11W — Documentation Tree Synthetic Rollover State
@@ -435,7 +435,7 @@
 2. [DONE] Ответить на последний видимый вопрос старого агента after rollover and verify the next provider turn includes the normal stage contract, `Continuation Mode`, `Last Assistant Message Before Rollover`, and the real user answer; continuation instructions must make clear this is not a cold start, existing artifacts are authoritative, and the user answer belongs to the old assistant question. User acceptance 2026-05-03: продолжение бесшовное, агент понимает дальнейшую работу.
 3. [DONE] Переключить continuation session на `gpt-5.3-codex-spark` / selected reasoning and verify new turn context/app-server rollout uses the selected model/reasoning while the smaller `121600` window is handled predictably. User acceptance 2026-05-03: релиз работает идеально.
 4. [DONE] Verify failure behavior: stale binding/provider failure must not leave UI stuck on `Agent is resuming your session... Please wait`; no `Provider codexCli unavailable`. User acceptance 2026-05-03: новых сбоев не замечено.
-5. [DONE] Зафиксировать пользовательский fast-rollover visual retest в `doc/TODO/todo-plan.md`, `doc/Sessions/Session047.md`; `doc/BugRegistry.md` не менялся, потому что retest passed and no new bug/failure was reported (scope: docs; expected commit: `docs: close capture workbench and documentation rollover scope`).
+5. [DONE] Зафиксировать пользовательский fast-rollover visual retest в `doc/TODO/todo-plan.md`, `legacy session report (removed)`; `doc/BugRegistry.md` не менялся, потому что retest passed and no new bug/failure was reported (scope: docs; expected commit: `docs: close capture workbench and documentation rollover scope`).
 6. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: 009ba5b39)
 
 ### Stream 12 — Scope Closeout
@@ -444,7 +444,7 @@
 2. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: 009ba5b39)
 3. [DONE] Создать новый reset-state `doc/TODO/todo-plan.md` для отсутствующего active scope (scope: 1 файл; expected commit: `docs: close capture workbench and documentation rollover scope`).
 4. [DONE] Git Commit: `docs: close capture workbench and documentation rollover scope` (hash: 009ba5b39)
-5. [DONE] Создать/обновить `doc/Sessions/Session047.md` как Completion Report: `Execution Scope Status: COMPLETED`, реальные commit hashes, explicit user acceptance после визуального тестирования. Session report остается единственным незакоммиченным файлом по closeout rules.
+5. [DONE] Создать/обновить `legacy session report (removed)` как Completion Report: `Execution Scope Status: COMPLETED`, реальные commit hashes, explicit user acceptance после визуального тестирования. Session report остается единственным незакоммиченным файлом по closeout rules.
 
 ---
 

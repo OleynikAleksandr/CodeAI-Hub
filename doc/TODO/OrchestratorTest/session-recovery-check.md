@@ -9,7 +9,7 @@
 - The session started from `doc/TODO/todo-plan.md`.
 - `Execution Scope Status` was `ACTIVE`.
 - Current task at recovery start was `phase1.stream1.task1`.
-- `doc/Sessions/` was not used for recovery.
+- Legacy recovery reports were not used for recovery.
 - Context was taken from the active plan `Recovery Pack` and `Context Pack For This Cycle`.
 
 ## Phase 1 Command Summary
@@ -23,7 +23,7 @@
 2. `npm run plan:validate`
    - Result: Plan validation OK.
 
-3. `npm run plan:complete -- "Recovered from active todo-plan only; doc/Sessions recovery was not used; status and validate checks are green."`
+3. `npm run plan:complete -- "Recovered from active todo-plan only; legacy recovery reports were not used; status and validate checks are green."`
    - Completed no-commit task: `phase1.stream1.task1`.
    - Advanced current task to `phase1.stream1.task2`.
 

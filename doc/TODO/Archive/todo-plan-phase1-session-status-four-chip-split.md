@@ -25,7 +25,7 @@
 - **Таргетные сборки** перед закрытием Stream/Phase: `npm run typecheck:webview`, `npm run build:webview`. Затронутые рабочие пространства проверяются точечно.
 - **Commit:** после зеленых гейтов. Сразу обновляем `todo-plan.md` (статус, дата, hash).
 - **Real-time Документация:** любое изменение архитектуры/логики требует синхронного обновления `SessionStatusPanel.md` и/или `UI_Bundles.md` **ДО** коммита, чтобы изменения попали в один Git Commit вместе с кодом.
-- **Phase завершается** на чистом дереве: запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball'ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`.
+- **Phase завершается** на чистом дереве: запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball'ы в `doc/tmp/releases/`, фиксируем результаты в legacy session-report archive (removed).
 
 ## Phase 1 — Session Status 4-Chip Split (owner: agent, updated: 2026-04-29)
 
@@ -98,7 +98,7 @@
 
 ### Stream 2.3: Closeout
 
-1. [TODO] Финализировать `doc/Sessions/Session028.md` как Type A Completion Report: внести все hashes Phase 1 + Phase 2, изменить `Execution Scope Status: COMPLETED`, обновить Plans for next session под no-active-scope shell. Заархивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-phase1-session-status-four-chip-split.md` и создать новый `doc/TODO/todo-plan.md` no-active-scope shell. Перенести planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/SessionStatus_FourChipSplit_Architecture.md`. Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`.
+1. [TODO] Финализировать `legacy session report (removed)` как Type A Completion Report: внести все hashes Phase 1 + Phase 2, изменить `Execution Scope Status: COMPLETED`, обновить Plans for next session под no-active-scope shell. Заархивировать `doc/TODO/todo-plan.md` в `doc/TODO/Archive/todo-plan-phase1-session-status-four-chip-split.md` и создать новый `doc/TODO/todo-plan.md` no-active-scope shell. Перенести planning-doc в `doc/SolidWorks-WorkFlow/Plans/Archive/SessionStatus_FourChipSplit_Architecture.md`. Обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`.
    - scope: до 5 файлов (Session028.md, todo-plan.md новый, todo-plan archive, planning-doc archive, Docs_Index.md). Если затронет > 3 — разбить на два коммита (closeout-docs + closeout-archive).
 2. [TODO] Git Commit (или серия коммитов): `docs: archive session status four-chip split scope` (hash: TBD).
 

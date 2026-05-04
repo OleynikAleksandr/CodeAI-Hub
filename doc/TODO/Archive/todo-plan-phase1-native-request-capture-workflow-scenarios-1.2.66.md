@@ -78,7 +78,7 @@
 23. [DONE] Подготовить release notes для будущей версии `1.2.66` — scope: `README.md`, `CHANGELOG.md`, `doc/TODO/Archive/todo-plan-phase1-native-request-capture-workflow-scenarios-1.2.66.md`; expected commit: `docs: prepare workflow scenario capture release`.
 24. [DONE] Git Commit: `docs: prepare workflow scenario capture release` (hash: `7483ebe1e`)
 
-25. [DONE] Выполнить release build `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем закрыть todo/archive/session — scope: release artifacts, `doc/TODO/Archive/`, `doc/Sessions/`; expected commit: `chore: package workflow scenario capture release`.
+25. [DONE] Выполнить release build `./scripts/build-all.sh` и `./scripts/build-release.sh --use-current-version`, затем закрыть todo/archive/session — scope: release artifacts, `doc/TODO/Archive/`, legacy session-report archive (removed); expected commit: `chore: package workflow scenario capture release`.
 26. [DONE] Git Commit: `chore: package workflow scenario capture release` (hash: `1d907d3e9`)
 
 27. [DONE] Closeout: архивировать planning/todo и обновить Docs_Index — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close workflow scenario capture session`.

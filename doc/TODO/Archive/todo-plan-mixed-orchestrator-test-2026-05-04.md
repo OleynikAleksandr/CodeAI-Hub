@@ -44,7 +44,7 @@
 ## Recovery Pack
 
 - **Current phase/stream/task:** Phase 1 / Stream 1 / Task 1.
-- **Next action:** в следующей сессии стартовать только из этого файла, не читать `doc/Sessions/`, выполнить Phase 1 no-commit checks через `npm run plan:complete`, затем перейти к commit tasks.
+- **Next action:** в следующей сессии стартовать только из этого файла, не читать legacy session-report archive (removed), выполнить Phase 1 no-commit checks через `npm run plan:complete`, затем перейти к commit tasks.
 - **Last completed commit in previous cycle:** `03ddd1984 docs: add development tree skeleton planning draft`
 - **Important constraint:** active `todo-plan.md` is ignored local machine-managed state; tracked history появляется только через отдельные test docs и их commits.
 
@@ -53,7 +53,7 @@
 - Active `doc/TODO/todo-plan.md` is ignored local machine-managed state.
 - Use `npm run plan:status`, `npm run plan:validate`, `npm run plan:complete -- "<result>"`, `npm run plan:commit -- "<expected commit message>"`, and `npm run plan:repair`.
 - Do not use `git commit --no-verify`.
-- Do not read `doc/Sessions/` for recovery.
+- Do not read legacy session-report archive (removed) for recovery.
 - If `.git/codeai-plan-debt` exists, run `npm run plan:repair` before continuing.
 - Each implementation task touches no more than 3 files.
 - For no-commit/user-check tasks, close the current task with `npm run plan:complete -- "<short result>"`.
@@ -65,7 +65,7 @@
 
 ### Stream 1 — Session Recovery Without Git Commit
 
-1. [DONE] `phase1.stream1.task1` Start the next Codex session from `doc/TODO/todo-plan.md` only; confirm `Execution Scope Status: ACTIVE`, current task, and no `doc/Sessions/` recovery (scope: commands + chat observation only; expected commit: not required). Result: Recovered from active todo-plan only; doc/Sessions recovery was not used; status and validate checks are green.
+1. [DONE] `phase1.stream1.task1` Start the next Codex session from `doc/TODO/todo-plan.md` only; confirm `Execution Scope Status: ACTIVE`, current task, and no legacy session-report archive (removed) recovery (scope: commands + chat observation only; expected commit: not required). Result: Recovered from active todo-plan only; legacy session-report archive (removed) recovery was not used; status and validate checks are green.
 2. [DONE] `phase1.stream1.task2` Run `npm run plan:status` and `npm run plan:validate`; confirm `Expected Commit: none`, `Debt: none`, and validation OK (scope: commands only; expected commit: not required). Result: plan:status and plan:validate are OK; Expected Commit is none; Debt is none.
 3. [DONE] `phase1.stream1.task3` Confirm `plan:complete` advanced task1 and task2 without creating Git commits or changing `lastRecordedCommit` (scope: commands only; expected commit: not required). Result: plan:complete advanced task1 and task2; HEAD and lastRecordedCommit stayed at 03ddd1984; no Git status output.
 

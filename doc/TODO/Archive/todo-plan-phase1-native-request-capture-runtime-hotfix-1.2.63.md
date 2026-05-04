@@ -49,5 +49,5 @@
 12. [DONE] Git Commit: `chore: build native capture hotfix release` (hash: `c8303cf07`)
 13. [DONE] Собрать финальный VSIX текущей версии — scope: release artifact; command: `./scripts/build-release.sh --use-current-version`; commit: `chore: package native capture hotfix release`.
 14. [DONE] Git Commit: `chore: package native capture hotfix release` (hash: `b444ec72c`)
-15. [DONE] Closeout: архивировать planning/todo и создать session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `doc/Sessions/Session004.md`; commit: `docs: close native capture hotfix session`.
+15. [DONE] Closeout: архивировать planning/todo и создать session report — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/TODO/Archive/`, `legacy session report (removed)`; commit: `docs: close native capture hotfix session`.
 16. [DONE] Git Commit: `docs: close native capture hotfix session` (hash: `725e04f37`)

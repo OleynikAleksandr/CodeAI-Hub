@@ -43,4 +43,4 @@
 2. [TODO] Git Commit: `chore: build release 1.2.108`
 3. [TODO] Архивировать todo-plan + planning-doc + Docs_Index.md update + reset todo-plan shell.
 4. [TODO] Git Commit: `docs: archive sidebar branch neutral scope`
-5. [TODO] Создать `doc/Sessions/Session031.md`.
+5. [TODO] Создать `legacy session report (removed)`.
