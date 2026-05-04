@@ -7,10 +7,10 @@
 
 ### Начало сессии
 1. **Единственный recovery owner**: сначала прочитай `doc/TODO/todo-plan.md` по фактической файловой системе. Этот файл может быть ignored/untracked; всё равно именно он является активным состоянием работы.
-2. **Если `Execution Scope Status: ACTIVE`**: не ищи session reports, не читай `doc/Sessions/`, не восстанавливайся по спискам коммитов. Следуй только `Recovery Pack` и `Context Pack For This Cycle` из `doc/TODO/todo-plan.md`.
+2. **Если `Execution Scope Status: ACTIVE`**: не ищи legacy recovery reports, не восстанавливайся по спискам коммитов. Следуй только `Recovery Pack` и `Context Pack For This Cycle` из `doc/TODO/todo-plan.md`.
 3. **Если `Execution Scope Status: BLOCKED`**: выполни `npm run plan:status`, прочитай blocker/debt reason и не продолжай реализацию до ремонта через `npm run plan:repair` или явного решения пользователя.
 4. **Если `Execution Scope Status: NONE` или active plan отсутствует**: прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, согласуй с пользователем новый scope, затем используй `doc/SolidWorks-WorkFlow/Docs_Index.md` для выбора релевантных документов.
-5. Исторические `doc/Sessions/*.md` остаются legacy archive only. Они не являются recovery mechanism и не должны заставлять новую сессию искать отчёты.
+5. Legacy recovery reports не являются recovery mechanism и не должны заставлять новую сессию искать отчёты.
 
 ### Во время выполнения
 1. Active `doc/TODO/todo-plan.md` — machine-managed execution state.
@@ -29,7 +29,7 @@
 
 ### Конец scope
 0. **User Acceptance Gate**: закрытие active scope, архивирование `todo-plan.md` и planning-документа разрешены только после явного acceptance пользователя.
-1. Closeout фиксируется в archived plan / planning-doc disposition, а не в новом обязательном session report.
+1. Closeout фиксируется в archived plan / planning-doc disposition, а не в новом обязательном recovery report.
 2. Если active plan становится ignored local state, перед closeout должен быть создан tracked archive/snapshot в `doc/TODO/Archive/` или другом явно указанном tracked path.
 3. Новый `doc/TODO/todo-plan.md` запрещено создавать или заменять, пока текущий plan имеет `Execution Scope Status: ACTIVE`, любой `IN_PROGRESS` пункт или открытый commit/debt lifecycle. Сначала closeout должен быть завершён оркестратором: финальный closeout commit/complete переводит scope в terminal `NONE` state (`currentTaskId: null`, `expectedCommitMessage: null`) и только потом можно начинать новый planning intake.
 4. Нельзя помечать невыполненные задачи как `DONE` ради закрытия scope. Если пользователь закрывает scope с невыполненной работой, эти пункты должны получить поддержанный terminal disposition (`BLOCKED` с причиной сейчас; `DEFERRED` / `CANCELLED` только после добавления в оркестратор) через отдельный closeout flow, а не ручную замену active plan.

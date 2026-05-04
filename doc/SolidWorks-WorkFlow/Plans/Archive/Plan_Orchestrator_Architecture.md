@@ -3,7 +3,7 @@
 **Status:** archived — accepted MVP test scope closed on 2026-05-04
 **Created:** 2026-05-03
 **Owner:** Process automation / Git hooks / Codex execution lifecycle
-**Scope:** заменить ручное ведение session reports и ручные отметки прогресса в `doc/TODO/todo-plan.md` на локальный deterministic Plan Orchestrator для работы пользователя с Codex в этом repo: новый `AGENTS.md`, scripts under `scripts/plan-orchestrator/`, automatic `pre-commit` / `post-commit` plan-state handling, and minimal repair/status commands.
+**Scope:** заменить ручное ведение legacy recovery reports и ручные отметки прогресса в `doc/TODO/todo-plan.md` на локальный deterministic Plan Orchestrator для работы пользователя с Codex в этом repo: новый `AGENTS.md`, scripts under `scripts/plan-orchestrator/`, automatic `pre-commit` / `post-commit` plan-state handling, and minimal repair/status commands.
 
 **MVP boundary:** это не feature приложения CodeAI Hub и не runtime/VSIX integration. Product release build, app packaging, provider modules, Project Manager UI, pre-push enforcement, snapshot automation and generic closeout automation are out of scope for this first implementation unless the user explicitly reopens them. Active `doc/TODO/todo-plan.md` is now ignored local execution state; tracked history belongs to archives/snapshots, not per-commit hash churn.
 
@@ -15,11 +15,11 @@
 
 Текущий процесс держится на дисциплине пользователя и агента:
 
-- агент вручную читает последний `doc/Sessions/SessionXXX.md`;
-- агент вручную восстанавливает context из session report;
+- агент вручную ищет legacy recovery report;
+- агент вручную восстанавливает context из legacy recovery report;
 - агент вручную меняет статусы задач в `todo-plan.md`;
 - агент вручную вписывает commit hashes;
-- агент вручную решает, когда архивировать plan и session report.
+- агент вручную решает, когда архивировать plan и recovery report.
 
 Это слабое место. Человек и агент могут забыть обновить план, ошибиться в hash, пропустить обязательный документ или закрыть scope до user acceptance.
 
@@ -42,7 +42,7 @@ doc/TODO/todo-plan.md
 - если `Execution Scope Status: ACTIVE`, `todo-plan.md` является единственным recovery owner;
 - если `Execution Scope Status: NONE`, active scope отсутствует, агент обсуждает с пользователем новый scope;
 - если `Execution Scope Status: BLOCKED`, агент читает blocker reason и не продолжает реализацию до снятия blocker;
-- session reports не участвуют в recovery path.
+- legacy recovery reports не участвуют в recovery path.
 
 `SystemArchitecture.md` и `Docs_Index.md` читаются только когда active plan отсутствует или когда active plan явно указывает их в `Recovery Pack`.
 
@@ -95,7 +95,7 @@ MVP closeout remains intentionally small:
 - final historical closeout can be an archived plan snapshot;
 - generic `plan:closeout` automation is deferred until pre/post commit automation is proven.
 
-Исторические `doc/Sessions/*.md` остаются как legacy archive, но `AGENTS.md` больше не должен ссылаться на них как на recovery mechanism.
+Legacy recovery reports больше не должны быть частью recovery mechanism.
 
 ---
 
@@ -433,12 +433,12 @@ Rules:
 
 ## 7. AGENTS.md Changes
 
-Remove the session report lifecycle as an active rule:
+Remove the legacy recovery report lifecycle as an active rule:
 
-- no required search for latest `doc/Sessions/SessionXXX.md`;
-- no `Execution Scope Status` recovery from session report;
-- no requirement to read commit list from session report;
-- no creation of new `SessionXXX.md` at closeout.
+- no required search for legacy recovery reports;
+- no `Execution Scope Status` recovery from recovery reports;
+- no requirement to read commit list from recovery reports;
+- no creation of a recovery report at closeout.
 
 Replace with:
 
@@ -448,9 +448,9 @@ Replace with:
 4. If status is `BLOCKED`, run `npm run plan:status` and follow blocker instructions.
 5. Never manually update task statuses or commit hashes. Use Plan Orchestrator commands.
 6. Never run `git commit` directly while active plan is `ACTIVE`; use `npm run plan:commit -- "<message>"`.
-7. Closeout uses `npm run plan:closeout`, not session reports.
+7. Closeout uses `npm run plan:closeout`, not recovery reports.
 
-Existing historical `doc/Sessions/` files remain in the repository/workspace as legacy history only.
+Existing historical recovery reports are legacy history only.
 
 ---
 
@@ -478,7 +478,7 @@ Existing historical `doc/Sessions/` files remain in the repository/workspace as 
 
 ### Phase 4 - AGENTS.md simplification
 
-- Remove session report lifecycle.
+- Remove legacy recovery report lifecycle.
 - Install new plan-first recovery lifecycle.
 - Replace `todo-plan.md` template.
 
@@ -513,5 +513,5 @@ Implemented MVP path: ignored active plan plus existing archived plans. Full sna
 - `npm run plan:commit -- "<message>"` updates status/hash/current pointer automatically.
 - Simulated crash after commit leaves `.git/codeai-plan-debt`; `plan:repair` completes recovery.
 - `pre-commit` blocks if plan debt or inconsistent state exists.
-- `AGENTS.md` no longer describes session reports as recovery mechanism.
-- Closeout archives the plan and resets `doc/TODO/todo-plan.md` without creating a session report.
+- `AGENTS.md` no longer describes recovery reports as recovery mechanism.
+- Closeout archives the plan and resets `doc/TODO/todo-plan.md` without creating a recovery report.
