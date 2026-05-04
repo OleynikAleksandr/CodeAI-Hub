@@ -56,6 +56,9 @@ export class DevelopmentTreeFilesystemPathPlanner {
     const directories: DevelopmentTreeFilesystemDirectoryPlan[] = [];
 
     for (const part of params.snapshot.parts) {
+      if (part.status !== "materialized") {
+        continue;
+      }
       directories.push(
         createDevelopmentTreeDirectoryPlan({
           rootAbsolutePath: root.absolutePath,

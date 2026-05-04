@@ -375,6 +375,15 @@ test("workflow-state tracks diagram modules progress when not all product parts 
         { id: "project-manager", status: "skeleton" },
       ]
     );
+    assert.equal(
+      await stat(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager"
+        )
+      ).catch(() => null),
+      null
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -99,15 +99,11 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
         relativePath:
           ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge",
       },
-      {
-        kind: "product_part",
-        partId: "project-manager",
-        clusterId: undefined,
-        moduleId: undefined,
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager",
-      },
     ]
+  );
+  assert.equal(
+    plan.directories.some((entry) => entry.partId === "project-manager"),
+    false
   );
 });
 
