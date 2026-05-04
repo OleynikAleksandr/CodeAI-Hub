@@ -4,6 +4,8 @@ set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
+node ./scripts/plan-orchestrator/plan-hook-pre-push.mjs
+
 echo "🔁 Running duplication check (jscpd)..."
 npm run -s check:dup || {
   echo "❌ jscpd threshold exceeded (3%). Fix duplications or adjust scripts/check).";
@@ -17,4 +19,3 @@ npm run -s check:links || {
 }
 
 echo "✅ Pre-push checks passed"
-
