@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { runPlanCommit } from "./plan-commit.mjs";
 import { getGitState } from "./plan-git-state.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
 
@@ -85,10 +86,20 @@ const main = () => {
     return;
   }
 
+  if (command === "commit") {
+    runPlanCommit({ message: process.argv.slice(3).join(" ") });
+    return;
+  }
+
   console.error(
-    "Usage: node scripts/plan-orchestrator/plan-cli.mjs <status|validate>"
+    "Usage: node scripts/plan-orchestrator/plan-cli.mjs <status|validate|commit>"
   );
   process.exitCode = 2;
 };
 
-main();
+try {
+  main();
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exitCode = 1;
+}
