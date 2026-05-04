@@ -57,20 +57,25 @@ export type DescriptionBranchSnapshot = {
 
 export type DevelopmentTreeModuleNode = {
   readonly id: string;
+  readonly readiness?: DevelopmentTreeReadiness;
   readonly title: string;
 };
 
 export type DevelopmentTreeClusterNode = {
   readonly id: string;
   readonly modules: readonly DevelopmentTreeModuleNode[];
+  readonly readiness?: DevelopmentTreeReadiness;
 };
 
 export type DevelopmentTreePartNode = {
   readonly id: string;
+  readonly readiness?: DevelopmentTreeReadiness;
   readonly status: "skeleton" | "materialized";
   readonly clusters: readonly DevelopmentTreeClusterNode[];
   readonly standaloneModules: readonly DevelopmentTreeModuleNode[];
 };
+
+export type DevelopmentTreeReadiness = "idle" | "in_progress" | "ready";
 
 export type DevelopmentTreeSnapshot = {
   readonly parts: readonly DevelopmentTreePartNode[];
@@ -117,7 +122,12 @@ const isWorkflowStageStatus = (value: unknown): value is WorkflowStageStatus =>
   value === "in_progress" ||
   value === "completed" ||
   value === "invalid" ||
-  value === "outdated";
+    value === "outdated";
+
+const isDevelopmentTreeReadiness = (
+  value: unknown
+): value is DevelopmentTreeReadiness =>
+  value === "idle" || value === "in_progress" || value === "ready";
 
 const isContinuityStageId = (value: unknown): value is ContinuityStageId =>
   value === "unknown" ||
@@ -262,7 +272,13 @@ const parseDevelopmentTreeModuleNode = (
   const id = readNonEmptyString(payload.id);
   const title = readNonEmptyString(payload.title);
   if (!(id && title)) return null;
-  return { id, title };
+  return {
+    id,
+    title,
+    readiness: isDevelopmentTreeReadiness(payload.readiness)
+      ? payload.readiness
+      : undefined,
+  };
 };
 
 const parseDevelopmentTreeClusterNode = (
@@ -276,7 +292,13 @@ const parseDevelopmentTreeClusterNode = (
         (m): m is DevelopmentTreeModuleNode => m !== null
       )
     : [];
-  return { id, modules };
+  return {
+    id,
+    modules,
+    readiness: isDevelopmentTreeReadiness(payload.readiness)
+      ? payload.readiness
+      : undefined,
+  };
 };
 
 const parseDevelopmentTreePartNode = (
@@ -297,7 +319,15 @@ const parseDevelopmentTreePartNode = (
         (m): m is DevelopmentTreeModuleNode => m !== null
       )
     : [];
-  return { id, status, clusters, standaloneModules };
+  return {
+    id,
+    status,
+    clusters,
+    standaloneModules,
+    readiness: isDevelopmentTreeReadiness(payload.readiness)
+      ? payload.readiness
+      : undefined,
+  };
 };
 
 const parseDevelopmentTreeSnapshot = (
