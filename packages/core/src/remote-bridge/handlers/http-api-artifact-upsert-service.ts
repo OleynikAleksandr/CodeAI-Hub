@@ -18,6 +18,9 @@ interface ArtifactUpsertItem {
   readonly slot: string;
 }
 
+const PRODUCT_PART_SLOT_RE =
+  /^diagram\.modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/;
+
 type ArtifactUpsertPayloadResult =
   | {
       readonly ok: true;
@@ -83,6 +86,7 @@ export const buildWorkflowStageArtifactUpsertPlan = async (params: {
       return { ok: false, error: targetResult.error };
     }
     const contentResult = normalizeAndValidateWorkflowStageArtifact({
+      expectedPartId: PRODUCT_PART_SLOT_RE.exec(artifact.slot)?.[1],
       fileName: targetResult.value.fileName,
       markdown: artifact.markdown,
     });
