@@ -8,6 +8,15 @@ import type {
   DevelopmentTreeSnapshotRequest,
 } from "./development-tree-types";
 
+export interface DevelopmentTreeSnapshotListenerParams
+  extends DevelopmentTreeSnapshotRequest {
+  readonly snapshot: DevelopmentTreeSnapshot;
+}
+
+export type DevelopmentTreeSnapshotListener = (
+  params: DevelopmentTreeSnapshotListenerParams
+) => Promise<void> | void;
+
 // Lightweight regex for extracting cluster/module structure from product-part files.
 // Intentionally simpler than the full diagram DSL parser: the facade owns the
 // current Project Manager read model, not semantic authoring validation.
@@ -123,6 +132,18 @@ const createMaterializedPart = async (
 };
 
 export class DevelopmentTreeStateFacade {
+  private readonly snapshotListeners: DevelopmentTreeSnapshotListener[] = [];
+
+  subscribeSnapshot(listener: DevelopmentTreeSnapshotListener): () => void {
+    this.snapshotListeners.push(listener);
+    return () => {
+      const index = this.snapshotListeners.indexOf(listener);
+      if (index >= 0) {
+        this.snapshotListeners.splice(index, 1);
+      }
+    };
+  }
+
   async currentSnapshot(
     params: DevelopmentTreeSnapshotRequest
   ): Promise<DevelopmentTreeSnapshot> {
@@ -134,6 +155,10 @@ export class DevelopmentTreeStateFacade {
           : createSkeletonPart(partId)
       );
     }
-    return { parts };
+    const snapshot = { parts };
+    for (const listener of this.snapshotListeners) {
+      await listener({ ...params, snapshot });
+    }
+    return snapshot;
   }
 }

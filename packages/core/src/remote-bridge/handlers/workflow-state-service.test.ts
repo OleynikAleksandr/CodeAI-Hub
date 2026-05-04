@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -208,6 +208,17 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
         (module) => module.id
       ),
       ["local-core-runtime-module"]
+    );
+    assert.equal(
+      (
+        await stat(
+          path.join(
+            workspaceRoot,
+            ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-core-runtime/modules/local-core-runtime-module"
+          )
+        )
+      ).isDirectory(),
+      true
     );
     assert.equal(
       payload.state?.stages.virtual_simulation?.artifacts?.some(

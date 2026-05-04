@@ -2,6 +2,7 @@ import { stat } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
+import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -54,6 +55,8 @@ export class WorkflowStateService {
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly developmentTreeState = new DevelopmentTreeStateFacade();
+  private readonly filesystemStructurator =
+    new DevelopmentTreeFilesystemStructuratorFacade();
   private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
@@ -62,6 +65,25 @@ export class WorkflowStateService {
   }) {
     this.logger = options.logger;
     this.sessionManager = options.sessionManager;
+    this.developmentTreeState.subscribeSnapshot(
+      async ({ snapshot, workspaceRoot, workspaceSlug }) => {
+        try {
+          await this.filesystemStructurator.materialize({
+            snapshot,
+            workspaceRoot,
+            workspaceSlug,
+          });
+        } catch (error) {
+          this.logger.warn(
+            "Failed to materialize development tree filesystem",
+            {
+              workspaceSlug,
+              error: error instanceof Error ? error.message : String(error),
+            }
+          );
+        }
+      }
+    );
   }
 
   record(event: WorkflowWatcherEvent): WorkflowState {
