@@ -1,0 +1,6 @@
+#!/bin/sh
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+cd "$REPO_ROOT" || exit 0
+
+node ./scripts/plan-orchestrator/plan-hook-branch-advisory.mjs || true
