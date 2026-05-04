@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 2 / Stream 5 / Task 1.
-- **Next action:** implement `plan:commit` command before post-commit finalization so hooks have a safe transaction entrypoint.
-- **Last completed commit in this cycle:** `76a15d409 feat: enforce plan commit messages`
+- **Current phase/stream/task:** Phase 2 / Stream 5 / Task 3.
+- **Next action:** implement post-commit finalization hook.
+- **Last completed commit in this cycle:** `b69985596 feat: add plan commit command`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -73,8 +73,8 @@
 
 ### Stream 5 — Commit Command, Post-commit Finalization And Repair
 
-1. [TODO] Реализовать `plan:commit` transaction entrypoint: `scripts/plan-orchestrator/plan-commit.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`, `package.json`; begin transaction, stage updated plan, run `git commit` with transaction env and leave post-commit to finalize hash (scope: 3 files; expected commit: `feat: add plan commit command`).
-2. [TODO] Git Commit: `feat: add plan commit command` (hash: TBD)
+1. [DONE] Реализовать `plan:commit` transaction entrypoint: `scripts/plan-orchestrator/plan-commit.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`, `package.json`; begin transaction, stage updated plan, run `git commit` with transaction env and leave post-commit to finalize hash. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; `npm run plan:commit` without message prints concise usage error; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: add plan commit command`).
+2. [DONE] Git Commit: `feat: add plan commit command` (hash: b69985596)
 3. [TODO] Добавить post-commit finalization hook: `scripts/plan-orchestrator/plan-hook-post-commit.mjs`, `.husky/post-commit`, `scripts/plan-orchestrator/plan-hook-post-commit.test.mjs`; hook writes current commit hash, advances plan state, never amends and never creates commits (scope: 3 files; expected commit: `feat: finalize plan state after commit`).
 4. [TODO] Git Commit: `feat: finalize plan state after commit` (hash: TBD)
 5. [TODO] Реализовать `plan:repair` for debt recovery: `scripts/plan-orchestrator/plan-repair.mjs`, `scripts/plan-orchestrator/plan-repair.test.mjs`, `scripts/plan-orchestrator/plan-cli.mjs`; support commit-succeeded/hash-missing, pending commit, next pointer missing, and unsafe BLOCKED fallback (scope: 3 files; expected commit: `feat: add plan repair command`).
