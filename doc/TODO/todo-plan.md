@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 2 / Stream 4 / Task 1.
-- **Next action:** implement pre-commit plan guard.
-- **Last completed commit in this cycle:** `a4be3c37d feat: add plan transaction debt state`
+- **Current phase/stream/task:** Phase 2 / Stream 4 / Task 3.
+- **Next action:** implement commit-msg plan guard if needed to validate exact expected commit messages.
+- **Last completed commit in this cycle:** `0b4235a28 feat: enforce plan state before commit`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -66,8 +66,8 @@
 
 ### Stream 4 — Pre-commit Guard
 
-1. [TODO] Добавить pre-commit plan guard: `scripts/plan-orchestrator/plan-hook-pre-commit.mjs`, `.husky/pre-commit`, `scripts/plan-orchestrator/plan-hook-pre-commit.test.mjs`; guard runs before existing architecture/lint gates and blocks debt/direct commit/scope mismatch while preserving existing checks (scope: 3 files; expected commit: `feat: enforce plan state before commit`).
-2. [TODO] Git Commit: `feat: enforce plan state before commit` (hash: TBD)
+1. [DONE] Добавить pre-commit plan guard: `scripts/plan-orchestrator/plan-hook-pre-commit.mjs`, `.husky/pre-commit`, `scripts/plan-orchestrator/plan-hook-pre-commit.test.mjs`; guard runs before existing architecture/lint gates and blocks debt/direct commit/scope mismatch while preserving existing checks. Verification: `node --test scripts/plan-orchestrator/*.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: enforce plan state before commit`).
+2. [DONE] Git Commit: `feat: enforce plan state before commit` (hash: 0b4235a28)
 3. [TODO] Если pre-commit не может reliably validate commit message, добавить minimal commit-msg composition: `scripts/plan-orchestrator/plan-hook-commit-msg.mjs`, `.husky/commit-msg`, `scripts/check-commit-message.sh`; сохранить Claude co-author cleanup and add exact expected message validation (scope: 3 files; expected commit: `feat: enforce plan commit messages`).
 4. [TODO] Git Commit: `feat: enforce plan commit messages` (hash: TBD)
 
