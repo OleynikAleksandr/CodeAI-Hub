@@ -8,6 +8,9 @@ import { repairPlanMarkdown } from "./plan-repair.mjs";
 import { parsePlanStateMarkdown } from "./plan-state-parser.mjs";
 import { beginPlanTransaction } from "./plan-transaction.mjs";
 
+const REPAIR_TASK_IN_PROGRESS_PATTERN = /\[IN_PROGRESS\].*Add repair command/u;
+const REPAIR_COMMIT_TODO_PATTERN = /\[TODO\].*Git Commit/u;
+
 const createMarkdown = () => `# План разработки
 
 <!-- codeai-plan-state:start -->
@@ -79,4 +82,34 @@ test("marks plan blocked when repair cannot prove a safe transition", () => {
 
   assert.equal(result.reason, "unsafe_blocked");
   assert.equal(parsed.state.executionScopeStatus, "BLOCKED");
+});
+
+test("rolls back pending transaction when commit was not created", () => {
+  const debtPath = join(
+    mkdtempSync(join(tmpdir(), "plan-repair-")),
+    "debt.json"
+  );
+  const pending = beginPlanTransaction({
+    debtPath,
+    expectedCommitMessage: "feat: add plan repair command",
+    markdown: createMarkdown(),
+    preCommitHead: "ef3c34928",
+    taskId: "phase2.stream5.task5",
+  });
+
+  const result = repairPlanMarkdown({
+    debt: { ...pending.debt, debtPath },
+    head: "ef3c34928",
+    markdown: pending.markdown,
+    subject: "docs: unrelated",
+  });
+  const parsed = parsePlanStateMarkdown(result.markdown);
+
+  assert.equal(result.reason, "commit_not_created_rolled_back");
+  assert.equal(parsed.state.debt, null);
+  assert.equal(parsed.state.executionScopeStatus, "ACTIVE");
+  assert.equal(parsed.state.currentTaskId, "phase2.stream5.task5");
+  assert.equal(parsed.state.lastRecordedCommit, "0debb4a32");
+  assert.match(result.markdown, REPAIR_TASK_IN_PROGRESS_PATTERN);
+  assert.match(result.markdown, REPAIR_COMMIT_TODO_PATTERN);
 });

@@ -80,3 +80,24 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
     lastRecordedCommit: commitHash,
   }));
 };
+
+export const rollbackPendingCommit = (markdown, taskId) => {
+  const { pairedCommit, task } = locateTaskPair(markdown, taskId);
+  let lines = markdown.split("\n");
+
+  lines = replaceLine(
+    lines,
+    task.lineIndex,
+    replaceItemStatus(task.line, "IN_PROGRESS")
+  );
+  lines = replaceLine(
+    lines,
+    pairedCommit.lineIndex,
+    replaceItemStatus(pairedCommit.line, "TODO")
+  );
+
+  return updatePlanState(lines.join("\n"), (state) => ({
+    ...state,
+    debt: null,
+  }));
+};

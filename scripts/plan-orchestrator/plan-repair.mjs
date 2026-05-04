@@ -7,7 +7,11 @@ import {
   readPlanDebtFile,
 } from "./plan-debt.mjs";
 import { getGitState } from "./plan-git-state.mjs";
-import { updatePlanState } from "./plan-markdown-updater.mjs";
+import {
+  rollbackPendingCommit,
+  updatePlanState,
+} from "./plan-markdown-updater.mjs";
+import { locateTaskPair } from "./plan-task-locator.mjs";
 import { finalizePlanTransaction } from "./plan-transaction.mjs";
 
 const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -18,6 +22,12 @@ const getHeadSubject = (cwd) =>
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
+
+const canRollbackPendingCommit = (markdown, taskId) => {
+  const { pairedCommit, task } = locateTaskPair(markdown, taskId);
+
+  return task.status === "DONE" && pairedCommit.status === "PENDING";
+};
 
 export const repairPlanMarkdown = ({ debt, head, markdown, subject }) => {
   if (!debt) {
@@ -36,6 +46,16 @@ export const repairPlanMarkdown = ({ debt, head, markdown, subject }) => {
         taskId: debt.taskId,
       }),
       reason: "commit_succeeded_hash_missing",
+    };
+  }
+
+  if (
+    head === debt.preCommitHead &&
+    canRollbackPendingCommit(markdown, debt.taskId)
+  ) {
+    return {
+      markdown: rollbackPendingCommit(markdown, debt.taskId),
+      reason: "commit_not_created_rolled_back",
     };
   }
 
@@ -61,7 +81,10 @@ export const runPlanRepair = (cwd = process.cwd()) => {
 
   writeFileSync(planPath, result.markdown, "utf8");
 
-  if (result.reason === "commit_succeeded_hash_missing") {
+  if (
+    result.reason === "commit_succeeded_hash_missing" ||
+    result.reason === "commit_not_created_rolled_back"
+  ) {
     clearPlanDebtFile(debtPath);
   }
 

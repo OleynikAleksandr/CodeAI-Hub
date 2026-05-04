@@ -6,6 +6,10 @@ import { validatePlanMarkdown } from "./plan-validator.mjs";
 
 const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
 const TRANSACTION_ENV = "CODEAI_PLAN_TRANSACTION_ACTIVE";
+const TRANSACTION_ALLOWED_ISSUES = new Set([
+  "PLAN_CURRENT_TASK_STATUS_INVALID",
+  "PLAN_DEBT_EXISTS",
+]);
 
 const getCommitSubject = (message) =>
   message
@@ -43,6 +47,17 @@ export const evaluateCommitMessageGuard = ({
   }
 
   const isTransaction = env[TRANSACTION_ENV] === "1";
+  const blockingIssues = validation.issues.filter(
+    (issue) => !(isTransaction && TRANSACTION_ALLOWED_ISSUES.has(issue.code))
+  );
+
+  if (blockingIssues.length > 0) {
+    return {
+      issues: blockingIssues,
+      ok: false,
+      reason: "active_plan_invalid",
+    };
+  }
 
   if (!isTransaction) {
     return {

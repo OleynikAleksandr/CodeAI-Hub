@@ -6,6 +6,10 @@ import { validatePlanMarkdown } from "./plan-validator.mjs";
 
 const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
 const TRANSACTION_ENV = "CODEAI_PLAN_TRANSACTION_ACTIVE";
+const TRANSACTION_ALLOWED_ISSUES = new Set([
+  "PLAN_CURRENT_TASK_STATUS_INVALID",
+  "PLAN_DEBT_EXISTS",
+]);
 
 export const evaluatePreCommitGuard = ({
   env = process.env,
@@ -38,7 +42,7 @@ export const evaluatePreCommitGuard = ({
 
   const isTransaction = env[TRANSACTION_ENV] === "1";
   const blockingIssues = validation.issues.filter(
-    (issue) => issue.code !== "PLAN_DEBT_EXISTS" || !isTransaction
+    (issue) => !(isTransaction && TRANSACTION_ALLOWED_ISSUES.has(issue.code))
   );
 
   if (blockingIssues.length > 0) {
