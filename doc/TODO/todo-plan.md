@@ -18,9 +18,9 @@
 
 ## Recovery Pack
 
-- **Current phase/stream/task:** Phase 1 / Stream 1 / Task 3.
-- **Next action:** implement plan-state parser.
-- **Last completed commit in this cycle:** `9c433c463 docs: trim plan orchestrator context pack`
+- **Current phase/stream/task:** Phase 1 / Stream 2 / Task 1.
+- **Next action:** implement read-only validator and git-state helper.
+- **Last completed commit in this cycle:** `f654ad055 feat: add plan state parser`
 - **Important constraint:** пока Plan Orchestrator не реализован и `AGENTS.md` не изменён, текущий cycle использует старую технологию session reports.
 
 ## Правила выполнения (Execution Rules)
@@ -43,8 +43,8 @@
 2. [DONE] Git Commit: `docs: narrow plan orchestrator automation scope` (hash: 788ed3ec4)
 3. [DONE] Уточнить context pack for local tooling scope: remove product SSOT required reads (`SystemArchitecture`, facade contract, `Docs_Index`) and keep only planning/hook/script/package/`AGENTS.md` context. Verification: Husky pre-commit passed with existing near-limit warnings only (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: trim plan orchestrator context pack`).
 4. [DONE] Git Commit: `docs: trim plan orchestrator context pack` (hash: 9c433c463)
-5. [TODO] Создать parser/types для machine-owned `codeai-plan-state` block: `scripts/plan-orchestrator/plan-state-types.mjs`, `scripts/plan-orchestrator/plan-state-parser.mjs`, `scripts/plan-orchestrator/plan-state-parser.test.mjs`; покрыть valid/missing/malformed JSON block and schema version checks (scope: 3 files; expected commit: `feat: add plan state parser`).
-6. [TODO] Git Commit: `feat: add plan state parser` (hash: TBD)
+5. [DONE] Создать parser/types для machine-owned `codeai-plan-state` block: `scripts/plan-orchestrator/plan-state-types.mjs`, `scripts/plan-orchestrator/plan-state-parser.mjs`, `scripts/plan-orchestrator/plan-state-parser.test.mjs`; покрыть valid/missing/malformed JSON block and schema version checks. Verification: `node --test scripts/plan-orchestrator/plan-state-parser.test.mjs`; Husky pre-commit passed with existing near-limit warnings only (scope: 3 files; expected commit: `feat: add plan state parser`).
+6. [DONE] Git Commit: `feat: add plan state parser` (hash: f654ad055)
 
 ### Stream 2 — Validator And Status
 
