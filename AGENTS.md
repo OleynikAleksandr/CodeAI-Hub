@@ -3,107 +3,35 @@
 **СИСТЕМНАЯ ИНСТРУКЦИЯ**: 
 Это ГЛАВНАЯ директива для всех сессий разработки. Ты ОБЯЗАН строго следовать этому жизненному циклу.
 
-## 1. Управление сессиями (Session Lifecycle)
+## 1. Управление сессиями (Plan-first Lifecycle)
 
 ### Начало сессии
-1. **Чтение отчета**: Найди последний файл `doc/Sessions/SessionXXX.md`.
-   - Искать нужно **по фактической файловой системе**, а не по git-tracked/ignore-aware спискам.
-   - **Запрещено** определять последний session report через `rg --files`, `git ls-files` и любые другие команды, которые уважают `.gitignore`, потому что `doc/Sessions/` может быть скрыт частично.
-   - Используй filesystem-only проверку, например: `find doc/Sessions -maxdepth 1 -type f -name 'Session*.md' | sort` или эквивалентный `ls`, и выбирай максимальный номер `SessionXXX.md`.
-   - Если в рабочем дереве есть более новый session report, но он ignored/untracked, именно он всё равно считается последним и обязан использоваться для старта сессии.
-2. **Базовый SSOT**: Прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, чтобы восстановить глобальные инварианты и карту системы.
-3. **Режим чтения коммитов зависит от статуса scope**:
-   - Если в отчете `Execution Scope Status: ACTIVE`, раздел `Git commits` — это обязательный путь восстановления контекста. Ты ОБЯЗАН просмотреть каждый коммит из списка, используя `git show --stat <hash>` и `git show <hash>`.
-   - Если в отчете `Execution Scope Status: COMPLETED`, раздел `Git commits` носит reference-only характер. Не нужно читать все коммиты по умолчанию; сначала обсуди с пользователем новый scope.
-4. **Маршрут продолжения**:
-   - Если в отчете `Execution Scope Status: ACTIVE`, следуй указанному там `Recovery Owner`. Если он указывает на активный `doc/TODO/todo-plan.md`, то именно он является единственным владельцем списка документов для восстановления контекста текущего execution cycle.
-   - Если в отчете `Execution Scope Status: COMPLETED`, то после чтения базового SSOT и обсуждения нового задания с пользователем используй указанный в отчете `Scope Discovery Index`, чтобы выбрать релевантные документы для нового planning scope.
+1. **Единственный recovery owner**: сначала прочитай `doc/TODO/todo-plan.md` по фактической файловой системе. Этот файл может быть ignored/untracked; всё равно именно он является активным состоянием работы.
+2. **Если `Execution Scope Status: ACTIVE`**: не ищи session reports, не читай `doc/Sessions/`, не восстанавливайся по спискам коммитов. Следуй только `Recovery Pack` и `Context Pack For This Cycle` из `doc/TODO/todo-plan.md`.
+3. **Если `Execution Scope Status: BLOCKED`**: выполни `npm run plan:status`, прочитай blocker/debt reason и не продолжай реализацию до ремонта через `npm run plan:repair` или явного решения пользователя.
+4. **Если `Execution Scope Status: NONE` или active plan отсутствует**: прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, согласуй с пользователем новый scope, затем используй `doc/SolidWorks-WorkFlow/Docs_Index.md` для выбора релевантных документов.
+5. Исторические `doc/Sessions/*.md` остаются legacy archive only. Они не являются recovery mechanism и не должны заставлять новую сессию искать отчёты.
 
-### Конец сессии
-0. **User Acceptance Gate**: `COMPLETED`, архивирование `todo-plan.md`, архивирование planning-документа и закрытие active scope разрешены только после того, как пользователь установил/запустил собранный релиз, выполнил визуальное тестирование и явно подтвердил, что релиз работает как планировалось. Собранный VSIX/tarball сам по себе не является acceptance.
-1. **Отчет**: Создай или обнови отчет `doc/Sessions/SessionXXX.md` в одном из двух типов.
-2. **Порядок фиксации в git**:
-   - К моменту финального closeout все изменения, кроме session report, должны быть уже закоммичены.
-   - Незакоммиченным в конце сессии может оставаться только `doc/Sessions/SessionXXX.md`.
-   - Session report заполняется после последнего содержательного коммита сессии, поэтому в разделе `Git commits` нужно указывать уже существующие hash'и, а не `TBD`.
+### Во время выполнения
+1. Active `doc/TODO/todo-plan.md` — machine-managed execution state.
+2. Не редактируй task status, commit status, hash и machine-owned `codeai-plan-state` вручную, кроме явно плановой миграции/ремонта.
+3. Для штатного commit workflow используй:
+   ```bash
+   npm run plan:commit -- "<expected commit message>"
+   ```
+4. Для диагностики используй:
+   ```bash
+   npm run plan:status
+   npm run plan:validate
+   npm run plan:repair
+   ```
+5. `pre-commit`, `commit-msg` и `post-commit` hooks являются частью процесса. Их нельзя обходить через `--no-verify`.
 
-#### Тип A — Completion Report
-Используется только когда весь активный `todo-plan.md` выполнен, релиз прошел пользовательское визуальное тестирование, пользователь явно подтвердил acceptance, `todo-plan.md` и planning-документ заархивированы, и active execution scope больше нет.
-
-```markdown
-# Session <N> — <Краткое название темы сессии>
-
-**Date:** YYYY-MM-DD HH:MM (Timezone)
-**Branch:** <branch_name>
-**Version:** <current_version>
-**Execution Scope Status:** COMPLETED
-
----
-
-# 1. Work Done in This Session
-
-## Work summary
-- <Краткое описание выполненной задачи 1>
-- <Краткое описание выполненной задачи 2>
-- <Результаты сборки/тестов>
-- <Явное подтверждение пользователя после визуального тестирования релиза>
-
-## Git commits
-(REFERENCE ONLY: этот список сохраняется для исторической трассировки и расследования регрессий; следующая сессия не обязана читать все коммиты по умолчанию.)
-- `<hash> <commit_message>`
-- `<hash> <commit_message>`
-
----
-
-# 2. Instructions for Next Session
-
-**Base SSOT:** `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-**Scope Discovery Index:** `doc/SolidWorks-WorkFlow/Docs_Index.md`
-
-## Plans for next session
-- Активный execution scope отсутствует.
-- Следующий агент обязан сначала прочитать `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` как базовый SSOT.
-- Затем агент обязан согласовать с пользователем новый scope.
-- После этого агент обязан открыть `doc/SolidWorks-WorkFlow/Docs_Index.md`, выбрать релевантные документы для нового scope и только потом формировать новый planning-doc.
-- До появления нового planning-doc и нового `doc/TODO/todo-plan.md` навигационной опорой служит `doc/SolidWorks-WorkFlow/Docs_Index.md`.
-```
-
-#### Тип B — Continuation Report
-Используется, когда активный `todo-plan.md` выполнен только частично, релиз ожидает пользовательского визуального тестирования, пользовательский retest провален, или работу нужно продолжать в следующей сессии.
-
-```markdown
-# Session <N> — <Краткое название темы сессии>
-
-**Date:** YYYY-MM-DD HH:MM (Timezone)
-**Branch:** <branch_name>
-**Version:** <current_version>
-**Execution Scope Status:** ACTIVE
-
----
-
-# 1. Work Done in This Session
-
-## Work summary
-- <Краткое описание выполненной задачи 1>
-- <Краткое описание выполненной задачи 2>
-- <Результаты сборки/тестов>
-- <Статус пользовательского визуального тестирования: ожидается / провалено / требует фикса>
-
-## Git commits
-(ВАЖНО: при `Execution Scope Status: ACTIVE` следующая сессия обязана просмотреть каждый коммит через `git show --stat <hash>` и `git show <hash>`.)
-- `<hash> <commit_message>`
-- `<hash> <commit_message>`
-
----
-
-# 2. Instructions for Next Session
-
-**Recovery Owner:** `doc/TODO/todo-plan.md`
-
-## Plans for next session
-- Продолжать активный execution scope по `doc/TODO/todo-plan.md`.
-- Список документов для восстановления контекста находится только в активном `doc/TODO/todo-plan.md`.
-```
+### Конец scope
+0. **User Acceptance Gate**: закрытие active scope, архивирование `todo-plan.md` и planning-документа разрешены только после явного acceptance пользователя.
+1. Closeout фиксируется в archived plan / planning-doc disposition, а не в новом обязательном session report.
+2. Если active plan становится ignored local state, перед closeout должен быть создан tracked archive/snapshot в `doc/TODO/Archive/` или другом явно указанном tracked path.
+3. В конце работы не оставляй `.git/codeai-plan-debt`; если он существует, сначала выполни `npm run plan:repair`.
 
 ## 2. Архитектурные принципы (Подход "Кластерно-Модульный")
 - **Микро-классы**: Никаких файлов > 500 строк. Логика должна быть разбита на маленькие классы с единственной ответственностью.
@@ -130,7 +58,7 @@
 `todo-plan.md` - может содержать несколько фаз и в каждой фазе несколько Stream с перечнем микро задач - не более 3-х файлов исправлений или вновь созданных.
 Полностью реализованный `todo-plan.md` переименовывается с префиксом последней реализованной Фазы (например - todo-plan-phase3.md) и кладется в `doc/TODO/Archive/` только после User Acceptance Gate.
 На его месте создается новый `todo-plan.md` под новые задачи.
-- **Обязательные финальные Stream в каждом новом `doc/TODO/todo-plan.md`:** `Release Build`, `User Visual Acceptance Testing`, `Scope Closeout` (закрытие todo-plan, planning-doc и session report). `Scope Closeout` выполняется только после явного acceptance пользователя.
+- **Обязательные финальные Stream в каждом новом `doc/TODO/todo-plan.md`:** `Release Build` или `Tooling Verification` (по scope), `User Visual Acceptance Testing` или `User Workflow Acceptance Testing`, `Scope Closeout` (закрытие todo-plan и planning-doc). `Scope Closeout` выполняется только после явного acceptance пользователя.
 - **Обязательный closeout Plans после User Acceptance Gate:** как только `doc/TODO/todo-plan.md` полностью закрыт, релиз принят пользователем и план переносится в `doc/TODO/Archive/`, необходимо в той же сессии провести ревизию `doc/SolidWorks-WorkFlow/Plans/` по этому execution cycle.
   Для каждого planning-документа, на который опирался завершенный `todo-plan`, обязательно принять одно из решений:
   1. перенести его стабильные итоговые выводы в канонические SSOT-документы (`System/`, `Clusters/`, `Modules/`, `Contracts/`);
@@ -138,7 +66,7 @@
   3. удалить документ, если он был временным рабочим refactoring/intake-доком и не несет самостоятельной исторической ценности.
   После этого нужно:
   - обновить `doc/SolidWorks-WorkFlow/Docs_Index.md`;
-  - поправить ссылки в `doc/Sessions/` и `doc/TODO/Archive/`, если они указывали на старый active path;
+  - поправить ссылки в `doc/TODO/Archive/` и связанных docs, если они указывали на старый active path;
   - создать новый `doc/TODO/todo-plan.md` только после завершения этой ревизии.
   В active `doc/SolidWorks-WorkFlow/Plans/` должны оставаться только реально незакрытые или отложенные (`deferred`) scope.
 - **Ограничение**: Разбивай работу на **Микро-задачи**. Каждая задача должна затрагивать **≤ 3 файлов**.
@@ -171,8 +99,8 @@
   - Stream завершается после того, как все его задачи закрыты таргетными сборками затронутых пакетов/клиентов и коммитами. Для серийных задач допускается диагностический прогон `npm run build --workspace <package>` по цепочке (например, Claude → Codex → core), чтобы локализовать ошибки без запуска `build-all`.
   - **Real-time Документация**: 
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
-  - Каждый новый `doc/TODO/todo-plan.md` обязан содержать финальные Stream: `Release Build`, `User Visual Acceptance Testing`, `Scope Closeout` (todo-plan, planning-doc, session report).
-  - Релизная Phase не завершается на сборке: на чистом дереве запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в `doc/Sessions/`, передаем релиз пользователю, оставляем scope `ACTIVE`, получаем явное acceptance и только потом закрываем scope.
+  - Каждый новый `doc/TODO/todo-plan.md` обязан содержать финальные Stream: `Release Build` или `Tooling Verification` (по scope), `User Visual Acceptance Testing` или `User Workflow Acceptance Testing`, `Scope Closeout` (todo-plan, planning-doc).
+  - Релизная Phase не завершается на сборке: на чистом дереве запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в active plan/archive snapshot, передаем релиз пользователю, оставляем scope `ACTIVE`, получаем явное acceptance и только потом закрываем scope.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
   ## Phase <N> — <описание> (owner: <имя>, updated: YYYY-MM-DD)
@@ -215,9 +143,9 @@
 5. Снова убедись, что `git status` пустой (все изменения от `build-all.sh` закоммичены, если это отдельная итерация).
 6. Выполни `./scripts/build-release.sh --use-current-version`. Скрипт ожидает чистое дерево, использует текущую версию из `package.json`, прогоняет финальные гейты (архитектура, type-check, compile, SDK exclusions, advisory `check:links` / `check:dup`, prune dev deps) и собирает VSIX. При падении повторно запускаем **только** `build-release.sh` после исправления причин.
 7. После успеха проверь вывод `scripts/build-release.sh`: должны появиться строки `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`. Забери `codeai-hub-<version>.vsix` из корня и при необходимости скопируй свежие tarball’ы из `~/.codeai-hub/releases` в `doc/tmp/releases/`.
-8. Зафиксируй изменения (включая версии и манифесты), обнови `doc/TODO/todo-plan.md`, обнови `doc/Sessions/SessionXXX.md` как `ACTIVE`, если пользовательское визуальное тестирование еще не завершено.
+8. Зафиксируй изменения (включая версии и манифесты), обнови active `doc/TODO/todo-plan.md` и при необходимости tracked archive/snapshot, если пользовательское визуальное тестирование еще не завершено.
 9. Передай VSIX пользователю для установки и retest. В `todo-plan.md` после Stream сборки релиза должен оставаться активный Stream `User Visual Acceptance Testing`.
-10. Только после явного acceptance от пользователя закрывай Stream визуального тестирования, архивируй `todo-plan.md` и planning-документ, обновляй `Docs_Index.md` и переводи session report в `COMPLETED`. Если пользователь сообщает о сбое, scope остается `ACTIVE`, а в `todo-plan.md` добавляется Stream расследования/фикса.
+10. Только после явного acceptance от пользователя закрывай Stream визуального тестирования, архивируй `todo-plan.md` и planning-документ, обновляй `Docs_Index.md`. Если пользователь сообщает о сбое, scope остается `ACTIVE`, а в `todo-plan.md` добавляется Stream расследования/фикса.
 
 
 Держи документ коротким; добавляй сюда только правила, которые реально блокируют работу.

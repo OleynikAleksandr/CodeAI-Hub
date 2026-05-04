@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getGitState } from "./plan-git-state.mjs";
@@ -91,10 +91,16 @@ const main = () => {
   }
 
   const cwd = process.cwd();
+  const planPath = resolve(cwd, TODO_PLAN_PATH);
+
+  if (!existsSync(planPath)) {
+    return;
+  }
+
   const result = evaluateCommitMessageGuard({
     env: process.env,
     gitState: getGitState(cwd),
-    markdown: readFileSync(resolve(cwd, TODO_PLAN_PATH), "utf8"),
+    markdown: readFileSync(planPath, "utf8"),
     message: readFileSync(messageFile, "utf8"),
   });
 

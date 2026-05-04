@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getGitState } from "./plan-git-state.mjs";
@@ -75,6 +75,11 @@ const printIssues = (issues = []) => {
 const main = () => {
   const cwd = process.cwd();
   const planPath = resolve(cwd, TODO_PLAN_PATH);
+
+  if (!existsSync(planPath)) {
+    return;
+  }
+
   const markdown = readFileSync(planPath, "utf8");
   const result = evaluatePreCommitGuard({
     env: process.env,

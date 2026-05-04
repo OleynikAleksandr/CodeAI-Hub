@@ -20,7 +20,6 @@ doc/TODO/*
 !doc/TODO/Archive.zip
 !doc/TODO/Planned/
 !doc/TODO/Planned/*.md
-!doc/TODO/todo-plan.md
 
 lefthook.yml
 *.vsix

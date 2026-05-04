@@ -5,7 +5,7 @@
 **Owner:** Process automation / Git hooks / Codex execution lifecycle
 **Scope:** заменить ручное ведение session reports и ручные отметки прогресса в `doc/TODO/todo-plan.md` на локальный deterministic Plan Orchestrator для работы пользователя с Codex в этом repo: новый `AGENTS.md`, scripts under `scripts/plan-orchestrator/`, automatic `pre-commit` / `post-commit` plan-state handling, and minimal repair/status commands.
 
-**MVP boundary:** это не feature приложения CodeAI Hub и не runtime/VSIX integration. Product release build, app packaging, provider modules, Project Manager UI, pre-push enforcement, snapshot automation and generic closeout automation are out of scope for this first implementation unless the user explicitly reopens them.
+**MVP boundary:** это не feature приложения CodeAI Hub и не runtime/VSIX integration. Product release build, app packaging, provider modules, Project Manager UI, pre-push enforcement, snapshot automation and generic closeout automation are out of scope for this first implementation unless the user explicitly reopens them. Active `doc/TODO/todo-plan.md` is now ignored local execution state; tracked history belongs to archives/snapshots, not per-commit hash churn.
 
 ---
 
@@ -447,7 +447,7 @@ Existing historical `doc/Sessions/` files remain in the repository/workspace as 
 - If active plan becomes ignored, add mandatory tracked snapshots and closeout archive flow.
 - If active plan stays tracked, document two-commit hash recording model.
 
-Recommended path for MVP: ignored active plan plus existing archived plans. Full snapshot automation is deferred.
+Implemented MVP path: ignored active plan plus existing archived plans. Full snapshot automation is deferred.
 
 ---
 
