@@ -36,7 +36,7 @@
 - `Modules/Codex_ProviderInvocationFlags.md` — SSOT actual Codex App Server startup flags, JSON-RPC `initialize` / `thread/start` / `thread/resume` / `turn/start` payloads, model/reasoning resolution, provider-home env, and native request capture parity.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
-- `Modules/Localization.md` — SSOT persistent UI localization module, including the four user-facing categories and the English-only internal-instructions boundary.
+- `Modules/Localization.md` — SSOT persistent UI localization module, including user-facing categories and the code-owned internal-instructions boundary with explicit localized prompt materialization exceptions.
 - `Plans/Archive/Localization_TranslationEngine_AnthropicHaiku_Architecture.md` — archived Anthropic Claude Haiku 4.5 translation engine architecture (closed by release `1.1.986`; canonical SSOT lives in `Modules/Claude.md`, `Modules/Shared_RuntimeTranslation_Module.md`, and `Modules/Localization.md`).
 - `Modules/Launcher_CEF.md` — SSOT CEF Launcher module.
 - `Modules/UI_Bundles.md` — SSOT UI bundles (Webview + Project Manager), включая Settings -> General card для provider native request capture commands and the `Translation` capture scenario.
@@ -56,7 +56,7 @@
 - `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md` — canonical effective model identity, next-turn settings SSOT, and model invocation profile compatibility boundary.
 - `Contracts/Gemini_ThoughtTranslation.md` — реализованный контракт перевода Gemini `Thought` событий в видимые tagged assistant messages.
 - `Contracts/ProviderFailure_Recovery_And_ProviderSwitch.md` — partially implemented SSOT для provider failure classification/retry/switch-offer scaffold и deferred provider-neutral `switch_provider` takeover.
-- `Contracts/UserFacing_Text_Localization_Boundary.md` — SSOT text-ownership contract for `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, and English-only `Internal Agent Instructions`.
+- `Contracts/UserFacing_Text_Localization_Boundary.md` — SSOT text-ownership contract for `UI Labels`, `UI Helper Text`, `Messages for the User`, `Artifacts for the User`, `Reasoning`, and code-owned `Internal Agent Instructions` with explicit localized prompt materialization exceptions.
 - `Contracts/FacadeClassDiagram_DesignAndMaintenance.md` — process: фасады/границы/диаграммы (required reading).
 
 ### Checklists (periodic workflows)

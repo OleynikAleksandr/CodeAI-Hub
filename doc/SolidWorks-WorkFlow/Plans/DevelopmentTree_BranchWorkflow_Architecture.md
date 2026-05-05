@@ -1,8 +1,8 @@
 # Development Tree Branch Workflow Architecture
 
-**Status:** Reference Architecture (2026-04-10). Sidebar визуализация branch structure реализована в production. Branch session execution (`Product Part Specification`, `Cluster Design`, `Module Design` / `Planning` / `Execution` агенты, materialize артефактов `Module Specification` / `Facade Contract` / `Implementation Foundation` / `TODO Plan`, workflow state machine для фаз, "Start Planning" / "Start Execution" UI) на 2026-04-21 **ещё не реализованы** — требуется отдельный execution-phase planning cycle. Документ остаётся как reference architecture и design intake для этой будущей работы. См. SystemArchitecture.md §20 (`[DESIGNED, NOT IMPLEMENTED]`).
+**Status:** Reference Architecture (2026-05-05). Sidebar визуализация branch structure and automatic Product Part / Cluster / Module first-draft materialization are implemented in production. Full branch session execution (`Planning` / `Execution` agents, `Implementation Foundation`, `TODO Plan`, workflow state machine для implementation phases, "Start Planning" / "Start Execution" UI) remains future work and requires a separate execution-phase planning cycle. Документ остаётся как reference architecture и design intake для этой будущей работы. См. SystemArchitecture.md §20 and §37.
 **Created:** 2026-04-07
-**Updated:** 2026-04-10
+**Updated:** 2026-05-05
 **Owner:** Oleksandr + Codex
 **Scope:** Формализовать branch-level workflow, который начинается после `Diagram Modules`: `Product Part Specification`, `Cluster Design`, `Module Design` / `Module Planning` / `Module Execution`, standalone-module path, required contracts для выбранной implementation wave и readiness gates между сессиями.
 

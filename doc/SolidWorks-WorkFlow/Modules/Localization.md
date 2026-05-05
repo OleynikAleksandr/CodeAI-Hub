@@ -277,8 +277,8 @@ Current live browser behavior:
 6. Browser/UI surfaces must consume host-materialized localization runtime payloads instead of reading mutable localization files directly.
 7. If a valid persisted browser bootstrap snapshot exists, browser startup must reuse it for first paint instead of briefly flashing English source copy and repainting later.
 8. Every text created or shown by the product must carry an explicit text category marker; automatic category guessing is not allowed.
-9. `Internal Agent Instructions` must stay outside user-facing localization settings and remain English-only unless a separate technical contract explicitly says otherwise.
-10. `Artifacts for the User` may influence workflow-created artifact shell text and brief user-facing chat updates, but it must not be used to translate internal prompt bodies or hidden provider instructions.
+9. `Internal Agent Instructions` must stay outside user-facing localization dictionaries/settings and remain code-owned; localized workflow/Development Tree instruction blocks are allowed only through an explicit prompt materialization contract that preserves protected canonical tokens.
+10. `Artifacts for the User` may influence workflow-created artifact shell text, generated artifact prose, and artifact-language directives in first prompts, but it must not translate provider flags, hidden provider instructions, filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, field names, method/event names, or structural headings.
 11. Structural vocabulary inside user-facing workflow DSLs may stay English-only when that vocabulary acts as the canonical semantic identifier set for runtime parsing and rendering.
 
 ---
