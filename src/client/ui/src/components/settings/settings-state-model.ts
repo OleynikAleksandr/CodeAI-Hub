@@ -23,6 +23,7 @@ import {
 } from "./gemini-mapping";
 import {
   areGeneralResponsePolicyEqual,
+  type GeneralResponsePolicySettings,
   mapGeneralResponsePolicy,
 } from "./general-response-mode/response-mode-state";
 import type {
@@ -35,6 +36,11 @@ import type {
   RawLocalizationCategorySettings,
   RawSettingsSnapshot,
 } from "./settings-state-raw";
+import {
+  areTextToSpeechSettingsEqual,
+  mapTextToSpeechSettings,
+  type TextToSpeechSettings,
+} from "./text-to-speech-settings";
 
 export type {
   CodexModelId,
@@ -53,9 +59,6 @@ export type { RawSettingsSnapshot } from "./settings-state-raw";
 type ThinkingSettings = ClaudeThinkingSettingsState;
 interface AutoUpdateSettings {
   readonly enabled: boolean;
-}
-interface CoreControlsSettings {
-  readonly allowRestart: boolean;
 }
 type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
 interface ApprovedLocalizationCategorySettings {
@@ -86,9 +89,10 @@ interface LocalizationSettings {
   readonly workflowTermsPolicy: LocalizationWorkflowTermsPolicy;
 }
 interface GeneralSettings {
-  readonly coreControls: CoreControlsSettings;
+  readonly coreControls: { readonly allowRestart: boolean };
   readonly localization: LocalizationSettings;
-  readonly responsePolicy: import("./general-response-mode/response-mode-state").GeneralResponsePolicySettings;
+  readonly responsePolicy: GeneralResponsePolicySettings;
+  readonly textToSpeech: TextToSpeechSettings;
 }
 interface ContinuitySettings {
   readonly remainingPercentThreshold: number;
@@ -296,6 +300,7 @@ const mapGeneralSettings = (
   },
   localization: mapLocalizationSettings(value?.localization),
   responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
+  textToSpeech: mapTextToSpeechSettings(value?.textToSpeech),
 });
 
 const mapContinuity = (value: unknown): ContinuitySettings => {
@@ -424,7 +429,8 @@ const areGeneralSettingsEqual = (
 ): boolean =>
   left.coreControls.allowRestart === right.coreControls.allowRestart &&
   areLocalizationSettingsEqual(left.localization, right.localization) &&
-  areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
+  areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy) &&
+  areTextToSpeechSettingsEqual(left.textToSpeech, right.textToSpeech);
 
 const areLocalizationCategoriesEqual = (
   left: LocalizationCategorySettings,

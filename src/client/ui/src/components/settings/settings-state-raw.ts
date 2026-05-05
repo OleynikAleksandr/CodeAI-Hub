@@ -1,3 +1,5 @@
+import type { RawTextToSpeechSettings } from "./text-to-speech-settings";
+
 export interface RawThinkingSettings {
   readonly effort?: unknown;
   readonly enabled?: unknown;
@@ -74,6 +76,7 @@ export interface RawGeneralSettings {
   readonly coreControls?: RawCoreControlsSettings;
   readonly localization?: RawGeneralLocalizationSettings;
   readonly responsePolicy?: RawGeneralResponsePolicySettings;
+  readonly textToSpeech?: RawTextToSpeechSettings;
 }
 export interface RawSettingsSnapshot {
   readonly general?: RawGeneralSettings;

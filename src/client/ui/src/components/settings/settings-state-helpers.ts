@@ -225,6 +225,20 @@ export const updateResponsePolicyMode = (
   },
 });
 
+export const updateTextToSpeechRate = (
+  settings: Settings,
+  rate: number
+): Settings => ({
+  ...settings,
+  general: {
+    ...settings.general,
+    textToSpeech: {
+      ...settings.general.textToSpeech,
+      rate,
+    },
+  },
+});
+
 export const updateStrictSchemaText = (
   settings: Settings,
   schemaText: string
