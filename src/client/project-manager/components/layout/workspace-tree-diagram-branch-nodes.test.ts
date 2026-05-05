@@ -246,6 +246,47 @@ test("buildDevelopmentTreeNodes maps readiness to sidebar status colors", () => 
   assert.equal(standaloneModule?.status, "todo");
 });
 
+test("buildDevelopmentTreeNodes updates readiness colors from refreshed snapshots", () => {
+  const createTree = (readiness: "idle" | "in_progress" | "ready") =>
+    ({
+      parts: [
+        {
+          id: "project-manager",
+          readiness,
+          status: "materialized",
+          clusters: [
+            {
+              id: "workflow-and-artifact-ui",
+              readiness,
+              modules: [
+                {
+                  id: "workflow-step-controller",
+                  readiness,
+                  title: "Workflow Step Controller",
+                },
+              ],
+            },
+          ],
+          standaloneModules: [],
+        },
+      ],
+    }) satisfies NonNullable<WorkflowStateSnapshot["developmentTree"]>;
+
+  const stalePart = buildDevelopmentTreeNodes(createTree("in_progress"), 0)[0];
+  const staleCluster = stalePart?.children?.[0];
+  const staleModule = staleCluster?.children?.[0];
+  assert.equal(stalePart?.status, "progress");
+  assert.equal(staleCluster?.status, "progress");
+  assert.equal(staleModule?.status, "progress");
+
+  const refreshedPart = buildDevelopmentTreeNodes(createTree("ready"), 0)[0];
+  const refreshedCluster = refreshedPart?.children?.[0];
+  const refreshedModule = refreshedCluster?.children?.[0];
+  assert.equal(refreshedPart?.status, "active");
+  assert.equal(refreshedCluster?.status, "active");
+  assert.equal(refreshedModule?.status, "active");
+});
+
 test("buildDevelopmentTreeNodes keeps artifacts and sessions out of sidebar rows", () => {
   const developmentTree = {
     parts: [

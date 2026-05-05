@@ -24,6 +24,17 @@ const PART_CONTENT = `# Product Part: Project Manager
 ## Standalone Modules
 `;
 
+const createDraft = (body: string): string => `---
+generated: true
+---
+
+## Draft
+
+<!-- agent-fill -->
+${body}
+<!-- /agent-fill -->
+`;
+
 const writeWorkspaceFile = async (
   workspaceRoot: string,
   relativePath: string,
@@ -94,6 +105,106 @@ test("DevelopmentTreeStateFacade exposes draft artifacts and sessions per node",
     ]);
     assert.equal(module?.session?.providerId, "codexCli");
     assert.equal(module?.session?.sessionId, "runtime-session");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("DevelopmentTreeStateFacade refreshes readiness after draft writes", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-readiness-refresh-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const partRoot =
+    ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager";
+  const clusterRoot = `${partRoot}/clusters/workflow-and-artifact-ui`;
+  const moduleRoot = `${clusterRoot}/modules/workflow-step-controller`;
+  const sentinel =
+    "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
+      PART_CONTENT
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${partRoot}/PartDescription.draft.md`,
+      createDraft(sentinel)
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${clusterRoot}/ClusterDescription.draft.md`,
+      createDraft(sentinel)
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${clusterRoot}/ClusterFacadeContract.draft.md`,
+      createDraft(sentinel)
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${moduleRoot}/ModuleSpec.draft.md`,
+      createDraft(sentinel)
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${moduleRoot}/ModuleFacadeContract.draft.md`,
+      createDraft(sentinel)
+    );
+
+    const facade = new DevelopmentTreeStateFacade();
+    const before = await facade.currentSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+      plannedPartIds: ["project-manager"],
+      generatedPartIds: ["project-manager"],
+    });
+    assert.equal(before.parts[0]?.readiness, "idle");
+    assert.equal(before.parts[0]?.clusters[0]?.readiness, "idle");
+    assert.equal(before.parts[0]?.clusters[0]?.modules[0]?.readiness, "idle");
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${partRoot}/PartDescription.draft.md`,
+      createDraft("Project Manager part draft is filled.")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${clusterRoot}/ClusterDescription.draft.md`,
+      createDraft("Workflow and artifact UI cluster draft is filled.")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${clusterRoot}/ClusterFacadeContract.draft.md`,
+      createDraft("Cluster facade contract draft is filled.")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${moduleRoot}/ModuleSpec.draft.md`,
+      createDraft("Workflow step controller module spec is filled.")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${moduleRoot}/ModuleFacadeContract.draft.md`,
+      createDraft("Workflow step controller facade contract is filled.")
+    );
+
+    const after = await facade.currentSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+      plannedPartIds: ["project-manager"],
+      generatedPartIds: ["project-manager"],
+    });
+    assert.equal(after.parts[0]?.readiness, "ready");
+    assert.equal(after.parts[0]?.clusters[0]?.readiness, "ready");
+    assert.equal(after.parts[0]?.clusters[0]?.modules[0]?.readiness, "ready");
+    assert.deepEqual(
+      after.parts[0]?.clusters[0]?.modules[0]?.artifacts?.map(
+        (artifact) => artifact.fileName
+      ),
+      ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"]
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
