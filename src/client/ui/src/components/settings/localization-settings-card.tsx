@@ -4,7 +4,11 @@ import type { ProviderStackDescriptor } from "../../../../../types/provider";
 import { useLocalization } from "../../app-host/use-localization";
 import { isCoreBridgeStatePayload } from "../../app-host/webview-message-types";
 import { getCachedProviders } from "../../core-bridge/core-bridge";
-import { resolveLocalizationEngineAvailability } from "./localization-engine-availability";
+import {
+  APPLE_NATIVE_TRANSLATION_ENGINE_ID,
+  resolveLocalizationEngineAvailability,
+  shouldExposeLocalizationEngineOption,
+} from "./localization-engine-availability";
 import LocalizationGlossaryEditor from "./localization-glossary-editor";
 import { LocalizationLanguageCombobox } from "./localization-language-combobox";
 import type { LocalizationLanguageOption } from "./localization-language-filter";
@@ -93,10 +97,15 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
-const formatUnknownTranslationEngineLabel = (engineId: string): string =>
-  engineId.startsWith("codex-")
-    ? `OpenAI Codex · ${engineId.slice("codex-".length)}`
-    : engineId;
+const formatUnknownTranslationEngineLabel = (engineId: string): string => {
+  if (engineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID) {
+    return "Apple Native - On-Device";
+  }
+  if (engineId.startsWith("codex-")) {
+    return `OpenAI Codex · ${engineId.slice("codex-".length)}`;
+  }
+  return engineId;
+};
 
 const resolveTranslationEngineLabel = (
   engineId: string,
@@ -248,13 +257,19 @@ const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({
     code: "source",
     label: defaultLanguageLabel,
   };
-  const engineOptions =
+  const engineOptions = (
     availableEngines.length > 0
       ? availableEngines
       : SUPPORTED_LOCALIZATION_ENGINE_IDS.map((engineId) => ({
           engineId,
           languages: [],
-        }));
+        }))
+  ).filter(
+    (engine) =>
+      shouldExposeLocalizationEngineOption(engine.engineId) ||
+      engine.engineId === localization.engineId ||
+      engine.engineId === localization.reasoningEngineId
+  );
   const selectedEngineOption = engineOptions.find(
     (engine) => engine.engineId === localization.engineId
   );
