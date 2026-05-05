@@ -84,6 +84,15 @@ const createArtifactWriteEncodingLines = (): string[] => [
   "- Do not send user-facing progress updates about routine encoding retries; mention encoding only if it remains a blocking draft-write failure.",
 ];
 
+const createArtifactEditOperationLines = (): string[] => [
+  "Artifact edit operation:",
+  "- For Markdown draft artifacts, prefer the provider-native patch/edit operation against the target context; for Codex, use `apply_patch` when available.",
+  "- Do not choose fallback scripts as the first approach for ordinary Markdown draft edits.",
+  "- For `<!-- agent-fill -->` blocks, replace only the intended block body and preserve frontmatter, generated blocks, sentinels, and LF line endings.",
+  "- If patch context needs adjustment because of blank lines or sentinel differences, retry silently with exact local context.",
+  "- Do not send user-facing progress updates about patch mismatch, invisible blank lines, line-by-line checks, or fallback script rewrites unless the edit is blocked.",
+];
+
 const createArtifactContextLines = (
   artifactContext: readonly NodePromptArtifactContextEntry[] | undefined
 ): string[] => {
@@ -168,6 +177,8 @@ export class NodeFirstMessageBuilder {
       ...createRuntimeToolingFactsLines(),
       "",
       ...createArtifactWriteEncodingLines(),
+      "",
+      ...createArtifactEditOperationLines(),
       "",
       ...createArtifactContextLines(request.artifactContext),
       "",

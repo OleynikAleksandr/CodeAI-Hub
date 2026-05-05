@@ -383,6 +383,16 @@ const buildArtifactWriteEncodingBlock = (): string =>
     "- Do not send user-facing progress updates about routine encoding retries; mention encoding only if it remains a blocking artifact-write failure.",
   ].join("\n");
 
+const buildArtifactEditOperationBlock = (): string =>
+  [
+    "Artifact edit operation:",
+    "- For Markdown artifacts, prefer the provider-native patch/edit operation against the target context; for Codex, use `apply_patch` when available.",
+    "- Do not choose fallback scripts as the first approach for ordinary Markdown edits.",
+    "- For `<!-- agent-fill -->` blocks, replace only the intended block body and preserve frontmatter, generated blocks, sentinels, and LF line endings.",
+    "- If patch context needs adjustment because of blank lines or sentinel differences, retry silently with exact local context.",
+    "- Do not send user-facing progress updates about patch mismatch, invisible blank lines, line-by-line checks, or fallback script rewrites unless the edit is blocked.",
+  ].join("\n");
+
 const buildRuntimeLanguageReminder = (params: {
   readonly artifactLanguage: string | undefined;
   readonly chatLanguage: string | undefined;
@@ -455,6 +465,7 @@ export const buildWorkflowPromptPack = (
       }),
       buildRuntimeToolingFactsBlock(params.workspacePath),
       buildArtifactWriteEncodingBlock(),
+      buildArtifactEditOperationBlock(),
       buildChangeSummaryBlock(params.stage),
       buildInlineSourceArtifactBlock({
         sourceArtifacts: params.sourceArtifacts,

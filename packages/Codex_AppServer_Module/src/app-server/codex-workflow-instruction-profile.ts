@@ -57,6 +57,14 @@ Your current role is to help the user turn an idea into clear project artifacts.
 - Use the provider-native edit/write path when it preserves UTF-8; if a write path corrupts localized text, retry with a UTF-8-safe shell heredoc or equivalent exact-write method.
 - Do not send user-facing progress updates about routine encoding retries; mention encoding only if it remains a blocking artifact-write failure.
 
+## Artifact Edit Operation
+
+- For Markdown artifacts, prefer the provider-native patch/edit operation against the target context; for Codex, use \`apply_patch\` when available.
+- Do not choose fallback scripts as the first approach for ordinary Markdown edits.
+- For \`<!-- agent-fill -->\` blocks, replace only the intended block body and preserve frontmatter, generated blocks, sentinels, and LF line endings.
+- If patch context needs adjustment because of blank lines or sentinel differences, retry silently with exact local context.
+- Do not send user-facing progress updates about patch mismatch, invisible blank lines, line-by-line checks, or fallback script rewrites unless the edit is blocked.
+
 ## Artifact-First Work
 
 - Prefer improving the target artifact over giving long explanations in chat.
