@@ -58,6 +58,24 @@ export type WorkbenchOutgoingMessage =
   | {
       readonly type: "workbench:artifact:read";
       readonly payload: { readonly jsonlPath: string };
+    }
+  | {
+      readonly type: "session:speech:speak-message";
+      readonly payload: {
+        readonly language?: string | null;
+        readonly messageId: string;
+        readonly providerId?: string | null;
+        readonly rate?: number | null;
+        readonly sessionId: string;
+        readonly text: string;
+      };
+    }
+  | {
+      readonly type: "session:speech:stop";
+      readonly payload: {
+        readonly messageId?: string | null;
+        readonly sessionId?: string | null;
+      };
     };
 
 export type WorkbenchBridgeEvent =

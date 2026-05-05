@@ -6,6 +6,7 @@ import type { CodexReasoningLevel } from "../../../../types/codex-model-registry
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SessionRecord, SessionSnapshot } from "../../../../types/session";
 import DialogPanel from "./dialog-panel";
+import { resolveDisplayContent } from "./dialog-panel-message-utils";
 import { buildTokenDebugSummaryFromMessages } from "./dialog-segment-meta";
 import EmptyState from "./empty-state";
 import type { FileLinkTarget } from "./file-link-target";
@@ -81,11 +82,18 @@ interface SessionViewProps {
   ) => void;
   readonly onSelectSession: (sessionId: string) => void;
   readonly onSendMessage: (sessionId: string, content: string) => void;
+  readonly onSpeakMessage?: (request: {
+    readonly messageId: string;
+    readonly providerId?: string | null;
+    readonly sessionId: string;
+    readonly text: string;
+  }) => void;
   readonly providerLabels: ReadonlyMap<ProviderStackId, string>;
   readonly sessions: readonly SessionRecord[];
   readonly showEmptyState: boolean;
   readonly showThinkingMessages?: boolean;
   readonly snapshots: Readonly<Record<string, SessionSnapshot>>;
+  readonly speakingMessageId?: string | null;
   readonly tokenDebugSummaryOverride?: string;
 }
 
@@ -116,7 +124,9 @@ const SessionViewBody = ({
   onSelectModel,
   onSelectReasoning,
   onSendMessage,
+  onSpeakMessage,
   showThinkingMessages,
+  speakingMessageId,
 }: SessionViewProps) => {
   const allSessions = allSessionsProp ?? sessions;
   const activeSession = resolveActiveSessionSnapshot({
@@ -215,8 +225,20 @@ const SessionViewBody = ({
           <DialogPanel
             messages={virtualConversationMessages}
             onFileLinkActivate={onFileLinkActivate}
+            onSpeakMessage={
+              onSpeakMessage
+                ? (message) =>
+                    onSpeakMessage({
+                      messageId: message.id,
+                      providerId: primaryProviderId,
+                      sessionId: activeSessionId,
+                      text: resolveDisplayContent(message),
+                    })
+                : undefined
+            }
             providerLabel={providerDisplayLabel}
             providerTheme={providerTheme}
+            speakingMessageId={speakingMessageId}
           />
         </div>
         <div className="session-app__rails">

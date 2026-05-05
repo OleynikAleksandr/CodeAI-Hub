@@ -21,8 +21,10 @@ const USER_MESSAGES_CATEGORY = "system_feedback";
 interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
+  readonly onSpeakMessage?: (message: SessionMessage) => void;
   readonly providerLabel?: string | null;
   readonly providerTheme?: ProviderTheme | null;
+  readonly speakingMessageId?: string | null;
 }
 
 interface ThinkingMessageProps {
@@ -31,7 +33,9 @@ interface ThinkingMessageProps {
   readonly label: string;
   readonly message: SessionMessage;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
+  readonly onSpeakMessage?: (message: SessionMessage) => void;
   readonly onToggle: (messageId: string) => void;
+  readonly speakingMessageId?: string | null;
 }
 
 interface StandardMessageProps {
@@ -39,17 +43,23 @@ interface StandardMessageProps {
   readonly label: string;
   readonly message: SessionMessage;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
+  readonly onSpeakMessage?: (message: SessionMessage) => void;
+  readonly speakingMessageId?: string | null;
 }
 
 interface SpeakMessageButtonProps {
+  readonly active: boolean;
   readonly label: string;
+  readonly onClick?: () => void;
 }
 
 const DialogPanel = ({
   messages,
+  onSpeakMessage,
   onFileLinkActivate,
   providerTheme = null,
   providerLabel = null,
+  speakingMessageId = null,
 }: DialogPanelProps) => {
   const { t } = useLocalization();
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -175,7 +185,9 @@ const DialogPanel = ({
                 label={label}
                 message={message}
                 onFileLinkActivate={onFileLinkActivate}
+                onSpeakMessage={onSpeakMessage}
                 onToggle={toggleThinking}
+                speakingMessageId={speakingMessageId}
               />
             );
           }
@@ -187,6 +199,8 @@ const DialogPanel = ({
               label={label}
               message={message}
               onFileLinkActivate={onFileLinkActivate}
+              onSpeakMessage={onSpeakMessage}
+              speakingMessageId={speakingMessageId}
             />
           );
         })}
@@ -202,6 +216,8 @@ const ThinkingMessage = ({
   expanded,
   onToggle,
   onFileLinkActivate,
+  onSpeakMessage,
+  speakingMessageId,
   label,
   className,
 }: ThinkingMessageProps) => {
@@ -235,7 +251,11 @@ const ThinkingMessage = ({
           {expanded ? "▾" : "▸"}
         </button>
         <span className="session-dialog__role">{label}</span>
-        <SpeakMessageButton label={label} />
+        <SpeakMessageButton
+          active={speakingMessageId === message.id}
+          label={label}
+          onClick={() => onSpeakMessage?.(message)}
+        />
       </header>
       {expanded ? (
         <MarkdownContent
@@ -254,14 +274,20 @@ const StandardMessage = ({
   message,
   label,
   className,
+  onSpeakMessage,
   onFileLinkActivate,
+  speakingMessageId,
 }: StandardMessageProps) => {
   const messageDate = new Date(message.createdAt);
   return (
     <article className={className}>
       <header className="session-dialog__message-header">
         <span className="session-dialog__role">{label}</span>
-        <SpeakMessageButton label={label} />
+        <SpeakMessageButton
+          active={speakingMessageId === message.id}
+          label={label}
+          onClick={() => onSpeakMessage?.(message)}
+        />
         <time
           className="session-dialog__timestamp"
           dateTime={messageDate.toISOString()}
@@ -278,7 +304,11 @@ const StandardMessage = ({
   );
 };
 
-const SpeakMessageButton = ({ label }: SpeakMessageButtonProps) => {
+const SpeakMessageButton = ({
+  active,
+  label,
+  onClick,
+}: SpeakMessageButtonProps) => {
   const { t } = useLocalization();
   const speakLabel = t(
     "ui_interface",
@@ -288,7 +318,13 @@ const SpeakMessageButton = ({ label }: SpeakMessageButtonProps) => {
   return (
     <button
       aria-label={`${speakLabel}: ${label}`}
-      className="session-dialog__speak-button"
+      aria-pressed={active}
+      className={
+        active
+          ? "session-dialog__speak-button session-dialog__speak-button--active"
+          : "session-dialog__speak-button"
+      }
+      onClick={onClick}
       title={speakLabel}
       type="button"
     >

@@ -332,6 +332,7 @@
 }
 
 .session-dialog__speak-button:hover,
+.session-dialog__speak-button--active,
 .session-dialog__speak-button:focus-visible {
   background: color-mix(in srgb, currentColor 18%, transparent);
   border-color: color-mix(in srgb, currentColor 70%, transparent);
