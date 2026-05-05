@@ -14,6 +14,12 @@
 `npm run build:webview`;
 `npm run plan:validate`.
 
+**Node detail routing verification (2026-05-05):** targeted PM checks passed for the follow-up retest fix that keeps the Development Tree sidebar limited to Product Part / Cluster / Module nodes and routes selected-node metadata into the main Project Manager surfaces:
+`npx tsx --test src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts src/client/project-manager/services/workflow-state-client.test.ts`;
+`npm run typecheck:webview`;
+`npm run build:webview`;
+`npm run plan:validate`.
+
 ---
 
 ## 1. Цель
