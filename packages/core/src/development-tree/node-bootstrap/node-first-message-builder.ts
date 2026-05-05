@@ -67,6 +67,15 @@ const createArtifactLanguageLines = (
   ];
 };
 
+const createRuntimeToolingFactsLines = (): string[] => [
+  "Runtime tooling facts:",
+  "- CodeAI Hub starts shell tools in the node workspace context for this session when shell tools are available.",
+  "- Python command: `python3`.",
+  "- Node command: `node`.",
+  "- Package manager command: `npm`.",
+  "- Do not spend a turn probing these routine commands or announcing fallback messages such as `python is missing`; mention tooling only when a command actually fails and blocks the draft update.",
+];
+
 const createArtifactContextLines = (
   artifactContext: readonly NodePromptArtifactContextEntry[] | undefined
 ): string[] => {
@@ -147,6 +156,8 @@ export class NodeFirstMessageBuilder {
       createResponseLanguageInstruction(request.responseLanguage),
       "",
       ...createArtifactLanguageLines(request.artifactLanguage),
+      "",
+      ...createRuntimeToolingFactsLines(),
       "",
       ...createArtifactContextLines(request.artifactContext),
       "",

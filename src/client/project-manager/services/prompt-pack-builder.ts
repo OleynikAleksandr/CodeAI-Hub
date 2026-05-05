@@ -363,6 +363,17 @@ const buildWorkflowArtifactModeBlock = (params: {
   return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
 };
 
+const buildRuntimeToolingFactsBlock = (workspacePath: string): string =>
+  [
+    "Runtime tooling facts:",
+    `- Runtime workspace path: \`${workspacePath}\`.`,
+    "- When shell tools are available, CodeAI Hub starts them in the workspace context for this session.",
+    "- Python command: `python3`.",
+    "- Node command: `node`.",
+    "- Package manager command: `npm`.",
+    "- Do not spend a turn probing these routine commands or announcing fallback messages such as `python is missing`; mention tooling only when a command actually fails and blocks the artifact update.",
+  ].join("\n");
+
 const buildRuntimeLanguageReminder = (params: {
   readonly artifactLanguage: string | undefined;
   readonly chatLanguage: string | undefined;
@@ -433,6 +444,7 @@ export const buildWorkflowPromptPack = (
         relativePath,
         stage: params.stage,
       }),
+      buildRuntimeToolingFactsBlock(params.workspacePath),
       buildChangeSummaryBlock(params.stage),
       buildInlineSourceArtifactBlock({
         sourceArtifacts: params.sourceArtifacts,
