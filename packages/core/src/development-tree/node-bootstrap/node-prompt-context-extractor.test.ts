@@ -9,6 +9,10 @@ const ARTIFACT_WORKSPACE_PATTERN =
   /Artifact Workspace presents editable drafts/;
 const STEP_NAVIGATION_PATTERN = /Workflow Step Navigation chooses current step/;
 const WORKFLOW_ARTIFACT_CLUSTER_PATTERN = /workflow-artifact-ui/;
+const DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN =
+  /project-manager owns the Project Manager product part/;
+const DETAILED_PRODUCT_PART_PATTERN =
+  /Detailed Project Manager decomposition is available/;
 const LONG_CONTEXT_PATTERN = /Project Manager repeated context/;
 const LONG_TEXT = `${"Project Manager repeated context ".repeat(120)}tail`;
 
@@ -83,6 +87,38 @@ test("NodePromptContextExtractor scopes module context through part and cluster 
   assert.match(content, ARTIFACT_WORKSPACE_PATTERN);
   assert.match(content, WORKFLOW_ARTIFACT_CLUSTER_PATTERN);
   assert.doesNotMatch(content, STEP_NAVIGATION_PATTERN);
+});
+
+test("NodePromptContextExtractor includes detailed product part artifact for part nodes", () => {
+  const context = new NodePromptContextExtractor().extract({
+    artifacts: [
+      {
+        content: [
+          "Product Part: project-manager",
+          "project-manager owns the Project Manager product part.",
+        ].join("\n"),
+        label: "Diagram Modules Index",
+        relativePath: ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+      },
+      {
+        content: [
+          "# Product Part: Project Manager",
+          "Detailed Project Manager decomposition is available.",
+          "## Owned Clusters",
+          "Cluster: workflow-artifact-ui",
+          "Cluster: session-workspace-ui",
+        ].join("\n"),
+        label: "Diagram Modules Product Part: project-manager",
+        relativePath:
+          ".codeai-hub/demo/diagram_modules/product-parts/project-manager.md",
+      },
+    ],
+    node: createNode({}),
+  });
+  const content = context.map((entry) => entry.content).join("\n");
+
+  assert.match(content, DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN);
+  assert.match(content, DETAILED_PRODUCT_PART_PATTERN);
 });
 
 test("NodePromptContextExtractor marks long scoped snippets as truncated", () => {

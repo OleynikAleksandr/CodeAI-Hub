@@ -50,6 +50,8 @@ export interface NodeAgentSessionBootstrapResult {
 const CODEAI_HUB_SEGMENT = ".codeai-hub";
 const DEFAULT_ARTIFACT_LANGUAGE = "en";
 const DEFAULT_RESPONSE_LANGUAGE = "en";
+const DETAILED_PART_CONTEXT_RETRY_COUNT = 6;
+const DETAILED_PART_CONTEXT_RETRY_DELAY_MS = 100;
 const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
 
 const resolveSettingsPath = (): string =>
@@ -172,6 +174,40 @@ const createWorkflowArtifactSpecs = (
   },
 ];
 
+const wait = (durationMs: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, durationMs);
+  });
+
+const isDetailedPartContextSpec = (
+  relativePath: string,
+  partId: string
+): boolean =>
+  relativePath.endsWith(`/diagram_modules/product-parts/${partId}.md`);
+
+const readOptionalArtifactContent = async (
+  workspacePath: string,
+  relativePath: string,
+  retryCount: number
+): Promise<string | null> => {
+  for (let attempt = 0; attempt <= retryCount; attempt += 1) {
+    try {
+      const rawContent = await readFile(
+        path.join(workspacePath, relativePath),
+        "utf8"
+      );
+      const content = rawContent.trim();
+      return content.length > 0 ? content : null;
+    } catch {
+      if (attempt >= retryCount) {
+        return null;
+      }
+      await wait(DETAILED_PART_CONTEXT_RETRY_DELAY_MS);
+    }
+  }
+  return null;
+};
+
 const readArtifactContext = async (
   node: DevelopmentTreeDetectedNode,
   options: NodeAgentSessionBootstrapperOptions
@@ -181,21 +217,20 @@ const readArtifactContext = async (
     options.workspaceSlug,
     node.partId
   )) {
-    try {
-      const rawContent = await readFile(
-        path.join(options.workspacePath, spec.relativePath),
-        "utf8"
-      );
-      const content = rawContent.trim();
-      if (content) {
-        artifacts.push({
-          content,
-          label: spec.label,
-          relativePath: spec.relativePath,
-        });
-      }
-    } catch {
-      // Optional context artifact is not available yet.
+    const retryCount = isDetailedPartContextSpec(spec.relativePath, node.partId)
+      ? DETAILED_PART_CONTEXT_RETRY_COUNT
+      : 0;
+    const content = await readOptionalArtifactContent(
+      options.workspacePath,
+      spec.relativePath,
+      retryCount
+    );
+    if (content) {
+      artifacts.push({
+        content,
+        label: spec.label,
+        relativePath: spec.relativePath,
+      });
     }
   }
   return new NodePromptContextExtractor().extract({ artifacts, node });

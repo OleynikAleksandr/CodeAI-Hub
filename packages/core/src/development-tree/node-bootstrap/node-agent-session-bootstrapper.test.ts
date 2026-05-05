@@ -21,6 +21,8 @@ const DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN =
   /project-manager owns the Project Manager product part/;
 const PRODUCT_PART_CONTEXT_PATTERN =
   /Artifact Workspace belongs to Project Manager/;
+const DETAILED_PRODUCT_PART_CONTEXT_PATTERN =
+  /Detailed Project Manager decomposition is ready/;
 const CORE_RUNTIME_CONTEXT_PATTERN = /Core Runtime manages provider processes/;
 const WORKFLOW_STEP_CONTEXT_PATTERN =
   /Workflow Step Navigation chooses current step/;
@@ -273,6 +275,71 @@ test("NodeAgentSessionBootstrapper sends scoped workflow artifacts in the first 
     assert.match(firstMessage, PRODUCT_PART_CONTEXT_PATTERN);
     assert.doesNotMatch(firstMessage, CORE_RUNTIME_CONTEXT_PATTERN);
     assert.doesNotMatch(firstMessage, WORKFLOW_STEP_CONTEXT_PATTERN);
+  } finally {
+    await rm(workspacePath, { recursive: true, force: true });
+  }
+});
+
+test("NodeAgentSessionBootstrapper waits briefly for detailed product part context", async () => {
+  const workspacePath = await mkdtemp(
+    path.join(os.tmpdir(), "node-agent-delayed-part-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sentMessages: string[] = [];
+  try {
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      [
+        "Product Part: project-manager",
+        "project-manager owns the Project Manager product part.",
+      ].join("\n")
+    );
+
+    const delayedPartContext = new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        writeWorkspaceArtifact(
+          workspacePath,
+          `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
+          [
+            "# Product Part: Project Manager",
+            "Detailed Project Manager decomposition is ready.",
+            "## Owned Clusters",
+            "Cluster: workflow-and-artifact-ui",
+          ].join("\n")
+        ).then(resolve, reject);
+      }, 50);
+    });
+
+    await new NodeAgentSessionBootstrapper().bootstrapNode(
+      {
+        absolutePath: path.join(
+          workspacePath,
+          `.codeai-hub/${workspaceSlug}/development_tree/materialized/product-parts/project-manager`
+        ),
+        id: "project-manager",
+        kind: "product_part",
+        partId: "project-manager",
+        relativePath: `.codeai-hub/${workspaceSlug}/development_tree/materialized/product-parts/project-manager`,
+      },
+      {
+        gateway: {
+          createSessionForWorkflow: () => Promise.resolve({ id: "session-1" }),
+          handleMessage: (_sessionId, content) => {
+            sentMessages.push(content);
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
+        workspacePath,
+        workspaceSlug,
+      }
+    );
+    await delayedPartContext;
+
+    const firstMessage = sentMessages[0] ?? "";
+    assert.match(firstMessage, DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN);
+    assert.match(firstMessage, DETAILED_PRODUCT_PART_CONTEXT_PATTERN);
   } finally {
     await rm(workspacePath, { recursive: true, force: true });
   }
