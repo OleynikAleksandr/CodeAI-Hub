@@ -2,7 +2,7 @@
 
 **Status:** Active planning doc  
 **Created:** 2026-05-05  
-**Scope:** унифицировать языковой контракт стартовых workflow prompt packs и вложение upstream source documents для ранних шагов `Description`, `Virtual Simulation`, `Diagram Modules`; сохранить принятый Development Tree scoped node prompt behavior без регрессии.
+**Scope:** унифицировать языковой контракт стартовых workflow prompt packs, материализовать localized instruction blocks для workflow и Development Tree first prompts, вложить authoritative source documents в первые prompts ранних шагов `Description`, `Virtual Simulation`, `Diagram Modules`, и закрепить bounded/no-read first-draft behavior для Development Tree node sessions.
 
 ---
 
@@ -27,20 +27,23 @@
    - основной блок ближе к началу prompt;
    - короткий final reminder ближе к концу prompt;
    - явное правило не копировать язык examples.
-3. Для шагов после `Description` передавать нужные upstream documents прямо в первом prompt:
+3. Передавать нужные source documents прямо в первом prompt:
+   - `Description` получает полный `questionnaire.md`;
    - `Virtual Simulation` получает полный `Final_Description.md`;
    - `Diagram Modules` получает полный `Final_Description.md` и полный `virtual-simulation.md`;
    - path/reference остаётся fallback, но agent не должен тратить отдельные tool cycles на чтение документов целиком.
-4. Сохранить принятый Development Tree behavior:
-   - Development Tree node agents продолжают получать deterministic scoped context extractor, а не полный dump всех upstream docs;
-   - node-agent chat/artifact language directives остаются разделёнными и не регрессируют.
+4. Сохранить и усилить принятый Development Tree behavior:
+   - Development Tree node agents получают deterministic scoped context extractor, а не полный dump всех upstream docs;
+   - exact owner Product Part Markdown передаётся целиком как protected context;
+   - automatic first-draft pass запрещает читать/search/list/open любые не перечисленные файлы до явного разрешения пользователя;
+   - node-agent chat/artifact language directives остаются разделёнными и могут материализоваться как localized instruction blocks.
 
 ---
 
 ## 3. Non-Goals
 
 - Не менять provider/model selection.
-- Не переводить внутренние инструкции целиком на язык пользователя.
+- Не переводить protected canonical tokens, provider flags, filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, method/event names или structural headings.
 - Не локализовывать canonical DSL/contract markers, filenames, ids, status/frontmatter tokens или field names.
 - Не возвращать полный upstream artifact dump в Development Tree node prompts.
 - Не менять Project Manager UI behavior, кроме indirect effects от prompt generation.
@@ -67,10 +70,15 @@ Prompt block должен явно говорить:
 
 ### 4.2. Source Documents Inline Payloads
 
-Сегодня ранние steps часто получают только paths и затем agent читает документы отдельными инструментами. Для `Virtual Simulation` и `Diagram Modules` это не экономит контекст: агенту всё равно нужно читать документы полностью.
+Ранние steps не должны начинать первый draft с отдельного tool cycle на чтение source документов, которые Core уже знает и может безопасно вложить. Для `Description`, `Virtual Simulation` и `Diagram Modules` это дешевле и надёжнее сделать в first prompt.
 
 Новый контракт:
 
+- `Description` first prompt includes `questionnaire.md` full content with:
+  - relative path;
+  - absolute path;
+  - fenced source block;
+  - fallback instruction if inline content is missing/stale.
 - `Virtual Simulation` first prompt includes `Final_Description.md` full content with:
   - relative path;
   - absolute path;
@@ -97,6 +105,8 @@ Development Tree Product Part / Cluster / Module sessions are an automatic first
 Node agents may inspect and edit only the listed target draft files during this automatic first turn. They must not read, search, list, or open other workspace files or upstream documents during the draft-pass, even if an excerpt says it is truncated. Missing detail must be recorded as an explicit Open question inside the draft instead of triggering another file-read cycle.
 
 Additional file reading becomes allowed only after the user explicitly asks for it or grants permission in a later dialog turn. This keeps the automated materialization fast and bounded while preserving user-directed depth for the review/refinement stage.
+
+Core must pre-create the materialized Development Tree folders and target draft files before the provider prompt is sent. The first prompt names exact target paths and describes the agent's job as filling those artifacts, not discovering, creating, or validating the directory structure.
 
 ### 4.2.3. Development Tree Contract Artifact Language Boundary
 
@@ -156,11 +166,22 @@ Localized prompt instruction packs may be materialized or cached during install/
 
 `promptPackVersion` invalidates cache entries when the instruction contract changes without an app version bump. `appVersion` invalidates entries across release upgrades. A localized prompt pack must never translate protected canonical tokens: filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, field names, method/event names, output filenames, and structural headings stay stable.
 
+### 4.6. Patch-Friendly Draft Template And Readiness Guard
+
+Workflow and Development Tree draft templates must be patch-friendly for provider-native patch/edit workflows:
+
+- `agent-fill` blocks have deterministic surrounding whitespace, LF endings, no trailing spaces, and a sentinel inside empty fill regions;
+- prompts instruct agents to replace sentinel/content inside `agent-fill` instead of diagnosing routine patch mismatch to the user;
+- routine tool discovery and fallback chatter (`python` vs `python3`, encoding retry, line-by-line probing) is not user-facing unless artifact write remains blocked.
+
+Readiness must remain content-based. A draft with an unbalanced `agent-fill` marker is not ready, even if other required text exists. The classifier keeps the node `in_progress` until markers are balanced and required `agent-fill` regions are completed.
+
 ---
 
 ## 5. Implementation Surfaces
 
 - `src/client/project-manager/services/prompt-pack-builder.ts`
+- `src/client/project-manager/services/prompt-localized-instructions.ts`
 - `src/client/project-manager/services/description-submit-service.ts`
 - `src/client/project-manager/services/workflow-step-start-service.ts`
 - `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`
@@ -173,31 +194,40 @@ Localized prompt instruction packs may be materialized or cached during install/
 - `packages/agents/diagram-modules-agent/assets/product-part-template.md`
 - `packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts`
 - `packages/core/src/templates/template-sync-service.test.ts`
+- `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.ts`
+- `packages/core/src/development-tree/node-bootstrap/localized-node-prompt-instructions.ts`
+- `packages/core/src/development-tree/node-bootstrap/draft-template-registry.ts`
+- `packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.ts`
+- `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts`
+- `packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.test.ts`
 
 ---
 
 ## 6. Acceptance Criteria
 
-1. With Settings language `ru`, `Description`, `Virtual Simulation`, and `Diagram Modules` first prompts contain:
+1. With Settings language `ru`, `Description`, `Virtual Simulation`, `Diagram Modules`, and Development Tree node first prompts contain:
    - chat language directive from `Settings > General > Reasoning`;
    - artifact prose language directive from `Settings > General > Artifacts for the User`;
+   - localized instruction prose where supported;
    - final reminder that English examples/templates are format-only.
-2. `Virtual Simulation` first prompt contains full inline `Final_Description.md`.
-3. `Diagram Modules` first prompt contains full inline `Final_Description.md` and `virtual-simulation.md`.
-4. Prompt/template tests prove structural tokens remain unlocalized.
-5. Manual retest on a weak/low-thinking model verifies:
+2. `Description` first prompt contains full inline `questionnaire.md`.
+3. `Virtual Simulation` first prompt contains full inline `Final_Description.md`.
+4. `Diagram Modules` first prompt contains full inline `Final_Description.md` and `virtual-simulation.md`.
+5. Prompt/template tests prove structural tokens remain unlocalized.
+6. Manual retest on a weak/low-thinking model verifies:
    - chat replies stay in selected chat language;
    - artifacts prose stays in selected artifact language;
    - contract syntax remains parseable.
-6. Development Tree node first prompts include the draft-pass source boundary:
+7. Development Tree node first prompts include the draft-pass source boundary:
    - use first-prompt scoped context plus listed target draft files only;
    - do not read/search/list/open other workspace files during the automatic draft-pass;
    - allow additional file reads only after explicit user request or permission.
-7. Development Tree contract artifact first prompts explicitly state that `ModuleFacadeContract.draft.md` and `ClusterFacadeContract.draft.md` localize explanatory prose inside `agent-fill`; only canonical method/event names, ids, headings, filenames, fields, status tokens, and DSL markers stay English.
-8. Localized prompt pack materialization is cache-safe:
+8. Development Tree contract artifact first prompts explicitly state that `ModuleFacadeContract.draft.md` and `ClusterFacadeContract.draft.md` localize explanatory prose inside `agent-fill`; only canonical method/event names, ids, headings, filenames, fields, status tokens, and DSL markers stay English.
+9. Localized prompt pack materialization is cache-safe:
    - cache keys include chat/response language, artifact prose language, `promptPackVersion`, and `appVersion`;
    - tests compare localized and non-localized prompt output as separate language-keyed variants;
    - tests assert protected canonical tokens remain present and untranslated in localized prompt packs.
+10. Patch-friendly draft/readiness tests prove deterministic `agent-fill` shape, sentinel replacement, LF/no trailing whitespace, and `in_progress` readiness for unbalanced markers.
 
 ---
 
@@ -219,9 +249,19 @@ Localized prompt instruction packs may be materialized or cached during install/
 
 ## 8. Verification Evidence
 
-2026-05-05 targeted verification passed for the workflow prompt language contract:
+2026-05-05 targeted verification passed for the workflow prompt language contract baseline:
 
 - `node --import tsx --test src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts src/client/project-manager/services/description-submit-service.localization.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` — 10/10 tests passed.
 - `node --import tsx --test packages/core/src/templates/template-sync-service.test.ts packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts` — 7/7 tests passed.
 - `npm run typecheck:webview` — passed.
 - `npm run build --workspace=@codeai-hub/core` — passed.
+
+2026-05-05 follow-up verification passed for the localized prompt / Development Tree hardening release line:
+
+- 28 workflow prompt and Development Tree node prompt/readiness tests passed, covering localized workflow instructions, localized Development Tree first prompts, protected canonical tokens, contract artifact prose localization, exact owner Markdown context, no-read draft-pass wording, and unbalanced `agent-fill` readiness guard.
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `npm run typecheck:webview` — passed.
+- `npm run build:webview` — passed.
+- `./scripts/build-all.sh` — passed and produced release artifacts for `1.2.149`.
+- `./scripts/build-release.sh --use-current-version` — passed; SDK exclusions, local artefacts, markdown links/duplication advisory checks, production dependency pruning, VSIX runtime package surface, and package creation were verified.
+- Release artifact: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.149.vsix`.
