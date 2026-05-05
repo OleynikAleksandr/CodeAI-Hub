@@ -14,6 +14,12 @@ const MODULE_SPEC_BOUNDARY_PATTERN =
   /Do not add Inputs\/Outputs sections to ModuleSpec\.draft\.md\./;
 const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
   /User communication language: ru \(from Settings > General > Reasoning\)\. Translate and communicate with the user in this language\./;
+const ARTIFACT_CONTEXT_RULE_PATTERN =
+  /Do not ask the user to re-explain information already present here\./;
+const FINAL_DESCRIPTION_HEADING_PATTERN = /### Final Description/;
+const PROJECT_MANAGER_CONTEXT_PATTERN = /Project Manager coordinates sessions/;
+const PRODUCT_PART_ARTIFACT_PATH_PATTERN =
+  /\.codeai-hub\/demo\/diagram_modules\/product-parts\/project-manager\.md/;
 
 const createNode = (
   overrides: Partial<DevelopmentTreeDetectedNode>
@@ -76,4 +82,32 @@ test("NodeFirstMessageBuilder maps product part and cluster draft files", () => 
     "ClusterDescription.draft.md",
     "ClusterFacadeContract.draft.md",
   ]);
+});
+
+test("NodeFirstMessageBuilder includes existing workflow artifacts as prior context", () => {
+  const result = new NodeFirstMessageBuilder().build({
+    artifactContext: [
+      {
+        content:
+          "Project Manager coordinates sessions, artifacts, and workflow state.",
+        label: "Final Description",
+        relativePath: ".codeai-hub/demo/description/Final_Description.md",
+        truncated: false,
+      },
+      {
+        content: "Product Part: Project Manager\nCluster: workflow-artifact-ui",
+        label: "Diagram Modules Product Part: project-manager",
+        relativePath:
+          ".codeai-hub/demo/diagram_modules/product-parts/project-manager.md",
+        truncated: false,
+      },
+    ],
+    node: createNode({ partId: "project-manager" }),
+    technologyBase: "TypeScript",
+  });
+
+  assert.match(result.content, ARTIFACT_CONTEXT_RULE_PATTERN);
+  assert.match(result.content, FINAL_DESCRIPTION_HEADING_PATTERN);
+  assert.match(result.content, PROJECT_MANAGER_CONTEXT_PATTERN);
+  assert.match(result.content, PRODUCT_PART_ARTIFACT_PATH_PATTERN);
 });

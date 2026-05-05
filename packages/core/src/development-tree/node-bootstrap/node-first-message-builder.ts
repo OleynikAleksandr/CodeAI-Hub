@@ -2,9 +2,17 @@ import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detect
 import { DraftTemplateRegistry } from "./draft-template-registry";
 
 export interface NodeFirstMessageBuildRequest {
+  readonly artifactContext?: readonly NodePromptArtifactContextEntry[];
   readonly node: DevelopmentTreeDetectedNode;
   readonly responseLanguage?: string;
   readonly technologyBase?: string;
+}
+
+export interface NodePromptArtifactContextEntry {
+  readonly content: string;
+  readonly label: string;
+  readonly relativePath: string;
+  readonly truncated: boolean;
 }
 
 export interface NodeFirstMessageBuildResult {
@@ -49,6 +57,33 @@ const createResponseLanguageInstruction = (
   return `- User communication language: ${language} (from Settings > General > Reasoning). Translate and communicate with the user in this language.`;
 };
 
+const createArtifactContextLines = (
+  artifactContext: readonly NodePromptArtifactContextEntry[] | undefined
+): string[] => {
+  if (!artifactContext?.length) {
+    return [
+      "Existing workflow artifacts:",
+      "- No upstream workflow artifacts were found on disk. Ask the user only for missing decisions that are not derivable from the node drafts.",
+    ];
+  }
+  return [
+    "Existing workflow artifacts (read before asking the user):",
+    "- Treat these artifacts as prior context. Do not ask the user to re-explain information already present here.",
+    "- If an excerpt is truncated, read the referenced file before making decisions.",
+    ...artifactContext.flatMap((artifact) => [
+      "",
+      `### ${artifact.label}`,
+      `- Path: ${artifact.relativePath}`,
+      artifact.truncated
+        ? "- Content excerpt: truncated; read the file for the full artifact."
+        : "- Content:",
+      "```markdown",
+      artifact.content,
+      "```",
+    ]),
+  ];
+};
+
 const createNodeSpecificRules = (
   node: DevelopmentTreeDetectedNode
 ): string[] => {
@@ -88,6 +123,8 @@ export class NodeFirstMessageBuilder {
       `- Folder: ${request.node.relativePath}`,
       technology.line,
       createResponseLanguageInstruction(request.responseLanguage),
+      "",
+      ...createArtifactContextLines(request.artifactContext),
       "",
       "Draft files to fill:",
       ...draftFileNames.map((fileName) => `- ${fileName}`),

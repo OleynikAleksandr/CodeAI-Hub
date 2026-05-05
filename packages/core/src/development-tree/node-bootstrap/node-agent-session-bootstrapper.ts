@@ -1,7 +1,11 @@
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
+import path from "node:path";
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
-import { NodeFirstMessageBuilder } from "./node-first-message-builder";
+import {
+  NodeFirstMessageBuilder,
+  type NodePromptArtifactContextEntry,
+} from "./node-first-message-builder";
 
 export interface DevelopmentTreeAgentSessionGateway {
   readonly createSessionForWorkflow: (options: {
@@ -38,6 +42,7 @@ export interface NodeAgentSessionBootstrapResult {
 
 const CODEAI_HUB_SEGMENT = ".codeai-hub";
 const DEFAULT_RESPONSE_LANGUAGE = "en";
+const MAX_ARTIFACT_CONTEXT_CHARS = 8000;
 const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
 
 const resolveSettingsPath = (): string =>
@@ -111,6 +116,77 @@ const resolveResponseLanguage = async (
   return readReasoningLanguageFromSettings();
 };
 
+const createWorkflowArtifactSpecs = (
+  workspaceSlug: string,
+  partId: string
+): readonly { readonly label: string; readonly relativePath: string }[] => [
+  {
+    label: "Final Description",
+    relativePath: `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+  },
+  {
+    label: "Virtual Simulation",
+    relativePath: `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+  },
+  {
+    label: "Diagram Modules Index",
+    relativePath: `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+  },
+  {
+    label: `Diagram Modules Product Part: ${partId}`,
+    relativePath: `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/${partId}.md`,
+  },
+];
+
+const createArtifactEntry = (
+  label: string,
+  relativePath: string,
+  rawContent: string
+): NodePromptArtifactContextEntry | null => {
+  const content = rawContent.trim();
+  if (!content) {
+    return null;
+  }
+  const truncated = content.length > MAX_ARTIFACT_CONTEXT_CHARS;
+  return {
+    content: truncated
+      ? content.slice(0, MAX_ARTIFACT_CONTEXT_CHARS).trimEnd()
+      : content,
+    label,
+    relativePath,
+    truncated,
+  };
+};
+
+const readArtifactContext = async (
+  node: DevelopmentTreeDetectedNode,
+  options: NodeAgentSessionBootstrapperOptions
+): Promise<readonly NodePromptArtifactContextEntry[]> => {
+  const entries: NodePromptArtifactContextEntry[] = [];
+  for (const spec of createWorkflowArtifactSpecs(
+    options.workspaceSlug,
+    node.partId
+  )) {
+    try {
+      const rawContent = await readFile(
+        path.join(options.workspacePath, spec.relativePath),
+        "utf8"
+      );
+      const entry = createArtifactEntry(
+        spec.label,
+        spec.relativePath,
+        rawContent
+      );
+      if (entry) {
+        entries.push(entry);
+      }
+    } catch {
+      // Optional context artifact is not available yet.
+    }
+  }
+  return entries;
+};
+
 export class NodeAgentSessionBootstrapper {
   private readonly firstMessageBuilder = new NodeFirstMessageBuilder();
 
@@ -123,6 +199,7 @@ export class NodeAgentSessionBootstrapper {
     const responseLanguage = await resolveResponseLanguage(
       options.responseLanguage
     );
+    const artifactContext = await readArtifactContext(node, options);
     const session = await options.gateway.createSessionForWorkflow({
       providerId,
       workspacePath: options.workspacePath,
@@ -133,6 +210,7 @@ export class NodeAgentSessionBootstrapper {
       },
     });
     const firstMessage = this.firstMessageBuilder.build({
+      artifactContext,
       node,
       responseLanguage,
       technologyBase: options.technologyBase,
