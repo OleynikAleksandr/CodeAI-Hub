@@ -5,7 +5,12 @@ type KnownContinuityStageId =
   | "virtual_simulation"
   | "diagram_modules";
 
-export type ContinuityStageId = KnownContinuityStageId | "unknown";
+type DevelopmentTreeContinuityStageId = `development_tree/${string}`;
+
+export type ContinuityStageId =
+  | DevelopmentTreeContinuityStageId
+  | KnownContinuityStageId
+  | "unknown";
 
 const KNOWN_CONTINUITY_STAGE_IDS = new Set<KnownContinuityStageId>([
   "description",
@@ -19,6 +24,31 @@ const isKnownContinuityStageId = (
   typeof value === "string" &&
   KNOWN_CONTINUITY_STAGE_IDS.has(value as KnownContinuityStageId);
 
+const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
+const DEVELOPMENT_TREE_STAGE_ROOT = "development_tree";
+const DEVELOPMENT_TREE_MATERIALIZED_SEGMENT = "materialized";
+const STAGE_PATH_SEPARATOR_RE = /[\\/]+/;
+
+const isSafeStageSegment = (segment: string): boolean =>
+  segment.length > 0 && segment !== "." && segment !== "..";
+
+const normalizeDevelopmentTreeStageId = (
+  value: string
+): DevelopmentTreeContinuityStageId | null => {
+  if (!value.startsWith(DEVELOPMENT_TREE_STAGE_PREFIX)) {
+    return null;
+  }
+  const segments = value.split(STAGE_PATH_SEPARATOR_RE).filter(Boolean);
+  if (
+    segments[0] !== DEVELOPMENT_TREE_STAGE_ROOT ||
+    segments[1] !== DEVELOPMENT_TREE_MATERIALIZED_SEGMENT ||
+    !segments.every(isSafeStageSegment)
+  ) {
+    return null;
+  }
+  return segments.join("/") as DevelopmentTreeContinuityStageId;
+};
+
 export const normalizeContinuityStageId = (
   value: string | null | undefined
 ): ContinuityStageId => {
@@ -26,7 +56,10 @@ export const normalizeContinuityStageId = (
   if (!trimmed) {
     return "unknown";
   }
-  return isKnownContinuityStageId(trimmed) ? trimmed : "unknown";
+  if (isKnownContinuityStageId(trimmed)) {
+    return trimmed;
+  }
+  return normalizeDevelopmentTreeStageId(trimmed) ?? "unknown";
 };
 
 export interface TokenUsageSnapshot {

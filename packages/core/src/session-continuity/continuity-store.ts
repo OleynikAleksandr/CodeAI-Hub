@@ -183,6 +183,22 @@ const readDirectories = async (root: string) => {
   }
 };
 
+const collectChainPaths = async (root: string): Promise<readonly string[]> => {
+  const entries = await readDirectories(root);
+  const paths: string[] = [];
+  for (const entry of entries) {
+    const entryPath = path.join(root, entry.name);
+    if (entry.isFile() && entry.name === CHAIN_FILE_NAME) {
+      paths.push(entryPath);
+      continue;
+    }
+    if (entry.isDirectory()) {
+      paths.push(...(await collectChainPaths(entryPath)));
+    }
+  }
+  return paths;
+};
+
 export const readContinuityChains = async (options: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -193,26 +209,14 @@ export const readContinuityChains = async (options: {
     options.workspaceSlug,
     CONTINUITY_DIR
   );
-  const stageEntries = await readDirectories(baseDir);
   const chains: ContinuityChainSummary[] = [];
 
-  for (const stageEntry of stageEntries) {
-    if (!stageEntry.isDirectory()) {
+  for (const chainPath of await collectChainPaths(baseDir)) {
+    const chain = await readJson<ContinuityChainSummary>(chainPath);
+    if (!chain || chain.workspaceSlug !== options.workspaceSlug) {
       continue;
     }
-    const stageDir = path.join(baseDir, stageEntry.name);
-    const rootEntries = await readDirectories(stageDir);
-    for (const rootEntry of rootEntries) {
-      if (!rootEntry.isDirectory()) {
-        continue;
-      }
-      const chainPath = path.join(stageDir, rootEntry.name, CHAIN_FILE_NAME);
-      const chain = await readJson<ContinuityChainSummary>(chainPath);
-      if (!chain || chain.workspaceSlug !== options.workspaceSlug) {
-        continue;
-      }
-      chains.push(chain);
-    }
+    chains.push(chain);
   }
 
   return chains.sort((left, right) =>

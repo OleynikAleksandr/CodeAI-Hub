@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { ContinuityChainStore } from "./continuity-store";
+import { ContinuityChainStore, readContinuityChains } from "./continuity-store";
 
 test("ContinuityChainStore persists diagram modules chains under the canonical stage path", async () => {
   const workspaceRoot = mkdtempSync(
@@ -74,5 +74,70 @@ test("ContinuityChainStore persists diagram modules chains under the canonical s
   assert.equal(
     saved.segments[0]?.modelBinding?.modelId,
     "gpt-5.3-codex-spark reasoning:xhigh"
+  );
+});
+
+test("ContinuityChainStore persists development tree node chains under nested node paths", async () => {
+  const workspaceRoot = mkdtempSync(
+    path.join(os.tmpdir(), "development-tree-chain-")
+  );
+  const stage =
+    "development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller";
+  const store = new ContinuityChainStore({
+    workspaceRoot,
+    workspaceSlug: "demo-workspace",
+    rootSessionId: "codex-root-development-node",
+    stage,
+    clock: () => "2026-05-05T06:20:00.000Z",
+  });
+
+  const chain = await store.appendSegment({
+    sessionId: "session-1",
+    providerId: "codexCli",
+    providerSessionId: "provider-session-1",
+    createdAt: "2026-05-05T06:19:00.000Z",
+  });
+
+  const chainPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    "demo-workspace",
+    "continuity",
+    "development_tree",
+    "materialized",
+    "product-parts",
+    "project-manager",
+    "clusters",
+    "workflow-and-artifact-ui",
+    "modules",
+    "workflow-step-controller",
+    "codex-root-development-node",
+    "chain.json"
+  );
+
+  assert.equal(chain.stage, stage);
+  assert.equal(existsSync(chainPath), true);
+  assert.equal(
+    existsSync(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub",
+        "demo-workspace",
+        "continuity",
+        "unknown",
+        "codex-root-development-node",
+        "chain.json"
+      )
+    ),
+    false
+  );
+
+  const chains = await readContinuityChains({
+    workspaceRoot,
+    workspaceSlug: "demo-workspace",
+  });
+  assert.deepEqual(
+    chains.map((item) => item.stage),
+    [stage]
   );
 });
