@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.151] - 2026-05-05
+### Fixed
+- **Apple Native release packaging now ships the executable helper in the Core runtime.** macOS release builds compile `native/apple-translation-helper` and bundle the executable under the Core app runtime path used by Settings preflight and translation requests.
+- **Release validation now blocks missing Apple helper binaries.** `build-release.sh --use-current-version` fails on macOS if the packaged Core runtime does not contain an executable Apple Translation helper.
+
+### Tests
+- **The `1.2.151` release build supersedes the local `1.2.150` VSIX candidate.** This avoids VS Code extension caching of the previously built package number and gives user acceptance a fresh installable artifact.
+
 ## [1.2.150] - 2026-05-05
 ### Added
 - **Apple Native translation is available as an on-device engine on supported macOS builds.** Settings can select `Apple Native - On-Device` for both UI and Reasoning translation after Core verifies macOS Translation framework readiness, the Swift helper, Xcode toolchain availability, and installed language packs.
