@@ -266,6 +266,12 @@ Settings-save retest release on 2026-05-05:
 - `./scripts/build-release.sh --use-current-version` passed for `1.2.152`, including architecture check, type-check, compile, SDK exclusions, artefact validation, markdown links, duplication advisory check, VSIX packaging, and VSIX runtime package surface verification.
 - Final user-test artifact: `codeai-hub-1.2.152.vsix` in the repository root, size `3.0M`.
 
+User acceptance on 2026-05-05:
+
+- User installed and tested `codeai-hub-1.2.152.vsix`.
+- Selecting `Apple Native - On-Device` for both UI and Reasoning engines now saves successfully.
+- Runtime translation was accepted as high quality and near realtime.
+
 Manual user workflow:
 
 1. Select `Apple Native - On-Device` as `UI Translation Engine`.
