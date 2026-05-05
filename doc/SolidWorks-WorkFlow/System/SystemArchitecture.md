@@ -374,6 +374,7 @@
 - Видимый UI больше не содержит inline-редакторов для module entities и relations.
 - `product-parts.index.md` is the first canonical orchestration artifact for `Diagram Modules`.
 - `product-parts/<part-id>.md` are the primary semantic artifacts of individual `Product Part`.
+- Development Tree Product Part node prompts treat `product-parts/<part-id>.md` as exact owner Markdown context: when the file exists and its id/path matches the Product Part node, Core passes the full Markdown file into the first node-agent prompt as protected context. This owner artifact is not split by the scoped-context parser and cannot be displaced by broad matches from `Final_Description.md`, `virtual-simulation.md`, or `product-parts.index.md`. Cluster and Module node prompts still receive scoped excerpts from indirect upstream artifacts, including relevant blocks from the owning Product Part file.
 - The Module Graph is built progressively from individual `product-parts/<part-id>.md` files; no single aggregate file is generated.
 - Начиная с ownership-aware migration (`2026-03-21`), canonical inventory model для `Diagram Modules` включает явный верхний уровень `Product Part -> Cluster -> Module`.
 - Parser/runtime обязаны поддерживать dual-read migration path: новый hierarchical DSL читает explicit `Product Parts`, а legacy flat inventories временно materialize synthetic `default-product-part`, чтобы старые workspace artifacts оставались parseable без ручной миграции.

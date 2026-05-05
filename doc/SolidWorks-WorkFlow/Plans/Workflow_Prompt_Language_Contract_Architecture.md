@@ -82,6 +82,14 @@ Prompt block должен явно говорить:
 
 This is intentionally different from Development Tree node prompts, where accepted behavior is deterministic scoped context by Product Part / Cluster / Module anchors.
 
+### 4.2.1. Development Tree Exact Owner Markdown Context
+
+Development Tree node prompts stay scoped and must not receive a full dump of every upstream workflow artifact. There is one explicit exception: an exact owner Markdown source whose path and id directly match the node is authoritative input, not fuzzy context.
+
+For Product Part nodes, `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md` is the exact owner artifact. When it exists, Core must include its full Markdown content in the first Product Part node prompt as protected context. It must not be split into scored snippets or allowed to fall out of the prompt because `Final_Description.md`, `virtual-simulation.md`, or `product-parts.index.md` happen to match broad anchors such as `Project Manager`.
+
+For Cluster and Module nodes, Core continues to use scoped excerpts from upstream artifacts, including the owning Product Part artifact, selected by node/cluster/module anchors. Parser/scoring is therefore reserved for indirect upstream context; direct owner Markdown is passed whole.
+
 ### 4.3. Template Hardening
 
 Prompt assets for `Description`, `Virtual Simulation`, and `Diagram Modules` must stop relying on weak language wording like "final artifact and brief updates". They should defer to the runtime language block and clarify:
