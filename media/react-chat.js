@@ -7789,6 +7789,25 @@
   });
   var areGeneralResponsePolicyEqual = (left, right) => left.mode === right.mode && left.strictOutput.schemaText === right.strictOutput.schemaText && left.strictOutput.instructionText === right.strictOutput.instructionText;
 
+  // src/client/ui/src/components/settings/text-to-speech-settings.ts
+  var DEFAULT_TEXT_TO_SPEECH_RATE = 1;
+  var MAX_TEXT_TO_SPEECH_RATE = 2;
+  var MIN_TEXT_TO_SPEECH_RATE = 0.75;
+  var normalizeTextToSpeechRate = (rate) => {
+    const numericRate = Number(rate);
+    if (!Number.isFinite(numericRate)) {
+      return DEFAULT_TEXT_TO_SPEECH_RATE;
+    }
+    return Math.min(
+      MAX_TEXT_TO_SPEECH_RATE,
+      Math.max(MIN_TEXT_TO_SPEECH_RATE, numericRate)
+    );
+  };
+  var mapTextToSpeechSettings = (value) => ({
+    rate: normalizeTextToSpeechRate(value?.rate)
+  });
+  var areTextToSpeechSettingsEqual = (left, right) => left.rate === right.rate;
+
   // src/client/ui/src/components/settings/settings-state-model.ts
   var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
   var DEFAULT_AUTO_UPDATE_ENABLED = true;
@@ -7905,7 +7924,8 @@
       allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
     },
     localization: mapLocalizationSettings(value?.localization),
-    responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy)
+    responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
+    textToSpeech: mapTextToSpeechSettings(value?.textToSpeech)
   });
   var mapContinuity = (value) => {
     const numericValue = Number(
@@ -7987,7 +8007,7 @@
       ([modelId, reasoning]) => right[modelId] === reasoning
     );
   };
-  var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy);
+  var areGeneralSettingsEqual = (left, right) => left.coreControls.allowRestart === right.coreControls.allowRestart && areLocalizationSettingsEqual(left.localization, right.localization) && areGeneralResponsePolicyEqual(left.responsePolicy, right.responsePolicy) && areTextToSpeechSettingsEqual(left.textToSpeech, right.textToSpeech);
   var areLocalizationCategoriesEqual = (left, right) => left.artifactsForTheUser === right.artifactsForTheUser && left.messagesForTheUser === right.messagesForTheUser && left.reasoning === right.reasoning && left.uiHelperText === right.uiHelperText && left.uiLabels === right.uiLabels;
   var areLocalizationSettingsEqual = (left, right) => left.defaultLanguage === right.defaultLanguage && areLocalizationCategoriesEqual(left.categories, right.categories) && left.workflowTermsPolicy === right.workflowTermsPolicy && left.engineId === right.engineId && left.reasoningEngineId === right.reasoningEngineId && left.glossaryEnabled === right.glossaryEnabled;
   var areClaudeSettingsEqual = (left, right) => areClaudeThinkingSettingsEqual(left.thinking, right.thinking) && areAutoUpdateSettingsEqual(left.autoUpdate, right.autoUpdate) && left.defaultModel === right.defaultModel && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
@@ -9316,6 +9336,16 @@
       }
     }
   });
+  var updateTextToSpeechRate = (settings, rate) => ({
+    ...settings,
+    general: {
+      ...settings.general,
+      textToSpeech: {
+        ...settings.general.textToSpeech,
+        rate
+      }
+    }
+  });
   var updateStrictSchemaText = (settings, schemaText) => ({
     ...settings,
     general: {
@@ -9344,13 +9374,7 @@
   });
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var RESET_DELAY_MS = 100;
-  var isSettingsSaveErrorMessage = (message) => {
-    if (!(message && typeof message === "object" && "type" in message)) {
-      return false;
-    }
-    return message.type === "settings:save-error";
-  };
+  var isSettingsSaveErrorMessage = (message) => message?.type === "settings:save-error";
   var useSettingsState = () => {
     const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
     const initialSettingsRef = (0, import_react.useRef)(
@@ -9449,9 +9473,7 @@
         }
       };
       window.addEventListener("message", handleMessage);
-      vscode_default.postMessage({
-        type: "settings:load"
-      });
+      vscode_default.postMessage({ type: "settings:load" });
       return () => {
         window.removeEventListener("message", handleMessage);
       };
@@ -9600,6 +9622,12 @@
       },
       [settings, updateSettings]
     );
+    const handleTextToSpeechRateChange = (0, import_react.useCallback)(
+      (rate) => {
+        updateSettings(updateTextToSpeechRate(settings, rate));
+      },
+      [settings, updateSettings]
+    );
     const handleGeminiDefaultModelChange = (0, import_react.useCallback)(
       (modelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
@@ -9650,10 +9678,8 @@
     const handleReset = (0, import_react.useCallback)(() => {
       setResetting(true);
       window.setTimeout(() => {
-        vscode_default.postMessage({
-          type: "settings:reset"
-        });
-      }, RESET_DELAY_MS);
+        vscode_default.postMessage({ type: "settings:reset" });
+      }, 100);
     }, []);
     const handleUpdateProvider = (0, import_react.useCallback)(
       (provider, target) => {
@@ -9676,9 +9702,7 @@
         message: "Restart requested. Preparing shutdown...",
         phase: "stopping"
       });
-      vscode_default.postMessage({
-        type: "core:restart-request"
-      });
+      vscode_default.postMessage({ type: "core:restart-request" });
     }, []);
     const handleNativeRequestCapture = (0, import_react.useCallback)(
       (providerId, modelId, scenarioId) => {
@@ -9726,6 +9750,7 @@
       handleResponsePolicyModeChange,
       handleStrictSchemaTextChange,
       handleStrictInstructionTextChange,
+      handleTextToSpeechRateChange,
       handleSave,
       handleReset,
       handleUpdateProvider

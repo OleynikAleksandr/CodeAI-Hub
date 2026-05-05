@@ -5,6 +5,7 @@ import type {
   SessionModelBindingInfo,
   SessionRecord,
 } from "../../../../types/session";
+import type { WorkbenchOutgoingMessage } from "../../services/workbench-bridge-types";
 import { providerIdSet } from "../../../ui/src/session/helpers";
 
 export type DialogOpenIntent = {
@@ -40,6 +41,19 @@ type DialogHistoryRecord = {
   readonly timestamp: string;
   readonly tag?: string;
 };
+
+export interface SpeechStatePayload {
+  readonly messageId: string | null;
+  readonly sessionId: string | null;
+  readonly status: string;
+}
+
+export interface DialogSpeechRequest {
+  readonly messageId: string;
+  readonly providerId?: string | null;
+  readonly sessionId: string;
+  readonly text: string;
+}
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -280,3 +294,35 @@ export const createDialogSystemMessage = (content: string): SessionMessage => ({
   content,
   createdAt: Date.now(),
 });
+
+export const resolveActiveSpeechMessageId = (
+  state: SpeechStatePayload | null
+): string | null =>
+  state?.status === "speaking" ||
+  state?.status === "starting" ||
+  state?.status === "stopping"
+    ? state.messageId
+    : null;
+
+export const buildDialogSpeechWorkbenchMessage = (options: {
+  readonly activeSpeechMessageId: string | null;
+  readonly rate: number;
+  readonly request: DialogSpeechRequest;
+}): WorkbenchOutgoingMessage => {
+  if (options.activeSpeechMessageId === options.request.messageId) {
+    return {
+      type: "session:speech:stop",
+      payload: {
+        messageId: options.request.messageId,
+        sessionId: options.request.sessionId,
+      },
+    };
+  }
+  return {
+    type: "session:speech:speak-message",
+    payload: {
+      ...options.request,
+      rate: options.rate,
+    },
+  };
+};

@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as React from "react";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import type { SessionMessage } from "../../../../types/session";
+import DialogPanel from "../../../ui/src/session/dialog-panel";
 import {
+  buildDialogSpeechWorkbenchMessage,
   buildDialogSessionRecord,
   resolveDialogMatch,
+  resolveActiveSpeechMessageId,
   sanitizeDialogIndexEntry,
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
@@ -17,6 +24,20 @@ const intent: DialogOpenIntent = {
   sessionKind: "collector",
   runSlug: "collector",
 };
+
+const createAssistantMessage = (
+  id: string,
+  content: string,
+  localizedContent?: string
+): SessionMessage => ({
+  id,
+  role: "assistant",
+  content,
+  createdAt: Date.parse("2026-05-05T18:00:00.000Z"),
+  ...(localizedContent ? { localizedContent } : {}),
+});
+
+(globalThis as typeof globalThis & { React?: unknown }).React = React;
 
 test("dialog bootstrap preserves model binding from dialog index", () => {
   const entry = sanitizeDialogIndexEntry({
@@ -88,4 +109,96 @@ test("dialog match prefers selected development-tree node identity", () => {
   });
 
   assert.equal(match?.dialogId, "codex-node-workflow-orchestration-ui");
+});
+
+test("active speech id follows only in-flight speech states", () => {
+  assert.equal(
+    resolveActiveSpeechMessageId({
+      messageId: "message-1",
+      sessionId: "session-1",
+      status: "starting",
+    }),
+    "message-1"
+  );
+  assert.equal(
+    resolveActiveSpeechMessageId({
+      messageId: "message-1",
+      sessionId: "session-1",
+      status: "finished",
+    }),
+    null
+  );
+});
+
+test("dialog speech command builder toggles speak and stop", () => {
+  const request = {
+    messageId: "message-1",
+    providerId: "codexCli",
+    sessionId: "session-1",
+    text: "Visible answer",
+  };
+
+  assert.deepEqual(
+    buildDialogSpeechWorkbenchMessage({
+      activeSpeechMessageId: null,
+      rate: 1.35,
+      request,
+    }),
+    {
+      type: "session:speech:speak-message",
+      payload: {
+        ...request,
+        rate: 1.35,
+      },
+    }
+  );
+  assert.deepEqual(
+    buildDialogSpeechWorkbenchMessage({
+      activeSpeechMessageId: "message-1",
+      rate: 1.35,
+      request,
+    }),
+    {
+      type: "session:speech:stop",
+      payload: {
+        messageId: "message-1",
+        sessionId: "session-1",
+      },
+    }
+  );
+});
+
+test("DialogPanel renders active Speak button for assistant bubble", () => {
+  const html = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      messages: [createAssistantMessage("assistant-1", "Hello")],
+      providerLabel: "Codex",
+      speakingMessageId: "assistant-1",
+    })
+  );
+
+  assert.equal(html.includes("session-dialog__speak-button--active"), true);
+  assert.equal(html.includes('aria-pressed="true"'), true);
+  assert.equal(html.includes('aria-label="Speak: Codex"'), true);
+});
+
+test("DialogPanel keeps Speak button available for assistant thinking bubbles", () => {
+  const html = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      messages: [
+        {
+          ...createAssistantMessage("thinking-1", "Internal notes"),
+          tag: "thinking",
+        },
+      ],
+      providerLabel: "Codex",
+      speakingMessageId: null,
+    })
+  );
+
+  assert.equal(html.includes("session-dialog__speak-button"), true);
+  assert.equal(
+    html.includes('aria-label="Speak: Codex · Thinking"'),
+    true
+  );
 });

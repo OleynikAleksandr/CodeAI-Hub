@@ -5,7 +5,12 @@ import type {
 } from "../../../../types/claude-model-registry";
 import SessionView from "../../../ui/src/session/session-view";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
-import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
+import {
+  buildDialogSpeechWorkbenchMessage,
+  resolveActiveSpeechMessageId,
+  type DialogOpenIntent,
+  type SpeechStatePayload,
+} from "./project-manager-dialog-session-view-helpers";
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
 import { api } from "../../api";
@@ -23,26 +28,11 @@ type DialogControllerClaudeSwitch = {
   ) => void;
 };
 
-interface SpeechStatePayload {
-  readonly messageId: string | null;
-  readonly sessionId: string | null;
-  readonly status: string;
-}
-
 const isSpeechStatePayload = (payload: unknown): payload is SpeechStatePayload =>
   typeof payload === "object" &&
   payload !== null &&
   "status" in payload &&
   typeof payload.status === "string";
-
-const resolveActiveSpeechMessageId = (
-  state: SpeechStatePayload | null
-): string | null =>
-  state?.status === "speaking" ||
-  state?.status === "starting" ||
-  state?.status === "stopping"
-    ? state.messageId
-    : null;
 
 const ProjectManagerDialogSessionView = (props: {
   readonly intent: DialogOpenIntent | null;
@@ -93,23 +83,13 @@ const ProjectManagerDialogSessionView = (props: {
       readonly sessionId: string;
       readonly text: string;
     }) => {
-      if (activeSpeechMessageId === request.messageId) {
-        api.sendWorkbenchMessage({
-          type: "session:speech:stop",
-          payload: {
-            messageId: request.messageId,
-            sessionId: request.sessionId,
-          },
-        });
-        return;
-      }
-      api.sendWorkbenchMessage({
-        type: "session:speech:speak-message",
-        payload: {
-          ...request,
+      api.sendWorkbenchMessage(
+        buildDialogSpeechWorkbenchMessage({
+          activeSpeechMessageId,
           rate: settings.general.textToSpeech.rate,
-        },
-      });
+          request,
+        })
+      );
     },
     [activeSpeechMessageId, settings.general.textToSpeech.rate]
   );
