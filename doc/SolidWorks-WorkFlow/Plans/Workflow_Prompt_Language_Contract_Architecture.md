@@ -111,6 +111,24 @@ Diagram Modules artifact templates need an explicit boundary:
 - prose fields are localized;
 - canonical field labels, ids, status values, generated block markers, table/DSL syntax and filenames stay stable.
 
+### 4.4. Runtime Tooling And UTF-8 Write Discipline
+
+Workflow and Development Tree prompts must include a compact runtime facts block so agents do not waste a turn discovering routine tools:
+
+- shell tools start in the runtime workspace context when they are available;
+- Python command is `python3`;
+- Node command is `node`;
+- package manager command is `npm`;
+- routine fallback chatter such as "python is missing, switching to python3" is prohibited unless the command failure blocks the artifact update.
+
+Prompts must also state the artifact write encoding contract:
+
+- Markdown artifacts and drafts are UTF-8 text with normal LF line endings;
+- Cyrillic/localized prose is written directly as UTF-8, not escaped or transliterated;
+- provider-native edit/write is preferred when it preserves UTF-8;
+- if a write path corrupts localized text, the agent may retry with a UTF-8-safe shell heredoc or equivalent exact-write method;
+- routine encoding retry messages are not user-facing progress updates and should be reported only if encoding remains a blocker.
+
 ---
 
 ## 5. Implementation Surfaces

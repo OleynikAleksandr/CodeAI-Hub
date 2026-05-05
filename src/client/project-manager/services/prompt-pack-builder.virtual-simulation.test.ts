@@ -55,6 +55,25 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
     ),
     true
   );
+  assert.equal(pack.content.includes("Runtime tooling facts:"), true);
+  assert.equal(pack.content.includes("Python command: `python3`."), true);
+  assert.equal(pack.content.includes("Node command: `node`."), true);
+  assert.equal(pack.content.includes("Package manager command: `npm`."), true);
+  assert.equal(pack.content.includes("Artifact write encoding:"), true);
+  assert.equal(
+    pack.content.includes("Write Markdown artifacts as UTF-8 text"),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Cyrillic and other localized prose"),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Do not send user-facing progress updates about routine encoding retries"
+    ),
+    true
+  );
   assert.equal(
     pack.content.includes("Authoritative upstream source documents (inline):"),
     true
@@ -119,6 +138,8 @@ test("description prompt pack keeps template hint", () => {
     ),
     true
   );
+  assert.equal(pack.content.includes("Runtime tooling facts:"), true);
+  assert.equal(pack.content.includes("Artifact write encoding:"), true);
   assert.equal(
     pack.content.includes("Authoritative upstream source documents (inline):"),
     true
@@ -194,6 +215,8 @@ test("diagram modules prompt pack targets product part index and omits generic t
     pack.content.includes("create or update `product-parts.index.md`"),
     false
   );
+  assert.equal(pack.content.includes("Runtime tooling facts:"), true);
+  assert.equal(pack.content.includes("Artifact write encoding:"), true);
   assert.equal(
     pack.content.includes(
       "Target path (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"

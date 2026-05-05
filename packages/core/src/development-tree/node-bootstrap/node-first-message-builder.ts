@@ -76,6 +76,14 @@ const createRuntimeToolingFactsLines = (): string[] => [
   "- Do not spend a turn probing these routine commands or announcing fallback messages such as `python is missing`; mention tooling only when a command actually fails and blocks the draft update.",
 ];
 
+const createArtifactWriteEncodingLines = (): string[] => [
+  "Artifact write encoding:",
+  "- Write Markdown draft artifacts as UTF-8 text and preserve normal LF line endings.",
+  "- Cyrillic and other localized prose must be written directly as valid UTF-8, not escaped or transliterated.",
+  "- Use the provider-native edit/write path when it preserves UTF-8; if a write path corrupts localized text, retry with a UTF-8-safe shell heredoc or equivalent exact-write method.",
+  "- Do not send user-facing progress updates about routine encoding retries; mention encoding only if it remains a blocking draft-write failure.",
+];
+
 const createArtifactContextLines = (
   artifactContext: readonly NodePromptArtifactContextEntry[] | undefined
 ): string[] => {
@@ -158,6 +166,8 @@ export class NodeFirstMessageBuilder {
       ...createArtifactLanguageLines(request.artifactLanguage),
       "",
       ...createRuntimeToolingFactsLines(),
+      "",
+      ...createArtifactWriteEncodingLines(),
       "",
       ...createArtifactContextLines(request.artifactContext),
       "",

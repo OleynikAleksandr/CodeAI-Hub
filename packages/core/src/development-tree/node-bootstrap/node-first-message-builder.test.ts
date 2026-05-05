@@ -18,6 +18,14 @@ const RUSSIAN_ARTIFACT_LANGUAGE_PATTERN =
   /Target language code: ru \(from Settings > General > Artifacts for the User\)\./;
 const DRAFT_ARTIFACT_LANGUAGE_RULE_PATTERN =
   /Write descriptive prose inside the draft artifacts in ru\./;
+const RUNTIME_TOOLING_FACTS_PATTERN = /Runtime tooling facts:/;
+const PYTHON3_COMMAND_PATTERN = /Python command: `python3`\./;
+const ARTIFACT_WRITE_ENCODING_PATTERN = /Artifact write encoding:/;
+const UTF8_MARKDOWN_PATTERN = /Markdown draft artifacts as UTF-8 text/;
+const CYRILLIC_DIRECT_UTF8_PATTERN =
+  /Cyrillic and other localized prose must be written directly as valid UTF-8/;
+const NO_ENCODING_RETRY_CHATTER_PATTERN =
+  /Do not send user-facing progress updates about routine encoding retries/;
 const ARTIFACT_CONTEXT_RULE_PATTERN =
   /Do not ask the user to re-explain information already present here\./;
 const SCOPED_CONTEXT_HEADING_PATTERN =
@@ -80,6 +88,12 @@ test("NodeFirstMessageBuilder includes module drafts and contract boundaries", (
   assert.match(result.content, RUSSIAN_RESPONSE_LANGUAGE_PATTERN);
   assert.match(result.content, RUSSIAN_ARTIFACT_LANGUAGE_PATTERN);
   assert.match(result.content, DRAFT_ARTIFACT_LANGUAGE_RULE_PATTERN);
+  assert.match(result.content, RUNTIME_TOOLING_FACTS_PATTERN);
+  assert.match(result.content, PYTHON3_COMMAND_PATTERN);
+  assert.match(result.content, ARTIFACT_WRITE_ENCODING_PATTERN);
+  assert.match(result.content, UTF8_MARKDOWN_PATTERN);
+  assert.match(result.content, CYRILLIC_DIRECT_UTF8_PATTERN);
+  assert.match(result.content, NO_ENCODING_RETRY_CHATTER_PATTERN);
   assert.match(result.content, MODULE_SPEC_BOUNDARY_PATTERN);
 });
 
