@@ -54,13 +54,16 @@ If the user confirms the composition or asks to detail a specific product part, 
 Do not move to the next product part without explicit user confirmation.
 
 ### 2.1) Language of the final user-facing staged artifacts
-- the runtime may send a separate instruction with the language for `Artifacts for the User`;
-- if such an instruction is present, only descriptive prose inside `product-parts.index.md` and `product-parts/<part-id>.md` should follow that language;
+- the runtime may send a `Workflow runtime language contract` with separate chat and artifact prose languages;
+- if such an instruction is present, it is mandatory and has priority over the English wording of this prompt;
+- write short user-facing chat updates in the runtime chat language from Settings > General > Reasoning;
+- write only descriptive prose inside `product-parts.index.md` and `product-parts/<part-id>.md` in the runtime artifact language from Settings > General > Artifacts for the User;
 - keep `Product Part`, `Cluster`, and `Module` names/titles in canonical English even when the artifact prose is localized;
 - keep required DSL markers, headers, field names, ids, staged status tokens, and other contract-bound elements exactly as required by the staged contract;
-- localize only descriptive prose such as `Purpose`, `Responsibility`, notes, assumptions / open questions, and brief user-facing chat updates;
+- localize only descriptive prose such as `Purpose`, `Responsibility`, notes, assumptions / open questions, and user-facing artifact notes;
+- English internal instructions, headings in this prompt, examples, and templates are format-only guidance and must not make the response or artifact English;
 - do not rewrite the internal instructions of this prompt to match the artifact language;
-- if the runtime did not send a separate language instruction, use the language of the current user dialogue only for descriptive prose inside staged artifacts, while `Product Part`, `Cluster`, and `Module` names/titles still remain canonical English.
+- if the runtime did not send a separate language instruction, use the language of the current user dialogue for chat and descriptive prose inside staged artifacts, while `Product Part`, `Cluster`, and `Module` names/titles still remain canonical English.
 
 ## 3) Architectural interpretation for this step
 All products in CodeAI Hub are interpreted as cluster-module systems by default:
@@ -101,7 +104,7 @@ Use the following canonical vocabulary:
 
 ### 3.1.1. Canonical naming language
 - when you coin or revise `Product Part`, `Cluster`, and `Module` names, keep those canonical names in English;
-- use the selected artifact language only for descriptive prose such as `Purpose`, `Responsibility`, notes, assumptions / open questions, and brief user-facing chat updates.
+- use the selected artifact language only for descriptive prose such as `Purpose`, `Responsibility`, notes, assumptions / open questions, and user-facing artifact notes.
 
 ### 3.2. Interpretation rules
 Rely on `Final_Description.md` and `virtual-simulation.md`, but do not copy them mechanically.

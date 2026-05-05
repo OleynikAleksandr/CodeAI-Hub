@@ -42,10 +42,14 @@ If the questionnaire is too short, still create a document skeleton first and on
 Do not expect the questionnaire itself to already list ready-made modules, shell boundaries, or precise architectural decisions.
 
 ### 2.1) Language of the final user-facing artifact
-- the runtime may send a separate instruction with the language for `Artifacts for the User`;
-- if such an instruction is present, the final `Final_Description.md` and short user-facing chat updates must be written in that language;
+- the runtime may send a `Workflow runtime language contract` with separate chat and artifact prose languages;
+- if such an instruction is present, it is mandatory and has priority over the English wording of this prompt;
+- write short user-facing chat updates in the runtime chat language from Settings > General > Reasoning;
+- write descriptive prose inside `Final_Description.md` in the runtime artifact language from Settings > General > Artifacts for the User;
+- keep required file names, paths, stable architecture vocabulary, and any runtime-required structural tokens exactly as specified;
+- English internal instructions, headings in this prompt, examples, and templates are format-only guidance and must not make the response or artifact English;
 - do not rewrite the internal instructions of this prompt to match the artifact language;
-- if the runtime did not send a separate language instruction, use the language of the current user dialogue.
+- if the runtime did not send a separate language instruction, use the language of the current user dialogue for both chat and user-facing artifact prose.
 
 ## 3) Architectural interpretation for this step
 All products in CodeAI Hub are interpreted as cluster-module systems by default:
