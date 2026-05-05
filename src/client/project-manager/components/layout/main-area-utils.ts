@@ -1,4 +1,8 @@
 import type { WorkspaceProject } from "../../types";
+import type {
+  DevelopmentTreeNodeArtifact,
+  DevelopmentTreeNodeSession,
+} from "../../services/workflow-state-client";
 
 export type BranchNodeKind = "product-part" | "cluster" | "module";
 
@@ -8,6 +12,9 @@ export type BranchNodeSelection = {
   readonly label: string;
   readonly partId: string;
   readonly clusterId?: string;
+  readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+  readonly session?: DevelopmentTreeNodeSession;
+  readonly workflowPath?: string;
 };
 
 const BRANCH_NODE_KINDS: readonly string[] = [
@@ -18,6 +25,58 @@ const BRANCH_NODE_KINDS: readonly string[] = [
 
 const isBranchNodeKind = (value: unknown): value is BranchNodeKind =>
   typeof value === "string" && BRANCH_NODE_KINDS.includes(value);
+
+const parseBranchArtifact = (
+  value: unknown
+): DevelopmentTreeNodeArtifact | null => {
+  if (typeof value !== "object" || value === null) return null;
+  const record = value as Record<string, unknown>;
+  const fileName =
+    typeof record.fileName === "string" ? record.fileName.trim() : null;
+  const path = typeof record.path === "string" ? record.path.trim() : null;
+  return fileName && path ? { fileName, path } : null;
+};
+
+const parseBranchSession = (
+  value: unknown
+): DevelopmentTreeNodeSession | undefined => {
+  if (typeof value !== "object" || value === null) return undefined;
+  const record = value as Record<string, unknown>;
+  const dialogId =
+    typeof record.dialogId === "string" ? record.dialogId.trim() : null;
+  const providerId =
+    typeof record.providerId === "string" ? record.providerId.trim() : null;
+  const providerSessionId =
+    typeof record.providerSessionId === "string"
+      ? record.providerSessionId.trim()
+      : null;
+  const rootSessionId =
+    typeof record.rootSessionId === "string" ? record.rootSessionId.trim() : null;
+  const sessionId =
+    typeof record.sessionId === "string" ? record.sessionId.trim() : null;
+  const updatedAt =
+    typeof record.updatedAt === "string" ? record.updatedAt.trim() : null;
+  if (
+    !(
+      dialogId &&
+      providerId &&
+      providerSessionId &&
+      rootSessionId &&
+      sessionId &&
+      updatedAt
+    )
+  ) {
+    return undefined;
+  }
+  return {
+    dialogId,
+    providerId,
+    providerSessionId,
+    rootSessionId,
+    sessionId,
+    updatedAt,
+  };
+};
 
 export const parseBranchNodeSelection = (
   detail: unknown
@@ -36,7 +95,26 @@ export const parseBranchNodeSelection = (
     typeof record.clusterId === "string" && record.clusterId.trim().length > 0
       ? record.clusterId.trim()
       : undefined;
-  return { kind, nodeId, label, partId, clusterId };
+  const artifacts = Array.isArray(record.artifacts)
+    ? record.artifacts
+        .map(parseBranchArtifact)
+        .filter((item): item is DevelopmentTreeNodeArtifact => item !== null)
+    : [];
+  const workflowPath =
+    typeof record.workflowPath === "string" &&
+    record.workflowPath.trim().length > 0
+      ? record.workflowPath.trim()
+      : undefined;
+  return {
+    kind,
+    nodeId,
+    label,
+    partId,
+    clusterId,
+    artifacts: artifacts.length > 0 ? artifacts : undefined,
+    session: parseBranchSession(record.session),
+    workflowPath,
+  };
 };
 import {
   toWorkflowWorkspaceSlug,

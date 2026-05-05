@@ -2,8 +2,6 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeModuleNode,
-  DevelopmentTreeNodeArtifact,
-  DevelopmentTreeNodeSession,
   DevelopmentTreePartNode,
   DevelopmentTreeReadiness,
   WorkflowStateSnapshot,
@@ -137,6 +135,9 @@ const dispatchBranchSelected = (detail: {
   readonly label: string;
   readonly partId: string;
   readonly clusterId?: string;
+  readonly artifacts?: DevelopmentTreeModuleNode["artifacts"];
+  readonly session?: DevelopmentTreeModuleNode["session"];
+  readonly workflowPath?: string;
 }): void => {
   window.dispatchEvent(
     new CustomEvent("pm:branch:selected", { detail })
@@ -164,61 +165,11 @@ const buildModuleTreeNode = (
       label: mod.title,
       partId,
       clusterId: clusterId ?? undefined,
+      artifacts: mod.artifacts,
+      session: mod.session,
+      workflowPath: mod.workflowPath,
     }),
 });
-
-const buildArtifactTreeNode = (
-  artifact: DevelopmentTreeNodeArtifact,
-  idPrefix: string,
-  depth: number,
-  index: number
-): TreeNode => ({
-  id: `${idPrefix}:artifact:${index}`,
-  label: `Artifact: ${artifact.fileName}`,
-  status: "draft",
-  title: artifact.path,
-  visualDepth: depth,
-});
-
-const buildSessionTreeNode = (
-  session: DevelopmentTreeNodeSession,
-  idPrefix: string,
-  depth: number
-): TreeNode => ({
-  id: `${idPrefix}:session:${session.rootSessionId}`,
-  label: `Session: ${resolveProviderTitle(session.providerId)}`,
-  status: "active",
-  title: `${session.dialogId}\n${session.providerSessionId}`,
-  visualDepth: depth,
-});
-
-const buildNodeMetadataTreeNodes = (
-  node: Pick<DevelopmentTreeModuleNode, "artifacts" | "session">,
-  idPrefix: string,
-  depth: number
-): TreeNode[] => {
-  const nodes =
-    node.artifacts?.map((artifact, index) =>
-      buildArtifactTreeNode(artifact, idPrefix, depth, index)
-    ) ?? [];
-  if (node.session) {
-    nodes.push(buildSessionTreeNode(node.session, idPrefix, depth));
-  }
-  return nodes;
-};
-
-const buildModuleTreeNodes = (
-  mod: DevelopmentTreeModuleNode,
-  partId: string,
-  clusterId: string | null,
-  depth: number
-): TreeNode[] => {
-  const moduleNode = buildModuleTreeNode(mod, partId, clusterId, depth);
-  return [
-    moduleNode,
-    ...buildNodeMetadataTreeNodes(mod, moduleNode.id, depth + 1),
-  ];
-};
 
 const buildClusterTreeNode = (
   cluster: DevelopmentTreeClusterNode,
@@ -226,12 +177,9 @@ const buildClusterTreeNode = (
   depth: number
 ): TreeNode => {
   const id = `devtree:${partId}:${cluster.id}`;
-  const children = [
-    ...buildNodeMetadataTreeNodes(cluster, id, depth + 1),
-    ...cluster.modules.flatMap((mod) =>
-      buildModuleTreeNodes(mod, partId, cluster.id, depth + 1)
-    ),
-  ];
+  const children = cluster.modules.map((mod) =>
+    buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
+  );
   return {
     id,
     label: cluster.id,
@@ -247,6 +195,9 @@ const buildClusterTreeNode = (
         nodeId: cluster.id,
         label: cluster.id,
         partId,
+        artifacts: cluster.artifacts,
+        session: cluster.session,
+        workflowPath: cluster.workflowPath,
       }),
   };
 };
@@ -256,16 +207,12 @@ const buildPartTreeNode = (
   depth: number
 ): TreeNode => {
   const partId = `devtree:${part.id}`;
-  const children: TreeNode[] = buildNodeMetadataTreeNodes(
-    part,
-    partId,
-    depth + 1
-  );
+  const children: TreeNode[] = [];
   for (const cluster of part.clusters) {
     children.push(buildClusterTreeNode(cluster, part.id, depth + 1));
   }
   for (const mod of part.standaloneModules) {
-    children.push(...buildModuleTreeNodes(mod, part.id, null, depth + 1));
+    children.push(buildModuleTreeNode(mod, part.id, null, depth + 1));
   }
   return {
     id: partId,
@@ -285,6 +232,9 @@ const buildPartTreeNode = (
         nodeId: part.id,
         label: part.id,
         partId: part.id,
+        artifacts: part.artifacts,
+        session: part.session,
+        workflowPath: part.workflowPath,
       }),
   };
 };

@@ -244,7 +244,7 @@ test("buildDevelopmentTreeNodes maps readiness to sidebar status colors", () => 
   assert.equal(standaloneModule?.status, "todo");
 });
 
-test("buildDevelopmentTreeNodes renders node artifacts and sessions below their owner", () => {
+test("buildDevelopmentTreeNodes keeps artifacts and sessions out of sidebar rows", () => {
   const developmentTree = {
     parts: [
       {
@@ -302,13 +302,83 @@ test("buildDevelopmentTreeNodes renders node artifacts and sessions below their 
   } satisfies NonNullable<WorkflowStateSnapshot["developmentTree"]>;
 
   const [part] = buildDevelopmentTreeNodes(developmentTree, 0);
-  assert.equal(part?.children?.[0]?.label, "Artifact: ProductPartSpec.draft.md");
-  assert.equal(part?.children?.[1]?.label, "Session: Codex");
+  assert.equal(part?.children?.[0]?.label, "workflow-and-artifact-ui");
 
   const cluster = part?.children?.find((node) => node.nodeType === "cluster");
-  assert.equal(cluster?.children?.[0]?.label, "Artifact: ClusterSpec.draft.md");
-  assert.equal(cluster?.children?.[1]?.label, "Workflow Step Controller");
-  assert.equal(cluster?.children?.[2]?.label, "Artifact: ModuleSpec.draft.md");
-  assert.equal(cluster?.children?.[3]?.label, "Session: Codex");
-  assert.match(cluster?.children?.[3]?.title ?? "", /provider-module/);
+  assert.equal(cluster?.children?.length, 1);
+  assert.equal(cluster?.children?.[0]?.label, "Workflow Step Controller");
+});
+
+test("development tree node selection dispatches artifacts and session metadata", () => {
+  const events: unknown[] = [];
+  const previousWindow = globalThis.window;
+  Object.defineProperty(globalThis, "window", {
+    configurable: true,
+    value: {
+      dispatchEvent: (event: { readonly detail?: unknown }) => {
+        events.push(event.detail);
+        return true;
+      },
+    },
+  });
+  try {
+    const developmentTree = {
+      parts: [
+        {
+          id: "project-manager",
+          status: "materialized",
+          clusters: [
+            {
+              id: "workflow-and-artifact-ui",
+              modules: [
+                {
+                  id: "workflow-step-controller",
+                  title: "Workflow Step Controller",
+                  artifacts: [
+                    {
+                      fileName: "ModuleSpec.draft.md",
+                      path: ".codeai-hub/demo/development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller/ModuleSpec.draft.md",
+                    },
+                  ],
+                  session: {
+                    dialogId:
+                      "codex-development-tree-project-manager-workflow-and-artifact-ui-workflow-step-controller",
+                    providerId: "codexCli",
+                    providerSessionId: "provider-module",
+                    rootSessionId: "module-root",
+                    sessionId: "module-session",
+                    updatedAt: "2026-05-05T07:01:00.000Z",
+                  },
+                  workflowPath:
+                    "development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller",
+                },
+              ],
+            },
+          ],
+          standaloneModules: [],
+        },
+      ],
+    } satisfies NonNullable<WorkflowStateSnapshot["developmentTree"]>;
+
+    const [part] = buildDevelopmentTreeNodes(developmentTree, 0);
+    const moduleNode = part?.children?.[0]?.children?.[0];
+    moduleNode?.onSelect?.();
+  } finally {
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: previousWindow,
+    });
+  }
+
+  const detail = events[0] as {
+    readonly artifacts?: readonly { readonly fileName: string }[];
+    readonly session?: { readonly providerSessionId: string };
+    readonly workflowPath?: string;
+  };
+  assert.equal(detail.artifacts?.[0]?.fileName, "ModuleSpec.draft.md");
+  assert.equal(detail.session?.providerSessionId, "provider-module");
+  assert.equal(
+    detail.workflowPath,
+    "development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller"
+  );
 });
