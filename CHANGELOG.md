@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.152] - 2026-05-05
+### Fixed
+- **Apple Native Settings save now resolves the packaged helper from the Core runtime path.** The Project Manager launcher can start Core with `cwd=/`; Settings preflight and runtime translation now also look beside the packaged Core entry point, so `Apple Native - On-Device` no longer fails helper discovery in installed builds.
+
+### Tests
+- **Installed runtime helper discovery was verified against the `1.2.151` Core layout.** The resolved path maps to `app/native/apple-translation-helper/.build/release/apple-translation-helper`, and the helper returns `ok:true` for `en -> ru` preflight.
+
 ## [1.2.151] - 2026-05-05
 ### Fixed
 - **Apple Native release packaging now ships the executable helper in the Core runtime.** macOS release builds compile `native/apple-translation-helper` and bundle the executable under the Core app runtime path used by Settings preflight and translation requests.
