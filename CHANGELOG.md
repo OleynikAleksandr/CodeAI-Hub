@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.135] - 2026-05-05
+### Fixed
+- **Development Tree node sessions now keep their concrete workflow identity.** Product Part, Cluster, and Module bootstrap sessions now use the materialized node path under `development_tree/materialized/...` instead of falling into `continuity/unknown`, and dialog IDs include the concrete node suffix instead of a generic `development-tree` suffix.
+- **Development Tree node sessions inherit the actual workflow provider.** Node bootstrap now resolves the provider from the latest `diagram_modules` continuity chain for the workspace, with the configured provider only as fallback.
+- **Project Manager now shows node-level artifacts and sessions.** Core exposes draft artifacts and latest session metadata per Product Part / Cluster / Module, Project Manager parses that metadata, and the Development Tree renders `Artifact: ...` and `Session: ...` rows under their owning nodes.
+
+### Tests
+- **Retest verification covers the namespace, continuity, session naming, parser, and PM rendering path.** Targeted Core and Project Manager checks passed before this release prep, including core build, webview typecheck, webview bundle generation, and plan validation.
+
 ## [1.2.134] - 2026-05-04
 ### Added
 - **Development Tree now materializes after Diagram Modules.** Core builds the existing Project Manager Development Tree snapshot into a neutral workspace-owned filesystem tree under `.codeai-hub/<workspace-slug>/development_tree/materialized/`, then bootstraps structural draft artifacts and first-message agent session intents for materialized Product Part, Cluster, and Module nodes.
