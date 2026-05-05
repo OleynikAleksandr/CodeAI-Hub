@@ -41,6 +41,9 @@ const resolveWorkflowPollingMode = (): WorkflowStatePollingMode => {
   return document.hasFocus() ? "foreground" : "background";
 };
 
+const isDevelopmentTreeArtifactPath = (value: string | undefined): boolean =>
+  Boolean(value?.includes("/development_tree/"));
+
 interface MainAreaProps {
   sizes: [number, number];
   onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
@@ -87,6 +90,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     useState<WorkflowStatePollingMode>(() => resolveWorkflowPollingMode());
   const selectedArtifactRef = useRef<typeof selectedArtifact>(null);
   const selectedBranchNodeRef = useRef<BranchNodeSelection | null>(null);
+  const lastDevelopmentTreeRefreshRef = useRef<string | null>(null);
   const activeWorkspaceSlug = activeWorkspace ? resolveWorkspaceSlug(activeWorkspace) : null;
   const activeWorkspaceSlugRef = useRef<string | null>(activeWorkspaceSlug);
   const { guardRef: descriptionGuardRef, activateGuard, resetGuard } =
@@ -295,6 +299,25 @@ export const MainArea: React.FC<MainAreaProps> = ({
   ]);
 
   const { loaded: workflowStoreLoaded, snapshot: workflowSnapshot } = useWorkflowStateSnapshot();
+
+  useEffect(() => {
+    const snapshotUpdatedAt = workflowSnapshot?.updatedAt ?? null;
+    if (!snapshotUpdatedAt) {
+      return;
+    }
+    const shouldRefreshDevelopmentTreeArtifact =
+      selectedBranchNode !== null ||
+      isDevelopmentTreeArtifactPath(selectedArtifact?.path);
+    if (!shouldRefreshDevelopmentTreeArtifact) {
+      lastDevelopmentTreeRefreshRef.current = snapshotUpdatedAt;
+      return;
+    }
+    if (lastDevelopmentTreeRefreshRef.current === snapshotUpdatedAt) {
+      return;
+    }
+    lastDevelopmentTreeRefreshRef.current = snapshotUpdatedAt;
+    setArtifactRefreshKey((current) => current + 1);
+  }, [selectedArtifact?.path, selectedBranchNode, workflowSnapshot?.updatedAt]);
 
   const [stepStartedIntent, setStepStartedIntent] = useState<{
     readonly providerId: string;
