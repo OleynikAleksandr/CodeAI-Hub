@@ -17,6 +17,23 @@ const TRANSLATION_TIMEOUT_BASE_MS = 15_000;
 const TRANSLATION_TIMEOUT_MAX_MS = 30_000;
 const TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 8;
 
+const APPLE_NATIVE_READINESS_ACTION_BY_ERROR_CODE: Readonly<
+  Record<string, string>
+> = {
+  apple_native_helper_failed: "recheck_apple_translation_setup",
+  apple_native_helper_unavailable: "build_or_install_apple_translation_helper",
+  apple_native_language_pack_missing: "download_translation_languages",
+  apple_native_language_pair_unsupported: "choose_supported_language_pair",
+  apple_native_request_failed: "recheck_apple_translation_setup",
+  apple_native_request_timeout: "recheck_apple_translation_setup",
+  apple_native_requires_macos: "update_macos",
+  apple_native_requires_macos_26: "update_macos_26",
+  apple_native_requires_xcode: "install_xcode_26",
+  supported_not_installed: "download_translation_languages",
+  unsupported: "choose_supported_language_pair",
+  xcode_not_ready: "install_xcode_26",
+};
+
 export type SessionTranslationFacadeFactory = (options: {
   readonly reporter?: TranslationReporter;
 }) => TranslationFacade;
@@ -64,6 +81,13 @@ const resolveTranslationTimeoutMs = (content: string): number =>
     TRANSLATION_TIMEOUT_BASE_MS +
       content.length * TRANSLATION_TIMEOUT_PER_CHARACTER_MS
   );
+
+const resolveAppleNativeReadinessAction = (
+  errorCode: string | undefined
+): string | null =>
+  errorCode
+    ? (APPLE_NATIVE_READINESS_ACTION_BY_ERROR_CODE[errorCode] ?? null)
+    : null;
 
 const buildRuntimeMetadataLogFields = (
   prefix: "requested" | "resolved",
@@ -240,6 +264,7 @@ export class SessionTranslationFacade {
         timeoutMs: options.timeoutMs,
         status: result.status,
         errorCode: result.errorCode,
+        readinessAction: resolveAppleNativeReadinessAction(result.errorCode),
         ...buildRuntimeMetadataLogFields("requested", options.policy.engineId),
         ...buildRuntimeMetadataLogFields("resolved", result.engine),
       });

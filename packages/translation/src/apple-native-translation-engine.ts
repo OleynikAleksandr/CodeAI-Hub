@@ -48,6 +48,15 @@ const createTranslatedResult = (
   translatedText,
 });
 
+const APPLE_NATIVE_FALLBACK_CODE_BY_HELPER_CODE: ReadonlyMap<string, string> =
+  new Map([
+    ["runtime_failure", "apple_native_helper_failed"],
+    ["supported_not_installed", "apple_native_language_pack_missing"],
+    ["unknown", "apple_native_helper_failed"],
+    ["unsupported", "apple_native_language_pair_unsupported"],
+    ["xcode_not_ready", "apple_native_requires_xcode"],
+  ]);
+
 const isExecutableFile = (path: string): boolean => {
   try {
     return existsSync(path) && statSync(path).isFile();
@@ -68,11 +77,15 @@ const resolveHelperPath = (
 ): string | null => candidates.find(isExecutableFile) ?? null;
 
 interface AppleNativeHelperResponse {
+  readonly diagnostic?: string;
   readonly errorCode?: string;
+  readonly helperStatus?: string;
+  readonly languageStatus?: string;
   readonly message?: string;
   readonly ok?: boolean;
   readonly translatedText?: string;
   readonly userMessageCode?: string;
+  readonly xcodeStatus?: string;
 }
 
 export interface AppleNativeTranslationEngineOptions {
@@ -98,7 +111,7 @@ export class AppleNativeTranslationEngine implements TranslationEngine {
       this.reporter?.warn?.("Apple Native translation helper unavailable", {
         engine: this.id,
       });
-      return createFallbackResult(request, "helper_unavailable");
+      return createFallbackResult(request, "apple_native_helper_unavailable");
     }
 
     try {
@@ -110,20 +123,28 @@ export class AppleNativeTranslationEngine implements TranslationEngine {
         }
       }
 
-      const errorCode =
-        response.errorCode ?? response.userMessageCode ?? "empty_translation";
+      const errorCode = resolveFallbackErrorCode(response);
       this.reporter?.warn?.("Apple Native translation returned fallback", {
         engine: this.id,
+        diagnostic: response.diagnostic,
         errorCode,
-        message: response.message,
+        helperErrorCode: response.errorCode,
+        helperStatus: response.helperStatus,
+        languageStatus: response.languageStatus,
+        userMessageCode: response.userMessageCode,
+        xcodeStatus: response.xcodeStatus,
       });
       return createFallbackResult(request, errorCode);
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorCode = resolveThrownFallbackErrorCode(errorMessage);
       this.reporter?.warn?.("Apple Native translation failed", {
         engine: this.id,
-        error: error instanceof Error ? error.message : String(error),
+        error: errorMessage,
+        errorCode,
       });
-      return createFallbackResult(request, "request_failed");
+      return createFallbackResult(request, errorCode);
     }
   }
 
@@ -192,4 +213,29 @@ const parseHelperResponse = (
     }
   }
   return null;
+};
+
+const resolveFallbackErrorCode = (
+  response: AppleNativeHelperResponse
+): string => {
+  if (response.userMessageCode?.startsWith("apple_native_")) {
+    return response.userMessageCode;
+  }
+  if (response.errorCode) {
+    return (
+      APPLE_NATIVE_FALLBACK_CODE_BY_HELPER_CODE.get(response.errorCode) ??
+      response.errorCode
+    );
+  }
+  return "apple_native_empty_translation";
+};
+
+const resolveThrownFallbackErrorCode = (message: string): string => {
+  if (message.includes("timed out")) {
+    return "apple_native_request_timeout";
+  }
+  if (message.includes("without JSON output")) {
+    return "apple_native_helper_failed";
+  }
+  return "apple_native_request_failed";
 };
