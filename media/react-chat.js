@@ -8050,6 +8050,7 @@
   var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
   var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
+    "apple-native",
     "google-gtx",
     "codex-gpt-5.4-mini",
     "codex-gpt-5.3-codex-spark",
