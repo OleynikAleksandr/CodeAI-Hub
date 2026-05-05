@@ -192,6 +192,19 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
       ? diagramModulesSourceAvailable
       : false;
   const helpMode = headerMode === "help";
+  const branchArtifacts = selectedBranchNode?.artifacts ?? [];
+  const branchKey = selectedBranchNode
+    ? `${selectedBranchNode.kind}:${selectedBranchNode.partId}:${selectedBranchNode.clusterId ?? ""}:${selectedBranchNode.nodeId}`
+    : null;
+  const [selectedBranchArtifactPath, setSelectedBranchArtifactPath] =
+    useState<string | null>(null);
+  useEffect(() => {
+    setSelectedBranchArtifactPath(branchArtifacts[0]?.path ?? null);
+  }, [branchKey]);
+  const selectedBranchArtifact =
+    branchArtifacts.find((item) => item.path === selectedBranchArtifactPath) ??
+    branchArtifacts[0] ??
+    null;
   const showSourceViewer =
     headerMode === "source" && sourceArtifact !== null;
   const showArtifactViewer =
@@ -231,11 +244,37 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
         : selectedBranchNode.kind === "cluster"
           ? "Cluster"
           : "Module";
+    if (!selectedBranchArtifact) {
+      return (
+        <div className="pm-placeholder">
+          <strong>{kindLabel}: {selectedBranchNode.label}</strong>
+          <br />
+          Draft artifacts are not available for this node yet.
+        </div>
+      );
+    }
     return (
-      <div className="pm-placeholder">
-        <strong>{kindLabel}: {selectedBranchNode.label}</strong>
-        <br />
-        Branch artifact surface will be available after the first Design session.
+      <div className="pm-details">
+        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+          {branchArtifacts.map((artifact) => (
+            <button
+              key={artifact.path}
+              onClick={() => setSelectedBranchArtifactPath(artifact.path)}
+              type="button"
+            >
+              {artifact.fileName}
+            </button>
+          ))}
+        </div>
+        <WorkflowArtifactViewer
+          description={`${kindLabel}: ${selectedBranchNode.label}`}
+          label={selectedBranchArtifact.fileName}
+          onClose={onSelectedArtifactClear}
+          path={selectedBranchArtifact.path}
+          refreshKey={artifactRefreshKey}
+          workspacePath={activeWorkspacePath ?? ""}
+          workspaceSlug={activeWorkspaceSlug ?? ""}
+        />
       </div>
     );
   }
@@ -348,6 +387,7 @@ interface SessionContentProps {
   readonly onStepStarted: (sessionId: string, intent: StageSessionIntent) => void;
   readonly pendingSessionCreate: { readonly providerTitle: string } | null;
   readonly preferredSessionId: string | null;
+  readonly selectedBranchNode: BranchNodeSelection | null;
   readonly showDescriptionHelp: boolean;
   readonly stepStartedIntent: StageSessionIntent | null;
   readonly workflowSnapshot: WorkflowStateSnapshot | null;
@@ -360,6 +400,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   onStepStarted,
   pendingSessionCreate,
   preferredSessionId,
+  selectedBranchNode,
   showDescriptionHelp,
   stepStartedIntent,
   workflowSnapshot,
@@ -372,7 +413,18 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
     : undefined;
   const nextIntent =
-    workflowSnapshot && workspacePath && workspaceSlug
+    selectedBranchNode?.session && workspacePath && workspaceSlug
+      ? {
+          providerId: selectedBranchNode.session.providerId,
+          providerSessionId: selectedBranchNode.session.providerSessionId,
+          workspacePath,
+          workspaceSlug,
+          initiativeSlug: workspaceSlug,
+          stage: selectedBranchNode.workflowPath ?? "diagram_modules",
+          sessionKind: "collector" as const,
+          runSlug: null,
+        }
+      : workflowSnapshot && workspacePath && workspaceSlug
       ? resolveStageSessionIntent(
           stageId,
           workflowSnapshot,

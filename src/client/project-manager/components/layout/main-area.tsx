@@ -137,7 +137,11 @@ export const MainArea: React.FC<MainAreaProps> = ({
       const detail = (event as CustomEvent).detail;
       const parsed = parseBranchNodeSelection(detail);
       if (parsed) {
+        setActiveTool("Diagram Modules");
+        setSelectedArtifact(null);
         setSelectedBranchNode(parsed);
+        setSettingsOpen(false);
+        setArtifactHeaderMode("artifacts");
       }
     };
     const onSettingsOpen = () => {
@@ -406,7 +410,10 @@ export const MainArea: React.FC<MainAreaProps> = ({
             activeTool={activeTool}
             onStepStarted={handleStepStarted}
             pendingSessionCreate={pendingSessionCreate}
-            preferredSessionId={preferredSessionId}
+            preferredSessionId={
+              selectedBranchNode?.session?.sessionId ?? preferredSessionId
+            }
+            selectedBranchNode={selectedBranchNode}
             showDescriptionHelp={showDescriptionHelpInSessionPanel}
             stepStartedIntent={stepStartedIntent}
             workflowSnapshot={workflowSnapshot}
