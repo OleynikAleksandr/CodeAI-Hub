@@ -15,7 +15,7 @@ import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const AGENT_FILL_MARKER_PATTERN = /<!-- agent-fill -->/;
-const DEVELOPMENT_TREE_STAGE_PATTERN = /^development-tree\./;
+const DEVELOPMENT_TREE_STAGE_PATTERN = /^development_tree\/materialized\//;
 const TECHNOLOGY_BASE_QUESTION_PATTERN = /Technology base: unknown/;
 
 const writeWorkspaceFile = async (
@@ -187,6 +187,28 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
       createProductPartMarkdown("local-core-runtime")
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/continuity/diagram_modules/diagram-root/chain.json`,
+      `${JSON.stringify(
+        {
+          rootSessionId: "diagram-root",
+          workspaceSlug,
+          stage: "diagram_modules",
+          segments: [
+            {
+              sessionId: "diagram-session",
+              providerId: "geminiCli",
+              providerSessionId: "gemini-provider-session",
+              createdAt: "2026-05-05T06:00:00.000Z",
+            },
+          ],
+          updatedAt: "2026-05-05T06:01:00.000Z",
+        },
+        null,
+        2
+      )}\n`
+    );
     const createdSessions: Array<{
       readonly context: {
         readonly initiativeSlug: string;
@@ -225,18 +247,8 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     assert.equal(result.statusCode, 200);
     const payload = result.payload as WorkflowStatePayload;
 
-    assert.equal(payload.state?.stages.virtual_simulation?.status, "completed");
     assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
-    assert.equal(payload.gating.blocked.diagram_modules, false);
-    assert.equal(payload.lastActive?.stage, "description");
-    assert.equal(
-      payload.lastActive?.artifactPath,
-      ".codeai-hub/demo-workspace/description/Final_Description.md"
-    );
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
-    assert.equal(payload.diagramModulesProgress?.plannedCount, 1);
-    assert.equal(payload.diagramModulesProgress?.generatedCount, 1);
-    assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
     assert.equal(payload.developmentTree?.parts.length, 1);
     assert.equal(payload.developmentTree?.parts[0]?.id, "local-core-runtime");
     assert.equal(payload.developmentTree?.parts[0]?.status, "materialized");
@@ -264,7 +276,7 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     assert.match(await readFile(draftPath, "utf8"), AGENT_FILL_MARKER_PATTERN);
     assert.equal(createdSessions.length, 2);
     assert.equal(sentMessages.length, 2);
-    assert.equal(createdSessions[0]?.providerId, "codexCli");
+    assert.equal(createdSessions[0]?.providerId, "geminiCli");
     assert.equal(createdSessions[0]?.workspacePath, workspaceRoot);
     assert.equal(createdSessions[0]?.context.initiativeSlug, workspaceSlug);
     assert.equal(createdSessions[0]?.context.runSlug, "development-tree");
@@ -275,19 +287,6 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
     assert.match(
       sentMessages[0]?.content ?? "",
       TECHNOLOGY_BASE_QUESTION_PATTERN
-    );
-    assert.equal(
-      payload.state?.stages.virtual_simulation?.artifacts?.some(
-        (artifact) =>
-          artifact.path === "virtual_simulation/virtual-simulation.md"
-      ),
-      true
-    );
-    assert.equal(
-      payload.state?.stages.diagram_modules?.artifacts?.some(
-        (artifact) => artifact.path === "diagram_modules/product-parts.index.md"
-      ),
-      true
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

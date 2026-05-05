@@ -5,6 +5,7 @@ import { DevelopmentTreeStateFacade } from "../../development-tree/development-t
 import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
 import { DevelopmentTreeNodeBootstrapFacade } from "../../development-tree/node-bootstrap/development-tree-node-bootstrap-facade";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
+import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -56,6 +57,26 @@ interface DevelopmentTreeAgentSessionOptions {
   readonly providerId: string;
   readonly technologyBase?: string;
 }
+
+const resolveLatestDiagramModulesProviderId = (
+  chains: readonly ContinuityChainSummary[]
+): string | null => {
+  let best: { readonly providerId: string; readonly updatedAt: string } | null =
+    null;
+  for (const chain of chains) {
+    if (chain.stage !== "diagram_modules") {
+      continue;
+    }
+    const providerId = chain.segments.at(-1)?.providerId;
+    if (!providerId) {
+      continue;
+    }
+    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
+      best = { providerId, updatedAt: chain.updatedAt };
+    }
+  }
+  return best?.providerId ?? null;
+};
 
 export class WorkflowStateService {
   private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
@@ -301,6 +322,8 @@ export class WorkflowStateService {
         ? {
             agentSessionOptions: {
               ...this.developmentTreeAgentSessions,
+              providerId: () =>
+                this.resolveDevelopmentTreeAgentProviderId(params),
               workspacePath: params.workspaceRoot,
               workspaceSlug: params.workspaceSlug,
             },
@@ -336,6 +359,21 @@ export class WorkflowStateService {
       .listSessions()
       .find((candidate) => candidate.initiativeSlug === workspaceSlug);
     return session?.workspacePath ?? null;
+  }
+
+  private async resolveDevelopmentTreeAgentProviderId(params: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<string> {
+    const fallbackProviderId = this.developmentTreeAgentSessions?.providerId;
+    if (!fallbackProviderId) {
+      return "";
+    }
+    const chains = await SessionContinuityFacade.readWorkspaceChains({
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    return resolveLatestDiagramModulesProviderId(chains) ?? fallbackProviderId;
   }
 }
 

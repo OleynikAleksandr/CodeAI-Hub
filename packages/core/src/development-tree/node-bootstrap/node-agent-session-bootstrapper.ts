@@ -16,7 +16,7 @@ export interface DevelopmentTreeAgentSessionGateway {
 
 export interface NodeAgentSessionBootstrapperOptions {
   readonly gateway: DevelopmentTreeAgentSessionGateway;
-  readonly providerId: string;
+  readonly providerId: string | (() => Promise<string> | string);
   readonly technologyBase?: string;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -57,6 +57,11 @@ const createNodeWorkflowPath = (
     workspaceSlug
   ).join("/");
 
+const resolveProviderId = async (
+  providerId: NodeAgentSessionBootstrapperOptions["providerId"]
+): Promise<string> =>
+  typeof providerId === "function" ? await providerId() : providerId;
+
 export class NodeAgentSessionBootstrapper {
   private readonly firstMessageBuilder = new NodeFirstMessageBuilder();
 
@@ -65,8 +70,9 @@ export class NodeAgentSessionBootstrapper {
     options: NodeAgentSessionBootstrapperOptions
   ): Promise<NodeAgentSessionBootstrapResult> {
     const stage = createNodeWorkflowPath(node, options.workspaceSlug);
+    const providerId = await resolveProviderId(options.providerId);
     const session = await options.gateway.createSessionForWorkflow({
-      providerId: options.providerId,
+      providerId,
       workspacePath: options.workspacePath,
       context: {
         initiativeSlug: options.workspaceSlug,
