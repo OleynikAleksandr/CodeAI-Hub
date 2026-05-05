@@ -61,3 +61,26 @@ test("main-area session content scopes runtime fallback by selected development-
   assert.equal(nullIntentIndex > branchIntentIndex, true);
   assert.equal(stageIntentIndex > nullIntentIndex, true);
 });
+
+test("main-area session content lets selected development-tree node outrank stale step-started intent", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  const selectedNodeIntentIndex = source.indexOf(
+    "const sessionInitialDialogIntent = selectedBranchNode"
+  );
+  const nodeWinsIndex = source.indexOf(
+    "? initialIntent\n    : stepStartedIntent ?? initialIntent;",
+    selectedNodeIntentIndex
+  );
+  const propIndex = source.indexOf(
+    "initialDialogIntent={sessionInitialDialogIntent}",
+    nodeWinsIndex
+  );
+  const stalePropIndex = source.indexOf(
+    "initialDialogIntent={stepStartedIntent ?? initialIntent}"
+  );
+  assert.equal(selectedNodeIntentIndex >= 0, true);
+  assert.equal(nodeWinsIndex > selectedNodeIntentIndex, true);
+  assert.equal(propIndex > nodeWinsIndex, true);
+  assert.equal(stalePropIndex, -1);
+});

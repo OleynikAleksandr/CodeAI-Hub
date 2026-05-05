@@ -451,6 +451,9 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     intentRef.current = nextIntent;
     return nextIntent;
   }, [nextIntent]);
+  const sessionInitialDialogIntent = selectedBranchNode
+    ? initialIntent
+    : stepStartedIntent ?? initialIntent;
 
   if (localizationSyncStatus.busy) {
     return renderLocalizationSyncBlockedState(localizationSyncStatus.message);
@@ -483,7 +486,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   return (
     <ProjectManagerSessionView
-      initialDialogIntent={stepStartedIntent ?? initialIntent}
+      initialDialogIntent={sessionInitialDialogIntent}
       pendingSessionCreate={pendingSessionCreate}
       preferredSessionId={preferredSessionId}
       startupStage={sessionStartupStage}
