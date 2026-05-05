@@ -5,6 +5,7 @@ export type WorkflowStageId =
 
 type WorkflowPromptPackInput = {
   readonly artifactLanguage?: string;
+  readonly chatLanguage?: string;
   readonly stage: WorkflowStageId;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -38,6 +39,7 @@ const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   diagram_modules: "Diagram Modules",
 };
 const DEFAULT_ARTIFACT_LANGUAGE = "en";
+const DEFAULT_CHAT_LANGUAGE = "en";
 const LEGACY_SOURCE_LANGUAGE = "source";
 
 const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
@@ -65,6 +67,47 @@ const normalizeArtifactLanguage = (value: string): string => {
   return normalized === LEGACY_SOURCE_LANGUAGE
     ? DEFAULT_ARTIFACT_LANGUAGE
     : normalized;
+};
+
+const normalizeRuntimeLanguage = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return null;
+  }
+  return normalized === LEGACY_SOURCE_LANGUAGE
+    ? DEFAULT_CHAT_LANGUAGE
+    : normalized;
+};
+
+const isRecordValue = (
+  value: unknown
+): value is Readonly<Record<string, unknown>> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+export const resolveWorkflowChatLanguage = (
+  payload: unknown
+): string => {
+  const payloadRecord = isRecordValue(payload) ? payload : null;
+  const settings = isRecordValue(payloadRecord?.settings)
+    ? payloadRecord.settings
+    : null;
+  const general = isRecordValue(settings?.general) ? settings.general : null;
+  const localization = isRecordValue(general?.localization)
+    ? general.localization
+    : null;
+  const categories = isRecordValue(localization?.categories)
+    ? localization.categories
+    : null;
+
+  return (
+    normalizeRuntimeLanguage(categories?.reasoning) ??
+    normalizeRuntimeLanguage(categories?.messagesForTheUser) ??
+    normalizeRuntimeLanguage(categories?.systemFeedback) ??
+    DEFAULT_CHAT_LANGUAGE
+  );
 };
 
 const normalizeRelativePath = (value: string): string => {
@@ -224,25 +267,42 @@ const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
   ].join("\n");
 };
 
-const buildArtifactLanguageBlock = (
-  stage: WorkflowStageId,
-  artifactLanguage: string | undefined
-): string => {
+const buildRuntimeLanguageBlock = (params: {
+  readonly artifactLanguage: string | undefined;
+  readonly chatLanguage: string | undefined;
+  readonly stage: WorkflowStageId;
+}): string => {
+  const normalizedChatLanguage =
+    normalizeRuntimeLanguage(params.chatLanguage) ?? DEFAULT_CHAT_LANGUAGE;
   const normalizedArtifactLanguage =
-    normalizeArtifactLanguage(artifactLanguage ?? DEFAULT_ARTIFACT_LANGUAGE);
+    normalizeArtifactLanguage(params.artifactLanguage ?? DEFAULT_ARTIFACT_LANGUAGE);
   const lines = [
-    "Artifacts for the User language (runtime directive):",
-    `- Target language code: \`${normalizedArtifactLanguage}\`.`,
-    `- Write the final user-facing artifact and brief user-facing chat updates in \`${normalizedArtifactLanguage}\`.`,
-    "- Do not rewrite internal instructions to match this language.",
-    stage === "diagram_modules"
+    "Workflow runtime language contract:",
+    `- Chat language code: \`${normalizedChatLanguage}\` (from Settings > General > Reasoning).`,
+    `- Use \`${normalizedChatLanguage}\` for brief user-facing chat updates and status replies.`,
+    `- Artifact prose language code: \`${normalizedArtifactLanguage}\` (from Settings > General > Artifacts for the User).`,
+    `- Write user-facing prose inside created or edited artifacts in \`${normalizedArtifactLanguage}\`.`,
+    "- English internal instructions, examples, and templates are format-only; do not infer English output language from them.",
+    "- Do not rewrite internal instructions, code identifiers, canonical headings, field names, ids, statuses, DSL markers, file names, or structural tokens to match either language.",
+    params.stage === "diagram_modules"
       ? "- Keep Product Part / Cluster / Module names and titles, contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical English form."
       : null,
-    stage === "diagram_modules"
-      ? "- Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and brief user-facing chat updates."
+    params.stage === "diagram_modules"
+      ? "- Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and user-facing artifact notes."
       : null,
   ];
   return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
+};
+
+const buildRuntimeLanguageReminder = (params: {
+  readonly artifactLanguage: string | undefined;
+  readonly chatLanguage: string | undefined;
+}): string => {
+  const normalizedChatLanguage =
+    normalizeRuntimeLanguage(params.chatLanguage) ?? DEFAULT_CHAT_LANGUAGE;
+  const normalizedArtifactLanguage =
+    normalizeArtifactLanguage(params.artifactLanguage ?? DEFAULT_ARTIFACT_LANGUAGE);
+  return `Final language reminder: user-facing chat stays in \`${normalizedChatLanguage}\`; artifact prose stays in \`${normalizedArtifactLanguage}\`; English examples/templates are format-only.`;
 };
 
 const shouldIncludeTemplateHint = (
@@ -294,11 +354,19 @@ export const buildWorkflowPromptPack = (
 
   return {
     content: [
+      buildRuntimeLanguageBlock({
+        artifactLanguage: params.artifactLanguage,
+        chatLanguage: params.chatLanguage,
+        stage: params.stage,
+      }),
       prompt,
-      buildArtifactLanguageBlock(params.stage, params.artifactLanguage),
       buildChangeSummaryBlock(params.stage),
       instructions,
       `Output file name: \`${fileName}\``,
+      buildRuntimeLanguageReminder({
+        artifactLanguage: params.artifactLanguage,
+        chatLanguage: params.chatLanguage,
+      }),
     ]
       .filter((entry): entry is string => Boolean(entry))
       .join("\n\n"),

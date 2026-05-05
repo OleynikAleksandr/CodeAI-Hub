@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { buildWorkflowPromptPack } from "./prompt-pack-builder";
 
-test("virtual simulation prompt pack omits template hint", () => {
+test("virtual simulation prompt pack separates chat and artifact languages", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "ru",
+    chatLanguage: "uk",
     stage: "virtual_simulation",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
@@ -14,17 +15,28 @@ test("virtual simulation prompt pack omits template hint", () => {
   });
 
   assert.equal(
+    pack.content.startsWith("Workflow runtime language contract:"),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Chat language code: `uk` (from Settings > General > Reasoning)."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Artifact prose language code: `ru` (from Settings > General > Artifacts for the User)."
+    ),
+    true
+  );
+  assert.equal(
     pack.content.includes("Build the artifact from `Final_Description.md`."),
     true
   );
   assert.equal(
-    pack.content.includes("Artifacts for the User language (runtime directive):"),
-    true
-  );
-  assert.equal(pack.content.includes("Target language code: `ru`."), true);
-  assert.equal(
     pack.content.includes(
-      "Write the final user-facing artifact and brief user-facing chat updates in `ru`."
+      "Final language reminder: user-facing chat stays in `uk`; artifact prose stays in `ru`; English examples/templates are format-only."
     ),
     true
   );
@@ -46,12 +58,18 @@ test("description prompt pack keeps template hint", () => {
     pack.content.includes("Template (absolute): `/tmp/description-template.md`"),
     true
   );
-  assert.equal(pack.content.includes("Target language code: `uk`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Artifact prose language code: `uk` (from Settings > General > Artifacts for the User)."
+    ),
+    true
+  );
 });
 
 test("diagram modules prompt pack targets product part index and omits generic template hint", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "de",
+    chatLanguage: "it",
     stage: "diagram_modules",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
@@ -95,7 +113,18 @@ test("diagram modules prompt pack targets product part index and omits generic t
     ),
     true
   );
-  assert.equal(pack.content.includes("Target language code: `de`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Chat language code: `it` (from Settings > General > Reasoning)."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Artifact prose language code: `de` (from Settings > General > Artifacts for the User)."
+    ),
+    true
+  );
   assert.equal(
     pack.content.includes(
       "Keep Product Part / Cluster / Module names and titles, contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical English form."
@@ -104,7 +133,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
   assert.equal(
     pack.content.includes(
-      "Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and brief user-facing chat updates."
+      "Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and user-facing artifact notes."
     ),
     true
   );

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { resolveWorkflowChatLanguage } from "./prompt-pack-builder";
 
 const installWindowStub = (): void => {
   if (!("window" in globalThis)) {
@@ -22,6 +23,42 @@ const installWindowStub = (): void => {
     setTimeout,
   });
 };
+
+test("workflow chat language resolves from Settings General Reasoning", () => {
+  assert.equal(
+    resolveWorkflowChatLanguage({
+      settings: {
+        general: {
+          localization: {
+            categories: {
+              artifactsForTheUser: "uk",
+              messagesForTheUser: "de",
+              reasoning: "ru",
+            },
+          },
+        },
+      },
+    }),
+    "ru"
+  );
+});
+
+test("workflow chat language falls back to messages language when reasoning is unavailable", () => {
+  assert.equal(
+    resolveWorkflowChatLanguage({
+      settings: {
+        general: {
+          localization: {
+            categories: {
+              messagesForTheUser: "de",
+            },
+          },
+        },
+      },
+    }),
+    "de"
+  );
+});
 
 test(
   "artifact language falls back to localization bootstrap snapshot when settings payload is unavailable",
