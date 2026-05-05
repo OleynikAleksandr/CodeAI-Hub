@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.140] - 2026-05-05
+### Fixed
+- **Development Tree node session tabs now show only the node name.** Tabs for `development_tree/...` sessions no longer expose the full materialized path and instead render the final Product Part, Cluster, or Module segment in readable Title Case.
+- **Development Tree node-agent first prompts now carry the configured reasoning language.** New node bootstrap prompts include the response-language instruction from Settings > General > Reasoning, with the persisted default language as fallback.
+
+### Tests
+- **Session polish is covered by targeted UI/Core tests.** Tests now lock short tab labels, prompt-level response-language text, and settings-backed language resolution during node session bootstrap.
+
 ## [1.2.139] - 2026-05-05
 ### Fixed
 - **Development Tree node selection now clears stale Diagram Modules session state.** Product Part, Cluster, and Module clicks now outrank an older Diagram Modules `stepStartedIntent`, and the Project Manager session surface ignores live dialog overrides whose stage no longer matches the selected node `development_tree/...` startup stage.
