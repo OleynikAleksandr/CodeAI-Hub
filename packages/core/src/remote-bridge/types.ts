@@ -10,6 +10,7 @@ import type {
   TemplateUpdateResolutionResult,
 } from "../templates/template-update-resolution-service";
 import type { CommandErrorPayload } from "../workspace-runtime/workspace-wire-types";
+import type { SessionSpeechStateEvent } from "./handlers/session-speech-request-handler";
 import type {
   WorkbenchArtifactReadPayload,
   WorkbenchIndexFile,
@@ -353,6 +354,7 @@ export type BridgeEvent =
   | CoreBridgeEvent
   | DialogBridgeEvent
   | ProjectBridgeEvent
+  | SessionSpeechStateEvent
   | SessionBridgeEvent
   | WorkspaceBridgeEvent;
 
@@ -378,6 +380,8 @@ type CoreIncomingMessage =
         readonly workspacePath?: string | null;
       };
     }
+  | { readonly type: "session:speech:speak-message"; readonly payload: unknown }
+  | { readonly type: "session:speech:stop"; readonly payload: unknown }
   | {
       readonly type: "settings:update-provider";
       readonly payload: {

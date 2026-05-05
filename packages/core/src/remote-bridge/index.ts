@@ -133,6 +133,7 @@ export class RemoteBridge {
       projectHandler: this.bootstrap.projectHandler,
       sessionHandler: this.bootstrap.sessionHandler,
       sessionManager: this.sessionManager,
+      sessionSpeechHandler: this.bootstrap.sessionSpeechHandler,
       settingsHandler: this.bootstrap.settingsHandler,
       workflowRuntime: this.bootstrap.workflowRuntime,
       workspaceRuntime: this.bootstrap.workspaceRuntime,

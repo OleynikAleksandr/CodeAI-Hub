@@ -12,6 +12,7 @@ import type { DialogListService } from "./handlers/dialog-list-service";
 import type { DialogOpenService } from "./handlers/dialog-open-service";
 import type { ProjectRequestHandler } from "./handlers/project-request-handler";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
+import type { SessionSpeechRequestHandler } from "./handlers/session-speech-request-handler";
 import type { SettingsRequestHandler } from "./handlers/settings-request-handler";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-router";
@@ -33,6 +34,7 @@ interface RemoteBridgeMessageRouterDependencies {
   readonly projectHandler: ProjectRequestHandler;
   readonly sessionHandler: SessionRequestHandler;
   readonly sessionManager: SessionManager;
+  readonly sessionSpeechHandler?: SessionSpeechRequestHandler;
   readonly settingsHandler: SettingsRequestHandler;
   readonly workflowRuntime: WorkflowRuntime;
   readonly workspaceRuntime: WorkspaceRuntimeFacade;
@@ -179,6 +181,12 @@ export class RemoteBridgeMessageRouter {
         break;
       case "session:stop":
         await this.handleSessionStopMessage(incoming.payload);
+        break;
+      case "session:speech:speak-message":
+        this.deps.sessionSpeechHandler?.handleSpeakMessage(incoming.payload);
+        break;
+      case "session:speech:stop":
+        this.deps.sessionSpeechHandler?.handleStop(incoming.payload);
         break;
       case "session:refreshUsageLimits": {
         const refreshPayload = incoming.payload as typeof incoming.payload & {

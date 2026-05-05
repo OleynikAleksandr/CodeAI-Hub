@@ -91,3 +91,39 @@ test("RemoteBridgeMessageRouter exposes template update commands and results", a
     "bridge event contract must include template update resolution result"
   );
 });
+
+test("RemoteBridgeMessageRouter exposes session speech commands and state events", async () => {
+  const [indexSource, routerSource, typesSource] = await Promise.all([
+    readFile(INDEX_SOURCE_PATH, "utf8"),
+    readFile(ROUTER_SOURCE_PATH, "utf8"),
+    readFile(TYPES_SOURCE_PATH, "utf8"),
+  ]);
+
+  assert.equal(
+    indexSource.includes(
+      "sessionSpeechHandler: this.bootstrap.sessionSpeechHandler"
+    ),
+    true,
+    "RemoteBridge must wire the session speech handler into the message router"
+  );
+  assert.equal(
+    routerSource.includes('case "session:speech:speak-message":'),
+    true,
+    "message router must handle session speech speak commands"
+  );
+  assert.equal(
+    routerSource.includes('case "session:speech:stop":'),
+    true,
+    "message router must handle session speech stop commands"
+  );
+  assert.equal(
+    typesSource.includes('readonly type: "session:speech:speak-message"'),
+    true,
+    "incoming bridge contract must include session speech speak command"
+  );
+  assert.equal(
+    typesSource.includes("SessionSpeechStateEvent"),
+    true,
+    "bridge event contract must include session speech state events"
+  );
+});

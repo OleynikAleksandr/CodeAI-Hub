@@ -2,6 +2,7 @@ import type { CoreConfig } from "../config";
 import type { ProviderRegistry } from "../provider-registry";
 import type { ProjectRegistry } from "../services/project-registry/project-registry";
 import type { SessionManager } from "../session-manager";
+import { SessionSpeechService } from "../session-speech/session-speech-service";
 import type { Logger } from "../telemetry/logger";
 import { UnifiedSessionStorage } from "../unified-session/storage";
 import { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
@@ -11,6 +12,7 @@ import { DialogListService } from "./handlers/dialog-list-service";
 import { DialogOpenService } from "./handlers/dialog-open-service";
 import { ProjectRequestHandler } from "./handlers/project-request-handler";
 import { SessionRequestHandler } from "./handlers/session-request-handler";
+import { SessionSpeechRequestHandler } from "./handlers/session-speech-request-handler";
 import { SettingsRequestHandler } from "./handlers/settings-request-handler";
 import { SystemRequestHandler } from "./handlers/system-request-handler";
 import { WorkflowEventsService } from "./handlers/workflow-events-service";
@@ -30,6 +32,7 @@ export interface RemoteBridgeBootstrapResult {
   readonly dialogOpenService: DialogOpenService;
   readonly projectHandler: ProjectRequestHandler;
   readonly sessionHandler: SessionRequestHandler;
+  readonly sessionSpeechHandler: SessionSpeechRequestHandler;
   readonly sessionStorage: UnifiedSessionStorage;
   readonly settingsHandler: SettingsRequestHandler;
   readonly systemHandler: SystemRequestHandler;
@@ -97,6 +100,12 @@ export const createRemoteBridgeBootstrap = (options: {
         payload: options.buildInitialState(),
       }),
   });
+  const sessionSpeechHandler = new SessionSpeechRequestHandler({
+    broadcaster: (event) => {
+      options.broadcaster(event as BridgeEvent);
+    },
+    service: new SessionSpeechService({ logger: options.logger }),
+  });
   const developmentTreeProviderId = resolveDevelopmentTreeBootstrapProviderId(
     options.providerRegistry
   );
@@ -141,6 +150,7 @@ export const createRemoteBridgeBootstrap = (options: {
     dialogOpenService,
     projectHandler,
     sessionHandler,
+    sessionSpeechHandler,
     sessionStorage,
     settingsHandler,
     systemHandler,
