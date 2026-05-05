@@ -144,3 +144,14 @@ Diagram Modules artifact templates need an explicit boundary:
 - `packages/agents/description-agent/assets/description-collector-prompt.md`
 - `packages/core/src/templates/source/virtual-simulation-prompt.md`
 - `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md`
+
+---
+
+## 8. Verification Evidence
+
+2026-05-05 targeted verification passed for the workflow prompt language contract:
+
+- `node --import tsx --test src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts src/client/project-manager/services/description-submit-service.localization.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` — 10/10 tests passed.
+- `node --import tsx --test packages/core/src/templates/template-sync-service.test.ts packages/core/src/remote-bridge/handlers/idea-contract-service.virtual-simulation.test.ts packages/core/src/remote-bridge/handlers/idea-contract-service.diagram-stages.test.ts` — 7/7 tests passed.
+- `npm run typecheck:webview` — passed.
+- `npm run build --workspace=@codeai-hub/core` — passed.
