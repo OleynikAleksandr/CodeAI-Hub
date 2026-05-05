@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.146] - 2026-05-05
+### Fixed
+- **Development Tree Product Part prompts now receive exact owner Markdown in full.** When `diagram_modules/product-parts/<part-id>.md` exists for the selected Product Part node, Core sends the complete file as protected context instead of letting scoped snippet ranking reduce it to a heading.
+- **Scoped context ranking now stays reserved for indirect sources.** `Final_Description.md`, `virtual-simulation.md`, and `product-parts.index.md` still provide bounded excerpts, while direct owner Markdown cannot be displaced by broad anchor matches.
+
+### Tests
+- **Exact owner context is covered by oracle-style Core tests.** The new regression test independently reads and parses real-shape source artifacts, assembles expected Product Part / Cluster / Module context, and compares that expectation against the first prompt emitted by Core Runtime.
+
 ## [1.2.145] - 2026-05-05
 ### Fixed
 - **Workflow stage directories are now prepared by Core Runtime before agent sessions start.** Description, Virtual Simulation, and Diagram Modules sessions get their parent artifact directories pre-created before provider session creation, so the first prompt cannot arrive before the target directory exists.
