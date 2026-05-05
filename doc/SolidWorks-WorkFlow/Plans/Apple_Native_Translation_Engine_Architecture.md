@@ -236,6 +236,15 @@ Targeted checks:
 - Core/session translation tests cover readiness failure metadata.
 - Settings UI tests cover selector availability, missing-pack message, and `Recheck`.
 
+Implementation verification on 2026-05-05:
+
+- Swift helper: `./scripts/build-apple-translation-helper.sh` passed.
+- Swift live tests: `APPLE_TRANSLATION_HELPER_RUN_LIVE_TESTS=1 swift test --package-path native/apple-translation-helper` passed 6 tests.
+- TypeScript builds: `@codeai-hub/translation`, `@codeai-hub/localization`, and `@codeai-hub/core` passed.
+- Webview settings surface: `npm run typecheck:webview` passed.
+- Node tests: translation facade/Core translation factory/session translation facade passed 22 tests; localization materializer/bootstrap store passed 9 tests.
+- Apple Native smoke: `en -> ru` returned `translated`; `en -> hi` returned fallback `apple_native_language_pack_missing`.
+
 Manual user workflow:
 
 1. Select `Apple Native - On-Device` as `UI Translation Engine`.
