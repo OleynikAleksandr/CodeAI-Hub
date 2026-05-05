@@ -10,11 +10,14 @@ const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
 const FINAL_DESCRIPTION_CONTEXT_PATTERN =
   /Project Manager coordinates artifacts and sessions/;
 const VIRTUAL_SIMULATION_CONTEXT_PATTERN =
-  /The user selects a workflow node and reviews its working session/;
+  /The Artifact Workspace user reviews its working session/;
 const DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN =
   /project-manager owns the Project Manager product part/;
 const PRODUCT_PART_CONTEXT_PATTERN =
   /Artifact Workspace belongs to Project Manager/;
+const CORE_RUNTIME_CONTEXT_PATTERN = /Core Runtime manages provider processes/;
+const WORKFLOW_STEP_CONTEXT_PATTERN =
+  /Workflow Step Navigation chooses current step/;
 
 const writeWorkspaceArtifact = async (
   workspacePath: string,
@@ -117,7 +120,7 @@ test("NodeAgentSessionBootstrapper reads response language from settings reasoni
   }
 });
 
-test("NodeAgentSessionBootstrapper sends existing workflow artifacts in the first prompt", async () => {
+test("NodeAgentSessionBootstrapper sends scoped workflow artifacts in the first prompt", async () => {
   const workspacePath = await mkdtemp(
     path.join(os.tmpdir(), "node-agent-workspace-")
   );
@@ -127,22 +130,44 @@ test("NodeAgentSessionBootstrapper sends existing workflow artifacts in the firs
     await writeWorkspaceArtifact(
       workspacePath,
       `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
-      "Project Manager coordinates artifacts and sessions."
+      [
+        "## Project Manager",
+        "Project Manager coordinates artifacts and sessions.",
+        "## Core Runtime",
+        "Core Runtime manages provider processes.",
+      ].join("\n")
     );
     await writeWorkspaceArtifact(
       workspacePath,
       `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
-      "The user selects a workflow node and reviews its working session."
+      [
+        "## Artifact Workspace",
+        "The Artifact Workspace user reviews its working session.",
+        "## Provider Console",
+        "The provider console streams runtime output.",
+      ].join("\n")
     );
     await writeWorkspaceArtifact(
       workspacePath,
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
-      "project-manager owns the Project Manager product part."
+      [
+        "Product Part: project-manager",
+        "project-manager owns the Project Manager product part.",
+        "Product Part: core-runtime",
+        "core-runtime owns the Core Runtime product part.",
+      ].join("\n")
     );
     await writeWorkspaceArtifact(
       workspacePath,
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
-      "Artifact Workspace belongs to Project Manager."
+      [
+        "Product Part: project-manager",
+        "Cluster: workflow-artifact-ui",
+        "Module: artifact-workspace",
+        "Artifact Workspace belongs to Project Manager.",
+        "Module: workflow-step-navigation",
+        "Workflow Step Navigation chooses current step.",
+      ].join("\n")
     );
 
     await new NodeAgentSessionBootstrapper().bootstrapNode(
@@ -176,6 +201,8 @@ test("NodeAgentSessionBootstrapper sends existing workflow artifacts in the firs
     assert.match(firstMessage, VIRTUAL_SIMULATION_CONTEXT_PATTERN);
     assert.match(firstMessage, DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN);
     assert.match(firstMessage, PRODUCT_PART_CONTEXT_PATTERN);
+    assert.doesNotMatch(firstMessage, CORE_RUNTIME_CONTEXT_PATTERN);
+    assert.doesNotMatch(firstMessage, WORKFLOW_STEP_CONTEXT_PATTERN);
   } finally {
     await rm(workspacePath, { recursive: true, force: true });
   }

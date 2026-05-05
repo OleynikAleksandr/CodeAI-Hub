@@ -6,6 +6,10 @@ import {
   NodeFirstMessageBuilder,
   type NodePromptArtifactContextEntry,
 } from "./node-first-message-builder";
+import {
+  NodePromptContextExtractor,
+  type NodePromptSourceArtifact,
+} from "./node-prompt-context-extractor";
 
 export interface DevelopmentTreeAgentSessionGateway {
   readonly createSessionForWorkflow: (options: {
@@ -42,7 +46,6 @@ export interface NodeAgentSessionBootstrapResult {
 
 const CODEAI_HUB_SEGMENT = ".codeai-hub";
 const DEFAULT_RESPONSE_LANGUAGE = "en";
-const MAX_ARTIFACT_CONTEXT_CHARS = 8000;
 const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
 
 const resolveSettingsPath = (): string =>
@@ -138,31 +141,11 @@ const createWorkflowArtifactSpecs = (
   },
 ];
 
-const createArtifactEntry = (
-  label: string,
-  relativePath: string,
-  rawContent: string
-): NodePromptArtifactContextEntry | null => {
-  const content = rawContent.trim();
-  if (!content) {
-    return null;
-  }
-  const truncated = content.length > MAX_ARTIFACT_CONTEXT_CHARS;
-  return {
-    content: truncated
-      ? content.slice(0, MAX_ARTIFACT_CONTEXT_CHARS).trimEnd()
-      : content,
-    label,
-    relativePath,
-    truncated,
-  };
-};
-
 const readArtifactContext = async (
   node: DevelopmentTreeDetectedNode,
   options: NodeAgentSessionBootstrapperOptions
 ): Promise<readonly NodePromptArtifactContextEntry[]> => {
-  const entries: NodePromptArtifactContextEntry[] = [];
+  const artifacts: NodePromptSourceArtifact[] = [];
   for (const spec of createWorkflowArtifactSpecs(
     options.workspaceSlug,
     node.partId
@@ -172,19 +155,19 @@ const readArtifactContext = async (
         path.join(options.workspacePath, spec.relativePath),
         "utf8"
       );
-      const entry = createArtifactEntry(
-        spec.label,
-        spec.relativePath,
-        rawContent
-      );
-      if (entry) {
-        entries.push(entry);
+      const content = rawContent.trim();
+      if (content) {
+        artifacts.push({
+          content,
+          label: spec.label,
+          relativePath: spec.relativePath,
+        });
       }
     } catch {
       // Optional context artifact is not available yet.
     }
   }
-  return entries;
+  return new NodePromptContextExtractor().extract({ artifacts, node });
 };
 
 export class NodeAgentSessionBootstrapper {

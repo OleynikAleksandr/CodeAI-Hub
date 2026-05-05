@@ -16,6 +16,8 @@ const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
   /User communication language: ru \(from Settings > General > Reasoning\)\. Translate and communicate with the user in this language\./;
 const ARTIFACT_CONTEXT_RULE_PATTERN =
   /Do not ask the user to re-explain information already present here\./;
+const SCOPED_CONTEXT_HEADING_PATTERN =
+  /Scoped workflow context \(read before asking the user\):/;
 const FINAL_DESCRIPTION_HEADING_PATTERN = /### Final Description/;
 const PROJECT_MANAGER_CONTEXT_PATTERN = /Project Manager coordinates sessions/;
 const PRODUCT_PART_ARTIFACT_PATH_PATTERN =
@@ -84,7 +86,7 @@ test("NodeFirstMessageBuilder maps product part and cluster draft files", () => 
   ]);
 });
 
-test("NodeFirstMessageBuilder includes existing workflow artifacts as prior context", () => {
+test("NodeFirstMessageBuilder includes scoped workflow artifacts as prior context", () => {
   const result = new NodeFirstMessageBuilder().build({
     artifactContext: [
       {
@@ -106,6 +108,7 @@ test("NodeFirstMessageBuilder includes existing workflow artifacts as prior cont
     technologyBase: "TypeScript",
   });
 
+  assert.match(result.content, SCOPED_CONTEXT_HEADING_PATTERN);
   assert.match(result.content, ARTIFACT_CONTEXT_RULE_PATTERN);
   assert.match(result.content, FINAL_DESCRIPTION_HEADING_PATTERN);
   assert.match(result.content, PROJECT_MANAGER_CONTEXT_PATTERN);
