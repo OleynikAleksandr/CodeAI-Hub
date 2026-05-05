@@ -245,6 +245,15 @@ Implementation verification on 2026-05-05:
 - Node tests: translation facade/Core translation factory/session translation facade passed 22 tests; localization materializer/bootstrap store passed 9 tests.
 - Apple Native smoke: `en -> ru` returned `translated`; `en -> hi` returned fallback `apple_native_language_pack_missing`.
 
+Release verification on 2026-05-05:
+
+- Release metadata was prepared for `1.2.151` after the local `1.2.150` VSIX candidate was superseded to avoid VS Code extension caching.
+- `./scripts/build-all.sh` passed and produced `1.2.151` provider, Core, UI, and CEF launcher tarballs in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+- macOS Core runtime packaging compiled the Swift Apple Translation helper and staged it at `app/native/apple-translation-helper/.build/release/apple-translation-helper`.
+- The generated `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.151.tar.bz2` contains the executable Apple Translation helper at the runtime path used by Core.
+- `./scripts/build-release.sh --use-current-version` passed for `1.2.151`, including architecture check, root type-check, compile, SDK exclusions, local artefact validation, markdown link check, duplication advisory check, VSIX packaging, and VSIX runtime package surface verification.
+- Final user-test artifact: `codeai-hub-1.2.151.vsix` in the repository root, size `3.0M`.
+
 Manual user workflow:
 
 1. Select `Apple Native - On-Device` as `UI Translation Engine`.
