@@ -101,6 +101,19 @@ test("diagram modules prompt pack targets product part index and omits generic t
     prompt: "",
     questionnairePath:
       ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
+    sourceArtifacts: [
+      {
+        content: "# Final Description\n\nDescription source.\n",
+        label: "Final_Description.md",
+        relativePath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+      },
+      {
+        content: "# Virtual Simulation\n\nSimulation source.\n",
+        label: "virtual-simulation.md",
+        relativePath:
+          ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
+      },
+    ],
     templatePath: "/tmp/diagram-modules-prompt.md",
   });
 
@@ -136,6 +149,22 @@ test("diagram modules prompt pack targets product part index and omits generic t
     pack.content.includes(
       "virtual-simulation.md (relative): `.codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md`"
     ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("### Final_Description.md"),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Description source."),
+    true
+  );
+  assert.equal(
+    pack.content.includes("### virtual-simulation.md"),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Simulation source."),
     true
   );
   assert.equal(

@@ -290,16 +290,39 @@ const readWorkflowSourceArtifacts = async (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }): Promise<readonly WorkflowSourceArtifactPayload[]> => {
-  if (params.stage !== "virtual_simulation") {
+  if (params.stage === "description") {
     return [];
   }
-  const sourceArtifact = await readWorkflowSourceArtifact({
-    label: "Final_Description.md",
-    relativePath: params.questionnairePath,
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-  });
-  return sourceArtifact ? [sourceArtifact] : [];
+  const sourceDescriptors =
+    params.stage === "virtual_simulation"
+      ? [
+          {
+            label: "Final_Description.md",
+            relativePath: params.questionnairePath,
+          },
+        ]
+      : [
+          {
+            label: "Final_Description.md",
+            relativePath: `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`,
+          },
+          {
+            label: "virtual-simulation.md",
+            relativePath: `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+          },
+        ];
+  const sourceArtifacts = await Promise.all(
+    sourceDescriptors.map((descriptor) =>
+      readWorkflowSourceArtifact({
+        ...descriptor,
+        workspacePath: params.workspacePath,
+        workspaceSlug: params.workspaceSlug,
+      })
+    )
+  );
+  return sourceArtifacts.filter(
+    (artifact): artifact is WorkflowSourceArtifactPayload => Boolean(artifact)
+  );
 };
 
 const createDescriptionSession = async (params: {
