@@ -26,6 +26,8 @@
   "settings.localization.translation_engine.option.codex_gpt54_mini": "OpenAI Codex · GPT-5.4 Mini",
   "settings.localization.translation_engine.option.codex_gpt53_spark": "OpenAI Codex · GPT-5.3 Codex Spark",
   "settings.localization.translation_engine.option.anthropic_claude_haiku_4_5": "Anthropic Claude · Haiku 4.5",
+  "settings.localization.translation_engine.option.apple_native": "Apple Native - On-Device",
+  "settings.localization.apple_native.recheck_label": "Recheck",
   "settings.localization.glossary_protection.label": "Glossary protection",
   "settings.localization.do_not_translate_terms.title": "Do-not-translate terms",
   "settings.localization.do_not_translate_terms.english_term_label": "English term",

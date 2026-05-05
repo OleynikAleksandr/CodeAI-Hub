@@ -8,6 +8,8 @@
   "settings.localization.ui_translation_engine.description": "Engine used for interface localization bundle materialization and the browser bootstrap payload.",
   "settings.localization.reasoning_translation_engine.description": "Engine used for live translation of visible Thinking and Reasoning bubbles. Google GTX Free is recommended for the most stable live translation.",
   "settings.localization.reasoning_translation_engine.warning": "Provider-backed engines can improve reasoning translation quality, but under higher parallel activity they may increase runtime load and cause visible reasoning to fall back to source English.",
+  "settings.localization.apple_native.setup_hint": "Apple Native translates on this Mac without provider tokens when macOS, Xcode, the helper, and the selected language packs are ready.",
+  "settings.localization.apple_native.language_pack_path": "System Settings -> General -> Language & Region -> Translation Languages",
   "settings.localization.glossary_protection.description": "Keep protected terms, provider names, and product vocabulary stable during localization.",
   "settings.localization.do_not_translate_terms.description": "Open the glossary file in VS Code and edit one English term per line. The file is created automatically on first open and starts with common product and workflow terms.",
   "settings.localization.do_not_translate_terms.placeholder": "Project Manager",
