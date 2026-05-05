@@ -218,6 +218,16 @@ Manual acceptance workflow:
 6. Change Text-to-Speech rate in Settings and confirm audible speed changes.
 7. Stop active speech and confirm it stops immediately.
 
+### 8.1 Release Build Evidence
+
+2026-05-05 release candidate `1.2.153`:
+
+- `./scripts/build-all.sh` completed for providers, Core, UI bundles, and CEF launcher.
+- Packaged Core runtime verified executable helper at `~/.codeai-hub/core/darwin-arm64/1.2.153/app/native/apple-speech-helper/.build/release/apple-speech-helper`.
+- Runtime tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.153.tar.bz2`, `codex-module-1.2.153.tar.bz2`, `gemini-module-1.2.153.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.153.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.153.tar.bz2`, `vscode-webview-1.2.153.tar.bz2`, `project-manager-1.2.153.tar.bz2`.
+- `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
+- VSIX produced at repository root: `codeai-hub-1.2.153.vsix` (`3.1M`).
+
 ## 9. Deferred Work
 
 - Speech-to-Text.
