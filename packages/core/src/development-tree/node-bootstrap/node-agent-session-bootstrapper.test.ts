@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -7,6 +7,24 @@ import { NodeAgentSessionBootstrapper } from "./node-agent-session-bootstrapper"
 
 const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
   /User communication language: ru \(from Settings > General > Reasoning\)\./;
+const FINAL_DESCRIPTION_CONTEXT_PATTERN =
+  /Project Manager coordinates artifacts and sessions/;
+const VIRTUAL_SIMULATION_CONTEXT_PATTERN =
+  /The user selects a workflow node and reviews its working session/;
+const DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN =
+  /project-manager owns the Project Manager product part/;
+const PRODUCT_PART_CONTEXT_PATTERN =
+  /Artifact Workspace belongs to Project Manager/;
+
+const writeWorkspaceArtifact = async (
+  workspacePath: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspacePath, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
 
 test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage", async () => {
   const createdStages: string[] = [];
@@ -96,5 +114,69 @@ test("NodeAgentSessionBootstrapper reads response language from settings reasoni
       process.env.CLAUDE_SETTINGS_PATH = previousSettingsPath;
     }
     await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("NodeAgentSessionBootstrapper sends existing workflow artifacts in the first prompt", async () => {
+  const workspacePath = await mkdtemp(
+    path.join(os.tmpdir(), "node-agent-workspace-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sentMessages: string[] = [];
+  try {
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "Project Manager coordinates artifacts and sessions."
+    );
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      "The user selects a workflow node and reviews its working session."
+    );
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      "project-manager owns the Project Manager product part."
+    );
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
+      "Artifact Workspace belongs to Project Manager."
+    );
+
+    await new NodeAgentSessionBootstrapper().bootstrapNode(
+      {
+        absolutePath: path.join(
+          workspacePath,
+          `.codeai-hub/${workspaceSlug}/development_tree/materialized/product-parts/project-manager/modules/artifact-workspace`
+        ),
+        id: "artifact-workspace",
+        kind: "module",
+        partId: "project-manager",
+        relativePath: `.codeai-hub/${workspaceSlug}/development_tree/materialized/product-parts/project-manager/modules/artifact-workspace`,
+      },
+      {
+        gateway: {
+          createSessionForWorkflow: () => Promise.resolve({ id: "session-1" }),
+          handleMessage: (_sessionId, content) => {
+            sentMessages.push(content);
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
+        technologyBase: "TypeScript",
+        workspacePath,
+        workspaceSlug,
+      }
+    );
+
+    const firstMessage = sentMessages[0] ?? "";
+    assert.match(firstMessage, FINAL_DESCRIPTION_CONTEXT_PATTERN);
+    assert.match(firstMessage, VIRTUAL_SIMULATION_CONTEXT_PATTERN);
+    assert.match(firstMessage, DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN);
+    assert.match(firstMessage, PRODUCT_PART_CONTEXT_PATTERN);
+  } finally {
+    await rm(workspacePath, { recursive: true, force: true });
   }
 });
