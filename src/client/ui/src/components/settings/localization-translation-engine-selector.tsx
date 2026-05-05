@@ -4,6 +4,8 @@ import type {
   KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useLocalization } from "../../app-host/use-localization";
+import vscode from "../../vscode";
 import type { LocalizationEngineAvailability } from "./localization-engine-availability";
 import { settingsColorTokens, settingsTypographyTokens } from "./style-tokens";
 
@@ -48,6 +50,8 @@ const availabilityHintStyles: CSSProperties = {
 };
 
 const availabilityWarningStyles: CSSProperties = {
+  display: "grid",
+  gap: "8px",
   border: `1px solid ${settingsColorTokens.borderStrong}`,
   borderRadius: "6px",
   background: "rgba(190, 145, 75, 0.12)",
@@ -56,6 +60,18 @@ const availabilityWarningStyles: CSSProperties = {
   lineHeight: 1.5,
   margin: 0,
   padding: "10px 12px",
+};
+
+const recheckButtonStyles: CSSProperties = {
+  justifySelf: "start",
+  minHeight: "30px",
+  padding: "0 10px",
+  borderRadius: "6px",
+  border: `1px solid ${settingsColorTokens.borderStrong}`,
+  background: settingsColorTokens.surface,
+  color: settingsColorTokens.textPrimary,
+  cursor: "pointer",
+  fontSize: settingsTypographyTokens.bodyFontSize,
 };
 
 const selectorRootStyles: CSSProperties = {
@@ -178,6 +194,7 @@ export const TranslationEngineSelector: FC<TranslationEngineSelectorProps> = ({
   unavailableSuffix,
   visibleEngineOptions,
 }) => {
+  const { t } = useLocalization();
   const listboxId = useId();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -298,6 +315,14 @@ export const TranslationEngineSelector: FC<TranslationEngineSelectorProps> = ({
   };
 
   const selectedOption = viewOptions[selectedIndex] ?? viewOptions[0];
+  const recheckLabel = t(
+    "ui_interface",
+    "settings.localization.apple_native.recheck_label",
+    "Recheck"
+  );
+  const handleRecheck = () => {
+    vscode.postMessage({ type: "settings:load" });
+  };
 
   return (
     <div style={controlRowStyles}>
@@ -376,7 +401,16 @@ export const TranslationEngineSelector: FC<TranslationEngineSelectorProps> = ({
       </div>
       <p style={availabilityHintStyles}>{hint}</p>
       {unavailableMessage ? (
-        <p style={availabilityWarningStyles}>{unavailableMessage}</p>
+        <div style={availabilityWarningStyles}>
+          <span>{unavailableMessage}</span>
+          <button
+            onClick={handleRecheck}
+            style={recheckButtonStyles}
+            type="button"
+          >
+            {recheckLabel}
+          </button>
+        </div>
       ) : null}
     </div>
   );
