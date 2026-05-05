@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.138] - 2026-05-05
+### Fixed
+- **Development Tree node selection no longer falls back to the Diagram Modules dialog.** When a selected Product Part, Cluster, or Module has draft artifacts but no exact session metadata in the branch event, Project Manager now clears the Diagram Modules dialog intent and scopes the left runtime session list by the selected node `development_tree/...` path.
+
+### Tests
+- **Runtime session fallback is covered by targeted Project Manager verification.** Logs confirmed node sessions exist in continuity and provider JSONL while PM still resolved `diagram_modules`; tests now lock the selected-node `initialDialogIntent=null` fallback and node-path `startupStage` behavior.
+
 ## [1.2.137] - 2026-05-05
 ### Fixed
 - **Development Tree node selection now opens the exact node session.** Product Part, Cluster, and Module selections pass the concrete `dialogId`, `rootSessionId`, and `sessionId` into the Project Manager session surface, so the left pane resolves the selected node dialog before falling back to provider/stage matching.
