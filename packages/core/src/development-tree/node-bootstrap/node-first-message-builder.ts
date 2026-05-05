@@ -70,23 +70,34 @@ const createArtifactLanguageLines = (
 const createArtifactContextLines = (
   artifactContext: readonly NodePromptArtifactContextEntry[] | undefined
 ): string[] => {
+  const sourceBoundary = [
+    "Draft-pass source boundary:",
+    "- For this automatic first draft pass, use only the scoped context included in this first prompt plus the listed target draft files.",
+    "- You may inspect and edit the listed target draft files, but do not read, search, list, or open any other workspace files or documents.",
+    "- If context seems incomplete or truncated, record the uncertainty as an Open question instead of reading another file.",
+    "- Additional file reading is allowed only after the user explicitly asks or permits you to read files in a later message.",
+  ];
   if (!artifactContext?.length) {
     return [
       "Scoped workflow context:",
       "- No upstream workflow artifacts were found on disk. Ask the user only for missing decisions that are not derivable from the node drafts.",
+      "",
+      ...sourceBoundary,
     ];
   }
   return [
     "Scoped workflow context (read before asking the user):",
     "- Treat these deterministic excerpts as prior context for this exact Product Part / Cluster / Module node.",
     "- Do not ask the user to re-explain information already present here.",
-    "- If an excerpt is truncated, read the referenced file before making decisions.",
+    "- If an excerpt is truncated, use the excerpt as-is and capture any missing detail as an Open question.",
+    "",
+    ...sourceBoundary,
     ...artifactContext.flatMap((artifact) => [
       "",
       `### ${artifact.label}`,
       `- Path: ${artifact.relativePath}`,
       artifact.truncated
-        ? "- Content excerpt: truncated; read the file for the full artifact."
+        ? "- Content excerpt: truncated; do not read the file during this automatic draft pass."
         : "- Content:",
       "```markdown",
       artifact.content,

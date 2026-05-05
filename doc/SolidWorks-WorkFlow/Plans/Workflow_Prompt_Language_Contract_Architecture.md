@@ -90,6 +90,14 @@ For Product Part nodes, `.codeai-hub/<workspaceSlug>/diagram_modules/product-par
 
 For Cluster and Module nodes, Core continues to use scoped excerpts from upstream artifacts, including the owning Product Part artifact, selected by node/cluster/module anchors. Parser/scoring is therefore reserved for indirect upstream context; direct owner Markdown is passed whole.
 
+### 4.2.2. Development Tree Draft-Pass Read Boundary
+
+Development Tree Product Part / Cluster / Module sessions are an automatic first-draft pass, not the final specification review. For this pass, Core must provide enough scoped context in the first prompt for agents to create fast initial drafts without exploration.
+
+Node agents may inspect and edit only the listed target draft files during this automatic first turn. They must not read, search, list, or open other workspace files or upstream documents during the draft-pass, even if an excerpt says it is truncated. Missing detail must be recorded as an explicit Open question inside the draft instead of triggering another file-read cycle.
+
+Additional file reading becomes allowed only after the user explicitly asks for it or grants permission in a later dialog turn. This keeps the automated materialization fast and bounded while preserving user-directed depth for the review/refinement stage.
+
 ### 4.3. Template Hardening
 
 Prompt assets for `Description`, `Virtual Simulation`, and `Diagram Modules` must stop relying on weak language wording like "final artifact and brief updates". They should defer to the runtime language block and clarify:
@@ -136,6 +144,10 @@ Diagram Modules artifact templates need an explicit boundary:
    - chat replies stay in selected chat language;
    - artifacts prose stays in selected artifact language;
    - contract syntax remains parseable.
+6. Development Tree node first prompts include the draft-pass source boundary:
+   - use first-prompt scoped context plus listed target draft files only;
+   - do not read/search/list/open other workspace files during the automatic draft-pass;
+   - allow additional file reads only after explicit user request or permission.
 
 ---
 

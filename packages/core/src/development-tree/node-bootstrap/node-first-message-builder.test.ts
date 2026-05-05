@@ -26,6 +26,18 @@ const FINAL_DESCRIPTION_HEADING_PATTERN = /### Final Description/;
 const PROJECT_MANAGER_CONTEXT_PATTERN = /Project Manager coordinates sessions/;
 const PRODUCT_PART_ARTIFACT_PATH_PATTERN =
   /\.codeai-hub\/demo\/diagram_modules\/product-parts\/project-manager\.md/;
+const DRAFT_PASS_SOURCE_BOUNDARY_PATTERN =
+  /For this automatic first draft pass, use only the scoped context included in this first prompt plus the listed target draft files\./;
+const NO_OTHER_FILE_READS_PATTERN =
+  /do not read, search, list, or open any other workspace files or documents\./;
+const USER_PERMISSION_READS_PATTERN =
+  /Additional file reading is allowed only after the user explicitly asks or permits you to read files in a later message\./;
+const LEGACY_READ_REFERENCED_FILE_PATTERN = /read the referenced file/;
+const LEGACY_READ_FULL_ARTIFACT_PATTERN = /read the file for the full artifact/;
+const TRUNCATED_NO_READ_PATTERN =
+  /Content excerpt: truncated; do not read the file during this automatic draft pass\./;
+const OPEN_QUESTION_FOR_MISSING_CONTEXT_PATTERN =
+  /capture any missing detail as an Open question/;
 
 const createNode = (
   overrides: Partial<DevelopmentTreeDetectedNode>
@@ -117,7 +129,32 @@ test("NodeFirstMessageBuilder includes scoped workflow artifacts as prior contex
 
   assert.match(result.content, SCOPED_CONTEXT_HEADING_PATTERN);
   assert.match(result.content, ARTIFACT_CONTEXT_RULE_PATTERN);
+  assert.match(result.content, DRAFT_PASS_SOURCE_BOUNDARY_PATTERN);
+  assert.match(result.content, NO_OTHER_FILE_READS_PATTERN);
+  assert.match(result.content, USER_PERMISSION_READS_PATTERN);
   assert.match(result.content, FINAL_DESCRIPTION_HEADING_PATTERN);
   assert.match(result.content, PROJECT_MANAGER_CONTEXT_PATTERN);
   assert.match(result.content, PRODUCT_PART_ARTIFACT_PATH_PATTERN);
+  assert.doesNotMatch(result.content, LEGACY_READ_REFERENCED_FILE_PATTERN);
+  assert.doesNotMatch(result.content, LEGACY_READ_FULL_ARTIFACT_PATTERN);
+});
+
+test("NodeFirstMessageBuilder keeps truncated excerpts inside the no-read draft boundary", () => {
+  const result = new NodeFirstMessageBuilder().build({
+    artifactContext: [
+      {
+        content: "Partial upstream context.",
+        label: "Virtual Simulation",
+        relativePath:
+          ".codeai-hub/demo/virtual_simulation/virtual-simulation.md",
+        truncated: true,
+      },
+    ],
+    node: createNode({ partId: "project-manager" }),
+    technologyBase: "TypeScript",
+  });
+
+  assert.match(result.content, TRUNCATED_NO_READ_PATTERN);
+  assert.match(result.content, OPEN_QUESTION_FOR_MISSING_CONTEXT_PATTERN);
+  assert.match(result.content, USER_PERMISSION_READS_PATTERN);
 });
