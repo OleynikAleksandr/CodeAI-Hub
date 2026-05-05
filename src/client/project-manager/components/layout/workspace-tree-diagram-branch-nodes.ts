@@ -2,6 +2,8 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeModuleNode,
+  DevelopmentTreeNodeArtifact,
+  DevelopmentTreeNodeSession,
   DevelopmentTreePartNode,
   DevelopmentTreeReadiness,
   WorkflowStateSnapshot,
@@ -165,43 +167,108 @@ const buildModuleTreeNode = (
     }),
 });
 
+const buildArtifactTreeNode = (
+  artifact: DevelopmentTreeNodeArtifact,
+  idPrefix: string,
+  depth: number,
+  index: number
+): TreeNode => ({
+  id: `${idPrefix}:artifact:${index}`,
+  label: `Artifact: ${artifact.fileName}`,
+  status: "draft",
+  title: artifact.path,
+  visualDepth: depth,
+});
+
+const buildSessionTreeNode = (
+  session: DevelopmentTreeNodeSession,
+  idPrefix: string,
+  depth: number
+): TreeNode => ({
+  id: `${idPrefix}:session:${session.rootSessionId}`,
+  label: `Session: ${resolveProviderTitle(session.providerId)}`,
+  status: "active",
+  title: `${session.dialogId}\n${session.providerSessionId}`,
+  visualDepth: depth,
+});
+
+const buildNodeMetadataTreeNodes = (
+  node: Pick<DevelopmentTreeModuleNode, "artifacts" | "session">,
+  idPrefix: string,
+  depth: number
+): TreeNode[] => {
+  const nodes =
+    node.artifacts?.map((artifact, index) =>
+      buildArtifactTreeNode(artifact, idPrefix, depth, index)
+    ) ?? [];
+  if (node.session) {
+    nodes.push(buildSessionTreeNode(node.session, idPrefix, depth));
+  }
+  return nodes;
+};
+
+const buildModuleTreeNodes = (
+  mod: DevelopmentTreeModuleNode,
+  partId: string,
+  clusterId: string | null,
+  depth: number
+): TreeNode[] => {
+  const moduleNode = buildModuleTreeNode(mod, partId, clusterId, depth);
+  return [
+    moduleNode,
+    ...buildNodeMetadataTreeNodes(mod, moduleNode.id, depth + 1),
+  ];
+};
+
 const buildClusterTreeNode = (
   cluster: DevelopmentTreeClusterNode,
   partId: string,
   depth: number
-): TreeNode => ({
-  id: `devtree:${partId}:${cluster.id}`,
-  label: cluster.id,
-  status: resolveReadinessStatus(cluster.readiness, "todo"),
-  visualDepth: depth,
-  nodeType: "cluster",
-  readiness: cluster.readiness,
-  isCollapsible: cluster.modules.length > 0,
-  children: cluster.modules.map((mod) =>
-    buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
-  ),
-  onSelect: () =>
-    dispatchBranchSelected({
-      kind: "cluster",
-      nodeId: cluster.id,
-      label: cluster.id,
-      partId,
-    }),
-});
+): TreeNode => {
+  const id = `devtree:${partId}:${cluster.id}`;
+  const children = [
+    ...buildNodeMetadataTreeNodes(cluster, id, depth + 1),
+    ...cluster.modules.flatMap((mod) =>
+      buildModuleTreeNodes(mod, partId, cluster.id, depth + 1)
+    ),
+  ];
+  return {
+    id,
+    label: cluster.id,
+    status: resolveReadinessStatus(cluster.readiness, "todo"),
+    visualDepth: depth,
+    nodeType: "cluster",
+    readiness: cluster.readiness,
+    isCollapsible: children.length > 0,
+    children,
+    onSelect: () =>
+      dispatchBranchSelected({
+        kind: "cluster",
+        nodeId: cluster.id,
+        label: cluster.id,
+        partId,
+      }),
+  };
+};
 
 const buildPartTreeNode = (
   part: DevelopmentTreePartNode,
   depth: number
 ): TreeNode => {
-  const children: TreeNode[] = [];
+  const partId = `devtree:${part.id}`;
+  const children: TreeNode[] = buildNodeMetadataTreeNodes(
+    part,
+    partId,
+    depth + 1
+  );
   for (const cluster of part.clusters) {
     children.push(buildClusterTreeNode(cluster, part.id, depth + 1));
   }
   for (const mod of part.standaloneModules) {
-    children.push(buildModuleTreeNode(mod, part.id, null, depth + 1));
+    children.push(...buildModuleTreeNodes(mod, part.id, null, depth + 1));
   }
   return {
-    id: `devtree:${part.id}`,
+    id: partId,
     label: part.id,
     status: resolveReadinessStatus(
       part.readiness,

@@ -309,7 +309,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     const clusters =
       node.children?.filter((c) => c.nodeType === "cluster") ?? [];
     const standaloneModules =
-      node.children?.filter((c) => c.nodeType === "module") ?? [];
+      node.children?.filter((c) => c.nodeType !== "cluster") ?? [];
     const partProvider =
       providerResolver.forBranchPart(node.id) ?? undefined;
     return (
