@@ -19,6 +19,8 @@ export interface DraftReadinessClassifierRequest {
 
 const AGENT_FILL_BLOCK_PATTERN =
   /<!-- agent-fill -->([\s\S]*?)<!-- \/agent-fill -->/g;
+const AGENT_FILL_SENTINEL =
+  "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
 const TODO_PATTERN = /\bTODO\b/i;
 const OUTDATED_TRUE_PATTERN = /^outdated:\s*true\s*$/im;
 const ORPHANED_TRUE_PATTERN = /^orphaned:\s*true\s*$/im;
@@ -61,9 +63,12 @@ const classifyFile = (file: {
   readonly fileName: string;
 }): DevelopmentTreeDraftReadinessFile => {
   const blocks = Array.from(file.content.matchAll(AGENT_FILL_BLOCK_PATTERN));
-  const filledBlockCount = blocks.filter(
-    (block) => (block[1] ?? "").trim().length > 0
-  ).length;
+  const filledBlockCount = blocks.filter((block) => {
+    const normalizedContent = (block[1] ?? "").trim();
+    return (
+      normalizedContent.length > 0 && normalizedContent !== AGENT_FILL_SENTINEL
+    );
+  }).length;
   const hasBlockingFlag =
     OUTDATED_TRUE_PATTERN.test(file.content) ||
     ORPHANED_TRUE_PATTERN.test(file.content);

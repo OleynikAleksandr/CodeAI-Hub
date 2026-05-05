@@ -18,7 +18,6 @@ import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-acti
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type {
   WorkflowArtifactState,
-  WorkflowStageStatus,
   WorkflowState,
 } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
@@ -30,16 +29,15 @@ import {
   type DiagramModulesProgressSnapshot,
   readDiagramModulesProgressSnapshot,
 } from "./diagram-modules-progress";
+import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
 const DIAGRAM_MODULES_INDEX_FILE = "product-parts.index.md";
-
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-
 const readAbsolutePath = (value: unknown): string | null => {
   const trimmed = readNonEmptyString(value);
   if (!trimmed) {
@@ -47,17 +45,14 @@ const readAbsolutePath = (value: unknown): string | null => {
   }
   return path.isAbsolute(trimmed) ? trimmed : null;
 };
-
 type WorkspaceSlugResult =
   | { readonly ok: true; readonly value: string }
   | { readonly ok: false; readonly status: number; readonly error: string };
-
 interface DevelopmentTreeAgentSessionOptions {
   readonly gateway: DevelopmentTreeAgentSessionGateway;
   readonly providerId: string;
   readonly technologyBase?: string;
 }
-
 const resolveLatestDiagramModulesProviderId = (
   chains: readonly ContinuityChainSummary[]
 ): string | null => {
@@ -77,7 +72,6 @@ const resolveLatestDiagramModulesProviderId = (
   }
   return best?.providerId ?? null;
 };
-
 export class WorkflowStateService {
   private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
   private readonly logger: Logger;
@@ -215,28 +209,34 @@ export class WorkflowStateService {
                     diagramModulesProgress?.generatedPartIds ?? [],
                 })
                 .then((developmentTree) => {
-                  const canonicalLastActive = resolveCanonicalLastActive({
-                    chains,
-                    description,
-                    lastActive,
-                    state: validatedState,
-                    workspaceSlug: workspaceSlugResult.value,
-                  });
-                  const gating = {
-                    blocked: resolveWorkflowBlockedStages({
-                      state: validatedState,
-                      description,
-                      diagramModulesProgress,
-                    }),
-                  };
-                  res.json({
-                    state: validatedState,
-                    continuity: { chains },
-                    description,
-                    lastActive: canonicalLastActive,
-                    gating,
-                    diagramModulesProgress,
+                  return applyDevelopmentTreeFreshnessToState({
                     developmentTree,
+                    state: validatedState,
+                    workspaceRoot,
+                  }).then((responseState) => {
+                    const canonicalLastActive = resolveCanonicalLastActive({
+                      chains,
+                      description,
+                      lastActive,
+                      state: responseState,
+                      workspaceSlug: workspaceSlugResult.value,
+                    });
+                    const gating = {
+                      blocked: resolveWorkflowBlockedStages({
+                        state: responseState,
+                        description,
+                        diagramModulesProgress,
+                      }),
+                    };
+                    res.json({
+                      state: responseState,
+                      continuity: { chains },
+                      description,
+                      lastActive: canonicalLastActive,
+                      gating,
+                      diagramModulesProgress,
+                      developmentTree,
+                    });
                   });
                 })
             );
@@ -413,11 +413,6 @@ const upsertStageArtifact = (params: {
   );
 };
 
-const resolveDiagramModulesColdStartStatus = (
-  progress: DiagramModulesProgressSnapshot
-): WorkflowStageStatus =>
-  progress.aggregateReady ? "completed" : "in_progress";
-
 const hydrateDiagramModulesStateFromProgress = async (params: {
   readonly state: WorkflowState;
   readonly workspaceRoot: string;
@@ -453,7 +448,9 @@ const hydrateDiagramModulesStateFromProgress = async (params: {
   const artifactUpdatedAt = artifactStat.mtime.toISOString();
   const nextStage = {
     ...currentStage,
-    status: resolveDiagramModulesColdStartStatus(params.diagramModulesProgress),
+    status: params.diagramModulesProgress.aggregateReady
+      ? "completed"
+      : "in_progress",
     artifacts: upsertStageArtifact({
       artifacts: currentStage.artifacts,
       relativePath: `diagram_modules/${DIAGRAM_MODULES_INDEX_FILE}`,
