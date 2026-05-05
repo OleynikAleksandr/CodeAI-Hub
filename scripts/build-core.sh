@@ -125,6 +125,15 @@ npm run build --workspace=@codeai-hub/unified-session >/dev/null
 npm run build --workspace=@codeai-hub/core-supervisor >/dev/null
 npm run build --workspace=@codeai-hub/core >/dev/null
 
+if [[ "$UNAME_S" == "Darwin" ]]; then
+  echo "🍎 Building Apple Translation helper..."
+  APPLE_TRANSLATION_HELPER_BINARY="$("$SCRIPT_DIR/build-apple-translation-helper.sh" | tail -n1)"
+  APPLE_TRANSLATION_HELPER_STAGE="$APP_STAGE/native/apple-translation-helper/.build/release"
+  mkdir -p "$APPLE_TRANSLATION_HELPER_STAGE"
+  cp "$APPLE_TRANSLATION_HELPER_BINARY" "$APPLE_TRANSLATION_HELPER_STAGE/apple-translation-helper"
+  chmod 755 "$APPLE_TRANSLATION_HELPER_STAGE/apple-translation-helper"
+fi
+
 echo "📦 Packing provider tarballs..."
 CLAUDE_TARBALL=$(npm pack --workspace=@codeai-hub/claude-module --pack-destination "$TARBALL_STAGE" | tail -n1)
 CODEX_APP_SERVER_TARBALL=$(npm pack --workspace=@codeai-hub/codex-app-server-module --pack-destination "$TARBALL_STAGE" | tail -n1)

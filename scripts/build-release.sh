@@ -298,6 +298,7 @@ CORE_INSTALL_ROOT="$HOME/.codeai-hub/core/$CORE_PLATFORM_KEY/$VERSION"
 CORE_NODE_PATH="$CORE_INSTALL_ROOT/$CORE_NODE_RELATIVE_PATH"
 CORE_HANDLER_PATH="$CORE_INSTALL_ROOT/app/dist/remote-bridge/handlers/settings-request-handler.js"
 CORE_SOURCE_DICTIONARY_PATH="$CORE_INSTALL_ROOT/app/assets/localization/source/en/interactive_templates.json"
+CORE_APPLE_TRANSLATION_HELPER_PATH="$CORE_INSTALL_ROOT/app/native/apple-translation-helper/.build/release/apple-translation-helper"
 if [[ ! -f "$CORE_INSTALL_ROOT/app/node_modules/@codeai-hub/localization/package.json" ]]; then
   echo "❌ Missing bundled @codeai-hub/localization package in $CORE_INSTALL_ROOT" >&2
   exit 1
@@ -316,6 +317,10 @@ if [[ ! -f "$CORE_SOURCE_DICTIONARY_PATH" ]]; then
 fi
 if [[ ! -x "$CORE_NODE_PATH" ]]; then
   echo "❌ Missing core runtime node binary at $CORE_NODE_PATH" >&2
+  exit 1
+fi
+if [[ "$UNAME_S" == "Darwin" && ! -x "$CORE_APPLE_TRANSLATION_HELPER_PATH" ]]; then
+  echo "❌ Missing executable Apple Translation helper at $CORE_APPLE_TRANSLATION_HELPER_PATH" >&2
   exit 1
 fi
 
