@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.142] - 2026-05-05
+### Fixed
+- **Development Tree node-agent prompts now use scoped upstream context.** Product Part, Cluster, and Module bootstrap prompts no longer paste broad upstream artifacts into every node; Core extracts deterministic excerpts that match the selected node, its Product Part, and its Cluster.
+- **Development Tree draft artifacts now follow the configured artifact language.** Node-agent first prompts separate chat language from Settings > General > Reasoning and draft prose language from Settings > General > Artifacts for the User, while preserving canonical ids, filenames, generated blocks, and structural labels.
+
+### Tests
+- **Scoped prompt and artifact-language behavior is covered by targeted Core tests.** Tests now lock context extraction, bootstrap loading, response-language resolution, and settings-backed draft artifact language selection.
+
 ## [1.2.141] - 2026-05-05
 ### Fixed
 - **Development Tree node-agent first prompts now include existing workflow context.** New Product Part, Cluster, and Module bootstrap prompts include bounded prior context from `Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`, and the selected Product Part artifact when those files exist in the workspace.
