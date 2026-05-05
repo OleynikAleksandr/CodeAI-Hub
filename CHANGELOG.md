@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.149] - 2026-05-05
+### Fixed
+- **Workflow and Development Tree prompts now start with localized instructions for Russian settings.** Description, Virtual Simulation, Diagram Modules, and Development Tree node first prompts now materialize a Russian instruction block when Settings > General > Reasoning is `ru`, while preserving filenames, ids, statuses, DSL markers, `agent-fill`, method/event names, and structural headings as canonical tokens.
+- **Development Tree contract draft prose now stays localized.** `ModuleFacadeContract.draft.md` and `ClusterFacadeContract.draft.md` are no longer treated as English-prose exceptions; only canonical identifiers remain English.
+- **Draft readiness now rejects malformed `agent-fill` marker balance.** Filled drafts with orphaned or unbalanced fill markers stay `in_progress` instead of being marked ready.
+
+### Tests
+- **Localized prompt materialization has targeted regression coverage.** Tests now compare localized and non-localized prompt variants, lock protected canonical tokens, verify cache/materializer dimensions, and cover workflow prompt language plus Development Tree marker readiness.
+
 ## [1.2.148] - 2026-05-05
 ### Fixed
 - **Development Tree readiness now refreshes after draft writes.** Core includes Development Tree draft artifact mtimes in the workflow state freshness signal, so completed Product Part, Cluster, and Module drafts can turn ready without switching steps.
