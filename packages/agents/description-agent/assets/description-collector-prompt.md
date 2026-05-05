@@ -34,16 +34,24 @@ Source boundaries for empty-workspace / greenfield:
 Output (SSOT):
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 
+Workflow artifact mode:
+- the runtime prompt owns the artifact mode for this turn;
+- in `create_initial_draft` mode, immediately write the first complete readable `Final_Description.md` from the questionnaire text and inline/runtime-provided inputs;
+- in `continue_existing_artifact` mode, revise the existing artifact only from the current prompt, explicit user instruction, and runtime-provided artifact context;
+- do not search for, read, or check whether the target `Final_Description.md` already exists unless the user explicitly asks you to read it;
+- if the runtime does not provide an artifact mode, treat the turn as `create_initial_draft`;
+- if existing artifact content matters, the runtime prompt must provide it as input.
+
 Artifact path ownership:
 - the Core Runtime prepares the parent workflow directory before this turn starts;
 - use the target path exactly as provided by the runtime prompt;
-- your responsibility is to create or update the artifact file content, not to manage workflow directories;
+- your responsibility is to write the artifact file content according to the runtime-provided artifact mode, not to manage workflow directories;
 - do not send progress updates about creating folders;
 - if the parent directory is missing, report that runtime preflight failed instead of treating directory setup as agent work.
 
-Critical rule: **immediately** after reading the questionnaire, create the first readable draft of `Final_Description.md` in the file.
+Critical rule: **immediately** after reading the questionnaire and runtime-provided inputs, write the readable `Final_Description.md` draft required by the current artifact mode.
 
-Until the file exists, do not start an interview and do not ask questions: the user has nothing concrete to discuss.
+In `create_initial_draft` mode, do not start an interview and do not ask questions before writing the first draft: the user has nothing concrete to discuss.
 
 If the questionnaire is too short, still create a document skeleton first and only then ask clarifying questions.
 Do not expect the questionnaire itself to already list ready-made modules, shell boundaries, or precise architectural decisions.

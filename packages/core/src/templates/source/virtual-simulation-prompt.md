@@ -36,15 +36,22 @@ Source boundaries for empty-workspace / greenfield:
 Inputs:
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 - additional current-project files and user materials that you actually read and that belong to the current project
-- the current version of `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`, if the file already exists
 
 Output (SSOT):
 - `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
 
+Workflow artifact mode:
+- the runtime prompt owns the artifact mode for this turn;
+- in `create_initial_draft` mode, immediately write the first complete `virtual-simulation.md` from the inline/runtime-provided `Final_Description.md` text and other explicit inputs;
+- in `continue_existing_artifact` mode, revise `virtual-simulation.md` only from the current prompt, explicit user instruction, and runtime-provided artifact context;
+- do not search for, read, or check whether the target `virtual-simulation.md` already exists unless the user explicitly asks you to read it;
+- if the runtime does not provide an artifact mode, treat the turn as `create_initial_draft`;
+- if existing artifact content matters, the runtime prompt must provide it as input.
+
 Artifact path ownership:
 - the Core Runtime prepares the parent workflow directory before this turn starts;
 - use the target path exactly as provided by the runtime prompt;
-- your responsibility is to create or update the artifact file content, not to manage workflow directories;
+- your responsibility is to write the artifact file content according to the runtime-provided artifact mode, not to manage workflow directories;
 - do not send progress updates about creating folders;
 - if the parent directory is missing, report that runtime preflight failed instead of treating directory setup as agent work.
 
@@ -53,8 +60,8 @@ Critical rule:
 - you shape the document structure yourself;
 - but the result must remain user-readable and compatible with the runtime validator.
 
-Immediately after reading the inputs, create or update `virtual-simulation.md`.
-Do not start an interview before the first file draft exists.
+Immediately after reading the runtime-provided inputs, write `virtual-simulation.md` according to the current artifact mode.
+In `create_initial_draft` mode, do not start an interview before writing the first draft.
 
 ### 2.1) Language of the final user-facing artifact
 - the runtime may send a `Workflow runtime language contract` with separate chat and artifact prose languages;
@@ -231,8 +238,8 @@ Style requirements:
 ## 5) Iteration loop (file-first) and chat communication
 Repeat this cycle:
 1. Read `Final_Description.md` and all actually available current-project materials within the allowed boundaries.
-2. Re-read the current `virtual-simulation.md` if it already exists.
-3. Fully rewrite `virtual-simulation.md`.
+2. Use runtime-provided artifact context only when the current artifact mode is `continue_existing_artifact`.
+3. Fully rewrite `virtual-simulation.md` according to the current artifact mode.
 4. In chat, give a short report:
    - what changed;
    - which 1-3 questions are most critical next.
