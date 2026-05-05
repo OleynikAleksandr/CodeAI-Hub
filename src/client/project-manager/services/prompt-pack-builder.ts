@@ -1,3 +1,10 @@
+import {
+  buildLocalizedWorkflowLanguageBlock,
+  buildRuntimeLanguageBlock,
+  buildRuntimeLanguageReminder,
+  normalizeRuntimeLanguage,
+} from "./prompt-localized-instructions";
+
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
@@ -46,10 +53,6 @@ const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
 };
-const DEFAULT_ARTIFACT_LANGUAGE = "en";
-const DEFAULT_CHAT_LANGUAGE = "en";
-const LEGACY_SOURCE_LANGUAGE = "source";
-
 const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
   description: "Build the artifact from the questionnaire and template.",
   virtual_simulation: "Build the artifact from `Final_Description.md`.",
@@ -66,29 +69,6 @@ const RUN_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const NON_ALPHANUMERIC_RE = /[^a-zA-Z0-9]/g;
 const MULTIPLE_DASHES_RE = /-+/g;
 const TRAILING_DASH_RE = /-$/;
-
-const normalizeArtifactLanguage = (value: string): string => {
-  const normalized = value.trim().toLowerCase();
-  if (!normalized) {
-    return DEFAULT_ARTIFACT_LANGUAGE;
-  }
-  return normalized === LEGACY_SOURCE_LANGUAGE
-    ? DEFAULT_ARTIFACT_LANGUAGE
-    : normalized;
-};
-
-const normalizeRuntimeLanguage = (value: unknown): string | null => {
-  if (typeof value !== "string") {
-    return null;
-  }
-  const normalized = value.trim().toLowerCase();
-  if (!normalized) {
-    return null;
-  }
-  return normalized === LEGACY_SOURCE_LANGUAGE
-    ? DEFAULT_CHAT_LANGUAGE
-    : normalized;
-};
 
 const isRecordValue = (
   value: unknown
@@ -114,7 +94,7 @@ export const resolveWorkflowChatLanguage = (
     normalizeRuntimeLanguage(categories?.reasoning) ??
     normalizeRuntimeLanguage(categories?.messagesForTheUser) ??
     normalizeRuntimeLanguage(categories?.systemFeedback) ??
-    DEFAULT_CHAT_LANGUAGE
+    "en"
   );
 };
 
@@ -316,33 +296,6 @@ const buildInlineSourceArtifactBlock = (params: {
   ].join("\n");
 };
 
-const buildRuntimeLanguageBlock = (params: {
-  readonly artifactLanguage: string | undefined;
-  readonly chatLanguage: string | undefined;
-  readonly stage: WorkflowStageId;
-}): string => {
-  const normalizedChatLanguage =
-    normalizeRuntimeLanguage(params.chatLanguage) ?? DEFAULT_CHAT_LANGUAGE;
-  const normalizedArtifactLanguage =
-    normalizeArtifactLanguage(params.artifactLanguage ?? DEFAULT_ARTIFACT_LANGUAGE);
-  const lines = [
-    "Workflow runtime language contract:",
-    `- Chat language code: \`${normalizedChatLanguage}\` (from Settings > General > Reasoning).`,
-    `- Use \`${normalizedChatLanguage}\` for brief user-facing chat updates and status replies.`,
-    `- Artifact prose language code: \`${normalizedArtifactLanguage}\` (from Settings > General > Artifacts for the User).`,
-    `- Write user-facing prose inside created or edited artifacts in \`${normalizedArtifactLanguage}\`.`,
-    "- English internal instructions, examples, and templates are format-only; do not infer English output language from them.",
-    "- Do not rewrite internal instructions, code identifiers, canonical headings, field names, ids, statuses, DSL markers, file names, or structural tokens to match either language.",
-    params.stage === "diagram_modules"
-      ? "- Keep Product Part / Cluster / Module names and titles, contract-bound DSL markers, headers, field names, ids, and staged status tokens in canonical English form."
-      : null,
-    params.stage === "diagram_modules"
-      ? "- Localize only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and user-facing artifact notes."
-      : null,
-  ];
-  return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
-};
-
 const buildWorkflowArtifactModeBlock = (params: {
   readonly relativePath: string;
   readonly stage: WorkflowStageId;
@@ -394,17 +347,6 @@ const buildArtifactEditOperationBlock = (): string =>
     "- Do not send user-facing progress updates about patch mismatch, invisible blank lines, line-by-line checks, or fallback script rewrites unless the edit is blocked.",
   ].join("\n");
 
-const buildRuntimeLanguageReminder = (params: {
-  readonly artifactLanguage: string | undefined;
-  readonly chatLanguage: string | undefined;
-}): string => {
-  const normalizedChatLanguage =
-    normalizeRuntimeLanguage(params.chatLanguage) ?? DEFAULT_CHAT_LANGUAGE;
-  const normalizedArtifactLanguage =
-    normalizeArtifactLanguage(params.artifactLanguage ?? DEFAULT_ARTIFACT_LANGUAGE);
-  return `Final language reminder: user-facing chat stays in \`${normalizedChatLanguage}\`; artifact prose stays in \`${normalizedArtifactLanguage}\`; English examples/templates are format-only.`;
-};
-
 const shouldIncludeTemplateHint = (
   stage: WorkflowStageId,
   templatePath: string | undefined
@@ -454,6 +396,11 @@ export const buildWorkflowPromptPack = (
 
   return {
     content: [
+      buildLocalizedWorkflowLanguageBlock({
+        artifactLanguage: params.artifactLanguage,
+        chatLanguage: params.chatLanguage,
+        stage: params.stage,
+      }),
       buildRuntimeLanguageBlock({
         artifactLanguage: params.artifactLanguage,
         chatLanguage: params.chatLanguage,

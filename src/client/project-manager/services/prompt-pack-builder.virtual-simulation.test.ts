@@ -137,6 +137,30 @@ test("description prompt pack keeps template hint", () => {
     true
   );
   assert.equal(
+    pack.content.startsWith(
+      "Локализованный пакет инструкций CodeAI Hub (ru):"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Общайся с пользователем на языке `ru`, как указано в Settings > General > Reasoning."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Заполняй описательный текст артефакта на языке `uk`, как указано в Settings > General > Artifacts for the User."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Во время автоматического draft-pass используй только этот prompt и runtime-provided inline source documents"
+    ),
+    true
+  );
+  assert.equal(
     pack.content.includes(
       "Artifact prose language code: `uk` (from Settings > General > Artifacts for the User)."
     ),
@@ -177,7 +201,7 @@ test("description prompt pack keeps template hint", () => {
 test("diagram modules prompt pack targets product part index and omits generic template hint", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "de",
-    chatLanguage: "it",
+    chatLanguage: "ru",
     stage: "diagram_modules",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
@@ -273,7 +297,13 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
   assert.equal(
     pack.content.includes(
-      "Chat language code: `it` (from Settings > General > Reasoning)."
+      "Chat language code: `ru` (from Settings > General > Reasoning)."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Для Diagram Modules держи Product Part / Cluster / Module titles"
     ),
     true
   );
