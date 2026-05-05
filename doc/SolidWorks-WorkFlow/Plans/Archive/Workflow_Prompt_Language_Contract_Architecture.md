@@ -237,7 +237,7 @@ Readiness must remain content-based. A draft with an unbalanced `agent-fill` mar
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - `doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`
-- `doc/SolidWorks-WorkFlow/Plans/Workflow_Prompt_Language_Contract_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Workflow_Prompt_Language_Contract_Architecture.md`
 - `src/client/project-manager/services/prompt-pack-builder.ts`
 - `src/client/project-manager/services/description-submit-service.ts`
 - `src/client/project-manager/services/workflow-step-start-service.ts`
