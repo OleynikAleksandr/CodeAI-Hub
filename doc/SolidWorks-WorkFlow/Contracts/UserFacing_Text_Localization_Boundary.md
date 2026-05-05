@@ -29,7 +29,7 @@ Allowed outcomes are only:
 3. `Messages for the User`
 4. `Artifacts for the User`
 5. `Reasoning` (runtime-only category for visible provider `Thinking` / `Reasoning` bubbles shown in the Session dialog)
-6. `Internal Agent Instructions` (English-only boundary)
+6. `Internal Agent Instructions` (code-owned prompt/instruction boundary; localized instruction blocks are allowed only through explicit prompt contracts)
 
 Automatic guessing is not allowed.
 
@@ -114,7 +114,13 @@ Use for:
 - internal routing/authoring text that is not shown to the user;
 - workflow/provider prompt bodies even when those prompts additionally instruct the agent which language to use for user-facing artifacts or brief user-facing chat updates.
 
-This boundary stays English-only unless a separate explicit contract changes it.
+This boundary is code-owned. Bundled source prompt contracts and protected canonical tokens remain stable, but a separate explicit contract may materialize localized instruction prose inside first prompts. The current explicit exception is the workflow prompt language contract:
+
+- workflow first prompts may include localized instruction blocks keyed by `Settings > General > Reasoning`;
+- artifact prose directives are keyed by `Settings > General > Artifacts for the User`;
+- protected tokens are never localized: filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, field names, method/event names, output filenames, and structural headings.
+
+Localized prompt materialization does not move provider flags, system tools, sandbox, approval policy, or canonical schema tokens into user-facing localization dictionaries.
 
 ---
 
@@ -125,9 +131,9 @@ When adding or changing user-facing product copy:
 1. Add or reuse a stable message id in the appropriate English source dictionary.
 2. Resolve the text through the shared localization runtime instead of making the component/template the source of truth.
 3. Keep fallback strings only as bootstrap safety, not as the primary authoring location.
-4. Do not place user-facing copy inside provider/internal prompt assets unless that surface is intentionally an internal English-only boundary.
+4. Do not place user-facing copy inside provider/internal prompt assets unless that surface is intentionally an internal prompt boundary or an explicit localized prompt materializer owns the text.
 5. If one surface contains multiple text kinds, split them by category instead of forcing one category onto the whole file.
-6. If a workflow prompt contains both internal instructions and an explicit language directive for user-facing artifacts/chat updates, only the resulting user-facing output belongs to `Artifacts for the User`; the prompt body itself remains `Internal Agent Instructions`.
+6. If a workflow prompt contains both internal instructions and an explicit language directive for user-facing artifacts/chat updates, only the resulting user-facing output belongs to `Artifacts for the User` / `Reasoning`; the prompt body itself remains `Internal Agent Instructions` unless an explicit localized prompt materializer owns that instruction prose.
 7. For mixed DSL artifacts such as `Diagram Modules`, treat canonical `Product Part` / `Cluster` / `Module` names and titles as structural vocabulary, not as automatically localizable prose.
 
 ---
@@ -178,3 +184,4 @@ If any answer is unclear, the task is not complete.
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
+- `doc/SolidWorks-WorkFlow/Plans/Workflow_Prompt_Language_Contract_Architecture.md`
