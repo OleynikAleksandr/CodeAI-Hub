@@ -12,24 +12,47 @@ export interface DevelopmentTreeDraftReadinessFile {
   readonly requiredAgentFillSections: number;
 }
 
+export interface DevelopmentTreeNodeArtifact {
+  readonly fileName: string;
+  readonly path: string;
+}
+
+export interface DevelopmentTreeNodeSession {
+  readonly dialogId: string;
+  readonly providerId: string;
+  readonly providerSessionId: string;
+  readonly rootSessionId: string;
+  readonly sessionId: string;
+  readonly updatedAt: string;
+}
+
 export interface DevelopmentTreeModuleNode {
+  readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly id: string;
   readonly readiness?: DevelopmentTreeDraftReadiness;
+  readonly session?: DevelopmentTreeNodeSession;
   readonly title: string;
+  readonly workflowPath?: string;
 }
 
 export interface DevelopmentTreeClusterNode {
+  readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly id: string;
   readonly modules: readonly DevelopmentTreeModuleNode[];
   readonly readiness?: DevelopmentTreeDraftReadiness;
+  readonly session?: DevelopmentTreeNodeSession;
+  readonly workflowPath?: string;
 }
 
 export interface DevelopmentTreePartNode {
+  readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly clusters: readonly DevelopmentTreeClusterNode[];
   readonly id: string;
   readonly readiness?: DevelopmentTreeDraftReadiness;
+  readonly session?: DevelopmentTreeNodeSession;
   readonly standaloneModules: readonly DevelopmentTreeModuleNode[];
   readonly status: "skeleton" | "materialized";
+  readonly workflowPath?: string;
 }
 
 export interface DevelopmentTreeSnapshot {

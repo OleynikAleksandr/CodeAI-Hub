@@ -1,11 +1,15 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import type { ContinuityChainSummary } from "../session-continuity/continuity-types";
+import { SessionContinuityFacade } from "../session-continuity/session-continuity-facade";
 import { resolveWorkflowArtifactPaths } from "../workflow/paths/workflow-artifact-paths";
 import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeDraftReadiness,
   DevelopmentTreeDraftReadinessKind,
   DevelopmentTreeModuleNode,
+  DevelopmentTreeNodeArtifact,
+  DevelopmentTreeNodeSession,
   DevelopmentTreePartNode,
   DevelopmentTreeSnapshot,
   DevelopmentTreeSnapshotRequest,
@@ -55,6 +59,9 @@ const readExistingFile = async (
   }
   return readFile(absolutePath, "utf8").catch(() => null);
 };
+
+const fileExists = async (absolutePath: string): Promise<boolean> =>
+  Boolean((await stat(absolutePath).catch(() => null))?.isFile());
 
 const extractModuleRows = (
   section: string
@@ -230,17 +237,108 @@ const createReadinessFolderSegments = (options: {
   return ["product-parts", options.partId, "modules", options.moduleId ?? ""];
 };
 
+const createNodeWorkflowPath = (options: {
+  readonly clusterId?: string;
+  readonly kind: DevelopmentTreeDraftReadinessKind;
+  readonly moduleId?: string;
+  readonly partId: string;
+}): string =>
+  path.posix.join(
+    "development_tree",
+    "materialized",
+    ...createReadinessFolderSegments(options)
+  );
+
+const resolveLatestNodeSession = (
+  chains: readonly ContinuityChainSummary[],
+  workflowPath: string
+): DevelopmentTreeNodeSession | undefined => {
+  let best: DevelopmentTreeNodeSession | undefined;
+  for (const chain of chains) {
+    if (chain.stage !== workflowPath) {
+      continue;
+    }
+    const last = chain.segments.at(-1);
+    if (!last) {
+      continue;
+    }
+    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
+      best = {
+        dialogId: chain.dialogId ?? chain.rootSessionId,
+        providerId: last.providerId,
+        providerSessionId: last.providerSessionId,
+        rootSessionId: chain.rootSessionId,
+        sessionId: last.sessionId,
+        updatedAt: chain.updatedAt,
+      };
+    }
+  }
+  return best;
+};
+
+const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
+  const root = createDevelopmentTreeMaterializedRoot({
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  });
+  const chains = await SessionContinuityFacade.readWorkspaceChains(params);
+  return async (options: {
+    readonly clusterId?: string;
+    readonly kind: DevelopmentTreeDraftReadinessKind;
+    readonly moduleId?: string;
+    readonly partId: string;
+  }): Promise<{
+    readonly artifacts: readonly DevelopmentTreeNodeArtifact[];
+    readonly session?: DevelopmentTreeNodeSession;
+    readonly workflowPath: string;
+  }> => {
+    const folderSegments = createReadinessFolderSegments(options);
+    const workflowPath = createNodeWorkflowPath(options);
+    const artifacts: DevelopmentTreeNodeArtifact[] = [];
+    for (const fileName of DRAFT_FILES[options.kind]) {
+      if (
+        await fileExists(
+          path.join(root.absolutePath, ...folderSegments, fileName)
+        )
+      ) {
+        artifacts.push({
+          fileName,
+          path: path.posix.join(
+            ".codeai-hub",
+            params.workspaceSlug,
+            workflowPath,
+            fileName
+          ),
+        });
+      }
+    }
+    return {
+      artifacts,
+      workflowPath,
+      session: resolveLatestNodeSession(chains, workflowPath),
+    };
+  };
+};
+
 const applyReadiness = async (
   part: DevelopmentTreePartNode,
-  params: DevelopmentTreeSnapshotRequest
+  params: DevelopmentTreeSnapshotRequest,
+  readMetadata: Awaited<ReturnType<typeof createMetadataReader>>
 ): Promise<DevelopmentTreePartNode> => {
   const readReadiness = createReadinessReader(params);
   const clusters: DevelopmentTreeClusterNode[] = [];
   for (const cluster of part.clusters) {
     const modules: DevelopmentTreeModuleNode[] = [];
     for (const module of cluster.modules) {
+      const metadata = await readMetadata({
+        kind: "module",
+        partId: part.id,
+        clusterId: cluster.id,
+        moduleId: module.id,
+      });
       modules.push({
         ...module,
+        ...metadata,
         readiness: await readReadiness({
           kind: "module",
           partId: part.id,
@@ -249,6 +347,11 @@ const applyReadiness = async (
         }),
       });
     }
+    const metadata = await readMetadata({
+      kind: "cluster",
+      partId: part.id,
+      clusterId: cluster.id,
+    });
     const selfReadiness = await readReadiness({
       kind: "cluster",
       partId: part.id,
@@ -256,6 +359,7 @@ const applyReadiness = async (
     });
     clusters.push({
       ...cluster,
+      ...metadata,
       modules,
       readiness: aggregateReadiness(
         selfReadiness,
@@ -266,8 +370,14 @@ const applyReadiness = async (
 
   const standaloneModules: DevelopmentTreeModuleNode[] = [];
   for (const module of part.standaloneModules) {
+    const metadata = await readMetadata({
+      kind: "module",
+      partId: part.id,
+      moduleId: module.id,
+    });
     standaloneModules.push({
       ...module,
+      ...metadata,
       readiness: await readReadiness({
         kind: "module",
         partId: part.id,
@@ -275,12 +385,17 @@ const applyReadiness = async (
       }),
     });
   }
+  const metadata = await readMetadata({
+    kind: "product_part",
+    partId: part.id,
+  });
   const selfReadiness = await readReadiness({
     kind: "product_part",
     partId: part.id,
   });
   return {
     ...part,
+    ...metadata,
     clusters,
     standaloneModules,
     readiness: aggregateReadiness(selfReadiness, [
@@ -307,13 +422,15 @@ export class DevelopmentTreeStateFacade {
     params: DevelopmentTreeSnapshotRequest
   ): Promise<DevelopmentTreeSnapshot> {
     const parts: DevelopmentTreePartNode[] = [];
+    const readMetadata = await createMetadataReader(params);
     for (const partId of params.plannedPartIds) {
       parts.push(
         await applyReadiness(
           params.generatedPartIds.includes(partId)
             ? await createMaterializedPart(params, partId)
             : createSkeletonPart(partId),
-          params
+          params,
+          readMetadata
         )
       );
     }
