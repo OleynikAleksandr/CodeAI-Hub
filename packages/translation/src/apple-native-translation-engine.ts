@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import type {
   TranslationReporter,
   TranslationRequest,
@@ -68,6 +68,9 @@ const isExecutableFile = (path: string): boolean => {
 const defaultHelperPathCandidates = (): readonly string[] => [
   ...(process.env.CODEAI_APPLE_TRANSLATION_HELPER_PATH
     ? [process.env.CODEAI_APPLE_TRANSLATION_HELPER_PATH]
+    : []),
+  ...(process.argv[1]
+    ? [join(dirname(process.argv[1]), "..", ...HELPER_RELATIVE_PATH)]
     : []),
   join(process.cwd(), ...HELPER_RELATIVE_PATH),
 ];

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, statSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import {
   type LocalizationFacade,
   UserGlossaryStore,
@@ -75,6 +75,15 @@ const resolveAppleNativeHelperPath = (): string | null => {
   const candidates = [
     ...(process.env.CODEAI_APPLE_TRANSLATION_HELPER_PATH
       ? [process.env.CODEAI_APPLE_TRANSLATION_HELPER_PATH]
+      : []),
+    ...(process.argv[1]
+      ? [
+          join(
+            dirname(process.argv[1]),
+            "..",
+            ...APPLE_NATIVE_HELPER_RELATIVE_PATH
+          ),
+        ]
       : []),
     join(process.cwd(), ...APPLE_NATIVE_HELPER_RELATIVE_PATH),
   ];
