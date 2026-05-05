@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.145] - 2026-05-05
+### Fixed
+- **Workflow stage directories are now prepared by Core Runtime before agent sessions start.** Description, Virtual Simulation, and Diagram Modules sessions get their parent artifact directories pre-created before provider session creation, so the first prompt cannot arrive before the target directory exists.
+- **Workflow agent prompts now keep directory ownership out of agent work.** Description, Virtual Simulation, and Diagram Modules instructions now state that agents write artifact content at the provided target path while Core Runtime owns parent workflow directory preparation.
+
+### Tests
+- **Directory preflight order is covered by targeted Core verification.** Tests assert `diagram_modules/` and `diagram_modules/product-parts/` already exist inside `session:create` before the provider session is created, plus workflow template contract tests and Core build.
+
 ## [1.2.144] - 2026-05-05
 ### Fixed
 - **Description first prompts now include the full questionnaire inline.** The questionnaire is sent as an authoritative fenced source block with provenance/fallback paths, so the agent does not need a separate turn just to read the initial answers.
