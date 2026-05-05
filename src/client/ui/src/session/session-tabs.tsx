@@ -3,8 +3,13 @@ import { getDefaultProviderTitle } from "../../../../types/provider";
 import type { SessionKind, SessionRecord } from "../../../../types/session";
 import { mapProviderTheme } from "./helpers";
 
-const formatWorkflowStageLabel = (stage: string): string => {
-  const normalized = stage.replace(/[-_]+/g, " ").trim();
+const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
+
+export const formatWorkflowStageLabel = (stage: string): string => {
+  const stageLabelSource = stage.startsWith(DEVELOPMENT_TREE_STAGE_PREFIX)
+    ? (stage.split("/").filter(Boolean).at(-1) ?? stage)
+    : stage;
+  const normalized = stageLabelSource.replace(/[-_]+/g, " ").trim();
   if (!normalized) {
     return stage;
   }
