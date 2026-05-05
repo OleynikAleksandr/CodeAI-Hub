@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.150] - 2026-05-05
+### Added
+- **Apple Native translation is available as an on-device engine on supported macOS builds.** Settings can select `Apple Native - On-Device` for both UI and Reasoning translation after Core verifies macOS Translation framework readiness, the Swift helper, Xcode toolchain availability, and installed language packs.
+- **Apple Native readiness failures now give actionable setup guidance.** Users are told whether they need to update macOS, install Xcode, build/ship the helper, or download the required Translation Languages packs before retrying.
+
+### Tests
+- **Apple Native integration has helper, package, Core, Localization, and UI verification.** The release includes live Swift helper smoke coverage for installed/missing language packs plus targeted builds/tests for translation, localization, Core settings preflight, and webview type-checking.
+
 ## [1.2.149] - 2026-05-05
 ### Fixed
 - **Workflow and Development Tree prompts now start with localized instructions for Russian settings.** Description, Virtual Simulation, Diagram Modules, and Development Tree node first prompts now materialize a Russian instruction block when Settings > General > Reasoning is `ru`, while preserving filenames, ids, statuses, DSL markers, `agent-fill`, method/event names, and structural headings as canonical tokens.
