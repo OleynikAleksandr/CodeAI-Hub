@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.137] - 2026-05-05
+### Fixed
+- **Development Tree node selection now opens the exact node session.** Product Part, Cluster, and Module selections pass the concrete `dialogId`, `rootSessionId`, and `sessionId` into the Project Manager session surface, so the left pane resolves the selected node dialog before falling back to provider/stage matching.
+
+### Tests
+- **Node session routing has targeted regression coverage.** Project Manager tests now verify that exact node dialog identity wins over a newer generic `Diagram Modules` dialog, with webview typecheck and build verification before release prep.
+
 ## [1.2.136] - 2026-05-05
 ### Fixed
 - **Development Tree sidebar is back to pure Product Part / Cluster / Module structure.** Node draft artifacts and sessions are no longer rendered as child rows inside the sidebar tree.
