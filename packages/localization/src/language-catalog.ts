@@ -55,8 +55,36 @@ const GOOGLE_GTX_LANGUAGES: readonly LocalizationLanguageCatalogEntry[] = [
   { code: "zu", label: "Zulu" },
 ];
 
+const APPLE_NATIVE_LANGUAGES: readonly LocalizationLanguageCatalogEntry[] = [
+  { code: "ar-AE", label: "Arabic (United Arab Emirates)" },
+  { code: "de", label: "German" },
+  { code: "en", label: "English" },
+  { code: "en-GB", label: "English (United Kingdom)" },
+  { code: "es", label: "Spanish" },
+  { code: "fr", label: "French" },
+  { code: "hi", label: "Hindi" },
+  { code: "id", label: "Indonesian" },
+  { code: "it", label: "Italian" },
+  { code: "ja", label: "Japanese" },
+  { code: "ko", label: "Korean" },
+  { code: "nl", label: "Dutch" },
+  { code: "pl", label: "Polish" },
+  { code: "pt", label: "Portuguese" },
+  { code: "ru", label: "Russian" },
+  { code: "th", label: "Thai" },
+  { code: "tr", label: "Turkish" },
+  { code: "uk", label: "Ukrainian" },
+  { code: "vi", label: "Vietnamese" },
+  { code: "zh", label: "Chinese (Simplified)" },
+  { code: "zh-TW", label: "Chinese (Traditional)" },
+];
+
 export const DEFAULT_ENGINE_LANGUAGE_CATALOGS: readonly LocalizationEngineLanguageCatalog[] =
   [
+    {
+      engineId: "apple-native",
+      languages: APPLE_NATIVE_LANGUAGES,
+    },
     {
       engineId: "google-gtx",
       languages: GOOGLE_GTX_LANGUAGES,
