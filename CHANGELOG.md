@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.136] - 2026-05-05
+### Fixed
+- **Development Tree sidebar is back to pure Product Part / Cluster / Module structure.** Node draft artifacts and sessions are no longer rendered as child rows inside the sidebar tree.
+- **Selecting a Development Tree node opens its working surfaces.** Product Part, Cluster, and Module selection now routes node metadata into Project Manager: the node session opens in the left session pane and the node draft artifacts are available in the right artifact pane with per-file switching.
+
+### Tests
+- **Node detail routing is covered by targeted Project Manager verification.** Tests confirm artifact/session metadata stays out of sidebar rows, remains available on branch selection, and the webview typecheck/build path passes.
+
 ## [1.2.135] - 2026-05-05
 ### Fixed
 - **Development Tree node sessions now keep their concrete workflow identity.** Product Part, Cluster, and Module bootstrap sessions now use the materialized node path under `development_tree/materialized/...` instead of falling into `continuity/unknown`, and dialog IDs include the concrete node suffix instead of a generic `development-tree` suffix.
