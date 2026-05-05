@@ -79,3 +79,24 @@ test("DraftReadinessClassifier treats outdated or orphaned drafts as in_progress
 
   assert.equal(result.readiness, "in_progress");
 });
+
+test("DraftReadinessClassifier rejects unbalanced agent-fill markers", () => {
+  const result = new DraftReadinessClassifier().classify({
+    kind: "cluster",
+    files: [
+      {
+        fileName: "ClusterDescription.draft.md",
+        content: `${createDraft("Cluster responsibility is described.")}
+<!-- /agent-fill -->
+`,
+      },
+      {
+        fileName: "ClusterFacadeContract.draft.md",
+        content: createDraft("Cluster facade contract is described."),
+      },
+    ],
+  });
+
+  assert.equal(result.readiness, "in_progress");
+  assert.equal(result.files[0]?.readiness, "in_progress");
+});

@@ -19,6 +19,8 @@ export interface DraftReadinessClassifierRequest {
 
 const AGENT_FILL_BLOCK_PATTERN =
   /<!-- agent-fill -->([\s\S]*?)<!-- \/agent-fill -->/g;
+const AGENT_FILL_CLOSE_PATTERN = /<!-- \/agent-fill -->/g;
+const AGENT_FILL_OPEN_PATTERN = /<!-- agent-fill -->/g;
 const AGENT_FILL_SENTINEL =
   "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
 const TODO_PATTERN = /\bTODO\b/i;
@@ -37,6 +39,7 @@ const REQUIRED_FILES = {
 const resolveFileReadiness = (params: {
   readonly filledBlockCount: number;
   readonly hasBlockingFlag: boolean;
+  readonly hasMarkerMismatch: boolean;
   readonly hasTodo: boolean;
   readonly requiredBlockCount: number;
 }): DevelopmentTreeDraftReadiness => {
@@ -44,13 +47,19 @@ const resolveFileReadiness = (params: {
     params.requiredBlockCount > 0 &&
     params.filledBlockCount < params.requiredBlockCount;
   if (
-    !(params.hasBlockingFlag || params.hasTodo || hasMissingAgentFillContent)
+    !(
+      params.hasBlockingFlag ||
+      params.hasMarkerMismatch ||
+      params.hasTodo ||
+      hasMissingAgentFillContent
+    )
   ) {
     return "ready";
   }
   if (
     params.filledBlockCount === 0 &&
     !params.hasBlockingFlag &&
+    !params.hasMarkerMismatch &&
     !params.hasTodo
   ) {
     return "idle";
@@ -72,11 +81,17 @@ const classifyFile = (file: {
   const hasBlockingFlag =
     OUTDATED_TRUE_PATTERN.test(file.content) ||
     ORPHANED_TRUE_PATTERN.test(file.content);
+  const openMarkerCount = (file.content.match(AGENT_FILL_OPEN_PATTERN) ?? [])
+    .length;
+  const closeMarkerCount = (file.content.match(AGENT_FILL_CLOSE_PATTERN) ?? [])
+    .length;
   const hasTodo = TODO_PATTERN.test(file.content);
   const requiredBlockCount = blocks.length;
   const readiness = resolveFileReadiness({
     filledBlockCount,
     hasBlockingFlag,
+    hasMarkerMismatch:
+      openMarkerCount !== closeMarkerCount || blocks.length !== openMarkerCount,
     hasTodo,
     requiredBlockCount,
   });
