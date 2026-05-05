@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.148] - 2026-05-05
+### Fixed
+- **Development Tree readiness now refreshes after draft writes.** Core includes Development Tree draft artifact mtimes in the workflow state freshness signal, so completed Product Part, Cluster, and Module drafts can turn ready without switching steps.
+- **Active Development Tree artifact panels now re-read filled drafts.** Project Manager refreshes the right artifact panel for the selected Development Tree node when workflow state freshness changes, replacing stale empty drafts with the agent-filled artifact content.
+
+### Tests
+- **Live readiness refresh has targeted regression coverage.** Tests now cover Core readiness recomputation after draft writes, client parsing of refreshed Development Tree metadata, and sidebar color updates from refreshed snapshots.
+
 ## [1.2.147] - 2026-05-05
 ### Fixed
 - **Development Tree draft-pass agents now stay inside first-prompt context.** Product Part, Cluster, and Module first-draft prompts now explicitly forbid reading, searching, listing, or opening additional workspace files during the automatic draft pass.
