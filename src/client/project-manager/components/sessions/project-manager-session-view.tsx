@@ -15,6 +15,17 @@ type ProjectManagerSessionViewProps = {
   readonly initialDialogIntent?: StageSessionIntent | null;
 };
 
+const isDialogIntentScopedToStartupStage = (
+  intent: DialogOpenIntent | StageSessionIntent | null,
+  startupStage: string
+): intent is DialogOpenIntent | StageSessionIntent => {
+  if (!intent) return false;
+  if (typeof intent.stage !== "string") {
+    return !startupStage.startsWith("development_tree/");
+  }
+  return intent.stage === startupStage;
+};
+
 export const ProjectManagerSessionView = ({
   workspacePath,
   preferredSessionId,
@@ -31,10 +42,10 @@ export const ProjectManagerSessionView = ({
     openProjectManagerFileLink(target);
   }, []);
 
-  // Clear override on workspace change
+  // Clear override on workspace or selected startup stage change.
   useEffect(() => {
     setDialogIntentOverride(null);
-  }, [workspacePath]);
+  }, [startupStage, workspacePath]);
 
   // Runtime events (new session creation via confirmation card, manual navigation)
   useEffect(() => {
@@ -58,7 +69,13 @@ export const ProjectManagerSessionView = ({
   }, []);
 
   // Derived — no intermediate renders, no flashing
-  const effectiveIntent = dialogIntentOverride ?? initialDialogIntent;
+  const scopedDialogIntentOverride = isDialogIntentScopedToStartupStage(
+    dialogIntentOverride,
+    startupStage
+  )
+    ? dialogIntentOverride
+    : null;
+  const effectiveIntent = scopedDialogIntentOverride ?? initialDialogIntent;
 
   if (effectiveIntent) {
     return (

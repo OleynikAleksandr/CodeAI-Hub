@@ -157,6 +157,42 @@ test("project-manager-session-view restores dialog mode only from live PM intent
   assert.equal(source.includes("initialDialogIntent"), true);
 });
 
+test("project-manager-session-view ignores stale dialog override outside startup stage", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes("const isDialogIntentScopedToStartupStage = ("),
+    true
+  );
+  assert.equal(
+    source.includes('return !startupStage.startsWith("development_tree/");'),
+    true
+  );
+  assert.equal(source.includes("return intent.stage === startupStage;"), true);
+  assert.equal(
+    source.includes("const scopedDialogIntentOverride = isDialogIntentScopedToStartupStage("),
+    true
+  );
+  assert.equal(
+    source.includes("const effectiveIntent = scopedDialogIntentOverride ?? initialDialogIntent;"),
+    true
+  );
+  assert.equal(source.includes("const effectiveIntent = dialogIntentOverride ?? initialDialogIntent;"), false);
+});
+
+test("project-manager-session-view clears dialog override when selected startup stage changes", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  const clearEffectIndex = source.indexOf(
+    "useEffect(() => {\n    setDialogIntentOverride(null);\n  }, [startupStage, workspacePath]);"
+  );
+  const legacyWorkspaceOnlyIndex = source.indexOf(
+    "useEffect(() => {\n    setDialogIntentOverride(null);\n  }, [workspacePath]);"
+  );
+  assert.equal(clearEffectIndex >= 0, true);
+  assert.equal(legacyWorkspaceOnlyIndex, -1);
+});
+
 test("project-manager-dialog-session-view keeps runtime model sync and dialog send wiring local", async () => {
   const source = await readFile(DIALOG_SOURCE_PATH, "utf8");
 
