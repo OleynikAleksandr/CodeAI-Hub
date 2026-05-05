@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.141] - 2026-05-05
+### Fixed
+- **Development Tree node-agent first prompts now include existing workflow context.** New Product Part, Cluster, and Module bootstrap prompts include bounded prior context from `Final_Description.md`, `virtual-simulation.md`, `product-parts.index.md`, and the selected Product Part artifact when those files exist in the workspace.
+- **Node agents are told not to restart discovery from zero.** The prompt now treats upstream artifacts as prior context and explicitly tells the agent not to ask the user to re-explain information already present there.
+
+### Tests
+- **Prompt artifact context is covered by targeted Core tests.** Tests now verify both prompt rendering and workspace-backed artifact loading during node session bootstrap.
+
 ## [1.2.140] - 2026-05-05
 ### Fixed
 - **Development Tree node session tabs now show only the node name.** Tabs for `development_tree/...` sessions no longer expose the full materialized path and instead render the final Product Part, Cluster, or Module segment in readable Title Case.
