@@ -11,6 +11,13 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
     workspaceSlug: "demo-workspace",
     prompt: "",
     questionnairePath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+    sourceArtifacts: [
+      {
+        content: "# Final Description\n\nUser-facing source content.\n",
+        label: "Final_Description.md",
+        relativePath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+      },
+    ],
     templatePath: "/tmp/should-not-appear.md",
   });
 
@@ -32,6 +39,24 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
   );
   assert.equal(
     pack.content.includes("Build the artifact from `Final_Description.md`."),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Authoritative upstream source documents (inline):"),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "- The listed paths are provenance and fallback references if inline content appears missing or stale."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("````markdown\n# Final Description"),
+    true
+  );
+  assert.equal(
+    pack.content.includes("User-facing source content."),
     true
   );
   assert.equal(

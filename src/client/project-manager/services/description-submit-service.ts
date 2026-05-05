@@ -30,6 +30,7 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
 const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
   "Build the artifact from the questionnaire and template. " +
   "Write the result to the target file path.";
+const WORKFLOW_SOURCE_MAX_BYTES = 500_000;
 export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
 
 const isRecordValue = (
@@ -106,6 +107,12 @@ type SessionCreatedPayload = {
 type SessionErrorPayload = {
   readonly sessionId?: string;
   readonly message: string;
+};
+type WorkflowSourceArtifactPayload = {
+  readonly content: string;
+  readonly label: string;
+  readonly relativePath: string;
+  readonly truncated?: boolean;
 };
 
 const cachedWorkflowSchemas = new Map<WorkflowStageId, Record<string, unknown>>();
@@ -238,6 +245,63 @@ export const loadWorkflowSchemaForProjectManager = async (
   pendingWorkflowSchemas.set(stage, pending);
   return pending;
 };
+
+const readWorkflowSourceArtifact = async (params: {
+  readonly label: string;
+  readonly relativePath: string;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): Promise<WorkflowSourceArtifactPayload | null> => {
+  const httpUrl = resolveCoreHttpUrl();
+  if (!httpUrl) {
+    return null;
+  }
+  const query = new URLSearchParams({
+    maxBytes: String(WORKFLOW_SOURCE_MAX_BYTES),
+    path: params.relativePath,
+    workspacePath: params.workspacePath,
+    workspaceSlug: params.workspaceSlug,
+  });
+  try {
+    const response = await fetch(
+      joinUrl(httpUrl, `/api/v1/orchestrator/workflow-artifact?${query.toString()}`)
+    );
+    if (!response.ok) {
+      return null;
+    }
+    const payload = (await response.json()) as unknown;
+    if (!isRecord(payload) || typeof payload.content !== "string") {
+      return null;
+    }
+    return {
+      content: payload.content,
+      label: params.label,
+      relativePath: params.relativePath,
+      truncated: payload.truncated === true,
+    };
+  } catch {
+    return null;
+  }
+};
+
+const readWorkflowSourceArtifacts = async (params: {
+  readonly stage: WorkflowStageId;
+  readonly questionnairePath: string;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): Promise<readonly WorkflowSourceArtifactPayload[]> => {
+  if (params.stage !== "virtual_simulation") {
+    return [];
+  }
+  const sourceArtifact = await readWorkflowSourceArtifact({
+    label: "Final_Description.md",
+    relativePath: params.questionnairePath,
+    workspacePath: params.workspacePath,
+    workspaceSlug: params.workspaceSlug,
+  });
+  return sourceArtifact ? [sourceArtifact] : [];
+};
+
 const createDescriptionSession = async (params: {
   readonly workspacePath: string;
   readonly initiativeSlug: string;
@@ -346,9 +410,16 @@ export class DescriptionSubmitService {
     const bindingPromise = waitForSessionProviderBinding(session.id);
     try {
       const contract = await contractPromise;
+      const sourceArtifacts = await readWorkflowSourceArtifacts({
+        stage,
+        questionnairePath: params.questionnairePath,
+        workspacePath: params.workspacePath,
+        workspaceSlug: resolvedInitiativeSlug,
+      });
       const promptPack = buildWorkflowPromptPack({
         artifactLanguage,
         chatLanguage,
+        sourceArtifacts,
         stage,
         workspacePath: params.workspacePath,
         workspaceSlug: resolvedInitiativeSlug,
