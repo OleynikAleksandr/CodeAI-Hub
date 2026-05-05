@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.143] - 2026-05-05
+### Fixed
+- **Workflow prompt language now separates chat and artifact prose.** Description, Virtual Simulation, and Diagram Modules first prompts now carry Settings > General > Reasoning as the chat language and Settings > General > Artifacts for the User as the artifact prose language, while English examples/templates remain format-only and contract tokens stay stable.
+- **Early workflow steps now receive upstream artifacts inline.** Virtual Simulation receives the full `Final_Description.md`; Diagram Modules receives the full `Final_Description.md` and `virtual-simulation.md` in the first prompt with provenance and fallback paths.
+
+### Tests
+- **Workflow prompt language behavior is covered by targeted Project Manager and Core verification.** Tests lock prompt language separation, settings-backed start wiring, inline source payloads, template sync, and Diagram Modules structural-token boundaries.
+
 ## [1.2.142] - 2026-05-05
 ### Fixed
 - **Development Tree node-agent prompts now use scoped upstream context.** Product Part, Cluster, and Module bootstrap prompts no longer paste broad upstream artifacts into every node; Core extracts deterministic excerpts that match the selected node, its Product Part, and its Cluster.
