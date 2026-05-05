@@ -89,6 +89,7 @@ const createArtifactEditOperationLines = (): string[] => [
   "- For Markdown draft artifacts, prefer the provider-native patch/edit operation against the target context; for Codex, use `apply_patch` when available.",
   "- Do not choose fallback scripts as the first approach for ordinary Markdown draft edits.",
   "- For `<!-- agent-fill -->` blocks, replace only the intended block body and preserve frontmatter, generated blocks, sentinels, and LF line endings.",
+  "- When the block contains `_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._`, replace that sentinel line through the patch/edit operation.",
   "- If patch context needs adjustment because of blank lines or sentinel differences, retry silently with exact local context.",
   "- Do not send user-facing progress updates about patch mismatch, invisible blank lines, line-by-line checks, or fallback script rewrites unless the edit is blocked.",
 ];
