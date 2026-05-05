@@ -254,6 +254,18 @@ Release verification on 2026-05-05:
 - `./scripts/build-release.sh --use-current-version` passed for `1.2.151`, including architecture check, root type-check, compile, SDK exclusions, local artefact validation, markdown link check, duplication advisory check, VSIX packaging, and VSIX runtime package surface verification.
 - Final user-test artifact: `codeai-hub-1.2.151.vsix` in the repository root, size `3.0M`.
 
+Settings-save retest release on 2026-05-05:
+
+- User feedback on `1.2.151`: selecting `Apple Native - On-Device` for both UI and Reasoning engines did not persist to `/Users/oleksandroliinyk/.codeai-hub/settings/settings.json`.
+- Core logs showed `Failed to save settings: Build or install the Apple Native Translation helper, then recheck this engine.`
+- Root cause: the packaged Core process can run with `cwd=/`, while helper resolution only checked `CODEAI_APPLE_TRANSLATION_HELPER_PATH` and `process.cwd()/native/...`.
+- Fix: helper resolution now also checks the runtime path derived from `process.argv[1]`, resolving to `app/native/apple-translation-helper/.build/release/apple-translation-helper` in packaged Core.
+- `./scripts/build-all.sh` passed for `1.2.152` and produced provider, Core, UI, and CEF launcher tarballs.
+- The generated `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.152.tar.bz2` contains the Apple Translation helper at `1.2.152/app/native/apple-translation-helper/.build/release/apple-translation-helper`.
+- Installed runtime helper preflight passed for `en -> ru`: `helperStatus=ready`, `languageStatus=installed`, `xcodeStatus=ready`, `macOSVersion=26.3.1`.
+- `./scripts/build-release.sh --use-current-version` passed for `1.2.152`, including architecture check, type-check, compile, SDK exclusions, artefact validation, markdown links, duplication advisory check, VSIX packaging, and VSIX runtime package surface verification.
+- Final user-test artifact: `codeai-hub-1.2.152.vsix` in the repository root, size `3.0M`.
+
 Manual user workflow:
 
 1. Select `Apple Native - On-Device` as `UI Translation Engine`.
