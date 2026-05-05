@@ -119,8 +119,8 @@ test("DevelopmentTreeNodeBootstrapFacade bootstraps agent sessions for new nodes
     assert.deepEqual(
       result.agentSessions.map((session) => session.stage),
       [
-        "development-tree.product_part.local-runtime.standalone.local-runtime",
-        "development-tree.module.local-runtime.standalone.provider-bridge",
+        "development_tree/materialized/product-parts/local-runtime",
+        "development_tree/materialized/product-parts/local-runtime/modules/provider-bridge",
       ]
     );
     assert.equal(createdStages.length, 2);

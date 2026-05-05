@@ -31,26 +31,31 @@ export interface NodeAgentSessionBootstrapResult {
   readonly stage: string;
 }
 
-const STAGE_SEGMENT_PATTERN = /[^a-zA-Z0-9_.-]+/g;
-const STAGE_BOUNDARY_PATTERN = /^-+|-+$/g;
+const CODEAI_HUB_SEGMENT = ".codeai-hub";
+const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
 
-const sanitizeStageSegment = (value: string): string =>
+const splitWorkflowPath = (value: string): readonly string[] =>
   value
-    .trim()
-    .replace(STAGE_SEGMENT_PATTERN, "-")
-    .replace(STAGE_BOUNDARY_PATTERN, "");
+    .split(WORKFLOW_PATH_SEPARATOR_RE)
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0);
 
-const createStageId = (node: DevelopmentTreeDetectedNode): string =>
-  [
-    "development-tree",
-    node.kind,
-    node.partId,
-    node.clusterId ?? "standalone",
-    node.id,
-  ]
-    .map(sanitizeStageSegment)
-    .filter((segment) => segment.length > 0)
-    .join(".");
+const stripCodeAiWorkspacePrefix = (
+  segments: readonly string[],
+  workspaceSlug: string
+): readonly string[] =>
+  segments[0] === CODEAI_HUB_SEGMENT && segments[1] === workspaceSlug
+    ? segments.slice(2)
+    : segments;
+
+const createNodeWorkflowPath = (
+  node: DevelopmentTreeDetectedNode,
+  workspaceSlug: string
+): string =>
+  stripCodeAiWorkspacePrefix(
+    splitWorkflowPath(node.relativePath),
+    workspaceSlug
+  ).join("/");
 
 export class NodeAgentSessionBootstrapper {
   private readonly firstMessageBuilder = new NodeFirstMessageBuilder();
@@ -59,7 +64,7 @@ export class NodeAgentSessionBootstrapper {
     node: DevelopmentTreeDetectedNode,
     options: NodeAgentSessionBootstrapperOptions
   ): Promise<NodeAgentSessionBootstrapResult> {
-    const stage = createStageId(node);
+    const stage = createNodeWorkflowPath(node, options.workspaceSlug);
     const session = await options.gateway.createSessionForWorkflow({
       providerId: options.providerId,
       workspacePath: options.workspacePath,
