@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.153] - 2026-05-05
+### Added
+- **Apple Native Text-to-Speech is available for session bubbles on macOS.** Assistant and thinking bubbles now expose provider-styled `Speak` controls that read the visible bubble text through the packaged Apple Speech helper, with stop behavior on the active bubble.
+- **Text-to-Speech rate is configurable in General Settings.** The persisted `general.textToSpeech.rate` setting is clamped to `0.75x-2.0x` and sent with each speech request.
+
+### Tests
+- **Text-to-Speech integration is covered across helper, Core, UI, and packaging.** Targeted verification covers Swift helper fixtures, Core speech service and websocket routing, settings persistence, bubble Speak rendering, PM speak/stop command building, Core/webview type-check/build, and release validation for the packaged Apple Speech helper executable.
+
 ## [1.2.152] - 2026-05-05
 ### Fixed
 - **Apple Native Settings save now resolves the packaged helper from the Core runtime path.** The Project Manager launcher can start Core with `cwd=/`; Settings preflight and runtime translation now also look beside the packaged Core entry point, so `Apple Native - On-Device` no longer fails helper discovery in installed builds.
