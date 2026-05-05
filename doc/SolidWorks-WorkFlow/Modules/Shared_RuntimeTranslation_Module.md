@@ -73,10 +73,13 @@ Current source files:
 - `packages/translation/src/codex-cli-path-resolver.ts` - resolves the production Codex CLI executable for translation-backed engines.
 - `packages/translation/src/codex-translation-runtime-home-facade.ts` - builds isolated provider-owned Codex homes for translation-only runs.
 - `packages/translation/src/codex-cli-translation-engine.ts` - shared Codex `codex exec` translation fallback for `gpt-5.4-mini` and `gpt-5.3-codex-spark`.
+- `packages/translation/src/apple-native-translation-engine.ts` - optional macOS on-device translation engine; talks to the Swift helper through JSON stdin/stdout and fail-closes with actionable `apple_native_*` error codes.
+- `native/apple-translation-helper/` - SwiftPM helper boundary around Apple `Translation` framework (`preflight`, `availability`, `translate`, `translateBatch`).
 
 Current bundled engines:
 
 - `google-gtx`
+- `apple-native` (macOS on-device; requires macOS 26+, Xcode 26+, helper binary, and installed Translation Languages packs)
 - `codex-gpt-5.4-mini`
 - `codex-gpt-5.3-codex-spark`
 
@@ -91,6 +94,7 @@ Implementation notes:
 - The facade depends on the engine contract, not on Google-specific code directly.
 - The request/response helpers stay split into small files so no single utility file becomes a new runtime god module.
 - `google-gtx` remains the zero-config default; Core-owned Codex engines use provider-owned App Server translation sessions, while the shared package retains the isolated `codex exec` runtime as fallback.
+- `apple-native` is explicit-only and never falls back to Apple network translation; helper/platform/language-pack failures return source text with `errorCode` such as `apple_native_helper_unavailable`, `apple_native_requires_xcode`, or `apple_native_language_pack_missing`.
 - provider-owned Codex App Server translation instructions are translation-only: they instruct the model to translate only supplied text, return only translated text, avoid workflow-agent behavior, and not use tools, shell commands, files, patches, web search, planning, or user-input requests.
 - long requests are no longer sent as one monolithic string by default for generic/document translation; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract, while `reasoning` defaults to one translate call per provider-emitted block.
 - safe boundary priority is paragraph break -> list boundary -> sentence boundary -> clause boundary -> hard split outside protected regions.
@@ -175,6 +179,7 @@ Current live overlay rules:
 - if a second pending translation resolves to the same `engineId + targetLanguage + sourceHash`, Core must reuse the in-flight promise instead of queueing a duplicate provider call; caller-specific `messageId` stays unique, but the translated text payload is shared;
 - UI renders `localizedContent ?? content` and can upgrade already-rendered messages in place when the translation patch arrives later.
 - runtime diagnostics for session translation must log both requested and resolved engine metadata. For `anthropic-claude-haiku-4-5`, that metadata includes provider `claude`, model `claude-haiku-4-5-20251001`, project slug `translation-runtime-haiku`, `persistSession: true`, and `runtimePath: "provider-owned"`.
+- Apple Native readiness failures must preserve the actionable error code in translation results and session translation warning logs; the session layer also records a `readinessAction` such as `download_translation_languages`, `install_xcode_26`, or `build_or_install_apple_translation_helper`.
 - providers that stream one reasoning item across multiple visible paragraph/block messages must not reuse the same `messageId` for every emitted block; overlay/replay stores are keyed by `messageId`, so later translations would otherwise overwrite earlier thinking fragments from the same provider item. Codex uses `<itemId>::summary-block::<index>` for this identity.
 
 ### 5.2 Provider boundary

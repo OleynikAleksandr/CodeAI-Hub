@@ -162,6 +162,7 @@ Current user-facing settings contract:
   - `Reasoning` (fifth user-facing card introduced by the UI/Reasoning translation split; independent target language for live visible provider `Thinking / Reasoning` overlays)
 - independent `UI Translation Engine` selector (drives bundle materialization and browser bootstrap);
 - independent `Reasoning Translation Engine` selector (drives visible reasoning overlay translation only);
+- optional `Apple Native - On-Device` engine visibility is platform-gated to macOS in the shared settings UI; saved `apple-native` selections stay visible as disabled on unsupported platforms so the user can choose another engine.
 - English default/reset semantics rendered in UI as `Default Language (English)`
 - no user-facing `Default language` control
 - no user-facing `Workflow Terms Policy` control
@@ -214,9 +215,11 @@ Important live behaviors:
 - explicit `translationEngineId` requests are fail-closed: if the selected engine is unavailable in the active runtime, Localization must surface fallback/error state instead of silently substituting `google-gtx`;
 - the current selectable engine set is:
   - `google-gtx`
+  - `apple-native` (guarded Apple supported-language catalog; actual save/readiness requires helper preflight and installed language packs)
   - `codex-gpt-5.4-mini`
   - `codex-gpt-5.3-codex-spark`
   - `anthropic-claude-haiku-4-5` (provider-owned, materialized through a strict Core-backed localization path; extension-host does not locally translate with this engine and must not downgrade to a local fallback path)
+- Settings save blocks `apple-native` selections before persistence when Core helper preflight fails. The blocker covers unsupported platform, missing helper, Xcode not ready, unsupported language pair, and supported-but-not-installed Translation Languages packs; the user-facing message tells the user whether to update macOS, install Xcode, build/install the helper, or download languages in System Settings -> General -> Language & Region -> Translation Languages with On-Device Mode enabled.
 - after the UI/Reasoning translation split, the persisted `uiEngineId` continues to be the SSOT for UI localization bundle materialization, while Core-owned live thinking overlay translation is driven by a dedicated `reasoningEngineId` and `reasoningLanguage`; Localization still does not own the overlay storage or replay path.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - Settings save-path now classifies every save through `LocalizationSettingsImpactClassifier` (in `src/extension-module/settings/localization-settings-impact-classifier.ts`) before deciding whether to enter the blocking strict sync path. Provider-only saves, `general.responsePolicy` changes, continuity-only changes, and any other setting that does not touch `general.localization.engineId`, the four approved category language selections, or the glossary-enabled flag return `no_localization_impact` and persist through a best-effort envelope without posting the localization busy overlay and without blocking Project Manager/new session sends.
