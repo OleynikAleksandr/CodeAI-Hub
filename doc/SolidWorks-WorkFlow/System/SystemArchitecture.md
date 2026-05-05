@@ -175,6 +175,7 @@
   - `services/workflow-state-store.ts`, `services/workflow-events-client.ts`, `components/layout/use-artifact-availability.ts`, and `components/diagram-editor/diagram-stage-panel-scaffold.tsx` now implement the shared visibility-aware PM polling budget (`foreground` normal cadence, `background` `30s`, `hidden` parked, foreground wake-up = immediate catch-up)
 - Shared Session UI: `src/client/ui/src/`
   - `src/client/ui/src/session/session-id-bar.tsx` = display-only usage telemetry surface; automatic `usageLimits` refresh ownership does not belong to the UI mount lifecycle
+  - dialog bubbles expose provider-colored `Speak` controls for assistant and thinking messages; Project Manager owns the Core bridge action and passes visible text (`localizedContent ?? content`) plus persisted `general.textToSpeech.rate` to Core
 - Localization package: `packages/localization/`
   - `src/localization-facade.ts` = thin public package façade
   - `src/localization-contract.ts`, `src/localization-facade.ts` = runtime payload contract plus materialized bundle resolution
@@ -221,6 +222,10 @@
   - UI renders `localizedContent ?? content`, so late translation completion upgrades already-visible messages in place without delaying the original thinking stream
   - live overlay translation now resolves settings per dispatch, serializes execution through one shared worker queue, deduplicates identical in-flight jobs by `engineId + targetLanguage + sourceHash`, and refuses to start while the persisted localization bootstrap snapshot does not match current settings
   - Apple Native runtime failures are non-blocking for live reasoning overlays, but warning logs preserve the `apple_native_*` `errorCode` plus a coarse `readinessAction` so Settings guidance and runtime diagnostics point to the same remediation path
+- Core-owned session text-to-speech cluster: `packages/core/src/session-speech/`, `packages/core/src/remote-bridge/handlers/session-speech-request-handler.ts`, `native/apple-speech-helper/`
+  - Project Manager sends `session:speech:speak-message` and `session:speech:stop` over the same Core websocket boundary used by session commands; Core broadcasts `session:speech:state` so the clicked bubble can show active/stop state without storing speech state in dialog history
+  - `SessionSpeechService` resolves `CODEAI_APPLE_SPEECH_HELPER_PATH` first, then the packaged `app/native/apple-speech-helper/.build/release/apple-speech-helper`, and finally the workspace fallback; missing helper is fail-closed through speech state instead of silently falling back to a remote provider
+  - `scripts/build-core.sh` packages the Swift Apple Speech helper into the Core runtime on macOS, and `scripts/build-release.sh` verifies the executable helper in the installed Core runtime before VSIX packaging
 - Claude messaging cluster: `packages/Claude_Module/src/messaging/`
   - `message-processor.ts` = thin façade / queue orchestration surface; shutdown-aware error suppression so `Stop` interrupts cannot escape as `ERR_UNHANDLED_ERROR` after the session error channel has been torn down
   - `claude-stream-event-router.ts` = assistant/result/structured-output/thinking/text routing; delegates the live content ingestion path to `claude-content-stream-handler.ts` and reconciles final assembled thinking AND text blocks against materialized live segments before emitting
