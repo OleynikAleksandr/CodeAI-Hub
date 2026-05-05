@@ -10,9 +10,16 @@ const WORKSPACE_ROOT_DIR = ".codeai-hub";
 
 interface WorkspaceSessionPayload {
   readonly initiativeSlug?: string | null;
+  readonly runSlug?: string | null;
   readonly stage?: string | null;
   readonly workspacePath: string;
 }
+
+const WORKFLOW_STAGE_DIRS = new Map<string, readonly string[]>([
+  ["description", ["description"]],
+  ["virtual_simulation", ["virtual_simulation"]],
+  ["diagram_modules", ["diagram_modules", "diagram_modules/product-parts"]],
+]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -51,12 +58,46 @@ const parseWorkspaceSessionPayload = (
     value: {
       workspacePath,
       initiativeSlug: readOptionalString(payload.initiativeSlug),
+      runSlug: readOptionalString(payload.runSlug),
       stage: readOptionalString(payload.stage),
     },
   };
 };
 
-export const handleWorkspaceSessionCreate = (params: {
+export const prepareWorkflowStageDirectories = async (params: {
+  readonly initiativeSlug?: string | null;
+  readonly runSlug?: string | null;
+  readonly stage?: string | null;
+  readonly workspacePath: string;
+}): Promise<void> => {
+  if (!params.initiativeSlug) {
+    return;
+  }
+
+  const workspaceRoot = path.join(
+    params.workspacePath,
+    WORKSPACE_ROOT_DIR,
+    params.initiativeSlug
+  );
+  const stageDirs = WORKFLOW_STAGE_DIRS.get(params.stage ?? "") ?? [];
+  await fs.mkdir(workspaceRoot, { recursive: true });
+  for (const stageDir of stageDirs) {
+    await fs.mkdir(path.join(workspaceRoot, stageDir), { recursive: true });
+  }
+  if (
+    params.runSlug &&
+    params.stage &&
+    params.stage !== "description" &&
+    WORKFLOW_STAGE_DIRS.has(params.stage)
+  ) {
+    await fs.mkdir(
+      path.join(workspaceRoot, params.stage, "runs", params.runSlug),
+      { recursive: true }
+    );
+  }
+};
+
+export const handleWorkspaceSessionCreate = async (params: {
   readonly req: Request;
   readonly res: Response;
   readonly sessionManager: SessionManager;
@@ -65,7 +106,7 @@ export const handleWorkspaceSessionCreate = (params: {
     workspacePath: string,
     workspaceSlug: string
   ) => Promise<void> | void;
-}): void => {
+}): Promise<void> => {
   const parsed = parseWorkspaceSessionPayload(params.req.body as unknown);
   if (!parsed.ok) {
     params.res.status(HTTP_BAD_REQUEST).json({ error: parsed.error });
@@ -73,6 +114,13 @@ export const handleWorkspaceSessionCreate = (params: {
   }
 
   try {
+    await prepareWorkflowStageDirectories({
+      initiativeSlug: parsed.value.initiativeSlug,
+      runSlug: parsed.value.runSlug,
+      stage: parsed.value.stage,
+      workspacePath: parsed.value.workspacePath,
+    });
+
     const session = params.sessionManager.createSession(
       "projectManager",
       parsed.value.workspacePath,
@@ -84,20 +132,6 @@ export const handleWorkspaceSessionCreate = (params: {
     );
 
     if (parsed.value.initiativeSlug) {
-      fs.mkdir(
-        path.join(
-          parsed.value.workspacePath,
-          WORKSPACE_ROOT_DIR,
-          parsed.value.initiativeSlug
-        ),
-        { recursive: true }
-      ).catch((error: unknown) => {
-        params.logger.warn("Failed to prepare workspace session directory", {
-          error: toErrorMessage(error),
-          workspacePath: parsed.value.workspacePath,
-          workspaceSlug: parsed.value.initiativeSlug,
-        });
-      });
       Promise.resolve(
         params.onWorkspaceSessionCreated?.(
           parsed.value.workspacePath,

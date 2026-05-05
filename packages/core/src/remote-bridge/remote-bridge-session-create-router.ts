@@ -2,6 +2,7 @@ import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import type { WebSocketManager } from "./handlers/websocket-manager";
+import { prepareWorkflowStageDirectories } from "./handlers/workspace-session-service";
 import type { IncomingMessage } from "./types";
 
 interface RemoteBridgeSessionCreateRouterDependencies {
@@ -43,14 +44,37 @@ export class RemoteBridgeSessionCreateRouter {
       targetModelId,
     };
 
+    if (!(resolvedWorkspacePath && initiativeSlug)) {
+      await this.deps.sessionHandler.handleCreate(
+        requestedProviderId,
+        resolvedWorkspacePath,
+        createContext
+      );
+      return;
+    }
+
+    try {
+      await prepareWorkflowStageDirectories({
+        initiativeSlug,
+        runSlug: createContext.runSlug,
+        stage: createContext.stage,
+        workspacePath: resolvedWorkspacePath,
+      });
+    } catch (error: unknown) {
+      this.deps.logger.warn("Failed to prepare workflow stage directories", {
+        workspacePath: resolvedWorkspacePath,
+        workspaceSlug: initiativeSlug,
+        stage: createContext.stage,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
+
     await this.deps.sessionHandler.handleCreate(
       requestedProviderId,
       resolvedWorkspacePath,
       createContext
     );
-    if (!(resolvedWorkspacePath && initiativeSlug)) {
-      return;
-    }
 
     try {
       await this.deps.workflowRuntime.connectWorkspace({
