@@ -1,5 +1,6 @@
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
 import { DraftTemplateRegistry } from "./draft-template-registry";
+import { createLocalizedNodePromptInstructionLines } from "./localized-node-prompt-instructions";
 import type { NodePromptContextEntry } from "./node-prompt-context-extractor";
 
 export type NodePromptArtifactContextEntry = NodePromptContextEntry;
@@ -165,7 +166,17 @@ export class NodeFirstMessageBuilder {
       request.node
     );
     const technology = createTechnologyInstruction(request.technologyBase);
+    const localizedInstructionLines = createLocalizedNodePromptInstructionLines(
+      {
+        artifactLanguage: request.artifactLanguage,
+        draftFileNames,
+        node: request.node,
+        responseLanguage: request.responseLanguage,
+      }
+    );
     const content = [
+      ...localizedInstructionLines,
+      localizedInstructionLines.length > 0 ? "" : null,
       `You are responsible for the ${NODE_KIND_LABELS[request.node.kind]} node "${request.node.id}".`,
       "",
       "Node context:",
@@ -196,7 +207,9 @@ export class NodeFirstMessageBuilder {
       "",
       "Node-specific work:",
       ...createNodeSpecificRules(request.node),
-    ].join("\n");
+    ]
+      .filter((entry): entry is string => entry !== null)
+      .join("\n");
     return {
       content,
       draftFileNames,

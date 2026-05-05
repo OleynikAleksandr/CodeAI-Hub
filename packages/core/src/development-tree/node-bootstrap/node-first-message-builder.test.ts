@@ -12,6 +12,11 @@ const TECH_QUESTION_PATTERN =
 const TYPESCRIPT_TECH_PATTERN = /Technology base: TypeScript Node\.js/;
 const MODULE_SPEC_BOUNDARY_PATTERN =
   /Do not add Inputs\/Outputs sections to ModuleSpec\.draft\.md\./;
+const RUSSIAN_LOCALIZED_INSTRUCTION_PATTERN =
+  /Локализованный пакет инструкций CodeAI Hub \(ru\):/;
+const RUSSIAN_CONTRACT_ARTIFACT_PROSE_PATTERN =
+  /Даже в `ModuleFacadeContract\.draft\.md` и `ClusterFacadeContract\.draft\.md` пояснительный текст внутри `<!-- agent-fill -->` должен быть на языке артефактов/;
+const RUSSIAN_PROTECTED_TOKENS_PATTERN = /canonical tokens; не переводи их/;
 const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
   /User communication language: ru \(from Settings > General > Reasoning\)\. Translate and communicate with the user in this language\./;
 const RUSSIAN_ARTIFACT_LANGUAGE_PATTERN =
@@ -94,6 +99,15 @@ test("NodeFirstMessageBuilder includes module drafts and contract boundaries", (
     "ModuleFacadeContract.draft.md",
   ]);
   assert.equal(result.requiresTechnologyBaseAnswer, false);
+  assert.equal(
+    result.content.startsWith(
+      "Локализованный пакет инструкций CodeAI Hub (ru):"
+    ),
+    true
+  );
+  assert.match(result.content, RUSSIAN_LOCALIZED_INSTRUCTION_PATTERN);
+  assert.match(result.content, RUSSIAN_CONTRACT_ARTIFACT_PROSE_PATTERN);
+  assert.match(result.content, RUSSIAN_PROTECTED_TOKENS_PATTERN);
   assert.match(result.content, TYPESCRIPT_TECH_PATTERN);
   assert.match(result.content, RUSSIAN_RESPONSE_LANGUAGE_PATTERN);
   assert.match(result.content, RUSSIAN_ARTIFACT_LANGUAGE_PATTERN);
