@@ -417,6 +417,9 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
       ? {
           providerId: selectedBranchNode.session.providerId,
           providerSessionId: selectedBranchNode.session.providerSessionId,
+          targetDialogId: selectedBranchNode.session.dialogId,
+          targetRootSessionId: selectedBranchNode.session.rootSessionId,
+          targetSessionId: selectedBranchNode.session.sessionId,
           workspacePath,
           workspaceSlug,
           initiativeSlug: workspaceSlug,

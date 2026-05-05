@@ -10,6 +10,9 @@ import { providerIdSet } from "../../../ui/src/session/helpers";
 export type DialogOpenIntent = {
   readonly providerId: string;
   readonly providerSessionId: string | null;
+  readonly targetDialogId?: string | null;
+  readonly targetRootSessionId?: string | null;
+  readonly targetSessionId?: string | null;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
   readonly initiativeSlug: string | null;
@@ -167,6 +170,20 @@ export const resolveDialogMatch = (options: {
   const stage = options.intent.stage;
   const providerId = options.intent.providerId;
   const providerSessionId = options.intent.providerSessionId;
+  const targeted = options.dialogs.find(
+    (entry) =>
+      (options.intent.targetDialogId &&
+        entry.dialogId === options.intent.targetDialogId) ||
+      (options.intent.targetRootSessionId &&
+        entry.rootSessionId === options.intent.targetRootSessionId) ||
+      (options.intent.targetSessionId &&
+        (entry.latestSessionId === options.intent.targetSessionId ||
+          entry.rootSessionId === options.intent.targetSessionId ||
+          entry.dialogId === options.intent.targetSessionId))
+  );
+  if (targeted) {
+    return targeted;
+  }
   const candidates = options.dialogs.filter(
     (entry) =>
       entry.providerId === providerId &&

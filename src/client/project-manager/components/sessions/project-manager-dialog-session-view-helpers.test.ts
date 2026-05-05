@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildDialogSessionRecord,
+  resolveDialogMatch,
   sanitizeDialogIndexEntry,
   type DialogOpenIntent,
 } from "./project-manager-dialog-session-view-helpers";
@@ -48,4 +49,43 @@ test("dialog bootstrap preserves model binding from dialog index", () => {
     session.modelBinding?.modelId,
     "gpt-5.3-codex-spark reasoning:xhigh"
   );
+});
+
+test("dialog match prefers selected development-tree node identity", () => {
+  const olderNodeDialog = sanitizeDialogIndexEntry({
+    stage: "development_tree/materialized/product-parts/project-manager/modules/workflow-orchestration-ui",
+    rootSessionId: "node-root",
+    dialogId: "codex-node-workflow-orchestration-ui",
+    updatedAt: "2026-05-05T08:00:00.000Z",
+    latestSessionId: "node-session",
+    providerId: "codexCli",
+    providerSessionId: "provider-session-node",
+    modelBinding: null,
+  });
+  const newerDiagramDialog = sanitizeDialogIndexEntry({
+    stage: "diagram_modules",
+    rootSessionId: "diagram-root",
+    dialogId: "codex-diagram-modules",
+    updatedAt: "2026-05-05T08:10:00.000Z",
+    latestSessionId: "diagram-session",
+    providerId: "codexCli",
+    providerSessionId: "provider-session-diagram",
+    modelBinding: null,
+  });
+  assert.ok(olderNodeDialog);
+  assert.ok(newerDiagramDialog);
+
+  const match = resolveDialogMatch({
+    intent: {
+      ...intent,
+      providerSessionId: null,
+      stage: "diagram_modules",
+      targetDialogId: "codex-node-workflow-orchestration-ui",
+      targetRootSessionId: "node-root",
+      targetSessionId: "node-session",
+    },
+    dialogs: [newerDiagramDialog, olderNodeDialog],
+  });
+
+  assert.equal(match?.dialogId, "codex-node-workflow-orchestration-ui");
 });
