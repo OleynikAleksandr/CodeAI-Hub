@@ -74,6 +74,18 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
     ),
     true
   );
+  assert.equal(pack.content.includes("Artifact edit operation:"), true);
+  assert.equal(pack.content.includes("use `apply_patch` when available"), true);
+  assert.equal(
+    pack.content.includes(
+      "Do not choose fallback scripts as the first approach"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("patch mismatch, invisible blank lines"),
+    true
+  );
   assert.equal(
     pack.content.includes("Authoritative upstream source documents (inline):"),
     true
@@ -140,6 +152,7 @@ test("description prompt pack keeps template hint", () => {
   );
   assert.equal(pack.content.includes("Runtime tooling facts:"), true);
   assert.equal(pack.content.includes("Artifact write encoding:"), true);
+  assert.equal(pack.content.includes("Artifact edit operation:"), true);
   assert.equal(
     pack.content.includes("Authoritative upstream source documents (inline):"),
     true
@@ -217,6 +230,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
   assert.equal(pack.content.includes("Runtime tooling facts:"), true);
   assert.equal(pack.content.includes("Artifact write encoding:"), true);
+  assert.equal(pack.content.includes("Artifact edit operation:"), true);
   assert.equal(
     pack.content.includes(
       "Target path (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"

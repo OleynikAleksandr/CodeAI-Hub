@@ -26,6 +26,12 @@ const CYRILLIC_DIRECT_UTF8_PATTERN =
   /Cyrillic and other localized prose must be written directly as valid UTF-8/;
 const NO_ENCODING_RETRY_CHATTER_PATTERN =
   /Do not send user-facing progress updates about routine encoding retries/;
+const ARTIFACT_EDIT_OPERATION_PATTERN = /Artifact edit operation:/;
+const APPLY_PATCH_PATTERN = /use `apply_patch` when available/;
+const NO_FALLBACK_SCRIPT_FIRST_PATTERN =
+  /Do not choose fallback scripts as the first approach/;
+const NO_PATCH_RETRY_CHATTER_PATTERN =
+  /Do not send user-facing progress updates about patch mismatch, invisible blank lines/;
 const ARTIFACT_CONTEXT_RULE_PATTERN =
   /Do not ask the user to re-explain information already present here\./;
 const SCOPED_CONTEXT_HEADING_PATTERN =
@@ -94,6 +100,10 @@ test("NodeFirstMessageBuilder includes module drafts and contract boundaries", (
   assert.match(result.content, UTF8_MARKDOWN_PATTERN);
   assert.match(result.content, CYRILLIC_DIRECT_UTF8_PATTERN);
   assert.match(result.content, NO_ENCODING_RETRY_CHATTER_PATTERN);
+  assert.match(result.content, ARTIFACT_EDIT_OPERATION_PATTERN);
+  assert.match(result.content, APPLY_PATCH_PATTERN);
+  assert.match(result.content, NO_FALLBACK_SCRIPT_FIRST_PATTERN);
+  assert.match(result.content, NO_PATCH_RETRY_CHATTER_PATTERN);
   assert.match(result.content, MODULE_SPEC_BOUNDARY_PATTERN);
 });
 
