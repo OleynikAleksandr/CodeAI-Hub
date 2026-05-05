@@ -71,11 +71,19 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
 test("description prompt pack keeps template hint", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "uk",
+    chatLanguage: "ru",
     stage: "description",
     workspacePath: "/tmp/workspace",
     workspaceSlug: "demo-workspace",
     prompt: "",
     questionnairePath: ".codeai-hub/demo-workspace/description/questionnaire.md",
+    sourceArtifacts: [
+      {
+        content: "# Questionnaire\n\nUser submitted product answers.\n",
+        label: "Questionnaire",
+        relativePath: ".codeai-hub/demo-workspace/description/questionnaire.md",
+      },
+    ],
     templatePath: "/tmp/description-template.md",
   });
 
@@ -86,6 +94,25 @@ test("description prompt pack keeps template hint", () => {
   assert.equal(
     pack.content.includes(
       "Artifact prose language code: `uk` (from Settings > General > Artifacts for the User)."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("Authoritative upstream source documents (inline):"),
+    true
+  );
+  assert.equal(pack.content.includes("### Questionnaire"), true);
+  assert.equal(
+    pack.content.includes("````markdown\n# Questionnaire"),
+    true
+  );
+  assert.equal(
+    pack.content.includes("User submitted product answers."),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Final language reminder: user-facing chat stays in `ru`; artifact prose stays in `uk`; English examples/templates are format-only."
     ),
     true
   );

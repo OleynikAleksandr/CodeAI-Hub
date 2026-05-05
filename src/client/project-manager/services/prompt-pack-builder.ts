@@ -280,10 +280,7 @@ const buildInlineSourceArtifactBlock = (params: {
   readonly stage: WorkflowStageId;
   readonly workspacePath: string;
 }): string | null => {
-  if (
-    params.stage === "description" ||
-    (params.stage === "diagram_modules" && !params.sourceArtifacts?.length)
-  ) {
+  if (params.stage === "diagram_modules" && !params.sourceArtifacts?.length) {
     return null;
   }
   const sourceArtifacts = params.sourceArtifacts ?? [];

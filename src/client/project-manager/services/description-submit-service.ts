@@ -290,14 +290,18 @@ const readWorkflowSourceArtifacts = async (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }): Promise<readonly WorkflowSourceArtifactPayload[]> => {
-  if (params.stage === "description") {
-    return [];
-  }
   const sourceDescriptors =
-    params.stage === "virtual_simulation"
+    params.stage === "description"
       ? [
           {
-            label: "Final_Description.md",
+            label: "Questionnaire",
+            relativePath: params.questionnairePath,
+          },
+        ]
+      : params.stage === "virtual_simulation"
+        ? [
+            {
+              label: "Final_Description.md",
             relativePath: params.questionnairePath,
           },
         ]
