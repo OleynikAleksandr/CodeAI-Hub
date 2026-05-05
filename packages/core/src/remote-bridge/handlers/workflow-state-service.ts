@@ -18,6 +18,7 @@ import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-acti
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
 import type {
   WorkflowArtifactState,
+  WorkflowStageStatus,
   WorkflowState,
 } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
@@ -446,11 +447,13 @@ const hydrateDiagramModulesStateFromProgress = async (params: {
   }
 
   const artifactUpdatedAt = artifactStat.mtime.toISOString();
+  const nextStatus: WorkflowStageStatus = params.diagramModulesProgress
+    .aggregateReady
+    ? "completed"
+    : "in_progress";
   const nextStage = {
     ...currentStage,
-    status: params.diagramModulesProgress.aggregateReady
-      ? "completed"
-      : "in_progress",
+    status: nextStatus,
     artifacts: upsertStageArtifact({
       artifacts: currentStage.artifacts,
       relativePath: `diagram_modules/${DIAGRAM_MODULES_INDEX_FILE}`,
