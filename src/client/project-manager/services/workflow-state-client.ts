@@ -1,12 +1,30 @@
 import { buildWorkflowStateQuery } from "./workflow-state-query";
+import {
+  parseDevelopmentTreeSnapshot,
+  type DevelopmentTreeContinuityStageId,
+  type DevelopmentTreeSnapshot,
+} from "./workflow-state-development-tree-client";
 import { parseWorkflowGating, type WorkflowGatingSnapshot } from "./workflow-gating-client";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
+export type {
+  DevelopmentTreeClusterNode,
+  DevelopmentTreeModuleNode,
+  DevelopmentTreeNodeArtifact,
+  DevelopmentTreeNodeSession,
+  DevelopmentTreePartNode,
+  DevelopmentTreeReadiness,
+  DevelopmentTreeSnapshot,
+} from "./workflow-state-development-tree-client";
+
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
   | "diagram_modules";
 
-export type ContinuityStageId = WorkflowStageId | "unknown";
+export type ContinuityStageId =
+  | WorkflowStageId
+  | DevelopmentTreeContinuityStageId
+  | "unknown";
 
 export type WorkflowStageStatus =
   | "idle"
@@ -55,32 +73,6 @@ export type DescriptionBranchSnapshot = {
   readonly primarySession?: DescriptionSessionRef;
 };
 
-export type DevelopmentTreeModuleNode = {
-  readonly id: string;
-  readonly readiness?: DevelopmentTreeReadiness;
-  readonly title: string;
-};
-
-export type DevelopmentTreeClusterNode = {
-  readonly id: string;
-  readonly modules: readonly DevelopmentTreeModuleNode[];
-  readonly readiness?: DevelopmentTreeReadiness;
-};
-
-export type DevelopmentTreePartNode = {
-  readonly id: string;
-  readonly readiness?: DevelopmentTreeReadiness;
-  readonly status: "skeleton" | "materialized";
-  readonly clusters: readonly DevelopmentTreeClusterNode[];
-  readonly standaloneModules: readonly DevelopmentTreeModuleNode[];
-};
-
-export type DevelopmentTreeReadiness = "idle" | "in_progress" | "ready";
-
-export type DevelopmentTreeSnapshot = {
-  readonly parts: readonly DevelopmentTreePartNode[];
-};
-
 export type WorkflowStateSnapshot = {
   readonly workspaceSlug: string;
   readonly updatedAt: string;
@@ -124,13 +116,9 @@ const isWorkflowStageStatus = (value: unknown): value is WorkflowStageStatus =>
   value === "invalid" ||
     value === "outdated";
 
-const isDevelopmentTreeReadiness = (
-  value: unknown
-): value is DevelopmentTreeReadiness =>
-  value === "idle" || value === "in_progress" || value === "ready";
-
 const isContinuityStageId = (value: unknown): value is ContinuityStageId =>
   value === "unknown" ||
+  (typeof value === "string" && value.startsWith("development_tree/")) ||
   (typeof value === "string" &&
     STAGE_ORDER.includes(value as WorkflowStageId));
 
@@ -263,84 +251,6 @@ const parseDescriptionBranch = (
     finalPath,
     primarySession: primarySession ?? undefined,
   };
-};
-
-const parseDevelopmentTreeModuleNode = (
-  payload: unknown
-): DevelopmentTreeModuleNode | null => {
-  if (!isRecord(payload)) return null;
-  const id = readNonEmptyString(payload.id);
-  const title = readNonEmptyString(payload.title);
-  if (!(id && title)) return null;
-  return {
-    id,
-    title,
-    readiness: isDevelopmentTreeReadiness(payload.readiness)
-      ? payload.readiness
-      : undefined,
-  };
-};
-
-const parseDevelopmentTreeClusterNode = (
-  payload: unknown
-): DevelopmentTreeClusterNode | null => {
-  if (!isRecord(payload)) return null;
-  const id = readNonEmptyString(payload.id);
-  if (!id) return null;
-  const modules = Array.isArray(payload.modules)
-    ? payload.modules.map(parseDevelopmentTreeModuleNode).filter(
-        (m): m is DevelopmentTreeModuleNode => m !== null
-      )
-    : [];
-  return {
-    id,
-    modules,
-    readiness: isDevelopmentTreeReadiness(payload.readiness)
-      ? payload.readiness
-      : undefined,
-  };
-};
-
-const parseDevelopmentTreePartNode = (
-  payload: unknown
-): DevelopmentTreePartNode | null => {
-  if (!isRecord(payload)) return null;
-  const id = readNonEmptyString(payload.id);
-  if (!id) return null;
-  const status =
-    payload.status === "materialized" ? "materialized" : "skeleton";
-  const clusters = Array.isArray(payload.clusters)
-    ? payload.clusters.map(parseDevelopmentTreeClusterNode).filter(
-        (c): c is DevelopmentTreeClusterNode => c !== null
-      )
-    : [];
-  const standaloneModules = Array.isArray(payload.standaloneModules)
-    ? payload.standaloneModules.map(parseDevelopmentTreeModuleNode).filter(
-        (m): m is DevelopmentTreeModuleNode => m !== null
-      )
-    : [];
-  return {
-    id,
-    status,
-    clusters,
-    standaloneModules,
-    readiness: isDevelopmentTreeReadiness(payload.readiness)
-      ? payload.readiness
-      : undefined,
-  };
-};
-
-const parseDevelopmentTreeSnapshot = (
-  payload: unknown
-): DevelopmentTreeSnapshot | null => {
-  if (!isRecord(payload)) return null;
-  const parts = Array.isArray(payload.parts)
-    ? payload.parts.map(parseDevelopmentTreePartNode).filter(
-        (p): p is DevelopmentTreePartNode => p !== null
-      )
-    : [];
-  if (parts.length === 0) return null;
-  return { parts };
 };
 
 const parseWorkflowState = (

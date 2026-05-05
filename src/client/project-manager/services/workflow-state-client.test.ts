@@ -13,13 +13,16 @@ const installFetchStub = (payload: unknown): void => {
   });
 };
 
-const createWorkflowPayload = (developmentTree: unknown): unknown => ({
+const createWorkflowPayload = (
+  developmentTree: unknown,
+  continuity: unknown = { chains: [] }
+): unknown => ({
   state: {
     workspaceSlug: "demo",
     updatedAt: "2026-05-04T10:00:00.000Z",
     stages: {},
   },
-  continuity: { chains: [] },
+  continuity,
   developmentTree,
   gating: {
     blocked: {
@@ -45,8 +48,25 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
               modules: [
                 {
                   id: "main-area",
+                  artifacts: [
+                    {
+                      fileName: "ModuleSpec.draft.md",
+                      path: ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area/ModuleSpec.draft.md",
+                    },
+                  ],
                   readiness: "ready",
+                  session: {
+                    dialogId:
+                      "codex-development-tree-ui-shell-layout-main-area",
+                    providerId: "codexCli",
+                    providerSessionId: "provider-session",
+                    rootSessionId: "codex-root",
+                    sessionId: "runtime-session",
+                    updatedAt: "2026-05-04T10:01:00.000Z",
+                  },
                   title: "Main Area",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
                 },
               ],
             },
@@ -56,6 +76,25 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
               id: "theme-engine",
               readiness: "idle",
               title: "Theme Engine",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      chains: [
+        {
+          rootSessionId: "codex-root",
+          workspaceSlug: "demo",
+          stage:
+            "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
+          updatedAt: "2026-05-04T10:01:00.000Z",
+          segments: [
+            {
+              sessionId: "runtime-session",
+              providerId: "codexCli",
+              providerSessionId: "provider-session",
+              createdAt: "2026-05-04T10:00:00.000Z",
             },
           ],
         },
@@ -71,7 +110,18 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
   const part = state?.developmentTree?.parts[0];
   assert.equal(part?.readiness, "in_progress");
   assert.equal(part?.clusters[0]?.readiness, "ready");
-  assert.equal(part?.clusters[0]?.modules[0]?.readiness, "ready");
+  const module = part?.clusters[0]?.modules[0];
+  assert.equal(module?.readiness, "ready");
+  assert.equal(
+    module?.workflowPath,
+    "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area"
+  );
+  assert.equal(module?.artifacts?.[0]?.fileName, "ModuleSpec.draft.md");
+  assert.equal(module?.session?.providerId, "codexCli");
+  assert.equal(
+    state?.continuity.chains[0]?.stage,
+    "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area"
+  );
   assert.equal(part?.standaloneModules[0]?.readiness, "idle");
 });
 
