@@ -132,6 +132,13 @@ if [[ "$UNAME_S" == "Darwin" ]]; then
   mkdir -p "$APPLE_TRANSLATION_HELPER_STAGE"
   cp "$APPLE_TRANSLATION_HELPER_BINARY" "$APPLE_TRANSLATION_HELPER_STAGE/apple-translation-helper"
   chmod 755 "$APPLE_TRANSLATION_HELPER_STAGE/apple-translation-helper"
+
+  echo "🍎 Building Apple Speech helper..."
+  APPLE_SPEECH_HELPER_BINARY="$("$SCRIPT_DIR/build-apple-speech-helper.sh" | tail -n1)"
+  APPLE_SPEECH_HELPER_STAGE="$APP_STAGE/native/apple-speech-helper/.build/release"
+  mkdir -p "$APPLE_SPEECH_HELPER_STAGE"
+  cp "$APPLE_SPEECH_HELPER_BINARY" "$APPLE_SPEECH_HELPER_STAGE/apple-speech-helper"
+  chmod 755 "$APPLE_SPEECH_HELPER_STAGE/apple-speech-helper"
 fi
 
 echo "📦 Packing provider tarballs..."
