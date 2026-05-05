@@ -5,6 +5,7 @@ import {
   resolveArtifactsForTheUserLanguage,
 } from "./description-submit-service";
 import type { SettingsLoadedPayload } from "../core-stream-message-types";
+import { resolveWorkflowChatLanguage } from "./prompt-pack-builder";
 
 type StartWorkflowStepParams = {
   readonly workspaceName?: string;
@@ -100,11 +101,12 @@ export class WorkflowStepStartService {
     if (!finalDescriptionPath) {
       throw new Error("Missing Final_Description.md. Complete Description step first.");
     }
-    const artifactLanguage = resolveArtifactsForTheUserLanguage(
-      this.getSettingsPayload()
-    );
+    const settingsPayload = this.getSettingsPayload();
+    const artifactLanguage = resolveArtifactsForTheUserLanguage(settingsPayload);
+    const chatLanguage = resolveWorkflowChatLanguage(settingsPayload);
     return this.submitService.submitQuestionnaire({
       artifactLanguage,
+      chatLanguage,
       workspaceName: params.workspaceName,
       workspaceSlug: params.workspaceSlug,
       workspacePath: params.workspacePath,
@@ -135,15 +137,16 @@ export class WorkflowStepStartService {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
     const progressSubstep = readDiagramModulesSubstep(state);
-    const artifactLanguage = resolveArtifactsForTheUserLanguage(
-      this.getSettingsPayload()
-    );
+    const settingsPayload = this.getSettingsPayload();
+    const artifactLanguage = resolveArtifactsForTheUserLanguage(settingsPayload);
+    const chatLanguage = resolveWorkflowChatLanguage(settingsPayload);
     const questionnairePath =
       progressSubstep === null
         ? vsArtifactPath
         : `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
     return this.submitService.submitQuestionnaire({
       artifactLanguage,
+      chatLanguage,
       workspaceName: params.workspaceName,
       workspaceSlug: params.workspaceSlug,
       workspacePath: params.workspacePath,

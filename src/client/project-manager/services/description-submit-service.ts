@@ -13,7 +13,10 @@ import {
   resolveWorkspaceName,
   toWorkspaceSlug,
 } from "./description-questionnaire-utils";
-import { buildWorkflowPromptPack } from "./prompt-pack-builder";
+import {
+  buildWorkflowPromptPack,
+  resolveWorkflowChatLanguage,
+} from "./prompt-pack-builder";
 import { waitForSessionProviderBinding } from "./session-binding-waiter";
 
 const SESSION_CREATE_TIMEOUT_MS = 15000;
@@ -307,6 +310,7 @@ export class DescriptionSubmitService {
     readonly questionnairePath: string;
     readonly stage?: WorkflowStageId;
     readonly artifactLanguage?: string;
+    readonly chatLanguage?: string;
     readonly providerId?: ProviderStackId;
     readonly onSessionCreated?: (sessionId: string) => void;
   }): Promise<string> {
@@ -329,9 +333,12 @@ export class DescriptionSubmitService {
     });
     params.onSessionCreated?.(session.id);
     const resolvedInitiativeSlug = session.initiativeSlug ?? initiativeSlug;
+    const settingsPayload = api.getLastSettingsPayload();
     const artifactLanguage =
       normalizeArtifactLanguage(params.artifactLanguage) ??
-      resolveArtifactsForTheUserLanguage(api.getLastSettingsPayload());
+      resolveArtifactsForTheUserLanguage(settingsPayload);
+    const chatLanguage =
+      params.chatLanguage?.trim() || resolveWorkflowChatLanguage(settingsPayload);
     if (!resolvedInitiativeSlug) {
       notifyMissingDescriptionContext(session.id);
       return session.id;
@@ -341,6 +348,7 @@ export class DescriptionSubmitService {
       const contract = await contractPromise;
       const promptPack = buildWorkflowPromptPack({
         artifactLanguage,
+        chatLanguage,
         stage,
         workspacePath: params.workspacePath,
         workspaceSlug: resolvedInitiativeSlug,
