@@ -39,3 +39,25 @@ test("main-area panel content keeps hook declarations ahead of localization busy
   assert.equal(sessionBusyIndex > sessionIntentRefIndex, true);
   assert.equal(sessionBusyIndex > sessionInitialIntentIndex, true);
 });
+
+test("main-area session content scopes runtime fallback by selected development-tree node path", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  const startupStageIndex = source.indexOf(
+    "const sessionStartupStage = selectedBranchNode?.workflowPath ?? stageId;"
+  );
+  const sessionViewIndex = source.indexOf(
+    "startupStage={sessionStartupStage}"
+  );
+  const branchIntentIndex = source.indexOf("selectedBranchNode\n      ?");
+  const nullIntentIndex = source.indexOf("        : null", branchIntentIndex);
+  const stageIntentIndex = source.indexOf(
+    "resolveStageSessionIntent(",
+    nullIntentIndex
+  );
+  assert.equal(startupStageIndex >= 0, true);
+  assert.equal(sessionViewIndex > startupStageIndex, true);
+  assert.equal(branchIntentIndex >= 0, true);
+  assert.equal(nullIntentIndex > branchIntentIndex, true);
+  assert.equal(stageIntentIndex > nullIntentIndex, true);
+});

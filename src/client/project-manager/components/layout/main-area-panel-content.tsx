@@ -412,28 +412,31 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   const confirmableStage = activeTool
     ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
     : undefined;
+  const sessionStartupStage = selectedBranchNode?.workflowPath ?? stageId;
   const nextIntent =
-    selectedBranchNode?.session && workspacePath && workspaceSlug
-      ? {
-          providerId: selectedBranchNode.session.providerId,
-          providerSessionId: selectedBranchNode.session.providerSessionId,
-          targetDialogId: selectedBranchNode.session.dialogId,
-          targetRootSessionId: selectedBranchNode.session.rootSessionId,
-          targetSessionId: selectedBranchNode.session.sessionId,
-          workspacePath,
-          workspaceSlug,
-          initiativeSlug: workspaceSlug,
-          stage: selectedBranchNode.workflowPath ?? "diagram_modules",
-          sessionKind: "collector" as const,
-          runSlug: null,
-        }
+    selectedBranchNode
+      ? selectedBranchNode.session && workspacePath && workspaceSlug
+        ? {
+            providerId: selectedBranchNode.session.providerId,
+            providerSessionId: selectedBranchNode.session.providerSessionId,
+            targetDialogId: selectedBranchNode.session.dialogId,
+            targetRootSessionId: selectedBranchNode.session.rootSessionId,
+            targetSessionId: selectedBranchNode.session.sessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: selectedBranchNode.workflowPath ?? "diagram_modules",
+            sessionKind: "collector" as const,
+            runSlug: null,
+          }
+        : null
       : workflowSnapshot && workspacePath && workspaceSlug
-      ? resolveStageSessionIntent(
-          stageId,
-          workflowSnapshot,
-          workspacePath,
-          workspaceSlug
-        )
+        ? resolveStageSessionIntent(
+            stageId,
+            workflowSnapshot,
+            workspacePath,
+            workspaceSlug
+          )
       : null;
   const intentRef = useRef(nextIntent);
   const initialIntent = useMemo(() => {
@@ -483,7 +486,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
       initialDialogIntent={stepStartedIntent ?? initialIntent}
       pendingSessionCreate={pendingSessionCreate}
       preferredSessionId={preferredSessionId}
-      startupStage={stageId}
+      startupStage={sessionStartupStage}
       workspacePath={workspacePath}
     />
   );
