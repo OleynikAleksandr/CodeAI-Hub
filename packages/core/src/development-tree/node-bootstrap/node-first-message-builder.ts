@@ -1,18 +1,14 @@
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
 import { DraftTemplateRegistry } from "./draft-template-registry";
+import type { NodePromptContextEntry } from "./node-prompt-context-extractor";
+
+export type NodePromptArtifactContextEntry = NodePromptContextEntry;
 
 export interface NodeFirstMessageBuildRequest {
   readonly artifactContext?: readonly NodePromptArtifactContextEntry[];
   readonly node: DevelopmentTreeDetectedNode;
   readonly responseLanguage?: string;
   readonly technologyBase?: string;
-}
-
-export interface NodePromptArtifactContextEntry {
-  readonly content: string;
-  readonly label: string;
-  readonly relativePath: string;
-  readonly truncated: boolean;
 }
 
 export interface NodeFirstMessageBuildResult {
@@ -62,13 +58,14 @@ const createArtifactContextLines = (
 ): string[] => {
   if (!artifactContext?.length) {
     return [
-      "Existing workflow artifacts:",
+      "Scoped workflow context:",
       "- No upstream workflow artifacts were found on disk. Ask the user only for missing decisions that are not derivable from the node drafts.",
     ];
   }
   return [
-    "Existing workflow artifacts (read before asking the user):",
-    "- Treat these artifacts as prior context. Do not ask the user to re-explain information already present here.",
+    "Scoped workflow context (read before asking the user):",
+    "- Treat these deterministic excerpts as prior context for this exact Product Part / Cluster / Module node.",
+    "- Do not ask the user to re-explain information already present here.",
     "- If an excerpt is truncated, read the referenced file before making decisions.",
     ...artifactContext.flatMap((artifact) => [
       "",
