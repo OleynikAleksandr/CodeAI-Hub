@@ -12,6 +12,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 
 const SESSION_ROOT = `${homedir()}/.codeai-hub/sessions`;
+const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
 
 export interface ContinuityRootResolutionOptions {
   readonly context: {
@@ -46,6 +47,14 @@ interface SessionRequestHandlerContinuityRootDependencies {
   readonly logger: Logger;
   readonly sessionStorage: UnifiedSessionStorage;
 }
+
+const resolveDialogAgentRole = (context: {
+  readonly runSlug: string | null;
+  readonly stage: string | null;
+}): string | null =>
+  context.stage?.startsWith(DEVELOPMENT_TREE_STAGE_PREFIX)
+    ? context.stage
+    : (context.runSlug ?? context.stage ?? null);
 
 export { normalizeContinuityStageId } from "../../session-continuity/continuity-types";
 
@@ -100,7 +109,7 @@ export class SessionRequestHandlerContinuityRoot {
     return buildHumanReadableDialogId({
       providerId: options.providerId,
       uuid: options.sessionId,
-      agentRole: options.context.runSlug ?? options.context.stage ?? null,
+      agentRole: resolveDialogAgentRole(options.context),
     });
   }
 
