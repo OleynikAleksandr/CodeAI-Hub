@@ -52,6 +52,7 @@ import {
   updateResponsePolicyMode,
   updateStrictInstructionText,
   updateStrictSchemaText,
+  updateTextToSpeechRate,
   updateThinkingDisplaySyncEnabled,
   updateThinkingSettings,
 } from "../../../ui/src/components/settings/settings-state-helpers";
@@ -482,6 +483,8 @@ export const useProjectManagerSettingsState =
       handleResponsePolicyModeChange,
       handleStrictSchemaTextChange,
       handleStrictInstructionTextChange,
+      handleTextToSpeechRateChange: (rate) =>
+        updateSettings(updateTextToSpeechRate(settings, rate)),
       handleSave: () => transport.save(settings),
       handleReset: transport.reset,
       handleUpdateProvider: transport.updateProvider,

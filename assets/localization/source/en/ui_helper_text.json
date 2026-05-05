@@ -1,5 +1,6 @@
 {
   "settings.core_controls.description": "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues.",
+  "settings.text_to_speech.description": "Control how fast message bubbles are read aloud.",
   "settings.localization.intro": "Configure which user-facing text should stay in English and which should be localized for the user.",
   "settings.localization.category_bridge_helper": "`Workflow Terms` now follow `UI Labels`, and `Default Language (English)` is the reset state for every category.",
   "settings.localization.language_catalog_helper": "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase.",

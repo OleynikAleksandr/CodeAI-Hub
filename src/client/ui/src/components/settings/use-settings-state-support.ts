@@ -442,6 +442,7 @@ export interface UseSettingsStateResult {
   readonly handleSave: () => void;
   readonly handleStrictInstructionTextChange: (value: string) => void;
   readonly handleStrictSchemaTextChange: (value: string) => void;
+  readonly handleTextToSpeechRateChange: (rate: number) => void;
   readonly handleThinkingSettingsChange: (
     enabled: boolean,
     effort: ClaudeThinkingEffort

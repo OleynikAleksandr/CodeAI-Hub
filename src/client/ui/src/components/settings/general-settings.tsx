@@ -13,6 +13,10 @@ import {
   settingsRadiusTokens,
   settingsTypographyTokens,
 } from "./style-tokens";
+import {
+  MAX_TEXT_TO_SPEECH_RATE,
+  MIN_TEXT_TO_SPEECH_RATE,
+} from "./text-to-speech-settings";
 import type {
   CoreControlState,
   LocalizationCategoryKey,
@@ -57,6 +61,26 @@ const controlsRowStyles: CSSProperties = {
   flexWrap: "wrap",
 };
 
+const sliderRowStyles: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "minmax(160px, 1fr) auto",
+  gap: "12px",
+  alignItems: "center",
+};
+
+const rangeStyles: CSSProperties = {
+  width: "100%",
+  accentColor: settingsColorTokens.actionPrimary,
+};
+
+const valueBadgeStyles: CSSProperties = {
+  minWidth: "54px",
+  textAlign: "right",
+  color: settingsColorTokens.textPrimary,
+  fontSize: settingsTypographyTokens.bodyFontSize,
+  fontWeight: 600,
+};
+
 const statusStyles: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
@@ -94,7 +118,9 @@ interface GeneralSettingsProps {
   readonly onRestartCore: () => void;
   readonly onStrictInstructionTextChange: (value: string) => void;
   readonly onStrictSchemaTextChange: (value: string) => void;
+  readonly onTextToSpeechRateChange: (rate: number) => void;
   readonly responsePolicy: GeneralResponsePolicySettings;
+  readonly textToSpeech: Settings["general"]["textToSpeech"];
 }
 
 const GeneralSettings = (props: GeneralSettingsProps) => {
@@ -125,6 +151,21 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
     USER_MESSAGES_CATEGORY,
     "settings.core_controls.idle_status_label",
     "Core restart status will appear here."
+  );
+  const speechTitle = t(
+    UI_LABELS_CATEGORY,
+    "settings.text_to_speech.title",
+    "Text-to-Speech"
+  );
+  const speechDescription = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "settings.text_to_speech.description",
+    "Control how fast message bubbles are read aloud."
+  );
+  const speechRateLabel = t(
+    UI_LABELS_CATEGORY,
+    "settings.text_to_speech.rate_label",
+    "Speech speed"
   );
 
   const resolvedButtonStyles = useMemo((): CSSProperties => {
@@ -223,6 +264,27 @@ const GeneralSettings = (props: GeneralSettingsProps) => {
           props.onLocalizationWorkflowTermsPolicyChange
         }
       />
+      <SettingsCard title={speechTitle}>
+        <p style={descriptionStyles}>{speechDescription}</p>
+        <label htmlFor="settings-text-to-speech-rate">{speechRateLabel}</label>
+        <div style={sliderRowStyles}>
+          <input
+            id="settings-text-to-speech-rate"
+            max={MAX_TEXT_TO_SPEECH_RATE}
+            min={MIN_TEXT_TO_SPEECH_RATE}
+            onChange={(event) =>
+              props.onTextToSpeechRateChange(Number(event.target.value))
+            }
+            step={0.05}
+            style={rangeStyles}
+            type="range"
+            value={props.textToSpeech.rate}
+          />
+          <output style={valueBadgeStyles}>
+            {props.textToSpeech.rate.toFixed(2)}x
+          </output>
+        </div>
+      </SettingsCard>
       <SettingsCard title={coreControlsTitle}>
         <p style={descriptionStyles}>{coreControlsDescription}</p>
         <div style={controlsRowStyles}>

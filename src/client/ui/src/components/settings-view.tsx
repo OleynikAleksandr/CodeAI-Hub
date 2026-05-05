@@ -178,6 +178,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleResponsePolicyModeChange,
     handleStrictSchemaTextChange,
     handleStrictInstructionTextChange,
+    handleTextToSpeechRateChange,
     handleSave,
     handleReset,
     handleUpdateProvider,
@@ -344,7 +345,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                         handleStrictInstructionTextChange
                       }
                       onStrictSchemaTextChange={handleStrictSchemaTextChange}
+                      onTextToSpeechRateChange={handleTextToSpeechRateChange}
                       responsePolicy={settings.general.responsePolicy}
+                      textToSpeech={settings.general.textToSpeech}
                     />
                     {templateUpdateControls ? (
                       <TemplateUpdatesCard

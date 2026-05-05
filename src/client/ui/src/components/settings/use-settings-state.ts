@@ -26,6 +26,7 @@ import {
   updateResponsePolicyMode,
   updateStrictInstructionText,
   updateStrictSchemaText,
+  updateTextToSpeechRate,
   updateThinkingDisplaySyncEnabled,
   updateThinkingSettings,
 } from "./settings-state-helpers";
@@ -61,20 +62,15 @@ import {
   type VersionsState,
 } from "./use-settings-state-support";
 
-const RESET_DELAY_MS = 100;
 export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
   "codeaihub:settings:localization:user-glossary-draft";
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
 const isSettingsSaveErrorMessage = (
   message: unknown
-): message is { readonly type: "settings:save-error" } => {
-  if (!(message && typeof message === "object" && "type" in message)) {
-    return false;
-  }
-
-  return message.type === "settings:save-error";
-};
+): message is { readonly type: "settings:save-error" } =>
+  (message as { readonly type?: unknown } | null)?.type ===
+  "settings:save-error";
 
 export const useSettingsState = (): UseSettingsStateResult => {
   const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
@@ -181,9 +177,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     };
 
     window.addEventListener("message", handleMessage);
-    vscode.postMessage({
-      type: "settings:load",
-    });
+    vscode.postMessage({ type: "settings:load" });
     return () => {
       window.removeEventListener("message", handleMessage);
     };
@@ -352,6 +346,13 @@ export const useSettingsState = (): UseSettingsStateResult => {
     [settings, updateSettings]
   );
 
+  const handleTextToSpeechRateChange = useCallback(
+    (rate: number) => {
+      updateSettings(updateTextToSpeechRate(settings, rate));
+    },
+    [settings, updateSettings]
+  );
+
   const handleGeminiDefaultModelChange = useCallback(
     (modelId: GeminiModelId) => {
       updateSettings(updateGeminiDefaultModel(settings, modelId));
@@ -408,10 +409,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
   const handleReset = useCallback(() => {
     setResetting(true);
     window.setTimeout(() => {
-      vscode.postMessage({
-        type: "settings:reset",
-      });
-    }, RESET_DELAY_MS);
+      vscode.postMessage({ type: "settings:reset" });
+    }, 100);
   }, []);
 
   const handleUpdateProvider = useCallback(
@@ -436,9 +435,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
       message: "Restart requested. Preparing shutdown...",
       phase: "stopping",
     });
-    vscode.postMessage({
-      type: "core:restart-request",
-    });
+    vscode.postMessage({ type: "core:restart-request" });
   }, []);
 
   const handleNativeRequestCapture = useCallback(
@@ -492,6 +489,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleResponsePolicyModeChange,
     handleStrictSchemaTextChange,
     handleStrictInstructionTextChange,
+    handleTextToSpeechRateChange,
     handleSave,
     handleReset,
     handleUpdateProvider,

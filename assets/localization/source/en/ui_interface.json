@@ -10,6 +10,8 @@
   "settings.core_controls.title": "Core Controls",
   "settings.core_controls.restart_idle_label": "Restart Core",
   "settings.core_controls.restart_pending_label": "Restarting...",
+  "settings.text_to_speech.title": "Text-to-Speech",
+  "settings.text_to_speech.rate_label": "Speech speed",
   "settings.native_capture.title": "Provider Native Request Capture",
   "settings.native_capture.capture_claude": "Capture Claude Native Request",
   "settings.native_capture.capture_codex": "Capture Codex Native Request",

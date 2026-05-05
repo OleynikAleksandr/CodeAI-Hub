@@ -1,5 +1,6 @@
 {
   "settings.core_controls.description": "Restart the CodeAI Hub core to trigger a fresh CLI detection cycle. Use this option after resolving CLI authentication or quota issues.",
+  "settings.text_to_speech.description": "Control how fast message bubbles are read aloud.",
   "settings.localization.intro": "Configure how each product copy category should be shown. Use `source` to keep the canonical English source copy.",
   "settings.localization.language_catalog_helper": "Language codes are free-form in this first wave. The engine-backed language catalog arrives in a later implementation phase.",
   "settings.localization.default_language.description": "Fallback language for categories that do not have their own override.",
