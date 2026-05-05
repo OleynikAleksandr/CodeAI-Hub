@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.139] - 2026-05-05
+### Fixed
+- **Development Tree node selection now clears stale Diagram Modules session state.** Product Part, Cluster, and Module clicks now outrank an older Diagram Modules `stepStartedIntent`, and the Project Manager session surface ignores live dialog overrides whose stage no longer matches the selected node `development_tree/...` startup stage.
+
+### Tests
+- **Stale dialog routing is covered by targeted Project Manager regression tests.** Tests now lock selected-node priority over `stepStartedIntent`, stage-scoped dialog overrides, exact dialog matching, runtime node-path fallback, webview typecheck, and webview bundle generation.
+
 ## [1.2.138] - 2026-05-05
 ### Fixed
 - **Development Tree node selection no longer falls back to the Diagram Modules dialog.** When a selected Product Part, Cluster, or Module has draft artifacts but no exact session metadata in the branch event, Project Manager now clears the Diagram Modules dialog intent and scopes the left runtime session list by the selected node `development_tree/...` path.
