@@ -130,6 +130,25 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
     assert.equal(
       countOccurrences(
         contract?.prompt ?? "",
+        "Patch-friendly authoring contract:"
+      ),
+      2
+    );
+    assert.equal(
+      contract?.prompt.includes(
+        "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._"
+      ),
+      true
+    );
+    assert.equal(
+      contract?.prompt.includes(
+        "Keep this Markdown as UTF-8 text with LF line endings and no trailing spaces."
+      ),
+      true
+    );
+    assert.equal(
+      countOccurrences(
+        contract?.prompt ?? "",
         "# Diagram Modules Field Reference"
       ),
       1

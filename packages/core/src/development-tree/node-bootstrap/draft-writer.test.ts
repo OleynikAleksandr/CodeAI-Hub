@@ -14,6 +14,8 @@ const AGENT_NOTE_PATTERN = /Keep this implementation note\./;
 const MODULE_SPEC_TITLE_PATTERN = /# ModuleSpec\n/;
 const MODULE_SPEC_PATH = "ModuleSpec.draft.md";
 const MODULE_CONTRACT_PATH = "ModuleFacadeContract.draft.md";
+const AGENT_FILL_SENTINEL =
+  "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
 const MODULE_NODE_RELATIVE_PATH =
   ".codeai-hub/demo/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge";
 
@@ -32,7 +34,7 @@ const createModuleNode = (
 
 const replaceResponsibilityAgentFill = (content: string): string =>
   content.replace(
-    "## Responsibility\n<!-- agent-fill -->\n\n<!-- /agent-fill -->",
+    `## Responsibility\n\n<!-- agent-fill -->\n${AGENT_FILL_SENTINEL}\n<!-- /agent-fill -->`,
     "## Responsibility\n<!-- agent-fill -->\nKeep this implementation note.\n<!-- /agent-fill -->"
   );
 

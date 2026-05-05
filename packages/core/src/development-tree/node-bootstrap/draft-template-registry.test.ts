@@ -17,8 +17,13 @@ const IO_FIELD_PATTERN = /\bInputs?\b|\bOutputs?\b/;
 const EXPOSED_METHODS_PATTERN = /## Methods\/Events exposed\n/;
 const CONSUMED_METHODS_PATTERN = /## Methods\/Events consumed\n/;
 const GENERATED_ZONE_PATTERN = /<!-- generated -->[\s\S]*<!-- \/generated -->/;
-const EMPTY_RESPONSIBILITY_PATTERN =
-  /## Responsibility\n<!-- agent-fill -->\n\n<!-- \/agent-fill -->/;
+const AGENT_FILL_SENTINEL =
+  "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
+const PATCH_FRIENDLY_RESPONSIBILITY_PATTERN =
+  /## Responsibility\n\n<!-- agent-fill -->\n_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content\._\n<!-- \/agent-fill -->/;
+const AGENT_FILL_BLOCK_PATTERN =
+  /<!-- agent-fill -->\n([\s\S]*?)\n<!-- \/agent-fill -->/g;
+const TRAILING_WHITESPACE_PATTERN = /[ \t]$/m;
 
 const createNode = (
   overrides: Partial<DevelopmentTreeDetectedNode>
@@ -111,5 +116,25 @@ test("DraftTemplateRegistry keeps generated and agent-fill zones separate", () =
 
   assert.ok(draft);
   assert.match(draft.content, GENERATED_ZONE_PATTERN);
-  assert.match(draft.content, EMPTY_RESPONSIBILITY_PATTERN);
+  assert.match(draft.content, PATCH_FRIENDLY_RESPONSIBILITY_PATTERN);
+});
+
+test("DraftTemplateRegistry renders patch-friendly agent-fill blocks", () => {
+  const rendered = new DraftTemplateRegistry().renderDrafts({
+    derivedHash: "sha256:patch-friendly",
+    generatedAt: "2026-05-04T13:00:00.000Z",
+    node: createNode({ clusterId: "orchestration" }),
+  });
+
+  for (const draft of rendered) {
+    assert.equal(draft.content.includes("\r"), false);
+    assert.equal(TRAILING_WHITESPACE_PATTERN.test(draft.content), false);
+    assert.equal(draft.content.endsWith("\n"), true);
+
+    const blocks = [...draft.content.matchAll(AGENT_FILL_BLOCK_PATTERN)];
+    assert.equal(blocks.length > 0, true);
+    for (const block of blocks) {
+      assert.equal(block[1], AGENT_FILL_SENTINEL);
+    }
+  }
 });
