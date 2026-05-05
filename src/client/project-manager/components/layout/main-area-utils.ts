@@ -3,6 +3,7 @@ import type {
   DevelopmentTreeNodeArtifact,
   DevelopmentTreeNodeSession,
 } from "../../services/workflow-state-client";
+import type { WorkflowEvent } from "../../services/workflow-events-client";
 
 export type BranchNodeKind = "product-part" | "cluster" | "module";
 
@@ -15,6 +16,51 @@ export type BranchNodeSelection = {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly session?: DevelopmentTreeNodeSession;
   readonly workflowPath?: string;
+};
+
+type ArtifactRefreshTarget = {
+  readonly path: string;
+  readonly workspaceSlug: string;
+};
+
+const normalizeArtifactPath = (value: string): string =>
+  value.replace(/\\/g, "/");
+
+const eventMatchesArtifactTarget = (
+  event: WorkflowEvent,
+  target: ArtifactRefreshTarget
+): boolean => {
+  if (event.type !== "workflow.artifact.written") return false;
+  if (event.workspaceSlug !== target.workspaceSlug) return false;
+  if (!event.filePath) return true;
+  const eventPath = normalizeArtifactPath(event.filePath);
+  const targetPath = normalizeArtifactPath(target.path);
+  return targetPath.endsWith(eventPath) || eventPath.endsWith(targetPath);
+};
+
+export const shouldRefreshArtifactForWorkflowEvents = (
+  events: readonly WorkflowEvent[],
+  selectedArtifact: ArtifactRefreshTarget | null,
+  branchWorkspaceSlug: string | null,
+  selectedBranchNode: BranchNodeSelection | null
+): boolean => {
+  if (events.length === 0) return false;
+  if (
+    selectedArtifact &&
+    events.some((event) => eventMatchesArtifactTarget(event, selectedArtifact))
+  ) {
+    return true;
+  }
+  const branchArtifacts = selectedBranchNode?.artifacts ?? [];
+  if (branchArtifacts.length === 0 || !branchWorkspaceSlug) return false;
+  return events.some((event) =>
+    branchArtifacts.some((artifact) =>
+      eventMatchesArtifactTarget(event, {
+        path: artifact.path,
+        workspaceSlug: branchWorkspaceSlug,
+      })
+    )
+  );
 };
 
 const BRANCH_NODE_KINDS: readonly string[] = [

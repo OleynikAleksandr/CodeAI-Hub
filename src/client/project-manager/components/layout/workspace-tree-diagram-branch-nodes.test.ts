@@ -7,7 +7,9 @@ import {
 import {
   WORKFLOW_STAGE_OUTDATED_TITLE,
 } from "./workspace-tree-model";
+import { shouldRefreshArtifactForWorkflowEvents } from "./main-area-utils";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import type { WorkflowEvent } from "../../services/workflow-events-client";
 
 const createWorkflowStateWithTree = (): WorkflowStateSnapshot => ({
   workspaceSlug: "demo",
@@ -380,5 +382,61 @@ test("development tree node selection dispatches artifacts and session metadata"
   assert.equal(
     detail.workflowPath,
     "development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller"
+  );
+});
+
+test("artifact refresh predicate covers selected development tree draft artifacts", () => {
+  const events: readonly WorkflowEvent[] = [
+    {
+      filePath:
+        ".codeai-hub/demo/development_tree/materialized/product-parts/project-manager/ProductPartSpec.draft.md",
+      timestamp: "2026-05-05T10:00:00.000Z",
+      type: "workflow.artifact.written",
+      workspaceSlug: "demo",
+    },
+  ];
+
+  assert.equal(
+    shouldRefreshArtifactForWorkflowEvents(events, null, "demo", {
+      artifacts: [
+        {
+          fileName: "ProductPartSpec.draft.md",
+          path: ".codeai-hub/demo/development_tree/materialized/product-parts/project-manager/ProductPartSpec.draft.md",
+        },
+      ],
+      kind: "product-part",
+      label: "Project Manager",
+      nodeId: "project-manager",
+      partId: "project-manager",
+    }),
+    true
+  );
+});
+
+test("artifact refresh predicate ignores unrelated workspaces and paths", () => {
+  const events: readonly WorkflowEvent[] = [
+    {
+      filePath:
+        ".codeai-hub/other/development_tree/materialized/product-parts/project-manager/ProductPartSpec.draft.md",
+      timestamp: "2026-05-05T10:00:00.000Z",
+      type: "workflow.artifact.written",
+      workspaceSlug: "other",
+    },
+  ];
+
+  assert.equal(
+    shouldRefreshArtifactForWorkflowEvents(events, null, "demo", {
+      artifacts: [
+        {
+          fileName: "ProductPartSpec.draft.md",
+          path: ".codeai-hub/demo/development_tree/materialized/product-parts/project-manager/ProductPartSpec.draft.md",
+        },
+      ],
+      kind: "product-part",
+      label: "Project Manager",
+      nodeId: "project-manager",
+      partId: "project-manager",
+    }),
+    false
   );
 });

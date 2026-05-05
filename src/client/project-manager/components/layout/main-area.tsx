@@ -4,7 +4,13 @@ import { api } from "../../api";
 import type { WorkspaceProject } from "../../types";
 import { useDescriptionSessionGuard } from "./use-description-session-guard";
 import { type WorkflowEvent, startWorkflowEventPolling } from "../../services/workflow-events-client";
-import { type BranchNodeSelection, parseBranchNodeSelection, resolveToolByStage, resolveWorkspaceSlug } from "./main-area-utils";
+import {
+  type BranchNodeSelection,
+  parseBranchNodeSelection,
+  resolveToolByStage,
+  resolveWorkspaceSlug,
+  shouldRefreshArtifactForWorkflowEvents,
+} from "./main-area-utils";
 import { MainAreaArtifactContent, MainAreaSessionContent } from "./main-area-panel-content";
 import {
   normalizeArtifactHeaderMode,
@@ -80,12 +86,23 @@ export const MainArea: React.FC<MainAreaProps> = ({
   const [workflowPollingMode, setWorkflowPollingMode] =
     useState<WorkflowStatePollingMode>(() => resolveWorkflowPollingMode());
   const selectedArtifactRef = useRef<typeof selectedArtifact>(null);
+  const selectedBranchNodeRef = useRef<BranchNodeSelection | null>(null);
+  const activeWorkspaceSlug = activeWorkspace ? resolveWorkspaceSlug(activeWorkspace) : null;
+  const activeWorkspaceSlugRef = useRef<string | null>(activeWorkspaceSlug);
   const { guardRef: descriptionGuardRef, activateGuard, resetGuard } =
     useDescriptionSessionGuard(hasDescriptionSession);
 
   useEffect(() => {
     selectedArtifactRef.current = selectedArtifact;
   }, [selectedArtifact]);
+
+  useEffect(() => {
+    selectedBranchNodeRef.current = selectedBranchNode;
+  }, [selectedBranchNode]);
+
+  useEffect(() => {
+    activeWorkspaceSlugRef.current = activeWorkspaceSlug;
+  }, [activeWorkspaceSlug]);
 
   useEffect(() => {
     const syncWorkflowPollingMode = () => {
@@ -188,15 +205,12 @@ export const MainArea: React.FC<MainAreaProps> = ({
       if (events.length > 0) {
         setPreferredSessionId((current) => current ?? null);
       }
-      const currentSelectedArtifact = selectedArtifactRef.current;
-      if (!currentSelectedArtifact) return;
-      const normalizedSelectedPath = currentSelectedArtifact.path.replace(/\\/g, "/");
-      const needsRefresh = events.some((event) => {
-        if (event.type !== "workflow.artifact.written") return false;
-        if (event.workspaceSlug !== currentSelectedArtifact.workspaceSlug) return false;
-        if (!event.filePath) return true;
-        return normalizedSelectedPath.endsWith(event.filePath.replace(/\\/g, "/"));
-      });
+      const needsRefresh = shouldRefreshArtifactForWorkflowEvents(
+        events,
+        selectedArtifactRef.current,
+        activeWorkspaceSlugRef.current,
+        selectedBranchNodeRef.current
+      );
       if (needsRefresh) {
         setArtifactRefreshKey((current) => current + 1);
       }
@@ -226,7 +240,10 @@ export const MainArea: React.FC<MainAreaProps> = ({
       httpUrl,
       workspaceSlug,
       onEvents: handleWorkflowEvents,
-      getForegroundIntervalMs: () => (selectedArtifactRef.current ? 2_000 : 10_000),
+      getForegroundIntervalMs: () =>
+        selectedArtifactRef.current || selectedBranchNodeRef.current
+          ? 2_000
+          : 10_000,
     });
     return () => {
       unsubscribe();
@@ -303,7 +320,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
     setStepStartedIntent(null);
   }, [activeTool]);
   const isDescriptionActive = activeTool === "Description";
-  const activeWorkspaceSlug = activeWorkspace ? resolveWorkspaceSlug(activeWorkspace) : null;
   const shouldShowQuestionnaireEditor = Boolean(
     isDescriptionActive &&
       selectedArtifact?.label === "questionnaire.md" &&
