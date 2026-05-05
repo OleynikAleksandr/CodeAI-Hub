@@ -61,6 +61,12 @@ const TRUNCATED_NO_READ_PATTERN =
   /Content excerpt: truncated; do not read the file during this automatic draft pass\./;
 const OPEN_QUESTION_FOR_MISSING_CONTEXT_PATTERN =
   /capture any missing detail as an Open question/;
+const PROMPT_MATERIALIZER_CACHE_DIMENSIONS = [
+  "responseLanguage",
+  "artifactLanguage",
+  "promptPackVersion",
+  "appVersion",
+] as const;
 
 const createNode = (
   overrides: Partial<DevelopmentTreeDetectedNode>
@@ -201,4 +207,48 @@ test("NodeFirstMessageBuilder keeps truncated excerpts inside the no-read draft 
   assert.match(result.content, TRUNCATED_NO_READ_PATTERN);
   assert.match(result.content, OPEN_QUESTION_FOR_MISSING_CONTEXT_PATTERN);
   assert.match(result.content, USER_PERMISSION_READS_PATTERN);
+});
+
+test("NodeFirstMessageBuilder localized prompt is language-keyable and keeps canonical tokens protected", () => {
+  const builder = new NodeFirstMessageBuilder();
+  const localized = builder.build({
+    artifactLanguage: "ru",
+    node: createNode({ clusterId: "orchestration" }),
+    responseLanguage: "ru",
+    technologyBase: "TypeScript Node.js",
+  });
+  const canonical = builder.build({
+    artifactLanguage: "en",
+    node: createNode({ clusterId: "orchestration" }),
+    responseLanguage: "en",
+    technologyBase: "TypeScript Node.js",
+  });
+
+  assert.deepEqual(PROMPT_MATERIALIZER_CACHE_DIMENSIONS, [
+    "responseLanguage",
+    "artifactLanguage",
+    "promptPackVersion",
+    "appVersion",
+  ]);
+  assert.notEqual(localized.content, canonical.content);
+  assert.match(localized.content, RUSSIAN_LOCALIZED_INSTRUCTION_PATTERN);
+  assert.doesNotMatch(canonical.content, RUSSIAN_LOCALIZED_INSTRUCTION_PATTERN);
+  assert.equal(
+    localized.content.includes("`ModuleFacadeContract.draft.md`"),
+    true
+  );
+  assert.equal(
+    localized.content.includes("`ClusterFacadeContract.draft.md`"),
+    true
+  );
+  assert.equal(localized.content.includes("`<!-- agent-fill -->`"), true);
+  assert.equal(
+    localized.content.includes("Settings > General > Reasoning"),
+    true
+  );
+  assert.equal(
+    localized.content.includes("Settings > General > Artifacts for the User"),
+    true
+  );
+  assert.match(localized.content, RUSSIAN_PROTECTED_TOKENS_PATTERN);
 });

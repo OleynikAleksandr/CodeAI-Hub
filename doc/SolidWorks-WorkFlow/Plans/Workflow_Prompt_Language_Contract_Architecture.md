@@ -145,6 +145,17 @@ Prompts must also state the artifact write encoding contract:
 - if a write path corrupts localized text, the agent may retry with a UTF-8-safe shell heredoc or equivalent exact-write method;
 - routine encoding retry messages are not user-facing progress updates and should be reported only if encoding remains a blocker.
 
+### 4.5. Localized Prompt Pack Materialization
+
+Localized prompt instruction packs may be materialized or cached during install/bootstrap, but the cache key must include all dimensions that can change the generated instruction text:
+
+- user-facing chat language / response language;
+- artifact prose language;
+- promptPackVersion;
+- appVersion.
+
+`promptPackVersion` invalidates cache entries when the instruction contract changes without an app version bump. `appVersion` invalidates entries across release upgrades. A localized prompt pack must never translate protected canonical tokens: filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, field names, method/event names, output filenames, and structural headings stay stable.
+
 ---
 
 ## 5. Implementation Surfaces
@@ -183,6 +194,10 @@ Prompts must also state the artifact write encoding contract:
    - do not read/search/list/open other workspace files during the automatic draft-pass;
    - allow additional file reads only after explicit user request or permission.
 7. Development Tree contract artifact first prompts explicitly state that `ModuleFacadeContract.draft.md` and `ClusterFacadeContract.draft.md` localize explanatory prose inside `agent-fill`; only canonical method/event names, ids, headings, filenames, fields, status tokens, and DSL markers stay English.
+8. Localized prompt pack materialization is cache-safe:
+   - cache keys include chat/response language, artifact prose language, `promptPackVersion`, and `appVersion`;
+   - tests compare localized and non-localized prompt output as separate language-keyed variants;
+   - tests assert protected canonical tokens remain present and untranslated in localized prompt packs.
 
 ---
 

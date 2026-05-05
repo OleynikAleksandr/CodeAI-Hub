@@ -2,6 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { buildWorkflowPromptPack } from "./prompt-pack-builder";
 
+const PROMPT_MATERIALIZER_CACHE_DIMENSIONS = [
+  "chatLanguage",
+  "artifactLanguage",
+  "promptPackVersion",
+  "appVersion",
+] as const;
+
 test("virtual simulation prompt pack separates chat and artifact languages", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "ru",
@@ -342,6 +349,73 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("module-map.md"), false);
   assert.equal(
     pack.content.includes("Output file name: `product-parts.index.md`"),
+    true
+  );
+});
+
+test("workflow localized prompt pack is language-keyable and keeps canonical tokens protected", () => {
+  const baseInput = {
+    artifactLanguage: "ru",
+    stage: "diagram_modules" as const,
+    workspacePath: "/tmp/workspace",
+    workspaceSlug: "demo-workspace",
+    prompt: "",
+    questionnairePath:
+      ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
+    sourceArtifacts: [
+      {
+        content: "# Final Description\n\nDescription source.\n",
+        label: "Final_Description.md",
+        relativePath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+      },
+      {
+        content: "# Virtual Simulation\n\nSimulation source.\n",
+        label: "virtual-simulation.md",
+        relativePath:
+          ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md",
+      },
+    ],
+  };
+  const localized = buildWorkflowPromptPack({
+    ...baseInput,
+    chatLanguage: "ru",
+  });
+  const canonical = buildWorkflowPromptPack({
+    ...baseInput,
+    chatLanguage: "en",
+  });
+
+  assert.deepEqual(PROMPT_MATERIALIZER_CACHE_DIMENSIONS, [
+    "chatLanguage",
+    "artifactLanguage",
+    "promptPackVersion",
+    "appVersion",
+  ]);
+  assert.notEqual(localized.content, canonical.content);
+  assert.equal(
+    localized.content.startsWith(
+      "Локализованный пакет инструкций CodeAI Hub (ru):"
+    ),
+    true
+  );
+  assert.equal(
+    canonical.content.startsWith("Workflow runtime language contract:"),
+    true
+  );
+  assert.equal(
+    localized.content.includes("Product Part / Cluster / Module"),
+    true
+  );
+  assert.equal(localized.content.includes("DSL markers"), true);
+  assert.equal(localized.content.includes("field names"), true);
+  assert.equal(localized.content.includes("ids"), true);
+  assert.equal(localized.content.includes("statuses"), true);
+  assert.equal(localized.content.includes("`create_initial_draft`"), true);
+  assert.equal(localized.content.includes("`product-parts.index.md`"), true);
+  assert.equal(
+    localized.content.includes(
+      "`.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
+    ),
     true
   );
 });
