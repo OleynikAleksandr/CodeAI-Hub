@@ -34,6 +34,13 @@ Source boundaries for empty-workspace / greenfield:
 Output (SSOT):
 - `.codeai-hub/<workspaceSlug>/description/Final_Description.md`
 
+Artifact path ownership:
+- the Core Runtime prepares the parent workflow directory before this turn starts;
+- use the target path exactly as provided by the runtime prompt;
+- your responsibility is to create or update the artifact file content, not to manage workflow directories;
+- do not send progress updates about creating folders;
+- if the parent directory is missing, report that runtime preflight failed instead of treating directory setup as agent work.
+
 Critical rule: **immediately** after reading the questionnaire, create the first readable draft of `Final_Description.md` in the file.
 
 Until the file exists, do not start an interview and do not ask questions: the user has nothing concrete to discuss.

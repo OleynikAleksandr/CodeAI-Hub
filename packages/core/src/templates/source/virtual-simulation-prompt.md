@@ -41,6 +41,13 @@ Inputs:
 Output (SSOT):
 - `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`
 
+Artifact path ownership:
+- the Core Runtime prepares the parent workflow directory before this turn starts;
+- use the target path exactly as provided by the runtime prompt;
+- your responsibility is to create or update the artifact file content, not to manage workflow directories;
+- do not send progress updates about creating folders;
+- if the parent directory is missing, report that runtime preflight failed instead of treating directory setup as agent work.
+
 Critical rule:
 - no separate markdown template is used for this step;
 - you shape the document structure yourself;

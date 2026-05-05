@@ -40,6 +40,13 @@ Output (staged SSOT):
 - first direct agent-written artifact: `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md`
 - continuation artifact: `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md`
 
+Artifact path ownership:
+- the Core Runtime prepares parent workflow directories before this turn starts, including `diagram_modules/product-parts`;
+- use the target path exactly as provided by the runtime prompt;
+- your responsibility is to create or update staged artifact file content, not to manage workflow directories;
+- do not send progress updates about creating folders;
+- if the parent directory is missing, report that runtime preflight failed instead of treating directory setup as agent work.
+
 Critical rule:
 - on the first visible turn, the canonical direct output of this step is `product-parts.index.md`;
 - on a part turn (after user confirmation), the canonical direct output is only one target `product-parts/<part-id>.md`;
