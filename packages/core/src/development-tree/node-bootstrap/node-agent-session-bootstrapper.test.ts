@@ -7,6 +7,12 @@ import { NodeAgentSessionBootstrapper } from "./node-agent-session-bootstrapper"
 
 const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
   /User communication language: ru \(from Settings > General > Reasoning\)\./;
+const ENGLISH_RESPONSE_LANGUAGE_PATTERN =
+  /User communication language: en \(from Settings > General > Reasoning\)\./;
+const RUSSIAN_ARTIFACT_LANGUAGE_PATTERN =
+  /Target language code: ru \(from Settings > General > Artifacts for the User\)\./;
+const RUSSIAN_DRAFT_ARTIFACT_RULE_PATTERN =
+  /Write descriptive prose inside the draft artifacts in ru\./;
 const FINAL_DESCRIPTION_CONTEXT_PATTERN =
   /Project Manager coordinates artifacts and sessions/;
 const VIRTUAL_SIMULATION_CONTEXT_PATTERN =
@@ -110,6 +116,70 @@ test("NodeAgentSessionBootstrapper reads response language from settings reasoni
     );
 
     assert.match(sentMessages[0] ?? "", RUSSIAN_RESPONSE_LANGUAGE_PATTERN);
+  } finally {
+    if (previousSettingsPath === undefined) {
+      process.env.CLAUDE_SETTINGS_PATH = undefined;
+    } else {
+      process.env.CLAUDE_SETTINGS_PATH = previousSettingsPath;
+    }
+    await rm(settingsDir, { recursive: true, force: true });
+  }
+});
+
+test("NodeAgentSessionBootstrapper reads draft artifact language from settings artifacts category", async () => {
+  const settingsDir = await mkdtemp(
+    path.join(os.tmpdir(), "node-agent-artifact-settings-")
+  );
+  const settingsPath = path.join(settingsDir, "settings.json");
+  const previousSettingsPath = process.env.CLAUDE_SETTINGS_PATH;
+  const sentMessages: string[] = [];
+  try {
+    process.env.CLAUDE_SETTINGS_PATH = settingsPath;
+    await writeFile(
+      settingsPath,
+      `${JSON.stringify({
+        general: {
+          localization: {
+            categories: {
+              artifactsForTheUser: "ru",
+              reasoning: "en",
+            },
+            defaultLanguage: "en",
+          },
+        },
+      })}\n`,
+      "utf8"
+    );
+
+    await new NodeAgentSessionBootstrapper().bootstrapNode(
+      {
+        absolutePath:
+          "/workspace/.codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager/clusters/workflow-artifact-ui",
+        clusterId: "workflow-artifact-ui",
+        id: "workflow-artifact-ui",
+        kind: "cluster",
+        partId: "project-manager",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager/clusters/workflow-artifact-ui",
+      },
+      {
+        gateway: {
+          createSessionForWorkflow: () => Promise.resolve({ id: "session-1" }),
+          handleMessage: (_sessionId, content) => {
+            sentMessages.push(content);
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
+        workspacePath: "/workspace",
+        workspaceSlug: "demo-workspace",
+      }
+    );
+
+    const firstMessage = sentMessages[0] ?? "";
+    assert.match(firstMessage, ENGLISH_RESPONSE_LANGUAGE_PATTERN);
+    assert.match(firstMessage, RUSSIAN_ARTIFACT_LANGUAGE_PATTERN);
+    assert.match(firstMessage, RUSSIAN_DRAFT_ARTIFACT_RULE_PATTERN);
   } finally {
     if (previousSettingsPath === undefined) {
       process.env.CLAUDE_SETTINGS_PATH = undefined;
