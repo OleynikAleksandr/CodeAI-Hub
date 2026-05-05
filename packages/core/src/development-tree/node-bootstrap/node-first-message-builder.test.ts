@@ -12,6 +12,8 @@ const TECH_QUESTION_PATTERN =
 const TYPESCRIPT_TECH_PATTERN = /Technology base: TypeScript Node\.js/;
 const MODULE_SPEC_BOUNDARY_PATTERN =
   /Do not add Inputs\/Outputs sections to ModuleSpec\.draft\.md\./;
+const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
+  /User communication language: ru \(from Settings > General > Reasoning\)\. Translate and communicate with the user in this language\./;
 
 const createNode = (
   overrides: Partial<DevelopmentTreeDetectedNode>
@@ -40,6 +42,7 @@ test("NodeFirstMessageBuilder asks for technology base when it is unknown", () =
 test("NodeFirstMessageBuilder includes module drafts and contract boundaries", () => {
   const result = new NodeFirstMessageBuilder().build({
     node: createNode({ clusterId: "orchestration" }),
+    responseLanguage: "ru",
     technologyBase: "TypeScript Node.js",
   });
 
@@ -49,6 +52,7 @@ test("NodeFirstMessageBuilder includes module drafts and contract boundaries", (
   ]);
   assert.equal(result.requiresTechnologyBaseAnswer, false);
   assert.match(result.content, TYPESCRIPT_TECH_PATTERN);
+  assert.match(result.content, RUSSIAN_RESPONSE_LANGUAGE_PATTERN);
   assert.match(result.content, MODULE_SPEC_BOUNDARY_PATTERN);
 });
 

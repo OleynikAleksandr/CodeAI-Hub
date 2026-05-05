@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { homedir } from "node:os";
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
 import { NodeFirstMessageBuilder } from "./node-first-message-builder";
 
@@ -17,6 +19,9 @@ export interface DevelopmentTreeAgentSessionGateway {
 export interface NodeAgentSessionBootstrapperOptions {
   readonly gateway: DevelopmentTreeAgentSessionGateway;
   readonly providerId: string | (() => Promise<string> | string);
+  readonly responseLanguage?:
+    | string
+    | (() => Promise<string | null | undefined> | string | null | undefined);
   readonly technologyBase?: string;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -32,7 +37,12 @@ export interface NodeAgentSessionBootstrapResult {
 }
 
 const CODEAI_HUB_SEGMENT = ".codeai-hub";
+const DEFAULT_RESPONSE_LANGUAGE = "en";
 const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
+
+const resolveSettingsPath = (): string =>
+  process.env.CLAUDE_SETTINGS_PATH ??
+  `${homedir()}/.codeai-hub/settings/settings.json`;
 
 const splitWorkflowPath = (value: string): readonly string[] =>
   value
@@ -62,6 +72,45 @@ const resolveProviderId = async (
 ): Promise<string> =>
   typeof providerId === "function" ? await providerId() : providerId;
 
+const readObject = (value: unknown): Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+
+const readReasoningLanguageFromSettings = async (): Promise<string> => {
+  try {
+    const settings = readObject(
+      JSON.parse(await readFile(resolveSettingsPath(), "utf8"))
+    );
+    const general = readObject(settings.general);
+    const localization = readObject(general.localization);
+    const categories = readObject(localization.categories);
+    const reasoningLanguage = categories.reasoning;
+    if (typeof reasoningLanguage === "string" && reasoningLanguage.trim()) {
+      return reasoningLanguage.trim();
+    }
+    const defaultLanguage = localization.defaultLanguage;
+    return typeof defaultLanguage === "string" && defaultLanguage.trim()
+      ? defaultLanguage.trim()
+      : DEFAULT_RESPONSE_LANGUAGE;
+  } catch {
+    return DEFAULT_RESPONSE_LANGUAGE;
+  }
+};
+
+const resolveResponseLanguage = async (
+  responseLanguage: NodeAgentSessionBootstrapperOptions["responseLanguage"]
+): Promise<string> => {
+  if (typeof responseLanguage === "function") {
+    const resolved = await responseLanguage();
+    return resolved?.trim() || DEFAULT_RESPONSE_LANGUAGE;
+  }
+  if (typeof responseLanguage === "string" && responseLanguage.trim()) {
+    return responseLanguage.trim();
+  }
+  return readReasoningLanguageFromSettings();
+};
+
 export class NodeAgentSessionBootstrapper {
   private readonly firstMessageBuilder = new NodeFirstMessageBuilder();
 
@@ -71,6 +120,9 @@ export class NodeAgentSessionBootstrapper {
   ): Promise<NodeAgentSessionBootstrapResult> {
     const stage = createNodeWorkflowPath(node, options.workspaceSlug);
     const providerId = await resolveProviderId(options.providerId);
+    const responseLanguage = await resolveResponseLanguage(
+      options.responseLanguage
+    );
     const session = await options.gateway.createSessionForWorkflow({
       providerId,
       workspacePath: options.workspacePath,
@@ -82,6 +134,7 @@ export class NodeAgentSessionBootstrapper {
     });
     const firstMessage = this.firstMessageBuilder.build({
       node,
+      responseLanguage,
       technologyBase: options.technologyBase,
     });
     if (session) {

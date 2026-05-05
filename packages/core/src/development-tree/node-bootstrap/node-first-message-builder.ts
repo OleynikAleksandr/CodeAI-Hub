@@ -3,6 +3,7 @@ import { DraftTemplateRegistry } from "./draft-template-registry";
 
 export interface NodeFirstMessageBuildRequest {
   readonly node: DevelopmentTreeDetectedNode;
+  readonly responseLanguage?: string;
   readonly technologyBase?: string;
 }
 
@@ -39,6 +40,13 @@ const createTechnologyInstruction = (
     line: "- Technology base: unknown. Ask the user to confirm the stack before making framework-specific decisions.",
     requiresTechnologyBaseAnswer: true,
   };
+};
+
+const createResponseLanguageInstruction = (
+  responseLanguage?: string
+): string => {
+  const language = responseLanguage?.trim() || "en";
+  return `- User communication language: ${language} (from Settings > General > Reasoning). Translate and communicate with the user in this language.`;
 };
 
 const createNodeSpecificRules = (
@@ -79,6 +87,7 @@ export class NodeFirstMessageBuilder {
       formatClusterLine(request.node),
       `- Folder: ${request.node.relativePath}`,
       technology.line,
+      createResponseLanguageInstruction(request.responseLanguage),
       "",
       "Draft files to fill:",
       ...draftFileNames.map((fileName) => `- ${fileName}`),
