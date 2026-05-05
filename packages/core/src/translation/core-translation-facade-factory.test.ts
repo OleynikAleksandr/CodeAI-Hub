@@ -182,6 +182,7 @@ test("buildCoreTranslationEngines registers built-in engines without Haiku when 
   const ids = engines.map((engine) => engine.id);
 
   assert.equal(ids.includes("google-gtx"), true);
+  assert.equal(ids.includes("apple-native"), true);
   assert.equal(ids.includes("codex-gpt-5.4-mini"), true);
   assert.equal(ids.includes("codex-gpt-5.3-codex-spark"), true);
   assert.equal(ids.includes(CLAUDE_HAIKU_TRANSLATION_ENGINE_ID), false);

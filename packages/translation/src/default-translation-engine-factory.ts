@@ -1,3 +1,4 @@
+import { AppleNativeTranslationEngine } from "./apple-native-translation-engine";
 import { CodexCliTranslationEngine } from "./codex-cli-translation-engine";
 import { GoogleTranslateClient } from "./google-translate-client";
 import type { TranslationReporter } from "./translation-contract";
@@ -11,6 +12,7 @@ export const createDefaultTranslationEngines = (options?: {
   const reporter = options?.reporter;
   return [
     new GoogleTranslateClient({ reporter }),
+    new AppleNativeTranslationEngine({ reporter }),
     new CodexCliTranslationEngine({
       engineId: "codex-gpt-5.4-mini",
       modelId: "gpt-5.4-mini",
