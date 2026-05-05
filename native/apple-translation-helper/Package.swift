@@ -16,6 +16,9 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AppleTranslationHelper"
+        ),
+        .testTarget(
+            name: "AppleTranslationHelperTests"
         )
     ]
 )
