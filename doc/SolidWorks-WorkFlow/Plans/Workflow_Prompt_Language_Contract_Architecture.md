@@ -98,6 +98,22 @@ Node agents may inspect and edit only the listed target draft files during this 
 
 Additional file reading becomes allowed only after the user explicitly asks for it or grants permission in a later dialog turn. This keeps the automated materialization fast and bounded while preserving user-directed depth for the review/refinement stage.
 
+### 4.2.3. Development Tree Contract Artifact Language Boundary
+
+Development Tree contract artifacts are not an English-language exception. If `Settings > General > Artifacts for the User` is `ru`, explanatory prose inside `<!-- agent-fill -->` blocks in `ModuleFacadeContract.draft.md` and `ClusterFacadeContract.draft.md` must also be Russian.
+
+The stable contract surface remains canonical:
+
+- method and event names;
+- ids;
+- filenames;
+- structural headings;
+- YAML/frontmatter keys;
+- status tokens;
+- DSL and field tokens.
+
+Only explanatory text is localized: descriptions, boundary rationale, assumptions, open questions, and brief user-facing artifact notes. This prevents agents from misreading `contract` as `English prose`.
+
 ### 4.3. Template Hardening
 
 Prompt assets for `Description`, `Virtual Simulation`, and `Diagram Modules` must stop relying on weak language wording like "final artifact and brief updates". They should defer to the runtime language block and clarify:
@@ -166,6 +182,7 @@ Prompts must also state the artifact write encoding contract:
    - use first-prompt scoped context plus listed target draft files only;
    - do not read/search/list/open other workspace files during the automatic draft-pass;
    - allow additional file reads only after explicit user request or permission.
+7. Development Tree contract artifact first prompts explicitly state that `ModuleFacadeContract.draft.md` and `ClusterFacadeContract.draft.md` localize explanatory prose inside `agent-fill`; only canonical method/event names, ids, headings, filenames, fields, status tokens, and DSL markers stay English.
 
 ---
 

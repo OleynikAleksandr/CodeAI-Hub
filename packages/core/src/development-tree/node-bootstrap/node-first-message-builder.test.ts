@@ -18,6 +18,10 @@ const RUSSIAN_ARTIFACT_LANGUAGE_PATTERN =
   /Target language code: ru \(from Settings > General > Artifacts for the User\)\./;
 const DRAFT_ARTIFACT_LANGUAGE_RULE_PATTERN =
   /Write descriptive prose inside the draft artifacts in ru\./;
+const CONTRACT_ARTIFACT_LOCALIZATION_PATTERN =
+  /Contract artifacts are not an English-language exception/;
+const FACADE_CONTRACT_PROSE_LOCALIZATION_PATTERN =
+  /keep method\/event names and identifiers canonical, but write descriptions, boundary rationale, assumptions, and open questions in the target artifact language/;
 const RUNTIME_TOOLING_FACTS_PATTERN = /Runtime tooling facts:/;
 const PYTHON3_COMMAND_PATTERN = /Python command: `python3`\./;
 const ARTIFACT_WRITE_ENCODING_PATTERN = /Artifact write encoding:/;
@@ -94,6 +98,8 @@ test("NodeFirstMessageBuilder includes module drafts and contract boundaries", (
   assert.match(result.content, RUSSIAN_RESPONSE_LANGUAGE_PATTERN);
   assert.match(result.content, RUSSIAN_ARTIFACT_LANGUAGE_PATTERN);
   assert.match(result.content, DRAFT_ARTIFACT_LANGUAGE_RULE_PATTERN);
+  assert.match(result.content, CONTRACT_ARTIFACT_LOCALIZATION_PATTERN);
+  assert.match(result.content, FACADE_CONTRACT_PROSE_LOCALIZATION_PATTERN);
   assert.match(result.content, RUNTIME_TOOLING_FACTS_PATTERN);
   assert.match(result.content, PYTHON3_COMMAND_PATTERN);
   assert.match(result.content, ARTIFACT_WRITE_ENCODING_PATTERN);

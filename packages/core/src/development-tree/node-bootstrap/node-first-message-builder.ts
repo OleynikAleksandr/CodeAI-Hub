@@ -64,6 +64,8 @@ const createArtifactLanguageLines = (
     `- Write descriptive prose inside the draft artifacts in ${language}.`,
     "- Keep YAML frontmatter, generated blocks, HTML comments, file names, ids, DSL/contract markers, field names, status tokens, and structural section headings in canonical English form.",
     "- Localize only descriptive prose inside <!-- agent-fill --> blocks, assumptions, open questions, and brief user-facing artifact notes.",
+    "- Contract artifacts are not an English-language exception: in ModuleFacadeContract.draft.md and ClusterFacadeContract.draft.md, explanatory prose inside <!-- agent-fill --> blocks must still use the target artifact language.",
+    "- In facade contract drafts, keep method/event names and identifiers canonical, but write descriptions, boundary rationale, assumptions, and open questions in the target artifact language.",
   ];
 };
 
