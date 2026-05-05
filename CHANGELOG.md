@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.147] - 2026-05-05
+### Fixed
+- **Development Tree draft-pass agents now stay inside first-prompt context.** Product Part, Cluster, and Module first-draft prompts now explicitly forbid reading, searching, listing, or opening additional workspace files during the automatic draft pass.
+- **Truncated scoped context now becomes an Open question instead of a file read.** If a Development Tree excerpt is incomplete, the agent records the uncertainty in the draft and waits for explicit user permission before reading more files.
+
+### Tests
+- **Draft-pass read boundaries are covered by Core prompt tests.** Tests assert the no-read boundary, user-permission rule, and truncated-excerpt behavior in Development Tree node prompts.
+
 ## [1.2.146] - 2026-05-05
 ### Fixed
 - **Development Tree Product Part prompts now receive exact owner Markdown in full.** When `diagram_modules/product-parts/<part-id>.md` exists for the selected Product Part node, Core sends the complete file as protected context instead of letting scoped snippet ranking reduce it to a heading.
