@@ -1,0 +1,240 @@
+# Apple Native Text-to-Speech Architecture
+
+**Status:** Planning intake  
+**Owner:** Oleksandr + Codex  
+**Created:** 2026-05-05  
+**Target scope:** Native Text-to-Speech for visible dialog message bubbles  
+**Planning source for:** `doc/TODO/todo-plan.md`
+
+## 1. Goal
+
+Add a native on-device Text-to-Speech module that can read the text of one selected dialog bubble aloud.
+
+The first user-facing workflow:
+
+1. The user sees a compact provider-styled speech button in each assistant or thinking bubble header.
+2. The button sits immediately to the right of the provider label, for example `Codex [volume icon]` or `Codex - Thinking [volume icon]`.
+3. The button is always visible, but semi-transparent in idle state so the clickable target is discoverable without dominating the bubble.
+4. Clicking the button reads only the visible text from that exact bubble.
+5. The user can stop the currently speaking bubble.
+6. Speech rate is adjustable from Settings.
+
+This scope is Text-to-Speech only. Speech-to-Text and live microphone transcription are future modules.
+
+## 2. Apple Framework Choice
+
+Use `AVSpeechSynthesizer`, `AVSpeechUtterance`, and `AVSpeechSynthesisVoice` from AVFAudio.
+
+Local SDK check on 2026-05-05:
+
+```text
+Speech framework import OK
+SFSpeechRecognizer supported locales: 63
+TTS voices: 182
+SpeechTranscriber available: true
+SpeechTranscriber installed locales: 9
+SpeechTranscriber supported locales: 30
+DictationTranscriber installed locales: 2
+DictationTranscriber supported locales: 43
+```
+
+Relevant Text-to-Speech voice check:
+
+```text
+ru-RU: Milena, Yuri, Yuri Enhanced
+uk-UA: Lesya
+en-US/en-GB/etc: multiple voices
+```
+
+Apple documentation references:
+
+- `AVSpeechSynthesizer`: https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer
+- `AVSpeechUtterance`: https://developer.apple.com/documentation/avfaudio/avspeechutterance
+- `AVSpeechSynthesisVoice`: https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoice
+
+## 3. User Experience Contract
+
+### 3.1 Bubble placement
+
+There are two relevant bubble types for MVP:
+
+- normal assistant bubble;
+- thinking bubble, including assistant messages tagged as thinking.
+
+The speech button belongs to the bubble header, not to the content area.
+
+Normal assistant bubble:
+
+```text
+Codex [speak]                                      8:12:49 PM
+message text...
+```
+
+Thinking bubble:
+
+```text
+[collapse] Codex - Thinking [speak]
+reasoning text...
+```
+
+The button must not move the timestamp or create wrapping in the header. The header should keep a left group (`role label + speech button`) and a right timestamp when one exists.
+
+### 3.2 Visibility and interaction
+
+- The speech button is always rendered.
+- Idle opacity should be around `0.45`.
+- Bubble hover, button hover, keyboard focus, and active speaking state raise opacity to `1`.
+- The button uses an icon-only control, not visible `Speak` text.
+- The accessible label and tooltip should use `Speak`.
+- Active speaking state should visually switch to stop behavior or a clear active state.
+- Hover alone must not start speech.
+
+### 3.3 Provider styling
+
+The button must follow `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html` provider tokens:
+
+- Claude: `--claude-accent`, `--claude-fill`, `--claude-fill-hover`, `--claude-border`;
+- Codex: `--codex-accent`, `--codex-fill`, `--codex-fill-hover`, `--codex-border`;
+- Gemini: `--gemini-accent`, `--gemini-fill`, `--gemini-fill-hover`, `--gemini-border`.
+
+If the bubble has no provider theme, the button falls back to neutral session dialog styling.
+
+### 3.4 Text source
+
+Do not scrape rendered DOM.
+
+The readable text must come from the `SessionMessage` model already used by `DialogPanel`:
+
+- prefer `localizedContent` when present;
+- otherwise use `content`;
+- never include provider label, timestamp, buttons, or UI chrome;
+- do not read segment boundary messages in MVP.
+
+Markdown may be passed as plain text in MVP. A later polish pass can strip markdown syntax if user testing shows it sounds awkward.
+
+## 4. Settings Contract
+
+Add `general.textToSpeech.rate`.
+
+Recommended MVP range:
+
+- minimum: `0.75`;
+- default: `1.0`;
+- maximum: `2.0`;
+- UI step: `0.05` or fixed presets if the slider feels too noisy.
+
+Swift helper receives the normalized user rate and maps it to the valid `AVSpeechUtterance.rate` range.
+
+Voice selection is deferred. The helper should choose an Apple voice from the current bubble language when possible, otherwise system default.
+
+## 5. Native Helper Contract
+
+Create `native/apple-speech-helper`.
+
+The helper should use a JSON stdin/stdout protocol similar to the Apple Translation helper.
+
+MVP commands:
+
+```json
+{ "command": "preflight" }
+{ "command": "voices" }
+{ "command": "speak", "id": "message-id", "text": "Text to read", "language": "ru-RU", "rate": 1.0 }
+{ "command": "stop" }
+```
+
+Expected events:
+
+```json
+{ "event": "ready", "ok": true }
+{ "event": "started", "id": "message-id" }
+{ "event": "finished", "id": "message-id" }
+{ "event": "stopped", "id": "message-id" }
+{ "event": "error", "id": "message-id", "message": "..." }
+```
+
+Implementation note: stop behavior needs Core to keep control of the active helper process. A one-process-per-speak implementation can stop by killing the child process, but pause/resume requires a long-lived helper. MVP requires speak and stop; pause/resume is deferred.
+
+## 6. Core Runtime Contract
+
+Core owns speech execution. UI sends intent; Core launches/stops the native helper.
+
+Proposed remote bridge messages:
+
+- `session:speech:speak-message`
+- `session:speech:stop`
+- `session:speech:state`
+
+The speak request should include:
+
+- `sessionId`;
+- `messageId`;
+- `role`;
+- `providerId` or provider theme;
+- `text`;
+- `rate`.
+
+The state broadcast should include:
+
+- current `messageId`;
+- `status`: `idle`, `starting`, `speaking`, `stopping`, `error`;
+- optional user-facing error message.
+
+Only one active spoken bubble is allowed at a time in MVP. Starting a new bubble stops the previous one.
+
+## 7. Packaging Contract
+
+The helper must be packaged into the Core runtime, not loaded from the repo workspace.
+
+Expected packaged path:
+
+```text
+app/native/apple-speech-helper/.build/release/apple-speech-helper
+```
+
+Release validation must fail if the helper is missing from the packaged Core tarball / install root.
+
+## 8. Verification Plan
+
+Targeted checks:
+
+- Swift helper builds.
+- Helper `preflight` returns available voices.
+- Helper can speak a short English text.
+- Helper can speak Russian text with a Russian voice available on this machine.
+- Core service resolves helper from packaged runtime path, not only `process.cwd()`.
+- UI renders an always-visible semi-transparent speech button for normal assistant bubbles.
+- UI renders an always-visible semi-transparent speech button for thinking bubbles.
+- Button uses provider color tokens for Claude/Codex/Gemini themes.
+- Rate setting persists and changes helper `rate` input.
+- Stop action stops the active spoken bubble.
+
+Manual acceptance workflow:
+
+1. Open a dialog with normal and thinking Codex bubbles.
+2. Confirm speech buttons are visible beside `Codex` / `Codex - Thinking`.
+3. Confirm the buttons are provider-styled and semi-transparent when idle.
+4. Click a normal bubble speech button and confirm only that bubble is read.
+5. Click a thinking bubble speech button and confirm only that thinking text is read.
+6. Change Text-to-Speech rate in Settings and confirm audible speed changes.
+7. Stop active speech and confirm it stops immediately.
+
+## 9. Deferred Work
+
+- Speech-to-Text.
+- Voice selection in Settings.
+- Per-message language detection.
+- Pause/resume.
+- Read selected text inside a bubble.
+- Queue multiple bubbles.
+- Strip or transform Markdown syntax for more natural speech.
+
+## 10. Documentation Disposition
+
+This file is a planning document and not a permanent SSOT.
+
+After implementation and user acceptance:
+
+- stable Core/runtime contracts move into `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`;
+- stable UI contracts move into `doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md` and `doc/SolidWorks-WorkFlow/Modules/Session_UI/README.md`;
+- global module map changes move into `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
+- this planning document moves to `doc/SolidWorks-WorkFlow/Plans/Archive/`.
