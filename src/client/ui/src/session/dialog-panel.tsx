@@ -41,6 +41,10 @@ interface StandardMessageProps {
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
 }
 
+interface SpeakMessageButtonProps {
+  readonly label: string;
+}
+
 const DialogPanel = ({
   messages,
   onFileLinkActivate,
@@ -231,6 +235,7 @@ const ThinkingMessage = ({
           {expanded ? "▾" : "▸"}
         </button>
         <span className="session-dialog__role">{label}</span>
+        <SpeakMessageButton label={label} />
       </header>
       {expanded ? (
         <MarkdownContent
@@ -256,6 +261,7 @@ const StandardMessage = ({
     <article className={className}>
       <header className="session-dialog__message-header">
         <span className="session-dialog__role">{label}</span>
+        <SpeakMessageButton label={label} />
         <time
           className="session-dialog__timestamp"
           dateTime={messageDate.toISOString()}
@@ -269,5 +275,24 @@ const StandardMessage = ({
         onFileLinkActivate={onFileLinkActivate}
       />
     </article>
+  );
+};
+
+const SpeakMessageButton = ({ label }: SpeakMessageButtonProps) => {
+  const { t } = useLocalization();
+  const speakLabel = t(
+    "ui_interface",
+    "session.dialog.speak_message_label",
+    "Speak"
+  );
+  return (
+    <button
+      aria-label={`${speakLabel}: ${label}`}
+      className="session-dialog__speak-button"
+      title={speakLabel}
+      type="button"
+    >
+      {speakLabel}
+    </button>
   );
 };
