@@ -6,6 +6,7 @@ export type NodePromptArtifactContextEntry = NodePromptContextEntry;
 
 export interface NodeFirstMessageBuildRequest {
   readonly artifactContext?: readonly NodePromptArtifactContextEntry[];
+  readonly artifactLanguage?: string;
   readonly node: DevelopmentTreeDetectedNode;
   readonly responseLanguage?: string;
   readonly technologyBase?: string;
@@ -51,6 +52,19 @@ const createResponseLanguageInstruction = (
 ): string => {
   const language = responseLanguage?.trim() || "en";
   return `- User communication language: ${language} (from Settings > General > Reasoning). Translate and communicate with the user in this language.`;
+};
+
+const createArtifactLanguageLines = (
+  artifactLanguage: string | undefined
+): string[] => {
+  const language = artifactLanguage?.trim() || "en";
+  return [
+    "Artifacts for the User language (runtime directive):",
+    `- Target language code: ${language} (from Settings > General > Artifacts for the User).`,
+    `- Write descriptive prose inside the draft artifacts in ${language}.`,
+    "- Keep YAML frontmatter, generated blocks, HTML comments, file names, ids, DSL/contract markers, field names, status tokens, and structural section headings in canonical English form.",
+    "- Localize only descriptive prose inside <!-- agent-fill --> blocks, assumptions, open questions, and brief user-facing artifact notes.",
+  ];
 };
 
 const createArtifactContextLines = (
@@ -120,6 +134,8 @@ export class NodeFirstMessageBuilder {
       `- Folder: ${request.node.relativePath}`,
       technology.line,
       createResponseLanguageInstruction(request.responseLanguage),
+      "",
+      ...createArtifactLanguageLines(request.artifactLanguage),
       "",
       ...createArtifactContextLines(request.artifactContext),
       "",

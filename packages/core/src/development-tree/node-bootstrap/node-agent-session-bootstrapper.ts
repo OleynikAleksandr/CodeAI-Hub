@@ -25,6 +25,9 @@ export interface DevelopmentTreeAgentSessionGateway {
 }
 
 export interface NodeAgentSessionBootstrapperOptions {
+  readonly artifactLanguage?:
+    | string
+    | (() => Promise<string | null | undefined> | string | null | undefined);
   readonly gateway: DevelopmentTreeAgentSessionGateway;
   readonly providerId: string | (() => Promise<string> | string);
   readonly responseLanguage?:
@@ -45,6 +48,7 @@ export interface NodeAgentSessionBootstrapResult {
 }
 
 const CODEAI_HUB_SEGMENT = ".codeai-hub";
+const DEFAULT_ARTIFACT_LANGUAGE = "en";
 const DEFAULT_RESPONSE_LANGUAGE = "en";
 const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
 
@@ -85,7 +89,10 @@ const readObject = (value: unknown): Record<string, unknown> =>
     ? (value as Record<string, unknown>)
     : {};
 
-const readReasoningLanguageFromSettings = async (): Promise<string> => {
+const readSettingsLocalizationCategory = async (
+  categoryKeys: readonly string[],
+  fallbackLanguage: string
+): Promise<string> => {
   try {
     const settings = readObject(
       JSON.parse(await readFile(resolveSettingsPath(), "utf8"))
@@ -93,18 +100,29 @@ const readReasoningLanguageFromSettings = async (): Promise<string> => {
     const general = readObject(settings.general);
     const localization = readObject(general.localization);
     const categories = readObject(localization.categories);
-    const reasoningLanguage = categories.reasoning;
-    if (typeof reasoningLanguage === "string" && reasoningLanguage.trim()) {
-      return reasoningLanguage.trim();
+    for (const key of categoryKeys) {
+      const categoryLanguage = categories[key];
+      if (typeof categoryLanguage === "string" && categoryLanguage.trim()) {
+        return categoryLanguage.trim();
+      }
     }
     const defaultLanguage = localization.defaultLanguage;
     return typeof defaultLanguage === "string" && defaultLanguage.trim()
       ? defaultLanguage.trim()
-      : DEFAULT_RESPONSE_LANGUAGE;
+      : fallbackLanguage;
   } catch {
-    return DEFAULT_RESPONSE_LANGUAGE;
+    return fallbackLanguage;
   }
 };
+
+const readReasoningLanguageFromSettings = (): Promise<string> =>
+  readSettingsLocalizationCategory(["reasoning"], DEFAULT_RESPONSE_LANGUAGE);
+
+const readArtifactLanguageFromSettings = (): Promise<string> =>
+  readSettingsLocalizationCategory(
+    ["artifactsForTheUser", "artifacts_for_the_user"],
+    DEFAULT_ARTIFACT_LANGUAGE
+  );
 
 const resolveResponseLanguage = async (
   responseLanguage: NodeAgentSessionBootstrapperOptions["responseLanguage"]
@@ -117,6 +135,19 @@ const resolveResponseLanguage = async (
     return responseLanguage.trim();
   }
   return readReasoningLanguageFromSettings();
+};
+
+const resolveArtifactLanguage = async (
+  artifactLanguage: NodeAgentSessionBootstrapperOptions["artifactLanguage"]
+): Promise<string> => {
+  if (typeof artifactLanguage === "function") {
+    const resolved = await artifactLanguage();
+    return resolved?.trim() || DEFAULT_ARTIFACT_LANGUAGE;
+  }
+  if (typeof artifactLanguage === "string" && artifactLanguage.trim()) {
+    return artifactLanguage.trim();
+  }
+  return readArtifactLanguageFromSettings();
 };
 
 const createWorkflowArtifactSpecs = (
@@ -182,6 +213,9 @@ export class NodeAgentSessionBootstrapper {
     const responseLanguage = await resolveResponseLanguage(
       options.responseLanguage
     );
+    const artifactLanguage = await resolveArtifactLanguage(
+      options.artifactLanguage
+    );
     const artifactContext = await readArtifactContext(node, options);
     const session = await options.gateway.createSessionForWorkflow({
       providerId,
@@ -193,6 +227,7 @@ export class NodeAgentSessionBootstrapper {
       },
     });
     const firstMessage = this.firstMessageBuilder.build({
+      artifactLanguage,
       artifactContext,
       node,
       responseLanguage,
