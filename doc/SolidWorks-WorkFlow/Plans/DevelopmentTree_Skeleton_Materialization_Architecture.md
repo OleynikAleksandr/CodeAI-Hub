@@ -260,6 +260,7 @@ Sidebar читалка получает readiness state как часть Develo
 - Canonical documentation target: stable implementation facts live in `System/SystemArchitecture.md`, `Clusters/CoreOrchestrator.md`, and `Clusters/Project_Manager.md`.
 - Lifecycle state: keep this planning-doc in `Plans/` until the release artifact is built, user retest is accepted, and Scope Closeout decides whether to archive or distill any remaining notes.
 - Deferred scope remains unchanged: branch-level workflow execution, cross-cutting session injection, framework-specific layouts, existing-project technology detection, and promote/export into product root require fresh planning/todo cycles.
+- Retest follow-up `1.2.136`: PM node artifacts were routed correctly, but the left session surface still opened the `Diagram Modules` session. The fix extends selected-node dialog intents with exact `dialogId`, `rootSessionId`, and `sessionId`; `resolveDialogMatch` now prefers those exact identities before provider/stage fallback. Targeted evidence: `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts src/client/project-manager/components/layout/main-area-panel-content.test.ts src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`, `npm run typecheck:webview`, `npm run build:webview`.
 
 ---
 
