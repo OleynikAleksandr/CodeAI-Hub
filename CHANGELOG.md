@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.144] - 2026-05-05
+### Fixed
+- **Description first prompts now include the full questionnaire inline.** The questionnaire is sent as an authoritative fenced source block with provenance/fallback paths, so the agent does not need a separate turn just to read the initial answers.
+- **Active artifact viewers now refresh when agents write drafts.** Project Manager refreshes the right artifact pane for both normal workflow artifacts and Development Tree draft artifacts while the user stays on the active session.
+- **Development Tree node prompts now wait briefly for detailed Product Part context.** Product Part / Cluster / Module agents retain scoped excerpts and Product Part sessions no longer miss `diagram_modules/product-parts/<part-id>.md` when it appears moments after bootstrap starts.
+
+### Tests
+- **Follow-up workflow behavior is covered by targeted Project Manager and Core verification.** Tests lock Description inline source prompts, active artifact refresh matching, Development Tree prompt context extraction, delayed detailed Product Part context loading, webview typecheck, webview build, and Core build.
+
 ## [1.2.143] - 2026-05-05
 ### Fixed
 - **Workflow prompt language now separates chat and artifact prose.** Description, Virtual Simulation, and Diagram Modules first prompts now carry Settings > General > Reasoning as the chat language and Settings > General > Artifacts for the User as the artifact prose language, while English examples/templates remain format-only and contract tokens stay stable.
