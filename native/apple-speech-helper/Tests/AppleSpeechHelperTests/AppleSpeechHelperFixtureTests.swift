@@ -27,6 +27,10 @@ final class AppleSpeechHelperFixtureTests: XCTestCase {
             .path
     }
 
+    private var liveTestsEnabled: Bool {
+        ProcessInfo.processInfo.environment["APPLE_SPEECH_HELPER_RUN_LIVE_TESTS"] == "1"
+    }
+
     func testRejectsEmptyStdinWithJsonError() throws {
         let result = try runHelper(input: nil)
 
@@ -62,15 +66,42 @@ final class AppleSpeechHelperFixtureTests: XCTestCase {
         XCTAssertGreaterThan((result.json["voices"] as? [Any])?.count ?? 0, 0)
     }
 
-    func testRuntimeCommandsAreExplicitlyScaffolded() throws {
+    func testSpeakRejectsMissingTextAndClampsRate() throws {
         let result = try runHelper(
-            input: #"{"command":"speak","requestId":"speech-speak","id":"message-1","text":"Hello","rate":1.0}"#
+            input: #"{"command":"speak","requestId":"speech-speak","id":"message-1","text":"   ","rate":9.0}"#
         )
 
         XCTAssertEqual(result.exitCode, 0)
         XCTAssertEqual(result.json["ok"] as? Bool, false)
-        XCTAssertEqual(result.json["errorCode"] as? String, "not_implemented")
+        XCTAssertEqual(result.json["errorCode"] as? String, "text_missing")
         XCTAssertEqual(result.json["id"] as? String, "message-1")
+        XCTAssertEqual(result.json["normalizedRate"] as? Double, 2.0)
+        XCTAssertEqual(result.json["userMessageCode"] as? String, "apple_speech_text_missing")
+    }
+
+    func testStopReturnsIdleWhenNoPersistentSpeechProcessIsActive() throws {
+        let result = try runHelper(input: #"{"command":"stop","requestId":"speech-stop","id":"message-1"}"#)
+
+        XCTAssertEqual(result.exitCode, 0)
+        XCTAssertEqual(result.json["ok"] as? Bool, true)
+        XCTAssertEqual(result.json["helperStatus"] as? String, "idle")
+        XCTAssertEqual(result.json["id"] as? String, "message-1")
+    }
+
+    func testSpeakCompletesWhenLiveTestsAreEnabled() throws {
+        try XCTSkipUnless(
+            liveTestsEnabled,
+            "Set APPLE_SPEECH_HELPER_RUN_LIVE_TESTS=1 to exercise audible AVSpeechSynthesizer output."
+        )
+
+        let result = try runHelper(
+            input: #"{"command":"speak","requestId":"speech-live","id":"message-live","text":"CodeAI Hub speech test.","language":"en-US","rate":1.0}"#
+        )
+
+        XCTAssertEqual(result.exitCode, 0)
+        XCTAssertEqual(result.json["ok"] as? Bool, true)
+        XCTAssertEqual(result.json["id"] as? String, "message-live")
+        XCTAssertEqual(result.json["normalizedRate"] as? Double, 1.0)
     }
 
     private func runHelper(input: String?) throws -> HelperRun {

@@ -1,6 +1,40 @@
 import AVFAudio
 import Foundation
 
+private let defaultSpeechRate = 1.0
+private let maxSpeechRate = 2.0
+private let minSpeechRate = 0.75
+private let speechRunLoopStepSeconds = 0.05
+
+private final class SpeechRunDelegate: NSObject, AVSpeechSynthesizerDelegate, @unchecked Sendable {
+    private(set) var diagnostic: String?
+    private(set) var finished = false
+
+    func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer,
+        didFinish utterance: AVSpeechUtterance
+    ) {
+        finished = true
+    }
+
+    func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer,
+        didCancel utterance: AVSpeechUtterance
+    ) {
+        finished = true
+    }
+
+    func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer,
+        didEncounterError error: Error,
+        for utterance: AVSpeechUtterance,
+        at characterRange: NSRange
+    ) {
+        diagnostic = String(describing: error)
+        finished = true
+    }
+}
+
 private func currentMacOSVersion() -> String {
     let version = ProcessInfo.processInfo.operatingSystemVersion
     return "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
@@ -100,15 +134,98 @@ private func handleVoices(_ request: HelperRequest) -> HelperResponse {
     )
 }
 
-private func handleScaffoldedRuntimeCommand(_ request: HelperRequest) -> HelperResponse {
-    makeResponse(
-        ok: false,
+private func trimToNil(_ value: String?) -> String? {
+    guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+          trimmed.isEmpty == false
+    else {
+        return nil
+    }
+    return trimmed
+}
+
+private func normalizedRate(_ value: Double?) -> Double {
+    let candidate = value ?? defaultSpeechRate
+    if candidate.isFinite == false {
+        return defaultSpeechRate
+    }
+    return min(max(candidate, minSpeechRate), maxSpeechRate)
+}
+
+private func utteranceRate(for normalizedRate: Double) -> Float {
+    let rawRate = Double(AVSpeechUtteranceDefaultSpeechRate) * normalizedRate
+    let clamped = min(
+        max(rawRate, Double(AVSpeechUtteranceMinimumSpeechRate)),
+        Double(AVSpeechUtteranceMaximumSpeechRate)
+    )
+    return Float(clamped)
+}
+
+private func handleSpeak(_ request: HelperRequest) -> HelperResponse {
+    let rate = normalizedRate(request.rate)
+    guard let text = trimToNil(request.text) else {
+        return makeResponse(
+            ok: false,
+            request: request,
+            errorCode: "text_missing",
+            message: "Missing text to speak.",
+            id: request.id,
+            normalizedRate: rate,
+            userMessageCode: .appleSpeechTextMissing
+        )
+    }
+
+    let utterance = AVSpeechUtterance(string: text)
+    utterance.rate = utteranceRate(for: rate)
+    if let language = trimToNil(request.language),
+       let voice = AVSpeechSynthesisVoice(language: language)
+    {
+        utterance.voice = voice
+    }
+
+    let synthesizer = AVSpeechSynthesizer()
+    let delegate = SpeechRunDelegate()
+    synthesizer.delegate = delegate
+    synthesizer.speak(utterance)
+
+    while delegate.finished == false {
+        RunLoop.current.run(
+            mode: .default,
+            before: Date(timeIntervalSinceNow: speechRunLoopStepSeconds)
+        )
+    }
+
+    if let diagnostic = delegate.diagnostic {
+        return makeResponse(
+            ok: false,
+            request: request,
+            errorCode: "speech_failed",
+            message: "Apple Text-to-Speech failed while speaking.",
+            helperStatus: "failed",
+            id: request.id,
+            normalizedRate: rate,
+            userMessageCode: .appleSpeechHelperFailed,
+            diagnostic: diagnostic
+        )
+    }
+
+    return makeResponse(
+        ok: true,
         request: request,
-        errorCode: "not_implemented",
-        message: "Apple Text-to-Speech runtime command is not implemented in scaffold.",
-        helperStatus: "scaffold",
+        message: "Apple Text-to-Speech completed.",
         id: request.id,
-        userMessageCode: .appleSpeechHelperFailed
+        normalizedRate: rate,
+        userMessageCode: .appleSpeechReady
+    )
+}
+
+private func handleStop(_ request: HelperRequest) -> HelperResponse {
+    makeResponse(
+        ok: true,
+        request: request,
+        message: "No persistent speech process is active in this helper instance.",
+        helperStatus: "idle",
+        id: request.id,
+        userMessageCode: .appleSpeechReady
     )
 }
 
@@ -118,8 +235,10 @@ private func handle(_ request: HelperRequest) throws -> HelperResponse {
         return handlePreflight(request)
     case .voices:
         return handleVoices(request)
-    case .speak, .stop:
-        return handleScaffoldedRuntimeCommand(request)
+    case .speak:
+        return handleSpeak(request)
+    case .stop:
+        return handleStop(request)
     }
 }
 
