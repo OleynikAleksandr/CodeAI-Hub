@@ -253,7 +253,7 @@ const buildStagePhaseLines = (
   if (stage === "diagram_modules") {
     return [
       "Work phases:",
-      `- Phase 1: read \`Final_Description.md\` and \`virtual-simulation.md\`, then create or update \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
+      `- Phase 1: read the runtime-provided \`Final_Description.md\` and \`virtual-simulation.md\` inputs, then write \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
       "- Phase 2: if the runtime launches a continuation subturn (hidden by default), work on only one target `Product Part`, materialize one `product-parts/<part-id>.md` per iteration, do not wait for a user-visible `Continue`, and do not silently generate the whole giant inventory in one go.",
       "- Phase 3: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
       "- Phase 4: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
@@ -343,6 +343,26 @@ const buildRuntimeLanguageBlock = (params: {
   return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
 };
 
+const buildWorkflowArtifactModeBlock = (params: {
+  readonly relativePath: string;
+  readonly stage: WorkflowStageId;
+}): string => {
+  const stagedTargetLine =
+    params.stage === "diagram_modules"
+      ? "- Diagram Modules continuation turns must receive a new runtime prompt with `Mode: continue_existing_artifact` and the exact target `product-parts/<part-id>.md`."
+      : null;
+  const lines = [
+    "Workflow artifact mode:",
+    "- Mode: `create_initial_draft`.",
+    `- Target artifact: \`${params.relativePath}\`.`,
+    "- Write the target artifact directly from the current prompt and runtime-provided inputs.",
+    "- Do not search for, read, or check whether the target artifact already exists.",
+    "- If existing artifact content is relevant, it must be included in this prompt as runtime-provided artifact context.",
+    stagedTargetLine,
+  ];
+  return lines.filter((entry): entry is string => Boolean(entry)).join("\n");
+};
+
 const buildRuntimeLanguageReminder = (params: {
   readonly artifactLanguage: string | undefined;
   readonly chatLanguage: string | undefined;
@@ -409,6 +429,10 @@ export const buildWorkflowPromptPack = (
         stage: params.stage,
       }),
       prompt,
+      buildWorkflowArtifactModeBlock({
+        relativePath,
+        stage: params.stage,
+      }),
       buildChangeSummaryBlock(params.stage),
       buildInlineSourceArtifactBlock({
         sourceArtifacts: params.sourceArtifacts,

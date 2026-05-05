@@ -41,6 +41,20 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
     pack.content.includes("Build the artifact from `Final_Description.md`."),
     true
   );
+  assert.equal(pack.content.includes("Workflow artifact mode:"), true);
+  assert.equal(pack.content.includes("- Mode: `create_initial_draft`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Target artifact: `.codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md`."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Do not search for, read, or check whether the target artifact already exists."
+    ),
+    true
+  );
   assert.equal(
     pack.content.includes("Authoritative upstream source documents (inline):"),
     true
@@ -94,6 +108,14 @@ test("description prompt pack keeps template hint", () => {
   assert.equal(
     pack.content.includes(
       "Artifact prose language code: `uk` (from Settings > General > Artifacts for the User)."
+    ),
+    true
+  );
+  assert.equal(pack.content.includes("Workflow artifact mode:"), true);
+  assert.equal(pack.content.includes("- Mode: `create_initial_draft`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Target artifact: `.codeai-hub/demo-workspace/description/Final_Description.md`."
     ),
     true
   );
@@ -152,6 +174,24 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
   assert.equal(
     pack.content.includes("Build the artifact from the questionnaire and template."),
+    false
+  );
+  assert.equal(pack.content.includes("Workflow artifact mode:"), true);
+  assert.equal(pack.content.includes("- Mode: `create_initial_draft`."), true);
+  assert.equal(
+    pack.content.includes(
+      "Target artifact: `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`."
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "Diagram Modules continuation turns must receive a new runtime prompt with `Mode: continue_existing_artifact`"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("create or update `product-parts.index.md`"),
     false
   );
   assert.equal(

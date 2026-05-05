@@ -211,3 +211,51 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
     /Missing virtual-simulation\.md/
   );
 });
+
+test("startVirtualSimulation reuses active continuity session instead of sending a fresh draft prompt", async () => {
+  installWindowStub();
+  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
+
+  const service = new WorkflowStepStartService({
+    getWorkflowState: async () =>
+      createWorkflowState({
+        continuity: {
+          chains: [
+            {
+              rootSessionId: "vs-root",
+              workspaceSlug: "demo-workspace",
+              stage: "virtual_simulation",
+              updatedAt: "2026-03-18T11:00:00.000Z",
+              segments: [
+                {
+                  createdAt: "2026-03-18T11:00:00.000Z",
+                  providerId: "codexCli",
+                  providerSessionId: "provider-vs",
+                  sessionId: "existing-vs-session",
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    submitService: {
+      submitQuestionnaire: async () => {
+        throw new Error("fresh prompt must not be sent for active continuity");
+      },
+    },
+  });
+
+  let createdSessionId: string | null = null;
+  const sessionId = await service.startVirtualSimulation({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "codexCli",
+    onSessionCreated: (value) => {
+      createdSessionId = value;
+    },
+  });
+
+  assert.equal(sessionId, "existing-vs-session");
+  assert.equal(createdSessionId, "existing-vs-session");
+});
