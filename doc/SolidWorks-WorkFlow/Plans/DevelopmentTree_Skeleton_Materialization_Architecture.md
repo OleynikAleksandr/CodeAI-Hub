@@ -6,6 +6,14 @@
 **Implementation plan:** `doc/TODO/todo-plan.md` (`development-tree-materialization-implementation-2026-05-04`)
 **Canonical SSOT sync:** реализованные итоги Phase 1 уже перенесены в `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md` и `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; этот planning-doc остаётся активным до релизного retest acceptance и closeout disposition.
 
+**Retest fix verification (2026-05-05):** targeted checks passed for development-tree workflow namespace, nested continuity storage, node-specific session naming, Core snapshot metadata, PM parser metadata, and PM tree artifact/session rows:
+`npx tsx --test packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts packages/core/src/session-continuity/continuity-store.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.test.ts packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`;
+`npx tsx --test src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`;
+`npm run build --workspace=@codeai-hub/core`;
+`npm run typecheck:webview`;
+`npm run build:webview`;
+`npm run plan:validate`.
+
 ---
 
 ## 1. Цель
