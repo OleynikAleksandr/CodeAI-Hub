@@ -34,7 +34,7 @@
 1. Пользователь редактирует `questionnaire.md` (pre-submit).
 2. Пользователь нажимает `Submit questionnaire`.
 3. PM запускает runtime-сессию Description Agent.
-4. Агент читает `questionnaire.md` (+ pre-read файлы, если есть).
+4. Core включает полный текущий `questionnaire.md` в первый prompt как authoritative inline source с relative/absolute path и provenance.
 5. Агент **сразу** формирует первый черновик `Final_Description.md` в файле.
 6. Агент и пользователь итеративно уточняют документ до явного утверждения.
 
@@ -60,6 +60,8 @@
 
 - Агент не начинает интервью до появления файла `Final_Description.md`.
 - Даже при короткой анкете агент создаёт скелет/черновик `Final_Description.md` и только после этого задаёт вопросы.
+- Первый draft должен использовать inline `questionnaire.md`, который Core передал в стартовом prompt; штатный первый turn не должен тратиться на отдельное чтение анкеты целиком.
+- Если inline questionnaire отсутствует или явно stale, агент использует указанный path как fallback и фиксирует это как техническую причину, а не как продуктовый вопрос.
 
 ### 4.2 Итеративный цикл
 
@@ -73,7 +75,8 @@
 - Не выдумывать факты.
 - Если данных не хватает: явное допущение или вопрос.
 - Не превращать шаг Description в техническую спецификацию.
-- Язык: русский (чат + артефакт).
+- Язык чата берётся из `Settings > General > Reasoning`; prose в `Final_Description.md` берётся из `Settings > General > Artifacts for the User`.
+- Canonical filenames, ids, YAML/frontmatter keys, HTML comments and structural markers stay contract-valid and are not translated.
 
 ### 4.4 Что обязательно должно быть в `Final_Description.md`
 
@@ -129,6 +132,8 @@
 3. Нет скрытого auto-start reviewer при записи description-артефактов.
 4. Любое изменение `Final_Description.md` должно помечать downstream шаги как `OUTDATED`.
 5. Late-write legacy `description.md` не должен понижать/ломать статус при наличии актуального `Final_Description.md`.
+6. Первый prompt Description содержит полный `questionnaire.md`; агент не должен выполнять отдельный read-cycle только ради первичного чтения анкеты.
+7. Core pre-creates `description/` before the provider prompt; agent instructions name the target artifact path instead of asking the agent to create/discover the directory.
 
 ---
 

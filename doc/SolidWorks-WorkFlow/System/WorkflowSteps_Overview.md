@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-04-13
+**Updated:** 2026-05-05
 **Owner:** Oleksandr
 
 ---
@@ -23,7 +23,7 @@
 - **Шаг 2 (Virtual Simulation):** как продукт должен вести себя в сценариях использования.
 - **Шаг 3 (Diagram Modules):** из каких Product Part / Cluster / Module состоит система.
 
-### Ветки (branches) — `[READ MODEL IMPLEMENTED, SESSIONS DEFERRED]`:
+### Ветки (branches) — materialized first-draft Development Tree:
 
 После утверждения `Diagram Modules` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта:
 
@@ -51,10 +51,13 @@ Diagram Modules
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
 
-Текущий статус реализации Development Tree (v1.1.931):
+Текущий статус реализации Development Tree (v1.2.149):
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
-- Branch-node selection: `pm:branch:selected` event обновляет main area panel header; placeholder surface показывает kind label.
-- Deferred: lazy session lifecycle, provider inheritance, draft-artifact gating, outdated propagation, progress counters.
+- Materialization: Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`, pre-creates target draft folders/files, and bootstraps node sessions for Product Part / Cluster / Module first drafts.
+- Branch-node selection: `pm:branch:selected` opens the real working surface: left node session pane and right draft artifact pane.
+- Live refresh: when an agent writes required draft artifacts, the right artifact pane and sidebar readiness/color refresh without switching steps or reopening the workspace.
+- Context boundary: Product Part node first prompts receive the exact owner `diagram_modules/product-parts/<part-id>.md` whole; Cluster/Module prompts receive scoped relevant excerpts. Automatic first-draft sessions may use only first-prompt context and listed target draft files until the user explicitly permits additional reads.
+- Deferred: full branch-level implementation waves, provider inheritance for future per-branch handoffs, outdated propagation beyond current draft readiness, and progress counters.
 
 ---
 
@@ -84,7 +87,7 @@ UI на этом этапе:
 
 После `Submit questionnaire`:
 1. Project Manager запускает runtime-сессию шага `description`.
-2. Агент читает `questionnaire.md` (+ pre-read документы, если есть).
+2. Core включает полный текущий `questionnaire.md` в первый prompt как authoritative inline source с path/provenance.
 3. Агент **сразу** формирует первый черновик `Final_Description.md` (file-first).
 4. Дальше агент итеративно обновляет файл и задаёт только критичные вопросы.
 
@@ -135,7 +138,7 @@ Manual start из PM + resume-сессия агента:
 - если у шага ещё нет continuity session, левая панель `Sessions` показывает confirmation card с upstream artifact, inline selector провайдера и кнопкой `Start step`;
 - провайдер по умолчанию наследуется от `Description.primarySession.providerId`, но пользователь может до старта выбрать любой `connected` provider;
 - если пользователь не меняет выбор, запуск остаётся one-click path и идёт на унаследованном provider;
-- агент читает `Final_Description.md`;
+- Core включает полный `Final_Description.md` в первый prompt как authoritative inline source; path остаётся fallback/reference;
 - агент задаёт только уточнения, которые реально улучшают сценарии;
 - агент обновляет `virtual-simulation.md` итеративно.
 
@@ -168,8 +171,8 @@ Manual start из sidebar Workflow Tree:
 
 ### Входы
 
-- `Final_Description.md`
-- `virtual-simulation.md`
+- `Final_Description.md` — включается Core в первый prompt полностью.
+- `virtual-simulation.md` — включается Core в первый prompt полностью.
 
 ### Артефакты
 
@@ -229,8 +232,14 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Шаг `Diagram Modules` работает через agent asset pack:
 - prompt, field reference и merge rules живут в `packages/agents/diagram-modules-agent/assets/` (`diagram-modules-prompt.md`, `diagram-modules-field-reference.md`, `diagram-modules-merge-rules.md`);
-- runtime отправляет агенту canonical `.md` артефакт и generated `Change Summary`;
+- runtime отправляет агенту canonical `.md` target paths, generated `Change Summary`, and full inline upstream sources (`Final_Description.md` + `virtual-simulation.md`) in the first prompt;
 - Mermaid `.mmd` больше не является workflow SSOT.
+
+Workflow prompt/runtime contracts:
+- Core Runtime pre-creates stage directories before provider prompt: `description/`, `virtual_simulation/`, `diagram_modules/`, and `diagram_modules/product-parts/`.
+- First prompts may include localized instruction blocks from `Settings > General > Reasoning`; artifact prose follows `Settings > General > Artifacts for the User`.
+- Protected canonical tokens remain stable: filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, method/event names, and structural headings.
+- Draft/artifact templates are patch-friendly: `agent-fill` regions have stable sentinel shape, UTF-8 + LF, and agents are instructed to patch content rather than emit routine technical retry chatter.
 
 ---
 
