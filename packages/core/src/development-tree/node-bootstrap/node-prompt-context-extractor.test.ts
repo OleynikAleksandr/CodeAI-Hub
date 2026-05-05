@@ -11,8 +11,10 @@ const STEP_NAVIGATION_PATTERN = /Workflow Step Navigation chooses current step/;
 const WORKFLOW_ARTIFACT_CLUSTER_PATTERN = /workflow-artifact-ui/;
 const DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN =
   /project-manager owns the Project Manager product part/;
-const DETAILED_PRODUCT_PART_PATTERN =
-  /Detailed Project Manager decomposition is available/;
+const PRODUCT_PART_PURPOSE_PATTERN =
+  /Project Manager is the primary workspace for artifact review/;
+const PRODUCT_PART_RELATION_PATTERN =
+  /workflow-step-navigation` \| `artifact-review-workspace` \| sync-call/;
 const LONG_CONTEXT_PATTERN = /Project Manager repeated context/;
 const LONG_TEXT = `${"Project Manager repeated context ".repeat(120)}tail`;
 
@@ -90,8 +92,74 @@ test("NodePromptContextExtractor scopes module context through part and cluster 
 });
 
 test("NodePromptContextExtractor includes detailed product part artifact for part nodes", () => {
+  const exactProductPartMarkdown = [
+    "# Product Part: Project Manager",
+    "",
+    "## Identity",
+    "",
+    "| Field | Value |",
+    "| --- | --- |",
+    "| Part ID | `project-manager` |",
+    "",
+    "## Purpose",
+    "",
+    "Project Manager is the primary workspace for artifact review.",
+    "",
+    "## Owned Clusters",
+    "",
+    "### `workflow-artifact-ui`",
+    "",
+    "| `module-id` | Responsibility |",
+    "| --- | --- |",
+    "| `artifact-workspace` | Presents editable drafts. |",
+    "",
+    "### `session-workspace-ui`",
+    "",
+    "| `module-id` | Responsibility |",
+    "| --- | --- |",
+    "| `project-context-hub` | Keeps active project context. |",
+    "",
+    "## Standalone Modules",
+    "",
+    "| `module-id` | Responsibility |",
+    "| --- | --- |",
+    "| `cef-launcher` | Starts the desktop shell. |",
+    "",
+    "## Simple Relations",
+    "",
+    "| From | To | Type | Label |",
+    "| --- | --- | --- | --- |",
+    "| `workflow-step-navigation` | `artifact-review-workspace` | sync-call | open-active-artifact |",
+  ].join("\n");
   const context = new NodePromptContextExtractor().extract({
     artifacts: [
+      {
+        content: [
+          "# Final Description",
+          "## Project Manager",
+          "Project Manager overview that should not displace exact owner markdown.",
+          "## Project Manager Shell",
+          "Project Manager shell context also matches the same broad anchor.",
+          "## Project Manager Setup",
+          "Project Manager setup context also matches the same broad anchor.",
+        ].join("\n"),
+        label: "Final Description",
+        relativePath: ".codeai-hub/demo/description/Final_Description.md",
+      },
+      {
+        content: [
+          "# Virtual Simulation",
+          "## Project Manager scenario",
+          "Project Manager scenario context also matches the same broad anchor.",
+          "## Project Manager recovery",
+          "Project Manager recovery context also matches the same broad anchor.",
+          "## Project Manager settings",
+          "Project Manager settings context also matches the same broad anchor.",
+        ].join("\n"),
+        label: "Virtual Simulation",
+        relativePath:
+          ".codeai-hub/demo/virtual_simulation/virtual-simulation.md",
+      },
       {
         content: [
           "Product Part: project-manager",
@@ -101,13 +169,7 @@ test("NodePromptContextExtractor includes detailed product part artifact for par
         relativePath: ".codeai-hub/demo/diagram_modules/product-parts.index.md",
       },
       {
-        content: [
-          "# Product Part: Project Manager",
-          "Detailed Project Manager decomposition is available.",
-          "## Owned Clusters",
-          "Cluster: workflow-artifact-ui",
-          "Cluster: session-workspace-ui",
-        ].join("\n"),
+        content: exactProductPartMarkdown,
         label: "Diagram Modules Product Part: project-manager",
         relativePath:
           ".codeai-hub/demo/diagram_modules/product-parts/project-manager.md",
@@ -116,9 +178,17 @@ test("NodePromptContextExtractor includes detailed product part artifact for par
     node: createNode({}),
   });
   const content = context.map((entry) => entry.content).join("\n");
+  const exactEntry = context.find((entry) =>
+    entry.relativePath.endsWith(
+      "/diagram_modules/product-parts/project-manager.md"
+    )
+  );
 
   assert.match(content, DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN);
-  assert.match(content, DETAILED_PRODUCT_PART_PATTERN);
+  assert.match(content, PRODUCT_PART_PURPOSE_PATTERN);
+  assert.match(content, PRODUCT_PART_RELATION_PATTERN);
+  assert.equal(exactEntry?.content, exactProductPartMarkdown);
+  assert.equal(exactEntry?.truncated, false);
 });
 
 test("NodePromptContextExtractor marks long scoped snippets as truncated", () => {

@@ -36,6 +36,14 @@ interface ScoredBlock {
   readonly truncated: boolean;
 }
 
+interface ProtectedContextEntry {
+  readonly content: string;
+  readonly label: string;
+  readonly relativePath: string;
+  readonly sourceIndex: number;
+  readonly truncated: false;
+}
+
 const BLOCK_START_RE =
   /^(#{1,6}\s+.+|(Product Part|Cluster|Module|Standalone Module):\s+.+)$/i;
 const NON_WORD_RE = /[^a-z0-9]+/gi;
@@ -152,13 +160,33 @@ const byScoreThenSource = (left: ScoredBlock, right: ScoredBlock): number => {
   return left.sourceIndex - right.sourceIndex;
 };
 
+const isExactProductPartMarkdown = (
+  artifact: NodePromptSourceArtifact,
+  node: DevelopmentTreeDetectedNode
+): boolean =>
+  node.kind === "product_part" &&
+  artifact.relativePath.endsWith(
+    `/diagram_modules/product-parts/${node.partId}.md`
+  );
+
 export class NodePromptContextExtractor {
   extract(
     request: NodePromptContextExtractorRequest
   ): readonly NodePromptContextEntry[] {
     const anchors = createAnchorSpecs(request.node);
+    const protectedEntries: ProtectedContextEntry[] = [];
     const scoredBlocks: ScoredBlock[] = [];
     for (const [sourceIndex, artifact] of request.artifacts.entries()) {
+      if (isExactProductPartMarkdown(artifact, request.node)) {
+        protectedEntries.push({
+          content: artifact.content.trim(),
+          label: artifact.label,
+          relativePath: artifact.relativePath,
+          sourceIndex,
+          truncated: false,
+        });
+        continue;
+      }
       const artifactBlocks: ScoredBlock[] = [];
       for (const block of splitMarkdownBlocks(artifact.content)) {
         const scored = scoreBlock(block, anchors);
@@ -181,13 +209,27 @@ export class NodePromptContextExtractor {
       );
     }
     scoredBlocks.sort(byScoreThenSource);
-    return scoredBlocks.slice(0, MAX_CONTEXT_ENTRIES).map((block) => ({
-      anchors: block.anchors,
-      content: block.content,
-      label: block.label,
-      relativePath: block.relativePath,
-      score: block.score,
-      truncated: block.truncated,
-    }));
+    const remainingEntryCount = Math.max(
+      0,
+      MAX_CONTEXT_ENTRIES - protectedEntries.length
+    );
+    return [
+      ...protectedEntries
+        .sort((left, right) => left.sourceIndex - right.sourceIndex)
+        .map((entry) => ({
+          content: entry.content,
+          label: entry.label,
+          relativePath: entry.relativePath,
+          truncated: entry.truncated,
+        })),
+      ...scoredBlocks.slice(0, remainingEntryCount).map((block) => ({
+        anchors: block.anchors,
+        content: block.content,
+        label: block.label,
+        relativePath: block.relativePath,
+        score: block.score,
+        truncated: block.truncated,
+      })),
+    ];
   }
 }
