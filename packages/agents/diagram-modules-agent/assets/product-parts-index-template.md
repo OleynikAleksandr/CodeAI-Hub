@@ -37,4 +37,10 @@ Canonical authoring rules:
 - Status reflects staged flow only, not implementation readiness
 - Runtime uses this list to build the skeleton and decide generation order
 - Each continuation turn materializes only one target Product Part file under `product-parts/<part-id>.md`
+
+Patch-friendly authoring contract:
+- Keep this Markdown as UTF-8 text with LF line endings and no trailing spaces.
+- Keep exactly one blank line around generated/comment or runtime `agent-fill` blocks when they are present.
+- If a runtime draft contains `<!-- agent-fill -->`, replace only the sentinel line `_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._` inside that block.
+- Do not rewrite generated/comment blocks while filling user-facing prose.
 -->

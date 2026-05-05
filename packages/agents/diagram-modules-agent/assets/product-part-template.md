@@ -62,4 +62,10 @@ Canonical authoring rules:
 - Do not mirror sibling Product Parts; each part file owns only its subtree
 - Use a cluster only for a real subsystem boundary, not as a decorative grouping
 - Keep the module standalone unless there is a confirmed subsystem boundary that requires a separate cluster
+
+Patch-friendly authoring contract:
+- Keep this Markdown as UTF-8 text with LF line endings and no trailing spaces.
+- Keep exactly one blank line around generated/comment or runtime `agent-fill` blocks when they are present.
+- If a runtime draft contains `<!-- agent-fill -->`, replace only the sentinel line `_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._` inside that block.
+- Do not rewrite generated/comment blocks while filling user-facing prose.
 -->

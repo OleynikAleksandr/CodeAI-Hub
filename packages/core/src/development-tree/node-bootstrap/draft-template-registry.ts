@@ -31,6 +31,8 @@ const GENERATED_START = "<!-- generated -->";
 const GENERATED_END = "<!-- /generated -->";
 const AGENT_FILL_START = "<!-- agent-fill -->";
 const AGENT_FILL_END = "<!-- /agent-fill -->";
+const AGENT_FILL_SENTINEL =
+  "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
 
 const PRODUCT_PART_TEMPLATES: readonly DevelopmentTreeDraftTemplate[] = [
   { fileName: "PartDescription.draft.md", nodeKind: "product_part" },
@@ -59,7 +61,13 @@ const formatClusterReference = (node: DevelopmentTreeDetectedNode): string =>
   node.clusterId ?? "standalone";
 
 const createAgentSection = (title: string): string =>
-  [`## ${title}`, AGENT_FILL_START, "", AGENT_FILL_END].join("\n");
+  [
+    `## ${title}`,
+    "",
+    AGENT_FILL_START,
+    AGENT_FILL_SENTINEL,
+    AGENT_FILL_END,
+  ].join("\n");
 
 const createGeneratedBlock = (lines: readonly string[]): string =>
   [GENERATED_START, ...lines, GENERATED_END].join("\n");
