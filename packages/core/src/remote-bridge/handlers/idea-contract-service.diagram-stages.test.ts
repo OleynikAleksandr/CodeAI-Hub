@@ -110,6 +110,24 @@ test("diagram modules contract embeds polygon grammar and inventory invariants",
       true
     );
     assert.equal(
+      contract?.prompt.includes(
+        "The runtime `Workflow runtime language contract` is authoritative for user-facing prose language."
+      ),
+      true
+    );
+    assert.equal(
+      contract?.prompt.includes(
+        "Descriptive prose in this artifact follows the configured `Artifacts for the User` language"
+      ),
+      true
+    );
+    assert.equal(
+      contract?.prompt.includes(
+        "Keep ids, DSL headers, field names, file names, and staged status tokens exactly as defined by the staged contract."
+      ),
+      true
+    );
+    assert.equal(
       countOccurrences(
         contract?.prompt ?? "",
         "# Diagram Modules Field Reference"

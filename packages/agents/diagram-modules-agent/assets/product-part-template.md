@@ -45,9 +45,10 @@ The runtime coordinates staged workflow execution, workspace-level lifecycle and
 
 <!--
 Language rule:
-- Runtime may require descriptive prose in this artifact to follow the configured `Artifacts for the User` language.
+- The runtime `Workflow runtime language contract` is authoritative for user-facing prose language.
+- Descriptive prose in this artifact follows the configured `Artifacts for the User` language, not the language of examples or internal instructions.
 - Keep Product Part, Cluster, and Module names/titles in canonical English.
-- Keep ids, DSL headers, field names, and staged status tokens exactly as defined by the staged contract.
+- Keep ids, DSL headers, field names, file names, and staged status tokens exactly as defined by the staged contract.
 - Translate only descriptive prose such as Purpose, Responsibility, notes, assumptions / open questions, and other free-text explanations.
 
 Canonical authoring rules:

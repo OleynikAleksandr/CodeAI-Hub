@@ -23,8 +23,9 @@
 
 <!--
 Language rule:
-- Runtime may require descriptive prose in this artifact to follow the configured `Artifacts for the User` language.
-- Keep Product Part names/titles, DSL headers, field names, ids, and staged status tokens exactly as defined by the staged contract.
+- The runtime `Workflow runtime language contract` is authoritative for user-facing prose language.
+- Descriptive prose in this artifact follows the configured `Artifacts for the User` language, not the language of examples or internal instructions.
+- Keep Product Part names/titles, DSL headers, field names, ids, file names, and staged status tokens exactly as defined by the staged contract.
 - Keep Cluster / Module canonical names in English when they are referenced from this artifact or surrounding staged context.
 - Translate only descriptive prose such as purposes, notes, assumptions / open questions, and other free-text content where the contract allows prose.
 
