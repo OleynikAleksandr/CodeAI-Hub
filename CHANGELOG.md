@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.165] - 2026-05-06
+### Fixed
+- **Application Skeleton now treats the Development Tree as the default production filesystem shape.** The bundled prompt/contract require Product Part roots under `product-parts/<product-part-id>`, clustered modules under `clusters/<cluster-id>/modules/<module-id>`, and standalone modules under the Product Part instead of scattering Product Parts across `apps/`, `packages/`, or `extensions`.
+- **Application Skeleton JSON now has a canonical lifecycle shape.** Draft and materialized maps must use explicit `reviewState`, `materialized`, `materializationState`, `materializedPaths`, and array-based `stack.languages`, `stack.frameworks`, and `stack.runtimes` fields.
+- **Post-materialization artifacts must describe the current filesystem, not a future draft.** The prompt now tells the agent to rewrite draft/future-tense Markdown after it creates the accepted skeleton.
+
+### Tests
+- **Bundled template coverage protects the Development Tree mirror contract.** Targeted tests assert the Product Part-aligned filesystem rules, canonical JSON fields, and post-materialization Markdown cleanup requirements.
+
 ## [1.2.164] - 2026-05-06
 ### Fixed
 - **Application Skeleton runtime prompt pack now matches the discovery-first stage direction.** The Project Manager prompt pack no longer injects legacy “ask stack questions first” phase guidance and keeps draft contract creation separate from post-acceptance filesystem materialization.
