@@ -17,7 +17,7 @@ Use only runtime-provided inputs for this turn:
 - existing Application Skeleton artifacts, if included by the runtime;
 - explicit user preferences or workspace facts.
 
-If stack choices are missing, infer a recommended baseline from the project needs. Do not start with blank-choice questions about language, framework, repo shape, or package manager. Ask blocking questions only when a wrong default would invalidate the skeleton; ask them as confirmation questions with your recommended option first.
+If stack choices are missing, infer a recommended baseline from the project needs. Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence rather than incidental module names. Do not start with blank-choice questions about language, framework, repo shape, or package manager. Ask blocking questions only when a wrong default would invalidate the skeleton; ask them as confirmation questions with your recommended option first.
 
 If the user explicitly replaces a stack decision, treat that replacement as final for that decision. Update the draft contract and map, make reasonable industry-aligned implementation assumptions, and do not open a new question loop about how to apply that chosen baseline.
 
@@ -36,8 +36,7 @@ Before explicit user acceptance:
 
 Do not create production files, package manifests, source folders, Product Part folders, config files, hooks, tests, CI files, Quality Gates artifacts, or agent sessions.
 
-Final response after draft contract:
-`Draft Application Skeleton contract is ready for review. Please confirm or request changes before filesystem materialization.`
+Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization.
 
 ## Phase 2: Post-Acceptance Materialization
 After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.
@@ -55,12 +54,11 @@ After materialization, remove stale draft/future claims from both artifacts, inc
 
 Do not create Quality Gates contracts, hooks, CI, final lint/test/build configs, product feature code, or Product Part / Cluster / Module sessions. The Quality Gates Baseline stage owns gate integration.
 
-Final response after materialization:
-`Application Skeleton is accepted and materialized. The workspace skeleton is ready for Quality Gates Baseline.`
+Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 
 ## Filesystem Rules
 - Use an industry-aligned scaffold for the accepted ecosystem, but keep Development Tree ownership visible in the production tree.
-- Unless the user explicitly accepts another root, use `product-parts/<product-part-id>` as each Product Part root.
+- Unless the user explicitly accepts another root, use `sourceRoot: "product-parts"` and `product-parts/<product-part-id>` as each Product Part root.
 - Cluster modules go under `product-parts/<product-part-id>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone Product Part modules go under `product-parts/<product-part-id>/modules/<module-id>`.
 - Do not split Product Part roots by implementation category such as `apps/`, `packages/`, or `extensions` when that breaks the Product Part -> Cluster -> Module mirror.
@@ -73,7 +71,7 @@ Final response after materialization:
 - `schema: "codeai-application-skeleton-v1"`;
 - non-null `reviewState`: `draft`, `accepted`, or `materialized`;
 - `accepted`, `materialized`, and `materializationState`;
-- `workspaceRoot`, `sourceRoot`, `repoShape`, `packageManager`;
+- `workspaceRoot`, `sourceRoot`, `repoShape`, `packageManager`; `sourceRoot` must be `"product-parts"` unless the user explicitly accepts another root;
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` arrays;
 - `productParts` with deterministic `codePath` values for every mapped Product Part, Cluster, and Module;
 - `materializedPaths` after materialization;

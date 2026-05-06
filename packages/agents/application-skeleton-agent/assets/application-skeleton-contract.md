@@ -58,7 +58,8 @@
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.
 - `sourceRoot` must point to the production source/scaffold root and must not point under `.codeai-hub/`.
-- Unless the user explicitly accepts another root, `sourceRoot` should be `product-parts` and every Product Part root should be `product-parts/<product-part-id>`.
+- Unless the user explicitly accepts another root, `sourceRoot` must be `product-parts` and every Product Part root must be `product-parts/<product-part-id>`.
+- Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence and either used in the recommended baseline or explicitly explained as a rejected alternative.
 - Do not split Product Part roots across implementation-category folders such as `apps/`, `packages/`, or `extensions/` when the Development Tree is organized by Product Part.
 - Clustered module paths must be nested under their owning cluster path: `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone modules must use `standaloneModules`; do not mix cluster-owned modules into a Product Part-level `modules` array.

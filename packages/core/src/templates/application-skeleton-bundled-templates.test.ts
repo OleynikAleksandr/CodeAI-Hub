@@ -14,8 +14,14 @@ const DO_NOT_START_WITH_STACK_QUESTIONS_RE =
   /Do not start with blank-choice questions about language, framework, repo shape, or package manager/;
 const RECOMMENDED_BASELINE_RE =
   /infer a recommended baseline from the project needs/;
+const TECHNOLOGY_HINTS_RE =
+  /Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence/;
 const CONFIRMATION_STYLE_RE =
   /confirmation questions with your recommended option first/;
+const LOCALIZED_DRAFT_RESPONSE_RE =
+  /tell the user, in the chat language, that the draft Application Skeleton contract is ready for review/;
+const LOCALIZED_MATERIALIZED_RESPONSE_RE =
+  /tell the user, in the chat language, that Application Skeleton is accepted and materialized/;
 const USER_STACK_REPLACEMENT_RE =
   /If the user explicitly replaces a stack decision/;
 const NO_STACK_DETAIL_LOOP_RE =
@@ -24,6 +30,7 @@ const PRODUCTION_SOURCE_ROOT_RE =
   /Never use `\.codeai-hub\/\.\.\.` as `sourceRoot` or production `codePath`/;
 const CLUSTERED_MODULE_PATH_RE = /clusters\/<cluster-id>\/modules\/<module-id>/;
 const PRODUCT_PARTS_ROOT_RE = /product-parts\/<product-part-id>/;
+const SOURCE_ROOT_PRODUCT_PARTS_RE = /sourceRoot: "product-parts"/;
 const NO_CATEGORY_SPLIT_RE = /Do not split Product Part roots/;
 const PRODUCT_PART_PACKAGE_MANIFEST_RE =
   /Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package/;
@@ -42,6 +49,8 @@ const CODEAI_HUB_SOURCE_ROOT_RE =
 const STANDALONE_MODULES_RE = /Standalone modules must use `standaloneModules`/;
 const STACK_ARRAYS_RE =
   /`stack\.languages`, `stack\.frameworks`, and `stack\.runtimes` must be arrays/;
+const CONTRACT_TECHNOLOGY_HINTS_RE =
+  /Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence/;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -60,12 +69,16 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, QUALITY_GATES_START_RE);
   assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
   assert.match(prompt, RECOMMENDED_BASELINE_RE);
+  assert.match(prompt, TECHNOLOGY_HINTS_RE);
   assert.match(prompt, CONFIRMATION_STYLE_RE);
+  assert.match(prompt, LOCALIZED_DRAFT_RESPONSE_RE);
+  assert.match(prompt, LOCALIZED_MATERIALIZED_RESPONSE_RE);
   assert.match(prompt, USER_STACK_REPLACEMENT_RE);
   assert.match(prompt, NO_STACK_DETAIL_LOOP_RE);
   assert.match(prompt, PRODUCTION_SOURCE_ROOT_RE);
   assert.match(prompt, CLUSTERED_MODULE_PATH_RE);
   assert.match(prompt, PRODUCT_PARTS_ROOT_RE);
+  assert.match(prompt, SOURCE_ROOT_PRODUCT_PARTS_RE);
   assert.match(prompt, NO_CATEGORY_SPLIT_RE);
   assert.match(prompt, PRODUCT_PART_PACKAGE_MANIFEST_RE);
   assert.match(prompt, POST_MATERIALIZATION_RE);
@@ -85,6 +98,7 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, STANDALONE_MODULES_RE);
   assert.match(contract, STACK_ARRAYS_RE);
   assert.match(contract, PRODUCT_PARTS_ROOT_RE);
+  assert.match(contract, CONTRACT_TECHNOLOGY_HINTS_RE);
   assert.match(contract, NO_CATEGORY_SPLIT_RE);
 });
 
