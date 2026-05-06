@@ -50,6 +50,8 @@ In this phase you must not:
 ### Phase 2: Post-Acceptance Materialization
 After the user explicitly accepts the skeleton contract, continue in the same Application Skeleton session and materialize the filesystem skeleton.
 
+Treat an explicit acceptance message as the instruction to start materialization immediately. Do not ask whether to proceed, do not offer a separate materialization contract, and do not hand this work to another step.
+
 In this phase you must:
 - re-read the accepted `application-skeleton-map.json`;
 - verify that it has `accepted: true` or `acceptance.accepted: true`;

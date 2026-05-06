@@ -123,6 +123,8 @@ AND quality-gates.json integrated == true
 
 После явного пользовательского acceptance агент обязан:
 
+- считать acceptance прямым сигналом к немедленной materialization в той же сессии;
+- не спрашивать пользователя, переходить ли к materialization, если acceptance уже получен;
 - перечитать accepted `application-skeleton-map.json`;
 - создать project scaffold в workspace;
 - создать filesystem projection Product Part / Cluster / Module inside the chosen scaffold;
