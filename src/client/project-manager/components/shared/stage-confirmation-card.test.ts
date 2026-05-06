@@ -47,6 +47,10 @@ test("stage confirmation workflow includes technical root stage labels", async (
 
   assert.equal(source.includes('application_skeleton: "Application Skeleton"'), true);
   assert.equal(source.includes('quality_gates: "Quality Gates Baseline"'), true);
+  assert.equal(
+    source.includes('quality_gates: "materialized Application Skeleton"'),
+    true
+  );
   assert.equal(source.includes('application_skeleton: "product-parts.index.md"'), true);
   assert.equal(source.includes('quality_gates: "application-skeleton-map.json"'), true);
 });

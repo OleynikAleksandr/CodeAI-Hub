@@ -18,7 +18,7 @@ export const UPSTREAM_STAGE_LABELS: Record<ConfirmableStageId, string> = {
   virtual_simulation: "Description",
   diagram_modules: "Virtual Simulation",
   application_skeleton: "Diagram Modules",
-  quality_gates: "Application Skeleton",
+  quality_gates: "materialized Application Skeleton",
 };
 
 const UPSTREAM_FILE_NAMES: Record<
