@@ -28,7 +28,8 @@ export const readDevelopmentTreeBootstrapGate = async (params: {
     applicationSkeletonProgress,
     qualityGatesProgress,
     unlocked: Boolean(
-      applicationSkeletonProgress?.accepted && qualityGatesProgress?.accepted
+      applicationSkeletonProgress?.materialized &&
+        qualityGatesProgress?.integrated
     ),
   };
 };

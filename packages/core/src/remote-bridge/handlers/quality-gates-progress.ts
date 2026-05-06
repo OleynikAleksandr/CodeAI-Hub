@@ -12,11 +12,17 @@ import type { DiagramModulesProgressSnapshot } from "./diagram-modules-progress"
 export type QualityGatesSubstep =
   | "artifact"
   | "awaiting_acceptance"
-  | "accepted";
+  | "accepted"
+  | "integrating"
+  | "integrated"
+  | "failed"
+  | "outdated";
 
 export interface QualityGatesProgressSnapshot {
   readonly accepted: boolean;
   readonly commandContractReady: boolean;
+  readonly integrated: boolean;
+  readonly integrationState: string | null;
   readonly jsonExists: boolean;
   readonly markdownExists: boolean;
   readonly substep: QualityGatesSubstep;
@@ -66,6 +72,14 @@ const readAcceptedFlag = (value: Record<string, unknown> | null): boolean => {
   );
 };
 
+const readIntegratedFlag = (value: Record<string, unknown> | null): boolean =>
+  value?.integrated === true;
+
+const readIntegrationState = (
+  value: Record<string, unknown> | null
+): string | null =>
+  typeof value?.integrationState === "string" ? value.integrationState : null;
+
 const hasCommandContract = (value: Record<string, unknown> | null): boolean =>
   typeof value?.commands === "object" &&
   value.commands !== null &&
@@ -73,9 +87,23 @@ const hasCommandContract = (value: Record<string, unknown> | null): boolean =>
 
 const resolveSubstep = (params: {
   readonly accepted: boolean;
+  readonly integrated: boolean;
+  readonly integrationState: string | null;
   readonly jsonExists: boolean;
   readonly markdownExists: boolean;
 }): QualityGatesSubstep => {
+  if (params.integrated) {
+    return "integrated";
+  }
+  if (params.integrationState === "in_progress") {
+    return "integrating";
+  }
+  if (params.integrationState === "failed") {
+    return "failed";
+  }
+  if (params.integrationState === "outdated") {
+    return "outdated";
+  }
   if (params.accepted) {
     return "accepted";
   }
@@ -120,12 +148,23 @@ export const readQualityGatesProgressSnapshot = async (params: {
     jsonExists &&
     commandContractReady &&
     readAcceptedFlag(contract);
+  const integrationState = readIntegrationState(contract);
+  const integrated =
+    accepted && commandContractReady && readIntegratedFlag(contract);
   return {
     accepted,
     commandContractReady,
+    integrated,
+    integrationState,
     jsonExists,
     markdownExists,
-    substep: resolveSubstep({ accepted, jsonExists, markdownExists }),
+    substep: resolveSubstep({
+      accepted,
+      integrated,
+      integrationState,
+      jsonExists,
+      markdownExists,
+    }),
   };
 };
 
@@ -185,7 +224,7 @@ export const applyTechnicalRootProgressToState = (params: {
   const qualityGates = params.qualityGatesProgress
     ? updateTechnicalStage({
         stage: params.state.stages.quality_gates,
-        complete: params.qualityGatesProgress.accepted,
+        complete: params.qualityGatesProgress.integrated,
         hasArtifact:
           params.qualityGatesProgress.markdownExists ||
           params.qualityGatesProgress.jsonExists,
