@@ -250,6 +250,15 @@ Manual acceptance workflow:
 - `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
 - VSIX produced at repository root: `codeai-hub-1.2.155.vsix` (`3.1M`).
 
+### 8.2 User Acceptance Evidence
+
+2026-05-06 accepted release `1.2.155`:
+
+- User installed and tested the new VSIX.
+- Bubble `Speak` playback works from the dialog message plate.
+- Russian bubble text is spoken with Russian voice selection after automatic language inference.
+- User reported speech quality as acceptable and the workflow as working ideally for this scope.
+
 ## 9. Deferred Work
 
 - Speech-to-Text.
