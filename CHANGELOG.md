@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.161] - 2026-05-06
+### Fixed
+- **Quality Gates agents now start with a universal research-first prompt.** The stage infers the current project shape from the accepted Application Skeleton, compares suitable tooling strategies, drafts minimal/recommended/strict baselines, and designs a first-class architecture gate without assuming a CodeAI Hub-specific stack.
+- **Quality Gates contracts now separate active blockers from deferred tooling.** The bundled contract reference requires selected baseline metadata, advisory/deferred sections, and keeps materialization, hooks, CI, scripts, and production files outside the Quality Gates stage unless explicitly allowed.
+
+### Tests
+- **Template sync and Core build checks cover the prompt update.** Targeted template tests and the `@codeai-hub/core` build passed after regenerating bundled templates.
+
 ## [1.2.160] - 2026-05-06
 ### Added
 - **Codex workflow agents now run with research-capable documentation tooling.** The documentation workflow process keeps implementation-heavy capabilities disabled but no longer disables browser/search tools, so Diagram Modules, Application Skeleton, and Quality Gates discussions can compare frameworks, architecture options, and external references when the user asks for research.
