@@ -4,13 +4,19 @@ import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-arti
 export type ApplicationSkeletonSubstep =
   | "artifact"
   | "awaiting_acceptance"
-  | "accepted";
+  | "accepted"
+  | "materializing"
+  | "materialized"
+  | "failed"
+  | "outdated";
 
 export interface ApplicationSkeletonProgressSnapshot {
   readonly accepted: boolean;
   readonly mapExists: boolean;
   readonly mappingReady: boolean;
   readonly markdownExists: boolean;
+  readonly materializationState: ApplicationSkeletonSubstep;
+  readonly materialized: boolean;
   readonly substep: ApplicationSkeletonSubstep;
 }
 
@@ -58,11 +64,62 @@ const readAcceptedFlag = (value: Record<string, unknown> | null): boolean => {
   );
 };
 
+const readMaterializedFlag = (
+  value: Record<string, unknown> | null
+): boolean => {
+  if (!value) {
+    return false;
+  }
+  if (value.materialized === true) {
+    return true;
+  }
+  const materialization = value.materialization;
+  return (
+    typeof materialization === "object" &&
+    materialization !== null &&
+    !Array.isArray(materialization) &&
+    (materialization as Record<string, unknown>).materialized === true
+  );
+};
+
+const readMaterializationState = (
+  value: Record<string, unknown> | null
+): ApplicationSkeletonSubstep => {
+  let raw: unknown = null;
+  if (typeof value?.materializationState === "string") {
+    raw = value.materializationState;
+  } else if (typeof value?.status === "string") {
+    raw = value.status;
+  }
+  if (
+    raw === "materializing" ||
+    raw === "in_progress" ||
+    raw === "materialized" ||
+    raw === "failed" ||
+    raw === "outdated"
+  ) {
+    return raw === "in_progress" ? "materializing" : raw;
+  }
+  return "artifact";
+};
+
 const resolveSubstep = (params: {
   readonly accepted: boolean;
+  readonly materializationState: ApplicationSkeletonSubstep;
+  readonly materialized: boolean;
   readonly mapExists: boolean;
   readonly markdownExists: boolean;
 }): ApplicationSkeletonSubstep => {
+  if (params.materialized) {
+    return "materialized";
+  }
+  if (
+    params.materializationState === "materializing" ||
+    params.materializationState === "failed" ||
+    params.materializationState === "outdated"
+  ) {
+    return params.materializationState;
+  }
   if (params.accepted) {
     return "accepted";
   }
@@ -102,11 +159,24 @@ export const readApplicationSkeletonProgressSnapshot = async (params: {
   }
 
   const accepted = markdownExists && mapExists && readAcceptedFlag(mapJson);
+  const materialized =
+    accepted && markdownExists && mapExists && readMaterializedFlag(mapJson);
+  const materializationState = materialized
+    ? "materialized"
+    : readMaterializationState(mapJson);
   return {
     accepted,
+    materializationState,
+    materialized,
     mapExists,
     mappingReady: mapExists,
     markdownExists,
-    substep: resolveSubstep({ accepted, mapExists, markdownExists }),
+    substep: resolveSubstep({
+      accepted,
+      materializationState,
+      materialized,
+      mapExists,
+      markdownExists,
+    }),
   };
 };

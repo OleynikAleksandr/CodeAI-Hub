@@ -142,11 +142,11 @@ const stageHasArtifact = (params: {
   );
 
 const resolveTechnicalStageStatus = (params: {
-  readonly accepted: boolean;
+  readonly complete: boolean;
   readonly current: WorkflowStageStatus;
   readonly hasArtifact: boolean;
 }): WorkflowStageStatus => {
-  if (params.accepted) {
+  if (params.complete) {
     return "completed";
   }
   if (params.hasArtifact && params.current === "completed") {
@@ -156,13 +156,13 @@ const resolveTechnicalStageStatus = (params: {
 };
 
 const updateTechnicalStage = (params: {
-  readonly accepted: boolean;
+  readonly complete: boolean;
   readonly hasArtifact: boolean;
   readonly stage: WorkflowStageState;
 }): WorkflowStageState => ({
   ...params.stage,
   status: resolveTechnicalStageStatus({
-    accepted: params.accepted,
+    complete: params.complete,
     current: params.stage.status,
     hasArtifact: params.hasArtifact,
   }),
@@ -176,7 +176,7 @@ export const applyTechnicalRootProgressToState = (params: {
   const applicationSkeleton = params.applicationSkeletonProgress
     ? updateTechnicalStage({
         stage: params.state.stages.application_skeleton,
-        accepted: params.applicationSkeletonProgress.accepted,
+        complete: params.applicationSkeletonProgress.materialized,
         hasArtifact:
           params.applicationSkeletonProgress.markdownExists ||
           params.applicationSkeletonProgress.mapExists,
@@ -185,7 +185,7 @@ export const applyTechnicalRootProgressToState = (params: {
   const qualityGates = params.qualityGatesProgress
     ? updateTechnicalStage({
         stage: params.state.stages.quality_gates,
-        accepted: params.qualityGatesProgress.accepted,
+        complete: params.qualityGatesProgress.accepted,
         hasArtifact:
           params.qualityGatesProgress.markdownExists ||
           params.qualityGatesProgress.jsonExists,
@@ -222,6 +222,6 @@ export const resolveWorkflowBlockedStages = (params: {
     virtual_simulation: !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
     application_skeleton: !params.diagramModulesProgress?.aggregateReady,
-    quality_gates: !params.applicationSkeletonProgress?.accepted,
+    quality_gates: !params.applicationSkeletonProgress?.materialized,
   };
 };
