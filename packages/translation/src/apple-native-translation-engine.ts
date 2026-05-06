@@ -12,6 +12,10 @@ import type {
 } from "./translation-engine";
 
 const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
+const DEFAULT_TRANSIENT_FALLBACK_RETRIES = 1;
+const DEFAULT_TRANSIENT_FALLBACK_RETRY_DELAY_MS = 250;
+const TRANSIENT_NOT_INSTALLED_DIAGNOSTIC_PATTERN =
+  /TranslationError\.Cause\.notInstalled|Cause\.notInstalled|notInstalled/;
 
 const HELPER_RELATIVE_PATH = [
   "native",
@@ -94,16 +98,33 @@ interface AppleNativeHelperResponse {
 export interface AppleNativeTranslationEngineOptions {
   readonly helperPathCandidates?: readonly string[];
   readonly reporter?: TranslationReporter;
+  readonly transientFallbackRetries?: number;
+  readonly transientFallbackRetryDelayMs?: number;
 }
 
 export class AppleNativeTranslationEngine implements TranslationEngine {
   readonly id = APPLE_NATIVE_TRANSLATION_ENGINE_ID;
   private readonly helperPathCandidates?: readonly string[];
   private readonly reporter?: TranslationReporter;
+  private readonly transientFallbackRetryDelayMs: number;
+  private readonly transientFallbackRetries: number;
 
   constructor(options: AppleNativeTranslationEngineOptions = {}) {
     this.helperPathCandidates = options.helperPathCandidates;
     this.reporter = options.reporter;
+    this.transientFallbackRetries = Math.max(
+      0,
+      Math.floor(
+        options.transientFallbackRetries ?? DEFAULT_TRANSIENT_FALLBACK_RETRIES
+      )
+    );
+    this.transientFallbackRetryDelayMs = Math.max(
+      0,
+      Math.floor(
+        options.transientFallbackRetryDelayMs ??
+          DEFAULT_TRANSIENT_FALLBACK_RETRY_DELAY_MS
+      )
+    );
   }
 
   async translate(
@@ -118,26 +139,51 @@ export class AppleNativeTranslationEngine implements TranslationEngine {
     }
 
     try {
-      const response = await this.runHelper(helperPath, request);
-      if (response.ok === true && typeof response.translatedText === "string") {
-        const translatedText = response.translatedText.trim();
-        if (translatedText.length > 0) {
-          return createTranslatedResult(request, translatedText);
+      for (let attempt = 0; ; attempt += 1) {
+        const response = await this.runHelper(helperPath, request);
+        if (
+          response.ok === true &&
+          typeof response.translatedText === "string"
+        ) {
+          const translatedText = response.translatedText.trim();
+          if (translatedText.length > 0) {
+            return createTranslatedResult(request, translatedText);
+          }
         }
-      }
 
-      const errorCode = resolveFallbackErrorCode(response);
-      this.reporter?.warn?.("Apple Native translation returned fallback", {
-        engine: this.id,
-        diagnostic: response.diagnostic,
-        errorCode,
-        helperErrorCode: response.errorCode,
-        helperStatus: response.helperStatus,
-        languageStatus: response.languageStatus,
-        userMessageCode: response.userMessageCode,
-        xcodeStatus: response.xcodeStatus,
-      });
-      return createFallbackResult(request, errorCode);
+        const shouldRetry =
+          attempt < this.transientFallbackRetries &&
+          isRetryableTransientFallback(response);
+        if (shouldRetry) {
+          this.reporter?.info?.(
+            "Apple Native translation retrying transient fallback",
+            {
+              attempt: attempt + 1,
+              diagnostic: response.diagnostic,
+              engine: this.id,
+              helperErrorCode: response.errorCode,
+              maxRetries: this.transientFallbackRetries,
+              retryDelayMs: this.transientFallbackRetryDelayMs,
+            }
+          );
+          await delay(this.transientFallbackRetryDelayMs);
+          continue;
+        }
+
+        const errorCode = resolveFallbackErrorCode(response);
+        this.reporter?.warn?.("Apple Native translation returned fallback", {
+          attempts: attempt + 1,
+          engine: this.id,
+          diagnostic: response.diagnostic,
+          errorCode,
+          helperErrorCode: response.errorCode,
+          helperStatus: response.helperStatus,
+          languageStatus: response.languageStatus,
+          userMessageCode: response.userMessageCode,
+          xcodeStatus: response.xcodeStatus,
+        });
+        return createFallbackResult(request, errorCode);
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -200,6 +246,17 @@ export class AppleNativeTranslationEngine implements TranslationEngine {
     });
   }
 }
+
+const delay = (milliseconds: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+const isRetryableTransientFallback = (
+  response: AppleNativeHelperResponse
+): boolean =>
+  response.errorCode === "runtime_failure" &&
+  TRANSIENT_NOT_INSTALLED_DIAGNOSTIC_PATTERN.test(
+    response.diagnostic ?? response.message ?? ""
+  );
 
 const parseHelperResponse = (
   stdout: string
