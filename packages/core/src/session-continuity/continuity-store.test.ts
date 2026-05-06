@@ -141,3 +141,61 @@ test("ContinuityChainStore persists development tree node chains under nested no
     [stage]
   );
 });
+
+test("ContinuityChainStore persists technical root workflow chains under canonical stage paths", async () => {
+  const workspaceRoot = mkdtempSync(
+    path.join(os.tmpdir(), "technical-root-chain-")
+  );
+  const stages = ["application_skeleton", "quality_gates"] as const;
+
+  for (const stage of stages) {
+    const rootSessionId = `codex-root-${stage}`;
+    const store = new ContinuityChainStore({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      rootSessionId,
+      stage,
+      clock: () => "2026-05-06T12:58:00.000Z",
+    });
+
+    const chain = await store.appendSegment({
+      sessionId: `${rootSessionId}-session-1`,
+      providerId: "codexCli",
+      providerSessionId: `${rootSessionId}-provider-1`,
+      createdAt: "2026-05-06T12:57:00.000Z",
+    });
+
+    const chainPath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      "demo-workspace",
+      "continuity",
+      stage,
+      rootSessionId,
+      "chain.json"
+    );
+    assert.equal(chain.stage, stage);
+    assert.equal(existsSync(chainPath), true);
+    assert.equal(
+      existsSync(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub",
+          "demo-workspace",
+          "continuity",
+          "unknown",
+          rootSessionId,
+          "chain.json"
+        )
+      ),
+      false
+    );
+
+    const saved = JSON.parse(await readFile(chainPath, "utf8")) as {
+      readonly stage: string;
+      readonly rootSessionId: string;
+    };
+    assert.equal(saved.stage, stage);
+    assert.equal(saved.rootSessionId, rootSessionId);
+  }
+});

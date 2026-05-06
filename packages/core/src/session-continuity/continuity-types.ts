@@ -3,7 +3,9 @@ import type { SessionModelBinding } from "../session-model-binding";
 type KnownContinuityStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules";
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates";
 
 type DevelopmentTreeContinuityStageId = `development_tree/${string}`;
 
@@ -16,6 +18,8 @@ const KNOWN_CONTINUITY_STAGE_IDS = new Set<KnownContinuityStageId>([
   "description",
   "virtual_simulation",
   "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
 ]);
 
 const isKnownContinuityStageId = (
