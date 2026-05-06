@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.169] - 2026-05-06
+### Fixed
+- **Application Skeleton validation now checks standalone module paths.** Product Part-level `standaloneModules` are included in materialization validation, so missing standalone folders cannot unlock Quality Gates accidentally.
+
+### Tests
+- **Application Skeleton progress coverage now includes missing standalone module directories.** The targeted regression keeps the stage failed when a materialized map declares a standalone module path that does not exist.
+
 ## [1.2.168] - 2026-05-06
 ### Fixed
 - **Application Skeleton now has a runtime validation gate for materialized artifacts.** Core treats the filesystem skeleton as part of the stage artifact surface and blocks Quality Gates when Markdown, JSON, or declared paths disagree after materialization is observed.
