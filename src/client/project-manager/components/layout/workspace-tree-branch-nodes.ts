@@ -97,7 +97,7 @@ const buildDescriptionBranchNodes = (options: {
 
 const resolveLatestStageChain = (
   chains: WorkflowStateSnapshot["continuity"]["chains"],
-  stage: "virtual_simulation" | "diagram_modules"
+  stage: "virtual_simulation" | "diagram_modules" | "application_skeleton" | "quality_gates"
 ) => {
   let best: (typeof chains)[number] | null = null;
   for (const chain of chains) {
@@ -189,6 +189,56 @@ export const resolveStageSyncPayload = (options: {
       workspacePath,
       diagramModulesArtifactAvailable: options.diagramModulesArtifactAvailable,
     });
+  }
+
+  if (stage === "application_skeleton") {
+    const chain = resolveLatestStageChain(
+      workflowState.continuity.chains,
+      "application_skeleton"
+    );
+    const last = chain?.segments.at(-1) ?? null;
+    const artifactPath = `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`;
+    return {
+      artifact: { path: artifactPath, label: "application-skeleton.md" },
+      clearTool: null,
+      session: last
+        ? {
+            providerId: last.providerId,
+            providerSessionId: last.providerSessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: "application_skeleton",
+            sessionKind: "collector",
+            runSlug: null,
+          }
+        : null,
+    };
+  }
+
+  if (stage === "quality_gates") {
+    const chain = resolveLatestStageChain(
+      workflowState.continuity.chains,
+      "quality_gates"
+    );
+    const last = chain?.segments.at(-1) ?? null;
+    const artifactPath = `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`;
+    return {
+      artifact: { path: artifactPath, label: "quality-gates.md" },
+      clearTool: null,
+      session: last
+        ? {
+            providerId: last.providerId,
+            providerSessionId: last.providerSessionId,
+            workspacePath,
+            workspaceSlug,
+            initiativeSlug: workspaceSlug,
+            stage: "quality_gates",
+            sessionKind: "collector",
+            runSlug: null,
+          }
+        : null,
+    };
   }
 
   return { artifact: null, clearTool: null, session: null };

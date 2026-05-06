@@ -16,20 +16,25 @@ import {
 } from "./workspace-tree-auto-select";
 import { useWorkspaceTreeActiveStage } from "./use-workspace-tree-active-stage";
 import {
-  WORKFLOW_LABELS,
   resolveTreeStatus,
   type TreeNode,
 } from "./workspace-tree-model";
+import {
+  resolveStageLabel,
+  resolveStageTitle,
+} from "./workspace-tree-stage-labels";
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import { useStepProviderResolver } from "./use-step-provider-resolver";
 import { renderTypeMarker } from "./workspace-tree-type-marker";
 
-const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
-const DIAGRAM_MODULES_BLOCKED_FALLBACK =
-  "BLOCKED: requires virtual-simulation.md (DONE)";
+
+const readProgressFlag = (
+  progress: Record<string, unknown> | null | undefined,
+  key: string
+): boolean => progress?.[key] === true;
 
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
@@ -37,8 +42,6 @@ interface WorkspaceTreeProps {
   readonly workspacePath?: string;
   readonly workspaceSlug?: string;
 }
-
-type TranslationResolver = ReturnType<typeof useLocalization>["t"];
 
 export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   selectedWorkspaceId,
@@ -201,6 +204,15 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       description: descriptionArtifactAvailable,
       virtual_simulation: virtualSimulationArtifactAvailable,
       diagram_modules: diagramModulesArtifactAvailable,
+      application_skeleton:
+        readProgressFlag(
+          workflowState.applicationSkeletonProgress,
+          "markdownExists"
+        ) ||
+        readProgressFlag(workflowState.applicationSkeletonProgress, "mapExists"),
+      quality_gates:
+        readProgressFlag(workflowState.qualityGatesProgress, "markdownExists") ||
+        readProgressFlag(workflowState.qualityGatesProgress, "jsonExists"),
     };
 
     return WORKFLOW_STAGE_ORDER.map((stage) => {
@@ -419,70 +431,4 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       )}
     </div>
   );
-};
-
-const resolveStageLabel = (
-  stage: WorkflowStageId,
-  t: TranslationResolver
-): string => {
-  switch (stage) {
-    case "description":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.description.label",
-        WORKFLOW_LABELS.description
-      );
-    case "virtual_simulation":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.virtual_simulation.label",
-        WORKFLOW_LABELS.virtual_simulation
-      );
-    case "diagram_modules":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.diagram_modules.label",
-        WORKFLOW_LABELS.diagram_modules
-      );
-  }
-};
-
-const resolveStageTitle = (
-  stage: WorkflowStageId,
-  status: string,
-  blocked: boolean,
-  t: TranslationResolver
-): string | undefined => {
-  if (status === "outdated") {
-    return t(
-      UI_LABELS_CATEGORY,
-      "pm.workflow.stage.outdated_title",
-      "OUTDATED: upstream input changed; resync recommended."
-    );
-  }
-
-  if (!blocked) {
-    return undefined;
-  }
-
-  switch (stage) {
-    case "description":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.description.ready_title",
-        "READY"
-      );
-    case "virtual_simulation":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.virtual_simulation.blocked_title",
-        "BLOCKED: requires Final_Description.md"
-      );
-    case "diagram_modules":
-      return t(
-        UI_LABELS_CATEGORY,
-        "pm.workflow.stage.diagram_modules.blocked_title",
-        DIAGRAM_MODULES_BLOCKED_FALLBACK
-      );
-  }
 };

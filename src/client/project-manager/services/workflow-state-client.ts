@@ -19,7 +19,9 @@ export type {
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules";
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates";
 
 export type ContinuityStageId =
   | WorkflowStageId
@@ -82,6 +84,8 @@ export type WorkflowStateSnapshot = {
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
   readonly diagramModulesProgress?: Record<string, unknown> | null;
+  readonly applicationSkeletonProgress?: Record<string, unknown> | null;
+  readonly qualityGatesProgress?: Record<string, unknown> | null;
   readonly developmentTree?: DevelopmentTreeSnapshot | null;
 };
 
@@ -92,6 +96,8 @@ type WorkflowStateResponse = {
   readonly description?: unknown;
   readonly gating?: unknown;
   readonly diagramModulesProgress?: unknown;
+  readonly applicationSkeletonProgress?: unknown;
+  readonly qualityGatesProgress?: unknown;
   readonly developmentTree?: unknown;
 };
 
@@ -99,6 +105,8 @@ const STAGE_ORDER: readonly WorkflowStageId[] = [
   "description",
   "virtual_simulation",
   "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
 ];
 
 const DEFAULT_STAGE_STATUS: WorkflowStageStatus = "idle";
@@ -275,6 +283,14 @@ const parseWorkflowState = (
   const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
     ? response.diagramModulesProgress
     : null;
+  const applicationSkeletonProgress = isRecord(
+    response?.applicationSkeletonProgress
+  )
+    ? response.applicationSkeletonProgress
+    : null;
+  const qualityGatesProgress = isRecord(response?.qualityGatesProgress)
+    ? response.qualityGatesProgress
+    : null;
   const developmentTree = parseDevelopmentTreeSnapshot(
     response?.developmentTree
   );
@@ -300,6 +316,8 @@ const parseWorkflowState = (
     description,
     gating,
     diagramModulesProgress,
+    applicationSkeletonProgress,
+    qualityGatesProgress,
     developmentTree,
   };
 };

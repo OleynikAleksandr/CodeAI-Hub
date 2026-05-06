@@ -167,6 +167,8 @@ import {
   type WorkflowStageId,
 } from "../../services/workflow-state-client";
 import {
+  APPLICATION_SKELETON_TOOL_LABEL,
+  QUALITY_GATES_TOOL_LABEL,
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
 
@@ -174,6 +176,8 @@ const STAGE_TO_TOOL_MAP: Readonly<Record<WorkflowStageId, string>> = {
   description: "Description",
   virtual_simulation: VIRTUAL_SIMULATION_TOOL_LABEL,
   diagram_modules: "Diagram Modules",
+  application_skeleton: APPLICATION_SKELETON_TOOL_LABEL,
+  quality_gates: QUALITY_GATES_TOOL_LABEL,
 };
 
 export const resolveToolByStage = (stage: string): string | null =>

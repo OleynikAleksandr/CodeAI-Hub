@@ -30,6 +30,8 @@ const createWorkflowPayload = (
       description: false,
       virtual_simulation: false,
       diagram_modules: false,
+      application_skeleton: false,
+      quality_gates: false,
     },
   },
 });

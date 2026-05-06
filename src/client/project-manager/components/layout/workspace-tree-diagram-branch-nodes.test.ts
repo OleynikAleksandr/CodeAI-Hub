@@ -18,6 +18,8 @@ const createWorkflowStateWithTree = (): WorkflowStateSnapshot => ({
     description: "completed",
     virtual_simulation: "completed",
     diagram_modules: "completed",
+    application_skeleton: "idle",
+    quality_gates: "idle",
   },
   continuity: {
     chains: [
@@ -40,7 +42,13 @@ const createWorkflowStateWithTree = (): WorkflowStateSnapshot => ({
   lastActive: null,
   description: null,
   gating: {
-    blocked: { description: false, virtual_simulation: false, diagram_modules: false },
+    blocked: {
+      description: false,
+      virtual_simulation: false,
+      diagram_modules: false,
+      application_skeleton: false,
+      quality_gates: false,
+    },
   },
   developmentTree: {
     parts: [
@@ -75,6 +83,8 @@ const createWorkflowState = (): WorkflowStateSnapshot => ({
     description: "completed",
     virtual_simulation: "completed",
     diagram_modules: "completed",
+    application_skeleton: "idle",
+    quality_gates: "idle",
   },
   continuity: {
     chains: [
@@ -105,6 +115,8 @@ const createWorkflowState = (): WorkflowStateSnapshot => ({
       description: false,
       virtual_simulation: false,
       diagram_modules: false,
+      application_skeleton: false,
+      quality_gates: false,
     },
   },
 });
