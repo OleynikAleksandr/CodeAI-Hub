@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.158] - 2026-05-06
+### Fixed
+- **Workflow session empty states no longer show a stale `Creating session` placeholder.** If a Diagram Modules branch node, Application Skeleton, or another workflow surface has no session/help content yet, the session panel now falls back to the generic empty state instead of showing an indefinite spinner.
+
+### Tests
+- **The empty-state regression is covered by targeted Project Manager session tests.** The hotfix verifies that the shared empty state no longer references the pending copy or spinner and that Project Manager workflow session routing still stays scoped to live stage/session intents.
+
 ## [1.2.157] - 2026-05-06
 ### Added
 - **Application Skeleton and Quality Gates Baseline are now first-class workflow stages.** After Diagram Modules, the Project Manager exposes dedicated technical root rows, prompt packs, artifact panels, confirmation cards, and SSOT documentation for creating the application skeleton before development-tree execution begins.
