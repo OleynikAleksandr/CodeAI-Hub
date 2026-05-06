@@ -1,0 +1,65 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import test from "node:test";
+import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
+
+const PHASE_1_RE = /Phase 1: Draft Contract/;
+const PHASE_2_RE = /Phase 2: Post-Acceptance Materialization/;
+const BEFORE_ACCEPTANCE_RE = /Before explicit user acceptance/;
+const NO_ROOT_FILES_RE = /must not:\n- create root workspace files/;
+const MATERIALIZED_TRUE_RE = /materialized: true/;
+const QUALITY_GATES_START_RE = /Quality Gates Baseline can start/;
+const ACCEPTED_FALSE_RE = /"accepted": false/;
+const MATERIALIZED_FALSE_RE = /"materialized": false/;
+const MATERIALIZATION_STATE_RE = /"materializationState": "not_started"/;
+const MATERIALIZED_PATHS_RE = /"materializedPaths": \[\]/;
+const ACCEPTED_AND_MATERIALIZED_RE = /accepted: true.*materialized: true/s;
+
+const decodeTemplate = (id: string): string => {
+  const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
+  assert.ok(source, `missing bundled template ${id}`);
+  return Buffer.from(source.base64, "base64").toString("utf8");
+};
+
+test("application skeleton bundled prompt requires draft and post-acceptance materialization phases", () => {
+  const prompt = decodeTemplate("application-skeleton-prompt");
+
+  assert.match(prompt, PHASE_1_RE);
+  assert.match(prompt, PHASE_2_RE);
+  assert.match(prompt, BEFORE_ACCEPTANCE_RE);
+  assert.match(prompt, NO_ROOT_FILES_RE);
+  assert.match(prompt, MATERIALIZED_TRUE_RE);
+  assert.match(prompt, QUALITY_GATES_START_RE);
+});
+
+test("application skeleton bundled contract exposes materialization state fields", () => {
+  const contract = decodeTemplate("application-skeleton-contract");
+
+  assert.match(contract, ACCEPTED_FALSE_RE);
+  assert.match(contract, MATERIALIZED_FALSE_RE);
+  assert.match(contract, MATERIALIZATION_STATE_RE);
+  assert.match(contract, MATERIALIZED_PATHS_RE);
+  assert.match(contract, ACCEPTED_AND_MATERIALIZED_RE);
+});
+
+test("application skeleton bundled templates stay synced with agent assets", async () => {
+  const root = process.cwd();
+  const promptAsset = await readFile(
+    path.join(
+      root,
+      "packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md"
+    ),
+    "utf8"
+  );
+  const contractAsset = await readFile(
+    path.join(
+      root,
+      "packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md"
+    ),
+    "utf8"
+  );
+
+  assert.equal(decodeTemplate("application-skeleton-prompt"), promptAsset);
+  assert.equal(decodeTemplate("application-skeleton-contract"), contractAsset);
+});
