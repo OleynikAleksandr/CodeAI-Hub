@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.166] - 2026-05-06
+### Fixed
+- **Application Skeleton first-turn instructions are now shorter and more directive.** The bundled prompt keeps the universal draft/materialization lifecycle, Development Tree filesystem mirror, and user stack-decision handling while removing duplicated guidance that made the first prompt noisier.
+- **Application Skeleton post-materialization cleanup is stricter.** The agent is now explicitly told to remove stale draft/future claims from both Markdown and JSON after creating the filesystem, including deferred notes that still say the filesystem was not materialized.
+
+### Tests
+- **Bundled template coverage tracks the compact prompt contract.** The Application Skeleton template test now protects the shorter prompt wording and the stale-draft cleanup rule.
+
 ## [1.2.165] - 2026-05-06
 ### Fixed
 - **Application Skeleton now treats the Development Tree as the default production filesystem shape.** The bundled prompt/contract require Product Part roots under `product-parts/<product-part-id>`, clustered modules under `clusters/<cluster-id>/modules/<module-id>`, and standalone modules under the Product Part instead of scattering Product Parts across `apps/`, `packages/`, or `extensions`.
