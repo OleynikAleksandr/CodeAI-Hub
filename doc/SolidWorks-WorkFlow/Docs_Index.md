@@ -25,6 +25,7 @@
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, or release-time regressions.
+- `System/WorkflowStep_PromptTesting_Methodology.md` — SSOT methodology for live-testing any workflow step agent prompt, identifying prompt-level defects, and turning observed behavior into an ideal step front contract.
 
 ### Clusters
 - `Clusters/Project_Manager.md` — SSOT подсистемы Project Manager.
