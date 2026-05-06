@@ -18,6 +18,11 @@ import {
   resolveWorkflowChatLanguage,
 } from "./prompt-pack-builder";
 import { waitForSessionProviderBinding } from "./session-binding-waiter";
+import {
+  buildProductPartSourceArtifactDescriptors,
+  buildWorkflowSourceArtifactDescriptors,
+  type WorkflowSourceArtifactDescriptor,
+} from "./workflow-source-artifact-descriptors";
 
 const SESSION_CREATE_TIMEOUT_MS = 15000;
 const DEFAULT_ARTIFACT_LANGUAGE = "en";
@@ -286,51 +291,13 @@ const readWorkflowSourceArtifact = async (params: {
   }
 };
 
-const readWorkflowSourceArtifacts = async (params: {
-  readonly stage: WorkflowStageId;
-  readonly questionnairePath: string;
+const readWorkflowSourceArtifactList = async (params: {
+  readonly descriptors: readonly WorkflowSourceArtifactDescriptor[];
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }): Promise<readonly WorkflowSourceArtifactPayload[]> => {
-  const sourceDescriptors = {
-    description: [
-      { label: "Questionnaire", relativePath: params.questionnairePath },
-    ],
-    virtual_simulation: [
-      { label: "Final_Description.md", relativePath: params.questionnairePath },
-    ],
-    diagram_modules: [
-      {
-        label: "Final_Description.md",
-        relativePath: `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`,
-      },
-      {
-        label: "virtual-simulation.md",
-        relativePath: `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`,
-      },
-    ],
-    application_skeleton: [
-      {
-        label: "product-parts.index.md",
-        relativePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
-      },
-    ],
-    quality_gates: [
-      {
-        label: "application-skeleton.md",
-        relativePath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton.md`,
-      },
-      {
-        label: "application-skeleton-map.json",
-        relativePath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`,
-      },
-    ],
-  } satisfies Record<
-    WorkflowStageId,
-    readonly { readonly label: string; readonly relativePath: string }[]
-  >;
   const sourceArtifacts = await Promise.all(
-    sourceDescriptors[params.stage].map((descriptor) =>
+    params.descriptors.map((descriptor) =>
       readWorkflowSourceArtifact({
         ...descriptor,
         workspacePath: params.workspacePath,
@@ -341,6 +308,37 @@ const readWorkflowSourceArtifacts = async (params: {
   return sourceArtifacts.filter(
     (artifact): artifact is WorkflowSourceArtifactPayload => Boolean(artifact)
   );
+};
+
+const readWorkflowSourceArtifacts = async (params: {
+  readonly stage: WorkflowStageId;
+  readonly questionnairePath: string;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): Promise<readonly WorkflowSourceArtifactPayload[]> => {
+  const sourceArtifacts = await readWorkflowSourceArtifactList({
+    descriptors: buildWorkflowSourceArtifactDescriptors(params),
+    workspacePath: params.workspacePath,
+    workspaceSlug: params.workspaceSlug,
+  });
+  if (params.stage !== "application_skeleton") {
+    return sourceArtifacts;
+  }
+  const productPartsIndex = sourceArtifacts.find(
+    (artifact) => artifact.label === "product-parts.index.md"
+  );
+  if (!productPartsIndex) {
+    return sourceArtifacts;
+  }
+  const productPartArtifacts = await readWorkflowSourceArtifactList({
+    descriptors: buildProductPartSourceArtifactDescriptors({
+      productPartsIndexContent: productPartsIndex.content,
+      workspaceSlug: params.workspaceSlug,
+    }),
+    workspacePath: params.workspacePath,
+    workspaceSlug: params.workspaceSlug,
+  });
+  return [...sourceArtifacts, ...productPartArtifacts];
 };
 
 const createDescriptionSession = async (params: {
