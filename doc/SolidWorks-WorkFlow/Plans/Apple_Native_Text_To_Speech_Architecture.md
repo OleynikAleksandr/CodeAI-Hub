@@ -239,6 +239,17 @@ Manual acceptance workflow:
 - `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
 - VSIX produced at repository root: `codeai-hub-1.2.154.vsix` (`3.1M`).
 
+2026-05-06 hotfix release candidate `1.2.155`:
+
+- Hotfix reason: user testing of `1.2.154` confirmed Speak playback works, but Russian bubble text was read with the system/default English voice because no speech language was passed.
+- Regression fix: the Apple Speech helper now infers voice language from the text when UI/Core does not provide an explicit language. Russian Cyrillic text resolves to `ru-RU`; Ukrainian-specific Cyrillic characters resolve to `uk-UA`; otherwise Apple NaturalLanguage plus installed voice fallbacks are used.
+- Targeted verification completed before release prep: `./scripts/build-apple-speech-helper.sh`, `cd native/apple-speech-helper && swift test`, and packaged Core helper dry-run returning `resolvedLanguage:"ru-RU"` with `voiceIdentifier:"com.apple.voice.enhanced.ru-RU.Yuri"`.
+- `./scripts/build-all.sh` completed for providers, Core, UI bundles, and CEF launcher at `1.2.155`.
+- Packaged Core runtime verified executable helper at `~/.codeai-hub/core/darwin-arm64/1.2.155/app/native/apple-speech-helper/.build/release/apple-speech-helper`.
+- Runtime tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.155.tar.bz2`, `codex-module-1.2.155.tar.bz2`, `gemini-module-1.2.155.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.155.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.155.tar.bz2`, `vscode-webview-1.2.155.tar.bz2`, `project-manager-1.2.155.tar.bz2`.
+- `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
+- VSIX produced at repository root: `codeai-hub-1.2.155.vsix` (`3.1M`).
+
 ## 9. Deferred Work
 
 - Speech-to-Text.
