@@ -228,6 +228,17 @@ Manual acceptance workflow:
 - `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
 - VSIX produced at repository root: `codeai-hub-1.2.153.vsix` (`3.1M`).
 
+2026-05-06 hotfix release candidate `1.2.154`:
+
+- Hotfix reason: user testing of `1.2.153` showed bubble Speak clicks reached Core but were rejected by incoming WebSocket validation as `unknown-command:session:speech:speak-message`.
+- Regression fix: Core now accepts `session:speech:speak-message` and `session:speech:stop` payloads before routing them to the speech request handler.
+- Targeted verification completed before release prep: incoming validator regression, speech request handler, message router, speech service, Ultracite check, and `npm run build --workspace=@codeai-hub/core`.
+- `./scripts/build-all.sh` completed for providers, Core, UI bundles, and CEF launcher at `1.2.154`.
+- Packaged Core runtime verified executable helper at `~/.codeai-hub/core/darwin-arm64/1.2.154/app/native/apple-speech-helper/.build/release/apple-speech-helper`.
+- Runtime tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.154.tar.bz2`, `codex-module-1.2.154.tar.bz2`, `gemini-module-1.2.154.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.154.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.154.tar.bz2`, `vscode-webview-1.2.154.tar.bz2`, `project-manager-1.2.154.tar.bz2`.
+- `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
+- VSIX produced at repository root: `codeai-hub-1.2.154.vsix` (`3.1M`).
+
 ## 9. Deferred Work
 
 - Speech-to-Text.
