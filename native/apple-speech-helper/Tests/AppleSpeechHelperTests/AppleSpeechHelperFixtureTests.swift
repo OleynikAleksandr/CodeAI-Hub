@@ -79,6 +79,19 @@ final class AppleSpeechHelperFixtureTests: XCTestCase {
         XCTAssertEqual(result.json["userMessageCode"] as? String, "apple_speech_text_missing")
     }
 
+    func testSpeakDryRunInfersRussianVoiceLanguageFromText() throws {
+        let result = try runHelper(
+            input: #"{"command":"speak","requestId":"speech-ru","id":"message-ru","text":"Сейчас проверяем русскую озвучку.","rate":1.0}"#,
+            environment: ["APPLE_SPEECH_HELPER_DRY_RUN": "1"]
+        )
+
+        XCTAssertEqual(result.exitCode, 0)
+        XCTAssertEqual(result.json["ok"] as? Bool, true)
+        XCTAssertEqual(result.json["id"] as? String, "message-ru")
+        XCTAssertEqual(result.json["resolvedLanguage"] as? String, "ru-RU")
+        XCTAssertNotNil(result.json["voiceIdentifier"] as? String)
+    }
+
     func testStopReturnsIdleWhenNoPersistentSpeechProcessIsActive() throws {
         let result = try runHelper(input: #"{"command":"stop","requestId":"speech-stop","id":"message-1"}"#)
 
@@ -104,7 +117,10 @@ final class AppleSpeechHelperFixtureTests: XCTestCase {
         XCTAssertEqual(result.json["normalizedRate"] as? Double, 1.0)
     }
 
-    private func runHelper(input: String?) throws -> HelperRun {
+    private func runHelper(
+        input: String?,
+        environment: [String: String] = [:]
+    ) throws -> HelperRun {
         try XCTSkipUnless(
             FileManager.default.isExecutableFile(atPath: helperExecutable),
             "Set APPLE_SPEECH_HELPER_EXECUTABLE or run scripts/build-apple-speech-helper.sh before fixture tests."
@@ -114,6 +130,7 @@ final class AppleSpeechHelperFixtureTests: XCTestCase {
         let stdout = Pipe()
         let stdin = Pipe()
         process.executableURL = URL(fileURLWithPath: helperExecutable)
+        process.environment = ProcessInfo.processInfo.environment.merging(environment) { _, next in next }
         process.standardOutput = stdout
         process.standardError = stdout
         process.standardInput = stdin

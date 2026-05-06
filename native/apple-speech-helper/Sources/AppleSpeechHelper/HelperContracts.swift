@@ -56,6 +56,8 @@ struct HelperResponse: Encodable {
     let voices: [SpeechVoice]?
     let id: String?
     let normalizedRate: Double?
+    let resolvedLanguage: String?
     let userMessageCode: String?
+    let voiceIdentifier: String?
     let diagnostic: String?
 }

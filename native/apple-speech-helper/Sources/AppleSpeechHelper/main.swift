@@ -1,10 +1,17 @@
 import AVFAudio
 import Foundation
+import NaturalLanguage
 
 private let defaultSpeechRate = 1.0
 private let maxSpeechRate = 2.0
 private let minSpeechRate = 0.75
 private let speechRunLoopStepSeconds = 0.05
+private let dryRunEnvironmentVariable = "APPLE_SPEECH_HELPER_DRY_RUN"
+
+private struct ResolvedSpeechVoice {
+    let language: String
+    let voice: AVSpeechSynthesisVoice
+}
 
 private final class SpeechRunDelegate: NSObject, AVSpeechSynthesizerDelegate, @unchecked Sendable {
     private(set) var diagnostic: String?
@@ -66,7 +73,9 @@ private func makeResponse(
     voices: [SpeechVoice]? = nil,
     id: String? = nil,
     normalizedRate: Double? = nil,
+    resolvedLanguage: String? = nil,
     userMessageCode: SpeechUserMessageCode? = nil,
+    voiceIdentifier: String? = nil,
     diagnostic: String? = nil
 ) -> HelperResponse {
     HelperResponse(
@@ -83,7 +92,9 @@ private func makeResponse(
         voices: voices,
         id: id,
         normalizedRate: normalizedRate,
+        resolvedLanguage: resolvedLanguage,
         userMessageCode: userMessageCode?.rawValue,
+        voiceIdentifier: voiceIdentifier,
         diagnostic: diagnostic
     )
 }
@@ -160,6 +171,110 @@ private func utteranceRate(for normalizedRate: Double) -> Float {
     return Float(clamped)
 }
 
+private func normalizedLanguageKey(_ language: String) -> String {
+    language
+        .trimmingCharacters(in: .whitespacesAndNewlines)
+        .replacingOccurrences(of: "_", with: "-")
+}
+
+private func baseLanguage(_ language: String) -> String {
+    normalizedLanguageKey(language)
+        .split(separator: "-", maxSplits: 1)
+        .first
+        .map(String.init)?
+        .lowercased() ?? ""
+}
+
+private func preferredSpeechLanguage(for language: String) -> String? {
+    let base = baseLanguage(language)
+    let preferredByBase = [
+        "ar": "ar-001",
+        "bg": "bg-BG",
+        "ca": "ca-ES",
+        "cs": "cs-CZ",
+        "da": "da-DK",
+        "de": "de-DE",
+        "el": "el-GR",
+        "en": "en-US",
+        "es": "es-ES",
+        "fi": "fi-FI",
+        "fr": "fr-FR",
+        "he": "he-IL",
+        "hi": "hi-IN",
+        "it": "it-IT",
+        "ja": "ja-JP",
+        "ko": "ko-KR",
+        "nl": "nl-NL",
+        "pl": "pl-PL",
+        "pt": "pt-BR",
+        "ro": "ro-RO",
+        "ru": "ru-RU",
+        "sv": "sv-SE",
+        "tr": "tr-TR",
+        "uk": "uk-UA",
+        "vi": "vi-VN",
+        "zh": "zh-CN",
+    ]
+    return preferredByBase[base]
+}
+
+private func inferredLanguage(from text: String) -> String? {
+    if text.range(of: #"[ІіЇїЄєҐґ]"#, options: .regularExpression) != nil {
+        return "uk-UA"
+    }
+
+    if let dominant = NLLanguageRecognizer.dominantLanguage(for: text)?.rawValue,
+       dominant != "und"
+    {
+        return preferredSpeechLanguage(for: dominant) ?? normalizedLanguageKey(dominant)
+    }
+
+    if text.range(of: #"\p{Cyrillic}"#, options: .regularExpression) != nil {
+        return "ru-RU"
+    }
+
+    return nil
+}
+
+private func candidateLanguages(requestLanguage: String?, text: String) -> [String] {
+    var result: [String] = []
+
+    func append(_ language: String?) {
+        guard let language, language.isEmpty == false else {
+            return
+        }
+        let normalized = normalizedLanguageKey(language)
+        if result.contains(normalized) == false {
+            result.append(normalized)
+        }
+        if let preferred = preferredSpeechLanguage(for: normalized),
+           result.contains(preferred) == false
+        {
+            result.append(preferred)
+        }
+    }
+
+    append(requestLanguage)
+    if requestLanguage == nil {
+        append(inferredLanguage(from: text))
+    }
+    return result
+}
+
+private func resolveSpeechVoice(requestLanguage: String?, text: String) -> ResolvedSpeechVoice? {
+    for language in candidateLanguages(requestLanguage: requestLanguage, text: text) {
+        if let voice = AVSpeechSynthesisVoice(language: language) {
+            return ResolvedSpeechVoice(language: language, voice: voice)
+        }
+    }
+
+    return nil
+}
+
+private func isDryRunEnabled() -> Bool {
+    ProcessInfo.processInfo.environment[dryRunEnvironmentVariable] == "1"
+}
+
 private func handleSpeak(_ request: HelperRequest) -> HelperResponse {
     let rate = normalizedRate(request.rate)
     guard let text = trimToNil(request.text) else {
@@ -176,10 +291,22 @@ private func handleSpeak(_ request: HelperRequest) -> HelperResponse {
 
     let utterance = AVSpeechUtterance(string: text)
     utterance.rate = utteranceRate(for: rate)
-    if let language = trimToNil(request.language),
-       let voice = AVSpeechSynthesisVoice(language: language)
-    {
-        utterance.voice = voice
+    let resolvedVoice = resolveSpeechVoice(requestLanguage: trimToNil(request.language), text: text)
+    if let resolvedVoice {
+        utterance.voice = resolvedVoice.voice
+    }
+
+    if isDryRunEnabled() {
+        return makeResponse(
+            ok: true,
+            request: request,
+            message: "Apple Text-to-Speech dry run completed.",
+            id: request.id,
+            normalizedRate: rate,
+            resolvedLanguage: resolvedVoice?.language,
+            userMessageCode: .appleSpeechReady,
+            voiceIdentifier: resolvedVoice?.voice.identifier
+        )
     }
 
     let synthesizer = AVSpeechSynthesizer()
@@ -214,6 +341,7 @@ private func handleSpeak(_ request: HelperRequest) -> HelperResponse {
         message: "Apple Text-to-Speech completed.",
         id: request.id,
         normalizedRate: rate,
+        resolvedLanguage: resolvedVoice?.language,
         userMessageCode: .appleSpeechReady
     )
 }
@@ -261,7 +389,9 @@ private func errorResponse(
         voices: nil,
         id: nil,
         normalizedRate: nil,
+        resolvedLanguage: nil,
         userMessageCode: SpeechUserMessageCode.appleSpeechHelperFailed.rawValue,
+        voiceIdentifier: nil,
         diagnostic: diagnostic
     )
 }
