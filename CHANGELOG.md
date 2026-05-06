@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.155] - 2026-05-06
+### Fixed
+- **Text-to-Speech now selects the Apple voice language from the bubble text.** When no explicit speech language is provided by the UI, the packaged Apple Speech helper detects the text language and resolves Russian Cyrillic text to `ru-RU` instead of falling back to the system/default English voice.
+
+### Tests
+- **Apple Speech helper language detection is covered without audible playback.** The Swift fixture suite now runs a dry-run `speak` request for Russian text and asserts `resolvedLanguage: ru-RU` with a real Apple voice identifier, alongside the existing helper build and fixture checks.
+
 ## [1.2.154] - 2026-05-06
 ### Fixed
 - **Text-to-Speech Speak clicks now pass Core WebSocket validation.** The Core incoming message validator accepts `session:speech:speak-message` and `session:speech:stop`, so bubble Speak buttons reach the speech router instead of being rejected as unknown commands.
