@@ -14,6 +14,13 @@ const FILESYSTEM_HYDRATION_TARGETS: readonly {
 }[] = [
   { stage: "description", fileName: "Final_Description.md" },
   { stage: "virtual_simulation", fileName: "virtual-simulation.md" },
+  { stage: "application_skeleton", fileName: "application-skeleton.md" },
+  {
+    stage: "application_skeleton",
+    fileName: "application-skeleton-map.json",
+  },
+  { stage: "quality_gates", fileName: "quality-gates.md" },
+  { stage: "quality_gates", fileName: "quality-gates.json" },
 ] as const;
 
 const upsertArtifact = (

@@ -33,25 +33,9 @@ const buildWorkflowRelativePath = (
 
 const buildCanonicalStageArtifactPath = (
   workspaceSlug: string,
-  stage: "virtual_simulation" | "diagram_modules"
-): string => {
-  if (stage === "virtual_simulation") {
-    return buildWorkflowRelativePath(
-      workspaceSlug,
-      "virtual_simulation/virtual-simulation.md"
-    );
-  }
-  if (stage === "diagram_modules") {
-    return buildWorkflowRelativePath(
-      workspaceSlug,
-      "diagram_modules/product-parts.index.md"
-    );
-  }
-  return buildWorkflowRelativePath(
-    workspaceSlug,
-    "diagram_modules/product-parts.index.md"
-  );
-};
+  filePathWithinWorkspaceSlug: string
+): string =>
+  buildWorkflowRelativePath(workspaceSlug, filePathWithinWorkspaceSlug);
 
 const resolveLastActiveUpdateFromArtifact = (params: {
   readonly relativePath: string;
@@ -69,7 +53,7 @@ const resolveLastActiveUpdateFromArtifact = (params: {
       stage: "virtual_simulation",
       artifactPath: buildCanonicalStageArtifactPath(
         params.workspaceSlug,
-        "virtual_simulation"
+        "virtual_simulation/virtual-simulation.md"
       ),
     };
   }
@@ -83,7 +67,36 @@ const resolveLastActiveUpdateFromArtifact = (params: {
       stage: "diagram_modules",
       artifactPath: buildCanonicalStageArtifactPath(
         params.workspaceSlug,
-        "diagram_modules"
+        "diagram_modules/product-parts.index.md"
+      ),
+    };
+  }
+
+  if (
+    params.stage === "application_skeleton" &&
+    (params.relativePath === "application_skeleton/application-skeleton.md" ||
+      params.relativePath ===
+        "application_skeleton/application-skeleton-map.json")
+  ) {
+    return {
+      stage: "application_skeleton",
+      artifactPath: buildCanonicalStageArtifactPath(
+        params.workspaceSlug,
+        params.relativePath
+      ),
+    };
+  }
+
+  if (
+    params.stage === "quality_gates" &&
+    (params.relativePath === "quality_gates/quality-gates.md" ||
+      params.relativePath === "quality_gates/quality-gates.json")
+  ) {
+    return {
+      stage: "quality_gates",
+      artifactPath: buildCanonicalStageArtifactPath(
+        params.workspaceSlug,
+        params.relativePath
       ),
     };
   }
