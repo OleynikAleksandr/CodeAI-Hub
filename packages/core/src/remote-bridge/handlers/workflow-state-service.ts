@@ -1,6 +1,6 @@
-import { stat } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
+import { readDevelopmentTreeBootstrapGate } from "../../development-tree/development-tree-bootstrap-gate";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
 import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
 import { DevelopmentTreeNodeBootstrapFacade } from "../../development-tree/node-bootstrap/development-tree-node-bootstrap-facade";
@@ -13,33 +13,25 @@ import {
   buildDescriptionBranchSnapshot,
   DescriptionStepStore,
 } from "../../workflow/description/description-step-store";
-import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import { WorkflowLastActiveStore } from "../../workflow/state/workflow-last-active-store";
 import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade";
-import type {
-  WorkflowArtifactState,
-  WorkflowStageStatus,
-  WorkflowState,
-} from "../../workflow/state/workflow-state-types";
+import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
 import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
-import {
-  type DiagramModulesProgressSnapshot,
-  readDiagramModulesProgressSnapshot,
-} from "./diagram-modules-progress";
+import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
 import {
   applyTechnicalRootProgressToState,
   readQualityGatesProgressSnapshot,
   resolveWorkflowBlockedStages,
 } from "./quality-gates-progress";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
+import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
-const DIAGRAM_MODULES_INDEX_FILE = "product-parts.index.md";
 const readNonEmptyString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 const readAbsolutePath = (value: unknown): string | null => {
@@ -102,6 +94,16 @@ export class WorkflowStateService {
     this.developmentTreeState.subscribeSnapshot(
       async ({ snapshot, workspaceRoot, workspaceSlug }) => {
         try {
+          if (
+            !(
+              await readDevelopmentTreeBootstrapGate({
+                workspaceRoot,
+                workspaceSlug,
+              })
+            ).unlocked
+          ) {
+            return;
+          }
           await this.filesystemStructurator.materialize({
             snapshot,
             workspaceRoot,
@@ -408,91 +410,3 @@ export class WorkflowStateService {
     return resolveLatestDiagramModulesProviderId(chains) ?? fallbackProviderId;
   }
 }
-
-const upsertStageArtifact = (params: {
-  readonly artifacts: readonly WorkflowArtifactState[];
-  readonly relativePath: string;
-  readonly updatedAt: string;
-}): readonly WorkflowArtifactState[] => {
-  const artifactIndex = params.artifacts.findIndex(
-    (artifact) => artifact.path === params.relativePath
-  );
-  if (artifactIndex < 0) {
-    return [
-      ...params.artifacts,
-      {
-        path: params.relativePath,
-        updatedAt: params.updatedAt,
-      },
-    ];
-  }
-  return params.artifacts.map((artifact, index) =>
-    index === artifactIndex
-      ? { ...artifact, updatedAt: params.updatedAt }
-      : artifact
-  );
-};
-
-const hydrateDiagramModulesStateFromProgress = async (params: {
-  readonly state: WorkflowState;
-  readonly workspaceRoot: string;
-  readonly workspaceSlug: string;
-  readonly diagramModulesProgress: DiagramModulesProgressSnapshot | null;
-}): Promise<WorkflowState> => {
-  if (!params.diagramModulesProgress) {
-    return params.state;
-  }
-
-  const currentStage = params.state.stages.diagram_modules;
-  if (currentStage.status !== "idle") {
-    return params.state;
-  }
-
-  const artifactPath = resolveWorkflowArtifactPaths({
-    workspaceRoot: params.workspaceRoot,
-    workspaceSlug: params.workspaceSlug,
-    stage: "diagram_modules",
-    fileName: DIAGRAM_MODULES_INDEX_FILE,
-  });
-  if (!artifactPath.ok) {
-    return params.state;
-  }
-
-  const artifactStat = await stat(artifactPath.value.absolutePath).catch(
-    () => null
-  );
-  if (!artifactStat?.isFile()) {
-    return params.state;
-  }
-
-  const artifactUpdatedAt = artifactStat.mtime.toISOString();
-  const nextStatus: WorkflowStageStatus = params.diagramModulesProgress
-    .aggregateReady
-    ? "completed"
-    : "in_progress";
-  const nextStage = {
-    ...currentStage,
-    status: nextStatus,
-    artifacts: upsertStageArtifact({
-      artifacts: currentStage.artifacts,
-      relativePath: `diagram_modules/${DIAGRAM_MODULES_INDEX_FILE}`,
-      updatedAt: artifactUpdatedAt,
-    }),
-    updatedAt:
-      artifactUpdatedAt.localeCompare(currentStage.updatedAt) > 0
-        ? artifactUpdatedAt
-        : currentStage.updatedAt,
-  };
-
-  return {
-    ...params.state,
-    stages: {
-      ...params.state.stages,
-      diagram_modules: nextStage,
-    },
-    updatedAt:
-      nextStage.updatedAt.localeCompare(params.state.updatedAt) > 0
-        ? nextStage.updatedAt
-        : params.state.updatedAt,
-  };
-};

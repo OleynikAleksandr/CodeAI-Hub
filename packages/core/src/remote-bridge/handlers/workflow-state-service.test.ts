@@ -1,22 +1,11 @@
 import assert from "node:assert/strict";
-import {
-  mkdir,
-  mkdtemp,
-  readFile,
-  rm,
-  stat,
-  writeFile,
-} from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Request, Response } from "express";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
-
-const AGENT_FILL_MARKER_PATTERN = /<!-- agent-fill -->/;
-const DEVELOPMENT_TREE_STAGE_PATTERN = /^development_tree\/materialized\//;
-const TECHNOLOGY_BASE_QUESTION_PATTERN = /Technology base: unknown/;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -146,7 +135,7 @@ const readWorkflowStatePayload = async (params: {
     params.service.handleWorkflowStateRead(req, res);
   });
 
-test("workflow-state cold start unlocks foundation envelope after diagram modules aggregate readiness", async () => {
+test("workflow-state cold start keeps development tree preview side-effect free before technical root gates", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-hydration-")
   );
@@ -259,35 +248,16 @@ test("workflow-state cold start unlocks foundation envelope after diagram module
       ["local-core-runtime-module"]
     );
     assert.equal(
-      (
-        await stat(
-          path.join(
-            workspaceRoot,
-            ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-core-runtime/modules/local-core-runtime-module"
-          )
+      await stat(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-core-runtime"
         )
-      ).isDirectory(),
-      true
+      ).catch(() => null),
+      null
     );
-    const draftPath = path.join(
-      workspaceRoot,
-      ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-core-runtime/PartDescription.draft.md"
-    );
-    assert.match(await readFile(draftPath, "utf8"), AGENT_FILL_MARKER_PATTERN);
-    assert.equal(createdSessions.length, 2);
-    assert.equal(sentMessages.length, 2);
-    assert.equal(createdSessions[0]?.providerId, "geminiCli");
-    assert.equal(createdSessions[0]?.workspacePath, workspaceRoot);
-    assert.equal(createdSessions[0]?.context.initiativeSlug, workspaceSlug);
-    assert.equal(createdSessions[0]?.context.runSlug, "development-tree");
-    assert.match(
-      createdSessions[0]?.context.stage ?? "",
-      DEVELOPMENT_TREE_STAGE_PATTERN
-    );
-    assert.match(
-      sentMessages[0]?.content ?? "",
-      TECHNOLOGY_BASE_QUESTION_PATTERN
-    );
+    assert.equal(createdSessions.length, 0);
+    assert.equal(sentMessages.length, 0);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
