@@ -266,10 +266,10 @@ const buildStagePhaseLines = (
   if (stage === "application_skeleton") {
     return [
       "Work phases:",
-      "- Phase 1: confirm the selected stack or ask focused stack questions before writing scaffold files.",
-      "- Phase 2: create the minimal industry-standard project skeleton only after the stack and repo shape are clear.",
-      `- Phase 3: write \`${targetFileName}\` and \`application-skeleton-map.json\` as the accepted skeleton contract candidates.`,
-      "- Phase 4: do not create Product Part, Cluster, or Module sessions.",
+      "- Phase 1: read the runtime-provided upstream artifacts, infer a recommended stack/repo/package-manager baseline from project needs, and record assumptions instead of starting with blank-choice questions.",
+      `- Phase 2: write \`${targetFileName}\` and \`application-skeleton-map.json\` as draft contract artifacts with \`accepted: false\`, \`materialized: false\`, and \`materializationState: \"not_started\"\`.`,
+      "- Phase 3: after explicit user acceptance, the same Application Skeleton session materializes the workspace skeleton and Product Part/Cluster/Module filesystem projection.",
+      "- Phase 4: ask only confirmation-style questions for genuine ambiguity; do not create Product Part, Cluster, Module, or Quality Gates sessions.",
     ];
   }
   if (stage === "quality_gates") {

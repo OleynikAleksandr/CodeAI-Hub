@@ -396,6 +396,15 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     true
   );
   assert.equal(
+    skeletonPack.content.includes("confirm the selected stack"),
+    false
+  );
+  assert.equal(
+    skeletonPack.content.includes("infer a recommended stack/repo/package-manager baseline"),
+    true
+  );
+  assert.equal(skeletonPack.content.includes("materializationState: \"not_started\""), true);
+  assert.equal(
     gatesPack.relativePath,
     ".codeai-hub/demo-workspace/quality_gates/quality-gates.md"
   );
