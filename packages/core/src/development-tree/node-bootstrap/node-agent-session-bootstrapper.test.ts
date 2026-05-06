@@ -23,6 +23,9 @@ const PRODUCT_PART_CONTEXT_PATTERN =
   /Artifact Workspace belongs to Project Manager/;
 const DETAILED_PRODUCT_PART_CONTEXT_PATTERN =
   /Detailed Project Manager decomposition is ready/;
+const APPLICATION_SKELETON_MAP_CONTEXT_PATTERN =
+  /"moduleId":"artifact-workspace"/;
+const QUALITY_GATES_CONTEXT_PATTERN = /"build":"npm run build:webview"/;
 const CORE_RUNTIME_CONTEXT_PATTERN = /Core Runtime manages provider processes/;
 const WORKFLOW_STEP_CONTEXT_PATTERN =
   /Workflow Step Navigation chooses current step/;
@@ -241,6 +244,16 @@ test("NodeAgentSessionBootstrapper sends scoped workflow artifacts in the first 
         "Workflow Step Navigation chooses current step.",
       ].join("\n")
     );
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+      JSON.stringify({ mappings: [{ moduleId: "artifact-workspace" }] })
+    );
+    await writeWorkspaceArtifact(
+      workspacePath,
+      `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+      JSON.stringify({ commands: { build: "npm run build:webview" } })
+    );
 
     await new NodeAgentSessionBootstrapper().bootstrapNode(
       {
@@ -273,6 +286,8 @@ test("NodeAgentSessionBootstrapper sends scoped workflow artifacts in the first 
     assert.match(firstMessage, VIRTUAL_SIMULATION_CONTEXT_PATTERN);
     assert.match(firstMessage, DIAGRAM_MODULES_INDEX_CONTEXT_PATTERN);
     assert.match(firstMessage, PRODUCT_PART_CONTEXT_PATTERN);
+    assert.match(firstMessage, APPLICATION_SKELETON_MAP_CONTEXT_PATTERN);
+    assert.match(firstMessage, QUALITY_GATES_CONTEXT_PATTERN);
     assert.doesNotMatch(firstMessage, CORE_RUNTIME_CONTEXT_PATTERN);
     assert.doesNotMatch(firstMessage, WORKFLOW_STEP_CONTEXT_PATTERN);
   } finally {

@@ -106,6 +106,7 @@ const createArtifactContextLines = (
     "- You may inspect and edit the listed target draft files, but do not read, search, list, or open any other workspace files or documents.",
     "- If context seems incomplete or truncated, record the uncertainty as an Open question instead of reading another file.",
     "- Additional file reading is allowed only after the user explicitly asks or permits you to read files in a later message.",
+    "- When included, Application Skeleton Map and Quality Gates Contract entries are binding for production paths and verification commands.",
   ];
   if (!artifactContext?.length) {
     return [

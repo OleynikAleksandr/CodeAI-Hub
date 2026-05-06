@@ -169,6 +169,13 @@ const isExactProductPartMarkdown = (
     `/diagram_modules/product-parts/${node.partId}.md`
   );
 
+const isProtectedTechnicalRootArtifact = (
+  artifact: NodePromptSourceArtifact
+): boolean =>
+  artifact.relativePath.endsWith(
+    "/application_skeleton/application-skeleton-map.json"
+  ) || artifact.relativePath.endsWith("/quality_gates/quality-gates.json");
+
 export class NodePromptContextExtractor {
   extract(
     request: NodePromptContextExtractorRequest
@@ -177,7 +184,10 @@ export class NodePromptContextExtractor {
     const protectedEntries: ProtectedContextEntry[] = [];
     const scoredBlocks: ScoredBlock[] = [];
     for (const [sourceIndex, artifact] of request.artifacts.entries()) {
-      if (isExactProductPartMarkdown(artifact, request.node)) {
+      if (
+        isExactProductPartMarkdown(artifact, request.node) ||
+        isProtectedTechnicalRootArtifact(artifact)
+      ) {
         protectedEntries.push({
           content: artifact.content.trim(),
           label: artifact.label,

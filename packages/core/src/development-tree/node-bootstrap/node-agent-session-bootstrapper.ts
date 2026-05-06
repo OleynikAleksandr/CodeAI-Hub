@@ -172,6 +172,14 @@ const createWorkflowArtifactSpecs = (
     label: `Diagram Modules Product Part: ${partId}`,
     relativePath: `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/${partId}.md`,
   },
+  {
+    label: "Application Skeleton Map",
+    relativePath: `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+  },
+  {
+    label: "Quality Gates Contract",
+    relativePath: `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+  },
 ];
 
 const wait = (durationMs: number): Promise<void> =>
