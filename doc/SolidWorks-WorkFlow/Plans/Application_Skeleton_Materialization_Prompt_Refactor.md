@@ -241,6 +241,22 @@ UI и Core должны различать:
 
 Проверка 3: downstream gating.
 
+## 12. Live retest feedback — v1.2.162
+
+Первый live retest нового `Application Skeleton` prompt показал, что агент всё ещё может начинать с блокирующих вопросов о stack, repo shape и package manager:
+
+```text
+Чтобы продолжить и сразу собрать корректный skeleton contract, мне нужно 3 уточнения...
+```
+
+Это допустимо как осторожное поведение, но не является целевым workflow. Для этого шага агент должен сначала выполнить discovery/research pass, предложить один recommended baseline на основе runtime artifacts и workspace facts, записать rationale/tradeoffs в draft contract, и только затем просить confirmation или задавать действительно блокирующие вопросы.
+
+Нужная корректировка стартового prompt:
+- запретить начинать с blank-choice вопросов о stack/repo/package manager;
+- требовать recommended default, если его можно обоснованно вывести;
+- формулировать вопросы как confirmation-style, а не как перекладывание первичного выбора на пользователя;
+- разрешать blocking questions только при настоящей неоднозначности, когда несколько baseline одинаково правдоподобны и ошибка сломает skeleton.
+
 Ожидаемое поведение:
 
 - Quality Gates становится доступен только после materialized skeleton;
