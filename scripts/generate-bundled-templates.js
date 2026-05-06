@@ -84,6 +84,20 @@ const TEMPLATES = [
       "packages/agents/diagram-modules-agent/assets/diagram-modules-merge-rules.md",
     dest: ".codeai-hub/templates/diagram_modules/diagram-modules-merge-rules.md",
   },
+  {
+    audience: "internal_agent_instructions",
+    id: "application-skeleton-prompt",
+    source:
+      "packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md",
+    dest: ".codeai-hub/templates/application_skeleton/application-skeleton-prompt.md",
+  },
+  {
+    audience: "internal_agent_instructions",
+    id: "application-skeleton-contract",
+    source:
+      "packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md",
+    dest: ".codeai-hub/templates/application_skeleton/application-skeleton-contract.md",
+  },
 ];
 
 function loadModelInvocationTemplates() {
