@@ -52,6 +52,18 @@ Manual evidence:
 - repeat the packaged helper replay for the observed text when needed;
 - after release, user retests first reasoning bubble in a fresh Codex session.
 
+### 3.1 Verification Evidence
+
+2026-05-06 local verification:
+
+- `npm run build --workspace=@codeai-hub/translation` passed.
+- `node --test packages/translation/dist/apple-native-translation-engine.test.js` passed with 2 tests:
+  - retries transient `runtime_failure` / `TranslationError.Cause.notInstalled` and returns the second translated result;
+  - does not retry `apple_native_language_pack_missing`.
+- `node --test packages/translation/dist/translation-facade.test.js` passed with 10 tests.
+- `npm exec -- ultracite check packages/translation/src/apple-native-translation-engine.ts packages/translation/src/apple-native-translation-engine.test.ts` passed.
+- Commit hooks for `fix: retry transient apple native translation failures` passed architecture, lint, knip, and staged formatting gates.
+
 ## 4. Documentation Disposition
 
 This is a hotfix planning document. After implementation and acceptance, archive it under `doc/SolidWorks-WorkFlow/Plans/Archive/` and keep stable behavior in `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`.
