@@ -1,6 +1,6 @@
 # Application Skeleton Architecture
 
-**Status:** Draft for discussion.
+**Status:** Accepted for execution planning.
 **Created:** 2026-05-06
 **Updated:** 2026-05-06
 **Owner:** Oleksandr + Codex
