@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.160] - 2026-05-06
+### Added
+- **Codex workflow agents now run with research-capable documentation tooling.** The documentation workflow process keeps implementation-heavy capabilities disabled but no longer disables browser/search tools, so Diagram Modules, Application Skeleton, and Quality Gates discussions can compare frameworks, architecture options, and external references when the user asks for research.
+- **A restricted Codex workflow process profile remains available.** Translation and no-research contexts keep browser/search/tool discovery disabled, preserving the narrow tool surface where external research is not appropriate.
+
+### Fixed
+- **Application Skeleton agents now have an explicit completion boundary.** After the accepted skeleton contract is written, the agent must stop, avoid materialization/root file creation, and direct the user to Quality Gates Baseline.
+
+### Tests
+- **Provider and template profile coverage verifies the new tooling split.** Targeted checks cover Codex app-server process args, translation isolation, model invocation profile keys, template sync/update behavior, and affected package builds.
+
 ## [1.2.159] - 2026-05-06
 ### Fixed
 - **Application Skeleton and Quality Gates sessions now keep their workflow stage identity in continuity.** New sessions for the technical root steps are stored under `application_skeleton` / `quality_gates` instead of `unknown`, so Project Manager can attach the started dialog to the selected workflow row.
