@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.157] - 2026-05-06
+### Added
+- **Application Skeleton and Quality Gates Baseline are now first-class workflow stages.** After Diagram Modules, the Project Manager exposes dedicated technical root rows, prompt packs, artifact panels, confirmation cards, and SSOT documentation for creating the application skeleton before development-tree execution begins.
+- **Development Tree execution is locked until skeleton and gates are accepted.** The workflow now prevents Product Part / Cluster / Module agent-session automation from starting until the application skeleton and quality baseline artifacts are produced and accepted.
+
+### Tests
+- **The workflow expansion is covered by targeted Core and Project Manager verification.** Prompt-pack, stage-start, workflow-state, panel-routing, workspace-tree, Core build, webview type-check, and webview build checks were run before release packaging.
+
 ## [1.2.156] - 2026-05-06
 ### Fixed
 - **Apple Native reasoning translation retries the transient first-call readiness failure.** If Apple Translation reports `TranslationError.Cause.notInstalled` during the first runtime call even though the language pair is installed, the Apple Native engine now performs a bounded retry instead of leaving the first `Thinking` bubble in source English.
