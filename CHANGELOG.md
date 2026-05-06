@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.159] - 2026-05-06
+### Fixed
+- **Application Skeleton and Quality Gates sessions now keep their workflow stage identity in continuity.** New sessions for the technical root steps are stored under `application_skeleton` / `quality_gates` instead of `unknown`, so Project Manager can attach the started dialog to the selected workflow row.
+
+### Tests
+- **Technical root continuity is covered by Core regression tests.** The hotfix verifies canonical continuity paths for `application_skeleton` and `quality_gates`, dialog reconciliation coverage, and the `@codeai-hub/core` build.
+
 ## [1.2.158] - 2026-05-06
 ### Fixed
 - **Workflow session empty states no longer show a stale `Creating session` placeholder.** If a Diagram Modules branch node, Application Skeleton, or another workflow surface has no session/help content yet, the session panel now falls back to the generic empty state instead of showing an indefinite spinner.
