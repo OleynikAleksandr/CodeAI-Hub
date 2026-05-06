@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.170] - 2026-05-06
+### Fixed
+- **Application Skeleton validation now requires canonical identifier fields.** Materialized maps must use `partId` for Product Parts, `clusterId` for Clusters, and `moduleId` for clustered and standalone Modules, so generic `id` fields cannot silently pass the runtime gate.
+
+### Tests
+- **Application Skeleton materialization validator coverage now catches missing canonical identifiers.** A focused regression verifies that materialized maps with missing `partId`, `clusterId`, or `moduleId` stay invalid.
+
 ## [1.2.169] - 2026-05-06
 ### Fixed
 - **Application Skeleton validation now checks standalone module paths.** Product Part-level `standaloneModules` are included in materialization validation, so missing standalone folders cannot unlock Quality Gates accidentally.
