@@ -376,6 +376,8 @@ When either `Application Skeleton` or `Quality Gates Baseline` is not accepted:
 - Their sessions are disabled/unavailable.
 - The UI should explain that node sessions unlock after Application Skeleton and Quality Gates Baseline acceptance.
 
+Implementation note (2026-05-06): Project Manager now renders both technical root stages in Documentation Tree, routes them through the same `StageConfirmationCard` start/resume path as VS/DM, shows `application-skeleton.md` / `quality-gates.md` artifact panels with Help tabs, and shows a locked Development Tree row while skeleton/gates acceptance is incomplete.
+
 ## 14. Application Skeleton Validation
 
 Application Skeleton cannot be accepted unless:
