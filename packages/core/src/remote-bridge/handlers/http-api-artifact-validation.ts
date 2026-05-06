@@ -2,6 +2,8 @@ const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
 const DIAGRAM_MODULES_TITLE_RE = /^#\s+(?:Module Inventory|Product Part:)/m;
 const PRODUCT_PARTS_INDEX_TITLE_RE = /^#\s+Product Parts Index/m;
+const APPLICATION_SKELETON_TITLE_RE = /^#\s+Application Skeleton/m;
+const QUALITY_GATES_TITLE_RE = /^#\s+Quality Gates/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
 const PRODUCT_PART_ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const PRODUCT_PART_FRONTMATTER_ID_RE =
@@ -24,7 +26,11 @@ export type WorkflowArtifactFileName =
   | "virtual-simulation.md"
   | "product-parts.index.md"
   | "product-part.md"
-  | "module-map.flow.json";
+  | "module-map.flow.json"
+  | "application-skeleton.md"
+  | "application-skeleton-map.json"
+  | "quality-gates.md"
+  | "quality-gates.json";
 
 type WorkflowParseResult<T> =
   | { readonly ok: true; readonly value: T }
@@ -64,6 +70,27 @@ const validateJsonObjectSidecar = (params: {
       : params.invalidObjectError;
   } catch {
     return params.invalidJsonError;
+  }
+};
+
+const parseJsonObject = (params: {
+  readonly content: string;
+  readonly emptyError: string;
+  readonly invalidJsonError: string;
+  readonly invalidObjectError: string;
+}): WorkflowParseResult<Record<string, unknown>> => {
+  if (params.content.trim().length === 0) {
+    return { ok: false, error: params.emptyError };
+  }
+  try {
+    const parsed = JSON.parse(params.content) as unknown;
+    return typeof parsed === "object" &&
+      parsed !== null &&
+      !Array.isArray(parsed)
+      ? { ok: true, value: parsed as Record<string, unknown> }
+      : { ok: false, error: params.invalidObjectError };
+  } catch {
+    return { ok: false, error: params.invalidJsonError };
   }
 };
 
@@ -140,6 +167,39 @@ const validateProductPartArtifact = (
     : null;
 };
 
+const validateApplicationSkeletonMap = (content: string): string | null => {
+  const parsed = parseJsonObject({
+    content,
+    emptyError: "Application skeleton map is empty",
+    invalidJsonError: "Application skeleton map is not valid JSON",
+    invalidObjectError: "Application skeleton map must be a JSON object",
+  });
+  if (!parsed.ok) {
+    return parsed.error;
+  }
+  return Array.isArray(parsed.value.productParts)
+    ? null
+    : "Application skeleton map must include productParts array";
+};
+
+const validateQualityGatesContract = (content: string): string | null => {
+  const parsed = parseJsonObject({
+    content,
+    emptyError: "Quality gates contract is empty",
+    invalidJsonError: "Quality gates contract is not valid JSON",
+    invalidObjectError: "Quality gates contract must be a JSON object",
+  });
+  if (!parsed.ok) {
+    return parsed.error;
+  }
+  const commands = parsed.value.commands;
+  return typeof commands === "object" &&
+    commands !== null &&
+    !Array.isArray(commands)
+    ? null
+    : "Quality gates contract must include commands object";
+};
+
 const WORKFLOW_ARTIFACT_VALIDATORS = new Map<
   WorkflowArtifactFileName,
   WorkflowArtifactValidator
@@ -177,6 +237,30 @@ const WORKFLOW_ARTIFACT_VALIDATORS = new Map<
         invalidObjectError: "Diagram flow sidecar must be a JSON object",
       }),
   ],
+  [
+    "application-skeleton.md",
+    (content) =>
+      validateRequiredHeader({
+        content,
+        emptyError: "Application skeleton markdown is empty",
+        headerError:
+          "Application skeleton markdown is missing '# Application Skeleton' header",
+        headerPattern: APPLICATION_SKELETON_TITLE_RE,
+      }),
+  ],
+  ["application-skeleton-map.json", validateApplicationSkeletonMap],
+  [
+    "quality-gates.md",
+    (content) =>
+      validateRequiredHeader({
+        content,
+        emptyError: "Quality gates markdown is empty",
+        headerError:
+          "Quality gates markdown is missing '# Quality Gates' header",
+        headerPattern: QUALITY_GATES_TITLE_RE,
+      }),
+  ],
+  ["quality-gates.json", validateQualityGatesContract],
 ]);
 
 const resolveWorkflowArtifactValidationError = (params: {

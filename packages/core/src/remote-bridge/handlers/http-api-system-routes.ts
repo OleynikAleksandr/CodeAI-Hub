@@ -16,6 +16,10 @@ const VIRTUAL_SIMULATION_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/virtual_simulation\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?virtual-simulation\.md$/;
 const DIAGRAM_MODULES_PATH_RE =
   /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/diagram_modules\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:(?:product-parts\.index\.md)|(?:product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\.md)|(?:module-map\.flow\.json))$/;
+const APPLICATION_SKELETON_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/application_skeleton\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:application-skeleton\.md|application-skeleton-map\.json)$/;
+const QUALITY_GATES_PATH_RE =
+  /^\.codeai-hub\/[a-z0-9]+(?:-[a-z0-9]+)*\/quality_gates\/(?:runs\/[a-z0-9]+(?:-[a-z0-9]+)*\/)?(?:quality-gates\.md|quality-gates\.json)$/;
 const PRODUCT_PART_SLOT_RE =
   /^diagram\.modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -39,14 +43,40 @@ const WORKFLOW_STAGE_SLOTS = new Map<
     "diagram.modules.flow",
     { stage: "diagram_modules", fileName: "module-map.flow.json" },
   ],
+  [
+    "application.skeleton.contract",
+    { stage: "application_skeleton", fileName: "application-skeleton.md" },
+  ],
+  [
+    "application.skeleton.map",
+    {
+      stage: "application_skeleton",
+      fileName: "application-skeleton-map.json",
+    },
+  ],
+  [
+    "quality.gates.contract",
+    { stage: "quality_gates", fileName: "quality-gates.md" },
+  ],
+  [
+    "quality.gates.commands",
+    { stage: "quality_gates", fileName: "quality-gates.json" },
+  ],
 ]);
 const WORKFLOW_STAGE_PATHS = new Map<WorkflowStageId, RegExp>([
   ["description", DESCRIPTION_PATH_RE],
   ["virtual_simulation", VIRTUAL_SIMULATION_PATH_RE],
   ["diagram_modules", DIAGRAM_MODULES_PATH_RE],
+  ["application_skeleton", APPLICATION_SKELETON_PATH_RE],
+  ["quality_gates", QUALITY_GATES_PATH_RE],
 ]);
 
-type WorkflowStageId = "description" | "virtual_simulation" | "diagram_modules";
+type WorkflowStageId =
+  | "description"
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates";
 type WorkflowParseResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly error: string };
@@ -154,7 +184,9 @@ export const resolveWorkflowStageArtifactTarget = (params: {
     !(
       stage === "description" ||
       stage === "virtual_simulation" ||
-      stage === "diagram_modules"
+      stage === "diagram_modules" ||
+      stage === "application_skeleton" ||
+      stage === "quality_gates"
     )
   ) {
     return { ok: false, error: `Unsupported stage: ${stage}` };
