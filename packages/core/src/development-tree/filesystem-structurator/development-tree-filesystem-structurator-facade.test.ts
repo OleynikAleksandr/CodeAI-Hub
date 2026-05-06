@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, stat } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -21,6 +21,49 @@ const createSnapshot = (): DevelopmentTreeSnapshot => ({
     },
   ],
 });
+
+const writeSkeletonMap = async (workspaceRoot: string): Promise<void> => {
+  const mapPath = path.join(
+    workspaceRoot,
+    ".codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json"
+  );
+  await mkdir(path.dirname(mapPath), { recursive: true });
+  await writeFile(
+    mapPath,
+    `${JSON.stringify({
+      schema: "codeai-application-skeleton-v1",
+      accepted: true,
+      productParts: [
+        {
+          id: "local-runtime",
+          codePath: "src/product-parts/local-runtime",
+          clusters: [
+            {
+              id: "orchestration",
+              codePath:
+                "src/product-parts/local-runtime/clusters/orchestration",
+              modules: [
+                {
+                  id: "workflow-state",
+                  codePath:
+                    "src/product-parts/local-runtime/clusters/orchestration/modules/workflow-state",
+                },
+              ],
+            },
+          ],
+          standaloneModules: [
+            {
+              id: "provider-bridge",
+              codePath:
+                "src/product-parts/local-runtime/modules/provider-bridge",
+            },
+          ],
+        },
+      ],
+    })}\n`,
+    "utf8"
+  );
+};
 
 test("DevelopmentTreeFilesystemStructuratorFacade plans and applies materialized tree directories", async () => {
   const workspaceRoot = await mkdtemp(
@@ -69,6 +112,42 @@ test("DevelopmentTreeFilesystemStructuratorFacade reports orphan summary behind 
     });
 
     assert.deepEqual(result.orphans.orphanRelativePaths, [orphanPath]);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("DevelopmentTreeFilesystemStructuratorFacade materializes accepted production code paths", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-facade-")
+  );
+  try {
+    await writeSkeletonMap(workspaceRoot);
+    const facade = new DevelopmentTreeFilesystemStructuratorFacade();
+    const result = await facade.materialize({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      snapshot: createSnapshot(),
+    });
+
+    assert.deepEqual(result.productionApply.conflicts, []);
+    assert.equal(
+      result.productionApply.created.includes(
+        "src/product-parts/local-runtime/clusters/orchestration/modules/workflow-state"
+      ),
+      true
+    );
+    assert.equal(
+      (
+        await stat(
+          path.join(
+            workspaceRoot,
+            "src/product-parts/local-runtime/modules/provider-bridge"
+          )
+        )
+      ).isDirectory(),
+      true
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
