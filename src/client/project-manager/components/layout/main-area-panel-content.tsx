@@ -2,6 +2,8 @@ import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type React from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
+import { ApplicationSkeletonHelp } from "../application-skeleton/application-skeleton-help";
+import { ApplicationSkeletonPanel } from "../application-skeleton/application-skeleton-panel";
 import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
 import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
@@ -32,6 +34,7 @@ import {
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import type { BranchNodeSelection } from "./main-area-utils";
 import {
+  APPLICATION_SKELETON_TOOL_LABEL,
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
 import {
@@ -292,6 +295,9 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
     if (activeTool === "Diagram Modules") {
       return <DiagramModulesHelp />;
     }
+    if (activeTool === APPLICATION_SKELETON_TOOL_LABEL) {
+      return <ApplicationSkeletonHelp />;
+    }
   }
   if (showSourceViewer && sourceArtifact) {
     if (!sourceArtifactAvailable) {
@@ -358,6 +364,13 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
       activeWorkspacePath,
       activeWorkspaceSlug,
       artifactRefreshKey
+    );
+  }
+  if (activeTool === APPLICATION_SKELETON_TOOL_LABEL) {
+    return renderStagePanel(
+      ApplicationSkeletonPanel,
+      activeWorkspacePath,
+      activeWorkspaceSlug
     );
   }
   if (activeTool === "Description" && hasDescriptionSession && selectedArtifact === null) {

@@ -84,3 +84,19 @@ test("main-area session content lets selected development-tree node outrank stal
   assert.equal(propIndex > nodeWinsIndex, true);
   assert.equal(stalePropIndex, -1);
 });
+
+test("main-area panel content routes application skeleton artifacts and help", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(
+    source.includes('from "../application-skeleton/application-skeleton-panel"'),
+    true
+  );
+  assert.equal(
+    source.includes('from "../application-skeleton/application-skeleton-help"'),
+    true
+  );
+  assert.equal(source.includes("APPLICATION_SKELETON_TOOL_LABEL"), true);
+  assert.equal(source.includes("<ApplicationSkeletonHelp />"), true);
+  assert.equal(source.includes("ApplicationSkeletonPanel"), true);
+});

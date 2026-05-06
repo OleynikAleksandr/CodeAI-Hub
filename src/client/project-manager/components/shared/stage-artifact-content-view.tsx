@@ -16,7 +16,10 @@ const buildArtifactRepairPrompt = (params: {
 
 const resolveArtifactStage = (
   artifactPath: string
-): "virtual_simulation" | "diagram_modules" => {
+): "virtual_simulation" | "diagram_modules" | "application_skeleton" => {
+  if (artifactPath.includes("/application_skeleton/")) {
+    return "application_skeleton";
+  }
   if (artifactPath.includes("/diagram_modules/")) {
     return "diagram_modules";
   }
