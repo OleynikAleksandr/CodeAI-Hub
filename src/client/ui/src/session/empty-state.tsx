@@ -19,29 +19,9 @@ const resolveIdleCopy = (
   };
 };
 
-const EmptyState = (props: { readonly pending: boolean }) => {
+const EmptyState = (_props: { readonly pending: boolean }) => {
   const { t } = useLocalization();
-  const pendingTitle = t(
-    USER_MESSAGES_CATEGORY,
-    "session.empty_state.pending_title",
-    "Creating session…"
-  );
-  const pendingDescription = t(
-    USER_MESSAGES_CATEGORY,
-    "session.empty_state.pending_description",
-    "This can take 5–10 seconds. Please wait."
-  );
   const idleCopy = resolveIdleCopy(t);
-
-  if (props.pending) {
-    return (
-      <output aria-busy="true" aria-live="polite" className="session-empty">
-        <div aria-hidden="true" className="session-spinner" />
-        <h2 className="session-empty__title">{pendingTitle}</h2>
-        <p className="session-empty__description">{pendingDescription}</p>
-      </output>
-    );
-  }
 
   return (
     <div className="session-empty">

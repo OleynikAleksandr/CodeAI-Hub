@@ -29,6 +29,11 @@ test("session empty state uses the generic idle copy path", async () => {
     emptyStateSource.includes('"session.empty_state.idle_description"'),
     true
   );
+  assert.equal(
+    emptyStateSource.includes('"session.empty_state.pending_title"'),
+    false
+  );
+  assert.equal(emptyStateSource.includes("session-spinner"), false);
   assert.equal(sessionViewSource.includes("emptyStatePending"), true);
   assert.equal(sessionViewSource.includes("emptyStateStage"), false);
   assert.equal(
