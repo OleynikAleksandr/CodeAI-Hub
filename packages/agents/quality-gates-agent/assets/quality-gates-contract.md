@@ -9,6 +9,9 @@
 {
   "schema": "codeai-quality-gates-v1",
   "accepted": false,
+  "reviewState": "draft",
+  "integrated": false,
+  "integrationState": "not_started",
   "projectProfile": {
     "domain": "inferred-project-domain",
     "languages": ["inferred-language"],
@@ -67,6 +70,8 @@
   "advisory": [],
   "deferredUntilMaterialization": [],
   "plannedRequiredAfterMaterialization": [],
+  "integratedPaths": [],
+  "deferredIntegration": [],
   "openDecisions": [],
   "acceptance": {
     "accepted": false,
@@ -81,6 +86,11 @@
 - Supported statuses are `active`, `plannedAfterMaterialization`, `deferred`, and `advisory`.
 - Required command names must refer to keys in `commands`.
 - Active required command names must have `status: "active"` and must belong to `selectedBaseline`.
+- `integrated` must stay `false` until the accepted gate baseline has actually been written into the materialized workspace skeleton.
+- `integrationState` must be one of `not_started`, `in_progress`, `integrated`, `failed`, or `outdated`.
+- `accepted: true` without `integrated: true` means the gate baseline is accepted but Development Tree sessions are still blocked.
+- `integratedPaths` must list real workspace paths created or verified during post-acceptance gate integration.
+- `deferredIntegration` must explain any accepted gate/tooling file that was intentionally not created.
 - Strict-only gates must not be listed in active required arrays unless `selectedBaseline` is `strict`.
 - Deferred, advisory, or planned-after-materialization command names must not be listed as active required blockers.
 - The contract must reference the accepted skeleton source roots or package roots in `quality-gates.md`.
