@@ -49,7 +49,7 @@ const createState = (workspaceSlug: string): WorkflowState => {
         updatedAt: "2026-05-06T00:00:00.000Z",
       },
     ])
-  ) as WorkflowState["stages"];
+  ) as unknown as WorkflowState["stages"];
   return {
     gates: [],
     stages,
@@ -116,7 +116,9 @@ test("accepted application skeleton remains in progress until materialized", asy
       diagramModulesProgress: {
         aggregateReady: true,
         generatedCount: 1,
+        generatedPartIds: ["project-manager"],
         plannedCount: 1,
+        plannedPartIds: ["project-manager"],
         substep: "awaiting_review",
       },
       state: updated,
@@ -171,7 +173,9 @@ test("materialized application skeleton completes stage and unlocks quality gate
       diagramModulesProgress: {
         aggregateReady: true,
         generatedCount: 1,
+        generatedPartIds: ["project-manager"],
         plannedCount: 1,
+        plannedPartIds: ["project-manager"],
         substep: "awaiting_review",
       },
       state: updated,
