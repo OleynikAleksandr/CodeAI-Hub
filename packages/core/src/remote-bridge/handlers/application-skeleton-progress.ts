@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
+import { validateApplicationSkeletonMaterialization } from "./application-skeleton-materialization-validator";
 
 export type ApplicationSkeletonSubstep =
   | "artifact"
@@ -17,7 +18,9 @@ export interface ApplicationSkeletonProgressSnapshot {
   readonly markdownExists: boolean;
   readonly materializationState: ApplicationSkeletonSubstep;
   readonly materialized: boolean;
+  readonly observedMaterialization: boolean;
   readonly substep: ApplicationSkeletonSubstep;
+  readonly validationErrors: readonly string[];
 }
 
 const readExistingFile = async (
@@ -159,11 +162,24 @@ export const readApplicationSkeletonProgressSnapshot = async (params: {
   }
 
   const accepted = markdownExists && mapExists && readAcceptedFlag(mapJson);
+  const { observedMaterialization, validationErrors } =
+    await validateApplicationSkeletonMaterialization({
+      mapJson,
+      markdown,
+      workspaceRoot: params.workspaceRoot,
+    });
   const materialized =
-    accepted && markdownExists && mapExists && readMaterializedFlag(mapJson);
-  const materializationState = materialized
-    ? "materialized"
-    : readMaterializationState(mapJson);
+    accepted &&
+    markdownExists &&
+    mapExists &&
+    readMaterializedFlag(mapJson) &&
+    validationErrors.length === 0;
+  let materializationState = readMaterializationState(mapJson);
+  if (materialized) {
+    materializationState = "materialized";
+  } else if (observedMaterialization && validationErrors.length > 0) {
+    materializationState = "failed";
+  }
   return {
     accepted,
     materializationState,
@@ -171,6 +187,7 @@ export const readApplicationSkeletonProgressSnapshot = async (params: {
     mapExists,
     mappingReady: mapExists,
     markdownExists,
+    observedMaterialization,
     substep: resolveSubstep({
       accepted,
       materializationState,
@@ -178,5 +195,6 @@ export const readApplicationSkeletonProgressSnapshot = async (params: {
       mapExists,
       markdownExists,
     }),
+    validationErrors,
   };
 };
