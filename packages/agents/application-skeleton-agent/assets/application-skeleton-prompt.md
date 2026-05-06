@@ -78,6 +78,10 @@ In this phase you must not:
 - Keep generated production folders minimal and aligned with the selected ecosystem.
 - Prefer simple contract/readme placeholders over fake implementation files when future branch-level agents must design the actual code.
 - Mapped code paths must be safe relative workspace paths.
+- `sourceRoot` and `codePath` values describe production workspace paths only. Never use `.codeai-hub/...` workflow artifact folders as `sourceRoot` or production code roots.
+- Cluster-owned modules must be mapped under `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
+- Standalone modules, if a Product Part has any outside clusters, must be mapped under `<productPartPath>/modules/<module-id>` and listed separately from clustered modules.
+- If the runtime did not provide enough cluster/module detail for a Product Part, do not invent module entries. Record the missing input and the deterministic path pattern that will be used once the detail exists.
 
 ## Acceptance Contract
 `application-skeleton.md` must explain:

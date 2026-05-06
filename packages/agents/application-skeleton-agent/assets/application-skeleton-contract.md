@@ -55,6 +55,9 @@
 - `productParts` must be an array.
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.
+- `sourceRoot` must point to the production source/scaffold root and must not point under `.codeai-hub/`.
+- Clustered module paths must be nested under their owning cluster path: `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
+- Standalone modules must use `standaloneModules`; do not mix cluster-owned modules into a Product Part-level `modules` array.
 - `accepted` must stay `false` until the user explicitly accepts the skeleton.
 - `materialized` must stay `false` until the workspace filesystem skeleton has actually been created.
 - `materializationState` must be one of `not_started`, `in_progress`, `materialized`, `failed`, or `outdated`.
