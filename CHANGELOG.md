@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.162] - 2026-05-06
+### Fixed
+- **Application Skeleton now owns post-acceptance filesystem materialization.** The bundled agent prompt separates draft contract creation from accepted skeleton materialization, writes explicit `materialized` state, and keeps Quality Gates blocked until the real scaffold exists.
+- **Quality Gates Baseline now owns post-acceptance gate integration.** The bundled prompt and contract separate accepted gate baselines from integrated tooling, and Development Tree bootstrap now waits for `quality-gates.json` to report `integrated: true`.
+
+### Tests
+- **Materialization and integration gates are covered by targeted Core checks.** Tests verify Application Skeleton materialized progress, Quality Gates integrated unlock, Development Tree filesystem path application, template sync, `@codeai-hub/core` build, and webview type-check.
+
 ## [1.2.161] - 2026-05-06
 ### Fixed
 - **Quality Gates agents now start with a universal research-first prompt.** The stage infers the current project shape from the accepted Application Skeleton, compares suitable tooling strategies, drafts minimal/recommended/strict baselines, and designs a first-class architecture gate without assuming a CodeAI Hub-specific stack.

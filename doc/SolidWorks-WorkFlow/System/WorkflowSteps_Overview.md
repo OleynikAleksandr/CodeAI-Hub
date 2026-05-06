@@ -27,7 +27,7 @@
 
 ### Ветки (branches) — materialized first-draft Development Tree:
 
-После утверждения `Application Skeleton` и `Quality Gates Baseline` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта и уже наложенным на созданный project skeleton:
+После materialized `Application Skeleton` и integrated `Quality Gates Baseline` ствол заканчивается и начинается дерево разработки (Development Tree). Работа ведётся по веткам, привязанным к структуре продукта и уже наложенным на созданный project skeleton:
 
 ```text
 Diagram Modules
@@ -53,10 +53,10 @@ Diagram Modules
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
 
-Текущий статус реализации Development Tree (v1.2.157):
+Текущий статус реализации Development Tree (v1.2.162):
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
-- Materialization gate: Core держит Development Tree sessions disabled, пока `application-skeleton-map.json` и `quality-gates.json` не приняты. Sidebar показывает locked-row вместо раннего session bootstrap.
-- Materialization: Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`, применяет accepted `application-skeleton-map.json` к production code folders внутри workspace, pre-creates target draft folders/files, and bootstraps node sessions for Product Part / Cluster / Module first drafts only after both technical root gates pass.
+- Materialization gate: Core держит Development Tree sessions disabled, пока `application-skeleton-map.json` не содержит `materialized: true`, а `quality-gates.json` не содержит `integrated: true`. Sidebar показывает locked-row вместо раннего session bootstrap.
+- Materialization: Application Skeleton Agent создаёт project skeleton и production code folder projection, Quality Gates Agent интегрирует gate tooling, затем Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`, pre-creates target draft folders/files, and bootstraps node sessions for Product Part / Cluster / Module first drafts only after both technical root gates pass.
 - Branch-node selection: `pm:branch:selected` opens the real working surface: left node session pane and right draft artifact pane.
 - Live refresh: when an agent writes required draft artifacts, the right artifact pane and sidebar readiness/color refresh without switching steps or reopening the workspace.
 - Context boundary: Product Part node first prompts receive the exact owner `diagram_modules/product-parts/<part-id>.md` whole; Cluster/Module prompts receive scoped relevant excerpts. Automatic first-draft sessions may use only first-prompt context and listed target draft files until the user explicitly permits additional reads.
@@ -216,7 +216,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Зафиксировать технологический каркас приложения до появления кода Development Tree.
 
-Этот шаг выбирает языки, фреймворки, package layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
+Этот шаг выбирает языки, фреймворки, package layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. После explicit acceptance тот же агент материализует real project scaffold и Product Part / Cluster / Module folder projection. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
 
 ### Входы
 
@@ -234,9 +234,9 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 ### Цель
 
-Зафиксировать минимальный contract качества для будущего кода: install/build/typecheck/lint/test/package commands, workspace assumptions и expected outputs.
+Зафиксировать минимальный contract качества для будущего кода: install/build/typecheck/lint/test/package commands, workspace assumptions и expected outputs. После explicit acceptance тот же агент интегрирует gate scripts/configs/hooks/package entries в materialized skeleton.
 
-Без этого шага Development Tree sessions не стартуют: агентам нельзя писать код, пока project skeleton не создан и не понятно, какими командами проверять результат.
+Без этого шага Development Tree sessions не стартуют: агентам нельзя писать код, пока project skeleton не создан и quality gates не интегрированы в реальную файловую систему.
 
 ### Входы
 
@@ -283,7 +283,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 Шаги `Application Skeleton` и `Quality Gates Baseline` работают через bundled agent assets:
 - `packages/agents/application-skeleton-agent/assets/` задаёт skeleton prompt/contract и ожидает `application-skeleton.md` + `application-skeleton-map.json`;
 - `packages/agents/quality-gates-agent/assets/` задаёт gates prompt/contract и ожидает `quality-gates.md` + `quality-gates.json`;
-- только после accepted skeleton+gates Core может создавать production code folders и Development Tree sessions.
+- только после materialized skeleton + integrated gates Core может создавать Development Tree sessions.
 
 Workflow prompt/runtime contracts:
 - Core Runtime pre-creates stage directories before provider prompt: `description/`, `virtual_simulation/`, `diagram_modules/`, `diagram_modules/product-parts/`, `application_skeleton/`, and `quality_gates/`.
