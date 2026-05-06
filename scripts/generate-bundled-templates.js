@@ -98,6 +98,20 @@ const TEMPLATES = [
       "packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md",
     dest: ".codeai-hub/templates/application_skeleton/application-skeleton-contract.md",
   },
+  {
+    audience: "internal_agent_instructions",
+    id: "quality-gates-prompt",
+    source:
+      "packages/agents/quality-gates-agent/assets/quality-gates-prompt.md",
+    dest: ".codeai-hub/templates/quality_gates/quality-gates-prompt.md",
+  },
+  {
+    audience: "internal_agent_instructions",
+    id: "quality-gates-contract",
+    source:
+      "packages/agents/quality-gates-agent/assets/quality-gates-contract.md",
+    dest: ".codeai-hub/templates/quality_gates/quality-gates-contract.md",
+  },
 ];
 
 function loadModelInvocationTemplates() {
