@@ -117,7 +117,7 @@ const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   if (typeof node.codePath === "string") {
     paths.push(node.codePath);
   }
-  for (const key of ["clusters", "modules"]) {
+  for (const key of ["clusters", "modules", "standaloneModules"]) {
     const children = node[key];
     if (!Array.isArray(children)) {
       continue;

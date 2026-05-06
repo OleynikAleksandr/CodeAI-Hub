@@ -45,6 +45,8 @@ const MISSING_CODE_PATH_RE =
   /application skeleton codePath is missing: product-parts\/project-manager/;
 const MISSING_MATERIALIZED_PATH_RE =
   /application skeleton materializedPath is missing: product-parts\/project-manager/;
+const MISSING_STANDALONE_MODULE_PATH_RE =
+  /application skeleton codePath is missing: product-parts\/project-manager\/modules\/settings/;
 
 const createState = (workspaceSlug: string): WorkflowState => {
   const stages = Object.fromEntries(
@@ -401,6 +403,58 @@ test("materialized application skeleton fails when declared paths are missing", 
     assert.match(
       progress?.validationErrors.join("\n") ?? "",
       MISSING_MATERIALIZED_PATH_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("materialized application skeleton fails when standalone module paths are missing", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "application-skeleton-progress-standalone-path-")
+  );
+  const workspaceSlug = "demo";
+
+  try {
+    await mkdir(path.join(workspaceRoot, "product-parts/project-manager"), {
+      recursive: true,
+    });
+    await writeSkeleton({
+      markdown: MATERIALIZED_MARKDOWN,
+      workspaceRoot,
+      workspaceSlug,
+      map: {
+        schema: "codeai-application-skeleton-v1",
+        reviewState: "materialized",
+        accepted: true,
+        materialized: true,
+        materializationState: "materialized",
+        materializedPaths: ["product-parts/project-manager"],
+        productParts: [
+          {
+            codePath: "product-parts/project-manager",
+            id: "project-manager",
+            standaloneModules: [
+              {
+                codePath: "product-parts/project-manager/modules/settings",
+                id: "settings",
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const progress = await readApplicationSkeletonProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+    });
+    assert.equal(progress?.observedMaterialization, true);
+    assert.equal(progress?.materialized, false);
+    assert.equal(progress?.substep, "failed");
+    assert.match(
+      progress?.validationErrors.join("\n") ?? "",
+      MISSING_STANDALONE_MODULE_PATH_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
