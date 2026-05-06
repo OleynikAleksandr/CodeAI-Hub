@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.168] - 2026-05-06
+### Fixed
+- **Application Skeleton now has a runtime validation gate for materialized artifacts.** Core treats the filesystem skeleton as part of the stage artifact surface and blocks Quality Gates when Markdown, JSON, or declared paths disagree after materialization is observed.
+- **Application Skeleton materialization is detected from filesystem facts, not only agent-declared JSON state.** Existing `product-parts`, declared `codePath`, and `materializedPaths` now force materialized-state validation even if the agent forgets to update lifecycle fields.
+- **Automation-first is now a standing agent rule.** Repeatable, formally checkable workflow issues should be solved with scripts, validators, hooks, or gates before relying on prompt wording alone.
+
+### Tests
+- **Application Skeleton progress coverage now includes stale Markdown, stale JSON, and missing path failures.** Targeted tests keep Quality Gates locked until the canonical artifacts and filesystem are consistent.
+
 ## [1.2.167] - 2026-05-06
 ### Fixed
 - **Application Skeleton now treats upstream technology hints as strong baseline evidence.** Named shells, launchers, runtimes, frameworks, package formats, and deployment targets from prior artifacts must be used in the recommended baseline or explicitly rejected with rationale.
