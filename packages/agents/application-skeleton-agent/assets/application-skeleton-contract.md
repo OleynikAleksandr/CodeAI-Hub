@@ -1,14 +1,25 @@
 # Application Skeleton Contract Reference
 
 ## Canonical Files
-- `application-skeleton.md`: human-readable technical scaffold decision record.
-- `application-skeleton-map.json`: machine-readable mapping from Development Tree ownership to production code paths.
+- `application-skeleton.md`: human-readable technical scaffold decision record and materialization checklist.
+- `application-skeleton-map.json`: machine-readable mapping from Development Tree ownership to production code paths and materialization state.
 
 ## JSON Shape
 ```json
 {
   "schema": "codeai-application-skeleton-v1",
   "accepted": false,
+  "reviewState": "draft",
+  "materialized": false,
+  "materializationState": "not_started",
+  "workspaceRoot": ".",
+  "repoShape": "single-package | monorepo | other",
+  "packageManager": "npm | pnpm | yarn | uv | pip | cargo | other",
+  "stack": {
+    "languages": ["language-id"],
+    "frameworks": ["framework-id"],
+    "runtimes": ["runtime-id"]
+  },
   "sourceRoot": "src",
   "productParts": [
     {
@@ -34,6 +45,8 @@
       ]
     }
   ],
+  "materializedPaths": [],
+  "deferredMaterialization": [],
   "notes": []
 }
 ```
@@ -43,4 +56,9 @@
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.
 - `accepted` must stay `false` until the user explicitly accepts the skeleton.
-- Quality gate commands may be proposed in Markdown, but the dedicated Quality Gates stage owns the accepted command contract.
+- `materialized` must stay `false` until the workspace filesystem skeleton has actually been created.
+- `materializationState` must be one of `not_started`, `in_progress`, `materialized`, `failed`, or `outdated`.
+- `accepted: true` without `materialized: true` means the contract is accepted but downstream work is still blocked.
+- `materializedPaths` must list real workspace paths created or verified during post-acceptance materialization.
+- `deferredMaterialization` must explain any mapped folder or scaffold element that was intentionally not created.
+- Quality gate commands may be proposed in Markdown, but the dedicated Quality Gates stage owns the accepted command contract and gate integration.
