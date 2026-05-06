@@ -117,11 +117,29 @@ test("readDevelopmentTreeSnapshot extracts clusters and standalone modules from 
     assert.ok(part);
     assert.equal(part.id, "ui-shell");
     assert.equal(part.status, "materialized");
+    assert.equal(
+      part.workflowPath,
+      "development_tree/materialized/product-parts/ui-shell"
+    );
+    assert.equal(part.artifacts, undefined);
+    assert.equal(part.session, undefined);
     assert.equal(part.clusters.length, 1);
     assert.equal(part.clusters[0]?.id, "layout-cluster");
+    assert.equal(
+      part.clusters[0]?.workflowPath,
+      "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster"
+    );
+    assert.equal(part.clusters[0]?.artifacts, undefined);
+    assert.equal(part.clusters[0]?.session, undefined);
     assert.equal(part.clusters[0]?.modules.length, 2);
     assert.equal(part.clusters[0]?.modules[0]?.id, "main-area");
     assert.equal(part.clusters[0]?.modules[0]?.title, "Main Area");
+    assert.equal(
+      part.clusters[0]?.modules[0]?.workflowPath,
+      "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area"
+    );
+    assert.equal(part.clusters[0]?.modules[0]?.artifacts, undefined);
+    assert.equal(part.clusters[0]?.modules[0]?.session, undefined);
     assert.equal(part.clusters[0]?.modules[1]?.id, "sidebar");
     assert.equal(part.clusters[0]?.modules[1]?.title, "Sidebar");
     assert.equal(part.standaloneModules.length, 1);

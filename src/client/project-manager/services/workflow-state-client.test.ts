@@ -205,6 +205,55 @@ test("fetchWorkflowState preserves refreshed development tree metadata", async (
   );
 });
 
+test("fetchWorkflowState preserves preview workflow paths without draft metadata", async () => {
+  installFetchStub(
+    createWorkflowPayload({
+      parts: [
+        {
+          id: "ui-shell",
+          status: "materialized",
+          workflowPath: "development_tree/materialized/product-parts/ui-shell",
+          clusters: [
+            {
+              id: "layout",
+              workflowPath:
+                "development_tree/materialized/product-parts/ui-shell/clusters/layout",
+              modules: [
+                {
+                  id: "main-area",
+                  title: "Main Area",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
+                },
+              ],
+            },
+          ],
+          standaloneModules: [],
+        },
+      ],
+    })
+  );
+
+  const state = await fetchWorkflowState({
+    httpUrl: "http://127.0.0.1:8080",
+    workspaceSlug: "demo",
+  });
+  const part = state?.developmentTree?.parts[0];
+  const cluster = part?.clusters[0];
+  const module = cluster?.modules[0];
+
+  assert.equal(part?.workflowPath, "development_tree/materialized/product-parts/ui-shell");
+  assert.equal(part?.artifacts, undefined);
+  assert.equal(part?.session, undefined);
+  assert.equal(
+    cluster?.workflowPath,
+    "development_tree/materialized/product-parts/ui-shell/clusters/layout"
+  );
+  assert.equal(module?.workflowPath?.endsWith("/modules/main-area"), true);
+  assert.equal(module?.artifacts, undefined);
+  assert.equal(module?.session, undefined);
+});
+
 test("fetchWorkflowState stays compatible when readiness is absent or invalid", async () => {
   installFetchStub(
     createWorkflowPayload({

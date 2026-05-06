@@ -288,7 +288,7 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
     readonly moduleId?: string;
     readonly partId: string;
   }): Promise<{
-    readonly artifacts: readonly DevelopmentTreeNodeArtifact[];
+    readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
     readonly session?: DevelopmentTreeNodeSession;
     readonly workflowPath: string;
   }> => {
@@ -313,7 +313,7 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
       }
     }
     return {
-      artifacts,
+      artifacts: artifacts.length > 0 ? artifacts : undefined,
       workflowPath,
       session: resolveLatestNodeSession(chains, workflowPath),
     };
