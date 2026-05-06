@@ -6,7 +6,11 @@ export type WorkflowArtifactFileName =
   | "virtual-simulation.md"
   | "product-parts.index.md"
   | "product-part.md"
-  | "module-map.flow.json";
+  | "module-map.flow.json"
+  | "application-skeleton.md"
+  | "application-skeleton-map.json"
+  | "quality-gates.md"
+  | "quality-gates.json";
 
 export interface WorkflowArtifactPath {
   readonly absolutePath: string;
