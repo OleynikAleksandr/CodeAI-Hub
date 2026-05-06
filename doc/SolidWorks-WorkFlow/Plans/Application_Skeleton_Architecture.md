@@ -8,7 +8,7 @@
 
 ---
 
-> Follow-up refinement: `Application_Skeleton_Materialization_Prompt_Refactor.md` supersedes the earlier assumption that post-skeleton filesystem materialization should be owned by a separate downstream materialization layer. The current planning direction is: `Application Skeleton Agent` owns post-acceptance workspace skeleton materialization, and `Quality Gates Baseline Agent` owns post-acceptance gates integration.
+> Follow-up refinement: `Archive/Application_Skeleton_Materialization_Prompt_Refactor.md` supersedes the earlier assumption that post-skeleton filesystem materialization should be owned by a separate downstream materialization layer. The current planning direction is: `Application Skeleton Agent` owns post-acceptance workspace skeleton materialization, and `Quality Gates Baseline Agent` owns post-acceptance gates integration.
 
 ## 1. Problem
 

@@ -1,6 +1,6 @@
 # Application Skeleton Materialization Prompt Refactor
 
-**Status:** Draft for discussion.
+**Status:** Archived after release `1.2.170`.
 **Created:** 2026-05-06
 **Owner:** Oleksandr + Codex
 **Scope:** уточнить контракт шага `Application Skeleton`: агент должен сначала создать draft/accepted skeleton contract, а после explicit acceptance сам материализовать workspace skeleton и filesystem projection Development Tree. Отдельный materialization agent не вводится.
