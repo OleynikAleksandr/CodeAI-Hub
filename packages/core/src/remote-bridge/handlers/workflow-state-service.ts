@@ -22,14 +22,17 @@ import type {
   WorkflowState,
 } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
-import type {
-  WorkflowStageId,
-  WorkflowWatcherEvent,
-} from "../../workflow/watcher/watcher-types";
+import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
+import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import {
   type DiagramModulesProgressSnapshot,
   readDiagramModulesProgressSnapshot,
 } from "./diagram-modules-progress";
+import {
+  applyTechnicalRootProgressToState,
+  readQualityGatesProgressSnapshot,
+  resolveWorkflowBlockedStages,
+} from "./quality-gates-progress";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
@@ -168,15 +171,33 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
+    const applicationSkeletonProgressPromise =
+      readApplicationSkeletonProgressSnapshot({
+        workspaceRoot,
+        workspaceSlug: workspaceSlugResult.value,
+      });
+    const qualityGatesProgressPromise = readQualityGatesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: workspaceSlugResult.value,
+    });
 
     Promise.all([
       continuityPromise,
       descriptionPromise,
       lastActivePromise,
       diagramModulesProgressPromise,
+      applicationSkeletonProgressPromise,
+      qualityGatesProgressPromise,
     ])
       .then(
-        ([chains, descriptionSnapshot, lastActive, diagramModulesProgress]) => {
+        ([
+          chains,
+          descriptionSnapshot,
+          lastActive,
+          diagramModulesProgress,
+          applicationSkeletonProgress,
+          qualityGatesProgress,
+        ]) => {
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
             : null;
@@ -198,6 +219,13 @@ export class WorkflowStateService {
                 workspaceRoot,
                 workspaceSlug: workspaceSlugResult.value,
                 diagramModulesProgress,
+              })
+            )
+            .then((validatedState) =>
+              applyTechnicalRootProgressToState({
+                state: validatedState,
+                applicationSkeletonProgress,
+                qualityGatesProgress,
               })
             )
             .then((validatedState) =>
@@ -227,6 +255,7 @@ export class WorkflowStateService {
                         state: responseState,
                         description,
                         diagramModulesProgress,
+                        applicationSkeletonProgress,
                       }),
                     };
                     res.json({
@@ -236,6 +265,8 @@ export class WorkflowStateService {
                       lastActive: canonicalLastActive,
                       gating,
                       diagramModulesProgress,
+                      applicationSkeletonProgress,
+                      qualityGatesProgress,
                       developmentTree,
                     });
                   });
@@ -378,18 +409,6 @@ export class WorkflowStateService {
   }
 }
 
-const normalizeArtifactPath = (value: string): string =>
-  value.replace(/\\/g, "/").trim();
-
-const stageHasArtifact = (params: {
-  readonly state: WorkflowState;
-  readonly stage: WorkflowStageId;
-  readonly fileName: string;
-}): boolean =>
-  params.state.stages[params.stage].artifacts.some((artifact) =>
-    normalizeArtifactPath(artifact.path).endsWith(`/${params.fileName}`)
-  );
-
 const upsertStageArtifact = (params: {
   readonly artifacts: readonly WorkflowArtifactState[];
   readonly relativePath: string;
@@ -475,26 +494,5 @@ const hydrateDiagramModulesStateFromProgress = async (params: {
       nextStage.updatedAt.localeCompare(params.state.updatedAt) > 0
         ? nextStage.updatedAt
         : params.state.updatedAt,
-  };
-};
-
-const resolveWorkflowBlockedStages = (params: {
-  readonly state: WorkflowState;
-  readonly description: {
-    readonly finalPath?: string;
-    readonly draftPath?: string;
-  } | null;
-  readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
-}): Partial<Record<WorkflowStageId, boolean>> => {
-  const descriptionDone = Boolean(params.description?.finalPath);
-  const virtualSimulationArtifactAvailable = stageHasArtifact({
-    state: params.state,
-    stage: "virtual_simulation",
-    fileName: "virtual-simulation.md",
-  });
-  return {
-    description: false,
-    virtual_simulation: !descriptionDone,
-    diagram_modules: !virtualSimulationArtifactAvailable,
   };
 };
