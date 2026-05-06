@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.156] - 2026-05-06
+### Fixed
+- **Apple Native reasoning translation retries the transient first-call readiness failure.** If Apple Translation reports `TranslationError.Cause.notInstalled` during the first runtime call even though the language pair is installed, the Apple Native engine now performs a bounded retry instead of leaving the first `Thinking` bubble in source English.
+
+### Tests
+- **The retry guard is covered by translation package regression tests.** New Apple Native engine tests verify that transient `runtime_failure` / `notInstalled` is retried and that real language-pack failures are not retried.
+
 ## [1.2.155] - 2026-05-06
 ### Fixed
 - **Text-to-Speech now selects the Apple voice language from the bubble text.** When no explicit speech language is provided by the UI, the packaged Apple Speech helper detects the text language and resolves Russian Cyrillic text to `ru-RU` instead of falling back to the system/default English voice.
