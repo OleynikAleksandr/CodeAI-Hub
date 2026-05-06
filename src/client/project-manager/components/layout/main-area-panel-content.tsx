@@ -2,10 +2,6 @@ import { memo, useEffect, useMemo, useRef, useState } from "react";
 import type React from "react";
 import { DescriptionQuestionnairePanel } from "../description/description-questionnaire-panel";
 import { DescriptionStepHelp } from "../description/description-step-help";
-import { ApplicationSkeletonHelp } from "../application-skeleton/application-skeleton-help";
-import { ApplicationSkeletonPanel } from "../application-skeleton/application-skeleton-panel";
-import { DiagramModulesHelp } from "../diagram-modules/diagram-modules-help";
-import { DiagramModulesPanel } from "../diagram-modules/diagram-modules-panel";
 import { ProjectManagerSessionView } from "../sessions/project-manager-session-view";
 import { api } from "../../api";
 import {
@@ -20,8 +16,6 @@ import {
   type StageSessionIntent,
 } from "../shared/stage-confirmation-card";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { VirtualSimulationHelp } from "../virtual-simulation/virtual-simulation-help";
-import { VirtualSimulationPanel } from "../virtual-simulation/virtual-simulation-panel";
 import { useProjectManagerSettingsState } from "../settings/use-project-manager-settings-state";
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
@@ -34,13 +28,13 @@ import {
 import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import type { BranchNodeSelection } from "./main-area-utils";
 import {
-  APPLICATION_SKELETON_TOOL_LABEL,
-  VIRTUAL_SIMULATION_TOOL_LABEL,
-} from "./use-workflow-tool-select";
-import {
   resolveConfirmableStageFromTool,
   resolveStartupStageFromTool,
 } from "./workflow-stage-tool-routing";
+import {
+  renderWorkflowStageHelp,
+  renderWorkflowStagePanel,
+} from "./workflow-stage-panel-registry";
 
 type LocalizationSyncStatus = {
   readonly busy: boolean;
@@ -103,26 +97,6 @@ interface SelectedArtifact {
   readonly path: string;
   readonly label: string;
 }
-
-const renderStagePanel = (
-  Panel: React.FC<{
-    readonly workspacePath: string;
-    readonly workspaceSlug: string;
-    readonly refreshKey?: number;
-  }>,
-  activeWorkspacePath: string | undefined,
-  activeWorkspaceSlug: string | null,
-  refreshKey?: number
-): React.ReactNode =>
-  activeWorkspacePath && activeWorkspaceSlug ? (
-    <Panel
-      refreshKey={refreshKey}
-      workspacePath={activeWorkspacePath}
-      workspaceSlug={activeWorkspaceSlug}
-    />
-  ) : (
-    <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
-  );
 
 interface ArtifactContentProps {
   readonly activeTool: string | null;
@@ -289,15 +263,8 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
     if (activeTool === "Description") {
       return <DescriptionStepHelp />;
     }
-    if (activeTool === VIRTUAL_SIMULATION_TOOL_LABEL) {
-      return <VirtualSimulationHelp />;
-    }
-    if (activeTool === "Diagram Modules") {
-      return <DiagramModulesHelp />;
-    }
-    if (activeTool === APPLICATION_SKELETON_TOOL_LABEL) {
-      return <ApplicationSkeletonHelp />;
-    }
+    const stageHelp = renderWorkflowStageHelp(activeTool);
+    if (stageHelp) return stageHelp;
   }
   if (showSourceViewer && sourceArtifact) {
     if (!sourceArtifactAvailable) {
@@ -351,28 +318,13 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
       />
     );
   }
-  if (activeTool === VIRTUAL_SIMULATION_TOOL_LABEL) {
-    return renderStagePanel(
-      VirtualSimulationPanel,
-      activeWorkspacePath,
-      activeWorkspaceSlug
-    );
-  }
-  if (activeTool === "Diagram Modules") {
-    return renderStagePanel(
-      DiagramModulesPanel,
-      activeWorkspacePath,
-      activeWorkspaceSlug,
-      artifactRefreshKey
-    );
-  }
-  if (activeTool === APPLICATION_SKELETON_TOOL_LABEL) {
-    return renderStagePanel(
-      ApplicationSkeletonPanel,
-      activeWorkspacePath,
-      activeWorkspaceSlug
-    );
-  }
+  const stagePanel = renderWorkflowStagePanel({
+    activeTool,
+    refreshKey: artifactRefreshKey,
+    workspacePath: activeWorkspacePath,
+    workspaceSlug: activeWorkspaceSlug,
+  });
+  if (stagePanel) return stagePanel;
   if (activeTool === "Description" && hasDescriptionSession && selectedArtifact === null) {
     return <div className="pm-placeholder">Выберите артефакт Description в дереве workflow.</div>;
   }

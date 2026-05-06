@@ -16,7 +16,14 @@ const buildArtifactRepairPrompt = (params: {
 
 const resolveArtifactStage = (
   artifactPath: string
-): "virtual_simulation" | "diagram_modules" | "application_skeleton" => {
+):
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates" => {
+  if (artifactPath.includes("/quality_gates/")) {
+    return "quality_gates";
+  }
   if (artifactPath.includes("/application_skeleton/")) {
     return "application_skeleton";
   }

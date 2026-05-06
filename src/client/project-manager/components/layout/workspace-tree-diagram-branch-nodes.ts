@@ -247,6 +247,28 @@ export const buildDevelopmentTreeNodes = (
   return tree.parts.map((part) => buildPartTreeNode(part, baseDepth));
 };
 
+export const buildDevelopmentTreeLockedNodes = (
+  workflowState: WorkflowStateSnapshot | null,
+  baseDepth: number
+): readonly TreeNode[] => {
+  if (!workflowState || workflowState.developmentTree?.parts.length) {
+    return [];
+  }
+  if (workflowState.stages.quality_gates === "completed") {
+    return [];
+  }
+  return [
+    {
+      id: "devtree:locked",
+      label: "Locked until Quality Gates Baseline is accepted",
+      status: "blocked",
+      title:
+        "Development Tree sessions stay disabled until Application Skeleton and Quality Gates Baseline are accepted.",
+      visualDepth: baseDepth,
+    },
+  ];
+};
+
 export const buildDiagramModulesBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly diagramModulesArtifactAvailable: boolean;

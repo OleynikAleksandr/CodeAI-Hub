@@ -89,14 +89,9 @@ test("main-area panel content routes application skeleton artifacts and help", a
   const source = await readFile(SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes('from "../application-skeleton/application-skeleton-panel"'),
+    source.includes('from "./workflow-stage-panel-registry"'),
     true
   );
-  assert.equal(
-    source.includes('from "../application-skeleton/application-skeleton-help"'),
-    true
-  );
-  assert.equal(source.includes("APPLICATION_SKELETON_TOOL_LABEL"), true);
-  assert.equal(source.includes("<ApplicationSkeletonHelp />"), true);
-  assert.equal(source.includes("ApplicationSkeletonPanel"), true);
+  assert.equal(source.includes("renderWorkflowStageHelp(activeTool)"), true);
+  assert.equal(source.includes("renderWorkflowStagePanel({"), true);
 });

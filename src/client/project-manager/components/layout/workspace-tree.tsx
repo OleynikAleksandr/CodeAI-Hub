@@ -9,7 +9,10 @@ import {
 } from "../../services/workflow-state-client";
 import { useWorkflowStateSnapshot } from "../../services/workflow-state-store";
 import { useStagePanelSync } from "./use-stage-panel-sync";
-import { buildDevelopmentTreeNodes } from "./workspace-tree-diagram-branch-nodes";
+import {
+  buildDevelopmentTreeLockedNodes,
+  buildDevelopmentTreeNodes,
+} from "./workspace-tree-diagram-branch-nodes";
 import {
   useWorkspaceTreeAutoSelect,
   type SessionResumeIntent,
@@ -263,6 +266,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     selectedWorkspaceId && devTree?.parts.length
       ? buildDevelopmentTreeNodes(devTree, 0)
       : [];
+  const devTreeLockedNodes =
+    selectedWorkspaceId && devTreeNodes.length === 0
+      ? buildDevelopmentTreeLockedNodes(workflowState, 0)
+      : [];
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
 
   const renderItemClass = (node: TreeNode) =>
@@ -419,11 +426,12 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           })}
 
           {/* Development Tree — nested structure */}
-          {devTreeNodes.length > 0 && (
+          {(devTreeNodes.length > 0 || devTreeLockedNodes.length > 0) && (
             <>
               <li className="pm-tree__separator" key="section:development">
                 Development Tree
               </li>
+              {devTreeLockedNodes.map((node) => renderModuleRow(node))}
               {devTreeNodes.map((partNode) => renderPartNode(partNode))}
             </>
           )}
