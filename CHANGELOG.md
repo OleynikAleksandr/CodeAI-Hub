@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.163] - 2026-05-06
+### Fixed
+- **Application Skeleton no longer starts by blocking on stack-choice questions.** The bundled prompt now requires a discovery/research pass first, asks the agent to propose one recommended baseline when the inputs support it, and limits blocking questions to genuinely ambiguous decisions.
+
+### Tests
+- **Template coverage protects the discovery-first prompt rule.** The Application Skeleton bundled template test now asserts that the prompt forbids early blank-choice stack questions and requires recommended-baseline confirmation style.
+
 ## [1.2.162] - 2026-05-06
 ### Fixed
 - **Application Skeleton now owns post-acceptance filesystem materialization.** The bundled agent prompt separates draft contract creation from accepted skeleton materialization, writes explicit `materialized` state, and keeps Quality Gates blocked until the real scaffold exists.
