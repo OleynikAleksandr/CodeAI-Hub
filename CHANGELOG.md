@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.164] - 2026-05-06
+### Fixed
+- **Application Skeleton runtime prompt pack now matches the discovery-first stage direction.** The Project Manager prompt pack no longer injects legacy “ask stack questions first” phase guidance and keeps draft contract creation separate from post-acceptance filesystem materialization.
+- **Application Skeleton now receives complete upstream Diagram Modules context.** The first-turn prompt inlines Final Description, Virtual Simulation, the Product Parts index, and generated Product Part artifacts derived from the index.
+- **Application Skeleton path contracts now distinguish workflow artifacts from production code.** The bundled prompt/contract forbid `.codeai-hub/...` as `sourceRoot` and require cluster-owned modules under `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
+
+### Tests
+- **Prompt pack and bundled template tests cover the corrected behavior.** Targeted tests verify discovery-first runtime phase guidance, source artifact descriptor generation, and stricter source/module path contract wording.
+
 ## [1.2.163] - 2026-05-06
 ### Fixed
 - **Application Skeleton no longer starts by blocking on stack-choice questions.** The bundled prompt now requires a discovery/research pass first, asks the agent to propose one recommended baseline when the inputs support it, and limits blocking questions to genuinely ambiguous decisions.
