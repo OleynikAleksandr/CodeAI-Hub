@@ -107,11 +107,13 @@ test("Codex translation process profile owns independent startup args", () => {
     translationProfile.appServerArgs,
     workflowProfile.appServerArgs
   );
-  assert.deepEqual(
+  assert.notDeepEqual(
     translationProfile.appServerArgs,
     workflowProfile.appServerArgs
   );
+  assert.equal(workflowProfile.appServerArgs.includes("tool_search"), false);
   assert.equal(translationProfile.appServerArgs.includes("tool_search"), true);
+  assert.equal(translationProfile.appServerArgs.includes("browser_use"), true);
 });
 
 test("CodexAppServerTranslationService uses strict translation thread profile", async () => {

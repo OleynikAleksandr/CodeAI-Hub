@@ -133,7 +133,7 @@ const buildCodexWorkflowProfile = (
     compatibleModelIds: CODEX_WORKFLOW_MODELS,
     processProfile: {
       processProfileKey: `codex:workflow-${tree}`,
-      toolProfileKey: "codex:workflow-documentation-tools",
+      toolProfileKey: "codex:workflow-research-tools",
     },
     selector: { ...selector, tree },
     sessionProfile: {

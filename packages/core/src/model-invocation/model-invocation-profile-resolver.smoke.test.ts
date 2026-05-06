@@ -35,6 +35,10 @@ test("ModelInvocationProfileResolver resolves documentation workflow step profil
     "codex:workflow-documentation"
   );
   assert.equal(
+    profile.processProfile.toolProfileKey,
+    "codex:workflow-research-tools"
+  );
+  assert.equal(
     profile.sessionProfile.sessionProfileKey,
     "codex:workflow-documentation:virtual_simulation"
   );

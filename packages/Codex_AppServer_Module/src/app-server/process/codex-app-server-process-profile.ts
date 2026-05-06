@@ -1,10 +1,13 @@
 export const CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY =
   "codex:workflow-documentation";
+export const CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_PROCESS_PROFILE_KEY =
+  "codex:workflow-documentation-restricted";
 export const CODEX_TRANSLATION_PROCESS_PROFILE_KEY = "codex:translation";
 
 export type CodexAppServerProcessProfileKey =
   | typeof CODEX_TRANSLATION_PROCESS_PROFILE_KEY
-  | typeof CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY;
+  | typeof CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY
+  | typeof CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_PROCESS_PROFILE_KEY;
 
 export interface CodexAppServerProcessProfile {
   readonly appServerArgs: readonly string[];
@@ -12,6 +15,19 @@ export interface CodexAppServerProcessProfile {
 }
 
 export const CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS = [
+  "app-server",
+  "--disable",
+  "multi_agent",
+  "--disable",
+  "computer_use",
+  "--disable",
+  "image_generation",
+  "--disable",
+  "plugins",
+  "--disable",
+  "apps",
+] as const;
+const CODEAI_CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_APP_SERVER_ARGS = [
   "app-server",
   "--disable",
   "multi_agent",
@@ -31,7 +47,7 @@ export const CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS = [
   "tool_search",
 ] as const;
 const CODEAI_CODEX_TRANSLATION_APP_SERVER_ARGS = [
-  ...CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS,
+  ...CODEAI_CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_APP_SERVER_ARGS,
 ] as const;
 
 const CODEX_APP_SERVER_PROCESS_PROFILES: ReadonlyMap<
@@ -43,6 +59,14 @@ const CODEX_APP_SERVER_PROCESS_PROFILES: ReadonlyMap<
     {
       appServerArgs: CODEAI_CODEX_WORKFLOW_DOCUMENTATION_APP_SERVER_ARGS,
       key: CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+    },
+  ],
+  [
+    CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_PROCESS_PROFILE_KEY,
+    {
+      appServerArgs:
+        CODEAI_CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_APP_SERVER_ARGS,
+      key: CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_PROCESS_PROFILE_KEY,
     },
   ],
   [

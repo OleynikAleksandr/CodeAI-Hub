@@ -15,6 +15,7 @@ import { materializeCodexProviderHomeSummaryConfig } from "./codex-provider-home
 export {
   CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
   CODEX_WORKFLOW_DOCUMENTATION_PROCESS_PROFILE_KEY,
+  CODEX_WORKFLOW_DOCUMENTATION_RESTRICTED_PROCESS_PROFILE_KEY,
   resolveCodexAppServerProcessProfile,
 } from "./codex-app-server-process-profile";
 
