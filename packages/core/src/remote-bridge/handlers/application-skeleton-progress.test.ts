@@ -183,7 +183,7 @@ test("materialized application skeleton completes stage and unlocks quality gate
         productParts: [
           {
             codePath: "product-parts/project-manager",
-            id: "project-manager",
+            partId: "project-manager",
           },
         ],
       },
@@ -262,7 +262,7 @@ test("observed filesystem materialization fails when markdown remains draft", as
         productParts: [
           {
             codePath: "product-parts/project-manager",
-            id: "project-manager",
+            partId: "project-manager",
           },
         ],
       },
@@ -336,7 +336,7 @@ test("observed filesystem materialization fails when json lifecycle remains unma
         productParts: [
           {
             codePath: "product-parts/project-manager",
-            id: "project-manager",
+            partId: "project-manager",
           },
         ],
       },
@@ -383,7 +383,7 @@ test("materialized application skeleton fails when declared paths are missing", 
         productParts: [
           {
             codePath: "product-parts/project-manager",
-            id: "project-manager",
+            partId: "project-manager",
           },
         ],
       },
@@ -433,11 +433,11 @@ test("materialized application skeleton fails when standalone module paths are m
         productParts: [
           {
             codePath: "product-parts/project-manager",
-            id: "project-manager",
+            partId: "project-manager",
             standaloneModules: [
               {
                 codePath: "product-parts/project-manager/modules/settings",
-                id: "settings",
+                moduleId: "settings",
               },
             ],
           },

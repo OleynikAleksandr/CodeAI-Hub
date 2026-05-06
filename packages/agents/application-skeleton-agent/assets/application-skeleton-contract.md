@@ -23,15 +23,15 @@
   "sourceRoot": "product-parts",
   "productParts": [
     {
-      "id": "product-part-id",
+      "partId": "product-part-id",
       "codePath": "product-parts/product-part-id",
       "clusters": [
         {
-          "id": "cluster-id",
+          "clusterId": "cluster-id",
           "codePath": "product-parts/product-part-id/clusters/cluster-id",
           "modules": [
             {
-              "id": "module-id",
+              "moduleId": "module-id",
               "codePath": "product-parts/product-part-id/clusters/cluster-id/modules/module-id"
             }
           ]
@@ -39,7 +39,7 @@
       ],
       "standaloneModules": [
         {
-          "id": "module-id",
+          "moduleId": "module-id",
           "codePath": "product-parts/product-part-id/modules/module-id"
         }
       ]
@@ -55,6 +55,7 @@
 - `productParts` must be an array.
 - `reviewState` must be `draft`, `accepted`, or `materialized`; it must not be `null`.
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` must be arrays. Do not replace them with scalar fields such as `stack.language`, `stack.framework`, or `stack.runtime`.
+- Product Part entries must use `partId`, Cluster entries must use `clusterId`, and Module entries must use `moduleId`. Do not replace these canonical fields with a generic `id`.
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.
 - `sourceRoot` must point to the production source/scaffold root and must not point under `.codeai-hub/`.

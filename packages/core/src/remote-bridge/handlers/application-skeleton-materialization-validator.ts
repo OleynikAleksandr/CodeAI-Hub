@@ -142,6 +142,80 @@ const collectCodePaths = (
   );
 };
 
+const describeMappedNode = (
+  node: Record<string, unknown>,
+  fallback: string
+): string =>
+  typeof node.codePath === "string" && node.codePath.trim().length > 0
+    ? node.codePath.trim()
+    : fallback;
+
+const hasCanonicalId = (node: Record<string, unknown>, key: string): boolean =>
+  typeof node[key] === "string" && node[key].trim().length > 0;
+
+const validateModuleIdentifiers = (
+  modules: readonly unknown[],
+  parentLabel: string
+): readonly string[] =>
+  modules.flatMap((module, moduleIndex) => {
+    if (!isRecord(module) || hasCanonicalId(module, "moduleId")) {
+      return [];
+    }
+    return [
+      `application skeleton Module is missing moduleId: ${describeMappedNode(
+        module,
+        `${parentLabel}.modules[${moduleIndex}]`
+      )}`,
+    ];
+  });
+
+const validateIdentifierFields = (
+  value: Record<string, unknown> | null
+): readonly string[] => {
+  if (!Array.isArray(value?.productParts)) {
+    return [];
+  }
+  const errors: string[] = [];
+  value.productParts.forEach((part, partIndex) => {
+    if (!isRecord(part)) {
+      return;
+    }
+    const partLabel = describeMappedNode(part, `productParts[${partIndex}]`);
+    if (!hasCanonicalId(part, "partId")) {
+      errors.push(
+        `application skeleton Product Part is missing partId: ${partLabel}`
+      );
+    }
+    if (Array.isArray(part.clusters)) {
+      part.clusters.forEach((cluster, clusterIndex) => {
+        if (!isRecord(cluster)) {
+          return;
+        }
+        const clusterLabel = describeMappedNode(
+          cluster,
+          `${partLabel}.clusters[${clusterIndex}]`
+        );
+        if (!hasCanonicalId(cluster, "clusterId")) {
+          errors.push(
+            `application skeleton Cluster is missing clusterId: ${clusterLabel}`
+          );
+        }
+        if (Array.isArray(cluster.modules)) {
+          errors.push(
+            ...validateModuleIdentifiers(cluster.modules, clusterLabel)
+          );
+        }
+      });
+    }
+    if (Array.isArray(part.standaloneModules)) {
+      errors.push(
+        ...validateModuleIdentifiers(part.standaloneModules, partLabel)
+      );
+    }
+  });
+  return errors;
+};
+
 const relativePathExists = async (
   workspaceRoot: string,
   relativePath: string
@@ -236,6 +310,7 @@ export const validateApplicationSkeletonMaterialization = async (params: {
   }
   const validationErrors = [
     ...validateMapLifecycle({ mapJson: params.mapJson, sourceRoot }),
+    ...validateIdentifierFields(params.mapJson),
     ...(await validateDeclaredPaths({
       codePaths,
       materializedPaths,
