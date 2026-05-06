@@ -17,7 +17,9 @@ type StartWorkflowStepParams = {
 
 type ContinuityStageId =
   | "virtual_simulation"
-  | "diagram_modules";
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates";
 
 type WorkflowStateGetter = (
   workspaceSlug: string,
@@ -40,6 +42,16 @@ const readDiagramModulesSubstep = (
   }
   const substep = progress.substep;
   return typeof substep === "string" ? substep : null;
+};
+
+const readStageBlocked = (
+  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
+  stage: ContinuityStageId
+): boolean => {
+  const blocked = state?.gating?.blocked as
+    | Readonly<Record<string, boolean>>
+    | undefined;
+  return blocked?.[stage] ?? true;
 };
 
 const resolveExistingStageSessionIdForExplicitStart = (options: {
@@ -132,8 +144,7 @@ export class WorkflowStepStartService {
     }
 
     const vsArtifactPath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-    const modulesBlocked = state?.gating?.blocked?.diagram_modules ?? true;
-    if (modulesBlocked) {
+    if (readStageBlocked(state, "diagram_modules")) {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
     const progressSubstep = readDiagramModulesSubstep(state);
@@ -152,6 +163,66 @@ export class WorkflowStepStartService {
       workspacePath: params.workspacePath,
       questionnairePath,
       stage: "diagram_modules",
+      providerId: params.providerId,
+      onSessionCreated: params.onSessionCreated,
+    });
+  }
+
+  async startApplicationSkeleton(params: StartWorkflowStepParams): Promise<string> {
+    const state = await this.getWorkflowState(
+      params.workspaceSlug,
+      params.workspacePath
+    );
+    const existingSessionId = resolveExistingStageSessionIdForExplicitStart({
+      state,
+      stage: "application_skeleton",
+    });
+    if (existingSessionId) {
+      params.onSessionCreated?.(existingSessionId);
+      return existingSessionId;
+    }
+    if (readStageBlocked(state, "application_skeleton")) {
+      throw new Error("Missing completed Diagram Modules. Complete Diagram Modules first.");
+    }
+    const settingsPayload = this.getSettingsPayload();
+    return this.submitService.submitQuestionnaire({
+      artifactLanguage: resolveArtifactsForTheUserLanguage(settingsPayload),
+      chatLanguage: resolveWorkflowChatLanguage(settingsPayload),
+      workspaceName: params.workspaceName,
+      workspaceSlug: params.workspaceSlug,
+      workspacePath: params.workspacePath,
+      questionnairePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
+      stage: "application_skeleton",
+      providerId: params.providerId,
+      onSessionCreated: params.onSessionCreated,
+    });
+  }
+
+  async startQualityGates(params: StartWorkflowStepParams): Promise<string> {
+    const state = await this.getWorkflowState(
+      params.workspaceSlug,
+      params.workspacePath
+    );
+    const existingSessionId = resolveExistingStageSessionIdForExplicitStart({
+      state,
+      stage: "quality_gates",
+    });
+    if (existingSessionId) {
+      params.onSessionCreated?.(existingSessionId);
+      return existingSessionId;
+    }
+    if (readStageBlocked(state, "quality_gates")) {
+      throw new Error("Missing accepted Application Skeleton. Complete Application Skeleton first.");
+    }
+    const settingsPayload = this.getSettingsPayload();
+    return this.submitService.submitQuestionnaire({
+      artifactLanguage: resolveArtifactsForTheUserLanguage(settingsPayload),
+      chatLanguage: resolveWorkflowChatLanguage(settingsPayload),
+      workspaceName: params.workspaceName,
+      workspaceSlug: params.workspaceSlug,
+      workspacePath: params.workspacePath,
+      questionnairePath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+      stage: "quality_gates",
       providerId: params.providerId,
       onSessionCreated: params.onSessionCreated,
     });

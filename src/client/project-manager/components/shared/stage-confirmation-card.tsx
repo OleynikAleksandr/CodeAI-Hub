@@ -7,150 +7,50 @@ import type { WorkflowStateSnapshot } from "../../services/workflow-state-client
 import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { PROVIDER_TINT_TOKENS } from "./stage-confirmation-card-provider-tint";
+import {
+  STAGE_LABELS,
+  UPSTREAM_STAGE_LABELS,
+  type ConfirmableStageId,
+  type StageSessionIntent,
+  hasExistingStageSession,
+  resolveInheritedStageProviderId,
+  resolveStageSessionIntent,
+  resolveUpstreamArtifactInfo,
+} from "./stage-confirmation-card-workflow";
 
-type ConfirmableStageId = "virtual_simulation" | "diagram_modules";
+export { hasExistingStageSession, resolveStageSessionIntent };
+export type { ConfirmableStageId, StageSessionIntent };
 
 const UI_LABELS_CATEGORY = "ui_interface";
 const UI_HELPER_TEXT_CATEGORY = "user_guidance";
 const SYSTEM_FEEDBACK_CATEGORY = "system_feedback";
-
-const STAGE_LABELS: Record<ConfirmableStageId, string> = {
-  virtual_simulation: "Virtual Simulation",
-  diagram_modules: "Diagram Modules",
+const MUTED_TEXT_STYLE: React.CSSProperties = {
+  color: "var(--pm-text-muted)",
+  fontSize: 13,
 };
-
-const UPSTREAM_STAGE_LABELS: Record<ConfirmableStageId, string> = {
-  virtual_simulation: "Description",
-  diagram_modules: "Virtual Simulation",
+const ARTIFACT_BOX_STYLE: React.CSSProperties = {
+  background: "rgba(255,255,255,0.04)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: 8,
+  fontFamily: "monospace",
+  fontSize: 13,
+  padding: "8px 12px",
 };
-
-type UpstreamArtifactInfo = {
-  readonly fileName: string;
-  readonly available: boolean;
+const PROVIDER_LABEL_STYLE: React.CSSProperties = {
+  color: "var(--pm-text-muted)",
+  fontSize: 11,
+  fontWeight: 600,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+};
+const HIDDEN_INPUT_STYLE: React.CSSProperties = {
+  opacity: 0,
+  pointerEvents: "none",
+  position: "absolute",
 };
 
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
-
-const resolveUpstreamArtifactInfo = (
-  stage: ConfirmableStageId,
-  snapshot: WorkflowStateSnapshot
-): UpstreamArtifactInfo => {
-  if (stage === "virtual_simulation") {
-    const finalPath = snapshot.description?.finalPath;
-    return {
-      fileName: "Final_Description.md",
-      available: typeof finalPath === "string" && finalPath.length > 0,
-    };
-  }
-  const vsStageStatus = snapshot.stages.virtual_simulation;
-  const hasVsArtifact =
-    vsStageStatus === "in_progress" || vsStageStatus === "completed";
-  const blocked = snapshot.gating.blocked.diagram_modules ?? true;
-  return {
-    fileName: "virtual-simulation.md",
-    available: hasVsArtifact || !blocked,
-  };
-};
-
-const resolveLatestChainSegment = (
-  snapshot: WorkflowStateSnapshot,
-  stage: string
-): { readonly providerId: string; readonly providerSessionId: string } | null => {
-  const chains = snapshot.continuity?.chains ?? [];
-  let best:
-    | {
-        readonly updatedAt: string;
-        readonly providerId: string;
-        readonly providerSessionId: string;
-      }
-    | null = null;
-  for (const chain of chains) {
-    if (chain.stage !== stage) continue;
-    const last = chain.segments.at(-1);
-    if (!last) continue;
-    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
-      best = {
-        updatedAt: chain.updatedAt,
-        providerId: last.providerId,
-        providerSessionId: last.providerSessionId,
-      };
-    }
-  }
-  return best;
-};
-
-const resolveInheritedStageProviderId = (
-  stage: ConfirmableStageId,
-  snapshot: WorkflowStateSnapshot
-): ProviderStackId | null => {
-  const descriptionProviderId = snapshot.description?.primarySession?.providerId;
-  if (stage === "virtual_simulation") {
-    return isProviderStackId(descriptionProviderId)
-      ? descriptionProviderId
-      : null;
-  }
-
-  const virtualSimulationProviderId =
-    resolveLatestChainSegment(snapshot, "virtual_simulation")?.providerId;
-  if (isProviderStackId(virtualSimulationProviderId)) {
-    return virtualSimulationProviderId;
-  }
-
-  return isProviderStackId(descriptionProviderId)
-    ? descriptionProviderId
-    : null;
-};
-
-export const hasExistingStageSession = (
-  stage: ConfirmableStageId,
-  snapshot: WorkflowStateSnapshot
-): boolean => resolveLatestChainSegment(snapshot, stage) !== null;
-
-export type StageSessionIntent = {
-  readonly providerId: string;
-  readonly providerSessionId: string | null;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-  readonly initiativeSlug: string | null;
-  readonly stage: string | null;
-  readonly sessionKind: "collector" | null;
-  readonly runSlug: string | null;
-};
-
-export const resolveStageSessionIntent = (
-  stage: string,
-  snapshot: WorkflowStateSnapshot,
-  workspacePath: string,
-  workspaceSlug: string
-): StageSessionIntent | null => {
-  if (stage === "description") {
-    const session = snapshot.description?.primarySession;
-    if (!session) return null;
-    return {
-      providerId: session.providerId,
-      providerSessionId: session.providerSessionId,
-      workspacePath,
-      workspaceSlug,
-      initiativeSlug: workspaceSlug,
-      stage: "description",
-      sessionKind: "collector",
-      runSlug: null,
-    };
-  }
-  const segment = resolveLatestChainSegment(snapshot, stage);
-  if (!segment) return null;
-  return {
-    providerId: segment.providerId,
-    providerSessionId: segment.providerSessionId,
-    workspacePath,
-    workspaceSlug,
-    initiativeSlug: workspaceSlug,
-    stage,
-    sessionKind: "collector",
-    runSlug: null,
-  };
-};
 
 const startService = new WorkflowStepStartService();
 
@@ -300,20 +200,20 @@ export const StageConfirmationCard: React.FC<{
         }, switchDelay);
       };
 
+      const startParams = {
+        workspacePath,
+        workspaceSlug,
+        providerId: selectedProviderId,
+        onSessionCreated,
+      };
       if (stage === "virtual_simulation") {
-        await startService.startVirtualSimulation({
-          workspacePath,
-          workspaceSlug,
-          providerId: selectedProviderId,
-          onSessionCreated,
-        });
+        await startService.startVirtualSimulation(startParams);
+      } else if (stage === "diagram_modules") {
+        await startService.startDiagramModules(startParams);
+      } else if (stage === "application_skeleton") {
+        await startService.startApplicationSkeleton(startParams);
       } else {
-        await startService.startDiagramModules({
-          workspacePath,
-          workspaceSlug,
-          providerId: selectedProviderId,
-          onSessionCreated,
-        });
+        await startService.startQualityGates(startParams);
       }
     })()
       .catch((error: unknown) => {
@@ -349,16 +249,7 @@ export const StageConfirmationCard: React.FC<{
 
       <div style={{ display: "grid", gap: 12 }}>
         <div>{inputLabel}</div>
-        <div
-          style={{
-            padding: "8px 12px",
-            background: "rgba(255,255,255,0.04)",
-            borderRadius: 8,
-            border: "1px solid rgba(255,255,255,0.08)",
-            fontFamily: "monospace",
-            fontSize: 13,
-          }}
-        >
+        <div style={ARTIFACT_BOX_STYLE}>
           <code>{upstream.fileName}</code>
           {upstream.available ? (
             <span
@@ -374,27 +265,13 @@ export const StageConfirmationCard: React.FC<{
         </div>
 
         {blocked ? (
-          <div style={{ color: "var(--pm-text-muted)", fontSize: 13 }}>
-            {blockedText}
-          </div>
+          <div style={MUTED_TEXT_STYLE}>{blockedText}</div>
         ) : (
-          <div style={{ color: "var(--pm-text-muted)", fontSize: 13 }}>
-            {confirmText}
-          </div>
+          <div style={MUTED_TEXT_STYLE}>{confirmText}</div>
         )}
 
         <div style={{ display: "grid", gap: 8 }}>
-          <div
-            style={{
-              color: "var(--pm-text-muted)",
-              fontSize: 11,
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
-            {providerLabelText}
-          </div>
+          <div style={PROVIDER_LABEL_STYLE}>{providerLabelText}</div>
           <div style={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: 8 }}>
             {providers.map((provider) => {
               const isSelected = provider.id === selectedProviderId;
@@ -432,11 +309,7 @@ export const StageConfirmationCard: React.FC<{
                     disabled={isDisabled}
                     name={`pm-stage-provider-${stage}`}
                     onChange={() => setSelectedProviderId(provider.id)}
-                    style={{
-                      opacity: 0,
-                      pointerEvents: "none",
-                      position: "absolute",
-                    }}
+                    style={HIDDEN_INPUT_STYLE}
                     type="radio"
                   />
                   <span style={{ fontSize: 13, fontWeight: 600 }}>
@@ -487,9 +360,7 @@ export const StageConfirmationCard: React.FC<{
           </div>
         ) : null}
         {!hasConnectedProviders && !blocked ? (
-          <div
-            style={{ color: "var(--pm-text-muted)", fontSize: 13, marginTop: 4 }}
-          >
+          <div style={{ ...MUTED_TEXT_STYLE, marginTop: 4 }}>
             {noProviderText}
           </div>
         ) : null}

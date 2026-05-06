@@ -1,6 +1,12 @@
 import type { ProviderStackDescriptor, ProviderStackId } from "../../../types/provider";
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
+type WorkflowProviderStageId =
+  | "virtual_simulation"
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates";
+
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
 
@@ -16,7 +22,7 @@ const resolveProviderIdFromDescription = (
 
 const resolveProviderIdFromLatestStageSegment = (
   state: WorkflowStateSnapshot | null,
-  stage: "virtual_simulation" | "diagram_modules"
+  stage: WorkflowProviderStageId
 ): ProviderStackId | null => {
   const chains = state?.continuity?.chains ?? [];
   let best:
@@ -44,7 +50,7 @@ const resolveProviderIdFromLatestStageSegment = (
 
 const resolveInheritedProviderId = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
-  readonly stage?: "virtual_simulation" | "diagram_modules";
+  readonly stage?: WorkflowProviderStageId;
 }): ProviderStackId | null => {
   if (options.stage === "virtual_simulation") {
     return resolveProviderIdFromDescription(options.workflowState);
@@ -55,6 +61,30 @@ const resolveInheritedProviderId = (options: {
         options.workflowState,
         "virtual_simulation"
       ) ?? resolveProviderIdFromDescription(options.workflowState)
+    );
+  }
+  if (options.stage === "application_skeleton") {
+    return (
+      resolveProviderIdFromLatestStageSegment(options.workflowState, "diagram_modules") ??
+      resolveProviderIdFromLatestStageSegment(
+        options.workflowState,
+        "virtual_simulation"
+      ) ??
+      resolveProviderIdFromDescription(options.workflowState)
+    );
+  }
+  if (options.stage === "quality_gates") {
+    return (
+      resolveProviderIdFromLatestStageSegment(
+        options.workflowState,
+        "application_skeleton"
+      ) ??
+      resolveProviderIdFromLatestStageSegment(options.workflowState, "diagram_modules") ??
+      resolveProviderIdFromLatestStageSegment(
+        options.workflowState,
+        "virtual_simulation"
+      ) ??
+      resolveProviderIdFromDescription(options.workflowState)
     );
   }
   return resolveProviderIdFromDescription(options.workflowState);
@@ -68,7 +98,7 @@ const resolveFirstConnectedProviderId = (
 export const resolvePreferredWorkflowProviderId = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly providers: readonly ProviderStackDescriptor[];
-  readonly stage?: "virtual_simulation" | "diagram_modules";
+  readonly stage?: WorkflowProviderStageId;
 }): ProviderStackId | null => {
   const providerIds = new Set(options.providers.map((provider) => provider.id));
   const fromState = resolveInheritedProviderId(options);

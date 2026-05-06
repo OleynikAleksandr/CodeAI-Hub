@@ -81,6 +81,14 @@ const DIAGRAM_MODULES_TEMPLATE_PATHS: WorkflowContractPaths = {
   promptAppendix: DIAGRAM_MODULES_PROMPT_APPENDIX_PATHS,
 };
 
+const APPLICATION_SKELETON_TEMPLATE_PATHS: WorkflowContractPaths = {
+  prompt: "application_skeleton/application-skeleton-prompt.md",
+};
+
+const QUALITY_GATES_TEMPLATE_PATHS: WorkflowContractPaths = {
+  prompt: "quality_gates/quality-gates-prompt.md",
+};
+
 const readTextFile = async (filePath: string): Promise<string | null> => {
   try {
     return await readFile(filePath, "utf8");
@@ -372,3 +380,11 @@ export const buildVirtualSimulationContract =
 export const buildDiagramModulesContract =
   async (): Promise<WorkflowContractPayload | null> =>
     buildWorkflowContract(DIAGRAM_MODULES_TEMPLATE_PATHS);
+
+export const buildApplicationSkeletonContract =
+  async (): Promise<WorkflowContractPayload | null> =>
+    buildWorkflowContract(APPLICATION_SKELETON_TEMPLATE_PATHS);
+
+export const buildQualityGatesContract =
+  async (): Promise<WorkflowContractPayload | null> =>
+    buildWorkflowContract(QUALITY_GATES_TEMPLATE_PATHS);

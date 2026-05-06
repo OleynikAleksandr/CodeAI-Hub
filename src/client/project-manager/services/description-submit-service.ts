@@ -26,6 +26,8 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
   description: "/api/v1/orchestrator/description-contract",
   virtual_simulation: "/api/v1/orchestrator/virtual-simulation-contract",
   diagram_modules: "/api/v1/orchestrator/diagram-modules-contract",
+  application_skeleton: "/api/v1/orchestrator/application-skeleton-contract",
+  quality_gates: "/api/v1/orchestrator/quality-gates-contract",
 } as const;
 const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
   "Build the artifact from the questionnaire and template. " +
@@ -290,33 +292,45 @@ const readWorkflowSourceArtifacts = async (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }): Promise<readonly WorkflowSourceArtifactPayload[]> => {
-  const sourceDescriptors =
-    params.stage === "description"
-      ? [
-          {
-            label: "Questionnaire",
-            relativePath: params.questionnairePath,
-          },
-        ]
-      : params.stage === "virtual_simulation"
-        ? [
-            {
-              label: "Final_Description.md",
-            relativePath: params.questionnairePath,
-          },
-        ]
-      : [
-          {
-            label: "Final_Description.md",
-            relativePath: `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`,
-          },
-          {
-            label: "virtual-simulation.md",
-            relativePath: `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`,
-          },
-        ];
+  const sourceDescriptors = {
+    description: [
+      { label: "Questionnaire", relativePath: params.questionnairePath },
+    ],
+    virtual_simulation: [
+      { label: "Final_Description.md", relativePath: params.questionnairePath },
+    ],
+    diagram_modules: [
+      {
+        label: "Final_Description.md",
+        relativePath: `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`,
+      },
+      {
+        label: "virtual-simulation.md",
+        relativePath: `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      },
+    ],
+    application_skeleton: [
+      {
+        label: "product-parts.index.md",
+        relativePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
+      },
+    ],
+    quality_gates: [
+      {
+        label: "application-skeleton.md",
+        relativePath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton.md`,
+      },
+      {
+        label: "application-skeleton-map.json",
+        relativePath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+      },
+    ],
+  } satisfies Record<
+    WorkflowStageId,
+    readonly { readonly label: string; readonly relativePath: string }[]
+  >;
   const sourceArtifacts = await Promise.all(
-    sourceDescriptors.map((descriptor) =>
+    sourceDescriptors[params.stage].map((descriptor) =>
       readWorkflowSourceArtifact({
         ...descriptor,
         workspacePath: params.workspacePath,

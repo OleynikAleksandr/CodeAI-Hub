@@ -11,8 +11,10 @@ import {
   handleWorkflowContract,
 } from "./http-api-system-routes";
 import {
+  buildApplicationSkeletonContract,
   buildDescriptionContract,
   buildDiagramModulesContract,
+  buildQualityGatesContract,
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
@@ -124,6 +126,28 @@ export class HttpApiRouter {
           res,
           buildDiagramModulesContract,
           "Diagram modules"
+        );
+      }
+    );
+    app.get(
+      "/api/v1/orchestrator/application-skeleton-contract",
+      async (_req: Request, res: Response) => {
+        await handleWorkflowContract(
+          this.deps,
+          res,
+          buildApplicationSkeletonContract,
+          "Application skeleton"
+        );
+      }
+    );
+    app.get(
+      "/api/v1/orchestrator/quality-gates-contract",
+      async (_req: Request, res: Response) => {
+        await handleWorkflowContract(
+          this.deps,
+          res,
+          buildQualityGatesContract,
+          "Quality gates"
         );
       }
     );
