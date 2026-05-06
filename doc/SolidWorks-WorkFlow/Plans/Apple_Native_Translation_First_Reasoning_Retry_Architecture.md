@@ -64,6 +64,15 @@ Manual evidence:
 - `npm exec -- ultracite check packages/translation/src/apple-native-translation-engine.ts packages/translation/src/apple-native-translation-engine.test.ts` passed.
 - Commit hooks for `fix: retry transient apple native translation failures` passed architecture, lint, knip, and staged formatting gates.
 
+### 3.2 Release Evidence
+
+2026-05-06 release candidate `1.2.156`:
+
+- `./scripts/build-all.sh` completed for providers, Core, UI bundles, and CEF launcher.
+- Runtime tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.156.tar.bz2`, `codex-module-1.2.156.tar.bz2`, `gemini-module-1.2.156.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.156.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.156.tar.bz2`, `vscode-webview-1.2.156.tar.bz2`, `project-manager-1.2.156.tar.bz2`.
+- `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
+- VSIX produced at repository root: `codeai-hub-1.2.156.vsix` (`3.1M`).
+
 ## 4. Documentation Disposition
 
 This is a hotfix planning document. After implementation and acceptance, archive it under `doc/SolidWorks-WorkFlow/Plans/Archive/` and keep stable behavior in `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`.
