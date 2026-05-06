@@ -45,3 +45,22 @@ The real project skeleton may be created in the workspace only after the stack a
 - `accepted` or `acceptance.accepted` set to `true` only after explicit user acceptance.
 
 Mapped code paths must be safe relative workspace paths.
+
+## Completion Boundary
+Your work ends after the Application Skeleton contract is accepted.
+
+The stage is complete only when:
+- `application-skeleton.md` is written;
+- `application-skeleton-map.json` is valid JSON;
+- the user explicitly confirms the skeleton contract;
+- `application-skeleton-map.json` contains `accepted: true` or `acceptance.accepted: true`;
+- the acceptance checklist in `application-skeleton.md` is marked complete.
+
+After acceptance:
+- do not propose materialization;
+- do not create root workspace files;
+- do not create package manifests, `src/` folders, configs, or Product Part / Cluster / Module folders;
+- do not continue into Quality Gates Baseline inside this session.
+
+Final response after acceptance:
+`Application Skeleton contract accepted. This stage is complete. Please start the next workflow step: Quality Gates Baseline.`
