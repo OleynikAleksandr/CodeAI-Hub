@@ -26,6 +26,14 @@ const isAccepted = (value: Record<string, unknown>): boolean => {
   return isRecord(acceptance) && acceptance.accepted === true;
 };
 
+const isMaterialized = (value: Record<string, unknown>): boolean => {
+  if (value.materialized === true) {
+    return true;
+  }
+  const materialization = value.materialization;
+  return isRecord(materialization) && materialization.materialized === true;
+};
+
 const normalizeSafeRelativePath = (value: unknown): string | null => {
   if (typeof value !== "string") {
     return null;
@@ -100,6 +108,12 @@ export class DevelopmentTreeProductionPathApplier {
       return {
         ...EMPTY_RESULT,
         skippedReason: "application_skeleton_not_accepted",
+      };
+    }
+    if (!isMaterialized(skeletonMap)) {
+      return {
+        ...EMPTY_RESULT,
+        skippedReason: "application_skeleton_not_materialized",
       };
     }
     const paths = new Set<string>();

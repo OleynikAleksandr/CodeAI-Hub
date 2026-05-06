@@ -33,6 +33,8 @@ const writeSkeletonMap = async (workspaceRoot: string): Promise<void> => {
     `${JSON.stringify({
       schema: "codeai-application-skeleton-v1",
       accepted: true,
+      materialized: true,
+      materializationState: "materialized",
       productParts: [
         {
           id: "local-runtime",
@@ -83,6 +85,55 @@ test("DevelopmentTreeFilesystemStructuratorFacade plans and applies materialized
     for (const directory of result.plan.directories) {
       assert.equal((await stat(directory.absolutePath)).isDirectory(), true);
     }
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("DevelopmentTreeFilesystemStructuratorFacade skips production paths until skeleton is materialized", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-facade-")
+  );
+  try {
+    const mapPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json"
+    );
+    await mkdir(path.dirname(mapPath), { recursive: true });
+    await writeFile(
+      mapPath,
+      `${JSON.stringify({
+        schema: "codeai-application-skeleton-v1",
+        accepted: true,
+        materialized: false,
+        materializationState: "not_started",
+        productParts: [
+          {
+            id: "local-runtime",
+            codePath: "src/product-parts/local-runtime",
+          },
+        ],
+      })}\n`,
+      "utf8"
+    );
+
+    const facade = new DevelopmentTreeFilesystemStructuratorFacade();
+    const result = await facade.materialize({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      snapshot: createSnapshot(),
+    });
+
+    assert.equal(
+      result.productionApply.skippedReason,
+      "application_skeleton_not_materialized"
+    );
+    assert.equal(
+      await stat(
+        path.join(workspaceRoot, "src/product-parts/local-runtime")
+      ).catch(() => null),
+      null
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
