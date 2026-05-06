@@ -27,9 +27,7 @@ import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
 import { StatusBar } from "./status-bar";
-import {
-  VIRTUAL_SIMULATION_TOOL_LABEL,
-} from "./use-workflow-tool-select";
+import { resolveWorkflowToolHeaderTitle } from "./workflow-stage-tool-routing";
 
 const resolveWorkflowPollingMode = (): WorkflowStatePollingMode => {
   if (typeof document === "undefined") {
@@ -360,9 +358,7 @@ export const MainArea: React.FC<MainAreaProps> = ({
     ? "Settings"
     : selectedBranchNode
       ? selectedBranchNode.label
-      : activeTool === VIRTUAL_SIMULATION_TOOL_LABEL
-        ? "Virtual Simulation"
-        : activeTool;
+      : resolveWorkflowToolHeaderTitle(activeTool);
   const detachButton = useDetachDiagramButton(activeTool, activeWorkspace?.path, activeWorkspaceSlug);
   const handleSelectedArtifactClear = useCallback(() => setSelectedArtifact(null), []);
   const handleSetActiveToolNull = useCallback(() => setActiveTool(null), []);

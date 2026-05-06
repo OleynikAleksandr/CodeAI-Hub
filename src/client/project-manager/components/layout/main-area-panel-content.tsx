@@ -34,6 +34,10 @@ import type { BranchNodeSelection } from "./main-area-utils";
 import {
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
+import {
+  resolveConfirmableStageFromTool,
+  resolveStartupStageFromTool,
+} from "./workflow-stage-tool-routing";
 
 type LocalizationSyncStatus = {
   readonly busy: boolean;
@@ -368,20 +372,6 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   );
 });
 
-type ConfirmableStageId = "virtual_simulation" | "diagram_modules";
-
-const TOOL_TO_CONFIRMABLE_STAGE: Record<string, ConfirmableStageId> = {
-  [VIRTUAL_SIMULATION_TOOL_LABEL]: "virtual_simulation",
-  "Diagram Modules": "diagram_modules",
-};
-
-const resolveStartupStageFromTool = (tool: string | null): string => {
-  if (!tool) return "description";
-  if (tool === VIRTUAL_SIMULATION_TOOL_LABEL) return "virtual_simulation";
-  if (tool === "Diagram Modules") return "diagram_modules";
-  return "description";
-};
-
 interface SessionContentProps {
   readonly activeTool: string | null;
   readonly onStepStarted: (sessionId: string, intent: StageSessionIntent) => void;
@@ -409,9 +399,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 }) => {
   const localizationSyncStatus = useLocalizationSyncStatus();
   const stageId = resolveStartupStageFromTool(activeTool);
-  const confirmableStage = activeTool
-    ? TOOL_TO_CONFIRMABLE_STAGE[activeTool]
-    : undefined;
+  const confirmableStage = resolveConfirmableStageFromTool(activeTool);
   const sessionStartupStage = selectedBranchNode?.workflowPath ?? stageId;
   const nextIntent =
     selectedBranchNode
