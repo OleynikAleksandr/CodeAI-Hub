@@ -73,6 +73,14 @@ Manual evidence:
 - `./scripts/build-release.sh --use-current-version` completed with `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `Step 9.5: Verifying VSIX runtime package surface`.
 - VSIX produced at repository root: `codeai-hub-1.2.156.vsix` (`3.1M`).
 
+### 3.3 User Acceptance Evidence
+
+2026-05-06 accepted release `1.2.156`:
+
+- User installed and retested the release.
+- The first reasoning bubble translation retry fix is confirmed.
+- Scope can be closed and pushed to GitHub.
+
 ## 4. Documentation Disposition
 
 This is a hotfix planning document. After implementation and acceptance, archive it under `doc/SolidWorks-WorkFlow/Plans/Archive/` and keep stable behavior in `doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md`.
