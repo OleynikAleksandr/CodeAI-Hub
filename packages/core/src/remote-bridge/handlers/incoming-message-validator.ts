@@ -115,6 +115,22 @@ const isSessionMessagePayload = (payload: unknown): boolean =>
   typeof payload.sessionId === "string" &&
   isMessageContentPayload(payload.content);
 
+const isSessionSpeechSpeakPayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  typeof payload.sessionId === "string" &&
+  typeof payload.messageId === "string" &&
+  typeof payload.text === "string" &&
+  isOptionalStringOrNull(payload.providerId) &&
+  isOptionalStringOrNull(payload.language) &&
+  (payload.rate === undefined ||
+    payload.rate === null ||
+    (typeof payload.rate === "number" && Number.isFinite(payload.rate)));
+
+const isSessionSpeechStopPayload = (payload: unknown): boolean =>
+  isRecord(payload) &&
+  isOptionalStringOrNull(payload.sessionId) &&
+  isOptionalStringOrNull(payload.messageId);
+
 const isCodexModelSwitchPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.sessionId === "string" &&
@@ -280,6 +296,8 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "session:delete": isSessionIdPayload,
   "session:message": isSessionMessagePayload,
   "session:refreshUsageLimits": isUsageRefreshPayload,
+  "session:speech:speak-message": isSessionSpeechSpeakPayload,
+  "session:speech:stop": isSessionSpeechStopPayload,
   "session:stop": isSessionIdPayload,
   "settings:native-request-capture": isNativeRequestCapturePayload,
   "settings:save": isSettingsSavePayload,
