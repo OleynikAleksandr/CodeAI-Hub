@@ -15,7 +15,11 @@ Use only runtime-provided project inputs for this turn:
 - existing `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton-map.json`, if present
 - explicit user technology preferences or runtime-provided workspace facts
 
-If the technology stack is unknown, first infer what you can from the runtime-provided artifacts and workspace facts. Ask focused questions only for decisions that cannot be inferred safely. Do not guess a framework for the user.
+If the technology stack is unknown, first infer what you can from the runtime-provided artifacts and workspace facts.
+
+Do not start by asking the user to choose language, framework, repo shape, or package manager. First perform a discovery/research pass and propose one recommended baseline when the inputs support a coherent default. Write that baseline, its rationale, and its tradeoffs into the draft contract with `accepted: false` and `materialized: false`.
+
+Ask blocking questions only when multiple materially different baselines remain equally plausible and a wrong choice would invalidate the skeleton. When you must ask, ask confirmation-style questions with your recommended option first, not blank-choice questions that push the initial design decision back to the user.
 
 ## Canonical Workflow Artifacts
 Create or update exactly these canonical workflow artifacts:

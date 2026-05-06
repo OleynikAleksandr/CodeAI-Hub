@@ -10,6 +10,12 @@ const BEFORE_ACCEPTANCE_RE = /Before explicit user acceptance/;
 const NO_ROOT_FILES_RE = /must not:\n- create root workspace files/;
 const MATERIALIZED_TRUE_RE = /materialized: true/;
 const QUALITY_GATES_START_RE = /Quality Gates Baseline can start/;
+const DO_NOT_START_WITH_STACK_QUESTIONS_RE =
+  /Do not start by asking the user to choose language, framework, repo shape, or package manager/;
+const RECOMMENDED_BASELINE_RE =
+  /propose one recommended baseline when the inputs support a coherent default/;
+const CONFIRMATION_STYLE_RE =
+  /ask confirmation-style questions with your recommended option first/;
 const ACCEPTED_FALSE_RE = /"accepted": false/;
 const MATERIALIZED_FALSE_RE = /"materialized": false/;
 const MATERIALIZATION_STATE_RE = /"materializationState": "not_started"/;
@@ -31,6 +37,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, NO_ROOT_FILES_RE);
   assert.match(prompt, MATERIALIZED_TRUE_RE);
   assert.match(prompt, QUALITY_GATES_START_RE);
+  assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
+  assert.match(prompt, RECOMMENDED_BASELINE_RE);
+  assert.match(prompt, CONFIRMATION_STYLE_RE);
 });
 
 test("application skeleton bundled contract exposes materialization state fields", () => {
