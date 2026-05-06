@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.154] - 2026-05-06
+### Fixed
+- **Text-to-Speech Speak clicks now pass Core WebSocket validation.** The Core incoming message validator accepts `session:speech:speak-message` and `session:speech:stop`, so bubble Speak buttons reach the speech router instead of being rejected as unknown commands.
+
+### Tests
+- **The hotfix is covered by Core regression tests and build verification.** Targeted checks cover accepted speech commands, malformed speech payload rejection, speech handler/router/service behavior, Ultracite validation, and the `@codeai-hub/core` build.
+
 ## [1.2.153] - 2026-05-05
 ### Added
 - **Apple Native Text-to-Speech is available for session bubbles on macOS.** Assistant and thinking bubbles now expose provider-styled `Speak` controls that read the visible bubble text through the packaged Apple Speech helper, with stop behavior on the active bubble.
