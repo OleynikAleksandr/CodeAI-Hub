@@ -16,6 +16,10 @@ const RECOMMENDED_BASELINE_RE =
   /propose one recommended baseline when the inputs support a coherent default/;
 const CONFIRMATION_STYLE_RE =
   /ask confirmation-style questions with your recommended option first/;
+const USER_STACK_REPLACEMENT_RE =
+  /If the user explicitly replaces one stack decision/;
+const NO_STACK_DETAIL_LOOP_RE =
+  /do not open a new question loop about how to apply that chosen baseline/;
 const PRODUCTION_SOURCE_ROOT_RE =
   /Never use `\.codeai-hub\/\.\.\.` workflow artifact folders as `sourceRoot`/;
 const CLUSTERED_MODULE_PATH_RE = /clusters\/<cluster-id>\/modules\/<module-id>/;
@@ -55,6 +59,8 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
   assert.match(prompt, RECOMMENDED_BASELINE_RE);
   assert.match(prompt, CONFIRMATION_STYLE_RE);
+  assert.match(prompt, USER_STACK_REPLACEMENT_RE);
+  assert.match(prompt, NO_STACK_DETAIL_LOOP_RE);
   assert.match(prompt, PRODUCTION_SOURCE_ROOT_RE);
   assert.match(prompt, CLUSTERED_MODULE_PATH_RE);
   assert.match(prompt, PRODUCT_PARTS_ROOT_RE);

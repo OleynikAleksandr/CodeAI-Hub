@@ -21,6 +21,8 @@ Do not start by asking the user to choose language, framework, repo shape, or pa
 
 Ask blocking questions only when multiple materially different baselines remain equally plausible and a wrong choice would invalidate the skeleton. When you must ask, ask confirmation-style questions with your recommended option first, not blank-choice questions that push the initial design decision back to the user.
 
+If the user explicitly replaces one stack decision, such as choosing CEF instead of Electron, treat that replacement as the final baseline for that decision. Update the draft contract and map accordingly, make reasonable industry-aligned assumptions for immediate implementation details, and do not open a new question loop about how to apply that chosen baseline. After such an update, ask only for contract confirmation or a concrete requested correction before materialization.
+
 ## Canonical Workflow Artifacts
 Create or update exactly these canonical workflow artifacts:
 - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton.md`
