@@ -16,11 +16,17 @@ const RECOMMENDED_BASELINE_RE =
   /propose one recommended baseline when the inputs support a coherent default/;
 const CONFIRMATION_STYLE_RE =
   /ask confirmation-style questions with your recommended option first/;
+const PRODUCTION_SOURCE_ROOT_RE =
+  /Never use `\.codeai-hub\/\.\.\.` workflow artifact folders as `sourceRoot`/;
+const CLUSTERED_MODULE_PATH_RE = /clusters\/<cluster-id>\/modules\/<module-id>/;
 const ACCEPTED_FALSE_RE = /"accepted": false/;
 const MATERIALIZED_FALSE_RE = /"materialized": false/;
 const MATERIALIZATION_STATE_RE = /"materializationState": "not_started"/;
 const MATERIALIZED_PATHS_RE = /"materializedPaths": \[\]/;
 const ACCEPTED_AND_MATERIALIZED_RE = /accepted: true.*materialized: true/s;
+const CODEAI_HUB_SOURCE_ROOT_RE =
+  /sourceRoot` must point to the production source\/scaffold root and must not point under `\.codeai-hub\/`/;
+const STANDALONE_MODULES_RE = /Standalone modules must use `standaloneModules`/;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -40,6 +46,8 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
   assert.match(prompt, RECOMMENDED_BASELINE_RE);
   assert.match(prompt, CONFIRMATION_STYLE_RE);
+  assert.match(prompt, PRODUCTION_SOURCE_ROOT_RE);
+  assert.match(prompt, CLUSTERED_MODULE_PATH_RE);
 });
 
 test("application skeleton bundled contract exposes materialization state fields", () => {
@@ -50,6 +58,8 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, MATERIALIZATION_STATE_RE);
   assert.match(contract, MATERIALIZED_PATHS_RE);
   assert.match(contract, ACCEPTED_AND_MATERIALIZED_RE);
+  assert.match(contract, CODEAI_HUB_SOURCE_ROOT_RE);
+  assert.match(contract, STANDALONE_MODULES_RE);
 });
 
 test("application skeleton bundled templates stay synced with agent assets", async () => {
