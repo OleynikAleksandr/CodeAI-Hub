@@ -37,6 +37,7 @@ In this phase you must:
 - choose or research an appropriate language/framework/runtime/package manager/repo shape;
 - write `application-skeleton.md`;
 - write valid `application-skeleton-map.json`;
+- set `reviewState: "draft"`;
 - keep `accepted: false`;
 - keep `materialized: false`;
 - keep `materializationState: "not_started"`;
@@ -63,7 +64,8 @@ In this phase you must:
 - create the filesystem projection for Product Part -> Cluster -> Module inside the selected scaffold;
 - create only minimal placeholders or stubs declared by the accepted contract;
 - keep workflow artifacts under `.codeai-hub/...` separate from production code;
-- update `application-skeleton-map.json` with `materialized: true`, `materializationState: "materialized"`, and created `materializedPaths`;
+- update `application-skeleton-map.json` with `reviewState: "materialized"`, `accepted: true`, `materialized: true`, `materializationState: "materialized"`, and created `materializedPaths`;
+- update `application-skeleton.md` from draft/future-tense wording to current materialized state; remove or rewrite sections such as "will be created" or "after confirmation";
 - report created/updated paths and any verification result.
 
 In this phase you must not:
@@ -75,12 +77,15 @@ In this phase you must not:
 ## Skeleton Principles
 - Use a conventional scaffold for the selected language, framework, package manager, and repo shape.
 - Mirror Product Part -> Cluster -> Module paths inside the scaffold, not by replacing the scaffold.
+- The production code tree must mirror the Development Tree as a first-class filesystem invariant. Unless the user explicitly accepts another root, use `product-parts/<product-part-id>` as each Product Part root.
+- Do not split Product Part roots by implementation category such as `apps/`, `packages/`, or `extensions/` when that breaks the Product Part -> Cluster -> Module mirror. Record app/package/extension roles as metadata or package fields inside the Product Part root instead.
 - Keep generated production folders minimal and aligned with the selected ecosystem.
 - Prefer simple contract/readme placeholders over fake implementation files when future branch-level agents must design the actual code.
 - Mapped code paths must be safe relative workspace paths.
 - `sourceRoot` and `codePath` values describe production workspace paths only. Never use `.codeai-hub/...` workflow artifact folders as `sourceRoot` or production code roots.
 - Cluster-owned modules must be mapped under `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone modules, if a Product Part has any outside clusters, must be mapped under `<productPartPath>/modules/<module-id>` and listed separately from clustered modules.
+- Package manifests/workspace entries must be created only for the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package. Ordinary module folders receive README/placeholders, not nested package manifests.
 - If the runtime did not provide enough cluster/module detail for a Product Part, do not invent module entries. Record the missing input and the deterministic path pattern that will be used once the detail exists.
 
 ## Acceptance Contract
@@ -94,6 +99,7 @@ In this phase you must not:
 
 `application-skeleton-map.json` must be valid JSON with:
 - `schema`: `codeai-application-skeleton-v1`;
+- `reviewState`: `draft`, `accepted`, or `materialized`;
 - `accepted` or `acceptance.accepted`;
 - `materialized`;
 - `materializationState`: `not_started`, `in_progress`, `materialized`, `failed`, or `outdated`;
@@ -101,7 +107,7 @@ In this phase you must not:
 - `sourceRoot` or equivalent source root metadata;
 - `repoShape`;
 - `packageManager`;
-- `stack` metadata;
+- `stack.languages`, `stack.frameworks`, and `stack.runtimes` arrays; additional stack details may be added under explicit nested fields, but do not replace these canonical arrays with ad hoc scalar fields;
 - `productParts` array;
 - deterministic `codePath` values for every Product Part and mapped Cluster/Module;
 - `materializedPaths` array after materialization;
