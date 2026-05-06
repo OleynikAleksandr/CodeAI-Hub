@@ -11,6 +11,10 @@ import {
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 export type NativeRequestCaptureScenarioId = WorkflowStageId;
+type SettingsWorkflowCaptureScenarioId = Extract<
+  NativeRequestCaptureScenarioId,
+  "description" | "virtual_simulation" | "diagram_modules"
+>;
 
 type WorkflowStateGetter = (
   workspaceSlug: string,
@@ -21,24 +25,28 @@ type WorkflowContractLoader = (
   stage: WorkflowStageId
 ) => Promise<WorkflowContractSnapshot>;
 
-interface NativeRequestCaptureScenarioPromptParams {
+interface NativeRequestCaptureScenarioPromptParams<
+  TScenarioId extends NativeRequestCaptureScenarioId = NativeRequestCaptureScenarioId,
+> {
   readonly artifactLanguage?: string;
   readonly bypassUpstreamGuard?: boolean;
   readonly getWorkflowState: WorkflowStateGetter;
   readonly loadContract?: WorkflowContractLoader;
-  readonly scenarioId: NativeRequestCaptureScenarioId;
+  readonly scenarioId: TScenarioId;
   readonly settingsPayload?: SettingsLoadedPayload | null;
   readonly workspaceName?: string;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }
 
-export interface NativeRequestCaptureScenarioPrompt {
+export interface NativeRequestCaptureScenarioPrompt<
+  TScenarioId extends NativeRequestCaptureScenarioId = SettingsWorkflowCaptureScenarioId,
+> {
   readonly artifactLanguage: string;
   readonly inputPath: string;
   readonly prompt: string;
   readonly promptPath: string;
-  readonly scenarioId: NativeRequestCaptureScenarioId;
+  readonly scenarioId: TScenarioId;
   readonly scenarioLabel: string;
   readonly targetAbsolutePath: string;
   readonly targetRelativePath: string;
@@ -49,6 +57,8 @@ const SCENARIO_LABELS: Record<NativeRequestCaptureScenarioId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
+  application_skeleton: "Application Skeleton",
+  quality_gates: "Quality Gates Baseline",
 };
 
 const buildQuestionnairePath = (workspaceSlug: string): string =>
@@ -59,6 +69,9 @@ const buildVirtualSimulationPath = (workspaceSlug: string): string =>
 
 const buildDiagramModulesIndexPath = (workspaceSlug: string): string =>
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`;
+
+const buildApplicationSkeletonMapPath = (workspaceSlug: string): string =>
+  `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton-map.json`;
 
 const readDiagramModulesSubstep = (
   state: WorkflowStateSnapshot | null
@@ -96,21 +109,50 @@ const resolveScenarioInputPath = (params: {
     return finalDescriptionPath;
   }
 
-  const modulesBlocked = params.state?.gating.blocked.diagram_modules ?? true;
-  if (modulesBlocked && !params.bypassUpstreamGuard) {
-    throw new Error(
-      "Missing virtual-simulation.md. Complete Virtual Simulation step first."
-    );
+  if (params.scenarioId === "diagram_modules") {
+    const modulesBlocked = params.state?.gating.blocked.diagram_modules ?? true;
+    if (modulesBlocked && !params.bypassUpstreamGuard) {
+      throw new Error(
+        "Missing virtual-simulation.md. Complete Virtual Simulation step first."
+      );
+    }
+
+    return readDiagramModulesSubstep(params.state) === null
+      ? buildVirtualSimulationPath(params.workspaceSlug)
+      : buildDiagramModulesIndexPath(params.workspaceSlug);
   }
 
-  return readDiagramModulesSubstep(params.state) === null
-    ? buildVirtualSimulationPath(params.workspaceSlug)
-    : buildDiagramModulesIndexPath(params.workspaceSlug);
+  if (params.scenarioId === "application_skeleton") {
+    const blockedStages = params.state?.gating.blocked as
+      | Readonly<Record<string, boolean>>
+      | undefined;
+    const skeletonBlocked =
+      blockedStages?.application_skeleton ?? true;
+    if (skeletonBlocked && !params.bypassUpstreamGuard) {
+      throw new Error(
+        "Missing completed Diagram Modules. Complete Diagram Modules first."
+      );
+    }
+    return buildDiagramModulesIndexPath(params.workspaceSlug);
+  }
+
+  const blockedStages = params.state?.gating.blocked as
+    | Readonly<Record<string, boolean>>
+    | undefined;
+  const gatesBlocked = blockedStages?.quality_gates ?? true;
+  if (gatesBlocked && !params.bypassUpstreamGuard) {
+    throw new Error(
+      "Missing accepted Application Skeleton. Complete Application Skeleton first."
+    );
+  }
+  return buildApplicationSkeletonMapPath(params.workspaceSlug);
 };
 
-export const buildNativeRequestCaptureScenarioPrompt = async (
-  params: NativeRequestCaptureScenarioPromptParams
-): Promise<NativeRequestCaptureScenarioPrompt> => {
+export const buildNativeRequestCaptureScenarioPrompt = async <
+  TScenarioId extends NativeRequestCaptureScenarioId,
+>(
+  params: NativeRequestCaptureScenarioPromptParams<TScenarioId>
+): Promise<NativeRequestCaptureScenarioPrompt<TScenarioId>> => {
   const state = await params.getWorkflowState(
     params.workspaceSlug,
     params.workspacePath
@@ -121,8 +163,12 @@ export const buildNativeRequestCaptureScenarioPrompt = async (
     state,
     workspaceSlug: params.workspaceSlug,
   });
-  const contractLoader = params.loadContract ?? loadWorkflowContract;
-  const contract = await contractLoader(params.scenarioId);
+  const contract =
+    params.loadContract === undefined
+      ? await loadWorkflowContract(
+          params.scenarioId as Parameters<typeof loadWorkflowContract>[0]
+        )
+      : await params.loadContract(params.scenarioId);
   const artifactLanguage =
     params.artifactLanguage ??
     resolveArtifactsForTheUserLanguage(params.settingsPayload);

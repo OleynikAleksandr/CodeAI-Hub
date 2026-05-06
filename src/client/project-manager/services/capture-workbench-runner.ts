@@ -332,5 +332,5 @@ const parseProviderIdSafe = (
 const loadScenarioPromptBuilder =
   async (): Promise<CaptureWorkbenchScenarioPromptBuilder> => {
     const module = await import("./native-request-capture-scenario-prompt");
-    return module.buildNativeRequestCaptureScenarioPrompt;
+    return module.buildNativeRequestCaptureScenarioPrompt as CaptureWorkbenchScenarioPromptBuilder;
   };

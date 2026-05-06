@@ -353,6 +353,70 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
 });
 
+test("technical root prompt packs target skeleton and quality gate artifacts", () => {
+  const skeletonPack = buildWorkflowPromptPack({
+    artifactLanguage: "en",
+    chatLanguage: "en",
+    stage: "application_skeleton",
+    workspacePath: "/tmp/workspace",
+    workspaceSlug: "demo-workspace",
+    prompt: "",
+    questionnairePath:
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
+  });
+  const gatesPack = buildWorkflowPromptPack({
+    artifactLanguage: "en",
+    chatLanguage: "en",
+    stage: "quality_gates",
+    workspacePath: "/tmp/workspace",
+    workspaceSlug: "demo-workspace",
+    prompt: "",
+    questionnairePath:
+      ".codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json",
+  });
+
+  assert.equal(
+    skeletonPack.relativePath,
+    ".codeai-hub/demo-workspace/application_skeleton/application-skeleton.md"
+  );
+  assert.equal(
+    skeletonPack.content.includes(
+      "product-parts.index.md (relative): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
+    ),
+    true
+  );
+  assert.equal(
+    skeletonPack.content.includes(
+      "Skeleton map JSON: `.codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json`"
+    ),
+    true
+  );
+  assert.equal(
+    skeletonPack.content.includes("Output file name: `application-skeleton.md`"),
+    true
+  );
+  assert.equal(
+    gatesPack.relativePath,
+    ".codeai-hub/demo-workspace/quality_gates/quality-gates.md"
+  );
+  assert.equal(
+    gatesPack.content.includes(
+      "application-skeleton-map.json (relative): `.codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json`"
+    ),
+    true
+  );
+  assert.equal(
+    gatesPack.content.includes(
+      "Quality gates JSON: `.codeai-hub/demo-workspace/quality_gates/quality-gates.json`"
+    ),
+    true
+  );
+  assert.equal(
+    gatesPack.content.includes("Output file name: `quality-gates.md`"),
+    true
+  );
+});
+
 test("workflow localized prompt pack is language-keyable and keeps canonical tokens protected", () => {
   const baseInput = {
     artifactLanguage: "ru",

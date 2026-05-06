@@ -8,7 +8,9 @@ import {
 export type WorkflowStageId =
   | "description"
   | "virtual_simulation"
-  | "diagram_modules";
+  | "diagram_modules"
+  | "application_skeleton"
+  | "quality_gates";
 
 type WorkflowPromptPackInput = {
   readonly artifactLanguage?: string;
@@ -46,18 +48,26 @@ const WORKFLOW_STAGE_FILES: Record<WorkflowStageId, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "product-parts.index.md",
+  application_skeleton: "application-skeleton.md",
+  quality_gates: "quality-gates.md",
 };
 
 const WORKFLOW_STAGE_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
   diagram_modules: "Diagram Modules",
+  application_skeleton: "Application Skeleton",
+  quality_gates: "Quality Gates Baseline",
 };
 const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
   description: "Build the artifact from the questionnaire and template.",
   virtual_simulation: "Build the artifact from `Final_Description.md`.",
   diagram_modules:
     "Build the staged artifact from `Final_Description.md` and `virtual-simulation.md`.",
+  application_skeleton:
+    "Build the application skeleton contract from the accepted Diagram Modules artifacts.",
+  quality_gates:
+    "Build the quality gates baseline from the accepted Application Skeleton contract.",
 };
 
 const DIAGRAM_STAGE_INPUT_LABELS: Partial<Record<WorkflowStageId, string>> = {
@@ -186,9 +196,7 @@ const buildStageInputLines = (params: {
   readonly questionnairePath: string;
 }): readonly string[] => {
   if (params.stage === "virtual_simulation") {
-    const finalRelativePath = normalizeRelativePath(
-      `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`
-    );
+    const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
     const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
     return [
       `Final_Description.md (relative): \`${finalRelativePath}\``,
@@ -196,13 +204,9 @@ const buildStageInputLines = (params: {
     ];
   }
   if (params.stage === "diagram_modules") {
-    const finalRelativePath = normalizeRelativePath(
-      `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`
-    );
+    const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
     const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
-    const simulationRelativePath = normalizeRelativePath(
-      `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`
-    );
+    const simulationRelativePath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
     const simulationAbsolutePath = joinPath(
       params.workspacePath,
       simulationRelativePath
@@ -212,6 +216,25 @@ const buildStageInputLines = (params: {
       `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
       `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
       `virtual-simulation.md (absolute): \`${simulationAbsolutePath}\``,
+    ];
+  }
+  if (params.stage === "application_skeleton") {
+    const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
+    const simulationRelativePath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
+    const modulesRelativePath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
+    return [
+      `Final_Description.md (relative): \`${finalRelativePath}\``,
+      `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
+      `product-parts.index.md (relative): \`${modulesRelativePath}\``,
+      `Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
+    ];
+  }
+  if (params.stage === "quality_gates") {
+    const skeletonRelativePath = `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton.md`;
+    const mapRelativePath = `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`;
+    return [
+      `application-skeleton.md (relative): \`${skeletonRelativePath}\``,
+      `application-skeleton-map.json (relative): \`${mapRelativePath}\``,
     ];
   }
   const questionnaireRelativePath = normalizeRelativePath(params.questionnairePath);
@@ -238,6 +261,24 @@ const buildStagePhaseLines = (
       "- Phase 3: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
       "- Phase 4: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
       "- Phase 5: do not spend the current turn searching for staged examples, continuity files, helper artifacts, or generic template files unless they are explicitly listed above as inputs for this turn.",
+    ];
+  }
+  if (stage === "application_skeleton") {
+    return [
+      "Work phases:",
+      "- Phase 1: confirm the selected stack or ask focused stack questions before writing scaffold files.",
+      "- Phase 2: create the minimal industry-standard project skeleton only after the stack and repo shape are clear.",
+      `- Phase 3: write \`${targetFileName}\` and \`application-skeleton-map.json\` as the accepted skeleton contract candidates.`,
+      "- Phase 4: do not create Product Part, Cluster, or Module sessions.",
+    ];
+  }
+  if (stage === "quality_gates") {
+    return [
+      "Work phases:",
+      "- Phase 1: read the accepted Application Skeleton artifacts.",
+      "- Phase 2: define executable build, typecheck, lint/format, test, and architecture commands for the selected stack.",
+      `- Phase 3: write \`${targetFileName}\` and \`quality-gates.json\` as the gate contract candidates.`,
+      "- Phase 4: do not implement product features.",
     ];
   }
   return [];
@@ -353,6 +394,32 @@ const shouldIncludeTemplateHint = (
 ): templatePath is string =>
   stage === "description" && Boolean(templatePath);
 
+const buildAdditionalArtifactLines = (params: {
+  readonly stage: WorkflowStageId;
+  readonly workspaceSlug: string;
+}): readonly string[] => {
+  if (params.stage === "diagram_modules") {
+    return [
+      "Additional staged artifacts for this step are allowed and expected by the runtime:",
+      `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
+      `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
+    ];
+  }
+  if (params.stage === "application_skeleton") {
+    return [
+      "Additional skeleton artifacts for this step are allowed and expected by the runtime:",
+      `- Skeleton map JSON: \`.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json\``,
+    ];
+  }
+  if (params.stage === "quality_gates") {
+    return [
+      "Additional quality gate artifacts for this step are allowed and expected by the runtime:",
+      `- Quality gates JSON: \`.codeai-hub/${params.workspaceSlug}/quality_gates/quality-gates.json\``,
+    ];
+  }
+  return [];
+};
+
 export const buildWorkflowPromptPack = (
   params: WorkflowPromptPackInput
 ): WorkflowPromptPack => {
@@ -362,14 +429,7 @@ export const buildWorkflowPromptPack = (
     workspaceSlug: params.workspaceSlug,
     runSlug: params.runSlug,
   });
-  const additionalArtifacts: readonly string[] =
-    params.stage === "diagram_modules"
-      ? [
-          "Additional staged artifacts for this step are allowed and expected by the runtime:",
-          `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
-          `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
-        ]
-      : [];
+  const additionalArtifacts = buildAdditionalArtifactLines(params);
 
   const defaultPrompt = DEFAULT_STAGE_PROMPTS[params.stage];
   const prompt = params.prompt.trim().length ? params.prompt.trim() : defaultPrompt;
