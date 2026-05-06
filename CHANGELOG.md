@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.167] - 2026-05-06
+### Fixed
+- **Application Skeleton now treats upstream technology hints as strong baseline evidence.** Named shells, launchers, runtimes, frameworks, package formats, and deployment targets from prior artifacts must be used in the recommended baseline or explicitly rejected with rationale.
+- **Application Skeleton keeps `product-parts` as the default source root.** The prompt and contract now require `sourceRoot: "product-parts"` unless the user explicitly accepts another production root.
+- **Application Skeleton final responses are language-aware.** Draft and materialization completion messages now describe the required state transition in the chat language instead of emitting fixed English template text.
+
+### Tests
+- **Bundled template coverage protects technology inference and source-root defaults.** The targeted Application Skeleton template test now asserts upstream technology hint handling, localized final-response semantics, and the `product-parts` source root rule.
+
 ## [1.2.166] - 2026-05-06
 ### Fixed
 - **Application Skeleton first-turn instructions are now shorter and more directive.** The bundled prompt keeps the universal draft/materialization lifecycle, Development Tree filesystem mirror, and user stack-decision handling while removing duplicated guidance that made the first prompt noisier.
