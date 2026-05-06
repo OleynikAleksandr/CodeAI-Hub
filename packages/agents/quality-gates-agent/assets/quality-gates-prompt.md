@@ -71,6 +71,10 @@ If the skeleton declares source-size rules, preserve them. If it does not, propo
 - Do not materialize config files, package manifests, hooks, CI files, scripts, or production files unless this workflow stage explicitly says tooling materialization is allowed.
 - Mark unavailable or deferred gates explicitly with rationale instead of pretending they exist.
 - Deferred or unavailable gates must not appear as active blocking gates. Put them in a separate deferred/planned section.
+- Separate stable gate identity from future executable commands. Prefer a structure that distinguishes `id`, `proposedCommand`, `status`, and `blockingIn` instead of encoding all semantics in a command string.
+- Use one status per gate: `active`, `plannedAfterMaterialization`, `deferred`, or `advisory`.
+- Active required arrays must match the selected baseline. Do not place strict-only, deferred, or advisory gates into active `requiredBefore*` arrays when `selectedBaseline` is `minimal` or `recommended`.
+- A gate can be planned to become blocking later, but then it belongs in `plannedRequiredAfterMaterialization`, not in active required arrays.
 - Keep pre-commit gates fast; reserve heavier tests, full builds, duplication scans, dead-code scans, and release checks for pre-push, before module execution, or before release unless the accepted project constraints require otherwise.
 - Do not create Product Part, Cluster, or Module sessions.
 - Do not write feature implementation code.
@@ -93,12 +97,21 @@ If the skeleton declares source-size rules, preserve them. If it does not, propo
 - `accepted` or `acceptance.accepted` set to `false` until explicit user acceptance;
 - `commands` object;
 - baseline variant metadata or equivalent machine-readable gate grouping;
+- each command/gate entry should expose a stable `id`, a `proposedCommand`, a `status`, a `baseline` membership list, and `blockingIn` phases where it blocks when active;
 - `requiredBeforeModuleExecution` array;
 - `requiredBeforeCommit` array;
 - optional `requiredBeforePush` and `requiredBeforeRelease` arrays when useful;
 - separate `advisory`, `deferredUntilMaterialization`, or `plannedRequiredAfterMaterialization` sections when gates are not active blockers yet.
 
 Every active required command must refer to a command entry that belongs to the selected baseline. Gates marked unavailable or deferred must not be listed as active required blockers.
+
+Before finishing, run a consistency check on the draft contract:
+- every `requiredBefore*` entry exists in `commands`;
+- every active required entry has `status: "active"`;
+- every active required entry belongs to `selectedBaseline`;
+- no strict-only gate is active-required unless `selectedBaseline` is `strict`;
+- no gate listed in `deferredUntilMaterialization` is also an active blocker;
+- any gate that needs user confirmation is `advisory` or `plannedAfterMaterialization`, not silently active.
 
 ## Completion Boundary
 This stage ends when `quality-gates.md` and valid `quality-gates.json` contain a coherent draft or accepted quality gate contract. Keep `accepted` false unless the user explicitly confirms the baseline.

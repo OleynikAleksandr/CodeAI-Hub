@@ -18,14 +18,28 @@
   "toolingCandidatesConsidered": [],
   "commands": {
     "build": {
-      "command": "<stack-specific build command>",
+      "id": "build",
+      "proposedCommand": "<stack-specific build command>",
       "category": "build",
-      "blocking": true
+      "status": "active",
+      "baseline": ["minimal", "recommended", "strict"],
+      "blockingIn": ["beforeModuleExecution", "beforePush", "beforeRelease"]
     },
     "architecture": {
-      "command": "<stack-specific architecture validation command>",
+      "id": "architecture",
+      "proposedCommand": "<stack-specific architecture validation command>",
       "category": "architecture",
-      "blocking": true
+      "status": "active",
+      "baseline": ["minimal", "recommended", "strict"],
+      "blockingIn": ["beforeModuleExecution", "beforeCommit", "beforePush", "beforeRelease"]
+    },
+    "coverage": {
+      "id": "coverage",
+      "proposedCommand": "<stack-specific coverage command>",
+      "category": "coverage",
+      "status": "plannedAfterMaterialization",
+      "baseline": ["strict"],
+      "blockingIn": ["beforeRelease"]
     }
   },
   "variants": {
@@ -63,10 +77,15 @@
 
 ## Validation Rules
 - `commands` must be an object.
+- Each command entry should separate stable identity from execution details with `id`, `proposedCommand`, `status`, `baseline`, and `blockingIn`.
+- Supported statuses are `active`, `plannedAfterMaterialization`, `deferred`, and `advisory`.
 - Required command names must refer to keys in `commands`.
-- Deferred or unavailable command names must not be listed as active required blockers.
+- Active required command names must have `status: "active"` and must belong to `selectedBaseline`.
+- Strict-only gates must not be listed in active required arrays unless `selectedBaseline` is `strict`.
+- Deferred, advisory, or planned-after-materialization command names must not be listed as active required blockers.
 - The contract must reference the accepted skeleton source roots or package roots in `quality-gates.md`.
 - `accepted` must stay `false` until the user explicitly accepts the gate baseline.
 - The contract must contain enough project profile context for future agents to understand why the selected gates fit this skeleton.
 - The contract must identify the selected baseline when multiple variants are present.
+- A gate that requires user confirmation must stay `advisory` or `plannedAfterMaterialization` until confirmed.
 - Future implementation agents must be able to cite this contract without inventing build or test commands.
