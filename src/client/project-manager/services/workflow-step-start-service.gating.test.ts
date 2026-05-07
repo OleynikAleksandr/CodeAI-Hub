@@ -220,6 +220,45 @@ test("diagram stage start still rejects when gating stays blocked", async () => 
   );
 });
 
+test("startVirtualSimulation is read-only after Diagram Modules starts", async () => {
+  installWindowStub();
+  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
+
+  const service = new WorkflowStepStartService({
+    getWorkflowState: async () =>
+      createWorkflowState({
+        description: {
+          finalPath:
+            ".codeai-hub/demo-workspace/description/Final_Description.md",
+          questionnairePath:
+            ".codeai-hub/demo-workspace/description/questionnaire.md",
+          updatedAt: "2026-03-18T10:00:00.000Z",
+        },
+        stages: {
+          description: "completed",
+          virtual_simulation: "completed",
+          diagram_modules: "in_progress",
+          application_skeleton: "idle",
+          quality_gates: "idle",
+        },
+      }),
+    submitService: {
+      submitQuestionnaire: async () => "unexpected-session",
+    },
+  });
+
+  await assert.rejects(
+    () =>
+      service.startVirtualSimulation({
+        workspaceName: "Demo Workspace",
+        workspacePath: "/tmp/demo",
+        workspaceSlug: "demo-workspace",
+        providerId: "codexCli",
+      }),
+    /Virtual Simulation is read-only after Diagram Modules has started/
+  );
+});
+
 test("technical root stage starts use skeleton and quality gate input artifacts", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");

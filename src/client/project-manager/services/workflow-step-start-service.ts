@@ -54,6 +54,13 @@ const readStageBlocked = (
   return blocked?.[stage] ?? true;
 };
 
+const isManagedModeActive = (
+  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null
+): boolean => {
+  const status = state?.stages?.diagram_modules;
+  return typeof status === "string" && status !== "idle";
+};
+
 const resolveExistingStageSessionIdForExplicitStart = (options: {
   readonly state: Awaited<ReturnType<typeof api.getWorkflowState>> | null;
   readonly stage: ContinuityStageId;
@@ -107,6 +114,11 @@ export class WorkflowStepStartService {
     if (existingSessionId) {
       params.onSessionCreated?.(existingSessionId);
       return existingSessionId;
+    }
+    if (isManagedModeActive(state)) {
+      throw new Error(
+        "Virtual Simulation is read-only after Diagram Modules has started."
+      );
     }
 
     const finalDescriptionPath = state?.description?.finalPath;

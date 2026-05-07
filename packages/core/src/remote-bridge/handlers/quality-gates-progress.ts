@@ -251,14 +251,16 @@ export const resolveWorkflowBlockedStages = (params: {
   readonly state: WorkflowState;
 }): Partial<Record<WorkflowStageId, boolean>> => {
   const descriptionDone = Boolean(params.description?.finalPath);
+  const managedModeActive =
+    params.state.stages.diagram_modules.status !== "idle";
   const virtualSimulationArtifactAvailable = stageHasArtifact({
     state: params.state,
     stage: "virtual_simulation",
     fileName: "virtual-simulation.md",
   });
   return {
-    description: false,
-    virtual_simulation: !descriptionDone,
+    description: managedModeActive,
+    virtual_simulation: managedModeActive || !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
     application_skeleton: !params.diagramModulesProgress?.aggregateReady,
     quality_gates: !params.applicationSkeletonProgress?.materialized,
