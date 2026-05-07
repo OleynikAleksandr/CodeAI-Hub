@@ -246,6 +246,8 @@ Short user-facing retest list after release:
 7. Return to `Diagram Modules`, add/remove/rename a module; verify revision diff and downstream migration tasks.
 8. Force or simulate session rollover after `Diagram Modules`; verify recovery starts from `todo-plan.md`, not legacy reports.
 
+Live retest note for `v1.2.173`: step 3 exposed a Project Manager defect. After `Diagram Modules` starts, `Description` renders hardcoded English read-only copy and `Virtual Simulation` can still show an editable session. The follow-up fix stream must localize the read-only placeholder and apply it consistently to both upstream stages.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
