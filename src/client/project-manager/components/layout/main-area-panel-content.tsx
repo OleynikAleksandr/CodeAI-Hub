@@ -91,6 +91,13 @@ const renderLocalizationSyncBlockedState = (
   </div>
 );
 
+const isManagedLifecycleActive = (
+  snapshot: WorkflowStateSnapshot | null
+): boolean => snapshot?.stages.diagram_modules !== undefined && snapshot.stages.diagram_modules !== "idle";
+
+const isReadOnlyUpstreamTool = (activeTool: string | null): boolean =>
+  activeTool === "Description" || activeTool === "Virtual Simulation";
+
 interface SelectedArtifact {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -414,6 +421,21 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   if (showDescriptionHelp) {
     return <DescriptionStepHelp />;
+  }
+
+  if (
+    isReadOnlyUpstreamTool(activeTool) &&
+    isManagedLifecycleActive(workflowSnapshot)
+  ) {
+    return (
+      <div className="pm-placeholder">
+        <strong>{activeTool} is read-only.</strong>
+        <br />
+        Managed workspace lifecycle has started at Diagram Modules. Existing
+        artifacts remain available from the tree, but this upstream stage can no
+        longer be edited.
+      </div>
+    );
   }
 
   // Show confirmation card for idle VS/DM stages without an existing session,
