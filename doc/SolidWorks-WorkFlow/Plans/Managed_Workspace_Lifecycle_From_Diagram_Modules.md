@@ -284,6 +284,12 @@ the turn. Those files are runtime state, not accepted workflow artifacts, and
 must be ignored or snapshot-managed separately so the next stage does not inherit
 uncommitted Core noise.
 
+Local smoke note for `v1.2.179`: release build completed with VSIX
+`codeai-hub-1.2.179.vsix`, and VSIX `extension/package.json` reports version
+`1.2.179`. Targeted managed-lifecycle smoke passed for ignored runtime state,
+Diagram Modules adoption commit, technical-stage managed preflight, and generated
+`plan:commit` advancement that leaves a temporary workspace clean after commit.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
