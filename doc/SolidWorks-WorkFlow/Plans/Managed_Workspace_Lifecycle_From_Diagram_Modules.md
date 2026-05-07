@@ -1,6 +1,6 @@
 # Managed Workspace Lifecycle From Diagram Modules
 
-**Status:** Accepted for execution planning.
+**Status:** In implementation.
 **Created:** 2026-05-07
 **Owner:** Oleksandr + Codex
 **Scope:** turn the workspace into a Core-managed Git/plan/hook lifecycle as soon as `Diagram Modules` starts; make downstream filesystem stages recoverable, revision-aware, and script-governed instead of agent-memory-governed.
@@ -260,3 +260,10 @@ The refactor must be incremental:
 8. Release and test with real agent sessions.
 
 Do not make Core a general-purpose file watcher that mutates arbitrary app files. Core should validate and reconcile known contracts only.
+
+## 12. SSOT Sync
+
+Phase 1 promotes this plan into the durable workflow/system SSOT:
+
+- `WorkflowSteps_Overview.md` defines `Diagram Modules` as managed-mode entrypoint and freezes `Description` / `Virtual Simulation` after that boundary.
+- `SystemArchitecture.md` separates repository-local CodeAI Hub hooks from managed user workspace lifecycle hooks and records `todo-plan.md` recovery as the primary managed-stage continuity path.

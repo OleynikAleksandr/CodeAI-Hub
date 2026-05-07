@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-05-06
+**Updated:** 2026-05-07
 **Owner:** Oleksandr
 
 ---
@@ -52,6 +52,16 @@ Diagram Modules
 Ключевое решение: **фасады не являются отдельным шагом ствола**. Для cluster и module используется один design-step, который materialize-ит сразу два артефакта: specification и facade contract. Это позволяет проектировать внутреннюю структуру и публичную boundary одновременно, не превращая фасады в неуправляемый плоский список.
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
+
+### Managed workspace lifecycle — начиная с Diagram Modules
+
+`Description` и `Virtual Simulation` остаются pre-managed документными шагами. Когда пользователь запускает `Diagram Modules`, Core до первого turn-а агента переводит workspace в managed mode:
+- инициализирует Git repo, если его ещё нет;
+- устанавливает минимальный Plan Orchestrator lifecycle: `doc/TODO/todo-plan.md`, scripts/shims, hooks и validation/repair commands;
+- создаёт tracked control plane `.codeai-hub/workflow/` и ignored machine state `.codeai-hub/runtime/`, `.codeai-hub/logs/`, `.codeai-hub/cache/`;
+- фиксирует `Description` и `Virtual Simulation` как read-only baselines: артефакты и история доступны для просмотра, но новые сообщения и прямые правки этих шагов блокируются.
+
+После этого `Application Skeleton`, `Quality Gates Baseline` и Development Tree работают внутри уже управляемого workspace. Агентам не передаётся ownership за Git, hooks или plan scripts: они следуют текущему `todo-plan.md`, а Core валидирует, ремонтирует и расширяет lifecycle алгоритмически.
 
 Текущий статус реализации Development Tree (v1.2.162):
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
@@ -168,6 +178,7 @@ Manual start из sidebar Workflow Tree:
 - пользователь сам решает, когда `virtual-simulation.md` уже достаточно хороший для перехода на следующий шаг;
 - запуск требует доступный canonical upstream artifact `virtual-simulation.md`;
 - PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
+- перед provider session creation Core обязан выполнить managed workspace bootstrap и read-only freeze upstream шагов; если lifecycle validation возвращает blocker/debt, agent turn не запускается до repair или явного решения пользователя;
 - если continuity session для шага ещё нет, confirmation card предвыбирает провайдера последнего trunk-step (`virtual_simulation`), а не провайдера из `Description`;
 - пользователь может прямо на карточке переключить provider до запуска; выбранный provider становится authoritative identity для новой step-session bootstrap path;
 - после materialization новой step-session нижняя model/status surface и header usage-limits surface должны перейти на выбранный provider/runtime identity; когда у шага уже есть continuity session, confirmation card не показывается и resume path остаётся без pre-start provider override.
@@ -218,6 +229,8 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Этот шаг выбирает языки, фреймворки, package layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. После explicit acceptance тот же агент материализует real project scaffold и Product Part / Cluster / Module folder projection. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
 
+`Application Skeleton` получает уже управляемый workspace. Он не создаёт Git repo, hooks, Plan Orchestrator scripts или `.codeai-hub/workflow`; эти элементы принадлежат Core lifecycle. Если пользователь просит изменить skeleton, агент обновляет текущий plan stream и materialize-ит файлы только через managed commit flow.
+
 ### Входы
 
 - `diagram_modules/product-parts.index.md`
@@ -234,7 +247,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 ### Цель
 
-Зафиксировать минимальный contract качества для будущего кода: install/build/typecheck/lint/test/package commands, workspace assumptions и expected outputs. После explicit acceptance тот же агент интегрирует gate scripts/configs/hooks/package entries в materialized skeleton.
+Зафиксировать минимальный contract качества для будущего кода: install/build/typecheck/lint/test/package commands, workspace assumptions и expected outputs. После explicit acceptance тот же агент интегрирует gate scripts/configs/package entries и gate manifest/scripts в materialized skeleton.
 
 Без этого шага Development Tree sessions не стартуют: агентам нельзя писать код, пока project skeleton не создан и quality gates не интегрированы в реальную файловую систему.
 
@@ -251,7 +264,8 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 ### Execution contract
 
 - **Draft phase:** до explicit acceptance агент пишет только `quality-gates.md` и `quality-gates.json`; он не создаёт package scripts, configs, hooks, CI files или production code.
-- **Integration phase:** после explicit acceptance в той же сессии агент интегрирует accepted gates в materialized skeleton: package scripts/devDependencies, выбранные lint/format configs, Knip config, size/layout scripts, Git hooks и optional update automation config.
+- **Integration phase:** после explicit acceptance в той же сессии агент интегрирует accepted gates в materialized skeleton: package scripts/devDependencies, выбранные lint/format configs, Knip config, size/layout scripts, gate scripts/manifests и optional update automation config.
+- Hook structure остаётся Core-owned: Quality Gates описывает и создаёт gate content, а Core валидирует manifest и детерминированно регенерирует hook wiring через Hook Registry.
 - `quality-gates.json` обязан разделять намерение и фактическую исполнимость: `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `blockingIn`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, `verification`.
 - Advisory/planned/deferred gates не могут быть active blockers. `availability: "not_integrated"` для required gate допустим только с `integrationRequired: true` и конкретными `plannedIntegrationPaths`.
 
