@@ -94,6 +94,7 @@ The first prompt should not teach a large process manual. It should say: read `d
 ### 4.3 Application Skeleton
 
 `Application Skeleton` receives an already managed workspace.
+Core must still run managed workspace preflight/reconciliation before starting the provider session, because the `Diagram Modules` session may have been created by an older release, the baseline may have drifted, or the user may have repaired/changed files between stages.
 
 It does not create git, hooks, or plan scripts. It only:
 
@@ -105,6 +106,7 @@ It does not create git, hooks, or plan scripts. It only:
 ### 4.4 Quality Gates Baseline
 
 `Quality Gates` receives the same managed workspace.
+Core must also run managed workspace preflight/reconciliation before starting this provider session so Quality Gates never starts from a missing or broken Git/hooks/plan baseline.
 
 It should:
 

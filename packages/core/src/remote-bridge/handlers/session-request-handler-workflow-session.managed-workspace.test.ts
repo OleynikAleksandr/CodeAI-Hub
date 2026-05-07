@@ -54,6 +54,47 @@ test("createSessionForWorkflow prepares managed workspace before diagram modules
   assert.deepEqual(calls, ["managed:/tmp/workspace", "create-session"]);
 });
 
+test("createSessionForWorkflow prepares managed workspace before technical stage provider sessions", async () => {
+  const stages = ["application_skeleton", "quality_gates"];
+  for (const stage of stages) {
+    const calls: string[] = [];
+    const service = new SessionRequestHandlerWorkflowSession({
+      createAndRegisterSession: () => {
+        calls.push("create-session");
+        return Promise.resolve({ id: `runtime-session:${stage}` } as Session);
+      },
+      logger: createLogger(),
+      managedWorkspaceLifecycle: {
+        ensureReady: (workspaceRoot) => {
+          calls.push(`managed:${workspaceRoot}:${stage}`);
+          return Promise.resolve({ ok: true, issues: [], workspaceRoot });
+        },
+      },
+      providerFailureRecovery: {
+        handleProviderFailure: () => undefined,
+      } as never,
+      providerRegistry: {
+        getAdapter: () => createAdapter(),
+      } as unknown as ProviderRegistry,
+    });
+
+    const session = await service.createSessionForWorkflow({
+      providerId: "codexCli",
+      workspacePath: "/tmp/workspace",
+      context: {
+        initiativeSlug: "demo-workspace",
+        stage,
+      },
+    });
+
+    assert.equal(session?.id, `runtime-session:${stage}`);
+    assert.deepEqual(calls, [
+      `managed:/tmp/workspace:${stage}`,
+      "create-session",
+    ]);
+  }
+});
+
 test("createSessionForWorkflow blocks diagram modules when managed workspace validation fails", async () => {
   let createCalled = false;
   const service = new SessionRequestHandlerWorkflowSession({

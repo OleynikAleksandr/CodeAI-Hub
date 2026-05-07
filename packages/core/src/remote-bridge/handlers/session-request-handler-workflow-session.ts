@@ -15,6 +15,15 @@ interface ManagedWorkspaceLifecycle {
   ensureReady(workspaceRoot: string): Promise<ManagedWorkspaceValidationResult>;
 }
 
+const MANAGED_WORKSPACE_STAGES = new Set([
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+]);
+
+const requiresManagedWorkspaceLifecycle = (stage: string): boolean =>
+  MANAGED_WORKSPACE_STAGES.has(stage);
+
 interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
     options: CreateAndRegisterSessionOptions
@@ -55,7 +64,7 @@ export class SessionRequestHandlerWorkflowSession {
       );
       return null;
     }
-    if (options.context.stage === "diagram_modules") {
+    if (requiresManagedWorkspaceLifecycle(options.context.stage)) {
       const managedWorkspace = await this.managedWorkspaceLifecycle.ensureReady(
         options.workspacePath
       );
@@ -64,6 +73,7 @@ export class SessionRequestHandlerWorkflowSession {
           "Workflow session creation blocked: managed workspace baseline invalid",
           {
             issues: managedWorkspace.issues,
+            stage: options.context.stage,
             workspaceRoot: managedWorkspace.workspaceRoot,
           }
         );
