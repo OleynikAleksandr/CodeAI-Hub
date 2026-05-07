@@ -59,3 +59,53 @@ test("SettingsProviderAutoUpdateService continues after a target update failure"
 
   assert.deepEqual(updates, ["claude:cli", "claude:sdk"]);
 });
+
+test("SettingsProviderAutoUpdateService waits for Codex CLI update before completing startup", async () => {
+  const updates: string[] = [];
+  let resolveCodexCliUpdate: (() => void) | null = null;
+  const codexCliUpdated = new Promise<void>((resolve) => {
+    resolveCodexCliUpdate = resolve;
+  });
+  const service = new SettingsProviderAutoUpdateService({
+    config: {} as never,
+    logger: createLogger(),
+    settingsPersistenceService: {
+      load: () =>
+        Promise.resolve({
+          providers: {
+            codex: { autoUpdate: { enabled: true } },
+          },
+        }),
+    },
+    settingsProviderVersionService: {
+      updateTarget: async (provider, target) => {
+        updates.push(`${provider}:${target}:start`);
+        if (provider === "codex" && target === "cli") {
+          await codexCliUpdated;
+        }
+        updates.push(`${provider}:${target}:done`);
+      },
+    },
+  });
+
+  let startupCompleted = false;
+  const startup = service.runStartupAutoUpdate().then(() => {
+    startupCompleted = true;
+  });
+  await Promise.resolve();
+
+  assert.equal(startupCompleted, false);
+  assert.deepEqual(updates, ["codex:cli:start"]);
+
+  assert.ok(resolveCodexCliUpdate);
+  resolveCodexCliUpdate();
+  await startup;
+
+  assert.equal(startupCompleted, true);
+  assert.deepEqual(updates, [
+    "codex:cli:start",
+    "codex:cli:done",
+    "codex:sdk:start",
+    "codex:sdk:done",
+  ]);
+});
