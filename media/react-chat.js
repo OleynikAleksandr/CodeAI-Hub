@@ -7810,7 +7810,7 @@
 
   // src/client/ui/src/components/settings/settings-state-model.ts
   var DEFAULT_THINKING_DISPLAY_SYNC_ENABLED = true;
-  var DEFAULT_AUTO_UPDATE_ENABLED = true;
+  var DEFAULT_AUTO_UPDATE_ENABLED = false;
   var DEFAULT_CORE_RESTART_ENABLED = true;
   var DEFAULT_LOCALIZATION_LANGUAGE = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
