@@ -597,6 +597,24 @@ User retest checklist for `v1.2.189`:
 - Regression coverage for this release includes Core adapter construction and
   Codex app-server `thread/start` defaults for `workspace-write`.
 
+Live retest defect for `v1.2.189`: Project Manager opens before Core has
+finished provider update/bootstrap. Core auto-registers the workspace early,
+but `RemoteBridge` starts only after provider update work completes. During that
+gap the UI is already visible, shows an empty workspace list, keeps Settings and
+workspace actions accessible, and gives the user no startup/update explanation.
+
+Root cause: the launcher readiness wait is shorter than the real first-start
+provider update window, and Project Manager has no blocking Core readiness gate
+of its own. The existing reconnect lifecycle eventually recovers once Core is
+available, but the visible startup state is misleading and allows actions while
+Core is not ready to serve them.
+
+Fix direction: Project Manager should present a localized blocking startup card
+until Core HTTP readiness responds. The shell may be mounted, but workspace
+selection, workspace creation, and Settings access must not appear usable during
+Core startup/update. The fix should avoid adding logic to the already
+499-line `api.ts` file and should remain a small UI readiness layer.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
