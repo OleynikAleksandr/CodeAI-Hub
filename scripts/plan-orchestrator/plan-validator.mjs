@@ -64,6 +64,9 @@ const validateCurrentTask = (state, items) => {
   }
 
   const currentItems = items.filter((item) => item.id === state.currentTaskId);
+  const inProgressTasks = items.filter(
+    (item) => !item.isCommitItem && item.status === "IN_PROGRESS"
+  );
 
   if (currentItems.length !== 1) {
     return [
@@ -85,6 +88,23 @@ const validateCurrentTask = (state, items) => {
         "PLAN_CURRENT_TASK_STATUS_INVALID",
         `Current task "${state.currentTaskId}" must be IN_PROGRESS.`,
         { actual: currentItem.status, currentTaskId: state.currentTaskId }
+      )
+    );
+  }
+
+  if (
+    state.debt === null &&
+    (inProgressTasks.length !== 1 ||
+      inProgressTasks[0]?.id !== state.currentTaskId)
+  ) {
+    issues.push(
+      createIssue(
+        "PLAN_ORPHAN_IN_PROGRESS_TASKS",
+        "Active plan must have exactly one non-commit IN_PROGRESS task, and it must match currentTaskId.",
+        {
+          currentTaskId: state.currentTaskId,
+          inProgressTaskIds: inProgressTasks.map((item) => item.id),
+        }
       )
     );
   }

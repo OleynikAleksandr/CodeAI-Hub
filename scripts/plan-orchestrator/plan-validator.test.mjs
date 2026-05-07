@@ -9,6 +9,7 @@ const createPlanMarkdown = ({
   debt = null,
   duplicateCurrentTask = false,
   expectedCommitMessage = "feat: add plan state validator",
+  orphanInProgressTask = false,
 } = {}) => `# План разработки
 
 <!-- codeai-plan-state:start -->
@@ -37,6 +38,10 @@ const createPlanMarkdown = ({
 ${
   duplicateCurrentTask
     ? "3. [TODO] `phase1.stream2.task1` Duplicate task id.\n"
+    : ""
+}${
+  orphanInProgressTask
+    ? "4. [IN_PROGRESS] `phase1.stream2.task9` Orphan task.\n"
     : ""
 }`;
 
@@ -130,6 +135,16 @@ test("reports duplicate task ids", () => {
 
   assert.equal(result.ok, false);
   assert.equal(result.issues[0].code, "PLAN_DUPLICATE_TASK_ID");
+});
+
+test("reports orphan in-progress tasks outside current task", () => {
+  const result = validatePlanMarkdown(
+    createPlanMarkdown({ orphanInProgressTask: true }),
+    { gitState: cleanGitState }
+  );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.issues[0].code, "PLAN_ORPHAN_IN_PROGRESS_TASKS");
 });
 
 test("reports branch mismatch and open debt", () => {

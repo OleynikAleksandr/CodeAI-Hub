@@ -1,0 +1,25 @@
+# Plan Orchestrator Runtime Guardrails Hotfix
+
+**Status:** active implementation planning
+**Created:** 2026-05-07
+
+## Problem
+
+Live dogfooding exposed two unsafe plan-orchestrator behaviors:
+
+1. A failed `plan:commit` can leave a commit-pending debt state that is only recoverable if the agent manually notices and runs `plan:repair`.
+2. A plan can accidentally contain an orphan `IN_PROGRESS` task outside `currentTaskId`; after a later commit, the post-commit updater may find no valid next task and move the scope to terminal `NONE` without explicit user acceptance.
+
+Both cases are unacceptable in Core-managed workflow sessions. The orchestrator must fail loudly, keep recovery deterministic, and never silently close an execution scope.
+
+## Required Fix
+
+- Active plans must have exactly one non-commit `IN_PROGRESS` task, and it must match `currentTaskId`.
+- Post-commit advancement must refuse implicit terminal closeout unless the next task is the explicit reserved post-closeout anchor.
+- Plan CLI failures must print an actionable recovery hint so an agent can repair or stop instead of hanging the workflow.
+
+## Verification
+
+- Targeted plan-orchestrator tests for validator, markdown updater, and CLI/recovery behavior.
+- `npm run plan:validate`
+- No release build until the user explicitly confirms packaging.
