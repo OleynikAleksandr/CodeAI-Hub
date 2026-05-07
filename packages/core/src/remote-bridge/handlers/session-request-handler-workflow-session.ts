@@ -1,3 +1,9 @@
+import { ManagedPlanOrchestratorInstaller } from "../../managed-workspace/managed-plan-orchestrator-installer";
+import { ManagedWorkspaceBootstrapper } from "../../managed-workspace/managed-workspace-bootstrapper";
+import {
+  type ManagedWorkspaceValidationResult,
+  ManagedWorkspaceValidator,
+} from "../../managed-workspace/managed-workspace-validator";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -5,20 +11,28 @@ import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtim
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
+interface ManagedWorkspaceLifecycle {
+  ensureReady(workspaceRoot: string): Promise<ManagedWorkspaceValidationResult>;
+}
+
 interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
     options: CreateAndRegisterSessionOptions
   ) => Promise<Session | null>;
   readonly logger: Logger;
+  readonly managedWorkspaceLifecycle?: ManagedWorkspaceLifecycle;
   readonly providerFailureRecovery: SessionProviderFailureRecovery;
   readonly providerRegistry: ProviderRegistry;
 }
 
 export class SessionRequestHandlerWorkflowSession {
   private readonly deps: SessionRequestHandlerWorkflowSessionDependencies;
+  private readonly managedWorkspaceLifecycle: ManagedWorkspaceLifecycle;
 
   constructor(deps: SessionRequestHandlerWorkflowSessionDependencies) {
     this.deps = deps;
+    this.managedWorkspaceLifecycle =
+      deps.managedWorkspaceLifecycle ?? new DefaultManagedWorkspaceLifecycle();
   }
 
   async createSessionForWorkflow(options: {
@@ -41,6 +55,21 @@ export class SessionRequestHandlerWorkflowSession {
       );
       return null;
     }
+    if (options.context.stage === "diagram_modules") {
+      const managedWorkspace = await this.managedWorkspaceLifecycle.ensureReady(
+        options.workspacePath
+      );
+      if (!managedWorkspace.ok) {
+        this.deps.logger.warn(
+          "Workflow session creation blocked: managed workspace baseline invalid",
+          {
+            issues: managedWorkspace.issues,
+            workspaceRoot: managedWorkspace.workspaceRoot,
+          }
+        );
+        return null;
+      }
+    }
 
     try {
       return await this.deps.createAndRegisterSession({
@@ -62,5 +91,19 @@ export class SessionRequestHandlerWorkflowSession {
       );
       return null;
     }
+  }
+}
+
+class DefaultManagedWorkspaceLifecycle implements ManagedWorkspaceLifecycle {
+  private readonly bootstrapper = new ManagedWorkspaceBootstrapper();
+  private readonly installer = new ManagedPlanOrchestratorInstaller();
+  private readonly validator = new ManagedWorkspaceValidator();
+
+  async ensureReady(
+    workspaceRoot: string
+  ): Promise<ManagedWorkspaceValidationResult> {
+    await this.bootstrapper.bootstrap(workspaceRoot);
+    await this.installer.install(workspaceRoot);
+    return await this.validator.validate(workspaceRoot);
   }
 }

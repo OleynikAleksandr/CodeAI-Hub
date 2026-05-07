@@ -1,4 +1,4 @@
-import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { createManagedWorkspacePaths } from "./managed-workspace-paths";
 
@@ -27,6 +27,7 @@ export interface ManagedPlanOrchestratorInstallResult {
   readonly hooksWritten: readonly string[];
   readonly packageScripts: readonly string[];
   readonly planScriptPath: string;
+  readonly todoPlanCreated: boolean;
 }
 
 export class ManagedPlanOrchestratorInstaller {
@@ -58,11 +59,13 @@ export class ManagedPlanOrchestratorInstaller {
     const packageScripts = await ensurePackageScripts(
       paths.packageManifest.absolutePath
     );
+    const todoPlanCreated = await ensureTodoPlan(paths.todoPlan.absolutePath);
 
     return {
       hooksWritten,
       packageScripts,
       planScriptPath,
+      todoPlanCreated,
     };
   }
 }
@@ -124,6 +127,58 @@ const readObject = (value: unknown): Record<string, string> => {
   }
   return result;
 };
+
+const ensureTodoPlan = async (todoPlanPath: string): Promise<boolean> => {
+  if (await pathExists(todoPlanPath)) {
+    return false;
+  }
+  await mkdir(path.dirname(todoPlanPath), { recursive: true });
+  await writeFile(todoPlanPath, createTodoPlanTemplate(), "utf8");
+  return true;
+};
+
+const pathExists = async (targetPath: string): Promise<boolean> => {
+  try {
+    await access(targetPath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const createTodoPlanTemplate = (): string => `# Managed Workspace TODO Plan
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "managed-workspace-diagram-modules",
+  "branch": "main",
+  "baseHead": "TBD",
+  "lastRecordedCommit": "TBD",
+  "planningSource": ".codeai-hub/workflow/index.json",
+  "currentTaskId": "diagram-modules.stream1.task1",
+  "expectedCommitMessage": "docs: update diagram modules artifacts",
+  "debt": null
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+
+## Context Pack For This Cycle
+
+- **Planning source:** \`.codeai-hub/workflow/index.json\`
+- **Read this context before implementation:**
+  - \`.codeai-hub/workflow/index.json\`
+- Only this Context Pack is the recovery source for the current managed cycle.
+
+## Phase 1 — Diagram Modules Managed Work
+
+### Stream: Diagram Modules Artifacts
+
+1. [IN_PROGRESS] \`diagram-modules.stream1.task1\` Update Diagram Modules artifacts through the managed workflow (scope: \`.codeai-hub/**/diagram_modules\`; expected commit: \`docs: update diagram modules artifacts\`).
+2. [TODO] Git Commit: \`docs: update diagram modules artifacts\` (hash: TBD)
+`;
 
 const createPlanCliShim = (): string => `#!/usr/bin/env node
 import { existsSync, readFileSync } from "node:fs";
