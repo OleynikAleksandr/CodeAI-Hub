@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.192] - 2026-05-07
+### Fixed
+- **Quality Gates integration now requires lifecycle hook wiring.** A `quality-gates.json` contract with `integrated: true` is treated as failed until every `requiredBeforeCommit` gate is present in `.husky/pre-commit` and every `requiredBeforePush` gate is present in `.husky/pre-push`.
+- **Development Tree bootstrap now starts after accepted Quality Gates integration.** Workflow state reads trigger materialized Development Tree folders, draft templates, and node sessions once Application Skeleton and Quality Gates commits are accepted.
+- **Development Tree bootstrap avoids duplicate sessions.** Existing unchanged draft files suppress repeated node-session creation after a Core restart or repeated state read.
+
+### Tests
+- **Targeted regression coverage verifies Quality Gates hook enforcement, Development Tree bootstrap side effects, bootstrap gate locking, and repeat-read duplicate protection.**
+
 ## [1.2.191] - 2026-05-07
 ### Fixed
 - **Plan orchestrator runtime guardrails now fail loudly instead of silently closing or hanging managed workflow work.** Orphan `IN_PROGRESS` tasks are rejected, implicit terminal closeout requires an explicit anchor, and failed plan commands print deterministic repair guidance.
