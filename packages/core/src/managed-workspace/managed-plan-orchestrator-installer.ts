@@ -197,7 +197,12 @@ const readState = () => {
   if (!block) {
     throw new Error("Missing codeai-plan-state block");
   }
-  const json = block.replace(/^\`\`\`json/u, "").replace(/\`\`\`$/u, "").trim();
+  const fence = String.fromCharCode(96).repeat(3);
+  const json = block
+    .trim()
+    .replace(new RegExp("^" + fence + "json\\s*", "u"), "")
+    .replace(new RegExp("\\s*" + fence + "$", "u"), "")
+    .trim();
   return JSON.parse(json);
 };
 
