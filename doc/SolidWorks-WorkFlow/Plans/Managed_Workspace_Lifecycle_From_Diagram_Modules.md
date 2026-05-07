@@ -523,6 +523,19 @@ User retest checklist for `v1.2.186`:
   gated Development Tree unlock, and no read-only Development Tree side effects
   during Quality Gates finalization.
 
+Clean rebuild delivery note for `v1.2.187`: the provider startup ready-gate
+release was rebuilt from scratch with a new version after the user reported that
+`v1.2.186` had been built while live testing was still running and runtime files
+were overwritten mid-session. The rebuilt package is
+`codeai-hub-1.2.187.vsix`, with fresh provider, Core, UI, and launcher tarballs
+under `doc/tmp/releases/`.
+
+Process rule added from this incident: after implementation and verification,
+release packaging must wait for explicit user confirmation when the user is
+still running live workflow tests. Fix streams can be prepared and committed,
+but `build-all.sh` / `build-release.sh` must not run until the user confirms the
+test window is clear.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
