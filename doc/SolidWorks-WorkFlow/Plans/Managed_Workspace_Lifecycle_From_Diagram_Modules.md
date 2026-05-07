@@ -298,6 +298,27 @@ polish: commit ledger lines currently record `hash: included-in-commit` instead
 of the actual short commit hash. This is not blocking for clean Git or recovery,
 but it should be fixed so the managed ledger is audit-grade.
 
+Design correction after the `v1.2.179` retest: a stage plan cannot reliably
+record the actual hash of the same commit that contains that hash line, because
+changing the line changes the commit hash. The durable solution is a Core-owned
+workspace master ledger plus child plans:
+
+- `doc/TODO/workspace.plan.md` is Core-owned and records active stage, child plan
+  links, accepted commits, revision ids, blockers, and downstream invalidation.
+- `doc/TODO/stages/<stage>/todo-plan.md` is the active plan for each workflow
+  stage, such as Diagram Modules or Application Skeleton.
+- later implementation plans mirror the materialized ownership tree under
+  `doc/TODO/product-parts/<part>/.../todo-plan.md`.
+
+Agents may read the workspace ledger but should only work inside the child plan
+assigned by Core. Core remains the owner of cross-stage status and real commit
+hash bookkeeping.
+
+The same retest also exposed an unmanaged visual sidecar:
+`.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json`. This file is
+runtime-owned layout state, not an agent semantic artifact, so Core must prevent
+it from leaving dirty Git state after graph regeneration.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
