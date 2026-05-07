@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.187] - 2026-05-07
+### Fixed
+- **Clean rebuild of the provider startup ready-gate release.** Rebuilds the v1.2.186 provider startup gate changes under a fresh version after the previous package was built while live testing was still running.
+
+### Process
+- **Release builds now require explicit user confirmation after fixes are ready.** Future fix streams should stop at implementation/verification unless the user explicitly asks to build the next release.
+
 ## [1.2.186] - 2026-05-07
 ### Fixed
 - **Project Manager now waits for provider startup readiness before accepting sessions.** Core completes provider auto-update and provider initialization before opening the RemoteBridge, preventing Description from starting Codex while the Codex CLI is still being installed.
