@@ -18,8 +18,11 @@ import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade"
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
 import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
+import type { ManagedWorkflowLifecyclePayload } from "../types";
+import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   applyTechnicalRootProgressToState,
   readQualityGatesProgressSnapshot,
@@ -67,6 +70,27 @@ const resolveLatestDiagramModulesProviderId = (
     }
   }
   return best?.providerId ?? null;
+};
+const resolveManagedLifecycle = (params: {
+  readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
+  readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
+  readonly state: WorkflowState;
+}): ManagedWorkflowLifecyclePayload => {
+  const active = params.state.stages.diagram_modules.status !== "idle";
+  const blockers = [
+    ...(params.applicationSkeletonProgress?.validationErrors ?? []),
+    ...(params.qualityGatesProgress?.substep === "failed"
+      ? ["Quality Gates integration failed"]
+      : []),
+  ];
+  return {
+    active,
+    blockers,
+    controlPlanePath: ".codeai-hub/workflow",
+    readOnlyStages: active ? ["description", "virtual_simulation"] : [],
+    revisionRootPath: ".codeai-hub/workflow/revisions",
+    todoPlanPath: "doc/TODO/todo-plan.md",
+  };
 };
 export class WorkflowStateService {
   private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
@@ -270,6 +294,11 @@ export class WorkflowStateService {
                       applicationSkeletonProgress,
                       qualityGatesProgress,
                       developmentTree,
+                      managedLifecycle: resolveManagedLifecycle({
+                        state: responseState,
+                        applicationSkeletonProgress,
+                        qualityGatesProgress,
+                      }),
                     });
                   });
                 })
