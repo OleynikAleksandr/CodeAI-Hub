@@ -272,15 +272,6 @@ const buildStagePhaseLines = (
       "- Phase 4: ask only confirmation-style questions for genuine ambiguity; do not create Product Part, Cluster, Module, or Quality Gates sessions.",
     ];
   }
-  if (stage === "quality_gates") {
-    return [
-      "Work phases:",
-      "- Phase 1: read the accepted Application Skeleton artifacts.",
-      "- Phase 2: define executable build, typecheck, lint/format, test, and architecture commands for the selected stack.",
-      `- Phase 3: write \`${targetFileName}\` and \`quality-gates.json\` as the gate contract candidates.`,
-      "- Phase 4: do not implement product features.",
-    ];
-  }
   return [];
 };
 

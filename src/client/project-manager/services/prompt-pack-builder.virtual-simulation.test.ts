@@ -420,10 +420,8 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     ),
     true
   );
-  assert.equal(
-    gatesPack.content.includes("Output file name: `quality-gates.md`"),
-    true
-  );
+  assert.equal(gatesPack.content.includes("Work phases:"), false);
+  assert.equal(gatesPack.content.includes("Output file name: `quality-gates.md`"), true);
 });
 
 test("workflow localized prompt pack is language-keyable and keeps canonical tokens protected", () => {
