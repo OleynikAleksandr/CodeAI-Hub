@@ -17,6 +17,8 @@ test("FlowNodeContinuityFacade matches trunk workflow sessions (runSlug=null)", 
     "description",
     "virtual_simulation",
     "diagram_modules",
+    "application_skeleton",
+    "quality_gates",
   ]) {
     assert.equal(
       facade.isEligibleForRollover({
@@ -40,6 +42,23 @@ test("FlowNodeContinuityFacade matches trunk workflow sessions (runSlug=null)", 
       runSlug: null,
     }),
     false
+  );
+});
+
+test("FlowNodeContinuityFacade resolves managed workspace recovery mode", () => {
+  const facade = createFacade();
+
+  assert.equal(
+    facade.resolveRecoveryMode({ stageId: "application_skeleton" }),
+    "managed_workspace"
+  );
+  assert.equal(
+    facade.resolveRecoveryMode({ stageId: "quality_gates" }),
+    "managed_workspace"
+  );
+  assert.equal(
+    facade.resolveRecoveryMode({ stageId: "description" }),
+    "continuity_report"
   );
 });
 

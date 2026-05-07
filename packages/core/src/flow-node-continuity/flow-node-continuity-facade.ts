@@ -1,8 +1,12 @@
 import type {
+  FlowNodeContinuityRecoveryMode,
   FlowNodeContinuityTemplateId,
   FlowNodeContinuityTemplateVariables,
 } from "./flow-node-continuity-types";
-import { FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS } from "./flow-node-continuity-types";
+import {
+  FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS,
+  FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS,
+} from "./flow-node-continuity-types";
 import type { ContinuityReportPaths } from "./report-path";
 import { buildContinuityReportPaths } from "./report-path";
 import type { WaitForReportResult } from "./report-waiter";
@@ -78,10 +82,18 @@ export class FlowNodeContinuityFacade {
     return (
       options.stageId !== null &&
       options.runSlug === null &&
-      FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS.includes(
-        options.stageId as (typeof FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS)[number]
-      )
+      (this.isTrunkDocumentationStage(options.stageId) ||
+        this.isManagedFilesystemStage(options.stageId))
     );
+  }
+
+  resolveRecoveryMode(options: {
+    readonly stageId: string | null;
+  }): FlowNodeContinuityRecoveryMode {
+    return options.stageId !== null &&
+      this.isManagedFilesystemStage(options.stageId)
+      ? "managed_workspace"
+      : "continuity_report";
   }
 
   shouldStartSilentPreemptiveRollover(options: {
@@ -101,5 +113,17 @@ export class FlowNodeContinuityFacade {
       return false;
     }
     return options.remainingPercent <= this.#preemptRemainingPercentThreshold;
+  }
+
+  private isManagedFilesystemStage(stageId: string): boolean {
+    return FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS.includes(
+      stageId as (typeof FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS)[number]
+    );
+  }
+
+  private isTrunkDocumentationStage(stageId: string): boolean {
+    return FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS.includes(
+      stageId as (typeof FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS)[number]
+    );
   }
 }
