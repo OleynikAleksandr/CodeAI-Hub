@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.175] - 2026-05-07
+### Fixed
+- **Application Skeleton activation now bootstraps the managed workspace from the real Project Manager session path.** The generic `session:create` route runs the same Git/hooks/plan preflight as workflow gateway sessions before creating `Application Skeleton` or `Quality Gates` provider sessions.
+
+### Tests
+- **Session-create coverage now verifies the managed baseline in a real temporary workspace.** The regression asserts `.git`, `.husky/pre-commit`, `doc/TODO/todo-plan.md`, `scripts/plan-orchestrator/plan-cli.mjs`, and `.codeai-hub/workflow` exist before the provider session is created.
+
 ## [1.2.174] - 2026-05-07
 ### Fixed
 - **Managed workspace baseline is now reconciled before every filesystem-aware workflow stage.** Core runs the Git/hooks/plan preflight before `Diagram Modules`, `Application Skeleton`, and `Quality Gates`, so older or drifted sessions cannot skip `doc/TODO/todo-plan.md`, plan scripts, hooks, and `.codeai-hub/workflow`.
