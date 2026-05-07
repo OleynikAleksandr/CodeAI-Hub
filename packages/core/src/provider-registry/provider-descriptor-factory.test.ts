@@ -60,7 +60,7 @@ const createAdapter = (config: CoreConfig): ProviderAdapter =>
     createReporter: () => ({}),
   });
 
-test("createCodexAdapterInstance defaults workflow sandbox to workspace write", () => {
+test("createCodexAdapterInstance defaults workflow sandbox to full access", () => {
   createAdapter(createCoreConfig());
 
   assert.equal(
@@ -69,7 +69,7 @@ test("createCodexAdapterInstance defaults workflow sandbox to workspace write", 
   );
   assert.equal(
     FakeCodexAdapter.capturedWorkspace?.defaultSandboxMode,
-    "workspace-write"
+    "danger-full-access"
   );
 });
 

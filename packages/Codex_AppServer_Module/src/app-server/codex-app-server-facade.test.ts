@@ -156,7 +156,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       workspace: {
         defaultApprovalMode: string;
         defaultModel: string;
-        defaultSandboxMode: string;
+        defaultSandboxMode?: string;
         workspacePath: string;
       };
     }
@@ -180,7 +180,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       workspace: {
         defaultApprovalMode: string;
         defaultModel: string;
-        defaultSandboxMode: string;
+        defaultSandboxMode?: string;
         workspacePath: string;
       };
     }
@@ -195,7 +195,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       workspace: {
         defaultApprovalMode: string;
         defaultModel: string;
-        defaultSandboxMode: string;
+        defaultSandboxMode?: string;
         workspacePath: string;
       };
     }
@@ -206,7 +206,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       workspace: {
         defaultApprovalMode: string;
         defaultModel: string;
-        defaultSandboxMode: string;
+        defaultSandboxMode?: string;
         workspacePath: string;
       };
     }
@@ -216,14 +216,13 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       workspace: {
         defaultApprovalMode: string;
         defaultModel: string;
-        defaultSandboxMode: string;
+        defaultSandboxMode?: string;
         workspacePath: string;
       };
     }
   ).workspace = {
     defaultApprovalMode: "on-request",
     defaultModel: "gpt-5.5",
-    defaultSandboxMode: "workspace-write",
     workspacePath: "/workspace/default",
   };
 
@@ -238,7 +237,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
     readonly sandbox?: string;
   };
   assert.equal(params.approvalPolicy, "on-request");
-  assert.equal(params.sandbox, "workspace-write");
+  assert.equal(params.sandbox, "danger-full-access");
   assert.match(
     params.baseInstructions ?? "",
     EARLY_ARCHITECTURE_WORKFLOW_PATTERN

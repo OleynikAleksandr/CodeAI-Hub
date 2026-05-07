@@ -102,7 +102,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "on-request";
-const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "workspace-write";
+const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
 
 export const resolveProviderImmediateBindingCapability = (
   providerId: string
