@@ -4,6 +4,10 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.188] - 2026-05-07
+### Fixed
+- **Post-clean-cache rebuild of the provider startup ready-gate release.** Rebuilds the current provider startup gate package after the local CodeAI Hub runtime cache was fully cleared, producing fresh provider, Core, UI, launcher, and VSIX artifacts under a new version.
+
 ## [1.2.187] - 2026-05-07
 ### Fixed
 - **Clean rebuild of the provider startup ready-gate release.** Rebuilds the v1.2.186 provider startup gate changes under a fresh version after the previous package was built while live testing was still running.
