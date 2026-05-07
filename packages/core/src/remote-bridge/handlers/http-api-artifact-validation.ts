@@ -351,6 +351,9 @@ const validateQualityGatesContract = (content: string): string | null => {
     return parsed.error;
   }
   const commands = parsed.value.commands;
+  if (Array.isArray(commands)) {
+    return "Quality gates contract commands must be an object keyed by gate id";
+  }
   if (!isRecord(commands)) {
     return "Quality gates contract must include commands object";
   }
