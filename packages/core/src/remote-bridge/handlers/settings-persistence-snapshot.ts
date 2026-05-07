@@ -73,12 +73,12 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
         effort: "medium",
       },
       thinkingDisplaySyncEnabled: true,
-      autoUpdate: { enabled: true },
+      autoUpdate: { enabled: false },
       defaultModel: "sonnet",
       sessionContinuity: { remainingPercentThreshold: 30 },
     },
     codex: {
-      autoUpdate: { enabled: true },
+      autoUpdate: { enabled: false },
       defaultModel: "gpt-5.3-codex",
       reasoningByModel: {
         "gpt-5.2": "medium",
@@ -91,7 +91,7 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
       sessionContinuity: { remainingPercentThreshold: 30 },
     },
     gemini: {
-      autoUpdate: { enabled: true },
+      autoUpdate: { enabled: false },
       defaultModel: "gemini-3-pro-preview",
       thinkingDisplaySyncEnabled: true,
       thinkingLevelByModel: {},

@@ -5,7 +5,7 @@ export interface AutoUpdateSettings {
 }
 
 export const DEFAULT_AUTO_UPDATE_SETTINGS: AutoUpdateSettings = {
-  enabled: true,
+  enabled: false,
 };
 
 export const normalizeAutoUpdateSettings = (
