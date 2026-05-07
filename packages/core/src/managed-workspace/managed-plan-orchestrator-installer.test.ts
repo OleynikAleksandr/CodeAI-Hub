@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -19,9 +26,14 @@ const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
 const APPLICATION_SKELETON_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
-const INCLUDED_IN_COMMIT_RE = /hash: included-in-commit/u;
 const LEDGER_COMMIT_RE = /chore: record managed workspace ledger/u;
 const DIAGRAM_MODULES_COMMIT_RE = /docs: update diagram modules artifacts/u;
+const PLAN_COMMIT_HASH_RE = /hash: [0-9a-f]+/u;
+const PRODUCT_PART_SUMMARY_RE =
+  /Update Diagram Modules Product Part artifacts: project-manager/u;
+const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
+const WORKSPACE_CHANGED_FILES_RE =
+  /"changedFiles": \[\n\s+"\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md"/u;
 const WORKSPACE_COMMIT_HASH_RE = /"commitHash": "[0-9a-f]+"/u;
 const WORKSPACE_ACCEPTED_COMMIT_RE = /"acceptedCommits": \[\n\s+\{/u;
 const WORKSPACE_LAST_COMMIT_RE =
@@ -153,11 +165,12 @@ test("managed plan shim advances the active task inside plan commits", async () 
       workspaceRoot,
       "scripts/plan-orchestrator/plan-cli.mjs"
     );
-    await writeFile(
-      path.join(workspaceRoot, "artifact.md"),
-      "# Demo\n",
-      "utf8"
+    const artifactPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md"
     );
+    await mkdir(path.dirname(artifactPath), { recursive: true });
+    await writeFile(artifactPath, "# Project Manager\n", "utf8");
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
 
     await execFileAsync(
@@ -187,8 +200,12 @@ test("managed plan shim advances the active task inside plan commits", async () 
     });
 
     assert.match(status.stdout, DIAGRAM_NEXT_TASK_RE);
-    assert.match(plan, INCLUDED_IN_COMMIT_RE);
+    assert.doesNotMatch(plan, INCLUDED_IN_COMMIT_RE);
+    assert.match(plan, PLAN_COMMIT_HASH_RE);
+    assert.match(plan, PRODUCT_PART_SUMMARY_RE);
     assert.match(workspacePlan, WORKSPACE_ACCEPTED_COMMIT_RE);
+    assert.match(workspacePlan, PRODUCT_PART_SUMMARY_RE);
+    assert.match(workspacePlan, WORKSPACE_CHANGED_FILES_RE);
     assert.match(workspacePlan, WORKSPACE_LAST_COMMIT_RE);
     assert.match(workspacePlan, WORKSPACE_COMMIT_HASH_RE);
     assert.match(gitLog.stdout, LEDGER_COMMIT_RE);

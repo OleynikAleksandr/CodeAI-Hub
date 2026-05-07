@@ -237,12 +237,49 @@ const hasStagedChanges = () => {
   return result.status !== 0;
 };
 
+const listStagedFiles = () =>
+  runGit(["diff", "--cached", "--name-only"])
+    .split("\\n")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
 const nextTaskId = (taskId) => {
   const match = /^(.*\\.task)(\\d+)$/u.exec(taskId);
   if (!match) {
     return \`\${taskId}.next\`;
   }
   return \`\${match[1]}\${Number(match[2]) + 1}\`;
+};
+
+const summarizeStagedFiles = (files, fallbackMessage) => {
+  const productParts = files
+    .map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1])
+    .filter(Boolean);
+  if (productParts.length > 0) {
+    return \`Update Diagram Modules Product Part artifacts: \${productParts.join(", ")}\`;
+  }
+  if (files.some((file) => file.includes("/diagram_modules/product-parts.index.md"))) {
+    return "Update Diagram Modules Product Part index artifact";
+  }
+  if (files.some((file) => file.includes("/application_skeleton/"))) {
+    return "Update Application Skeleton artifacts and materialized filesystem";
+  }
+  if (files.some((file) => file.includes("/quality_gates/"))) {
+    return "Update Quality Gates baseline artifacts and gate files";
+  }
+  if (files.length > 0) {
+    return \`Update managed workspace files: \${files.slice(0, 5).join(", ")}\`;
+  }
+  return fallbackMessage;
+};
+
+const formatTaskLine = (line, taskId, status, summary, files, message) => {
+  const number = /^\\d+\\./u.exec(line)?.[0] ?? "1.";
+  const scope =
+    files.length > 0
+      ? files.slice(0, 5).join(", ")
+      : "managed workspace files";
+  return \`\${number} [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
 };
 
 const replaceState = (text, state) => {
@@ -273,6 +310,8 @@ const advancePlanForCommit = (message) => {
   const state = validate();
   const workspaceState = readWorkspaceState();
   const planPath = activePlanPath();
+  const changedFiles = listStagedFiles();
+  const summary = summarizeStagedFiles(changedFiles, message);
   if (state.expectedCommitMessage && message !== state.expectedCommitMessage) {
     throw new Error(\`Expected commit message: \${state.expectedCommitMessage}\`);
   }
@@ -299,7 +338,14 @@ const advancePlanForCommit = (message) => {
 
   const nextId = nextTaskId(state.currentTaskId);
   const nextTaskExists = lines.some((line) => line.includes(\`\\\`\${nextId}\\\`\`));
-  lines[taskLineIndex] = lines[taskLineIndex].replace("[IN_PROGRESS]", "[DONE]");
+  lines[taskLineIndex] = formatTaskLine(
+    lines[taskLineIndex],
+    state.currentTaskId,
+    "DONE",
+    summary,
+    changedFiles,
+    message
+  );
   lines[commitLineIndex] = lines[commitLineIndex]
     .replace("[TODO]", "[DONE]")
     .replace("hash: TBD", "hash: included-in-commit");
@@ -308,14 +354,17 @@ const advancePlanForCommit = (message) => {
     const nextNumber = lines
       .slice(0, commitLineIndex + 1)
       .filter((line) => /^\\d+\\. /u.test(line)).length + 1;
-    const currentTaskText = lines[taskLineIndex].replace(
-      \`\\\`\${state.currentTaskId}\\\`\`,
-      \`\\\`\${nextId}\\\`\`
-    );
     lines.splice(
       commitLineIndex + 1,
       0,
-      \`\${nextNumber}. \${currentTaskText.replace("[DONE]", "[IN_PROGRESS]").replace(/^\\d+\\.\\s+/u, "")}\`,
+      formatTaskLine(
+        String(nextNumber) + ". [IN_PROGRESS] \`" + nextId + "\`",
+        nextId,
+        "IN_PROGRESS",
+        \`Continue managed \${workspaceState.activeStage ?? "stage"} updates\`,
+        [],
+        message
+      ),
       \`\${nextNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`
     );
   }
@@ -335,14 +384,27 @@ const advancePlanForCommit = (message) => {
     message,
     planPath,
     stage: workspaceState.activeStage ?? "unknown",
+    changedFiles,
+    summary,
     taskId: state.currentTaskId,
   };
 };
 
-const recordWorkspaceCommit = (event) => {
-  const workspaceState = readWorkspaceState();
-  const commitHash = runGit(["rev-parse", "--short", "HEAD"]);
-  const commitFullHash = runGit(["rev-parse", "HEAD"]);
+const backfillPlanCommitHash = (event, commitHash) => {
+  const planText = readFileSync(event.planPath, "utf8");
+  writeFileSync(
+    event.planPath,
+    planText
+      .replace("hash: included-in-commit", \`hash: \${commitHash}\`)
+      .replace(
+        '"lastRecordedCommit": "included-in-commit"',
+        \`"lastRecordedCommit": "\${commitHash}"\`
+      ),
+    "utf8"
+  );
+};
+
+const recordWorkspaceCommit = (event, workspaceState, commitHash, commitFullHash) => {
   const acceptedCommits = Array.isArray(workspaceState.acceptedCommits)
     ? workspaceState.acceptedCommits
     : [];
@@ -355,9 +417,11 @@ const recordWorkspaceCommit = (event) => {
       {
         commitFullHash,
         commitHash,
+        changedFiles: event.changedFiles,
         message: event.message,
         planPath: event.planPath,
         stage: event.stage,
+        summary: event.summary,
         taskId: event.taskId,
       },
     ],
@@ -416,7 +480,12 @@ try {
     if (result.status !== 0) {
       process.exitCode = result.status ?? 1;
     } else {
-      recordWorkspaceCommit(event);
+      const workspaceState = readWorkspaceState();
+      const commitHash = runGit(["rev-parse", "--short", "HEAD"]);
+      const commitFullHash = runGit(["rev-parse", "HEAD"]);
+      backfillPlanCommitHash(event, commitHash);
+      recordWorkspaceCommit(event, workspaceState, commitHash, commitFullHash);
+      runGit(["add", event.planPath]);
       createWorkspaceLedgerCommit();
       process.exitCode = 0;
     }
