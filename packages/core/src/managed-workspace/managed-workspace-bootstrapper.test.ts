@@ -98,3 +98,30 @@ test("ManagedWorkspaceBootstrapper is idempotent for existing gitignore entries"
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("ManagedWorkspaceBootstrapper preserves workflow manifest timestamp across preflight", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  const commandRunner: ManagedWorkspaceCommandRunner = () => Promise.resolve();
+
+  try {
+    await new ManagedWorkspaceBootstrapper({
+      commandRunner,
+      createdAt: "2026-05-07T00:00:00.000Z",
+    }).bootstrap(workspaceRoot);
+    const secondResult = await new ManagedWorkspaceBootstrapper({
+      commandRunner,
+      createdAt: "2026-05-08T00:00:00.000Z",
+    }).bootstrap(workspaceRoot);
+    const manifest = JSON.parse(
+      await readFile(
+        path.join(workspaceRoot, ".codeai-hub/workflow/index.json"),
+        "utf8"
+      )
+    );
+
+    assert.equal(manifest.createdAt, "2026-05-07T00:00:00.000Z");
+    assert.equal(secondResult.actions.includes("wrote_manifest"), false);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});

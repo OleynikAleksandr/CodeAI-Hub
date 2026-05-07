@@ -3,7 +3,10 @@ import { constants } from "node:fs";
 import { access, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { createManagedWorkspaceManifest } from "./managed-workspace-manifest";
+import {
+  createManagedWorkspaceManifest,
+  MANAGED_WORKSPACE_MANIFEST_RELATIVE_PATH,
+} from "./managed-workspace-manifest";
 import { createManagedWorkspacePaths } from "./managed-workspace-paths";
 
 const execFileAsync = promisify(execFile);
@@ -83,15 +86,24 @@ export class ManagedWorkspaceBootstrapper {
       actions.add("updated_gitignore");
     }
 
+    const manifestPath = path.join(
+      paths.workspaceRoot,
+      MANAGED_WORKSPACE_MANIFEST_RELATIVE_PATH
+    );
     const manifest = createManagedWorkspaceManifest({
-      createdAt: this.#createdAt(),
+      createdAt:
+        (await readExistingManifestCreatedAt(manifestPath)) ??
+        this.#createdAt(),
       paths,
     });
-    const manifestPath = path.join(paths.workspaceRoot, manifest.manifestPath);
-    await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, {
-      encoding: "utf8",
-    });
-    actions.add("wrote_manifest");
+    if (
+      await writeIfChanged(
+        manifestPath,
+        `${JSON.stringify(manifest, null, 2)}\n`
+      )
+    ) {
+      actions.add("wrote_manifest");
+    }
 
     return {
       actions: [...actions],
@@ -163,5 +175,29 @@ const readExistingText = async (targetPath: string): Promise<string> => {
     return await readFile(targetPath, "utf8");
   } catch {
     return "";
+  }
+};
+
+const writeIfChanged = async (
+  targetPath: string,
+  nextContent: string
+): Promise<boolean> => {
+  if ((await readExistingText(targetPath)) === nextContent) {
+    return false;
+  }
+  await writeFile(targetPath, nextContent, "utf8");
+  return true;
+};
+
+const readExistingManifestCreatedAt = async (
+  manifestPath: string
+): Promise<string | null> => {
+  try {
+    const parsed = JSON.parse(await readExistingText(manifestPath)) as {
+      readonly createdAt?: unknown;
+    };
+    return typeof parsed.createdAt === "string" ? parsed.createdAt : null;
+  } catch {
+    return null;
   }
 };
