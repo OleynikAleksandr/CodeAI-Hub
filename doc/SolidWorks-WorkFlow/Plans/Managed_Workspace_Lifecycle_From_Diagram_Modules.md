@@ -501,6 +501,28 @@ keep startup failures visible and recoverable, but it must prevent early
 Description/Virtual Simulation traffic from starting Codex against a CLI that is
 still being installed.
 
+Release delivery note for `v1.2.186`: provider startup ready-gate hotfix release
+is built as `codeai-hub-1.2.186.vsix`. Core now completes provider auto-update
+and provider initialization before opening `RemoteBridge`, so Project Manager
+cannot create Description/Virtual Simulation sessions against a provider that is
+still installing or updating. The release preserves provider startup failure
+visibility through the existing initialize/recovery path, but removes the early
+UI traffic window that produced `spawn codex ENOENT` in `v1.2.185`.
+
+User retest checklist for `v1.2.186`:
+
+- After installing the VSIX, Project Manager should not allow Description
+  session creation until Core startup/provider auto-update has completed.
+- Core logs should show provider auto-update and provider initialization before
+  `Remote bridge started`.
+- Starting a fresh Description session with Codex should not emit
+  `codex app-server spawn error: spawn codex ENOENT` while Codex auto-update is
+  still running.
+- The earlier managed-workspace checks from `v1.2.185` still apply unchanged:
+  Application Skeleton draft commit, Quality Gates draft commit, transaction
+  gated Development Tree unlock, and no read-only Development Tree side effects
+  during Quality Gates finalization.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
