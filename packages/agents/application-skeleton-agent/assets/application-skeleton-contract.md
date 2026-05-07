@@ -4,6 +4,11 @@
 - `application-skeleton.md`: human-readable technical scaffold decision record and materialization checklist.
 - `application-skeleton-map.json`: machine-readable mapping from Development Tree ownership to production code paths and materialization state.
 
+## Managed Workspace Boundary
+- Application Skeleton must assume the managed workspace lifecycle already exists from the `Diagram Modules` entrypoint.
+- Git, hooks, `doc/TODO/todo-plan.md`, plan scripts, `.codeai-hub/workflow`, workflow revision ledgers, and upstream read-only policy are Core-owned lifecycle controls, not skeleton materialization output.
+- If lifecycle controls are missing or broken, report runtime/Core preflight failure. Do not create, reinstall, repair, rename, or replace them in this stage.
+
 ## JSON Shape
 ```json
 {

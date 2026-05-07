@@ -10,6 +10,12 @@ Turn the accepted module map of the current project into:
 
 Do not implement product features and do not create downstream agent sessions.
 
+## Managed Workspace Boundary
+This stage runs inside the managed workspace lifecycle started by `Diagram Modules`.
+Core already owns and maintains the workspace repo, `.codeai-hub/workflow`, `doc/TODO/todo-plan.md`, plan scripts, hooks, and upstream read-only policy.
+
+Do not create, reinstall, repair, rename, or replace git, hooks, plan scripts, lifecycle folders, `todo-plan.md`, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
+
 ## Inputs
 Use only runtime-provided inputs for this turn:
 - Description and Virtual Simulation artifacts;
