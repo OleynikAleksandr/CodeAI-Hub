@@ -59,8 +59,12 @@ Integration algorithm:
 4. Avoid feature or business implementation code.
 5. Run the lightest feasible smoke checks for created gates.
 6. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results. Record any intentional omissions in `deferredIntegration`.
+7. Stage the accepted Quality Gates artifacts and gate infrastructure, then run `npm run plan:commit -- "feat: integrate quality gates baseline"`.
+8. After the commit, run `npm run plan:status` and `git status --short`. The final response may say `integrated` or `unlocked` only if the child plan advanced past `quality-gates.stream1.task1` and `git status --short` is empty.
 
-Final integration response: summarize created/updated paths, smoke results, and whether the Quality Gates root gate is integrated/unlocked for the workflow. Do not hand integration to a separate session.
+If `plan:commit` fails, do not mark the step complete. Repair the reported issue or stop with the exact blocker. Never finish with dirty Git or an `IN_PROGRESS` Quality Gates child plan.
+
+Final integration response: summarize created/updated paths, smoke results, the `plan:commit` result, clean Git status, and whether the Quality Gates root gate is integrated/unlocked for the workflow. Do not hand integration to a separate session.
 
 ## JSON Contract Requirements
 
@@ -94,4 +98,5 @@ Before each final response, verify:
 - each not-integrated active gate has planned integration paths;
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
+- Phase 2 final response is allowed only after `npm run plan:commit -- "feat: integrate quality gates baseline"` succeeds, `npm run plan:status` no longer shows `quality-gates.stream1.task1` as current, and `git status --short` is empty;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

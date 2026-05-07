@@ -19,6 +19,11 @@ const QUALITY_GATES_HANDOFF_RE =
 const NO_LIFECYCLE_RESTORE_RE =
   /must not create, rewrite, restore, revert, checkout/;
 const NO_DIRECT_HUSKY_RE = /Do not edit `\.husky` hooks directly/;
+const PLAN_COMMIT_RE =
+  /npm run plan:commit -- "feat: integrate quality gates baseline"/;
+const CLEAN_GIT_RE = /git status --short/;
+const CHILD_PLAN_ADVANCED_RE =
+  /child plan advanced past `quality-gates\.stream1\.task1`/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const NO_PLANNED_DUPLICATES_RE =
   /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
@@ -63,6 +68,9 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, QUALITY_GATES_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, NO_DIRECT_HUSKY_RE);
+  assert.match(prompt, PLAN_COMMIT_RE);
+  assert.match(prompt, CLEAN_GIT_RE);
+  assert.match(prompt, CHILD_PLAN_ADVANCED_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
