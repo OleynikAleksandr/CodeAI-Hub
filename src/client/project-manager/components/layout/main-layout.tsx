@@ -7,6 +7,7 @@ import { ensureWorkflowWorktree } from "../../services/workspace-session-client"
 import type { WorkspaceProject } from "../../types";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
+import { useCoreStartupGate } from "./use-core-startup-gate";
 import { useWorkspaceScopeSync } from "./workspace-scope-sync";
 
 const UI_LABELS_CATEGORY = "ui_interface";
@@ -26,11 +27,36 @@ type AddWorkspaceRequestedDetail = {
   readonly path: string;
 };
 
+const resolveStartupCopy = (
+  configuredLanguage: string
+): {
+  readonly detail: string;
+  readonly status: string;
+  readonly title: string;
+} => {
+  if (configuredLanguage.toLowerCase().startsWith("ru")) {
+    return {
+      detail:
+        "Core проверяет и обновляет локальные компоненты. Рабочие области и Settings станут доступны после завершения.",
+      status: "Ожидание готовности Core...",
+      title: "CodeAI Hub запускается",
+    };
+  }
+  return {
+    detail:
+      "Core is checking and updating local components. Workspaces and Settings will become available when startup completes.",
+    status: "Waiting for Core readiness...",
+    title: "CodeAI Hub is starting",
+  };
+};
+
 /**
  * Main layout component (Grid container for Section 1 + Section 2)
  */
 export const MainLayout: React.FC = () => {
-  const { t } = useLocalization();
+  const localization = useLocalization();
+  const { t } = localization;
+  const coreStartup = useCoreStartupGate();
   const { sizes, updateSize } = usePanelSizes();
   const [projects, setProjects] = useState<readonly WorkspaceProject[]>([]);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | undefined>();
@@ -159,6 +185,25 @@ export const MainLayout: React.FC = () => {
     "pm.workspace_modal.error.path_absolute",
     "Path must be absolute."
   );
+  const startupCopy = resolveStartupCopy(
+    localization.configuredLanguageByCategory.ui_interface
+  );
+  const startupTitle = t(
+    UI_LABELS_CATEGORY,
+    "pm.startup_gate.title",
+    startupCopy.title
+  );
+  const startupDetail = t(
+    UI_HELPER_TEXT_CATEGORY,
+    "pm.startup_gate.detail",
+    startupCopy.detail
+  );
+  const startupStatus = t(
+    USER_MESSAGES_CATEGORY,
+    "pm.startup_gate.status",
+    startupCopy.status
+  );
+  const isCoreStartupBlocked = coreStartup.status !== "ready";
 
   useEffect(() => {
     if (!activeWorkspace) {
@@ -181,6 +226,21 @@ export const MainLayout: React.FC = () => {
 
   return (
     <div className="pm-layout">
+      {isCoreStartupBlocked ? (
+        <div
+          aria-busy="true"
+          aria-live="polite"
+          className="pm-startup-gate"
+          role="status"
+        >
+          <div className="pm-startup-gate__card">
+            <div className="pm-startup-gate__spinner" aria-hidden="true" />
+            <h2 className="pm-startup-gate__title">{startupTitle}</h2>
+            <p className="pm-startup-gate__detail">{startupDetail}</p>
+            <p className="pm-startup-gate__status">{startupStatus}</p>
+          </div>
+        </div>
+      ) : null}
       {isAddWorkspaceModalOpen ? (
         <div
           aria-label={addWorkspaceDialogLabel}
