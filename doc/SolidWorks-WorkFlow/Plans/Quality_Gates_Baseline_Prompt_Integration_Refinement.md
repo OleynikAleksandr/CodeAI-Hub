@@ -130,7 +130,16 @@ Required consistency rules:
 - `node --test packages/core/dist/development-tree/development-tree-bootstrap-gate.test.js`
 - `npm run build:project-manager`
 
-## 9. Definition Of Done
+## 9. Retest Feedback
+
+2026-05-07 live retest on release `1.2.171` found blockers:
+
+- The first prompt still hardcoded JavaScript/TypeScript-specific tools (`Ultracite`, `Knip`) as project policies instead of requiring the agent to infer/select suitable automated tooling for the skeleton language/framework.
+- The universal `<= 500` source file/class size rule is valid and must remain a mandatory architecture policy for all generated products.
+- The final response used `Development Tree sessions`, which is misleading here: Quality Gates integration must continue in the same Quality Gates session after explicit acceptance.
+- `quality-gates.json` was syntactically valid JSON but used `commands` as an array, while the contract requires a command object keyed by gate id.
+
+## 10. Definition Of Done
 
 - The first prompt is shorter and has no repeated phase rules across bundled prompt, contract, and runtime prompt pack.
 - Draft artifacts from a live run include a concrete integration plan.
