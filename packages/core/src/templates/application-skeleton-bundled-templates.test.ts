@@ -48,6 +48,8 @@ const POST_MATERIALIZATION_RE =
   /remove stale draft\/future claims from both artifacts/;
 const STALE_DEFERRED_NOTE_RE =
   /deferred note that says the filesystem was not materialized/;
+const CANONICAL_ID_RE =
+  /stable canonical `id` values.*legacy aliases `partId`, `clusterId`, and `moduleId` are optional/s;
 const ACCEPTED_FALSE_RE = /"accepted": false/;
 const REVIEW_STATE_DRAFT_RE = /"reviewState": "draft"/;
 const MATERIALIZED_FALSE_RE = /"materialized": false/;
@@ -101,6 +103,7 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, PRODUCT_PART_PACKAGE_MANIFEST_RE);
   assert.match(prompt, POST_MATERIALIZATION_RE);
   assert.match(prompt, STALE_DEFERRED_NOTE_RE);
+  assert.match(prompt, CANONICAL_ID_RE);
 });
 
 test("application skeleton bundled contract exposes materialization state fields", () => {

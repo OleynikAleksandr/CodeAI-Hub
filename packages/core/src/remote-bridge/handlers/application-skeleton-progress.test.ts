@@ -169,6 +169,13 @@ test("materialized application skeleton completes stage and unlocks quality gate
     await mkdir(path.join(workspaceRoot, "product-parts/project-manager"), {
       recursive: true,
     });
+    await mkdir(
+      path.join(
+        workspaceRoot,
+        "product-parts/project-manager/clusters/workflow-ui/modules/step-navigation"
+      ),
+      { recursive: true }
+    );
     await writeSkeleton({
       markdown: MATERIALIZED_MARKDOWN,
       workspaceRoot,
@@ -182,8 +189,21 @@ test("materialized application skeleton completes stage and unlocks quality gate
         materializedPaths: ["product-parts/project-manager"],
         productParts: [
           {
+            clusters: [
+              {
+                codePath: "product-parts/project-manager/clusters/workflow-ui",
+                id: "workflow-ui",
+                modules: [
+                  {
+                    codePath:
+                      "product-parts/project-manager/clusters/workflow-ui/modules/step-navigation",
+                    id: "step-navigation",
+                  },
+                ],
+              },
+            ],
             codePath: "product-parts/project-manager",
-            partId: "project-manager",
+            id: "project-manager",
           },
         ],
       },
