@@ -415,7 +415,6 @@ export class LocalizationFacade {
     const materializedBundle = await this.materializeBundle({
       category,
       engineId: settings.engineId,
-      force: true,
       targetLanguage: requestedLanguage,
       workflowTermsPolicy: settings.workflowTermsPolicy,
     });

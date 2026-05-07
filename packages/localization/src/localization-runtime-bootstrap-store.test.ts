@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   LocalizationFacade,
+  type LocalizationMaterializationRequest,
   type LocalizationRuntimeBootstrapSnapshot,
   LocalizationRuntimeBootstrapStore,
   resolveLocalizationPaths,
@@ -66,6 +67,60 @@ const createSnapshot = (): LocalizationRuntimeBootstrapSnapshot => ({
     engineId: "google-gtx",
     workflowTermsPolicy: "translate",
   },
+});
+
+test("strict runtime sync reuses materialized bundles without forcing retranslation", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  const facade = new LocalizationFacade();
+  const materializationRequests: LocalizationMaterializationRequest[] = [];
+
+  try {
+    const glossaryDirectory =
+      resolveLocalizationPaths(homeDirectory).glossaryDirectory;
+    Object.assign(facade as object, {
+      materializeBundle: (request: LocalizationMaterializationRequest) => {
+        materializationRequests.push(request);
+        return {
+          bundle: {
+            category: request.category,
+            entries: { "settings.hint": "Gotovaya podskazka" },
+            language: request.targetLanguage,
+          },
+          fallbackTranslationCount: 0,
+          partialFallbackTranslationCount: 0,
+          reusedExistingBundle: true,
+          translatedEntryCount: 1,
+          uniqueTranslationCount: 0,
+        };
+      },
+      runtimeBootstrapStore: new LocalizationRuntimeBootstrapStore({
+        homeDirectory,
+      }),
+      userGlossaryStore: new UserGlossaryStore({ glossaryDirectory }),
+    });
+
+    await facade.synchronizeRuntimePayload(
+      {
+        categories: {
+          interactive_templates: "source",
+          system_feedback: "source",
+          ui_interface: "source",
+          user_guidance: "ru",
+          workflow_terms: "source",
+        },
+        defaultLanguage: "source",
+        engineId: "google-gtx",
+        workflowTermsPolicy: "keep_english",
+      },
+      { affectedRuntimeBundleIds: ["user_guidance"] }
+    );
+
+    assert.equal(materializationRequests.length, 1);
+    assert.equal(materializationRequests[0]?.category, "user_guidance");
+    assert.equal(materializationRequests[0]?.force, undefined);
+  } finally {
+    await rm(homeDirectory, { force: true, recursive: true });
+  }
 });
 
 test("bootstrap store saves and loads the persisted startup snapshot", async () => {
