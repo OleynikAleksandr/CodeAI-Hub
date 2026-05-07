@@ -262,6 +262,7 @@ Live retest note for `v1.2.182`: managed workspace ledger commits are created, a
 
 - Core does not fully own stage handoff. The next stage can inherit stale active-plan metadata, and agents may try to repair Core-owned `workspace.plan.md` / workflow control files manually.
 - `Quality Gates Baseline` can remain blocked even when `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton-map.json` exists. The observed case was a contract mismatch: the Application Skeleton artifact used canonical `id` fields, while Core validation required `partId`, `clusterId`, and `moduleId`, and the UI collapsed the validation failure into a misleading `application-skeleton-map.json not found` message.
+- Managed child plans still lose semantic traceability: repeated Diagram Modules commits can be recorded with generic task text, and the child plan commit line can keep `hash: included-in-commit` instead of the real artifact commit hash. `workspace.plan.md` must remain the Core ledger, but the active child plan also needs enough semantic and hash data for direct recovery inside a stage.
 
 Live retest note for `v1.2.174`: upstream read-only behavior is confirmed, including `Virtual Simulation`. Application Skeleton activation still does not create or reconcile the managed Git baseline in the user workspace. Root cause to verify in the fix stream: Project Manager starts workflow stages through the generic `session:create` route, while the `v1.2.174` bootstrap fix covered only the `createSessionForWorkflow` gateway path.
 
