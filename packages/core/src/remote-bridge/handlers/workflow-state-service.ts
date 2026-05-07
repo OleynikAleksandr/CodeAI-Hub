@@ -263,6 +263,7 @@ export class WorkflowStateService {
                   plannedPartIds: diagramModulesProgress?.plannedPartIds ?? [],
                   generatedPartIds:
                     diagramModulesProgress?.generatedPartIds ?? [],
+                  emitSnapshotSideEffects: true,
                 })
                 .then((developmentTree) => {
                   return applyDevelopmentTreeFreshnessToState({

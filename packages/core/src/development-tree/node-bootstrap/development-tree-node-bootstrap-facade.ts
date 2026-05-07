@@ -45,7 +45,10 @@ export class DevelopmentTreeNodeBootstrapFacade {
     for (const node of newNodes) {
       const result = await this.draftWriter.writeDrafts({ node });
       writtenDrafts.push(...result.drafts);
-      if (this.agentSessionOptions) {
+      const hasDraftChanges = result.drafts.some(
+        (draft) => draft.action !== "unchanged"
+      );
+      if (this.agentSessionOptions && hasDraftChanges) {
         agentSessions.push(
           await this.agentSessionBootstrapper.bootstrapNode(
             node,
