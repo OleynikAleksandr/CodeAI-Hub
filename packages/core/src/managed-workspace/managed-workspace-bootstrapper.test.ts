@@ -9,6 +9,7 @@ import {
 } from "./managed-workspace-bootstrapper";
 
 const CACHE_GITIGNORE_RE = /\.codeai-hub\/cache\//u;
+const DS_STORE_GITIGNORE_RE = /^\.DS_Store$/mu;
 const LOGS_GITIGNORE_RE = /\.codeai-hub\/logs\//u;
 const RUNTIME_GITIGNORE_RE = /\.codeai-hub\/runtime\//u;
 
@@ -33,9 +34,14 @@ test("ManagedWorkspaceBootstrapper creates baseline directories and manifest", a
       createdAt: "2026-05-07T00:00:00.000Z",
     }).bootstrap(workspaceRoot);
 
-    assert.equal(commands.length, 1);
+    assert.equal(commands.length, 2);
     assert.equal(commands[0], `git init ${workspaceRoot}`);
+    assert.equal(
+      commands[1],
+      `git config core.hooksPath .husky ${workspaceRoot}`
+    );
     assert.equal(result.actions.includes("initialized_git"), true);
+    assert.equal(result.actions.includes("configured_hooks_path"), true);
     assert.equal(result.actions.includes("updated_gitignore"), true);
 
     const manifest = JSON.parse(await readFile(result.manifestPath, "utf8"));
@@ -46,6 +52,7 @@ test("ManagedWorkspaceBootstrapper creates baseline directories and manifest", a
       path.join(workspaceRoot, ".gitignore"),
       "utf8"
     );
+    assert.match(gitignore, DS_STORE_GITIGNORE_RE);
     assert.match(gitignore, RUNTIME_GITIGNORE_RE);
     assert.match(gitignore, LOGS_GITIGNORE_RE);
     assert.match(gitignore, CACHE_GITIGNORE_RE);
@@ -72,6 +79,7 @@ test("ManagedWorkspaceBootstrapper is idempotent for existing gitignore entries"
     );
 
     assert.equal(secondResult.actions.includes("updated_gitignore"), false);
+    assert.equal(gitignore.split(".DS_Store").length - 1, 1);
     assert.equal(gitignore.split(".codeai-hub/runtime/").length - 1, 1);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

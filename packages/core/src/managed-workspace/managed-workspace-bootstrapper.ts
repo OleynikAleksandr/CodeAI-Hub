@@ -9,9 +9,11 @@ import { createManagedWorkspacePaths } from "./managed-workspace-paths";
 const execFileAsync = promisify(execFile);
 const GITIGNORE_PATH = ".gitignore";
 const LINE_SPLIT_RE = /\r?\n/u;
+const MANAGED_HOOKS_PATH = ".husky";
 const TRAILING_SLASH_RE = /\/$/u;
 
 export type ManagedWorkspaceBootstrapAction =
+  | "configured_hooks_path"
   | "created_directories"
   | "initialized_git"
   | "updated_gitignore"
@@ -54,6 +56,14 @@ export class ManagedWorkspaceBootstrapper {
       await this.#commandRunner("git", ["init"], { cwd: paths.workspaceRoot });
       actions.add("initialized_git");
     }
+    await this.#commandRunner(
+      "git",
+      ["config", "core.hooksPath", MANAGED_HOOKS_PATH],
+      {
+        cwd: paths.workspaceRoot,
+      }
+    );
+    actions.add("configured_hooks_path");
 
     await Promise.all([
       mkdir(paths.controlPlaneRoot.absolutePath, { recursive: true }),
@@ -120,6 +130,7 @@ const ensureGitIgnoreEntries = async (
       .filter(Boolean)
   );
   const requiredLines = [
+    ".DS_Store",
     ".codeai-hub/runtime/",
     ".codeai-hub/logs/",
     ".codeai-hub/cache/",
