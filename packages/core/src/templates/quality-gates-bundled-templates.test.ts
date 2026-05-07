@@ -19,7 +19,8 @@ const LEGACY_RESEARCH_PASS_RE = /Required Research And Design Pass/;
 const HARDCODED_ULTRACITE_RE =
   /Ultracite may be the primary lint\/format preset/;
 const HARDCODED_KNIP_RE = /Knip is a first-class JavaScript\/TypeScript gate/;
-const DEVELOPMENT_TREE_SESSIONS_RE = /Development Tree sessions/;
+const DEVELOPMENT_TREE_SESSION_RE = /Development Tree Session/i;
+const DEVELOPMENT_TREE_SESSIONS_RE = /Development Tree sessions/i;
 const COMMANDS_OBJECT_RE = /`commands` object keyed by stable gate id/;
 const DESIRED_STATUS_RE = /"desiredStatus": "active"/;
 const AVAILABILITY_RE = /"availability": "not_integrated"/;
@@ -54,6 +55,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, COMMANDS_OBJECT_RE);
   assert.doesNotMatch(prompt, HARDCODED_ULTRACITE_RE);
   assert.doesNotMatch(prompt, HARDCODED_KNIP_RE);
+  assert.doesNotMatch(prompt, DEVELOPMENT_TREE_SESSION_RE);
   assert.doesNotMatch(prompt, DEVELOPMENT_TREE_SESSIONS_RE);
   assert.doesNotMatch(prompt, LEGACY_RESEARCH_PASS_RE);
 });
