@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.182] - 2026-05-07
+### Fixed
+- **Managed workspace Core ledger now records accepted stage commits.** Generated `npm run plan:commit` advances the active child plan, commits the agent artifacts, records the accepted commit hash/message/task in `doc/TODO/workspace.plan.md`, and creates a separate Core ledger commit so the workspace stays clean.
+- **Session-create coverage now matches the managed TODO tree contract.** Diagram Modules and Application Skeleton activation checks assert `doc/TODO/workspace.plan.md` plus the active child plan under `doc/TODO/stages/<stage>/todo-plan.md`, and reject root `doc/TODO/todo-plan.md`.
+
+### Tests
+- **Managed workspace ledger behavior is covered by targeted Core tests.** Coverage verifies root plan absence, active child-plan status, workspace ledger accepted-commit entries, clean Git status after `plan:commit`, and synced managed-stage prompts.
+
 ## [1.2.181] - 2026-05-07
 ### Fixed
 - **Managed user workspaces now use the per-stage child TODO plan as the active agent ledger.** Fresh Diagram Modules workspaces no longer create root `doc/TODO/todo-plan.md`; generated `npm run plan:*` reads `doc/TODO/workspace.plan.md` and advances the active child plan from `activePlanPath`.
