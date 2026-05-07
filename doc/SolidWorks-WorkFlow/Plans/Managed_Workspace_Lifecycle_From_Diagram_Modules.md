@@ -615,6 +615,24 @@ selection, workspace creation, and Settings access must not appear usable during
 Core startup/update. The fix should avoid adding logic to the already
 499-line `api.ts` file and should remain a small UI readiness layer.
 
+Live retest defect for `v1.2.189`: Codex can write the first Diagram Modules
+artifact, but cannot complete the required managed lifecycle commit. The native
+rollout shows `product-parts.index.md` created successfully, followed by
+`git add ...` failing with `fatal: Unable to create .../.git/index.lock:
+Operation not permitted`. The same rollout's permission profile shows the
+workspace as writable while `${workspace}/.git` is read-only.
+
+Important nuance: the user is running with Bypass/Full Access enabled, and the
+provider home config contains `sandbox_mode = "danger-full-access"`. CodeAI Hub
+still overrides the thread with `sandbox: "workspace-write"` at `thread/start`,
+so the user's Full Access setting does not reach ordinary Codex workflow
+sessions. This makes any managed stage that requires `plan:commit` unreliable.
+
+Fix direction: ordinary Codex workflow/documentation sessions must receive an
+effective permission profile that allows managed workspace Git writes. The fix
+must preserve intentionally read-only translation/native-capture profiles and
+must not rely on the agent asking for escalation during workflow stages.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
