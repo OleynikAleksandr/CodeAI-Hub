@@ -24,7 +24,11 @@ const DIAGRAM_PLAN_TASK_RE =
 const DIAGRAM_NEXT_TASK_RE = /Current Task: diagram-modules\.stream1\.task2/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
-const APPLICATION_SKELETON_COMMIT_RE =
+const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
+  /Expected Commit: docs: draft application skeleton contract/u;
+const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
+  /Current Task: application-skeleton\.stream1\.task2/u;
+const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const LEDGER_COMMIT_RE = /chore: record managed workspace ledger/u;
 const DIAGRAM_MODULES_COMMIT_RE = /docs: update diagram modules artifacts/u;
@@ -141,7 +145,58 @@ test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage
     );
 
     assert.match(result.stdout, APPLICATION_SKELETON_TASK_RE);
-    assert.match(result.stdout, APPLICATION_SKELETON_COMMIT_RE);
+    assert.match(result.stdout, APPLICATION_SKELETON_DRAFT_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed plan shim advances filesystem stage draft commits to materialization", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const artifactPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton/application-skeleton.md"
+    );
+    await mkdir(path.dirname(artifactPath), { recursive: true });
+    await writeFile(artifactPath, "# Application Skeleton\n", "utf8");
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: draft application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const status = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    const gitStatus = await execFileAsync("git", ["status", "--short"], {
+      cwd: workspaceRoot,
+    });
+
+    assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_TASK_RE);
+    assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE);
+    assert.equal(gitStatus.stdout.trim(), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

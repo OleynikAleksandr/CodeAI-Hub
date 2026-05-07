@@ -29,12 +29,13 @@ const STAGE_TEMPLATES: Readonly<
   Record<ManagedWorkflowPlanStage, StageTemplate>
 > = {
   application_skeleton: {
-    commitMessage: "feat: materialize application skeleton",
+    commitMessage: "docs: draft application skeleton contract",
     description:
-      "Materialize Application Skeleton artifacts and tracked filesystem projection through the managed workflow",
-    heading: "Application Skeleton Materialization",
+      "Draft Application Skeleton contract artifacts for user approval before filesystem materialization",
+    heading: "Application Skeleton Draft Contract",
     planId: "managed-workspace-application-skeleton",
-    scope: ".codeai-hub/**/application_skeleton, product-parts/**",
+    scope:
+      ".codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json",
     taskId: "application-skeleton.stream1.task1",
   },
   diagram_modules: {
@@ -47,12 +48,13 @@ const STAGE_TEMPLATES: Readonly<
     taskId: "diagram-modules.stream1.task1",
   },
   quality_gates: {
-    commitMessage: "feat: integrate quality gates baseline",
+    commitMessage: "docs: draft quality gates contract",
     description:
-      "Integrate Quality Gates baseline artifacts and tracked gate files through the managed workflow",
-    heading: "Quality Gates Baseline",
+      "Draft Quality Gates contract artifacts for user approval before package and gate script integration",
+    heading: "Quality Gates Draft Contract",
     planId: "managed-workspace-quality-gates",
-    scope: ".codeai-hub/**/quality_gates, quality-gates/**, scripts/**",
+    scope:
+      ".codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json",
     taskId: "quality-gates.stream1.task1",
   },
 };
@@ -271,5 +273,32 @@ const createStagePlan = (initialStage: ManagedWorkflowPlanStage): string => {
 
 1. [IN_PROGRESS] \`${stage.taskId}\` ${stage.description} (scope: \`${stage.scope}\`; expected commit: \`${stage.commitMessage}\`).
 2. [TODO] Git Commit: \`${stage.commitMessage}\` (hash: TBD)
+${createStageFollowUpTasks(initialStage)}
 `;
+};
+
+const createStageFollowUpTasks = (
+  initialStage: ManagedWorkflowPlanStage
+): string => {
+  if (initialStage === "application_skeleton") {
+    return `
+## Phase 2 — Managed Filesystem Materialization
+
+### Stream: Application Skeleton Materialization
+
+3. [TODO] \`application-skeleton.stream1.task2\` Materialize Application Skeleton tracked filesystem projection after the draft contract is accepted and committed (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
+4. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
+`;
+  }
+  if (initialStage === "quality_gates") {
+    return `
+## Phase 2 — Managed Gate Integration
+
+### Stream: Quality Gates Integration
+
+3. [TODO] \`quality-gates.stream1.task2\` Integrate accepted Quality Gates package scripts, lockfile changes, gate scripts, configs, and verification results after the gate contract is accepted and committed (scope: \`package.json, package-lock.json, scripts/gates/**, .codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json\`; expected commit: \`feat: integrate quality gates baseline\`).
+4. [TODO] Git Commit: \`feat: integrate quality gates baseline\` (hash: TBD)
+`;
+  }
+  return "";
 };

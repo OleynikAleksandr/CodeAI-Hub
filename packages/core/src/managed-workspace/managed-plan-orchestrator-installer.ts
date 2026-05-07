@@ -153,12 +153,14 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const ARTIFACT_COMMIT_ENV = "CODEAI_MANAGED_ARTIFACT_COMMIT";
 const LEDGER_COMMIT_MESSAGE = "chore: record managed workspace ledger";
 const LEDGER_COMMIT_ENV = "CODEAI_MANAGED_LEDGER_COMMIT";
 const START = "<!-- codeai-plan-state:start -->";
 const END = "<!-- codeai-plan-state:end -->";
 const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
 const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
+const TASK_LINE_RE = new RegExp("^\\\\d+\\\\. \\\\[(?:TODO|IN_PROGRESS)\\\\].*?\`([^\`]+)\`.*expected commit: \`([^\`]+)\`", "u");
 
 const parseJsonBlock = (text, start, end, label) => {
   const block = text.split(start)[1]?.split(end)[0];
@@ -178,20 +180,12 @@ const readWorkspaceState = () => {
   if (!existsSync(WORKSPACE_PLAN_PATH)) {
     throw new Error("Missing doc/TODO/workspace.plan.md");
   }
-  return parseJsonBlock(
-    readFileSync(WORKSPACE_PLAN_PATH, "utf8"),
-    WORKSPACE_START,
-    WORKSPACE_END,
-    "codeai-workspace-plan-state"
-  );
+  return parseJsonBlock(readFileSync(WORKSPACE_PLAN_PATH, "utf8"), WORKSPACE_START, WORKSPACE_END, "codeai-workspace-plan-state");
 };
 
 const activePlanPath = () => {
   const workspaceState = readWorkspaceState();
-  if (
-    !workspaceState.activePlanPath ||
-    typeof workspaceState.activePlanPath !== "string"
-  ) {
+  if (!workspaceState.activePlanPath || typeof workspaceState.activePlanPath !== "string") {
     throw new Error("Workspace plan requires activePlanPath");
   }
   return workspaceState.activePlanPath;
@@ -202,12 +196,7 @@ const readState = () => {
   if (!existsSync(planPath)) {
     throw new Error(\`Missing active managed plan: \${planPath}\`);
   }
-  return parseJsonBlock(
-    readFileSync(planPath, "utf8"),
-    START,
-    END,
-    "codeai-plan-state"
-  );
+  return parseJsonBlock(readFileSync(planPath, "utf8"), START, END, "codeai-plan-state");
 };
 
 const readPlanText = () => readFileSync(activePlanPath(), "utf8");
@@ -251,6 +240,10 @@ const nextTaskId = (taskId) => {
   return \`\${match[1]}\${Number(match[2]) + 1}\`;
 };
 
+const readTaskLine = (line) => {
+  const match = TASK_LINE_RE.exec(line); return match ? { id: match[1], message: match[2] } : null;
+};
+
 const summarizeStagedFiles = (files, fallbackMessage) => {
   const productParts = files
     .map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1])
@@ -262,10 +255,10 @@ const summarizeStagedFiles = (files, fallbackMessage) => {
     return "Update Diagram Modules Product Part index artifact";
   }
   if (files.some((file) => file.includes("/application_skeleton/"))) {
-    return "Update Application Skeleton artifacts and materialized filesystem";
+    return files.some((file) => file.startsWith("product-parts/")) ? "Update Application Skeleton artifacts and materialized filesystem" : "Update Application Skeleton draft contract artifacts";
   }
   if (files.some((file) => file.includes("/quality_gates/"))) {
-    return "Update Quality Gates baseline artifacts and gate files";
+    return files.some((file) => file.startsWith("scripts/gates/") || file === "package.json" || file === "package-lock.json") ? "Update Quality Gates baseline artifacts and gate files" : "Update Quality Gates draft contract artifacts";
   }
   if (files.length > 0) {
     return \`Update managed workspace files: \${files.slice(0, 5).join(", ")}\`;
@@ -290,8 +283,7 @@ const replaceState = (text, state) => {
   }
   const before = text.slice(0, blockStart + START.length);
   const after = text.slice(blockEnd);
-  const json = JSON.stringify(state, null, 2);
-  return \`\${before}\\n\\\`\\\`\\\`json\\n\${json}\\n\\\`\\\`\\\`\\n\${after}\`;
+  return \`\${before}\\n\\\`\\\`\\\`json\\n\${JSON.stringify(state, null, 2)}\\n\\\`\\\`\\\`\\n\${after}\`;
 };
 
 const replaceWorkspaceState = (text, state) => {
@@ -302,8 +294,7 @@ const replaceWorkspaceState = (text, state) => {
   }
   const before = text.slice(0, blockStart + WORKSPACE_START.length);
   const after = text.slice(blockEnd);
-  const json = JSON.stringify(state, null, 2);
-  return \`\${before}\\n\\\`\\\`\\\`json\\n\${json}\\n\\\`\\\`\\\`\\n\${after}\`;
+  return \`\${before}\\n\\\`\\\`\\\`json\\n\${JSON.stringify(state, null, 2)}\\n\\\`\\\`\\\`\\n\${after}\`;
 };
 
 const advancePlanForCommit = (message) => {
@@ -336,8 +327,12 @@ const advancePlanForCommit = (message) => {
     throw new Error(\`Git Commit item not found: \${message}\`);
   }
 
-  const nextId = nextTaskId(state.currentTaskId);
-  const nextTaskExists = lines.some((line) => line.includes(\`\\\`\${nextId}\\\`\`));
+  const nextTaskLineIndex = lines.findIndex(
+    (line, index) => index > commitLineIndex && readTaskLine(line)
+  );
+  const nextTask = readTaskLine(lines[nextTaskLineIndex] ?? "");
+  const nextId = nextTask?.id ?? nextTaskId(state.currentTaskId);
+  const nextMessage = nextTask?.message ?? message;
   lines[taskLineIndex] = formatTaskLine(
     lines[taskLineIndex],
     state.currentTaskId,
@@ -350,7 +345,12 @@ const advancePlanForCommit = (message) => {
     .replace("[TODO]", "[DONE]")
     .replace("hash: TBD", "hash: included-in-commit");
 
-  if (!nextTaskExists) {
+  if (nextTaskLineIndex >= 0) {
+    lines[nextTaskLineIndex] = lines[nextTaskLineIndex].replace(
+      "[TODO]",
+      "[IN_PROGRESS]"
+    );
+  } else {
     const nextNumber = lines
       .slice(0, commitLineIndex + 1)
       .filter((line) => /^\\d+\\. /u.test(line)).length + 1;
@@ -363,9 +363,9 @@ const advancePlanForCommit = (message) => {
         "IN_PROGRESS",
         \`Continue managed \${workspaceState.activeStage ?? "stage"} updates\`,
         [],
-        message
+        nextMessage
       ),
-      \`\${nextNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`
+      \`\${nextNumber + 1}. [TODO] Git Commit: \\\`\${nextMessage}\\\` (hash: TBD)\`
     );
   }
 
@@ -373,7 +373,7 @@ const advancePlanForCommit = (message) => {
     ...state,
     lastRecordedCommit: "included-in-commit",
     currentTaskId: nextId,
-    expectedCommitMessage: message,
+    expectedCommitMessage: nextMessage,
   };
   writeFileSync(
     planPath,
@@ -466,6 +466,7 @@ try {
       process.exitCode = 0;
       process.exit();
     }
+    if (process.env[ARTIFACT_COMMIT_ENV] === message) { process.exitCode = 0; process.exit(); }
     if (state.expectedCommitMessage && message !== state.expectedCommitMessage) {
       throw new Error(\`Expected commit message: \${state.expectedCommitMessage}\`);
     }
@@ -476,7 +477,7 @@ try {
     }
     const event = advancePlanForCommit(message);
     runGit(["add", activePlanPath()]);
-    const result = spawnSync("git", ["commit", "-m", message], { stdio: "inherit" });
+    const result = spawnSync("git", ["commit", "-m", message], { env: { ...process.env, [ARTIFACT_COMMIT_ENV]: message }, stdio: "inherit" });
     if (result.status !== 0) {
       process.exitCode = result.status ?? 1;
     } else {
