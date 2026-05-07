@@ -62,7 +62,9 @@ test("SettingsProviderAutoUpdateService continues after a target update failure"
 
 test("SettingsProviderAutoUpdateService waits for Codex CLI update before completing startup", async () => {
   const updates: string[] = [];
-  let resolveCodexCliUpdate: (() => void) | null = null;
+  let resolveCodexCliUpdate: () => void = () => {
+    throw new Error("Codex CLI update resolver was not initialized");
+  };
   const codexCliUpdated = new Promise<void>((resolve) => {
     resolveCodexCliUpdate = resolve;
   });
@@ -97,7 +99,6 @@ test("SettingsProviderAutoUpdateService waits for Codex CLI update before comple
   assert.equal(startupCompleted, false);
   assert.deepEqual(updates, ["codex:cli:start"]);
 
-  assert.ok(resolveCodexCliUpdate);
   resolveCodexCliUpdate();
   await startup;
 
