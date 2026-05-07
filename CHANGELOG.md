@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.173] - 2026-05-07
+### Added
+- **Managed workspace lifecycle now starts at Diagram Modules.** Core bootstraps the project repo, `.codeai-hub/workflow` ledger, `doc/TODO/todo-plan.md`, plan scripts, and managed hook baseline before filesystem-aware workflow stages begin.
+- **Workflow revision tracking now supports downstream migration planning.** Accepted Diagram Modules, Application Skeleton, and Quality Gates artifacts can be snapshotted, diffed, and converted into downstream migration tasks without mutating project files automatically.
+
+### Fixed
+- **Upstream stages become read-only after Diagram Modules starts.** Description and Virtual Simulation history remains viewable, but new editing turns are blocked once the managed lifecycle is active.
+- **Application Skeleton and Quality Gates prompts now assume Core-owned lifecycle controls.** Agents receive concise instructions to use the managed repo and plan state instead of creating git, hooks, lifecycle ledgers, or separate handoff sessions.
+
+### Tests
+- **Managed lifecycle regression coverage now spans Core, prompt, and Project Manager behavior.** Targeted tests cover bootstrap/reconciliation, hook manifest validation, revision diff planning, managed rollover recovery, upstream read-only gating, and prompt wording.
+
 ## [1.2.172] - 2026-05-07
 ### Fixed
 - **Quality Gates Baseline no longer hardcodes JavaScript-specific tools as universal policy.** The first prompt now keeps universal architecture gates, including the `<= 500` source file/class rule, while requiring stack-specific tool selection from user preference, project evidence, or research.
