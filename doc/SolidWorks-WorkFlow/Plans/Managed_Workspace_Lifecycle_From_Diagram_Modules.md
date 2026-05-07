@@ -418,6 +418,22 @@ User retest checklist for `v1.2.184`:
 - After a valid Quality Gates managed commit, the workspace should be clean and
   Development Tree may unlock normally.
 
+Live retest note for `v1.2.184`: Application Skeleton now receives the correct
+managed child plan, but its draft/contract negotiation is still modeled as
+uncommitted pre-materialization work. The agent can create draft contract files,
+discuss them with the user for a long time, revise them, and only run the
+managed commit after filesystem materialization. That is too late: the accepted
+or revised draft contract is a real workflow artifact and must be recoverable
+through the managed ledger before structure generation begins.
+
+The fix should split Application Skeleton into two committed transactions. The
+first transaction owns draft contract creation and every substantial contract
+revision during user negotiation. The second transaction owns materialized
+filesystem structure after the draft contract has an accepted commit, a clean
+workspace, and an advanced child plan. This keeps rollover/recovery meaningful
+during long contract discussions and prevents draft artifacts plus generated app
+structure from collapsing into one oversized commit.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
