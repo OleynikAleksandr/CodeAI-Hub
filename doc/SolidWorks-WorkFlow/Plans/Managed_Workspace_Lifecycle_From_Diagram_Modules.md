@@ -646,6 +646,24 @@ flags cannot be downgraded by persisted settings. The live retest should cover
 fresh Description startup, Diagram Modules managed commits, and a Gemini-backed
 workflow turn that writes and commits without requesting hidden approval.
 
+Release delivery note for `v1.2.190`: `./scripts/build-all.sh` produced fresh
+provider/core/UI/launcher tarballs under `doc/tmp/releases/`, and
+`./scripts/build-release.sh --use-current-version` completed architecture,
+type-check, compile, SDK exclusion, artifact validation, markdown link,
+duplication, dependency prune/restore, package-size, and VSIX surface checks.
+The installable package is `codeai-hub-1.2.190.vsix`.
+
+User retest checklist for `v1.2.190`:
+
+1. Fresh Project Manager launch should show startup readiness gating until Core
+   is actually ready; Settings/workspace actions must not be usable early.
+2. Fresh Codex Description and Diagram Modules workflow turns should start
+   without hidden permission prompts.
+3. Diagram Modules should write artifacts and complete managed `plan:commit`
+   without `.git/index.lock: Operation not permitted`.
+4. Gemini workflow turns should preserve `approvalMode: "yolo"` and should not
+   wait for invisible permission confirmation.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
