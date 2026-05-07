@@ -112,9 +112,9 @@ export class CoreOrchestrator {
 
     await this.templateSync.sync();
     await this.runStartupSelfTest();
-    await this.remoteBridge.start();
     await this.providerAutoUpdateService.runStartupAutoUpdate();
     await this.providerRegistry.initialize();
+    await this.remoteBridge.start();
     this.statusReporter.emit({
       phase: "finalize",
       scope: "core",
