@@ -575,6 +575,28 @@ translation and native request capture diagnostics. Regression tests must cover
 the empty-env/default path so a fresh install cannot silently fall back to
 read-only and hang artifact creation.
 
+Release delivery note for `v1.2.189`: the Codex workflow sandbox hotfix release
+is built as `codeai-hub-1.2.189.vsix`. Core now defaults ordinary Codex
+workflow/documentation sessions to `workspace-write` and `on-request` when no
+explicit sandbox/approval config is provided, while preserving explicit caller
+settings. The Codex app-server facade also applies the same fallback at
+`thread/start` and `thread/resume`, so a fresh clean-cache Description run no
+longer depends on provider defaults before writing `Final_Description.md`.
+
+User retest checklist for `v1.2.189`:
+
+- Install `codeai-hub-1.2.189.vsix` after stopping the currently running
+  Project Manager/Core instance.
+- Start from a fresh Description session with Codex in the same clean-cache
+  workspace.
+- Confirm the agent writes
+  `.codeai-hub/<workspaceSlug>/description/Final_Description.md` without
+  reporting a `read-only` shell/write environment.
+- Core/Codex logs should show normal provider startup readiness first; the
+  Description turn should finish instead of staying indefinitely in `running`.
+- Regression coverage for this release includes Core adapter construction and
+  Codex app-server `thread/start` defaults for `workspace-write`.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
