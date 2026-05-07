@@ -3,6 +3,8 @@
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
 ## [Unreleased]
+
+## [1.2.189] - 2026-05-07
 ### Fixed
 - **Codex workflow sessions now default to writable workspace mode.** Fresh clean-cache Description sessions no longer depend on Codex provider defaults that can resolve to `read-only` and block `Final_Description.md` materialization.
 
