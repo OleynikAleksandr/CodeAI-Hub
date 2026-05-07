@@ -265,6 +265,9 @@ const hasMarkdownStatus = (
 ): boolean =>
   new RegExp(`(?:\`${field}\`|${field})\\s*:\\s*\`?${value}\`?`, "i").test(
     markdown
+  ) ||
+  new RegExp(`\\|\\s*\`?${field}\`?\\s*\\|\\s*\`?${value}\`?\\s*\\|`, "i").test(
+    markdown
   );
 
 const validateMaterializedMarkdown = (markdown: string | null): string[] => {

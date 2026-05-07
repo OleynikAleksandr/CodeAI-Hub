@@ -25,10 +25,12 @@ const MATERIALIZED_MARKDOWN = `# Application Skeleton
 
 ## Status
 
-- \`reviewState\`: \`materialized\`
-- \`accepted\`: \`true\`
-- \`materialized\`: \`true\`
-- \`materializationState\`: \`materialized\`
+| Field | Value |
+| --- | --- |
+| reviewState | \`materialized\` |
+| accepted | \`true\` |
+| materialized | \`true\` |
+| materializationState | \`materialized\` |
 
 ## Materialized State
 
