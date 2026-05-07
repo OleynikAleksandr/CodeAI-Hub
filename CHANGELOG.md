@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.176] - 2026-05-07
+### Fixed
+- **Managed workspace plans now parse fenced JSON state reliably.** The generated plan CLI strips Markdown fences before reading `codeai-plan-state`, so fresh managed workspaces can run `npm run plan:status`.
+- **Filesystem-aware workflow stages now seed the correct expected commit.** `Application Skeleton` starts with `feat: materialize application skeleton`, and `Quality Gates` starts with `feat: integrate quality gates baseline`.
+- **Application Skeleton now commits materialized scaffold output.** The prompt and contract require tracked `README.md` placeholders for Product Part / Cluster / Module directories and a managed `plan:commit` before the final materialization response.
+
+### Tests
+- **Managed lifecycle hotfix coverage now spans parser, stage seed, session create, and Application Skeleton templates.** Targeted tests verify generated plan status, real session bootstrap, stage-aware initial plans, synced bundled templates, and `@codeai-hub/core` build.
+
 ## [1.2.175] - 2026-05-07
 ### Fixed
 - **Application Skeleton activation now bootstraps the managed workspace from the real Project Manager session path.** The generic `session:create` route runs the same Git/hooks/plan preflight as workflow gateway sessions before creating `Application Skeleton` or `Quality Gates` provider sessions.
