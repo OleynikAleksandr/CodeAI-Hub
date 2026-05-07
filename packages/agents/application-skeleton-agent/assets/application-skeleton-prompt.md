@@ -46,12 +46,22 @@ Before explicit user acceptance:
 
 Do not create production files, package manifests, source folders, Product Part folders, config files, hooks, tests, CI files, Quality Gates artifacts, or agent sessions.
 
-Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization.
+Before the draft-review response:
+- stage only the two canonical Application Skeleton artifacts;
+- run `npm run plan:commit -- "docs: draft application skeleton contract"`;
+- run `npm run plan:status` and `git status --short`;
+- continue only if Git is clean and the child plan has advanced from `application-skeleton.stream1.task1`.
+
+If the user requests draft corrections before materialization, update only the canonical artifacts and commit the revision through the active child plan before asking for review again. If the child plan has already advanced to materialization but another draft revision is needed, add a draft-revision microtask and its `Git Commit` pair before the materialization task in the active child plan, then commit the revised contract before materialization.
+
+Final response after draft contract: tell the user, in the chat language, that the committed draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization.
 
 ## Phase 2: Post-Acceptance Materialization
 After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.
 
 You must:
+- verify `npm run plan:status` shows the materialization task and expected commit `feat: materialize application skeleton`;
+- verify `git status --short` is empty before creating filesystem structure;
 - re-read the accepted `application-skeleton-map.json`;
 - create the minimal conventional scaffold for the accepted stack and repo shape;
 - create the Product Part / Cluster / Module filesystem projection;

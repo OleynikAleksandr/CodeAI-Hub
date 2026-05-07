@@ -29,9 +29,15 @@ const TECHNOLOGY_HINTS_RE =
 const CONFIRMATION_STYLE_RE =
   /confirmation questions with your recommended option first/;
 const LOCALIZED_DRAFT_RESPONSE_RE =
-  /tell the user, in the chat language, that the draft Application Skeleton contract is ready for review/;
+  /tell the user, in the chat language, that the committed draft Application Skeleton contract is ready for review/;
 const LOCALIZED_MATERIALIZED_RESPONSE_RE =
   /tell the user, in the chat language, that Application Skeleton is accepted and materialized/;
+const DRAFT_PLAN_COMMIT_RE =
+  /npm run plan:commit -- "docs: draft application skeleton contract"/;
+const DRAFT_REVISION_MICROTASK_RE =
+  /add a draft-revision microtask and its `Git Commit` pair before the materialization task/;
+const MATERIALIZATION_EXPECTED_COMMIT_RE =
+  /expected commit `feat: materialize application skeleton`/;
 const USER_STACK_REPLACEMENT_RE =
   /If the user explicitly replaces a stack decision/;
 const NO_STACK_DETAIL_LOOP_RE =
@@ -93,6 +99,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, CONFIRMATION_STYLE_RE);
   assert.match(prompt, LOCALIZED_DRAFT_RESPONSE_RE);
   assert.match(prompt, LOCALIZED_MATERIALIZED_RESPONSE_RE);
+  assert.match(prompt, DRAFT_PLAN_COMMIT_RE);
+  assert.match(prompt, DRAFT_REVISION_MICROTASK_RE);
+  assert.match(prompt, MATERIALIZATION_EXPECTED_COMMIT_RE);
   assert.match(prompt, USER_STACK_REPLACEMENT_RE);
   assert.match(prompt, NO_STACK_DETAIL_LOOP_RE);
   assert.match(prompt, PRODUCTION_SOURCE_ROOT_RE);
