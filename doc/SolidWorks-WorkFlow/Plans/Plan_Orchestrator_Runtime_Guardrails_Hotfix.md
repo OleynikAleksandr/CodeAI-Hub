@@ -23,3 +23,16 @@ Both cases are unacceptable in Core-managed workflow sessions. The orchestrator 
 - Targeted plan-orchestrator tests for validator, markdown updater, and CLI/recovery behavior.
 - `npm run plan:validate`
 - No release build until the user explicitly confirms packaging.
+
+## Test Evidence
+
+2026-05-07 targeted verification passed:
+
+- `node --test scripts/plan-orchestrator/plan-validator.test.mjs`
+- `node --test scripts/plan-orchestrator/plan-markdown-updater.test.mjs`
+- `node --test scripts/plan-orchestrator/plan-repair.test.mjs`
+- `npm exec -- tsx --test packages/core/src/managed-workspace/managed-workspace-validator.test.ts`
+- `npm exec -- tsx --test packages/core/src/provider-registry/provider-descriptor-factory.test.ts`
+- `npm exec -- tsx --test packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`
+- `npm run plan:validate`
