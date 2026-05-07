@@ -12,6 +12,12 @@ const printIssue = (issue) => {
   console.error(`- ${issue.code}: ${issue.message}`);
 };
 
+const printRecoveryHint = () => {
+  console.error(
+    "Recovery: run `npm run plan:status`. If Debt is open, run `npm run plan:repair`, fix the reported blocker, then retry the planned command."
+  );
+};
+
 const readPlanMarkdown = (cwd) => {
   const planPath = resolve(cwd, TODO_PLAN_PATH);
 
@@ -78,28 +84,35 @@ const printValidate = (validation) => {
 const main = () => {
   const command = process.argv[2];
 
-  if (command === "status") {
-    process.exitCode = printStatus(loadValidation());
-    return;
-  }
+  try {
+    if (command === "status") {
+      process.exitCode = printStatus(loadValidation());
+      return;
+    }
 
-  if (command === "validate") {
-    process.exitCode = printValidate(loadValidation());
-    return;
-  }
+    if (command === "validate") {
+      process.exitCode = printValidate(loadValidation());
+      return;
+    }
 
-  if (command === "commit") {
-    runPlanCommit({ message: process.argv.slice(3).join(" ") });
-    return;
-  }
+    if (command === "commit") {
+      runPlanCommit({ message: process.argv.slice(3).join(" ") });
+      return;
+    }
 
-  if (command === "complete") {
-    runPlanComplete({ result: process.argv.slice(3).join(" ") });
-    return;
-  }
+    if (command === "complete") {
+      runPlanComplete({ result: process.argv.slice(3).join(" ") });
+      return;
+    }
 
-  if (command === "repair") {
-    runPlanRepair();
+    if (command === "repair") {
+      runPlanRepair();
+      return;
+    }
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    printRecoveryHint();
+    process.exitCode = 1;
     return;
   }
 

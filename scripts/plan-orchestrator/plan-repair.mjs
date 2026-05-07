@@ -89,4 +89,14 @@ export const runPlanRepair = (cwd = process.cwd()) => {
   }
 
   console.log(`Plan repair: ${result.reason}`);
+  if (result.reason === "commit_not_created_rolled_back") {
+    console.log(
+      'Recovery action: stage the intended files if needed, then retry `npm run plan:commit -- "<expected commit message>"`.'
+    );
+  }
+  if (result.reason === "unsafe_blocked") {
+    console.log(
+      "Recovery action: inspect `npm run plan:status`, resolve the blocker, and do not continue implementation until the plan is repaired."
+    );
+  }
 };
