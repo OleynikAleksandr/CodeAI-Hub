@@ -12,6 +12,10 @@ const createWorkspaceRoot = (): Promise<string> =>
 const execFileAsync = promisify(execFile);
 const ACTIVE_SCOPE_RE = /Execution Scope Status: ACTIVE/u;
 const DIAGRAM_TASK_RE = /Current Task: diagram-modules\.stream1\.task1/u;
+const APPLICATION_SKELETON_TASK_RE =
+  /Current Task: application-skeleton\.stream1\.task1/u;
+const APPLICATION_SKELETON_COMMIT_RE =
+  /Expected Commit: feat: materialize application skeleton/u;
 
 test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package scripts", async () => {
   const workspaceRoot = await createWorkspaceRoot();
@@ -68,6 +72,30 @@ test("ManagedPlanOrchestratorInstaller writes a plan shim that reads the generat
 
     assert.match(result.stdout, ACTIVE_SCOPE_RE);
     assert.match(result.stdout, DIAGRAM_TASK_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+
+    const result = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+
+    assert.match(result.stdout, APPLICATION_SKELETON_TASK_RE);
+    assert.match(result.stdout, APPLICATION_SKELETON_COMMIT_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

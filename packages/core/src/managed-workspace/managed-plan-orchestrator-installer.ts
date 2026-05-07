@@ -30,9 +30,19 @@ export interface ManagedPlanOrchestratorInstallResult {
   readonly todoPlanCreated: boolean;
 }
 
+export type ManagedWorkflowPlanStage =
+  | "application_skeleton"
+  | "diagram_modules"
+  | "quality_gates";
+
+export interface ManagedPlanOrchestratorInstallOptions {
+  readonly initialStage?: ManagedWorkflowPlanStage | string | null;
+}
+
 export class ManagedPlanOrchestratorInstaller {
   async install(
-    workspaceRoot: string
+    workspaceRoot: string,
+    options: ManagedPlanOrchestratorInstallOptions = {}
   ): Promise<ManagedPlanOrchestratorInstallResult> {
     const paths = createManagedWorkspacePaths(workspaceRoot);
     const planScriptPath = path.join(
@@ -59,7 +69,10 @@ export class ManagedPlanOrchestratorInstaller {
     const packageScripts = await ensurePackageScripts(
       paths.packageManifest.absolutePath
     );
-    const todoPlanCreated = await ensureTodoPlan(paths.todoPlan.absolutePath);
+    const todoPlanCreated = await ensureTodoPlan(
+      paths.todoPlan.absolutePath,
+      normalizeInitialPlanStage(options.initialStage)
+    );
 
     return {
       hooksWritten,
@@ -128,12 +141,15 @@ const readObject = (value: unknown): Record<string, string> => {
   return result;
 };
 
-const ensureTodoPlan = async (todoPlanPath: string): Promise<boolean> => {
+const ensureTodoPlan = async (
+  todoPlanPath: string,
+  initialStage: ManagedWorkflowPlanStage
+): Promise<boolean> => {
   if (await pathExists(todoPlanPath)) {
     return false;
   }
   await mkdir(path.dirname(todoPlanPath), { recursive: true });
-  await writeFile(todoPlanPath, createTodoPlanTemplate(), "utf8");
+  await writeFile(todoPlanPath, createTodoPlanTemplate(initialStage), "utf8");
   return true;
 };
 
@@ -146,20 +162,79 @@ const pathExists = async (targetPath: string): Promise<boolean> => {
   }
 };
 
-const createTodoPlanTemplate = (): string => `# Managed Workspace TODO Plan
+const normalizeInitialPlanStage = (
+  value: ManagedPlanOrchestratorInstallOptions["initialStage"]
+): ManagedWorkflowPlanStage => {
+  if (
+    value === "application_skeleton" ||
+    value === "diagram_modules" ||
+    value === "quality_gates"
+  ) {
+    return value;
+  }
+  return "diagram_modules";
+};
+
+const PLAN_STAGE_TEMPLATES: Readonly<
+  Record<
+    ManagedWorkflowPlanStage,
+    {
+      readonly commitMessage: string;
+      readonly description: string;
+      readonly heading: string;
+      readonly planId: string;
+      readonly scope: string;
+      readonly taskId: string;
+    }
+  >
+> = {
+  application_skeleton: {
+    commitMessage: "feat: materialize application skeleton",
+    description:
+      "Materialize Application Skeleton artifacts and tracked filesystem projection through the managed workflow",
+    heading: "Application Skeleton Materialization",
+    planId: "managed-workspace-application-skeleton",
+    scope: ".codeai-hub/**/application_skeleton, product-parts/**",
+    taskId: "application-skeleton.stream1.task1",
+  },
+  diagram_modules: {
+    commitMessage: "docs: update diagram modules artifacts",
+    description:
+      "Update Diagram Modules artifacts through the managed workflow",
+    heading: "Diagram Modules Artifacts",
+    planId: "managed-workspace-diagram-modules",
+    scope: ".codeai-hub/**/diagram_modules",
+    taskId: "diagram-modules.stream1.task1",
+  },
+  quality_gates: {
+    commitMessage: "feat: integrate quality gates baseline",
+    description:
+      "Integrate Quality Gates baseline artifacts and tracked gate files through the managed workflow",
+    heading: "Quality Gates Baseline",
+    planId: "managed-workspace-quality-gates",
+    scope: ".codeai-hub/**/quality_gates, quality-gates/**, scripts/**",
+    taskId: "quality-gates.stream1.task1",
+  },
+};
+
+const createTodoPlanTemplate = (
+  initialStage: ManagedWorkflowPlanStage
+): string => {
+  const stage = PLAN_STAGE_TEMPLATES[initialStage];
+  return `# Managed Workspace TODO Plan
 
 <!-- codeai-plan-state:start -->
 \`\`\`json
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "managed-workspace-diagram-modules",
+  "planId": "${stage.planId}",
   "branch": "main",
   "baseHead": "TBD",
   "lastRecordedCommit": "TBD",
   "planningSource": ".codeai-hub/workflow/index.json",
-  "currentTaskId": "diagram-modules.stream1.task1",
-  "expectedCommitMessage": "docs: update diagram modules artifacts",
+  "currentTaskId": "${stage.taskId}",
+  "expectedCommitMessage": "${stage.commitMessage}",
   "debt": null
 }
 \`\`\`
@@ -172,13 +247,14 @@ const createTodoPlanTemplate = (): string => `# Managed Workspace TODO Plan
   - \`.codeai-hub/workflow/index.json\`
 - Only this Context Pack is the recovery source for the current managed cycle.
 
-## Phase 1 — Diagram Modules Managed Work
+## Phase 1 — Managed Workflow Stage
 
-### Stream: Diagram Modules Artifacts
+### Stream: ${stage.heading}
 
-1. [IN_PROGRESS] \`diagram-modules.stream1.task1\` Update Diagram Modules artifacts through the managed workflow (scope: \`.codeai-hub/**/diagram_modules\`; expected commit: \`docs: update diagram modules artifacts\`).
-2. [TODO] Git Commit: \`docs: update diagram modules artifacts\` (hash: TBD)
+1. [IN_PROGRESS] \`${stage.taskId}\` ${stage.description} (scope: \`${stage.scope}\`; expected commit: \`${stage.commitMessage}\`).
+2. [TODO] Git Commit: \`${stage.commitMessage}\` (hash: TBD)
 `;
+};
 
 const createPlanCliShim = (): string => `#!/usr/bin/env node
 import { existsSync, readFileSync } from "node:fs";

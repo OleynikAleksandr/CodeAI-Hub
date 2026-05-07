@@ -12,7 +12,10 @@ import type { SessionProviderFailureRecovery } from "./session-provider-failure-
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
 export interface ManagedWorkspaceLifecycle {
-  ensureReady(workspaceRoot: string): Promise<ManagedWorkspaceValidationResult>;
+  ensureReady(
+    workspaceRoot: string,
+    initialStage?: string | null
+  ): Promise<ManagedWorkspaceValidationResult>;
 }
 
 const MANAGED_WORKSPACE_STAGES = new Set([
@@ -66,7 +69,8 @@ export class SessionRequestHandlerWorkflowSession {
     }
     if (requiresManagedWorkspaceLifecycle(options.context.stage)) {
       const managedWorkspace = await this.managedWorkspaceLifecycle.ensureReady(
-        options.workspacePath
+        options.workspacePath,
+        options.context.stage
       );
       if (!managedWorkspace.ok) {
         this.deps.logger.warn(
@@ -112,10 +116,11 @@ export class DefaultManagedWorkspaceLifecycle
   private readonly validator = new ManagedWorkspaceValidator();
 
   async ensureReady(
-    workspaceRoot: string
+    workspaceRoot: string,
+    initialStage?: string | null
   ): Promise<ManagedWorkspaceValidationResult> {
     await this.bootstrapper.bootstrap(workspaceRoot);
-    await this.installer.install(workspaceRoot);
+    await this.installer.install(workspaceRoot, { initialStage });
     return await this.validator.validate(workspaceRoot);
   }
 }
