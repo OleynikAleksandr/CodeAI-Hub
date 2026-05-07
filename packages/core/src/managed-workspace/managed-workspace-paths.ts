@@ -11,7 +11,7 @@ import type {
 const CONTROL_PLANE_ROOT = ".codeai-hub/workflow";
 const HOOK_DIRECTORY = ".husky";
 const PLAN_COMMAND_DIRECTORY = "scripts/plan-orchestrator";
-const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
+const TODO_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const PACKAGE_MANIFEST_PATH = "package.json";
 
 const HOOK_NAMES: readonly ManagedWorkspaceHookName[] = [

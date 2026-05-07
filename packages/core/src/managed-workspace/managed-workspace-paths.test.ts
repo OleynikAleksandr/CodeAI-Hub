@@ -11,7 +11,7 @@ test("createManagedWorkspacePaths resolves managed baseline paths", () => {
   const paths = createManagedWorkspacePaths(workspaceRoot);
 
   assert.equal(paths.workspaceRoot, workspaceRoot);
-  assert.equal(paths.todoPlan.relativePath, "doc/TODO/todo-plan.md");
+  assert.equal(paths.todoPlan.relativePath, "doc/TODO/workspace.plan.md");
   assert.equal(paths.controlPlaneRoot.relativePath, ".codeai-hub/workflow");
   assert.equal(paths.hooks.length, 5);
   assert.deepEqual(

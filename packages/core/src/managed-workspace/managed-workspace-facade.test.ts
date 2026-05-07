@@ -29,7 +29,10 @@ test("ManagedWorkspaceFacade resolves managed workspace paths", () => {
     result.value.controlPlaneRoot.relativePath,
     ".codeai-hub/workflow"
   );
-  assert.equal(result.value.todoPlan.relativePath, "doc/TODO/todo-plan.md");
+  assert.equal(
+    result.value.todoPlan.relativePath,
+    "doc/TODO/workspace.plan.md"
+  );
 });
 
 test("ManagedWorkspaceFacade resolvePathsOrThrow throws validation errors", () => {
