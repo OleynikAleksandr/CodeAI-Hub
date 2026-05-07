@@ -19,6 +19,8 @@ import { resolveCodexWorkflowInvocationProfile } from "./codex-workflow-instruct
 import { CodexAppServerProcess } from "./process/codex-app-server-process";
 
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
+const CODEX_WORKFLOW_DEFAULT_APPROVAL_POLICY = "on-request";
+const CODEX_WORKFLOW_DEFAULT_SANDBOX = "workspace-write";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
 const REASONING_SUMMARY_SETTINGS_CACHE_TTL_MS = 500;
 const DEFAULT_SETTINGS_PATH = path.join(
@@ -165,8 +167,11 @@ export class CodexAppServerFacade {
       "thread/start",
       {
         cwd: workspacePath ?? this.workspace.workspacePath,
-        approvalPolicy: this.workspace.defaultApprovalMode,
-        sandbox: this.workspace.defaultSandboxMode,
+        approvalPolicy:
+          this.workspace.defaultApprovalMode ??
+          CODEX_WORKFLOW_DEFAULT_APPROVAL_POLICY,
+        sandbox:
+          this.workspace.defaultSandboxMode ?? CODEX_WORKFLOW_DEFAULT_SANDBOX,
         model: this.workspace.defaultModel,
         persistExtendedHistory: true,
         baseInstructions: workflowProfile.baseInstructions,
@@ -194,8 +199,11 @@ export class CodexAppServerFacade {
       {
         threadId,
         cwd: workspacePath ?? this.workspace.workspacePath,
-        approvalPolicy: this.workspace.defaultApprovalMode,
-        sandbox: this.workspace.defaultSandboxMode,
+        approvalPolicy:
+          this.workspace.defaultApprovalMode ??
+          CODEX_WORKFLOW_DEFAULT_APPROVAL_POLICY,
+        sandbox:
+          this.workspace.defaultSandboxMode ?? CODEX_WORKFLOW_DEFAULT_SANDBOX,
         model: this.workspace.defaultModel,
         persistExtendedHistory: true,
       }

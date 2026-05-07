@@ -101,6 +101,9 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   geminiCli: true,
 };
 
+const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "on-request";
+const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "workspace-write";
+
 export const resolveProviderImmediateBindingCapability = (
   providerId: string
 ): boolean => PROVIDER_IMMEDIATE_BINDING_CAPABILITIES[providerId] === true;
@@ -143,8 +146,10 @@ export const createCodexAdapterInstance = (
     usageLimitsFacade: createCodexUsageLimitsFacadeBridge(),
     workspace: {
       workspacePath: codexWorkspacePath ?? process.cwd(),
-      defaultSandboxMode: codexSandboxMode,
-      defaultApprovalMode: codexApprovalMode,
+      defaultSandboxMode:
+        codexSandboxMode ?? CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE,
+      defaultApprovalMode:
+        codexApprovalMode ?? CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE,
       defaultModel: codexDefaultModel,
       defaultReasoningEffort: codexDefaultReasoningEffort,
       skipGitRepoCheck: codexSkipGitRepoCheck,
