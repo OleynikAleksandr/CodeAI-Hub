@@ -12,12 +12,17 @@ const createWorkspaceRoot = (): Promise<string> =>
 const execFileAsync = promisify(execFile);
 const ACTIVE_SCOPE_RE = /Execution Scope Status: ACTIVE/u;
 const DIAGRAM_TASK_RE = /Current Task: diagram-modules\.stream1\.task1/u;
+const DIAGRAM_PLAN_TASK_RE =
+  /"currentTaskId": "diagram-modules\.stream1\.task1"/u;
 const DIAGRAM_NEXT_TASK_RE = /Current Task: diagram-modules\.stream1\.task2/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
 const APPLICATION_SKELETON_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const INCLUDED_IN_COMMIT_RE = /hash: included-in-commit/u;
+const WORKSPACE_PLAN_ACTIVE_STAGE_RE = /"activeStage": "diagram_modules"/u;
+const DIAGRAM_STAGE_PLAN_RE =
+  /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
 
 test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package scripts", async () => {
   const workspaceRoot = await createWorkspaceRoot();
@@ -40,6 +45,30 @@ test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package s
         "utf8"
       ).then((content) => content.includes("codeai-plan-state:start")),
       true
+    );
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+        "utf8"
+      ),
+      WORKSPACE_PLAN_ACTIVE_STAGE_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+        "utf8"
+      ),
+      DIAGRAM_STAGE_PLAN_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          "doc/TODO/stages/diagram-modules/todo-plan.md"
+        ),
+        "utf8"
+      ),
+      DIAGRAM_PLAN_TASK_RE
     );
 
     const packageJson = JSON.parse(
