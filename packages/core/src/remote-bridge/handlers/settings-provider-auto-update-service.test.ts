@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import type { CoreConfig } from "../../config";
+import { buildDefaultSettingsSnapshot } from "./settings-persistence-snapshot";
 import {
   resolveProviderAutoUpdateTargets,
   SettingsProviderAutoUpdateService,
@@ -14,6 +16,32 @@ const createLogger = () =>
       // noop
     },
   }) as never;
+
+const createConfig = (): CoreConfig => ({
+  claudeContinuityRemainingPercentThreshold: 30,
+  claudeDefaultModel: "sonnet",
+  claudeProjectSlug: "default",
+  claudeSettingsPath: "/tmp/codeai-hub-settings.json",
+  codexSkipGitRepoCheck: false,
+  continuityPreemptRemainingPercentThreshold: 50,
+  geminiSettingsPath: "/tmp/codeai-hub-settings.json",
+  geminiThinkingLevelByModel: {},
+  host: "127.0.0.1",
+  idleTtlMinutes: null,
+  managedMode: null,
+  port: 8080,
+  shutdownGracePeriodMs: 0,
+  templatesDir: "/tmp/codeai-hub-templates",
+});
+
+test("default settings snapshot does not schedule startup provider auto-updates", () => {
+  assert.deepEqual(
+    resolveProviderAutoUpdateTargets(
+      buildDefaultSettingsSnapshot(createConfig())
+    ),
+    []
+  );
+});
 
 test("resolveProviderAutoUpdateTargets maps enabled provider settings to startup update targets", () => {
   assert.deepEqual(
