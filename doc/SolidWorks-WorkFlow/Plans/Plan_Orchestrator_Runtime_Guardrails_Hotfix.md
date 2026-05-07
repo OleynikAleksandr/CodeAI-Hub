@@ -36,3 +36,12 @@ Both cases are unacceptable in Core-managed workflow sessions. The orchestrator 
 - `npm exec -- tsx --test packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`
 - `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`
 - `npm run plan:validate`
+
+2026-05-07 follow-up verification passed after live Quality Gates retest:
+
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`
+- `npm exec -- tsx --test packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`
+- `npm exec -- tsx --test packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`
+- `npm run plan:validate`
