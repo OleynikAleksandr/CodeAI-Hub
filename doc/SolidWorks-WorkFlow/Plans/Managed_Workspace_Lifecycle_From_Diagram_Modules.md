@@ -460,6 +460,33 @@ to a filesystem-stage transaction fix:
 - Development Tree bootstrap: Core-owned downstream side effects must not dirty
   the finishing upstream stage or become a decision for the wrong agent.
 
+Release delivery note for `v1.2.185`: filesystem-stage draft lifecycle hotfix
+release is built as `codeai-hub-1.2.185.vsix`. The release splits generated
+Application Skeleton and Quality Gates child plans into separate draft and
+execution transactions, updates both bundled agent prompts to require a clean
+managed draft commit before destructive filesystem work, gates Development Tree
+unlock on accepted materialization/integration ledger evidence, and stops
+workflow-state reads from creating untracked Development Tree draft files as a
+side effect while Quality Gates is finishing.
+
+User retest checklist for `v1.2.185`:
+
+- Application Skeleton child plan must start with
+  `docs: draft application skeleton contract`, and draft artifacts must be
+  committed before user review/materialization.
+- After the Application Skeleton draft commit, the child plan must advance to
+  expected commit `feat: materialize application skeleton`.
+- Quality Gates child plan must start with
+  `docs: draft quality gates contract`, and gate contract artifacts must be
+  committed before package/script integration.
+- After the Quality Gates draft commit, the child plan must advance to expected
+  commit `feat: integrate quality gates baseline`.
+- Development Tree must stay locked without accepted ledger entries for both
+  Application Skeleton materialization and Quality Gates integration.
+- Workflow-state reads after Quality Gates must not create untracked
+  `.codeai-hub/<workspaceSlug>/development_tree/` files while the Quality Gates
+  agent is finalizing.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
