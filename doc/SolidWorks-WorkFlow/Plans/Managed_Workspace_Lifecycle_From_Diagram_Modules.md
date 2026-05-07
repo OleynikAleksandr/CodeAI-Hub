@@ -536,6 +536,23 @@ still running live workflow tests. Fix streams can be prepared and committed,
 but `build-all.sh` / `build-release.sh` must not run until the user confirms the
 test window is clear.
 
+Post-clean-cache rebuild delivery note for `v1.2.188`: the package was rebuilt
+after the user cleared the local CodeAI Hub runtime cache and reported that
+`v1.2.187` could not be installed/launched. Fresh provider, Core, UI, and
+launcher tarballs were generated under `doc/tmp/releases/` and
+`~/.codeai-hub/releases/`; the VSIX is `codeai-hub-1.2.188.vsix`.
+
+User retest checklist for `v1.2.188`:
+
+- Install `codeai-hub-1.2.188.vsix` after the local runtime cache has been
+  cleared.
+- Confirm Project Manager starts and Core recreates the required
+  `.codeai-hub` runtime directories from the `1.2.188` release artifacts.
+- Confirm Project Manager does not accept Description session creation before
+  provider startup/update completes.
+- Core logs should show provider auto-update and provider initialization before
+  `Remote bridge started`.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
