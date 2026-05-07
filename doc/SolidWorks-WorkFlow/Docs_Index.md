@@ -47,6 +47,8 @@
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
+- `Contracts/Managed_Workspace_Lifecycle.md` — managed workspace lifecycle contract from `Diagram Modules`: Core-owned Git/plan/hooks baseline, tracked `.codeai-hub/workflow`, ignored runtime/cache/log state, upstream read-only freeze, and recovery from `todo-plan.md`.
+- `Contracts/Workflow_Revision_Graph.md` — revision graph contract for Diagram/Skeleton/Quality Gates/Development Tree snapshots, stable ids, diff classes, and downstream migration tasks.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.
