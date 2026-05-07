@@ -13,8 +13,11 @@ const QUALITY_GATES_START_RE = /ready for Quality Gates Baseline/;
 const MANAGED_WORKSPACE_BOUNDARY_RE = /Managed Workspace Boundary/;
 const CORE_LIFECYCLE_OWNER_RE =
   /Core already owns and maintains the workspace repo/;
+const ACTIVE_CHILD_PLAN_RE =
+  /read `doc\/TODO\/workspace\.plan\.md`, then read the active child plan named by `activePlanPath`/;
 const NO_LIFECYCLE_REPAIR_RE =
   /Do not create, reinstall, repair, rename, or replace git, hooks, plan scripts/;
+const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const DO_NOT_START_WITH_STACK_QUESTIONS_RE =
   /Do not start with blank-choice questions about language, framework, repo shape, or package manager/;
 const RECOMMENDED_BASELINE_RE =
@@ -57,7 +60,7 @@ const STACK_ARRAYS_RE =
 const CONTRACT_TECHNOLOGY_HINTS_RE =
   /Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence/;
 const CONTRACT_CORE_LIFECYCLE_OWNER_RE =
-  /Git, hooks, `doc\/TODO\/todo-plan\.md`, plan scripts, `\.codeai-hub\/workflow`, workflow revision ledgers, and upstream read-only policy are Core-owned lifecycle controls/;
+  /Git, hooks, `doc\/TODO\/workspace\.plan\.md`, active child plans under `doc\/TODO\/stages\/<stage>\/todo-plan\.md`/;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -76,7 +79,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, QUALITY_GATES_START_RE);
   assert.match(prompt, MANAGED_WORKSPACE_BOUNDARY_RE);
   assert.match(prompt, CORE_LIFECYCLE_OWNER_RE);
+  assert.match(prompt, ACTIVE_CHILD_PLAN_RE);
   assert.match(prompt, NO_LIFECYCLE_REPAIR_RE);
+  assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
   assert.match(prompt, RECOMMENDED_BASELINE_RE);
   assert.match(prompt, TECHNOLOGY_HINTS_RE);
@@ -110,6 +115,7 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, PRODUCT_PARTS_ROOT_RE);
   assert.match(contract, CONTRACT_TECHNOLOGY_HINTS_RE);
   assert.match(contract, CONTRACT_CORE_LIFECYCLE_OWNER_RE);
+  assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
   assert.match(contract, NO_CATEGORY_SPLIT_RE);
 });
 

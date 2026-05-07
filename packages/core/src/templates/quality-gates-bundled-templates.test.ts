@@ -12,7 +12,10 @@ const NEEDS_USER_DECISION_RE = /needs_user_decision/;
 const INTEGRATION_PATHS_RE = /planned integration paths/;
 const CORE_HOOK_REGISTRY_RE =
   /Core owns the managed lifecycle baseline and hook registry/;
+const ACTIVE_CHILD_PLAN_RE =
+  /Read `doc\/TODO\/workspace\.plan\.md`, then read the active child plan named by `activePlanPath`/;
 const NO_DIRECT_HUSKY_RE = /Do not edit `\.husky` hooks directly/;
+const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const NO_PLANNED_DUPLICATES_RE =
   /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
 const LEGACY_RESEARCH_PASS_RE = /Required Research And Design Pass/;
@@ -50,8 +53,10 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, NEEDS_USER_DECISION_RE);
   assert.match(prompt, INTEGRATION_PATHS_RE);
   assert.match(prompt, CORE_HOOK_REGISTRY_RE);
+  assert.match(prompt, ACTIVE_CHILD_PLAN_RE);
   assert.match(prompt, NO_DIRECT_HUSKY_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
+  assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
   assert.doesNotMatch(prompt, HARDCODED_ULTRACITE_RE);
   assert.doesNotMatch(prompt, HARDCODED_KNIP_RE);
