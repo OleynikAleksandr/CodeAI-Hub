@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { normalizeAndValidateWorkflowStageArtifact } from "../remote-bridge/handlers/http-api-artifact-validation";
 import { readDevelopmentTreeBootstrapGate } from "./development-tree-bootstrap-gate";
 
 const writeWorkspaceFile = async (
@@ -43,6 +44,49 @@ const writeMarkdownArtifact = async (params: {
   );
 };
 
+const validateQualityGatesJson = (content: Record<string, unknown>) =>
+  normalizeAndValidateWorkflowStageArtifact({
+    fileName: "quality-gates.json",
+    markdown: JSON.stringify(content),
+  });
+
+test("quality gates validation rejects contradictory blocker contracts", () => {
+  const advisoryBlocker = validateQualityGatesJson({
+    advisory: ["license-policy"],
+    commands: {
+      "license-policy": {
+        blockingIn: ["beforeRelease"],
+        desiredStatus: "advisory",
+        id: "license-policy",
+      },
+    },
+    schema: "codeai-quality-gates-v1",
+  });
+  assert.equal(advisoryBlocker.ok, false);
+  assert.equal(
+    advisoryBlocker.error.includes("must not have blocking phases"),
+    true
+  );
+
+  const missingIntegrationPlan = validateQualityGatesJson({
+    commands: {
+      "format-check": {
+        availability: "not_integrated",
+        desiredStatus: "active",
+        id: "format-check",
+        integrationRequired: true,
+      },
+    },
+    requiredBeforeCommit: ["format-check"],
+    schema: "codeai-quality-gates-v1",
+  });
+  assert.equal(missingIntegrationPlan.ok, false);
+  assert.equal(
+    missingIntegrationPlan.error.includes("plannedIntegrationPaths"),
+    true
+  );
+});
+
 test("development tree stays locked until quality gates are integrated", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "development-tree-bootstrap-gate-")
@@ -50,13 +94,22 @@ test("development tree stays locked until quality gates are integrated", async (
   const workspaceSlug = "demo";
 
   try {
-    await writeMarkdownArtifact({
-      fileName: "application-skeleton.md",
-      heading: "Application Skeleton",
-      stage: "application_skeleton",
+    await writeWorkspaceFile(
       workspaceRoot,
-      workspaceSlug,
-    });
+      `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`,
+      [
+        "# Application Skeleton",
+        "- `reviewState`: `materialized`",
+        "- `accepted`: `true`",
+        "- `materialized`: `true`",
+        "- `materializationState`: `materialized`",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/demo/README.md",
+      "# Demo Product Part\n"
+    );
     await writeJsonArtifact({
       fileName: "application-skeleton-map.json",
       stage: "application_skeleton",
@@ -64,9 +117,13 @@ test("development tree stays locked until quality gates are integrated", async (
       workspaceSlug,
       content: {
         accepted: true,
+        materializedPaths: ["product-parts/demo/README.md"],
         materialized: true,
         materializationState: "materialized",
+        productParts: [{ codePath: "product-parts/demo", partId: "demo" }],
+        reviewState: "materialized",
         schema: "codeai-application-skeleton-v1",
+        sourceRoot: "product-parts",
       },
     });
     await writeMarkdownArtifact({

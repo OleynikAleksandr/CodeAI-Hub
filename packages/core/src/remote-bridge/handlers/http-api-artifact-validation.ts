@@ -20,6 +20,26 @@ const PRODUCT_PART_MODULE_ROW_RE =
   /^\|\s*(?:\d+\s*\|\s*)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*[^|\n]+?\s*\|[ \t]*$/gm;
 const PRODUCT_PART_LEGACY_MODULE_NODE_RE =
   /^###\s+Module:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
+const REQUIRED_QUALITY_GATE_ARRAY_KEYS = [
+  "requiredBeforeCommit",
+  "requiredBeforeModuleExecution",
+  "requiredBeforePush",
+  "requiredBeforeRelease",
+] as const;
+const NON_BLOCKING_QUALITY_GATE_ARRAY_KEYS = [
+  "advisory",
+  "deferred",
+  "deferredUntilMaterialization",
+  "plannedRequiredAfterIntegration",
+  "plannedRequiredAfterMaterialization",
+] as const;
+const NON_BLOCKING_GATE_STATUSES = new Set([
+  "advisory",
+  "deferred",
+  "planned",
+  "plannedAfterIntegration",
+  "plannedAfterMaterialization",
+]);
 
 export type WorkflowArtifactFileName =
   | "Final_Description.md"
@@ -182,6 +202,144 @@ const validateApplicationSkeletonMap = (content: string): string | null => {
     : "Application skeleton map must include productParts array";
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readStringArray = (
+  value: Record<string, unknown>,
+  key: string
+): WorkflowParseResult<readonly string[]> => {
+  const array = value[key];
+  if (array === undefined) {
+    return { ok: true, value: [] };
+  }
+  if (!Array.isArray(array) || array.some((item) => typeof item !== "string")) {
+    return { ok: false, error: `Quality gates ${key} must be a string array` };
+  }
+  return { ok: true, value: array };
+};
+
+const readGateDesiredStatus = (
+  gate: Record<string, unknown>
+): string | null => {
+  const status = gate.desiredStatus ?? gate.status;
+  return typeof status === "string" ? status : null;
+};
+
+const hasPlannedIntegrationPaths = (gate: Record<string, unknown>): boolean =>
+  Array.isArray(gate.plannedIntegrationPaths) &&
+  gate.plannedIntegrationPaths.some((item) => typeof item === "string");
+
+const validateRequiredQualityGate = (params: {
+  readonly commands: Record<string, unknown>;
+  readonly gateId: string;
+  readonly key: string;
+}): string | null => {
+  const gate = params.commands[params.gateId];
+  if (!isRecord(gate)) {
+    return `Quality gates ${params.key} references missing command ${params.gateId}`;
+  }
+  const status = readGateDesiredStatus(gate);
+  if (status && NON_BLOCKING_GATE_STATUSES.has(status)) {
+    return `Quality gates ${params.gateId} cannot be required while ${status}`;
+  }
+  if (
+    gate.availability === "not_integrated" &&
+    !(gate.integrationRequired === true && hasPlannedIntegrationPaths(gate))
+  ) {
+    return `Quality gates ${params.gateId} is not integrated and must list plannedIntegrationPaths`;
+  }
+  return null;
+};
+
+const validateNonBlockingQualityGate = (params: {
+  readonly commands: Record<string, unknown>;
+  readonly gateId: string;
+  readonly key: (typeof NON_BLOCKING_QUALITY_GATE_ARRAY_KEYS)[number];
+}): string | null => {
+  const gate = params.commands[params.gateId];
+  if (params.key !== "advisory" || !isRecord(gate)) {
+    return null;
+  }
+  const blockingIn = gate.blockingIn;
+  return Array.isArray(blockingIn) && blockingIn.length > 0
+    ? `Quality gates advisory command ${params.gateId} must not have blocking phases`
+    : null;
+};
+
+const collectNonBlockingQualityGateIds = (params: {
+  readonly commands: Record<string, unknown>;
+  readonly contract: Record<string, unknown>;
+}): WorkflowParseResult<ReadonlySet<string>> => {
+  const nonBlockingGateIds = new Set<string>();
+  for (const key of NON_BLOCKING_QUALITY_GATE_ARRAY_KEYS) {
+    const parsed = readStringArray(params.contract, key);
+    if (!parsed.ok) {
+      return parsed;
+    }
+    for (const gateId of parsed.value) {
+      nonBlockingGateIds.add(gateId);
+      const error = validateNonBlockingQualityGate({
+        commands: params.commands,
+        gateId,
+        key,
+      });
+      if (error) {
+        return { ok: false, error };
+      }
+    }
+  }
+  return { ok: true, value: nonBlockingGateIds };
+};
+
+const validateRequiredQualityGateArray = (params: {
+  readonly commands: Record<string, unknown>;
+  readonly gateIds: readonly string[];
+  readonly key: string;
+  readonly nonBlockingGateIds: ReadonlySet<string>;
+}): string | null => {
+  for (const gateId of params.gateIds) {
+    if (params.nonBlockingGateIds.has(gateId)) {
+      return `Quality gates ${gateId} cannot be both required and non-blocking`;
+    }
+    const error = validateRequiredQualityGate({
+      commands: params.commands,
+      gateId,
+      key: params.key,
+    });
+    if (error) {
+      return error;
+    }
+  }
+  return null;
+};
+
+const validateQualityGateArrays = (params: {
+  readonly commands: Record<string, unknown>;
+  readonly contract: Record<string, unknown>;
+}): string | null => {
+  const nonBlockingGateIds = collectNonBlockingQualityGateIds(params);
+  if (!nonBlockingGateIds.ok) {
+    return nonBlockingGateIds.error;
+  }
+  for (const key of REQUIRED_QUALITY_GATE_ARRAY_KEYS) {
+    const parsed = readStringArray(params.contract, key);
+    if (!parsed.ok) {
+      return parsed.error;
+    }
+    const error = validateRequiredQualityGateArray({
+      commands: params.commands,
+      gateIds: parsed.value,
+      key,
+      nonBlockingGateIds: nonBlockingGateIds.value,
+    });
+    if (error) {
+      return error;
+    }
+  }
+  return null;
+};
+
 const validateQualityGatesContract = (content: string): string | null => {
   const parsed = parseJsonObject({
     content,
@@ -193,11 +351,13 @@ const validateQualityGatesContract = (content: string): string | null => {
     return parsed.error;
   }
   const commands = parsed.value.commands;
-  return typeof commands === "object" &&
-    commands !== null &&
-    !Array.isArray(commands)
-    ? null
-    : "Quality gates contract must include commands object";
+  if (!isRecord(commands)) {
+    return "Quality gates contract must include commands object";
+  }
+  return validateQualityGateArrays({
+    commands,
+    contract: parsed.value,
+  });
 };
 
 const WORKFLOW_ARTIFACT_VALIDATORS = new Map<
