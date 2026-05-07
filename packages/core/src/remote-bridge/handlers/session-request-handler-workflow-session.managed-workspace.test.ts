@@ -168,12 +168,30 @@ test("default managed lifecycle creates an adoption commit before diagram module
     "virtual_simulation",
     "virtual-simulation.md"
   );
+  const continuityPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    "demo-workspace",
+    "continuity",
+    "index.json"
+  );
+  const workflowStatePath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    "demo-workspace",
+    "workflow",
+    "state.json"
+  );
 
   try {
     await mkdir(path.dirname(descriptionPath), { recursive: true });
     await mkdir(path.dirname(simulationPath), { recursive: true });
+    await mkdir(path.dirname(continuityPath), { recursive: true });
+    await mkdir(path.dirname(workflowStatePath), { recursive: true });
     await writeFile(descriptionPath, "# Description\n", "utf8");
     await writeFile(simulationPath, "# Simulation\n", "utf8");
+    await writeFile(continuityPath, "{}\n", "utf8");
+    await writeFile(workflowStatePath, "{}\n", "utf8");
 
     const result = await new DefaultManagedWorkspaceLifecycle().ensureReady(
       workspaceRoot,
@@ -205,6 +223,14 @@ test("default managed lifecycle creates an adoption commit before diagram module
         ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md"
       ),
       true
+    );
+    assert.equal(
+      trackedFiles.has(".codeai-hub/demo-workspace/continuity/index.json"),
+      false
+    );
+    assert.equal(
+      trackedFiles.has(".codeai-hub/demo-workspace/workflow/state.json"),
+      false
     );
     assert.match(
       await readFile(path.join(workspaceRoot, "doc/TODO/todo-plan.md"), "utf8"),

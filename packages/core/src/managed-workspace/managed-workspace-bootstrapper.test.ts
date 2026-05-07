@@ -9,9 +9,11 @@ import {
 } from "./managed-workspace-bootstrapper";
 
 const CACHE_GITIGNORE_RE = /\.codeai-hub\/cache\//u;
+const CONTINUITY_GITIGNORE_RE = /\.codeai-hub\/\*\/continuity\//u;
 const DS_STORE_GITIGNORE_RE = /^\.DS_Store$/mu;
 const LOGS_GITIGNORE_RE = /\.codeai-hub\/logs\//u;
 const RUNTIME_GITIGNORE_RE = /\.codeai-hub\/runtime\//u;
+const WORKFLOW_STATE_GITIGNORE_RE = /\.codeai-hub\/\*\/workflow\/state\.json/u;
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "managed-workspace-"));
@@ -56,6 +58,8 @@ test("ManagedWorkspaceBootstrapper creates baseline directories and manifest", a
     assert.match(gitignore, RUNTIME_GITIGNORE_RE);
     assert.match(gitignore, LOGS_GITIGNORE_RE);
     assert.match(gitignore, CACHE_GITIGNORE_RE);
+    assert.match(gitignore, CONTINUITY_GITIGNORE_RE);
+    assert.match(gitignore, WORKFLOW_STATE_GITIGNORE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -81,6 +85,7 @@ test("ManagedWorkspaceBootstrapper is idempotent for existing gitignore entries"
     assert.equal(secondResult.actions.includes("updated_gitignore"), false);
     assert.equal(gitignore.split(".DS_Store").length - 1, 1);
     assert.equal(gitignore.split(".codeai-hub/runtime/").length - 1, 1);
+    assert.equal(gitignore.split(".codeai-hub/*/continuity/").length - 1, 1);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

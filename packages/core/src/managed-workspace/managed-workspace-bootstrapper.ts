@@ -134,6 +134,8 @@ const ensureGitIgnoreEntries = async (
     ".codeai-hub/runtime/",
     ".codeai-hub/logs/",
     ".codeai-hub/cache/",
+    ".codeai-hub/*/continuity/",
+    ".codeai-hub/*/workflow/state.json",
   ];
   const missingLines = requiredLines.filter(
     (line) => !existingLines.has(line.replace(TRAILING_SLASH_RE, ""))
