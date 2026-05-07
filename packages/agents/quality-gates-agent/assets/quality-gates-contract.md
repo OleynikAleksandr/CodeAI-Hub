@@ -3,7 +3,7 @@
 ## Canonical Files
 
 - `quality-gates.md`: human-readable gate baseline, tooling rationale, integration plan, open decisions, and acceptance checklist.
-- `quality-gates.json`: machine-readable command and integration contract for Core and future Development Tree agents.
+- `quality-gates.json`: machine-readable command and integration contract for Core and future workflow/node agents.
 
 ## JSON Shape
 
@@ -29,7 +29,7 @@
       "integrationRequired": true,
       "baseline": ["minimal", "recommended", "strict"],
       "blockingIn": ["beforeCommit"],
-      "plannedIntegrationPaths": ["package.json", "ultracite config"]
+      "plannedIntegrationPaths": ["package.json", "format/lint config"]
     }
   },
   "requiredBeforeCommit": ["format-check"],
@@ -47,20 +47,24 @@
 
 ## Field Rules
 
+- `commands` must be an object/map keyed by gate id. Do not write it as an array.
 - `desiredStatus`: `active`, `planned`, `deferred`, or `advisory`.
 - `availability`: `executable`, `not_integrated`, `unavailable`, or `needs_user_decision`.
 - `integrationRequired` is `true` when scripts/configs/hooks/devDependencies still need to be created.
 - `plannedIntegrationPaths` names the future files or config surfaces Phase 2 will touch.
 - `integratedPaths` names real paths created or verified during Phase 2.
 - `deferredIntegration` explains accepted gate infrastructure intentionally skipped during Phase 2.
+- Concrete tools must be selected from user preference, project evidence, or stack-specific research. Otherwise keep the gate category and mark availability as `needs_user_decision`.
+- Source files and classes must stay <= 500 lines for every generated product; 400-500 lines is near-limit reporting.
 
 ## Validation Rules
 
+- `commands` must be a JSON object keyed by id, not an array.
 - Required gate ids must exist in `commands`.
 - Advisory gates must not have `blockingIn` phases.
 - Deferred or planned gates must not appear in active required arrays.
 - A not-integrated active gate must include `integrationRequired: true` and non-empty `plannedIntegrationPaths`.
-- User-selected tools must appear in tooling rationale, command entries, and planned integration paths.
+- Selected tools must appear in tooling rationale, command entries, and planned integration paths.
 - `accepted: true` requires explicit user acceptance.
 - `integrated: true` requires actual filesystem integration plus smoke evidence.
 - Future agents must be able to run or cite gate commands without inventing missing scripts.
