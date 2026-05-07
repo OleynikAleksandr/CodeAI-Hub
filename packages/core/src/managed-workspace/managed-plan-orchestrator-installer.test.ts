@@ -20,6 +20,12 @@ const APPLICATION_SKELETON_TASK_RE =
 const APPLICATION_SKELETON_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const INCLUDED_IN_COMMIT_RE = /hash: included-in-commit/u;
+const LEDGER_COMMIT_RE = /chore: record managed workspace ledger/u;
+const DIAGRAM_MODULES_COMMIT_RE = /docs: update diagram modules artifacts/u;
+const WORKSPACE_COMMIT_HASH_RE = /"commitHash": "[0-9a-f]+"/u;
+const WORKSPACE_ACCEPTED_COMMIT_RE = /"acceptedCommits": \[\n\s+\{/u;
+const WORKSPACE_LAST_COMMIT_RE =
+  /"lastAcceptedCommitMessage": "docs: update diagram modules artifacts"/u;
 const WORKSPACE_PLAN_ACTIVE_STAGE_RE = /"activeStage": "diagram_modules"/u;
 const DIAGRAM_STAGE_PLAN_RE =
   /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
@@ -169,12 +175,24 @@ test("managed plan shim advances the active task inside plan commits", async () 
       path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH),
       "utf8"
     );
+    const workspacePlan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      "utf8"
+    );
+    const gitLog = await execFileAsync("git", ["log", "--pretty=%s", "-2"], {
+      cwd: workspaceRoot,
+    });
     const gitStatus = await execFileAsync("git", ["status", "--short"], {
       cwd: workspaceRoot,
     });
 
     assert.match(status.stdout, DIAGRAM_NEXT_TASK_RE);
     assert.match(plan, INCLUDED_IN_COMMIT_RE);
+    assert.match(workspacePlan, WORKSPACE_ACCEPTED_COMMIT_RE);
+    assert.match(workspacePlan, WORKSPACE_LAST_COMMIT_RE);
+    assert.match(workspacePlan, WORKSPACE_COMMIT_HASH_RE);
+    assert.match(gitLog.stdout, LEDGER_COMMIT_RE);
+    assert.match(gitLog.stdout, DIAGRAM_MODULES_COMMIT_RE);
     await assert.rejects(access(path.join(workspaceRoot, ROOT_TODO_PLAN_PATH)));
     assert.equal(gitStatus.stdout.trim(), "");
   } finally {

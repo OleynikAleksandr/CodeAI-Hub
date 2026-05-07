@@ -153,6 +153,8 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const LEDGER_COMMIT_MESSAGE = "chore: record managed workspace ledger";
+const LEDGER_COMMIT_ENV = "CODEAI_MANAGED_LEDGER_COMMIT";
 const START = "<!-- codeai-plan-state:start -->";
 const END = "<!-- codeai-plan-state:end -->";
 const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
@@ -209,6 +211,7 @@ const readState = () => {
 };
 
 const readPlanText = () => readFileSync(activePlanPath(), "utf8");
+const readWorkspaceText = () => readFileSync(WORKSPACE_PLAN_PATH, "utf8");
 
 const validate = () => {
   const state = readState();
@@ -254,8 +257,22 @@ const replaceState = (text, state) => {
   return \`\${before}\\n\\\`\\\`\\\`json\\n\${json}\\n\\\`\\\`\\\`\\n\${after}\`;
 };
 
+const replaceWorkspaceState = (text, state) => {
+  const blockStart = text.indexOf(WORKSPACE_START);
+  const blockEnd = text.indexOf(WORKSPACE_END);
+  if (blockStart < 0 || blockEnd < 0 || blockEnd <= blockStart) {
+    throw new Error("Missing codeai-workspace-plan-state block");
+  }
+  const before = text.slice(0, blockStart + WORKSPACE_START.length);
+  const after = text.slice(blockEnd);
+  const json = JSON.stringify(state, null, 2);
+  return \`\${before}\\n\\\`\\\`\\\`json\\n\${json}\\n\\\`\\\`\\\`\\n\${after}\`;
+};
+
 const advancePlanForCommit = (message) => {
   const state = validate();
+  const workspaceState = readWorkspaceState();
+  const planPath = activePlanPath();
   if (state.expectedCommitMessage && message !== state.expectedCommitMessage) {
     throw new Error(\`Expected commit message: \${state.expectedCommitMessage}\`);
   }
@@ -310,10 +327,60 @@ const advancePlanForCommit = (message) => {
     expectedCommitMessage: message,
   };
   writeFileSync(
-    activePlanPath(),
+    planPath,
     replaceState(lines.join("\\n"), nextState),
     "utf8"
   );
+  return {
+    message,
+    planPath,
+    stage: workspaceState.activeStage ?? "unknown",
+    taskId: state.currentTaskId,
+  };
+};
+
+const recordWorkspaceCommit = (event) => {
+  const workspaceState = readWorkspaceState();
+  const commitHash = runGit(["rev-parse", "--short", "HEAD"]);
+  const commitFullHash = runGit(["rev-parse", "HEAD"]);
+  const acceptedCommits = Array.isArray(workspaceState.acceptedCommits)
+    ? workspaceState.acceptedCommits
+    : [];
+  const nextState = {
+    ...workspaceState,
+    lastAcceptedCommitHash: commitHash,
+    lastAcceptedCommitMessage: event.message,
+    acceptedCommits: [
+      ...acceptedCommits,
+      {
+        commitFullHash,
+        commitHash,
+        message: event.message,
+        planPath: event.planPath,
+        stage: event.stage,
+        taskId: event.taskId,
+      },
+    ],
+  };
+  writeFileSync(
+    WORKSPACE_PLAN_PATH,
+    replaceWorkspaceState(readWorkspaceText(), nextState),
+    "utf8"
+  );
+};
+
+const createWorkspaceLedgerCommit = () => {
+  runGit(["add", WORKSPACE_PLAN_PATH]);
+  if (!hasStagedChanges()) {
+    return;
+  }
+  const result = spawnSync("git", ["commit", "-m", LEDGER_COMMIT_MESSAGE], {
+    env: { ...process.env, [LEDGER_COMMIT_ENV]: "1" },
+    stdio: "inherit",
+  });
+  if (result.status !== 0) {
+    throw new Error("Failed to commit managed workspace ledger");
+  }
 };
 
 const command = process.argv[2];
@@ -331,6 +398,10 @@ try {
   } else if (command === "commit-msg") {
     const state = validate();
     const message = readFileSync(process.argv[3], "utf8").trim();
+    if (process.env[LEDGER_COMMIT_ENV] === "1" && message === LEDGER_COMMIT_MESSAGE) {
+      process.exitCode = 0;
+      process.exit();
+    }
     if (state.expectedCommitMessage && message !== state.expectedCommitMessage) {
       throw new Error(\`Expected commit message: \${state.expectedCommitMessage}\`);
     }
@@ -339,10 +410,16 @@ try {
     if (!hasStagedChanges()) {
       throw new Error("No staged changes to commit");
     }
-    advancePlanForCommit(message);
+    const event = advancePlanForCommit(message);
     runGit(["add", activePlanPath()]);
     const result = spawnSync("git", ["commit", "-m", message], { stdio: "inherit" });
-    process.exitCode = result.status ?? 1;
+    if (result.status !== 0) {
+      process.exitCode = result.status ?? 1;
+    } else {
+      recordWorkspaceCommit(event);
+      createWorkspaceLedgerCommit();
+      process.exitCode = 0;
+    }
   } else {
     throw new Error("Usage: plan-cli.mjs <status|validate|commit|repair|commit-msg|post-commit>");
   }

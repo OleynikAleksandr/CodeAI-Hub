@@ -133,6 +133,8 @@ const createWorkspacePlan = (params: {
   "activeStage": "${params.activeStage}",
   "activePlanPath": "${STAGE_PLANS[params.activeStage]}",
   "stagePlans": ${JSON.stringify(STAGE_PLANS, null, 2).replace(/\n/g, "\n  ")},
+  "lastAcceptedCommitHash": null,
+  "lastAcceptedCommitMessage": null,
   "acceptedCommits": [],
   "blockers": []
 }
