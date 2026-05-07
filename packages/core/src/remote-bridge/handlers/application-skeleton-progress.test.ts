@@ -23,18 +23,13 @@ const writeWorkspaceFile = async (
 
 const MATERIALIZED_MARKDOWN = `# Application Skeleton
 
-## Status
+## Статус
 
-| Field | Value |
-| --- | --- |
-| reviewState | \`materialized\` |
-| accepted | \`true\` |
-| materialized | \`true\` |
-| materializationState | \`materialized\` |
+Артефакт утверждён и материализован. Production-tree skeleton создан на базе \`product-parts\`.
 
-## Materialized State
+## Итог
 
-Application Skeleton is accepted and materialized.
+Application Skeleton принят и материализован. Следующий этап может опираться на этот workspace skeleton как на готовую базу для Quality Gates Baseline.
 `;
 const MARKDOWN_REVIEW_STATE_ERROR_RE =
   /application-skeleton\.md status reviewState must be materialized/;

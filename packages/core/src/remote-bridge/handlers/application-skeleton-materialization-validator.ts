@@ -270,6 +270,10 @@ const hasMarkdownStatus = (
     markdown
   );
 
+const hasMarkdownStatusField = (markdown: string, field: string): boolean =>
+  new RegExp(`(?:\`${field}\`|${field})\\s*:`, "i").test(markdown) ||
+  new RegExp(`\\|\\s*\`?${field}\`?\\s*\\|`, "i").test(markdown);
+
 const validateMaterializedMarkdown = (markdown: string | null): string[] => {
   if (!markdown) {
     return ["application-skeleton.md is missing"];
@@ -281,7 +285,10 @@ const validateMaterializedMarkdown = (markdown: string | null): string[] => {
     ["materialized", "true"],
     ["materializationState", "materialized"],
   ] as const) {
-    if (!hasMarkdownStatus(markdown, field, value)) {
+    if (
+      hasMarkdownStatusField(markdown, field) &&
+      !hasMarkdownStatus(markdown, field, value)
+    ) {
       errors.push(`application-skeleton.md status ${field} must be ${value}`);
     }
   }
