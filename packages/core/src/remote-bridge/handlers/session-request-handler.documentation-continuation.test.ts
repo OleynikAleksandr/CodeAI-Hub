@@ -9,6 +9,7 @@ import {
   flushAsyncWork,
   internals,
 } from "./session-request-handler.test-helpers";
+import { buildDocumentationContinuationEnvelope } from "./session-request-handler-documentation-continuation-envelope";
 
 interface ProviderSend {
   readonly content: string;
@@ -158,4 +159,30 @@ test("Documentation Tree continuation envelope is attached to the first real use
     }
     await rm(tempHome, { recursive: true, force: true });
   }
+});
+
+test("managed workflow continuation envelope resumes from todo plan", async () => {
+  const envelope = await buildDocumentationContinuationEnvelope({
+    context: {
+      createdAtIso: "2026-05-07T00:00:00.000Z",
+      lastUserVisibleAssistantMessage:
+        "Skeleton materialization is in progress.",
+      modelBinding: null,
+      providerId: "codexCli",
+      rolloverId: "rollover-application-skeleton",
+      runSlug: null,
+      sourceSessionId: "source",
+      stageId: "application_skeleton",
+      targetSessionId: "target",
+      workspacePath: "/tmp/managed-workspace",
+      workspaceSlug: "demo",
+    },
+    userMessage: "Продолжай.",
+  });
+
+  assert.equal(envelope.includes("## Managed Workspace Recovery"), true);
+  assert.equal(envelope.includes("doc/TODO/todo-plan.md"), true);
+  assert.equal(envelope.includes("npm run plan:status"), true);
+  assert.equal(envelope.includes(".codeai-hub/workflow/revisions/"), true);
+  assert.equal(envelope.includes("application-skeleton-map.json"), true);
 });

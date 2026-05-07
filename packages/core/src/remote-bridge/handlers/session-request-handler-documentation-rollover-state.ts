@@ -5,6 +5,8 @@ const DOCUMENTATION_TREE_STAGES = new Set([
   "description",
   "virtual_simulation",
   "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
 ]);
 
 const INTERNAL_ASSISTANT_PATTERNS = [
