@@ -74,7 +74,9 @@
 - `materialized` must stay `false` until the workspace filesystem skeleton has actually been created.
 - `materializationState` must be one of `not_started`, `in_progress`, `materialized`, `failed`, or `outdated`.
 - `accepted: true` without `materialized: true` means the contract is accepted but downstream work is still blocked.
-- `materializedPaths` must list real workspace paths created or verified during post-acceptance materialization.
+- Materialized Product Part, Cluster, and Module directories must contain tracked `README.md` placeholders or other tracked files; empty directories are not Git-tracked and do not count as committed materialization.
+- `materializedPaths` must list real workspace files or directories created or verified during post-acceptance materialization, including tracked placeholders needed to preserve empty scaffold folders in Git.
 - `deferredMaterialization` must explain any mapped folder or scaffold element that was intentionally not created.
 - After materialization, `application-skeleton.md` must describe the current materialized state and must not keep draft-only/future-tense claims such as "will be created after confirmation".
+- Before the final materialization response, the stage must verify `npm run plan:status`, inspect `git status --short`, and commit through `npm run plan:commit -- "feat: materialize application skeleton"` using the existing managed lifecycle.
 - Quality gate commands may be proposed in Markdown, but the dedicated Quality Gates stage owns the accepted command contract and gate integration.

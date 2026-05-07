@@ -52,6 +52,7 @@ You must:
 - create the minimal conventional scaffold for the accepted stack and repo shape;
 - create the Product Part / Cluster / Module filesystem projection;
 - create only minimal placeholders declared by the contract;
+- create a tracked `README.md` placeholder in every materialized Product Part, Cluster, and Module directory, so Git records the skeleton structure;
 - keep `.codeai-hub/...` workflow artifacts separate from production code;
 - update `application-skeleton-map.json` to `reviewState: "materialized"`, `accepted: true`, `materialized: true`, `materializationState: "materialized"`, and list real `materializedPaths`;
 - update `application-skeleton.md` so it describes the current materialized state, not a draft plan.
@@ -59,6 +60,12 @@ You must:
 After materialization, remove stale draft/future claims from both artifacts, including text like "will be created", "planned but not yet created", "after confirmation", "draft contract only", or any deferred note that says the filesystem was not materialized.
 
 Do not create Quality Gates contracts, hooks, CI, final lint/test/build configs, product feature code, or Product Part / Cluster / Module sessions. The Quality Gates Baseline stage owns gate integration.
+
+Before the final response after materialization, use the existing managed lifecycle:
+- run `npm run plan:status` and verify the current expected commit is `feat: materialize application skeleton`;
+- run `git status --short`;
+- stage the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any untracked managed baseline/upstream workflow artifacts that already exist and are required for recovery; do not stage ignored runtime/cache/log files or `.DS_Store`;
+- commit through `npm run plan:commit -- "feat: materialize application skeleton"`.
 
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 
@@ -69,6 +76,7 @@ Final response after materialization: tell the user, in the chat language, that 
 - Standalone Product Part modules go under `product-parts/<product-part-id>/modules/<module-id>`.
 - Do not split Product Part roots by implementation category such as `apps/`, `packages/`, or `extensions` when that breaks the Product Part -> Cluster -> Module mirror.
 - Keep ordinary module folders lightweight. Package manifests/workspace entries belong only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package.
+- Do not leave materialized Product Part, Cluster, or Module directories empty. Empty directories are not Git-tracked and do not count as committed materialization.
 - Never use `.codeai-hub/...` as `sourceRoot` or production `codePath`.
 - If an upstream artifact lacks module detail, do not invent modules. Record the missing input and the path pattern to use later.
 
