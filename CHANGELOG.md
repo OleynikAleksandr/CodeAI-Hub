@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.180] - 2026-05-07
+### Added
+- **Managed workspace planning now has a Core-owned master TODO tree.** Fresh managed workspaces create `doc/TODO/workspace.plan.md` plus per-stage child plans under `doc/TODO/stages/<stage>/todo-plan.md`, while preserving the existing active-stage `npm run plan:*` compatibility path.
+
+### Fixed
+- **Diagram Modules layout sidecars no longer dirty managed Git.** Core ignores `.codeai-hub/*/diagram_modules/module-map.flow.json`, so UI/runtime graph layout state stays out of agent artifact commits.
+
+### Tests
+- **Managed TODO tree and sidecar handling are covered by targeted Core tests.** Bootstrapper, reconciler, plan-installer, and workflow-session managed workspace checks verify the new plan tree, idempotent ignore entries, and pre-provider lifecycle setup.
+
 ## [1.2.179] - 2026-05-07
 ### Fixed
 - **Managed workspace runtime state no longer dirties project Git.** Core ignores live continuity chains and workflow runtime state under `.codeai-hub/*/`, while keeping durable lifecycle artifacts tracked.
