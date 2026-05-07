@@ -11,7 +11,7 @@ import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtim
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
-interface ManagedWorkspaceLifecycle {
+export interface ManagedWorkspaceLifecycle {
   ensureReady(workspaceRoot: string): Promise<ManagedWorkspaceValidationResult>;
 }
 
@@ -21,7 +21,7 @@ const MANAGED_WORKSPACE_STAGES = new Set([
   "quality_gates",
 ]);
 
-const requiresManagedWorkspaceLifecycle = (stage: string): boolean =>
+export const requiresManagedWorkspaceLifecycle = (stage: string): boolean =>
   MANAGED_WORKSPACE_STAGES.has(stage);
 
 interface SessionRequestHandlerWorkflowSessionDependencies {
@@ -104,7 +104,9 @@ export class SessionRequestHandlerWorkflowSession {
   }
 }
 
-class DefaultManagedWorkspaceLifecycle implements ManagedWorkspaceLifecycle {
+export class DefaultManagedWorkspaceLifecycle
+  implements ManagedWorkspaceLifecycle
+{
   private readonly bootstrapper = new ManagedWorkspaceBootstrapper();
   private readonly installer = new ManagedPlanOrchestratorInstaller();
   private readonly validator = new ManagedWorkspaceValidator();

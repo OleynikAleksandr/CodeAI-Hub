@@ -66,3 +66,67 @@ test("session:create prepares workflow stage directories before creating provide
     await rm(workspacePath, { force: true, recursive: true });
   }
 });
+
+test("session:create bootstraps managed workspace before application skeleton session", async () => {
+  const workspacePath = await mkdtemp(
+    path.join(tmpdir(), "codeai-managed-session-create-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    let handleCreateCalled = false;
+    const sessionHandler = {
+      async handleCreate(
+        _providerId: string | undefined,
+        _workspacePath: string | undefined,
+        context: { readonly stage?: string | null } | undefined
+      ): Promise<void> {
+        assert.equal(context?.stage, "application_skeleton");
+        await assertDirectoryExists(path.join(workspacePath, ".git"));
+        await assertDirectoryExists(
+          path.join(workspacePath, ".codeai-hub", "workflow")
+        );
+        await access(path.join(workspacePath, ".husky", "pre-commit"));
+        await access(path.join(workspacePath, "doc", "TODO", "todo-plan.md"));
+        await access(
+          path.join(
+            workspacePath,
+            "scripts",
+            "plan-orchestrator",
+            "plan-cli.mjs"
+          )
+        );
+        handleCreateCalled = true;
+      },
+    } as unknown as SessionRequestHandler;
+    const workflowRuntime = {
+      connectWorkspace: () => Promise.resolve(),
+    } as unknown as WorkflowRuntime;
+    const logger = {
+      warn(): void {
+        return;
+      },
+    } as unknown as Logger;
+
+    const router = new RemoteBridgeSessionCreateRouter({
+      getManager: () => undefined,
+      logger,
+      sessionHandler,
+      workflowRuntime,
+    });
+
+    await router.handle("client-1", {
+      type: "session:create",
+      payload: {
+        initiativeSlug: workspaceSlug,
+        providerId: "codexCli",
+        stage: "application_skeleton",
+        workspacePath,
+      },
+    });
+
+    assert.equal(handleCreateCalled, true);
+  } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});

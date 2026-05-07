@@ -1,6 +1,11 @@
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
+import {
+  DefaultManagedWorkspaceLifecycle,
+  type ManagedWorkspaceLifecycle,
+  requiresManagedWorkspaceLifecycle,
+} from "./handlers/session-request-handler-workflow-session";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { prepareWorkflowStageDirectories } from "./handlers/workspace-session-service";
 import type { IncomingMessage } from "./types";
@@ -8,15 +13,19 @@ import type { IncomingMessage } from "./types";
 interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
   readonly logger: Logger;
+  readonly managedWorkspaceLifecycle?: ManagedWorkspaceLifecycle;
   readonly sessionHandler: SessionRequestHandler;
   readonly workflowRuntime: WorkflowRuntime;
 }
 
 export class RemoteBridgeSessionCreateRouter {
   private readonly deps: RemoteBridgeSessionCreateRouterDependencies;
+  private readonly managedWorkspaceLifecycle: ManagedWorkspaceLifecycle;
 
   constructor(deps: RemoteBridgeSessionCreateRouterDependencies) {
     this.deps = deps;
+    this.managedWorkspaceLifecycle =
+      deps.managedWorkspaceLifecycle ?? new DefaultManagedWorkspaceLifecycle();
   }
 
   async handle(
@@ -60,6 +69,26 @@ export class RemoteBridgeSessionCreateRouter {
         stage: createContext.stage,
         workspacePath: resolvedWorkspacePath,
       });
+      if (
+        createContext.stage &&
+        requiresManagedWorkspaceLifecycle(createContext.stage)
+      ) {
+        const managedWorkspace =
+          await this.managedWorkspaceLifecycle.ensureReady(
+            resolvedWorkspacePath
+          );
+        if (!managedWorkspace.ok) {
+          this.deps.logger.warn(
+            "Session create blocked: managed workspace baseline invalid",
+            {
+              issues: managedWorkspace.issues,
+              stage: createContext.stage,
+              workspaceRoot: managedWorkspace.workspaceRoot,
+            }
+          );
+          return;
+        }
+      }
     } catch (error: unknown) {
       this.deps.logger.warn("Failed to prepare workflow stage directories", {
         workspacePath: resolvedWorkspacePath,
