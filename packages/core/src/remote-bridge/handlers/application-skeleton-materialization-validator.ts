@@ -150,8 +150,12 @@ const describeMappedNode = (
     ? node.codePath.trim()
     : fallback;
 
-const hasCanonicalId = (node: Record<string, unknown>, key: string): boolean =>
-  typeof node[key] === "string" && node[key].trim().length > 0;
+const hasCanonicalId = (
+  node: Record<string, unknown>,
+  legacyKey: string
+): boolean =>
+  (typeof node.id === "string" && node.id.trim().length > 0) ||
+  (typeof node[legacyKey] === "string" && node[legacyKey].trim().length > 0);
 
 const validateModuleIdentifiers = (
   modules: readonly unknown[],

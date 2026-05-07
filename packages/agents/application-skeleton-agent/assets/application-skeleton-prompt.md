@@ -91,7 +91,7 @@ Final response after materialization: tell the user, in the chat language, that 
 - `accepted`, `materialized`, and `materializationState`;
 - `workspaceRoot`, `sourceRoot`, `repoShape`, `packageManager`; `sourceRoot` must be `"product-parts"` unless the user explicitly accepts another root;
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` arrays;
-- `productParts` with deterministic `codePath` values for every mapped Product Part, Cluster, and Module;
+- `productParts` with stable canonical `id` values and deterministic `codePath` values for every mapped Product Part, Cluster, and Module; legacy aliases `partId`, `clusterId`, and `moduleId` are optional, not required;
 - `materializedPaths` after materialization;
 - `deferredMaterialization` only for entries intentionally skipped in the current state.
 
