@@ -60,12 +60,12 @@ const createAdapter = (config: CoreConfig): ProviderAdapter =>
     createReporter: () => ({}),
   });
 
-test("createCodexAdapterInstance defaults workflow sandbox to full access", () => {
+test("createCodexAdapterInstance defaults workflow permissions to non-interactive full access", () => {
   createAdapter(createCoreConfig());
 
   assert.equal(
     FakeCodexAdapter.capturedWorkspace?.defaultApprovalMode,
-    "on-request"
+    "never"
   );
   assert.equal(
     FakeCodexAdapter.capturedWorkspace?.defaultSandboxMode,

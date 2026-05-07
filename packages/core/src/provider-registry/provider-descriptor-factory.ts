@@ -101,7 +101,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   geminiCli: true,
 };
 
-const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "on-request";
+const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
 
 export const resolveProviderImmediateBindingCapability = (
