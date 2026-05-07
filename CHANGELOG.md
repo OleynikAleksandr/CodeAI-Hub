@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.193] - 2026-05-07
+### Fixed
+- **Application Skeleton can unlock Quality Gates from the materialized JSON map.** Core now treats `application-skeleton-map.json` as the machine lifecycle source and no longer requires `application-skeleton.md` to duplicate lifecycle fields verbatim when the Markdown is a narrative artifact.
+- **Stale/draft Markdown contradictions are still rejected.** If `application-skeleton.md` explicitly says draft, unaccepted, or not materialized, the handoff remains blocked.
+
+### Tests
+- **Targeted regression coverage verifies narrative materialized Markdown unlocks Quality Gates while stale Markdown and stale JSON still fail.**
+
 ## [1.2.192] - 2026-05-07
 ### Fixed
 - **Quality Gates integration now requires lifecycle hook wiring.** A `quality-gates.json` contract with `integrated: true` is treated as failed until every `requiredBeforeCommit` gate is present in `.husky/pre-commit` and every `requiredBeforePush` gate is present in `.husky/pre-push`.
