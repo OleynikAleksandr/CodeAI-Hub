@@ -254,6 +254,8 @@ Live retest note for `v1.2.174`: upstream read-only behavior is confirmed, inclu
 
 Live retest note for `v1.2.175`: Application Skeleton activation now creates the managed workspace baseline in the correct workspace root, including `.git`, hooks, package scripts, `doc/TODO/todo-plan.md`, and `.codeai-hub/workflow`. Follow-up defect: the installed `scripts/plan-orchestrator/plan-cli.mjs` shim fails on `npm run plan:status` because its state parser does not strip the fenced JSON block when the block starts with a leading newline. This means hooks would fail even though the filesystem baseline exists.
 
+Local smoke note for `v1.2.176`: release build completed with VSIX `codeai-hub-1.2.176.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.176`. The targeted fixes cover fenced plan-state parsing, stage-aware managed plan seeding for `Application Skeleton` / `Quality Gates`, and Application Skeleton prompt/contract requirements for Git-tracked placeholders plus `npm run plan:commit -- "feat: materialize application skeleton"` before the final materialization response. User retest should verify Application Skeleton now commits materialized files and Quality Gates unlocks from a clean managed workspace.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
