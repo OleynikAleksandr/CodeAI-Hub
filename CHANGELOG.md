@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.177] - 2026-05-07
+### Fixed
+- **Managed workspace bootstrap now activates the generated Husky hooks.** Core configures `core.hooksPath=.husky` during managed preflight, so normal `git commit` and `git push` run the managed `pre-commit`, `commit-msg`, `post-commit`, and `pre-push` scripts.
+- **Managed workspace `.gitignore` now ignores `.DS_Store`.** Fresh project workspaces no longer show macOS metadata files as untracked lifecycle noise.
+
+### Tests
+- **Bootstrapper coverage verifies hook-path configuration and ignore baseline.** Targeted tests assert `git config core.hooksPath .husky`, `.DS_Store`, managed runtime/cache/log ignores, and idempotency.
+
 ## [1.2.176] - 2026-05-07
 ### Fixed
 - **Managed workspace plans now parse fenced JSON state reliably.** The generated plan CLI strips Markdown fences before reading `codeai-plan-state`, so fresh managed workspaces can run `npm run plan:status`.
