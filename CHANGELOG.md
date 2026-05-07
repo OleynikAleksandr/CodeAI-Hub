@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.172] - 2026-05-07
+### Fixed
+- **Quality Gates Baseline no longer hardcodes JavaScript-specific tools as universal policy.** The first prompt now keeps universal architecture gates, including the `<= 500` source file/class rule, while requiring stack-specific tool selection from user preference, project evidence, or research.
+- **Quality Gates integration stays in the same session.** Final integration wording now reports whether the Quality Gates root gate is integrated/unlocked instead of asking about separate Development Tree sessions.
+
+### Tests
+- **Quality Gates contract validation now rejects array-shaped `commands`.** Targeted coverage keeps `quality-gates.json` on the command-map contract and verifies the stack-neutral prompt constraints.
+
 ## [1.2.171] - 2026-05-07
 ### Fixed
 - **Quality Gates Baseline now starts from a compact two-phase prompt.** The bundled prompt and contract separate draft artifacts from post-acceptance file-system integration, persist user-selected tooling such as Ultracite and Knip into `quality-gates.md` / `quality-gates.json`, and avoid duplicate runtime phase instructions.
