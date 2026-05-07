@@ -250,6 +250,8 @@ Short user-facing retest list after release:
 
 Live retest note for `v1.2.173`: step 3 exposed a Project Manager defect. After `Diagram Modules` starts, `Description` renders hardcoded English read-only copy and `Virtual Simulation` can still show an editable session. The follow-up fix stream must localize the read-only placeholder and apply it consistently to both upstream stages.
 
+Live retest note for `v1.2.174`: upstream read-only behavior is confirmed, including `Virtual Simulation`. Application Skeleton activation still does not create or reconcile the managed Git baseline in the user workspace. Root cause to verify in the fix stream: Project Manager starts workflow stages through the generic `session:create` route, while the `v1.2.174` bootstrap fix covered only the `createSessionForWorkflow` gateway path.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
