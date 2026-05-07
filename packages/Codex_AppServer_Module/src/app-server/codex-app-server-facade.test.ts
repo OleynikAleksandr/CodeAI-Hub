@@ -232,9 +232,13 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
   assert.equal(threadId, "thread-runtime-test");
   assert.equal(requests[0]?.method, "thread/start");
   const params = requests[0]?.params as {
+    readonly approvalPolicy?: string;
     readonly baseInstructions?: string;
     readonly config?: unknown;
+    readonly sandbox?: string;
   };
+  assert.equal(params.approvalPolicy, "on-request");
+  assert.equal(params.sandbox, "workspace-write");
   assert.match(
     params.baseInstructions ?? "",
     EARLY_ARCHITECTURE_WORKFLOW_PATTERN
