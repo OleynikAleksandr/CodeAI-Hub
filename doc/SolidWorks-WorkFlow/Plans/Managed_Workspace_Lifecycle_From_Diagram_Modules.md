@@ -327,6 +327,14 @@ stage child plan under `doc/TODO/stages/<stage>/todo-plan.md`, while
 `doc/TODO/workspace.plan.md` remains the Core-owned recovery ledger. Fresh
 managed user workspaces must not create root `doc/TODO/todo-plan.md`.
 
+Live retest note for `v1.2.181`: the root stage plan creation was removed from
+the main generated plan tree and managed prompts, but the Core-owned workspace
+ledger still behaves like a static bootstrap document. The generated
+`plan-cli.mjs` advances only the active child plan and leaves
+`doc/TODO/workspace.plan.md` without accepted commit history. The next hotfix
+must make the workspace ledger record each managed stage commit and must remove
+the remaining old root-plan assumptions from the session-create coverage.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
