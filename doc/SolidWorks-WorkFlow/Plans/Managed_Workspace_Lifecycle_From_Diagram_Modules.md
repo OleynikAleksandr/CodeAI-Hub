@@ -252,6 +252,8 @@ Live retest note for `v1.2.173`: step 3 exposed a Project Manager defect. After 
 
 Live retest note for `v1.2.174`: upstream read-only behavior is confirmed, including `Virtual Simulation`. Application Skeleton activation still does not create or reconcile the managed Git baseline in the user workspace. Root cause to verify in the fix stream: Project Manager starts workflow stages through the generic `session:create` route, while the `v1.2.174` bootstrap fix covered only the `createSessionForWorkflow` gateway path.
 
+Live retest note for `v1.2.175`: Application Skeleton activation now creates the managed workspace baseline in the correct workspace root, including `.git`, hooks, package scripts, `doc/TODO/todo-plan.md`, and `.codeai-hub/workflow`. Follow-up defect: the installed `scripts/plan-orchestrator/plan-cli.mjs` shim fails on `npm run plan:status` because its state parser does not strip the fenced JSON block when the block starts with a leading newline. This means hooks would fail even though the filesystem baseline exists.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
