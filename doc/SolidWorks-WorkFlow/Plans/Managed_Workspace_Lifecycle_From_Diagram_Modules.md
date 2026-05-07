@@ -353,6 +353,28 @@ ledger still behaves like a static bootstrap document. The generated
 must make the workspace ledger record each managed stage commit and must remove
 the remaining old root-plan assumptions from the session-create coverage.
 
+Release delivery note for `v1.2.183`: combined managed lifecycle hotfix release
+is built as `codeai-hub-1.2.183.vsix`. The release includes Core-owned stage
+handoff before Application Skeleton / Quality Gates, stage-correct child plan
+prompts, semantic accepted-commit ledger entries, canonical Application Skeleton
+`id` validation, and malformed workflow-state recovery coverage.
+
+User retest checklist for `v1.2.183`:
+
+- Fresh Diagram Modules start creates `.git`, hooks, `doc/TODO/workspace.plan.md`,
+  and `doc/TODO/stages/diagram-modules/todo-plan.md`, without root
+  `doc/TODO/todo-plan.md` in the managed user workspace.
+- Diagram Modules materialization commits leave the workspace clean and record
+  real commit hashes plus semantic summaries in `workspace.plan.md`.
+- Application Skeleton launch switches `workspace.plan.md.activeStage` and
+  `activePlanPath` before the agent prompt, so the agent sees the
+  application-skeleton child plan from the first turn.
+- Materialized Application Skeleton artifacts with canonical `id` fields unlock
+  Quality Gates; validation failures must not be displayed as a missing
+  `application-skeleton-map.json`.
+- Quality Gates launch switches to the quality-gates child plan in the same
+  session flow, without asking for a separate Development Tree session.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
