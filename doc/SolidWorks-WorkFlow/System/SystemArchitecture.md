@@ -334,6 +334,7 @@ First-turn source payload contract:
 - `Diagram Modules` получает полные `description/Final_Description.md` и `virtual_simulation/virtual-simulation.md` inline в первом prompt.
 - `Application Skeleton` получает staged Diagram Modules Product Part artifacts inline/contract context.
 - `Quality Gates Baseline` получает `application-skeleton.md` и `application-skeleton-map.json` inline/contract context.
+- Quality Gates first prompt is compact and two-phase: draft artifacts first, then concrete file-system integration only after explicit user acceptance in the same session.
 - Path остаётся fallback/reference, но штатный первый draft не должен начинаться с отдельного чтения этих upstream документов.
 
 Workflow directory preflight:
@@ -438,6 +439,7 @@ Workflow artifact edit contract:
   - **Cluster** nodes create Cluster Specification and Cluster Facade Contract drafts from scoped context for the owning Product Part and cluster.
   - **Module** and standalone Module nodes create Module Specification and Module Facade Contract drafts from scoped context for the owning Product Part/Cluster/Module.
   - Production code folders are created from accepted `application-skeleton-map.json` `codePath` mappings before node implementation sessions begin.
+  - Quality gate tooling is treated as ready only when `quality-gates.json` has accepted/integrated state and records concrete integrated paths plus verification results. Planned, advisory, deferred or not-integrated gates may remain documented, but they cannot unlock Development Tree sessions as active blockers.
   - Node first prompts include protected skeleton/gates context (`application-skeleton-map.json`, `quality-gates.json`) in addition to Product Part/Cluster/Module context.
   - This Development Tree pass is an automatic first-draft materialization, not final design approval. Agents must use the first-prompt context and listed target draft files only during the automatic pass; deeper reading/search is user-directed follow-up.
   - `Implementation Foundation` and full branch-level implementation waves remain future/deferred scopes after user review of the generated Product Part / Cluster / Module drafts.

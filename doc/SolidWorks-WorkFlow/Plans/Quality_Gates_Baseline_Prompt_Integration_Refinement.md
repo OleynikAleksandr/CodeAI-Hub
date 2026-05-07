@@ -114,7 +114,14 @@ Required consistency rules:
 4. Sync SSOT docs after behavior lands.
 5. Build release, hand VSIX to user, receive live retest feedback, and iterate if needed.
 
-## 7. Definition Of Done
+## 7. Implemented Decisions
+
+- The bundled `quality-gates-prompt.md` and `quality-gates-contract.md` are the canonical source for the two-phase draft/integration boundary.
+- Runtime prompt pack must not add another `Work phases` block for `quality_gates`; it may only supply target paths and current workflow context.
+- `quality-gates.json` separates desired status from execution readiness through `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, and `verification`.
+- Validation rejects contradictory states: advisory gates with blocking phases, planned/deferred gates in required arrays, and not-integrated required gates without planned integration paths.
+
+## 8. Definition Of Done
 
 - The first prompt is shorter and has no repeated phase rules across bundled prompt, contract, and runtime prompt pack.
 - Draft artifacts from a live run include a concrete integration plan.

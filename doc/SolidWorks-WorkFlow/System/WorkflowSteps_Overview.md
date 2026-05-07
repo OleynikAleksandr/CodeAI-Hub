@@ -248,6 +248,13 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
 
+### Execution contract
+
+- **Draft phase:** до explicit acceptance агент пишет только `quality-gates.md` и `quality-gates.json`; он не создаёт package scripts, configs, hooks, CI files или production code.
+- **Integration phase:** после explicit acceptance в той же сессии агент интегрирует accepted gates в materialized skeleton: package scripts/devDependencies, выбранные lint/format configs, Knip config, size/layout scripts, Git hooks и optional update automation config.
+- `quality-gates.json` обязан разделять намерение и фактическую исполнимость: `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `blockingIn`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, `verification`.
+- Advisory/planned/deferred gates не могут быть active blockers. `availability: "not_integrated"` для required gate допустим только с `integrationRequired: true` и конкретными `plannedIntegrationPaths`.
+
 ---
 
 ## Сквозные механизмы
@@ -283,6 +290,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 Шаги `Application Skeleton` и `Quality Gates Baseline` работают через bundled agent assets:
 - `packages/agents/application-skeleton-agent/assets/` задаёт skeleton prompt/contract и ожидает `application-skeleton.md` + `application-skeleton-map.json`;
 - `packages/agents/quality-gates-agent/assets/` задаёт gates prompt/contract и ожидает `quality-gates.md` + `quality-gates.json`;
+- Quality Gates bundled prompt/contract является единственным владельцем двухфазной инструкции draft/integration; runtime prompt pack не добавляет отдельный `Work phases` narrative для этого шага.
 - только после materialized skeleton + integrated gates Core может создавать Development Tree sessions.
 
 Workflow prompt/runtime contracts:
