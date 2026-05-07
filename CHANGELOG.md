@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.183] - 2026-05-07
+### Fixed
+- **Core now owns managed stage handoff before each filesystem agent starts.** Application Skeleton and Quality Gates launches switch `doc/TODO/workspace.plan.md` to the correct active stage/child plan before the first provider prompt, while prompts explicitly stop on Core preflight mismatch instead of repairing lifecycle files by hand.
+- **Application Skeleton completion now accepts the canonical map identifier contract.** Materialized maps with stable `id` fields for Product Parts, Clusters, and Modules can unlock Quality Gates, while validation errors stay distinct from missing-artifact failures.
+- **Malformed managed workflow state no longer masks existing artifacts.** A damaged `.codeai-hub/<workspace>/workflow/state.json` is ignored during workflow-state reads so filesystem evidence still reports materialized skeleton progress and Quality Gates availability.
+
+### Tests
+- **Managed handoff, completion-gate, and malformed-state behavior are covered by targeted Core tests.** Coverage verifies stage-correct child plan routing, prompt-boundary wording, canonical skeleton materialization, Quality Gates unlock behavior, and recovery from bad workflow state JSON.
+
 ## [1.2.182] - 2026-05-07
 ### Fixed
 - **Managed workspace Core ledger now records accepted stage commits.** Generated `npm run plan:commit` advances the active child plan, commits the agent artifacts, records the accepted commit hash/message/task in `doc/TODO/workspace.plan.md`, and creates a separate Core ledger commit so the workspace stays clean.
