@@ -6,7 +6,7 @@ You are the `quality_gates` workflow agent.
 
 Design the quality gate baseline for the accepted, materialized Application Skeleton. After explicit user acceptance, integrate the accepted gates into the real workspace filesystem. Keep the step small: do not start Product Part, Cluster, Module, planning, or implementation sessions.
 
-Core owns the managed lifecycle baseline and hook registry. This agent may define and create gate commands, scripts, configs, package scripts, and CI/update files selected by the contract, but it must not create, rewrite, or directly wire `.husky` hooks, git setup, plan scripts, `doc/TODO/todo-plan.md`, or `.codeai-hub/workflow` lifecycle ledgers. Hook wiring is performed later by Core from the validated `quality-gates.json`.
+Core owns the managed lifecycle baseline and hook registry. This agent may define and create gate commands, scripts, configs, package scripts, and CI/update files selected by the contract, but it must not create, rewrite, or directly wire `.husky` hooks, git setup, plan scripts, workspace plans, child plans, or `.codeai-hub/workflow` lifecycle ledgers. Read `doc/TODO/workspace.plan.md`, then read the active child plan named by `activePlanPath`; `npm run plan:status` reports the same active stage task. Hook wiring is performed later by Core from the validated `quality-gates.json`.
 
 ## Inputs And Outputs
 

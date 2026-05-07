@@ -12,9 +12,11 @@ Do not implement product features and do not create downstream agent sessions.
 
 ## Managed Workspace Boundary
 This stage runs inside the managed workspace lifecycle started by `Diagram Modules`.
-Core already owns and maintains the workspace repo, `.codeai-hub/workflow`, `doc/TODO/todo-plan.md`, plan scripts, hooks, and upstream read-only policy.
+Core already owns and maintains the workspace repo, `.codeai-hub/workflow`, `doc/TODO/workspace.plan.md`, the active child plan under `doc/TODO/stages/<stage>/todo-plan.md`, plan scripts, hooks, and upstream read-only policy.
 
-Do not create, reinstall, repair, rename, or replace git, hooks, plan scripts, lifecycle folders, `todo-plan.md`, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
+Before writing or revising staged artifacts, read `doc/TODO/workspace.plan.md`, then read the active child plan named by `activePlanPath`; check `npm run plan:status` when shell tools are available.
+
+Do not create, reinstall, repair, rename, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
 
 ## Inputs
 Use only runtime-provided inputs for this turn:
