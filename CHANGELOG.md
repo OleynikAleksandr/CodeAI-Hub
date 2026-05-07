@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.178] - 2026-05-07
+### Fixed
+- **Managed workspace lifecycle now creates its first commit at Diagram Modules.** Core commits the lifecycle baseline and accepted upstream evidence before the first `Diagram Modules` provider turn, so later `Application Skeleton` sessions start from a clean Git tree instead of inheriting uncommitted setup files.
+- **Diagram Modules prompt now follows the managed commit flow.** The agent is told to read `doc/TODO/todo-plan.md`, use the Core-created clean baseline, keep upstream stages read-only, and commit its own staged artifacts through `npm run plan:commit`.
+
+### Tests
+- **Session-create coverage verifies the real managed entrypoint.** Targeted tests assert that `Diagram Modules` receives `.git`, hooks, plan scripts, tracked upstream evidence, an initial adoption commit, and a clean `git status` before provider session creation.
+
 ## [1.2.177] - 2026-05-07
 ### Fixed
 - **Managed workspace bootstrap now activates the generated Husky hooks.** Core configures `core.hooksPath=.husky` during managed preflight, so normal `git commit` and `git push` run the managed `pre-commit`, `commit-msg`, `post-commit`, and `pre-push` scripts.
