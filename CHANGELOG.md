@@ -3,6 +3,11 @@
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
 ## [Unreleased]
+### Fixed
+- **Codex workflow sessions now default to writable workspace mode.** Fresh clean-cache Description sessions no longer depend on Codex provider defaults that can resolve to `read-only` and block `Final_Description.md` materialization.
+
+### Tests
+- **Workflow sandbox defaults are covered for both Core adapter construction and Codex thread start.** Regression coverage verifies the empty-env/default path uses `workspace-write` while explicit sandbox settings remain respected.
 
 ## [1.2.188] - 2026-05-07
 ### Fixed
