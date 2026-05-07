@@ -553,6 +553,28 @@ User retest checklist for `v1.2.188`:
 - Core logs should show provider auto-update and provider initialization before
   `Remote bridge started`.
 
+Live retest defect for `v1.2.188`: after a clean local runtime cache rebuild,
+the first Codex Description session started and tried to write
+`Final_Description.md`, but the provider reported an effective `read-only`
+environment for shell writes. The agent then said it would retry through
+`apply_patch`, but the turn stayed running and the target artifact was not
+created. The session jsonl contains only the initial progress messages and no
+final artifact update.
+
+Root cause hypothesis: workflow Codex sessions currently pass through an
+undefined sandbox when `CODEX_SANDBOX_MODE` is absent. After the clean cache
+reset and fresh Codex CLI/app-server installation, that undefined default
+resolved to read-only behavior. Workflow/documentation agents such as
+Description must not depend on provider defaults because their core contract is
+to materialize workspace artifacts.
+
+Fix direction: Core/Codex integration should explicitly start ordinary
+workflow/documentation Codex sessions with writable workspace semantics
+(`workspace-write`) while preserving intentionally read-only profiles for
+translation and native request capture diagnostics. Regression tests must cover
+the empty-env/default path so a fresh install cannot silently fall back to
+read-only and hang artifact creation.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
