@@ -22,6 +22,26 @@ const DIAGRAM_MODULES_EXPECTED_COMMIT_RE =
   /docs: update diagram modules artifacts/u;
 const APPLICATION_SKELETON_EXPECTED_COMMIT_RE =
   /feat: materialize application skeleton/u;
+const ROOT_TODO_PLAN_PATH = path.join("doc", "TODO", "todo-plan.md");
+const WORKSPACE_PLAN_PATH = path.join("doc", "TODO", "workspace.plan.md");
+const DIAGRAM_MODULES_STAGE_PLAN_PATH = path.join(
+  "doc",
+  "TODO",
+  "stages",
+  "diagram-modules",
+  "todo-plan.md"
+);
+const APPLICATION_SKELETON_STAGE_PLAN_PATH = path.join(
+  "doc",
+  "TODO",
+  "stages",
+  "application-skeleton",
+  "todo-plan.md"
+);
+const DIAGRAM_MODULES_ACTIVE_PLAN_PATH_RE =
+  /"activePlanPath": "doc\/TODO\/stages\/diagram-modules\/todo-plan\.md"/u;
+const APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE =
+  /"activePlanPath": "doc\/TODO\/stages\/application-skeleton\/todo-plan\.md"/u;
 
 const assertDirectoryExists = async (directoryPath: string): Promise<void> => {
   await access(directoryPath);
@@ -69,10 +89,17 @@ test("session:create prepares diagram modules lifecycle baseline before provider
         );
         assert.match(
           await readFile(
-            path.join(workspacePath, "doc", "TODO", "todo-plan.md"),
+            path.join(workspacePath, DIAGRAM_MODULES_STAGE_PLAN_PATH),
             "utf8"
           ),
           DIAGRAM_MODULES_EXPECTED_COMMIT_RE
+        );
+        assert.match(
+          await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
+          DIAGRAM_MODULES_ACTIVE_PLAN_PATH_RE
+        );
+        await assert.rejects(
+          access(path.join(workspacePath, ROOT_TODO_PLAN_PATH))
         );
         handleCreateCalled = true;
       },
@@ -129,11 +156,17 @@ test("session:create bootstraps managed workspace before application skeleton se
           path.join(workspacePath, ".codeai-hub", "workflow")
         );
         await access(path.join(workspacePath, ".husky", "pre-commit"));
-        await access(path.join(workspacePath, "doc", "TODO", "todo-plan.md"));
+        await access(path.join(workspacePath, WORKSPACE_PLAN_PATH));
+        await access(
+          path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH)
+        );
+        await assert.rejects(
+          access(path.join(workspacePath, ROOT_TODO_PLAN_PATH))
+        );
         assert.equal(
           (
             await readFile(
-              path.join(workspacePath, "doc", "TODO", "todo-plan.md"),
+              path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH),
               "utf8"
             )
           ).includes("feat: materialize application skeleton"),
@@ -146,10 +179,14 @@ test("session:create bootstraps managed workspace before application skeleton se
         assert.equal(await git(workspacePath, ["status", "--short"]), "");
         assert.match(
           await readFile(
-            path.join(workspacePath, "doc", "TODO", "todo-plan.md"),
+            path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH),
             "utf8"
           ),
           APPLICATION_SKELETON_EXPECTED_COMMIT_RE
+        );
+        assert.match(
+          await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
+          APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE
         );
         await access(
           path.join(
