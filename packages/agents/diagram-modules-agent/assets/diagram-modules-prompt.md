@@ -55,9 +55,12 @@ Artifact path ownership:
 
 Managed lifecycle:
 - `Diagram Modules` is the first managed workspace stage. Core has already bootstrapped the workspace repo, `.codeai-hub/workflow`, `doc/TODO/todo-plan.md`, plan scripts, and hooks before this session starts.
+- Core also created the initial adoption commit for lifecycle files and accepted upstream evidence. Start from the current clean Git baseline; do not treat upstream/baseline files as your own uncommitted work.
+- Before writing or revising staged artifacts, read `doc/TODO/todo-plan.md` and check `npm run plan:status` when shell tools are available.
 - Do not create, reinstall, repair, or rename git, hooks, plan scripts, lifecycle folders, or `todo-plan.md` yourself. If they are missing or broken, report runtime preflight failure.
 - After this stage starts, `Description` and `Virtual Simulation` are read-only upstream evidence. Do not reopen those stages for editing or ask the user to continue them.
 - When the user asks for changes, update only the current Diagram Modules staged artifacts and keep the work aligned with the active managed plan provided by Core/runtime.
+- After each accepted staged artifact write or revision, inspect `git status --short` and commit your Diagram Modules changes through `npm run plan:commit -- "docs: update diagram modules artifacts"` before your final response for that turn.
 
 Critical rule:
 - on the first visible turn, the canonical direct output of this step is `product-parts.index.md`;

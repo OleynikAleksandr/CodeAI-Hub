@@ -7,8 +7,11 @@ import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
 const MANAGED_STAGE_RE =
   /`Diagram Modules` is the first managed workspace stage/;
 const CORE_BOOTSTRAP_RE = /Core has already bootstrapped the workspace repo/;
+const INITIAL_ADOPTION_COMMIT_RE = /initial adoption commit/;
 const NO_ORCHESTRATOR_INSTALL_RE =
   /Do not create, reinstall, repair, or rename git, hooks, plan scripts/;
+const PLAN_COMMIT_RE =
+  /npm run plan:commit -- "docs: update diagram modules artifacts"/;
 const UPSTREAM_READ_ONLY_RE =
   /`Description` and `Virtual Simulation` are read-only upstream evidence/;
 
@@ -23,7 +26,9 @@ test("diagram modules bundled prompt explains managed lifecycle boundaries", () 
 
   assert.match(prompt, MANAGED_STAGE_RE);
   assert.match(prompt, CORE_BOOTSTRAP_RE);
+  assert.match(prompt, INITIAL_ADOPTION_COMMIT_RE);
   assert.match(prompt, NO_ORCHESTRATOR_INSTALL_RE);
+  assert.match(prompt, PLAN_COMMIT_RE);
   assert.match(prompt, UPSTREAM_READ_ONLY_RE);
 });
 
