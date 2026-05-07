@@ -633,6 +633,12 @@ effective permission profile that allows managed workspace Git writes. The fix
 must preserve intentionally read-only translation/native-capture profiles and
 must not rely on the agent asking for escalation during workflow stages.
 
+Regression coverage note: the Codex app-server thread start regression now
+asserts that a workflow session without explicit sandbox config sends
+`sandbox: "danger-full-access"`, and the Core provider factory default asserts
+that the Codex workflow adapter receives `defaultSandboxMode:
+"danger-full-access"` while explicit read-only caller settings are preserved.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
