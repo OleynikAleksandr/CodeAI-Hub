@@ -39,3 +39,17 @@ test("ManagedWorkspaceFacade resolvePathsOrThrow throws validation errors", () =
     WORKSPACE_ROOT_REQUIRED_RE
   );
 });
+
+test("ManagedWorkspaceFacade creates semantic drift reports", () => {
+  const report = new ManagedWorkspaceFacade().createSemanticDriftReport([
+    {
+      affectedPaths: [".codeai-hub/demo/quality_gates/quality-gates.json"],
+      code: "quality_gates_outdated",
+      detail: "Quality Gates must be reviewed after skeleton changes.",
+      recommendedOwner: "agent",
+    },
+  ]);
+
+  assert.equal(report.ok, false);
+  assert.equal(report.issues[0]?.repairMode, "decision_required");
+});

@@ -1,3 +1,8 @@
+import {
+  createManagedWorkspaceSemanticDriftReport,
+  type ManagedWorkspaceSemanticDriftInput,
+  type ManagedWorkspaceSemanticDriftReport,
+} from "./managed-workspace-drift";
 import { createManagedWorkspacePaths } from "./managed-workspace-paths";
 import type {
   ManagedWorkspacePathRequest,
@@ -6,6 +11,12 @@ import type {
 } from "./managed-workspace-types";
 
 export class ManagedWorkspaceFacade {
+  createSemanticDriftReport(
+    issues: readonly ManagedWorkspaceSemanticDriftInput[]
+  ): ManagedWorkspaceSemanticDriftReport {
+    return createManagedWorkspaceSemanticDriftReport(issues);
+  }
+
   resolvePaths(
     request: ManagedWorkspacePathRequest
   ): ManagedWorkspacePathResult {
