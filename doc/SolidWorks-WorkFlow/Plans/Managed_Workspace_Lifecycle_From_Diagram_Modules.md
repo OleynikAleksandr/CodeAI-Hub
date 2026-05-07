@@ -375,6 +375,23 @@ User retest checklist for `v1.2.183`:
 - Quality Gates launch switches to the quality-gates child plan in the same
   session flow, without asking for a separate Development Tree session.
 
+Live retest note for `v1.2.183`: the handoff and child-plan setup worked through
+Quality Gates, but the Quality Gates agent finished Phase 2 without executing
+`npm run plan:commit -- "feat: integrate quality gates baseline"`. The workspace
+was left dirty with `package.json`, `package-lock.json`, `tools/gates/**`,
+`.codeai-hub/<workspaceSlug>/quality_gates/**`, and a normalized upstream
+`virtual_simulation/virtual-simulation.md`; the child plan stayed
+`IN_PROGRESS` with `hash: TBD`, and `doc/TODO/workspace.plan.md` still recorded
+Application Skeleton as the last accepted commit.
+
+Core then unlocked Development Tree from the dirty `quality-gates.json` content
+because `readDevelopmentTreeBootstrapGate` only required Application Skeleton
+materialized plus `quality-gates.json.integrated === true`. This proves the
+missing transaction gate: a downstream stage must not unlock from dirty artifact
+state alone. It must require accepted managed lifecycle evidence for
+`quality_gates`, including a recorded accepted commit in `workspace.plan.md`,
+clean Git, and green artifact validation.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
