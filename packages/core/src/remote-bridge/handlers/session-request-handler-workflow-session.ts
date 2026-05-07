@@ -1,4 +1,5 @@
 import { ManagedPlanOrchestratorInstaller } from "../../managed-workspace/managed-plan-orchestrator-installer";
+import { ManagedWorkspaceAdoptionCommitter } from "../../managed-workspace/managed-workspace-adoption-committer";
 import { ManagedWorkspaceBootstrapper } from "../../managed-workspace/managed-workspace-bootstrapper";
 import {
   type ManagedWorkspaceValidationResult,
@@ -111,6 +112,7 @@ export class SessionRequestHandlerWorkflowSession {
 export class DefaultManagedWorkspaceLifecycle
   implements ManagedWorkspaceLifecycle
 {
+  private readonly adoptionCommitter = new ManagedWorkspaceAdoptionCommitter();
   private readonly bootstrapper = new ManagedWorkspaceBootstrapper();
   private readonly installer = new ManagedPlanOrchestratorInstaller();
   private readonly validator = new ManagedWorkspaceValidator();
@@ -121,6 +123,7 @@ export class DefaultManagedWorkspaceLifecycle
   ): Promise<ManagedWorkspaceValidationResult> {
     await this.bootstrapper.bootstrap(workspaceRoot);
     await this.installer.install(workspaceRoot, { initialStage });
+    await this.adoptionCommitter.commitInitialBaseline(workspaceRoot);
     return await this.validator.validate(workspaceRoot);
   }
 }

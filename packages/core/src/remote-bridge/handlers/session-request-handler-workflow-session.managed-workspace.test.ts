@@ -1,10 +1,22 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { ProviderAdapter } from "../../provider-registry/provider-module-loader.types";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
-import { SessionRequestHandlerWorkflowSession } from "./session-request-handler-workflow-session";
+import {
+  DefaultManagedWorkspaceLifecycle,
+  SessionRequestHandlerWorkflowSession,
+} from "./session-request-handler-workflow-session";
+
+const execFileAsync = promisify(execFile);
+const DIAGRAM_MODULES_PLAN_COMMIT_RE =
+  /docs: update diagram modules artifacts/u;
 
 const createAdapter = (): ProviderAdapter => ({
   closeSession: () => Promise.resolve(),
@@ -137,3 +149,73 @@ test("createSessionForWorkflow blocks diagram modules when managed workspace val
   assert.equal(session, null);
   assert.equal(createCalled, false);
 });
+
+test("default managed lifecycle creates an adoption commit before diagram modules work", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-managed-adoption-")
+  );
+  const descriptionPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    "demo-workspace",
+    "description",
+    "Final_Description.md"
+  );
+  const simulationPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    "demo-workspace",
+    "virtual_simulation",
+    "virtual-simulation.md"
+  );
+
+  try {
+    await mkdir(path.dirname(descriptionPath), { recursive: true });
+    await mkdir(path.dirname(simulationPath), { recursive: true });
+    await writeFile(descriptionPath, "# Description\n", "utf8");
+    await writeFile(simulationPath, "# Simulation\n", "utf8");
+
+    const result = await new DefaultManagedWorkspaceLifecycle().ensureReady(
+      workspaceRoot,
+      "diagram_modules"
+    );
+
+    assert.equal(result.ok, true);
+    assert.equal(
+      await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
+      "chore: initialize managed workflow baseline"
+    );
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
+
+    const trackedFiles = new Set(
+      (await git(workspaceRoot, ["ls-files"])).split("\n").filter(Boolean)
+    );
+    assert.equal(trackedFiles.has(".gitignore"), true);
+    assert.equal(trackedFiles.has(".husky/pre-commit"), true);
+    assert.equal(trackedFiles.has("doc/TODO/todo-plan.md"), true);
+    assert.equal(trackedFiles.has(".codeai-hub/workflow/index.json"), true);
+    assert.equal(
+      trackedFiles.has(
+        ".codeai-hub/demo-workspace/description/Final_Description.md"
+      ),
+      true
+    );
+    assert.equal(
+      trackedFiles.has(
+        ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md"
+      ),
+      true
+    );
+    assert.match(
+      await readFile(path.join(workspaceRoot, "doc/TODO/todo-plan.md"), "utf8"),
+      DIAGRAM_MODULES_PLAN_COMMIT_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+const git = async (cwd: string, args: readonly string[]): Promise<string> => {
+  const { stdout } = await execFileAsync("git", [...args], { cwd });
+  return stdout.trim();
+};
