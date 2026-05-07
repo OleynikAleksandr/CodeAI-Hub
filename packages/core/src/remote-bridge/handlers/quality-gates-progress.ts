@@ -1,4 +1,5 @@
 import { readFile, stat } from "node:fs/promises";
+import path from "node:path";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import type {
   WorkflowStageState,
@@ -26,6 +27,7 @@ export interface QualityGatesProgressSnapshot {
   readonly jsonExists: boolean;
   readonly markdownExists: boolean;
   readonly substep: QualityGatesSubstep;
+  readonly validationErrors: readonly string[];
 }
 
 const readExistingFile = async (
@@ -85,15 +87,81 @@ const hasCommandContract = (value: Record<string, unknown> | null): boolean =>
   value.commands !== null &&
   !Array.isArray(value.commands);
 
+const readStringArray = (
+  value: Record<string, unknown> | null,
+  key: string
+): readonly string[] =>
+  Array.isArray(value?.[key])
+    ? value[key].filter((entry): entry is string => typeof entry === "string")
+    : [];
+
+const toPackageScriptName = (gateId: string): string =>
+  gateId.startsWith("qg-") ? `qg:${gateId.slice("qg-".length)}` : gateId;
+
+const readHookText = async (
+  workspaceRoot: string,
+  hookName: string
+): Promise<string> =>
+  (await readExistingFile(path.join(workspaceRoot, ".husky", hookName))) ?? "";
+
+const validateHookCommands = (params: {
+  readonly gateIds: readonly string[];
+  readonly hookName: string;
+  readonly hookText: string;
+}): readonly string[] =>
+  params.gateIds
+    .filter((gateId) => {
+      const packageScriptName = toPackageScriptName(gateId);
+      return !(
+        params.hookText.includes(gateId) ||
+        params.hookText.includes(packageScriptName)
+      );
+    })
+    .map(
+      (gateId) =>
+        `Quality gate ${gateId} is missing from .husky/${params.hookName}`
+    );
+
+const validateDeclaredHookIntegration = async (params: {
+  readonly contract: Record<string, unknown> | null;
+  readonly declaredIntegrated: boolean;
+  readonly workspaceRoot: string;
+}): Promise<readonly string[]> => {
+  if (!params.declaredIntegrated) {
+    return [];
+  }
+  const [preCommitText, prePushText] = await Promise.all([
+    readHookText(params.workspaceRoot, "pre-commit"),
+    readHookText(params.workspaceRoot, "pre-push"),
+  ]);
+  return [
+    ...validateHookCommands({
+      gateIds: readStringArray(params.contract, "requiredBeforeCommit"),
+      hookName: "pre-commit",
+      hookText: preCommitText,
+    }),
+    ...validateHookCommands({
+      gateIds: readStringArray(params.contract, "requiredBeforePush"),
+      hookName: "pre-push",
+      hookText: prePushText,
+    }),
+  ];
+};
+
 const resolveSubstep = (params: {
   readonly accepted: boolean;
+  readonly declaredIntegrated: boolean;
   readonly integrated: boolean;
   readonly integrationState: string | null;
   readonly jsonExists: boolean;
   readonly markdownExists: boolean;
+  readonly validationErrors: readonly string[];
 }): QualityGatesSubstep => {
   if (params.integrated) {
     return "integrated";
+  }
+  if (params.declaredIntegrated && params.validationErrors.length > 0) {
+    return "failed";
   }
   if (params.integrationState === "in_progress") {
     return "integrating";
@@ -149,8 +217,14 @@ export const readQualityGatesProgressSnapshot = async (params: {
     commandContractReady &&
     readAcceptedFlag(contract);
   const integrationState = readIntegrationState(contract);
-  const integrated =
+  const declaredIntegrated =
     accepted && commandContractReady && readIntegratedFlag(contract);
+  const validationErrors = await validateDeclaredHookIntegration({
+    contract,
+    declaredIntegrated,
+    workspaceRoot: params.workspaceRoot,
+  });
+  const integrated = declaredIntegrated && validationErrors.length === 0;
   return {
     accepted,
     commandContractReady,
@@ -160,11 +234,14 @@ export const readQualityGatesProgressSnapshot = async (params: {
     markdownExists,
     substep: resolveSubstep({
       accepted,
+      declaredIntegrated,
       integrated,
       integrationState,
       jsonExists,
       markdownExists,
+      validationErrors,
     }),
+    validationErrors,
   };
 };
 

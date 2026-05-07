@@ -272,6 +272,15 @@ const buildStagePhaseLines = (
       "- Phase 4: ask only confirmation-style questions for genuine ambiguity; do not create Product Part, Cluster, Module, or Quality Gates sessions.",
     ];
   }
+  if (stage === "quality_gates") {
+    return [
+      "Work phases:",
+      "- Phase 1: read the accepted Application Skeleton artifacts and draft `quality-gates.md` plus `quality-gates.json` with selected baseline commands and `accepted: false`, `integrated: false`, `integrationState: \"not_started\"`.",
+      "- Phase 2: after explicit user acceptance, integrate executable gate scripts, package scripts, lockfile changes, and lifecycle hook wiring in the same Quality Gates session.",
+      "- Phase 3: hook wiring is mandatory for `integrated: true`: every `requiredBeforeCommit` gate must be called by `.husky/pre-commit`, and every `requiredBeforePush` gate must be called by `.husky/pre-push`.",
+      "- Phase 4: set `integrated: true` only after the selected baseline is executable, hooked into lifecycle, verified, and committed through the managed plan.",
+    ];
+  }
   return [];
 };
 

@@ -79,6 +79,7 @@ const resolveManagedLifecycle = (params: {
   const active = params.state.stages.diagram_modules.status !== "idle";
   const blockers = [
     ...(params.applicationSkeletonProgress?.validationErrors ?? []),
+    ...(params.qualityGatesProgress?.validationErrors ?? []),
     ...(params.qualityGatesProgress?.substep === "failed"
       ? ["Quality Gates integration failed"]
       : []),
