@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.181] - 2026-05-07
+### Fixed
+- **Managed user workspaces now use the per-stage child TODO plan as the active agent ledger.** Fresh Diagram Modules workspaces no longer create root `doc/TODO/todo-plan.md`; generated `npm run plan:*` reads `doc/TODO/workspace.plan.md` and advances the active child plan from `activePlanPath`.
+- **Filesystem-stage prompts now point agents at the managed child plan.** Diagram Modules, Application Skeleton, and Quality Gates wording now references `workspace.plan.md` plus `doc/TODO/stages/<stage>/todo-plan.md` instead of the removed root plan path.
+- **Managed lifecycle metadata exposes the workspace plan path.** Core validators, manifest path metadata, and Project Manager lifecycle payloads now report `doc/TODO/workspace.plan.md` as the recovery ledger.
+
+### Tests
+- **Child-plan behavior is protected by targeted Core and template tests.** Coverage verifies fresh managed workspaces do not create the root plan, `plan:status` and `plan:commit` operate on the active child plan, bundled prompts stay synced, and adoption/reconciler validation remains green.
+
 ## [1.2.180] - 2026-05-07
 ### Added
 - **Managed workspace planning now has a Core-owned master TODO tree.** Fresh managed workspaces create `doc/TODO/workspace.plan.md` plus per-stage child plans under `doc/TODO/stages/<stage>/todo-plan.md`, while preserving the existing active-stage `npm run plan:*` compatibility path.
