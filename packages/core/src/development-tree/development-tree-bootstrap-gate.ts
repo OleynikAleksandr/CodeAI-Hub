@@ -12,9 +12,13 @@ import {
 } from "../remote-bridge/handlers/quality-gates-progress";
 
 const execFileAsync = promisify(execFile);
+const APPLICATION_SKELETON_PLAN_PATH =
+  "doc/TODO/stages/application-skeleton/todo-plan.md";
+const APPLICATION_SKELETON_MATERIALIZATION_TASK =
+  "application-skeleton.stream1.task2";
 const WORKSPACE_PLAN_PATH = path.join("doc", "TODO", "workspace.plan.md");
 const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
-const QUALITY_GATES_INITIAL_TASK = "quality-gates.stream1.task1";
+const QUALITY_GATES_INTEGRATION_TASK = "quality-gates.stream1.task2";
 const WORKSPACE_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
 const WORKSPACE_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
 const PLAN_STATE_START = "<!-- codeai-plan-state:start -->";
@@ -71,8 +75,14 @@ const readStateFile = async (params: {
   }
 };
 
-const hasAcceptedQualityGatesCommit = (
-  workspaceState: Record<string, unknown> | null
+const hasAcceptedStageCommit = (
+  workspaceState: Record<string, unknown> | null,
+  params: {
+    readonly message: string;
+    readonly planPath: string;
+    readonly stage: string;
+    readonly taskId: string;
+  }
 ): boolean => {
   const commits = workspaceState?.acceptedCommits;
   if (!Array.isArray(commits)) {
@@ -81,17 +91,20 @@ const hasAcceptedQualityGatesCommit = (
   return commits.some(
     (commit) =>
       isRecord(commit) &&
-      commit.stage === "quality_gates" &&
-      commit.planPath === QUALITY_GATES_PLAN_PATH &&
+      commit.message === params.message &&
+      commit.planPath === params.planPath &&
+      commit.stage === params.stage &&
+      commit.taskId === params.taskId &&
       Boolean(readNonEmptyString(commit.commitHash))
   );
 };
 
-const hasAdvancedQualityGatesPlan = (
+const hasAdvancedStagePlan = (
+  blockedTaskId: string,
   planState: Record<string, unknown> | null
 ): boolean =>
   !planState?.debt &&
-  readNonEmptyString(planState?.currentTaskId) !== QUALITY_GATES_INITIAL_TASK;
+  readNonEmptyString(planState?.currentTaskId) !== blockedTaskId;
 
 const readGitClean = async (workspaceRoot: string): Promise<boolean> => {
   try {
@@ -109,17 +122,21 @@ export interface QualityGatesTransactionSnapshot {
   readonly ready: boolean;
 }
 
-const readQualityGatesTransaction = async (params: {
+const readManagedStageTransaction = async (params: {
+  readonly blockedTaskId: string;
+  readonly commitMessage: string;
+  readonly missingCommitBlocker: string;
+  readonly planNotAdvancedBlocker: string;
+  readonly planPath: string;
+  readonly stage: string;
+  readonly taskId: string;
   readonly workspaceRoot: string;
 }): Promise<QualityGatesTransactionSnapshot> => {
   const workspacePlanPath = path.join(
     params.workspaceRoot,
     WORKSPACE_PLAN_PATH
   );
-  const qualityGatesPlanPath = path.join(
-    params.workspaceRoot,
-    QUALITY_GATES_PLAN_PATH
-  );
+  const stagePlanPath = path.join(params.workspaceRoot, params.planPath);
   const [workspaceState, planState, gitClean] = await Promise.all([
     readStateFile({
       filePath: workspacePlanPath,
@@ -127,21 +144,24 @@ const readQualityGatesTransaction = async (params: {
       endMarker: WORKSPACE_STATE_END,
     }),
     readStateFile({
-      filePath: qualityGatesPlanPath,
+      filePath: stagePlanPath,
       startMarker: PLAN_STATE_START,
       endMarker: PLAN_STATE_END,
     }),
     readGitClean(params.workspaceRoot),
   ]);
   const blockers = [
-    ...(hasAcceptedQualityGatesCommit(workspaceState)
+    ...(hasAcceptedStageCommit(workspaceState, {
+      message: params.commitMessage,
+      planPath: params.planPath,
+      stage: params.stage,
+      taskId: params.taskId,
+    })
       ? []
-      : ["Missing accepted quality_gates commit in workspace.plan.md"]),
-    ...(hasAdvancedQualityGatesPlan(planState)
+      : [params.missingCommitBlocker]),
+    ...(hasAdvancedStagePlan(params.blockedTaskId, planState)
       ? []
-      : [
-          "Quality Gates child plan has not advanced past the integration task",
-        ]),
+      : [params.planNotAdvancedBlocker]),
     ...(gitClean ? [] : ["Managed workspace Git status is not clean"]),
   ];
   return { blockers, ready: blockers.length === 0 };
@@ -149,6 +169,7 @@ const readQualityGatesTransaction = async (params: {
 
 export interface DevelopmentTreeBootstrapGateSnapshot {
   readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
+  readonly applicationSkeletonTransaction: QualityGatesTransactionSnapshot;
   readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
   readonly qualityGatesTransaction: QualityGatesTransactionSnapshot;
   readonly unlocked: boolean;
@@ -164,8 +185,37 @@ export const readDevelopmentTreeBootstrapGate = async (params: {
       readQualityGatesProgressSnapshot(params),
     ]
   );
+  const applicationSkeletonTransaction =
+    applicationSkeletonProgress?.materialized
+      ? await readManagedStageTransaction({
+          blockedTaskId: APPLICATION_SKELETON_MATERIALIZATION_TASK,
+          commitMessage: "feat: materialize application skeleton",
+          missingCommitBlocker:
+            "Missing accepted application_skeleton materialization commit in workspace.plan.md",
+          planNotAdvancedBlocker:
+            "Application Skeleton child plan has not advanced past the materialization task",
+          planPath: APPLICATION_SKELETON_PLAN_PATH,
+          stage: "application_skeleton",
+          taskId: APPLICATION_SKELETON_MATERIALIZATION_TASK,
+          workspaceRoot: params.workspaceRoot,
+        })
+      : {
+          blockers: ["Application Skeleton artifacts are not materialized"],
+          ready: false,
+        };
   const qualityGatesTransaction = qualityGatesProgress?.integrated
-    ? await readQualityGatesTransaction(params)
+    ? await readManagedStageTransaction({
+        blockedTaskId: QUALITY_GATES_INTEGRATION_TASK,
+        commitMessage: "feat: integrate quality gates baseline",
+        missingCommitBlocker:
+          "Missing accepted quality_gates integration commit in workspace.plan.md",
+        planNotAdvancedBlocker:
+          "Quality Gates child plan has not advanced past the integration task",
+        planPath: QUALITY_GATES_PLAN_PATH,
+        stage: "quality_gates",
+        taskId: QUALITY_GATES_INTEGRATION_TASK,
+        workspaceRoot: params.workspaceRoot,
+      })
     : {
         blockers: ["Quality Gates artifacts are not integrated"],
         ready: false,
@@ -173,10 +223,12 @@ export const readDevelopmentTreeBootstrapGate = async (params: {
 
   return {
     applicationSkeletonProgress,
+    applicationSkeletonTransaction,
     qualityGatesTransaction,
     qualityGatesProgress,
     unlocked: Boolean(
       applicationSkeletonProgress?.materialized &&
+        applicationSkeletonTransaction.ready &&
         qualityGatesProgress?.integrated &&
         qualityGatesTransaction.ready
     ),

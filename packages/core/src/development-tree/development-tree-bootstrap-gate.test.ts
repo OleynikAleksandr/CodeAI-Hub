@@ -49,9 +49,18 @@ const writeManagedPlanEvidence = async (params: {
         {
           acceptedCommits: [
             {
+              commitHash: "def5678",
+              message: "feat: materialize application skeleton",
+              planPath: "doc/TODO/stages/application-skeleton/todo-plan.md",
+              stage: "application_skeleton",
+              taskId: "application-skeleton.stream1.task2",
+            },
+            {
               commitHash: "abc1234",
+              message: "feat: integrate quality gates baseline",
               planPath: "doc/TODO/stages/quality-gates/todo-plan.md",
               stage: "quality_gates",
+              taskId: "quality-gates.stream1.task2",
             },
           ],
           activePlanPath: "doc/TODO/stages/quality-gates/todo-plan.md",
@@ -68,6 +77,30 @@ const writeManagedPlanEvidence = async (params: {
   );
   await writeWorkspaceFile(
     params.workspaceRoot,
+    "doc/TODO/stages/application-skeleton/todo-plan.md",
+    [
+      "# Managed Workspace TODO Plan",
+      "",
+      "<!-- codeai-plan-state:start -->",
+      "```json",
+      JSON.stringify(
+        {
+          currentTaskId: "application-skeleton.stream1.task3",
+          debt: null,
+          executionScopeStatus: "ACTIVE",
+          expectedCommitMessage: "feat: materialize application skeleton",
+          schema: "codeai-plan-v1",
+        },
+        null,
+        2
+      ),
+      "```",
+      "<!-- codeai-plan-state:end -->",
+      "",
+    ].join("\n")
+  );
+  await writeWorkspaceFile(
+    params.workspaceRoot,
     "doc/TODO/stages/quality-gates/todo-plan.md",
     [
       "# Managed Workspace TODO Plan",
@@ -76,7 +109,7 @@ const writeManagedPlanEvidence = async (params: {
       "```json",
       JSON.stringify(
         {
-          currentTaskId: "quality-gates.stream1.task2",
+          currentTaskId: "quality-gates.stream1.task3",
           debt: null,
           executionScopeStatus: "ACTIVE",
           expectedCommitMessage: "feat: integrate quality gates baseline",
@@ -308,10 +341,17 @@ test("development tree stays locked until quality gates transaction is committed
     });
     assert.equal(integrated.qualityGatesProgress?.integrated, true);
     assert.equal(integrated.qualityGatesProgress?.substep, "integrated");
+    assert.equal(integrated.applicationSkeletonTransaction.ready, false);
+    assert.equal(
+      integrated.applicationSkeletonTransaction.blockers.includes(
+        "Missing accepted application_skeleton materialization commit in workspace.plan.md"
+      ),
+      true
+    );
     assert.equal(integrated.qualityGatesTransaction.ready, false);
     assert.equal(
       integrated.qualityGatesTransaction.blockers.includes(
-        "Missing accepted quality_gates commit in workspace.plan.md"
+        "Missing accepted quality_gates integration commit in workspace.plan.md"
       ),
       true
     );
@@ -325,7 +365,9 @@ test("development tree stays locked until quality gates transaction is committed
       workspaceSlug,
     });
     assert.equal(committed.qualityGatesProgress?.integrated, true);
+    assert.equal(committed.applicationSkeletonTransaction.ready, true);
     assert.equal(committed.qualityGatesTransaction.ready, true);
+    assert.deepEqual(committed.applicationSkeletonTransaction.blockers, []);
     assert.deepEqual(committed.qualityGatesTransaction.blockers, []);
     assert.equal(committed.unlocked, true);
   } finally {
