@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.186] - 2026-05-07
+### Fixed
+- **Project Manager now waits for provider startup readiness before accepting sessions.** Core completes provider auto-update and provider initialization before opening the RemoteBridge, preventing Description from starting Codex while the Codex CLI is still being installed.
+- **Codex startup no longer races provider auto-update.** The `spawn codex ENOENT` path seen during v1.2.185 startup is blocked by the new startup order.
+
+### Tests
+- **Provider startup ready-gate coverage locks the startup order.** Targeted tests verify Core starts RemoteBridge only after auto-update and provider initialization, and that Codex CLI auto-update is awaited before startup completes.
+
 ## [1.2.185] - 2026-05-07
 ### Fixed
 - **Filesystem workflow stages now start with committed draft contracts.** Fresh Application Skeleton and Quality Gates child plans split draft/contract checkpoints from materialization/integration, so long user review loops no longer collapse into one oversized commit.
