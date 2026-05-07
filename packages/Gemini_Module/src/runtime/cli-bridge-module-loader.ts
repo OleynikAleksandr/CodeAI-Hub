@@ -180,7 +180,6 @@ const createCompatConfigModule = async (
         "ui",
         "accessibility"
       );
-      const securitySettings = resolveObjectPath(mergedSettings, "security");
       const includeDirectories = Array.from(
         new Set(
           [
@@ -190,20 +189,12 @@ const createCompatConfigModule = async (
         )
       );
 
-      let approvalMode = (asString(argvRecord.approvalMode) ??
+      const approvalMode = (asString(argvRecord.approvalMode) ??
         (argvRecord.yolo === true
           ? "yolo"
           : "default")) as ConstructorParameters<
         typeof coreConfigModule.Config
       >[0]["approvalMode"];
-      if (
-        asBoolean(securitySettings?.disableYoloMode) === true &&
-        approvalMode === "yolo"
-      ) {
-        approvalMode = "default" as ConstructorParameters<
-          typeof coreConfigModule.Config
-        >[0]["approvalMode"];
-      }
 
       const resolvedModel =
         asString(argvRecord.model) ??

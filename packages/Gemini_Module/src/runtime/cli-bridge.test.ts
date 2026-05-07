@@ -209,6 +209,7 @@ test("loadCliBridgeFromGlobal supports bundle-only Gemini CLI layouts", async ()
       JSON.stringify(
         {
           security: {
+            disableYoloMode: true,
             auth: {
               selectedType: "login_with_google",
             },
@@ -236,6 +237,11 @@ test("loadCliBridgeFromGlobal supports bundle-only Gemini CLI layouts", async ()
       workspacePath
     );
     assert.equal(config.getSessionId(), "bundle-session");
+    assert.equal(
+      (config as { readonly params?: { readonly approvalMode?: string } })
+        .params?.approvalMode,
+      "yolo"
+    );
 
     const completedCalls: unknown[][] = [];
     const Scheduler = bridge.modules.toolScheduler
