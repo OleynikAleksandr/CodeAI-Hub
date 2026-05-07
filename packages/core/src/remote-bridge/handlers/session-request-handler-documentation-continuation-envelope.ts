@@ -79,10 +79,10 @@ const buildManagedWorkspaceRecoveryBlock = (
   return [
     "## Managed Workspace Recovery",
     "- This filesystem stage resumes from the managed workspace control plane, not from legacy continuity reports.",
-    "- First read `doc/TODO/todo-plan.md` from the workspace root.",
+    "- First read `doc/TODO/workspace.plan.md`, then read the active child plan named by `activePlanPath`.",
     "- Run `npm run plan:status` and continue the current task/expected commit reported by the plan.",
     "- Use `.codeai-hub/workflow/revisions/` as the workflow revision ledger when downstream impact or recovery context is needed.",
-    "- Do not search for legacy recovery reports or create a new planning document unless `todo-plan.md` explicitly tells you to do that.",
+    "- Do not search for legacy recovery reports and do not create a legacy root todo plan.",
   ].join("\n");
 };
 

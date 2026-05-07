@@ -181,7 +181,10 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
   });
 
   assert.equal(envelope.includes("## Managed Workspace Recovery"), true);
-  assert.equal(envelope.includes("doc/TODO/todo-plan.md"), true);
+  assert.equal(envelope.includes("doc/TODO/workspace.plan.md"), true);
+  assert.equal(envelope.includes("activePlanPath"), true);
+  assert.equal(envelope.includes("legacy root todo plan"), true);
+  assert.equal(envelope.includes("doc/TODO/todo-plan.md"), false);
   assert.equal(envelope.includes("npm run plan:status"), true);
   assert.equal(envelope.includes(".codeai-hub/workflow/revisions/"), true);
   assert.equal(envelope.includes("application-skeleton-map.json"), true);

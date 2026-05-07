@@ -124,7 +124,7 @@ test("createSessionForWorkflow blocks diagram modules when managed workspace val
             {
               code: "missing_file",
               message: "Missing file",
-              relativePath: "doc/TODO/todo-plan.md",
+              relativePath: "doc/TODO/stages/diagram-modules/todo-plan.md",
             },
           ],
         }),
@@ -210,7 +210,12 @@ test("default managed lifecycle creates an adoption commit before diagram module
     );
     assert.equal(trackedFiles.has(".gitignore"), true);
     assert.equal(trackedFiles.has(".husky/pre-commit"), true);
-    assert.equal(trackedFiles.has("doc/TODO/todo-plan.md"), true);
+    assert.equal(trackedFiles.has("doc/TODO/todo-plan.md"), false);
+    assert.equal(trackedFiles.has("doc/TODO/workspace.plan.md"), true);
+    assert.equal(
+      trackedFiles.has("doc/TODO/stages/diagram-modules/todo-plan.md"),
+      true
+    );
     assert.equal(trackedFiles.has(".codeai-hub/workflow/index.json"), true);
     assert.equal(
       trackedFiles.has(
@@ -233,7 +238,13 @@ test("default managed lifecycle creates an adoption commit before diagram module
       false
     );
     assert.match(
-      await readFile(path.join(workspaceRoot, "doc/TODO/todo-plan.md"), "utf8"),
+      await readFile(
+        path.join(
+          workspaceRoot,
+          "doc/TODO/stages/diagram-modules/todo-plan.md"
+        ),
+        "utf8"
+      ),
       DIAGRAM_MODULES_PLAN_COMMIT_RE
     );
   } finally {
