@@ -262,7 +262,7 @@ test("session:create switches managed active plan across filesystem stages", asy
         context: { readonly stage?: string | null } | undefined
       ): Promise<void> {
         const stage = context?.stage;
-        assert.equal(typeof stage, "string");
+        assert.ok(typeof stage === "string");
         seenStages.push(stage);
         assert.match(
           await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
