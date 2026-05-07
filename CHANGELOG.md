@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.190] - 2026-05-07
+### Fixed
+- **Project Manager now stays behind a startup readiness gate while Core/provider bootstrap is still running.** Workspace actions and Settings are blocked until Core HTTP readiness is available.
+- **Codex workflow sessions now use full managed workspace access for ordinary workflow/documentation turns.** Managed stages can write artifacts and complete required `plan:commit` Git lifecycle operations instead of hanging on invisible permission escalation.
+- **Gemini workflow sessions now keep explicit `yolo` approval flags.** Runtime flags are no longer downgraded by persisted settings, avoiding hidden approval prompts during managed workflow work.
+
+### Tests
+- **Provider permission coverage now checks Codex thread start, Core Codex defaults, and Gemini bridge approval behavior.** Targeted builds and node tests cover the affected provider paths before packaging.
+
 ## [1.2.189] - 2026-05-07
 ### Fixed
 - **Codex workflow sessions now default to writable workspace mode.** Fresh clean-cache Description sessions no longer depend on Codex provider defaults that can resolve to `read-only` and block `Final_Description.md` materialization.

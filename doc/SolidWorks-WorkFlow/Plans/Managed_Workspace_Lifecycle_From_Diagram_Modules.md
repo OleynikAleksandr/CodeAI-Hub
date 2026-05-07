@@ -639,6 +639,13 @@ asserts that a workflow session without explicit sandbox config sends
 that the Codex workflow adapter receives `defaultSandboxMode:
 "danger-full-access"` while explicit read-only caller settings are preserved.
 
+Provider permission release note for `v1.2.190`: the hotfix package combines
+the Project Manager Core startup readiness gate, the Codex managed `.git`
+permission fix, and Gemini bridge hardening so runtime `approvalMode: "yolo"`
+flags cannot be downgraded by persisted settings. The live retest should cover
+fresh Description startup, Diagram Modules managed commits, and a Gemini-backed
+workflow turn that writes and commits without requesting hidden approval.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
