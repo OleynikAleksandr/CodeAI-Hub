@@ -24,6 +24,14 @@ const normalizeResult = (result) => result.trim().replace(/\s+/gu, " ");
 const isReservedPostCloseoutTask = (task) =>
   RESERVED_POST_CLOSEOUT_PATTERN.test(task?.text ?? "");
 
+const assertExplicitCloseoutBoundary = (nextTask) => {
+  if (nextTask === null) {
+    throw new Error(
+      "Plan cannot advance to terminal NONE without an explicit reserved post-closeout handoff anchor."
+    );
+  }
+};
+
 const sanitizePathPart = (value) =>
   value
     .toLowerCase()
@@ -125,7 +133,8 @@ export const finalizeCommitAndAdvance = (markdown, { commitHash, taskId }) => {
   const { items, pairedCommit } = locateTaskPair(markdown, taskId);
   const nextTask = locateNextTask(items, pairedCommit.lineIndex);
   let lines = markdown.split("\n");
-  const closesScope = nextTask === null || isReservedPostCloseoutTask(nextTask);
+  assertExplicitCloseoutBoundary(nextTask);
+  const closesScope = isReservedPostCloseoutTask(nextTask);
 
   if (closesScope) {
     const parsed = parsePlanStateMarkdown(markdown);
@@ -197,7 +206,8 @@ export const completeNoCommitTaskAndAdvance = (
 
   const nextTask = locateNextTask(items, task.lineIndex);
   let lines = markdown.split("\n");
-  const closesScope = nextTask === null || isReservedPostCloseoutTask(nextTask);
+  assertExplicitCloseoutBoundary(nextTask);
+  const closesScope = isReservedPostCloseoutTask(nextTask);
 
   lines = replaceLine(
     lines,

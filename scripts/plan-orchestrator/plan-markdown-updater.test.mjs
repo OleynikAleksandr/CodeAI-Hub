@@ -18,6 +18,8 @@ const CLOSEOUT_ARCHIVE_PATTERN =
 const NO_ACTIVE_SCOPE_PATTERN = /## No Active Execution Scope/u;
 const AGENTS_PATH_PATTERN = /AGENTS\.md/u;
 const RESERVED_HANDOFF_PATTERN = /Reserved post-closeout handoff anchor/u;
+const EXPLICIT_CLOSEOUT_ANCHOR_ERROR_RE =
+  /explicit reserved post-closeout handoff anchor/u;
 
 const createMarkdown = () => `# План разработки
 
@@ -83,6 +85,30 @@ const createCloseoutMarkdown = () => `# План разработки
 3. [TODO] \`phase6.stream1.task2\` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
 `;
 
+const createImplicitTailMarkdown = () => `# План разработки
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "implicit-tail-test",
+  "branch": "main",
+  "baseHead": "1111111",
+  "lastRecordedCommit": "1111111",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Plan_Example.md",
+  "currentTaskId": "phase2.stream1.task1",
+  "expectedCommitMessage": "fix: final ordinary task",
+  "debt": null
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+
+1. [IN_PROGRESS] \`phase2.stream1.task1\` Final ordinary task without closeout anchor.
+   - expected commit: \`fix: final ordinary task\`
+2. [TODO] \`phase2.stream1.commit1\` Git Commit: \`fix: final ordinary task\` (hash: TBD)
+`;
+
 test("marks current task done and paired commit pending", () => {
   const markdown = markTaskDoneAndCommitPending(
     createMarkdown(),
@@ -142,4 +168,20 @@ test("finalizes closeout commit into NONE state instead of reserved handoff", ()
   assert.equal(parsed.state.expectedCommitMessage, null);
   assert.equal(parsed.state.lastRecordedCommit, "def5678");
   assert.equal(parsed.state.debt, null);
+});
+
+test("refuses implicit terminal NONE without closeout anchor", () => {
+  const pending = markTaskDoneAndCommitPending(
+    createImplicitTailMarkdown(),
+    "phase2.stream1.task1"
+  );
+
+  assert.throws(
+    () =>
+      finalizeCommitAndAdvance(pending, {
+        commitHash: "abc1234",
+        taskId: "phase2.stream1.task1",
+      }),
+    EXPLICIT_CLOSEOUT_ANCHOR_ERROR_RE
+  );
 });
