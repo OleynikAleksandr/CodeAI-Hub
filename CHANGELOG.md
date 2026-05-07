@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.174] - 2026-05-07
+### Fixed
+- **Managed workspace baseline is now reconciled before every filesystem-aware workflow stage.** Core runs the Git/hooks/plan preflight before `Diagram Modules`, `Application Skeleton`, and `Quality Gates`, so older or drifted sessions cannot skip `doc/TODO/todo-plan.md`, plan scripts, hooks, and `.codeai-hub/workflow`.
+- **Upstream read-only panels now use localized Project Manager copy.** `Description` and `Virtual Simulation` both replace editable sessions with the same localization-backed read-only panel after the managed lifecycle starts.
+
+### Tests
+- **Managed lifecycle activation coverage now includes Application Skeleton and Quality Gates.** Targeted tests verify provider sessions are not created before managed workspace preflight for the technical stages, plus the localized upstream read-only panel coverage.
+
 ## [1.2.173] - 2026-05-07
 ### Added
 - **Managed workspace lifecycle now starts at Diagram Modules.** Core bootstraps the project repo, `.codeai-hub/workflow` ledger, `doc/TODO/todo-plan.md`, plan scripts, and managed hook baseline before filesystem-aware workflow stages begin.
