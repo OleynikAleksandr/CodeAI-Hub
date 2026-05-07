@@ -15,8 +15,10 @@ const CORE_LIFECYCLE_OWNER_RE =
   /Core already owns and maintains the workspace repo/;
 const ACTIVE_CHILD_PLAN_RE =
   /read `doc\/TODO\/workspace\.plan\.md`, then read the active child plan named by `activePlanPath`/;
+const APPLICATION_SKELETON_HANDOFF_RE =
+  /activeStage: "application_skeleton".*activePlanPath: "doc\/TODO\/stages\/application-skeleton\/todo-plan\.md"/s;
 const NO_LIFECYCLE_REPAIR_RE =
-  /Do not create, reinstall, repair, rename, or replace git, hooks, plan scripts/;
+  /Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const DO_NOT_START_WITH_STACK_QUESTIONS_RE =
   /Do not start with blank-choice questions about language, framework, repo shape, or package manager/;
@@ -80,6 +82,7 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, MANAGED_WORKSPACE_BOUNDARY_RE);
   assert.match(prompt, CORE_LIFECYCLE_OWNER_RE);
   assert.match(prompt, ACTIVE_CHILD_PLAN_RE);
+  assert.match(prompt, APPLICATION_SKELETON_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_REPAIR_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);

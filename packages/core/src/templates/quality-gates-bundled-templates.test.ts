@@ -14,6 +14,10 @@ const CORE_HOOK_REGISTRY_RE =
   /Core owns the managed lifecycle baseline and hook registry/;
 const ACTIVE_CHILD_PLAN_RE =
   /Read `doc\/TODO\/workspace\.plan\.md`, then read the active child plan named by `activePlanPath`/;
+const QUALITY_GATES_HANDOFF_RE =
+  /activeStage: "quality_gates".*activePlanPath: "doc\/TODO\/stages\/quality-gates\/todo-plan\.md"/s;
+const NO_LIFECYCLE_RESTORE_RE =
+  /must not create, rewrite, restore, revert, checkout/;
 const NO_DIRECT_HUSKY_RE = /Do not edit `\.husky` hooks directly/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const NO_PLANNED_DUPLICATES_RE =
@@ -56,6 +60,8 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, INTEGRATION_PATHS_RE);
   assert.match(prompt, CORE_HOOK_REGISTRY_RE);
   assert.match(prompt, ACTIVE_CHILD_PLAN_RE);
+  assert.match(prompt, QUALITY_GATES_HANDOFF_RE);
+  assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, NO_DIRECT_HUSKY_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);

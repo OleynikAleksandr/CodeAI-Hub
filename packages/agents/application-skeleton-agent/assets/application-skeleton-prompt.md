@@ -16,7 +16,9 @@ Core already owns and maintains the workspace repo, `.codeai-hub/workflow`, `doc
 
 Before writing or revising staged artifacts, read `doc/TODO/workspace.plan.md`, then read the active child plan named by `activePlanPath`; check `npm run plan:status` when shell tools are available.
 
-Do not create, reinstall, repair, rename, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
+Required handoff check: `doc/TODO/workspace.plan.md` must say `activeStage: "application_skeleton"` and `activePlanPath: "doc/TODO/stages/application-skeleton/todo-plan.md"`. If it points to another stage, stop and report a Core preflight failure. Do not switch the stage manually.
+
+Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
 
 ## Inputs
 Use only runtime-provided inputs for this turn:
