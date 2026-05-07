@@ -487,6 +487,20 @@ User retest checklist for `v1.2.185`:
   `.codeai-hub/<workspaceSlug>/development_tree/` files while the Quality Gates
   agent is finalizing.
 
+Live retest note for `v1.2.185`: Description startup can fail before the
+managed lifecycle begins. Core logs show `codex app-server spawn error: spawn
+codex ENOENT` while Codex provider auto-update is still running. The sequence is
+`RemoteBridge started`, UI client connects, Codex auto-update starts, the Codex
+app-server is spawned before the CLI update completes, then the update finishes.
+The installed CLI is present afterward at `~/.npm-global/bin/codex`, so this is
+not a missing permanent dependency; it is a startup race.
+
+Core must not accept provider session creation until provider auto-update and
+provider initialization have reached a deterministic ready state. The fix must
+keep startup failures visible and recoverable, but it must prevent early
+Description/Virtual Simulation traffic from starting Codex against a CLI that is
+still being installed.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
