@@ -101,6 +101,45 @@ test("quality gates validation rejects contradictory blocker contracts", () => {
   });
   assert.equal(commandsArray.ok, false);
   assert.equal(commandsArray.error.includes("object keyed by gate id"), true);
+
+  const plannedRequiredDuplicate = validateQualityGatesJson({
+    commands: {
+      "format-check": {
+        availability: "not_integrated",
+        desiredStatus: "active",
+        id: "format-check",
+        integrationRequired: true,
+        plannedIntegrationPaths: ["package.json"],
+      },
+    },
+    plannedRequiredAfterIntegration: ["format-check"],
+    requiredBeforeCommit: ["format-check"],
+    schema: "codeai-quality-gates-v1",
+  });
+  assert.equal(plannedRequiredDuplicate.ok, false);
+  assert.equal(
+    plannedRequiredDuplicate.error.includes("both required and non-blocking"),
+    true
+  );
+
+  const invalidPlannedRequired = validateQualityGatesJson({
+    commands: {
+      "format-check": {
+        availability: "not_integrated",
+        desiredStatus: "planned",
+        id: "format-check",
+        integrationRequired: true,
+        plannedIntegrationPaths: ["package.json"],
+      },
+    },
+    plannedRequiredAfterIntegration: ["format-check"],
+    schema: "codeai-quality-gates-v1",
+  });
+  assert.equal(invalidPlannedRequired.ok, false);
+  assert.equal(
+    invalidPlannedRequired.error.includes("must be active and not_integrated"),
+    true
+  );
 });
 
 test("development tree stays locked until quality gates are integrated", async () => {

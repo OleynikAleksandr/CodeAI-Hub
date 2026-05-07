@@ -258,13 +258,25 @@ const validateNonBlockingQualityGate = (params: {
   readonly key: (typeof NON_BLOCKING_QUALITY_GATE_ARRAY_KEYS)[number];
 }): string | null => {
   const gate = params.commands[params.gateId];
-  if (params.key !== "advisory" || !isRecord(gate)) {
+  if (!isRecord(gate)) {
     return null;
   }
-  const blockingIn = gate.blockingIn;
-  return Array.isArray(blockingIn) && blockingIn.length > 0
-    ? `Quality gates advisory command ${params.gateId} must not have blocking phases`
-    : null;
+  if (params.key === "advisory") {
+    const blockingIn = gate.blockingIn;
+    return Array.isArray(blockingIn) && blockingIn.length > 0
+      ? `Quality gates advisory command ${params.gateId} must not have blocking phases`
+      : null;
+  }
+  if (params.key === "plannedRequiredAfterIntegration") {
+    const status = readGateDesiredStatus(gate);
+    if (status !== "active" || gate.availability !== "not_integrated") {
+      return `Quality gates plannedRequiredAfterIntegration command ${params.gateId} must be active and not_integrated`;
+    }
+    return gate.integrationRequired === true && hasPlannedIntegrationPaths(gate)
+      ? null
+      : `Quality gates plannedRequiredAfterIntegration command ${params.gateId} must list plannedIntegrationPaths`;
+  }
+  return null;
 };
 
 const collectNonBlockingQualityGateIds = (params: {
