@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -147,6 +147,15 @@ test("workflow-state read ignores malformed managed state while preserving skele
     assert.equal(skeletonProgress.materialized, true);
     assert.deepEqual(skeletonProgress.validationErrors, []);
     assert.equal(gating.blocked?.quality_gates, false);
+    assert.equal(
+      await stat(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${workspaceSlug}/development_tree`
+        )
+      ).catch(() => null),
+      null
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

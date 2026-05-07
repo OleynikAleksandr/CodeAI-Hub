@@ -419,7 +419,9 @@ export class DevelopmentTreeStateFacade {
   }
 
   async currentSnapshot(
-    params: DevelopmentTreeSnapshotRequest
+    params: DevelopmentTreeSnapshotRequest & {
+      readonly emitSnapshotSideEffects?: boolean;
+    }
   ): Promise<DevelopmentTreeSnapshot> {
     const parts: DevelopmentTreePartNode[] = [];
     const readMetadata = await createMetadataReader(params);
@@ -435,8 +437,10 @@ export class DevelopmentTreeStateFacade {
       );
     }
     const snapshot = { parts };
-    for (const listener of this.snapshotListeners) {
-      await listener({ ...params, snapshot });
+    if (params.emitSnapshotSideEffects === true) {
+      for (const listener of this.snapshotListeners) {
+        await listener({ ...params, snapshot });
+      }
     }
     return snapshot;
   }

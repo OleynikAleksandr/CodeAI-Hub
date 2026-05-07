@@ -209,3 +209,41 @@ test("DevelopmentTreeStateFacade refreshes readiness after draft writes", async 
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("DevelopmentTreeStateFacade does not emit materialization side effects during read-only snapshots", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-side-effects-")
+  );
+  const workspaceSlug = "demo-workspace";
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
+      PART_CONTENT
+    );
+    const facade = new DevelopmentTreeStateFacade();
+    let calls = 0;
+    facade.subscribeSnapshot(() => {
+      calls += 1;
+    });
+
+    await facade.currentSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+      plannedPartIds: ["project-manager"],
+      generatedPartIds: ["project-manager"],
+    });
+    assert.equal(calls, 0);
+
+    await facade.currentSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+      plannedPartIds: ["project-manager"],
+      generatedPartIds: ["project-manager"],
+      emitSnapshotSideEffects: true,
+    });
+    assert.equal(calls, 1);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
