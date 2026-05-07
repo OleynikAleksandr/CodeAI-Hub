@@ -75,7 +75,8 @@ export class RemoteBridgeSessionCreateRouter {
       ) {
         const managedWorkspace =
           await this.managedWorkspaceLifecycle.ensureReady(
-            resolvedWorkspacePath
+            resolvedWorkspacePath,
+            createContext.stage
           );
         if (!managedWorkspace.ok) {
           this.deps.logger.warn(

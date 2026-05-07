@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -88,6 +88,15 @@ test("session:create bootstraps managed workspace before application skeleton se
         );
         await access(path.join(workspacePath, ".husky", "pre-commit"));
         await access(path.join(workspacePath, "doc", "TODO", "todo-plan.md"));
+        assert.equal(
+          (
+            await readFile(
+              path.join(workspacePath, "doc", "TODO", "todo-plan.md"),
+              "utf8"
+            )
+          ).includes("feat: materialize application skeleton"),
+          true
+        );
         await access(
           path.join(
             workspacePath,
