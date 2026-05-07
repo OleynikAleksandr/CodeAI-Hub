@@ -3,6 +3,7 @@ import type { ProtectedGlossaryToken } from "./glossary-contract";
 import type { GlossaryProtector } from "./glossary-protector";
 
 const LOCALIZATION_BATCH_MARKER_PREFIX = "__CODEAI_HUB_LOCALIZATION_ENTRY__";
+const MISSING_ENTRY_RECOVERY_CONCURRENCY = 4;
 
 export interface StructuredBatchEntry {
   readonly entryId: number;
@@ -20,6 +21,36 @@ const createBatchMarker = (entryId: number, boundary: "END" | "START") =>
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const recoverMissingEntries = async (
+  entries: readonly StructuredBatchEntry[],
+  retryMissingEntry: (entry: StructuredBatchEntry) => Promise<string | null>
+): Promise<readonly (string | null)[]> => {
+  const recoveredTexts: (string | null)[] = new Array(entries.length).fill(
+    null
+  );
+  let nextEntryIndex = 0;
+  const workerCount = Math.min(
+    MISSING_ENTRY_RECOVERY_CONCURRENCY,
+    entries.length
+  );
+
+  const recoverNextEntry = async (): Promise<void> => {
+    while (nextEntryIndex < entries.length) {
+      const entryIndex = nextEntryIndex;
+      nextEntryIndex += 1;
+      const entry = entries[entryIndex];
+      if (!entry) {
+        continue;
+      }
+      recoveredTexts[entryIndex] = await retryMissingEntry(entry);
+    }
+  };
+
+  await Promise.all(Array.from({ length: workerCount }, recoverNextEntry));
+
+  return recoveredTexts;
+};
 
 export const buildStructuredBatchText = (
   entries: readonly StructuredBatchEntry[]
@@ -70,8 +101,12 @@ export const resolveStructuredBatchTranslations = async (options: {
   }
 
   let unresolvedMissingEntryCount = 0;
-  for (const entry of missingEntries) {
-    const recoveredText = await options.retryMissingEntry(entry);
+  const recoveredMissingTexts = await recoverMissingEntries(
+    missingEntries,
+    options.retryMissingEntry
+  );
+  for (const [index, entry] of missingEntries.entries()) {
+    const recoveredText = recoveredMissingTexts[index] ?? null;
     const translatedText = recoveredText ?? entry.sourceText;
     if (!recoveredText) {
       unresolvedMissingEntryCount += 1;
