@@ -121,7 +121,16 @@ Required consistency rules:
 - `quality-gates.json` separates desired status from execution readiness through `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, and `verification`.
 - Validation rejects contradictory states: advisory gates with blocking phases, planned/deferred gates in required arrays, and not-integrated required gates without planned integration paths.
 
-## 8. Definition Of Done
+## 8. Verification Record
+
+2026-05-07 targeted verification passed:
+
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/templates/quality-gates-bundled-templates.test.js`
+- `node --test packages/core/dist/development-tree/development-tree-bootstrap-gate.test.js`
+- `npm run build:project-manager`
+
+## 9. Definition Of Done
 
 - The first prompt is shorter and has no repeated phase rules across bundled prompt, contract, and runtime prompt pack.
 - Draft artifacts from a live run include a concrete integration plan.
