@@ -1,25 +1,48 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
+const execFileAsync = promisify(execFile);
+const DIAGRAM_MODULES_EXPECTED_COMMIT_RE =
+  /docs: update diagram modules artifacts/u;
+const APPLICATION_SKELETON_EXPECTED_COMMIT_RE =
+  /feat: materialize application skeleton/u;
+
 const assertDirectoryExists = async (directoryPath: string): Promise<void> => {
   await access(directoryPath);
 };
 
-test("session:create prepares workflow stage directories before creating provider session", async () => {
+test("session:create prepares diagram modules lifecycle baseline before provider session", async () => {
   const workspacePath = await mkdtemp(
     path.join(tmpdir(), "codeai-stage-preflight-")
   );
   const workspaceSlug = "demo-workspace";
   const expectedRoot = path.join(workspacePath, ".codeai-hub", workspaceSlug);
+  const descriptionPath = path.join(
+    expectedRoot,
+    "description",
+    "Final_Description.md"
+  );
 
   try {
+    await mkdir(path.dirname(descriptionPath), { recursive: true });
+    await writeFile(descriptionPath, "# Accepted description\n", "utf8");
+
     let handleCreateCalled = false;
     const sessionHandler = {
       async handleCreate(
@@ -31,6 +54,25 @@ test("session:create prepares workflow stage directories before creating provide
         await assertDirectoryExists(path.join(expectedRoot, "diagram_modules"));
         await assertDirectoryExists(
           path.join(expectedRoot, "diagram_modules", "product-parts")
+        );
+        assert.equal(
+          await git(workspacePath, ["log", "-1", "--pretty=%s"]),
+          "chore: initialize managed workflow baseline"
+        );
+        assert.equal(await git(workspacePath, ["status", "--short"]), "");
+        assert.equal(
+          await git(workspacePath, [
+            "ls-files",
+            ".codeai-hub/demo-workspace/description/Final_Description.md",
+          ]),
+          ".codeai-hub/demo-workspace/description/Final_Description.md"
+        );
+        assert.match(
+          await readFile(
+            path.join(workspacePath, "doc", "TODO", "todo-plan.md"),
+            "utf8"
+          ),
+          DIAGRAM_MODULES_EXPECTED_COMMIT_RE
         );
         handleCreateCalled = true;
       },
@@ -97,6 +139,18 @@ test("session:create bootstraps managed workspace before application skeleton se
           ).includes("feat: materialize application skeleton"),
           true
         );
+        assert.equal(
+          await git(workspacePath, ["log", "-1", "--pretty=%s"]),
+          "chore: initialize managed workflow baseline"
+        );
+        assert.equal(await git(workspacePath, ["status", "--short"]), "");
+        assert.match(
+          await readFile(
+            path.join(workspacePath, "doc", "TODO", "todo-plan.md"),
+            "utf8"
+          ),
+          APPLICATION_SKELETON_EXPECTED_COMMIT_RE
+        );
         await access(
           path.join(
             workspacePath,
@@ -139,3 +193,8 @@ test("session:create bootstraps managed workspace before application skeleton se
     await rm(workspacePath, { force: true, recursive: true });
   }
 });
+
+const git = async (cwd: string, args: readonly string[]): Promise<string> => {
+  const { stdout } = await execFileAsync("git", [...args], { cwd });
+  return stdout.trim();
+};
