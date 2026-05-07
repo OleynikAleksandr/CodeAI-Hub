@@ -1,4 +1,4 @@
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export type ManagedWorkflowPlanStage =
@@ -20,6 +20,10 @@ const STAGE_PLANS: Readonly<Record<ManagedWorkflowPlanStage, string>> = {
   diagram_modules: "doc/TODO/stages/diagram-modules/todo-plan.md",
   quality_gates: "doc/TODO/stages/quality-gates/todo-plan.md",
 };
+const WORKSPACE_PLAN_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
+const WORKSPACE_PLAN_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
+const JSON_FENCE_END_RE = /\s*```$/u;
+const JSON_FENCE_START_RE = /^```json\s*/u;
 
 const STAGE_TEMPLATES: Readonly<
   Record<ManagedWorkflowPlanStage, StageTemplate>
@@ -89,16 +93,101 @@ export const ensureManagedTodoTree = async (
   if (await writeIfMissing(stagePlanPath, createStagePlan(initialStage))) {
     created = true;
   }
-  if (
-    await writeIfMissing(
-      workspacePlanPath,
-      createWorkspacePlan({ activeStage: initialStage })
-    )
-  ) {
+  if (await ensureWorkspacePlan(workspacePlanPath, initialStage)) {
     created = true;
   }
 
   return { created, stagePlanPath, workspacePlanPath };
+};
+
+const ensureWorkspacePlan = async (
+  workspacePlanPath: string,
+  activeStage: ManagedWorkflowPlanStage
+): Promise<boolean> => {
+  if (!(await pathExists(workspacePlanPath))) {
+    await writeFile(
+      workspacePlanPath,
+      createWorkspacePlan({ activeStage }),
+      "utf8"
+    );
+    return true;
+  }
+  const existing = await readFile(workspacePlanPath, "utf8");
+  const updated = updateWorkspacePlanState(existing, activeStage);
+  if (updated === existing) {
+    return false;
+  }
+  await writeFile(workspacePlanPath, updated, "utf8");
+  return true;
+};
+
+const updateWorkspacePlanState = (
+  text: string,
+  activeStage: ManagedWorkflowPlanStage
+): string => {
+  const state = readWorkspacePlanState(text);
+  if (!state) {
+    return createWorkspacePlan({ activeStage });
+  }
+  const nextState = {
+    ...state,
+    activePlanPath: STAGE_PLANS[activeStage],
+    activeStage,
+    stagePlans: { ...STAGE_PLANS, ...readObject(state.stagePlans) },
+  };
+  if (JSON.stringify(nextState) === JSON.stringify(state)) {
+    return text;
+  }
+  return replaceWorkspacePlanState(text, nextState);
+};
+
+const readWorkspacePlanState = (
+  text: string
+): Record<string, unknown> | null => {
+  const rawState = text
+    .split(WORKSPACE_PLAN_STATE_START)[1]
+    ?.split(WORKSPACE_PLAN_STATE_END)[0];
+  if (!rawState) {
+    return null;
+  }
+  try {
+    return JSON.parse(stripJsonFence(rawState)) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+};
+
+const readObject = (value: unknown): Record<string, string> =>
+  value && typeof value === "object" && !Array.isArray(value)
+    ? Object.fromEntries(
+        Object.entries(value).filter(
+          (entry): entry is [string, string] => typeof entry[1] === "string"
+        )
+      )
+    : {};
+
+const replaceWorkspacePlanState = (
+  text: string,
+  state: Record<string, unknown>
+): string => {
+  const blockStart = text.indexOf(WORKSPACE_PLAN_STATE_START);
+  const blockEnd = text.indexOf(WORKSPACE_PLAN_STATE_END);
+  if (blockStart < 0 || blockEnd < 0 || blockEnd <= blockStart) {
+    return createWorkspacePlan({
+      activeStage: normalizeInitialPlanStage(state.activeStage as string),
+    });
+  }
+  const before = text.slice(0, blockStart + WORKSPACE_PLAN_STATE_START.length);
+  const after = text.slice(blockEnd);
+  return `${before}\n\`\`\`json\n${JSON.stringify(state, null, 2)}\n\`\`\`\n${after}`;
+};
+
+const stripJsonFence = (value: string): string => {
+  const trimmed = value.trim();
+  return trimmed
+    .replace(JSON_FENCE_START_RE, "")
+    .replace(JSON_FENCE_END_RE, "")
+    .trim();
 };
 
 const writeIfMissing = async (

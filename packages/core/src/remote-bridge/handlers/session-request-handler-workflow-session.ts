@@ -1,3 +1,5 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { ManagedPlanOrchestratorInstaller } from "../../managed-workspace/managed-plan-orchestrator-installer";
 import { ManagedWorkspaceAdoptionCommitter } from "../../managed-workspace/managed-workspace-adoption-committer";
 import { ManagedWorkspaceBootstrapper } from "../../managed-workspace/managed-workspace-bootstrapper";
@@ -11,6 +13,9 @@ import type { Logger } from "../../telemetry/logger";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
+
+const execFileAsync = promisify(execFile);
+const HANDOFF_COMMIT_MESSAGE = "chore: switch managed workspace stage";
 
 export interface ManagedWorkspaceLifecycle {
   ensureReady(
@@ -124,6 +129,48 @@ export class DefaultManagedWorkspaceLifecycle
     await this.bootstrapper.bootstrap(workspaceRoot);
     await this.installer.install(workspaceRoot, { initialStage });
     await this.adoptionCommitter.commitInitialBaseline(workspaceRoot);
+    await commitManagedStageHandoff(workspaceRoot);
     return await this.validator.validate(workspaceRoot);
   }
 }
+
+const commitManagedStageHandoff = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await execFileAsync(
+    "git",
+    ["add", "--", "doc/TODO", ".codeai-hub/workflow"],
+    {
+      cwd: workspaceRoot,
+    }
+  );
+  const hasChanges = await hasStagedChanges(workspaceRoot);
+  if (!hasChanges) {
+    return;
+  }
+  await execFileAsync(
+    "git",
+    ["-c", "core.hooksPath=", "commit", "-m", HANDOFF_COMMIT_MESSAGE],
+    {
+      cwd: workspaceRoot,
+      env: {
+        ...process.env,
+        GIT_AUTHOR_EMAIL: "managed-workspace@codeai-hub.local",
+        GIT_AUTHOR_NAME: "CodeAI Hub",
+        GIT_COMMITTER_EMAIL: "managed-workspace@codeai-hub.local",
+        GIT_COMMITTER_NAME: "CodeAI Hub",
+      },
+    }
+  );
+};
+
+const hasStagedChanges = async (workspaceRoot: string): Promise<boolean> => {
+  try {
+    await execFileAsync("git", ["diff", "--cached", "--quiet"], {
+      cwd: workspaceRoot,
+    });
+    return false;
+  } catch {
+    return true;
+  }
+};

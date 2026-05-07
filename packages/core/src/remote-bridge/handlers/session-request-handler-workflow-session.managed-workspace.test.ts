@@ -17,6 +17,12 @@ import {
 const execFileAsync = promisify(execFile);
 const DIAGRAM_MODULES_PLAN_COMMIT_RE =
   /docs: update diagram modules artifacts/u;
+const APPLICATION_SKELETON_PLAN_RE =
+  /doc\/TODO\/stages\/application-skeleton\/todo-plan\.md/u;
+const APPLICATION_SKELETON_COMMIT_RE =
+  /feat: materialize application skeleton/u;
+const APPLICATION_SKELETON_STAGE_RE = /"activeStage": "application_skeleton"/u;
+const HANDOFF_COMMIT_RE = /chore: switch managed workspace stage/u;
 
 const createAdapter = (): ProviderAdapter => ({
   closeSession: () => Promise.resolve(),
@@ -246,6 +252,60 @@ test("default managed lifecycle creates an adoption commit before diagram module
         "utf8"
       ),
       DIAGRAM_MODULES_PLAN_COMMIT_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("default managed lifecycle switches active stage before technical work", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-managed-handoff-")
+  );
+  try {
+    await new DefaultManagedWorkspaceLifecycle().ensureReady(
+      workspaceRoot,
+      "diagram_modules"
+    );
+
+    const result = await new DefaultManagedWorkspaceLifecycle().ensureReady(
+      workspaceRoot,
+      "application_skeleton"
+    );
+
+    assert.equal(result.ok, true);
+    assert.equal(
+      await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
+      "chore: switch managed workspace stage"
+    );
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+        "utf8"
+      ),
+      APPLICATION_SKELETON_STAGE_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+        "utf8"
+      ),
+      APPLICATION_SKELETON_PLAN_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          "doc/TODO/stages/application-skeleton/todo-plan.md"
+        ),
+        "utf8"
+      ),
+      APPLICATION_SKELETON_COMMIT_RE
+    );
+    assert.match(
+      await git(workspaceRoot, ["log", "--pretty=%s", "-2"]),
+      HANDOFF_COMMIT_RE
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
