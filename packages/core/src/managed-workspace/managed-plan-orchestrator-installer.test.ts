@@ -12,10 +12,12 @@ const createWorkspaceRoot = (): Promise<string> =>
 const execFileAsync = promisify(execFile);
 const ACTIVE_SCOPE_RE = /Execution Scope Status: ACTIVE/u;
 const DIAGRAM_TASK_RE = /Current Task: diagram-modules\.stream1\.task1/u;
+const DIAGRAM_NEXT_TASK_RE = /Current Task: diagram-modules\.stream1\.task2/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
 const APPLICATION_SKELETON_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
+const INCLUDED_IN_COMMIT_RE = /hash: included-in-commit/u;
 
 test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package scripts", async () => {
   const workspaceRoot = await createWorkspaceRoot();
@@ -96,6 +98,58 @@ test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage
 
     assert.match(result.stdout, APPLICATION_SKELETON_TASK_RE);
     assert.match(result.stdout, APPLICATION_SKELETON_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed plan shim advances the active task inside plan commits", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot);
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    await writeFile(
+      path.join(workspaceRoot, "artifact.md"),
+      "# Demo\n",
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: update diagram modules artifacts"],
+      { cwd: workspaceRoot }
+    );
+
+    const status = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    const plan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/todo-plan.md"),
+      "utf8"
+    );
+    const gitStatus = await execFileAsync("git", ["status", "--short"], {
+      cwd: workspaceRoot,
+    });
+
+    assert.match(status.stdout, DIAGRAM_NEXT_TASK_RE);
+    assert.match(plan, INCLUDED_IN_COMMIT_RE);
+    assert.equal(gitStatus.stdout.trim(), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

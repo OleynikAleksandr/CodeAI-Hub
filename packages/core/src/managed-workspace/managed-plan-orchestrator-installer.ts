@@ -257,7 +257,7 @@ const createTodoPlanTemplate = (
 };
 
 const createPlanCliShim = (): string => `#!/usr/bin/env node
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -282,6 +282,8 @@ const readState = () => {
   return JSON.parse(json);
 };
 
+const readPlanText = () => readFileSync(PLAN_PATH, "utf8");
+
 const validate = () => {
   const state = readState();
   if (state.debt) {
@@ -291,6 +293,97 @@ const validate = () => {
     throw new Error("ACTIVE plan requires currentTaskId");
   }
   return state;
+};
+
+const runGit = (args) => {
+  const result = spawnSync("git", args, { encoding: "utf8" });
+  if (result.status !== 0) {
+    throw new Error((result.stderr || result.stdout || "git command failed").trim());
+  }
+  return result.stdout.trim();
+};
+
+const hasStagedChanges = () => {
+  const result = spawnSync("git", ["diff", "--cached", "--quiet"]);
+  return result.status !== 0;
+};
+
+const nextTaskId = (taskId) => {
+  const match = /^(.*\\.task)(\\d+)$/u.exec(taskId);
+  if (!match) {
+    return \`\${taskId}.next\`;
+  }
+  return \`\${match[1]}\${Number(match[2]) + 1}\`;
+};
+
+const replaceState = (text, state) => {
+  const blockStart = text.indexOf(START);
+  const blockEnd = text.indexOf(END);
+  if (blockStart < 0 || blockEnd < 0 || blockEnd <= blockStart) {
+    throw new Error("Missing codeai-plan-state block");
+  }
+  const before = text.slice(0, blockStart + START.length);
+  const after = text.slice(blockEnd);
+  const json = JSON.stringify(state, null, 2);
+  return \`\${before}\\n\\\`\\\`\\\`json\\n\${json}\\n\\\`\\\`\\\`\\n\${after}\`;
+};
+
+const advancePlanForCommit = (message) => {
+  const state = validate();
+  if (state.expectedCommitMessage && message !== state.expectedCommitMessage) {
+    throw new Error(\`Expected commit message: \${state.expectedCommitMessage}\`);
+  }
+  if (!state.currentTaskId) {
+    throw new Error("ACTIVE plan requires currentTaskId");
+  }
+
+  const text = readPlanText();
+  const lines = text.split("\\n");
+  const taskLineIndex = lines.findIndex((line) =>
+    line.includes(\`\\\`\${state.currentTaskId}\\\`\`)
+  );
+  if (taskLineIndex < 0) {
+    throw new Error(\`Current task not found: \${state.currentTaskId}\`);
+  }
+  const commitLineIndex = lines.findIndex(
+    (line, index) =>
+      index > taskLineIndex &&
+      line.includes(\`Git Commit: \\\`\${message}\\\`\`)
+  );
+  if (commitLineIndex < 0) {
+    throw new Error(\`Git Commit item not found: \${message}\`);
+  }
+
+  const nextId = nextTaskId(state.currentTaskId);
+  const nextTaskExists = lines.some((line) => line.includes(\`\\\`\${nextId}\\\`\`));
+  lines[taskLineIndex] = lines[taskLineIndex].replace("[IN_PROGRESS]", "[DONE]");
+  lines[commitLineIndex] = lines[commitLineIndex]
+    .replace("[TODO]", "[DONE]")
+    .replace("hash: TBD", "hash: included-in-commit");
+
+  if (!nextTaskExists) {
+    const nextNumber = lines
+      .slice(0, commitLineIndex + 1)
+      .filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+    const currentTaskText = lines[taskLineIndex].replace(
+      \`\\\`\${state.currentTaskId}\\\`\`,
+      \`\\\`\${nextId}\\\`\`
+    );
+    lines.splice(
+      commitLineIndex + 1,
+      0,
+      \`\${nextNumber}. \${currentTaskText.replace("[DONE]", "[IN_PROGRESS]").replace(/^\\d+\\.\\s+/u, "")}\`,
+      \`\${nextNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`
+    );
+  }
+
+  const nextState = {
+    ...state,
+    lastRecordedCommit: "included-in-commit",
+    currentTaskId: nextId,
+    expectedCommitMessage: message,
+  };
+  writeFileSync(PLAN_PATH, replaceState(lines.join("\\n"), nextState), "utf8");
 };
 
 const command = process.argv[2];
@@ -313,6 +406,11 @@ try {
     }
   } else if (command === "commit") {
     const message = process.argv.slice(3).join(" ");
+    if (!hasStagedChanges()) {
+      throw new Error("No staged changes to commit");
+    }
+    advancePlanForCommit(message);
+    runGit(["add", PLAN_PATH]);
     const result = spawnSync("git", ["commit", "-m", message], { stdio: "inherit" });
     process.exitCode = result.status ?? 1;
   } else {
