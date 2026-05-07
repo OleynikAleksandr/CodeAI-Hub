@@ -86,8 +86,16 @@ Before starting the agent, Core:
 2. creates baseline `doc/TODO/todo-plan.md`;
 3. installs minimal hooks;
 4. creates `.codeai-hub/workflow` tracked structure;
-5. freezes `Description` and `Virtual Simulation`;
-6. injects a short workflow discipline block into the first prompt.
+5. creates the initial adoption commit for Core-owned lifecycle files and accepted upstream evidence;
+6. freezes `Description` and `Virtual Simulation`;
+7. injects a short workflow discipline block into the first prompt.
+
+The adoption commit is Core-owned and happens before the agent sees the first
+turn. This keeps `Diagram Modules` as the first editable managed stage while
+giving that agent a clean Git status and a real commit history. Later
+`Application Skeleton` and `Quality Gates` sessions may reconcile the baseline,
+but they must not inherit uncommitted Description, Virtual Simulation, or
+lifecycle setup files as work they supposedly created.
 
 The first prompt should not teach a large process manual. It should say: read `doc/TODO/todo-plan.md`, keep changes scoped to the current task, update workflow artifacts, and use the managed commit flow.
 
@@ -257,6 +265,13 @@ Live retest note for `v1.2.175`: Application Skeleton activation now creates the
 Local smoke note for `v1.2.176`: release build completed with VSIX `codeai-hub-1.2.176.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.176`. The targeted fixes cover fenced plan-state parsing, stage-aware managed plan seeding for `Application Skeleton` / `Quality Gates`, and Application Skeleton prompt/contract requirements for Git-tracked placeholders plus `npm run plan:commit -- "feat: materialize application skeleton"` before the final materialization response. User retest should verify Application Skeleton now commits materialized files and Quality Gates unlocks from a clean managed workspace.
 
 Local smoke note for `v1.2.177`: release build completed with VSIX `codeai-hub-1.2.177.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.177`. A compiled-Core smoke workspace verified `git config --local core.hooksPath` returns `.husky`, `.gitignore` contains `.DS_Store`, and `npm run plan:status` still seeds Application Skeleton with `Expected Commit: feat: materialize application skeleton`. User retest should verify the same preflight facts in a fresh Project Manager workspace before accepting the Application Skeleton materialization contract.
+
+Live retest note for `v1.2.177`: managed bootstrap at `Application Skeleton`
+creates the expected files, but it is too late. Because `Diagram Modules` is the
+first stage users can return to for architecture refactoring, Core must create
+and commit the managed lifecycle baseline before the first `Diagram Modules`
+agent turn. `Application Skeleton` must then receive a clean Git tree and commit
+only its own draft/materialization artifacts.
 
 ## 11. Implementation Strategy
 
