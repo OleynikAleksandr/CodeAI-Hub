@@ -273,6 +273,17 @@ and commit the managed lifecycle baseline before the first `Diagram Modules`
 agent turn. `Application Skeleton` must then receive a clean Git tree and commit
 only its own draft/materialization artifacts.
 
+Live retest note for `v1.2.178`: `Diagram Modules` now starts with the correct
+Core-owned adoption commit and the agent commits `product-parts.index.md` through
+the managed flow. Two follow-up defects remain. First, the generated
+`plan-cli.mjs` shim validates `post-commit` but does not record the commit hash
+or move the active task forward. Second, live runtime session state under
+`.codeai-hub/<workspaceSlug>/continuity/` and
+`.codeai-hub/<workspaceSlug>/workflow/state.json` remains tracked/dirty after
+the turn. Those files are runtime state, not accepted workflow artifacts, and
+must be ignored or snapshot-managed separately so the next stage does not inherit
+uncommitted Core noise.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
