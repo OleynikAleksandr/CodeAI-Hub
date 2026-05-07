@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.179] - 2026-05-07
+### Fixed
+- **Managed workspace runtime state no longer dirties project Git.** Core ignores live continuity chains and workflow runtime state under `.codeai-hub/*/`, while keeping durable lifecycle artifacts tracked.
+- **Managed `plan:commit` now advances the active plan inside the artifact commit.** The generated plan shim updates `doc/TODO/todo-plan.md`, stages it, and commits it with the agent-created artifacts so Diagram Modules can continue from a clean tree.
+
+### Tests
+- **Managed lifecycle coverage now checks ignored runtime state and clean post-commit plan advancement.** Targeted tests verify adoption commits skip live runtime files and the generated plan shim leaves a temporary workspace clean after `npm run plan:commit`.
+
 ## [1.2.178] - 2026-05-07
 ### Fixed
 - **Managed workspace lifecycle now creates its first commit at Diagram Modules.** Core commits the lifecycle baseline and accepted upstream evidence before the first `Diagram Modules` provider turn, so later `Application Skeleton` sessions start from a clean Git tree instead of inheriting uncommitted setup files.
