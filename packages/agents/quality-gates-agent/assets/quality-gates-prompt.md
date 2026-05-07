@@ -38,6 +38,15 @@ Draft algorithm:
 5. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 2 will create or verify.
 6. Leave `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.
 
+Before the draft-review response:
+
+- stage only the two canonical Quality Gates artifacts;
+- run `npm run plan:commit -- "docs: draft quality gates contract"`;
+- run `npm run plan:status` and `git status --short`;
+- continue only if Git is clean and the child plan has advanced from `quality-gates.stream1.task1`.
+
+If the user requests draft corrections before integration, update only the canonical artifacts and commit the revision through the active child plan before asking for review again. If the child plan has already advanced to integration but another draft revision is needed, add a gate-contract revision microtask and its `Git Commit` pair before the integration task in the active child plan, then commit the revised contract before package/script integration.
+
 Universal policies for every generated product:
 
 - Source files and classes must stay <= 500 lines. Report 400-500 lines as near-limit. Mark intended blocking phases in the gate contract; Core renders the actual managed hook wiring.
@@ -54,13 +63,14 @@ An explicit user acceptance message in this same session starts integration imme
 Integration algorithm:
 
 1. Re-read `quality-gates.json` and `application-skeleton-map.json`.
-2. Mark acceptance in the contract, then set integration state to `in_progress`.
-3. Create or update only accepted gate infrastructure: package scripts/devDependencies or equivalent stack files, selected lint/format/static-analysis config, architecture/layout/size scripts, gate manifest entries, and CI/update files selected by the contract. Do not edit `.husky` hooks directly.
-4. Avoid feature or business implementation code.
-5. Run the lightest feasible smoke checks for created gates.
-6. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results. Record any intentional omissions in `deferredIntegration`.
-7. Stage the accepted Quality Gates artifacts and gate infrastructure, then run `npm run plan:commit -- "feat: integrate quality gates baseline"`.
-8. After the commit, run `npm run plan:status` and `git status --short`. The final response may say `integrated` or `unlocked` only if the child plan advanced past `quality-gates.stream1.task1` and `git status --short` is empty.
+2. Verify `npm run plan:status` shows the integration task and expected commit `feat: integrate quality gates baseline`; verify `git status --short` is empty before creating package files, scripts, configs, or CI files.
+3. Mark acceptance in the contract, then set integration state to `in_progress`.
+4. Create or update only accepted gate infrastructure: package scripts/devDependencies or equivalent stack files, selected lint/format/static-analysis config, architecture/layout/size scripts, gate manifest entries, and CI/update files selected by the contract. Do not edit `.husky` hooks directly.
+5. Avoid feature or business implementation code.
+6. Run the lightest feasible smoke checks for created gates.
+7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results. Record any intentional omissions in `deferredIntegration`.
+8. Stage the accepted Quality Gates artifacts and gate infrastructure, then run `npm run plan:commit -- "feat: integrate quality gates baseline"`.
+9. After the commit, run `npm run plan:status` and `git status --short`. The final response may say `integrated` or `unlocked` only if the child plan advanced past `quality-gates.stream1.task2` and `git status --short` is empty.
 
 If `plan:commit` fails, do not mark the step complete. Repair the reported issue or stop with the exact blocker. Never finish with dirty Git or an `IN_PROGRESS` Quality Gates child plan.
 
@@ -98,5 +108,6 @@ Before each final response, verify:
 - each not-integrated active gate has planned integration paths;
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
-- Phase 2 final response is allowed only after `npm run plan:commit -- "feat: integrate quality gates baseline"` succeeds, `npm run plan:status` no longer shows `quality-gates.stream1.task1` as current, and `git status --short` is empty;
+- Phase 1 final response is allowed only after `npm run plan:commit -- "docs: draft quality gates contract"` succeeds, `npm run plan:status` no longer shows `quality-gates.stream1.task1` as current, and `git status --short` is empty;
+- Phase 2 final response is allowed only after `npm run plan:commit -- "feat: integrate quality gates baseline"` succeeds, `npm run plan:status` no longer shows `quality-gates.stream1.task2` as current, and `git status --short` is empty;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

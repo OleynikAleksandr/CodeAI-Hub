@@ -21,9 +21,15 @@ const NO_LIFECYCLE_RESTORE_RE =
 const NO_DIRECT_HUSKY_RE = /Do not edit `\.husky` hooks directly/;
 const PLAN_COMMIT_RE =
   /npm run plan:commit -- "feat: integrate quality gates baseline"/;
+const DRAFT_PLAN_COMMIT_RE =
+  /npm run plan:commit -- "docs: draft quality gates contract"/;
 const CLEAN_GIT_RE = /git status --short/;
 const CHILD_PLAN_ADVANCED_RE =
-  /child plan advanced past `quality-gates\.stream1\.task1`/;
+  /child plan advanced past `quality-gates\.stream1\.task2`/;
+const GATE_CONTRACT_REVISION_RE =
+  /add a gate-contract revision microtask and its `Git Commit` pair before the integration task/;
+const INTEGRATION_EXPECTED_COMMIT_RE =
+  /expected commit `feat: integrate quality gates baseline`/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const NO_PLANNED_DUPLICATES_RE =
   /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
@@ -69,8 +75,11 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, NO_DIRECT_HUSKY_RE);
   assert.match(prompt, PLAN_COMMIT_RE);
+  assert.match(prompt, DRAFT_PLAN_COMMIT_RE);
   assert.match(prompt, CLEAN_GIT_RE);
   assert.match(prompt, CHILD_PLAN_ADVANCED_RE);
+  assert.match(prompt, GATE_CONTRACT_REVISION_RE);
+  assert.match(prompt, INTEGRATION_EXPECTED_COMMIT_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
