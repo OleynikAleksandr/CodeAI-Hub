@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -51,6 +51,56 @@ test("ManagedWorkspaceValidator accepts bootstrapped lifecycle baseline", async 
 
     assert.equal(result.ok, true);
     assert.deepEqual(result.issues, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("ManagedWorkspaceValidator reports open active plan debt", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await new ManagedWorkspaceBootstrapper({
+      commandRunner: (_command, args) =>
+        args[0] === "init"
+          ? mkdir(path.join(workspaceRoot, ".git"))
+          : Promise.resolve(),
+      createdAt: "2026-05-07T00:00:00.000Z",
+    }).bootstrap(workspaceRoot);
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot);
+    await writeFile(
+      path.join(workspaceRoot, "doc/TODO/stages/diagram-modules/todo-plan.md"),
+      [
+        "# Managed Workspace TODO Plan",
+        "",
+        "<!-- codeai-plan-state:start -->",
+        "```json",
+        JSON.stringify(
+          {
+            currentTaskId: "diagram-modules.stream1.task1",
+            debt: { stage: "commit_pending" },
+            executionScopeStatus: "ACTIVE",
+            expectedCommitMessage: "docs: update diagram modules artifacts",
+            schema: "codeai-plan-v1",
+          },
+          null,
+          2
+        ),
+        "```",
+        "<!-- codeai-plan-state:end -->",
+        "",
+      ].join("\n"),
+      "utf8"
+    );
+
+    const result = await new ManagedWorkspaceValidator().validate(
+      workspaceRoot
+    );
+
+    assert.equal(result.ok, false);
+    assert.equal(
+      result.issues.some((issue) => issue.code === "open_plan_debt"),
+      true
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

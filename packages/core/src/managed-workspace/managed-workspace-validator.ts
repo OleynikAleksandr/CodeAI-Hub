@@ -28,7 +28,9 @@ export type ManagedWorkspaceValidationIssueCode =
   | "missing_file"
   | "missing_git_repo"
   | "missing_gitignore_entry"
-  | "missing_package_script";
+  | "missing_package_script"
+  | "open_plan_debt"
+  | "blocked_active_plan";
 
 export interface ManagedWorkspaceValidationIssue {
   readonly code: ManagedWorkspaceValidationIssueCode;
@@ -101,7 +103,11 @@ export class ManagedWorkspaceValidator {
         issues.push(issue("missing_file", file.relativePath, "Missing file"));
       }
     }
-    if (!activePlanPath) {
+    if (activePlanPath) {
+      issues.push(
+        ...(await validateActivePlanState(paths.workspaceRoot, activePlanPath))
+      );
+    } else {
       issues.push(
         issue(
           "missing_file",
@@ -141,6 +147,50 @@ const pathExists = async (targetPath: string): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+const validateActivePlanState = async (
+  workspaceRoot: string,
+  activePlanPath: string
+): Promise<readonly ManagedWorkspaceValidationIssue[]> => {
+  const activePlan = await readText(path.join(workspaceRoot, activePlanPath));
+  const rawState = activePlan
+    .split("<!-- codeai-plan-state:start -->")[1]
+    ?.split("<!-- codeai-plan-state:end -->")[0];
+  if (!rawState) {
+    return [
+      issue(
+        "blocked_active_plan",
+        activePlanPath,
+        "Missing active plan machine state"
+      ),
+    ];
+  }
+  try {
+    const state = JSON.parse(stripJsonFence(rawState)) as {
+      readonly debt?: unknown;
+      readonly executionScopeStatus?: unknown;
+    };
+    if (state.debt !== null && state.debt !== undefined) {
+      return [
+        issue("open_plan_debt", activePlanPath, "Active plan debt is open"),
+      ];
+    }
+    if (state.executionScopeStatus === "BLOCKED") {
+      return [
+        issue("blocked_active_plan", activePlanPath, "Active plan is blocked"),
+      ];
+    }
+  } catch {
+    return [
+      issue(
+        "blocked_active_plan",
+        activePlanPath,
+        "Active plan machine state is invalid"
+      ),
+    ];
+  }
+  return [];
 };
 
 const isDirectory = async (targetPath: string): Promise<boolean> => {
