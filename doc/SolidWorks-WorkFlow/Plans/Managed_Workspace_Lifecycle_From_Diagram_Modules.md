@@ -319,6 +319,14 @@ The same retest also exposed an unmanaged visual sidecar:
 runtime-owned layout state, not an agent semantic artifact, so Core must prevent
 it from leaving dirty Git state after graph regeneration.
 
+Live retest note for `v1.2.180`: the managed TODO tree is created and the
+Diagram Modules layout sidecar is correctly ignored, but Core still creates and
+uses root `doc/TODO/todo-plan.md` as the active ledger. That contradicts the
+corrected tree contract above: managed workflow agents must work from the
+stage child plan under `doc/TODO/stages/<stage>/todo-plan.md`, while
+`doc/TODO/workspace.plan.md` remains the Core-owned recovery ledger. Fresh
+managed user workspaces must not create root `doc/TODO/todo-plan.md`.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
