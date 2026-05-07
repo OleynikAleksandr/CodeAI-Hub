@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.185] - 2026-05-07
+### Fixed
+- **Filesystem workflow stages now start with committed draft contracts.** Fresh Application Skeleton and Quality Gates child plans split draft/contract checkpoints from materialization/integration, so long user review loops no longer collapse into one oversized commit.
+- **Application Skeleton and Quality Gates prompts now require draft commits before destructive work.** Agents must commit canonical draft artifacts, verify clean Git, and only then proceed to materialization or gate script/package integration after user acceptance.
+- **Development Tree unlock now requires managed transaction evidence.** Core checks accepted Application Skeleton materialization and Quality Gates integration commits in `doc/TODO/workspace.plan.md`, plus advanced child plans and clean Git.
+- **Workflow-state reads no longer create Development Tree draft files as a side effect.** Read-only snapshots do not materialize downstream drafts while the Quality Gates agent is finishing.
+
+### Tests
+- **Managed draft lifecycle coverage verifies split child plans, prompt wording, transaction gates, and side-effect isolation.** Targeted tests cover generated `plan-cli.mjs` stage advancement, bundled templates, Development Tree gate evidence, and read-only snapshot behavior.
+
 ## [1.2.184] - 2026-05-07
 ### Fixed
 - **Development Tree now waits for a committed Quality Gates transaction.** Dirty `quality-gates.json` content with `integrated: true` no longer unlocks downstream work unless `doc/TODO/workspace.plan.md` records an accepted `quality_gates` commit, the Quality Gates child plan advanced past the integration task, and Git is clean.
