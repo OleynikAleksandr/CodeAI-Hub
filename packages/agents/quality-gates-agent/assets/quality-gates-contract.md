@@ -7,7 +7,7 @@
 
 ## Managed Hook Boundary
 
-- Core owns git, `.husky` hooks, plan scripts, `doc/TODO/todo-plan.md`, and `.codeai-hub/workflow` lifecycle ledgers.
+- Core owns git, `.husky` hooks, plan scripts, `doc/TODO/workspace.plan.md`, active child plans under `doc/TODO/stages/<stage>/todo-plan.md`, and `.codeai-hub/workflow` lifecycle ledgers.
 - Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, and `quality-gates.json` manifest fields.
 - Do not edit `.husky` hooks directly. Core renders managed hook wiring from the validated gate manifest.
 

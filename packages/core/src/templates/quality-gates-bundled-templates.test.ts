@@ -34,6 +34,8 @@ const COMMANDS_MAP_RULE_RE =
 const ADVISORY_NO_BLOCKING_RE =
   /Advisory gates must not have `blockingIn` phases/;
 const CONTRACT_HOOK_BOUNDARY_RE = /Managed Hook Boundary/;
+const CONTRACT_CHILD_PLAN_RE =
+  /Core owns git, `\.husky` hooks, plan scripts, `doc\/TODO\/workspace\.plan\.md`, active child plans under `doc\/TODO\/stages\/<stage>\/todo-plan\.md`/;
 const CONTRACT_NO_DIRECT_HUSKY_RE =
   /Core renders managed hook wiring from the validated gate manifest/;
 
@@ -75,8 +77,10 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, COMMANDS_MAP_RULE_RE);
   assert.match(contract, ADVISORY_NO_BLOCKING_RE);
   assert.match(contract, CONTRACT_HOOK_BOUNDARY_RE);
+  assert.match(contract, CONTRACT_CHILD_PLAN_RE);
   assert.match(contract, CONTRACT_NO_DIRECT_HUSKY_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);
+  assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
 });
 
 test("quality gates bundled templates stay synced with agent assets", async () => {
