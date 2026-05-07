@@ -290,6 +290,14 @@ Local smoke note for `v1.2.179`: release build completed with VSIX
 Diagram Modules adoption commit, technical-stage managed preflight, and generated
 `plan:commit` advancement that leaves a temporary workspace clean after commit.
 
+Live retest note for `v1.2.179`: the same-workspace retest confirms the managed
+Git tree stays clean after the Diagram Modules artifact commit, runtime
+continuity/workflow state is ignored, hooks are executable, and
+`doc/TODO/todo-plan.md` advances to the next Diagram Modules task. Follow-up
+polish: commit ledger lines currently record `hash: included-in-commit` instead
+of the actual short commit hash. This is not blocking for clean Git or recovery,
+but it should be fixed so the managed ledger is audit-grade.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
