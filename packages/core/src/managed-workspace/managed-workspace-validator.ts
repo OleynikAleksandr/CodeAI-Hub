@@ -15,6 +15,11 @@ const REQUIRED_GITIGNORE_ENTRIES: readonly string[] = [
   ".codeai-hub/logs",
   ".codeai-hub/cache",
 ];
+const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const WORKSPACE_PLAN_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
+const WORKSPACE_PLAN_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
+const JSON_FENCE_END_RE = /\s*```$/u;
+const JSON_FENCE_START_RE = /^```json\s*/u;
 const LINE_SPLIT_RE = /\r?\n/u;
 const TRAILING_SLASH_RE = /\/$/u;
 
@@ -68,8 +73,20 @@ export class ManagedWorkspaceValidator {
       }
     }
 
+    const activePlanPath = await readActivePlanPath(paths.workspaceRoot);
     for (const file of [
-      paths.todoPlan,
+      {
+        absolutePath: path.join(paths.workspaceRoot, WORKSPACE_PLAN_PATH),
+        relativePath: WORKSPACE_PLAN_PATH,
+      },
+      ...(activePlanPath
+        ? [
+            {
+              absolutePath: path.join(paths.workspaceRoot, activePlanPath),
+              relativePath: activePlanPath,
+            },
+          ]
+        : []),
       paths.packageManifest,
       ...paths.hooks,
       {
@@ -83,6 +100,15 @@ export class ManagedWorkspaceValidator {
       if (!(await isFile(file.absolutePath))) {
         issues.push(issue("missing_file", file.relativePath, "Missing file"));
       }
+    }
+    if (!activePlanPath) {
+      issues.push(
+        issue(
+          "missing_file",
+          WORKSPACE_PLAN_PATH,
+          "Missing activePlanPath in workspace plan"
+        )
+      );
     }
 
     issues.push(
@@ -168,6 +194,35 @@ const validateGitignore = async (
       `Missing ignore entry ${entry}`
     )
   );
+};
+
+const readActivePlanPath = async (
+  workspaceRoot: string
+): Promise<string | null> => {
+  const workspacePlan = await readText(
+    path.join(workspaceRoot, WORKSPACE_PLAN_PATH)
+  );
+  const rawState = workspacePlan
+    .split(WORKSPACE_PLAN_STATE_START)[1]
+    ?.split(WORKSPACE_PLAN_STATE_END)[0];
+  if (!rawState) {
+    return null;
+  }
+  const jsonText = stripJsonFence(rawState);
+  try {
+    const state = JSON.parse(jsonText) as { readonly activePlanPath?: unknown };
+    return typeof state.activePlanPath === "string"
+      ? state.activePlanPath
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const stripJsonFence = (value: string): string => {
+  const trimmed = value.trim();
+  const withoutStart = trimmed.replace(JSON_FENCE_START_RE, "");
+  return withoutStart.replace(JSON_FENCE_END_RE, "").trim();
 };
 
 const readJsonObject = async (

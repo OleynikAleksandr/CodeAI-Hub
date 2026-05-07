@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -24,7 +24,7 @@ test("ManagedWorkspaceValidator reports missing baseline pieces", async () => {
     );
     assert.equal(
       result.issues.some(
-        (issue) => issue.relativePath === "doc/TODO/todo-plan.md"
+        (issue) => issue.relativePath === "doc/TODO/workspace.plan.md"
       ),
       true
     );
@@ -37,15 +37,13 @@ test("ManagedWorkspaceValidator accepts bootstrapped lifecycle baseline", async 
   const workspaceRoot = await createWorkspaceRoot();
   try {
     await new ManagedWorkspaceBootstrapper({
-      commandRunner: () => mkdir(path.join(workspaceRoot, ".git")),
+      commandRunner: (_command, args) =>
+        args[0] === "init"
+          ? mkdir(path.join(workspaceRoot, ".git"))
+          : Promise.resolve(),
       createdAt: "2026-05-07T00:00:00.000Z",
     }).bootstrap(workspaceRoot);
     await new ManagedPlanOrchestratorInstaller().install(workspaceRoot);
-    await writeFile(
-      path.join(workspaceRoot, "doc/TODO/todo-plan.md"),
-      "placeholder\n",
-      "utf8"
-    );
 
     const result = await new ManagedWorkspaceValidator().validate(
       workspaceRoot
