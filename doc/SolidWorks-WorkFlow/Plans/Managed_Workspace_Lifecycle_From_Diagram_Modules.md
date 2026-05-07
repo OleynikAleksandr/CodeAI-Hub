@@ -434,6 +434,32 @@ workspace, and an advanced child plan. This keeps rollover/recovery meaningful
 during long contract discussions and prevents draft artifacts plus generated app
 structure from collapsing into one oversized commit.
 
+Follow-up retest note for `v1.2.184`: Quality Gates confirms the same
+transaction problem. The generated quality-gates child plan has one oversized
+task, so the accepted contract artifacts, `package.json`, `package-lock.json`,
+and the whole `scripts/gates/*.mjs` baseline were committed together as
+`feat: integrate quality gates baseline`. That transaction is recoverable, but
+it does not preserve the user-approved gate contract as a separate checkpoint
+before integration.
+
+The same run exposed a second ownership defect. After the Quality Gates managed
+commit, Core created `.codeai-hub/<workspaceSlug>/development_tree/...` draft
+files while the Quality Gates agent was still trying to finish with clean Git.
+Those files are downstream Development Tree ownership, not Quality Gates
+ownership. The agent incorrectly reasoned about whether it should delete or
+commit the generated tree, then reported clean Git even though the workspace
+still had untracked Development Tree files. Core must either create those
+downstream drafts in a separate Core-owned transaction, or keep them ignored /
+uncreated until the Development Tree stage owns them.
+
+Phase 21D is therefore generalized from an Application Skeleton-only prompt fix
+to a filesystem-stage transaction fix:
+
+- Application Skeleton: draft contract commits before materialization commits.
+- Quality Gates: gate contract commits before package/script integration commits.
+- Development Tree bootstrap: Core-owned downstream side effects must not dirty
+  the finishing upstream stage or become a decision for the wrong agent.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
