@@ -89,7 +89,7 @@ const resolveManagedLifecycle = (params: {
     controlPlanePath: ".codeai-hub/workflow",
     readOnlyStages: active ? ["description", "virtual_simulation"] : [],
     revisionRootPath: ".codeai-hub/workflow/revisions",
-    todoPlanPath: "doc/TODO/todo-plan.md",
+    todoPlanPath: "doc/TODO/workspace.plan.md",
   };
 };
 export class WorkflowStateService {
