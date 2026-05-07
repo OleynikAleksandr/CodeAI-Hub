@@ -5,6 +5,7 @@ import { api } from "../../api";
 import { usePanelSizes } from "../../hooks/use-panel-sizes";
 import { ensureWorkflowWorktree } from "../../services/workspace-session-client";
 import type { WorkspaceProject } from "../../types";
+import { resolveStartupGateCopy } from "./core-startup-gate-state";
 import { MainArea } from "./main-area";
 import { Sidebar } from "./sidebar";
 import { useCoreStartupGate } from "./use-core-startup-gate";
@@ -25,29 +26,6 @@ const isAbsolutePath = (value: string): boolean => {
 
 type AddWorkspaceRequestedDetail = {
   readonly path: string;
-};
-
-const resolveStartupCopy = (
-  configuredLanguage: string
-): {
-  readonly detail: string;
-  readonly status: string;
-  readonly title: string;
-} => {
-  if (configuredLanguage.toLowerCase().startsWith("ru")) {
-    return {
-      detail:
-        "Core проверяет и обновляет локальные компоненты. Рабочие области и Settings станут доступны после завершения.",
-      status: "Ожидание готовности Core...",
-      title: "CodeAI Hub запускается",
-    };
-  }
-  return {
-    detail:
-      "Core is checking and updating local components. Workspaces and Settings will become available when startup completes.",
-    status: "Waiting for Core readiness...",
-    title: "CodeAI Hub is starting",
-  };
 };
 
 /**
@@ -185,7 +163,7 @@ export const MainLayout: React.FC = () => {
     "pm.workspace_modal.error.path_absolute",
     "Path must be absolute."
   );
-  const startupCopy = resolveStartupCopy(
+  const startupCopy = resolveStartupGateCopy(
     localization.configuredLanguageByCategory.ui_interface
   );
   const startupTitle = t(
