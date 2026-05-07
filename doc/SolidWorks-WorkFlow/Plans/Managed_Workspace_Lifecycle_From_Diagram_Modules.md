@@ -392,6 +392,32 @@ state alone. It must require accepted managed lifecycle evidence for
 `quality_gates`, including a recorded accepted commit in `workspace.plan.md`,
 clean Git, and green artifact validation.
 
+Release delivery note for `v1.2.184`: quality transaction hotfix release is
+built as `codeai-hub-1.2.184.vsix`. The release tightens the Quality Gates
+prompt so the agent must stage artifacts, run
+`npm run plan:commit -- "feat: integrate quality gates baseline"`, verify
+`npm run plan:status`, and keep Git clean before claiming integration. Core now
+keeps Development Tree locked until Quality Gates has an accepted commit entry in
+`doc/TODO/workspace.plan.md`, the quality-gates child plan has advanced beyond
+the integration task, no child-plan debt exists, and `git status --short` is
+clean.
+
+User retest checklist for `v1.2.184`:
+
+- Quality Gates must not finish with only dirty `quality-gates.json.integrated`
+  state; the managed commit must be present first.
+- `doc/TODO/stages/quality-gates/todo-plan.md` must advance past
+  `quality-gates.stream1.task1`, with the commit lifecycle no longer left at
+  `hash: TBD`.
+- `doc/TODO/workspace.plan.md.acceptedCommits` must contain an entry with
+  `stage: quality_gates`, `planPath:
+  doc/TODO/stages/quality-gates/todo-plan.md`, and a non-empty commit hash.
+- Development Tree sessions must not be created while Quality Gates artifacts
+  are dirty, the child plan is still on task 1, or the workspace ledger has no
+  accepted Quality Gates commit.
+- After a valid Quality Gates managed commit, the workspace should be clean and
+  Development Tree may unlock normally.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
