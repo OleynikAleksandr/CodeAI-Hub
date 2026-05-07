@@ -73,10 +73,10 @@ export const normalizeInitialPlanStage = (
 };
 
 export const ensureManagedTodoTree = async (
-  legacyTodoPlanPath: string,
+  todoRootProbePath: string,
   initialStage: ManagedWorkflowPlanStage
 ): Promise<ManagedTodoTreeResult> => {
-  const todoRoot = path.dirname(legacyTodoPlanPath);
+  const todoRoot = path.dirname(todoRootProbePath);
   const workspacePlanPath = path.join(todoRoot, "workspace.plan.md");
   const stagePlanPath = path.resolve(
     path.dirname(path.dirname(todoRoot)),
@@ -84,11 +84,8 @@ export const ensureManagedTodoTree = async (
   );
   let created = false;
 
-  await mkdir(path.dirname(legacyTodoPlanPath), { recursive: true });
+  await mkdir(todoRoot, { recursive: true });
   await mkdir(path.dirname(stagePlanPath), { recursive: true });
-  if (await writeIfMissing(legacyTodoPlanPath, createStagePlan(initialStage))) {
-    created = true;
-  }
   if (await writeIfMissing(stagePlanPath, createStagePlan(initialStage))) {
     created = true;
   }
@@ -135,7 +132,6 @@ const createWorkspacePlan = (params: {
   "executionScopeStatus": "ACTIVE",
   "activeStage": "${params.activeStage}",
   "activePlanPath": "${STAGE_PLANS[params.activeStage]}",
-  "legacyActivePlanPath": "doc/TODO/todo-plan.md",
   "stagePlans": ${JSON.stringify(STAGE_PLANS, null, 2).replace(/\n/g, "\n  ")},
   "acceptedCommits": [],
   "blockers": []

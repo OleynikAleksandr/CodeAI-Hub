@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -23,6 +23,8 @@ const INCLUDED_IN_COMMIT_RE = /hash: included-in-commit/u;
 const WORKSPACE_PLAN_ACTIVE_STAGE_RE = /"activeStage": "diagram_modules"/u;
 const DIAGRAM_STAGE_PLAN_RE =
   /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
+const ROOT_TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
+const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 
 test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package scripts", async () => {
   const workspaceRoot = await createWorkspaceRoot();
@@ -61,15 +63,10 @@ test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package s
       DIAGRAM_STAGE_PLAN_RE
     );
     assert.match(
-      await readFile(
-        path.join(
-          workspaceRoot,
-          "doc/TODO/stages/diagram-modules/todo-plan.md"
-        ),
-        "utf8"
-      ),
+      await readFile(path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH), "utf8"),
       DIAGRAM_PLAN_TASK_RE
     );
+    await assert.rejects(access(path.join(workspaceRoot, ROOT_TODO_PLAN_PATH)));
 
     const packageJson = JSON.parse(
       await readFile(path.join(workspaceRoot, "package.json"), "utf8")
@@ -169,7 +166,7 @@ test("managed plan shim advances the active task inside plan commits", async () 
       { cwd: workspaceRoot }
     );
     const plan = await readFile(
-      path.join(workspaceRoot, "doc/TODO/todo-plan.md"),
+      path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH),
       "utf8"
     );
     const gitStatus = await execFileAsync("git", ["status", "--short"], {
@@ -178,6 +175,7 @@ test("managed plan shim advances the active task inside plan commits", async () 
 
     assert.match(status.stdout, DIAGRAM_NEXT_TASK_RE);
     assert.match(plan, INCLUDED_IN_COMMIT_RE);
+    await assert.rejects(access(path.join(workspaceRoot, ROOT_TODO_PLAN_PATH)));
     assert.equal(gitStatus.stdout.trim(), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

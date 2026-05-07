@@ -152,18 +152,16 @@ const createPlanCliShim = (): string => `#!/usr/bin/env node
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
-const PLAN_PATH = "doc/TODO/todo-plan.md";
+const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const START = "<!-- codeai-plan-state:start -->";
 const END = "<!-- codeai-plan-state:end -->";
+const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
+const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 
-const readState = () => {
-  if (!existsSync(PLAN_PATH)) {
-    throw new Error("Missing doc/TODO/todo-plan.md");
-  }
-  const text = readFileSync(PLAN_PATH, "utf8");
-  const block = text.split(START)[1]?.split(END)[0];
+const parseJsonBlock = (text, start, end, label) => {
+  const block = text.split(start)[1]?.split(end)[0];
   if (!block) {
-    throw new Error("Missing codeai-plan-state block");
+    throw new Error(\`Missing \${label} block\`);
   }
   const fence = String.fromCharCode(96).repeat(3);
   const json = block
@@ -174,7 +172,43 @@ const readState = () => {
   return JSON.parse(json);
 };
 
-const readPlanText = () => readFileSync(PLAN_PATH, "utf8");
+const readWorkspaceState = () => {
+  if (!existsSync(WORKSPACE_PLAN_PATH)) {
+    throw new Error("Missing doc/TODO/workspace.plan.md");
+  }
+  return parseJsonBlock(
+    readFileSync(WORKSPACE_PLAN_PATH, "utf8"),
+    WORKSPACE_START,
+    WORKSPACE_END,
+    "codeai-workspace-plan-state"
+  );
+};
+
+const activePlanPath = () => {
+  const workspaceState = readWorkspaceState();
+  if (
+    !workspaceState.activePlanPath ||
+    typeof workspaceState.activePlanPath !== "string"
+  ) {
+    throw new Error("Workspace plan requires activePlanPath");
+  }
+  return workspaceState.activePlanPath;
+};
+
+const readState = () => {
+  const planPath = activePlanPath();
+  if (!existsSync(planPath)) {
+    throw new Error(\`Missing active managed plan: \${planPath}\`);
+  }
+  return parseJsonBlock(
+    readFileSync(planPath, "utf8"),
+    START,
+    END,
+    "codeai-plan-state"
+  );
+};
+
+const readPlanText = () => readFileSync(activePlanPath(), "utf8");
 
 const validate = () => {
   const state = readState();
@@ -275,7 +309,11 @@ const advancePlanForCommit = (message) => {
     currentTaskId: nextId,
     expectedCommitMessage: message,
   };
-  writeFileSync(PLAN_PATH, replaceState(lines.join("\\n"), nextState), "utf8");
+  writeFileSync(
+    activePlanPath(),
+    replaceState(lines.join("\\n"), nextState),
+    "utf8"
+  );
 };
 
 const command = process.argv[2];
@@ -302,7 +340,7 @@ try {
       throw new Error("No staged changes to commit");
     }
     advancePlanForCommit(message);
-    runGit(["add", PLAN_PATH]);
+    runGit(["add", activePlanPath()]);
     const result = spawnSync("git", ["commit", "-m", message], { stdio: "inherit" });
     process.exitCode = result.status ?? 1;
   } else {
