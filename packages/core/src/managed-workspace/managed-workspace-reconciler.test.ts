@@ -51,3 +51,29 @@ test("ManagedWorkspaceReconciler restores deterministic lifecycle baseline", asy
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("ManagedWorkspaceReconciler remains idempotent after baseline repair", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  const commandRunner = async () => {
+    await mkdir(path.join(workspaceRoot, ".git"), { recursive: true });
+  };
+
+  try {
+    const reconciler = new ManagedWorkspaceReconciler({
+      bootstrapper: new ManagedWorkspaceBootstrapper({
+        commandRunner,
+        createdAt: "2026-05-07T00:00:00.000Z",
+      }),
+    });
+
+    await reconciler.reconcile(workspaceRoot);
+    const second = await reconciler.reconcile(workspaceRoot);
+
+    assert.equal(second.before.ok, true);
+    assert.equal(second.after.ok, true);
+    assert.equal(second.bootstrap.actions.includes("updated_gitignore"), false);
+    assert.equal(second.installer.todoPlanCreated, false);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
