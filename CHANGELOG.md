@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.191] - 2026-05-07
+### Fixed
+- **Plan orchestrator runtime guardrails now fail loudly instead of silently closing or hanging managed workflow work.** Orphan `IN_PROGRESS` tasks are rejected, implicit terminal closeout requires an explicit anchor, and failed plan commands print deterministic repair guidance.
+- **Core now blocks managed workflow progression on active plan debt or blocked plan state.** Downstream stage unlocks wait until `plan:repair`/plan validation recover the lifecycle instead of proceeding over an unfinished transaction.
+- **Application Skeleton completion accepts the agent's lifecycle Markdown table format.** Materialized skeleton output can unlock Quality Gates when declared files exist.
+- **Codex workflow turns default to non-interactive full access.** Core and AppServer defaults avoid invisible permission prompts during managed Git/filesystem work.
+
+### Tests
+- **Targeted regression coverage verifies orchestrator validation, recovery repair, managed workspace blockers, Codex permissions, and Application Skeleton to Quality Gates unlock behavior.**
+
 ## [1.2.190] - 2026-05-07
 ### Fixed
 - **Project Manager now stays behind a startup readiness gate while Core/provider bootstrap is still running.** Workspace actions and Settings are blocked until Core HTTP readiness is available.
