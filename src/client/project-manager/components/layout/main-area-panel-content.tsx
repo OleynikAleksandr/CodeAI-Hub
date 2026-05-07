@@ -6,6 +6,7 @@ import { ProjectManagerSessionView } from "../sessions/project-manager-session-v
 import { api } from "../../api";
 import {
   LocalizationProvider,
+  useLocalization,
   useResolvedLocalization,
 } from "../../../ui/src/app-host/use-localization";
 import SettingsView from "../../../ui/src/components/settings-view";
@@ -30,7 +31,9 @@ import type { BranchNodeSelection } from "./main-area-utils";
 import {
   resolveConfirmableStageFromTool,
   resolveStartupStageFromTool,
+  resolveWorkflowToolHeaderTitle,
 } from "./workflow-stage-tool-routing";
+import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 import {
   renderWorkflowStageHelp,
   renderWorkflowStagePanel,
@@ -96,7 +99,7 @@ const isManagedLifecycleActive = (
 ): boolean => snapshot?.stages.diagram_modules !== undefined && snapshot.stages.diagram_modules !== "idle";
 
 const isReadOnlyUpstreamTool = (activeTool: string | null): boolean =>
-  activeTool === "Description" || activeTool === "Virtual Simulation";
+  activeTool === "Description" || activeTool === VIRTUAL_SIMULATION_TOOL_LABEL;
 
 interface SelectedArtifact {
   readonly workspacePath: string;
@@ -369,6 +372,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
   workspacePath,
   workspaceSlug,
 }) => {
+  const { t } = useLocalization();
   const localizationSyncStatus = useLocalizationSyncStatus();
   const stageId = resolveStartupStageFromTool(activeTool);
   const confirmableStage = resolveConfirmableStageFromTool(activeTool);
@@ -427,13 +431,24 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     isReadOnlyUpstreamTool(activeTool) &&
     isManagedLifecycleActive(workflowSnapshot)
   ) {
+    const stageTitle =
+      resolveWorkflowToolHeaderTitle(activeTool) ?? activeTool ?? "Workflow stage";
     return (
       <div className="pm-placeholder">
-        <strong>{activeTool} is read-only.</strong>
+        <strong>
+          {t(
+            "ui_interface",
+            "pm.workflow.upstream_readonly.title",
+            "{stage} is read-only.",
+            { stage: stageTitle }
+          )}
+        </strong>
         <br />
-        Managed workspace lifecycle has started at Diagram Modules. Existing
-        artifacts remain available from the tree, but this upstream stage can no
-        longer be edited.
+        {t(
+          "ui_interface",
+          "pm.workflow.upstream_readonly.body",
+          "Managed workspace lifecycle has started at Diagram Modules. Existing artifacts remain available from the tree, but this upstream stage can no longer be edited."
+        )}
       </div>
     );
   }

@@ -7,6 +7,10 @@ const SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/layout/main-area-panel-content.tsx"
 );
+const UI_INTERFACE_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "assets/localization/source/en/ui_interface.json"
+);
 
 test("main-area panel content keeps hook declarations ahead of localization busy returns", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
@@ -94,4 +98,40 @@ test("main-area panel content routes application skeleton artifacts and help", a
   );
   assert.equal(source.includes("renderWorkflowStageHelp(activeTool)"), true);
   assert.equal(source.includes("renderWorkflowStagePanel({"), true);
+});
+
+test("managed upstream read-only panel covers virtual simulation and localization keys", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+  const uiInterface = JSON.parse(
+    await readFile(UI_INTERFACE_SOURCE_PATH, "utf8")
+  ) as Record<string, string>;
+
+  assert.equal(source.includes("useLocalization,"), true);
+  assert.equal(
+    source.includes('from "./use-workflow-tool-select"'),
+    true
+  );
+  assert.equal(
+    source.includes('activeTool === VIRTUAL_SIMULATION_TOOL_LABEL'),
+    true
+  );
+  assert.equal(
+    source.includes('"pm.workflow.upstream_readonly.title"'),
+    true
+  );
+  assert.equal(
+    source.includes('"pm.workflow.upstream_readonly.body"'),
+    true
+  );
+  assert.equal(
+    uiInterface["pm.workflow.upstream_readonly.title"],
+    "{stage} is read-only."
+  );
+  assert.equal(
+    uiInterface["pm.workflow.upstream_readonly.body"]?.includes(
+      "Managed workspace lifecycle has started at Diagram Modules."
+    ),
+    true
+  );
+  assert.equal(source.includes("{activeTool} is read-only."), false);
 });
