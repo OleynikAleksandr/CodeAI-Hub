@@ -135,6 +135,7 @@ const ensureGitIgnoreEntries = async (
     ".codeai-hub/logs/",
     ".codeai-hub/cache/",
     ".codeai-hub/*/continuity/",
+    ".codeai-hub/*/diagram_modules/module-map.flow.json",
     ".codeai-hub/*/workflow/state.json",
   ];
   const missingLines = requiredLines.filter(

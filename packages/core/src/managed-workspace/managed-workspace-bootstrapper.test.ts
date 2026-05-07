@@ -10,6 +10,8 @@ import {
 
 const CACHE_GITIGNORE_RE = /\.codeai-hub\/cache\//u;
 const CONTINUITY_GITIGNORE_RE = /\.codeai-hub\/\*\/continuity\//u;
+const DIAGRAM_LAYOUT_SIDECAR_GITIGNORE_RE =
+  /\.codeai-hub\/\*\/diagram_modules\/module-map\.flow\.json/u;
 const DS_STORE_GITIGNORE_RE = /^\.DS_Store$/mu;
 const LOGS_GITIGNORE_RE = /\.codeai-hub\/logs\//u;
 const RUNTIME_GITIGNORE_RE = /\.codeai-hub\/runtime\//u;
@@ -59,6 +61,7 @@ test("ManagedWorkspaceBootstrapper creates baseline directories and manifest", a
     assert.match(gitignore, LOGS_GITIGNORE_RE);
     assert.match(gitignore, CACHE_GITIGNORE_RE);
     assert.match(gitignore, CONTINUITY_GITIGNORE_RE);
+    assert.match(gitignore, DIAGRAM_LAYOUT_SIDECAR_GITIGNORE_RE);
     assert.match(gitignore, WORKFLOW_STATE_GITIGNORE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
@@ -86,6 +89,11 @@ test("ManagedWorkspaceBootstrapper is idempotent for existing gitignore entries"
     assert.equal(gitignore.split(".DS_Store").length - 1, 1);
     assert.equal(gitignore.split(".codeai-hub/runtime/").length - 1, 1);
     assert.equal(gitignore.split(".codeai-hub/*/continuity/").length - 1, 1);
+    assert.equal(
+      gitignore.split(".codeai-hub/*/diagram_modules/module-map.flow.json")
+        .length - 1,
+      1
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
