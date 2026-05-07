@@ -256,6 +256,8 @@ Live retest note for `v1.2.175`: Application Skeleton activation now creates the
 
 Local smoke note for `v1.2.176`: release build completed with VSIX `codeai-hub-1.2.176.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.176`. The targeted fixes cover fenced plan-state parsing, stage-aware managed plan seeding for `Application Skeleton` / `Quality Gates`, and Application Skeleton prompt/contract requirements for Git-tracked placeholders plus `npm run plan:commit -- "feat: materialize application skeleton"` before the final materialization response. User retest should verify Application Skeleton now commits materialized files and Quality Gates unlocks from a clean managed workspace.
 
+Local smoke note for `v1.2.177`: release build completed with VSIX `codeai-hub-1.2.177.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.177`. A compiled-Core smoke workspace verified `git config --local core.hooksPath` returns `.husky`, `.gitignore` contains `.DS_Store`, and `npm run plan:status` still seeds Application Skeleton with `Expected Commit: feat: materialize application skeleton`. User retest should verify the same preflight facts in a fresh Project Manager workspace before accepting the Application Skeleton materialization contract.
+
 ## 11. Implementation Strategy
 
 The refactor must be incremental:
