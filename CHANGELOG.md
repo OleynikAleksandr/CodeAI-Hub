@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.171] - 2026-05-07
+### Fixed
+- **Quality Gates Baseline now starts from a compact two-phase prompt.** The bundled prompt and contract separate draft artifacts from post-acceptance file-system integration, persist user-selected tooling such as Ultracite and Knip into `quality-gates.md` / `quality-gates.json`, and avoid duplicate runtime phase instructions.
+
+### Tests
+- **Quality Gates prompt and contract consistency are covered by targeted checks.** Core tests verify synced bundled templates, the compact integration-aware prompt surface, and stricter `quality-gates.json` validation for advisory, planned, and not-integrated gates.
+
 ## [1.2.170] - 2026-05-06
 ### Fixed
 - **Application Skeleton validation now requires canonical identifier fields.** Materialized maps must use `partId` for Product Parts, `clusterId` for Clusters, and `moduleId` for clustered and standalone Modules, so generic `id` fields cannot silently pass the runtime gate.
