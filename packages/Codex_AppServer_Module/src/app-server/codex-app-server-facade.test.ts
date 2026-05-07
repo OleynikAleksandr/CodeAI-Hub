@@ -154,7 +154,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       };
       sessions: Map<string, unknown>;
       workspace: {
-        defaultApprovalMode: string;
+        defaultApprovalMode?: string;
         defaultModel: string;
         defaultSandboxMode?: string;
         workspacePath: string;
@@ -178,7 +178,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       handshakedThreadIds: Set<string>;
       sessions: Map<string, unknown>;
       workspace: {
-        defaultApprovalMode: string;
+        defaultApprovalMode?: string;
         defaultModel: string;
         defaultSandboxMode?: string;
         workspacePath: string;
@@ -193,7 +193,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
       handshakedThreadIds: Set<string>;
       sessions: Map<string, unknown>;
       workspace: {
-        defaultApprovalMode: string;
+        defaultApprovalMode?: string;
         defaultModel: string;
         defaultSandboxMode?: string;
         workspacePath: string;
@@ -204,7 +204,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
     facade as unknown as {
       handshakedThreadIds: Set<string>;
       workspace: {
-        defaultApprovalMode: string;
+        defaultApprovalMode?: string;
         defaultModel: string;
         defaultSandboxMode?: string;
         workspacePath: string;
@@ -214,14 +214,13 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
   (
     facade as unknown as {
       workspace: {
-        defaultApprovalMode: string;
+        defaultApprovalMode?: string;
         defaultModel: string;
         defaultSandboxMode?: string;
         workspacePath: string;
       };
     }
   ).workspace = {
-    defaultApprovalMode: "on-request",
     defaultModel: "gpt-5.5",
     workspacePath: "/workspace/default",
   };
@@ -236,7 +235,7 @@ test("CodexAppServerFacade applies CodeAI Hub instruction profile on thread star
     readonly config?: unknown;
     readonly sandbox?: string;
   };
-  assert.equal(params.approvalPolicy, "on-request");
+  assert.equal(params.approvalPolicy, "never");
   assert.equal(params.sandbox, "danger-full-access");
   assert.match(
     params.baseInstructions ?? "",
