@@ -10,6 +10,11 @@ const SIZE_POLICY_RE = /Source files and classes must stay <= 500 lines/;
 const STACK_RESEARCH_RE = /stack-specific research/;
 const NEEDS_USER_DECISION_RE = /needs_user_decision/;
 const INTEGRATION_PATHS_RE = /planned integration paths/;
+const CORE_HOOK_REGISTRY_RE =
+  /Core owns the managed lifecycle baseline and hook registry/;
+const NO_DIRECT_HUSKY_RE = /Do not edit `\.husky` hooks directly/;
+const NO_PLANNED_DUPLICATES_RE =
+  /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
 const LEGACY_RESEARCH_PASS_RE = /Required Research And Design Pass/;
 const HARDCODED_ULTRACITE_RE =
   /Ultracite may be the primary lint\/format preset/;
@@ -24,6 +29,9 @@ const COMMANDS_MAP_RULE_RE =
   /`commands` must be an object\/map keyed by gate id/;
 const ADVISORY_NO_BLOCKING_RE =
   /Advisory gates must not have `blockingIn` phases/;
+const CONTRACT_HOOK_BOUNDARY_RE = /Managed Hook Boundary/;
+const CONTRACT_NO_DIRECT_HUSKY_RE =
+  /Core renders managed hook wiring from the validated gate manifest/;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -40,6 +48,9 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, STACK_RESEARCH_RE);
   assert.match(prompt, NEEDS_USER_DECISION_RE);
   assert.match(prompt, INTEGRATION_PATHS_RE);
+  assert.match(prompt, CORE_HOOK_REGISTRY_RE);
+  assert.match(prompt, NO_DIRECT_HUSKY_RE);
+  assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
   assert.doesNotMatch(prompt, HARDCODED_ULTRACITE_RE);
   assert.doesNotMatch(prompt, HARDCODED_KNIP_RE);
@@ -56,6 +67,9 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, PLANNED_PATHS_RE);
   assert.match(contract, COMMANDS_MAP_RULE_RE);
   assert.match(contract, ADVISORY_NO_BLOCKING_RE);
+  assert.match(contract, CONTRACT_HOOK_BOUNDARY_RE);
+  assert.match(contract, CONTRACT_NO_DIRECT_HUSKY_RE);
+  assert.match(contract, NO_PLANNED_DUPLICATES_RE);
 });
 
 test("quality gates bundled templates stay synced with agent assets", async () => {

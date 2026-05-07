@@ -5,6 +5,12 @@
 - `quality-gates.md`: human-readable gate baseline, tooling rationale, integration plan, open decisions, and acceptance checklist.
 - `quality-gates.json`: machine-readable command and integration contract for Core and future workflow/node agents.
 
+## Managed Hook Boundary
+
+- Core owns git, `.husky` hooks, plan scripts, `doc/TODO/todo-plan.md`, and `.codeai-hub/workflow` lifecycle ledgers.
+- Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, and `quality-gates.json` manifest fields.
+- Do not edit `.husky` hooks directly. Core renders managed hook wiring from the validated gate manifest.
+
 ## JSON Shape
 
 ```json
@@ -32,7 +38,7 @@
       "plannedIntegrationPaths": ["package.json", "format/lint config"]
     }
   },
-  "requiredBeforeCommit": ["format-check"],
+  "requiredBeforeCommit": [],
   "requiredBeforeModuleExecution": [],
   "requiredBeforePush": [],
   "requiredBeforeRelease": [],
@@ -64,6 +70,7 @@
 - Advisory gates must not have `blockingIn` phases.
 - Deferred or planned gates must not appear in active required arrays.
 - A not-integrated active gate must include `integrationRequired: true` and non-empty `plannedIntegrationPaths`.
+- `plannedRequiredAfterIntegration` must not duplicate ids already listed in `requiredBeforeCommit`, `requiredBeforeModuleExecution`, `requiredBeforePush`, or `requiredBeforeRelease`.
 - Selected tools must appear in tooling rationale, command entries, and planned integration paths.
 - `accepted: true` requires explicit user acceptance.
 - `integrated: true` requires actual filesystem integration plus smoke evidence.
