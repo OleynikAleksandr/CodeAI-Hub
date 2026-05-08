@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import type { Settings } from "../../ui/src/components/settings/settings-state-model";
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 const installWindowStub = (): void => {
@@ -47,6 +48,66 @@ const createWorkflowState = (
     },
   },
   ...overrides,
+});
+
+const createSettings = (): Settings => ({
+  general: {
+    coreControls: { allowRestart: true },
+    localization: {
+      categories: {
+        artifactsForTheUser: "en",
+        interactiveTemplates: "en",
+        messagesForTheUser: "en",
+        reasoning: "en",
+        systemFeedback: "en",
+        uiHelperText: "en",
+        uiInterface: "en",
+        uiLabels: "en",
+        userGuidance: "en",
+        workflowTerms: "en",
+      },
+      defaultLanguage: "en",
+      engineId: "google-gtx",
+      glossaryEnabled: false,
+      reasoningEngineId: "google-gtx",
+      workflowTermsPolicy: "keep_english",
+    },
+    responsePolicy: {
+      mode: "hybrid",
+      strictOutput: {
+        instructionText: "",
+        schemaText: "{}",
+      },
+    },
+    textToSpeech: { rate: 1 },
+  },
+  providers: {
+    claude: {
+      autoUpdate: { enabled: false },
+      defaultModel: "sonnet",
+      sessionContinuity: { remainingPercentThreshold: 30 },
+      thinking: { enabled: true, effort: "medium" },
+      thinkingDisplaySyncEnabled: true,
+    },
+    codex: {
+      autoUpdate: { enabled: false },
+      defaultModel: "gpt-5.2",
+      reasoningByModel: { "gpt-5.2": "medium", "gpt-5.4": "low" },
+      reasoningSummaryEnabled: true,
+      sessionContinuity: { remainingPercentThreshold: 30 },
+      thinkingDisplaySyncEnabled: true,
+    },
+    gemini: {
+      autoUpdate: { enabled: false },
+      defaultModel: "gemini-3-flash-preview",
+      sessionContinuity: {
+        contextWindowTokenLimit: 1_000_000,
+        remainingPercentThreshold: 30,
+      },
+      thinkingDisplaySyncEnabled: true,
+      thinkingLevelByModel: { "gemini-3-flash-preview": "low" },
+    },
+  },
 });
 
 test("startDiagramModules starts from virtual-simulation artifact without completed status", async () => {
@@ -361,4 +422,67 @@ test("startVirtualSimulation reuses active continuity session instead of sending
 
   assert.equal(sessionId, "existing-vs-session");
   assert.equal(createdSessionId, "existing-vs-session");
+});
+
+test("workflow starts persist selected model defaults for supported providers", async () => {
+  installWindowStub();
+  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
+
+  const savedSettings: Settings[] = [];
+  const createService = () =>
+    new WorkflowStepStartService({
+      getWorkflowState: async () =>
+        createWorkflowState({
+          description: {
+            finalPath:
+              ".codeai-hub/demo-workspace/description/Final_Description.md",
+            questionnairePath:
+              ".codeai-hub/demo-workspace/description/questionnaire.md",
+            updatedAt: "2026-03-18T10:00:00.000Z",
+          },
+        }),
+      getSettingsPayload: () => ({ settings: createSettings() }),
+      saveSettings: (settings) => {
+        savedSettings.push(settings);
+      },
+      submitService: {
+        submitQuestionnaire: async (params) => `${params.providerId}-session`,
+      },
+    });
+
+  await createService().startVirtualSimulation({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "claudeCodeCli",
+    modelId: "opus",
+    reasoning: "high",
+  });
+  await createService().startVirtualSimulation({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "codexCli",
+    modelId: "gpt-5.4",
+    reasoning: "xhigh",
+  });
+  await createService().startVirtualSimulation({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "geminiCli",
+    modelId: "gemini-3-flash-preview",
+    reasoning: "medium",
+  });
+
+  assert.equal(savedSettings[0]?.providers.claude.defaultModel, "opus");
+  assert.equal(savedSettings[0]?.providers.claude.thinking.effort, "high");
+  assert.equal(savedSettings[1]?.providers.codex.defaultModel, "gpt-5.4");
+  assert.equal(savedSettings[1]?.providers.codex.reasoningByModel["gpt-5.4"], "xhigh");
+  assert.equal(
+    savedSettings[2]?.providers.gemini.thinkingLevelByModel[
+      "gemini-3-flash-preview"
+    ],
+    "medium"
+  );
 });

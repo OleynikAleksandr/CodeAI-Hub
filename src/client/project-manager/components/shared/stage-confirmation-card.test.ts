@@ -18,10 +18,22 @@ test("stage confirmation card keeps explicit provider override in start path", a
   assert.equal(source.includes("const [selectedProviderId, setSelectedProviderId] ="), true);
   assert.equal(source.includes("resolvePreferredWorkflowProviderId({"), true);
   assert.equal(source.includes("providerId: selectedProviderId,"), true);
+  assert.equal(source.includes("modelId: selectedModelId,"), true);
+  assert.equal(source.includes("reasoning: selectedReasoning,"), true);
   assert.equal(source.includes("startService.startVirtualSimulation("), true);
   assert.equal(source.includes("startService.startDiagramModules("), true);
   assert.equal(source.includes("startService.startApplicationSkeleton("), true);
   assert.equal(source.includes("startService.startQualityGates("), true);
+});
+
+test("stage confirmation card exposes model and reasoning controls", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("getStartCardModelOptions("), true);
+  assert.equal(source.includes("getStartCardReasoningOptions("), true);
+  assert.equal(source.includes('"pm.confirmation_card.model_label"'), true);
+  assert.equal(source.includes('"pm.confirmation_card.reasoning_label"'), true);
+  assert.equal(source.includes("<select"), true);
 });
 
 test("stage confirmation card keeps previous-step badge and override helper copy", async () => {
