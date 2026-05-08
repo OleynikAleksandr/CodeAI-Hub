@@ -72,9 +72,12 @@ After integrated Quality Gates, Core unlocks Development Tree read model but doe
 
 Core acceptance is an active loop, not a passive lock.
 
-When a managed stage agent commits work, Core must verify the actual workspace
-result against the stage contract before unlocking downstream work. This applies
-to every managed trunk stage that participates in the plan/commit lifecycle:
+When a managed stage agent produces work, Core must verify the actual workspace
+result against the stage contract before unlocking downstream work. Core owns
+the durable Git transaction for accepted managed documentation stages; provider
+agents own artifact content and must not be required to run `npm run
+plan:commit`. This applies to every managed trunk stage that participates in the
+plan/commit lifecycle:
 
 - `Diagram Modules`: planned Product Parts must resolve to valid generated
   Product Part artifacts, and `blocked_ambiguity` must be resolved in the
@@ -98,7 +101,16 @@ If acceptance fails, Core must:
 - resend feedback after a new agent repair commit if the same validation still
   fails, because that represents a new failed acceptance attempt;
 - re-run acceptance on the next workflow state read after the agent repairs and
-  commits the stage.
+  revises the stage.
+
+If acceptance passes, Core must:
+
+- validate that dirty Git state contains only files owned by the active stage;
+- stage only the active stage allowlist and reject any staged out-of-owner file;
+- execute the managed child-plan commit with the current expected commit
+  message;
+- re-read plan status, stage validation, and Git clean state after the commit;
+- unlock the next stage only from that post-commit snapshot.
 
 Core must reserve the feedback signature before awaiting provider/session
 delivery. If delivery fails, the reservation is released so the next state read

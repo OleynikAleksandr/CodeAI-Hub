@@ -46,6 +46,19 @@ Core may create a managed documentation commit only when all of these conditions
 
 If any condition fails, Core must not commit. It sends feedback to the owning agent session with the concrete blocker.
 
+The implemented runtime path is `workflow-state` driven. When Core reads workflow state after a managed stage artifact changes, it first runs the stage validator. A green `Diagram Modules`, `Application Skeleton`, or `Quality Gates Baseline` validator may trigger the managed documentation commit transaction before Core computes the final downstream gating payload. After a successful transaction, Core reads the child plan, Git state, and stage progress again and uses that post-commit snapshot for unlock and feedback decisions.
+
+The transaction is intentionally narrow:
+
+- it resolves the active child plan and expected commit from the managed workspace state;
+- it reads dirty Git state with untracked files included;
+- it stages only active-stage owned paths;
+- it rejects any staged path outside the same owned-path allowlist;
+- it invokes `npm run plan:commit -- "<expected commit>"` itself;
+- it requires a clean Git tree after the commit before downstream unlock.
+
+Provider sessions are not part of this transaction. They may produce files and report content readiness, but they do not run the plan commit, do not advance the child plan, and do not prove acceptance by shell output.
+
 ## Ownership Allowlist Principle
 
 Each managed stage must have an explicit owned-path allowlist.
@@ -58,6 +71,8 @@ Examples:
 - Development Tree documentation node: only that node's draft/specification/contract paths and the Core-owned node lifecycle metadata required for that node.
 
 Any dirty file outside the active stage allowlist is a hard blocker.
+
+Out-of-owner dirty files are reported as Core acceptance feedback, not as a shell instruction for the provider. The repair request must name the dirty paths and keep the next stage blocked until the user or owning workflow resolves the unrelated changes.
 
 ## Agent Prompt Rule
 
@@ -77,4 +92,3 @@ The user should see the result as a stable state machine:
 4. Core either unlocks the next step or sends actionable feedback.
 
 The user should not need to manually run `npm run plan:commit` for managed documentation stages.
-
