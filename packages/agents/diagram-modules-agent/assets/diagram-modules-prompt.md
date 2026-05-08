@@ -6,15 +6,16 @@ CodeAI Hub turns a product idea into a sequence of artifacts that are refined st
 The `Diagram Modules` step comes after `Description` and `Virtual Simulation`.
 Its purpose is to turn the already collected understanding of the product and system behavior into a staged modular map of the system.
 
-Your task in this step is to use `Final_Description.md`, `virtual-simulation.md`, the project materials you actually read, and the current context to first materialize `product-parts.index.md`, and then materialize one `product-parts/<part-id>.md` at a time after user confirmation, translating the product understanding into `Product Part`, clusters, and standalone modules.
+Your task in this step is to use `Final_Description.md`, `virtual-simulation.md`, the project materials you actually read, and the current context to materialize a complete reviewable Diagram Modules structure: `product-parts.index.md` plus one valid `product-parts/<part-id>.md` file for every `Product Part` declared in the index.
 
 Important:
 - the user describes the product in plain language;
 - the user is not required to know terms such as `shell`, `runtime`, `cluster`, `module`, `facade`, or `boundary`;
 - do not assume that upstream `Description` or `Virtual Simulation` already contain a final module list or a fully shaped modular map;
 - you must translate the user's description and previous artifacts into a canonical staged modular map yourself;
-- do not revert this step back to a giant single-turn generation of all product parts;
-- each turn is a step-by-step discussion with the user; the agent must wait for explicit confirmation before moving to the next product part.
+- do not collapse the whole structure into one giant artifact; keep one bounded file per `Product Part`;
+- the first useful review surface should be a complete proposed structure, even if the user later corrects it;
+- discussion with the user happens against the generated structure, not before every single `Product Part` file exists.
 
 The resulting staged artifact set must already be understandable to the user at the index/skeleton stage and provide the runtime with a strong enough basis to visualize the Module Graph.
 
@@ -63,17 +64,22 @@ Managed lifecycle:
 - After each accepted staged artifact write or revision, inspect `git status --short` and commit your Diagram Modules changes through `npm run plan:commit -- "docs: update diagram modules artifacts"` before your final response for that turn.
 
 Critical rule:
-- on the first visible turn, the canonical direct output of this step is `product-parts.index.md`;
-- on a part turn (after user confirmation), the canonical direct output is only one target `product-parts/<part-id>.md`;
+- on the first visible turn, the canonical output starts with `product-parts.index.md`, then continues until every declared `Product Part` has a matching valid `product-parts/<part-id>.md`;
 - staged Markdown artifacts are allowed and expected for this step;
 - the visual diagram (Module Graph) is built separately by the runtime from staged artifacts;
 - the layout sidecar `module-map.flow.json` is not a semantic artifact and must not be created by you;
 - relation lines and cross-part wiring are not required for the first useful slice and must not block structure materialization;
 - do not create Mermaid or JSON as a replacement for staged Markdown artifacts.
 
-Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` (only the list of product parts with short descriptions, WITHOUT clusters and modules), ask questions about the composition, and WAIT for the user's response.
-If the user confirms the composition or asks to detail a specific product part, write only the corresponding `product-parts/<part-id>.md`.
-Do not move to the next product part without explicit user confirmation.
+Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` with the list of product parts and short descriptions, then create a separate `product-parts/<part-id>.md` for each declared part. Keep each file focused and bounded; do not generate one monolithic inventory file.
+
+Before the final response, perform the same observable completion check Core will perform:
+- every `Product Part` id declared in `product-parts.index.md` has a corresponding `product-parts/<part-id>.md`;
+- each Product Part file is non-empty and contains the required staged structure for clusters/modules or a clear statement that no further module detail exists in the upstream artifacts;
+- all staged Diagram Modules artifacts are committed through `npm run plan:commit -- "docs: update diagram modules artifacts"`;
+- `git status --short` is empty after the commit.
+
+If the user later asks for corrections, revise the affected staged artifacts and repeat the completion check before reporting the step ready.
 
 ### 2.1) Language of the final user-facing staged artifacts
 - the runtime may send a `Workflow runtime language contract` with separate chat and artifact prose languages;

@@ -66,8 +66,10 @@ Integration algorithm:
 2. Verify `npm run plan:status` shows the integration task and expected commit `feat: integrate quality gates baseline`; verify `git status --short` is empty before creating package files, scripts, configs, or CI files.
 3. Mark acceptance in the contract, then set integration state to `in_progress`.
 4. Create or update only accepted gate infrastructure: package scripts/devDependencies or equivalent stack files, selected lint/format/static-analysis config, architecture/layout/size scripts, gate manifest entries, lifecycle hook wiring, and CI/update files selected by the contract.
-   - `.husky/pre-commit` must run every gate id listed in `requiredBeforeCommit`, either directly (`npm run qg:<gate>`) or through a package script such as `qg:before-commit` that dispatches `requiredBeforeCommit` from `quality-gates.json`.
-   - `.husky/pre-push` must run every gate id listed in `requiredBeforePush`, either directly (`npm run qg:<gate>`) or through a package script such as `qg:before-push` that dispatches `requiredBeforePush` from `quality-gates.json`.
+   - `package.json` must expose an exact script key `qg:<gate-id>` for every gate id listed in `requiredBeforeCommit` or `requiredBeforePush`.
+   - `.husky/pre-commit` must explicitly call every gate id listed in `requiredBeforeCommit` as `npm run qg:<gate-id>`.
+   - `.husky/pre-push` must explicitly call every gate id listed in `requiredBeforePush` as `npm run qg:<gate-id>`.
+   - Aggregate scripts such as `qg:before-commit` or `qg:before-push` are allowed only as additional convenience commands; they are not sufficient hook wiring evidence by themselves.
    - Preserve existing Core lifecycle commands such as `plan:validate`; append the Quality Gates wiring instead of replacing the hook.
 5. Avoid feature or business implementation code.
 6. Run the lightest feasible smoke checks for created gates.
@@ -107,7 +109,8 @@ Before each final response, verify:
 - user-selected tools and policies are reflected in both artifacts;
 - concrete tools are selected only from user preference, project evidence, or stack-specific research;
 - every required gate exists in `commands`;
-- each non-empty hook scope is actually wired into `.husky/pre-commit` / `.husky/pre-push` before `integrated: true`;
+- each non-empty hook scope is actually wired into `.husky/pre-commit` / `.husky/pre-push` with explicit `npm run qg:<gate-id>` calls before `integrated: true`;
+- every required hook gate id has a matching exact `package.json` script key and matching `proposedCommand` in `quality-gates.json`;
 - advisory gates have no blocking phases;
 - deferred/planned gates are not in active required arrays;
 - each not-integrated active gate has planned integration paths;

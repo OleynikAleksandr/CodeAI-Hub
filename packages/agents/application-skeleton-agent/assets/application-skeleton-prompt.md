@@ -75,6 +75,16 @@ After materialization, remove stale draft/future claims from both artifacts, inc
 
 Do not create Quality Gates contracts, hooks, CI, final lint/test/build configs, product feature code, or Product Part / Cluster / Module sessions. The Quality Gates Baseline stage owns gate integration.
 
+Before committing materialization, run a Core-observable self-audit:
+- `application-skeleton-map.json` reports `reviewState: "materialized"`, `accepted: true`, `materialized: true`, and `materializationState: "materialized"`;
+- `application-skeleton.md` reports the same materialized status fields and no longer describes a draft or future filesystem state;
+- every declared Product Part, Cluster, and Module `codePath` exists on disk;
+- every path listed in `materializedPaths` exists on disk;
+- every materialized Product Part, Cluster, and Module directory contains a tracked `README.md` placeholder so Git records the skeleton;
+- `deferredMaterialization` contains only intentional skips that are also explained in the Markdown artifact.
+
+If any script, patch, or file write fails during materialization, do not commit a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then commit.
+
 Before the final response after materialization, use the existing managed lifecycle:
 - run `npm run plan:status` and verify the current expected commit is `feat: materialize application skeleton`;
 - run `git status --short`;
