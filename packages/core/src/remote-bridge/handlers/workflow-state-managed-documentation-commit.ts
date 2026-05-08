@@ -29,37 +29,10 @@ const hasCommittableManagedStage = (
         context.managedGitStatus.dirtyByStage.quality_gates.length > 0)
   );
 
-export const commitManagedDocumentationStageIfReady = async (params: {
-  readonly context: ManagedDocumentationProgressContext;
-  readonly logger: Logger;
-  readonly transaction: ManagedDocumentationCommitTransaction;
+const readLatestManagedDocumentationProgress = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<ManagedDocumentationProgressContext> => {
-  if (!hasCommittableManagedStage(params.context)) {
-    return params.context;
-  }
-  const commitResult = await params.transaction
-    .commitAcceptedStage({
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-    })
-    .catch((error) => {
-      params.logger.warn("Managed documentation commit transaction failed", {
-        error: error instanceof Error ? error.message : String(error),
-        workspaceSlug: params.workspaceSlug,
-      });
-      return null;
-    });
-  if (commitResult?.status !== "committed") {
-    return commitResult?.status === "blocked" && commitResult.stage
-      ? attachOutOfOwnerDirtyFiles({
-          context: params.context,
-          files: commitResult.unmanagedDirtyFiles,
-          stage: commitResult.stage,
-        })
-      : params.context;
-  }
   const [
     diagramModulesProgress,
     applicationSkeletonProgress,
@@ -77,6 +50,41 @@ export const commitManagedDocumentationStageIfReady = async (params: {
     managedGitStatus,
     qualityGatesProgress,
   };
+};
+
+export const commitManagedDocumentationStageIfReady = async (params: {
+  readonly context: ManagedDocumentationProgressContext;
+  readonly logger: Logger;
+  readonly transaction: ManagedDocumentationCommitTransaction;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<ManagedDocumentationProgressContext> => {
+  const latestContext = await readLatestManagedDocumentationProgress(params);
+  if (!hasCommittableManagedStage(latestContext)) {
+    return latestContext;
+  }
+  const commitResult = await params.transaction
+    .commitAcceptedStage({
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    })
+    .catch((error) => {
+      params.logger.warn("Managed documentation commit transaction failed", {
+        error: error instanceof Error ? error.message : String(error),
+        workspaceSlug: params.workspaceSlug,
+      });
+      return null;
+    });
+  if (commitResult?.status !== "committed") {
+    return commitResult?.status === "blocked" && commitResult.stage
+      ? attachOutOfOwnerDirtyFiles({
+          context: latestContext,
+          files: commitResult.unmanagedDirtyFiles,
+          stage: commitResult.stage,
+        })
+      : latestContext;
+  }
+  return readLatestManagedDocumentationProgress(params);
 };
 
 const attachOutOfOwnerDirtyFiles = (params: {

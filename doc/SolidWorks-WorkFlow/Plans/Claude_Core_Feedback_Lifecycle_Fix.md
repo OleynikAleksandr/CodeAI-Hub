@@ -56,3 +56,7 @@ locked across Core-owned post-turn processing.
   `npm run build --workspace=@codeai-hub/core`.
 - 2026-05-08: User explicitly confirmed release assembly after deleting the
   accidental untracked `README 19.04.22 19.04.22.md` scratch file.
+- 2026-05-08 retest found a stale workflow-state poll issue: Core could send
+  Diagram Modules feedback from an old progress/Git snapshot captured while
+  Claude was still writing Product Part files. The repair is to refresh managed
+  stage progress and Git status immediately before managed commit/feedback.
