@@ -10,11 +10,23 @@ const readWorkflowControl = (
   return turnOptions.workflowControl;
 };
 
+const readUserMessageVisibility = (
+  turnOptions?: Record<string, unknown>
+): string | null => {
+  const value = turnOptions?.userMessageVisibility;
+  return typeof value === "string" ? value : null;
+};
+
 export const shouldHideUserMessage = (
   turnOptions?: Record<string, unknown>
 ): boolean => {
   const workflowControl = readWorkflowControl(turnOptions);
-  return workflowControl?.visibility === "hidden";
+  const visibility = readUserMessageVisibility(turnOptions);
+  return (
+    workflowControl?.visibility === "hidden" ||
+    visibility === "hidden" ||
+    visibility === "deferred"
+  );
 };
 
 export const stripInternalWorkflowTurnOptions = (

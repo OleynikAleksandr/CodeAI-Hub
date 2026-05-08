@@ -13,6 +13,7 @@ interface DialogMessagePayload {
   readonly role?: string;
   readonly tag?: string;
   readonly timestamp?: string;
+  readonly uuid?: string;
 }
 
 interface SessionIdChangedPayload {
@@ -71,6 +72,17 @@ interface SessionProviderEventRouterDependencies {
   ) => void;
   readonly workspaceRuntime?: WorkspaceRuntimeFacade;
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readStringField = (
+  record: Record<string, unknown> | null,
+  key: string
+): string | null => {
+  const value = record?.[key];
+  return typeof value === "string" ? value : null;
+};
 
 export class SessionProviderEventRouter {
   private readonly deps: SessionProviderEventRouterDependencies;
@@ -156,6 +168,9 @@ export class SessionProviderEventRouter {
       case "turn_started":
         this.deps.emitTurnStateEvent({ sessionId, state: "running" });
         break;
+      case "user_input":
+        this.appendDeferredUserInput(sessionId, event);
+        break;
       case "turn_failed":
         this.deps.clearPostTurnContextDecision(sessionId);
         this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
@@ -194,9 +209,36 @@ export class SessionProviderEventRouter {
         this.deps.appendProviderMessage(sessionId, "system", event);
         this.broadcastRuntimeModelUpdate(sessionId, event);
         break;
+      case "model_info":
+        this.broadcastRuntimeModelUpdate(sessionId, event);
+        break;
       default:
         break;
     }
+  }
+
+  private appendDeferredUserInput(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): void {
+    const eventRecord = event as unknown as Record<string, unknown>;
+    const data = isRecord(eventRecord.data) ? eventRecord.data : null;
+    const visibility =
+      readStringField(eventRecord, "userMessageVisibility") ??
+      readStringField(data, "userMessageVisibility");
+    if (visibility !== "deferred") {
+      return;
+    }
+    const content = readStringField(eventRecord, "content");
+    if (!content || content.trim().length === 0) {
+      return;
+    }
+    this.deps.appendDialogMessage(sessionId, {
+      content,
+      role: "user",
+      timestamp: readStringField(eventRecord, "timestamp") ?? undefined,
+      uuid: readStringField(eventRecord, "uuid") ?? undefined,
+    });
   }
 
   private recordStreamHeartbeat(sessionId: string): void {

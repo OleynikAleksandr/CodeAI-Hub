@@ -7,13 +7,23 @@ import type { DiagramModulesProgressSnapshot } from "./diagram-modules-progress"
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 
 export interface WorkflowAgentAcceptanceFeedbackGateway {
-  readonly handleMessage: (sessionId: string, content: string) => Promise<void>;
+  readonly handleMessage: (
+    sessionId: string,
+    payload: string | WorkflowAgentAcceptanceFeedbackPayload
+  ) => Promise<void>;
 }
 
 const QUALITY_GATES_STAGE = "quality_gates";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const execFileAsync = promisify(execFile);
+
+interface WorkflowAgentAcceptanceFeedbackPayload {
+  readonly content: string;
+  readonly turnOptions: {
+    readonly userMessageVisibility: "deferred";
+  };
+}
 
 interface StageFeedbackRequest {
   readonly actionLines: readonly string[];
@@ -223,10 +233,10 @@ export class WorkflowAgentAcceptanceFeedback {
     }
     this.sentSignatures.add(signature);
     try {
-      await params.gateway.handleMessage(
-        sessionId,
-        buildFeedbackMessage(params.request)
-      );
+      await params.gateway.handleMessage(sessionId, {
+        content: buildFeedbackMessage(params.request),
+        turnOptions: { userMessageVisibility: "deferred" },
+      });
     } catch (error) {
       this.sentSignatures.delete(signature);
       throw error;
