@@ -73,3 +73,8 @@ downstream lock.
 - `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`
 - `npm run plan:validate`
 - Live retest workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` evaluates to `qualityGatesProgress.integrated: true` and `developmentTreeBootstrapGate.unlocked: true` with aggregate `qg:before-commit` / `qg:before-push` hook wiring.
+
+2026-05-08 repair-aware managed feedback verification passed:
+
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
+- `npm run plan:validate`
