@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.196] - 2026-05-08
+### Fixed
+- **Core acceptance feedback is now repair-aware.** Identical validation failures are deduped only on the same workspace commit; after an agent repair commit, the same remaining blocker is sent back to the owning managed stage session again.
+- **Managed stage feedback now includes diagnostic check context.** Diagram Modules, Application Skeleton, and Quality Gates feedback reports what Core checked, observed counters/lifecycle flags, and the specific failed part/path/gate.
+- **The feedback contract now documents retry semantics.** Managed lifecycle docs require repeated feedback after failed repair attempts instead of leaving agents silent behind a locked downstream stage.
+
+### Tests
+- **Targeted regression coverage verifies repeated feedback after repair commits and diagnostic messages for all managed acceptance stages.**
+
 ## [1.2.195] - 2026-05-08
 ### Fixed
 - **Quality Gates aggregate hook wiring now unlocks Development Tree correctly.** Core accepts `qg:before-commit` and `qg:before-push` when those scripts dispatch the corresponding required gate arrays from `quality-gates.json`.
