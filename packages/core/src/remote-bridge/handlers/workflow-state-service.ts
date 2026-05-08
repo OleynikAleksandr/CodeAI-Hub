@@ -32,7 +32,10 @@ import {
   readQualityGatesProgressSnapshot,
   resolveWorkflowBlockedStages,
 } from "./quality-gates-progress";
-import { WorkflowAgentAcceptanceFeedback } from "./workflow-agent-acceptance-feedback";
+import {
+  WorkflowAgentAcceptanceFeedback,
+  type WorkflowAgentAcceptanceFeedbackGateway,
+} from "./workflow-agent-acceptance-feedback";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
@@ -251,24 +254,28 @@ export class WorkflowStateService {
                   "Quality Gates",
                   latestManagedGitStatus.dirtyByStage.quality_gates
                 );
+                const feedbackGateway = this.developmentTreeAgentSessions
+                  ?.gateway as
+                  | WorkflowAgentAcceptanceFeedbackGateway
+                  | undefined;
                 return Promise.all([
                   this.acceptanceFeedback.sendDiagramModulesFeedback({
                     chains,
-                    gateway: this.developmentTreeAgentSessions?.gateway,
+                    gateway: feedbackGateway,
                     progress: diagramModulesProgress,
                     workspaceRoot,
                     workspaceSlug: workspaceSlugResult.value,
                   }),
                   this.acceptanceFeedback.sendApplicationSkeletonFeedback({
                     chains,
-                    gateway: this.developmentTreeAgentSessions?.gateway,
+                    gateway: feedbackGateway,
                     progress: applicationSkeletonProgress,
                     workspaceRoot,
                     workspaceSlug: workspaceSlugResult.value,
                   }),
                   this.acceptanceFeedback.sendQualityGatesFeedback({
                     chains,
-                    gateway: this.developmentTreeAgentSessions?.gateway,
+                    gateway: feedbackGateway,
                     progress: qualityGatesProgress,
                     workspaceRoot,
                     workspaceSlug: workspaceSlugResult.value,
