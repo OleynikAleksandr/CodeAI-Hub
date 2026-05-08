@@ -11,10 +11,12 @@ import { WorkflowAgentAcceptanceFeedback } from "./workflow-agent-acceptance-fee
 
 const execFileAsync = promisify(execFile);
 const DIAGRAM_MODULES_MISSING_PART_RE =
-  /next missing or invalid Product Part is "local-runtime"/u;
+  /Product Part "local-runtime" is missing or invalid/u;
 const CORE_CHECKED_HEADING_RE = /What Core checked:/u;
 const DIAGRAM_MODULES_OBSERVED_RE =
   /Observed valid Product Part artifacts: 0\/1\./u;
+const DIAGRAM_MODULES_VALIDATOR_ERROR_RE =
+  /Product Part "local-runtime" failed validation .*Missing Part ID/u;
 const APPLICATION_SKELETON_OBSERVED_RE =
   /Observed accepted: true; materialized: false; materializationState: failed; substep: failed\./u;
 const APPLICATION_SKELETON_DRAFT_RULE_RE =
@@ -176,6 +178,14 @@ test("managed feedback includes diagnostic check context for every managed stage
         generatedPartIds: [],
         plannedCount: 1,
         plannedPartIds: ["local-runtime"],
+        productPartDiagnostics: [
+          {
+            error: "Missing Part ID table row.",
+            partId: "local-runtime",
+            path: ".codeai-hub/demo-workspace/diagram_modules/product-parts/local-runtime.md",
+            valid: false,
+          },
+        ],
         substep: "generate_product_part",
       },
       workspaceRoot,
@@ -224,6 +234,7 @@ test("managed feedback includes diagnostic check context for every managed stage
     assert.deepEqual(visibilities, ["deferred", "deferred", "deferred"]);
     assert.match(feedbackText, CORE_CHECKED_HEADING_RE);
     assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
+    assert.match(feedbackText, DIAGRAM_MODULES_VALIDATOR_ERROR_RE);
     assert.match(feedbackText, APPLICATION_SKELETON_OBSERVED_RE);
     assert.match(feedbackText, QUALITY_GATES_OBSERVED_RE);
   } finally {

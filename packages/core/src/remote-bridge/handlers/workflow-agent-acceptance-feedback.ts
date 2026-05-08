@@ -3,7 +3,10 @@ import { promisify } from "node:util";
 import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
 import type { Logger } from "../../telemetry/logger";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
-import type { DiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import type {
+  DiagramModulesProgressSnapshot,
+  ProductPartDiagnostic,
+} from "./diagram-modules-progress";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 
 export interface WorkflowAgentAcceptanceFeedbackGateway {
@@ -91,11 +94,16 @@ const createDiagramModulesErrors = (
       createOutOfOwnerDirtyError("Diagram Modules", outOfOwnerDirtyFiles),
     ];
   }
+  const semanticErrors = createProductPartDiagnosticErrors(progress);
   const dirtyFiles = readManagedGitDirtyFiles(progress);
-  if (dirtyFiles.length > 0) {
-    return [
-      `Managed workspace Git status is dirty for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Commit or clean these files before Core can unlock Application Skeleton.`,
-    ];
+  const dirtyGateErrors =
+    dirtyFiles.length > 0
+      ? [
+          `Core-owned managed commit is pending for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Core owns this commit gate; do not run Git commands from the provider turn.`,
+        ]
+      : [];
+  if (semanticErrors.length > 0 || dirtyGateErrors.length > 0) {
+    return [...semanticErrors, ...dirtyGateErrors];
   }
   if (progress.substep === "blocked_ambiguity") {
     return [
@@ -111,6 +119,44 @@ const createDiagramModulesErrors = (
   const missingPart = progress.currentPartId ?? "unknown";
   return [
     `Diagram Modules is not complete: ${progress.generatedCount}/${progress.plannedCount} Product Part artifacts are valid; next missing or invalid Product Part is "${missingPart}".`,
+  ];
+};
+
+const createDiagramModulesActionLines = (
+  progress: DiagramModulesProgressSnapshot
+): readonly string[] => {
+  const hasSemanticErrors =
+    createProductPartDiagnosticErrors(progress).length > 0;
+  if (!hasSemanticErrors && readManagedGitDirtyFiles(progress).length > 0) {
+    return [
+      "Do not run Git commands. Core owns the managed commit and downstream unlock for these files.",
+      "Wait for Core to finish the commit/acceptance cycle or provide another Core feedback message.",
+    ];
+  }
+  return [
+    "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
+    "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
+  ];
+};
+
+const createProductPartDiagnosticErrors = (
+  progress: DiagramModulesProgressSnapshot
+): readonly string[] => {
+  const diagnostics = readProductPartDiagnostics(progress).filter(
+    (diagnostic) => !diagnostic.valid
+  );
+  if (diagnostics.length > 0) {
+    return diagnostics.map((diagnostic) => {
+      const path = diagnostic.path ? ` (${diagnostic.path})` : "";
+      return `Product Part "${diagnostic.partId}" failed validation${path}: ${diagnostic.error ?? "unknown validation error"}.`;
+    });
+  }
+  if (progress.aggregateReady || progress.plannedCount === 0) {
+    return [];
+  }
+  const missingPart = progress.currentPartId ?? "unknown";
+  return [
+    `Product Part "${missingPart}" is missing or invalid, but no validator diagnostic was captured.`,
   ];
 };
 
@@ -141,6 +187,13 @@ const readManagedGitOutOfOwnerDirtyFiles = (
       )
     : [];
 };
+
+const readProductPartDiagnostics = (
+  progress: DiagramModulesProgressSnapshot
+): readonly ProductPartDiagnostic[] =>
+  Array.isArray(progress.productPartDiagnostics)
+    ? progress.productPartDiagnostics
+    : [];
 
 const createDiagramModulesCheckLines = (
   progress: DiagramModulesProgressSnapshot
@@ -255,10 +308,7 @@ export class WorkflowAgentAcceptanceFeedback {
     const request =
       progress && errors.length > 0
         ? {
-            actionLines: [
-              "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
-              "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
-            ],
+            actionLines: [...createDiagramModulesActionLines(progress)],
             checkLines: createDiagramModulesCheckLines(progress),
             errors,
             stage: DIAGRAM_MODULES_STAGE,
