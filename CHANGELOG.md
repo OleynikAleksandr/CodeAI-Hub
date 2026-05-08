@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.198] - 2026-05-08
+### Fixed
+- **Project Manager Start card selectors no longer use native CEF dropdowns.** Provider, model, and reasoning controls now use the existing in-app DOM listbox, avoiding the macOS/CEF crash seen when changing model or reasoning during acceptance testing.
+
+### Tests
+- **Targeted regression coverage verifies workflow and Development Tree Start cards avoid native `<select>` controls while preserving selected provider/model/reasoning payloads.**
+
 ## [1.2.197] - 2026-05-08
 ### Added
 - **Workflow start cards now expose provider, model, and reasoning selection.** The selected model becomes the provider default in Settings before the managed stage starts.
