@@ -56,7 +56,7 @@ type WorkflowStateGetter = (
 ) => ReturnType<typeof api.getWorkflowState>;
 
 type SettingsPayloadGetter = () => SettingsLoadedPayload | null;
-type SettingsSaver = (settings: Settings) => void;
+type SettingsSaver = (settings: Settings) => Promise<void> | void;
 
 type SubmitQuestionnaireService = Pick<
   DescriptionSubmitService,
@@ -72,6 +72,7 @@ const CODEX_REASONING_LEVEL_SET = new Set<string>(
 const GEMINI_THINKING_LEVEL_SET = new Set<string>(
   GEMINI_THINKING_LEVELS.map((level) => level.name)
 );
+const SETTINGS_SAVE_TIMEOUT_MS = 5_000;
 
 const isSettings = (value: unknown): value is Settings =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -147,6 +148,40 @@ const applyStartCardModelDefaults = (
   return nextSettings;
 };
 
+const saveSettingsAndWait = (settings: Settings): Promise<void> =>
+  new Promise((resolve, reject) => {
+    let settled = false;
+    const cleanup = (): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      window.clearTimeout(timeoutId);
+      unsubscribe();
+    };
+    const timeoutId = window.setTimeout(() => {
+      cleanup();
+      reject(new Error("Settings save timed out before workflow start."));
+    }, SETTINGS_SAVE_TIMEOUT_MS);
+    const unsubscribe = api.onCoreEvent((message) => {
+      if (message.type === "settings:saved") {
+        cleanup();
+        resolve();
+        return;
+      }
+      if (message.type === "settings:save-error") {
+        cleanup();
+        const payload = message.payload;
+        const error =
+          payload && typeof payload === "object" && "error" in payload
+            ? String(payload.error)
+            : "Settings save failed before workflow start.";
+        reject(new Error(error));
+      }
+    });
+    api.saveSettings(settings);
+  });
+
 const readDiagramModulesSubstep = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null
 ): string | null => {
@@ -214,19 +249,21 @@ export class WorkflowStepStartService {
       options?.getWorkflowState ?? api.getWorkflowState.bind(api);
     this.getSettingsPayload =
       options?.getSettingsPayload ?? api.getLastSettingsPayload.bind(api);
-    this.saveSettings = options?.saveSettings ?? api.saveSettings.bind(api);
+    this.saveSettings = options?.saveSettings ?? saveSettingsAndWait;
     this.submitService =
       options?.submitService ?? new DescriptionSubmitService();
   }
 
-  private persistStartCardModelDefaults(params: StartWorkflowStepParams): void {
+  private async persistStartCardModelDefaults(
+    params: StartWorkflowStepParams
+  ): Promise<void> {
     const settings = this.getSettingsPayload()?.settings;
     if (!isSettings(settings)) {
       return;
     }
     const nextSettings = applyStartCardModelDefaults(settings, params);
     if (nextSettings) {
-      this.saveSettings(nextSettings);
+      await this.saveSettings(nextSettings);
     }
   }
 
@@ -254,7 +291,7 @@ export class WorkflowStepStartService {
       throw new Error("Missing Final_Description.md. Complete Description step first.");
     }
     const settingsPayload = this.getSettingsPayload();
-    this.persistStartCardModelDefaults(params);
+    await this.persistStartCardModelDefaults(params);
     const artifactLanguage = resolveArtifactsForTheUserLanguage(settingsPayload);
     const chatLanguage = resolveWorkflowChatLanguage(settingsPayload);
     return this.submitService.submitQuestionnaire({
@@ -290,7 +327,7 @@ export class WorkflowStepStartService {
     }
     const progressSubstep = readDiagramModulesSubstep(state);
     const settingsPayload = this.getSettingsPayload();
-    this.persistStartCardModelDefaults(params);
+    await this.persistStartCardModelDefaults(params);
     const artifactLanguage = resolveArtifactsForTheUserLanguage(settingsPayload);
     const chatLanguage = resolveWorkflowChatLanguage(settingsPayload);
     const questionnairePath =
@@ -327,7 +364,7 @@ export class WorkflowStepStartService {
       throw new Error("Missing completed Diagram Modules. Complete Diagram Modules first.");
     }
     const settingsPayload = this.getSettingsPayload();
-    this.persistStartCardModelDefaults(params);
+    await this.persistStartCardModelDefaults(params);
     return this.submitService.submitQuestionnaire({
       artifactLanguage: resolveArtifactsForTheUserLanguage(settingsPayload),
       chatLanguage: resolveWorkflowChatLanguage(settingsPayload),
@@ -358,7 +395,7 @@ export class WorkflowStepStartService {
       throw new Error("Missing accepted Application Skeleton. Complete Application Skeleton first.");
     }
     const settingsPayload = this.getSettingsPayload();
-    this.persistStartCardModelDefaults(params);
+    await this.persistStartCardModelDefaults(params);
     return this.submitService.submitQuestionnaire({
       artifactLanguage: resolveArtifactsForTheUserLanguage(settingsPayload),
       chatLanguage: resolveWorkflowChatLanguage(settingsPayload),
