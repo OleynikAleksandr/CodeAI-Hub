@@ -60,7 +60,7 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       this.sendCommandError(
         clientId,
         COMMAND,
-        "Invalid Development Tree node start payload.",
+        "Core acceptance check failed for Development Tree node start: invalid payload. Required: absolute workspacePath, workspaceSlug, providerId, and workflowPath starting with development_tree/.",
         "invalid_payload"
       );
       return;
@@ -69,7 +69,7 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       this.sendCommandError(
         clientId,
         COMMAND,
-        "Workspace has uncommitted changes. Commit or clean the workspace before starting a Development Tree node.",
+        "Core acceptance check failed for Development Tree node start: workspace Git status is dirty. Commit or clean the workspace, then start this node again.",
         "dirty_worktree"
       );
       return;
@@ -89,7 +89,7 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       this.sendCommandError(
         clientId,
         COMMAND,
-        `Development Tree node is not materialized: ${workflowPath}`,
+        `Core acceptance check failed for Development Tree node start: node folder is not materialized for ${workflowPath}. Refresh the Development Tree read model and retry only after the node appears as startable.`,
         "node_not_found"
       );
       return;
