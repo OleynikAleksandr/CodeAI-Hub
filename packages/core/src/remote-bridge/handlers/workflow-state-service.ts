@@ -231,13 +231,26 @@ export class WorkflowStateService {
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
             : null;
-          return this.acceptanceFeedback
-            .sendQualityGatesFeedback({
+          return Promise.all([
+            this.acceptanceFeedback.sendDiagramModulesFeedback({
+              chains,
+              gateway: this.developmentTreeAgentSessions?.gateway,
+              progress: diagramModulesProgress,
+              workspaceSlug: workspaceSlugResult.value,
+            }),
+            this.acceptanceFeedback.sendApplicationSkeletonFeedback({
+              chains,
+              gateway: this.developmentTreeAgentSessions?.gateway,
+              progress: applicationSkeletonProgress,
+              workspaceSlug: workspaceSlugResult.value,
+            }),
+            this.acceptanceFeedback.sendQualityGatesFeedback({
               chains,
               gateway: this.developmentTreeAgentSessions?.gateway,
               progress: qualityGatesProgress,
               workspaceSlug: workspaceSlugResult.value,
-            })
+            }),
+          ])
             .then(() =>
               hydrateWorkflowStateFromFilesystem({
                 state,

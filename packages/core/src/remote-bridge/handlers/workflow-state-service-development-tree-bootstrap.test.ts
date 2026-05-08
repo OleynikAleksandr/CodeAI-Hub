@@ -17,6 +17,16 @@ const QUALITY_GATE_PRE_COMMIT_ERROR_RE =
   /Quality gate qg-secret-scan is missing from \.husky\/pre-commit/u;
 const QUALITY_GATE_PRE_PUSH_ERROR_RE =
   /Quality gate qg-smoke-checks is missing from \.husky\/pre-push/u;
+const APPLICATION_SKELETON_FEEDBACK_SESSION_RE = /^skeleton-session\n/u;
+const APPLICATION_SKELETON_FEEDBACK_TITLE_RE =
+  /Core acceptance check failed for Application Skeleton\./u;
+const APPLICATION_SKELETON_MISSING_PATH_RE =
+  /application skeleton materializedPath is missing: product-parts\/missing-runtime/u;
+const DIAGRAM_MODULES_FEEDBACK_SESSION_RE = /^diagram-session\n/u;
+const DIAGRAM_MODULES_FEEDBACK_TITLE_RE =
+  /Core acceptance check failed for Diagram Modules\./u;
+const DIAGRAM_MODULES_MISSING_PART_RE =
+  /next missing or invalid Product Part is "local-runtime"/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -230,26 +240,27 @@ const writeTechnicalRootArtifacts = async (
   await writeManagedPlanEvidence(workspaceRoot);
 };
 
-const writeQualityGatesContinuity = (
+const writeStageContinuity = (
   workspaceRoot: string,
   workspaceSlug: string,
-  sessionId = "quality-session"
+  stage: string,
+  sessionId: string
 ): Promise<void> =>
   writeJsonFile(
     workspaceRoot,
-    `.codeai-hub/${workspaceSlug}/continuity/quality_gates/codex-quality-gates/chain.json`,
+    `.codeai-hub/${workspaceSlug}/continuity/${stage}/codex-${stage}/chain.json`,
     {
-      dialogId: "codex-quality-gates",
-      rootSessionId: "codex-quality-gates",
+      dialogId: `codex-${stage}`,
+      rootSessionId: `codex-${stage}`,
       segments: [
         {
           createdAt: "2026-05-08T05:51:54.053Z",
           providerId: "codexCli",
-          providerSessionId: "provider-quality-session",
+          providerSessionId: `provider-${sessionId}`,
           sessionId,
         },
       ],
-      stage: "quality_gates",
+      stage,
       updatedAt: "2026-05-08T05:51:54.053Z",
       workspaceSlug,
     }
@@ -284,6 +295,65 @@ const readWorkflowStatePayload = async (params: {
     const res = { json: (payload: unknown) => resolve(payload) } as Response;
     params.service.handleWorkflowStateRead(req, res);
   });
+
+const readWorkflowStateTwice = async (params: {
+  readonly service: WorkflowStateService;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  await readWorkflowStatePayload(params);
+  await readWorkflowStatePayload(params);
+};
+
+const runFeedbackScenario = async (params: {
+  readonly expected: readonly RegExp[];
+  readonly sessionId: string;
+  readonly setup: (
+    workspaceRoot: string,
+    workspaceSlug: string
+  ) => Promise<void>;
+  readonly stage: string;
+  readonly tmpPrefix: string;
+}): Promise<void> => {
+  const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), params.tmpPrefix));
+  const workspaceSlug = "demo-workspace";
+  const feedbackMessages: string[] = [];
+
+  try {
+    await writeTechnicalRootArtifacts(workspaceRoot, workspaceSlug);
+    await writeStageContinuity(
+      workspaceRoot,
+      workspaceSlug,
+      params.stage,
+      params.sessionId
+    );
+    await params.setup(workspaceRoot, workspaceSlug);
+    await commitWorkspace(workspaceRoot);
+
+    const service = new WorkflowStateService({
+      logger: new Logger("error"),
+      developmentTreeAgentSessions: {
+        gateway: {
+          createSessionForWorkflow: () => Promise.resolve(null),
+          handleMessage: (sessionId, content) => {
+            feedbackMessages.push(`${sessionId}\n${content}`);
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
+      },
+    });
+
+    await readWorkflowStateTwice({ service, workspaceRoot, workspaceSlug });
+
+    assert.equal(feedbackMessages.length, 1);
+    for (const expected of params.expected) {
+      assert.match(feedbackMessages[0] ?? "", expected);
+    }
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+};
 
 test("workflow-state read bootstraps development tree once after Quality Gates", async () => {
   const workspaceRoot = await mkdtemp(
@@ -345,50 +415,81 @@ test("workflow-state read bootstraps development tree once after Quality Gates",
 });
 
 test("workflow-state read sends Quality Gates acceptance feedback to the active agent", async () => {
-  const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "workflow-state-quality-gates-feedback-")
-  );
-  const workspaceSlug = "demo-workspace";
-  const feedbackMessages: string[] = [];
+  await runFeedbackScenario({
+    expected: [
+      QUALITY_GATE_FEEDBACK_SESSION_RE,
+      QUALITY_GATE_FEEDBACK_TITLE_RE,
+      QUALITY_GATE_PRE_COMMIT_ERROR_RE,
+      QUALITY_GATE_PRE_PUSH_ERROR_RE,
+    ],
+    sessionId: "quality-session",
+    stage: "quality_gates",
+    tmpPrefix: "workflow-state-quality-gates-feedback-",
+    setup: async (workspaceRoot) => {
+      await writeWorkspaceFile(
+        workspaceRoot,
+        ".husky/pre-commit",
+        "#!/bin/sh\nnpm run plan:validate\n"
+      );
+      await writeWorkspaceFile(
+        workspaceRoot,
+        ".husky/pre-push",
+        "#!/bin/sh\nnpm run plan:validate\n"
+      );
+    },
+  });
+});
 
-  try {
-    await writeTechnicalRootArtifacts(workspaceRoot, workspaceSlug);
-    await writeQualityGatesContinuity(workspaceRoot, workspaceSlug);
-    await writeWorkspaceFile(
-      workspaceRoot,
-      ".husky/pre-commit",
-      "#!/bin/sh\nnpm run plan:validate\n"
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      ".husky/pre-push",
-      "#!/bin/sh\nnpm run plan:validate\n"
-    );
-    await commitWorkspace(workspaceRoot);
+test("workflow-state read sends Application Skeleton acceptance feedback to the active agent", async () => {
+  await runFeedbackScenario({
+    expected: [
+      APPLICATION_SKELETON_FEEDBACK_SESSION_RE,
+      APPLICATION_SKELETON_FEEDBACK_TITLE_RE,
+      APPLICATION_SKELETON_MISSING_PATH_RE,
+    ],
+    sessionId: "skeleton-session",
+    stage: "application_skeleton",
+    tmpPrefix: "workflow-state-application-skeleton-feedback-",
+    setup: async (workspaceRoot, workspaceSlug) => {
+      await writeJsonFile(
+        workspaceRoot,
+        `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+        {
+          accepted: true,
+          materialized: true,
+          materializationState: "materialized",
+          materializedPaths: ["product-parts/missing-runtime"],
+          productParts: [
+            {
+              codePath: "product-parts/missing-runtime",
+              id: "missing-runtime",
+            },
+          ],
+          reviewState: "materialized",
+          schema: "codeai-application-skeleton-v1",
+          sourceRoot: "product-parts",
+        }
+      );
+    },
+  });
+});
 
-    const service = new WorkflowStateService({
-      logger: new Logger("error"),
-      developmentTreeAgentSessions: {
-        gateway: {
-          createSessionForWorkflow: () => Promise.resolve(null),
-          handleMessage: (sessionId, content) => {
-            feedbackMessages.push(`${sessionId}\n${content}`);
-            return Promise.resolve();
-          },
-        },
-        providerId: "codexCli",
-      },
-    });
-
-    await readWorkflowStatePayload({ service, workspaceRoot, workspaceSlug });
-    await readWorkflowStatePayload({ service, workspaceRoot, workspaceSlug });
-
-    assert.equal(feedbackMessages.length, 1);
-    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_FEEDBACK_SESSION_RE);
-    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_FEEDBACK_TITLE_RE);
-    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_PRE_COMMIT_ERROR_RE);
-    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_PRE_PUSH_ERROR_RE);
-  } finally {
-    await rm(workspaceRoot, { recursive: true, force: true });
-  }
+test("workflow-state read sends Diagram Modules acceptance feedback to the active agent", async () => {
+  await runFeedbackScenario({
+    expected: [
+      DIAGRAM_MODULES_FEEDBACK_SESSION_RE,
+      DIAGRAM_MODULES_FEEDBACK_TITLE_RE,
+      DIAGRAM_MODULES_MISSING_PART_RE,
+    ],
+    sessionId: "diagram-session",
+    stage: "diagram_modules",
+    tmpPrefix: "workflow-state-diagram-modules-feedback-",
+    setup: async (workspaceRoot, workspaceSlug) => {
+      await writeWorkspaceFile(
+        workspaceRoot,
+        `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-runtime.md`,
+        "# Incomplete Product Part\n"
+      );
+    },
+  });
 });
