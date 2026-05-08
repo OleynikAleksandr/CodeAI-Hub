@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -11,8 +11,17 @@ import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
+const CURRENT_TASK_ID_RE = /"currentTaskId":\s*"[^"]+"/u;
 const DIAGRAM_MODULES_AUTO_COMMIT_LOG_RE =
   /chore: record managed workspace ledger[\s\S]+docs: update diagram modules artifacts/u;
+const APPLICATION_SKELETON_AUTO_COMMIT_LOG_RE =
+  /chore: record managed workspace ledger[\s\S]+feat: materialize application skeleton/u;
+const QUALITY_GATES_AUTO_COMMIT_LOG_RE =
+  /chore: record managed workspace ledger[\s\S]+feat: integrate quality gates baseline/u;
+const EXPECTED_COMMIT_MESSAGE_RE = /"expectedCommitMessage":\s*"[^"]+"/u;
+const SCRATCH_UNMANAGED_RE = /scratch\//u;
+const DIAGRAM_MODULES_COMMIT_SUBJECT_RE =
+  /docs: update diagram modules artifacts/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -66,7 +75,8 @@ const createProductPart = (): string =>
 
 const initManagedWorkspace = async (
   workspaceRoot: string,
-  workspaceSlug: string
+  workspaceSlug: string,
+  initialStage: "application_skeleton" | "diagram_modules" | "quality_gates"
 ): Promise<void> => {
   await runGit(workspaceRoot, ["init"]);
   await runGit(workspaceRoot, ["config", "user.email", "test@example.com"]);
@@ -83,8 +93,14 @@ const initManagedWorkspace = async (
     "# Virtual Simulation\n"
   );
   await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
-    initialStage: "diagram_modules",
+    initialStage,
   });
+  if (initialStage !== "diagram_modules") {
+    await writeDiagramModulesArtifacts(workspaceRoot, workspaceSlug);
+  }
+  if (initialStage === "quality_gates") {
+    await writeApplicationSkeletonArtifacts(workspaceRoot, workspaceSlug);
+  }
   await runGit(workspaceRoot, ["add", "."]);
   await runGit(workspaceRoot, [
     "-c",
@@ -93,6 +109,127 @@ const initManagedWorkspace = async (
     "-m",
     "test: managed baseline",
   ]);
+};
+
+const setActivePlanTask = async (
+  workspaceRoot: string,
+  activePlanPath: string,
+  taskId: string,
+  expectedCommitMessage: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, activePlanPath);
+  const text = await readFile(absolutePath, "utf8");
+  await writeFile(
+    absolutePath,
+    text
+      .replace(CURRENT_TASK_ID_RE, `"currentTaskId": "${taskId}"`)
+      .replace(
+        EXPECTED_COMMIT_MESSAGE_RE,
+        `"expectedCommitMessage": "${expectedCommitMessage}"`
+      ),
+    "utf8"
+  );
+};
+
+const writeDiagramModulesArtifacts = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+    createProductPartsIndex()
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-runtime.md`,
+    createProductPart()
+  );
+};
+
+const writeApplicationSkeletonArtifacts = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`,
+    [
+      "# Application Skeleton",
+      "",
+      "| Field | Value |",
+      "| --- | --- |",
+      "| reviewState | `materialized` |",
+      "| accepted | `true` |",
+      "| materialized | `true` |",
+      "| materializationState | `materialized` |",
+      "",
+    ].join("\n")
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+    `${JSON.stringify({
+      accepted: true,
+      materialized: true,
+      materializationState: "materialized",
+      materializedPaths: ["product-parts/local-runtime"],
+      productParts: [
+        { codePath: "product-parts/local-runtime", id: "local-runtime" },
+      ],
+      reviewState: "materialized",
+      schema: "codeai-application-skeleton-v1",
+      sourceRoot: "product-parts",
+    })}\n`
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "product-parts/local-runtime/README.md",
+    "# Local Runtime\n"
+  );
+};
+
+const writeQualityGatesArtifacts = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
+    "# Quality Gates\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+    `${JSON.stringify({
+      accepted: true,
+      commands: { "qg-smoke": { id: "qg-smoke" } },
+      integrated: true,
+      integrationState: "integrated",
+      requiredBeforeCommit: ["qg-smoke"],
+      schema: "codeai-quality-gates-v1",
+    })}\n`
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "package.json",
+    `${JSON.stringify({
+      private: true,
+      scripts: {
+        "plan:commit": "node ./scripts/plan-orchestrator/plan-cli.mjs commit",
+        "plan:repair": "node ./scripts/plan-orchestrator/plan-cli.mjs repair",
+        "plan:status": "node ./scripts/plan-orchestrator/plan-cli.mjs status",
+        "plan:validate":
+          "node ./scripts/plan-orchestrator/plan-cli.mjs validate",
+        "qg:smoke": 'node -e "process.exit(0)"',
+      },
+    })}\n`
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    ".husky/pre-commit",
+    "#!/bin/sh\nnpm run qg:smoke\n"
+  );
 };
 
 const readWorkflowStatePayload = async (params: {
@@ -124,17 +261,8 @@ test("workflow-state auto-commits valid Diagram Modules artifacts and unlocks Ap
   const workspaceSlug = "demo-workspace";
 
   try {
-    await initManagedWorkspace(workspaceRoot, workspaceSlug);
-    await writeWorkspaceFile(
-      workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
-      createProductPartsIndex()
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-runtime.md`,
-      createProductPart()
-    );
+    await initManagedWorkspace(workspaceRoot, workspaceSlug, "diagram_modules");
+    await writeDiagramModulesArtifacts(workspaceRoot, workspaceSlug);
 
     const payload = await readWorkflowStatePayload({
       service: new WorkflowStateService({ logger: new Logger("error") }),
@@ -147,6 +275,122 @@ test("workflow-state auto-commits valid Diagram Modules artifacts and unlocks Ap
     assert.match(
       await runGit(workspaceRoot, ["log", "--oneline", "-2"]),
       DIAGRAM_MODULES_AUTO_COMMIT_LOG_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("workflow-state auto-commits valid Application Skeleton artifacts and unlocks Quality Gates", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-managed-commit-skeleton-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await initManagedWorkspace(
+      workspaceRoot,
+      workspaceSlug,
+      "application_skeleton"
+    );
+    await setActivePlanTask(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md",
+      "application-skeleton.stream1.task2",
+      "feat: materialize application skeleton"
+    );
+    await runGit(workspaceRoot, ["add", "."]);
+    await runGit(workspaceRoot, [
+      "-c",
+      "core.hooksPath=",
+      "commit",
+      "-m",
+      "test: accept application skeleton draft",
+    ]);
+    await writeApplicationSkeletonArtifacts(workspaceRoot, workspaceSlug);
+
+    const payload = await readWorkflowStatePayload({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(payload.gating?.blocked?.quality_gates, false);
+    assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
+    assert.match(
+      await runGit(workspaceRoot, ["log", "--oneline", "-2"]),
+      APPLICATION_SKELETON_AUTO_COMMIT_LOG_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("workflow-state auto-commits valid Quality Gates artifacts", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-managed-commit-quality-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await initManagedWorkspace(workspaceRoot, workspaceSlug, "quality_gates");
+    await setActivePlanTask(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md",
+      "quality-gates.stream1.task2",
+      "feat: integrate quality gates baseline"
+    );
+    await runGit(workspaceRoot, ["add", "."]);
+    await runGit(workspaceRoot, [
+      "-c",
+      "core.hooksPath=",
+      "commit",
+      "-m",
+      "test: accept quality gates draft",
+    ]);
+    await writeQualityGatesArtifacts(workspaceRoot, workspaceSlug);
+
+    await readWorkflowStatePayload({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
+    assert.match(
+      await runGit(workspaceRoot, ["log", "--oneline", "-2"]),
+      QUALITY_GATES_AUTO_COMMIT_LOG_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("workflow-state refuses auto-commit when dirty files include another path", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-managed-commit-refuse-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await initManagedWorkspace(workspaceRoot, workspaceSlug, "diagram_modules");
+    await writeDiagramModulesArtifacts(workspaceRoot, workspaceSlug);
+    await writeWorkspaceFile(workspaceRoot, "scratch/unmanaged.txt", "dirty\n");
+
+    const payload = await readWorkflowStatePayload({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(payload.gating?.blocked?.application_skeleton, true);
+    assert.match(
+      await runGit(workspaceRoot, ["status", "--short"]),
+      SCRATCH_UNMANAGED_RE
+    );
+    assert.doesNotMatch(
+      await runGit(workspaceRoot, ["log", "--oneline", "-1"]),
+      DIAGRAM_MODULES_COMMIT_SUBJECT_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
