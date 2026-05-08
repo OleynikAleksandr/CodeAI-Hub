@@ -369,6 +369,17 @@ export type BridgeEvent =
 
 type CoreIncomingMessage =
   | { readonly type: "settings:load" }
+  | {
+      readonly type: "development-tree:node-start";
+      readonly payload: {
+        readonly modelId?: string | null;
+        readonly providerId?: string | null;
+        readonly reasoning?: string | null;
+        readonly workflowPath?: string | null;
+        readonly workspacePath?: string | null;
+        readonly workspaceSlug?: string | null;
+      };
+    }
   | { readonly type: "settings:versions" }
   | {
       readonly type: "settings:save";

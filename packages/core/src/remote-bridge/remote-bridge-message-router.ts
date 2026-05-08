@@ -3,45 +3,18 @@ import {
   isNativeRequestCaptureProviderId,
   type NativeRequestCaptureFacade,
 } from "../provider-network-capture/native-request-capture-facade";
-import type { SessionManager } from "../session-manager";
-import type { Logger } from "../telemetry/logger";
-import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
-import type { WorkspaceRuntimeFacade } from "../workspace-runtime/workspace-runtime-facade";
-import type { DialogHistoryService } from "./handlers/dialog-history-service";
-import type { DialogListService } from "./handlers/dialog-list-service";
-import type { DialogOpenService } from "./handlers/dialog-open-service";
-import type { ProjectRequestHandler } from "./handlers/project-request-handler";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
-import type { SessionSpeechRequestHandler } from "./handlers/session-speech-request-handler";
-import type { SettingsRequestHandler } from "./handlers/settings-request-handler";
-import type { WebSocketManager } from "./handlers/websocket-manager";
+import { RemoteBridgeDevelopmentTreeNodeCommandRouter } from "./remote-bridge-development-tree-node-command-router";
 import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-router";
+import type { RemoteBridgeMessageRouterDependencies } from "./remote-bridge-message-router-dependencies";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 import { RemoteBridgeWorkbenchCommandRouter } from "./remote-bridge-workbench-command-router";
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
 
-interface RemoteBridgeMessageRouterDependencies {
-  readonly dialogHistoryService: DialogHistoryService;
-  readonly dialogListService: DialogListService;
-  readonly dialogOpenService: DialogOpenService;
-  readonly getManager: () => WebSocketManager | undefined;
-  readonly logger: Logger;
-  readonly nativeRequestCaptureFacade: Pick<
-    NativeRequestCaptureFacade,
-    "capture"
-  >;
-  readonly projectHandler: ProjectRequestHandler;
-  readonly sessionHandler: SessionRequestHandler;
-  readonly sessionManager: SessionManager;
-  readonly sessionSpeechHandler?: SessionSpeechRequestHandler;
-  readonly settingsHandler: SettingsRequestHandler;
-  readonly workflowRuntime: WorkflowRuntime;
-  readonly workspaceRuntime: WorkspaceRuntimeFacade;
-}
-
 export class RemoteBridgeMessageRouter {
   private readonly deps: RemoteBridgeMessageRouterDependencies;
+  private readonly developmentTreeNodeCommandRouter: RemoteBridgeDevelopmentTreeNodeCommandRouter;
   private readonly dialogCommandRouter: RemoteBridgeDialogCommandRouter;
   private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
   private readonly workbenchCommandRouter: RemoteBridgeWorkbenchCommandRouter;
@@ -68,6 +41,13 @@ export class RemoteBridgeMessageRouter {
       sessionHandler: deps.sessionHandler,
       workflowRuntime: deps.workflowRuntime,
     });
+    this.developmentTreeNodeCommandRouter =
+      new RemoteBridgeDevelopmentTreeNodeCommandRouter({
+        sessionCreateRouter: this.sessionCreateRouter,
+        sendCommandError: (clientId, command, message, code) => {
+          this.sendCommandError(clientId, command, message, code);
+        },
+      });
     this.workbenchCommandRouter = new RemoteBridgeWorkbenchCommandRouter({
       getManager: deps.getManager,
     });
@@ -133,6 +113,12 @@ export class RemoteBridgeMessageRouter {
         break;
       case "settings:native-request-capture":
         await this.handleNativeRequestCapture(clientId, incoming.payload);
+        break;
+      case "development-tree:node-start":
+        await this.developmentTreeNodeCommandRouter.handle(
+          clientId,
+          incoming.payload
+        );
         break;
       case "workbench:state:load":
         await this.workbenchCommandRouter.handleStateLoad(
@@ -461,6 +447,23 @@ export class RemoteBridgeMessageRouter {
         command,
         message,
         code: "workspace_scope_violation",
+      },
+    });
+  }
+
+  private sendCommandError(
+    clientId: string,
+    command: string,
+    message: string,
+    code: string
+  ): void {
+    this.deps.getManager()?.sendToClient(clientId, {
+      type: "command:error",
+      payload: {
+        requestId: randomUUID(),
+        command,
+        message,
+        code,
       },
     });
   }
