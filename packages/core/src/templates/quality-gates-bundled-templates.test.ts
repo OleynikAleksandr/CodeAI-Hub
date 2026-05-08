@@ -11,14 +11,19 @@ const STACK_RESEARCH_RE = /stack-specific research/;
 const NEEDS_USER_DECISION_RE = /needs_user_decision/;
 const INTEGRATION_PATHS_RE = /planned integration paths/;
 const CORE_HOOK_REGISTRY_RE =
-  /Core owns the managed lifecycle baseline and hook registry/;
+  /Core owns the managed lifecycle baseline, git setup, plan scripts, workspace plans, child plans/;
 const ACTIVE_CHILD_PLAN_RE =
   /Read `doc\/TODO\/workspace\.plan\.md`, then read the active child plan named by `activePlanPath`/;
 const QUALITY_GATES_HANDOFF_RE =
   /activeStage: "quality_gates".*activePlanPath: "doc\/TODO\/stages\/quality-gates\/todo-plan\.md"/s;
 const NO_LIFECYCLE_RESTORE_RE =
-  /must not create, rewrite, restore, revert, checkout/;
-const NO_DIRECT_HUSKY_RE = /Do not edit `\.husky` hooks directly/;
+  /must not rewrite, restore, revert, checkout, or replace the Core-owned lifecycle baseline/;
+const HOOK_WIRING_RE =
+  /Phase 2 must wire the accepted required gate scope into the managed lifecycle hooks/;
+const AGGREGATE_PRE_COMMIT_RE = /qg:before-commit/;
+const AGGREGATE_PRE_PUSH_RE = /qg:before-push/;
+const PRESERVE_PLAN_VALIDATE_RE =
+  /Preserve existing Core lifecycle commands such as `plan:validate`/;
 const PLAN_COMMIT_RE =
   /npm run plan:commit -- "feat: integrate quality gates baseline"/;
 const DRAFT_PLAN_COMMIT_RE =
@@ -50,9 +55,11 @@ const ADVISORY_NO_BLOCKING_RE =
   /Advisory gates must not have `blockingIn` phases/;
 const CONTRACT_HOOK_BOUNDARY_RE = /Managed Hook Boundary/;
 const CONTRACT_CHILD_PLAN_RE =
-  /Core owns git, `\.husky` hooks, plan scripts, `doc\/TODO\/workspace\.plan\.md`, active child plans under `doc\/TODO\/stages\/<stage>\/todo-plan\.md`/;
-const CONTRACT_NO_DIRECT_HUSKY_RE =
-  /Core renders managed hook wiring from the validated gate manifest/;
+  /Core owns git setup, the lifecycle baseline inside `\.husky` hooks, plan scripts, `doc\/TODO\/workspace\.plan\.md`, active child plans under `doc\/TODO\/stages\/<stage>\/todo-plan\.md`/;
+const CONTRACT_HOOK_AGGREGATE_RE =
+  /Hook wiring may be direct .* or aggregate .*qg:before-commit.*qg:before-push/s;
+const CONTRACT_INTEGRATED_HOOK_RE =
+  /`integrated: true` requires lifecycle hook wiring/;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -73,7 +80,10 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, ACTIVE_CHILD_PLAN_RE);
   assert.match(prompt, QUALITY_GATES_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
-  assert.match(prompt, NO_DIRECT_HUSKY_RE);
+  assert.match(prompt, HOOK_WIRING_RE);
+  assert.match(prompt, AGGREGATE_PRE_COMMIT_RE);
+  assert.match(prompt, AGGREGATE_PRE_PUSH_RE);
+  assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
   assert.match(prompt, PLAN_COMMIT_RE);
   assert.match(prompt, DRAFT_PLAN_COMMIT_RE);
   assert.match(prompt, CLEAN_GIT_RE);
@@ -101,7 +111,8 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, ADVISORY_NO_BLOCKING_RE);
   assert.match(contract, CONTRACT_HOOK_BOUNDARY_RE);
   assert.match(contract, CONTRACT_CHILD_PLAN_RE);
-  assert.match(contract, CONTRACT_NO_DIRECT_HUSKY_RE);
+  assert.match(contract, CONTRACT_HOOK_AGGREGATE_RE);
+  assert.match(contract, CONTRACT_INTEGRATED_HOOK_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
 });
