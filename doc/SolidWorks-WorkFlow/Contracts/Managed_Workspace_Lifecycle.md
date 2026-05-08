@@ -65,3 +65,26 @@ Provider native compact is fallback only. It must not replace the product-owned 
 At `Diagram Modules` start, hooks are lifecycle-minimal and stack-neutral.
 
 `Quality Gates Baseline` may create stack-specific scripts/configs/manifests after acceptance. Core validates the manifest and uses the Hook Registry to regenerate hook wiring. Agents must not hand-edit hook structure as the source of truth.
+
+## 6. Agent Acceptance Feedback
+
+Core acceptance is an active loop, not a passive lock.
+
+When a managed stage agent declares completion, Core must verify the actual
+workspace result against the stage contract before unlocking downstream work.
+For `Quality Gates Baseline`, `quality-gates.json` flags are not enough: Core
+also verifies that required gates are wired into lifecycle hooks and that the
+managed plan transaction is accepted.
+
+If acceptance fails, Core must:
+
+- keep downstream stages blocked;
+- send the validation result back into the owning workflow session;
+- include the concrete failed checks and a repair request;
+- avoid duplicate feedback for the same session/error set;
+- re-run acceptance on the next workflow state read after the agent repairs and
+  commits the stage.
+
+The user should not have to infer the blocker from a locked Development Tree.
+The same agent that produced the incomplete stage result must receive the Core
+acceptance feedback and continue the repair in place.
