@@ -46,3 +46,11 @@ locked across Core-owned post-turn processing.
 - Prefer focused tests around the Core handler seams that already reproduce the
   current behavior.
 
+## Verification Notes
+
+- 2026-05-08: Targeted Core lifecycle tests passed for Diagram Modules
+  diagnostics, managed acceptance feedback, deferred user-message ordering, and
+  provider event routing:
+  `npx tsx --test packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`.
+- 2026-05-08: Affected Core build passed:
+  `npm run build --workspace=@codeai-hub/core`.
