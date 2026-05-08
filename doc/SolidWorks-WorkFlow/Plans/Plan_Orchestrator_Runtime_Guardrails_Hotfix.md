@@ -45,3 +45,12 @@ Both cases are unacceptable in Core-managed workflow sessions. The orchestrator 
 - `npm exec -- tsx --test packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`
 - `npm exec -- tsx --test packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`
 - `npm run plan:validate`
+
+## Retest Finding
+
+2026-05-08 live managed workspace retest reached Quality Gates integration, but
+Core only blocked Development Tree bootstrap when hook integration validation
+failed. The runtime must send actionable acceptance feedback back to the owning
+Quality Gates workflow session so the agent can repair the missing lifecycle
+hook wiring in the same stage instead of leaving the user with a silent
+downstream lock.
