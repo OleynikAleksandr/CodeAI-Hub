@@ -251,7 +251,13 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
   assert.equal(
     pack.content.includes(
-      "Diagram Modules continuation turns must receive a new runtime prompt with `Mode: continue_existing_artifact`"
+      "Diagram Modules must be Core-checkable before handoff"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "create one valid `product-parts/<part-id>.md` file for every Product Part declared in the index"
     ),
     true
   );
@@ -335,7 +341,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Work phases:"), true);
   assert.equal(
     pack.content.includes(
-      "Phase 2: if the runtime launches a continuation subturn"
+      "Phase 2: create one valid `product-parts/<part-id>.md` file"
     ),
     true
   );
@@ -420,7 +426,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     ),
     true
   );
-  assert.equal(gatesPack.content.includes("Work phases:"), false);
+  assert.equal(gatesPack.content.includes("Work phases:"), true);
   assert.equal(gatesPack.content.includes("Output file name: `quality-gates.md`"), true);
 });
 

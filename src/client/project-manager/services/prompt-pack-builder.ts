@@ -257,10 +257,11 @@ const buildStagePhaseLines = (
     return [
       "Work phases:",
       `- Phase 1: read the runtime-provided \`Final_Description.md\` and \`virtual-simulation.md\` inputs, then write \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
-      "- Phase 2: if the runtime launches a continuation subturn (hidden by default), work on only one target `Product Part`, materialize one `product-parts/<part-id>.md` per iteration, do not wait for a user-visible `Continue`, and do not silently generate the whole giant inventory in one go.",
-      "- Phase 3: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
-      "- Phase 4: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
-      "- Phase 5: do not spend the current turn searching for staged examples, continuity files, helper artifacts, or generic template files unless they are explicitly listed above as inputs for this turn.",
+      "- Phase 2: create one valid `product-parts/<part-id>.md` file for every Product Part declared in the index before reporting the Diagram Modules stage ready.",
+      "- Phase 3: keep each Product Part file bounded and reviewable; do not collapse the structure into one giant artifact, but do not wait for user-visible continuation between declared Product Parts.",
+      "- Phase 4: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
+      "- Phase 5: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
+      "- Phase 6: do not spend the current turn searching for staged examples, continuity files, helper artifacts, or generic template files unless they are explicitly listed above as inputs for this turn.",
     ];
   }
   if (stage === "application_skeleton") {
@@ -343,7 +344,7 @@ const buildWorkflowArtifactModeBlock = (params: {
 }): string => {
   const stagedTargetLine =
     params.stage === "diagram_modules"
-      ? "- Diagram Modules continuation turns must receive a new runtime prompt with `Mode: continue_existing_artifact` and the exact target `product-parts/<part-id>.md`."
+      ? "- Diagram Modules must be Core-checkable before handoff: every Product Part declared in `product-parts.index.md` needs a matching valid `product-parts/<part-id>.md`."
       : null;
   const lines = [
     "Workflow artifact mode:",
