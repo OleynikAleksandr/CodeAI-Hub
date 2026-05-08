@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.2.200",
-    "package": "claude-module-1.2.200.tar.bz2",
-    "size": 113879,
-    "sha1": "8b3f43803ce0febe503ad086c7cdff4635aa1b47"
+    "version": "1.2.201",
+    "package": "claude-module-1.2.201.tar.bz2",
+    "size": 113820,
+    "sha1": "33bf90109a643a6640caa7c4cd03ea71ac37030e"
   }
 }
