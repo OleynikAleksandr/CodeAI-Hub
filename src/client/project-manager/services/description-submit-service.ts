@@ -345,7 +345,6 @@ const createDescriptionSession = async (params: {
   readonly workspacePath: string;
   readonly initiativeSlug: string;
   readonly stage: WorkflowStageId;
-  readonly modelId?: string | null;
   readonly providerId?: ProviderStackId;
   readonly sessionKind?: "collector" | null;
 }): Promise<SessionCreatedPayload> =>
@@ -402,7 +401,6 @@ const createDescriptionSession = async (params: {
       providerId: params.providerId,
       workspacePath: params.workspacePath,
       initiativeSlug: params.initiativeSlug,
-      targetModelId: params.modelId ?? null,
       stage: params.stage,
       sessionKind: params.sessionKind,
     });
@@ -416,7 +414,6 @@ export class DescriptionSubmitService {
     readonly stage?: WorkflowStageId;
     readonly artifactLanguage?: string;
     readonly chatLanguage?: string;
-    readonly modelId?: string | null;
     readonly providerId?: ProviderStackId;
     readonly onSessionCreated?: (sessionId: string) => void;
   }): Promise<string> {
@@ -434,7 +431,6 @@ export class DescriptionSubmitService {
       workspacePath: params.workspacePath,
       initiativeSlug,
       stage,
-      modelId: params.modelId,
       providerId: params.providerId,
       sessionKind: stage === "description" ? null : "collector",
     });

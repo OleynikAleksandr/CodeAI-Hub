@@ -266,7 +266,6 @@ export class WorkflowStepStartService {
       questionnairePath: finalDescriptionPath,
       stage: "virtual_simulation",
       providerId: params.providerId,
-      modelId: params.modelId,
       onSessionCreated: params.onSessionCreated,
     });
   }
@@ -307,7 +306,6 @@ export class WorkflowStepStartService {
       questionnairePath,
       stage: "diagram_modules",
       providerId: params.providerId,
-      modelId: params.modelId,
       onSessionCreated: params.onSessionCreated,
     });
   }
@@ -339,7 +337,6 @@ export class WorkflowStepStartService {
       questionnairePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
       stage: "application_skeleton",
       providerId: params.providerId,
-      modelId: params.modelId,
       onSessionCreated: params.onSessionCreated,
     });
   }
@@ -371,7 +368,6 @@ export class WorkflowStepStartService {
       questionnairePath: `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`,
       stage: "quality_gates",
       providerId: params.providerId,
-      modelId: params.modelId,
       onSessionCreated: params.onSessionCreated,
     });
   }
