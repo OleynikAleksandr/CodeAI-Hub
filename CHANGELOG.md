@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.202] - 2026-05-08
+### Fixed
+- **Project Manager keeps workflow input locked during queued provider turns.** Direct `turn_state` stream events now update session connection state immediately, preventing user input from unlocking while Claude continues streaming reasoning or processing Core feedback turns.
+- **Application Skeleton feedback is now phase-safe before user acceptance.** Draft-stage Core feedback no longer asks agents to materialize `product-parts/**` or mark the skeleton accepted/materialized before explicit user acceptance.
+
+### Tests
+- **Targeted regression coverage verifies turn-state stream locking and pre-acceptance Application Skeleton feedback wording.**
+
 ## [1.2.201] - 2026-05-08
 ### Fixed
 - **Workflow starts now bind provider models from Settings only.** Start cards persist provider/model defaults, wait for the confirmed `settings:saved` event, and then create the real provider session so Application Skeleton and other workflow stages use the selected model instead of a stale default.
