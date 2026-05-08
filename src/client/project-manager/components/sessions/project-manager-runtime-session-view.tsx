@@ -22,6 +22,7 @@ import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } fro
 import { appendDedupedSessionMessageToSnapshots } from "./session-message-dedupe";
 import { useSessionMessageSender } from "./session-message-sender";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
+import { updateSnapshotsWithTurnState } from "./turn-state-stream";
 import {
   seedSnapshotWithCachedUsageLimits,
   updateSnapshotsWithUsageLimits,
@@ -264,7 +265,13 @@ const ProjectManagerRuntimeSessionView = ({
       ),
     onSessionStream: (payload) =>
       setSnapshots((previous) =>
-        updateSnapshotsWithUsageLimits(updateSnapshotsWithTokenUsage(previous, payload), payload)
+        updateSnapshotsWithUsageLimits(
+          updateSnapshotsWithTokenUsage(
+            updateSnapshotsWithTurnState(previous, payload),
+            payload
+          ),
+          payload
+        )
       ),
     onWorkspaceSnapshot: (payload) => {
       workspaceSnapshotStore.applySnapshot(payload);

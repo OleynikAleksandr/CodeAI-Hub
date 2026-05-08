@@ -19,6 +19,7 @@ import {
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 import { applyWorkspaceSnapshotToSnapshots, useProjectManagerSessionStream } from "./session-stream";
 import { updateSnapshotsWithTokenUsage } from "./token-usage-stream";
+import { updateSnapshotsWithTurnState } from "./turn-state-stream";
 import {
   seedSnapshotWithCachedUsageLimits,
   updateSnapshotsWithUsageLimits,
@@ -329,7 +330,13 @@ export const useProjectManagerDialogSessionController = (
     },
     onSessionStream: (payload) => {
       setSnapshots((previous) =>
-        updateSnapshotsWithUsageLimits(updateSnapshotsWithTokenUsage(previous, payload), payload)
+        updateSnapshotsWithUsageLimits(
+          updateSnapshotsWithTokenUsage(
+            updateSnapshotsWithTurnState(previous, payload),
+            payload
+          ),
+          payload
+        )
       );
     },
     onWorkspaceSnapshot: (payload) => {
