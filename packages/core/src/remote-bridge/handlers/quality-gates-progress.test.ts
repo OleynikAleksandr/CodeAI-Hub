@@ -96,3 +96,49 @@ test("Quality Gates progress requires lifecycle hook wiring before integrated", 
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("Quality Gates progress accepts aggregate lifecycle hook runners", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-progress-aggregate-")
+  );
+  try {
+    await writeQualityGateArtifacts(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      `${JSON.stringify(
+        {
+          scripts: {
+            "qg:before-commit":
+              "node ./scripts/quality-gates/run.mjs requiredBeforeCommit",
+            "qg:before-push":
+              "node ./scripts/quality-gates/run.mjs requiredBeforePush",
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nnpm run qg:before-commit\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-push",
+      "#!/bin/sh\nnpm run qg:before-push\n"
+    );
+
+    const snapshot = await readQualityGatesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+
+    assert.equal(snapshot?.integrated, true);
+    assert.equal(snapshot?.substep, "integrated");
+    assert.deepEqual(snapshot?.validationErrors, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
