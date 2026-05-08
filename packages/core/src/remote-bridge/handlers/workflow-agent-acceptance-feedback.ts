@@ -17,6 +17,7 @@ const execFileAsync = promisify(execFile);
 
 interface StageFeedbackRequest {
   readonly actionLines: readonly string[];
+  readonly checkLines: readonly string[];
   readonly errors: readonly string[];
   readonly stage: string;
   readonly title: string;
@@ -47,6 +48,9 @@ const buildFeedbackMessage = (request: StageFeedbackRequest): string =>
   [
     `Core acceptance check failed for ${request.title}.`,
     "",
+    "What Core checked:",
+    ...request.checkLines.map((line) => `- ${line}`),
+    "",
     "What needs to be fixed:",
     ...request.errors.map((error) => `- ${error}`),
     "",
@@ -64,6 +68,9 @@ const readWorkspaceHead = async (workspaceRoot: string): Promise<string> => {
     return "unknown-head";
   }
 };
+
+const formatList = (items: readonly string[]): string =>
+  items.length > 0 ? items.join(", ") : "(none)";
 
 const createDiagramModulesErrors = (
   progress: DiagramModulesProgressSnapshot
@@ -84,6 +91,36 @@ const createDiagramModulesErrors = (
     `Diagram Modules is not complete: ${progress.generatedCount}/${progress.plannedCount} Product Part artifacts are valid; next missing or invalid Product Part is "${missingPart}".`,
   ];
 };
+
+const createDiagramModulesCheckLines = (
+  progress: DiagramModulesProgressSnapshot
+): readonly string[] => [
+  "Stage: Diagram Modules.",
+  "Rule: every Product Part declared in product-parts.index.md must have a valid generated Product Part artifact.",
+  `Observed valid Product Part artifacts: ${progress.generatedCount}/${progress.plannedCount}.`,
+  `Planned Product Parts: ${formatList(progress.plannedPartIds)}.`,
+  `Valid generated Product Parts: ${formatList(progress.generatedPartIds)}.`,
+  `Next missing or invalid Product Part: ${progress.currentPartId ?? "(none)"}.`,
+];
+
+const createApplicationSkeletonCheckLines = (
+  progress: ApplicationSkeletonProgressSnapshot
+): readonly string[] => [
+  "Stage: Application Skeleton.",
+  "Rule: application-skeleton-map.json, application-skeleton.md, and every declared production path must agree on a materialized accepted skeleton.",
+  `Observed map exists: ${progress.mapExists}; markdown exists: ${progress.markdownExists}; mapping ready: ${progress.mappingReady}.`,
+  `Observed accepted: ${progress.accepted}; materialized: ${progress.materialized}; materializationState: ${progress.materializationState}; substep: ${progress.substep}.`,
+  `Observed filesystem materialization signal: ${progress.observedMaterialization}.`,
+];
+
+const createQualityGatesCheckLines = (
+  progress: QualityGatesProgressSnapshot
+): readonly string[] => [
+  "Stage: Quality Gates Baseline.",
+  "Rule: accepted quality-gates.json must declare commands and every required gate must be wired into the managed lifecycle hooks.",
+  `Observed quality-gates.json exists: ${progress.jsonExists}; quality-gates.md exists: ${progress.markdownExists}; command contract ready: ${progress.commandContractReady}.`,
+  `Observed accepted: ${progress.accepted}; integrated: ${progress.integrated}; integrationState: ${progress.integrationState ?? "(missing)"}; substep: ${progress.substep}.`,
+];
 
 export class WorkflowAgentAcceptanceFeedback {
   private readonly logger: Logger;
@@ -155,6 +192,7 @@ export class WorkflowAgentAcceptanceFeedback {
                 "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
                 "Commit the repair with the current managed plan command so Core can re-run acceptance before the next workflow stage.",
               ],
+              checkLines: createDiagramModulesCheckLines(params.progress),
               errors,
               stage: DIAGRAM_MODULES_STAGE,
               title: "Diagram Modules",
@@ -183,6 +221,7 @@ export class WorkflowAgentAcceptanceFeedback {
                 "Update application-skeleton-map.json and the materialized filesystem projection until every declared path exists and matches the accepted skeleton.",
                 "Commit the repair with the current managed plan command so Core can re-run acceptance before Quality Gates starts.",
               ],
+              checkLines: createApplicationSkeletonCheckLines(params.progress),
               errors: params.progress.validationErrors,
               stage: APPLICATION_SKELETON_STAGE,
               title: "Application Skeleton",
@@ -212,6 +251,7 @@ export class WorkflowAgentAcceptanceFeedback {
                 "Re-run the affected qg:* checks and the aggregate quality gate command.",
                 "Commit the repair with the current managed plan command so Core can re-run acceptance and unlock the next workflow step.",
               ],
+              checkLines: createQualityGatesCheckLines(params.progress),
               errors: params.progress.validationErrors,
               stage: QUALITY_GATES_STAGE,
               title: "Quality Gates Baseline",

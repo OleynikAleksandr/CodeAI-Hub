@@ -12,19 +12,29 @@ import { WorkflowAgentAcceptanceFeedback } from "./workflow-agent-acceptance-fee
 const execFileAsync = promisify(execFile);
 const DIAGRAM_MODULES_MISSING_PART_RE =
   /next missing or invalid Product Part is "local-runtime"/u;
+const CORE_CHECKED_HEADING_RE = /What Core checked:/u;
+const DIAGRAM_MODULES_OBSERVED_RE =
+  /Observed valid Product Part artifacts: 0\/1\./u;
+const APPLICATION_SKELETON_OBSERVED_RE =
+  /Observed accepted: true; materialized: false; materializationState: failed; substep: failed\./u;
+const QUALITY_GATES_OBSERVED_RE =
+  /Observed accepted: true; integrated: false; integrationState: integrated; substep: failed\./u;
 
-const createChains = (): readonly ContinuityChainSummary[] => [
+const createChains = (
+  stage: ContinuityChainSummary["stage"],
+  sessionId: string
+): readonly ContinuityChainSummary[] => [
   {
-    rootSessionId: "codex-diagram-modules",
+    rootSessionId: `codex-${stage}`,
     segments: [
       {
         createdAt: "2026-05-08T05:51:54.053Z",
         providerId: "codexCli",
-        providerSessionId: "provider-diagram-session",
-        sessionId: "diagram-session",
+        providerSessionId: `provider-${sessionId}`,
+        sessionId,
       },
     ],
-    stage: "diagram_modules",
+    stage,
     updatedAt: "2026-05-08T05:51:54.053Z",
     workspaceSlug: "demo-workspace",
   },
@@ -72,7 +82,7 @@ test("managed feedback repeats after a repair commit leaves Diagram Modules vali
     const feedback = new WorkflowAgentAcceptanceFeedback(new Logger("error"));
     const send = () =>
       feedback.sendDiagramModulesFeedback({
-        chains: createChains(),
+        chains: createChains("diagram_modules", "diagram-session"),
         gateway: {
           handleMessage: (sessionId, content) => {
             messages.push(`${sessionId}\n${content}`);
@@ -107,6 +117,85 @@ test("managed feedback repeats after a repair commit leaves Diagram Modules vali
     await send();
     assert.equal(messages.length, 2);
     assert.match(messages[1] ?? "", DIAGRAM_MODULES_MISSING_PART_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed feedback includes diagnostic check context for every managed stage", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-diagnostics-")
+  );
+  const messages: string[] = [];
+  const gateway = {
+    handleMessage: (sessionId: string, content: string) => {
+      messages.push(`${sessionId}\n${content}`);
+      return Promise.resolve();
+    },
+  };
+
+  try {
+    await initWorkspace(workspaceRoot);
+    const feedback = new WorkflowAgentAcceptanceFeedback(new Logger("error"));
+    await feedback.sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway,
+      progress: {
+        aggregateReady: false,
+        currentPartId: "local-runtime",
+        generatedCount: 0,
+        generatedPartIds: [],
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        substep: "generate_product_part",
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+    await feedback.sendApplicationSkeletonFeedback({
+      chains: createChains("application_skeleton", "skeleton-session"),
+      gateway,
+      progress: {
+        accepted: true,
+        mapExists: true,
+        mappingReady: true,
+        markdownExists: true,
+        materializationState: "failed",
+        materialized: false,
+        observedMaterialization: true,
+        substep: "failed",
+        validationErrors: [
+          "application-skeleton.md status reviewState must be materialized",
+        ],
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+    await feedback.sendQualityGatesFeedback({
+      chains: createChains("quality_gates", "quality-session"),
+      gateway,
+      progress: {
+        accepted: true,
+        commandContractReady: true,
+        integrated: false,
+        integrationState: "integrated",
+        jsonExists: true,
+        markdownExists: true,
+        substep: "failed",
+        validationErrors: [
+          "Quality gate qg-secret-scan is missing from .husky/pre-commit",
+        ],
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    const feedbackText = messages.join("\n---\n");
+    assert.equal(messages.length, 3);
+    assert.match(feedbackText, CORE_CHECKED_HEADING_RE);
+    assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
+    assert.match(feedbackText, APPLICATION_SKELETON_OBSERVED_RE);
+    assert.match(feedbackText, QUALITY_GATES_OBSERVED_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
