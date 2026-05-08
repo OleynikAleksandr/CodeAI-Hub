@@ -91,11 +91,16 @@ If acceptance fails, Core must:
 - include the concrete failed checks, the observed Core check context, and a
   repair request;
 - avoid duplicate feedback for the same session/error set on the same workspace
-  commit;
+  commit, including concurrent workflow-state reads that observe the same
+  failing commit before the first feedback delivery finishes;
 - resend feedback after a new agent repair commit if the same validation still
   fails, because that represents a new failed acceptance attempt;
 - re-run acceptance on the next workflow state read after the agent repairs and
   commits the stage.
+
+Core must reserve the feedback signature before awaiting provider/session
+delivery. If delivery fails, the reservation is released so the next state read
+can retry the same acceptance feedback.
 
 The user should not have to infer the blocker from a locked next stage. The
 same agent that produced the incomplete stage result must receive the Core
