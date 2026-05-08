@@ -78,3 +78,9 @@ downstream lock.
 
 - `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
 - `npm run plan:validate`
+
+2026-05-08 repair-aware managed feedback release built:
+
+- `./scripts/build-all.sh --allow-dirty --version 1.2.196` completed after a compile-narrowing repair and produced provider/core/UI/launcher tarballs in `doc/tmp/releases/` and `~/.codeai-hub/releases`.
+- `./scripts/build-release.sh --use-current-version` completed and produced `codeai-hub-1.2.196.vsix`.
+- Release handoff remains active for user workflow retest before scope closeout.
