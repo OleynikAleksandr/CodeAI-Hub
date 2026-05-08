@@ -97,3 +97,46 @@ test("Diagram Modules feedback separates Core-owned dirty gate from artifact edi
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("managed feedback marks the feedback turn running before dispatch", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-running-")
+  );
+  const events: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway: {
+        handleMessage: (sessionId) => {
+          events.push(`message:${sessionId}`);
+          return Promise.resolve();
+        },
+        markFeedbackTurnStarted: (sessionId) => {
+          events.push(`running:${sessionId}`);
+        },
+      },
+      progress: {
+        aggregateReady: false,
+        currentPartId: "local-runtime",
+        generatedCount: 0,
+        generatedPartIds: [],
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        substep: "generate_product_part",
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.deepEqual(events, [
+      "running:diagram-session",
+      "message:diagram-session",
+    ]);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});

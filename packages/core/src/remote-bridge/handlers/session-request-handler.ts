@@ -82,6 +82,10 @@ export class SessionRequestHandler {
   private readonly broadcaster: (event: BridgeEvent) => void;
   private readonly stateBroadcaster: () => void;
   private readonly workspaceRuntime?: WorkspaceRuntimeFacade;
+  private readonly emitTurnStateEvent: (options: {
+    readonly sessionId: string;
+    readonly state: "running" | "idle";
+  }) => void;
   private readonly continuity: SessionContinuityFacade;
   private readonly descriptionDialogSync: SessionDescriptionDialogSync;
   private readonly providerBindingService: SessionProviderBindingService;
@@ -146,6 +150,7 @@ export class SessionRequestHandler {
     });
     const handleProviderFailure = runtimeCallbacks.handleProviderFailure;
     const emitTurnStateEvent = runtimeCallbacks.emitTurnStateEvent;
+    this.emitTurnStateEvent = emitTurnStateEvent;
     const runtime = createSessionRequestHandlerRuntime({
       broadcaster: this.broadcaster,
       callbacks: runtimeCallbacks,
@@ -325,6 +330,10 @@ export class SessionRequestHandler {
     content: string
   ): Promise<void> {
     await this.messageDispatch.sendInternalMessage(sessionId, content);
+  }
+
+  markFeedbackTurnStarted(sessionId: string): void {
+    this.emitTurnStateEvent({ sessionId, state: "running" });
   }
 
   async handleCreate(

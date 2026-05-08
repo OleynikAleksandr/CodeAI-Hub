@@ -14,6 +14,7 @@ export interface WorkflowAgentAcceptanceFeedbackGateway {
     sessionId: string,
     payload: string | WorkflowAgentAcceptanceFeedbackPayload
   ) => Promise<void>;
+  readonly markFeedbackTurnStarted?: (sessionId: string) => void;
 }
 
 const QUALITY_GATES_STAGE = "quality_gates";
@@ -286,6 +287,7 @@ export class WorkflowAgentAcceptanceFeedback {
     }
     this.sentSignatures.add(signature);
     try {
+      params.gateway.markFeedbackTurnStarted?.(sessionId);
       await params.gateway.handleMessage(sessionId, {
         content: buildFeedbackMessage(params.request),
         turnOptions: { userMessageVisibility: "deferred" },
