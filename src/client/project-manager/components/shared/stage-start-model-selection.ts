@@ -1,0 +1,123 @@
+import {
+  CLAUDE_MODEL_ALIASES,
+  DEFAULT_CLAUDE_MODEL_ALIAS,
+  DEFAULT_CLAUDE_THINKING_EFFORT,
+} from "../../../../types/claude-model-registry";
+import {
+  CODEX_SETTINGS_MODELS,
+  DEFAULT_CODEX_MODEL_ID,
+  DEFAULT_CODEX_REASONING_LEVEL,
+} from "../../../../types/codex-model-registry";
+import {
+  DEFAULT_GEMINI_MODEL_ID,
+  DEFAULT_GEMINI_THINKING_LEVEL,
+  GEMINI_RECOMMENDED_MODELS,
+} from "../../../../types/gemini-model-registry";
+import type { ProviderStackId } from "../../../../types/provider";
+import type { SettingsLoadedPayload } from "../../core-stream-message-types";
+import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
+
+export type StartCardModelOption = {
+  readonly description: string;
+  readonly id: string;
+  readonly label: string;
+};
+
+export type StartCardReasoningOption = {
+  readonly id: string;
+  readonly label: string;
+};
+
+export type StartCardModelSelection = {
+  readonly modelId: string;
+  readonly reasoning: string;
+};
+
+const isSettings = (value: unknown): value is Settings =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+export const getStartCardModelOptions = (
+  providerId: ProviderStackId
+): readonly StartCardModelOption[] => {
+  if (providerId === "claudeCodeCli") {
+    return CLAUDE_MODEL_ALIASES.map((model) => ({
+      description: model.description,
+      id: model.alias,
+      label: model.displayName,
+    }));
+  }
+  if (providerId === "codexCli") {
+    return CODEX_SETTINGS_MODELS.map((model) => ({
+      description: model.description,
+      id: model.id,
+      label: model.displayName,
+    }));
+  }
+  return GEMINI_RECOMMENDED_MODELS.map((model) => ({
+    description: model.description,
+    id: model.id,
+    label: model.displayName,
+  }));
+};
+
+export const getStartCardReasoningOptions = (
+  providerId: ProviderStackId,
+  modelId: string
+): readonly StartCardReasoningOption[] => {
+  if (providerId === "claudeCodeCli") {
+    const model =
+      CLAUDE_MODEL_ALIASES.find((candidate) => candidate.alias === modelId) ??
+      CLAUDE_MODEL_ALIASES[0];
+    return model.thinkingEffortOptions.map((effort) => ({
+      id: effort,
+      label: effort,
+    }));
+  }
+  if (providerId === "codexCli") {
+    const model =
+      CODEX_SETTINGS_MODELS.find((candidate) => candidate.id === modelId) ??
+      CODEX_SETTINGS_MODELS[0];
+    return model.reasoningEffortOptions.map((effort) => ({
+      id: effort,
+      label: effort,
+    }));
+  }
+  const model =
+    GEMINI_RECOMMENDED_MODELS.find((candidate) => candidate.id === modelId) ??
+    GEMINI_RECOMMENDED_MODELS[0];
+  return model.supportedThinkingLevels.map((level) => ({
+    id: level,
+    label: level,
+  }));
+};
+
+export const resolveDefaultStartCardModelSelection = (
+  payload: SettingsLoadedPayload | null,
+  providerId: ProviderStackId
+): StartCardModelSelection => {
+  const settings = isSettings(payload?.settings) ? payload.settings : null;
+  if (providerId === "claudeCodeCli") {
+    return {
+      modelId: settings?.providers.claude.defaultModel ?? DEFAULT_CLAUDE_MODEL_ALIAS,
+      reasoning:
+        settings?.providers.claude.thinking.effort ??
+        DEFAULT_CLAUDE_THINKING_EFFORT,
+    };
+  }
+  if (providerId === "codexCli") {
+    const modelId = settings?.providers.codex.defaultModel ?? DEFAULT_CODEX_MODEL_ID;
+    return {
+      modelId,
+      reasoning:
+        settings?.providers.codex.reasoningByModel[modelId] ??
+        DEFAULT_CODEX_REASONING_LEVEL,
+    };
+  }
+  const modelId = settings?.providers.gemini.defaultModel ?? DEFAULT_GEMINI_MODEL_ID;
+  return {
+    modelId,
+    reasoning:
+      settings?.providers.gemini.thinkingLevelByModel[modelId] ??
+      DEFAULT_GEMINI_THINKING_LEVEL,
+  };
+};

@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
@@ -7,6 +7,11 @@ import type { WorkflowStateSnapshot } from "../../services/workflow-state-client
 import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { PROVIDER_TINT_TOKENS } from "./stage-confirmation-card-provider-tint";
+import {
+  getStartCardModelOptions,
+  getStartCardReasoningOptions,
+  resolveDefaultStartCardModelSelection,
+} from "./stage-start-model-selection";
 import {
   STAGE_LABELS,
   UPSTREAM_STAGE_LABELS,
@@ -48,6 +53,20 @@ const HIDDEN_INPUT_STYLE: React.CSSProperties = {
   pointerEvents: "none",
   position: "absolute",
 };
+const SELECT_GRID_STYLE: React.CSSProperties = {
+  display: "grid",
+  gap: 8,
+  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+};
+const SELECT_STYLE: React.CSSProperties = {
+  background: "rgba(7, 11, 18, 0.94)",
+  border: "1px solid rgba(255,255,255,0.12)",
+  borderRadius: 8,
+  color: "var(--pm-text)",
+  fontSize: 13,
+  minHeight: 36,
+  padding: "7px 10px",
+};
 
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
@@ -68,6 +87,10 @@ export const StageConfirmationCard: React.FC<{
   const [startError, setStartError] = useState<string | null>(null);
   const [selectedProviderId, setSelectedProviderId] =
     useState<ProviderStackId | null>(null);
+  const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+  const [selectedReasoning, setSelectedReasoning] = useState<string | null>(
+    null
+  );
   const mountedRef = useRef(true);
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionScopeKeyRef = useRef<string | null>(null);
@@ -105,6 +128,20 @@ export const StageConfirmationCard: React.FC<{
   );
   const selectedProvider =
     providers.find((provider) => provider.id === selectedProviderId) ?? null;
+  const modelOptions = useMemo(
+    () =>
+      selectedProviderId
+        ? getStartCardModelOptions(selectedProviderId)
+        : [],
+    [selectedProviderId]
+  );
+  const reasoningOptions = useMemo(
+    () =>
+      selectedProviderId && selectedModelId
+        ? getStartCardReasoningOptions(selectedProviderId, selectedModelId)
+        : [],
+    [selectedModelId, selectedProviderId]
+  );
   const hasConnectedProviders = providers.some((provider) => provider.connected);
   const isUsingInheritedProvider =
     inheritedProviderId !== null && selectedProviderId === inheritedProviderId;
@@ -131,6 +168,32 @@ export const StageConfirmationCard: React.FC<{
     });
   }, [defaultProviderId, providers, stage, workspaceSlug]);
 
+  useEffect(() => {
+    if (!selectedProviderId) {
+      setSelectedModelId(null);
+      setSelectedReasoning(null);
+      return;
+    }
+    const selection = resolveDefaultStartCardModelSelection(
+      api.getLastSettingsPayload(),
+      selectedProviderId
+    );
+    setSelectedModelId(selection.modelId);
+    setSelectedReasoning(selection.reasoning);
+  }, [selectedProviderId]);
+
+  useEffect(() => {
+    if (reasoningOptions.length === 0) {
+      return;
+    }
+    const reasoningStillSupported = reasoningOptions.some(
+      (option) => option.id === selectedReasoning
+    );
+    if (!reasoningStillSupported) {
+      setSelectedReasoning(reasoningOptions[0]?.id ?? null);
+    }
+  }, [reasoningOptions, selectedReasoning]);
+
   const providerTitle =
     selectedProvider?.title ??
     providers.find((provider) => provider.id === inheritedProviderId)?.title ??
@@ -144,6 +207,11 @@ export const StageConfirmationCard: React.FC<{
   const availableLabel = uiLabel("pm.confirmation_card.artifact_available", "available");
   const notFoundLabel = uiLabel("pm.confirmation_card.artifact_not_found", "not found");
   const providerLabelText = uiLabel("pm.confirmation_card.provider_label", "Agent provider");
+  const modelLabelText = uiLabel("pm.confirmation_card.model_label", "Model");
+  const reasoningLabelText = uiLabel(
+    "pm.confirmation_card.reasoning_label",
+    "Reasoning"
+  );
   const previousStepBadgeText = uiLabel(
     "pm.confirmation_card.previous_provider_badge",
     "previous step"
@@ -204,6 +272,8 @@ export const StageConfirmationCard: React.FC<{
         workspacePath,
         workspaceSlug,
         providerId: selectedProviderId,
+        modelId: selectedModelId,
+        reasoning: selectedReasoning,
         onSessionCreated,
       };
       if (stage === "virtual_simulation") {
@@ -232,6 +302,8 @@ export const StageConfirmationCard: React.FC<{
     canStart,
     onStarted,
     selectedProviderId,
+    selectedModelId,
+    selectedReasoning,
     stage,
     workspacePath,
     workspaceSlug,
@@ -342,6 +414,41 @@ export const StageConfirmationCard: React.FC<{
             </div>
           ) : null}
         </div>
+
+        {selectedProvider ? (
+          <div style={SELECT_GRID_STYLE}>
+            <label style={{ display: "grid", gap: 6 }}>
+              <span style={PROVIDER_LABEL_STYLE}>{modelLabelText}</span>
+              <select
+                disabled={startInFlight}
+                onChange={(event) => setSelectedModelId(event.target.value)}
+                style={SELECT_STYLE}
+                value={selectedModelId ?? ""}
+              >
+                {modelOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label style={{ display: "grid", gap: 6 }}>
+              <span style={PROVIDER_LABEL_STYLE}>{reasoningLabelText}</span>
+              <select
+                disabled={startInFlight}
+                onChange={(event) => setSelectedReasoning(event.target.value)}
+                style={SELECT_STYLE}
+                value={selectedReasoning ?? ""}
+              >
+                {reasoningOptions.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        ) : null}
 
         <div style={{ marginTop: 8 }}>
           <button
