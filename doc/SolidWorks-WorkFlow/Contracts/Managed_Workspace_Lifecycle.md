@@ -70,11 +70,19 @@ At `Diagram Modules` start, hooks are lifecycle-minimal and stack-neutral.
 
 Core acceptance is an active loop, not a passive lock.
 
-When a managed stage agent declares completion, Core must verify the actual
-workspace result against the stage contract before unlocking downstream work.
-For `Quality Gates Baseline`, `quality-gates.json` flags are not enough: Core
-also verifies that required gates are wired into lifecycle hooks and that the
-managed plan transaction is accepted.
+When a managed stage agent commits work, Core must verify the actual workspace
+result against the stage contract before unlocking downstream work. This applies
+to every managed trunk stage that participates in the plan/commit lifecycle:
+
+- `Diagram Modules`: planned Product Parts must resolve to valid generated
+  Product Part artifacts, and `blocked_ambiguity` must be resolved in the
+  owning session.
+- `Application Skeleton`: `application-skeleton-map.json` flags are not enough;
+  declared production `codePath` and `materializedPaths` must exist and match
+  the accepted skeleton lifecycle state.
+- `Quality Gates Baseline`: `quality-gates.json` flags are not enough; required
+  gates must be wired into lifecycle hooks and the managed plan transaction must
+  be accepted.
 
 If acceptance fails, Core must:
 
@@ -85,6 +93,6 @@ If acceptance fails, Core must:
 - re-run acceptance on the next workflow state read after the agent repairs and
   commits the stage.
 
-The user should not have to infer the blocker from a locked Development Tree.
-The same agent that produced the incomplete stage result must receive the Core
+The user should not have to infer the blocker from a locked next stage. The
+same agent that produced the incomplete stage result must receive the Core
 acceptance feedback and continue the repair in place.
