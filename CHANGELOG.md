@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.204] - 2026-05-08
+### Fixed
+- **Claude/Core feedback turns now stay ordered and locked.** Core marks managed feedback turns as running before dispatch and serializes per-session message persistence/broadcast so deferred Core feedback is shown before the next reasoning block instead of appearing late.
+- **Diagram Modules validation feedback now reports exact Product Part failures.** Core preserves per-part validator diagnostics and separates semantic artifact errors from Core-owned dirty/commit gates, so Claude receives the failed pattern instead of a generic rejection.
+
+### Tests
+- **Targeted regression coverage verifies Diagram Modules diagnostics, Core-owned feedback wording, feedback-turn locking, deferred-message ordering, and provider event routing.**
+
 ## [1.2.203] - 2026-05-08
 ### Fixed
 - **Claude workflow turns now stay coherent through Core feedback.** Deferred Core feedback is delivered at provider turn boundaries, provider turn state keeps workflow input locked while Claude continues working, and orphan punctuation/suffix chunks are suppressed instead of becoming standalone dialog bubbles.
