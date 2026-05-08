@@ -23,7 +23,15 @@ export interface DiagramModulesProgressSnapshot {
   readonly generatedPartIds: readonly string[];
   readonly plannedCount: number;
   readonly plannedPartIds: readonly string[];
+  readonly productPartDiagnostics?: readonly ProductPartDiagnostic[];
   readonly substep: DiagramModulesSubstep;
+}
+
+export interface ProductPartDiagnostic {
+  readonly error: string | null;
+  readonly partId: string;
+  readonly path?: string;
+  readonly valid: boolean;
 }
 
 const readExistingFile = async (
@@ -36,15 +44,19 @@ const readExistingFile = async (
   return readFile(absolutePath, "utf8").catch(() => null);
 };
 
-const isProductPartReady = (params: {
+const validateProductPartContent = (params: {
   readonly content: string;
   readonly partId: string;
-}): boolean =>
-  normalizeAndValidateWorkflowStageArtifact({
+}): { readonly error: string | null; readonly valid: boolean } => {
+  const result = normalizeAndValidateWorkflowStageArtifact({
     expectedPartId: params.partId,
     fileName: "product-part.md",
     markdown: params.content,
-  }).ok;
+  });
+  return result.ok
+    ? { error: null, valid: true }
+    : { error: result.error, valid: false };
+};
 
 const collectPlannedPartIds = (markdown: string): string[] => {
   const plannedPartIds: string[] = [];
@@ -64,12 +76,12 @@ const collectPlannedPartIds = (markdown: string): string[] => {
   return plannedPartIds;
 };
 
-const resolveGeneratedPartIds = async (params: {
+const resolveProductPartDiagnostics = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
   readonly plannedPartIds: readonly string[];
-}): Promise<string[]> => {
-  const generatedPartIds: string[] = [];
+}): Promise<ProductPartDiagnostic[]> => {
+  const diagnostics: ProductPartDiagnostic[] = [];
   for (const partId of params.plannedPartIds) {
     const artifactPath = resolveWorkflowArtifactPaths({
       workspaceRoot: params.workspaceRoot,
@@ -79,14 +91,32 @@ const resolveGeneratedPartIds = async (params: {
       partId,
     });
     if (!artifactPath.ok) {
+      diagnostics.push({
+        error: artifactPath.error,
+        partId,
+        valid: false,
+      });
       continue;
     }
     const content = await readExistingFile(artifactPath.value.absolutePath);
-    if (content && isProductPartReady({ content, partId })) {
-      generatedPartIds.push(partId);
+    if (!content) {
+      diagnostics.push({
+        error: "Product Part artifact file is missing.",
+        partId,
+        path: artifactPath.value.relativePath,
+        valid: false,
+      });
+      continue;
     }
+    const validation = validateProductPartContent({ content, partId });
+    diagnostics.push({
+      error: validation.error,
+      partId,
+      path: artifactPath.value.relativePath,
+      valid: validation.valid,
+    });
   }
-  return generatedPartIds;
+  return diagnostics;
 };
 
 export const readDiagramModulesProgressSnapshot = async (params: {
@@ -109,11 +139,14 @@ export const readDiagramModulesProgressSnapshot = async (params: {
   }
 
   const plannedPartIds = collectPlannedPartIds(indexMarkdown);
-  const generatedPartIds = await resolveGeneratedPartIds({
+  const productPartDiagnostics = await resolveProductPartDiagnostics({
     workspaceRoot: params.workspaceRoot,
     workspaceSlug: params.workspaceSlug,
     plannedPartIds,
   });
+  const generatedPartIds = productPartDiagnostics
+    .filter((diagnostic) => diagnostic.valid)
+    .map((diagnostic) => diagnostic.partId);
   const currentPartId = plannedPartIds.find(
     (partId) => !generatedPartIds.includes(partId)
   );
@@ -136,6 +169,7 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     ...(currentPartId ? { currentPartId } : {}),
     plannedCount: plannedPartIds.length,
     generatedCount: generatedPartIds.length,
+    productPartDiagnostics,
     aggregateReady: substep === "awaiting_review",
   };
 };
