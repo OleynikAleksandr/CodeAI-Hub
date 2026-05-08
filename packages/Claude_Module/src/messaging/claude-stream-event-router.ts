@@ -10,6 +10,7 @@ import {
 import {
   emitClaudeAssistantLiveText,
   emitClaudeThinkingDialog,
+  isClaudeDisplayMicroChunk,
   isClaudeMessageStopEvent,
   readClaudeMessageDeltaStopReason,
   readClaudeMessageId,
@@ -179,6 +180,9 @@ export class ClaudeStreamEventRouter {
     message: ClaudeStreamMessage,
     content: string
   ): void {
+    if (isClaudeDisplayMicroChunk(content)) {
+      return;
+    }
     session.eventEmitter.emit("message", {
       type: "assistant",
       content,

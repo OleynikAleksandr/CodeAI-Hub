@@ -4,8 +4,29 @@ import type { ClaudeStreamMessage } from "../types";
 import { splitClaudeDialogChunks } from "./claude-readable-text-chunker";
 
 const THINKING_DIALOG_MAX_CHARS = 900;
+const MICRO_CHUNK_MAX_CHARS = 24;
+const LATIN_WORD_SUFFIX_REGEX = /^[A-Za-z][A-Za-z'-]{0,15}[.!?…]$/u;
+const CORE_ACCEPTANCE_FRAGMENT_REGEX = /^core acceptance\.$/iu;
+const PUNCTUATION_ONLY_REGEX = /^[\p{P}\p{S}]+$/u;
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+export const isClaudeDisplayMicroChunk = (content: string): boolean => {
+  const trimmed = content.trim();
+  if (trimmed.length === 0) {
+    return true;
+  }
+  if (PUNCTUATION_ONLY_REGEX.test(trimmed)) {
+    return true;
+  }
+  if (trimmed.length > MICRO_CHUNK_MAX_CHARS) {
+    return false;
+  }
+  return (
+    LATIN_WORD_SUFFIX_REGEX.test(trimmed) ||
+    CORE_ACCEPTANCE_FRAGMENT_REGEX.test(trimmed)
+  );
+};
 
 export const emitClaudeThinkingDialog = (
   session: ActiveSession,
@@ -13,6 +34,9 @@ export const emitClaudeThinkingDialog = (
   content: string,
   suffix: string
 ): void => {
+  if (isClaudeDisplayMicroChunk(content)) {
+    return;
+  }
   const displayChunks = splitClaudeDialogChunks(
     content,
     THINKING_DIALOG_MAX_CHARS
@@ -47,7 +71,7 @@ export const emitClaudeAssistantLiveText = (
   content: string,
   suffix: string
 ): void => {
-  if (content.length === 0) {
+  if (content.length === 0 || isClaudeDisplayMicroChunk(content)) {
     return;
   }
   session.eventEmitter.emit("message", {
