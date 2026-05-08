@@ -17,6 +17,10 @@ const DIAGRAM_MODULES_OBSERVED_RE =
   /Observed valid Product Part artifacts: 0\/1\./u;
 const APPLICATION_SKELETON_OBSERVED_RE =
   /Observed accepted: true; materialized: false; materializationState: failed; substep: failed\./u;
+const APPLICATION_SKELETON_DRAFT_RULE_RE =
+  /draft application-skeleton-map\.json and application-skeleton\.md must be complete and committed before user review/u;
+const APPLICATION_SKELETON_NO_MATERIALIZE_RE =
+  /Do not create product-parts\/\*\* or mark the skeleton accepted\/materialized until explicit user acceptance/u;
 const QUALITY_GATES_OBSERVED_RE =
   /Observed accepted: true; integrated: false; integrationState: integrated; substep: failed\./u;
 const OUT_OF_OWNER_DIRTY_RE =
@@ -205,6 +209,49 @@ test("managed feedback includes diagnostic check context for every managed stage
     assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
     assert.match(feedbackText, APPLICATION_SKELETON_OBSERVED_RE);
     assert.match(feedbackText, QUALITY_GATES_OBSERVED_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Application Skeleton draft feedback does not instruct materialization before acceptance", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-skeleton-draft-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendApplicationSkeletonFeedback({
+      chains: createChains("application_skeleton", "skeleton-session"),
+      gateway: {
+        handleMessage: (sessionId, content) => {
+          messages.push(`${sessionId}\n${content}`);
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        accepted: false,
+        mapExists: true,
+        mappingReady: true,
+        markdownExists: true,
+        materializationState: "failed",
+        materialized: false,
+        observedMaterialization: false,
+        substep: "failed",
+        validationErrors: [
+          "Managed workspace Git status is dirty for Application Skeleton-owned files: .codeai-hub/demo/application_skeleton/application-skeleton.md.",
+        ],
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(messages.length, 1);
+    assert.match(messages[0] ?? "", APPLICATION_SKELETON_DRAFT_RULE_RE);
+    assert.match(messages[0] ?? "", APPLICATION_SKELETON_NO_MATERIALIZE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

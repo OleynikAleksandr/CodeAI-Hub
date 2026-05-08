@@ -147,11 +147,27 @@ const createApplicationSkeletonCheckLines = (
   progress: ApplicationSkeletonProgressSnapshot
 ): readonly string[] => [
   "Stage: Application Skeleton.",
-  "Rule: application-skeleton-map.json, application-skeleton.md, and every declared production path must agree on a materialized accepted skeleton.",
+  progress.accepted
+    ? "Rule: application-skeleton-map.json, application-skeleton.md, and every declared production path must agree on a materialized accepted skeleton."
+    : "Rule: draft application-skeleton-map.json and application-skeleton.md must be complete and committed before user review; filesystem materialization waits for explicit user acceptance.",
   `Observed map exists: ${progress.mapExists}; markdown exists: ${progress.markdownExists}; mapping ready: ${progress.mappingReady}.`,
   `Observed accepted: ${progress.accepted}; materialized: ${progress.materialized}; materializationState: ${progress.materializationState}; substep: ${progress.substep}.`,
   `Observed filesystem materialization signal: ${progress.observedMaterialization}.`,
 ];
+
+const createApplicationSkeletonActionLines = (
+  progress: ApplicationSkeletonProgressSnapshot
+): readonly string[] =>
+  progress.accepted
+    ? [
+        "Update application-skeleton-map.json and the materialized filesystem projection until every declared path exists and matches the accepted skeleton.",
+        "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
+      ]
+    : [
+        "Update only the draft Application Skeleton artifacts: application-skeleton-map.json and application-skeleton.md.",
+        "Do not create product-parts/** or mark the skeleton accepted/materialized until explicit user acceptance advances the managed plan.",
+        "When the draft artifacts are ready, respond with a content-readiness note; Core owns the managed commit and user review unlock.",
+      ];
 
 const createQualityGatesCheckLines = (
   progress: QualityGatesProgressSnapshot
@@ -273,8 +289,7 @@ export class WorkflowAgentAcceptanceFeedback {
         params.progress && errors.length > 0
           ? {
               actionLines: [
-                "Update application-skeleton-map.json and the materialized filesystem projection until every declared path exists and matches the accepted skeleton.",
-                "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
+                ...createApplicationSkeletonActionLines(params.progress),
               ],
               checkLines: createApplicationSkeletonCheckLines(params.progress),
               errors,
