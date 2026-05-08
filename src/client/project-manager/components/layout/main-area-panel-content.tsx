@@ -16,6 +16,7 @@ import {
   StageConfirmationCard,
   type StageSessionIntent,
 } from "../shared/stage-confirmation-card";
+import { DevelopmentTreeNodeStartCard } from "./development-tree-node-start-card";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { useProjectManagerSettingsState } from "../settings/use-project-manager-settings-state";
 import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
@@ -425,6 +426,17 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   if (showDescriptionHelp) {
     return <DescriptionStepHelp />;
+  }
+
+  if (selectedBranchNode && !selectedBranchNode.session && selectedBranchNode.workflowPath) {
+    return (
+      <DevelopmentTreeNodeStartCard
+        kind={selectedBranchNode.kind}
+        label={selectedBranchNode.label}
+        nodeId={selectedBranchNode.nodeId}
+        workflowPath={selectedBranchNode.workflowPath}
+      />
+    );
   }
 
   if (
