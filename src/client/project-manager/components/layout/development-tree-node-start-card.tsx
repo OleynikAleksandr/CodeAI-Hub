@@ -38,7 +38,9 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
   readonly label: string;
   readonly nodeId: string;
   readonly workflowPath: string;
-}> = ({ kind, label, nodeId, workflowPath }) => {
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}> = ({ kind, label, nodeId, workflowPath, workspacePath, workspaceSlug }) => {
   const providers = api.getDescriptionProviders();
   const firstProvider =
     providers.find((provider) => provider.connected && isProviderStackId(provider.id)) ??
@@ -151,17 +153,14 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
           className="pm-provider-picker__button pm-provider-picker__button--primary"
           disabled={startDisabled}
           onClick={() => {
-            window.dispatchEvent(
-              new CustomEvent("pm:development-tree-node:start", {
-                detail: {
-                  modelId: selectedModelId,
-                  nodeId,
-                  providerId: selectedProviderId,
-                  reasoning: selectedReasoning,
-                  workflowPath,
-                },
-              })
-            );
+            api.startDevelopmentTreeNode({
+              modelId: selectedModelId,
+              providerId: selectedProviderId ?? "",
+              reasoning: selectedReasoning,
+              workflowPath,
+              workspacePath,
+              workspaceSlug,
+            });
           }}
           type="button"
         >

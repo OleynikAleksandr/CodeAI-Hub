@@ -129,17 +129,11 @@ class ProjectManagerApi {
   }
 
   listProjects(): void { this.send({ type: "projects:list" }); }
-
   loadSettings(): void { this.send({ type: "settings:load" }); }
-
   loadSettingsVersions(): void { this.send({ type: "settings:versions" }); }
-
   getLastSettingsPayload(): SettingsLoadedPayload | null { return this.lastSettingsPayload; }
-
   getLastSettingsSaveError(): string | null { return this.lastSettingsSaveError; }
-
   getLastSettingsVersionsPayload(): SettingsVersionsPayload | null { return this.lastSettingsVersionsPayload; }
-
   getLastUserGlossaryFilePayload(): SettingsUserGlossaryFilePayload | null {
     return this.lastUserGlossaryFilePayload;
   }
@@ -148,12 +142,10 @@ class ProjectManagerApi {
     this.lastSettingsSaveError = null;
     this.send({ type: "settings:save", payload: { settings } });
   }
-
   resetSettings(): void {
     this.lastSettingsSaveError = null;
     this.send({ type: "settings:reset" });
   }
-
   restartCore(): void {
     this.coreRestartTracker.requestRestart();
   }
@@ -167,12 +159,10 @@ class ProjectManagerApi {
       payload: { provider, target },
     });
   }
-
   openUserGlossaryFile(): void {
     this.lastUserGlossaryFilePayload = null;
     this.send({ type: "settings:open-user-glossary-file" });
   }
-
   loadTemplateUpdates(): void {
     this.send({ type: "settings:template-updates" });
   }
@@ -225,6 +215,16 @@ class ProjectManagerApi {
       return;
     }
     this.send({ type: "session:create", payload: params });
+  }
+  startDevelopmentTreeNode(params: {
+    readonly modelId?: string | null;
+    readonly providerId: string;
+    readonly reasoning?: string | null;
+    readonly workflowPath: string;
+    readonly workspacePath: string;
+    readonly workspaceSlug: string;
+  }): void {
+    this.send({ type: "development-tree:node-start", payload: params } as unknown as QueuedOutgoingMessage);
   }
   deleteSession(sessionId: string): void {
     this.send({ type: "session:delete", payload: { sessionId } });

@@ -428,13 +428,15 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     return <DescriptionStepHelp />;
   }
 
-  if (selectedBranchNode && !selectedBranchNode.session && selectedBranchNode.workflowPath) {
+  if (selectedBranchNode && !selectedBranchNode.session && selectedBranchNode.workflowPath && workspacePath && workspaceSlug) {
     return (
       <DevelopmentTreeNodeStartCard
         kind={selectedBranchNode.kind}
         label={selectedBranchNode.label}
         nodeId={selectedBranchNode.nodeId}
         workflowPath={selectedBranchNode.workflowPath}
+        workspacePath={workspacePath}
+        workspaceSlug={workspaceSlug}
       />
     );
   }

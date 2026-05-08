@@ -1,6 +1,9 @@
 import { execFile } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";
+import { createDevelopmentTreeMaterializedRoot } from "../development-tree/filesystem-structurator/development-tree-filesystem-paths";
+import { DevelopmentTreeNodeDetector } from "../development-tree/node-bootstrap/development-tree-node-detector";
+import { DraftWriter } from "../development-tree/node-bootstrap/draft-writer";
 import type { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
 const execFileAsync = promisify(execFile);
@@ -18,6 +21,8 @@ const readOptionalString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
 export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
+  private readonly detector = new DevelopmentTreeNodeDetector();
+  private readonly draftWriter = new DraftWriter();
   private readonly sendCommandError: SendCommandError;
   private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
 
@@ -69,6 +74,27 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       );
       return;
     }
+    const materialized = createDevelopmentTreeMaterializedRoot({
+      workspaceRoot: workspacePath,
+      workspaceSlug,
+    });
+    const nodes = await this.detector.detect({
+      materializedRootAbsolutePath: materialized.absolutePath,
+      materializedRootRelativePath: materialized.relativePath,
+    });
+    const node = nodes.find(
+      (candidate) => candidate.relativePath === workflowPath
+    );
+    if (!node) {
+      this.sendCommandError(
+        clientId,
+        COMMAND,
+        `Development Tree node is not materialized: ${workflowPath}`,
+        "node_not_found"
+      );
+      return;
+    }
+    await this.draftWriter.writeDrafts({ node });
     await this.sessionCreateRouter.handle(clientId, {
       type: "session:create",
       payload: {
