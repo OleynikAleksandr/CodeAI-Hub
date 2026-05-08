@@ -156,3 +156,76 @@ test("SessionProviderEventRouter keeps model_info updates on session binding", (
     "gpt-5.3-codex-spark reasoning:xhigh"
   );
 });
+
+test("SessionProviderEventRouter appends deferred user_input when provider turn starts", () => {
+  const dialogMessages: Array<{ sessionId: string; payload: unknown }> = [];
+
+  const router = new SessionProviderEventRouter({
+    appendDialogMessage: (sessionId, payload) => {
+      dialogMessages.push({ sessionId, payload });
+    },
+    appendProviderMessage: () => {
+      // noop
+    },
+    broadcaster: () => {
+      // noop
+    },
+    clearPostTurnContextDecision: () => {
+      // noop
+    },
+    emitTurnStateEvent: () => {
+      // noop
+    },
+    finalizeFlowNodeContinuityLockOnBootstrapGate: () => {
+      // noop
+    },
+    handleFlowNodeContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleSessionContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleTurnCompletedWithFlowNodeArbitration: () => {
+      // noop
+    },
+    logger: new Logger("error"),
+    markPostTurnContextDecisionPending: () => {
+      // noop
+    },
+    sessionManager: {
+      getSession: () => ({
+        id: "session-1",
+        workspacePath: "/tmp/workspace",
+        stage: "diagram_modules",
+        providerId: "claudeCodeCli",
+      }),
+    } as never,
+    updateBindingWithResolvedId: () => {
+      // noop
+    },
+  });
+
+  router.handleProviderEvent("session-1", {
+    content: "Core acceptance check failed for Diagram Modules.",
+    timestamp: "2026-05-08T14:20:24.000Z",
+    type: "user_input",
+    userMessageVisibility: "deferred",
+    uuid: "core-feedback-1",
+  });
+  router.handleProviderEvent("session-1", {
+    content: "normal user echo should stay ignored",
+    type: "user_input",
+  });
+
+  assert.deepEqual(dialogMessages, [
+    {
+      sessionId: "session-1",
+      payload: {
+        content: "Core acceptance check failed for Diagram Modules.",
+        role: "user",
+        timestamp: "2026-05-08T14:20:24.000Z",
+        uuid: "core-feedback-1",
+      },
+    },
+  ]);
+});

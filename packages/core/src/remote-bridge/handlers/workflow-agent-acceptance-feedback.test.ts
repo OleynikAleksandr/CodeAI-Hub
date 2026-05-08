@@ -33,6 +33,20 @@ const waitForImmediate = (): Promise<void> =>
     setImmediate(resolve);
   });
 
+const stringifyFeedbackPayload = (payload: unknown): string =>
+  typeof payload === "string"
+    ? payload
+    : ((payload as { readonly content?: string }).content ?? "");
+
+const readFeedbackTurnVisibility = (payload: unknown): string | null =>
+  typeof payload === "object" && payload
+    ? ((
+        payload as {
+          readonly turnOptions?: { readonly userMessageVisibility?: string };
+        }
+      ).turnOptions?.userMessageVisibility ?? null)
+    : null;
+
 const createChains = (
   stage: ContinuityChainSummary["stage"],
   sessionId: string
@@ -98,7 +112,7 @@ test("managed feedback repeats after a repair commit leaves Diagram Modules vali
         chains: createChains("diagram_modules", "diagram-session"),
         gateway: {
           handleMessage: (sessionId, content) => {
-            messages.push(`${sessionId}\n${content}`);
+            messages.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
             return Promise.resolve();
           },
         },
@@ -140,9 +154,11 @@ test("managed feedback includes diagnostic check context for every managed stage
     path.join(os.tmpdir(), "workflow-agent-feedback-diagnostics-")
   );
   const messages: string[] = [];
+  const visibilities: Array<string | null> = [];
   const gateway = {
-    handleMessage: (sessionId: string, content: string) => {
-      messages.push(`${sessionId}\n${content}`);
+    handleMessage: (sessionId: string, content: unknown) => {
+      visibilities.push(readFeedbackTurnVisibility(content));
+      messages.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
       return Promise.resolve();
     },
   };
@@ -205,6 +221,7 @@ test("managed feedback includes diagnostic check context for every managed stage
 
     const feedbackText = messages.join("\n---\n");
     assert.equal(messages.length, 3);
+    assert.deepEqual(visibilities, ["deferred", "deferred", "deferred"]);
     assert.match(feedbackText, CORE_CHECKED_HEADING_RE);
     assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
     assert.match(feedbackText, APPLICATION_SKELETON_OBSERVED_RE);
@@ -228,7 +245,7 @@ test("Application Skeleton draft feedback does not instruct materialization befo
       chains: createChains("application_skeleton", "skeleton-session"),
       gateway: {
         handleMessage: (sessionId, content) => {
-          messages.push(`${sessionId}\n${content}`);
+          messages.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
           return Promise.resolve();
         },
       },
@@ -271,7 +288,7 @@ test("managed feedback reports out-of-owner dirty files without provider shell c
       chains: createChains("diagram_modules", "diagram-session"),
       gateway: {
         handleMessage: (sessionId, content) => {
-          messages.push(`${sessionId}\n${content}`);
+          messages.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
           return Promise.resolve();
         },
       },
@@ -302,9 +319,9 @@ test("managed feedback suppresses concurrent duplicate sends for every managed s
   );
   const messages: string[] = [];
   const gateway = {
-    handleMessage: async (sessionId: string, content: string) => {
+    handleMessage: async (sessionId: string, content: unknown) => {
       await waitForImmediate();
-      messages.push(`${sessionId}\n${content}`);
+      messages.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
     },
   };
 
