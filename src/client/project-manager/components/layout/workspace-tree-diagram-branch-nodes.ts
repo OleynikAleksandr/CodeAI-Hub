@@ -260,7 +260,7 @@ export const buildDevelopmentTreeLockedNodes = (
   return [
     {
       id: "devtree:locked",
-      label: "Locked until Quality Gates Baseline is integrated",
+      label: "Locked until Quality\nGates Baseline\nis integrated",
       status: "blocked",
       title:
         "Development Tree sessions stay disabled until Application Skeleton is materialized and Quality Gates Baseline is integrated.",

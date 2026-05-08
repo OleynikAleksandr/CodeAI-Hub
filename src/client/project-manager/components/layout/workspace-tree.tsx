@@ -1,5 +1,5 @@
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import {
   WORKFLOW_STAGE_ORDER,
@@ -290,6 +290,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const renderItemClass = (node: TreeNode) =>
     `pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`;
 
+  const renderTreeLabel = (label: string): React.ReactNode =>
+    label.split("\n").map((line, index) => (
+      <Fragment key={`${line}-${index}`}>
+        {index > 0 ? <br /> : null}
+        {line}
+      </Fragment>
+    ));
+
   const renderModuleRow = (node: TreeNode) => (
     <li
       className={renderItemClass(node)}
@@ -300,7 +308,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     >
       {renderTypeMarker(node)}
       <span className="pm-tree__label" title={node.title ?? node.label}>
-        {node.label}
+        {renderTreeLabel(node.label)}
       </span>
     </li>
   );

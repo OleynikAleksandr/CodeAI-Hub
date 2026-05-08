@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  buildDevelopmentTreeLockedNodes,
   buildDiagramModulesBranchNodes,
   buildDevelopmentTreeNodes,
 } from "./workspace-tree-diagram-branch-nodes";
@@ -188,6 +189,10 @@ test("buildDiagramModulesBranchNodes projects development tree nodes from snapsh
   assert.equal(coreNode.id, "devtree:core-services");
   assert.equal(coreNode.status, "todo");
   assert.equal(coreNode.children, undefined);
+  assert.equal(
+    buildDevelopmentTreeLockedNodes(createWorkflowState(), 0)[0]?.label,
+    "Locked until Quality\nGates Baseline\nis integrated"
+  );
 });
 
 test("buildDevelopmentTreeNodes respects custom baseDepth for top-level rendering", () => {
