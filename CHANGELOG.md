@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.203] - 2026-05-08
+### Fixed
+- **Claude workflow turns now stay coherent through Core feedback.** Deferred Core feedback is delivered at provider turn boundaries, provider turn state keeps workflow input locked while Claude continues working, and orphan punctuation/suffix chunks are suppressed instead of becoming standalone dialog bubbles.
+- **Diagram Modules agents now receive required Markdown format contracts inline.** Core embeds canonical `product-parts.index.md` and `product-parts/<part-id>.md` examples in the first workflow prompt so providers do not need to search template files before writing managed artifacts.
+
+### Tests
+- **Targeted regression coverage verifies deferred Core feedback, Claude live text chunk suppression, and Diagram Modules prompt contract inclusion.**
+
 ## [1.2.202] - 2026-05-08
 ### Fixed
 - **Project Manager keeps workflow input locked during queued provider turns.** Direct `turn_state` stream events now update session connection state immediately, preventing user input from unlocking while Claude continues streaming reasoning or processing Core feedback turns.
