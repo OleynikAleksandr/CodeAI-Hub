@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.201] - 2026-05-08
+### Fixed
+- **Workflow starts now bind provider models from Settings only.** Start cards persist provider/model defaults, wait for the confirmed `settings:saved` event, and then create the real provider session so Application Skeleton and other workflow stages use the selected model instead of a stale default.
+
+### Tests
+- **Targeted regression coverage verifies Application Skeleton waits for Settings persistence before creating the workflow session.**
+
 ## [1.2.200] - 2026-05-08
 ### Fixed
 - **Managed documentation commits are now Core-owned.** Diagram Modules, Application Skeleton, and Quality Gates no longer depend on provider shell access for `plan:commit`; Core validates artifacts, stages only active-stage owned files, commits with the child plan expected message, and rechecks Git/plan/stage state before downstream unlock.
