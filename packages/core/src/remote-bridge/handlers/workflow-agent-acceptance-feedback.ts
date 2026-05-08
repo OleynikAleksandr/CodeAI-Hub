@@ -165,11 +165,16 @@ export class WorkflowAgentAcceptanceFeedback {
     if (this.sentSignatures.has(signature)) {
       return;
     }
-    await params.gateway.handleMessage(
-      sessionId,
-      buildFeedbackMessage(params.request)
-    );
     this.sentSignatures.add(signature);
+    try {
+      await params.gateway.handleMessage(
+        sessionId,
+        buildFeedbackMessage(params.request)
+      );
+    } catch (error) {
+      this.sentSignatures.delete(signature);
+      throw error;
+    }
   }
 
   async sendDiagramModulesFeedback(params: {

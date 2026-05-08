@@ -20,6 +20,11 @@ const APPLICATION_SKELETON_OBSERVED_RE =
 const QUALITY_GATES_OBSERVED_RE =
   /Observed accepted: true; integrated: false; integrationState: integrated; substep: failed\./u;
 
+const waitForImmediate = (): Promise<void> =>
+  new Promise((resolve) => {
+    setImmediate(resolve);
+  });
+
 const createChains = (
   stage: ContinuityChainSummary["stage"],
   sessionId: string
@@ -196,6 +201,143 @@ test("managed feedback includes diagnostic check context for every managed stage
     assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
     assert.match(feedbackText, APPLICATION_SKELETON_OBSERVED_RE);
     assert.match(feedbackText, QUALITY_GATES_OBSERVED_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed feedback suppresses concurrent duplicate sends for every managed stage", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-concurrent-")
+  );
+  const messages: string[] = [];
+  const gateway = {
+    handleMessage: async (sessionId: string, content: string) => {
+      await waitForImmediate();
+      messages.push(`${sessionId}\n${content}`);
+    },
+  };
+
+  try {
+    await initWorkspace(workspaceRoot);
+    const feedback = new WorkflowAgentAcceptanceFeedback(new Logger("error"));
+    const commonParams = {
+      gateway,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    };
+
+    await Promise.all([
+      feedback.sendDiagramModulesFeedback({
+        ...commonParams,
+        chains: createChains("diagram_modules", "diagram-session"),
+        progress: {
+          aggregateReady: false,
+          currentPartId: "local-runtime",
+          generatedCount: 0,
+          generatedPartIds: [],
+          plannedCount: 1,
+          plannedPartIds: ["local-runtime"],
+          substep: "generate_product_part",
+        },
+      }),
+      feedback.sendDiagramModulesFeedback({
+        ...commonParams,
+        chains: createChains("diagram_modules", "diagram-session"),
+        progress: {
+          aggregateReady: false,
+          currentPartId: "local-runtime",
+          generatedCount: 0,
+          generatedPartIds: [],
+          plannedCount: 1,
+          plannedPartIds: ["local-runtime"],
+          substep: "generate_product_part",
+        },
+      }),
+      feedback.sendApplicationSkeletonFeedback({
+        ...commonParams,
+        chains: createChains("application_skeleton", "skeleton-session"),
+        progress: {
+          accepted: true,
+          mapExists: true,
+          mappingReady: true,
+          markdownExists: true,
+          materializationState: "failed",
+          materialized: false,
+          observedMaterialization: true,
+          substep: "failed",
+          validationErrors: [
+            "application-skeleton.md status reviewState must be materialized",
+          ],
+        },
+      }),
+      feedback.sendApplicationSkeletonFeedback({
+        ...commonParams,
+        chains: createChains("application_skeleton", "skeleton-session"),
+        progress: {
+          accepted: true,
+          mapExists: true,
+          mappingReady: true,
+          markdownExists: true,
+          materializationState: "failed",
+          materialized: false,
+          observedMaterialization: true,
+          substep: "failed",
+          validationErrors: [
+            "application-skeleton.md status reviewState must be materialized",
+          ],
+        },
+      }),
+      feedback.sendQualityGatesFeedback({
+        ...commonParams,
+        chains: createChains("quality_gates", "quality-session"),
+        progress: {
+          accepted: true,
+          commandContractReady: true,
+          integrated: false,
+          integrationState: "integrated",
+          jsonExists: true,
+          markdownExists: true,
+          substep: "failed",
+          validationErrors: [
+            "Quality gate qg-secret-scan is missing from .husky/pre-commit",
+          ],
+        },
+      }),
+      feedback.sendQualityGatesFeedback({
+        ...commonParams,
+        chains: createChains("quality_gates", "quality-session"),
+        progress: {
+          accepted: true,
+          commandContractReady: true,
+          integrated: false,
+          integrationState: "integrated",
+          jsonExists: true,
+          markdownExists: true,
+          substep: "failed",
+          validationErrors: [
+            "Quality gate qg-secret-scan is missing from .husky/pre-commit",
+          ],
+        },
+      }),
+    ]);
+
+    assert.equal(messages.length, 3);
+    assert.equal(
+      messages.filter((message) => message.startsWith("diagram-session\n"))
+        .length,
+      1
+    );
+    assert.equal(
+      messages.filter((message) => message.startsWith("skeleton-session\n"))
+        .length,
+      1
+    );
+    assert.equal(
+      messages.filter((message) => message.startsWith("quality-session\n"))
+        .length,
+      1
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
