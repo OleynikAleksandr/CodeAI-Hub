@@ -179,25 +179,25 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
-    const errors = params.progress
-      ? createDiagramModulesErrors(params.progress)
-      : [];
+    const progress = params.progress;
+    const errors = progress ? createDiagramModulesErrors(progress) : [];
+    const request =
+      progress && errors.length > 0
+        ? {
+            actionLines: [
+              "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
+              "Commit the repair with the current managed plan command so Core can re-run acceptance before the next workflow stage.",
+            ],
+            checkLines: createDiagramModulesCheckLines(progress),
+            errors,
+            stage: DIAGRAM_MODULES_STAGE,
+            title: "Diagram Modules",
+          }
+        : null;
     await this.sendManagedStageFeedback({
       chains: params.chains,
       gateway: params.gateway,
-      request:
-        errors.length > 0
-          ? {
-              actionLines: [
-                "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
-                "Commit the repair with the current managed plan command so Core can re-run acceptance before the next workflow stage.",
-              ],
-              checkLines: createDiagramModulesCheckLines(params.progress),
-              errors,
-              stage: DIAGRAM_MODULES_STAGE,
-              title: "Diagram Modules",
-            }
-          : null,
+      request,
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
