@@ -201,3 +201,11 @@ Likely future execution streams:
 - Whether Settings write-back happens on selection change or only on Start.
 - Whether multi-start is exposed in the first version or kept as one-node-at-a-time UI.
 - Exact node-scoped commit command name and contract.
+
+## 14. Verification Evidence
+
+2026-05-08 implementation verification:
+
+- `npm run typecheck:webview` passed.
+- `npm run build --workspace=@codeai-hub/core` passed.
+- `npx tsx --test` passed for start-card Settings write-back, Development Tree read model/parser, no-auto-fanout workflow-state behavior, and managed-stage acceptance feedback suites: 22 tests passed.
