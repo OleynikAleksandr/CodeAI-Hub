@@ -19,6 +19,10 @@ const APPLICATION_SKELETON_OBSERVED_RE =
   /Observed accepted: true; materialized: false; materializationState: failed; substep: failed\./u;
 const QUALITY_GATES_OBSERVED_RE =
   /Observed accepted: true; integrated: false; integrationState: integrated; substep: failed\./u;
+const OUT_OF_OWNER_DIRTY_RE =
+  /dirty files are outside the active stage allowlist: scratch\/unmanaged\.txt/u;
+const PLAN_COMMIT_COMMAND_RE =
+  /npm run plan:commit|current managed plan command/u;
 
 const waitForImmediate = (): Promise<void> =>
   new Promise((resolve) => {
@@ -201,6 +205,45 @@ test("managed feedback includes diagnostic check context for every managed stage
     assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
     assert.match(feedbackText, APPLICATION_SKELETON_OBSERVED_RE);
     assert.match(feedbackText, QUALITY_GATES_OBSERVED_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed feedback reports out-of-owner dirty files without provider shell commands", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-out-of-owner-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway: {
+        handleMessage: (sessionId, content) => {
+          messages.push(`${sessionId}\n${content}`);
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        aggregateReady: true,
+        generatedCount: 1,
+        generatedPartIds: ["local-runtime"],
+        managedGitOutOfOwnerDirtyFiles: ["scratch/unmanaged.txt"],
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        substep: "awaiting_review",
+      } as never,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(messages.length, 1);
+    assert.match(messages[0] ?? "", OUT_OF_OWNER_DIRTY_RE);
+    assert.doesNotMatch(messages[0] ?? "", PLAN_COMMIT_COMMAND_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -52,7 +52,13 @@ export const commitManagedDocumentationStageIfReady = async (params: {
       return null;
     });
   if (commitResult?.status !== "committed") {
-    return params.context;
+    return commitResult?.status === "blocked" && commitResult.stage
+      ? attachOutOfOwnerDirtyFiles({
+          context: params.context,
+          files: commitResult.unmanagedDirtyFiles,
+          stage: commitResult.stage,
+        })
+      : params.context;
   }
   const [
     diagramModulesProgress,
@@ -70,5 +76,37 @@ export const commitManagedDocumentationStageIfReady = async (params: {
     diagramModulesProgress,
     managedGitStatus,
     qualityGatesProgress,
+  };
+};
+
+const attachOutOfOwnerDirtyFiles = (params: {
+  readonly context: ManagedDocumentationProgressContext;
+  readonly files: readonly string[];
+  readonly stage: "application_skeleton" | "diagram_modules" | "quality_gates";
+}): ManagedDocumentationProgressContext => {
+  if (params.files.length === 0) {
+    return params.context;
+  }
+  const attach = <T extends object>(progress: T | null): T | null =>
+    progress
+      ? ({
+          ...progress,
+          managedGitOutOfOwnerDirtyFiles: params.files,
+        } as T)
+      : progress;
+  return {
+    ...params.context,
+    applicationSkeletonProgress:
+      params.stage === "application_skeleton"
+        ? attach(params.context.applicationSkeletonProgress)
+        : params.context.applicationSkeletonProgress,
+    diagramModulesProgress:
+      params.stage === "diagram_modules"
+        ? attach(params.context.diagramModulesProgress)
+        : params.context.diagramModulesProgress,
+    qualityGatesProgress:
+      params.stage === "quality_gates"
+        ? attach(params.context.qualityGatesProgress)
+        : params.context.qualityGatesProgress,
   };
 };

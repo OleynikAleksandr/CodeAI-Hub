@@ -75,6 +75,12 @@ const formatList = (items: readonly string[]): string =>
 const createDiagramModulesErrors = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
+  const outOfOwnerDirtyFiles = readManagedGitOutOfOwnerDirtyFiles(progress);
+  if (outOfOwnerDirtyFiles.length > 0) {
+    return [
+      createOutOfOwnerDirtyError("Diagram Modules", outOfOwnerDirtyFiles),
+    ];
+  }
   const dirtyFiles = readManagedGitDirtyFiles(progress);
   if (dirtyFiles.length > 0) {
     return [
@@ -98,10 +104,29 @@ const createDiagramModulesErrors = (
   ];
 };
 
+const createOutOfOwnerDirtyError = (
+  stageTitle: string,
+  files: readonly string[]
+): string =>
+  `Core refused the managed documentation commit for ${stageTitle} because dirty files are outside the active stage allowlist: ${files.join(", ")}. Keep this stage limited to its owned artifacts and ask the user or Core to resolve unrelated workspace changes.`;
+
 const readManagedGitDirtyFiles = (progress: unknown): readonly string[] => {
   const value = progress as { readonly managedGitDirtyFiles?: unknown };
   return Array.isArray(value.managedGitDirtyFiles)
     ? value.managedGitDirtyFiles.filter(
+        (entry): entry is string => typeof entry === "string"
+      )
+    : [];
+};
+
+const readManagedGitOutOfOwnerDirtyFiles = (
+  progress: unknown
+): readonly string[] => {
+  const value = progress as {
+    readonly managedGitOutOfOwnerDirtyFiles?: unknown;
+  };
+  return Array.isArray(value.managedGitOutOfOwnerDirtyFiles)
+    ? value.managedGitOutOfOwnerDirtyFiles.filter(
         (entry): entry is string => typeof entry === "string"
       )
     : [];
@@ -206,7 +231,7 @@ export class WorkflowAgentAcceptanceFeedback {
         ? {
             actionLines: [
               "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
-              "Commit the repair with the current managed plan command so Core can re-run acceptance before the next workflow stage.",
+              "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
             ],
             checkLines: createDiagramModulesCheckLines(progress),
             errors,
@@ -230,19 +255,29 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
+    const outOfOwnerDirtyFiles = params.progress
+      ? readManagedGitOutOfOwnerDirtyFiles(params.progress)
+      : [];
+    const errors = [
+      ...outOfOwnerDirtyFiles.map((file) =>
+        createOutOfOwnerDirtyError("Application Skeleton", [file])
+      ),
+      ...(params.progress?.substep === "failed"
+        ? params.progress.validationErrors
+        : []),
+    ];
     await this.sendManagedStageFeedback({
       chains: params.chains,
       gateway: params.gateway,
       request:
-        params.progress?.substep === "failed" &&
-        params.progress.validationErrors.length > 0
+        params.progress && errors.length > 0
           ? {
               actionLines: [
                 "Update application-skeleton-map.json and the materialized filesystem projection until every declared path exists and matches the accepted skeleton.",
-                "Commit the repair with the current managed plan command so Core can re-run acceptance before Quality Gates starts.",
+                "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
               ],
               checkLines: createApplicationSkeletonCheckLines(params.progress),
-              errors: params.progress.validationErrors,
+              errors,
               stage: APPLICATION_SKELETON_STAGE,
               title: "Application Skeleton",
             }
@@ -259,20 +294,30 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
+    const outOfOwnerDirtyFiles = params.progress
+      ? readManagedGitOutOfOwnerDirtyFiles(params.progress)
+      : [];
+    const errors = [
+      ...outOfOwnerDirtyFiles.map((file) =>
+        createOutOfOwnerDirtyError("Quality Gates Baseline", [file])
+      ),
+      ...(params.progress?.substep === "failed"
+        ? params.progress.validationErrors
+        : []),
+    ];
     await this.sendManagedStageFeedback({
       chains: params.chains,
       gateway: params.gateway,
       request:
-        params.progress?.substep === "failed" &&
-        params.progress.validationErrors.length > 0
+        params.progress && errors.length > 0
           ? {
               actionLines: [
                 "Update the Quality Gates integration so every selected required gate is wired into the managed lifecycle hooks.",
                 "Re-run the affected qg:* checks and the aggregate quality gate command.",
-                "Commit the repair with the current managed plan command so Core can re-run acceptance and unlock the next workflow step.",
+                "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
               ],
               checkLines: createQualityGatesCheckLines(params.progress),
-              errors: params.progress.validationErrors,
+              errors,
               stage: QUALITY_GATES_STAGE,
               title: "Quality Gates Baseline",
             }
