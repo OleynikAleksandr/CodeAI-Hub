@@ -236,18 +236,21 @@ export class WorkflowStateService {
               chains,
               gateway: this.developmentTreeAgentSessions?.gateway,
               progress: diagramModulesProgress,
+              workspaceRoot,
               workspaceSlug: workspaceSlugResult.value,
             }),
             this.acceptanceFeedback.sendApplicationSkeletonFeedback({
               chains,
               gateway: this.developmentTreeAgentSessions?.gateway,
               progress: applicationSkeletonProgress,
+              workspaceRoot,
               workspaceSlug: workspaceSlugResult.value,
             }),
             this.acceptanceFeedback.sendQualityGatesFeedback({
               chains,
               gateway: this.developmentTreeAgentSessions?.gateway,
               progress: qualityGatesProgress,
+              workspaceRoot,
               workspaceSlug: workspaceSlugResult.value,
             }),
           ])

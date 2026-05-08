@@ -1,3 +1,5 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
 import type { Logger } from "../../telemetry/logger";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
@@ -11,6 +13,7 @@ export interface WorkflowAgentAcceptanceFeedbackGateway {
 const QUALITY_GATES_STAGE = "quality_gates";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
+const execFileAsync = promisify(execFile);
 
 interface StageFeedbackRequest {
   readonly actionLines: readonly string[];
@@ -51,6 +54,17 @@ const buildFeedbackMessage = (request: StageFeedbackRequest): string =>
     ...request.actionLines.map((action) => `- ${action}`),
   ].join("\n");
 
+const readWorkspaceHead = async (workspaceRoot: string): Promise<string> => {
+  try {
+    const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], {
+      cwd: workspaceRoot,
+    });
+    return stdout.trim() || "unknown-head";
+  } catch {
+    return "unknown-head";
+  }
+};
+
 const createDiagramModulesErrors = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
@@ -83,6 +97,7 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
     readonly request: StageFeedbackRequest | null;
+    readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
     if (
@@ -102,10 +117,12 @@ export class WorkflowAgentAcceptanceFeedback {
       });
       return;
     }
+    const workspaceHead = await readWorkspaceHead(params.workspaceRoot);
     const signature = [
       params.workspaceSlug,
       params.request.stage,
       sessionId,
+      workspaceHead,
       ...params.request.errors,
     ].join("\0");
     if (this.sentSignatures.has(signature)) {
@@ -122,6 +139,7 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
     readonly progress: DiagramModulesProgressSnapshot | null;
+    readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
     const errors = params.progress
@@ -142,6 +160,7 @@ export class WorkflowAgentAcceptanceFeedback {
               title: "Diagram Modules",
             }
           : null,
+      workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
   }
@@ -150,6 +169,7 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
     readonly progress: ApplicationSkeletonProgressSnapshot | null;
+    readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
     await this.sendManagedStageFeedback({
@@ -168,6 +188,7 @@ export class WorkflowAgentAcceptanceFeedback {
               title: "Application Skeleton",
             }
           : null,
+      workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
   }
@@ -176,6 +197,7 @@ export class WorkflowAgentAcceptanceFeedback {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
     readonly progress: QualityGatesProgressSnapshot | null;
+    readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
     await this.sendManagedStageFeedback({
@@ -195,6 +217,7 @@ export class WorkflowAgentAcceptanceFeedback {
               title: "Quality Gates Baseline",
             }
           : null,
+      workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
   }
