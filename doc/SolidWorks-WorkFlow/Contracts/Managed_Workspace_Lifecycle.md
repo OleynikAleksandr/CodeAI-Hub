@@ -88,11 +88,18 @@ If acceptance fails, Core must:
 
 - keep downstream stages blocked;
 - send the validation result back into the owning workflow session;
-- include the concrete failed checks and a repair request;
-- avoid duplicate feedback for the same session/error set;
+- include the concrete failed checks, the observed Core check context, and a
+  repair request;
+- avoid duplicate feedback for the same session/error set on the same workspace
+  commit;
+- resend feedback after a new agent repair commit if the same validation still
+  fails, because that represents a new failed acceptance attempt;
 - re-run acceptance on the next workflow state read after the agent repairs and
   commits the stage.
 
 The user should not have to infer the blocker from a locked next stage. The
 same agent that produced the incomplete stage result must receive the Core
-acceptance feedback and continue the repair in place.
+acceptance feedback and continue the repair in place. Feedback must be specific
+enough for the agent to compare what it believes it changed with what Core
+actually observed: checked artifact/rule, observed counters or lifecycle flags,
+the failed field/path/gate, and the required repair direction.
