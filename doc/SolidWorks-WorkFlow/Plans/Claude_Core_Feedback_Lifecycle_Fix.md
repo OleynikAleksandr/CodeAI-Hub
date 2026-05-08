@@ -54,3 +54,5 @@ locked across Core-owned post-turn processing.
   `npx tsx --test packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`.
 - 2026-05-08: Affected Core build passed:
   `npm run build --workspace=@codeai-hub/core`.
+- 2026-05-08: User explicitly confirmed release assembly after deleting the
+  accidental untracked `README 19.04.22 19.04.22.md` scratch file.
