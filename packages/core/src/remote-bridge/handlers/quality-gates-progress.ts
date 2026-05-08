@@ -381,6 +381,7 @@ export const resolveWorkflowBlockedStages = (params: {
     readonly finalPath?: string;
   } | null;
   readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
+  readonly managedGitClean?: boolean;
   readonly state: WorkflowState;
 }): Partial<Record<WorkflowStageId, boolean>> => {
   const descriptionDone = Boolean(params.description?.finalPath);
@@ -391,11 +392,14 @@ export const resolveWorkflowBlockedStages = (params: {
     stage: "virtual_simulation",
     fileName: "virtual-simulation.md",
   });
+  const managedGitBlocked = params.managedGitClean === false;
   return {
     description: managedModeActive,
     virtual_simulation: managedModeActive || !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
-    application_skeleton: !params.diagramModulesProgress?.aggregateReady,
-    quality_gates: !params.applicationSkeletonProgress?.materialized,
+    application_skeleton:
+      managedGitBlocked || !params.diagramModulesProgress?.aggregateReady,
+    quality_gates:
+      managedGitBlocked || !params.applicationSkeletonProgress?.materialized,
   };
 };

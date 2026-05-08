@@ -20,6 +20,11 @@ import type { ManagedWorkflowLifecyclePayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import {
+  attachManagedGitStatus,
+  attachValidationDirtyGate,
+  readManagedGitStatus,
+} from "./managed-git-stage-gate";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   applyTechnicalRootProgressToState,
@@ -181,6 +186,10 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
+    const managedGitStatusPromise = readManagedGitStatus(
+      workspaceRoot,
+      workspaceSlugResult.value
+    );
 
     Promise.all([
       continuityPromise,
@@ -189,16 +198,32 @@ export class WorkflowStateService {
       diagramModulesProgressPromise,
       applicationSkeletonProgressPromise,
       qualityGatesProgressPromise,
+      managedGitStatusPromise,
     ])
       .then(
         ([
           chains,
           descriptionSnapshot,
           lastActive,
-          diagramModulesProgress,
-          applicationSkeletonProgress,
-          qualityGatesProgress,
+          rawDiagramModulesProgress,
+          rawApplicationSkeletonProgress,
+          rawQualityGatesProgress,
+          managedGitStatus,
         ]) => {
+          const diagramModulesProgress = attachManagedGitStatus(
+            rawDiagramModulesProgress,
+            managedGitStatus.dirtyByStage.diagram_modules
+          );
+          const applicationSkeletonProgress = attachValidationDirtyGate(
+            rawApplicationSkeletonProgress,
+            "Application Skeleton",
+            managedGitStatus.dirtyByStage.application_skeleton
+          );
+          const qualityGatesProgress = attachValidationDirtyGate(
+            rawQualityGatesProgress,
+            "Quality Gates",
+            managedGitStatus.dirtyByStage.quality_gates
+          );
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
             : null;
@@ -283,6 +308,7 @@ export class WorkflowStateService {
                         description,
                         diagramModulesProgress,
                         applicationSkeletonProgress,
+                        managedGitClean: managedGitStatus.clean,
                       }),
                     };
                     res.json({

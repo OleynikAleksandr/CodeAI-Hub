@@ -75,6 +75,12 @@ const formatList = (items: readonly string[]): string =>
 const createDiagramModulesErrors = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
+  const dirtyFiles = readManagedGitDirtyFiles(progress);
+  if (dirtyFiles.length > 0) {
+    return [
+      `Managed workspace Git status is dirty for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Commit or clean these files before Core can unlock Application Skeleton.`,
+    ];
+  }
   if (progress.substep === "blocked_ambiguity") {
     return [
       "Diagram Modules index is marked blocked_ambiguity and must be resolved before downstream stages can trust the module map.",
@@ -90,6 +96,15 @@ const createDiagramModulesErrors = (
   return [
     `Diagram Modules is not complete: ${progress.generatedCount}/${progress.plannedCount} Product Part artifacts are valid; next missing or invalid Product Part is "${missingPart}".`,
   ];
+};
+
+const readManagedGitDirtyFiles = (progress: unknown): readonly string[] => {
+  const value = progress as { readonly managedGitDirtyFiles?: unknown };
+  return Array.isArray(value.managedGitDirtyFiles)
+    ? value.managedGitDirtyFiles.filter(
+        (entry): entry is string => typeof entry === "string"
+      )
+    : [];
 };
 
 const createDiagramModulesCheckLines = (
