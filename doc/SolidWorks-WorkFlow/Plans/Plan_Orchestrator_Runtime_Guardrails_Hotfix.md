@@ -54,3 +54,9 @@ failed. The runtime must send actionable acceptance feedback back to the owning
 Quality Gates workflow session so the agent can repair the missing lifecycle
 hook wiring in the same stage instead of leaving the user with a silent
 downstream lock.
+
+2026-05-08 acceptance feedback verification passed:
+
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`
+- `npm run plan:validate`
