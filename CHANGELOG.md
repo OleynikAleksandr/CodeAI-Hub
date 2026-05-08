@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.197] - 2026-05-08
+### Added
+- **Workflow start cards now expose provider, model, and reasoning selection.** The selected model becomes the provider default in Settings before the managed stage starts.
+- **Development Tree nodes now start from explicit user cards.** Core no longer creates every cluster/module session and draft immediately after Quality Gates unlock; each node is started only when the user chooses it.
+
+### Fixed
+- **Development Tree node starts now materialize only the selected node drafts.** Core validates clean Git, resolves the selected workflow path, writes that node's specification/contract drafts, and creates only that node session with actionable blocker messages.
+
+### Tests
+- **Targeted regression coverage verifies model-default persistence, disabled auto fanout, startable node metadata, selected-node draft materialization, and the user-started workflow evidence.**
+
 ## [1.2.196] - 2026-05-08
 ### Fixed
 - **Core acceptance feedback is now repair-aware.** Identical validation failures are deduped only on the same workspace commit; after an agent repair commit, the same remaining blocker is sent back to the owning managed stage session again.
