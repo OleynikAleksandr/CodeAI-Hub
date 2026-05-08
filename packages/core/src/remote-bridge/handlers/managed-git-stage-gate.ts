@@ -14,6 +14,15 @@ export interface ManagedGitStatus {
   readonly dirtyFiles: readonly string[];
 }
 
+const MANAGED_STAGE_IDS: readonly ManagedStageId[] = [
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+];
+
+export const isManagedStageId = (value: string): value is ManagedStageId =>
+  MANAGED_STAGE_IDS.includes(value as ManagedStageId);
+
 const parseGitStatusPath = (line: string): string | null => {
   const rawPath = line.slice(3).trim();
   if (!rawPath) {
@@ -63,6 +72,14 @@ export const readManagedGitStatus = async (
     }
   }
   return { clean: dirtyFiles.length === 0, dirtyByStage, dirtyFiles };
+};
+
+export const listDirtyFilesOutsideManagedStage = (
+  status: ManagedGitStatus,
+  stage: ManagedStageId
+): readonly string[] => {
+  const allowed = new Set(status.dirtyByStage[stage]);
+  return status.dirtyFiles.filter((file) => !allowed.has(file));
 };
 
 const formatDirtyGateError = (
