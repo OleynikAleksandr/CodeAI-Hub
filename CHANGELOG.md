@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.195] - 2026-05-08
+### Fixed
+- **Quality Gates aggregate hook wiring now unlocks Development Tree correctly.** Core accepts `qg:before-commit` and `qg:before-push` when those scripts dispatch the corresponding required gate arrays from `quality-gates.json`.
+- **Quality Gates agent instructions now match runtime acceptance.** Phase 2 must preserve Core lifecycle commands and wire `.husky/pre-commit` / `.husky/pre-push` before reporting `integrated: true`.
+- **Live retest workspace validation now reaches Development Tree unlock.** The aggregate hook repair path evaluates to `qualityGatesProgress.integrated: true` and `developmentTreeBootstrapGate.unlocked: true`.
+
+### Tests
+- **Targeted regression coverage verifies aggregate hook acceptance, bundled Quality Gates prompt sync, and Development Tree bootstrap gating.**
+
 ## [1.2.194] - 2026-05-08
 ### Fixed
 - **Managed acceptance failures are now returned to the owning agent session.** Core sends actionable repair feedback to Diagram Modules, Application Skeleton, and Quality Gates sessions when runtime validation rejects an agent commit.
