@@ -78,6 +78,10 @@ const buildMessagePreview = (content: string): string => {
 
 export class SessionRequestHandlerEventMessages {
   private readonly deps: SessionRequestHandlerEventMessagesDependencies;
+  private readonly messagePersistenceTailBySessionId = new Map<
+    string,
+    Promise<void>
+  >();
 
   constructor(deps: SessionRequestHandlerEventMessagesDependencies) {
     this.deps = deps;
@@ -198,54 +202,70 @@ export class SessionRequestHandlerEventMessages {
     }
     const thinkingMessage = isThinkingDisplayMessage(message);
 
-    this.deps.sessionStorage
-      .appendMessage(options.sessionId, message)
-      .then(() => {
-        if (thinkingMessage) {
-          this.deps.logger.info(
-            "Thinking dialog message persisted and ready for broadcast",
-            {
-              sessionId: options.sessionId,
-              messageId: message.id,
-              role: message.role,
-              tag: message.tag,
-              contentLength: message.content.length,
-              preview: buildMessagePreview(message.content),
-              timestamp: message.timestamp,
-            }
-          );
-        }
-        this.deps.broadcaster({ type: "session:message", payload: message });
-        this.broadcastDialogMessage(options.sessionId, message);
-        if (thinkingMessage) {
-          this.deps.logger.info(
-            "Thinking dialog message broadcast dispatched",
-            {
-              sessionId: options.sessionId,
-              messageId: message.id,
-              role: message.role,
-              tag: message.tag,
-              contentLength: message.content.length,
-            }
-          );
-        }
-        this.maybeTranslateDialogMessage(options.sessionId, message).catch(
-          (error: unknown) => {
-            this.deps.logger.warn("Failed to translate dialog message", {
-              sessionId: options.sessionId,
-              messageId: message.id,
-              error: error instanceof Error ? error.message : String(error),
-            });
+    this.enqueueMessagePersistence(options.sessionId, async () => {
+      await this.deps.sessionStorage.appendMessage(options.sessionId, message);
+      if (thinkingMessage) {
+        this.deps.logger.info(
+          "Thinking dialog message persisted and ready for broadcast",
+          {
+            sessionId: options.sessionId,
+            messageId: message.id,
+            role: message.role,
+            tag: message.tag,
+            contentLength: message.content.length,
+            preview: buildMessagePreview(message.content),
+            timestamp: message.timestamp,
           }
         );
+      }
+      this.deps.broadcaster({ type: "session:message", payload: message });
+      this.broadcastDialogMessage(options.sessionId, message);
+      if (thinkingMessage) {
+        this.deps.logger.info("Thinking dialog message broadcast dispatched", {
+          sessionId: options.sessionId,
+          messageId: message.id,
+          role: message.role,
+          tag: message.tag,
+          contentLength: message.content.length,
+        });
+      }
+      this.maybeTranslateDialogMessage(options.sessionId, message).catch(
+        (error: unknown) => {
+          this.deps.logger.warn("Failed to translate dialog message", {
+            sessionId: options.sessionId,
+            messageId: message.id,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      );
+    });
+  }
+
+  private enqueueMessagePersistence(
+    sessionId: string,
+    task: () => Promise<void>
+  ): void {
+    const previous =
+      this.messagePersistenceTailBySessionId.get(sessionId) ??
+      Promise.resolve();
+    const current = previous
+      .catch(() => {
+        // The original failure was already logged by its own queued task.
       })
+      .then(task)
       .catch((error: unknown) => {
         this.deps.logger.error(
           "Failed to append unified session record",
           error as Error,
-          { sessionId: options.sessionId }
+          { sessionId }
         );
       });
+    this.messagePersistenceTailBySessionId.set(sessionId, current);
+    current.finally(() => {
+      if (this.messagePersistenceTailBySessionId.get(sessionId) === current) {
+        this.messagePersistenceTailBySessionId.delete(sessionId);
+      }
+    });
   }
 
   private broadcastDialogMessage(
