@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.200] - 2026-05-08
+### Fixed
+- **Managed documentation commits are now Core-owned.** Diagram Modules, Application Skeleton, and Quality Gates no longer depend on provider shell access for `plan:commit`; Core validates artifacts, stages only active-stage owned files, commits with the child plan expected message, and rechecks Git/plan/stage state before downstream unlock.
+- **Out-of-owner dirty files now block managed stage acceptance.** Core refuses the commit transaction when unrelated workspace paths are dirty and sends actionable owning-session feedback instead of asking provider agents to run shell commands.
+
+### Tests
+- **Regression coverage verifies Core auto-commits valid managed artifacts and refuses unrelated dirty paths across Diagram Modules, Application Skeleton, and Quality Gates.**
+- **Bundled prompt tests verify managed stage prompts no longer instruct provider agents to run plan commits.**
+
 ## [1.2.199] - 2026-05-08
 ### Fixed
 - **Managed workflow handoffs now fail closed on dirty Git state.** From Diagram Modules onward, Core checks the workspace Git status, blocks downstream stage availability, and sends owning-stage feedback when managed files are uncommitted.
