@@ -76,6 +76,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/DevelopmentTree_Orchestration_Architecture.md` — active planning-doc текущего scope: user-driven Development Tree documentation sessions after Quality Gates, contract-only Implementation Planner inputs, implementation waves, deterministic node micro-plans, and Core-orchestrated parallel/serial code execution.
 - `Plans/Application_Skeleton_Architecture.md` — active planning-doc текущего scope: добавление `Application Skeleton` и `Quality Gates Baseline` между `Diagram Modules` и Development Tree session bootstrap.
 - `Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md` — active planning-doc текущего managed workspace lifecycle scope: Core initializes Git/plan/hooks at `Diagram Modules` start, freezes upstream document stages, tracks `.codeai-hub/workflow`, reuses the lifecycle for Application Skeleton / Quality Gates, and introduces revision diff/migration planning for later diagram changes.
 - `Plans/Archive/Quality_Gates_Baseline_Prompt_Integration_Refinement.md` — archived planning-doc закрытого Quality Gates prompt-testing scope / release `1.2.172`: compact first prompt, concrete draft/integration split, stack-neutral gate selection, machine-readable integration plan, release + user retest loop. Открытый follow-up по `plannedRequiredAfterIntegration` перенесен в следующий managed workspace lifecycle scope.
