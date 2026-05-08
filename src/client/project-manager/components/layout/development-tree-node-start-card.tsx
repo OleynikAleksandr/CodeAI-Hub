@@ -2,30 +2,13 @@ import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
+import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
 import type { BranchNodeKind } from "./main-area-utils";
 import {
   getStartCardModelOptions,
   getStartCardReasoningOptions,
   resolveDefaultStartCardModelSelection,
 } from "../shared/stage-start-model-selection";
-
-const LABEL_STYLE: React.CSSProperties = {
-  color: "var(--pm-text-muted)",
-  fontSize: 11,
-  fontWeight: 600,
-  letterSpacing: "0.08em",
-  textTransform: "uppercase",
-};
-
-const SELECT_STYLE: React.CSSProperties = {
-  background: "rgba(7, 11, 18, 0.94)",
-  border: "1px solid rgba(255,255,255,0.12)",
-  borderRadius: 8,
-  color: "var(--pm-text)",
-  fontSize: 13,
-  minHeight: 36,
-  padding: "7px 10px",
-};
 
 const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
@@ -99,55 +82,38 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
           Draft artifacts are not created yet. Start this node to create only this
           node session and its draft artifacts.
         </div>
-        <div style={LABEL_STYLE}>Agent provider</div>
-        <select
-          onChange={(event) =>
-            setSelectedProviderId(
-              isProviderStackId(event.target.value) ? event.target.value : null
-            )
+        <CaptureWorkbenchDomListboxSelector
+          label="Agent provider"
+          onChange={(value) =>
+            setSelectedProviderId(isProviderStackId(value) ? value : null)
           }
-          style={SELECT_STYLE}
+          options={providers.map((provider) => ({
+            disabled: !provider.connected || !isProviderStackId(provider.id),
+            label: provider.title,
+            value: provider.id,
+          }))}
           value={selectedProviderId ?? ""}
-        >
-          {providers.map((provider) => (
-            <option
-              disabled={!provider.connected || !isProviderStackId(provider.id)}
-              key={provider.id}
-              value={provider.id}
-            >
-              {provider.title}
-            </option>
-          ))}
-        </select>
+        />
         <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
-          <label style={{ display: "grid", gap: 6 }}>
-            <span style={LABEL_STYLE}>Model</span>
-            <select
-              onChange={(event) => setSelectedModelId(event.target.value)}
-              style={SELECT_STYLE}
-              value={selectedModelId ?? ""}
-            >
-              {modelOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label style={{ display: "grid", gap: 6 }}>
-            <span style={LABEL_STYLE}>Reasoning</span>
-            <select
-              onChange={(event) => setSelectedReasoning(event.target.value)}
-              style={SELECT_STYLE}
-              value={selectedReasoning ?? ""}
-            >
-              {reasoningOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <CaptureWorkbenchDomListboxSelector
+            label="Model"
+            onChange={setSelectedModelId}
+            options={modelOptions.map((option) => ({
+              label: option.label,
+              title: option.description,
+              value: option.id,
+            }))}
+            value={selectedModelId ?? ""}
+          />
+          <CaptureWorkbenchDomListboxSelector
+            label="Reasoning"
+            onChange={setSelectedReasoning}
+            options={reasoningOptions.map((option) => ({
+              label: option.label,
+              value: option.id,
+            }))}
+            value={selectedReasoning ?? ""}
+          />
         </div>
         <button
           className="pm-provider-picker__button pm-provider-picker__button--primary"

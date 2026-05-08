@@ -11,6 +11,10 @@ const WORKFLOW_SOURCE_PATH = path.resolve(
   process.cwd(),
   "src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts"
 );
+const DEVELOPMENT_TREE_NODE_START_CARD_SOURCE_PATH = path.resolve(
+  process.cwd(),
+  "src/client/project-manager/components/layout/development-tree-node-start-card.tsx"
+);
 
 test("stage confirmation card keeps explicit provider override in start path", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
@@ -31,9 +35,18 @@ test("stage confirmation card exposes model and reasoning controls", async () =>
 
   assert.equal(source.includes("getStartCardModelOptions("), true);
   assert.equal(source.includes("getStartCardReasoningOptions("), true);
+  assert.equal(source.includes("CaptureWorkbenchDomListboxSelector"), true);
   assert.equal(source.includes('"pm.confirmation_card.model_label"'), true);
   assert.equal(source.includes('"pm.confirmation_card.reasoning_label"'), true);
-  assert.equal(source.includes("<select"), true);
+  assert.equal(source.includes("<select"), false);
+});
+
+test("development tree node start card avoids native selects", async () => {
+  const source = await readFile(DEVELOPMENT_TREE_NODE_START_CARD_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("CaptureWorkbenchDomListboxSelector"), true);
+  assert.equal(source.includes("api.startDevelopmentTreeNode({"), true);
+  assert.equal(source.includes("<select"), false);
 });
 
 test("stage confirmation card keeps previous-step badge and override helper copy", async () => {

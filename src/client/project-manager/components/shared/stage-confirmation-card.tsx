@@ -6,6 +6,7 @@ import { api } from "../../api";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
 import { PROVIDER_TINT_TOKENS } from "./stage-confirmation-card-provider-tint";
 import {
   getStartCardModelOptions,
@@ -58,16 +59,6 @@ const SELECT_GRID_STYLE: React.CSSProperties = {
   gap: 8,
   gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
 };
-const SELECT_STYLE: React.CSSProperties = {
-  background: "rgba(7, 11, 18, 0.94)",
-  border: "1px solid rgba(255,255,255,0.12)",
-  borderRadius: 8,
-  color: "var(--pm-text)",
-  fontSize: 13,
-  minHeight: 36,
-  padding: "7px 10px",
-};
-
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
 
@@ -417,36 +408,25 @@ export const StageConfirmationCard: React.FC<{
 
         {selectedProvider ? (
           <div style={SELECT_GRID_STYLE}>
-            <label style={{ display: "grid", gap: 6 }}>
-              <span style={PROVIDER_LABEL_STYLE}>{modelLabelText}</span>
-              <select
-                disabled={startInFlight}
-                onChange={(event) => setSelectedModelId(event.target.value)}
-                style={SELECT_STYLE}
-                value={selectedModelId ?? ""}
-              >
-                {modelOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label style={{ display: "grid", gap: 6 }}>
-              <span style={PROVIDER_LABEL_STYLE}>{reasoningLabelText}</span>
-              <select
-                disabled={startInFlight}
-                onChange={(event) => setSelectedReasoning(event.target.value)}
-                style={SELECT_STYLE}
-                value={selectedReasoning ?? ""}
-              >
-                {reasoningOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CaptureWorkbenchDomListboxSelector
+              label={modelLabelText}
+              onChange={setSelectedModelId}
+              options={modelOptions.map((option) => ({
+                label: option.label,
+                title: option.description,
+                value: option.id,
+              }))}
+              value={selectedModelId ?? ""}
+            />
+            <CaptureWorkbenchDomListboxSelector
+              label={reasoningLabelText}
+              onChange={setSelectedReasoning}
+              options={reasoningOptions.map((option) => ({
+                label: option.label,
+                value: option.id,
+              }))}
+              value={selectedReasoning ?? ""}
+            />
           </div>
         ) : null}
 
