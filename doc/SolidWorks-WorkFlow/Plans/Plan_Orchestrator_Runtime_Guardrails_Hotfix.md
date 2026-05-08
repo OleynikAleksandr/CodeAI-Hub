@@ -60,3 +60,10 @@ downstream lock.
 - `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
 - `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`
 - `npm run plan:validate`
+
+2026-05-08 managed stage feedback parity verification passed:
+
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`
+- `npm exec -- tsx --test packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`
+- `npm run plan:validate`
