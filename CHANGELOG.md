@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.205] - 2026-05-08
+### Fixed
+- **Core no longer sends stale Diagram Modules rejection feedback from old workflow-state polls.** Managed progress and Git status are refreshed immediately before Core feedback or managed documentation commits, preventing Claude from seeing already-written Product Part files as missing.
+
+### Tests
+- **Regression coverage verifies stale `0/N missing` managed progress is refreshed to the current valid Product Part set before feedback can be sent.**
+
 ## [1.2.204] - 2026-05-08
 ### Fixed
 - **Claude/Core feedback turns now stay ordered and locked.** Core marks managed feedback turns as running before dispatch and serializes per-session message persistence/broadcast so deferred Core feedback is shown before the next reasoning block instead of appearing late.
