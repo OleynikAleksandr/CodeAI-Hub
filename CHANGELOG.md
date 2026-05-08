@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.199] - 2026-05-08
+### Fixed
+- **Managed workflow handoffs now fail closed on dirty Git state.** From Diagram Modules onward, Core checks the workspace Git status, blocks downstream stage availability, and sends owning-stage feedback when managed files are uncommitted.
+- **Dirty managed files are attributed to the responsible stage.** Diagram Modules, Application Skeleton, and Quality Gates leftovers now produce concrete file-level blocker messages instead of silently allowing the next agent to inherit them.
+
+### Tests
+- **Targeted regression coverage verifies dirty managed paths are classified by stage, downgrade progress, and block downstream stage unlocks.**
+
 ## [1.2.198] - 2026-05-08
 ### Fixed
 - **Project Manager Start card selectors no longer use native CEF dropdowns.** Provider, model, and reasoning controls now use the existing in-app DOM listbox, avoiding the macOS/CEF crash seen when changing model or reasoning during acceptance testing.
