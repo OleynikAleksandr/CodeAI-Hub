@@ -4,6 +4,7 @@ import {
   buildRuntimeLanguageReminder,
   normalizeRuntimeLanguage,
 } from "./prompt-localized-instructions";
+import { buildDiagramModulesInlineContractBlock } from "./prompt-diagram-modules-contract";
 
 export type WorkflowStageId =
   | "description"
@@ -476,6 +477,9 @@ export const buildWorkflowPromptPack = (
       buildArtifactWriteEncodingBlock(),
       buildArtifactEditOperationBlock(),
       buildChangeSummaryBlock(params.stage),
+      params.stage === "diagram_modules"
+        ? buildDiagramModulesInlineContractBlock()
+        : null,
       buildInlineSourceArtifactBlock({
         sourceArtifacts: params.sourceArtifacts,
         stage: params.stage,
