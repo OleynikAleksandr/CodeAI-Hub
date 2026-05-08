@@ -66,6 +66,8 @@ At `Diagram Modules` start, hooks are lifecycle-minimal and stack-neutral.
 
 `Quality Gates Baseline` may create stack-specific scripts/configs/manifests after acceptance. Core validates the manifest and uses the Hook Registry to regenerate hook wiring. Agents must not hand-edit hook structure as the source of truth.
 
+After integrated Quality Gates, Core unlocks Development Tree read model but does not automatically start all branch agents. Product Part / Cluster / Module nodes are startable units. A node Start command must validate clean Git and the materialized node folder, persist/use the selected provider/model/reasoning defaults, create only that node's draft artifacts, and create only that node's workflow session.
+
 ## 6. Agent Acceptance Feedback
 
 Core acceptance is an active loop, not a passive lock.

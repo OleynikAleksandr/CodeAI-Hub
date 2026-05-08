@@ -63,10 +63,11 @@ Diagram Modules
 
 После этого `Application Skeleton`, `Quality Gates Baseline` и Development Tree работают внутри уже управляемого workspace. Агентам не передаётся ownership за Git, hooks или plan scripts: они следуют текущему `todo-plan.md`, а Core валидирует, ремонтирует и расширяет lifecycle алгоритмически.
 
-Текущий статус реализации Development Tree (v1.2.162):
+Текущий статус реализации Development Tree:
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
 - Materialization gate: Core держит Development Tree sessions disabled, пока `application-skeleton-map.json` не содержит `materialized: true`, а `quality-gates.json` не содержит `integrated: true`. Sidebar показывает locked-row вместо раннего session bootstrap.
-- Materialization: Application Skeleton Agent создаёт project skeleton и production code folder projection, Quality Gates Agent интегрирует gate tooling, затем Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`, pre-creates target draft folders/files, and bootstraps node sessions for Product Part / Cluster / Module first drafts only after both technical root gates pass.
+- Materialization: Application Skeleton Agent создаёт project skeleton и production code folder projection, Quality Gates Agent интегрирует gate tooling, затем Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`. Core больше не pre-creates все node draft files и не bootstraps все Product Part / Cluster / Module sessions автоматически.
+- User-started node lifecycle: каждый Product Part / Cluster / Module node получает `lifecycle.startState = "not_started"` и `startable: true`, пока у него нет node session. Пользователь выбирает нужный node, provider/model/reasoning на Start card и запускает только этот node. Core проверяет clean Git, materialized node folder, пишет draft artifacts только выбранного node и создаёт session с `runSlug: "development-tree"`.
 - Branch-node selection: `pm:branch:selected` opens the real working surface: left node session pane and right draft artifact pane.
 - Live refresh: when an agent writes required draft artifacts, the right artifact pane and sidebar readiness/color refresh without switching steps or reopening the workspace.
 - Context boundary: Product Part node first prompts receive the exact owner `diagram_modules/product-parts/<part-id>.md` whole; Cluster/Module prompts receive scoped relevant excerpts. Automatic first-draft sessions may use only first-prompt context and listed target draft files until the user explicitly permits additional reads.
@@ -181,6 +182,7 @@ Manual start из sidebar Workflow Tree:
 - перед provider session creation Core обязан выполнить managed workspace bootstrap и read-only freeze upstream шагов; если lifecycle validation возвращает blocker/debt, agent turn не запускается до repair или явного решения пользователя;
 - если continuity session для шага ещё нет, confirmation card предвыбирает провайдера последнего trunk-step (`virtual_simulation`), а не провайдера из `Description`;
 - пользователь может прямо на карточке переключить provider до запуска; выбранный provider становится authoritative identity для новой step-session bootstrap path;
+- provider/model/reasoning controls присутствуют на всех Start/confirmation cards. При Start выбранные значения сохраняются в canonical Settings defaults выбранного provider и seed-ят новую session identity; existing continuity sessions не перепривязываются от Settings.
 - после materialization новой step-session нижняя model/status surface и header usage-limits surface должны перейти на выбранный provider/runtime identity; когда у шага уже есть continuity session, confirmation card не показывается и resume path остаётся без pre-start provider override.
 
 ### Входы
