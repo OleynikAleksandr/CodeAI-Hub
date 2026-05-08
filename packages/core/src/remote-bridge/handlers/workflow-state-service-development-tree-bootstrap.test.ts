@@ -355,7 +355,7 @@ const runFeedbackScenario = async (params: {
   }
 };
 
-test("workflow-state read bootstraps development tree once after Quality Gates", async () => {
+test("workflow-state read unlocks development tree without node auto fan-out", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-development-tree-")
   );
@@ -387,19 +387,16 @@ test("workflow-state read bootstraps development tree once after Quality Gates",
       workspaceSlug,
     });
 
-    assert.deepEqual(createdStages, [
-      "development_tree/materialized/product-parts/local-runtime",
-      "development_tree/materialized/product-parts/local-runtime/modules/provider-bridge",
-    ]);
+    assert.deepEqual(createdStages, []);
     assert.equal(
       (
         await stat(
           path.join(
             workspaceRoot,
-            ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/PartDescription.draft.md"
+            ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime"
           )
         )
-      ).isFile(),
+      ).isDirectory(),
       true
     );
 
@@ -408,7 +405,7 @@ test("workflow-state read bootstraps development tree once after Quality Gates",
       workspaceRoot,
       workspaceSlug,
     });
-    assert.equal(createdStages.length, 2);
+    assert.equal(createdStages.length, 0);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
