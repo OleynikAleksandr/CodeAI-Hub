@@ -10,12 +10,13 @@
 
 1. `System/SystemArchitecture.md`
 2. `System/WorkflowSteps_Overview.md`
-3. `Clusters/Project_Manager.md`
-4. `Clusters/CoreOrchestrator.md`
-5. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
-6. `Contracts/` (только по ссылкам из документов выше)
-7. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
-8. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
+3. `System/ManagedDocumentationCommitOwnership.md`
+4. `Clusters/Project_Manager.md`
+5. `Clusters/CoreOrchestrator.md`
+6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+7. `Contracts/` (только по ссылкам из документов выше)
+8. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
+9. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
 
 ## 1) Канонические документы (этот каталог)
 
@@ -24,6 +25,7 @@
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
+- `System/ManagedDocumentationCommitOwnership.md` — SSOT принятого решения для pre-code managed documentation workflow: агенты владеют содержанием артефактов, Core владеет Git-транзакцией, staging allowlist, plan advancement, feedback и downstream unlock.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, or release-time regressions.
 - `System/WorkflowStep_PromptTesting_Methodology.md` — SSOT methodology for live-testing any workflow step agent prompt, identifying prompt-level defects, and turning observed behavior into an ideal step front contract.
 

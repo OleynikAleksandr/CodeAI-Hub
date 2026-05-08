@@ -63,6 +63,7 @@
 Полностью реализованный `todo-plan.md` переименовывается с префиксом последней реализованной Фазы (например - todo-plan-phase3.md) и кладется в `doc/TODO/Archive/` только после User Acceptance Gate.
 На его месте создается новый `todo-plan.md` под новые задачи только после того, как оркестратор перевёл предыдущий active plan в terminal `NONE` state.
 - **Обязательные финальные Stream в каждом новом `doc/TODO/todo-plan.md`:** `Release Build` или `Tooling Verification` (по scope), `User Visual Acceptance Testing` или `User Workflow Acceptance Testing`, `Scope Closeout` (закрытие todo-plan и planning-doc). `Scope Closeout` выполняется только после явного acceptance пользователя.
+- **Release Build Confirmation Gate:** даже если все фиксы и проверки завершены, новый релиз нельзя собирать автоматически. Перед подготовкой release notes, запуском `build-all.sh` или `build-release.sh` обязательно отдельно переспроси пользователя и получи явное подтверждение на сборку релиза.
 - **Обязательный closeout Plans после User Acceptance Gate:** как только `doc/TODO/todo-plan.md` полностью закрыт, релиз принят пользователем и план переносится в `doc/TODO/Archive/`, необходимо в той же сессии провести ревизию `doc/SolidWorks-WorkFlow/Plans/` по этому execution cycle.
   Для каждого planning-документа, на который опирался завершенный `todo-plan`, обязательно принять одно из решений:
   1. перенести его стабильные итоговые выводы в канонические SSOT-документы (`System/`, `Clusters/`, `Modules/`, `Contracts/`);
@@ -86,6 +87,7 @@
     - `<doc 1>`
     - `<doc 2>`
     - `<doc 3>`
+    - `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md` (для managed documentation workflow до начала генерации кода)
   - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
   ## Правила выполнения (Execution Rules):
@@ -104,6 +106,7 @@
   - **Real-time Документация**: 
 Любое изменение архитектуры/логики требует синхронного обновления и todo-plan.md и документации (`doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и др.) **ДО** коммита - чтоб измененные документы также попали в Git Commit.
   - Каждый новый `doc/TODO/todo-plan.md` обязан содержать финальные Stream: `Release Build` или `Tooling Verification` (по scope), `User Visual Acceptance Testing` или `User Workflow Acceptance Testing`, `Scope Closeout` (todo-plan, planning-doc).
+  - **Release Build Confirmation Gate:** после завершения фиксов и проверок остановись и переспроси пользователя, собирать ли новый релиз. Не готовь README/CHANGELOG под новую версию и не запускай `./scripts/build-all.sh` / `./scripts/build-release.sh --use-current-version` без отдельного явного подтверждения пользователя.
   - Релизная Phase не завершается на сборке: на чистом дереве запускаем `./scripts/build-all.sh` (он повышает версии и вызывает `./scripts/build-release.sh --use-current-version`), переносим tarball’ы в `doc/tmp/releases/`, фиксируем результаты в active plan/archive snapshot, передаем релиз пользователю, оставляем scope `ACTIVE`, получаем явное acceptance и только потом закрываем scope.
   - **doc/TODO/todo-plan.md** необходимо постоянно в риалтайме обновлять, после каждой подзадачи обязательный коммит, после каждого коммита его номер и наименование заносить, статус задачи тут же менять.
 
@@ -140,6 +143,8 @@
 - **Automation-first**: если проблема повторяется или проверяется формально, сначала ищи решение через скрипт, validator, hook или gate; prompt-инструкции используй как второй слой, а не как единственную защиту.
 
 ## 7. Release Build Checklist
+Перед выполнением этого checklist обязательно получи отдельное явное подтверждение пользователя на сборку релиза. Нельзя начинать release notes, version bump, `build-all.sh` или `build-release.sh` только потому, что фиксы завершены.
+
 0. Перед сборкой релиза определи БУДУЩУЮ версию (текущая из `package.json` + 1) и актуализируй `README.md` ("Current Release — vX.Y.Z") и `CHANGELOG.md` ("## [X.Y.Z]") на эту будущую версию. Закоммить обновлённые документы ДО запуска `build-all.sh`. Это гарантирует, что VSIX содержит README/CHANGELOG с правильной версией. Также обнови связанные архитектурные материалы из `doc/`, если они затронуты.
 1. Перед началом убедись, что `npm install` выполнен — отсутствие зависимостей ломает `build:webview`/`build:web-client`.
 2. Закрой все микро‑задачи/стримы: для затронутых пакетов должны пройти таргетные `npm run build --workspace …` (или `npm run build:webview`, `npm run typecheck:webview`) + гейты качества (обычно автоматически через `.husky/pre-commit` и `.husky/pre-push`). Только после этого чистим рабочее дерево.
