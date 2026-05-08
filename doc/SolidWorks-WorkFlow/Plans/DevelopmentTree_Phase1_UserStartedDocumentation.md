@@ -48,13 +48,15 @@ Phase 1 supports these node types:
 
 Product Part is not treated as the main implementation unit. It is a navigation, review, and delivery boundary. Cluster and Module are the main documentation/contract work units.
 
-## 5. Start Card
+## 5. Universal Start Card Contract
 
-Each startable Development Tree node should expose a Start card similar to trunk workflow stage cards.
+Every workflow step or branch node that starts an agent session should expose the same provider/model/reasoning Start card contract. This applies to existing trunk/documentation steps and to new Development Tree nodes.
+
+Development Tree nodes should use the same card pattern as trunk workflow stage cards, not a separate reduced control surface.
 
 The card should include:
 
-- node identity: Product Part, Cluster, or Module name;
+- step or node identity: workflow step, Product Part, Cluster, or Module name;
 - node type and parent path;
 - expected artifacts that will be created;
 - current status (`not_started`, `drafting`, `needs_user_review`, `accepted`, `blocked`);
@@ -63,33 +65,29 @@ The card should include:
 - reasoning/thinking selector when supported by the provider;
 - Start button.
 
-The card should not immediately start a session when the tree is materialized. Start is a user action.
+For Development Tree nodes, the card should not immediately start a session when the tree is materialized. Start is a user action.
 
-## 6. Provider And Model Binding
+## 6. Provider, Model, Reasoning, And Settings Binding
 
-The Start card must support per-node provider/model overrides.
+Every Start card must support provider/model/reasoning selection.
 
 Default behavior:
 
 - initial provider/model/reasoning values come from Settings;
 - changing provider updates the available model list;
-- changing model/reasoning affects only the node session being started;
-- Core stores the effective provider/model/reasoning binding in the node session record;
-- later Settings changes do not mutate an existing node session binding.
+- changing model/reasoning writes the selected default model/reasoning for that provider back to the Settings file;
+- the newly started session also receives the selected effective provider/model/reasoning binding;
+- Core stores the effective binding in the step or node session record for audit/recovery.
 
-Global Settings should not be overwritten automatically.
+The Start action is therefore both a session start and an explicit default update for the selected provider. If the user chooses a different model for a provider on any start card, that provider's default model in Settings must change.
 
-Optional UX:
+Required Settings behavior:
 
-- a checkbox or explicit action can save the selected provider/model/reasoning as the future default;
-- this must be separate from starting the node session;
-- if implemented, the UI must make clear whether the choice applies to this session only or to future sessions.
-
-Recommended first implementation:
-
-- support per-node session binding;
-- do not write back to global Settings from the card;
-- leave "save as default" as an explicit follow-up capability.
+- write through the same Core-owned Settings lifecycle used by the Settings UI;
+- update only the selected provider's default model/reasoning fields;
+- preserve other provider defaults and unrelated Settings fields;
+- broadcast the settings/session update through the existing Settings/session transports;
+- ensure the session Status Panel shows the effective model from the created session binding.
 
 ## 7. Node Start Lifecycle
 
@@ -99,9 +97,10 @@ When the user starts a node, Core should:
 2. Verify the node is startable and not already accepted.
 3. Create or reuse a node task record.
 4. Create only that node's draft artifact files.
-5. Create a session for the selected provider/model/reasoning binding.
-6. Send a first prompt scoped to that node.
-7. Mark the node `drafting`.
+5. Persist the selected provider/model/reasoning as the provider default in Settings.
+6. Create a session for the selected provider/model/reasoning binding.
+7. Send a first prompt scoped to that node.
+8. Mark the node `drafting`.
 
 If Git is dirty, Core should block start and explain the dirty paths.
 
@@ -189,8 +188,8 @@ Likely future execution streams:
 1. Disable automatic Development Tree session/draft fan-out after Quality Gates.
 2. Materialize Development Tree index/read model with branch nodes in `not_started`.
 3. Add node Start cards to the UI.
-4. Add provider/model/reasoning selection to node Start cards.
-5. Persist per-node session binding without changing global Settings.
+4. Extend all workflow Start cards, existing trunk and Development Tree, with provider/model/reasoning selection.
+5. Persist Start card provider/model/reasoning selection into Settings as the selected provider default and into the created session binding.
 6. Create node task records and node-scoped draft artifact materialization.
 7. Add node-scoped Core acceptance feedback.
 8. Add guards for dirty Git and overlapping node scopes.
@@ -199,6 +198,6 @@ Likely future execution streams:
 
 - Exact node task record storage path.
 - Whether Product Part overview is mandatory before Cluster/Module starts.
-- Whether the first implementation includes "save as default" from the Start card.
+- Whether Settings write-back happens on selection change or only on Start.
 - Whether multi-start is exposed in the first version or kept as one-node-at-a-time UI.
 - Exact node-scoped commit command name and contract.
