@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.194] - 2026-05-08
+### Fixed
+- **Managed acceptance failures are now returned to the owning agent session.** Core sends actionable repair feedback to Diagram Modules, Application Skeleton, and Quality Gates sessions when runtime validation rejects an agent commit.
+- **Development Tree progression stays locked until real stage state passes Core validation.** Downstream workflow stages no longer rely on a single accepted/integrated flag when required materialized artifacts, hook wiring, or lifecycle evidence are missing.
+- **Quality Gates feedback now explains the missing work.** If baseline gates are not actually wired into managed lifecycle hooks, Core reports the failed acceptance check back to the Quality Gates agent.
+
+### Tests
+- **Targeted regression coverage verifies Core feedback parity for Diagram Modules, Application Skeleton, and Quality Gates.**
+
 ## [1.2.193] - 2026-05-07
 ### Fixed
 - **Application Skeleton can unlock Quality Gates from the materialized JSON map.** Core now treats `application-skeleton-map.json` as the machine lifecycle source and no longer requires `application-skeleton.md` to duplicate lifecycle fields verbatim when the Markdown is a narrative artifact.
