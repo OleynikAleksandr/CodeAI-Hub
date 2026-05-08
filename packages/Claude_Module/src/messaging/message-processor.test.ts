@@ -129,6 +129,53 @@ test("SDKMessageProcessor processes queued turns in FIFO order", async () => {
   assert.equal(types.filter((type) => type === "turn_failed").length, 0);
 });
 
+test("SDKMessageProcessor marks deferred Core feedback user_input events", async () => {
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-deferred-feedback"
+  );
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-deferred-feedback",
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    {
+      content: "Core acceptance check failed for Diagram Modules.",
+      enqueuedAt: Date.now(),
+      internal: false,
+      turnOptions: { userMessageVisibility: "deferred" },
+    },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "assistant",
+            session_id: "real-session-deferred",
+            message: {
+              content: [{ type: "text", text: "repair-response" }],
+            },
+          },
+          { type: "result", session_id: "real-session-deferred" },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  const userInput = events.find((event) => event.type === "user_input");
+  assert.equal(
+    userInput?.content,
+    "Core acceptance check failed for Diagram Modules."
+  );
+  assert.equal(userInput?.userMessageVisibility, "deferred");
+  assert.deepEqual(userInput?.data, { userMessageVisibility: "deferred" });
+});
+
 test("SDKMessageProcessor emits turn_failed exactly once on stream error", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(

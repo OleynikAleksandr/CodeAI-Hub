@@ -54,6 +54,27 @@ test("ClaudeTextLiveBuffer backtracks from a marker-only list line to the previo
   assert.equal(tail, "2. First-run without projects");
 });
 
+test("ClaudeTextLiveBuffer does not split inline-code filenames at periods", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const segment = buffer.appendDelta(
+    "s",
+    "I am updating the project documentation references now. " +
+      "The next file is `project-manager."
+  );
+
+  assert.equal(segment, null);
+
+  const nextSegment = buffer.appendDelta(
+    "s",
+    "md`, and the Core validation feedback should stay readable."
+  );
+
+  assert.equal(
+    nextSegment,
+    "I am updating the project documentation references now. The next file is `project-manager.md`, and the Core validation feedback should stay readable."
+  );
+});
+
 test("ClaudeTextLiveBuffer flushRemaining returns leftover tail and clears it", () => {
   const buffer = new ClaudeTextLiveBuffer();
   buffer.appendDelta("s", "pending tail without any boundary at all");
@@ -102,6 +123,17 @@ test("ClaudeTextLiveBuffer suppresses orphan tail flush after early finalization
   assert.equal(finalTail, " This affects shell.");
   assert.notEqual(finalTail, "ell.");
   assert.equal(buffer.flushRemaining("s"), null);
+});
+
+test("ClaudeTextLiveBuffer suppresses short orphan final word tails", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const livePrefix =
+    "This live assistant segment is long enough to cross the flushing threshold and to materialize as a complete sentence.";
+
+  assert.equal(buffer.appendDelta("s", livePrefix), livePrefix.trimEnd());
+
+  const tail = buffer.consumeFinal("s", `${livePrefix}ceptance.`);
+  assert.equal(tail, null);
 });
 
 test("ClaudeTextLiveBuffer consumeFinal returns full final when diverging from live draft", () => {

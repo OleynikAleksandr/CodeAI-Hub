@@ -15,9 +15,12 @@
  */
 
 const MIN_FLUSH_CHARS = 96;
+const ORPHAN_FINAL_TAIL_MAX_CHARS = 24;
 const SENTENCE_BOUNDARY_REGEX = /[.!?…\n]/g;
 const TRAILING_MARKDOWN_LIST_MARKER_REGEX =
   /(?:^|\n)\s{0,3}(?:\d+\.|[-*+])\s*$/u;
+const LEADING_WHITESPACE_REGEX = /^\s/u;
+const WORD_OR_FILENAME_TAIL_REGEX = /^[\p{L}\p{N}_-]/u;
 
 interface LiveTextState {
   finalizedText: string | null;
@@ -95,7 +98,9 @@ export class ClaudeTextLiveBuffer {
     }
     if (finalText.startsWith(state.nativeAccumulated)) {
       const tail = finalText.slice(state.materializedLength);
-      return tail.trim().length > 0 ? tail : null;
+      return tail.trim().length > 0 && !this.isLikelyOrphanFinalTail(tail)
+        ? tail
+        : null;
     }
     return finalText;
   }
@@ -137,7 +142,12 @@ export class ClaudeTextLiveBuffer {
     while (match !== null) {
       const boundary = match.index + match[0].length;
       const candidate = tail.slice(0, boundary);
-      if (!this.endsWithMarkerOnlyListLine(candidate)) {
+      if (
+        !(
+          this.endsWithMarkerOnlyListLine(candidate) ||
+          this.endsInsideInlineCode(tail, match.index)
+        )
+      ) {
         lastSafeBoundary = boundary;
       }
       match = SENTENCE_BOUNDARY_REGEX.exec(tail);
@@ -156,5 +166,26 @@ export class ClaudeTextLiveBuffer {
       return false;
     }
     return TRAILING_MARKDOWN_LIST_MARKER_REGEX.test(normalized);
+  }
+
+  private endsInsideInlineCode(text: string, boundaryStart: number): boolean {
+    if (text[boundaryStart] !== ".") {
+      return false;
+    }
+    const beforeBoundary = text.slice(0, boundaryStart);
+    const backtickCount = [...beforeBoundary].filter(
+      (char) => char === "`"
+    ).length;
+    return backtickCount % 2 === 1;
+  }
+
+  private isLikelyOrphanFinalTail(tail: string): boolean {
+    const trimmed = tail.trim();
+    return (
+      trimmed.length > 0 &&
+      trimmed.length <= ORPHAN_FINAL_TAIL_MAX_CHARS &&
+      !LEADING_WHITESPACE_REGEX.test(tail) &&
+      WORD_OR_FILENAME_TAIL_REGEX.test(trimmed)
+    );
   }
 }

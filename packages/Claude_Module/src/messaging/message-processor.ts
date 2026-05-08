@@ -30,6 +30,16 @@ interface MessageProcessorOptions {
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 }
 
+interface SendOptions {
+  readonly internal?: boolean;
+  readonly userMessageVisibility?: "deferred";
+}
+
+const readDeferredUserMessageVisibility = (
+  turnOptions?: Record<string, unknown>
+): "deferred" | undefined =>
+  turnOptions?.userMessageVisibility === "deferred" ? "deferred" : undefined;
+
 export class SDKMessageProcessor {
   private readonly finishHandler: ClaudeMessageFinishHandler;
   private readonly reporter?: ModuleReporter;
@@ -139,6 +149,9 @@ export class SDKMessageProcessor {
         try {
           this.send(session.sessionId, turn.content, {
             internal: turn.internal,
+            userMessageVisibility: readDeferredUserMessageVisibility(
+              turn.turnOptions
+            ),
           });
           session.messageController.pendingMessages.length = 0;
           const iterator = hooks.createIterator({ session, turn });
@@ -176,11 +189,7 @@ export class SDKMessageProcessor {
     }
   }
 
-  send(
-    sessionId: string,
-    content: string,
-    options?: { readonly internal?: boolean }
-  ): void {
+  send(sessionId: string, content: string, options?: SendOptions): void {
     const targetSession = this.sessionManager.getSession(sessionId);
     if (!targetSession) {
       throw new Error(`Session ${sessionId} not found`);
@@ -202,12 +211,19 @@ export class SDKMessageProcessor {
     }
     if (!internal) {
       this.finishHandler.emitTurnStarted(targetSession, sessionId);
+      const userMessageVisibility = options?.userMessageVisibility;
       targetSession.eventEmitter.emit("message", {
         type: "user_input",
         content,
         uuid: crypto.randomUUID(),
         claudeSessionId: sessionId,
         timestamp: new Date().toISOString(),
+        ...(userMessageVisibility
+          ? {
+              data: { userMessageVisibility },
+              userMessageVisibility,
+            }
+          : {}),
       });
     }
   }
