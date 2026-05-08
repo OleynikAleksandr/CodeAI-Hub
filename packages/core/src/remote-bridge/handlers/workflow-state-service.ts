@@ -28,6 +28,7 @@ import {
   readQualityGatesProgressSnapshot,
   resolveWorkflowBlockedStages,
 } from "./quality-gates-progress";
+import { WorkflowAgentAcceptanceFeedback } from "./workflow-agent-acceptance-feedback";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
@@ -94,6 +95,7 @@ const resolveManagedLifecycle = (params: {
   };
 };
 export class WorkflowStateService {
+  private readonly acceptanceFeedback: WorkflowAgentAcceptanceFeedback;
   private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
   private readonly logger: Logger;
   private readonly nodeBootstraps = new Map<
@@ -115,6 +117,7 @@ export class WorkflowStateService {
   }) {
     this.developmentTreeAgentSessions = options.developmentTreeAgentSessions;
     this.logger = options.logger;
+    this.acceptanceFeedback = new WorkflowAgentAcceptanceFeedback(this.logger);
     this.sessionManager = options.sessionManager;
     this.developmentTreeState.subscribeSnapshot(
       async ({ snapshot, workspaceRoot, workspaceSlug }) => {
@@ -228,11 +231,20 @@ export class WorkflowStateService {
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
             : null;
-          return hydrateWorkflowStateFromFilesystem({
-            state,
-            workspaceRoot,
-            workspaceSlug: workspaceSlugResult.value,
-          })
+          return this.acceptanceFeedback
+            .sendQualityGatesFeedback({
+              chains,
+              gateway: this.developmentTreeAgentSessions?.gateway,
+              progress: qualityGatesProgress,
+              workspaceSlug: workspaceSlugResult.value,
+            })
+            .then(() =>
+              hydrateWorkflowStateFromFilesystem({
+                state,
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
+              })
+            )
             .then((hydratedState) =>
               applyVirtualSimulationValidation({
                 state: hydratedState,

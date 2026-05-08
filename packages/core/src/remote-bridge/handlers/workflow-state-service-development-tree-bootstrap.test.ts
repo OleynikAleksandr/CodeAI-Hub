@@ -10,6 +10,13 @@ import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
+const QUALITY_GATE_FEEDBACK_SESSION_RE = /^quality-session\n/u;
+const QUALITY_GATE_FEEDBACK_TITLE_RE =
+  /Core acceptance check failed for Quality Gates Baseline\./u;
+const QUALITY_GATE_PRE_COMMIT_ERROR_RE =
+  /Quality gate qg-secret-scan is missing from \.husky\/pre-commit/u;
+const QUALITY_GATE_PRE_PUSH_ERROR_RE =
+  /Quality gate qg-smoke-checks is missing from \.husky\/pre-push/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -223,6 +230,31 @@ const writeTechnicalRootArtifacts = async (
   await writeManagedPlanEvidence(workspaceRoot);
 };
 
+const writeQualityGatesContinuity = (
+  workspaceRoot: string,
+  workspaceSlug: string,
+  sessionId = "quality-session"
+): Promise<void> =>
+  writeJsonFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/continuity/quality_gates/codex-quality-gates/chain.json`,
+    {
+      dialogId: "codex-quality-gates",
+      rootSessionId: "codex-quality-gates",
+      segments: [
+        {
+          createdAt: "2026-05-08T05:51:54.053Z",
+          providerId: "codexCli",
+          providerSessionId: "provider-quality-session",
+          sessionId,
+        },
+      ],
+      stage: "quality_gates",
+      updatedAt: "2026-05-08T05:51:54.053Z",
+      workspaceSlug,
+    }
+  );
+
 const commitWorkspace = async (workspaceRoot: string): Promise<void> => {
   await execFileAsync("git", ["init"], { cwd: workspaceRoot });
   await execFileAsync("git", ["config", "user.email", "test@example.com"], {
@@ -307,6 +339,55 @@ test("workflow-state read bootstraps development tree once after Quality Gates",
       workspaceSlug,
     });
     assert.equal(createdStages.length, 2);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("workflow-state read sends Quality Gates acceptance feedback to the active agent", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-quality-gates-feedback-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const feedbackMessages: string[] = [];
+
+  try {
+    await writeTechnicalRootArtifacts(workspaceRoot, workspaceSlug);
+    await writeQualityGatesContinuity(workspaceRoot, workspaceSlug);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nnpm run plan:validate\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-push",
+      "#!/bin/sh\nnpm run plan:validate\n"
+    );
+    await commitWorkspace(workspaceRoot);
+
+    const service = new WorkflowStateService({
+      logger: new Logger("error"),
+      developmentTreeAgentSessions: {
+        gateway: {
+          createSessionForWorkflow: () => Promise.resolve(null),
+          handleMessage: (sessionId, content) => {
+            feedbackMessages.push(`${sessionId}\n${content}`);
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
+      },
+    });
+
+    await readWorkflowStatePayload({ service, workspaceRoot, workspaceSlug });
+    await readWorkflowStatePayload({ service, workspaceRoot, workspaceSlug });
+
+    assert.equal(feedbackMessages.length, 1);
+    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_FEEDBACK_SESSION_RE);
+    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_FEEDBACK_TITLE_RE);
+    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_PRE_COMMIT_ERROR_RE);
+    assert.match(feedbackMessages[0] ?? "", QUALITY_GATE_PRE_PUSH_ERROR_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
