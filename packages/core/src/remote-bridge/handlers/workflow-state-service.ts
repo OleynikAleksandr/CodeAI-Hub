@@ -20,6 +20,7 @@ import type { ManagedWorkflowLifecyclePayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import { ManagedDocumentationCommitTransaction } from "./managed-documentation-commit-transaction";
 import {
   attachManagedGitStatus,
   attachValidationDirtyGate,
@@ -36,6 +37,7 @@ import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-developme
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
+import { commitManagedDocumentationStageIfReady } from "./workflow-state-managed-documentation-commit";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
@@ -78,10 +80,13 @@ const resolveManagedLifecycle = (params: {
     todoPlanPath: "doc/TODO/workspace.plan.md",
   };
 };
+
 export class WorkflowStateService {
   private readonly acceptanceFeedback: WorkflowAgentAcceptanceFeedback;
   private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
   private readonly logger: Logger;
+  private readonly managedCommitTransaction =
+    new ManagedDocumentationCommitTransaction();
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
@@ -210,125 +215,164 @@ export class WorkflowStateService {
           rawQualityGatesProgress,
           managedGitStatus,
         ]) => {
-          const diagramModulesProgress = attachManagedGitStatus(
-            rawDiagramModulesProgress,
-            managedGitStatus.dirtyByStage.diagram_modules
-          );
-          const applicationSkeletonProgress = attachValidationDirtyGate(
-            rawApplicationSkeletonProgress,
-            "Application Skeleton",
-            managedGitStatus.dirtyByStage.application_skeleton
-          );
-          const qualityGatesProgress = attachValidationDirtyGate(
-            rawQualityGatesProgress,
-            "Quality Gates",
-            managedGitStatus.dirtyByStage.quality_gates
-          );
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
             : null;
-          return Promise.all([
-            this.acceptanceFeedback.sendDiagramModulesFeedback({
-              chains,
-              gateway: this.developmentTreeAgentSessions?.gateway,
-              progress: diagramModulesProgress,
-              workspaceRoot,
-              workspaceSlug: workspaceSlugResult.value,
-            }),
-            this.acceptanceFeedback.sendApplicationSkeletonFeedback({
-              chains,
-              gateway: this.developmentTreeAgentSessions?.gateway,
-              progress: applicationSkeletonProgress,
-              workspaceRoot,
-              workspaceSlug: workspaceSlugResult.value,
-            }),
-            this.acceptanceFeedback.sendQualityGatesFeedback({
-              chains,
-              gateway: this.developmentTreeAgentSessions?.gateway,
-              progress: qualityGatesProgress,
-              workspaceRoot,
-              workspaceSlug: workspaceSlugResult.value,
-            }),
-          ])
-            .then(() =>
+          return commitManagedDocumentationStageIfReady({
+            context: {
+              applicationSkeletonProgress: rawApplicationSkeletonProgress,
+              diagramModulesProgress: rawDiagramModulesProgress,
+              managedGitStatus,
+              qualityGatesProgress: rawQualityGatesProgress,
+            },
+            logger: this.logger,
+            transaction: this.managedCommitTransaction,
+            workspaceRoot,
+            workspaceSlug: workspaceSlugResult.value,
+          })
+            .then(
+              ({
+                applicationSkeletonProgress: latestApplicationSkeletonProgress,
+                diagramModulesProgress: latestDiagramModulesProgress,
+                managedGitStatus: latestManagedGitStatus,
+                qualityGatesProgress: latestQualityGatesProgress,
+              }) => {
+                const diagramModulesProgress = attachManagedGitStatus(
+                  latestDiagramModulesProgress,
+                  latestManagedGitStatus.dirtyByStage.diagram_modules
+                );
+                const applicationSkeletonProgress = attachValidationDirtyGate(
+                  latestApplicationSkeletonProgress,
+                  "Application Skeleton",
+                  latestManagedGitStatus.dirtyByStage.application_skeleton
+                );
+                const qualityGatesProgress = attachValidationDirtyGate(
+                  latestQualityGatesProgress,
+                  "Quality Gates",
+                  latestManagedGitStatus.dirtyByStage.quality_gates
+                );
+                return Promise.all([
+                  this.acceptanceFeedback.sendDiagramModulesFeedback({
+                    chains,
+                    gateway: this.developmentTreeAgentSessions?.gateway,
+                    progress: diagramModulesProgress,
+                    workspaceRoot,
+                    workspaceSlug: workspaceSlugResult.value,
+                  }),
+                  this.acceptanceFeedback.sendApplicationSkeletonFeedback({
+                    chains,
+                    gateway: this.developmentTreeAgentSessions?.gateway,
+                    progress: applicationSkeletonProgress,
+                    workspaceRoot,
+                    workspaceSlug: workspaceSlugResult.value,
+                  }),
+                  this.acceptanceFeedback.sendQualityGatesFeedback({
+                    chains,
+                    gateway: this.developmentTreeAgentSessions?.gateway,
+                    progress: qualityGatesProgress,
+                    workspaceRoot,
+                    workspaceSlug: workspaceSlugResult.value,
+                  }),
+                ]).then(() => ({
+                  applicationSkeletonProgress,
+                  diagramModulesProgress,
+                  managedGitStatus: latestManagedGitStatus,
+                  qualityGatesProgress,
+                }));
+              }
+            )
+            .then((managedProgress) =>
               hydrateWorkflowStateFromFilesystem({
                 state,
                 workspaceRoot,
                 workspaceSlug: workspaceSlugResult.value,
               })
-            )
-            .then((hydratedState) =>
-              applyVirtualSimulationValidation({
-                state: hydratedState,
-                workspaceRoot,
-                workspaceSlug: workspaceSlugResult.value,
-              })
-            )
-            .then((validatedState) =>
-              hydrateDiagramModulesStateFromProgress({
-                state: validatedState,
-                workspaceRoot,
-                workspaceSlug: workspaceSlugResult.value,
-                diagramModulesProgress,
-              })
-            )
-            .then((validatedState) =>
-              applyTechnicalRootProgressToState({
-                state: validatedState,
-                applicationSkeletonProgress,
-                qualityGatesProgress,
-              })
-            )
-            .then((validatedState) =>
-              this.developmentTreeState
-                .currentSnapshot({
-                  workspaceRoot,
-                  workspaceSlug: workspaceSlugResult.value,
-                  plannedPartIds: diagramModulesProgress?.plannedPartIds ?? [],
-                  generatedPartIds:
-                    diagramModulesProgress?.generatedPartIds ?? [],
-                  emitSnapshotSideEffects: true,
-                })
-                .then((developmentTree) => {
-                  return applyDevelopmentTreeFreshnessToState({
-                    developmentTree,
+                .then((hydratedState) =>
+                  applyVirtualSimulationValidation({
+                    state: hydratedState,
+                    workspaceRoot,
+                    workspaceSlug: workspaceSlugResult.value,
+                  })
+                )
+                .then((validatedState) =>
+                  hydrateDiagramModulesStateFromProgress({
                     state: validatedState,
                     workspaceRoot,
-                  }).then((responseState) => {
-                    const canonicalLastActive = resolveCanonicalLastActive({
-                      chains,
-                      description,
-                      lastActive,
-                      state: responseState,
+                    workspaceSlug: workspaceSlugResult.value,
+                    diagramModulesProgress:
+                      managedProgress.diagramModulesProgress,
+                  })
+                )
+                .then((validatedState) =>
+                  applyTechnicalRootProgressToState({
+                    state: validatedState,
+                    applicationSkeletonProgress:
+                      managedProgress.applicationSkeletonProgress,
+                    qualityGatesProgress: managedProgress.qualityGatesProgress,
+                  })
+                )
+                .then((validatedState) =>
+                  this.developmentTreeState
+                    .currentSnapshot({
+                      workspaceRoot,
                       workspaceSlug: workspaceSlugResult.value,
-                    });
-                    const gating = {
-                      blocked: resolveWorkflowBlockedStages({
-                        state: responseState,
-                        description,
-                        diagramModulesProgress,
-                        applicationSkeletonProgress,
-                        managedGitClean: managedGitStatus.clean,
-                      }),
-                    };
-                    res.json({
-                      state: responseState,
-                      continuity: { chains },
-                      description,
-                      lastActive: canonicalLastActive,
-                      gating,
-                      diagramModulesProgress,
-                      applicationSkeletonProgress,
-                      qualityGatesProgress,
-                      developmentTree,
-                      managedLifecycle: resolveManagedLifecycle({
-                        state: responseState,
-                        applicationSkeletonProgress,
-                        qualityGatesProgress,
-                      }),
-                    });
-                  });
-                })
+                      plannedPartIds:
+                        managedProgress.diagramModulesProgress
+                          ?.plannedPartIds ?? [],
+                      generatedPartIds:
+                        managedProgress.diagramModulesProgress
+                          ?.generatedPartIds ?? [],
+                      emitSnapshotSideEffects: true,
+                    })
+                    .then((developmentTree) => {
+                      return applyDevelopmentTreeFreshnessToState({
+                        developmentTree,
+                        state: validatedState,
+                        workspaceRoot,
+                      }).then((responseState) => {
+                        const canonicalLastActive = resolveCanonicalLastActive({
+                          chains,
+                          description,
+                          lastActive,
+                          state: responseState,
+                          workspaceSlug: workspaceSlugResult.value,
+                        });
+                        const gating = {
+                          blocked: resolveWorkflowBlockedStages({
+                            state: responseState,
+                            description,
+                            diagramModulesProgress:
+                              managedProgress.diagramModulesProgress,
+                            applicationSkeletonProgress:
+                              managedProgress.applicationSkeletonProgress,
+                            managedGitClean:
+                              managedProgress.managedGitStatus.clean,
+                          }),
+                        };
+                        res.json({
+                          state: responseState,
+                          continuity: { chains },
+                          description,
+                          lastActive: canonicalLastActive,
+                          gating,
+                          diagramModulesProgress:
+                            managedProgress.diagramModulesProgress,
+                          applicationSkeletonProgress:
+                            managedProgress.applicationSkeletonProgress,
+                          qualityGatesProgress:
+                            managedProgress.qualityGatesProgress,
+                          developmentTree,
+                          managedLifecycle: resolveManagedLifecycle({
+                            state: responseState,
+                            applicationSkeletonProgress:
+                              managedProgress.applicationSkeletonProgress,
+                            qualityGatesProgress:
+                              managedProgress.qualityGatesProgress,
+                          }),
+                        });
+                      });
+                    })
+                )
             );
         }
       )
