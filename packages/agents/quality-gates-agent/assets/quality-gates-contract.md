@@ -7,9 +7,10 @@
 
 ## Managed Hook Boundary
 
-- Core owns git, `.husky` hooks, plan scripts, `doc/TODO/workspace.plan.md`, active child plans under `doc/TODO/stages/<stage>/todo-plan.md`, and `.codeai-hub/workflow` lifecycle ledgers.
-- Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, and `quality-gates.json` manifest fields.
-- Do not edit `.husky` hooks directly. Core renders managed hook wiring from the validated gate manifest.
+- Core owns git setup, the lifecycle baseline inside `.husky` hooks, plan scripts, `doc/TODO/workspace.plan.md`, active child plans under `doc/TODO/stages/<stage>/todo-plan.md`, and `.codeai-hub/workflow` lifecycle ledgers.
+- Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, `quality-gates.json` manifest fields, and the Quality Gates hook wiring required by accepted `requiredBeforeCommit` / `requiredBeforePush` arrays.
+- Preserve Core lifecycle commands such as `plan:validate`. Append Quality Gates hook wiring instead of replacing the hook.
+- Hook wiring may be direct (`npm run qg:<gate>`) or aggregate (`npm run qg:before-commit` / `npm run qg:before-push`) when the package script dispatches the corresponding required array from `quality-gates.json`.
 
 ## JSON Shape
 
@@ -59,6 +60,7 @@
 - `integrationRequired` is `true` when scripts/configs/hooks/devDependencies still need to be created.
 - `plannedIntegrationPaths` names the future files or config surfaces Phase 2 will touch.
 - `integratedPaths` names real paths created or verified during Phase 2.
+- `integratedPaths` must include `.husky/pre-commit` or `.husky/pre-push` when non-empty required hook scopes are wired.
 - `deferredIntegration` explains accepted gate infrastructure intentionally skipped during Phase 2.
 - Concrete tools must be selected from user preference, project evidence, or stack-specific research. Otherwise keep the gate category and mark availability as `needs_user_decision`.
 - Source files and classes must stay <= 500 lines for every generated product; 400-500 lines is near-limit reporting.
@@ -74,4 +76,5 @@
 - Selected tools must appear in tooling rationale, command entries, and planned integration paths.
 - `accepted: true` requires explicit user acceptance.
 - `integrated: true` requires actual filesystem integration plus smoke evidence.
+- `integrated: true` requires lifecycle hook wiring for every non-empty required hook scope.
 - Future agents must be able to run or cite gate commands without inventing missing scripts.
