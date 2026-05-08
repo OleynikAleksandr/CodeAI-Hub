@@ -26,9 +26,17 @@ export interface DevelopmentTreeNodeSession {
   readonly updatedAt: string;
 }
 
+export type DevelopmentTreeNodeStartState = "not_started" | "started";
+
+export interface DevelopmentTreeNodeLifecycle {
+  readonly startable: boolean;
+  readonly startState: DevelopmentTreeNodeStartState;
+}
+
 export interface DevelopmentTreeModuleNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly id: string;
+  readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly readiness?: DevelopmentTreeDraftReadiness;
   readonly session?: DevelopmentTreeNodeSession;
   readonly title: string;
@@ -38,6 +46,7 @@ export interface DevelopmentTreeModuleNode {
 export interface DevelopmentTreeClusterNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly id: string;
+  readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly modules: readonly DevelopmentTreeModuleNode[];
   readonly readiness?: DevelopmentTreeDraftReadiness;
   readonly session?: DevelopmentTreeNodeSession;
@@ -48,6 +57,7 @@ export interface DevelopmentTreePartNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly clusters: readonly DevelopmentTreeClusterNode[];
   readonly id: string;
+  readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly readiness?: DevelopmentTreeDraftReadiness;
   readonly session?: DevelopmentTreeNodeSession;
   readonly standaloneModules: readonly DevelopmentTreeModuleNode[];

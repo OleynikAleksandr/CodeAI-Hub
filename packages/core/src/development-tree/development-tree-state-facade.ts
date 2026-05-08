@@ -9,6 +9,7 @@ import type {
   DevelopmentTreeDraftReadinessKind,
   DevelopmentTreeModuleNode,
   DevelopmentTreeNodeArtifact,
+  DevelopmentTreeNodeLifecycle,
   DevelopmentTreeNodeSession,
   DevelopmentTreePartNode,
   DevelopmentTreeSnapshot,
@@ -276,6 +277,13 @@ const resolveLatestNodeSession = (
   return best;
 };
 
+const createNodeLifecycle = (
+  session: DevelopmentTreeNodeSession | undefined
+): DevelopmentTreeNodeLifecycle => ({
+  startState: session ? "started" : "not_started",
+  startable: !session,
+});
+
 const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
   const root = createDevelopmentTreeMaterializedRoot({
     workspaceRoot: params.workspaceRoot,
@@ -289,6 +297,7 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
     readonly partId: string;
   }): Promise<{
     readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+    readonly lifecycle: DevelopmentTreeNodeLifecycle;
     readonly session?: DevelopmentTreeNodeSession;
     readonly workflowPath: string;
   }> => {
@@ -312,10 +321,12 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
         });
       }
     }
+    const session = resolveLatestNodeSession(chains, workflowPath);
     return {
       artifacts: artifacts.length > 0 ? artifacts : undefined,
+      lifecycle: createNodeLifecycle(session),
       workflowPath,
-      session: resolveLatestNodeSession(chains, workflowPath),
+      session,
     };
   };
 };

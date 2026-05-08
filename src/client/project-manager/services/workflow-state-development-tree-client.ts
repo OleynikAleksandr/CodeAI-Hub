@@ -16,8 +16,16 @@ export type DevelopmentTreeNodeSession = {
   readonly updatedAt: string;
 };
 
+export type DevelopmentTreeNodeStartState = "not_started" | "started";
+
+export type DevelopmentTreeNodeLifecycle = {
+  readonly startState: DevelopmentTreeNodeStartState;
+  readonly startable: boolean;
+};
+
 type DevelopmentTreeNodeMetadata = {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+  readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly session?: DevelopmentTreeNodeSession;
   readonly workflowPath?: string;
 };
@@ -57,6 +65,11 @@ const isDevelopmentTreeReadiness = (
 ): value is DevelopmentTreeReadiness =>
   value === "idle" || value === "in_progress" || value === "ready";
 
+const isDevelopmentTreeNodeStartState = (
+  value: unknown
+): value is DevelopmentTreeNodeStartState =>
+  value === "not_started" || value === "started";
+
 const parseArtifact = (payload: unknown): DevelopmentTreeNodeArtifact | null => {
   if (!isRecord(payload)) return null;
   const fileName = readNonEmptyString(payload.fileName);
@@ -85,6 +98,20 @@ const parseSession = (payload: unknown): DevelopmentTreeNodeSession | undefined 
   };
 };
 
+const parseLifecycle = (
+  payload: unknown
+): DevelopmentTreeNodeLifecycle | undefined => {
+  if (!isRecord(payload)) return undefined;
+  const startState = isDevelopmentTreeNodeStartState(payload.startState)
+    ? payload.startState
+    : undefined;
+  const startable =
+    typeof payload.startable === "boolean" ? payload.startable : undefined;
+  return startState && typeof startable === "boolean"
+    ? { startState, startable }
+    : undefined;
+};
+
 const parseNodeMetadata = (
   payload: Record<string, unknown>
 ): DevelopmentTreeNodeMetadata => {
@@ -95,6 +122,7 @@ const parseNodeMetadata = (
     : [];
   return {
     artifacts: artifacts.length > 0 ? artifacts : undefined,
+    lifecycle: parseLifecycle(payload.lifecycle),
     session: parseSession(payload.session),
     workflowPath: readNonEmptyString(payload.workflowPath) ?? undefined,
   };
