@@ -41,11 +41,10 @@ Draft algorithm:
 Before the draft-review response:
 
 - stage only the two canonical Quality Gates artifacts;
-- run `npm run plan:commit -- "docs: draft quality gates contract"`;
-- run `npm run plan:status` and `git status --short`;
-- continue only if Git is clean and the child plan has advanced from `quality-gates.stream1.task1`.
+- report that the draft Quality Gates artifacts are ready for Core acceptance;
+- Core owns staging, the managed commit, post-commit validation, and child-plan advancement.
 
-If the user requests draft corrections before integration, update only the canonical artifacts and commit the revision through the active child plan before asking for review again. If the child plan has already advanced to integration but another draft revision is needed, add a gate-contract revision microtask and its `Git Commit` pair before the integration task in the active child plan, then commit the revised contract before package/script integration.
+If the user requests draft corrections before integration, update only the canonical artifacts and report readiness again. If the child plan has already advanced to integration but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
 
 Universal policies for every generated product:
 
@@ -63,7 +62,7 @@ An explicit user acceptance message in this same session starts integration imme
 Integration algorithm:
 
 1. Re-read `quality-gates.json` and `application-skeleton-map.json`.
-2. Verify `npm run plan:status` shows the integration task and expected commit `feat: integrate quality gates baseline`; verify `git status --short` is empty before creating package files, scripts, configs, or CI files.
+2. Verify the runtime-provided managed context is still for the Quality Gates integration task before creating package files, scripts, configs, or CI files.
 3. Mark acceptance in the contract, then set integration state to `in_progress`.
 4. Create or update only accepted gate infrastructure: package scripts/devDependencies or equivalent stack files, selected lint/format/static-analysis config, architecture/layout/size scripts, gate manifest entries, lifecycle hook wiring, and CI/update files selected by the contract.
    - `package.json` must expose an exact script key `qg:<gate-id>` for every gate id listed in `requiredBeforeCommit` or `requiredBeforePush`.
@@ -74,12 +73,12 @@ Integration algorithm:
 5. Avoid feature or business implementation code.
 6. Run the lightest feasible smoke checks for created gates.
 7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results. Record any intentional omissions in `deferredIntegration`.
-8. Stage the accepted Quality Gates artifacts and gate infrastructure, then run `npm run plan:commit -- "feat: integrate quality gates baseline"`.
-9. After the commit, run `npm run plan:status` and `git status --short`. The final response may say `integrated` or `unlocked` only if the child plan advanced past `quality-gates.stream1.task2` and `git status --short` is empty.
+8. Leave the accepted Quality Gates artifacts and gate infrastructure ready for Core acceptance.
+9. The final response may say `ready for Core acceptance`; say `unlocked` only after Core reports post-commit validation and downstream unlock.
 
-If `plan:commit` fails, do not mark the step complete. Repair the reported issue or stop with the exact blocker. Never finish with dirty Git or an `IN_PROGRESS` Quality Gates child plan.
+If Core acceptance feedback reports a blocker, repair the reported issue or stop with the exact blocker. Never finish by claiming the Quality Gates stage is unlocked before Core confirms it.
 
-Final integration response: summarize created/updated paths, smoke results, the `plan:commit` result, clean Git status, and whether the Quality Gates root gate is integrated/unlocked for the workflow. Do not hand integration to a separate session.
+Final integration response: summarize created/updated paths, smoke results, readiness for Core acceptance, and whether Core has confirmed the Quality Gates root gate is integrated/unlocked for the workflow. Do not hand integration to a separate session.
 
 ## JSON Contract Requirements
 
@@ -116,6 +115,6 @@ Before each final response, verify:
 - each not-integrated active gate has planned integration paths;
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
-- Phase 1 final response is allowed only after `npm run plan:commit -- "docs: draft quality gates contract"` succeeds, `npm run plan:status` no longer shows `quality-gates.stream1.task1` as current, and `git status --short` is empty;
-- Phase 2 final response is allowed only after `npm run plan:commit -- "feat: integrate quality gates baseline"` succeeds, `npm run plan:status` no longer shows `quality-gates.stream1.task2` as current, and `git status --short` is empty;
+- Phase 1 final response is allowed only after the two canonical draft artifacts are ready for Core acceptance;
+- Phase 2 final response is allowed only after the accepted gate infrastructure is ready for Core acceptance; `unlocked` language requires Core confirmation;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

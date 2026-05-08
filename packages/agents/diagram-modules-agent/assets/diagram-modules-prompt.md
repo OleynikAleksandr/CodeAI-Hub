@@ -61,7 +61,7 @@ Managed lifecycle:
 - Do not create, reinstall, repair, or rename git, hooks, plan scripts, lifecycle folders, workspace plans, or child plans yourself. If they are missing or broken, report runtime preflight failure.
 - After this stage starts, `Description` and `Virtual Simulation` are read-only upstream evidence. Do not reopen those stages for editing or ask the user to continue them.
 - When the user asks for changes, update only the current Diagram Modules staged artifacts and keep the work aligned with the active managed plan provided by Core/runtime.
-- After each accepted staged artifact write or revision, inspect `git status --short` and commit your Diagram Modules changes through `npm run plan:commit -- "docs: update diagram modules artifacts"` before your final response for that turn.
+- After each accepted staged artifact write or revision, leave only Diagram Modules-owned artifact changes in the workspace and respond that the staged artifacts are ready for Core acceptance. Core owns staging, the managed commit, post-commit validation, and downstream unlock.
 
 Critical rule:
 - on the first visible turn, the canonical output starts with `product-parts.index.md`, then continues until every declared `Product Part` has a matching valid `product-parts/<part-id>.md`;
@@ -76,8 +76,8 @@ Immediately after reading the runtime-provided inputs on the first turn, write `
 Before the final response, perform the same observable completion check Core will perform:
 - every `Product Part` id declared in `product-parts.index.md` has a corresponding `product-parts/<part-id>.md`;
 - each Product Part file is non-empty and contains the required staged structure for clusters/modules or a clear statement that no further module detail exists in the upstream artifacts;
-- all staged Diagram Modules artifacts are committed through `npm run plan:commit -- "docs: update diagram modules artifacts"`;
-- `git status --short` is empty after the commit.
+- all staged Diagram Modules artifacts are written and ready for Core acceptance;
+- no unrelated workspace files were created or changed by this stage.
 
 If the user later asks for corrections, revise the affected staged artifacts and repeat the completion check before reporting the step ready.
 

@@ -48,20 +48,19 @@ Do not create production files, package manifests, source folders, Product Part 
 
 Before the draft-review response:
 - stage only the two canonical Application Skeleton artifacts;
-- run `npm run plan:commit -- "docs: draft application skeleton contract"`;
-- run `npm run plan:status` and `git status --short`;
-- continue only if Git is clean and the child plan has advanced from `application-skeleton.stream1.task1`.
+- report that the draft Application Skeleton artifacts are ready for Core acceptance;
+- Core owns staging, the managed commit, post-commit validation, and child-plan advancement.
 
-If the user requests draft corrections before materialization, update only the canonical artifacts and commit the revision through the active child plan before asking for review again. If the child plan has already advanced to materialization but another draft revision is needed, add a draft-revision microtask and its `Git Commit` pair before the materialization task in the active child plan, then commit the revised contract before materialization.
+If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. If the child plan has already advanced to materialization but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
 
-Final response after draft contract: tell the user, in the chat language, that the committed draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization.
+Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for Core acceptance and then user review; it must be confirmed or corrected before filesystem materialization.
 
 ## Phase 2: Post-Acceptance Materialization
 After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.
 
 You must:
-- verify `npm run plan:status` shows the materialization task and expected commit `feat: materialize application skeleton`;
-- verify `git status --short` is empty before creating filesystem structure;
+- verify the runtime-provided managed context is still for the Application Skeleton materialization task;
+- ensure no unrelated workspace files are changed before creating filesystem structure;
 - re-read the accepted `application-skeleton-map.json`;
 - create the minimal conventional scaffold for the accepted stack and repo shape;
 - create the Product Part / Cluster / Module filesystem projection;
@@ -86,10 +85,9 @@ Before committing materialization, run a Core-observable self-audit:
 If any script, patch, or file write fails during materialization, do not commit a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then commit.
 
 Before the final response after materialization, use the existing managed lifecycle:
-- run `npm run plan:status` and verify the current expected commit is `feat: materialize application skeleton`;
-- run `git status --short`;
-- stage the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any untracked managed baseline/upstream workflow artifacts that already exist and are required for recovery; do not stage ignored runtime/cache/log files or `.DS_Store`;
-- commit through `npm run plan:commit -- "feat: materialize application skeleton"`.
+- ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for Core acceptance;
+- do not create or change ignored runtime/cache/log files or `.DS_Store`;
+- respond with materialization readiness and the paths changed. Core owns staging, the managed commit, post-commit validation, and downstream unlock.
 
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 

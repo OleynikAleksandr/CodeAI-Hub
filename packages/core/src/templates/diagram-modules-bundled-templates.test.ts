@@ -13,8 +13,9 @@ const INITIAL_ADOPTION_COMMIT_RE = /initial adoption commit/;
 const NO_ORCHESTRATOR_INSTALL_RE =
   /Do not create, reinstall, repair, or rename git, hooks, plan scripts/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
-const PLAN_COMMIT_RE =
-  /npm run plan:commit -- "docs: update diagram modules artifacts"/;
+const CORE_OWNS_COMMIT_RE =
+  /Core owns staging, the managed commit, post-commit validation, and downstream unlock/;
+const PLAN_COMMIT_RE = /npm run plan:commit/;
 const UPSTREAM_READ_ONLY_RE =
   /`Description` and `Virtual Simulation` are read-only upstream evidence/;
 
@@ -33,7 +34,8 @@ test("diagram modules bundled prompt explains managed lifecycle boundaries", () 
   assert.match(prompt, INITIAL_ADOPTION_COMMIT_RE);
   assert.match(prompt, NO_ORCHESTRATOR_INSTALL_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
-  assert.match(prompt, PLAN_COMMIT_RE);
+  assert.match(prompt, CORE_OWNS_COMMIT_RE);
+  assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
   assert.match(prompt, UPSTREAM_READ_ONLY_RE);
 });
 

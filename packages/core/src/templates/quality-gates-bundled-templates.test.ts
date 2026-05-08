@@ -24,17 +24,15 @@ const AGGREGATE_PRE_COMMIT_RE = /qg:before-commit/;
 const AGGREGATE_PRE_PUSH_RE = /qg:before-push/;
 const PRESERVE_PLAN_VALIDATE_RE =
   /Preserve existing Core lifecycle commands such as `plan:validate`/;
-const PLAN_COMMIT_RE =
-  /npm run plan:commit -- "feat: integrate quality gates baseline"/;
-const DRAFT_PLAN_COMMIT_RE =
-  /npm run plan:commit -- "docs: draft quality gates contract"/;
+const CORE_OWNS_COMMIT_RE =
+  /Core owns staging, the managed commit, post-commit validation, and child-plan advancement/;
+const PLAN_COMMIT_RE = /npm run plan:commit/;
 const CLEAN_GIT_RE = /git status --short/;
-const CHILD_PLAN_ADVANCED_RE =
-  /child plan advanced past `quality-gates\.stream1\.task2`/;
-const GATE_CONTRACT_REVISION_RE =
-  /add a gate-contract revision microtask and its `Git Commit` pair before the integration task/;
-const INTEGRATION_EXPECTED_COMMIT_RE =
-  /expected commit `feat: integrate quality gates baseline`/;
+const CORE_UNLOCK_RE =
+  /unlocked` language requires Core confirmation|Core has confirmed the Quality Gates root gate is integrated\/unlocked/s;
+const GATE_CONTRACT_REVISION_RE = /ask Core for a managed plan revision/;
+const INTEGRATION_CONTEXT_RE =
+  /runtime-provided managed context is still for the Quality Gates integration task/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const NO_PLANNED_DUPLICATES_RE =
   /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
@@ -84,12 +82,12 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, AGGREGATE_PRE_COMMIT_RE);
   assert.match(prompt, AGGREGATE_PRE_PUSH_RE);
   assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
-  assert.match(prompt, PLAN_COMMIT_RE);
-  assert.match(prompt, DRAFT_PLAN_COMMIT_RE);
-  assert.match(prompt, CLEAN_GIT_RE);
-  assert.match(prompt, CHILD_PLAN_ADVANCED_RE);
+  assert.match(prompt, CORE_OWNS_COMMIT_RE);
+  assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
+  assert.doesNotMatch(prompt, CLEAN_GIT_RE);
+  assert.match(prompt, CORE_UNLOCK_RE);
   assert.match(prompt, GATE_CONTRACT_REVISION_RE);
-  assert.match(prompt, INTEGRATION_EXPECTED_COMMIT_RE);
+  assert.match(prompt, INTEGRATION_CONTEXT_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
