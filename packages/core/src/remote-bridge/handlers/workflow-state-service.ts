@@ -19,7 +19,10 @@ import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types"
 import type { ManagedWorkflowLifecyclePayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
-import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import {
+  readDiagramModulesProgressSnapshot,
+  syncDiagramModulesSubturnState,
+} from "./diagram-modules-progress";
 import { ManagedDocumentationCommitTransaction } from "./managed-documentation-commit-transaction";
 import {
   attachManagedGitStatus,
@@ -254,11 +257,18 @@ export class WorkflowStateService {
                   "Quality Gates",
                   latestManagedGitStatus.dirtyByStage.quality_gates
                 );
+                const diagramModulesSubturnStatePromise =
+                  syncDiagramModulesSubturnState({
+                    progress: latestDiagramModulesProgress,
+                    workspaceRoot,
+                    workspaceSlug: workspaceSlugResult.value,
+                  });
                 const feedbackGateway = this.developmentTreeAgentSessions
                   ?.gateway as
                   | WorkflowAgentAcceptanceFeedbackGateway
                   | undefined;
                 return Promise.all([
+                  diagramModulesSubturnStatePromise,
                   this.acceptanceFeedback.sendDiagramModulesFeedback({
                     chains,
                     gateway: feedbackGateway,

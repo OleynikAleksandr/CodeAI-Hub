@@ -3,7 +3,11 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
+import {
+  readDiagramModulesPersistedSubturnState,
+  readDiagramModulesProgressSnapshot,
+  syncDiagramModulesSubturnState,
+} from "./diagram-modules-progress";
 
 const PRODUCT_PART_MISSING_FILE_RE = /Product Part artifact file is missing\./u;
 const PRODUCT_PART_HEADER_ERROR_RE =
@@ -171,6 +175,67 @@ test("Diagram Modules progress exposes aggregate accepted subturn when every Pro
     );
     assert.equal(progress?.lastValidation?.valid, true);
     assert.equal(progress?.nextPartId, null);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules subturn state persists the active expected artifact for recovery", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-subturn-state-")
+  );
+
+  try {
+    await mkdir(
+      path.join(workspaceRoot, ".codeai-hub/demo-workspace/diagram_modules"),
+      { recursive: true }
+    );
+    await writeFile(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+      ),
+      [
+        "# Product Parts Index",
+        "",
+        "### Product Part: local-runtime",
+        "- Id: local-runtime",
+        "- Title: Local Runtime",
+        "- Purpose: Runs local orchestration.",
+        "- Status: planned",
+        "",
+      ].join("\n"),
+      "utf8"
+    );
+
+    const progress = await readDiagramModulesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+    await syncDiagramModulesSubturnState({
+      progress,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    const persisted = await readDiagramModulesPersistedSubturnState({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(persisted?.schema, "codeai-diagram-modules-subturn-v1");
+    assert.deepEqual(persisted?.activeSubturn, {
+      kind: "product_part",
+      partId: "local-runtime",
+      status: "pending",
+    });
+    assert.equal(persisted?.nextPartId, "local-runtime");
+    assert.equal(
+      persisted?.expectedArtifactPath?.endsWith(
+        "diagram_modules/product-parts/local-runtime.md"
+      ),
+      true
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

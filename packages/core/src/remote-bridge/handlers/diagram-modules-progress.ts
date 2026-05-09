@@ -1,4 +1,5 @@
-import { readFile, stat } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import { normalizeAndValidateWorkflowStageArtifact } from "./http-api-artifact-validation";
 
@@ -51,6 +52,17 @@ export interface DiagramModulesValidationSnapshot {
   readonly validator: string;
 }
 
+export interface DiagramModulesPersistedSubturnState {
+  readonly acceptedPartIds: readonly string[];
+  readonly activeSubturn: DiagramModulesSubturnProgress;
+  readonly expectedArtifactPath: string | null;
+  readonly lastValidation: DiagramModulesValidationSnapshot | null;
+  readonly nextPartId: string | null;
+  readonly schema: "codeai-diagram-modules-subturn-v1";
+  readonly stage: "diagram_modules";
+  readonly updatedAt: string;
+}
+
 export interface ProductPartDiagnostic {
   readonly error: string | null;
   readonly partId: string;
@@ -66,6 +78,72 @@ const readExistingFile = async (
     return null;
   }
   return readFile(absolutePath, "utf8").catch(() => null);
+};
+
+const resolveSubturnStatePath = (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): { readonly absolutePath: string; readonly relativePath: string } => {
+  const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/state.json`;
+  return {
+    absolutePath: path.join(params.workspaceRoot, relativePath),
+    relativePath,
+  };
+};
+
+const isDiagramModulesPersistedSubturnState = (
+  value: unknown
+): value is DiagramModulesPersistedSubturnState =>
+  Boolean(value) &&
+  typeof value === "object" &&
+  !Array.isArray(value) &&
+  (value as { readonly schema?: unknown }).schema ===
+    "codeai-diagram-modules-subturn-v1" &&
+  (value as { readonly stage?: unknown }).stage === "diagram_modules";
+
+export const readDiagramModulesPersistedSubturnState = async (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<DiagramModulesPersistedSubturnState | null> => {
+  const statePath = resolveSubturnStatePath(params);
+  const content = await readExistingFile(statePath.absolutePath);
+  if (!content) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(content) as unknown;
+    return isDiagramModulesPersistedSubturnState(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+export const syncDiagramModulesSubturnState = async (params: {
+  readonly progress: DiagramModulesProgressSnapshot | null;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<DiagramModulesPersistedSubturnState | null> => {
+  if (!params.progress) {
+    return null;
+  }
+  const statePath = resolveSubturnStatePath(params);
+  const state: DiagramModulesPersistedSubturnState = {
+    schema: "codeai-diagram-modules-subturn-v1",
+    stage: "diagram_modules",
+    updatedAt: new Date().toISOString(),
+    activeSubturn: params.progress.activeSubturn,
+    acceptedPartIds: params.progress.acceptedPartIds,
+    expectedArtifactPath: params.progress.expectedArtifactPath,
+    lastValidation: params.progress.lastValidation,
+    nextPartId: params.progress.nextPartId,
+  };
+  await mkdir(path.dirname(statePath.absolutePath), { recursive: true });
+  await writeFile(
+    statePath.absolutePath,
+    `${JSON.stringify(state, null, 2)}\n`,
+    "utf8"
+  );
+  return state;
 };
 
 const validateProductPartContent = (params: {
