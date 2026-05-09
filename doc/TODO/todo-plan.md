@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "6ed656c15",
+  "lastRecordedCommit": "2fac9fd76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14c.task3",
-  "expectedCommitMessage": "test: verify product part acceptance repair",
+  "currentTaskId": "managed-workflow-context.phase14d.task1",
+  "expectedCommitMessage": "docs: record product part acceptance release decision",
   "debt": {
-    "expectedCommitMessage": "test: verify product part acceptance repair",
-    "preCommitHead": "6ed656c15",
+    "expectedCommitMessage": "docs: record product part acceptance release decision",
+    "preCommitHead": "2fac9fd76",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14c.task3"
+    "taskId": "managed-workflow-context.phase14d.task1"
   }
 }
 ```
@@ -187,12 +187,25 @@
 55. [DONE] `managed-workflow-context.phase14c.task2` Fix managed commit ownership for Diagram Modules Product Part turns so Core-owned index status updates are included with the current Product Part commit while sibling Product Part files remain rejected (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: allow product part index status commits`).
 56. [DONE] Git Commit: `fix: allow product part index status commits` (hash: 6ed656c15)
 57. [DONE] `managed-workflow-context.phase14c.task3` Run focused Core regressions for Product Part target-scoped acceptance, managed commit allowlists, and managed plan sequencing; stop before release build confirmation (scope: `packages/core`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify product part acceptance repair`).
-58. [PENDING] Git Commit: `test: verify product part acceptance repair` (hash: TBD)
+58. [DONE] Git Commit: `test: verify product part acceptance repair` (hash: 2fac9fd76)
+
+## Phase 14D - Product Part Acceptance Release (owner: Codex/User, updated: 2026-05-09)
+
+### Stream: Release Assembly
+
+59. [DONE] `managed-workflow-context.phase14d.task1` Record explicit user confirmation to assemble a release for the Product Part acceptance repair stream before changing release notes or running release automation (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record product part acceptance release decision`).
+60. [PENDING] Git Commit: `docs: record product part acceptance release decision` (hash: TBD)
+61. [TODO] `managed-workflow-context.phase14d.task2` Prepare README and CHANGELOG for the Product Part acceptance repair release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: prepare product part acceptance release`).
+62. [TODO] Git Commit: `docs: prepare product part acceptance release` (hash: TBD)
+63. [TODO] `managed-workflow-context.phase14d.task3` Run release automation and verify VSIX/tarball outputs for the Product Part acceptance repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build product part acceptance release artifacts`).
+64. [TODO] Git Commit: `chore: build product part acceptance release artifacts` (hash: TBD)
+65. [TODO] `managed-workflow-context.phase14d.task4` User retests the Product Part acceptance repair release with Claude Diagram Modules to confirm target-scoped feedback, blocked continuation on failed managed commit, and Product Part index status commit ownership (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record product part acceptance release retest`).
+66. [TODO] Git Commit: `docs: record product part acceptance release retest` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-59. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-60. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-61. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+67. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+68. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+69. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).

@@ -344,3 +344,13 @@ Verification:
 Release status:
 
 - Stop before release build confirmation. No `build-all.sh` or `build-release.sh` was run for this repair stream.
+
+## 19. Product Part Acceptance Repair Release Decision
+
+On 2026-05-09 the user explicitly confirmed building a new release for the Product Part acceptance repair stream. This satisfies the release build confirmation gate for the repair stream.
+
+The release must include:
+
+- blocked automatic Product Part continuation while managed commit state is dirty or out-of-target;
+- target-scoped managed commit feedback that does not ask the provider to create every Product Part;
+- Product Part index status updates included in the active Product Part managed commit.
