@@ -14,6 +14,15 @@ const CORE_OWNED_DIRTY_GATE_RE = /Core-owned managed commit is pending/u;
 const COMMIT_OR_CLEAN_RE = /Commit or clean/u;
 const PLAN_COMMIT_COMMAND_RE =
   /npm run plan:commit|current managed plan command/u;
+const DIAGRAM_MODULES_REPAIR_RE =
+  /Core rejected the current Diagram Modules artifact/u;
+const TARGET_ARTIFACT_REPAIR_RE = /Target artifact to repair:/u;
+const SNAPSHOT_HEAD_RE = /snapshotHead: [a-f0-9]{40}/u;
+const CHECKED_AT_RE = /checkedAt:/u;
+const PRODUCT_PART_VALIDATOR_RE = /validator: diagram_modules\.product_part/u;
+const MISSING_PART_ID_RE = /Missing Part ID `local-runtime`\./u;
+const DO_NOT_UPDATE_NEXT_PART_RE =
+  /Do not create or update the next Product Part\./u;
 
 const stringifyFeedbackPayload = (payload: unknown): string =>
   typeof payload === "string"
@@ -136,6 +145,136 @@ test("managed feedback marks the feedback turn running before dispatch", async (
       "running:diagram-session",
       "message:diagram-session",
     ]);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules pending Product Part waits for continuation instead of feedback", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-pending-part-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway: {
+        handleMessage: (_sessionId, content) => {
+          messages.push(stringifyFeedbackPayload(content));
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        acceptedPartIds: [],
+        activeSubturn: {
+          kind: "product_part",
+          partId: "local-runtime",
+          status: "pending",
+        },
+        aggregateReady: false,
+        currentPartId: "local-runtime",
+        expectedArtifactPath:
+          ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+        generatedCount: 0,
+        generatedPartIds: [],
+        lastValidation: {
+          diagnostics: ["Product Part artifact file is missing."],
+          expectedArtifactPath:
+            ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+          valid: false,
+          validator: "diagram_modules.product_part",
+        },
+        nextPartId: "local-runtime",
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        productPartDiagnostics: [
+          {
+            error: "Product Part artifact file is missing.",
+            partId: "local-runtime",
+            path: ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+            valid: false,
+          },
+        ],
+        substep: "generate_product_part",
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.deepEqual(messages, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules repair feedback targets current artifact with snapshot metadata", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-repair-part-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway: {
+        handleMessage: (_sessionId, content) => {
+          messages.push(stringifyFeedbackPayload(content));
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        acceptedPartIds: [],
+        activeSubturn: {
+          kind: "product_part",
+          partId: "local-runtime",
+          status: "repair_pending",
+        },
+        aggregateReady: false,
+        currentPartId: "local-runtime",
+        expectedArtifactPath:
+          ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+        generatedCount: 0,
+        generatedPartIds: [],
+        lastValidation: {
+          diagnostics: ["Missing Part ID `local-runtime`."],
+          expectedArtifactPath:
+            ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+          valid: false,
+          validator: "diagram_modules.product_part",
+        },
+        nextPartId: "local-runtime",
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        productPartDiagnostics: [
+          {
+            error: "Missing Part ID `local-runtime`.",
+            partId: "local-runtime",
+            path: ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+            valid: false,
+          },
+        ],
+        substep: "generate_product_part",
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(messages.length, 1);
+    const message = messages[0] ?? "";
+    assert.match(message, DIAGRAM_MODULES_REPAIR_RE);
+    assert.match(message, TARGET_ARTIFACT_REPAIR_RE);
+    assert.match(message, SNAPSHOT_HEAD_RE);
+    assert.match(message, CHECKED_AT_RE);
+    assert.match(message, PRODUCT_PART_VALIDATOR_RE);
+    assert.match(message, MISSING_PART_ID_RE);
+    assert.match(message, DO_NOT_UPDATE_NEXT_PART_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

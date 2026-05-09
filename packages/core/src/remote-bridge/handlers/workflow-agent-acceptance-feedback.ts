@@ -33,8 +33,16 @@ interface StageFeedbackRequest {
   readonly actionLines: readonly string[];
   readonly checkLines: readonly string[];
   readonly errors: readonly string[];
+  readonly feedbackKind?: "acceptance" | "repair";
   readonly stage: string;
+  readonly targetArtifactPath?: string | null;
   readonly title: string;
+  readonly validator?: string | null;
+}
+
+interface FeedbackSnapshotMetadata {
+  readonly checkedAt: string;
+  readonly snapshotHead: string;
 }
 
 const resolveLatestStageSessionId = (
@@ -58,8 +66,30 @@ const resolveLatestStageSessionId = (
   return best?.sessionId ?? null;
 };
 
-const buildFeedbackMessage = (request: StageFeedbackRequest): string =>
-  [
+const buildFeedbackMessage = (
+  request: StageFeedbackRequest,
+  metadata: FeedbackSnapshotMetadata
+): string => {
+  if (request.feedbackKind === "repair") {
+    return [
+      `Core rejected the current ${request.title} artifact.`,
+      "",
+      "Target artifact to repair:",
+      `\`${request.targetArtifactPath ?? "(unknown target artifact)"}\``,
+      "",
+      "Fresh validation snapshot:",
+      `- snapshotHead: ${metadata.snapshotHead}`,
+      `- checkedAt: ${metadata.checkedAt}`,
+      `- validator: ${request.validator ?? "unknown"}`,
+      "",
+      "Errors:",
+      ...request.errors.map((error) => `- ${error}`),
+      "",
+      "Required action:",
+      ...request.actionLines.map((action) => `- ${action}`),
+    ].join("\n");
+  }
+  return [
     `Core acceptance check failed for ${request.title}.`,
     "",
     "What Core checked:",
@@ -71,6 +101,7 @@ const buildFeedbackMessage = (request: StageFeedbackRequest): string =>
     "Required action:",
     ...request.actionLines.map((action) => `- ${action}`),
   ].join("\n");
+};
 
 const readWorkspaceHead = async (workspaceRoot: string): Promise<string> => {
   try {
@@ -103,6 +134,16 @@ const createDiagramModulesErrors = (
           `Core-owned managed commit is pending for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Core owns this commit gate; do not run Git commands from the provider turn.`,
         ]
       : [];
+  if (
+    isDiagramModulesPendingSubturn(progress) &&
+    dirtyGateErrors.length === 0
+  ) {
+    return [];
+  }
+  if (isDiagramModulesRepairSubturn(progress)) {
+    const repairErrors = createDiagramModulesRepairErrors(progress);
+    return repairErrors.length > 0 ? repairErrors : semanticErrors;
+  }
   if (semanticErrors.length > 0 || dirtyGateErrors.length > 0) {
     return [...semanticErrors, ...dirtyGateErrors];
   }
@@ -128,6 +169,13 @@ const createDiagramModulesActionLines = (
 ): readonly string[] => {
   const hasSemanticErrors =
     createProductPartDiagnosticErrors(progress).length > 0;
+  if (isDiagramModulesRepairSubturn(progress)) {
+    return [
+      "Repair only this target artifact unless an error explicitly references another file.",
+      "Do not create or update the next Product Part.",
+      "When ready, stop with a content-readiness note for Core acceptance.",
+    ];
+  }
   if (!hasSemanticErrors && readManagedGitDirtyFiles(progress).length > 0) {
     return [
       "Do not run Git commands. Core owns the managed commit and downstream unlock for these files.",
@@ -138,6 +186,34 @@ const createDiagramModulesActionLines = (
     "Update the Diagram Modules artifacts until every planned Product Part has a valid product-parts/<part-id>.md file.",
     "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
   ];
+};
+
+const readDiagramModulesSubturnStatus = (
+  progress: DiagramModulesProgressSnapshot
+): string | null => progress.activeSubturn?.status ?? null;
+
+const isDiagramModulesPendingSubturn = (
+  progress: DiagramModulesProgressSnapshot
+): boolean => readDiagramModulesSubturnStatus(progress) === "pending";
+
+const isDiagramModulesRepairSubturn = (
+  progress: DiagramModulesProgressSnapshot
+): boolean => readDiagramModulesSubturnStatus(progress) === "repair_pending";
+
+const createDiagramModulesRepairErrors = (
+  progress: DiagramModulesProgressSnapshot
+): readonly string[] => {
+  const validationErrors = progress.lastValidation?.diagnostics ?? [];
+  if (validationErrors.length > 0) {
+    return validationErrors;
+  }
+  const currentPartId = progress.currentPartId;
+  const diagnostics = readProductPartDiagnostics(progress).filter(
+    (diagnostic) => !diagnostic.valid && diagnostic.partId === currentPartId
+  );
+  return diagnostics.map(
+    (diagnostic) => diagnostic.error ?? "unknown validation error"
+  );
 };
 
 const createProductPartDiagnosticErrors = (
@@ -287,9 +363,13 @@ export class WorkflowAgentAcceptanceFeedback {
     }
     this.sentSignatures.add(signature);
     try {
+      const checkedAt = new Date().toISOString();
       params.gateway.markFeedbackTurnStarted?.(sessionId);
       await params.gateway.handleMessage(sessionId, {
-        content: buildFeedbackMessage(params.request),
+        content: buildFeedbackMessage(params.request, {
+          checkedAt,
+          snapshotHead: workspaceHead,
+        }),
         turnOptions: { userMessageVisibility: "deferred" },
       });
     } catch (error) {
@@ -313,8 +393,15 @@ export class WorkflowAgentAcceptanceFeedback {
             actionLines: [...createDiagramModulesActionLines(progress)],
             checkLines: createDiagramModulesCheckLines(progress),
             errors,
+            feedbackKind: isDiagramModulesRepairSubturn(progress)
+              ? "repair"
+              : "acceptance",
             stage: DIAGRAM_MODULES_STAGE,
+            targetArtifactPath:
+              progress.lastValidation?.expectedArtifactPath ??
+              progress.expectedArtifactPath,
             title: "Diagram Modules",
+            validator: progress.lastValidation?.validator,
           }
         : null;
     await this.sendManagedStageFeedback({
