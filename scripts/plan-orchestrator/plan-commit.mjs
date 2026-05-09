@@ -3,6 +3,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { getRepositoryDebtPath } from "./plan-debt.mjs";
 import { getGitState } from "./plan-git-state.mjs";
+import {
+  assertPathsWithinScope,
+  extractTaskScopePatterns,
+  readDirtyPaths,
+} from "./plan-scope-boundary.mjs";
 import { parsePlanStateMarkdown } from "./plan-state-parser.mjs";
 import { beginPlanTransaction } from "./plan-transaction.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
@@ -18,19 +23,16 @@ const runGit = (args, cwd, options = {}) =>
     stdio: options.stdio ?? ["ignore", "pipe", "pipe"],
   });
 
-const isTracked = (cwd, path) => {
-  try {
-    runGit(["ls-files", "--error-unmatch", path], cwd);
-    return true;
-  } catch {
-    return false;
-  }
-};
+const uniquePaths = (paths) => Array.from(new Set(paths));
 
-const stagePlanIfTracked = (cwd) => {
-  if (isTracked(cwd, TODO_PLAN_PATH)) {
-    runGit(["add", TODO_PLAN_PATH], cwd);
+const stagePaths = (cwd, paths) => {
+  const uniqueDirtyPaths = uniquePaths(paths);
+
+  if (uniqueDirtyPaths.length === 0) {
+    return;
   }
+
+  runGit(["add", "--", ...uniqueDirtyPaths], cwd);
 };
 
 const assertValidForCommit = ({ message, validation }) => {
@@ -70,16 +72,27 @@ export const runPlanCommit = ({ cwd = process.cwd(), message }) => {
   assertValidForCommit({ message, validation });
 
   const parsed = parsePlanStateMarkdown(markdown, planPath);
+  const taskId = parsed.state.currentTaskId;
+  const scopePatterns = extractTaskScopePatterns(markdown, taskId);
+  assertPathsWithinScope({
+    paths: readDirtyPaths(cwd),
+    scopePatterns,
+  });
   const transaction = beginPlanTransaction({
     debtPath: getRepositoryDebtPath(cwd),
     expectedCommitMessage: message,
     markdown,
     preCommitHead: gitState.head,
-    taskId: parsed.state.currentTaskId,
+    taskId,
   });
 
   writeFileSync(planPath, transaction.markdown, "utf8");
-  stagePlanIfTracked(cwd);
+  const transactionDirtyPaths = readDirtyPaths(cwd);
+  assertPathsWithinScope({
+    paths: transactionDirtyPaths,
+    scopePatterns,
+  });
+  stagePaths(cwd, transactionDirtyPaths);
 
   runGit(["commit", "-m", message], cwd, {
     env: {
