@@ -288,3 +288,17 @@ On 2026-05-09 the user explicitly authorized continuing without pauses through i
 - `./scripts/build-all.sh` — passed, produced provider/core/UI/launcher artifacts for version `1.2.208`.
 - `./scripts/build-release.sh --use-current-version --allow-dirty` — passed, verified SDK exclusions, local artifacts, markdown links, duplication advisory gate, VSIX package surface, and produced `codeai-hub-1.2.208.vsix`.
 - Release artifacts are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+
+## 15. Claude Retest Blocker: Product Part Sequencing
+
+The `v1.2.208` Claude retest exposed two Core-side stage-plan defects:
+
+- Product Part extraction in the managed plan shim accepted bullets/tables/comment words from `product-parts.index.md` and produced fake targets such as `Id`, `Title`, `Purpose`, and prose words.
+- The shim exposed every future Product Part task immediately after index acceptance, which made Claude infer that Core requested all remaining Product Part files in one turn.
+
+The fix makes Product Part extraction header-only (`### Product Part: <lowercase-kebab-id>`) and opens only one visible Product Part microtask at a time. After a Product Part commit, the shim re-reads the accepted index and opens the next not-yet-committed Product Part.
+
+Verification:
+
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `node --test packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js` — passed, 5/5 tests.
