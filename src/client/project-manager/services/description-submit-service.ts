@@ -17,6 +17,7 @@ import {
   buildWorkflowPromptPack,
   resolveWorkflowChatLanguage,
 } from "./prompt-pack-builder";
+import { buildManagedWorkflowInitialContext } from "./managed-workflow-initial-context";
 import { waitForSessionProviderBinding } from "./session-binding-waiter";
 import {
   buildProductPartSourceArtifactDescriptors,
@@ -455,6 +456,12 @@ export class DescriptionSubmitService {
         workspacePath: params.workspacePath,
         workspaceSlug: resolvedInitiativeSlug,
       });
+      const managedContext = await buildManagedWorkflowInitialContext({
+        providerId: params.providerId,
+        stage,
+        workspacePath: params.workspacePath,
+        workspaceSlug: resolvedInitiativeSlug,
+      });
       const promptPack = buildWorkflowPromptPack({
         artifactLanguage,
         chatLanguage,
@@ -462,7 +469,7 @@ export class DescriptionSubmitService {
         stage,
         workspacePath: params.workspacePath,
         workspaceSlug: resolvedInitiativeSlug,
-        prompt: contract.prompt,
+        prompt: [contract.prompt, managedContext].filter(Boolean).join("\n\n"),
         templatePath: contract.paths.template,
         questionnairePath: params.questionnairePath,
       });
