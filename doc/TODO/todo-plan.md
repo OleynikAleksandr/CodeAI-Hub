@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "77130d84d",
+  "lastRecordedCommit": "3001c6afc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14e.task3",
-  "expectedCommitMessage": "test: verify prompt no-link contracts",
+  "currentTaskId": "managed-workflow-context.phase14f.task1",
+  "expectedCommitMessage": "fix: remove pm managed workflow agent messaging",
   "debt": {
-    "expectedCommitMessage": "test: verify prompt no-link contracts",
-    "preCommitHead": "77130d84d",
+    "expectedCommitMessage": "fix: remove pm managed workflow agent messaging",
+    "preCommitHead": "3001c6afc",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14e.task3"
+    "taskId": "managed-workflow-context.phase14f.task1"
   }
 }
 ```
@@ -211,14 +211,14 @@
 69. [DONE] `managed-workflow-context.phase14e.task2` Remove provider-visible `Final_Description.md` relative and absolute paths from the Virtual Simulation first prompt when the final description text is already embedded; provider prompts must not invite the agent to re-read the source file (scope: `src/client/project-manager/services`, prompt builder tests, `doc/TODO/todo-plan.md`; expected commit: `fix: remove virtual simulation prompt file paths`).
 70. [DONE] Git Commit: `fix: remove virtual simulation prompt file paths` (hash: 77130d84d)
 71. [DONE] `managed-workflow-context.phase14e.task3` Verify Description and Virtual Simulation prompt no-link behavior and record retest evidence before the next release decision (scope: `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify prompt no-link contracts`).
-72. [PENDING] Git Commit: `test: verify prompt no-link contracts` (hash: TBD)
+72. [DONE] Git Commit: `test: verify prompt no-link contracts` (hash: 3001c6afc)
 
 ## Phase 14F - Managed Workflow Core-Only Agent Messaging Repair (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Retest Feedback Intake
 
-73. [TODO] `managed-workflow-context.phase14f.task1` Remove Project Manager as a sender of managed workflow provider messages: PM may refresh/read state and send user intents to Core, but only Core may send automatic Diagram Modules/Product Part continuation, repair, failure, or wait messages to the agent between turns (scope: `src/client/project-manager/components/sessions`, `src/client/project-manager/services`, focused PM orchestration tests; expected commit: `fix: remove pm managed workflow agent messaging`).
-74. [TODO] Git Commit: `fix: remove pm managed workflow agent messaging` (hash: TBD)
+73. [DONE] `managed-workflow-context.phase14f.task1` Remove Project Manager as a sender of managed workflow provider messages: PM may refresh/read state and send user intents to Core, but only Core may send automatic Diagram Modules/Product Part continuation, repair, failure, or wait messages to the agent between turns (scope: `src/client/project-manager/components/sessions`, `src/client/project-manager/services`, focused PM orchestration tests; expected commit: `fix: remove pm managed workflow agent messaging`).
+74. [PENDING] Git Commit: `fix: remove pm managed workflow agent messaging` (hash: TBD)
 75. [TODO] `managed-workflow-context.phase14f.task2` Move Diagram Modules Product Part continuation decisions into Core as a single atomic boundary after validation and managed commit: Core emits exactly one provider-visible message per boundary, either repair/failure/wait or accepted next-target continuation, never both (scope: `packages/core/src/remote-bridge/handlers`, `packages/core/src/remote-bridge/handlers/*diagram*test*`, `doc/TODO/todo-plan.md`; expected commit: `fix: make core own diagram modules continuation`).
 76. [TODO] Git Commit: `fix: make core own diagram modules continuation` (hash: TBD)
 77. [TODO] `managed-workflow-context.phase14f.task3` Model Diagram Modules as two ownership phases without splitting the existing automatic generation phase: Phase 1 remains a Core/agent-owned automatic conversation that creates the Product Parts index/graph and materializes every Product Part under Core-owned continuation; after all Product Parts are accepted, Phase 1 completes and the agent stops. Phase 2 is user-owned review/editing, where each user turn that changes Product Parts, clusters, modules, names, or descriptions is opened by Core as its own microtask and commit boundary (scope: `packages/core/src/managed-workspace`, `packages/core/src/remote-bridge/handlers`, stage-plan tests; expected commit: `fix: add diagram modules user review phase`).

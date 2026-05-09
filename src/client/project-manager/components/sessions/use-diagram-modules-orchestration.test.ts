@@ -5,7 +5,6 @@ import path from "node:path";
 import test from "node:test";
 import { readDiagramModulesProgressSnapshot } from "../../../../../packages/core/src/remote-bridge/handlers/diagram-modules-progress";
 import { buildDiagramModulesSkeletonFromIndex, loadDiagramModulesProgressiveResult } from "../diagram-editor/diagram-modules-progressive-model";
-import { buildDiagramModulesContinuationPrompt } from "../../services/diagram-modules-continuation-prompt";
 
 const ORCHESTRATION_SOURCE_PATH = path.resolve(process.cwd(), "src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts");
 
@@ -108,10 +107,23 @@ test("diagram modules orchestration source code invariants", async () => {
     "artifact chunks must not trigger Core validation"
   );
   assert.ok(source.includes('if (eventType === "turn_failed") {'), "turn_failed unlocks sequence");
-  assert.ok(source.includes('progress.activeSubturnStatus === "pending"'), "only pending product part state auto-continues");
   assert.ok(
-    source.includes("!progress.hasManagedCommitGate"),
-    "managed dirty/blocked commit state must not auto-continue"
+    source.includes('progress.activeSubturnStatus === "pending"'),
+    "pending product part state keeps PM input locked"
+  );
+  assert.ok(
+    source.includes("progress?.hasManagedCommitGate"),
+    "managed dirty/blocked commit state keeps PM input locked"
+  );
+  assert.equal(
+    source.includes("api.sendSessionMessage("),
+    false,
+    "Project Manager must not send managed workflow continuation messages"
+  );
+  assert.equal(
+    source.includes("buildDiagramModulesContinuationPrompt"),
+    false,
+    "managed workflow continuation prompts are Core-owned, not PM-owned"
   );
   assert.ok(
     source.includes("managedGitOutOfOwnerDirtyFiles"),
@@ -120,43 +132,6 @@ test("diagram modules orchestration source code invariants", async () => {
   for (const banned of ['visibility: "hidden"', "cachedPartTemplateRef"]) {
     assert.equal(source.includes(banned), false, `must not contain: ${banned}`);
   }
-});
-
-test("diagram modules continuation prompt targets one product part", () => {
-  const prompt = buildDiagramModulesContinuationPrompt({
-    acceptedPartIds: ["project-manager"],
-    expectedArtifactPath:
-      ".codeai-hub/demo/diagram_modules/product-parts/vs-code-extension.md",
-    partId: "vs-code-extension",
-  });
-
-  assert.equal(
-    prompt.includes("Core accepted the previous Diagram Modules artifact."),
-    true
-  );
-  assert.equal(
-    prompt.includes(
-      "This Core continuation message is the authoritative scope for the current turn."
-    ),
-    true
-  );
-  assert.equal(
-    prompt.includes("older aggregate scope as superseded by the target below"),
-    true
-  );
-  assert.equal(prompt.includes('Materialize only Product Part "vs-code-extension".'), true);
-  assert.equal(
-    prompt.includes("Existing sibling Product Part files do not expand this turn scope."),
-    true
-  );
-  assert.equal(
-    prompt.includes("Do not create or update any other Product Part file in this turn."),
-    true
-  );
-  assert.equal(
-    prompt.includes("Do not continue to the next Product Part by yourself."),
-    true
-  );
 });
 
 test("diagram modules progress snapshot points to next product part after index-only direct file write", async () => {

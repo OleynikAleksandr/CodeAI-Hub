@@ -4,7 +4,6 @@ import { api } from "../../api";
 import { persistIdeaArtifacts } from "../../../ui/src/services/idea-artifact-persistence";
 import { extractIdeaCollectorArtifact } from "../../../ui/src/services/idea-collector-artifact";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
-import { buildDiagramModulesContinuationPrompt } from "../../services/diagram-modules-continuation-prompt";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -22,23 +21,13 @@ const readStringArray = (value: unknown): readonly string[] =>
 const readDiagramModulesProgress = (
   value: unknown
 ): {
-  readonly acceptedPartIds: readonly string[];
   readonly activeSubturnStatus?: string;
-  readonly currentPartId?: string;
-  readonly expectedArtifactPath?: string;
   readonly hasManagedCommitGate: boolean;
   readonly substep: string;
 } | null => {
   if (!isRecord(value) || typeof value.substep !== "string") {
     return null;
   }
-  const currentPartId =
-    typeof value.currentPartId === "string" ? value.currentPartId : undefined;
-  const expectedArtifactPath =
-    typeof value.expectedArtifactPath === "string"
-      ? value.expectedArtifactPath
-      : undefined;
-  const acceptedPartIds = readStringArray(value.acceptedPartIds);
   const managedDirtyFiles = readStringArray(value.managedGitDirtyFiles);
   const outOfOwnerDirtyFiles = readStringArray(
     value.managedGitOutOfOwnerDirtyFiles
@@ -51,10 +40,7 @@ const readDiagramModulesProgress = (
       ? activeSubturn.status
       : undefined;
   return {
-    acceptedPartIds,
     activeSubturnStatus,
-    currentPartId,
-    expectedArtifactPath,
     hasManagedCommitGate:
       managedDirtyFiles.length > 0 || outOfOwnerDirtyFiles.length > 0,
     substep: value.substep,
@@ -67,7 +53,6 @@ export const useDiagramModulesOrchestration = (options: {
   readonly setSnapshots: Dispatch<SetStateAction<SessionSnapshots>>;
 }) => {
   const queuedBySessionRef = useRef(new Map<string, Promise<void>>());
-  const dispatchedSignatureRef = useRef(new Map<string, string>());
   const setSequenceLock = (sessionId: string, active: boolean) => {
     options.setSnapshots((previous) => {
       const current = previous[sessionId];
@@ -165,29 +150,11 @@ export const useDiagramModulesOrchestration = (options: {
         );
         if (
           progress?.substep === "generate_product_part" &&
-          progress.activeSubturnStatus === "pending" &&
-          !progress.hasManagedCommitGate &&
-          progress.currentPartId &&
-          progress.expectedArtifactPath
+          progress.activeSubturnStatus === "pending"
         ) {
-          const signature = [
-            params.sessionId,
-            progress.currentPartId,
-            progress.expectedArtifactPath,
-            progress.acceptedPartIds.join(","),
-          ].join("\0");
-          if (dispatchedSignatureRef.current.get(params.sessionId) === signature) {
-            return;
-          }
-          dispatchedSignatureRef.current.set(params.sessionId, signature);
-          api.sendSessionMessage(
-            params.sessionId,
-            buildDiagramModulesContinuationPrompt({
-              acceptedPartIds: progress.acceptedPartIds,
-              expectedArtifactPath: progress.expectedArtifactPath,
-              partId: progress.currentPartId,
-            })
-          );
+          return;
+        }
+        if (progress?.hasManagedCommitGate) {
           return;
         }
         setSequenceLock(params.sessionId, false);
@@ -247,7 +214,6 @@ export const useDiagramModulesOrchestration = (options: {
     return () => {
       unsubscribe();
       queuedBySessionRef.current.clear();
-      dispatchedSignatureRef.current.clear();
     };
   }, [options.pendingIntentRef, options.sessionRef]);
 };
