@@ -71,10 +71,6 @@ const DEFAULT_STAGE_PROMPTS: Record<WorkflowStageId, string> = {
     "Build the quality gates baseline from the accepted Application Skeleton contract.",
 };
 
-const DIAGRAM_STAGE_INPUT_LABELS: Partial<Record<WorkflowStageId, string>> = {
-  diagram_modules: "Source artifact",
-};
-
 const RUN_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const NON_ALPHANUMERIC_RE = /[^a-zA-Z0-9]/g;
@@ -196,6 +192,9 @@ const buildStageInputLines = (params: {
   readonly workspaceSlug: string;
   readonly questionnairePath: string;
 }): readonly string[] => {
+  if (params.stage === "description") {
+    return [];
+  }
   if (params.stage === "virtual_simulation") {
     const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
     const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
@@ -243,10 +242,9 @@ const buildStageInputLines = (params: {
     params.workspacePath,
     questionnaireRelativePath
   );
-  const label = DIAGRAM_STAGE_INPUT_LABELS[params.stage] ?? "Questionnaire";
   return [
-    `${label} (relative): \`${questionnaireRelativePath}\``,
-    `${label} (absolute): \`${questionnaireAbsolutePath}\``,
+    `Questionnaire (relative): \`${questionnaireRelativePath}\``,
+    `Questionnaire (absolute): \`${questionnaireAbsolutePath}\``,
   ];
 };
 
@@ -388,12 +386,6 @@ const buildArtifactEditOperationBlock = (): string =>
     "- Do not send user-facing progress updates about patch mismatch, invisible blank lines, line-by-line checks, or fallback script rewrites unless the edit is blocked.",
   ].join("\n");
 
-const shouldIncludeTemplateHint = (
-  stage: WorkflowStageId,
-  templatePath: string | undefined
-): templatePath is string =>
-  stage === "description" && Boolean(templatePath);
-
 const buildAdditionalArtifactLines = (params: {
   readonly stage: WorkflowStageId;
   readonly workspaceSlug: string;
@@ -444,9 +436,6 @@ export const buildWorkflowPromptPack = (
     `Target path (relative): \`${relativePath}\``,
     `Target path (absolute): \`${absolutePath}\``,
     ...primaryInputLines,
-    shouldIncludeTemplateHint(params.stage, params.templatePath)
-      ? `Template (absolute): \`${params.templatePath}\``
-      : null,
     ...buildStagePhaseLines(params.stage, fileName),
     ...additionalArtifacts,
   ];

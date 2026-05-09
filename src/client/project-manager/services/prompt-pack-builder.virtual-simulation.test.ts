@@ -122,7 +122,7 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
   assert.equal(pack.content.includes("Template (absolute)"), false);
 });
 
-test("description prompt pack keeps template hint", () => {
+test("description prompt pack embeds inputs without provider-visible input paths", () => {
   const pack = buildWorkflowPromptPack({
     artifactLanguage: "uk",
     chatLanguage: "ru",
@@ -141,10 +141,9 @@ test("description prompt pack keeps template hint", () => {
     templatePath: "/tmp/description-template.md",
   });
 
-  assert.equal(
-    pack.content.includes("Template (absolute): `/tmp/description-template.md`"),
-    true
-  );
+  assert.equal(pack.content.includes("Questionnaire (relative):"), false);
+  assert.equal(pack.content.includes("Questionnaire (absolute):"), false);
+  assert.equal(pack.content.includes("Template (absolute):"), false);
   assert.equal(
     pack.content.startsWith(
       "Локализованный пакет инструкций CodeAI Hub (ru):"

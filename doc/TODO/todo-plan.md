@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "4fe24d1f9",
+  "lastRecordedCommit": "6bd34b715",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14d.task4",
-  "expectedCommitMessage": "docs: record product part acceptance release retest",
+  "currentTaskId": "managed-workflow-context.phase14e.task1",
+  "expectedCommitMessage": "fix: remove description prompt file paths",
   "debt": {
-    "expectedCommitMessage": "docs: record product part acceptance release retest",
-    "preCommitHead": "4fe24d1f9",
+    "expectedCommitMessage": "fix: remove description prompt file paths",
+    "preCommitHead": "6bd34b715",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14d.task4"
+    "taskId": "managed-workflow-context.phase14e.task1"
   }
 }
 ```
@@ -200,14 +200,14 @@
 63. [DONE] `managed-workflow-context.phase14d.task3` Run release automation and verify VSIX/tarball outputs for the Product Part acceptance repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build product part acceptance release artifacts`).
 64. [DONE] Git Commit: `chore: build product part acceptance release artifacts` (hash: 4fe24d1f9)
 65. [DONE] `managed-workflow-context.phase14d.task4` User retests the Product Part acceptance repair release with Claude Diagram Modules to confirm target-scoped feedback, blocked continuation on failed managed commit, and Product Part index status commit ownership; result: failed on prompt no-link leakage and split Core/PM managed messaging ownership, so repair streams 14E and 14F were added (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record product part acceptance release retest`).
-66. [PENDING] Git Commit: `docs: record product part acceptance release retest` (hash: TBD)
+66. [DONE] Git Commit: `docs: record product part acceptance release retest` (hash: 6bd34b715)
 
 ## Phase 14E - Description Prompt No-Link Repair (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Retest Feedback Intake
 
-67. [TODO] `managed-workflow-context.phase14e.task1` Remove provider-visible file paths from the Description first prompt when questionnaire/template content is already embedded, including relative questionnaire path, absolute questionnaire path, and absolute template path; provider prompts must give text, not instructions or incentives to read those files again (scope: `src/client/project-manager/services`, prompt builder tests, `doc/TODO/todo-plan.md`; expected commit: `fix: remove description prompt file paths`).
-68. [TODO] Git Commit: `fix: remove description prompt file paths` (hash: TBD)
+67. [DONE] `managed-workflow-context.phase14e.task1` Remove provider-visible file paths from the Description first prompt when questionnaire/template content is already embedded, including relative questionnaire path, absolute questionnaire path, and absolute template path; provider prompts must give text, not instructions or incentives to read those files again (scope: `src/client/project-manager/services`, prompt builder tests, `doc/TODO/todo-plan.md`; expected commit: `fix: remove description prompt file paths`).
+68. [PENDING] Git Commit: `fix: remove description prompt file paths` (hash: TBD)
 69. [TODO] `managed-workflow-context.phase14e.task2` Remove provider-visible `Final_Description.md` relative and absolute paths from the Virtual Simulation first prompt when the final description text is already embedded; provider prompts must not invite the agent to re-read the source file (scope: `src/client/project-manager/services`, prompt builder tests, `doc/TODO/todo-plan.md`; expected commit: `fix: remove virtual simulation prompt file paths`).
 70. [TODO] Git Commit: `fix: remove virtual simulation prompt file paths` (hash: TBD)
 71. [TODO] `managed-workflow-context.phase14e.task3` Verify Description and Virtual Simulation prompt no-link behavior and record retest evidence before the next release decision (scope: `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify prompt no-link contracts`).
