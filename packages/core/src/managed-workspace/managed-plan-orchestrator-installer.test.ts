@@ -29,6 +29,16 @@ const DIAGRAM_SECOND_TASK_RE =
   /Current Task: diagram-modules\.product-part\.vs-code-extension/u;
 const DIAGRAM_SECOND_COMMIT_RE =
   /Expected Commit: docs: update diagram modules product part vs-code-extension/u;
+const DIAGRAM_THIRD_TASK_RE =
+  /Current Task: diagram-modules\.product-part\.core-runtime/u;
+const DIAGRAM_THIRD_COMMIT_RE =
+  /Expected Commit: docs: update diagram modules product part core-runtime/u;
+const DIAGRAM_USER_REVIEW_TASK_RE =
+  /Current Task: diagram-modules\.user-review\.task1/u;
+const DIAGRAM_USER_REVIEW_COMMIT_RE =
+  /Expected Commit: docs: review diagram modules product map/u;
+const DIAGRAM_USER_REVIEW_PHASE_RE =
+  /Phase 2 — User-Owned Diagram Modules Review/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
@@ -355,6 +365,59 @@ test("managed plan shim advances the active task inside plan commits", async () 
     assert.match(nextStatus.stdout, DIAGRAM_SECOND_COMMIT_RE);
     assert.match(nextPlan, VS_CODE_PRODUCT_PART_SUMMARY_RE);
     assert.doesNotMatch(nextPlan, FUTURE_CORE_RUNTIME_TASK_RE);
+
+    const vsCodePath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/vs-code-extension.md"
+    );
+    await writeFile(vsCodePath, "# Product Part: vs-code-extension\n", "utf8");
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [
+        scriptPath,
+        "commit",
+        "docs: update diagram modules product part vs-code-extension",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const thirdStatus = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    assert.match(thirdStatus.stdout, DIAGRAM_THIRD_TASK_RE);
+    assert.match(thirdStatus.stdout, DIAGRAM_THIRD_COMMIT_RE);
+
+    const corePath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/core-runtime.md"
+    );
+    await writeFile(corePath, "# Product Part: core-runtime\n", "utf8");
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [
+        scriptPath,
+        "commit",
+        "docs: update diagram modules product part core-runtime",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const userReviewStatus = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    const userReviewPlan = await readFile(
+      path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH),
+      "utf8"
+    );
+    assert.match(userReviewStatus.stdout, DIAGRAM_USER_REVIEW_TASK_RE);
+    assert.match(userReviewStatus.stdout, DIAGRAM_USER_REVIEW_COMMIT_RE);
+    assert.match(userReviewPlan, DIAGRAM_USER_REVIEW_PHASE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

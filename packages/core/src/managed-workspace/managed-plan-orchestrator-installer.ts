@@ -241,7 +241,6 @@ const nextTaskId = (taskId) => {
 const readTaskLine = (line) => {
   const match = TASK_LINE_RE.exec(line); return match ? { id: match[1], message: match[2] } : null;
 };
-
 const summarizeStagedFiles = (files, fallbackMessage) => {
   const productParts = files
     .map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1])
@@ -289,12 +288,13 @@ const insertDiagramModulesProductPartTasks = (lines, commitLineIndex, files) => 
   if (ids.length === 0) { return; }
   const completed = committedProductPartIds(lines, files);
   const id = ids.find((candidate) => !completed.includes(candidate));
-  if (!id || lines.some((line) => line.includes(\`diagram-modules.product-part.\${id}\`))) { return; }
+  if (!id) { insertDiagramModulesUserReviewTask(lines, commitLineIndex); return; }
+  if (lines.some((line) => line.includes(\`diagram-modules.product-part.\${id}\`))) { return; }
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = \`docs: update diagram modules product part \${id}\`;
   const inserted = [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];
   lines.splice(commitLineIndex + 1, 0, ...inserted);
 };
-
+const insertDiagramModulesUserReviewTask = (lines, commitLineIndex) => { if (lines.some((line) => line.includes("diagram-modules.user-review.task1"))) { return; } const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = "docs: review diagram modules product map"; lines.splice(commitLineIndex + 1, 0, "", "## Phase 2 — User-Owned Diagram Modules Review", "", "### Stream: User Review And Corrections", "", formatNewTaskLine(taskNumber, "diagram-modules.user-review.task1", "TODO", "Wait for user-requested Diagram Modules corrections after Core accepted every Product Part; each user turn is a standalone Core-tracked microtask", ".codeai-hub/**/diagram_modules/**", message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`); };
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
