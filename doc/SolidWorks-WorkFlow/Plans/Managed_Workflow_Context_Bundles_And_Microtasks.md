@@ -278,3 +278,7 @@ This planning scope is accepted when the user agrees that the future implementat
 - `npm run build --workspace=@codeai-hub/core` — passed.
 - `npm run build:project-manager` — passed.
 - `npm run typecheck:webview` — passed.
+
+## 13. Release Decision
+
+On 2026-05-09 the user explicitly authorized continuing without pauses through implementation, verification, and new release assembly. This satisfies the release build confirmation gate for this execution cycle.
