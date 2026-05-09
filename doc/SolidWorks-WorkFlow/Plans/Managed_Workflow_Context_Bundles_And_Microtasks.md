@@ -272,3 +272,9 @@ This planning scope is accepted when the user agrees that the future implementat
 - `npm run build --workspace=@codeai-hub/core` — passed.
 - `node --test packages/core/dist/remote-bridge/handlers/session-request-handler.documentation-continuation.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js packages/core/dist/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.js packages/core/dist/development-tree/node-bootstrap/node-first-message-builder.test.js packages/core/dist/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.js packages/core/dist/development-tree/node-bootstrap/node-prompt-context-extractor.test.js` — passed, 27/27 tests.
 - `npm run typecheck:webview` — passed.
+
+### 2026-05-09 Affected Builds
+
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `npm run build:project-manager` — passed.
+- `npm run typecheck:webview` — passed.
