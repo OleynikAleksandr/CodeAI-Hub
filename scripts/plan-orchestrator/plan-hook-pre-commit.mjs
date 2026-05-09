@@ -2,6 +2,11 @@ import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getGitState } from "./plan-git-state.mjs";
+import {
+  extractTaskScopePatterns,
+  getOutOfScopePaths,
+  readStagedPaths,
+} from "./plan-scope-boundary.mjs";
 import { validatePlanMarkdown } from "./plan-validator.mjs";
 
 const TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -15,6 +20,7 @@ export const evaluatePreCommitGuard = ({
   env = process.env,
   gitState,
   markdown,
+  stagedFiles = [],
 }) => {
   const validation = validatePlanMarkdown(markdown, { gitState });
   const isMissingMachineState =
@@ -67,6 +73,24 @@ export const evaluatePreCommitGuard = ({
     };
   }
 
+  const taskId =
+    validation.state.debt?.taskId ?? validation.state.currentTaskId;
+  const scopePatterns = extractTaskScopePatterns(markdown, taskId);
+  const outOfScopePaths = getOutOfScopePaths(stagedFiles, scopePatterns);
+
+  if (outOfScopePaths.length > 0) {
+    return {
+      issues: [
+        {
+          code: "PLAN_STAGED_FILES_OUTSIDE_SCOPE",
+          message: `Staged files are outside current task scope: ${outOfScopePaths.join(", ")}.`,
+        },
+      ],
+      ok: false,
+      reason: "staged_files_outside_scope",
+    };
+  }
+
   return { ok: true, reason: "transaction_commit" };
 };
 
@@ -89,6 +113,7 @@ const main = () => {
     env: process.env,
     gitState: getGitState(cwd),
     markdown,
+    stagedFiles: readStagedPaths(cwd),
   });
 
   if (result.ok) {

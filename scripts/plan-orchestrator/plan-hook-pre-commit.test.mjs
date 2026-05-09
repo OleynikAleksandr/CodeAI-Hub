@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { evaluatePreCommitGuard } from "./plan-hook-pre-commit.mjs";
 
-const createMarkdown = () => `# План разработки
+const createMarkdown = ({
+  commitStatus = "TODO",
+  debt = null,
+  taskStatus = "IN_PROGRESS",
+} = {}) => `# План разработки
 
 <!-- codeai-plan-state:start -->
 \`\`\`json
@@ -16,15 +20,28 @@ const createMarkdown = () => `# План разработки
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Plan_Orchestrator_Architecture.md",
   "currentTaskId": "phase2.stream4.task1",
   "expectedCommitMessage": "feat: enforce plan state before commit",
-  "debt": null
+  "debt": ${debt === null ? "null" : JSON.stringify(debt)}
 }
 \`\`\`
 <!-- codeai-plan-state:end -->
 
-1. [IN_PROGRESS] \`phase2.stream4.task1\` Add pre-commit guard.
+1. [${taskStatus}] \`phase2.stream4.task1\` Add pre-commit guard.
+   - scope: \`scripts/plan-orchestrator/**, doc/TODO/todo-plan.md\`
    - expected commit: \`feat: enforce plan state before commit\`
-2. [TODO] \`phase2.stream4.commit1\` Git Commit: \`feat: enforce plan state before commit\` (hash: TBD)
+2. [${commitStatus}] \`phase2.stream4.commit1\` Git Commit: \`feat: enforce plan state before commit\` (hash: TBD)
 `;
+
+const createPendingMarkdown = () =>
+  createMarkdown({
+    commitStatus: "PENDING",
+    debt: {
+      expectedCommitMessage: "feat: enforce plan state before commit",
+      preCommitHead: "a4be3c37d",
+      stage: "commit_pending",
+      taskId: "phase2.stream4.task1",
+    },
+    taskStatus: "DONE",
+  });
 
 const gitState = {
   branch: "main",
@@ -58,11 +75,28 @@ test("allows active machine-managed plan during transaction", () => {
   const result = evaluatePreCommitGuard({
     env: { CODEAI_PLAN_TRANSACTION_ACTIVE: "1" },
     gitState,
-    markdown: createMarkdown(),
+    markdown: createPendingMarkdown(),
+    stagedFiles: [
+      "doc/TODO/todo-plan.md",
+      "scripts/plan-orchestrator/plan-hook-pre-commit.mjs",
+    ],
   });
 
   assert.equal(result.ok, true);
   assert.equal(result.reason, "transaction_commit");
+});
+
+test("blocks staged files outside current task scope during transaction", () => {
+  const result = evaluatePreCommitGuard({
+    env: { CODEAI_PLAN_TRANSACTION_ACTIVE: "1" },
+    gitState,
+    markdown: createPendingMarkdown(),
+    stagedFiles: ["doc/TODO/todo-plan.md", "src/client/project-manager/api.ts"],
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "staged_files_outside_scope");
+  assert.equal(result.issues[0].code, "PLAN_STAGED_FILES_OUTSIDE_SCOPE");
 });
 
 test("blocks open debt outside transaction", () => {

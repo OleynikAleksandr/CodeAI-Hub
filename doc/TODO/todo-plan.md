@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "6e0e60329",
+  "lastRecordedCommit": "806b2d797",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14r.task2",
-  "expectedCommitMessage": "fix: let plan commit stage scoped files",
+  "currentTaskId": "managed-workflow-context.phase14r.task3",
+  "expectedCommitMessage": "fix: block out-of-scope staged plan files",
   "debt": {
-    "expectedCommitMessage": "fix: let plan commit stage scoped files",
-    "preCommitHead": "6e0e60329",
+    "expectedCommitMessage": "fix: block out-of-scope staged plan files",
+    "preCommitHead": "806b2d797",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14r.task2"
+    "taskId": "managed-workflow-context.phase14r.task3"
   }
 }
 ```
@@ -362,9 +362,9 @@
 147. [DONE] `managed-workflow-context.phase14r.task1` Add a reusable Plan Orchestrator scope boundary that parses current task scope, compares dirty/staged Git paths against it, and reports out-of-scope files deterministically (scope: `scripts/plan-orchestrator/plan-scope-boundary.mjs, scripts/plan-orchestrator/plan-scope-boundary.test.mjs, doc/TODO/todo-plan.md`; expected commit: `feat: add plan commit scope boundary`).
 148. [DONE] Git Commit: `feat: add plan commit scope boundary` (hash: 6e0e60329)
 149. [DONE] `managed-workflow-context.phase14r.task2` Make `plan:commit` collect dirty files through the current task scope boundary and stage allowed files itself instead of relying on manual Git staging (scope: `scripts/plan-orchestrator/plan-commit.mjs, scripts/plan-orchestrator/plan-commit.test.mjs, doc/TODO/todo-plan.md`; expected commit: `fix: let plan commit stage scoped files`).
-150. [PENDING] Git Commit: `fix: let plan commit stage scoped files` (hash: TBD)
-151. [TODO] `managed-workflow-context.phase14r.task3` Enforce the same task scope boundary in the pre-commit transaction guard so manually staged out-of-scope files cannot bypass the orchestrator (scope: `scripts/plan-orchestrator/plan-hook-pre-commit.mjs, scripts/plan-orchestrator/plan-hook-pre-commit.test.mjs, doc/TODO/todo-plan.md`; expected commit: `fix: block out-of-scope staged plan files`).
-152. [TODO] Git Commit: `fix: block out-of-scope staged plan files` (hash: TBD)
+150. [DONE] Git Commit: `fix: let plan commit stage scoped files` (hash: 806b2d797)
+151. [DONE] `managed-workflow-context.phase14r.task3` Enforce the same task scope boundary in the pre-commit transaction guard so manually staged out-of-scope files cannot bypass the orchestrator (scope: `scripts/plan-orchestrator/plan-hook-pre-commit.mjs, scripts/plan-orchestrator/plan-hook-pre-commit.test.mjs, doc/TODO/todo-plan.md`; expected commit: `fix: block out-of-scope staged plan files`).
+152. [PENDING] Git Commit: `fix: block out-of-scope staged plan files` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
