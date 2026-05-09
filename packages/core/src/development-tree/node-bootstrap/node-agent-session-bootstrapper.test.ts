@@ -29,6 +29,8 @@ const QUALITY_GATES_CONTEXT_PATTERN = /"build":"npm run build:webview"/;
 const CORE_RUNTIME_CONTEXT_PATTERN = /Core Runtime manages provider processes/;
 const WORKFLOW_STEP_CONTEXT_PATTERN =
   /Workflow Step Navigation chooses current step/;
+const EMBEDDED_SOURCE_PATH_PATTERN =
+  /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md/;
 
 const writeWorkspaceArtifact = async (
   workspacePath: string,
@@ -288,6 +290,7 @@ test("NodeAgentSessionBootstrapper sends scoped workflow artifacts in the first 
     assert.match(firstMessage, PRODUCT_PART_CONTEXT_PATTERN);
     assert.match(firstMessage, APPLICATION_SKELETON_MAP_CONTEXT_PATTERN);
     assert.match(firstMessage, QUALITY_GATES_CONTEXT_PATTERN);
+    assert.doesNotMatch(firstMessage, EMBEDDED_SOURCE_PATH_PATTERN);
     assert.doesNotMatch(firstMessage, CORE_RUNTIME_CONTEXT_PATTERN);
     assert.doesNotMatch(firstMessage, WORKFLOW_STEP_CONTEXT_PATTERN);
   } finally {

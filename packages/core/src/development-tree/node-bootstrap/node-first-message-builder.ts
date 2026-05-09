@@ -102,8 +102,10 @@ const createArtifactContextLines = (
 ): string[] => {
   const sourceBoundary = [
     "Draft-pass source boundary:",
-    "- For this automatic first draft pass, use only the scoped context included in this first prompt plus the listed target draft files.",
+    "- Core embedded the scoped upstream context for this node in this first prompt.",
+    "- For this automatic first draft pass, use only the embedded scoped context plus the listed target draft files.",
     "- You may inspect and edit the listed target draft files, but do not read, search, list, or open any other workspace files or documents.",
+    "- Do not reread embedded source artifacts by path during this automatic draft pass.",
     "- If context seems incomplete or truncated, record the uncertainty as an Open question instead of reading another file.",
     "- Additional file reading is allowed only after the user explicitly asks or permits you to read files in a later message.",
     "- When included, Application Skeleton Map and Quality Gates Contract entries are binding for production paths and verification commands.",
@@ -121,12 +123,18 @@ const createArtifactContextLines = (
     "- Treat these deterministic excerpts as prior context for this exact Product Part / Cluster / Module node.",
     "- Do not ask the user to re-explain information already present here.",
     "- If an excerpt is truncated, use the excerpt as-is and capture any missing detail as an Open question.",
+    "- Source artifact paths are Core metadata and are intentionally omitted unless an excerpt is explicitly truncated.",
     "",
     ...sourceBoundary,
     ...artifactContext.flatMap((artifact) => [
       "",
       `### ${artifact.label}`,
-      `- Path: ${artifact.relativePath}`,
+      ...(artifact.truncated
+        ? [
+            `- Fallback path: ${artifact.relativePath}`,
+            "- Use this path only if the user or Core explicitly permits file reading in a later message.",
+          ]
+        : []),
       artifact.truncated
         ? "- Content excerpt: truncated; do not read the file during this automatic draft pass."
         : "- Content:",
