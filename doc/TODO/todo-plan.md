@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "d82bed088",
+  "lastRecordedCommit": "c31b51a99",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14j.task2",
-  "expectedCommitMessage": "fix: remove rollover prompt artifact paths",
+  "currentTaskId": "managed-workflow-context.phase14k.task1",
+  "expectedCommitMessage": "fix: complete claude turns at stream boundary",
   "debt": {
-    "expectedCommitMessage": "fix: remove rollover prompt artifact paths",
-    "preCommitHead": "d82bed088",
+    "expectedCommitMessage": "fix: complete claude turns at stream boundary",
+    "preCommitHead": "c31b51a99",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14j.task2"
+    "taskId": "managed-workflow-context.phase14k.task1"
   }
 }
 ```
@@ -268,12 +268,23 @@
 101. [DONE] `managed-workflow-context.phase14j.task1` Remove provider-visible input artifact paths from initial workflow prompts, including Diagram Modules, Application Skeleton, and Quality Gates, while keeping embedded source text as the authority for each turn (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove diagram modules prompt artifact paths`).
 102. [DONE] Git Commit: `fix: remove diagram modules prompt artifact paths` (hash: d82bed088)
 103. [DONE] `managed-workflow-context.phase14j.task2` Remove provider-visible target/input artifact paths from managed rollover continuation envelopes and verify rollover prompts stay text-bundle based (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove rollover prompt artifact paths`).
-104. [PENDING] Git Commit: `fix: remove rollover prompt artifact paths` (hash: TBD)
+104. [DONE] Git Commit: `fix: remove rollover prompt artifact paths` (hash: c31b51a99)
+
+## Phase 14K - Provider Terminal Turn Boundary Repair (owner: Codex, updated: 2026-05-09)
+
+### Stream: Event-Driven Continuation Boundary
+
+105. [DONE] `managed-workflow-context.phase14k.task1` Fix Claude turn completion so `turn_completed` is emitted only after the provider stream reaches the terminal turn boundary, not on an early `result` message that can precede final visible assistant chunks (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit: `fix: complete claude turns at stream boundary`).
+106. [PENDING] Git Commit: `fix: complete claude turns at stream boundary` (hash: TBD)
+107. [TODO] `managed-workflow-context.phase14k.task2` Remove the timer-based Core managed continuation wait path and keep continuation dispatch tied to provider `turn_completed`/new-turn ownership only (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-managed-continuation-boundary.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove timed managed continuation wait`).
+108. [TODO] Git Commit: `fix: remove timed managed continuation wait` (hash: TBD)
+109. [TODO] `managed-workflow-context.phase14k.task3` Remove stale dispatcher/test expectations for quiet-window settling and verify Diagram Modules continuation starts only from the provider-completed turn event path (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts`, `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test: verify event-driven managed continuation`).
+110. [TODO] Git Commit: `test: verify event-driven managed continuation` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-105. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-106. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-107. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+111. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+112. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+113. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
