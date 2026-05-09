@@ -31,7 +31,7 @@ const STAGE_TEMPLATES: Readonly<
   application_skeleton: {
     commitMessage: "docs: draft application skeleton contract",
     description:
-      "Draft Application Skeleton contract artifacts for user approval before filesystem materialization",
+      "Draft Application Skeleton contract artifacts as the first managed microtask before filesystem materialization",
     heading: "Application Skeleton Draft Contract",
     planId: "managed-workspace-application-skeleton",
     scope:
@@ -286,7 +286,7 @@ const createStageFollowUpTasks = (
 
 ### Stream: Application Skeleton Materialization
 
-3. [TODO] \`application-skeleton.stream1.task2\` Materialize Application Skeleton tracked filesystem projection after the draft contract is accepted and committed (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
+3. [TODO] \`application-skeleton.stream1.task2\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the draft contract is accepted and committed (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
 4. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
 `;
   }

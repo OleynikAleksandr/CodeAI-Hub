@@ -33,6 +33,7 @@ const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task2/u;
 const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
+const APPLICATION_SKELETON_BOUNDED_GROUP_RE = /bounded target-group microtask/u;
 const LEDGER_COMMIT_RE = /chore: record managed workspace ledger/u;
 const DIAGRAM_MODULES_COMMIT_RE =
   /docs: update diagram modules product part index/u;
@@ -195,12 +196,20 @@ test("managed plan shim advances filesystem stage draft commits to materializati
       [scriptPath, "status"],
       { cwd: workspaceRoot }
     );
+    const plan = await readFile(
+      path.join(
+        workspaceRoot,
+        "doc/TODO/stages/application-skeleton/todo-plan.md"
+      ),
+      "utf8"
+    );
     const gitStatus = await execFileAsync("git", ["status", "--short"], {
       cwd: workspaceRoot,
     });
 
     assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_TASK_RE);
     assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE);
+    assert.match(plan, APPLICATION_SKELETON_BOUNDED_GROUP_RE);
     assert.equal(gitStatus.stdout.trim(), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
