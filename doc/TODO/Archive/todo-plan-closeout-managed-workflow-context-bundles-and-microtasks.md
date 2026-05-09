@@ -1,3 +1,18 @@
+# Plan Closeout: managed-workflow-context-bundles-and-microtasks
+
+**Created:** 2026-05-09T16:37:06.171Z
+**Acceptance:** User accepted v1.2.215 managed workflow fixes after successful Claude Diagram Modules retest; SSOT documentation was synchronized in commit 477108017 before closeout.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** managed-workflow-context.phase15.task1
+**Expected Commit:** docs: close managed workflow context bundles
+**Last Recorded Commit:** 477108017
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Context_Bundles_And_Microtasks.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Context_Bundles_And_Microtasks.md",
   "currentTaskId": "managed-workflow-context.phase15.task1",
   "expectedCommitMessage": "docs: close managed workflow context bundles",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed workflow context bundles",
-    "preCommitHead": "477108017",
-    "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase15.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -394,6 +404,7 @@
 
 ### Stream: Closeout
 
-162. [DONE] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md, doc/SolidWorks-WorkFlow/Plans/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-163. [PENDING] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+162. [IN_PROGRESS] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+163. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
 164. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+````
