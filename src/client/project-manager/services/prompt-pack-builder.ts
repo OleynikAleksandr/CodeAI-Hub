@@ -196,12 +196,7 @@ const buildStageInputLines = (params: {
     return [];
   }
   if (params.stage === "virtual_simulation") {
-    const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
-    const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
-    return [
-      `Final_Description.md (relative): \`${finalRelativePath}\``,
-      `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
-    ];
+    return [];
   }
   if (params.stage === "diagram_modules") {
     const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;

@@ -105,6 +105,8 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
   );
   assert.equal(pack.content.includes("- Relative path:"), false);
   assert.equal(pack.content.includes("- Absolute path:"), false);
+  assert.equal(pack.content.includes("Final_Description.md (relative):"), false);
+  assert.equal(pack.content.includes("Final_Description.md (absolute):"), false);
   assert.equal(
     pack.content.includes("````markdown\n# Final Description"),
     true
