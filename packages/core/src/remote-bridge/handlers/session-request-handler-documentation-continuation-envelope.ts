@@ -1,4 +1,3 @@
-import path from "node:path";
 import {
   buildDescriptionContract,
   buildDiagramModulesContract,
@@ -29,15 +28,6 @@ const MANAGED_WORKSPACE_STAGES = new Set([
   "quality_gates",
 ]);
 
-const buildRelativePath = (context: DocumentationRolloverContext): string => {
-  const fileName = STAGE_FILE_NAMES[context.stageId] ?? "artifact.md";
-  const runSegment =
-    context.stageId !== "description" && context.runSlug
-      ? `runs/${context.runSlug}/`
-      : "";
-  return `.codeai-hub/${context.workspaceSlug}/${context.stageId}/${runSegment}${fileName}`;
-};
-
 const buildInputLines = (
   context: DocumentationRolloverContext
 ): readonly string[] => {
@@ -46,9 +36,10 @@ const buildInputLines = (
       "Input documents and managed workflow state are embedded below by Core. Do not reread input documents by path unless Core marks the bundle as truncated or stale.",
     ];
   }
-  const descriptionPath = `.codeai-hub/${context.workspaceSlug}/description/Final_Description.md`;
   if (context.stageId === "virtual_simulation") {
-    return [`Final_Description.md: \`${descriptionPath}\``];
+    return [
+      "Use the embedded Final Description text from Core; do not reread it by path.",
+    ];
   }
   return [
     "Use the existing source/questionnaire context already represented by the workflow artifacts.",
@@ -71,16 +62,11 @@ const buildWorkflowStartContract = async (
   context: DocumentationRolloverContext,
   managedBundleText: string | null
 ): Promise<string> => {
-  const relativePath = buildRelativePath(context);
-  const absolutePath = path.join(context.workspacePath, relativePath);
-  const fileName =
-    STAGE_FILE_NAMES[context.stageId] ?? path.basename(relativePath);
+  const fileName = STAGE_FILE_NAMES[context.stageId] ?? "artifact.md";
   return [
     await resolveContractPrompt(context.stageId),
     "## Workflow Start / Step Contract Context",
     `Stage: ${STAGE_LABELS[context.stageId] ?? context.stageId}.`,
-    `Target path (relative): \`${relativePath}\``,
-    `Target path (absolute): \`${absolutePath}\``,
     ...buildInputLines(context),
     `Output file name: \`${fileName}\``,
     managedBundleText,

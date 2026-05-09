@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "9a727e8da",
+  "lastRecordedCommit": "d82bed088",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14j.task1",
-  "expectedCommitMessage": "fix: remove diagram modules prompt artifact paths",
+  "currentTaskId": "managed-workflow-context.phase14j.task2",
+  "expectedCommitMessage": "fix: remove rollover prompt artifact paths",
   "debt": {
-    "expectedCommitMessage": "fix: remove diagram modules prompt artifact paths",
-    "preCommitHead": "9a727e8da",
+    "expectedCommitMessage": "fix: remove rollover prompt artifact paths",
+    "preCommitHead": "d82bed088",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14j.task1"
+    "taskId": "managed-workflow-context.phase14j.task2"
   }
 }
 ```
@@ -266,9 +266,9 @@
 ### Stream: Provider Prompt No-Link Cleanup
 
 101. [DONE] `managed-workflow-context.phase14j.task1` Remove provider-visible input artifact paths from initial workflow prompts, including Diagram Modules, Application Skeleton, and Quality Gates, while keeping embedded source text as the authority for each turn (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove diagram modules prompt artifact paths`).
-102. [PENDING] Git Commit: `fix: remove diagram modules prompt artifact paths` (hash: TBD)
-103. [TODO] `managed-workflow-context.phase14j.task2` Remove provider-visible target/input artifact paths from managed rollover continuation envelopes and verify rollover prompts stay text-bundle based (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove rollover prompt artifact paths`).
-104. [TODO] Git Commit: `fix: remove rollover prompt artifact paths` (hash: TBD)
+102. [DONE] Git Commit: `fix: remove diagram modules prompt artifact paths` (hash: d82bed088)
+103. [DONE] `managed-workflow-context.phase14j.task2` Remove provider-visible target/input artifact paths from managed rollover continuation envelopes and verify rollover prompts stay text-bundle based (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove rollover prompt artifact paths`).
+104. [PENDING] Git Commit: `fix: remove rollover prompt artifact paths` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 

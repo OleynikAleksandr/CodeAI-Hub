@@ -188,5 +188,8 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
   assert.equal(envelope.includes("doc/TODO/todo-plan.md"), false);
   assert.equal(envelope.includes("npm run plan:status"), false);
   assert.equal(envelope.includes("First read"), false);
+  assert.equal(envelope.includes("Target path (relative):"), false);
+  assert.equal(envelope.includes("Target path (absolute):"), false);
+  assert.equal(envelope.includes("Final_Description.md:"), false);
   assert.equal(envelope.includes("application-skeleton-map.json"), true);
 });
