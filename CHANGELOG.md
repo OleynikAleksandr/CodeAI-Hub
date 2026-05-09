@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.212] - 2026-05-09
+### Fixed
+- **Diagram Modules Core continuation now waits for a settled provider turn boundary.** Core samples the latest session message id before sending the next Product Part prompt, preventing accepted continuation messages from appearing inside the tail of the previous assistant response.
+- **Managed handoff input locking is covered by regression invariants.** Project Manager must keep input locked during the async Core state read and cannot unlock from the queue cleanup path before Core state is known.
+
+### Tests
+- **Focused Core and Project Manager coverage verifies settled-boundary continuation order, unsettled-boundary suppression before provider turn start, Core build, Project Manager orchestration invariants, and webview typecheck.**
+
 ## [1.2.211] - 2026-05-09
 ### Fixed
 - **Core now owns Diagram Modules continuation messages.** Project Manager no longer sends automatic provider messages between managed workflow turns; it only refreshes/read state and keeps UI locks from Core state.

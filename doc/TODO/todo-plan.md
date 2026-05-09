@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "07b4ba24a",
+  "lastRecordedCommit": "1925fcc05",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14h.task3",
-  "expectedCommitMessage": "test: verify managed continuation turn boundaries",
+  "currentTaskId": "managed-workflow-context.phase14i.task1",
+  "expectedCommitMessage": "docs: prepare managed continuation boundary release",
   "debt": {
-    "expectedCommitMessage": "test: verify managed continuation turn boundaries",
-    "preCommitHead": "07b4ba24a",
+    "expectedCommitMessage": "docs: prepare managed continuation boundary release",
+    "preCommitHead": "1925fcc05",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14h.task3"
+    "taskId": "managed-workflow-context.phase14i.task1"
   }
 }
 ```
@@ -248,12 +248,23 @@
 91. [DONE] `managed-workflow-context.phase14h.task2` Keep Project Manager input locked across Core continuation handoff and the following managed provider turn, including the case where a continuation is queued but the previous assistant turn is still flushing visible text (scope: `src/client/project-manager/components/sessions`, focused PM input-lock tests; expected commit: `fix: keep input locked during managed continuation handoff`).
 92. [DONE] Git Commit: `fix: keep input locked during managed continuation handoff` (hash: 07b4ba24a)
 93. [DONE] `managed-workflow-context.phase14h.task3` Verify turn-boundary-safe continuation ordering for Claude Diagram Modules and record focused Core/Project Manager evidence before the next release decision (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation turn boundaries`).
-94. [PENDING] Git Commit: `test: verify managed continuation turn boundaries` (hash: TBD)
+94. [DONE] Git Commit: `test: verify managed continuation turn boundaries` (hash: 1925fcc05)
+
+## Phase 14I - Release Build (owner: Codex, updated: 2026-05-09)
+
+### Stream: Managed Continuation Boundary Release
+
+95. [DONE] `managed-workflow-context.phase14i.task1` Prepare README and CHANGELOG for the managed continuation boundary release after explicit user authorization to assemble a new release without waiting for another confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed continuation boundary release`).
+96. [PENDING] Git Commit: `docs: prepare managed continuation boundary release` (hash: TBD)
+97. [TODO] `managed-workflow-context.phase14i.task2` Run release automation and verify VSIX/tarball outputs for the managed continuation boundary fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build managed continuation boundary release artifacts`).
+98. [TODO] Git Commit: `chore: build managed continuation boundary release artifacts` (hash: TBD)
+99. [TODO] `managed-workflow-context.phase14i.task3` Hand off the built managed continuation boundary release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off managed continuation boundary release`).
+100. [TODO] Git Commit: `docs: hand off managed continuation boundary release` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-95. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-96. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-97. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+101. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+102. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+103. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
