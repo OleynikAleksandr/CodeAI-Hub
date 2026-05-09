@@ -19,6 +19,7 @@ import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types"
 import type { ManagedWorkflowLifecyclePayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
   readDiagramModulesProgressSnapshot,
   syncDiagramModulesSubturnState,
@@ -270,6 +271,13 @@ export class WorkflowStateService {
                 return Promise.all([
                   diagramModulesSubturnStatePromise,
                   this.acceptanceFeedback.sendDiagramModulesFeedback({
+                    chains,
+                    gateway: feedbackGateway,
+                    progress: diagramModulesProgress,
+                    workspaceRoot,
+                    workspaceSlug: workspaceSlugResult.value,
+                  }),
+                  sendDiagramModulesContinuationIfReady({
                     chains,
                     gateway: feedbackGateway,
                     progress: diagramModulesProgress,

@@ -7,6 +7,7 @@ import test from "node:test";
 import { promisify } from "node:util";
 import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
 import { Logger } from "../../telemetry/logger";
+import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import { WorkflowAgentAcceptanceFeedback } from "./workflow-agent-acceptance-feedback";
 
 const execFileAsync = promisify(execFile);
@@ -23,6 +24,15 @@ const PRODUCT_PART_VALIDATOR_RE = /validator: diagram_modules\.product_part/u;
 const MISSING_PART_ID_RE = /Missing Part ID `local-runtime`\./u;
 const DO_NOT_UPDATE_NEXT_PART_RE =
   /Do not create or update the next Product Part\./u;
+const CONTINUATION_SESSION_RE = /diagram-continuation-session/u;
+const CONTINUATION_ACCEPTED_RE =
+  /Core accepted the previous Diagram Modules artifact\./u;
+const MATERIALIZE_LOCAL_RUNTIME_RE =
+  /Materialize only Product Part "local-runtime"\./u;
+const ACCEPTED_PROJECT_MANAGER_RE =
+  /Already accepted Product Parts: project-manager\./u;
+const LOCAL_RUNTIME_ARTIFACT_RE =
+  /\.codeai-hub\/demo\/diagram_modules\/product-parts\/local-runtime\.md/u;
 
 const stringifyFeedbackPayload = (payload: unknown): string =>
   typeof payload === "string"
@@ -206,6 +216,105 @@ test("Diagram Modules pending Product Part waits for continuation instead of agg
       } as never,
       workspaceRoot,
       workspaceSlug: "demo-workspace",
+    });
+
+    assert.deepEqual(messages, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules continuation dispatches the current Product Part scope from Core", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-continuation-core-")
+  );
+  const events: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await sendDiagramModulesContinuationIfReady({
+      chains: createChains("diagram_modules", "diagram-continuation-session"),
+      gateway: {
+        handleMessage: (sessionId, content) => {
+          events.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
+          return Promise.resolve();
+        },
+        markFeedbackTurnStarted: (sessionId) => {
+          events.push(`running:${sessionId}`);
+        },
+      },
+      progress: {
+        acceptedPartIds: ["project-manager"],
+        activeSubturn: {
+          kind: "product_part",
+          partId: "local-runtime",
+          status: "pending",
+        },
+        aggregateReady: false,
+        currentPartId: "local-runtime",
+        expectedArtifactPath:
+          ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+        generatedCount: 1,
+        generatedPartIds: ["project-manager"],
+        plannedCount: 2,
+        plannedPartIds: ["project-manager", "local-runtime"],
+        substep: "generate_product_part",
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace-continuation",
+    });
+
+    assert.equal(events.length, 2);
+    assert.equal(events[0], "running:diagram-continuation-session");
+    const message = events[1] ?? "";
+    assert.match(message, CONTINUATION_SESSION_RE);
+    assert.match(message, CONTINUATION_ACCEPTED_RE);
+    assert.match(message, MATERIALIZE_LOCAL_RUNTIME_RE);
+    assert.match(message, ACCEPTED_PROJECT_MANAGER_RE);
+    assert.match(message, LOCAL_RUNTIME_ARTIFACT_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules continuation waits when Core commit gate is dirty", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-continuation-dirty-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await sendDiagramModulesContinuationIfReady({
+      chains: createChains("diagram_modules", "diagram-dirty-session"),
+      gateway: {
+        handleMessage: (_sessionId, content) => {
+          messages.push(stringifyFeedbackPayload(content));
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        acceptedPartIds: ["project-manager"],
+        activeSubturn: {
+          kind: "product_part",
+          partId: "local-runtime",
+          status: "pending",
+        },
+        aggregateReady: false,
+        currentPartId: "local-runtime",
+        expectedArtifactPath:
+          ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+        generatedCount: 1,
+        generatedPartIds: ["project-manager"],
+        managedGitDirtyFiles: [
+          ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+        ],
+        plannedCount: 2,
+        plannedPartIds: ["project-manager", "local-runtime"],
+        substep: "generate_product_part",
+      } as never,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace-dirty-continuation",
     });
 
     assert.deepEqual(messages, []);
