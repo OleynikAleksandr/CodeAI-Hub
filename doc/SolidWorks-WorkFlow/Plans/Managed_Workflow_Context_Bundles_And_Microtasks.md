@@ -264,3 +264,11 @@ This planning scope is accepted when the user agrees that the future implementat
 - Diagram Modules, Application Skeleton, Quality Gates, and Development Tree sessions share the same Core-owned bundle/commit architecture;
 - validation feedback identifies the exact failed target and rule;
 - user input remains locked through Core validation, commit, feedback, and automatic continuation boundaries.
+
+## 12. Verification Evidence
+
+### 2026-05-09 Targeted Context Bundle Tests
+
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler.documentation-continuation.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js packages/core/dist/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.js packages/core/dist/development-tree/node-bootstrap/node-first-message-builder.test.js packages/core/dist/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.js packages/core/dist/development-tree/node-bootstrap/node-prompt-context-extractor.test.js` — passed, 27/27 tests.
+- `npm run typecheck:webview` — passed.
