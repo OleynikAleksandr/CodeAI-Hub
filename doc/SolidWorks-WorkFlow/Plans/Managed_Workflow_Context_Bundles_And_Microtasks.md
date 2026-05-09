@@ -381,3 +381,10 @@ Prompt no-link repair verification:
 - `npm run typecheck:webview` — passed after removing Description and Virtual Simulation provider-visible input paths.
 - `npm run build:project-manager` — passed after removing Description and Virtual Simulation provider-visible input paths.
 - Prompt builder assertions now cover that Description omits `Questionnaire (relative)`, `Questionnaire (absolute)`, and `Template (absolute)` when source text is embedded, and Virtual Simulation omits `Final_Description.md (relative)` / `(absolute)` when source text is embedded.
+
+Core-only Diagram Modules messaging verification:
+
+- `npm run build --workspace=@codeai-hub/core` — passed after moving Diagram Modules continuation dispatch into Core and adding the user-owned review phase.
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js` — passed. The tests cover Core-owned next-target continuation, no continuation while the managed commit gate is dirty, one-at-a-time Product Part plan advancement, and Phase 2 insertion only after the final Product Part commit.
+- `npx tsx --test src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts` — passed. The PM invariant test confirms Project Manager no longer calls `api.sendSessionMessage(...)` or owns Diagram Modules continuation prompt text.
+- `npm run typecheck:webview` and `npm run build:project-manager` — passed after the Core-only messaging and Diagram Modules phase-boundary changes.

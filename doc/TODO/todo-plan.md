@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "e46536bff",
+  "lastRecordedCommit": "0e695055f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14f.task3",
-  "expectedCommitMessage": "fix: add diagram modules user review phase",
+  "currentTaskId": "managed-workflow-context.phase14f.task4",
+  "expectedCommitMessage": "test: verify core-only managed workflow messaging",
   "debt": {
-    "expectedCommitMessage": "fix: add diagram modules user review phase",
-    "preCommitHead": "e46536bff",
+    "expectedCommitMessage": "test: verify core-only managed workflow messaging",
+    "preCommitHead": "0e695055f",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14f.task3"
+    "taskId": "managed-workflow-context.phase14f.task4"
   }
 }
 ```
@@ -222,9 +222,9 @@
 75. [DONE] `managed-workflow-context.phase14f.task2` Move Diagram Modules Product Part continuation decisions into Core as a single atomic boundary after validation and managed commit: Core emits exactly one provider-visible message per boundary, either repair/failure/wait or accepted next-target continuation, never both (scope: `packages/core/src/remote-bridge/handlers`, `packages/core/src/remote-bridge/handlers/*diagram*test*`, `doc/TODO/todo-plan.md`; expected commit: `fix: make core own diagram modules continuation`).
 76. [DONE] Git Commit: `fix: make core own diagram modules continuation` (hash: e46536bff)
 77. [DONE] `managed-workflow-context.phase14f.task3` Model Diagram Modules as two ownership phases without splitting the existing automatic generation phase: Phase 1 remains a Core/agent-owned automatic conversation that creates the Product Parts index/graph and materializes every Product Part under Core-owned continuation; after all Product Parts are accepted, Phase 1 completes and the agent stops. Phase 2 is user-owned review/editing, where each user turn that changes Product Parts, clusters, modules, names, or descriptions is opened by Core as its own microtask and commit boundary (scope: `packages/core/src/managed-workspace`, `packages/core/src/remote-bridge/handlers`, stage-plan tests; expected commit: `fix: add diagram modules user review phase`).
-78. [PENDING] Git Commit: `fix: add diagram modules user review phase` (hash: TBD)
-79. [TODO] `managed-workflow-context.phase14f.task4` Verify managed workflow messaging ownership and Diagram Modules phase boundaries: PM sends no automatic provider messages, Core emits one authoritative message per Product Part boundary during Phase 1, aggregate completion stops for user continuation, and Phase 2 user turns become independent Core-tracked microtasks with UI input/locks reflecting Core state only (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify core-only managed workflow messaging`).
-80. [TODO] Git Commit: `test: verify core-only managed workflow messaging` (hash: TBD)
+78. [DONE] Git Commit: `fix: add diagram modules user review phase` (hash: 0e695055f)
+79. [DONE] `managed-workflow-context.phase14f.task4` Verify managed workflow messaging ownership and Diagram Modules phase boundaries: PM sends no automatic provider messages, Core emits one authoritative message per Product Part boundary during Phase 1, aggregate completion stops for user continuation, and Phase 2 user turns become independent Core-tracked microtasks with UI input/locks reflecting Core state only (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify core-only managed workflow messaging`).
+80. [PENDING] Git Commit: `test: verify core-only managed workflow messaging` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
