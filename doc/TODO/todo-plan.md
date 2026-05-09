@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "61dc46571",
+  "lastRecordedCommit": "07b4ba24a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14h.task2",
-  "expectedCommitMessage": "fix: keep input locked during managed continuation handoff",
+  "currentTaskId": "managed-workflow-context.phase14h.task3",
+  "expectedCommitMessage": "test: verify managed continuation turn boundaries",
   "debt": {
-    "expectedCommitMessage": "fix: keep input locked during managed continuation handoff",
-    "preCommitHead": "61dc46571",
+    "expectedCommitMessage": "test: verify managed continuation turn boundaries",
+    "preCommitHead": "07b4ba24a",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14h.task2"
+    "taskId": "managed-workflow-context.phase14h.task3"
   }
 }
 ```
@@ -246,9 +246,9 @@
 89. [DONE] `managed-workflow-context.phase14h.task1` Fix Diagram Modules Core continuation dispatch so accepted next-target messages wait for a fully settled provider turn boundary and cannot appear between chunks of the previous assistant response (scope: `packages/core/src/remote-bridge/handlers`, focused Core session/feedback ordering tests; expected commit: `fix: defer core continuation until turn boundary settles`).
 90. [DONE] Git Commit: `fix: defer core continuation until turn boundary settles` (hash: 61dc46571)
 91. [DONE] `managed-workflow-context.phase14h.task2` Keep Project Manager input locked across Core continuation handoff and the following managed provider turn, including the case where a continuation is queued but the previous assistant turn is still flushing visible text (scope: `src/client/project-manager/components/sessions`, focused PM input-lock tests; expected commit: `fix: keep input locked during managed continuation handoff`).
-92. [PENDING] Git Commit: `fix: keep input locked during managed continuation handoff` (hash: TBD)
-93. [TODO] `managed-workflow-context.phase14h.task3` Verify turn-boundary-safe continuation ordering for Claude Diagram Modules and record focused Core/Project Manager evidence before the next release decision (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation turn boundaries`).
-94. [TODO] Git Commit: `test: verify managed continuation turn boundaries` (hash: TBD)
+92. [DONE] Git Commit: `fix: keep input locked during managed continuation handoff` (hash: 07b4ba24a)
+93. [DONE] `managed-workflow-context.phase14h.task3` Verify turn-boundary-safe continuation ordering for Claude Diagram Modules and record focused Core/Project Manager evidence before the next release decision (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation turn boundaries`).
+94. [PENDING] Git Commit: `test: verify managed continuation turn boundaries` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 

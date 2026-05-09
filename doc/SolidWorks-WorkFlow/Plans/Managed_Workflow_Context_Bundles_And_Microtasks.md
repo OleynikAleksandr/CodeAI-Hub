@@ -410,3 +410,10 @@ Repair direction:
 - The dialog insertion order must be `assistant previous turn complete` -> `Core continuation` -> `assistant next turn`, with no Core message interleaved into an unfinished assistant response.
 - Project Manager input locking must remain locked across the Core continuation handoff and the following provider turn; it should unlock only when Core has no pending managed continuation or active provider work.
 - Add a regression that simulates a late assistant chunk after Core acceptance and proves continuation dispatch is deferred until the assistant turn is fully closed.
+
+Implemented evidence:
+
+- Core owns a managed-continuation boundary wait that samples the latest session message id and dispatches the next Product Part prompt only after the id remains stable across a quiet interval.
+- The Diagram Modules continuation dispatcher calls the boundary wait before `markFeedbackTurnStarted` or `handleMessage`, so an unsettled assistant tail cannot be interleaved with a Core continuation prompt.
+- Regression coverage now proves both accepted paths: settled boundary dispatches in `boundary -> running -> message` order, while unsettled boundary stops before any provider turn starts.
+- Project Manager source invariants keep input locked during the async Core state read and forbid unlocking from the queue `finally` path.
