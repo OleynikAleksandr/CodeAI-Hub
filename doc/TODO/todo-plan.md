@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "e0b5f104d",
+  "lastRecordedCommit": "2a541c94d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14n.task1",
-  "expectedCommitMessage": "fix: serialize provider turn completion after messages",
+  "currentTaskId": "managed-workflow-context.phase14n.task2",
+  "expectedCommitMessage": "test: verify managed continuation ordering",
   "debt": {
-    "expectedCommitMessage": "fix: serialize provider turn completion after messages",
-    "preCommitHead": "e0b5f104d",
+    "expectedCommitMessage": "test: verify managed continuation ordering",
+    "preCommitHead": "2a541c94d",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14n.task1"
+    "taskId": "managed-workflow-context.phase14n.task2"
   }
 }
 ```
@@ -329,9 +329,9 @@
 ### Stream: Provider Message Flush And Core Continuation Gate
 
 137. [DONE] `managed-workflow-context.phase14n.task1` Make SDK `turn_completed` the single Core-owned trigger for managed acceptance: serialize provider turn completion after emitted assistant/dialog messages, move managed commit/feedback/continuation out of workflow-state read paths, and invoke managed acceptance only from the Core post-turn pipeline after turn arbitration (scope: `packages/core/src/remote-bridge/handlers`, `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts`, focused Core tests; expected commit: `fix: serialize provider turn completion after messages`).
-138. [PENDING] Git Commit: `fix: serialize provider turn completion after messages` (hash: TBD)
-139. [TODO] `managed-workflow-context.phase14n.task2` Verify managed continuation ordering against the Claude Diagram Modules interleaving regression and record evidence before release assembly (scope: `packages/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation ordering`).
-140. [TODO] Git Commit: `test: verify managed continuation ordering` (hash: TBD)
+138. [DONE] Git Commit: `fix: serialize provider turn completion after messages` (hash: 2a541c94d)
+139. [DONE] `managed-workflow-context.phase14n.task2` Verify managed continuation ordering against the Claude Diagram Modules interleaving regression and record evidence before release assembly (scope: `packages/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation ordering`).
+140. [PENDING] Git Commit: `test: verify managed continuation ordering` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
