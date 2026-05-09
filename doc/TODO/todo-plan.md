@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "54fa80962",
+  "lastRecordedCommit": "177a889d9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14g.task4",
-  "expectedCommitMessage": "docs: record core-only messaging release retest",
+  "currentTaskId": "managed-workflow-context.phase14h.task1",
+  "expectedCommitMessage": "fix: defer core continuation until turn boundary settles",
   "debt": {
-    "expectedCommitMessage": "docs: record core-only messaging release retest",
-    "preCommitHead": "54fa80962",
+    "expectedCommitMessage": "fix: defer core continuation until turn boundary settles",
+    "preCommitHead": "177a889d9",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14g.task4"
+    "taskId": "managed-workflow-context.phase14h.task1"
   }
 }
 ```
@@ -237,14 +237,14 @@
 85. [DONE] `managed-workflow-context.phase14g.task3` Hand off the built release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off core-only messaging release`).
 86. [DONE] Git Commit: `docs: hand off core-only messaging release` (hash: 54fa80962)
 87. [DONE] `managed-workflow-context.phase14g.task4` User retests release `1.2.211`, with focus on Claude Diagram Modules Core-only continuation, absence of contradictory PM/Core messages, Product Part Phase 1 automation, and user-owned Phase 2 review handoff (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record core-only messaging release retest`).
-88. [PENDING] Git Commit: `docs: record core-only messaging release retest` (hash: TBD)
+88. [DONE] Git Commit: `docs: record core-only messaging release retest` (hash: 177a889d9)
 
 ## Phase 14H - Continuation Turn Boundary Repair (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Turn Boundary Ordering And Input Lock
 
-89. [TODO] `managed-workflow-context.phase14h.task1` Fix Diagram Modules Core continuation dispatch so accepted next-target messages wait for a fully settled provider turn boundary and cannot appear between chunks of the previous assistant response (scope: `packages/core/src/remote-bridge/handlers`, focused Core session/feedback ordering tests; expected commit: `fix: defer core continuation until turn boundary settles`).
-90. [TODO] Git Commit: `fix: defer core continuation until turn boundary settles` (hash: TBD)
+89. [DONE] `managed-workflow-context.phase14h.task1` Fix Diagram Modules Core continuation dispatch so accepted next-target messages wait for a fully settled provider turn boundary and cannot appear between chunks of the previous assistant response (scope: `packages/core/src/remote-bridge/handlers`, focused Core session/feedback ordering tests; expected commit: `fix: defer core continuation until turn boundary settles`).
+90. [PENDING] Git Commit: `fix: defer core continuation until turn boundary settles` (hash: TBD)
 91. [TODO] `managed-workflow-context.phase14h.task2` Keep Project Manager input locked across Core continuation handoff and the following managed provider turn, including the case where a continuation is queued but the previous assistant turn is still flushing visible text (scope: `src/client/project-manager/components/sessions`, focused PM input-lock tests; expected commit: `fix: keep input locked during managed continuation handoff`).
 92. [TODO] Git Commit: `fix: keep input locked during managed continuation handoff` (hash: TBD)
 93. [TODO] `managed-workflow-context.phase14h.task3` Verify turn-boundary-safe continuation ordering for Claude Diagram Modules and record focused Core/Project Manager evidence before the next release decision (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation turn boundaries`).
