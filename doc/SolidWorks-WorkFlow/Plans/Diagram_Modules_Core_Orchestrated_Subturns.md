@@ -1,7 +1,8 @@
 # Diagram Modules Core-Orchestrated Subturns
 
-**Status:** Proposed refactor planning document
+**Status:** Approved for execution planning
 **Created:** 2026-05-09
+**Approved:** 2026-05-09
 **Owner:** Oleksandr + Codex
 **Related audit:** `doc/Claude_Diagram_Modules_Provider_Audit.md`
 
