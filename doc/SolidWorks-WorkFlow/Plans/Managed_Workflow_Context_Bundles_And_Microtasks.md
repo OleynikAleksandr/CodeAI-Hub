@@ -225,6 +225,26 @@ The active `doc/TODO/todo-plan.md` was sliced on 2026-05-09 into the following i
 8. Targeted Core / Project Manager tests and affected builds.
 9. Release build confirmation gate, release assembly, user workflow retest, and scope closeout.
 
+### 9.2 Prompt and rollover surface audit
+
+The first implementation stream audited the current managed workflow surfaces before code changes:
+
+- **First-turn source artifact embedding:** `src/client/project-manager/services/workflow-source-artifact-descriptors.ts`, `description-submit-service.ts`, and `prompt-pack-builder.ts` already embed source artifact contents for normal workflow starts, including Diagram Modules upstream documents and Application Skeleton Product Part expansion.
+- **Stage continuation prompts:** `src/client/project-manager/services/diagram-modules-continuation-prompt.ts` and `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts` own current Diagram Modules subturn continuation wording. These remain stage-specific and must consume Core progress/target state.
+- **Documentation rollover envelope:** `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts` is the primary defect surface. It currently renders path-based input hints and tells providers to read `doc/TODO/workspace.plan.md`, read the active child plan from `activePlanPath`, and run `npm run plan:status`.
+- **Rollover dispatch:** `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` injects the documentation continuation envelope into the next real user message after `session-request-handler-flow-node-rollover.ts` registers lazy rollover context.
+- **Managed plan synthesis:** `packages/core/src/managed-workspace/managed-todo-tree.ts` creates broad stage plans for Diagram Modules, Application Skeleton, and Quality Gates. `managed-plan-orchestrator-installer.ts` advances them after commits but still summarizes broad staged files instead of synthesizing per-target tasks.
+- **Managed commit gate:** `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts` currently commits Diagram Modules only at aggregate-ready; Application Skeleton and Quality Gates commit at broad stage readiness.
+- **Development Tree node prompts:** `packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts` and `node-prompt-context-extractor.ts` collect owner context. They already know owner artifact paths, but the implementation must ensure provider-visible prompts carry embedded owner text rather than path-driven recovery instructions.
+
+Tests expected to change or expand:
+
+- `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts`
+- `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`
+- `src/client/project-manager/services/prompt-pack-builder*.test.ts`
+- `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`
+- `packages/core/src/development-tree/node-bootstrap/*test.ts`
+
 ## 10. Non-Goals
 
 - Do not hardcode Product Part names or counts.
