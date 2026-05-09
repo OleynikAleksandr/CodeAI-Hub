@@ -306,3 +306,9 @@ Verification:
 ## 16. Sequencing Fix Release Decision
 
 On 2026-05-09 the user explicitly confirmed building a new follow-up release for the managed Product Part sequencing fix. This satisfies the release build confirmation gate for the sequencing fix stream.
+
+## 17. Sequencing Fix Release Build Evidence
+
+- `./scripts/build-all.sh` — passed, produced provider/core/UI/launcher artifacts for version `1.2.209`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed, verified SDK exclusions, local artifacts, markdown links, duplication advisory gate, VSIX package surface, and produced `codeai-hub-1.2.209.vsix`.
+- Release artifacts are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.

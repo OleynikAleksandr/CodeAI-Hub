@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "901ae132b",
+  "lastRecordedCommit": "775b41943",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14b.task2",
-  "expectedCommitMessage": "docs: prepare managed sequencing release",
+  "currentTaskId": "managed-workflow-context.phase14b.task3",
+  "expectedCommitMessage": "chore: build managed sequencing release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed sequencing release",
-    "preCommitHead": "901ae132b",
+    "expectedCommitMessage": "chore: build managed sequencing release artifacts",
+    "preCommitHead": "775b41943",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14b.task2"
+    "taskId": "managed-workflow-context.phase14b.task3"
   }
 }
 ```
@@ -172,9 +172,9 @@
 45. [DONE] `managed-workflow-context.phase14b.task1` Stop after the managed Product Part sequencing fix and ask the user whether to assemble a new release before changing README/CHANGELOG or running release automation (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record managed sequencing release decision`).
 46. [DONE] Git Commit: `docs: record managed sequencing release decision` (hash: 901ae132b)
 47. [DONE] `managed-workflow-context.phase14b.task2` Prepare README and CHANGELOG for the managed Product Part sequencing follow-up release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: prepare managed sequencing release`).
-48. [PENDING] Git Commit: `docs: prepare managed sequencing release` (hash: TBD)
-49. [TODO] `managed-workflow-context.phase14b.task3` Run release automation and verify VSIX/tarball outputs for the managed Product Part sequencing fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build managed sequencing release artifacts`).
-50. [TODO] Git Commit: `chore: build managed sequencing release artifacts` (hash: TBD)
+48. [DONE] Git Commit: `docs: prepare managed sequencing release` (hash: 775b41943)
+49. [DONE] `managed-workflow-context.phase14b.task3` Run release automation and verify VSIX/tarball outputs for the managed Product Part sequencing fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build managed sequencing release artifacts`).
+50. [PENDING] Git Commit: `chore: build managed sequencing release artifacts` (hash: TBD)
 51. [TODO] `managed-workflow-context.phase14b.task4` User retests the follow-up release with Claude Diagram Modules to confirm strict Product Part extraction and one-at-a-time task exposure (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record managed sequencing release retest`).
 52. [TODO] Git Commit: `docs: record managed sequencing release retest` (hash: TBD)
 
