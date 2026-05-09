@@ -12,6 +12,8 @@ import {
 const execFileAsync = promisify(execFile);
 const ACTIVE_PLAN_STATE_END = "<!-- codeai-plan-state:end -->";
 const ACTIVE_PLAN_STATE_START = "<!-- codeai-plan-state:start -->";
+const DIAGRAM_MODULES_PRODUCT_PART_TASK_RE =
+  /^diagram-modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/u;
 const JSON_FENCE_END_RE = /\s*```$/u;
 const JSON_FENCE_START_RE = /^```json\s*/u;
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
@@ -40,6 +42,7 @@ interface ManagedWorkspacePlanState {
 }
 
 interface ManagedActivePlanState {
+  readonly currentTaskId: string;
   readonly expectedCommitMessage: string;
 }
 
@@ -86,24 +89,6 @@ export class ManagedDocumentationCommitTransaction {
       };
     }
 
-    await git(params.workspaceRoot, ["add", "--", ...ownedFiles]);
-    const stagedFiles = await listStagedFiles(params.workspaceRoot);
-    const stagedOutsideAllowlist = stagedFiles.filter(
-      (file) => !ownedFiles.includes(file)
-    );
-    if (stagedOutsideAllowlist.length > 0) {
-      return {
-        activePlanPath: workspacePlan.activePlanPath,
-        blockedReason:
-          "Managed documentation commit blocked by staged files outside the active stage allowlist.",
-        dirtyFiles: status.dirtyFiles,
-        ownedFiles,
-        stage: workspacePlan.activeStage,
-        status: "blocked",
-        unmanagedDirtyFiles: stagedOutsideAllowlist,
-      };
-    }
-
     const activePlan = await readActivePlanState(
       params.workspaceRoot,
       workspacePlan.activePlanPath
@@ -117,6 +102,55 @@ export class ManagedDocumentationCommitTransaction {
         stage: workspacePlan.activeStage,
         status: "blocked",
         unmanagedDirtyFiles: [],
+      };
+    }
+
+    const targetOwnedFiles = filterOwnedFilesForActivePlan({
+      activePlan,
+      ownedFiles,
+      stage: workspacePlan.activeStage,
+    });
+    const outOfTargetOwnedFiles = ownedFiles.filter(
+      (file) => !targetOwnedFiles.includes(file)
+    );
+    if (targetOwnedFiles.length === 0) {
+      return {
+        activePlanPath: workspacePlan.activePlanPath,
+        dirtyFiles: status.dirtyFiles,
+        ownedFiles: targetOwnedFiles,
+        stage: workspacePlan.activeStage,
+        status: "no_changes",
+        unmanagedDirtyFiles: outOfTargetOwnedFiles,
+      };
+    }
+    if (outOfTargetOwnedFiles.length > 0) {
+      return {
+        activePlanPath: workspacePlan.activePlanPath,
+        blockedReason:
+          "Managed documentation commit blocked by files outside the active microtask target.",
+        dirtyFiles: status.dirtyFiles,
+        ownedFiles: targetOwnedFiles,
+        stage: workspacePlan.activeStage,
+        status: "blocked",
+        unmanagedDirtyFiles: outOfTargetOwnedFiles,
+      };
+    }
+
+    await git(params.workspaceRoot, ["add", "--", ...targetOwnedFiles]);
+    const stagedFiles = await listStagedFiles(params.workspaceRoot);
+    const stagedOutsideAllowlist = stagedFiles.filter(
+      (file) => !targetOwnedFiles.includes(file)
+    );
+    if (stagedOutsideAllowlist.length > 0) {
+      return {
+        activePlanPath: workspacePlan.activePlanPath,
+        blockedReason:
+          "Managed documentation commit blocked by staged files outside the active stage allowlist.",
+        dirtyFiles: status.dirtyFiles,
+        ownedFiles: targetOwnedFiles,
+        stage: workspacePlan.activeStage,
+        status: "blocked",
+        unmanagedDirtyFiles: stagedOutsideAllowlist,
       };
     }
 
@@ -135,7 +169,7 @@ export class ManagedDocumentationCommitTransaction {
         blockedReason:
           "Managed documentation commit completed but Git status is still dirty.",
         dirtyFiles: postCommitStatus.dirtyFiles,
-        ownedFiles,
+        ownedFiles: targetOwnedFiles,
         stage: workspacePlan.activeStage,
         status: "blocked",
         unmanagedDirtyFiles: postCommitStatus.dirtyFiles,
@@ -151,7 +185,7 @@ export class ManagedDocumentationCommitTransaction {
       activePlanPath: workspacePlan.activePlanPath,
       commitHash,
       dirtyFiles: status.dirtyFiles,
-      ownedFiles,
+      ownedFiles: targetOwnedFiles,
       stage: workspacePlan.activeStage,
       status: "committed",
       unmanagedDirtyFiles: [],
@@ -178,6 +212,41 @@ const git = async (
     cwd: workspaceRoot,
   });
   return stdout.trim();
+};
+
+const filterOwnedFilesForActivePlan = (params: {
+  readonly activePlan: ManagedActivePlanState;
+  readonly ownedFiles: readonly string[];
+  readonly stage: ManagedStageId;
+}): readonly string[] => {
+  if (params.stage !== "diagram_modules") {
+    return params.ownedFiles;
+  }
+  const workflowFiles = params.ownedFiles.filter((file) =>
+    file.includes("/workflow/")
+  );
+  if (
+    params.activePlan.currentTaskId === "diagram-modules.stream1.task1" ||
+    params.activePlan.expectedCommitMessage.includes("product part index")
+  ) {
+    return [
+      ...params.ownedFiles.filter((file) =>
+        file.endsWith("/diagram_modules/product-parts.index.md")
+      ),
+      ...workflowFiles,
+    ];
+  }
+  const partId = DIAGRAM_MODULES_PRODUCT_PART_TASK_RE.exec(
+    params.activePlan.currentTaskId
+  )?.[1];
+  return partId
+    ? [
+        ...params.ownedFiles.filter((file) =>
+          file.endsWith(`/diagram_modules/product-parts/${partId}.md`)
+        ),
+        ...workflowFiles,
+      ]
+    : params.ownedFiles;
 };
 
 const listStagedFiles = async (
@@ -223,9 +292,13 @@ const readActivePlanState = async (
     end: ACTIVE_PLAN_STATE_END,
     start: ACTIVE_PLAN_STATE_START,
   });
-  return typeof state?.expectedCommitMessage === "string" &&
+  return typeof state?.currentTaskId === "string" &&
+    typeof state?.expectedCommitMessage === "string" &&
     state.expectedCommitMessage.trim()
-    ? { expectedCommitMessage: state.expectedCommitMessage.trim() }
+    ? {
+        currentTaskId: state.currentTaskId.trim(),
+        expectedCommitMessage: state.expectedCommitMessage.trim(),
+      }
     : null;
 };
 

@@ -9,6 +9,9 @@ import { readManagedGitStatus } from "./managed-git-stage-gate";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import { readQualityGatesProgressSnapshot } from "./quality-gates-progress";
 
+const DIAGRAM_MODULES_PRODUCT_PART_FILE_RE =
+  /\/diagram_modules\/product-parts\/([^/]+)\.md$/u;
+
 export interface ManagedDocumentationProgressContext {
   readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
   readonly diagramModulesProgress: DiagramModulesProgressSnapshot | null;
@@ -16,12 +19,35 @@ export interface ManagedDocumentationProgressContext {
   readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
 }
 
+const hasCommittableDiagramModulesStage = (
+  context: ManagedDocumentationProgressContext
+): boolean => {
+  const dirtyFiles = context.managedGitStatus.dirtyByStage.diagram_modules;
+  const progress = context.diagramModulesProgress;
+  if (!progress || dirtyFiles.length === 0) {
+    return false;
+  }
+  if (progress.aggregateReady) {
+    return true;
+  }
+  if (
+    dirtyFiles.some((file) =>
+      file.endsWith("/diagram_modules/product-parts.index.md")
+    )
+  ) {
+    return progress.plannedPartIds.length > 0;
+  }
+  return dirtyFiles.some((file) => {
+    const partId = DIAGRAM_MODULES_PRODUCT_PART_FILE_RE.exec(file)?.[1];
+    return Boolean(partId && progress.generatedPartIds.includes(partId));
+  });
+};
+
 const hasCommittableManagedStage = (
   context: ManagedDocumentationProgressContext
 ): boolean =>
   Boolean(
-    (context.diagramModulesProgress?.aggregateReady &&
-      context.managedGitStatus.dirtyByStage.diagram_modules.length > 0) ||
+    hasCommittableDiagramModulesStage(context) ||
       (context.applicationSkeletonProgress?.materialized &&
         context.managedGitStatus.dirtyByStage.application_skeleton.length >
           0) ||

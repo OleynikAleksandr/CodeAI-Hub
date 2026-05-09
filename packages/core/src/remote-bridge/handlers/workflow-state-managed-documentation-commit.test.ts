@@ -13,7 +13,9 @@ import { WorkflowStateService } from "./workflow-state-service";
 const execFileAsync = promisify(execFile);
 const CURRENT_TASK_ID_RE = /"currentTaskId":\s*"[^"]+"/u;
 const DIAGRAM_MODULES_AUTO_COMMIT_LOG_RE =
-  /chore: record managed workspace ledger[\s\S]+docs: update diagram modules artifacts/u;
+  /chore: record managed workspace ledger[\s\S]+docs: update diagram modules product part local-runtime/u;
+const DIAGRAM_MODULES_INDEX_COMMIT_LOG_RE =
+  /docs: update diagram modules product part index/u;
 const APPLICATION_SKELETON_AUTO_COMMIT_LOG_RE =
   /chore: record managed workspace ledger[\s\S]+feat: materialize application skeleton/u;
 const QUALITY_GATES_AUTO_COMMIT_LOG_RE =
@@ -21,7 +23,7 @@ const QUALITY_GATES_AUTO_COMMIT_LOG_RE =
 const EXPECTED_COMMIT_MESSAGE_RE = /"expectedCommitMessage":\s*"[^"]+"/u;
 const SCRATCH_UNMANAGED_RE = /scratch\//u;
 const DIAGRAM_MODULES_COMMIT_SUBJECT_RE =
-  /docs: update diagram modules artifacts/u;
+  /docs: update diagram modules product part/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -82,6 +84,11 @@ const initManagedWorkspace = async (
   await runGit(workspaceRoot, ["config", "user.email", "test@example.com"]);
   await runGit(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
   await writeWorkspaceFile(workspaceRoot, "README.md", "# Demo\n");
+  await writeWorkspaceFile(
+    workspaceRoot,
+    ".gitignore",
+    ".codeai-hub/*/workflow/state.json\n"
+  );
   await writeWorkspaceFile(
     workspaceRoot,
     `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
@@ -262,7 +269,30 @@ test("workflow-state auto-commits valid Diagram Modules artifacts and unlocks Ap
 
   try {
     await initManagedWorkspace(workspaceRoot, workspaceSlug, "diagram_modules");
-    await writeDiagramModulesArtifacts(workspaceRoot, workspaceSlug);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      createProductPartsIndex()
+    );
+
+    const indexPayload = await readWorkflowStatePayload({
+      service: new WorkflowStateService({ logger: new Logger("error") }),
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(indexPayload.gating?.blocked?.application_skeleton, true);
+    assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
+    assert.match(
+      await runGit(workspaceRoot, ["log", "--oneline", "-2"]),
+      DIAGRAM_MODULES_INDEX_COMMIT_LOG_RE
+    );
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-runtime.md`,
+      createProductPart()
+    );
 
     const payload = await readWorkflowStatePayload({
       service: new WorkflowStateService({ logger: new Logger("error") }),

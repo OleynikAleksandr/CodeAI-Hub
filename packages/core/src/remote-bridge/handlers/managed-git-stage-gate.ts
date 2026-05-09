@@ -53,7 +53,10 @@ export const readManagedGitStatus = async (
     quality_gates: [],
   };
   for (const file of dirtyFiles) {
-    if (file.startsWith(`.codeai-hub/${workspaceSlug}/diagram_modules/`)) {
+    if (
+      file.startsWith(`.codeai-hub/${workspaceSlug}/diagram_modules/`) ||
+      file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/`)
+    ) {
       dirtyByStage.diagram_modules.push(file);
     } else if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/application_skeleton/`) ||
