@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "a85109893",
+  "lastRecordedCommit": "34479e1cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14g.task1",
-  "expectedCommitMessage": "docs: prepare core-only messaging release",
+  "currentTaskId": "managed-workflow-context.phase14g.task2",
+  "expectedCommitMessage": "chore: build core-only messaging release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare core-only messaging release",
-    "preCommitHead": "a85109893",
+    "expectedCommitMessage": "chore: build core-only messaging release artifacts",
+    "preCommitHead": "34479e1cc",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14g.task1"
+    "taskId": "managed-workflow-context.phase14g.task2"
   }
 }
 ```
@@ -231,9 +231,9 @@
 ### Stream: Core-Only Messaging Release Assembly
 
 81. [DONE] `managed-workflow-context.phase14g.task1` Prepare README and CHANGELOG for the next core-only managed workflow messaging release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare core-only messaging release`).
-82. [PENDING] Git Commit: `docs: prepare core-only messaging release` (hash: TBD)
-83. [TODO] `managed-workflow-context.phase14g.task2` Run release automation and verify VSIX/tarball outputs for the core-only managed workflow messaging fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build core-only messaging release artifacts`).
-84. [TODO] Git Commit: `chore: build core-only messaging release artifacts` (hash: TBD)
+82. [DONE] Git Commit: `docs: prepare core-only messaging release` (hash: 34479e1cc)
+83. [DONE] `managed-workflow-context.phase14g.task2` Run release automation and verify VSIX/tarball outputs for the core-only managed workflow messaging fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build core-only messaging release artifacts`).
+84. [PENDING] Git Commit: `chore: build core-only messaging release artifacts` (hash: TBD)
 85. [TODO] `managed-workflow-context.phase14g.task3` Hand off the built release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off core-only messaging release`).
 86. [TODO] Git Commit: `docs: hand off core-only messaging release` (hash: TBD)
 
