@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.211] - 2026-05-09
+### Fixed
+- **Core now owns Diagram Modules continuation messages.** Project Manager no longer sends automatic provider messages between managed workflow turns; it only refreshes/read state and keeps UI locks from Core state.
+- **Diagram Modules Product Part continuation is single-boundary.** Core sends exactly one authoritative next-target message only after validation and managed commit state allow continuation, and waits while commit gates are dirty.
+- **Diagram Modules now separates automatic generation from user review.** Phase 1 remains Core/agent-owned through all Product Parts; Phase 2 opens only after all Product Parts are accepted and belongs to user-driven corrections.
+
+### Tests
+- **Focused Core and Project Manager coverage verifies Core-owned continuation, dirty commit-gate suppression, one-at-a-time Product Part advancement, Phase 2 insertion, Project Manager no-message invariants, Core build, Project Manager bundle generation, and webview typecheck.**
+
 ## [1.2.210] - 2026-05-09
 ### Fixed
 - **Diagram Modules Product Part continuation now waits for successful managed commits.** Project Manager no longer sends the next Product Part target while workflow-state still reports managed dirty or out-of-target dirty files.

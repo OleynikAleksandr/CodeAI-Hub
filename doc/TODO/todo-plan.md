@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "0e695055f",
+  "lastRecordedCommit": "a85109893",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14f.task4",
-  "expectedCommitMessage": "test: verify core-only managed workflow messaging",
+  "currentTaskId": "managed-workflow-context.phase14g.task1",
+  "expectedCommitMessage": "docs: prepare core-only messaging release",
   "debt": {
-    "expectedCommitMessage": "test: verify core-only managed workflow messaging",
-    "preCommitHead": "0e695055f",
+    "expectedCommitMessage": "docs: prepare core-only messaging release",
+    "preCommitHead": "a85109893",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14f.task4"
+    "taskId": "managed-workflow-context.phase14g.task1"
   }
 }
 ```
@@ -224,12 +224,23 @@
 77. [DONE] `managed-workflow-context.phase14f.task3` Model Diagram Modules as two ownership phases without splitting the existing automatic generation phase: Phase 1 remains a Core/agent-owned automatic conversation that creates the Product Parts index/graph and materializes every Product Part under Core-owned continuation; after all Product Parts are accepted, Phase 1 completes and the agent stops. Phase 2 is user-owned review/editing, where each user turn that changes Product Parts, clusters, modules, names, or descriptions is opened by Core as its own microtask and commit boundary (scope: `packages/core/src/managed-workspace`, `packages/core/src/remote-bridge/handlers`, stage-plan tests; expected commit: `fix: add diagram modules user review phase`).
 78. [DONE] Git Commit: `fix: add diagram modules user review phase` (hash: 0e695055f)
 79. [DONE] `managed-workflow-context.phase14f.task4` Verify managed workflow messaging ownership and Diagram Modules phase boundaries: PM sends no automatic provider messages, Core emits one authoritative message per Product Part boundary during Phase 1, aggregate completion stops for user continuation, and Phase 2 user turns become independent Core-tracked microtasks with UI input/locks reflecting Core state only (scope: `packages/core`, `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify core-only managed workflow messaging`).
-80. [PENDING] Git Commit: `test: verify core-only managed workflow messaging` (hash: TBD)
+80. [DONE] Git Commit: `test: verify core-only managed workflow messaging` (hash: a85109893)
+
+## Phase 14G - Release Build (owner: Codex, updated: 2026-05-09)
+
+### Stream: Core-Only Messaging Release Assembly
+
+81. [DONE] `managed-workflow-context.phase14g.task1` Prepare README and CHANGELOG for the next core-only managed workflow messaging release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare core-only messaging release`).
+82. [PENDING] Git Commit: `docs: prepare core-only messaging release` (hash: TBD)
+83. [TODO] `managed-workflow-context.phase14g.task2` Run release automation and verify VSIX/tarball outputs for the core-only managed workflow messaging fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build core-only messaging release artifacts`).
+84. [TODO] Git Commit: `chore: build core-only messaging release artifacts` (hash: TBD)
+85. [TODO] `managed-workflow-context.phase14g.task3` Hand off the built release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off core-only messaging release`).
+86. [TODO] Git Commit: `docs: hand off core-only messaging release` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-81. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-82. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-83. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+87. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+88. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+89. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
