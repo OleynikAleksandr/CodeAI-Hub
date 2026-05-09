@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "34479e1cc",
+  "lastRecordedCommit": "fab90291f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14g.task2",
-  "expectedCommitMessage": "chore: build core-only messaging release artifacts",
+  "currentTaskId": "managed-workflow-context.phase14g.task3",
+  "expectedCommitMessage": "docs: hand off core-only messaging release",
   "debt": {
-    "expectedCommitMessage": "chore: build core-only messaging release artifacts",
-    "preCommitHead": "34479e1cc",
+    "expectedCommitMessage": "docs: hand off core-only messaging release",
+    "preCommitHead": "fab90291f",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14g.task2"
+    "taskId": "managed-workflow-context.phase14g.task3"
   }
 }
 ```
@@ -233,14 +233,16 @@
 81. [DONE] `managed-workflow-context.phase14g.task1` Prepare README and CHANGELOG for the next core-only managed workflow messaging release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare core-only messaging release`).
 82. [DONE] Git Commit: `docs: prepare core-only messaging release` (hash: 34479e1cc)
 83. [DONE] `managed-workflow-context.phase14g.task2` Run release automation and verify VSIX/tarball outputs for the core-only managed workflow messaging fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build core-only messaging release artifacts`).
-84. [PENDING] Git Commit: `chore: build core-only messaging release artifacts` (hash: TBD)
-85. [TODO] `managed-workflow-context.phase14g.task3` Hand off the built release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off core-only messaging release`).
-86. [TODO] Git Commit: `docs: hand off core-only messaging release` (hash: TBD)
+84. [DONE] Git Commit: `chore: build core-only messaging release artifacts` (hash: fab90291f)
+85. [DONE] `managed-workflow-context.phase14g.task3` Hand off the built release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off core-only messaging release`).
+86. [PENDING] Git Commit: `docs: hand off core-only messaging release` (hash: TBD)
+87. [TODO] `managed-workflow-context.phase14g.task4` User retests release `1.2.211`, with focus on Claude Diagram Modules Core-only continuation, absence of contradictory PM/Core messages, Product Part Phase 1 automation, and user-owned Phase 2 review handoff (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record core-only messaging release retest`).
+88. [TODO] Git Commit: `docs: record core-only messaging release retest` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-87. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-88. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-89. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+89. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+90. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+91. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
