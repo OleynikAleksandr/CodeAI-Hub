@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.210] - 2026-05-09
+### Fixed
+- **Diagram Modules Product Part continuation now waits for successful managed commits.** Project Manager no longer sends the next Product Part target while workflow-state still reports managed dirty or out-of-target dirty files.
+- **Product Part managed commit feedback is target-scoped.** Core commit-gate feedback tells the provider not to create or update Product Part artifacts instead of asking for all planned Product Parts.
+- **Product Part index status updates are committed with the active Product Part.** Core includes `product-parts.index.md` in the current Product Part managed commit allowlist while still rejecting sibling Product Part files.
+
+### Tests
+- **Focused Core and Project Manager coverage verifies target-scoped feedback, managed commit allowlists, Product Part sequencing, Core build, Project Manager bundle generation, and webview typecheck.**
+
 ## [1.2.209] - 2026-05-09
 ### Fixed
 - **Diagram Modules managed plans now expose Product Parts one at a time.** After the index commit, Core opens only the next Product Part microtask and waits for its accepted commit before adding the following Product Part.
