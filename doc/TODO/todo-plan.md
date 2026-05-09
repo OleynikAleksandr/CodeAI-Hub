@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "775b41943",
+  "lastRecordedCommit": "113acbec8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14b.task3",
-  "expectedCommitMessage": "chore: build managed sequencing release artifacts",
+  "currentTaskId": "managed-workflow-context.phase14b.task4",
+  "expectedCommitMessage": "docs: record managed sequencing release retest",
   "debt": {
-    "expectedCommitMessage": "chore: build managed sequencing release artifacts",
-    "preCommitHead": "775b41943",
+    "expectedCommitMessage": "docs: record managed sequencing release retest",
+    "preCommitHead": "113acbec8",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14b.task3"
+    "taskId": "managed-workflow-context.phase14b.task4"
   }
 }
 ```
@@ -174,14 +174,25 @@
 47. [DONE] `managed-workflow-context.phase14b.task2` Prepare README and CHANGELOG for the managed Product Part sequencing follow-up release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: prepare managed sequencing release`).
 48. [DONE] Git Commit: `docs: prepare managed sequencing release` (hash: 775b41943)
 49. [DONE] `managed-workflow-context.phase14b.task3` Run release automation and verify VSIX/tarball outputs for the managed Product Part sequencing fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build managed sequencing release artifacts`).
-50. [PENDING] Git Commit: `chore: build managed sequencing release artifacts` (hash: TBD)
-51. [TODO] `managed-workflow-context.phase14b.task4` User retests the follow-up release with Claude Diagram Modules to confirm strict Product Part extraction and one-at-a-time task exposure (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record managed sequencing release retest`).
-52. [TODO] Git Commit: `docs: record managed sequencing release retest` (hash: TBD)
+50. [DONE] Git Commit: `chore: build managed sequencing release artifacts` (hash: 113acbec8)
+51. [DONE] `managed-workflow-context.phase14b.task4` User retests the follow-up release with Claude Diagram Modules to confirm strict Product Part extraction and one-at-a-time task exposure; result: failed because Core emitted aggregate Product Part feedback, advanced the next target after a failed managed commit, and rejected Product Part index status updates as outside the active allowlist (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record managed sequencing release retest`).
+52. [PENDING] Git Commit: `docs: record managed sequencing release retest` (hash: TBD)
+
+## Phase 14C - Product Part Acceptance Repair (owner: Codex, updated: 2026-05-09)
+
+### Stream: Target-Scoped Acceptance
+
+53. [TODO] `managed-workflow-context.phase14c.task1` Fix Diagram Modules Product Part acceptance feedback so a failed managed commit does not emit an accepted continuation or advance the next target, and Product Part subturn failures report only the current target rather than aggregate 1/4 state (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts`, `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: gate product part continuation on commit acceptance`).
+54. [TODO] Git Commit: `fix: gate product part continuation on commit acceptance` (hash: TBD)
+55. [TODO] `managed-workflow-context.phase14c.task2` Fix managed commit ownership for Diagram Modules Product Part turns so Core-owned index status updates are included with the current Product Part commit while sibling Product Part files remain rejected (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: allow product part index status commits`).
+56. [TODO] Git Commit: `fix: allow product part index status commits` (hash: TBD)
+57. [TODO] `managed-workflow-context.phase14c.task3` Run focused Core regressions for Product Part target-scoped acceptance, managed commit allowlists, and managed plan sequencing; stop before release build confirmation (scope: `packages/core`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify product part acceptance repair`).
+58. [TODO] Git Commit: `test: verify product part acceptance repair` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-53. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-54. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-55. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+59. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+60. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+61. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).

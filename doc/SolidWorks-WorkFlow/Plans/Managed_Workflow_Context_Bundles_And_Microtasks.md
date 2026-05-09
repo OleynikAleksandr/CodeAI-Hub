@@ -312,3 +312,19 @@ On 2026-05-09 the user explicitly confirmed building a new follow-up release for
 - `./scripts/build-all.sh` — passed, produced provider/core/UI/launcher artifacts for version `1.2.209`.
 - `./scripts/build-release.sh --use-current-version --allow-dirty` — passed, verified SDK exclusions, local artifacts, markdown links, duplication advisory gate, VSIX package surface, and produced `codeai-hub-1.2.209.vsix`.
 - Release artifacts are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+
+## 18. Claude Retest Blocker: Product Part Acceptance Boundaries
+
+The `v1.2.209` Claude retest showed that Product Part sequencing improved but Core still breaks the managed subturn contract after the first Product Part:
+
+- Core emitted a failed aggregate Diagram Modules acceptance message after `project-manager.md` was written, even though one valid Product Part is expected at that point.
+- Core refused the managed commit because the provider also updated `product-parts.index.md` status from `planned` to `generated`; that index status update is a Core-owned stage artifact and must either be included in the current Product Part commit or be owned exclusively by Core.
+- Core then immediately emitted an accepted continuation for `core-runtime.md`, even though the managed commit for `project-manager.md` did not succeed and the active stage todo-plan still pointed to `diagram-modules.product-part.project-manager`.
+- The aggregate repair wording still said to update artifacts until every planned Product Part has a valid file, which pushed Claude to create `core-runtime.md`, `ai-providers.md`, and `vscode-extension.md` in one turn.
+
+Repair direction:
+
+- Do not send an accepted continuation or advance the next Product Part unless the current Product Part managed commit succeeds.
+- Product Part subturn feedback must be target-scoped: validate and report only the current target artifact, not the whole `0/4`, `1/4`, `4/4` aggregate stage.
+- Include the Product Part index status update in the active Product Part allowlist, or move status updates fully into Core after the commit. Sibling Product Part files must remain outside the allowlist.
+- Keep the session stopped before the next release build until focused regressions pass and the user explicitly confirms another release assembly.
