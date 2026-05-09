@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.216] - 2026-05-09
+### Fixed
+- **Managed documentation providers no longer own durable commits.** Application Skeleton and Quality Gates prompts now stop at content readiness; Core owns validation, staging, managed commits, child-plan advancement, workspace ledger updates, continuation, and downstream unlock.
+- **Initial managed prompts receive the same context contract as continuations.** Diagram Modules, Application Skeleton, and Quality Gates cold starts now receive a Core-built managed workflow context bundle with active stage, active plan path, current task, expected commit, and last accepted commit data.
+- **Rollover prompts are covered by the managed ownership invariant.** Documentation rollover coverage now verifies managed stages keep the context bundle and do not expose provider-side `npm run plan:commit`, `git commit`, or staging instructions.
+
+### Tests
+- **Focused bundled prompt, Project Manager prompt-pack, managed initial-context, managed Core bundle, and documentation rollover tests passed before release assembly.**
+
 ## [1.2.215] - 2026-05-09
 ### Fixed
 - **Core managed continuation now belongs to the post-turn pipeline.** Provider-visible acceptance and continuation messages are dispatched only after provider message flush and Core turn arbitration, not from workflow state read paths.

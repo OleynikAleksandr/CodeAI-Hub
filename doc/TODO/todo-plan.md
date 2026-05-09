@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "a4f794d44",
+  "lastRecordedCommit": "78aae1cdc",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase3.task2",
-  "expectedCommitMessage": "docs: align managed lifecycle planning notes",
+  "currentTaskId": "prompt-ownership.phase4.task2",
+  "expectedCommitMessage": "docs: prepare 1.2.216 managed prompt ownership release",
   "debt": {
-    "expectedCommitMessage": "docs: align managed lifecycle planning notes",
-    "preCommitHead": "a4f794d44",
+    "expectedCommitMessage": "docs: prepare 1.2.216 managed prompt ownership release",
+    "preCommitHead": "78aae1cdc",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase3.task2"
+    "taskId": "prompt-ownership.phase4.task2"
   }
 }
 ```
@@ -77,7 +77,7 @@
 13. [DONE] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
 14. [DONE] Git Commit: `docs: sync managed prompt ownership ssot` (hash: 58ac41903)
 15. [DONE] `prompt-ownership.phase3.task2` Align the active managed-workspace planning notes with Core-owned managed commits after the whole-prompt audit (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md`; expected commit: `docs: align managed lifecycle planning notes`).
-16. [PENDING] Git Commit: `docs: align managed lifecycle planning notes` (hash: TBD)
+16. [DONE] Git Commit: `docs: align managed lifecycle planning notes` (hash: 78aae1cdc)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-09)
 
@@ -85,17 +85,21 @@
 
 17. [DONE] `prompt-ownership.phase4.task1` Run targeted bundled-template/prompt tests and relevant typecheck/build checks for the touched surfaces (scope: `packages/core/src/templates`, `src/client/project-manager/services`; expected commit: `test: verify managed prompt ownership repair`).
 18. [DONE] Git Commit: `test: verify managed prompt ownership repair` (hash: 82fb6aec6)
+19. [DONE] `prompt-ownership.phase4.task2` Prepare release documentation for v1.2.216 before version bump and package assembly (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.216 managed prompt ownership release`).
+20. [PENDING] Git Commit: `docs: prepare 1.2.216 managed prompt ownership release` (hash: TBD)
+21. [TODO] `prompt-ownership.phase4.task3` Build v1.2.216 release artifacts with the standard release scripts after the release-doc commit (scope: release scripts/package manifests/artifacts; expected commit: `chore: build 1.2.216 release artifacts`).
+22. [TODO] Git Commit: `chore: build 1.2.216 release artifacts` (hash: TBD)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-09)
 
 ### Stream: User Retest
 
-19. [TODO] `prompt-ownership.phase5.task1` User retests Application Skeleton / Quality Gates provider turns and confirms providers stop after content readiness while Core owns commits (scope: user workflow retest; expected commit: `test: record managed prompt ownership acceptance`).
-20. [TODO] Git Commit: `test: record managed prompt ownership acceptance` (hash: TBD)
+23. [TODO] `prompt-ownership.phase5.task1` User retests Application Skeleton / Quality Gates provider turns and confirms providers stop after content readiness while Core owns commits (scope: user workflow retest; expected commit: `test: record managed prompt ownership acceptance`).
+24. [TODO] Git Commit: `test: record managed prompt ownership acceptance` (hash: TBD)
 
 ## Phase 6 — Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-21. [TODO] `prompt-ownership.phase6.task1` After explicit user acceptance, archive this plan and leave terminal NONE state (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit: `docs: close managed prompt ownership repair`).
-22. [TODO] Git Commit: `docs: close managed prompt ownership repair` (hash: TBD)
+25. [TODO] `prompt-ownership.phase6.task1` After explicit user acceptance, archive this plan and leave terminal NONE state (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit: `docs: close managed prompt ownership repair`).
+26. [TODO] Git Commit: `docs: close managed prompt ownership repair` (hash: TBD)
