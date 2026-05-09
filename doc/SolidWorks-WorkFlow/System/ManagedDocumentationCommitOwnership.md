@@ -84,9 +84,11 @@ Out-of-owner dirty files are reported as Core acceptance feedback, not as a shel
 
 Managed documentation agents must not be required to run `npm run plan:commit`.
 
-Their prompt may ask them to finish with a content-level readiness statement, but the durable acceptance statement belongs to Core after the commit transaction succeeds.
+Their prompt may ask them to finish with a content-level readiness statement, but the durable acceptance statement belongs to Core after the commit transaction succeeds. Managed-stage prompts must not ask providers to stage files, run Git commands, run plan commands, or describe a provider-side "before committing" step. Words like "staged artifact" remain valid only as workflow terminology; they must not become an instruction to run `git add`.
 
 Core-owned prompts for managed stages are context bundles, not link lists. When Core has the source text, it embeds that text in the initial, repair, continuation, and rollover prompt. Provider-visible links to input artifacts are allowed only for explicitly marked fallback cases such as truncated or stale bundles. Output target paths remain visible because agents need them to write the active artifact.
+
+Every managed-stage provider prompt must include an explicit managed context preflight. The provider may write artifacts only when the prompt contains a Core-owned `## Managed Workflow Context Bundle` with a Plan Status line such as `activeStage: "diagram_modules"`, `activeStage: "application_skeleton"`, or `activeStage: "quality_gates"` for the current step. If that bundle or active-stage line is absent, the provider must stop before writing files and report a Core preflight failure instead of reading plan files, running `npm run plan:status`, staging files, or committing.
 
 For `Diagram Modules`, Core owns the automatic Phase 1 conversation until all Product Parts declared in `product-parts.index.md` have been accepted and committed one at a time. After that, Core stops automatic continuation and opens the user-owned review phase; every later user correction is a separate Core-tracked microtask and commit boundary.
 

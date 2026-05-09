@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "75b59ad72",
+  "lastRecordedCommit": "58822ca52",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase2.task1",
-  "expectedCommitMessage": "fix: align managed prompt context bundle wording",
+  "currentTaskId": "prompt-ownership.phase3.task1",
+  "expectedCommitMessage": "docs: sync managed prompt ownership ssot",
   "debt": {
-    "expectedCommitMessage": "fix: align managed prompt context bundle wording",
-    "preCommitHead": "75b59ad72",
+    "expectedCommitMessage": "docs: sync managed prompt ownership ssot",
+    "preCommitHead": "58822ca52",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase2.task1"
+    "taskId": "prompt-ownership.phase3.task1"
   }
 }
 ```
@@ -64,14 +64,14 @@
 ### Stream: Prompt Context Bundle
 
 7. [DONE] `prompt-ownership.phase2.task1` Ensure cold-start managed workflow prompts receive the same Core-owned managed context bundle contract as continuation prompts, or stop claiming embedded plan state exists (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts`; expected commit: `fix: align managed prompt context bundle wording`).
-8. [PENDING] Git Commit: `fix: align managed prompt context bundle wording` (hash: TBD)
+8. [DONE] Git Commit: `fix: align managed prompt context bundle wording` (hash: 58822ca52)
 
 ## Phase 3 — SSOT Sync (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Documentation
 
-9. [TODO] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
-10. [TODO] Git Commit: `docs: sync managed prompt ownership ssot` (hash: TBD)
+9. [DONE] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
+10. [PENDING] Git Commit: `docs: sync managed prompt ownership ssot` (hash: TBD)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-09)
 

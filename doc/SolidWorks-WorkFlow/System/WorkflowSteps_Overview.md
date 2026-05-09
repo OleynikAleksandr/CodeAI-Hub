@@ -61,7 +61,7 @@ Diagram Modules
 - создаёт tracked control plane `.codeai-hub/workflow/` и ignored machine state `.codeai-hub/runtime/`, `.codeai-hub/logs/`, `.codeai-hub/cache/`;
 - фиксирует `Description` и `Virtual Simulation` как read-only baselines: артефакты и история доступны для просмотра, но новые сообщения и прямые правки этих шагов блокируются.
 
-После этого `Application Skeleton`, `Quality Gates Baseline` и Development Tree работают внутри уже управляемого workspace. Агентам не передаётся ownership за Git, hooks или plan scripts: они следуют текущему `todo-plan.md`, а Core валидирует, ремонтирует и расширяет lifecycle алгоритмически.
+После этого `Application Skeleton`, `Quality Gates Baseline` и Development Tree работают внутри уже управляемого workspace. Агентам не передаётся ownership за Git, hooks или plan scripts: они готовят только содержимое своих артефактов, а Core валидирует, ремонтирует и расширяет lifecycle алгоритмически. Prompt каждого managed stage обязан иметь Core-owned context preflight: без `## Managed Workflow Context Bundle` и строки `activeStage: "<stage>"` агент останавливается до записи файлов и сообщает Core preflight failure.
 
 ### Core Runtime как Product Part с контрактами
 
@@ -78,6 +78,8 @@ Core Runtime является самостоятельным `Product Part`, а 
 2. Core flushes already received assistant/dialog messages into the session history and UI stream.
 3. Core runs post-turn arbitration: summary/rollover context, plan status, current microtask/target context, managed Git boundary.
 4. Core sends exactly one provider-visible decision for the next turn: acceptance continuation, rejection/repair feedback, pause, or handoff to user phase.
+
+Provider-visible managed prompts are content-readiness contracts. Они не должны просить агента выполнить `git add`, `git commit`, `npm run plan:commit` или "commit before final response". Даже когда шаг физически создаёт несколько файлов (`Application Skeleton`, `Quality Gates Baseline`), durable acceptance происходит только в Core-owned post-turn transaction.
 
 Любой код, который читает workflow state для Project Manager, sidebar, cards, status panel или artifact panes, обязан оставаться side-effect free относительно provider-visible messages. Read-path может возвращать snapshot и diagnostics, но не должен запускать acceptance, managed commit или continuation. Если нескольким внутренним модулям Core нужны данные одного turn-а, они получают их из общего post-turn contract/cluster, а не каждый из своего наблюдателя.
 
@@ -251,7 +253,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Этот шаг выбирает языки, фреймворки, package layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. После explicit acceptance тот же агент материализует real project scaffold и Product Part / Cluster / Module folder projection. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
 
-`Application Skeleton` получает уже управляемый workspace. Он не создаёт Git repo, hooks, Plan Orchestrator scripts или `.codeai-hub/workflow`; эти элементы принадлежат Core lifecycle. Если пользователь просит изменить skeleton, агент обновляет текущий plan stream и materialize-ит файлы только через managed commit flow.
+`Application Skeleton` получает уже управляемый workspace. Он не создаёт Git repo, hooks, Plan Orchestrator scripts или `.codeai-hub/workflow`; эти элементы принадлежат Core lifecycle. Если пользователь просит изменить skeleton, агент обновляет только свои canonical artifacts / materialized skeleton files и завершает turn content-readiness сообщением. Core выполняет managed commit flow и продвижение child plan.
 
 ### Входы
 
