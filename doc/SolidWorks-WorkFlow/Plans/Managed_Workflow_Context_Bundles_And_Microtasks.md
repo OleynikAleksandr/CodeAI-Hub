@@ -354,3 +354,9 @@ The release must include:
 - blocked automatic Product Part continuation while managed commit state is dirty or out-of-target;
 - target-scoped managed commit feedback that does not ask the provider to create every Product Part;
 - Product Part index status updates included in the active Product Part managed commit.
+
+## 20. Product Part Acceptance Repair Release Build Evidence
+
+- `./scripts/build-all.sh` — passed, produced provider/core/UI/launcher artifacts for version `1.2.210`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed, verified SDK exclusions, local artifacts, markdown links, duplication advisory gate, VSIX package surface, and produced `codeai-hub-1.2.210.vsix`.
+- Release artifacts are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.

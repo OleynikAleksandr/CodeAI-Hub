@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "74ec8f12d",
+  "lastRecordedCommit": "a99795475",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14d.task2",
-  "expectedCommitMessage": "docs: prepare product part acceptance release",
+  "currentTaskId": "managed-workflow-context.phase14d.task3",
+  "expectedCommitMessage": "chore: build product part acceptance release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare product part acceptance release",
-    "preCommitHead": "74ec8f12d",
+    "expectedCommitMessage": "chore: build product part acceptance release artifacts",
+    "preCommitHead": "a99795475",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14d.task2"
+    "taskId": "managed-workflow-context.phase14d.task3"
   }
 }
 ```
@@ -196,9 +196,9 @@
 59. [DONE] `managed-workflow-context.phase14d.task1` Record explicit user confirmation to assemble a release for the Product Part acceptance repair stream before changing release notes or running release automation (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record product part acceptance release decision`).
 60. [DONE] Git Commit: `docs: record product part acceptance release decision` (hash: 74ec8f12d)
 61. [DONE] `managed-workflow-context.phase14d.task2` Prepare README and CHANGELOG for the Product Part acceptance repair release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`; expected commit: `docs: prepare product part acceptance release`).
-62. [PENDING] Git Commit: `docs: prepare product part acceptance release` (hash: TBD)
-63. [TODO] `managed-workflow-context.phase14d.task3` Run release automation and verify VSIX/tarball outputs for the Product Part acceptance repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build product part acceptance release artifacts`).
-64. [TODO] Git Commit: `chore: build product part acceptance release artifacts` (hash: TBD)
+62. [DONE] Git Commit: `docs: prepare product part acceptance release` (hash: a99795475)
+63. [DONE] `managed-workflow-context.phase14d.task3` Run release automation and verify VSIX/tarball outputs for the Product Part acceptance repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build product part acceptance release artifacts`).
+64. [PENDING] Git Commit: `chore: build product part acceptance release artifacts` (hash: TBD)
 65. [TODO] `managed-workflow-context.phase14d.task4` User retests the Product Part acceptance repair release with Claude Diagram Modules to confirm target-scoped feedback, blocked continuation on failed managed commit, and Product Part index status commit ownership (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record product part acceptance release retest`).
 66. [TODO] Git Commit: `docs: record product part acceptance release retest` (hash: TBD)
 
