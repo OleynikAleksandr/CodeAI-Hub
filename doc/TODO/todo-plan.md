@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "78aae1cdc",
+  "lastRecordedCommit": "1a97972e8",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase4.task2",
-  "expectedCommitMessage": "docs: prepare 1.2.216 managed prompt ownership release",
+  "currentTaskId": "prompt-ownership.phase4.task3",
+  "expectedCommitMessage": "chore: build 1.2.216 release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.216 managed prompt ownership release",
-    "preCommitHead": "78aae1cdc",
+    "expectedCommitMessage": "chore: build 1.2.216 release artifacts",
+    "preCommitHead": "1a97972e8",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase4.task2"
+    "taskId": "prompt-ownership.phase4.task3"
   }
 }
 ```
@@ -86,9 +86,9 @@
 17. [DONE] `prompt-ownership.phase4.task1` Run targeted bundled-template/prompt tests and relevant typecheck/build checks for the touched surfaces (scope: `packages/core/src/templates`, `src/client/project-manager/services`; expected commit: `test: verify managed prompt ownership repair`).
 18. [DONE] Git Commit: `test: verify managed prompt ownership repair` (hash: 82fb6aec6)
 19. [DONE] `prompt-ownership.phase4.task2` Prepare release documentation for v1.2.216 before version bump and package assembly (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.216 managed prompt ownership release`).
-20. [PENDING] Git Commit: `docs: prepare 1.2.216 managed prompt ownership release` (hash: TBD)
-21. [TODO] `prompt-ownership.phase4.task3` Build v1.2.216 release artifacts with the standard release scripts after the release-doc commit (scope: release scripts/package manifests/artifacts; expected commit: `chore: build 1.2.216 release artifacts`).
-22. [TODO] Git Commit: `chore: build 1.2.216 release artifacts` (hash: TBD)
+20. [DONE] Git Commit: `docs: prepare 1.2.216 managed prompt ownership release` (hash: 1a97972e8)
+21. [DONE] `prompt-ownership.phase4.task3` Build v1.2.216 release artifacts with the standard release scripts after the release-doc commit (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.216 release artifacts`).
+22. [PENDING] Git Commit: `chore: build 1.2.216 release artifacts` (hash: TBD)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-09)
 
