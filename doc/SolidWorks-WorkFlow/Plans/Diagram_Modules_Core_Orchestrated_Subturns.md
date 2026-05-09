@@ -6,6 +6,7 @@
 **Implementation status:** In execution. Core subturn progress, continuation prompts, repair diagnostics, post-turn validation trigger, input lock, UI projection, and Claude micro-fragment filtering are implemented in the active release scope.
 **Owner:** Oleksandr + Codex
 **Related audit:** `doc/Claude_Diagram_Modules_Provider_Audit.md`
+**Retest finding:** 2026-05-09 Claude retest showed Core still emitted legacy aggregate `0/4` failure feedback during a pending single-artifact subturn when the accepted index was waiting for a Core-owned managed commit. That stale aggregate feedback reached Claude before/alongside the continuation turn and caused Claude to create all Product Part files in one turn.
 
 ## 1. Problem
 
@@ -202,6 +203,13 @@ Core must keep validation executable and specific:
 - Feedback is suppressed if Git HEAD/progress changed since the feedback candidate was created and a fresh read no longer matches the failure.
 
 Feedback text must tell the agent whether it is a repair turn or a wait/no-op turn. A Core-owned dirty commit gate must not be phrased as a provider formatting problem.
+
+Retest refinement:
+
+- A `pending` Diagram Modules Product Part subturn is never a provider failure, even when Diagram Modules-owned files are dirty because Core has not committed the accepted previous artifact yet.
+- During `pending` subturns, Core must not emit aggregate `0/N`, `1/N`, `2/N`, or `3/N` failure feedback to the provider.
+- Aggregate missing-artifact feedback is valid only at final aggregate validation, not between Core-orchestrated Product Part turns.
+- If a continuation prompt is sent, it must explicitly state that the current target artifact is authoritative and that previous aggregate feedback or already-written sibling files do not expand the turn scope.
 
 ## 8. Implementation Streams
 
