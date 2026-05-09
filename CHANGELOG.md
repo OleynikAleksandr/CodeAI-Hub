@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.208] - 2026-05-09
+### Changed
+- **Managed workflow rollover now uses embedded Core context bundles.** Diagram Modules, Application Skeleton, and Quality Gates continuation sessions receive upstream artifact text, workspace/stage plan text, derived plan status, current target, and accepted commit context instead of path-based recovery instructions.
+- **Managed stage plans now track accepted microtask boundaries.** Diagram Modules creates a commit task for the index and for each Product Part from the accepted index; Application Skeleton and Quality Gates split draft and materialized/integration target groups into Core-owned tasks.
+- **Development Tree node prompts no longer expose embedded input artifact paths.** Product Part, Cluster, and Module first prompts keep source text inline and show fallback paths only when an excerpt is explicitly truncated.
+
+### Tests
+- **Targeted coverage verifies managed context bundles, documentation rollover, Diagram Modules/Application Skeleton/Quality Gates managed commits, Development Tree node prompts, Core build, Project Manager bundle generation, and webview typecheck.**
+
 ## [1.2.207] - 2026-05-09
 ### Fixed
 - **Claude Diagram Modules no longer receives stale aggregate failure feedback during pending Product Part subturns.** Core suppresses legacy `0/N`, `1/N`, `2/N`, and `3/N` aggregate failure feedback while a single Product Part continuation is pending, including the Core-owned dirty managed commit gate after index acceptance.
