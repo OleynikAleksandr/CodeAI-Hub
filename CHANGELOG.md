@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.207] - 2026-05-09
+### Fixed
+- **Claude Diagram Modules no longer receives stale aggregate failure feedback during pending Product Part subturns.** Core suppresses legacy `0/N`, `1/N`, `2/N`, and `3/N` aggregate failure feedback while a single Product Part continuation is pending, including the Core-owned dirty managed commit gate after index acceptance.
+- **Diagram Modules continuation turns now state the authoritative scope explicitly.** The provider is told that the current Core target supersedes older aggregate missing-artifact feedback and that already-written sibling Product Part files do not expand the turn scope.
+
+### Tests
+- **Targeted coverage verifies pending-subturn feedback suppression, Diagram Modules continuation prompt hardening, Core build, webview typecheck, and webview bundle generation.**
+
 ## [1.2.206] - 2026-05-09
 ### Changed
 - **Diagram Modules now advances as Core-orchestrated subturns.** Providers create `product-parts.index.md` first, then Core validates, commits, and sends exactly one Product Part target per continuation turn.
