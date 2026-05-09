@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "58d8b35d3",
+  "lastRecordedCommit": "0b503c65c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14i.task2",
-  "expectedCommitMessage": "chore: build managed continuation boundary release artifacts",
+  "currentTaskId": "managed-workflow-context.phase14i.task3",
+  "expectedCommitMessage": "docs: hand off managed continuation boundary release",
   "debt": {
-    "expectedCommitMessage": "chore: build managed continuation boundary release artifacts",
-    "preCommitHead": "58d8b35d3",
+    "expectedCommitMessage": "docs: hand off managed continuation boundary release",
+    "preCommitHead": "0b503c65c",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14i.task2"
+    "taskId": "managed-workflow-context.phase14i.task3"
   }
 }
 ```
@@ -257,9 +257,9 @@
 95. [DONE] `managed-workflow-context.phase14i.task1` Prepare README and CHANGELOG for the managed continuation boundary release after explicit user authorization to assemble a new release without waiting for another confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed continuation boundary release`).
 96. [DONE] Git Commit: `docs: prepare managed continuation boundary release` (hash: 58d8b35d3)
 97. [DONE] `managed-workflow-context.phase14i.task2` Run release automation and verify VSIX/tarball outputs for the managed continuation boundary fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build managed continuation boundary release artifacts`).
-98. [PENDING] Git Commit: `chore: build managed continuation boundary release artifacts` (hash: TBD)
-99. [TODO] `managed-workflow-context.phase14i.task3` Hand off the built managed continuation boundary release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off managed continuation boundary release`).
-100. [TODO] Git Commit: `docs: hand off managed continuation boundary release` (hash: TBD)
+98. [DONE] Git Commit: `chore: build managed continuation boundary release artifacts` (hash: 0b503c65c)
+99. [DONE] `managed-workflow-context.phase14i.task3` Hand off the built managed continuation boundary release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off managed continuation boundary release`).
+100. [PENDING] Git Commit: `docs: hand off managed continuation boundary release` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
