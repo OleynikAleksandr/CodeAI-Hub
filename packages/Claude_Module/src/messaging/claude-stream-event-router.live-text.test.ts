@@ -5,6 +5,7 @@ import type { ClaudeStreamMessage } from "../types";
 import { ClaudeContentStreamHandler } from "./claude-content-stream-handler";
 import { ClaudeStreamEventRouter } from "./claude-stream-event-router";
 import { ClaudeTextLiveBuffer } from "./claude-text-live-buffer";
+import { isClaudeDisplayMicroChunk } from "./claude-thinking-dialog-emitter";
 import { ClaudeThinkingLiveBuffer } from "./claude-thinking-live-buffer";
 
 interface AssistantEmission {
@@ -134,6 +135,19 @@ const buildAssistantTextMessage = (
     id: `msg-${uuid}`,
     content: [{ type: "text", text } as never],
   },
+});
+
+test("isClaudeDisplayMicroChunk filters punctuation and short word suffix cards", () => {
+  assert.equal(isClaudeDisplayMicroChunk("."), true);
+  assert.equal(isClaudeDisplayMicroChunk("ceptance."), true);
+  assert.equal(isClaudeDisplayMicroChunk("Ференс."), true);
+  assert.equal(isClaudeDisplayMicroChunk("Core acceptance."), true);
+  assert.equal(
+    isClaudeDisplayMicroChunk(
+      "Core accepted the previous Diagram Modules artifact."
+    ),
+    false
+  );
 });
 
 test("ClaudeStreamEventRouter emits live assistant text segment when text_delta crosses flush threshold", async () => {

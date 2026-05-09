@@ -5,7 +5,7 @@ import { splitClaudeDialogChunks } from "./claude-readable-text-chunker";
 
 const THINKING_DIALOG_MAX_CHARS = 900;
 const MICRO_CHUNK_MAX_CHARS = 24;
-const LATIN_WORD_SUFFIX_REGEX = /^[A-Za-z][A-Za-z'-]{0,15}[.!?…]$/u;
+const WORD_SUFFIX_REGEX = /^\p{L}[\p{L}'-]{0,15}[.!?…]$/u;
 const CORE_ACCEPTANCE_FRAGMENT_REGEX = /^core acceptance\.$/iu;
 const PUNCTUATION_ONLY_REGEX = /^[\p{P}\p{S}]+$/u;
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -23,7 +23,7 @@ export const isClaudeDisplayMicroChunk = (content: string): boolean => {
     return false;
   }
   return (
-    LATIN_WORD_SUFFIX_REGEX.test(trimmed) ||
+    WORD_SUFFIX_REGEX.test(trimmed) ||
     CORE_ACCEPTANCE_FRAGMENT_REGEX.test(trimmed)
   );
 };
