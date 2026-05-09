@@ -8,12 +8,6 @@ const execFileAsync = promisify(execFile);
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const sentSignatures = new Set<string>();
 
-type TurnBoundaryAwareGateway = WorkflowAgentAcceptanceFeedbackGateway & {
-  readonly waitForManagedContinuationTurnBoundary?: (
-    sessionId: string
-  ) => Promise<boolean>;
-};
-
 const readStringArray = (value: unknown): readonly string[] =>
   Array.isArray(value)
     ? value.filter((entry): entry is string => typeof entry === "string")
@@ -119,14 +113,6 @@ export const sendDiagramModulesContinuationIfReady = async (params: {
   }
   const sessionId = resolveLatestStageSessionId(params.chains);
   if (!sessionId) {
-    return;
-  }
-  const turnBoundaryGateway = params.gateway as TurnBoundaryAwareGateway;
-  const turnBoundarySettled =
-    (await turnBoundaryGateway.waitForManagedContinuationTurnBoundary?.(
-      sessionId
-    )) ?? true;
-  if (!turnBoundarySettled) {
     return;
   }
   const workspaceHead = await readWorkspaceHead(params.workspaceRoot);
