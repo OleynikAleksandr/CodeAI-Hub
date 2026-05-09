@@ -40,9 +40,9 @@ Draft algorithm:
 
 Before the draft-review response:
 
-- stage only the two canonical Quality Gates artifacts;
+- leave only the two canonical Quality Gates artifact changes ready for Core inspection;
 - report that the draft Quality Gates artifacts are ready for Core acceptance;
-- Core owns staging, the managed commit, post-commit validation, and child-plan advancement.
+- Core owns all staging, the managed commit, post-commit validation, and child-plan advancement.
 
 If the user requests draft corrections before integration, update only the canonical artifacts and report readiness again. If the child plan has already advanced to integration but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
 

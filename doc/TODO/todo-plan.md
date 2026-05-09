@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "c44a1a7c5",
+  "lastRecordedCommit": "230e702d6",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase1.task1",
-  "expectedCommitMessage": "fix: remove application skeleton agent commit wording",
+  "currentTaskId": "prompt-ownership.phase1.task2",
+  "expectedCommitMessage": "fix: remove quality gates agent staging wording",
   "debt": {
-    "expectedCommitMessage": "fix: remove application skeleton agent commit wording",
-    "preCommitHead": "c44a1a7c5",
+    "expectedCommitMessage": "fix: remove quality gates agent staging wording",
+    "preCommitHead": "230e702d6",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase1.task1"
+    "taskId": "prompt-ownership.phase1.task2"
   }
 }
 ```
@@ -55,9 +55,9 @@
 ### Stream: Prompt Assets
 
 3. [DONE] `prompt-ownership.phase1.task1` Remove provider-side staging/commit language from Application Skeleton prompt and lock the bundled-template regression (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove application skeleton agent commit wording`).
-4. [PENDING] Git Commit: `fix: remove application skeleton agent commit wording` (hash: TBD)
-5. [TODO] `prompt-ownership.phase1.task2` Remove provider-side staging language from Quality Gates prompt and lock the bundled-template regression (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove quality gates agent staging wording`).
-6. [TODO] Git Commit: `fix: remove quality gates agent staging wording` (hash: TBD)
+4. [DONE] Git Commit: `fix: remove application skeleton agent commit wording` (hash: 230e702d6)
+5. [DONE] `prompt-ownership.phase1.task2` Remove provider-side staging language from Quality Gates prompt and lock the bundled-template regression (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove quality gates agent staging wording`).
+6. [PENDING] Git Commit: `fix: remove quality gates agent staging wording` (hash: TBD)
 
 ## Phase 2 — Initial Managed Context (owner: Codex, updated: 2026-05-09)
 

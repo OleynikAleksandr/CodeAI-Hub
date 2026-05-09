@@ -25,8 +25,9 @@ const AGGREGATE_PRE_PUSH_RE = /qg:before-push/;
 const PRESERVE_PLAN_VALIDATE_RE =
   /Preserve existing Core lifecycle commands such as `plan:validate`/;
 const CORE_OWNS_COMMIT_RE =
-  /Core owns staging, the managed commit, post-commit validation, and child-plan advancement/;
+  /Core owns all staging, the managed commit, post-commit validation, and child-plan advancement/;
 const PLAN_COMMIT_RE = /npm run plan:commit/;
+const PROVIDER_STAGE_ONLY_RE = /stage only the two canonical/u;
 const CLEAN_GIT_RE = /git status --short/;
 const CORE_UNLOCK_RE =
   /unlocked` language requires Core confirmation|Core has confirmed the Quality Gates root gate is integrated\/unlocked/s;
@@ -86,6 +87,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
   assert.match(prompt, CORE_OWNS_COMMIT_RE);
   assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
+  assert.doesNotMatch(prompt, PROVIDER_STAGE_ONLY_RE);
   assert.doesNotMatch(prompt, CLEAN_GIT_RE);
   assert.match(prompt, CORE_UNLOCK_RE);
   assert.match(prompt, GATE_CONTRACT_REVISION_RE);
