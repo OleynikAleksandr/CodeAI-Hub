@@ -5,6 +5,7 @@ import {
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import type { DocumentationRolloverContext } from "./session-request-handler-documentation-rollover-state";
+import { buildManagedWorkflowContextBundle } from "./session-request-handler-managed-context-bundle";
 
 const STAGE_FILE_NAMES: Record<string, string> = {
   description: "Final_Description.md",
@@ -40,50 +41,18 @@ const buildRelativePath = (context: DocumentationRolloverContext): string => {
 const buildInputLines = (
   context: DocumentationRolloverContext
 ): readonly string[] => {
+  if (MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
+    return [
+      "Input documents and managed workflow state are embedded below by Core. Do not reread input documents by path unless Core marks the bundle as truncated or stale.",
+    ];
+  }
   const descriptionPath = `.codeai-hub/${context.workspaceSlug}/description/Final_Description.md`;
-  const simulationPath = `.codeai-hub/${context.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
   if (context.stageId === "virtual_simulation") {
     return [`Final_Description.md: \`${descriptionPath}\``];
-  }
-  if (context.stageId === "diagram_modules") {
-    return [
-      `Final_Description.md: \`${descriptionPath}\``,
-      `virtual-simulation.md: \`${simulationPath}\``,
-      `Product Part files: \`.codeai-hub/${context.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
-      `Layout sidecar: \`.codeai-hub/${context.workspaceSlug}/diagram_modules/module-map.flow.json\``,
-    ];
-  }
-  if (context.stageId === "application_skeleton") {
-    return [
-      `Diagram Modules artifacts: \`.codeai-hub/${context.workspaceSlug}/diagram_modules/product-parts.index.md\` and \`.codeai-hub/${context.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
-      `Application Skeleton artifacts: \`.codeai-hub/${context.workspaceSlug}/application_skeleton/application-skeleton.md\` and \`.codeai-hub/${context.workspaceSlug}/application_skeleton/application-skeleton-map.json\``,
-    ];
-  }
-  if (context.stageId === "quality_gates") {
-    return [
-      `Application Skeleton artifacts: \`.codeai-hub/${context.workspaceSlug}/application_skeleton/application-skeleton.md\` and \`.codeai-hub/${context.workspaceSlug}/application_skeleton/application-skeleton-map.json\``,
-      `Quality Gates artifacts: \`.codeai-hub/${context.workspaceSlug}/quality_gates/quality-gates.md\` and \`.codeai-hub/${context.workspaceSlug}/quality_gates/quality-gates.json\``,
-    ];
   }
   return [
     "Use the existing source/questionnaire context already represented by the workflow artifacts.",
   ];
-};
-
-const buildManagedWorkspaceRecoveryBlock = (
-  context: DocumentationRolloverContext
-): string | null => {
-  if (!MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
-    return null;
-  }
-  return [
-    "## Managed Workspace Recovery",
-    "- This filesystem stage resumes from the managed workspace control plane, not from legacy continuity reports.",
-    "- First read `doc/TODO/workspace.plan.md`, then read the active child plan named by `activePlanPath`.",
-    "- Run `npm run plan:status` and continue the current task/expected commit reported by the plan.",
-    "- Use `.codeai-hub/workflow/revisions/` as the workflow revision ledger when downstream impact or recovery context is needed.",
-    "- Do not search for legacy recovery reports and do not create a legacy root todo plan.",
-  ].join("\n");
 };
 
 const resolveContractPrompt = async (stageId: string): Promise<string> => {
@@ -99,7 +68,8 @@ const resolveContractPrompt = async (stageId: string): Promise<string> => {
 };
 
 const buildWorkflowStartContract = async (
-  context: DocumentationRolloverContext
+  context: DocumentationRolloverContext,
+  managedBundleText: string | null
 ): Promise<string> => {
   const relativePath = buildRelativePath(context);
   const absolutePath = path.join(context.workspacePath, relativePath);
@@ -113,6 +83,7 @@ const buildWorkflowStartContract = async (
     `Target path (absolute): \`${absolutePath}\``,
     ...buildInputLines(context),
     `Output file name: \`${fileName}\``,
+    managedBundleText,
   ].join("\n\n");
 };
 
@@ -123,16 +94,20 @@ export const buildDocumentationContinuationEnvelope = async (options: {
   if (!options.context) {
     return options.userMessage;
   }
-  const managedRecoveryBlock = buildManagedWorkspaceRecoveryBlock(
+  const managedBundle = await buildManagedWorkflowContextBundle(
     options.context
   );
   return [
-    await buildWorkflowStartContract(options.context),
+    await buildWorkflowStartContract(
+      options.context,
+      managedBundle?.rendered ?? null
+    ),
     "## Continuation Mode",
     "- This is a continuation of the same Documentation Tree stage after context rollover, not a cold start.",
-    "- Use the existing canonical workflow artifacts as the authoritative current state.",
+    "- Use the embedded Core context bundle and canonical workflow artifacts as the authoritative current state.",
+    "- Continue only the current managed microtask/target named by Core, then stop for Core acceptance.",
     "- Do not create, read, or update continuity report files.",
-    managedRecoveryBlock,
+    "- Do not search for legacy recovery reports and do not create a legacy root todo plan.",
     "- The previous provider session ended after the assistant message below.",
     "- The user's message after this block is the user's answer or next instruction in response to that assistant message.",
     "## Last Assistant Message Before Rollover",

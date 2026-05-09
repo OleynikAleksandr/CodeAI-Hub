@@ -95,7 +95,7 @@ test("Documentation Tree continuation envelope is attached to the first real use
     assert.equal(providerSends[0]?.content.includes("not a cold start"), true);
     assert.equal(
       providerSends[0]?.content.includes(
-        "existing canonical workflow artifacts as the authoritative current state"
+        "embedded Core context bundle and canonical workflow artifacts as the authoritative current state"
       ),
       true
     );
@@ -180,12 +180,13 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
     userMessage: "Продолжай.",
   });
 
-  assert.equal(envelope.includes("## Managed Workspace Recovery"), true);
-  assert.equal(envelope.includes("doc/TODO/workspace.plan.md"), true);
-  assert.equal(envelope.includes("activePlanPath"), true);
+  assert.equal(envelope.includes("## Managed Workspace Recovery"), false);
+  assert.equal(envelope.includes("## Managed Workflow Context Bundle"), true);
+  assert.equal(envelope.includes("Workspace Plan Text"), true);
+  assert.equal(envelope.includes("Active Stage Todo Plan Text"), true);
   assert.equal(envelope.includes("legacy root todo plan"), true);
   assert.equal(envelope.includes("doc/TODO/todo-plan.md"), false);
-  assert.equal(envelope.includes("npm run plan:status"), true);
-  assert.equal(envelope.includes(".codeai-hub/workflow/revisions/"), true);
+  assert.equal(envelope.includes("npm run plan:status"), false);
+  assert.equal(envelope.includes("First read"), false);
   assert.equal(envelope.includes("application-skeleton-map.json"), true);
 });
