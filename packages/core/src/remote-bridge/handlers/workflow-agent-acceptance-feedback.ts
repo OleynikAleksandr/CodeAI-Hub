@@ -387,7 +387,7 @@ export class WorkflowAgentAcceptanceFeedback {
   }): Promise<void> {
     const progress = params.progress;
     const errors = progress ? createDiagramModulesErrors(progress) : [];
-    const request =
+    const request: StageFeedbackRequest | null =
       progress && errors.length > 0
         ? {
             actionLines: [...createDiagramModulesActionLines(progress)],

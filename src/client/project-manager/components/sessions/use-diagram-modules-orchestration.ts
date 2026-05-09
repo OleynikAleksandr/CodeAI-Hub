@@ -152,7 +152,9 @@ export const useDiagramModulesOrchestration = (options: {
           params.intent.workspaceSlug,
           params.intent.workspacePath
         );
-        const progress = readDiagramModulesProgress(state.diagramModulesProgress);
+        const progress = readDiagramModulesProgress(
+          state?.diagramModulesProgress
+        );
         if (
           progress?.substep === "generate_product_part" &&
           progress.activeSubturnStatus === "pending" &&

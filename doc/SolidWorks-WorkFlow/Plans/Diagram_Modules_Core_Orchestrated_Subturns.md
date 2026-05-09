@@ -309,7 +309,16 @@ Regression acceptance:
 - Dialog ordering shows Core feedback before the reasoning that reacts to it.
 - One-character Claude partial messages are not rendered as standalone dialog cards.
 
-## 10. Non-Goals
+## 10. Verification Evidence
+
+Updated 2026-05-09:
+
+- Core progress and acceptance feedback tests passed: `npx tsx --test packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`.
+- Project Manager orchestration and tree projection tests passed: `npx tsx --test src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`.
+- Claude stream fragment regression test passed: `npx tsx --test packages/Claude_Module/src/messaging/claude-stream-event-router.live-text.test.ts`.
+- Affected builds passed: `npm run typecheck:webview`, `npm run build --workspace packages/Claude_Module`, `npm run build --workspace packages/core`.
+
+## 11. Non-Goals
 
 - Do not rely on provider self-discipline as the only guard.
 - Do not ask the user to manually continue each Product Part in the normal path.
@@ -317,7 +326,7 @@ Regression acceptance:
 - Do not replace executable validators with prompt-only instructions.
 - Do not delay the required Core freshness/input-lock fix just because the workflow is split into smaller subturns.
 
-## 11. Open Questions
+## 12. Open Questions
 
 1. Should the index acceptance commit be separate from each Product Part commit, or should Core support optional squash at final stage acceptance?
 2. Should the UI expose a user override to pause between Product Parts, or should normal progression always be automatic?

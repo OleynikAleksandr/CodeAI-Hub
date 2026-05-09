@@ -64,17 +64,19 @@ const createWorkflowStateWithTree = (): WorkflowStateSnapshot => ({
 });
 
 test("buildDiagramModulesBranchNodes overlays subturn progress on product parts", () => {
-  const workflowState = createWorkflowStateWithTree();
-  workflowState.diagramModulesProgress = {
-    acceptedPartIds: ["ui-shell"],
-    activeSubturn: {
-      kind: "product_part",
-      partId: "core-services",
-      status: "repair_pending",
+  const workflowState: WorkflowStateSnapshot = {
+    ...createWorkflowStateWithTree(),
+    diagramModulesProgress: {
+      acceptedPartIds: ["ui-shell"],
+      activeSubturn: {
+        kind: "product_part",
+        partId: "core-services",
+        status: "repair_pending",
+      },
+      currentPartId: "core-services",
+      generatedPartIds: ["ui-shell"],
+      plannedPartIds: ["ui-shell", "core-services"],
     },
-    currentPartId: "core-services",
-    generatedPartIds: ["ui-shell"],
-    plannedPartIds: ["ui-shell", "core-services"],
   };
 
   const nodes = buildDiagramModulesBranchNodes({

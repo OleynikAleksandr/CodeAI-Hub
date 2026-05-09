@@ -18,15 +18,15 @@ export type DiagramModulesSubstep =
   | "blocked_ambiguity";
 
 export interface DiagramModulesProgressSnapshot {
-  readonly acceptedPartIds: readonly string[];
-  readonly activeSubturn: DiagramModulesSubturnProgress;
+  readonly acceptedPartIds?: readonly string[];
+  readonly activeSubturn?: DiagramModulesSubturnProgress;
   readonly aggregateReady: boolean;
   readonly currentPartId?: string;
-  readonly expectedArtifactPath: string | null;
+  readonly expectedArtifactPath?: string | null;
   readonly generatedCount: number;
   readonly generatedPartIds: readonly string[];
-  readonly lastValidation: DiagramModulesValidationSnapshot | null;
-  readonly nextPartId: string | null;
+  readonly lastValidation?: DiagramModulesValidationSnapshot | null;
+  readonly nextPartId?: string | null;
   readonly plannedCount: number;
   readonly plannedPartIds: readonly string[];
   readonly productPartDiagnostics?: readonly ProductPartDiagnostic[];
@@ -126,16 +126,19 @@ export const syncDiagramModulesSubturnState = async (params: {
   if (!params.progress) {
     return null;
   }
+  if (!params.progress.activeSubturn) {
+    return null;
+  }
   const statePath = resolveSubturnStatePath(params);
   const state: DiagramModulesPersistedSubturnState = {
     schema: "codeai-diagram-modules-subturn-v1",
     stage: "diagram_modules",
     updatedAt: new Date().toISOString(),
     activeSubturn: params.progress.activeSubturn,
-    acceptedPartIds: params.progress.acceptedPartIds,
-    expectedArtifactPath: params.progress.expectedArtifactPath,
-    lastValidation: params.progress.lastValidation,
-    nextPartId: params.progress.nextPartId,
+    acceptedPartIds: params.progress.acceptedPartIds ?? [],
+    expectedArtifactPath: params.progress.expectedArtifactPath ?? null,
+    lastValidation: params.progress.lastValidation ?? null,
+    nextPartId: params.progress.nextPartId ?? null,
   };
   await mkdir(path.dirname(statePath.absolutePath), { recursive: true });
   await writeFile(
