@@ -126,7 +126,21 @@ test("diagram modules continuation prompt targets one product part", () => {
     prompt.includes("Core accepted the previous Diagram Modules artifact."),
     true
   );
+  assert.equal(
+    prompt.includes(
+      "This Core continuation message is the authoritative scope for the current turn."
+    ),
+    true
+  );
+  assert.equal(
+    prompt.includes("older aggregate scope as superseded by the target below"),
+    true
+  );
   assert.equal(prompt.includes('Materialize only Product Part "vs-code-extension".'), true);
+  assert.equal(
+    prompt.includes("Existing sibling Product Part files do not expand this turn scope."),
+    true
+  );
   assert.equal(
     prompt.includes("Do not create or update any other Product Part file in this turn."),
     true

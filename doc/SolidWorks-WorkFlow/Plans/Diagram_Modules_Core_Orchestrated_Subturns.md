@@ -210,6 +210,7 @@ Retest refinement:
 - During `pending` subturns, Core must not emit aggregate `0/N`, `1/N`, `2/N`, or `3/N` failure feedback to the provider.
 - Aggregate missing-artifact feedback is valid only at final aggregate validation, not between Core-orchestrated Product Part turns.
 - If a continuation prompt is sent, it must explicitly state that the current target artifact is authoritative and that previous aggregate feedback or already-written sibling files do not expand the turn scope.
+- The continuation prompt must tell the provider that older aggregate missing-artifact feedback is superseded for this turn, so a late or stale `0/N` message cannot make Claude create all Product Part files at once.
 
 ## 8. Implementation Streams
 
@@ -254,6 +255,7 @@ Implemented notes:
 
 - PM no longer triggers Core acceptance validation from intermediate artifact chunks. Artifact events may refresh the diagram surface, but `workflow-state` validation/continuation starts on `turn_completed`.
 - Pending Product Part state is not emitted as Core failure feedback. It is the normal handoff point for the continuation prompt builder.
+- Continuation turns explicitly mark the named Product Part target as the only authoritative scope for that turn and warn that older aggregate feedback or sibling files do not expand the scope.
 - Repair feedback is artifact-scoped and starts with `Core rejected the current Diagram Modules artifact`, then includes target path, `snapshotHead`, `checkedAt`, validator and exact diagnostics.
 - The session input is locked synchronously on `turn_completed` before async validation and remains blocked while Core dispatches feedback or the next continuation turn.
 
