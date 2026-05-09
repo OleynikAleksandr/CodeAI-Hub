@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "58822ca52",
+  "lastRecordedCommit": "58ac41903",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase3.task1",
-  "expectedCommitMessage": "docs: sync managed prompt ownership ssot",
+  "currentTaskId": "prompt-ownership.phase4.task1",
+  "expectedCommitMessage": "test: verify managed prompt ownership repair",
   "debt": {
-    "expectedCommitMessage": "docs: sync managed prompt ownership ssot",
-    "preCommitHead": "58822ca52",
+    "expectedCommitMessage": "test: verify managed prompt ownership repair",
+    "preCommitHead": "58ac41903",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase3.task1"
+    "taskId": "prompt-ownership.phase4.task1"
   }
 }
 ```
@@ -71,14 +71,14 @@
 ### Stream: Documentation
 
 9. [DONE] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
-10. [PENDING] Git Commit: `docs: sync managed prompt ownership ssot` (hash: TBD)
+10. [DONE] Git Commit: `docs: sync managed prompt ownership ssot` (hash: 58ac41903)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Targeted Checks
 
-11. [TODO] `prompt-ownership.phase4.task1` Run targeted bundled-template/prompt tests and relevant typecheck/build checks for the touched surfaces (scope: `packages/core/src/templates`, `src/client/project-manager/services`; expected commit: `test: verify managed prompt ownership repair`).
-12. [TODO] Git Commit: `test: verify managed prompt ownership repair` (hash: TBD)
+11. [DONE] `prompt-ownership.phase4.task1` Run targeted bundled-template/prompt tests and relevant typecheck/build checks for the touched surfaces (scope: `packages/core/src/templates`, `src/client/project-manager/services`; expected commit: `test: verify managed prompt ownership repair`).
+12. [PENDING] Git Commit: `test: verify managed prompt ownership repair` (hash: TBD)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-09)
 
