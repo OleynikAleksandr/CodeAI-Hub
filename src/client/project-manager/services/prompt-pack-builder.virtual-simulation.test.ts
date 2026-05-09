@@ -407,10 +407,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     skeletonPack.content.includes("confirm the selected stack"),
     false
   );
-  assert.equal(
-    skeletonPack.content.includes("infer a recommended stack/repo/package-manager baseline"),
-    true
-  );
+  assert.equal(skeletonPack.content.includes("infer a recommended stack/repo/package-manager baseline"), true);
   assert.equal(skeletonPack.content.includes("materializationState: \"not_started\""), true);
   assert.equal(
     gatesPack.relativePath,
@@ -429,6 +426,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     true
   );
   assert.equal(gatesPack.content.includes("Work phases:"), true);
+  assert.equal(gatesPack.content.includes("runtime-embedded accepted Application Skeleton artifacts"), true);
   assert.equal(gatesPack.content.includes("Output file name: `quality-gates.md`"), true);
 });
 
