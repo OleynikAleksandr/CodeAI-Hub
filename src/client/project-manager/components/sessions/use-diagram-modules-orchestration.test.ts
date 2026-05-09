@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import { readDiagramModulesProgressSnapshot } from "../../../../../packages/core/src/remote-bridge/handlers/diagram-modules-progress";
 import { buildDiagramModulesSkeletonFromIndex, loadDiagramModulesProgressiveResult } from "../diagram-editor/diagram-modules-progressive-model";
+import { buildDiagramModulesContinuationPrompt } from "../../services/diagram-modules-continuation-prompt";
 
 const ORCHESTRATION_SOURCE_PATH = path.resolve(process.cwd(), "src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts");
 
@@ -95,9 +96,33 @@ test("diagram modules orchestration source code invariants", async () => {
   const source = await readFile(ORCHESTRATION_SOURCE_PATH, "utf8");
   assert.ok(source.includes('artifact !== null || eventType === "turn_completed"'), "turn_completed triggers refresh");
   assert.ok(source.includes('if (eventType === "turn_failed") {'), "turn_failed unlocks sequence");
-  for (const banned of ['visibility: "hidden"', "buildDiagramModulesContinuationPrompt", "cachedPartTemplateRef"]) {
+  assert.ok(source.includes('progress.activeSubturnStatus === "pending"'), "only pending product part state auto-continues");
+  for (const banned of ['visibility: "hidden"', "cachedPartTemplateRef"]) {
     assert.equal(source.includes(banned), false, `must not contain: ${banned}`);
   }
+});
+
+test("diagram modules continuation prompt targets one product part", () => {
+  const prompt = buildDiagramModulesContinuationPrompt({
+    acceptedPartIds: ["project-manager"],
+    expectedArtifactPath:
+      ".codeai-hub/demo/diagram_modules/product-parts/vs-code-extension.md",
+    partId: "vs-code-extension",
+  });
+
+  assert.equal(
+    prompt.includes("Core accepted the previous Diagram Modules artifact."),
+    true
+  );
+  assert.equal(prompt.includes('Materialize only Product Part "vs-code-extension".'), true);
+  assert.equal(
+    prompt.includes("Do not create or update any other Product Part file in this turn."),
+    true
+  );
+  assert.equal(
+    prompt.includes("Do not continue to the next Product Part by yourself."),
+    true
+  );
 });
 
 test("diagram modules progress snapshot points to next product part after index-only direct file write", async () => {

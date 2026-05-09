@@ -4,6 +4,7 @@ import { api } from "../../api";
 import { persistIdeaArtifacts } from "../../../ui/src/services/idea-artifact-persistence";
 import { extractIdeaCollectorArtifact } from "../../../ui/src/services/idea-collector-artifact";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import { buildDiagramModulesContinuationPrompt } from "../../services/diagram-modules-continuation-prompt";
 import type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -15,13 +16,41 @@ const readStreamEventType = (value: unknown): string | null =>
 
 const readDiagramModulesProgress = (
   value: unknown
-): { readonly substep: string; readonly currentPartId?: string } | null => {
+): {
+  readonly acceptedPartIds: readonly string[];
+  readonly activeSubturnStatus?: string;
+  readonly currentPartId?: string;
+  readonly expectedArtifactPath?: string;
+  readonly substep: string;
+} | null => {
   if (!isRecord(value) || typeof value.substep !== "string") {
     return null;
   }
   const currentPartId =
     typeof value.currentPartId === "string" ? value.currentPartId : undefined;
-  return { substep: value.substep, currentPartId };
+  const expectedArtifactPath =
+    typeof value.expectedArtifactPath === "string"
+      ? value.expectedArtifactPath
+      : undefined;
+  const acceptedPartIds = Array.isArray(value.acceptedPartIds)
+    ? value.acceptedPartIds.filter(
+        (entry): entry is string => typeof entry === "string"
+      )
+    : [];
+  const activeSubturn = isRecord(value.activeSubturn)
+    ? value.activeSubturn
+    : null;
+  const activeSubturnStatus =
+    typeof activeSubturn?.status === "string"
+      ? activeSubturn.status
+      : undefined;
+  return {
+    acceptedPartIds,
+    activeSubturnStatus,
+    currentPartId,
+    expectedArtifactPath,
+    substep: value.substep,
+  };
 };
 
 export const useDiagramModulesOrchestration = (options: {
@@ -118,10 +147,39 @@ export const useDiagramModulesOrchestration = (options: {
         if (!params.shouldRefreshWorkflowState) {
           return;
         }
+        setSequenceLock(params.sessionId, true);
         const state = await api.getWorkflowState(
           params.intent.workspaceSlug,
           params.intent.workspacePath
         );
+        const progress = readDiagramModulesProgress(state.diagramModulesProgress);
+        if (
+          progress?.substep === "generate_product_part" &&
+          progress.activeSubturnStatus === "pending" &&
+          progress.currentPartId &&
+          progress.expectedArtifactPath
+        ) {
+          const signature = [
+            params.sessionId,
+            progress.currentPartId,
+            progress.expectedArtifactPath,
+            progress.acceptedPartIds.join(","),
+          ].join("\0");
+          if (dispatchedSignatureRef.current.get(params.sessionId) === signature) {
+            return;
+          }
+          dispatchedSignatureRef.current.set(params.sessionId, signature);
+          api.sendSessionMessage(
+            params.sessionId,
+            buildDiagramModulesContinuationPrompt({
+              acceptedPartIds: progress.acceptedPartIds,
+              expectedArtifactPath: progress.expectedArtifactPath,
+              partId: progress.currentPartId,
+            })
+          );
+          return;
+        }
+        setSequenceLock(params.sessionId, false);
       })
       .finally(() => {
         if (queuedBySessionRef.current.get(params.sessionId) === nextRun) {
