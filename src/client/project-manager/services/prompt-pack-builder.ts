@@ -301,36 +301,34 @@ const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
 const buildInlineSourceArtifactBlock = (params: {
   readonly sourceArtifacts: readonly WorkflowSourceArtifact[] | undefined;
   readonly stage: WorkflowStageId;
-  readonly workspacePath: string;
 }): string | null => {
   if (params.stage === "diagram_modules" && !params.sourceArtifacts?.length) {
     return null;
   }
   const sourceArtifacts = params.sourceArtifacts ?? [];
   if (!sourceArtifacts.length) {
-    return [
-      "Authoritative upstream source documents (inline):",
-      "- Inline upstream source content was not available for this turn.",
-      "- Before drafting, read the relative or absolute source paths listed below and treat those files as authoritative.",
-    ].join("\n");
+    return "Authoritative upstream source documents (inline):\n- Inline upstream source content was not available for this turn.\n- Core did not embed source text; stop and ask Core for a refreshed prompt instead of searching the workspace.";
   }
   return [
     "Authoritative upstream source documents (inline):",
     "- Treat the fenced content below as authoritative for this turn.",
-    "- The listed paths are provenance and fallback references if inline content appears missing or stale.",
+    "- Do not reread input documents by path unless an artifact below is explicitly marked truncated.",
     ...sourceArtifacts.flatMap((artifact) => {
-      const absolutePath = joinPath(params.workspacePath, artifact.relativePath);
       const content = artifact.content.endsWith("\n")
         ? artifact.content
         : `${artifact.content}\n`;
+      const fallbackLines = artifact.truncated
+        ? [
+            "- Warning: inline content was truncated by the runtime. The fallback paths below are allowed only for omitted content recovery.",
+            `- Fallback relative path: \`${artifact.relativePath}\``,
+          ]
+        : [
+            "- Inline content: complete runtime read; no input file reread is needed.",
+          ];
       return [
         "",
         `### ${artifact.label}`,
-        `- Relative path: \`${artifact.relativePath}\``,
-        `- Absolute path: \`${absolutePath}\``,
-        artifact.truncated
-          ? "- Warning: inline content was truncated by the runtime. Read the source path before making decisions that depend on omitted content."
-          : "- Inline content: complete runtime read.",
+        ...fallbackLines,
         "````markdown",
         content,
         "````",
@@ -483,7 +481,6 @@ export const buildWorkflowPromptPack = (
       buildInlineSourceArtifactBlock({
         sourceArtifacts: params.sourceArtifacts,
         stage: params.stage,
-        workspacePath: params.workspacePath,
       }),
       instructions,
       `Output file name: \`${fileName}\``,

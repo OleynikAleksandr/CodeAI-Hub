@@ -99,10 +99,12 @@ test("virtual simulation prompt pack separates chat and artifact languages", () 
   );
   assert.equal(
     pack.content.includes(
-      "- The listed paths are provenance and fallback references if inline content appears missing or stale."
+      "- Do not reread input documents by path unless an artifact below is explicitly marked truncated."
     ),
     true
   );
+  assert.equal(pack.content.includes("- Relative path:"), false);
+  assert.equal(pack.content.includes("- Absolute path:"), false);
   assert.equal(
     pack.content.includes("````markdown\n# Final Description"),
     true

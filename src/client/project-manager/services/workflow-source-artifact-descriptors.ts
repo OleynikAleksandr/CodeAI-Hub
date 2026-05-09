@@ -5,7 +5,12 @@ export type WorkflowSourceArtifactDescriptor = {
   readonly relativePath: string;
 };
 
-const PRODUCT_PART_ID_RE = /^-\s*Id:\s*`([^`\n]+)`\s*$/gim;
+const PRODUCT_PART_ID_RES = [
+  /^###\s+Product Part:\s*([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gim,
+  /^-\s*Id:\s*`([^`\n]+)`\s*$/gim,
+  /^\s*[-*]\s+([a-z0-9]+(?:-[a-z0-9]+)*)\b/gim,
+  /^\s*\|\s*([a-z0-9]+(?:-[a-z0-9]+)*)\s*\|/gim,
+] as const;
 const SAFE_PRODUCT_PART_ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const buildWorkflowSourceArtifactDescriptors = (params: {
@@ -67,16 +72,22 @@ export const buildProductPartSourceArtifactDescriptors = (params: {
 }): readonly WorkflowSourceArtifactDescriptor[] => {
   const seen = new Set<string>();
   const descriptors: WorkflowSourceArtifactDescriptor[] = [];
-  for (const match of params.productPartsIndexContent.matchAll(PRODUCT_PART_ID_RE)) {
-    const partId = match[1]?.trim();
-    if (!partId || seen.has(partId) || !SAFE_PRODUCT_PART_ID_RE.test(partId)) {
-      continue;
+  for (const pattern of PRODUCT_PART_ID_RES) {
+    for (const match of params.productPartsIndexContent.matchAll(pattern)) {
+      const partId = match[1]?.trim();
+      if (
+        !partId ||
+        seen.has(partId) ||
+        !SAFE_PRODUCT_PART_ID_RE.test(partId)
+      ) {
+        continue;
+      }
+      seen.add(partId);
+      descriptors.push({
+        label: `Product Part: ${partId}`,
+        relativePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/${partId}.md`,
+      });
     }
-    seen.add(partId);
-    descriptors.push({
-      label: `Product Part: ${partId}`,
-      relativePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/${partId}.md`,
-    });
   }
   return descriptors;
 };
