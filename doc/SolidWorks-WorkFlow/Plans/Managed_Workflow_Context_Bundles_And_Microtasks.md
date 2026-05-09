@@ -360,3 +360,18 @@ The release must include:
 - `./scripts/build-all.sh` — passed, produced provider/core/UI/launcher artifacts for version `1.2.210`.
 - `./scripts/build-release.sh --use-current-version --allow-dirty` — passed, verified SDK exclusions, local artifacts, markdown links, duplication advisory gate, VSIX package surface, and produced `codeai-hub-1.2.210.vsix`.
 - Release artifacts are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+
+## 21. Claude Retest Blocker: Core-Only Managed Messaging
+
+The `v1.2.210` Claude retest showed that Diagram Modules Product Part sequencing is improved, but the managed workflow still has two architectural leaks:
+
+- Description and Virtual Simulation first prompts still expose provider-visible file paths even when the source documents are already embedded as text. These prompts must stop inviting the agent to spend a turn reading files that Core already provided.
+- Diagram Modules can still deliver two contradictory Core-looking messages at one Product Part boundary: a deferred failure and an accepted next-target continuation. The root cause is split ownership: Core sends managed feedback, while Project Manager can still send automatic continuation after a workflow-state refresh. Project Manager must remain UI/read-model only; only Core may send automatic managed workflow messages to the provider.
+
+The corrected Diagram Modules ownership model is:
+
+- Phase 1 is a Core/agent-owned automatic conversation. It creates the Product Parts index/graph and materializes every Product Part under Core-owned continuation until all Product Parts are accepted.
+- After all Product Parts are accepted, Phase 1 completes and the agent stops.
+- Phase 2 is user-owned review/editing. Each user turn that changes Product Parts, clusters, modules, names, or descriptions is opened by Core as an independent microtask and commit boundary.
+
+Implementation must stop before the next release build. No `build-all.sh` or `build-release.sh` is authorized for this repair stream yet.
