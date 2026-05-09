@@ -208,6 +208,9 @@ export const useDiagramModulesOrchestration = (options: {
         setSequenceLock(sessionId, false);
         return;
       }
+      if (eventType === "turn_completed") {
+        setSequenceLock(sessionId, true);
+      }
       const shouldRefreshWorkflowState = eventType === "turn_completed";
       if (!shouldRefreshWorkflowState) {
         if (artifact) {

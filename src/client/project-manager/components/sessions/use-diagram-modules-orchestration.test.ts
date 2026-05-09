@@ -98,6 +98,10 @@ test("diagram modules orchestration source code invariants", async () => {
     source.includes('const shouldRefreshWorkflowState = eventType === "turn_completed"'),
     "workflow state refresh waits for turn_completed"
   );
+  assert.ok(
+    source.includes('if (eventType === "turn_completed") {\n        setSequenceLock(sessionId, true);'),
+    "turn_completed locks input before async Core validation"
+  );
   assert.equal(
     source.includes('artifact !== null || eventType === "turn_completed"'),
     false,
