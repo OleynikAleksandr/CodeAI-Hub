@@ -402,6 +402,7 @@ export const buildWorkflowPromptPack = (
       }),
       instructions,
       `Output file name: \`${fileName}\``,
+      `Output target artifact (write exactly this relative path; do not read it first): \`${relativePath}\``,
       buildRuntimeLanguageReminder({
         artifactLanguage: params.artifactLanguage,
         chatLanguage: params.chatLanguage,

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "7389db33e",
+  "lastRecordedCommit": "fbd530085",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14m.task1b",
-  "expectedCommitMessage": "fix: apply claude assistant end turn completion",
+  "currentTaskId": "managed-workflow-context.phase14m.task2",
+  "expectedCommitMessage": "fix: keep workflow output target in prompt tail",
   "debt": {
-    "expectedCommitMessage": "fix: apply claude assistant end turn completion",
-    "preCommitHead": "7389db33e",
+    "expectedCommitMessage": "fix: keep workflow output target in prompt tail",
+    "preCommitHead": "fbd530085",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14m.task1b"
+    "taskId": "managed-workflow-context.phase14m.task2"
   }
 }
 ```
@@ -299,9 +299,9 @@
 117. [DONE] `managed-workflow-context.phase14m.task1` Fix Claude turn completion so native `assistant` messages with `stop_reason: "end_turn"` complete the provider turn after the final visible response even when no separate `result` message is emitted (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: complete claude turns on assistant end turn`).
 118. [DONE] Git Commit: `fix: complete claude turns on assistant end turn` (hash: 7389db33e)
 119. [DONE] `managed-workflow-context.phase14m.task1b` Apply the Claude assistant `end_turn` provider implementation and regression test that were intentionally scoped by task1 but not included in its plan-only commit (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: apply claude assistant end turn completion`).
-120. [PENDING] Git Commit: `fix: apply claude assistant end turn completion` (hash: TBD)
-121. [TODO] `managed-workflow-context.phase14m.task2` Re-emphasize the exact write target for initial workflow prompts at the end of the provider prompt without reintroducing input-document read paths, so managed agents write under `.codeai-hub/<workspaceSlug>/...` instead of a sibling folder (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: keep workflow output target in prompt tail`).
-122. [TODO] Git Commit: `fix: keep workflow output target in prompt tail` (hash: TBD)
+120. [DONE] Git Commit: `fix: apply claude assistant end turn completion` (hash: fbd530085)
+121. [DONE] `managed-workflow-context.phase14m.task2` Re-emphasize the exact write target for initial workflow prompts at the end of the provider prompt without reintroducing input-document read paths, so managed agents write under `.codeai-hub/<workspaceSlug>/...` instead of a sibling folder (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: keep workflow output target in prompt tail`).
+122. [PENDING] Git Commit: `fix: keep workflow output target in prompt tail` (hash: TBD)
 123. [TODO] `managed-workflow-context.phase14m.task3` Run focused Claude provider and Project Manager prompt regressions for the retest failure and record the outcome before release assembly (scope: `packages/Claude_Module`, `src/client/project-manager`, `doc/TODO/todo-plan.md`; expected commit: `test: verify claude managed retest repair`).
 124. [TODO] Git Commit: `test: verify claude managed retest repair` (hash: TBD)
 125. [TODO] `managed-workflow-context.phase14m.task4` Prepare README and CHANGELOG for the Claude managed retest repair release after the user's explicit release request (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude managed retest repair release`).

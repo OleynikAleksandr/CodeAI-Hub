@@ -340,6 +340,12 @@ test("diagram modules prompt pack targets product part index and omits generic t
     pack.content.includes("Output file name: `product-parts.index.md`"),
     true
   );
+  assert.equal(
+    pack.content.includes(
+      "Output target artifact (write exactly this relative path; do not read it first): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
+    ),
+    true
+  );
 });
 
 test("technical root prompt packs target skeleton and quality gate artifacts", () => {
