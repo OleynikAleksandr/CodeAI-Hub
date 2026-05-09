@@ -1,7 +1,8 @@
 # Managed Workflow Context Bundles And Microtasks
 
-**Status:** Draft for user review
+**Status:** Accepted for implementation slicing
 **Created:** 2026-05-09
+**Accepted:** 2026-05-09
 **Owner:** Core / Project Manager
 **Scope:** Managed documentation workflow stages after `Virtual Simulation`, including `Diagram Modules`, `Application Skeleton`, `Quality Gates`, and later Development Tree documentation sessions.
 
@@ -15,6 +16,8 @@ Core improved Diagram Modules by moving the provider into Core-orchestrated subt
 2. **Managed microtasks are too coarse.** Core can lead one provider turn per Product Part, but managed stage plans and commits can still treat multiple accepted artifacts as one broad task. That weakens recovery, user intervention, and auditability.
 
 This planning scope generalizes the Diagram Modules lessons to the following managed stages. The fix must be Core-owned and executable. Prompt text is a secondary guard, not the primary correctness mechanism.
+
+User acceptance on 2026-05-09 confirmed that the implementation plan must include the same rollover, no-link prompt, stage todo-plan, and microtask commit-boundary checks for each following managed workflow step, with final streams for targeted tests, release assembly, and user retest.
 
 ## 2. Architectural Decision
 
