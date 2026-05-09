@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.213] - 2026-05-09
+### Fixed
+- **Claude managed turns now complete at the provider stream boundary.** `turn_completed` is emitted only after final visible assistant chunks are flushed, so Core cannot send the next Diagram Modules continuation inside the tail of the previous response.
+- **Core no longer uses timed quiet-window waits for managed continuation.** The old timer-based boundary watcher was removed; managed workflow continuation now relies on provider `turn_completed` / Core turn ownership instead of seconds-based settling.
+- **Diagram Modules continuation tests now cover the event-driven contract.** Stale quiet-window expectations were removed from Core tests.
+
+### Tests
+- **Focused Claude and Core coverage verifies stream-boundary turn completion, Core build, Claude build, Claude provider tests, and Diagram Modules continuation dispatch without timed boundary waiting.**
+
 ## [1.2.212] - 2026-05-09
 ### Fixed
 - **Diagram Modules Core continuation now waits for a settled provider turn boundary.** Core samples the latest session message id before sending the next Product Part prompt, preventing accepted continuation messages from appearing inside the tail of the previous assistant response.

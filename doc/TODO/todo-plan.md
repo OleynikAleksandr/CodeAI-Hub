@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "ba22041e1",
+  "lastRecordedCommit": "3ad0d45af",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14k.task3",
-  "expectedCommitMessage": "test: verify event-driven managed continuation",
+  "currentTaskId": "managed-workflow-context.phase14l.task1",
+  "expectedCommitMessage": "docs: prepare event-driven continuation release",
   "debt": {
-    "expectedCommitMessage": "test: verify event-driven managed continuation",
-    "preCommitHead": "ba22041e1",
+    "expectedCommitMessage": "docs: prepare event-driven continuation release",
+    "preCommitHead": "3ad0d45af",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14k.task3"
+    "taskId": "managed-workflow-context.phase14l.task1"
   }
 }
 ```
@@ -279,12 +279,23 @@
 107. [DONE] `managed-workflow-context.phase14k.task2` Remove the timer-based Core managed continuation wait path and keep continuation dispatch tied to provider `turn_completed`/new-turn ownership only (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-managed-continuation-boundary.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove timed managed continuation wait`).
 108. [DONE] Git Commit: `fix: remove timed managed continuation wait` (hash: ba22041e1)
 109. [DONE] `managed-workflow-context.phase14k.task3` Remove stale dispatcher/test expectations for quiet-window settling and verify Diagram Modules continuation starts only from the provider-completed turn event path (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts`, `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test: verify event-driven managed continuation`).
-110. [PENDING] Git Commit: `test: verify event-driven managed continuation` (hash: TBD)
+110. [DONE] Git Commit: `test: verify event-driven managed continuation` (hash: 3ad0d45af)
+
+## Phase 14L - Release Build (owner: Codex, updated: 2026-05-09)
+
+### Stream: Event-Driven Continuation Release
+
+111. [DONE] `managed-workflow-context.phase14l.task1` Prepare README and CHANGELOG for the event-driven continuation boundary release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare event-driven continuation release`).
+112. [PENDING] Git Commit: `docs: prepare event-driven continuation release` (hash: TBD)
+113. [TODO] `managed-workflow-context.phase14l.task2` Run release automation and verify VSIX/tarball outputs for the event-driven continuation boundary fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build event-driven continuation release artifacts`).
+114. [TODO] Git Commit: `chore: build event-driven continuation release artifacts` (hash: TBD)
+115. [TODO] `managed-workflow-context.phase14l.task3` Hand off the built event-driven continuation release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off event-driven continuation release`).
+116. [TODO] Git Commit: `docs: hand off event-driven continuation release` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-111. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-112. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-113. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+117. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+118. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+119. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
