@@ -1,6 +1,6 @@
 # Managed Workflow Context Bundles And Microtasks
 
-**Status:** Accepted for implementation slicing
+**Status:** Accepted and sliced into active implementation plan
 **Created:** 2026-05-09
 **Accepted:** 2026-05-09
 **Owner:** Core / Project Manager
@@ -210,6 +210,20 @@ Suggested streams:
 7. Extend no-link context bundles to Development Tree node sessions.
 8. Update SSOT docs and regression tests.
 9. Run targeted builds and stop for explicit release confirmation.
+
+### 9.1 Active execution slicing
+
+The active `doc/TODO/todo-plan.md` was sliced on 2026-05-09 into the following implementation phases:
+
+1. Prompt and rollover audit across Diagram Modules, Application Skeleton, Quality Gates, and Development Tree node sessions.
+2. Managed context bundle foundation and documentation rollover embedding.
+3. Diagram Modules Product Part stage-plan microtasks and accepted-artifact commit boundaries.
+4. Application Skeleton embedded context and managed microtasks.
+5. Quality Gates embedded context and managed microtasks.
+6. Development Tree node-session embedded context bundles.
+7. SSOT documentation sync.
+8. Targeted Core / Project Manager tests and affected builds.
+9. Release build confirmation gate, release assembly, user workflow retest, and scope closeout.
 
 ## 10. Non-Goals
 
