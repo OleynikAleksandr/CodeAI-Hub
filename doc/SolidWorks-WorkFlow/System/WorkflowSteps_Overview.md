@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-05-07
+**Updated:** 2026-05-09
 **Owner:** Oleksandr
 
 ---
@@ -62,6 +62,26 @@ Diagram Modules
 - фиксирует `Description` и `Virtual Simulation` как read-only baselines: артефакты и история доступны для просмотра, но новые сообщения и прямые правки этих шагов блокируются.
 
 После этого `Application Skeleton`, `Quality Gates Baseline` и Development Tree работают внутри уже управляемого workspace. Агентам не передаётся ownership за Git, hooks или plan scripts: они следуют текущему `todo-plan.md`, а Core валидирует, ремонтирует и расширяет lifecycle алгоритмически.
+
+### Core Runtime как Product Part с контрактами
+
+Core Runtime является самостоятельным `Product Part`, а не набором независимых helper-процессов. Все его кластеры, которые взаимодействуют с Project Manager, provider adapters, agent sessions, Git и Plan Orchestrator, должны проектироваться через явные контракты: сначала boundary contract, затем функции модулей внутри boundary.
+
+Главное правило для workflow orchestration: **у каждого внешнего направления должен быть один canonical ingress и один canonical egress**.
+- Project Manager является UI/read-model consumer и command surface, но не автором provider-visible continuation/acceptance messages.
+- Provider adapters являются transport/runtime boundary и сообщают Core о ходе turn-а через SDK/provider events; они не принимают решений о workflow acceptance.
+- Managed Git commit, stage acceptance, continuation prompt, rollover/autocompact и session summary должны получать состояние через один Core-owned post-turn contract, а не через конкурирующие read endpoints, timers или UI polling.
+- Settings, active `todo-plan.md`, provider SDK terminal events и Git state являются отдельными canonical sources; UI-карточки и status panels только записывают или отображают эти источники, но не создают параллельную правду.
+
+Для managed workflow stages порядок закрытия turn-а фиксирован:
+1. Provider SDK/adapter emits terminal event (`turn_completed` / `turn_failed`) for the active turn.
+2. Core flushes already received assistant/dialog messages into the session history and UI stream.
+3. Core runs post-turn arbitration: summary/rollover context, plan status, current microtask/target context, managed Git boundary.
+4. Core sends exactly one provider-visible decision for the next turn: acceptance continuation, rejection/repair feedback, pause, or handoff to user phase.
+
+Любой код, который читает workflow state для Project Manager, sidebar, cards, status panel или artifact panes, обязан оставаться side-effect free относительно provider-visible messages. Read-path может возвращать snapshot и diagnostics, но не должен запускать acceptance, managed commit или continuation. Если нескольким внутренним модулям Core нужны данные одного turn-а, они получают их из общего post-turn contract/cluster, а не каждый из своего наблюдателя.
+
+Следствие для проектирования новых Core-модулей: если возникает функция вроде session summarizer, managed commit owner, continuation orchestrator или stage validator, она не должна добавлять новый источник истины и новый канал общения с агентом. Такие функции входят в один workflow orchestration cluster с общим contract envelope и детерминированным order of operations.
 
 Текущий статус реализации Development Tree:
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
@@ -300,7 +320,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Шаг `Diagram Modules` работает через agent asset pack:
 - prompt, field reference и merge rules живут в `packages/agents/diagram-modules-agent/assets/` (`diagram-modules-prompt.md`, `diagram-modules-field-reference.md`, `diagram-modules-merge-rules.md`);
-- runtime отправляет агенту canonical `.md` target paths, generated `Change Summary`, and full inline upstream sources (`Final_Description.md` + `virtual-simulation.md`) in the first prompt;
+- runtime отправляет агенту current target identity, generated `Change Summary` и full inline upstream sources (`Final_Description.md` + `virtual-simulation.md`) in the first prompt; file paths are Core-owned write targets/fallback diagnostics and must not be presented as documents the agent should re-read when the text is already embedded;
 - Mermaid `.mmd` больше не является workflow SSOT.
 
 Шаги `Application Skeleton` и `Quality Gates Baseline` работают через bundled agent assets:
@@ -311,6 +331,7 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Workflow prompt/runtime contracts:
 - Core Runtime pre-creates stage directories before provider prompt: `description/`, `virtual_simulation/`, `diagram_modules/`, `diagram_modules/product-parts/`, `application_skeleton/`, and `quality_gates/`.
+- First prompts and rollover prompts must carry required source artifact text inline. They should not include extra user-facing links/paths for the same sources unless a bounded fallback/truncation mode explicitly says why the agent may read from disk.
 - First prompts may include localized instruction blocks from `Settings > General > Reasoning`; artifact prose follows `Settings > General > Artifacts for the User`.
 - Protected canonical tokens remain stable: filenames, ids, statuses, YAML/frontmatter keys, HTML comments, `agent-fill`, DSL markers, method/event names, and structural headings.
 - Draft/artifact templates are patch-friendly: `agent-fill` regions have stable sentinel shape, UTF-8 + LF, and agents are instructed to patch content rather than emit routine technical retry chatter.

@@ -9,7 +9,7 @@
 1. **Единственный recovery owner**: сначала прочитай `doc/TODO/todo-plan.md` по фактической файловой системе. Этот файл может быть ignored/untracked; всё равно именно он является активным состоянием работы.
 2. **Если `Execution Scope Status: ACTIVE`**: не ищи legacy recovery reports, не восстанавливайся по спискам коммитов. Следуй только `Recovery Pack` и `Context Pack For This Cycle` из `doc/TODO/todo-plan.md`.
 3. **Если `Execution Scope Status: BLOCKED`**: выполни `npm run plan:status`, прочитай blocker/debt reason и не продолжай реализацию до ремонта через `npm run plan:repair` или явного решения пользователя.
-4. **Если `Execution Scope Status: NONE` или active plan отсутствует**: прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, согласуй с пользователем новый scope, затем используй `doc/SolidWorks-WorkFlow/Docs_Index.md` для выбора релевантных документов.
+4. **Если `Execution Scope Status: NONE` или active plan отсутствует**: прочитай `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` и `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, согласуй с пользователем новый scope, затем используй `doc/SolidWorks-WorkFlow/Docs_Index.md` для выбора релевантных документов.
 5. Legacy recovery reports не являются recovery mechanism и не должны заставлять новую сессию искать отчёты.
 
 ### Во время выполнения
@@ -84,6 +84,8 @@
   ## Context Pack For This Cycle
   - **Planning source:** `<path to approved planning doc>`
   - **Read this context before implementation:**
+    - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+    - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
     - `<doc 1>`
     - `<doc 2>`
     - `<doc 3>`

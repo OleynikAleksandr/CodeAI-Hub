@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "7a97fff8d",
+  "lastRecordedCommit": "5079897ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14p.task1",
-  "expectedCommitMessage": "docs: document core workflow contract boundary",
+  "currentTaskId": "managed-workflow-context.phase14q.task1",
+  "expectedCommitMessage": "docs: persist core workflow contract docs",
   "debt": {
-    "expectedCommitMessage": "docs: document core workflow contract boundary",
-    "preCommitHead": "7a97fff8d",
+    "expectedCommitMessage": "docs: persist core workflow contract docs",
+    "preCommitHead": "5079897ea",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14p.task1"
+    "taskId": "managed-workflow-context.phase14q.task1"
   }
 }
 ```
@@ -346,12 +346,19 @@
 ### Stream: Canonical Workflow Contracts
 
 143. [DONE] `managed-workflow-context.phase14p.task1` Document the Core Runtime workflow contract boundary discovered during Claude managed-stage testing and make Workflow Steps Overview mandatory context next to System Architecture in future todo-plan templates (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `AGENTS.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: document core workflow contract boundary`).
-144. [PENDING] Git Commit: `docs: document core workflow contract boundary` (hash: TBD)
+144. [DONE] Git Commit: `docs: document core workflow contract boundary` (hash: 5079897ea)
+
+## Phase 14Q - Core Workflow Contract Documentation Commit Repair (owner: Codex, updated: 2026-05-09)
+
+### Stream: Persist Canonical Documents
+
+145. [DONE] `managed-workflow-context.phase14q.task1` Persist the canonical Workflow Steps Overview and AGENTS template edits that define Core Runtime as a contract-owned Product Part boundary (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `AGENTS.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: persist core workflow contract docs`).
+146. [PENDING] Git Commit: `docs: persist core workflow contract docs` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-145. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-146. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-147. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+147. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+148. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+149. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
