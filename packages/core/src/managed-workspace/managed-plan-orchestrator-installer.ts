@@ -121,10 +121,7 @@ const readPackageJson = async (
       unknown
     >;
   } catch {
-    return {
-      private: true,
-      scripts: {},
-    };
+    return { private: true, scripts: {} };
   }
 };
 
@@ -161,6 +158,7 @@ const END = "<!-- codeai-plan-state:end -->";
 const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
 const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 const TASK_LINE_RE = new RegExp("^\\\\d+\\\\. \\\\[(?:TODO|IN_PROGRESS)\\\\].*?\`([^\`]+)\`.*expected commit: \`([^\`]+)\`", "u");
+const PRODUCT_PART_DECLARATION_RES = [/^###\\s+Product Part:\\s*([a-z0-9]+(?:-[a-z0-9]+)*)\\s*$/gimu, /^\\s*[-*]\\s+([a-z0-9]+(?:-[a-z0-9]+)*)\\b/gimu, /^\\s*\\|\\s*([a-z0-9]+(?:-[a-z0-9]+)*)\\s*\\|/gimu];
 
 const parseJsonBlock = (text, start, end, label) => {
   const block = text.split(start)[1]?.split(end)[0];
@@ -275,6 +273,25 @@ const formatTaskLine = (line, taskId, status, summary, files, message) => {
   return \`\${number} [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
 };
 
+const formatNewTaskLine = (number, taskId, status, summary, scope, message) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
+const collectProductPartIdsFromIndex = (files) => {
+  const indexFile = files.find((file) => file.includes("/diagram_modules/product-parts.index.md"));
+  if (!indexFile || !existsSync(indexFile)) { return []; }
+  const text = readFileSync(indexFile, "utf8");
+  return PRODUCT_PART_DECLARATION_RES.flatMap((pattern) => [...text.matchAll(pattern)].map((match) => match[1]?.trim())).filter((id, index, ids) => id && id !== "part-id" && ids.indexOf(id) === index);
+};
+const insertDiagramModulesProductPartTasks = (lines, commitLineIndex, files) => {
+  const ids = collectProductPartIdsFromIndex(files);
+  if (ids.length === 0 || lines.some((line) => line.includes("diagram-modules.product-part."))) { return; }
+  const existingItemCount = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length;
+  const inserted = ids.flatMap((id, index) => {
+    const taskNumber = existingItemCount + index * 2 + 1;
+    const message = \`docs: update diagram modules product part \${id}\`;
+    return [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];
+  });
+  lines.splice(commitLineIndex + 1, 0, ...inserted);
+};
+
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
@@ -326,6 +343,8 @@ const advancePlanForCommit = (message) => {
   if (commitLineIndex < 0) {
     throw new Error(\`Git Commit item not found: \${message}\`);
   }
+
+  insertDiagramModulesProductPartTasks(lines, commitLineIndex, changedFiles);
 
   const nextTaskLineIndex = lines.findIndex(
     (line, index) => index > commitLineIndex && readTaskLine(line)
@@ -405,32 +424,10 @@ const backfillPlanCommitHash = (event, commitHash) => {
 };
 
 const recordWorkspaceCommit = (event, workspaceState, commitHash, commitFullHash) => {
-  const acceptedCommits = Array.isArray(workspaceState.acceptedCommits)
-    ? workspaceState.acceptedCommits
-    : [];
-  const nextState = {
-    ...workspaceState,
-    lastAcceptedCommitHash: commitHash,
-    lastAcceptedCommitMessage: event.message,
-    acceptedCommits: [
-      ...acceptedCommits,
-      {
-        commitFullHash,
-        commitHash,
-        changedFiles: event.changedFiles,
-        message: event.message,
-        planPath: event.planPath,
-        stage: event.stage,
-        summary: event.summary,
-        taskId: event.taskId,
-      },
-    ],
-  };
-  writeFileSync(
-    WORKSPACE_PLAN_PATH,
-    replaceWorkspaceState(readWorkspaceText(), nextState),
-    "utf8"
-  );
+  const acceptedCommits = Array.isArray(workspaceState.acceptedCommits) ? workspaceState.acceptedCommits : [];
+  const commitRecord = { commitFullHash, commitHash, changedFiles: event.changedFiles, message: event.message, planPath: event.planPath, stage: event.stage, summary: event.summary, taskId: event.taskId };
+  const nextState = { ...workspaceState, lastAcceptedCommitHash: commitHash, lastAcceptedCommitMessage: event.message, acceptedCommits: [...acceptedCommits, commitRecord] };
+  writeFileSync(WORKSPACE_PLAN_PATH, replaceWorkspaceState(readWorkspaceText(), nextState), "utf8");
 };
 
 const createWorkspaceLedgerCommit = () => {

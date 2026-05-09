@@ -39,12 +39,12 @@ const STAGE_TEMPLATES: Readonly<
     taskId: "application-skeleton.stream1.task1",
   },
   diagram_modules: {
-    commitMessage: "docs: update diagram modules artifacts",
+    commitMessage: "docs: update diagram modules product part index",
     description:
-      "Update Diagram Modules artifacts through the managed workflow",
+      "Update Diagram Modules Product Part index artifact through the managed workflow",
     heading: "Diagram Modules Artifacts",
     planId: "managed-workspace-diagram-modules",
-    scope: ".codeai-hub/**/diagram_modules",
+    scope: ".codeai-hub/**/diagram_modules/product-parts.index.md",
     taskId: "diagram-modules.stream1.task1",
   },
   quality_gates: {

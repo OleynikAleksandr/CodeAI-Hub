@@ -21,7 +21,10 @@ const ACTIVE_SCOPE_RE = /Execution Scope Status: ACTIVE/u;
 const DIAGRAM_TASK_RE = /Current Task: diagram-modules\.stream1\.task1/u;
 const DIAGRAM_PLAN_TASK_RE =
   /"currentTaskId": "diagram-modules\.stream1\.task1"/u;
-const DIAGRAM_NEXT_TASK_RE = /Current Task: diagram-modules\.stream1\.task2/u;
+const DIAGRAM_NEXT_TASK_RE =
+  /Current Task: diagram-modules\.product-part\.project-manager/u;
+const DIAGRAM_NEXT_COMMIT_RE =
+  /Expected Commit: docs: update diagram modules product part project-manager/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
@@ -31,17 +34,19 @@ const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
 const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const LEDGER_COMMIT_RE = /chore: record managed workspace ledger/u;
-const DIAGRAM_MODULES_COMMIT_RE = /docs: update diagram modules artifacts/u;
+const DIAGRAM_MODULES_COMMIT_RE =
+  /docs: update diagram modules product part index/u;
 const PLAN_COMMIT_HASH_RE = /hash: [0-9a-f]+/u;
 const PRODUCT_PART_SUMMARY_RE =
-  /Update Diagram Modules Product Part artifacts: project-manager/u;
+  /Materialize only Diagram Modules Product Part "project-manager"/u;
+const INDEX_SUMMARY_RE = /Update Diagram Modules Product Part index artifact/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
 const WORKSPACE_CHANGED_FILES_RE =
-  /"changedFiles": \[\n\s+"\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md"/u;
+  /"changedFiles": \[\n\s+"\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\.index\.md"/u;
 const WORKSPACE_COMMIT_HASH_RE = /"commitHash": "[0-9a-f]+"/u;
 const WORKSPACE_ACCEPTED_COMMIT_RE = /"acceptedCommits": \[\n\s+\{/u;
 const WORKSPACE_LAST_COMMIT_RE =
-  /"lastAcceptedCommitMessage": "docs: update diagram modules artifacts"/u;
+  /"lastAcceptedCommitMessage": "docs: update diagram modules product part index"/u;
 const WORKSPACE_PLAN_ACTIVE_STAGE_RE = /"activeStage": "diagram_modules"/u;
 const DIAGRAM_STAGE_PLAN_RE =
   /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
@@ -222,15 +227,19 @@ test("managed plan shim advances the active task inside plan commits", async () 
     );
     const artifactPath = path.join(
       workspaceRoot,
-      ".codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md"
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
     );
     await mkdir(path.dirname(artifactPath), { recursive: true });
-    await writeFile(artifactPath, "# Project Manager\n", "utf8");
+    await writeFile(
+      artifactPath,
+      "# Product Parts\n\n### Product Part: project-manager\n",
+      "utf8"
+    );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
 
     await execFileAsync(
       process.execPath,
-      [scriptPath, "commit", "docs: update diagram modules artifacts"],
+      [scriptPath, "commit", "docs: update diagram modules product part index"],
       { cwd: workspaceRoot }
     );
 
@@ -255,11 +264,12 @@ test("managed plan shim advances the active task inside plan commits", async () 
     });
 
     assert.match(status.stdout, DIAGRAM_NEXT_TASK_RE);
+    assert.match(status.stdout, DIAGRAM_NEXT_COMMIT_RE);
     assert.doesNotMatch(plan, INCLUDED_IN_COMMIT_RE);
     assert.match(plan, PLAN_COMMIT_HASH_RE);
     assert.match(plan, PRODUCT_PART_SUMMARY_RE);
     assert.match(workspacePlan, WORKSPACE_ACCEPTED_COMMIT_RE);
-    assert.match(workspacePlan, PRODUCT_PART_SUMMARY_RE);
+    assert.match(workspacePlan, INDEX_SUMMARY_RE);
     assert.match(workspacePlan, WORKSPACE_CHANGED_FILES_RE);
     assert.match(workspacePlan, WORKSPACE_LAST_COMMIT_RE);
     assert.match(workspacePlan, WORKSPACE_COMMIT_HASH_RE);
