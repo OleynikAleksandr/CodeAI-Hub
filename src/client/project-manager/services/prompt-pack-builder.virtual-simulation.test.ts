@@ -265,6 +265,8 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Runtime tooling facts:"), true);
   assert.equal(pack.content.includes("Artifact write encoding:"), true);
   assert.equal(pack.content.includes("Artifact edit operation:"), true);
+  assert.equal(pack.content.includes("Managed workflow context preflight:"), true);
+  assert.equal(pack.content.includes('activeStage: "diagram_modules"'), true);
   for (const forbiddenPathLine of [
     "Target path (relative):",
     "Target path (absolute):",
@@ -396,6 +398,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
   );
   assert.equal(skeletonPack.content.includes("infer a recommended stack/repo/package-manager baseline"), true);
   assert.equal(skeletonPack.content.includes("materializationState: \"not_started\""), true);
+  assert.equal(skeletonPack.content.includes('activeStage: "application_skeleton"'), true);
   assert.equal(
     gatesPack.relativePath,
     ".codeai-hub/demo-workspace/quality_gates/quality-gates.md"
@@ -414,6 +417,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
   );
   assert.equal(gatesPack.content.includes("Work phases:"), true);
   assert.equal(gatesPack.content.includes("runtime-embedded accepted Application Skeleton artifacts"), true);
+  assert.equal(gatesPack.content.includes('activeStage: "quality_gates"'), true);
   assert.equal(gatesPack.content.includes("Output file name: `quality-gates.md`"), true);
 });
 

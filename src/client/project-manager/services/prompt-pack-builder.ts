@@ -234,6 +234,27 @@ const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
   ].join("\n");
 };
 
+const MANAGED_WORKFLOW_STAGES = new Set<WorkflowStageId>([
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+]);
+
+const buildManagedWorkflowContextPreflightBlock = (
+  stage: WorkflowStageId
+): string | null => {
+  if (!MANAGED_WORKFLOW_STAGES.has(stage)) {
+    return null;
+  }
+  return [
+    "Managed workflow context preflight:",
+    "- Managed stages require a Core context bundle in the current prompt before artifact writes.",
+    "- Required bundle title: `## Managed Workflow Context Bundle`.",
+    `- Required Plan Status line: \`activeStage: \"${stage}\"\`.`,
+    "- If this prompt does not include that bundle and status line, stop before writing files and report a Core preflight failure; do not read plan files, run plan status commands, stage files, or commit from the provider turn.",
+  ].join("\n");
+};
+
 const buildInlineSourceArtifactBlock = (params: {
   readonly sourceArtifacts: readonly WorkflowSourceArtifact[] | undefined;
   readonly stage: WorkflowStageId;
@@ -392,6 +413,7 @@ export const buildWorkflowPromptPack = (
       buildRuntimeToolingFactsBlock(params.workspacePath),
       buildArtifactWriteEncodingBlock(),
       buildArtifactEditOperationBlock(),
+      buildManagedWorkflowContextPreflightBlock(params.stage),
       buildChangeSummaryBlock(params.stage),
       params.stage === "diagram_modules"
         ? buildDiagramModulesInlineContractBlock()

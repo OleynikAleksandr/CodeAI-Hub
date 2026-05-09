@@ -129,8 +129,8 @@ const renderPlanStatus = (params: {
   readonly workspacePlanState: WorkspacePlanState;
 }): string =>
   [
-    `Active stage: ${params.workspacePlanState.activeStage ?? "unknown"}`,
-    `Active plan path: ${params.activePlanPath ?? "unknown"}`,
+    `activeStage: ${JSON.stringify(params.workspacePlanState.activeStage ?? null)}`,
+    `activePlanPath: ${JSON.stringify(params.activePlanPath ?? null)}`,
     `Execution scope status: ${params.activePlanState.executionScopeStatus ?? "unknown"}`,
     `Current task: ${params.activePlanState.currentTaskId ?? "none"}`,
     `Expected commit: ${params.activePlanState.expectedCommitMessage ?? "none"}`,

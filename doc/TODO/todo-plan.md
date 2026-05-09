@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "230e702d6",
+  "lastRecordedCommit": "75b59ad72",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase1.task2",
-  "expectedCommitMessage": "fix: remove quality gates agent staging wording",
+  "currentTaskId": "prompt-ownership.phase2.task1",
+  "expectedCommitMessage": "fix: align managed prompt context bundle wording",
   "debt": {
-    "expectedCommitMessage": "fix: remove quality gates agent staging wording",
-    "preCommitHead": "230e702d6",
+    "expectedCommitMessage": "fix: align managed prompt context bundle wording",
+    "preCommitHead": "75b59ad72",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase1.task2"
+    "taskId": "prompt-ownership.phase2.task1"
   }
 }
 ```
@@ -57,14 +57,14 @@
 3. [DONE] `prompt-ownership.phase1.task1` Remove provider-side staging/commit language from Application Skeleton prompt and lock the bundled-template regression (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove application skeleton agent commit wording`).
 4. [DONE] Git Commit: `fix: remove application skeleton agent commit wording` (hash: 230e702d6)
 5. [DONE] `prompt-ownership.phase1.task2` Remove provider-side staging language from Quality Gates prompt and lock the bundled-template regression (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove quality gates agent staging wording`).
-6. [PENDING] Git Commit: `fix: remove quality gates agent staging wording` (hash: TBD)
+6. [DONE] Git Commit: `fix: remove quality gates agent staging wording` (hash: 75b59ad72)
 
 ## Phase 2 — Initial Managed Context (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Prompt Context Bundle
 
-7. [TODO] `prompt-ownership.phase2.task1` Ensure cold-start managed workflow prompts receive the same Core-owned managed context bundle contract as continuation prompts, or stop claiming embedded plan state exists (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts`; expected commit: `fix: align managed prompt context bundle wording`).
-8. [TODO] Git Commit: `fix: align managed prompt context bundle wording` (hash: TBD)
+7. [DONE] `prompt-ownership.phase2.task1` Ensure cold-start managed workflow prompts receive the same Core-owned managed context bundle contract as continuation prompts, or stop claiming embedded plan state exists (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts`; expected commit: `fix: align managed prompt context bundle wording`).
+8. [PENDING] Git Commit: `fix: align managed prompt context bundle wording` (hash: TBD)
 
 ## Phase 3 — SSOT Sync (owner: Codex, updated: 2026-05-09)
 
