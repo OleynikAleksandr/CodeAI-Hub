@@ -302,3 +302,7 @@ Verification:
 
 - `npm run build --workspace=@codeai-hub/core` — passed.
 - `node --test packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js` — passed, 5/5 tests.
+
+## 16. Sequencing Fix Release Decision
+
+On 2026-05-09 the user explicitly confirmed building a new follow-up release for the managed Product Part sequencing fix. This satisfies the release build confirmation gate for the sequencing fix stream.
