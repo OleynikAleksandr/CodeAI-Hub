@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "0b503c65c",
+  "lastRecordedCommit": "9a727e8da",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14i.task3",
-  "expectedCommitMessage": "docs: hand off managed continuation boundary release",
+  "currentTaskId": "managed-workflow-context.phase14j.task1",
+  "expectedCommitMessage": "fix: remove diagram modules prompt artifact paths",
   "debt": {
-    "expectedCommitMessage": "docs: hand off managed continuation boundary release",
-    "preCommitHead": "0b503c65c",
+    "expectedCommitMessage": "fix: remove diagram modules prompt artifact paths",
+    "preCommitHead": "9a727e8da",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14i.task3"
+    "taskId": "managed-workflow-context.phase14j.task1"
   }
 }
 ```
@@ -259,12 +259,21 @@
 97. [DONE] `managed-workflow-context.phase14i.task2` Run release automation and verify VSIX/tarball outputs for the managed continuation boundary fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build managed continuation boundary release artifacts`).
 98. [DONE] Git Commit: `chore: build managed continuation boundary release artifacts` (hash: 0b503c65c)
 99. [DONE] `managed-workflow-context.phase14i.task3` Hand off the built managed continuation boundary release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off managed continuation boundary release`).
-100. [PENDING] Git Commit: `docs: hand off managed continuation boundary release` (hash: TBD)
+100. [DONE] Git Commit: `docs: hand off managed continuation boundary release` (hash: 9a727e8da)
+
+## Phase 14J - Prompt Artifact Path Cleanup (owner: Codex, updated: 2026-05-09)
+
+### Stream: Provider Prompt No-Link Cleanup
+
+101. [DONE] `managed-workflow-context.phase14j.task1` Remove provider-visible input artifact paths from initial workflow prompts, including Diagram Modules, Application Skeleton, and Quality Gates, while keeping embedded source text as the authority for each turn (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove diagram modules prompt artifact paths`).
+102. [PENDING] Git Commit: `fix: remove diagram modules prompt artifact paths` (hash: TBD)
+103. [TODO] `managed-workflow-context.phase14j.task2` Remove provider-visible target/input artifact paths from managed rollover continuation envelopes and verify rollover prompts stay text-bundle based (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove rollover prompt artifact paths`).
+104. [TODO] Git Commit: `fix: remove rollover prompt artifact paths` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-101. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-102. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-103. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+105. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+106. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+107. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).

@@ -186,63 +186,6 @@ const resolveWorkflowArtifactPaths = (params: {
   };
 };
 
-const buildStageInputLines = (params: {
-  readonly stage: WorkflowStageId;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-  readonly questionnairePath: string;
-}): readonly string[] => {
-  if (params.stage === "description") {
-    return [];
-  }
-  if (params.stage === "virtual_simulation") {
-    return [];
-  }
-  if (params.stage === "diagram_modules") {
-    const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
-    const finalAbsolutePath = joinPath(params.workspacePath, finalRelativePath);
-    const simulationRelativePath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-    const simulationAbsolutePath = joinPath(
-      params.workspacePath,
-      simulationRelativePath
-    );
-    return [
-      `Final_Description.md (relative): \`${finalRelativePath}\``,
-      `Final_Description.md (absolute): \`${finalAbsolutePath}\``,
-      `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
-      `virtual-simulation.md (absolute): \`${simulationAbsolutePath}\``,
-    ];
-  }
-  if (params.stage === "application_skeleton") {
-    const finalRelativePath = `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`;
-    const simulationRelativePath = `.codeai-hub/${params.workspaceSlug}/virtual_simulation/virtual-simulation.md`;
-    const modulesRelativePath = `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
-    return [
-      `Final_Description.md (relative): \`${finalRelativePath}\``,
-      `virtual-simulation.md (relative): \`${simulationRelativePath}\``,
-      `product-parts.index.md (relative): \`${modulesRelativePath}\``,
-      `Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
-    ];
-  }
-  if (params.stage === "quality_gates") {
-    const skeletonRelativePath = `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton.md`;
-    const mapRelativePath = `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`;
-    return [
-      `application-skeleton.md (relative): \`${skeletonRelativePath}\``,
-      `application-skeleton-map.json (relative): \`${mapRelativePath}\``,
-    ];
-  }
-  const questionnaireRelativePath = normalizeRelativePath(params.questionnairePath);
-  const questionnaireAbsolutePath = joinPath(
-    params.workspacePath,
-    questionnaireRelativePath
-  );
-  return [
-    `Questionnaire (relative): \`${questionnaireRelativePath}\``,
-    `Questionnaire (absolute): \`${questionnaireAbsolutePath}\``,
-  ];
-};
-
 const buildStagePhaseLines = (
   stage: WorkflowStageId,
   targetFileName: string
@@ -420,17 +363,8 @@ export const buildWorkflowPromptPack = (
 
   const defaultPrompt = DEFAULT_STAGE_PROMPTS[params.stage];
   const prompt = params.prompt.trim().length ? params.prompt.trim() : defaultPrompt;
-  const primaryInputLines = buildStageInputLines({
-    stage: params.stage,
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-    questionnairePath: params.questionnairePath,
-  });
   const instructionLines = [
     `Stage: ${WORKFLOW_STAGE_LABELS[params.stage]}.`,
-    `Target path (relative): \`${relativePath}\``,
-    `Target path (absolute): \`${absolutePath}\``,
-    ...primaryInputLines,
     ...buildStagePhaseLines(params.stage, fileName),
     ...additionalArtifacts,
   ];

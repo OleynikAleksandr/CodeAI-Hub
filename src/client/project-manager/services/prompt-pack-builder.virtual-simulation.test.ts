@@ -254,13 +254,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
   );
   assert.equal(
     pack.content.includes(
-      "Diagram Modules must be Core-checkable before handoff"
-    ),
-    true
-  );
-  assert.equal(
-    pack.content.includes(
-      "create one valid `product-parts/<part-id>.md` file for every Product Part declared in the index"
+      "Diagram Modules is Core-orchestrated: this turn must make only the target artifact Core-checkable"
     ),
     true
   );
@@ -271,30 +265,16 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Runtime tooling facts:"), true);
   assert.equal(pack.content.includes("Artifact write encoding:"), true);
   assert.equal(pack.content.includes("Artifact edit operation:"), true);
-  assert.equal(
-    pack.content.includes(
-      "Target path (relative): `codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
-    ),
-    false
-  );
-  assert.equal(
-    pack.content.includes(
-      "Target path (relative): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
-    ),
-    true
-  );
-  assert.equal(
-    pack.content.includes(
-      "Final_Description.md (relative): `.codeai-hub/demo-workspace/description/Final_Description.md`"
-    ),
-    true
-  );
-  assert.equal(
-    pack.content.includes(
-      "virtual-simulation.md (relative): `.codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md`"
-    ),
-    true
-  );
+  for (const forbiddenPathLine of [
+    "Target path (relative):",
+    "Target path (absolute):",
+    "Final_Description.md (relative):",
+    "Final_Description.md (absolute):",
+    "virtual-simulation.md (relative):",
+    "virtual-simulation.md (absolute):",
+  ]) {
+    assert.equal(pack.content.includes(forbiddenPathLine), false);
+  }
   assert.equal(
     pack.content.includes("### Final_Description.md"),
     true
@@ -344,7 +324,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Work phases:"), true);
   assert.equal(
     pack.content.includes(
-      "Phase 2: create one valid `product-parts/<part-id>.md` file"
+      "Phase 2: do not create `product-parts/<part-id>.md` files in this initial turn"
     ),
     true
   );
@@ -392,7 +372,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     skeletonPack.content.includes(
       "product-parts.index.md (relative): `.codeai-hub/demo-workspace/diagram_modules/product-parts.index.md`"
     ),
-    true
+    false
   );
   assert.equal(
     skeletonPack.content.includes(
@@ -418,7 +398,7 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     gatesPack.content.includes(
       "application-skeleton-map.json (relative): `.codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json`"
     ),
-    true
+    false
   );
   assert.equal(
     gatesPack.content.includes(
