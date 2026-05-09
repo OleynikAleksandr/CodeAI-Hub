@@ -257,9 +257,9 @@ const buildStagePhaseLines = (
   if (stage === "diagram_modules") {
     return [
       "Work phases:",
-      `- Phase 1: read the runtime-provided \`Final_Description.md\` and \`virtual-simulation.md\` inputs, then write \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
-      "- Phase 2: create one valid `product-parts/<part-id>.md` file for every Product Part declared in the index before reporting the Diagram Modules stage ready.",
-      "- Phase 3: keep each Product Part file bounded and reviewable; do not collapse the structure into one giant artifact, but do not wait for user-visible continuation between declared Product Parts.",
+      `- Phase 1: read the runtime-provided \`Final_Description.md\` and \`virtual-simulation.md\` inputs, then write only \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
+      "- Phase 2: do not create `product-parts/<part-id>.md` files in this initial turn; Core validates and commits the index first.",
+      "- Phase 3: after Core sends a continuation turn, materialize only the named `product-parts/<part-id>.md` file and stop again for Core feedback.",
       "- Phase 4: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
       "- Phase 5: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
       "- Phase 6: do not spend the current turn searching for staged examples, continuity files, helper artifacts, or generic template files unless they are explicitly listed above as inputs for this turn.",
@@ -345,7 +345,7 @@ const buildWorkflowArtifactModeBlock = (params: {
 }): string => {
   const stagedTargetLine =
     params.stage === "diagram_modules"
-      ? "- Diagram Modules must be Core-checkable before handoff: every Product Part declared in `product-parts.index.md` needs a matching valid `product-parts/<part-id>.md`."
+      ? "- Diagram Modules is Core-orchestrated: this turn must make only the target artifact Core-checkable; Product Part files are requested one at a time by later Core turns."
       : null;
   const lines = [
     "Workflow artifact mode:",
@@ -402,8 +402,8 @@ const buildAdditionalArtifactLines = (params: {
 }): readonly string[] => {
   if (params.stage === "diagram_modules") {
     return [
-      "Additional staged artifacts for this step are allowed and expected by the runtime:",
-      `- Product Part files (pattern): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\``,
+      "Additional staged artifacts for this step are Core-orchestrated by later turns:",
+      `- Later Product Part target pattern: \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\`; do not create these unless the current target path names that part.`,
       `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
     ];
   }

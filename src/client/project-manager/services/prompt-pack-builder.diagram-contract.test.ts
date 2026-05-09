@@ -47,6 +47,22 @@ test("Diagram Modules prompt pack embeds inline format contract snippets", () =>
     ),
     true
   );
+  assert.equal(
+    pack.content.includes(
+      "write only `product-parts.index.md` as the canonical index"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes(
+      "do not create `product-parts/<part-id>.md` files in this initial turn"
+    ),
+    true
+  );
+  assert.equal(
+    pack.content.includes("do not wait for user-visible continuation"),
+    false
+  );
 });
 
 test("non Diagram Modules prompt packs do not include Diagram Modules snippets", () => {

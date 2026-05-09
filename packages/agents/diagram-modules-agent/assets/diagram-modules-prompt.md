@@ -6,16 +6,16 @@ CodeAI Hub turns a product idea into a sequence of artifacts that are refined st
 The `Diagram Modules` step comes after `Description` and `Virtual Simulation`.
 Its purpose is to turn the already collected understanding of the product and system behavior into a staged modular map of the system.
 
-Your task in this step is to use `Final_Description.md`, `virtual-simulation.md`, the project materials you actually read, and the current context to materialize a complete reviewable Diagram Modules structure: `product-parts.index.md` plus one valid `product-parts/<part-id>.md` file for every `Product Part` declared in the index.
+Your task in this step is to use `Final_Description.md`, `virtual-simulation.md`, the project materials you actually read, and the current context to materialize the current Core-assigned Diagram Modules artifact. The first turn creates only `product-parts.index.md`; later Core continuation turns request exactly one `product-parts/<part-id>.md`.
 
 Important:
 - the user describes the product in plain language;
 - the user is not required to know terms such as `shell`, `runtime`, `cluster`, `module`, `facade`, or `boundary`;
 - do not assume that upstream `Description` or `Virtual Simulation` already contain a final module list or a fully shaped modular map;
 - you must translate the user's description and previous artifacts into a canonical staged modular map yourself;
-- do not collapse the whole structure into one giant artifact; keep one bounded file per `Product Part`;
-- the first useful review surface should be a complete proposed structure, even if the user later corrects it;
-- discussion with the user happens against the generated structure, not before every single `Product Part` file exists.
+- do not collapse the whole structure into one giant artifact; keep one bounded file per `Product Part` when Core requests that part;
+- the first useful review surface should be the proposed `Product Part` index, even if Core or the user later corrects it;
+- discussion and continuation happen through Core feedback turns, not through automatic same-turn generation of every `Product Part` file.
 
 The resulting staged artifact set must already be understandable to the user at the index/skeleton stage and provide the runtime with a strong enough basis to visualize the Module Graph.
 
@@ -64,22 +64,24 @@ Managed lifecycle:
 - After each accepted staged artifact write or revision, leave only Diagram Modules-owned artifact changes in the workspace and respond that the staged artifacts are ready for Core acceptance. Core owns staging, the managed commit, post-commit validation, and downstream unlock.
 
 Critical rule:
-- on the first visible turn, the canonical output starts with `product-parts.index.md`, then continues until every declared `Product Part` has a matching valid `product-parts/<part-id>.md`;
+- on the first visible turn, the canonical output is only `product-parts.index.md`;
+- do not create `product-parts/<part-id>.md` files on the index turn;
+- create a `product-parts/<part-id>.md` file only when Core starts a continuation turn whose target artifact is that exact file;
 - staged Markdown artifacts are allowed and expected for this step;
 - the visual diagram (Module Graph) is built separately by the runtime from staged artifacts;
 - the layout sidecar `module-map.flow.json` is not a semantic artifact and must not be created by you;
 - relation lines and cross-part wiring are not required for the first useful slice and must not block structure materialization;
 - do not create Mermaid or JSON as a replacement for staged Markdown artifacts.
 
-Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` with the list of product parts and short descriptions, then create a separate `product-parts/<part-id>.md` for each declared part. Keep each file focused and bounded; do not generate one monolithic inventory file.
+Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` with the list of product parts and short descriptions. Then stop and report that the index artifact is ready for Core acceptance. Keep each later part file focused and bounded; do not generate one monolithic inventory file.
 
-Before the final response, perform the same observable completion check Core will perform:
-- every `Product Part` id declared in `product-parts.index.md` has a corresponding `product-parts/<part-id>.md`;
-- each Product Part file is non-empty and contains the required staged structure for clusters/modules or a clear statement that no further module detail exists in the upstream artifacts;
-- all staged Diagram Modules artifacts are written and ready for Core acceptance;
+Before the final response on the index turn, perform the same observable completion check Core will perform:
+- `product-parts.index.md` exists and declares the ordered `Product Part` ids;
+- no `product-parts/<part-id>.md` file was created before Core requested that part;
+- the current target staged Diagram Modules artifact is written and ready for Core acceptance;
 - no unrelated workspace files were created or changed by this stage.
 
-If the user later asks for corrections, revise the affected staged artifacts and repeat the completion check before reporting the step ready.
+If Core or the user later asks for corrections, revise only the affected staged artifact and repeat the completion check before reporting the target artifact ready.
 
 ### 2.1) Language of the final user-facing staged artifacts
 - the runtime may send a `Workflow runtime language contract` with separate chat and artifact prose languages;
@@ -263,8 +265,8 @@ Style requirements:
 1. Read the direct inputs: `Final_Description.md`, `virtual-simulation.md`, and any other files explicitly provided by the user.
 2. Write `product-parts.index.md` as an ordered list of product parts with short descriptions (`title` + `purpose`). DO NOT include clusters or modules on the index turn.
 3. In chat, give a short report on which product parts were identified and why.
-4. Ask 1-3 questions about the composition: are the parts split correctly, and is anything important missing?
-5. **STOP and wait for the user's response.** Do not move to detailed product-part materialization without confirmation.
+4. Report that the index artifact is ready for Core acceptance.
+5. **STOP and wait for Core feedback.** Do not move to detailed product-part materialization in the same turn.
 
 ### 5.2. Part turn (after user confirmation)
 1. The user confirms the composition or asks to detail a specific product part.
