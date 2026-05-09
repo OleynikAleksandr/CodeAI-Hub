@@ -10,8 +10,8 @@ const STAGE_FILE_NAMES: Record<string, string> = {
   description: "Final_Description.md",
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "product-parts.index.md",
-  application_skeleton: "application-skeleton-map.json",
-  quality_gates: "quality-gates.json",
+  application_skeleton: "application-skeleton.md",
+  quality_gates: "quality-gates.md",
 };
 
 const STAGE_LABELS: Record<string, string> = {
@@ -27,6 +27,56 @@ const MANAGED_WORKSPACE_STAGES = new Set([
   "application_skeleton",
   "quality_gates",
 ]);
+
+const buildStageOutputTargets = (
+  context: DocumentationRolloverContext
+): readonly string[] => {
+  const root = `.codeai-hub/${context.workspaceSlug}`;
+  if (context.stageId === "description") {
+    return [`${root}/description/Final_Description.md`];
+  }
+  if (context.stageId === "virtual_simulation") {
+    return [`${root}/virtual_simulation/virtual-simulation.md`];
+  }
+  if (context.stageId === "diagram_modules") {
+    return [
+      `${root}/diagram_modules/product-parts.index.md`,
+      `${root}/diagram_modules/product-parts/<part-id>.md`,
+    ];
+  }
+  if (context.stageId === "application_skeleton") {
+    return [
+      `${root}/application_skeleton/application-skeleton.md`,
+      `${root}/application_skeleton/application-skeleton-map.json`,
+    ];
+  }
+  if (context.stageId === "quality_gates") {
+    return [
+      `${root}/quality_gates/quality-gates.md`,
+      `${root}/quality_gates/quality-gates.json`,
+    ];
+  }
+  return [];
+};
+
+const buildOutputTargetLines = (
+  context: DocumentationRolloverContext
+): readonly string[] => {
+  const targets = buildStageOutputTargets(context);
+  if (targets.length === 0) {
+    return [];
+  }
+  if (!MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
+    return [
+      `Output target artifact (write exactly this relative path; do not read it first): \`${targets[0]}\``,
+    ];
+  }
+  return [
+    "Managed output target rule: write only the current target path named by Core or by the Active Stage Todo Plan Text; do not infer or expand scope from sibling files.",
+    "Canonical output path(s) for this stage:",
+    ...targets.map((target) => `- \`${target}\``),
+  ];
+};
 
 const buildInputLines = (
   context: DocumentationRolloverContext
@@ -69,6 +119,7 @@ const buildWorkflowStartContract = async (
     `Stage: ${STAGE_LABELS[context.stageId] ?? context.stageId}.`,
     ...buildInputLines(context),
     `Output file name: \`${fileName}\``,
+    ...buildOutputTargetLines(context),
     managedBundleText,
   ].join("\n\n");
 };

@@ -119,6 +119,12 @@ test("Documentation Tree continuation envelope is attached to the first real use
     );
     assert.equal(
       providerSends[0]?.content.includes(
+        "Output target artifact (write exactly this relative path; do not read it first): `.codeai-hub/demo/virtual_simulation/virtual-simulation.md`"
+      ),
+      true
+    );
+    assert.equal(
+      providerSends[0]?.content.includes(
         "## Last Assistant Message Before Rollover"
       ),
       true
@@ -191,5 +197,17 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
   assert.equal(envelope.includes("Target path (relative):"), false);
   assert.equal(envelope.includes("Target path (absolute):"), false);
   assert.equal(envelope.includes("Final_Description.md:"), false);
+  assert.equal(
+    envelope.includes(
+      "Managed output target rule: write only the current target path named by Core or by the Active Stage Todo Plan Text"
+    ),
+    true
+  );
+  assert.equal(
+    envelope.includes(
+      "`.codeai-hub/demo/application_skeleton/application-skeleton.md`"
+    ),
+    true
+  );
   assert.equal(envelope.includes("application-skeleton-map.json"), true);
 });
