@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "05a72e2a0",
+  "lastRecordedCommit": "3f17208ee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14s.task2",
-  "expectedCommitMessage": "chore: build managed workflow contract release",
+  "currentTaskId": "managed-workflow-context.phase14s.task3",
+  "expectedCommitMessage": "docs: record managed workflow contract retest handoff",
   "debt": {
-    "expectedCommitMessage": "chore: build managed workflow contract release",
-    "preCommitHead": "05a72e2a0",
+    "expectedCommitMessage": "docs: record managed workflow contract retest handoff",
+    "preCommitHead": "3f17208ee",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14s.task2"
+    "taskId": "managed-workflow-context.phase14s.task3"
   }
 }
 ```
@@ -373,9 +373,9 @@
 153. [DONE] `managed-workflow-context.phase14s.task1` Prepare release metadata for v1.2.215 and record that the next session starts with user testing of this release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed workflow contract release`).
 154. [DONE] Git Commit: `docs: prepare managed workflow contract release` (hash: 05a72e2a0)
 155. [DONE] `managed-workflow-context.phase14s.task2` Build v1.2.215 release artifacts for next-session testing and record generated VSIX/tarball paths for handoff (scope: `package.json, package-lock.json, packages/**/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow contract release`).
-156. [PENDING] Git Commit: `chore: build managed workflow contract release` (hash: TBD)
-157. [TODO] `managed-workflow-context.phase14s.task3` Next session user workflow testing: install v1.2.215 and retest Claude Diagram Modules turn ordering, provider-visible prompt paths, Plan Orchestrator scoped commits, and managed release handoff behavior (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow contract retest handoff`).
-158. [TODO] Git Commit: `docs: record managed workflow contract retest handoff` (hash: TBD)
+156. [DONE] Git Commit: `chore: build managed workflow contract release` (hash: 3f17208ee)
+157. [DONE] `managed-workflow-context.phase14s.task3` Record next-session user workflow testing handoff for v1.2.215: install `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.215.vsix` and retest Claude Diagram Modules turn ordering, provider-visible prompt paths, Plan Orchestrator scoped commits, and managed release handoff behavior (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow contract retest handoff`).
+158. [PENDING] Git Commit: `docs: record managed workflow contract retest handoff` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
