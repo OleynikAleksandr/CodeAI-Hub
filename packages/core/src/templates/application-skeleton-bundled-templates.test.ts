@@ -35,8 +35,12 @@ const LOCALIZED_DRAFT_RESPONSE_RE =
 const LOCALIZED_MATERIALIZED_RESPONSE_RE =
   /tell the user, in the chat language, that Application Skeleton is accepted and materialized/;
 const CORE_OWNS_COMMIT_RE =
-  /Core owns staging, the managed commit, post-commit validation, and downstream unlock/;
+  /Core owns all staging, the managed commit, post-commit validation, and downstream unlock/;
 const PLAN_COMMIT_RE = /npm run plan:commit/;
+const PROVIDER_STAGE_ONLY_RE = /stage only the two canonical/u;
+const BEFORE_COMMITTING_RE = /Before committing materialization/u;
+const THEN_COMMIT_RE = /then commit/u;
+const PARTIAL_COMMIT_RE = /commit a partial result/u;
 const DRAFT_REVISION_MICROTASK_RE = /ask Core for a managed plan revision/;
 const MATERIALIZATION_CONTEXT_RE =
   /runtime-provided managed context is still for the Application Skeleton materialization task/;
@@ -105,6 +109,10 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, LOCALIZED_MATERIALIZED_RESPONSE_RE);
   assert.match(prompt, CORE_OWNS_COMMIT_RE);
   assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
+  assert.doesNotMatch(prompt, PROVIDER_STAGE_ONLY_RE);
+  assert.doesNotMatch(prompt, BEFORE_COMMITTING_RE);
+  assert.doesNotMatch(prompt, THEN_COMMIT_RE);
+  assert.doesNotMatch(prompt, PARTIAL_COMMIT_RE);
   assert.match(prompt, DRAFT_REVISION_MICROTASK_RE);
   assert.match(prompt, MATERIALIZATION_CONTEXT_RE);
   assert.match(prompt, USER_STACK_REPLACEMENT_RE);

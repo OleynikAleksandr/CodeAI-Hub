@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "30c150bf3",
+  "lastRecordedCommit": "c44a1a7c5",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase0.task1",
-  "expectedCommitMessage": "docs: open managed prompt ownership repair plan",
+  "currentTaskId": "prompt-ownership.phase1.task1",
+  "expectedCommitMessage": "fix: remove application skeleton agent commit wording",
   "debt": {
-    "expectedCommitMessage": "docs: open managed prompt ownership repair plan",
-    "preCommitHead": "30c150bf3",
+    "expectedCommitMessage": "fix: remove application skeleton agent commit wording",
+    "preCommitHead": "c44a1a7c5",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase0.task1"
+    "taskId": "prompt-ownership.phase1.task1"
   }
 }
 ```
@@ -48,29 +48,29 @@
 ### Stream: Plan Activation
 
 1. [DONE] `prompt-ownership.phase0.task1` Open the active repair plan for managed prompt ownership leak fixes (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open managed prompt ownership repair plan`).
-2. [PENDING] Git Commit: `docs: open managed prompt ownership repair plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: open managed prompt ownership repair plan` (hash: c44a1a7c5)
 
 ## Phase 1 — Managed Prompt Ownership (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Prompt Assets
 
-3. [TODO] `prompt-ownership.phase1.task1` Remove provider-side staging/commit language from Application Skeleton prompt and lock the bundled-template regression (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md`, `packages/core/src/templates/application-skeleton-bundled-templates.test.ts`; expected commit: `fix: remove application skeleton agent commit wording`).
-4. [TODO] Git Commit: `fix: remove application skeleton agent commit wording` (hash: TBD)
-5. [TODO] `prompt-ownership.phase1.task2` Remove provider-side staging language from Quality Gates prompt and lock the bundled-template regression (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md`, `packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `fix: remove quality gates agent staging wording`).
+3. [DONE] `prompt-ownership.phase1.task1` Remove provider-side staging/commit language from Application Skeleton prompt and lock the bundled-template regression (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove application skeleton agent commit wording`).
+4. [PENDING] Git Commit: `fix: remove application skeleton agent commit wording` (hash: TBD)
+5. [TODO] `prompt-ownership.phase1.task2` Remove provider-side staging language from Quality Gates prompt and lock the bundled-template regression (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: remove quality gates agent staging wording`).
 6. [TODO] Git Commit: `fix: remove quality gates agent staging wording` (hash: TBD)
 
 ## Phase 2 — Initial Managed Context (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Prompt Context Bundle
 
-7. [TODO] `prompt-ownership.phase2.task1` Ensure cold-start managed workflow prompts receive the same Core-owned managed context bundle contract as continuation prompts, or stop claiming embedded plan state exists (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts`; expected commit: `fix: align managed prompt context bundle wording`).
+7. [TODO] `prompt-ownership.phase2.task1` Ensure cold-start managed workflow prompts receive the same Core-owned managed context bundle contract as continuation prompts, or stop claiming embedded plan state exists (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts`; expected commit: `fix: align managed prompt context bundle wording`).
 8. [TODO] Git Commit: `fix: align managed prompt context bundle wording` (hash: TBD)
 
 ## Phase 3 — SSOT Sync (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Documentation
 
-9. [TODO] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`, `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
+9. [TODO] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
 10. [TODO] Git Commit: `docs: sync managed prompt ownership ssot` (hash: TBD)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-09)

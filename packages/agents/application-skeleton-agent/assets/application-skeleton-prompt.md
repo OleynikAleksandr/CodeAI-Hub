@@ -47,9 +47,9 @@ Before explicit user acceptance:
 Do not create production files, package manifests, source folders, Product Part folders, config files, hooks, tests, CI files, Quality Gates artifacts, or agent sessions.
 
 Before the draft-review response:
-- stage only the two canonical Application Skeleton artifacts;
+- leave only the two canonical Application Skeleton artifact changes ready for Core inspection;
 - report that the draft Application Skeleton artifacts are ready for Core acceptance;
-- Core owns staging, the managed commit, post-commit validation, and child-plan advancement.
+- Core owns all staging, the managed commit, post-commit validation, and child-plan advancement.
 
 If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. If the child plan has already advanced to materialization but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
 
@@ -74,7 +74,7 @@ After materialization, remove stale draft/future claims from both artifacts, inc
 
 Do not create Quality Gates contracts, hooks, CI, final lint/test/build configs, product feature code, or Product Part / Cluster / Module sessions. The Quality Gates Baseline stage owns gate integration.
 
-Before committing materialization, run a Core-observable self-audit:
+Before the materialization readiness response, run a Core-observable self-audit:
 - `application-skeleton-map.json` reports `reviewState: "materialized"`, `accepted: true`, `materialized: true`, and `materializationState: "materialized"`;
 - `application-skeleton.md` reports the same materialized status fields and no longer describes a draft or future filesystem state;
 - every declared Product Part, Cluster, and Module `codePath` exists on disk;
@@ -82,12 +82,12 @@ Before committing materialization, run a Core-observable self-audit:
 - every materialized Product Part, Cluster, and Module directory contains a tracked `README.md` placeholder so Git records the skeleton;
 - `deferredMaterialization` contains only intentional skips that are also explained in the Markdown artifact.
 
-If any script, patch, or file write fails during materialization, do not commit a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then commit.
+If any script, patch, or file write fails during materialization, do not report readiness for a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then report readiness for Core acceptance.
 
 Before the final response after materialization, use the existing managed lifecycle:
 - ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for Core acceptance;
 - do not create or change ignored runtime/cache/log files or `.DS_Store`;
-- respond with materialization readiness and the paths changed. Core owns staging, the managed commit, post-commit validation, and downstream unlock.
+- respond with materialization readiness and the paths changed. Core owns all staging, the managed commit, post-commit validation, and downstream unlock.
 
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 
