@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "c50ec3e24",
+  "lastRecordedCommit": "a4f794d44",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase2.task3",
-  "expectedCommitMessage": "test: verify rollover prompt ownership",
+  "currentTaskId": "prompt-ownership.phase3.task2",
+  "expectedCommitMessage": "docs: align managed lifecycle planning notes",
   "debt": {
-    "expectedCommitMessage": "test: verify rollover prompt ownership",
-    "preCommitHead": "c50ec3e24",
+    "expectedCommitMessage": "docs: align managed lifecycle planning notes",
+    "preCommitHead": "a4f794d44",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase2.task3"
+    "taskId": "prompt-ownership.phase3.task2"
   }
 }
 ```
@@ -68,7 +68,7 @@
 9. [DONE] `prompt-ownership.phase2.task2` Embed managed context bundle text into initial managed workflow prompt packs before provider turns start (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `fix: embed managed context in initial prompts`).
 10. [DONE] Git Commit: `fix: embed managed context in initial prompts` (hash: c50ec3e24)
 11. [DONE] `prompt-ownership.phase2.task3` Verify rollover/continuation prompts follow the same managed prompt ownership contract and document whole-prompt audit requirements (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `test: verify rollover prompt ownership`).
-12. [PENDING] Git Commit: `test: verify rollover prompt ownership` (hash: TBD)
+12. [DONE] Git Commit: `test: verify rollover prompt ownership` (hash: a4f794d44)
 
 ## Phase 3 — SSOT Sync (owner: Codex, updated: 2026-05-09)
 
@@ -76,24 +76,26 @@
 
 13. [DONE] `prompt-ownership.phase3.task1` Update SSOT docs to state that all managed-stage prompts use content-readiness wording and never ask providers to stage or commit (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: sync managed prompt ownership ssot`).
 14. [DONE] Git Commit: `docs: sync managed prompt ownership ssot` (hash: 58ac41903)
+15. [DONE] `prompt-ownership.phase3.task2` Align the active managed-workspace planning notes with Core-owned managed commits after the whole-prompt audit (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md`; expected commit: `docs: align managed lifecycle planning notes`).
+16. [PENDING] Git Commit: `docs: align managed lifecycle planning notes` (hash: TBD)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Targeted Checks
 
-15. [DONE] `prompt-ownership.phase4.task1` Run targeted bundled-template/prompt tests and relevant typecheck/build checks for the touched surfaces (scope: `packages/core/src/templates`, `src/client/project-manager/services`; expected commit: `test: verify managed prompt ownership repair`).
-16. [DONE] Git Commit: `test: verify managed prompt ownership repair` (hash: 82fb6aec6)
+17. [DONE] `prompt-ownership.phase4.task1` Run targeted bundled-template/prompt tests and relevant typecheck/build checks for the touched surfaces (scope: `packages/core/src/templates`, `src/client/project-manager/services`; expected commit: `test: verify managed prompt ownership repair`).
+18. [DONE] Git Commit: `test: verify managed prompt ownership repair` (hash: 82fb6aec6)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-09)
 
 ### Stream: User Retest
 
-17. [TODO] `prompt-ownership.phase5.task1` User retests Application Skeleton / Quality Gates provider turns and confirms providers stop after content readiness while Core owns commits (scope: user workflow retest; expected commit: `test: record managed prompt ownership acceptance`).
-18. [TODO] Git Commit: `test: record managed prompt ownership acceptance` (hash: TBD)
+19. [TODO] `prompt-ownership.phase5.task1` User retests Application Skeleton / Quality Gates provider turns and confirms providers stop after content readiness while Core owns commits (scope: user workflow retest; expected commit: `test: record managed prompt ownership acceptance`).
+20. [TODO] Git Commit: `test: record managed prompt ownership acceptance` (hash: TBD)
 
 ## Phase 6 — Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-19. [TODO] `prompt-ownership.phase6.task1` After explicit user acceptance, archive this plan and leave terminal NONE state (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit: `docs: close managed prompt ownership repair`).
-20. [TODO] Git Commit: `docs: close managed prompt ownership repair` (hash: TBD)
+21. [TODO] `prompt-ownership.phase6.task1` After explicit user acceptance, archive this plan and leave terminal NONE state (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit: `docs: close managed prompt ownership repair`).
+22. [TODO] Git Commit: `docs: close managed prompt ownership repair` (hash: TBD)

@@ -10,7 +10,7 @@
 The current trunk becomes filesystem-heavy too late for the existing continuity model:
 
 - `Diagram Modules` can be a long user-review session, but it is also the first stage where stable architecture graph decisions appear.
-- `Application Skeleton` and `Quality Gates Baseline` work with real files, but the project lifecycle baseline (`git`, `todo-plan.md`, hooks, plan scripts) does not exist yet in generated workspaces.
+- `Application Skeleton` and `Quality Gates Baseline` work with real files, but the project lifecycle baseline (`git`, `workspace.plan.md`, stage child plans, hooks, plan scripts) does not exist yet in generated workspaces.
 - Provider native compaction can help as a fallback, but it is not a product-owned recovery mechanism.
 - If the user later returns to `Diagram Modules` and changes modules/clusters, downstream skeleton/gates/development work needs a controlled revision diff and migration plan.
 
@@ -27,7 +27,8 @@ Managed mode creates one Git-controlled workspace lifecycle, not separate workfl
   .git/
   .husky/
   scripts/plan-orchestrator/
-  doc/TODO/todo-plan.md
+  doc/TODO/workspace.plan.md
+  doc/TODO/stages/<stage>/todo-plan.md
   .codeai-hub/
     workflow/        tracked control plane
     runtime/         ignored machine runtime
@@ -83,7 +84,7 @@ If the user wants a product-level change after this point, it becomes an **Upstr
 Before starting the agent, Core:
 
 1. initializes managed workspace lifecycle;
-2. creates baseline `doc/TODO/todo-plan.md`;
+2. creates `doc/TODO/workspace.plan.md` and the active stage child plan under `doc/TODO/stages/<stage>/todo-plan.md`;
 3. installs minimal hooks;
 4. creates `.codeai-hub/workflow` tracked structure;
 5. creates the initial adoption commit for Core-owned lifecycle files and accepted upstream evidence;
@@ -97,7 +98,10 @@ giving that agent a clean Git status and a real commit history. Later
 but they must not inherit uncommitted Description, Virtual Simulation, or
 lifecycle setup files as work they supposedly created.
 
-The first prompt should not teach a large process manual. It should say: read `doc/TODO/todo-plan.md`, keep changes scoped to the current task, update workflow artifacts, and use the managed commit flow.
+The first prompt should not teach a large process manual. It receives the
+Core-built managed workflow context bundle, keeps the provider focused on
+content readiness for the current stage artifacts, and leaves validation,
+staging, commit, ledger update, continuation, and downstream unlock to Core.
 
 ### 4.3 Application Skeleton
 
@@ -109,7 +113,8 @@ It does not create git, hooks, or plan scripts. It only:
 - updates/extends the current plan when the user asks for skeleton changes;
 - writes `application-skeleton-map.json` and human-readable rationale;
 - materializes the accepted project skeleton under the same Git repo;
-- commits through the plan workflow.
+- reports content readiness so Core can validate and commit the accepted owned
+  files through the managed workflow transaction.
 
 ### 4.4 Quality Gates Baseline
 
@@ -215,10 +220,13 @@ Native provider auto-compact remains a fallback only.
 
 Primary recovery after `Diagram Modules` starts:
 
-1. new session reads `doc/TODO/todo-plan.md`;
-2. runs `plan:status`;
-3. reads current Context Pack only;
-4. continues current task.
+1. Core resolves `doc/TODO/workspace.plan.md` and the active stage child plan;
+2. Core injects the managed workflow context bundle into the provider-visible
+   prompt or continuation envelope;
+3. the provider reads only that bundled stage context unless Core explicitly
+   asks for more;
+4. provider work continues from the current task as content readiness, while
+   Core owns acceptance and durable commit.
 
 Core should lower rollover thresholds for managed filesystem stages and must not start long filesystem/research turns when lifecycle state is missing or blocked.
 
@@ -248,13 +256,13 @@ It must block or create plan tasks for semantic drift:
 Short user-facing retest list after release:
 
 1. Start a fresh workspace and run `Description` + `Virtual Simulation`.
-2. Start `Diagram Modules`; verify Core initializes Git, hooks, `doc/TODO/todo-plan.md`, and `.codeai-hub/workflow` before agent work.
+2. Start `Diagram Modules`; verify Core initializes Git, hooks, `doc/TODO/workspace.plan.md`, the diagram-modules child plan, and `.codeai-hub/workflow` before agent work.
 3. Try sending messages to `Description` / `Virtual Simulation` after `Diagram Modules` starts; they must be read-only.
-4. In `Diagram Modules`, ask for a module/cluster change; verify plan stream is updated and commit workflow is enforced.
+4. In `Diagram Modules`, ask for a module/cluster change; verify Core accepts the ready artifacts, records the managed commit, and advances the active child plan.
 5. Start `Application Skeleton`; verify it receives existing managed lifecycle and does not create process infrastructure itself.
-6. Start `Quality Gates`; verify it creates gate manifest/scripts and Core-owned hook registry wires gates.
+6. Start `Quality Gates`; verify it creates gate manifest/scripts, reports readiness, and Core-owned acceptance wires gate artifacts and hook registry updates.
 7. Return to `Diagram Modules`, add/remove/rename a module; verify revision diff and downstream migration tasks.
-8. Force or simulate session rollover after `Diagram Modules`; verify recovery starts from `todo-plan.md`, not legacy reports.
+8. Force or simulate session rollover after `Diagram Modules`; verify recovery starts from the managed workflow context bundle, not legacy reports or provider-side plan commands.
 
 Live retest note for `v1.2.173`: step 3 exposed a Project Manager defect. After `Diagram Modules` starts, `Description` renders hardcoded English read-only copy and `Virtual Simulation` can still show an editable session. The follow-up fix stream must localize the read-only placeholder and apply it consistently to both upstream stages.
 
@@ -280,7 +288,7 @@ Live retest note for `v1.2.174`: upstream read-only behavior is confirmed, inclu
 
 Live retest note for `v1.2.175`: Application Skeleton activation now creates the managed workspace baseline in the correct workspace root, including `.git`, hooks, package scripts, `doc/TODO/todo-plan.md`, and `.codeai-hub/workflow`. Follow-up defect: the installed `scripts/plan-orchestrator/plan-cli.mjs` shim fails on `npm run plan:status` because its state parser does not strip the fenced JSON block when the block starts with a leading newline. This means hooks would fail even though the filesystem baseline exists.
 
-Local smoke note for `v1.2.176`: release build completed with VSIX `codeai-hub-1.2.176.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.176`. The targeted fixes cover fenced plan-state parsing, stage-aware managed plan seeding for `Application Skeleton` / `Quality Gates`, and Application Skeleton prompt/contract requirements for Git-tracked placeholders plus `npm run plan:commit -- "feat: materialize application skeleton"` before the final materialization response. User retest should verify Application Skeleton now commits materialized files and Quality Gates unlocks from a clean managed workspace.
+Local smoke note for `v1.2.176`: release build completed with VSIX `codeai-hub-1.2.176.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.176`. The targeted fixes cover fenced plan-state parsing and stage-aware managed plan seeding for `Application Skeleton` / `Quality Gates`. The older prompt-level requirement that Application Skeleton run `npm run plan:commit -- "feat: materialize application skeleton"` before its final response is superseded: managed-stage providers now report content readiness, and Core owns the durable post-turn transaction.
 
 Local smoke note for `v1.2.177`: release build completed with VSIX `codeai-hub-1.2.177.vsix`, runtime tarballs copied to `doc/tmp/releases/`, and VSIX `extension/package.json` reports version `1.2.177`. A compiled-Core smoke workspace verified `git config --local core.hooksPath` returns `.husky`, `.gitignore` contains `.DS_Store`, and `npm run plan:status` still seeds Application Skeleton with `Expected Commit: feat: materialize application skeleton`. User retest should verify the same preflight facts in a fresh Project Manager workspace before accepting the Application Skeleton materialization contract.
 
@@ -376,13 +384,15 @@ User retest checklist for `v1.2.183`:
   session flow, without asking for a separate Development Tree session.
 
 Live retest note for `v1.2.183`: the handoff and child-plan setup worked through
-Quality Gates, but the Quality Gates agent finished Phase 2 without executing
-`npm run plan:commit -- "feat: integrate quality gates baseline"`. The workspace
-was left dirty with `package.json`, `package-lock.json`, `tools/gates/**`,
+Quality Gates, but the workflow still depended on the Quality Gates agent to
+complete the durable managed transaction. The workspace was left dirty with
+`package.json`, `package-lock.json`, `tools/gates/**`,
 `.codeai-hub/<workspaceSlug>/quality_gates/**`, and a normalized upstream
-`virtual_simulation/virtual-simulation.md`; the child plan stayed
-`IN_PROGRESS` with `hash: TBD`, and `doc/TODO/workspace.plan.md` still recorded
-Application Skeleton as the last accepted commit.
+`virtual_simulation/virtual-simulation.md`; the child plan stayed `IN_PROGRESS`
+with `hash: TBD`, and `doc/TODO/workspace.plan.md` still recorded Application
+Skeleton as the last accepted commit. The corrected architecture treats this as
+a missing Core-owned post-turn acceptance transaction, not as a provider prompt
+responsibility.
 
 Core then unlocked Development Tree from the dirty `quality-gates.json` content
 because `readDevelopmentTreeBootstrapGate` only required Application Skeleton
@@ -393,14 +403,12 @@ state alone. It must require accepted managed lifecycle evidence for
 clean Git, and green artifact validation.
 
 Release delivery note for `v1.2.184`: quality transaction hotfix release is
-built as `codeai-hub-1.2.184.vsix`. The release tightens the Quality Gates
-prompt so the agent must stage artifacts, run
-`npm run plan:commit -- "feat: integrate quality gates baseline"`, verify
-`npm run plan:status`, and keep Git clean before claiming integration. Core now
-keeps Development Tree locked until Quality Gates has an accepted commit entry in
-`doc/TODO/workspace.plan.md`, the quality-gates child plan has advanced beyond
-the integration task, no child-plan debt exists, and `git status --short` is
-clean.
+built as `codeai-hub-1.2.184.vsix`. Its prompt-level transaction requirement is
+now superseded by the Core-owned managed commit model: Quality Gates reports
+content readiness, then Core validates the owned files, records the accepted
+commit entry in `doc/TODO/workspace.plan.md`, advances the quality-gates child
+plan, checks that no child-plan debt exists, and only then unlocks Development
+Tree from a clean Git state.
 
 User retest checklist for `v1.2.184`:
 
@@ -463,9 +471,10 @@ to a filesystem-stage transaction fix:
 Release delivery note for `v1.2.185`: filesystem-stage draft lifecycle hotfix
 release is built as `codeai-hub-1.2.185.vsix`. The release splits generated
 Application Skeleton and Quality Gates child plans into separate draft and
-execution transactions, updates both bundled agent prompts to require a clean
-managed draft commit before destructive filesystem work, gates Development Tree
-unlock on accepted materialization/integration ledger evidence, and stops
+execution transactions, updates both bundled agent prompts to report draft
+content readiness before destructive filesystem work while Core owns the clean
+managed draft commit, gates Development Tree unlock on accepted
+materialization/integration ledger evidence, and stops
 read-model workflow-state refreshes from creating untracked Development Tree
 draft files as a side effect while Quality Gates is finishing.
 
@@ -616,17 +625,19 @@ Core startup/update. The fix should avoid adding logic to the already
 499-line `api.ts` file and should remain a small UI readiness layer.
 
 Live retest defect for `v1.2.189`: Codex can write the first Diagram Modules
-artifact, but cannot complete the required managed lifecycle commit. The native
-rollout shows `product-parts.index.md` created successfully, followed by
-`git add ...` failing with `fatal: Unable to create .../.git/index.lock:
-Operation not permitted`. The same rollout's permission profile shows the
-workspace as writable while `${workspace}/.git` is read-only.
+artifact, but the old provider-owned commit path cannot complete the required
+managed lifecycle transaction. The native rollout shows `product-parts.index.md`
+created successfully, followed by `git add ...` failing with `fatal: Unable to
+create .../.git/index.lock: Operation not permitted`. The same rollout's
+permission profile shows the workspace as writable while `${workspace}/.git` is
+read-only.
 
 Important nuance: the user is running with Bypass/Full Access enabled, and the
 provider home config contains `sandbox_mode = "danger-full-access"`. CodeAI Hub
 still overrides the thread with `sandbox: "workspace-write"` at `thread/start`,
 so the user's Full Access setting does not reach ordinary Codex workflow
-sessions. This makes any managed stage that requires `plan:commit` unreliable.
+sessions. This is one reason provider-side managed commits are the wrong
+boundary; Core-owned acceptance must be the durable transaction owner.
 
 Fix direction: ordinary Codex workflow/documentation sessions must receive an
 effective permission profile that allows managed workspace Git writes. The fix
@@ -643,8 +654,9 @@ Provider permission release note for `v1.2.190`: the hotfix package combines
 the Project Manager Core startup readiness gate, the Codex managed `.git`
 permission fix, and Gemini bridge hardening so runtime `approvalMode: "yolo"`
 flags cannot be downgraded by persisted settings. The live retest should cover
-fresh Description startup, Diagram Modules managed commits, and a Gemini-backed
-workflow turn that writes and commits without requesting hidden approval.
+fresh Description startup, Diagram Modules content readiness with Core-owned
+managed acceptance, and a Gemini-backed workflow turn that writes artifacts
+without requesting hidden approval.
 
 Release delivery note for `v1.2.190`: `./scripts/build-all.sh` produced fresh
 provider/core/UI/launcher tarballs under `doc/tmp/releases/`, and
@@ -659,8 +671,8 @@ User retest checklist for `v1.2.190`:
    is actually ready; Settings/workspace actions must not be usable early.
 2. Fresh Codex Description and Diagram Modules workflow turns should start
    without hidden permission prompts.
-3. Diagram Modules should write artifacts and complete managed `plan:commit`
-   without `.git/index.lock: Operation not permitted`.
+3. Diagram Modules should write artifacts and let Core complete managed
+   acceptance without `.git/index.lock: Operation not permitted`.
 4. Gemini workflow turns should preserve `approvalMode: "yolo"` and should not
    wait for invisible permission confirmation.
 
