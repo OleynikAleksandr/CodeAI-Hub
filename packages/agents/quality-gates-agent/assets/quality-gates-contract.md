@@ -7,7 +7,7 @@
 
 ## Managed Hook Boundary
 
-- Core owns git setup, the lifecycle baseline inside `.husky` hooks, plan scripts, `doc/TODO/workspace.plan.md`, active child plans under `doc/TODO/stages/<stage>/todo-plan.md`, and `.codeai-hub/workflow` lifecycle ledgers.
+- Core owns git setup, the lifecycle baseline inside `.husky` hooks, plan scripts, workspace plan state, active stage todo-plan state, and workflow lifecycle ledgers.
 - Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, `quality-gates.json` manifest fields, and the Quality Gates hook wiring required by accepted `requiredBeforeCommit` / `requiredBeforePush` arrays.
 - Preserve Core lifecycle commands such as `plan:validate`. Append Quality Gates hook wiring instead of replacing the hook.
 - Hook wiring may be direct (`npm run qg:<gate>`) or aggregate (`npm run qg:before-commit` / `npm run qg:before-push`) when the package script dispatches the corresponding required array from `quality-gates.json`.

@@ -6,7 +6,7 @@
 
 ## Managed Workspace Boundary
 - Application Skeleton must assume the managed workspace lifecycle already exists from the `Diagram Modules` entrypoint.
-- Git, hooks, `doc/TODO/workspace.plan.md`, active child plans under `doc/TODO/stages/<stage>/todo-plan.md`, plan scripts, `.codeai-hub/workflow`, workflow revision ledgers, and upstream read-only policy are Core-owned lifecycle controls, not skeleton materialization output.
+- Git, hooks, workspace plan state, active stage todo-plan state, plan scripts, workflow lifecycle ledgers, and upstream read-only policy are Core-owned lifecycle controls, not skeleton materialization output.
 - If lifecycle controls are missing or broken, report runtime/Core preflight failure. Do not create, reinstall, repair, rename, or replace them in this stage.
 
 ## JSON Shape

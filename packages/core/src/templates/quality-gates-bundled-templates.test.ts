@@ -11,11 +11,11 @@ const STACK_RESEARCH_RE = /stack-specific research/;
 const NEEDS_USER_DECISION_RE = /needs_user_decision/;
 const INTEGRATION_PATHS_RE = /planned integration paths/;
 const CORE_HOOK_REGISTRY_RE =
-  /Core owns the managed lifecycle baseline, git setup, plan scripts, workspace plans, child plans/;
-const ACTIVE_CHILD_PLAN_RE =
-  /Read `doc\/TODO\/workspace\.plan\.md`, then read the active child plan named by `activePlanPath`/;
+  /Core owns the managed lifecycle baseline, git setup, plan scripts, workspace plan state, active stage todo-plan state/;
+const EMBEDDED_PLAN_CONTEXT_RE =
+  /Use only the workspace plan text, active stage todo-plan text, and plan status that Core embeds/;
 const QUALITY_GATES_HANDOFF_RE =
-  /activeStage: "quality_gates".*activePlanPath: "doc\/TODO\/stages\/quality-gates\/todo-plan\.md"/s;
+  /embedded Core plan status must say `activeStage: "quality_gates"`/;
 const NO_LIFECYCLE_RESTORE_RE =
   /must not rewrite, restore, revert, checkout, or replace the Core-owned lifecycle baseline/;
 const HOOK_WIRING_RE =
@@ -34,6 +34,8 @@ const GATE_CONTRACT_REVISION_RE = /ask Core for a managed plan revision/;
 const INTEGRATION_CONTEXT_RE =
   /runtime-provided managed context is still for the Quality Gates integration task/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
+const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
+const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
 const NO_PLANNED_DUPLICATES_RE =
   /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
 const LEGACY_RESEARCH_PASS_RE = /Required Research And Design Pass/;
@@ -53,7 +55,7 @@ const ADVISORY_NO_BLOCKING_RE =
   /Advisory gates must not have `blockingIn` phases/;
 const CONTRACT_HOOK_BOUNDARY_RE = /Managed Hook Boundary/;
 const CONTRACT_CHILD_PLAN_RE =
-  /Core owns git setup, the lifecycle baseline inside `\.husky` hooks, plan scripts, `doc\/TODO\/workspace\.plan\.md`, active child plans under `doc\/TODO\/stages\/<stage>\/todo-plan\.md`/;
+  /Core owns git setup, the lifecycle baseline inside `\.husky` hooks, plan scripts, workspace plan state, active stage todo-plan state/;
 const CONTRACT_HOOK_AGGREGATE_RE =
   /Hook wiring may be direct .* or aggregate .*qg:before-commit.*qg:before-push/s;
 const CONTRACT_INTEGRATED_HOOK_RE =
@@ -75,7 +77,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, NEEDS_USER_DECISION_RE);
   assert.match(prompt, INTEGRATION_PATHS_RE);
   assert.match(prompt, CORE_HOOK_REGISTRY_RE);
-  assert.match(prompt, ACTIVE_CHILD_PLAN_RE);
+  assert.match(prompt, EMBEDDED_PLAN_CONTEXT_RE);
   assert.match(prompt, QUALITY_GATES_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, HOOK_WIRING_RE);
@@ -90,6 +92,8 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, INTEGRATION_CONTEXT_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
+  assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);
+  assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
   assert.doesNotMatch(prompt, HARDCODED_ULTRACITE_RE);
   assert.doesNotMatch(prompt, HARDCODED_KNIP_RE);
@@ -113,6 +117,7 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, CONTRACT_INTEGRATED_HOOK_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
+  assert.doesNotMatch(contract, WORKSPACE_PLAN_PATH_RE);
 });
 
 test("quality gates bundled templates stay synced with agent assets", async () => {

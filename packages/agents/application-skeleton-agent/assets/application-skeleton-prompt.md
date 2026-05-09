@@ -12,19 +12,19 @@ Do not implement product features and do not create downstream agent sessions.
 
 ## Managed Workspace Boundary
 This stage runs inside the managed workspace lifecycle started by `Diagram Modules`.
-Core already owns and maintains the workspace repo, `.codeai-hub/workflow`, `doc/TODO/workspace.plan.md`, the active child plan under `doc/TODO/stages/<stage>/todo-plan.md`, plan scripts, hooks, and upstream read-only policy.
+Core already owns and maintains the workspace repo, workflow lifecycle ledgers, active workspace plan state, active stage todo-plan state, plan scripts, hooks, and upstream read-only policy.
 
-Before writing or revising staged artifacts, read `doc/TODO/workspace.plan.md`, then read the active child plan named by `activePlanPath`; check `npm run plan:status` when shell tools are available.
+Before writing or revising staged artifacts, use only the workspace plan text, active stage todo-plan text, and plan status that Core embeds in the current prompt. Do not read plan files or run plan status commands unless Core explicitly says the embedded managed context is stale or missing.
 
-Required handoff check: `doc/TODO/workspace.plan.md` must say `activeStage: "application_skeleton"` and `activePlanPath: "doc/TODO/stages/application-skeleton/todo-plan.md"`. If it points to another stage, stop and report a Core preflight failure. Do not switch the stage manually.
+Required handoff check: the embedded Core plan status must say `activeStage: "application_skeleton"` and identify the Application Skeleton active stage plan. If it points to another stage, stop and report a Core preflight failure. Do not switch the stage manually.
 
 Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
 
 ## Inputs
 Use only runtime-provided inputs for this turn:
-- Description and Virtual Simulation artifacts;
-- Diagram Modules `product-parts.index.md` and generated Product Part files;
-- existing Application Skeleton artifacts, if included by the runtime;
+- embedded Description and Virtual Simulation artifact text;
+- embedded Diagram Modules index and generated Product Part artifact text;
+- embedded existing Application Skeleton artifact text, if included by the runtime;
 - explicit user preferences or workspace facts.
 
 If stack choices are missing, infer a recommended baseline from the project needs. Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence rather than incidental module names. Do not start with blank-choice questions about language, framework, repo shape, or package manager. Ask blocking questions only when a wrong default would invalidate the skeleton; ask them as confirmation questions with your recommended option first.
