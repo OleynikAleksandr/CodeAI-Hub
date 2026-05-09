@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "3c710d67f",
+  "lastRecordedCommit": "e0b5f104d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14m.task6",
-  "expectedCommitMessage": "docs: hand off claude managed retest repair release",
+  "currentTaskId": "managed-workflow-context.phase14n.task1",
+  "expectedCommitMessage": "fix: serialize provider turn completion after messages",
   "debt": {
-    "expectedCommitMessage": "docs: hand off claude managed retest repair release",
-    "preCommitHead": "3c710d67f",
+    "expectedCommitMessage": "fix: serialize provider turn completion after messages",
+    "preCommitHead": "e0b5f104d",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14m.task6"
+    "taskId": "managed-workflow-context.phase14n.task1"
   }
 }
 ```
@@ -322,12 +322,21 @@
     - Release 2026-05-09: VSIX ready at `codeai-hub-1.2.214.vsix` (47 MB).
     - Release 2026-05-09: tarballs ready in `doc/tmp/releases/` for Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, and project-manager v1.2.214.
     - Retest focus: Claude Diagram Modules first index turn completion, exact `.codeai-hub/<workspaceSlug>/...` writes, absence of provider-visible input-document path labels, and managed prompt behavior that relies on Core-embedded plan context instead of reading plan files.
-136. [PENDING] Git Commit: `docs: hand off claude managed retest repair release` (hash: TBD)
+136. [DONE] Git Commit: `docs: hand off claude managed retest repair release` (hash: e0b5f104d)
+
+## Phase 14N - Managed Continuation Ordering Repair (owner: Codex, updated: 2026-05-09)
+
+### Stream: Provider Message Flush And Core Continuation Gate
+
+137. [DONE] `managed-workflow-context.phase14n.task1` Make SDK `turn_completed` the single Core-owned trigger for managed acceptance: serialize provider turn completion after emitted assistant/dialog messages, move managed commit/feedback/continuation out of workflow-state read paths, and invoke managed acceptance only from the Core post-turn pipeline after turn arbitration (scope: `packages/core/src/remote-bridge/handlers`, `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts`, focused Core tests; expected commit: `fix: serialize provider turn completion after messages`).
+138. [PENDING] Git Commit: `fix: serialize provider turn completion after messages` (hash: TBD)
+139. [TODO] `managed-workflow-context.phase14n.task2` Verify managed continuation ordering against the Claude Diagram Modules interleaving regression and record evidence before release assembly (scope: `packages/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation ordering`).
+140. [TODO] Git Commit: `test: verify managed continuation ordering` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-137. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-138. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-139. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+141. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+142. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+143. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
