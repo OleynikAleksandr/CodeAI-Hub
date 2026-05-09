@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "42ea31ffa",
+  "lastRecordedCommit": "fed1d9351",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14m.task2b",
-  "expectedCommitMessage": "fix: keep rollover output targets explicit",
+  "currentTaskId": "managed-workflow-context.phase14m.task2c",
+  "expectedCommitMessage": "fix: remove managed plan read instructions from agent prompts",
   "debt": {
-    "expectedCommitMessage": "fix: keep rollover output targets explicit",
-    "preCommitHead": "42ea31ffa",
+    "expectedCommitMessage": "fix: remove managed plan read instructions from agent prompts",
+    "preCommitHead": "fed1d9351",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14m.task2b"
+    "taskId": "managed-workflow-context.phase14m.task2c"
   }
 }
 ```
@@ -303,20 +303,22 @@
 121. [DONE] `managed-workflow-context.phase14m.task2` Re-emphasize the exact write target for initial workflow prompts at the end of the provider prompt without reintroducing input-document read paths, so managed agents write under `.codeai-hub/<workspaceSlug>/...` instead of a sibling folder (scope: `src/client/project-manager/services/prompt-pack-builder.ts`, `src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: keep workflow output target in prompt tail`).
 122. [DONE] Git Commit: `fix: keep workflow output target in prompt tail` (hash: 42ea31ffa)
 123. [DONE] `managed-workflow-context.phase14m.task2b` Add explicit relative output target guidance to documentation rollover envelopes for all workflow stages, including managed-stage canonical artifact paths without reintroducing input-document read paths (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: keep rollover output targets explicit`).
-124. [PENDING] Git Commit: `fix: keep rollover output targets explicit` (hash: TBD)
-125. [TODO] `managed-workflow-context.phase14m.task3` Run focused Claude provider, Project Manager prompt, and rollover envelope regressions for the retest failure and record the outcome before release assembly (scope: `packages/Claude_Module`, `src/client/project-manager`, `packages/core`, `doc/TODO/todo-plan.md`; expected commit: `test: verify claude managed retest repair`).
-126. [TODO] Git Commit: `test: verify claude managed retest repair` (hash: TBD)
-127. [TODO] `managed-workflow-context.phase14m.task4` Prepare README and CHANGELOG for the Claude managed retest repair release after the user's explicit release request (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude managed retest repair release`).
-128. [TODO] Git Commit: `docs: prepare claude managed retest repair release` (hash: TBD)
-129. [TODO] `managed-workflow-context.phase14m.task5` Run release automation and verify VSIX/tarball outputs for the Claude managed retest repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build claude managed retest repair release artifacts`).
-130. [TODO] Git Commit: `chore: build claude managed retest repair release artifacts` (hash: TBD)
-131. [TODO] `managed-workflow-context.phase14m.task6` Hand off the built release for user retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off claude managed retest repair release`).
-132. [TODO] Git Commit: `docs: hand off claude managed retest repair release` (hash: TBD)
+124. [DONE] Git Commit: `fix: keep rollover output targets explicit` (hash: fed1d9351)
+125. [DONE] `managed-workflow-context.phase14m.task2c` Remove managed-plan file-read and plan-status command instructions from bundled managed agent prompts, preserving Core-embedded workspace plan text, active stage todo-plan text, and plan status as the single context source (scope: `packages/agents/*/assets`, `packages/core/src/templates`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove managed plan read instructions from agent prompts`).
+126. [PENDING] Git Commit: `fix: remove managed plan read instructions from agent prompts` (hash: TBD)
+127. [TODO] `managed-workflow-context.phase14m.task3` Run focused Claude provider, Project Manager prompt, rollover envelope, and bundled managed prompt regressions for the retest failure and record the outcome before release assembly (scope: `packages/Claude_Module`, `src/client/project-manager`, `packages/core`, `packages/agents`, `doc/TODO/todo-plan.md`; expected commit: `test: verify claude managed retest repair`).
+128. [TODO] Git Commit: `test: verify claude managed retest repair` (hash: TBD)
+129. [TODO] `managed-workflow-context.phase14m.task4` Prepare README and CHANGELOG for the Claude managed retest repair release after the user's explicit release request (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude managed retest repair release`).
+130. [TODO] Git Commit: `docs: prepare claude managed retest repair release` (hash: TBD)
+131. [TODO] `managed-workflow-context.phase14m.task5` Run release automation and verify VSIX/tarball outputs for the Claude managed retest repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build claude managed retest repair release artifacts`).
+132. [TODO] Git Commit: `chore: build claude managed retest repair release artifacts` (hash: TBD)
+133. [TODO] `managed-workflow-context.phase14m.task6` Hand off the built release for user retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off claude managed retest repair release`).
+134. [TODO] Git Commit: `docs: hand off claude managed retest repair release` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-133. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-134. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-135. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+135. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+136. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+137. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
