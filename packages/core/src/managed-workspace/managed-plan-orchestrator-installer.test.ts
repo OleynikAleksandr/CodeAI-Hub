@@ -25,6 +25,10 @@ const DIAGRAM_NEXT_TASK_RE =
   /Current Task: diagram-modules\.product-part\.project-manager/u;
 const DIAGRAM_NEXT_COMMIT_RE =
   /Expected Commit: docs: update diagram modules product part project-manager/u;
+const DIAGRAM_SECOND_TASK_RE =
+  /Current Task: diagram-modules\.product-part\.vs-code-extension/u;
+const DIAGRAM_SECOND_COMMIT_RE =
+  /Expected Commit: docs: update diagram modules product part vs-code-extension/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.stream1\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
@@ -40,6 +44,12 @@ const DIAGRAM_MODULES_COMMIT_RE =
 const PLAN_COMMIT_HASH_RE = /hash: [0-9a-f]+/u;
 const PRODUCT_PART_SUMMARY_RE =
   /Materialize only Diagram Modules Product Part "project-manager"/u;
+const VS_CODE_PRODUCT_PART_SUMMARY_RE =
+  /Materialize only Diagram Modules Product Part "vs-code-extension"/u;
+const FUTURE_CORE_RUNTIME_TASK_RE =
+  /Materialize only Diagram Modules Product Part "core-runtime"/u;
+const PRODUCT_PART_FIELD_FALSE_TASK_RE =
+  /diagram-modules\.product-part\.(Id|Title|Purpose|Status|Every|Translate)/u;
 const INDEX_SUMMARY_RE = /Update Diagram Modules Product Part index artifact/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
 const WORKSPACE_CHANGED_FILES_RE =
@@ -241,7 +251,31 @@ test("managed plan shim advances the active task inside plan commits", async () 
     await mkdir(path.dirname(artifactPath), { recursive: true });
     await writeFile(
       artifactPath,
-      "# Product Parts\n\n### Product Part: project-manager\n",
+      [
+        "# Product Parts Index",
+        "",
+        "## Product Parts",
+        "",
+        "### Product Part: project-manager",
+        "- Id: project-manager",
+        "- Title: Project Manager",
+        "- Purpose: Owns workflow.",
+        "- Status: generated",
+        "",
+        "### Product Part: vs-code-extension",
+        "- Id: vs-code-extension",
+        "- Title: VS Code Extension",
+        "- Purpose: Owns editor shell.",
+        "- Status: planned",
+        "",
+        "### Product Part: core-runtime",
+        "- Id: core-runtime",
+        "- Title: Core Runtime",
+        "- Purpose: Owns orchestration.",
+        "- Status: planned",
+        "",
+        "<!-- Translate descriptive prose only. Every entry has fields. -->",
+      ].join("\n"),
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
@@ -277,6 +311,9 @@ test("managed plan shim advances the active task inside plan commits", async () 
     assert.doesNotMatch(plan, INCLUDED_IN_COMMIT_RE);
     assert.match(plan, PLAN_COMMIT_HASH_RE);
     assert.match(plan, PRODUCT_PART_SUMMARY_RE);
+    assert.doesNotMatch(plan, VS_CODE_PRODUCT_PART_SUMMARY_RE);
+    assert.doesNotMatch(plan, FUTURE_CORE_RUNTIME_TASK_RE);
+    assert.doesNotMatch(plan, PRODUCT_PART_FIELD_FALSE_TASK_RE);
     assert.match(workspacePlan, WORKSPACE_ACCEPTED_COMMIT_RE);
     assert.match(workspacePlan, INDEX_SUMMARY_RE);
     assert.match(workspacePlan, WORKSPACE_CHANGED_FILES_RE);
@@ -286,6 +323,38 @@ test("managed plan shim advances the active task inside plan commits", async () 
     assert.match(gitLog.stdout, DIAGRAM_MODULES_COMMIT_RE);
     await assert.rejects(access(path.join(workspaceRoot, ROOT_TODO_PLAN_PATH)));
     assert.equal(gitStatus.stdout.trim(), "");
+
+    const partPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md"
+    );
+    await mkdir(path.dirname(partPath), { recursive: true });
+    await writeFile(partPath, "# Product Part: project-manager\n", "utf8");
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [
+        scriptPath,
+        "commit",
+        "docs: update diagram modules product part project-manager",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const nextStatus = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    const nextPlan = await readFile(
+      path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH),
+      "utf8"
+    );
+
+    assert.match(nextStatus.stdout, DIAGRAM_SECOND_TASK_RE);
+    assert.match(nextStatus.stdout, DIAGRAM_SECOND_COMMIT_RE);
+    assert.match(nextPlan, VS_CODE_PRODUCT_PART_SUMMARY_RE);
+    assert.doesNotMatch(nextPlan, FUTURE_CORE_RUNTIME_TASK_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

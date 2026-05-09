@@ -158,7 +158,7 @@ const END = "<!-- codeai-plan-state:end -->";
 const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
 const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 const TASK_LINE_RE = new RegExp("^\\\\d+\\\\. \\\\[(?:TODO|IN_PROGRESS)\\\\].*?\`([^\`]+)\`.*expected commit: \`([^\`]+)\`", "u");
-const PRODUCT_PART_DECLARATION_RES = [/^###\\s+Product Part:\\s*([a-z0-9]+(?:-[a-z0-9]+)*)\\s*$/gimu, /^\\s*[-*]\\s+([a-z0-9]+(?:-[a-z0-9]+)*)\\b/gimu, /^\\s*\\|\\s*([a-z0-9]+(?:-[a-z0-9]+)*)\\s*\\|/gimu];
+const PRODUCT_PART_DECLARATION_RE = /^###\\s+Product Part:\\s*([a-z0-9]+(?:-[a-z0-9]+)*)\\s*$/gimu;
 
 const parseJsonBlock = (text, start, end, label) => {
   const block = text.split(start)[1]?.split(end)[0];
@@ -275,20 +275,23 @@ const formatTaskLine = (line, taskId, status, summary, files, message) => {
 
 const formatNewTaskLine = (number, taskId, status, summary, scope, message) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
 const collectProductPartIdsFromIndex = (files) => {
-  const indexFile = files.find((file) => file.includes("/diagram_modules/product-parts.index.md"));
+  const indexFile = files.find((file) => file.includes("/diagram_modules/product-parts.index.md")) ?? files.map((file) => file.replace(/\\/diagram_modules\\/product-parts\\/[^/]+\\.md$/u, "/diagram_modules/product-parts.index.md")).find((file) => file.includes("/diagram_modules/product-parts.index.md"));
   if (!indexFile || !existsSync(indexFile)) { return []; }
-  const text = readFileSync(indexFile, "utf8");
-  return PRODUCT_PART_DECLARATION_RES.flatMap((pattern) => [...text.matchAll(pattern)].map((match) => match[1]?.trim())).filter((id, index, ids) => id && id !== "part-id" && ids.indexOf(id) === index);
+  return [...readFileSync(indexFile, "utf8").matchAll(PRODUCT_PART_DECLARATION_RE)].map((match) => match[1]?.trim()).filter((id, index, ids) => id && id !== "part-id" && ids.indexOf(id) === index);
+};
+const committedProductPartIds = (lines, files) => {
+  const fromPlan = lines.map((line) => /^\\d+\\. \\[DONE\\] \`diagram-modules\\.product-part\\.([a-z0-9]+(?:-[a-z0-9]+)*)\`/u.exec(line)?.[1]).filter(Boolean);
+  const fromCommit = files.map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1]).filter(Boolean);
+  return [...new Set([...fromPlan, ...fromCommit])];
 };
 const insertDiagramModulesProductPartTasks = (lines, commitLineIndex, files) => {
   const ids = collectProductPartIdsFromIndex(files);
-  if (ids.length === 0 || lines.some((line) => line.includes("diagram-modules.product-part."))) { return; }
-  const existingItemCount = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length;
-  const inserted = ids.flatMap((id, index) => {
-    const taskNumber = existingItemCount + index * 2 + 1;
-    const message = \`docs: update diagram modules product part \${id}\`;
-    return [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];
-  });
+  if (ids.length === 0) { return; }
+  const completed = committedProductPartIds(lines, files);
+  const id = ids.find((candidate) => !completed.includes(candidate));
+  if (!id || lines.some((line) => line.includes(\`diagram-modules.product-part.\${id}\`))) { return; }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = \`docs: update diagram modules product part \${id}\`;
+  const inserted = [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];
   lines.splice(commitLineIndex + 1, 0, ...inserted);
 };
 
