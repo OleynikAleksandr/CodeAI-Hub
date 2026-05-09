@@ -23,6 +23,11 @@ interface ProcessResponseOptions {
   readonly sessionId: string;
 }
 
+interface ProcessResponseState {
+  promotedSessionId: string | null;
+  resultSessionId: string | null;
+}
+
 interface MessageProcessorOptions {
   readonly projectPath: string;
   readonly reporter?: ModuleReporter;
@@ -39,6 +44,25 @@ const readDeferredUserMessageVisibility = (
   turnOptions?: Record<string, unknown>
 ): "deferred" | undefined =>
   turnOptions?.userMessageVisibility === "deferred" ? "deferred" : undefined;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readAssistantStopReason = (
+  message: ClaudeStreamMessage
+): string | null => {
+  if (message.type !== "assistant") {
+    return null;
+  }
+  const nestedMessage = isRecord(message.message)
+    ? (message.message as Record<string, unknown>)
+    : null;
+  const stopReason = nestedMessage?.stop_reason ?? message.stop_reason;
+  return typeof stopReason === "string" ? stopReason : null;
+};
+
+const isAssistantEndTurnMessage = (message: ClaudeStreamMessage): boolean =>
+  readAssistantStopReason(message) === "end_turn";
 
 export class SDKMessageProcessor {
   private readonly finishHandler: ClaudeMessageFinishHandler;
@@ -229,45 +253,49 @@ export class SDKMessageProcessor {
   }
 
   async processResponses(options: ProcessResponseOptions): Promise<void> {
-    let promotedSessionId: string | null = null;
-    let resultSessionId: string | null = null;
+    const state: ProcessResponseState = {
+      promotedSessionId: null,
+      resultSessionId: null,
+    };
     try {
       for await (const message of options.iterator) {
-        const activeSession = this.resolveSession(
-          options.sessionId,
-          promotedSessionId
-        );
-        if (!promotedSessionId && message.session_id) {
-          promotedSessionId = message.session_id;
-          activeSession?.eventEmitter.emit("realSessionId", promotedSessionId);
-          options.onRealSessionId(promotedSessionId);
-        }
-        await this.dispatchMessage(activeSession, message);
-        if (message.type === "result") {
-          resultSessionId =
-            message.session_id ?? promotedSessionId ?? options.sessionId;
+        const completed = await this.processResponseMessage({
+          message,
+          options,
+          state,
+        });
+        if (completed) {
+          return;
         }
       }
-      const session = this.resolveSession(options.sessionId, promotedSessionId);
+      const session = this.resolveSession(
+        options.sessionId,
+        state.promotedSessionId
+      );
       if (session) {
-        if (resultSessionId) {
-          await this.streamEventRouter.handleStreamCompleted(session);
-          await this.finishHandler.completeTurn(session, resultSessionId);
+        if (state.resultSessionId) {
+          await this.completeTurnAtProviderBoundary(
+            session,
+            state.resultSessionId
+          );
           return;
         }
         this.finishHandler.emitTurnFailed(
           session,
           new Error("Claude stream ended without result"),
-          promotedSessionId ?? options.sessionId
+          state.promotedSessionId ?? options.sessionId
         );
       }
     } catch (error) {
-      const session = this.resolveSession(options.sessionId, promotedSessionId);
+      const session = this.resolveSession(
+        options.sessionId,
+        state.promotedSessionId
+      );
       if (session && !this.isSessionShuttingDown(session)) {
         this.finishHandler.emitTurnFailed(
           session,
           error,
-          promotedSessionId ?? options.sessionId
+          state.promotedSessionId ?? options.sessionId
         );
       }
       if (this.isSessionShuttingDown(session)) {
@@ -276,6 +304,50 @@ export class SDKMessageProcessor {
       this.emitSessionError(session, { type: "processing", error });
       this.reporter?.error?.("Claude stream processing failed", error);
     }
+  }
+
+  private async processResponseMessage(params: {
+    readonly message: ClaudeStreamMessage;
+    readonly options: ProcessResponseOptions;
+    readonly state: ProcessResponseState;
+  }): Promise<boolean> {
+    const activeSession = this.resolveSession(
+      params.options.sessionId,
+      params.state.promotedSessionId
+    );
+    if (!params.state.promotedSessionId && params.message.session_id) {
+      params.state.promotedSessionId = params.message.session_id;
+      activeSession?.eventEmitter.emit(
+        "realSessionId",
+        params.state.promotedSessionId
+      );
+      params.options.onRealSessionId(params.state.promotedSessionId);
+    }
+    await this.dispatchMessage(activeSession, params.message);
+    if (params.message.type === "result") {
+      params.state.resultSessionId =
+        params.message.session_id ??
+        params.state.promotedSessionId ??
+        params.options.sessionId;
+    }
+    if (!(activeSession && isAssistantEndTurnMessage(params.message))) {
+      return false;
+    }
+    await this.completeTurnAtProviderBoundary(
+      activeSession,
+      params.message.session_id ??
+        params.state.promotedSessionId ??
+        params.options.sessionId
+    );
+    return true;
+  }
+
+  private async completeTurnAtProviderBoundary(
+    session: ActiveSession,
+    claudeSessionId: string
+  ): Promise<void> {
+    await this.streamEventRouter.handleStreamCompleted(session);
+    await this.finishHandler.completeTurn(session, claudeSessionId);
   }
 
   private resolveSession(

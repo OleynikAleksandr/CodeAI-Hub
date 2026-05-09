@@ -185,6 +185,58 @@ test("SDKMessageProcessor completes Claude turn only after stream end", async ()
   );
 });
 
+test("SDKMessageProcessor completes native Claude assistant end_turn without result", async () => {
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-native-end-turn"
+  );
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-native-end-turn",
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "native", internal: false, enqueuedAt: Date.now() },
+    {
+      async *createIterator() {
+        yield {
+          type: "assistant",
+          session_id: "real-session-native-end-turn",
+          message: {
+            content: [{ type: "text", text: "final native response" }],
+            stop_reason: "end_turn",
+          } as unknown as ClaudeStreamMessage["message"],
+        };
+        await new Promise<never>(() => {
+          // Native Claude SDK sessions can keep the iterable open after the
+          // terminal assistant turn. The provider must not wait for that close.
+        });
+      },
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  const finalResponseIndex = events.findIndex(
+    (event) =>
+      event.type === "assistant" && event.content === "final native response"
+  );
+  const completedIndex = events.findIndex(
+    (event) => event.type === "turn_completed"
+  );
+  assert.notEqual(finalResponseIndex, -1);
+  assert.notEqual(completedIndex, -1);
+  assert.equal(completedIndex > finalResponseIndex, true);
+  assert.equal(
+    events.filter((event) => event.type === "turn_completed").length,
+    1
+  );
+});
+
 test("SDKMessageProcessor marks deferred Core feedback user_input events", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(
