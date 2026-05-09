@@ -388,3 +388,25 @@ Core-only Diagram Modules messaging verification:
 - `node --test packages/core/dist/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js` — passed. The tests cover Core-owned next-target continuation, no continuation while the managed commit gate is dirty, one-at-a-time Product Part plan advancement, and Phase 2 insertion only after the final Product Part commit.
 - `npx tsx --test src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts` — passed. The PM invariant test confirms Project Manager no longer calls `api.sendSessionMessage(...)` or owns Diagram Modules continuation prompt text.
 - `npm run typecheck:webview` and `npm run build:project-manager` — passed after the Core-only messaging and Diagram Modules phase-boundary changes.
+
+## 22. Claude Retest Blocker: Continuation Turn Boundary Ordering
+
+The `v1.2.211` Claude retest showed that Core-only continuation ownership is not sufficient by itself. Core emitted the accepted Diagram Modules continuation message after the Product Part index had been accepted, but before the previous assistant turn had visually finished in the dialog.
+
+Observed order:
+
+- Claude started the index-ready response and explained the Product Parts it identified.
+- Core inserted `Core accepted the previous Diagram Modules artifact` and the next `project-manager.md` target.
+- Claude then finished the previous response with the remaining boundary-decision text and the content-readiness note.
+
+This created two user-visible defects:
+
+- the Core continuation appeared in the middle of the previous assistant turn, so the dialog ordering no longer represented a clean turn boundary;
+- the user input became unlocked for the next agent work turn, even though the provider was already working on the next Product Part.
+
+Repair direction:
+
+- Core continuation dispatch must wait for a fully settled provider turn boundary, not only for workflow-state validation/commit readiness.
+- The dialog insertion order must be `assistant previous turn complete` -> `Core continuation` -> `assistant next turn`, with no Core message interleaved into an unfinished assistant response.
+- Project Manager input locking must remain locked across the Core continuation handoff and the following provider turn; it should unlock only when Core has no pending managed continuation or active provider work.
+- Add a regression that simulates a late assistant chunk after Core acceptance and proves continuation dispatch is deferred until the assistant turn is fully closed.
