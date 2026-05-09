@@ -282,3 +282,9 @@ This planning scope is accepted when the user agrees that the future implementat
 ## 13. Release Decision
 
 On 2026-05-09 the user explicitly authorized continuing without pauses through implementation, verification, and new release assembly. This satisfies the release build confirmation gate for this execution cycle.
+
+## 14. Release Build Evidence
+
+- `./scripts/build-all.sh` — passed, produced provider/core/UI/launcher artifacts for version `1.2.208`.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — passed, verified SDK exclusions, local artifacts, markdown links, duplication advisory gate, VSIX package surface, and produced `codeai-hub-1.2.208.vsix`.
+- Release artifacts are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
