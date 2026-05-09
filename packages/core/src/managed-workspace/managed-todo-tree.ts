@@ -50,7 +50,7 @@ const STAGE_TEMPLATES: Readonly<
   quality_gates: {
     commitMessage: "docs: draft quality gates contract",
     description:
-      "Draft Quality Gates contract artifacts for user approval before package and gate script integration",
+      "Draft Quality Gates contract artifacts as the first managed microtask before package and gate script integration",
     heading: "Quality Gates Draft Contract",
     planId: "managed-workspace-quality-gates",
     scope:
@@ -296,7 +296,7 @@ const createStageFollowUpTasks = (
 
 ### Stream: Quality Gates Integration
 
-3. [TODO] \`quality-gates.stream1.task2\` Integrate accepted Quality Gates package scripts, lockfile changes, gate scripts, configs, and verification results after the gate contract is accepted and committed (scope: \`package.json, package-lock.json, scripts/gates/**, .codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json\`; expected commit: \`feat: integrate quality gates baseline\`).
+3. [TODO] \`quality-gates.stream1.task2\` Integrate accepted Quality Gates package scripts, lockfile changes, gate scripts, configs, and verification results as one bounded target-group microtask after the gate contract is accepted and committed (scope: \`package.json, package-lock.json, scripts/gates/**, .codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json\`; expected commit: \`feat: integrate quality gates baseline\`).
 4. [TODO] Git Commit: \`feat: integrate quality gates baseline\` (hash: TBD)
 `;
   }
