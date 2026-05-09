@@ -72,12 +72,15 @@ After integrated Quality Gates, Core unlocks Development Tree read model but doe
 
 Core acceptance is an active loop, not a passive lock.
 
-When a managed stage agent produces work, Core must verify the actual workspace
-result against the stage contract before unlocking downstream work. Core owns
-the durable Git transaction for accepted managed documentation stages; provider
-agents own artifact content and must not be required to run `npm run
-plan:commit`. This applies to every managed trunk stage that participates in the
-plan/commit lifecycle:
+When a managed stage agent produces work, provider terminal events are the only
+trigger for Core-owned acceptance. Core first lets the provider turn finish,
+flushes already received assistant/dialog messages, then runs the post-turn
+managed workflow pipeline: validate the actual workspace result, commit accepted
+owned files, decide repair/continuation/pause, and only then unlock downstream
+work. Core owns the durable Git transaction for accepted managed documentation
+stages; provider agents own artifact content and must not be required to run
+`npm run plan:commit`. This applies to every managed trunk stage that
+participates in the plan/commit lifecycle:
 
 - `Diagram Modules`: planned Product Parts must resolve to valid generated
   Product Part artifacts, and `blocked_ambiguity` must be resolved in the
@@ -95,13 +98,12 @@ If acceptance fails, Core must:
 - send the validation result back into the owning workflow session;
 - include the concrete failed checks, the observed Core check context, and a
   repair request;
-- avoid duplicate feedback for the same session/error set on the same workspace
-  commit, including concurrent workflow-state reads that observe the same
-  failing commit before the first feedback delivery finishes;
+- avoid duplicate feedback for the same session/error set on the same provider
+  turn and workspace commit before the first feedback delivery finishes;
 - resend feedback after a new agent repair commit if the same validation still
   fails, because that represents a new failed acceptance attempt;
-- re-run acceptance on the next workflow state read after the agent repairs and
-  revises the stage.
+- re-run acceptance on the next provider terminal event after the agent repairs
+  and revises the stage.
 
 If acceptance passes, Core must:
 
@@ -122,3 +124,9 @@ acceptance feedback and continue the repair in place. Feedback must be specific
 enough for the agent to compare what it believes it changed with what Core
 actually observed: checked artifact/rule, observed counters or lifecycle flags,
 the failed field/path/gate, and the required repair direction.
+
+Workflow-state APIs, PM status panels, sidebars, cards, and artifact panes are
+read-model surfaces. They may display snapshots and diagnostics, but they must
+not start acceptance, managed commits, provider-visible repair feedback, or
+continuation messages. If a read path discovers stale state, it reports that
+state; the next Core post-turn pipeline owns the mutation.

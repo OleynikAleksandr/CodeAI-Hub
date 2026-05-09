@@ -26,6 +26,7 @@
 - `dialog_opened` — специальный explicit-intent trigger: при фактическом открытии пользователем Core обязан replay-ить cached `usage_limits`, а затем запускать cheap provider refresh даже если cached payload уже есть. Это даёт instant last-known limits + pre-turn freshness без eager provider resume.
 - Terminal usage updates нормализуются вокруг `turn_completed`: provider/core доставляют свежие usage snapshots в самом turn-completion payload и/или adjacent `stream_event`, без UI-owned provider reread.
 - Если latest workspace snapshot уже подтверждает, что для `dialogId` нет live runtime segment, ready idle dialog не должен сам перезапускать `dialog:list`, `dialog:history` или provider usage refresh от incidental `dialog:message`, remount или reopen noise.
+- Для managed workflow stages provider-visible automatic messages являются Core-owned post-turn decisions. Project Manager dialog/history/workflow-state refresh may render the resulting Core messages, but must not synthesize or send acceptance, repair, or continuation prompts from a read path.
 
 ## Связанные контракты
 - Workspace runtime/lock: `doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md`

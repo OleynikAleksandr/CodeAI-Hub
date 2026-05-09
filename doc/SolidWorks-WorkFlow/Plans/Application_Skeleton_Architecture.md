@@ -119,7 +119,8 @@ Description
 Gate condition:
 
 ```text
-Diagram Modules aggregateReady
+Diagram Modules Product Part index accepted
+AND all Product Parts declared by that index accepted and committed
 AND Application Skeleton accepted
 AND Application Skeleton mapping exists
 AND Quality Gates Baseline accepted
@@ -360,7 +361,7 @@ Project Manager should show `Application Skeleton` and `Quality Gates Baseline` 
 
 Expected `Application Skeleton` states:
 
-- `blocked`: no valid `Diagram Modules` aggregate yet.
+- `blocked`: no accepted Diagram Modules Product Part set yet.
 - `ready_to_start`: valid `Diagram Modules`, no skeleton session/artifact.
 - `in_progress`: skeleton agent/session active or skeleton artifacts exist but are not accepted.
 - `accepted`: skeleton artifacts exist, mapping validates, user accepted.
@@ -397,12 +398,15 @@ Application Skeleton cannot be accepted unless:
 Development Tree node bootstrap is allowed only when both technical root steps are accepted:
 
 ```text
-diagramModules.aggregateReady === true
+diagramModules.productPartsAccepted === true
 applicationSkeleton.accepted === true
 qualityGates.accepted === true
 ```
 
-This is the earliest point where Core may create Product Part / Cluster / Module agent sessions.
+The current managed contract is stricter than the legacy `aggregateReady`
+shorthand: Core must have accepted and committed the Product Part index plus
+every Product Part declared by that index before skeleton/gates can unlock
+Development Tree node sessions.
 
 Future node prompts should include:
 

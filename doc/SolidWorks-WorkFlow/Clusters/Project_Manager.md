@@ -27,6 +27,12 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - отображает lock/continuity/usage и обеспечивает recovery UX;
 - является единственной user-facing runtime bootstrap authority для живого Core workflow.
 
+Project Manager не является владельцем managed workflow acceptance или
+automatic provider continuation. Для managed stages он отправляет только
+пользовательские intents и отображает Core snapshots/read-model; автоматические
+repair/acceptance/continuation сообщения агенту принадлежат Core post-turn
+pipeline.
+
 ## 2) Где живёт код
 
 - PM bundle: `src/client/project-manager/`

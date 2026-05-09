@@ -1,6 +1,6 @@
 # Managed Workflow Context Bundles And Microtasks
 
-**Status:** Accepted and sliced into active implementation plan
+**Status:** Implemented and user-retested successfully in `v1.2.215`; pending closeout/archive
 **Created:** 2026-05-09
 **Accepted:** 2026-05-09
 **Owner:** Core / Project Manager
@@ -37,6 +37,17 @@ For initial turns, continuation turns, repair turns, and rollover turns, Core mu
 - exact validation diagnostics when Core is asking for repair.
 
 The provider prompt must not include input-document links or "read this file" instructions when Core embedded the document text. Paths are allowed only for output targets or explicit bounded fallback modes.
+
+### 2.1 Accepted Runtime Result (`v1.2.215`)
+
+The accepted runtime architecture after the final Claude Diagram Modules retest is:
+
+- provider terminal events, not PM polling or workflow-state reads, trigger managed acceptance;
+- Core flushes already received assistant/dialog messages before managed post-turn acceptance;
+- Core validates and commits exactly the active managed microtask, then re-reads child plan, Git state, and stage progress;
+- Core sends exactly one provider-visible decision per boundary: repair/failure/wait, accepted next-target continuation, or user-owned review handoff;
+- Project Manager remains UI/read-model only for managed workflow stages and must not send automatic continuation/repair messages to providers;
+- `Diagram Modules` Phase 1 runs as a Core/agent-owned automatic sequence from index to one Product Part per turn; after all Product Parts are accepted, Core stops automatic continuation and opens Phase 2 user-owned review, where each user correction is its own Core-tracked microtask.
 
 ## 3. No-Link Prompt Rule
 
@@ -417,3 +428,25 @@ Implemented evidence:
 - The Diagram Modules continuation dispatcher calls the boundary wait before `markFeedbackTurnStarted` or `handleMessage`, so an unsettled assistant tail cannot be interleaved with a Core continuation prompt.
 - Regression coverage now proves both accepted paths: settled boundary dispatches in `boundary -> running -> message` order, while unsettled boundary stops before any provider turn starts.
 - Project Manager source invariants keep input locked during the async Core state read and forbid unlocking from the queue `finally` path.
+
+## 23. Final Accepted Result: Event-Driven Post-Turn Boundary
+
+The later `v1.2.215` release supersedes the quiet-interval implementation note
+above. The accepted final behavior is event-driven:
+
+- Claude emits `turn_completed` only at the provider terminal boundary, including
+  native assistant `stop_reason: "end_turn"` cases.
+- Core removed the timer/quiet-window managed continuation wait path.
+- Managed acceptance, commit, feedback, and continuation run from the Core
+  post-turn pipeline after provider message persistence flush.
+- Project Manager does not send automatic managed workflow provider messages and
+  does not own continuation prompt text.
+- Plan Orchestrator scoped commits prevent manually staged or dirty files
+  outside the current microtask scope from entering a managed commit.
+
+User retest of `v1.2.215` confirmed the desired Diagram Modules behavior:
+Core accepts one completed agent turn, records the managed commit hash in the
+previous microtask, creates/opens the next microtask, and starts the next agent
+turn with a single Core continuation message. After the final Product Part is
+accepted and committed, Core moves the stage into the user-owned review phase
+instead of continuing automatically.

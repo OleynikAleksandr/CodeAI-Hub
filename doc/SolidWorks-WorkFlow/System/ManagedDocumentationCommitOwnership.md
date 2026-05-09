@@ -46,7 +46,9 @@ Core may create a managed documentation commit only when all of these conditions
 
 If any condition fails, Core must not commit. It sends feedback to the owning agent session with the concrete blocker.
 
-The implemented runtime path is `workflow-state` driven. Core reads managed documentation state only at stable provider-turn boundaries for Core-owned acceptance decisions. A green `Diagram Modules`, `Application Skeleton`, or `Quality Gates Baseline` validator may trigger the managed documentation commit transaction before Core computes the final downstream gating payload. After a successful transaction, Core reads the child plan, Git state, and stage progress again and uses that post-commit snapshot for unlock, continuation, and feedback decisions.
+The implemented runtime path is provider-event driven. Core starts managed documentation acceptance only from the post-turn pipeline after the provider emits a terminal event and Core has flushed already received assistant/dialog messages. A green `Diagram Modules`, `Application Skeleton`, or `Quality Gates Baseline` validator may trigger the managed documentation commit transaction inside that post-turn boundary. After a successful transaction, Core reads the child plan, Git state, and stage progress again and uses that post-commit snapshot for unlock, continuation, and feedback decisions.
+
+Read-model paths are explicitly side-effect free. `workflow-state`, PM sidebar/status/card refreshes, artifact panes, and polling observers can return snapshots and diagnostics, but they must not send provider-visible repair/continuation messages and must not run managed commits.
 
 `Diagram Modules` has an additional subturn invariant: Core validates and commits exactly one active `expectedArtifact` at a time. `product-parts.index.md` is accepted before any `product-parts/<part-id>.md` turn starts. Each Product Part turn is accepted, repaired, or held pending independently; pending is a continuation state, not an error. Repair feedback must name the current `expectedArtifactPath`, validator, snapshot head, checked time, and exact diagnostics. Core sends the next Product Part instruction only after the previous artifact is accepted and the managed commit is complete.
 
@@ -85,6 +87,8 @@ Managed documentation agents must not be required to run `npm run plan:commit`.
 Their prompt may ask them to finish with a content-level readiness statement, but the durable acceptance statement belongs to Core after the commit transaction succeeds.
 
 Core-owned prompts for managed stages are context bundles, not link lists. When Core has the source text, it embeds that text in the initial, repair, continuation, and rollover prompt. Provider-visible links to input artifacts are allowed only for explicitly marked fallback cases such as truncated or stale bundles. Output target paths remain visible because agents need them to write the active artifact.
+
+For `Diagram Modules`, Core owns the automatic Phase 1 conversation until all Product Parts declared in `product-parts.index.md` have been accepted and committed one at a time. After that, Core stops automatic continuation and opens the user-owned review phase; every later user correction is a separate Core-tracked microtask and commit boundary.
 
 Provider-specific shell capability can be useful for diagnostics, but it is not part of the managed documentation lifecycle contract.
 

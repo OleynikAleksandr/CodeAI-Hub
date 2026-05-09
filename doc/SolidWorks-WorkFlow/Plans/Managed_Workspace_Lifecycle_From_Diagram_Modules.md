@@ -466,8 +466,8 @@ Application Skeleton and Quality Gates child plans into separate draft and
 execution transactions, updates both bundled agent prompts to require a clean
 managed draft commit before destructive filesystem work, gates Development Tree
 unlock on accepted materialization/integration ledger evidence, and stops
-workflow-state reads from creating untracked Development Tree draft files as a
-side effect while Quality Gates is finishing.
+read-model workflow-state refreshes from creating untracked Development Tree
+draft files as a side effect while Quality Gates is finishing.
 
 User retest checklist for `v1.2.185`:
 
@@ -483,7 +483,7 @@ User retest checklist for `v1.2.185`:
   commit `feat: integrate quality gates baseline`.
 - Development Tree must stay locked without accepted ledger entries for both
   Application Skeleton materialization and Quality Gates integration.
-- Workflow-state reads after Quality Gates must not create untracked
+- Workflow-state read-model refreshes after Quality Gates must not create untracked
   `.codeai-hub/<workspaceSlug>/development_tree/` files while the Quality Gates
   agent is finalizing.
 

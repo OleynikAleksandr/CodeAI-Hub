@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "3f17208ee",
+  "lastRecordedCommit": "9278797e2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14s.task3",
-  "expectedCommitMessage": "docs: record managed workflow contract retest handoff",
+  "currentTaskId": "managed-workflow-context.phase14u.task1",
+  "expectedCommitMessage": "docs: sync managed workflow ssot",
   "debt": {
-    "expectedCommitMessage": "docs: record managed workflow contract retest handoff",
-    "preCommitHead": "3f17208ee",
+    "expectedCommitMessage": "docs: sync managed workflow ssot",
+    "preCommitHead": "9278797e2",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14s.task3"
+    "taskId": "managed-workflow-context.phase14u.task1"
   }
 }
 ```
@@ -375,12 +375,25 @@
 155. [DONE] `managed-workflow-context.phase14s.task2` Build v1.2.215 release artifacts for next-session testing and record generated VSIX/tarball paths for handoff (scope: `package.json, package-lock.json, packages/**/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow contract release`).
 156. [DONE] Git Commit: `chore: build managed workflow contract release` (hash: 3f17208ee)
 157. [DONE] `managed-workflow-context.phase14s.task3` Record next-session user workflow testing handoff for v1.2.215: install `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.215.vsix` and retest Claude Diagram Modules turn ordering, provider-visible prompt paths, Plan Orchestrator scoped commits, and managed release handoff behavior (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow contract retest handoff`).
-158. [PENDING] Git Commit: `docs: record managed workflow contract retest handoff` (hash: TBD)
+158. [DONE] Git Commit: `docs: record managed workflow contract retest handoff` (hash: 9278797e2)
+
+## Phase 14T - User Workflow Acceptance Testing (owner: User/Codex, updated: 2026-05-09)
+
+### Stream: Next Session Retest
+
+159. [DONE] `managed-workflow-context.phase14t.task1` Next session starts here: install `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.215.vsix` and test the managed workflow fixes before any closeout. Retest focus: Claude Diagram Modules turn ordering, provider-visible prompt paths, Plan Orchestrator scoped commits, Core post-turn continuation, and release handoff behavior. Result: User accepted v1.2.215 Diagram Modules retest: Core-owned post-turn acceptance, managed commits, and continuation sequencing are working; proceed to documentation sync before closeout.
+
+## Phase 14U - SSOT Documentation Sync (owner: Codex, updated: 2026-05-09)
+
+### Stream: Managed Workflow Architecture Docs
+
+160. [DONE] `managed-workflow-context.phase14u.task1` Review and update SolidWorks workflow SSOT documents related to agents, workflow steps, managed workspace lifecycle, Core-owned post-turn acceptance, provider prompt boundaries, and Plan Orchestrator scoped commits before scope closeout (scope: `doc/SolidWorks-WorkFlow/**`, `doc/TODO/todo-plan.md`; expected commit: `docs: sync managed workflow ssot`).
+161. [PENDING] Git Commit: `docs: sync managed workflow ssot` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-159. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-160. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-161. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+162. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+163. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+164. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).

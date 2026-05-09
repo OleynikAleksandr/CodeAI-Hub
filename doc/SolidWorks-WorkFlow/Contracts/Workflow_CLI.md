@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-04-07
+**Updated:** 2026-05-09
 **Owner:** Oleksandr + Codex
 
 ---
@@ -23,6 +23,8 @@
 1. `Description` → финал: `Final_Description.md`
 2. `Virtual Simulation` → артефакт: `virtual-simulation.md`
 3. `Diagram Modules` → canonical output: `product-parts.index.md` + `product-parts/<part-id>.md` + sidecar `module-map.flow.json`
+4. `Application Skeleton` → artifacts: `application-skeleton.md` + `application-skeleton-map.json`
+5. `Quality Gates Baseline` → artifacts: `quality-gates.md` + `quality-gates.json`
 
 ---
 
@@ -39,6 +41,12 @@
   - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md` (canonical orchestration SSOT)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md` (canonical semantic artifacts per Product Part)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
+- `Application Skeleton`:
+  - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton.md`
+  - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton-map.json`
+- `Quality Gates Baseline`:
+  - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
+  - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
 
@@ -69,6 +77,8 @@ Legacy `description.md` допускается только для compat и н�
 - `Description`: шаг может быть `READY` сразу (upstream не требуется).
 - `Virtual Simulation`: требует `Final_Description.md`.
 - `Diagram Modules`: требует доступные canonical artifacts `Final_Description.md` и `virtual-simulation.md`; пользователь вручную запускает шаг, когда считает upstream artifacts достаточными, если gating не блокирует старт.
+- `Application Skeleton`: требует accepted Diagram Modules index и accepted/generated Product Part artifacts.
+- `Quality Gates Baseline`: требует accepted Application Skeleton contract and map.
 
 ---
 
@@ -80,6 +90,9 @@ Watcher обязан отслеживать canonical артефакты и пу
 - `Final_Description.md` created/changed
 - `virtual-simulation.md` created/changed
 - `product-parts.index.md` created/changed
+- `product-parts/<part-id>.md` created/changed
+- `application-skeleton.md` / `application-skeleton-map.json` created/changed
+- `quality-gates.md` / `quality-gates.json` created/changed
 
 Требования:
 - событие содержит `workspaceSlug` + canonical path;
@@ -92,6 +105,8 @@ Watcher обязан отслеживать canonical артефакты и пу
 
 - Изменение `Final_Description.md` после `DONE` шага `Virtual Simulation` → `Virtual Simulation = OUTDATED`.
 - Изменение `Final_Description.md` или `virtual-simulation.md` после `DONE` шага `Diagram Modules` → `Diagram Modules = OUTDATED` (или `BLOCKED`, если артефакта ещё нет).
+- Изменение `Diagram Modules` semantic artifacts после accepted `Application Skeleton` → `Application Skeleton = OUTDATED`.
+- Изменение `application-skeleton-map.json` после accepted `Quality Gates Baseline` → `Quality Gates Baseline = OUTDATED`.
 
 `*.flow.json` не участвуют в semantic gating: это view-only sidecar, их изменение не должно менять `READY/DONE/OUTDATED`.
 
