@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.209] - 2026-05-09
+### Fixed
+- **Diagram Modules managed plans now expose Product Parts one at a time.** After the index commit, Core opens only the next Product Part microtask and waits for its accepted commit before adding the following Product Part.
+- **Product Part id extraction is now strict.** Core reads Product Part ids only from canonical `### Product Part: <id>` headers, so fields like `Id`, `Title`, `Purpose`, `Status`, and comment prose cannot become fake Product Part tasks.
+
+### Tests
+- **Focused Core coverage verifies strict Product Part extraction and sequential task exposure across index and Product Part commits.**
+
 ## [1.2.208] - 2026-05-09
 ### Changed
 - **Managed workflow rollover now uses embedded Core context bundles.** Diagram Modules, Application Skeleton, and Quality Gates continuation sessions receive upstream artifact text, workspace/stage plan text, derived plan status, current target, and accepted commit context instead of path-based recovery instructions.

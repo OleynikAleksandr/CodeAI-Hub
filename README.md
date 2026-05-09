@@ -2,12 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.208**
+**Current Release — v1.2.209**
 
-This release hardens managed workflow context delivery: Core embeds source
-artifact text, managed plans, plan status, and current targets into rollover
-and node prompts, while managed stages advance through explicit microtask
-commit boundaries.
+This release fixes managed Product Part sequencing: Core extracts Diagram
+Modules Product Part ids only from canonical headers and exposes exactly one
+Product Part microtask at a time to provider sessions.
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
