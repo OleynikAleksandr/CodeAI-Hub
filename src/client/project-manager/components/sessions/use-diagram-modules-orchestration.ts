@@ -208,9 +208,17 @@ export const useDiagramModulesOrchestration = (options: {
         setSequenceLock(sessionId, false);
         return;
       }
-      const shouldRefreshWorkflowState =
-        artifact !== null || eventType === "turn_completed";
+      const shouldRefreshWorkflowState = eventType === "turn_completed";
       if (!shouldRefreshWorkflowState) {
+        if (artifact) {
+          queueContinuationCheck({
+            sessionId,
+            session,
+            intent,
+            shouldRefreshWorkflowState,
+            artifact,
+          });
+        }
         return;
       }
       queueContinuationCheck({

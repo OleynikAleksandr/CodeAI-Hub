@@ -94,7 +94,15 @@ const createIdentityTableProductPartFile = (): string =>
 
 test("diagram modules orchestration source code invariants", async () => {
   const source = await readFile(ORCHESTRATION_SOURCE_PATH, "utf8");
-  assert.ok(source.includes('artifact !== null || eventType === "turn_completed"'), "turn_completed triggers refresh");
+  assert.ok(
+    source.includes('const shouldRefreshWorkflowState = eventType === "turn_completed"'),
+    "workflow state refresh waits for turn_completed"
+  );
+  assert.equal(
+    source.includes('artifact !== null || eventType === "turn_completed"'),
+    false,
+    "artifact chunks must not trigger Core validation"
+  );
   assert.ok(source.includes('if (eventType === "turn_failed") {'), "turn_failed unlocks sequence");
   assert.ok(source.includes('progress.activeSubturnStatus === "pending"'), "only pending product part state auto-continues");
   for (const banned of ['visibility: "hidden"', "cachedPartTemplateRef"]) {
