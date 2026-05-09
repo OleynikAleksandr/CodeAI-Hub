@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "5226bc8b1",
+  "lastRecordedCommit": "3c710d67f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14m.task5",
-  "expectedCommitMessage": "chore: build claude managed retest repair release artifacts",
+  "currentTaskId": "managed-workflow-context.phase14m.task6",
+  "expectedCommitMessage": "docs: hand off claude managed retest repair release",
   "debt": {
-    "expectedCommitMessage": "chore: build claude managed retest repair release artifacts",
-    "preCommitHead": "5226bc8b1",
+    "expectedCommitMessage": "docs: hand off claude managed retest repair release",
+    "preCommitHead": "3c710d67f",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14m.task5"
+    "taskId": "managed-workflow-context.phase14m.task6"
   }
 }
 ```
@@ -317,9 +317,12 @@
 131. [DONE] `managed-workflow-context.phase14m.task4` Prepare README and CHANGELOG for the Claude managed retest repair release after the user's explicit release request (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude managed retest repair release`).
 132. [DONE] Git Commit: `docs: prepare claude managed retest repair release` (hash: 5226bc8b1)
 133. [DONE] `managed-workflow-context.phase14m.task5` Run release automation and verify VSIX/tarball outputs for the Claude managed retest repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build claude managed retest repair release artifacts`).
-134. [PENDING] Git Commit: `chore: build claude managed retest repair release artifacts` (hash: TBD)
-135. [TODO] `managed-workflow-context.phase14m.task6` Hand off the built release for user retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off claude managed retest repair release`).
-136. [TODO] Git Commit: `docs: hand off claude managed retest repair release` (hash: TBD)
+134. [DONE] Git Commit: `chore: build claude managed retest repair release artifacts` (hash: 3c710d67f)
+135. [DONE] `managed-workflow-context.phase14m.task6` Hand off the built release for user retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off claude managed retest repair release`).
+    - Release 2026-05-09: VSIX ready at `codeai-hub-1.2.214.vsix` (47 MB).
+    - Release 2026-05-09: tarballs ready in `doc/tmp/releases/` for Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, and project-manager v1.2.214.
+    - Retest focus: Claude Diagram Modules first index turn completion, exact `.codeai-hub/<workspaceSlug>/...` writes, absence of provider-visible input-document path labels, and managed prompt behavior that relies on Core-embedded plan context instead of reading plan files.
+136. [PENDING] Git Commit: `docs: hand off claude managed retest repair release` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
