@@ -42,7 +42,6 @@ import type {
 } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import type { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
-import { SessionRequestHandlerManagedContinuationBoundary } from "./session-request-handler-managed-continuation-boundary";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import type { SessionRequestHandlerResumeLifecycle } from "./session-request-handler-resume-lifecycle";
 import type { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
@@ -115,7 +114,6 @@ export class SessionRequestHandler {
   private readonly codexModelSwitch: SessionRequestHandlerCodexModelSwitch;
   private readonly codexReasoningSwitch: SessionRequestHandlerCodexReasoningSwitch;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
-  private readonly managedContinuationBoundary: SessionRequestHandlerManagedContinuationBoundary;
   private readonly stopAction: SessionRequestHandlerStopAction;
   private readonly stopRebind: SessionRequestHandlerStopRebind;
   private readonly workflowSession: SessionRequestHandlerWorkflowSession;
@@ -248,11 +246,6 @@ export class SessionRequestHandler {
       stopRebind: this.stopRebind,
       workspaceRuntime: this.workspaceRuntime,
     });
-    this.managedContinuationBoundary =
-      new SessionRequestHandlerManagedContinuationBoundary({
-        logger: this.logger,
-        sessionManager: this.sessionManager,
-      });
     this.codexModelSwitch = new SessionRequestHandlerCodexModelSwitch({
       broadcaster: this.broadcaster,
       logger: this.logger,
@@ -341,12 +334,6 @@ export class SessionRequestHandler {
 
   markFeedbackTurnStarted(sessionId: string): void {
     this.emitTurnStateEvent({ sessionId, state: "running" });
-  }
-
-  async waitForManagedContinuationTurnBoundary(
-    sessionId: string
-  ): Promise<boolean> {
-    return await this.managedContinuationBoundary.waitForSettled(sessionId);
   }
 
   async handleCreate(

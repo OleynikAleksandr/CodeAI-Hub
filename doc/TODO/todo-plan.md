@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "eaa9b6284",
+  "lastRecordedCommit": "a2d7d7d61",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14k.task1",
-  "expectedCommitMessage": "fix: complete claude turns at stream boundary",
+  "currentTaskId": "managed-workflow-context.phase14k.task2",
+  "expectedCommitMessage": "fix: remove timed managed continuation wait",
   "debt": {
-    "expectedCommitMessage": "fix: complete claude turns at stream boundary",
-    "preCommitHead": "eaa9b6284",
+    "expectedCommitMessage": "fix: remove timed managed continuation wait",
+    "preCommitHead": "a2d7d7d61",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14k.task1"
+    "taskId": "managed-workflow-context.phase14k.task2"
   }
 }
 ```
@@ -275,9 +275,9 @@
 ### Stream: Event-Driven Continuation Boundary
 
 105. [DONE] `managed-workflow-context.phase14k.task1` Fix Claude turn completion so `turn_completed` is emitted only after the provider stream reaches the terminal turn boundary, not on an early `result` message that can precede final visible assistant chunks (scope: `packages/Claude_Module/src/messaging/message-processor.ts`, `packages/Claude_Module/src/messaging/claude-stream-event-router.ts`, `packages/Claude_Module/src/messaging/message-processor.test.ts`; expected commit: `fix: complete claude turns at stream boundary`).
-106. [PENDING] Git Commit: `fix: complete claude turns at stream boundary` (hash: TBD)
-107. [TODO] `managed-workflow-context.phase14k.task2` Remove the timer-based Core managed continuation wait path and keep continuation dispatch tied to provider `turn_completed`/new-turn ownership only (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-managed-continuation-boundary.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove timed managed continuation wait`).
-108. [TODO] Git Commit: `fix: remove timed managed continuation wait` (hash: TBD)
+106. [DONE] Git Commit: `fix: complete claude turns at stream boundary` (hash: a2d7d7d61)
+107. [DONE] `managed-workflow-context.phase14k.task2` Remove the timer-based Core managed continuation wait path and keep continuation dispatch tied to provider `turn_completed`/new-turn ownership only (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-managed-continuation-boundary.ts`, `doc/TODO/todo-plan.md`; expected commit: `fix: remove timed managed continuation wait`).
+108. [PENDING] Git Commit: `fix: remove timed managed continuation wait` (hash: TBD)
 109. [TODO] `managed-workflow-context.phase14k.task3` Remove stale dispatcher/test expectations for quiet-window settling and verify Diagram Modules continuation starts only from the provider-completed turn event path (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts`, `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`, `doc/TODO/todo-plan.md`; expected commit: `test: verify event-driven managed continuation`).
 110. [TODO] Git Commit: `test: verify event-driven managed continuation` (hash: TBD)
 
