@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.215] - 2026-05-09
+### Fixed
+- **Core managed continuation now belongs to the post-turn pipeline.** Provider-visible acceptance and continuation messages are dispatched only after provider message flush and Core turn arbitration, not from workflow state read paths.
+- **Workflow contracts now document Core Runtime as a contract-owned Product Part boundary.** `WorkflowSteps_Overview.md` records the single ingress/egress rule for Project Manager, providers, managed Git, rollover, and stage continuation.
+- **Plan Orchestrator commits now enforce current task scope.** `plan:commit` stages dirty files inside the active microtask scope automatically and blocks dirty or manually staged files outside that scope.
+
+### Tests
+- **Focused Core managed continuation tests and the full Plan Orchestrator test suite passed before release assembly. The next session starts with user workflow testing of v1.2.215.**
+
 ## [1.2.214] - 2026-05-09
 ### Fixed
 - **Claude Diagram Modules turns now recover from native assistant `end_turn`.** Claude provider sessions emit Core turn completion even when native Claude output ends without a separate result event.
