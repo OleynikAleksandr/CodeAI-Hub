@@ -46,7 +46,9 @@ Core may create a managed documentation commit only when all of these conditions
 
 If any condition fails, Core must not commit. It sends feedback to the owning agent session with the concrete blocker.
 
-The implemented runtime path is `workflow-state` driven. When Core reads workflow state after a managed stage artifact changes, it first runs the stage validator. A green `Diagram Modules`, `Application Skeleton`, or `Quality Gates Baseline` validator may trigger the managed documentation commit transaction before Core computes the final downstream gating payload. After a successful transaction, Core reads the child plan, Git state, and stage progress again and uses that post-commit snapshot for unlock and feedback decisions.
+The implemented runtime path is `workflow-state` driven. Core reads managed documentation state only at stable provider-turn boundaries for Core-owned acceptance decisions. A green `Diagram Modules`, `Application Skeleton`, or `Quality Gates Baseline` validator may trigger the managed documentation commit transaction before Core computes the final downstream gating payload. After a successful transaction, Core reads the child plan, Git state, and stage progress again and uses that post-commit snapshot for unlock, continuation, and feedback decisions.
+
+`Diagram Modules` has an additional subturn invariant: Core validates and commits exactly one active `expectedArtifact` at a time. `product-parts.index.md` is accepted before any `product-parts/<part-id>.md` turn starts. Each Product Part turn is accepted, repaired, or held pending independently; pending is a continuation state, not an error. Repair feedback must name the current `expectedArtifactPath`, validator, snapshot head, checked time, and exact diagnostics. Core sends the next Product Part instruction only after the previous artifact is accepted and the managed commit is complete.
 
 The transaction is intentionally narrow:
 
@@ -89,6 +91,6 @@ The user should see the result as a stable state machine:
 1. User starts a managed documentation card.
 2. The agent creates or revises artifacts.
 3. Core validates and commits accepted owned changes.
-4. Core either unlocks the next step or sends actionable feedback.
+4. Core either unlocks the next step, sends the next Core-owned continuation turn, or sends actionable repair feedback.
 
 The user should not need to manually run `npm run plan:commit` for managed documentation stages.

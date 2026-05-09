@@ -3,6 +3,7 @@
 **Status:** Approved for execution planning
 **Created:** 2026-05-09
 **Approved:** 2026-05-09
+**Implementation status:** In execution. Core subturn progress, continuation prompts, repair diagnostics, post-turn validation trigger, input lock, UI projection, and Claude micro-fragment filtering are implemented in the active release scope.
 **Owner:** Oleksandr + Codex
 **Related audit:** `doc/Claude_Diagram_Modules_Provider_Audit.md`
 
@@ -241,6 +242,13 @@ Scope:
 - suppress stale feedback;
 - keep input locked while Core validation/feedback is pending.
 
+Implemented notes:
+
+- PM no longer triggers Core acceptance validation from intermediate artifact chunks. Artifact events may refresh the diagram surface, but `workflow-state` validation/continuation starts on `turn_completed`.
+- Pending Product Part state is not emitted as Core failure feedback. It is the normal handoff point for the continuation prompt builder.
+- Repair feedback is artifact-scoped and starts with `Core rejected the current Diagram Modules artifact`, then includes target path, `snapshotHead`, `checkedAt`, validator and exact diagnostics.
+- The session input is locked synchronously on `turn_completed` before async validation and remains blocked while Core dispatches feedback or the next continuation turn.
+
 Likely files:
 
 - workflow state service;
@@ -255,6 +263,11 @@ Scope:
 - show pending/active/accepted Product Part nodes from Core progress;
 - ensure repair feedback is rendered before next reasoning;
 - keep stage card/status panel aligned with subturn state.
+
+Implemented notes:
+
+- `DiagramModulesProgressSnapshot` is projected into sidebar Product Part nodes: accepted parts are active, current pending part is progress, and current repair part is blocked with a repair title.
+- Claude one-character or short suffix display fragments such as `.`, `ceptance.`, and `Ференс.` are filtered before they become standalone dialog cards.
 
 Likely files:
 
