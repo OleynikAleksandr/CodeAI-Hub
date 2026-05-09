@@ -242,6 +242,9 @@ const filterOwnedFilesForActivePlan = (params: {
   return partId
     ? [
         ...params.ownedFiles.filter((file) =>
+          file.endsWith("/diagram_modules/product-parts.index.md")
+        ),
+        ...params.ownedFiles.filter((file) =>
           file.endsWith(`/diagram_modules/product-parts/${partId}.md`)
         ),
         ...workflowFiles,

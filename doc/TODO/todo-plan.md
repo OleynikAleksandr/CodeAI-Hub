@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "6c661d5ab",
+  "lastRecordedCommit": "ef8aa9c95",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14c.task1",
-  "expectedCommitMessage": "fix: gate product part continuation on commit acceptance",
+  "currentTaskId": "managed-workflow-context.phase14c.task2",
+  "expectedCommitMessage": "fix: allow product part index status commits",
   "debt": {
-    "expectedCommitMessage": "fix: gate product part continuation on commit acceptance",
-    "preCommitHead": "6c661d5ab",
+    "expectedCommitMessage": "fix: allow product part index status commits",
+    "preCommitHead": "ef8aa9c95",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14c.task1"
+    "taskId": "managed-workflow-context.phase14c.task2"
   }
 }
 ```
@@ -183,9 +183,9 @@
 ### Stream: Target-Scoped Acceptance
 
 53. [DONE] `managed-workflow-context.phase14c.task1` Fix Diagram Modules Product Part acceptance feedback so a failed managed commit does not emit an accepted continuation or advance the next target, and Product Part subturn failures report only the current target rather than aggregate 1/4 state (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`; expected commit: `fix: gate product part continuation on commit acceptance`).
-54. [PENDING] Git Commit: `fix: gate product part continuation on commit acceptance` (hash: TBD)
-55. [TODO] `managed-workflow-context.phase14c.task2` Fix managed commit ownership for Diagram Modules Product Part turns so Core-owned index status updates are included with the current Product Part commit while sibling Product Part files remain rejected (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: allow product part index status commits`).
-56. [TODO] Git Commit: `fix: allow product part index status commits` (hash: TBD)
+54. [DONE] Git Commit: `fix: gate product part continuation on commit acceptance` (hash: ef8aa9c95)
+55. [DONE] `managed-workflow-context.phase14c.task2` Fix managed commit ownership for Diagram Modules Product Part turns so Core-owned index status updates are included with the current Product Part commit while sibling Product Part files remain rejected (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: allow product part index status commits`).
+56. [PENDING] Git Commit: `fix: allow product part index status commits` (hash: TBD)
 57. [TODO] `managed-workflow-context.phase14c.task3` Run focused Core regressions for Product Part target-scoped acceptance, managed commit allowlists, and managed plan sequencing; stop before release build confirmation (scope: `packages/core`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify product part acceptance repair`).
 58. [TODO] Git Commit: `test: verify product part acceptance repair` (hash: TBD)
 

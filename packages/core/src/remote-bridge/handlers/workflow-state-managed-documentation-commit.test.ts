@@ -52,6 +52,7 @@ const createProductPartsIndex = (): string =>
     "### Product Part: local-runtime",
     "- Title: Local Runtime",
     "- Purpose: Runtime shell.",
+    "- Status: planned",
     "",
   ].join("\n");
 
@@ -292,6 +293,14 @@ test("workflow-state auto-commits valid Diagram Modules artifacts and unlocks Ap
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-runtime.md`,
       createProductPart()
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      createProductPartsIndex().replace(
+        "- Status: planned",
+        "- Status: generated"
+      )
     );
 
     const payload = await readWorkflowStatePayload({

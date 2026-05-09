@@ -328,3 +328,8 @@ Repair direction:
 - Product Part subturn feedback must be target-scoped: validate and report only the current target artifact, not the whole `0/4`, `1/4`, `4/4` aggregate stage.
 - Include the Product Part index status update in the active Product Part allowlist, or move status updates fully into Core after the commit. Sibling Product Part files must remain outside the allowlist.
 - Keep the session stopped before the next release build until focused regressions pass and the user explicitly confirms another release assembly.
+
+Implementation note:
+
+- The first repair blocks PM automatic Product Part continuation while the workflow-state payload still carries managed dirty or out-of-target dirty files.
+- The second repair keeps `product-parts.index.md` inside the current Product Part managed commit allowlist so provider-updated status markers can be committed with the accepted Product Part file.
