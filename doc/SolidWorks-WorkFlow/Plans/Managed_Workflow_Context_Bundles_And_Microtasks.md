@@ -375,3 +375,9 @@ The corrected Diagram Modules ownership model is:
 - Phase 2 is user-owned review/editing. Each user turn that changes Product Parts, clusters, modules, names, or descriptions is opened by Core as an independent microtask and commit boundary.
 
 Implementation must stop before the next release build. No `build-all.sh` or `build-release.sh` is authorized for this repair stream yet.
+
+Prompt no-link repair verification:
+
+- `npm run typecheck:webview` — passed after removing Description and Virtual Simulation provider-visible input paths.
+- `npm run build:project-manager` — passed after removing Description and Virtual Simulation provider-visible input paths.
+- Prompt builder assertions now cover that Description omits `Questionnaire (relative)`, `Questionnaire (absolute)`, and `Template (absolute)` when source text is embedded, and Virtual Simulation omits `Final_Description.md (relative)` / `(absolute)` when source text is embedded.

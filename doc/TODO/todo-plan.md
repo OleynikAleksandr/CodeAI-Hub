@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "09457e3d1",
+  "lastRecordedCommit": "77130d84d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14e.task2",
-  "expectedCommitMessage": "fix: remove virtual simulation prompt file paths",
+  "currentTaskId": "managed-workflow-context.phase14e.task3",
+  "expectedCommitMessage": "test: verify prompt no-link contracts",
   "debt": {
-    "expectedCommitMessage": "fix: remove virtual simulation prompt file paths",
-    "preCommitHead": "09457e3d1",
+    "expectedCommitMessage": "test: verify prompt no-link contracts",
+    "preCommitHead": "77130d84d",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14e.task2"
+    "taskId": "managed-workflow-context.phase14e.task3"
   }
 }
 ```
@@ -209,9 +209,9 @@
 67. [DONE] `managed-workflow-context.phase14e.task1` Remove provider-visible file paths from the Description first prompt when questionnaire/template content is already embedded, including relative questionnaire path, absolute questionnaire path, and absolute template path; provider prompts must give text, not instructions or incentives to read those files again (scope: `src/client/project-manager/services`, prompt builder tests, `doc/TODO/todo-plan.md`; expected commit: `fix: remove description prompt file paths`).
 68. [DONE] Git Commit: `fix: remove description prompt file paths` (hash: 09457e3d1)
 69. [DONE] `managed-workflow-context.phase14e.task2` Remove provider-visible `Final_Description.md` relative and absolute paths from the Virtual Simulation first prompt when the final description text is already embedded; provider prompts must not invite the agent to re-read the source file (scope: `src/client/project-manager/services`, prompt builder tests, `doc/TODO/todo-plan.md`; expected commit: `fix: remove virtual simulation prompt file paths`).
-70. [PENDING] Git Commit: `fix: remove virtual simulation prompt file paths` (hash: TBD)
-71. [TODO] `managed-workflow-context.phase14e.task3` Verify Description and Virtual Simulation prompt no-link behavior and record retest evidence before the next release decision (scope: `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify prompt no-link contracts`).
-72. [TODO] Git Commit: `test: verify prompt no-link contracts` (hash: TBD)
+70. [DONE] Git Commit: `fix: remove virtual simulation prompt file paths` (hash: 77130d84d)
+71. [DONE] `managed-workflow-context.phase14e.task3` Verify Description and Virtual Simulation prompt no-link behavior and record retest evidence before the next release decision (scope: `src/client/project-manager`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify prompt no-link contracts`).
+72. [PENDING] Git Commit: `test: verify prompt no-link contracts` (hash: TBD)
 
 ## Phase 14F - Managed Workflow Core-Only Agent Messaging Repair (owner: Codex, updated: 2026-05-09)
 
