@@ -126,6 +126,9 @@ const createDiagramModulesErrors = (
       createOutOfOwnerDirtyError("Diagram Modules", outOfOwnerDirtyFiles),
     ];
   }
+  if (isDiagramModulesPendingSubturn(progress)) {
+    return [];
+  }
   const semanticErrors = createProductPartDiagnosticErrors(progress);
   const dirtyFiles = readManagedGitDirtyFiles(progress);
   const dirtyGateErrors =
@@ -134,12 +137,6 @@ const createDiagramModulesErrors = (
           `Core-owned managed commit is pending for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Core owns this commit gate; do not run Git commands from the provider turn.`,
         ]
       : [];
-  if (
-    isDiagramModulesPendingSubturn(progress) &&
-    dirtyGateErrors.length === 0
-  ) {
-    return [];
-  }
   if (isDiagramModulesRepairSubturn(progress)) {
     const repairErrors = createDiagramModulesRepairErrors(progress);
     return repairErrors.length > 0 ? repairErrors : semanticErrors;

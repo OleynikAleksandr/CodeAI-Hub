@@ -150,7 +150,7 @@ test("managed feedback marks the feedback turn running before dispatch", async (
   }
 });
 
-test("Diagram Modules pending Product Part waits for continuation instead of feedback", async () => {
+test("Diagram Modules pending Product Part waits for continuation instead of aggregate feedback", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-agent-feedback-pending-part-")
   );
@@ -188,6 +188,9 @@ test("Diagram Modules pending Product Part waits for continuation instead of fee
           valid: false,
           validator: "diagram_modules.product_part",
         },
+        managedGitDirtyFiles: [
+          ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+        ],
         nextPartId: "local-runtime",
         plannedCount: 1,
         plannedPartIds: ["local-runtime"],
@@ -200,7 +203,7 @@ test("Diagram Modules pending Product Part waits for continuation instead of fee
           },
         ],
         substep: "generate_product_part",
-      },
+      } as never,
       workspaceRoot,
       workspaceSlug: "demo-workspace",
     });
