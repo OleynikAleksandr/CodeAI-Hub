@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -16,6 +16,58 @@ import {
   internals,
   noop,
 } from "./session-request-handler.test-helpers";
+
+const MANAGED_STAGE_PLAN_PATHS = {
+  application_skeleton: "doc/TODO/stages/application-skeleton/todo-plan.md",
+  diagram_modules: "doc/TODO/stages/diagram-modules/todo-plan.md",
+  quality_gates: "doc/TODO/stages/quality-gates/todo-plan.md",
+} as const;
+
+const writeManagedRolloverPlan = async (
+  workspacePath: string,
+  stage: keyof typeof MANAGED_STAGE_PLAN_PATHS
+): Promise<void> => {
+  const activePlanPath = MANAGED_STAGE_PLAN_PATHS[stage];
+  const write = async (
+    relativePath: string,
+    content: string
+  ): Promise<void> => {
+    const absolutePath = path.join(workspacePath, relativePath);
+    await mkdir(path.dirname(absolutePath), { recursive: true });
+    await writeFile(absolutePath, content, "utf8");
+  };
+  await write(
+    "doc/TODO/workspace.plan.md",
+    `# Workspace Plan
+
+<!-- codeai-workspace-plan-state:start -->
+\`\`\`json
+{
+  "activeStage": "${stage}",
+  "activePlanPath": "${activePlanPath}",
+  "acceptedCommits": []
+}
+\`\`\`
+<!-- codeai-workspace-plan-state:end -->
+`
+  );
+  await write(
+    activePlanPath,
+    `# Stage Plan
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "executionScopeStatus": "ACTIVE",
+  "currentTaskId": "${stage}.rollover.task",
+  "expectedCommitMessage": "docs: ${stage} rollover task",
+  "lastRecordedCommit": "abc123"
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+`
+  );
+};
 
 test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover state without report turn", async () => {
   const harness = createHarness();
@@ -173,8 +225,17 @@ test("Documentation Tree production rollover waits for next user turn before con
       "description",
       "virtual_simulation",
       "diagram_modules",
+      "application_skeleton",
+      "quality_gates",
     ] as const) {
       const harness = createHarness();
+      const workspacePath = path.join(tempHome, `workspace-${stage}`);
+      if (stage in MANAGED_STAGE_PLAN_PATHS) {
+        await writeManagedRolloverPlan(
+          workspacePath,
+          stage as keyof typeof MANAGED_STAGE_PLAN_PATHS
+        );
+      }
       stubDescriptionDialogSync(harness);
       const providerSends: Array<{
         readonly content: string;
@@ -183,7 +244,7 @@ test("Documentation Tree production rollover waits for next user turn before con
       const internalMessages: string[] = [];
       const sourceSession = harness.sessionManager.createSession(
         "codexCli",
-        `/tmp/core-documentation-production-${stage}`,
+        workspacePath,
         `provider-source-${stage}`,
         {
           initiativeSlug: "demo",
@@ -260,6 +321,19 @@ test("Documentation Tree production rollover waits for next user turn before con
       assert.equal(firstSend.providerSessionId, `provider-target-${stage}`);
       assert.equal(firstSend.content.includes("## Continuation Mode"), true);
       assert.equal(firstSend.content.includes("not a cold start"), true);
+      if (stage in MANAGED_STAGE_PLAN_PATHS) {
+        assert.equal(
+          firstSend.content.includes("## Managed Workflow Context Bundle"),
+          true
+        );
+        assert.equal(
+          firstSend.content.includes(`activeStage: "${stage}"`),
+          true
+        );
+        assert.equal(firstSend.content.includes("npm run plan:commit"), false);
+        assert.equal(firstSend.content.includes("git commit"), false);
+        assert.equal(firstSend.content.includes("stage only"), false);
+      }
       assert.equal(
         firstSend.content.includes(`Question before rollover for ${stage}?`),
         true
