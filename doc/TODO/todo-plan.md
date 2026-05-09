@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "5079897ea",
+  "lastRecordedCommit": "26a4bd4ec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14q.task1",
-  "expectedCommitMessage": "docs: persist core workflow contract docs",
+  "currentTaskId": "managed-workflow-context.phase14r.task1",
+  "expectedCommitMessage": "feat: add plan commit scope boundary",
   "debt": {
-    "expectedCommitMessage": "docs: persist core workflow contract docs",
-    "preCommitHead": "5079897ea",
+    "expectedCommitMessage": "feat: add plan commit scope boundary",
+    "preCommitHead": "26a4bd4ec",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14q.task1"
+    "taskId": "managed-workflow-context.phase14r.task1"
   }
 }
 ```
@@ -353,12 +353,23 @@
 ### Stream: Persist Canonical Documents
 
 145. [DONE] `managed-workflow-context.phase14q.task1` Persist the canonical Workflow Steps Overview and AGENTS template edits that define Core Runtime as a contract-owned Product Part boundary (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `AGENTS.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: persist core workflow contract docs`).
-146. [PENDING] Git Commit: `docs: persist core workflow contract docs` (hash: TBD)
+146. [DONE] Git Commit: `docs: persist core workflow contract docs` (hash: 26a4bd4ec)
+
+## Phase 14R - Plan Orchestrator Commit Boundary Repair (owner: Codex, updated: 2026-05-09)
+
+### Stream: Current Task Scope As Commit SSOT
+
+147. [DONE] `managed-workflow-context.phase14r.task1` Add a reusable Plan Orchestrator scope boundary that parses current task scope, compares dirty/staged Git paths against it, and reports out-of-scope files deterministically (scope: `scripts/plan-orchestrator/plan-scope-boundary.mjs, scripts/plan-orchestrator/plan-scope-boundary.test.mjs, doc/TODO/todo-plan.md`; expected commit: `feat: add plan commit scope boundary`).
+148. [PENDING] Git Commit: `feat: add plan commit scope boundary` (hash: TBD)
+149. [TODO] `managed-workflow-context.phase14r.task2` Make `plan:commit` collect dirty files through the current task scope boundary and stage allowed files itself instead of relying on manual Git staging (scope: `scripts/plan-orchestrator/plan-commit.mjs, scripts/plan-orchestrator/plan-commit.test.mjs, doc/TODO/todo-plan.md`; expected commit: `fix: let plan commit stage scoped files`).
+150. [TODO] Git Commit: `fix: let plan commit stage scoped files` (hash: TBD)
+151. [TODO] `managed-workflow-context.phase14r.task3` Enforce the same task scope boundary in the pre-commit transaction guard so manually staged out-of-scope files cannot bypass the orchestrator (scope: `scripts/plan-orchestrator/plan-hook-pre-commit.mjs, scripts/plan-orchestrator/plan-hook-pre-commit.test.mjs, doc/TODO/todo-plan.md`; expected commit: `fix: block out-of-scope staged plan files`).
+152. [TODO] Git Commit: `fix: block out-of-scope staged plan files` (hash: TBD)
 
 ## Phase 15 - Scope Closeout (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Closeout
 
-147. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
-148. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
-149. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
+153. [TODO] `managed-workflow-context.phase15.task1` Close the scope only after explicit user acceptance, archive the active plan, and dispose planning documents according to closeout rules (scope: `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow context bundles`).
+154. [TODO] Git Commit: `docs: close managed workflow context bundles` (hash: TBD)
+155. [TODO] `managed-workflow-context.phase15.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: close managed workflow context bundles`).
