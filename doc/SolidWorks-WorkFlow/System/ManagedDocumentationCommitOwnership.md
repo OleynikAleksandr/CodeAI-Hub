@@ -50,6 +50,8 @@ The implemented runtime path is `workflow-state` driven. Core reads managed docu
 
 `Diagram Modules` has an additional subturn invariant: Core validates and commits exactly one active `expectedArtifact` at a time. `product-parts.index.md` is accepted before any `product-parts/<part-id>.md` turn starts. Each Product Part turn is accepted, repaired, or held pending independently; pending is a continuation state, not an error. Repair feedback must name the current `expectedArtifactPath`, validator, snapshot head, checked time, and exact diagnostics. Core sends the next Product Part instruction only after the previous artifact is accepted and the managed commit is complete.
 
+`Application Skeleton` and `Quality Gates Baseline` follow the same managed-task shape even when their provider work is physically smaller than Diagram Modules. The first accepted draft artifact is its own microtask and commit. Any later materialized or integrated target group is a separate Core-owned task/commit boundary, derived from accepted runtime artifacts instead of hardcoded product names. Core must not advance or unlock a downstream stage from an aggregate provider turn until the active child-plan task has been validated, committed, and re-read from the clean post-commit state.
+
 The transaction is intentionally narrow:
 
 - it resolves the active child plan and expected commit from the managed workspace state;
@@ -81,6 +83,8 @@ Out-of-owner dirty files are reported as Core acceptance feedback, not as a shel
 Managed documentation agents must not be required to run `npm run plan:commit`.
 
 Their prompt may ask them to finish with a content-level readiness statement, but the durable acceptance statement belongs to Core after the commit transaction succeeds.
+
+Core-owned prompts for managed stages are context bundles, not link lists. When Core has the source text, it embeds that text in the initial, repair, continuation, and rollover prompt. Provider-visible links to input artifacts are allowed only for explicitly marked fallback cases such as truncated or stale bundles. Output target paths remain visible because agents need them to write the active artifact.
 
 Provider-specific shell capability can be useful for diagnostics, but it is not part of the managed documentation lifecycle contract.
 
