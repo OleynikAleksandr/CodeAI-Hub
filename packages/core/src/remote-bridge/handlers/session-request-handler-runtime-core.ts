@@ -243,6 +243,8 @@ export const createSessionRequestHandlerRuntimeCore = (
       eventMessages.appendProviderMessage(sessionId, role, event),
     appendDialogMessage: (sessionId, payload) =>
       eventMessages.appendDialogMessage(sessionId, payload),
+    waitForProviderMessagePersistence: (sessionId) =>
+      eventMessages.waitForMessagePersistence(sessionId),
     resolveEffectiveModelId: ({ providerId, targetModelId }) =>
       appliedTurnConfig.resolveEffectiveModelId(providerId, targetModelId),
   });

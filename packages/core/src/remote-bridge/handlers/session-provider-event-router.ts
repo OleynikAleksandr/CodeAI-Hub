@@ -70,6 +70,9 @@ interface SessionProviderEventRouterDependencies {
     sessionId: string,
     providerSessionId: string
   ) => void;
+  readonly waitForProviderMessagePersistence: (
+    sessionId: string
+  ) => Promise<void>;
   readonly workspaceRuntime?: WorkspaceRuntimeFacade;
 }
 
@@ -119,12 +122,9 @@ export class SessionProviderEventRouter {
     const flowNodeContinuityTask =
       this.deps.handleFlowNodeContinuityProviderEvent(sessionId, event);
     if (typedEvent.type === "turn_completed") {
-      this.deps.broadcaster({
-        type: "session:stream",
-        payload: { sessionId, event: typedEvent },
-      });
-      this.deps.handleTurnCompletedWithFlowNodeArbitration(
+      this.handleTurnCompletedAfterMessageFlush(
         sessionId,
+        typedEvent,
         flowNodeContinuityTask
       );
       return;
@@ -215,6 +215,34 @@ export class SessionProviderEventRouter {
       default:
         break;
     }
+  }
+
+  private handleTurnCompletedAfterMessageFlush(
+    sessionId: string,
+    event: ProviderEventEnvelope,
+    flowNodeContinuityTask: Promise<void>
+  ): void {
+    this.deps
+      .waitForProviderMessagePersistence(sessionId)
+      .catch((error: unknown) => {
+        this.deps.logger.warn(
+          "Provider message persistence flush failed before turn completion",
+          {
+            sessionId,
+            error: error instanceof Error ? error.message : String(error),
+          }
+        );
+      })
+      .finally(() => {
+        this.deps.broadcaster({
+          type: "session:stream",
+          payload: { sessionId, event },
+        });
+        this.deps.handleTurnCompletedWithFlowNodeArbitration(
+          sessionId,
+          flowNodeContinuityTask
+        );
+      });
   }
 
   private appendDeferredUserInput(

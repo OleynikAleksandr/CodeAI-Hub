@@ -136,6 +136,7 @@ export class SessionRequestHandler {
       getTurnArbitration: () => this.turnArbitration,
       handleMessage: async (sessionId, payload) =>
         await this.handleMessage(sessionId, payload),
+      onTurnCompleted: options.onTurnCompleted,
       handleProviderEvent: (sessionId, event) =>
         this.providerEventRouter.handleProviderEvent(sessionId, event),
       getLogger: () => this.logger,

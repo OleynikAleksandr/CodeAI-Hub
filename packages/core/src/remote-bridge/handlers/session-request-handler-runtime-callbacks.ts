@@ -31,6 +31,7 @@ interface SessionRequestHandlerRuntimeCallbackDependencies {
     payload: MessageContentPayload
   ) => Promise<void>;
   readonly handleProviderEvent: (sessionId: string, event: unknown) => void;
+  readonly onTurnCompleted?: (sessionId: string) => void;
   readonly resolveContinuityRootSessionId: (
     options: ContinuityRootResolutionOptionsLike
   ) => Promise<string>;
@@ -144,6 +145,7 @@ export const createSessionRequestHandlerRuntimeCallbacks = (
       })
       .finally(() => {
         runTurnCompletedArbitration(sessionId);
+        dependencies.onTurnCompleted?.(sessionId);
       });
   };
 

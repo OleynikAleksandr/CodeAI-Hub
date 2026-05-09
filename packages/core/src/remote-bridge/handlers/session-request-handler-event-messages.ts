@@ -127,6 +127,11 @@ export class SessionRequestHandlerEventMessages {
     });
   }
 
+  async waitForMessagePersistence(sessionId: string): Promise<void> {
+    await (this.messagePersistenceTailBySessionId.get(sessionId) ??
+      Promise.resolve());
+  }
+
   extractMessageContentAndTurnOptions(
     payload: MessageContentPayload
   ): MessageContentExtraction | null {

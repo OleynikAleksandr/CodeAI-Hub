@@ -156,6 +156,7 @@ export interface SessionRequestHandlerOptions {
   readonly config: CoreConfig;
   readonly continuityClock?: () => string;
   readonly logger: Logger;
+  readonly onTurnCompleted?: (sessionId: string) => void;
   readonly providerRegistry: ProviderRegistry;
   readonly sessionManager: SessionManager;
   readonly sessionStorage: UnifiedSessionStorage;

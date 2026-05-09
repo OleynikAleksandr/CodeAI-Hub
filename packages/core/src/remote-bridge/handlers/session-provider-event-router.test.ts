@@ -54,6 +54,9 @@ test("SessionProviderEventRouter materializes turn_failed as history-visible sys
     updateBindingWithResolvedId: () => {
       // noop
     },
+    waitForProviderMessagePersistence: async () => {
+      // noop
+    },
   });
 
   router.handleProviderEvent("session-1", {
@@ -139,6 +142,9 @@ test("SessionProviderEventRouter keeps model_info updates on session binding", (
     updateBindingWithResolvedId: () => {
       // noop
     },
+    waitForProviderMessagePersistence: async () => {
+      // noop
+    },
   });
 
   router.handleProviderEvent("session-1", {
@@ -203,6 +209,9 @@ test("SessionProviderEventRouter appends deferred user_input when provider turn 
     updateBindingWithResolvedId: () => {
       // noop
     },
+    waitForProviderMessagePersistence: async () => {
+      // noop
+    },
   });
 
   router.handleProviderEvent("session-1", {
@@ -227,5 +236,89 @@ test("SessionProviderEventRouter appends deferred user_input when provider turn 
         uuid: "core-feedback-1",
       },
     },
+  ]);
+});
+
+test("SessionProviderEventRouter delays turn_completed until provider messages flush", async () => {
+  const events: string[] = [];
+  let releaseFlush: () => void = () => {
+    // assigned by Promise executor below
+  };
+  const flushPromise = new Promise<void>((resolve) => {
+    releaseFlush = resolve;
+  });
+
+  const router = new SessionProviderEventRouter({
+    appendDialogMessage: () => {
+      // noop
+    },
+    appendProviderMessage: () => {
+      // noop
+    },
+    broadcaster: (event) => {
+      events.push(
+        (event as { payload?: { event?: { type?: string } } }).payload?.event
+          ?.type ?? "broadcast"
+      );
+    },
+    clearPostTurnContextDecision: () => {
+      // noop
+    },
+    emitTurnStateEvent: () => {
+      // noop
+    },
+    finalizeFlowNodeContinuityLockOnBootstrapGate: () => {
+      // noop
+    },
+    handleFlowNodeContinuityProviderEvent: () => {
+      events.push("flow-node");
+      return Promise.resolve();
+    },
+    handleSessionContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleTurnCompletedWithFlowNodeArbitration: () => {
+      events.push("arbitration");
+    },
+    logger: new Logger("error"),
+    markPostTurnContextDecisionPending: () => {
+      events.push("decision-pending");
+    },
+    sessionManager: {
+      getSession: () => ({
+        id: "session-1",
+        workspacePath: "/tmp/workspace",
+        stage: "diagram_modules",
+        providerId: "claudeCodeCli",
+      }),
+    } as never,
+    updateBindingWithResolvedId: () => {
+      // noop
+    },
+    waitForProviderMessagePersistence: async () => {
+      await flushPromise;
+      events.push("messages-flushed");
+    },
+  });
+
+  router.handleProviderEvent("session-1", {
+    provider: "claude",
+    type: "turn_completed",
+  });
+
+  await Promise.resolve();
+  assert.deepEqual(events, ["decision-pending", "flow-node"]);
+
+  releaseFlush();
+  await flushPromise;
+  await Promise.resolve();
+  await new Promise<void>((resolve) => setImmediate(resolve));
+
+  assert.deepEqual(events, [
+    "decision-pending",
+    "flow-node",
+    "messages-flushed",
+    "turn_completed",
+    "arbitration",
   ]);
 });

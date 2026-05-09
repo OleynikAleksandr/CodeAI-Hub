@@ -83,6 +83,7 @@ export const createRemoteBridgeBootstrap = (options: {
   const dialogHistoryService = new DialogHistoryService({
     logger: options.logger,
   });
+  let workflowStateService: WorkflowStateService | null = null;
   const sessionHandler = new SessionRequestHandler({
     config: options.config,
     sessionManager: options.sessionManager,
@@ -91,6 +92,9 @@ export const createRemoteBridgeBootstrap = (options: {
     logger: options.logger,
     continuityClock: () => new Date().toISOString(),
     workspaceRuntime,
+    onTurnCompleted: (sessionId) => {
+      workflowStateService?.handleManagedWorkflowPostTurn(sessionId);
+    },
     broadcaster: (event) => {
       options.broadcaster(event as BridgeEvent);
     },
@@ -109,7 +113,7 @@ export const createRemoteBridgeBootstrap = (options: {
   const developmentTreeProviderId = resolveDevelopmentTreeBootstrapProviderId(
     options.providerRegistry
   );
-  const workflowStateService = new WorkflowStateService({
+  workflowStateService = new WorkflowStateService({
     logger: options.logger,
     sessionManager: options.sessionManager,
     ...(developmentTreeProviderId
