@@ -4,6 +4,7 @@ import type {
   DevelopmentTreeModuleNode,
   DevelopmentTreePartNode,
   DevelopmentTreeReadiness,
+  DiagramModulesProgressSnapshot,
   WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
@@ -204,7 +205,8 @@ const buildClusterTreeNode = (
 
 const buildPartTreeNode = (
   part: DevelopmentTreePartNode,
-  depth: number
+  depth: number,
+  diagramProgress?: DiagramModulesProgressSnapshot | null
 ): TreeNode => {
   const partId = `devtree:${part.id}`;
   const children: TreeNode[] = [];
@@ -214,16 +216,19 @@ const buildPartTreeNode = (
   for (const mod of part.standaloneModules) {
     children.push(buildModuleTreeNode(mod, part.id, null, depth + 1));
   }
+  const progressVisuals = resolvePartProgressVisuals(part, diagramProgress);
+  const fallbackStatus = resolveReadinessStatus(
+    part.readiness,
+    part.status === "materialized" ? "draft" : "todo"
+  );
   return {
     id: partId,
     label: part.id,
-    status: resolveReadinessStatus(
-      part.readiness,
-      part.status === "materialized" ? "draft" : "todo"
-    ),
+    status: progressVisuals.status ?? fallbackStatus,
+    title: progressVisuals.title,
     visualDepth: depth,
     nodeType: "product-part",
-    readiness: part.readiness,
+    readiness: progressVisuals.readiness ?? part.readiness,
     isCollapsible: children.length > 0,
     children: children.length > 0 ? children : undefined,
     onSelect: () =>
@@ -239,12 +244,60 @@ const buildPartTreeNode = (
   };
 };
 
+const readStringArray = (value: unknown): readonly string[] =>
+  Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
+    : [];
+
+const resolvePartProgressVisuals = (
+  part: DevelopmentTreePartNode,
+  progress?: DiagramModulesProgressSnapshot | null
+): {
+  readonly readiness?: DevelopmentTreeReadiness;
+  readonly status?: TreeNode["status"];
+  readonly title?: string;
+} => {
+  if (!progress) {
+    return {};
+  }
+  const acceptedPartIds = readStringArray(progress.acceptedPartIds);
+  const generatedPartIds = readStringArray(progress.generatedPartIds);
+  if (acceptedPartIds.includes(part.id) || generatedPartIds.includes(part.id)) {
+    return { readiness: "ready", status: "active", title: "Accepted by Core." };
+  }
+  const activeSubturn = progress.activeSubturn;
+  const isActiveProductPart =
+    activeSubturn?.kind === "product_part" && activeSubturn.partId === part.id;
+  if (isActiveProductPart && activeSubturn.status === "repair_pending") {
+    return {
+      readiness: "in_progress",
+      status: "blocked",
+      title: "Repair pending for this Product Part.",
+    };
+  }
+  if (
+    isActiveProductPart ||
+    (typeof progress.currentPartId === "string" &&
+      progress.currentPartId === part.id)
+  ) {
+    return {
+      readiness: "in_progress",
+      status: "progress",
+      title: "Current Core target Product Part.",
+    };
+  }
+  return { readiness: "idle", status: "todo", title: "Pending Core turn." };
+};
+
 export const buildDevelopmentTreeNodes = (
   tree: WorkflowStateSnapshot["developmentTree"],
-  baseDepth: number
+  baseDepth: number,
+  diagramProgress?: DiagramModulesProgressSnapshot | null
 ): readonly TreeNode[] => {
   if (!tree?.parts.length) return [];
-  return tree.parts.map((part) => buildPartTreeNode(part, baseDepth));
+  return tree.parts.map((part) =>
+    buildPartTreeNode(part, baseDepth, diagramProgress)
+  );
 };
 
 export const buildDevelopmentTreeLockedNodes = (
@@ -354,7 +407,8 @@ export const buildDiagramModulesBranchNodes = (options: {
   // Append development tree branch nodes (Product Parts / Clusters / Modules)
   const devTreeNodes = buildDevelopmentTreeNodes(
     workflowState.developmentTree,
-    2
+    2,
+    workflowState.diagramModulesProgress
   );
   for (const node of devTreeNodes) {
     nodes.push(node);

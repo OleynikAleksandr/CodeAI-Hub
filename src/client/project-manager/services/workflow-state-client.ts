@@ -70,6 +70,26 @@ export type ManagedWorkflowLifecycleSnapshot = {
   readonly todoPlanPath: string;
 };
 
+export type DiagramModulesSubturnSnapshot =
+  | {
+      readonly kind: "index";
+      readonly status: "accepted" | "pending" | "repair_pending";
+    }
+  | {
+      readonly kind: "product_part";
+      readonly partId: string;
+      readonly status: "accepted" | "pending" | "repair_pending";
+    }
+  | { readonly kind: "aggregate"; readonly status: "accepted" };
+
+export type DiagramModulesProgressSnapshot = Record<string, unknown> & {
+  readonly acceptedPartIds?: readonly string[];
+  readonly activeSubturn?: DiagramModulesSubturnSnapshot;
+  readonly currentPartId?: string;
+  readonly generatedPartIds?: readonly string[];
+  readonly plannedPartIds?: readonly string[];
+};
+
 export type DescriptionSessionRef = {
   readonly providerId: string;
   readonly providerSessionId: string;
@@ -93,7 +113,7 @@ export type WorkflowStateSnapshot = {
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
   readonly managedLifecycle?: ManagedWorkflowLifecycleSnapshot | null;
-  readonly diagramModulesProgress?: Record<string, unknown> | null;
+  readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
   readonly applicationSkeletonProgress?: Record<string, unknown> | null;
   readonly qualityGatesProgress?: Record<string, unknown> | null;
   readonly developmentTree?: DevelopmentTreeSnapshot | null;
@@ -314,7 +334,7 @@ const parseWorkflowState = (
   const gating = parseWorkflowGating({ payload: response?.gating, stageOrder: STAGE_ORDER });
   const managedLifecycle = parseManagedLifecycle(response?.managedLifecycle);
   const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
-    ? response.diagramModulesProgress
+    ? (response.diagramModulesProgress as DiagramModulesProgressSnapshot)
     : null;
   const applicationSkeletonProgress = isRecord(
     response?.applicationSkeletonProgress
