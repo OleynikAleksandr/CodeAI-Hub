@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.206] - 2026-05-09
+### Changed
+- **Diagram Modules now advances as Core-orchestrated subturns.** Providers create `product-parts.index.md` first, then Core validates, commits, and sends exactly one Product Part target per continuation turn.
+
+### Fixed
+- **Diagram Modules repair feedback is now artifact-scoped and fresh.** Core repair turns include the current target artifact, validation snapshot metadata, and exact diagnostics instead of stale aggregate rejection noise.
+- **Workflow input stays locked across Core validation and continuation dispatch.** The Project Manager keeps the user input disabled while Core validates, commits, queues feedback, or sends the next Product Part instruction.
+- **Claude micro-fragments are filtered from live dialog output.** One-character punctuation and short orphan suffix chunks no longer render as standalone message cards.
+
+### Tests
+- **Targeted coverage verifies Core progress snapshots, artifact-scoped feedback, UI continuation orchestration, tree progress projection, Claude live text filtering, webview typecheck, and affected Core/Claude builds.**
+
 ## [1.2.205] - 2026-05-08
 ### Fixed
 - **Core no longer sends stale Diagram Modules rejection feedback from old workflow-state polls.** Managed progress and Git status are refreshed immediately before Core feedback or managed documentation commits, preventing Claude from seeing already-written Product Part files as missing.
