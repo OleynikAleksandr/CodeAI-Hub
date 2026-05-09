@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "164a1d2f7",
+  "lastRecordedCommit": "7d460068d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14m.task3",
-  "expectedCommitMessage": "test: verify claude managed retest repair",
+  "currentTaskId": "managed-workflow-context.phase14m.task4",
+  "expectedCommitMessage": "docs: prepare claude managed retest repair release",
   "debt": {
-    "expectedCommitMessage": "test: verify claude managed retest repair",
-    "preCommitHead": "164a1d2f7",
+    "expectedCommitMessage": "docs: prepare claude managed retest repair release",
+    "preCommitHead": "7d460068d",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14m.task3"
+    "taskId": "managed-workflow-context.phase14m.task4"
   }
 }
 ```
@@ -313,9 +313,9 @@
     - Evidence 2026-05-09: focused prompt/rollover/template tests passed (18 tests) after rerun; the first parallel attempt failed only because Claude build temporarily removed `dist/index.js` while Core tests imported it.
     - Evidence 2026-05-09: generated prompt scan for Description, Virtual Simulation, Diagram Modules, Application Skeleton, and Quality Gates initial/rollover prompts found no legacy `Target path (...)`, input-document relative/absolute path labels, `read doc/TODO...`, or `npm run plan:status` instructions.
     - Evidence 2026-05-09: `npm run build --workspace packages/core` and `npm run typecheck:webview` passed.
-130. [PENDING] Git Commit: `test: verify claude managed retest repair` (hash: TBD)
-131. [TODO] `managed-workflow-context.phase14m.task4` Prepare README and CHANGELOG for the Claude managed retest repair release after the user's explicit release request (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude managed retest repair release`).
-132. [TODO] Git Commit: `docs: prepare claude managed retest repair release` (hash: TBD)
+130. [DONE] Git Commit: `test: verify claude managed retest repair` (hash: 7d460068d)
+131. [DONE] `managed-workflow-context.phase14m.task4` Prepare README and CHANGELOG for the Claude managed retest repair release after the user's explicit release request (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude managed retest repair release`).
+132. [PENDING] Git Commit: `docs: prepare claude managed retest repair release` (hash: TBD)
 133. [TODO] `managed-workflow-context.phase14m.task5` Run release automation and verify VSIX/tarball outputs for the Claude managed retest repair (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build claude managed retest repair release artifacts`).
 134. [TODO] Git Commit: `chore: build claude managed retest repair release artifacts` (hash: TBD)
 135. [TODO] `managed-workflow-context.phase14m.task6` Hand off the built release for user retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off claude managed retest repair release`).

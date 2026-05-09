@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.214] - 2026-05-09
+### Fixed
+- **Claude Diagram Modules turns now recover from native assistant `end_turn`.** Claude provider sessions emit Core turn completion even when native Claude output ends without a separate result event.
+- **Workflow prompt tails now preserve exact relative output targets.** Initial and rollover prompts for Description, Virtual Simulation, Diagram Modules, Application Skeleton, and Quality Gates keep the write target visible without reintroducing input-document path labels.
+- **Managed agent prompts no longer ask providers to read plan files.** Diagram Modules, Application Skeleton, and Quality Gates templates now use Core-embedded workspace plan text, active stage todo-plan text, and plan status as the context source.
+
+### Tests
+- **Focused Claude, Core, Project Manager prompt, rollover envelope, bundled managed template, generated prompt scan, Core build, Claude build, Claude provider tests, and webview typecheck coverage passed before release assembly.**
+
 ## [1.2.213] - 2026-05-09
 ### Fixed
 - **Claude managed turns now complete at the provider stream boundary.** `turn_completed` is emitted only after final visible assistant chunks are flushed, so Core cannot send the next Diagram Modules continuation inside the tail of the previous response.
