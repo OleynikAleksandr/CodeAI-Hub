@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "3ad0d45af",
+  "lastRecordedCommit": "13f275433",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14l.task1",
-  "expectedCommitMessage": "docs: prepare event-driven continuation release",
+  "currentTaskId": "managed-workflow-context.phase14l.task2",
+  "expectedCommitMessage": "chore: build event-driven continuation release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare event-driven continuation release",
-    "preCommitHead": "3ad0d45af",
+    "expectedCommitMessage": "chore: build event-driven continuation release artifacts",
+    "preCommitHead": "13f275433",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14l.task1"
+    "taskId": "managed-workflow-context.phase14l.task2"
   }
 }
 ```
@@ -286,9 +286,9 @@
 ### Stream: Event-Driven Continuation Release
 
 111. [DONE] `managed-workflow-context.phase14l.task1` Prepare README and CHANGELOG for the event-driven continuation boundary release after explicit user confirmation (scope: `README.md`, `CHANGELOG.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: prepare event-driven continuation release`).
-112. [PENDING] Git Commit: `docs: prepare event-driven continuation release` (hash: TBD)
-113. [TODO] `managed-workflow-context.phase14l.task2` Run release automation and verify VSIX/tarball outputs for the event-driven continuation boundary fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build event-driven continuation release artifacts`).
-114. [TODO] Git Commit: `chore: build event-driven continuation release artifacts` (hash: TBD)
+112. [DONE] Git Commit: `docs: prepare event-driven continuation release` (hash: 13f275433)
+113. [DONE] `managed-workflow-context.phase14l.task2` Run release automation and verify VSIX/tarball outputs for the event-driven continuation boundary fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/TODO/todo-plan.md`; expected commit: `chore: build event-driven continuation release artifacts`).
+114. [PENDING] Git Commit: `chore: build event-driven continuation release artifacts` (hash: TBD)
 115. [TODO] `managed-workflow-context.phase14l.task3` Hand off the built event-driven continuation release for user workflow retesting and keep scope active until explicit acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: hand off event-driven continuation release`).
 116. [TODO] Git Commit: `docs: hand off event-driven continuation release` (hash: TBD)
 
