@@ -8,13 +8,13 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "c31b51a99",
+  "lastRecordedCommit": "eaa9b6284",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
   "currentTaskId": "managed-workflow-context.phase14k.task1",
   "expectedCommitMessage": "fix: complete claude turns at stream boundary",
   "debt": {
     "expectedCommitMessage": "fix: complete claude turns at stream boundary",
-    "preCommitHead": "c31b51a99",
+    "preCommitHead": "eaa9b6284",
     "stage": "commit_pending",
     "taskId": "managed-workflow-context.phase14k.task1"
   }

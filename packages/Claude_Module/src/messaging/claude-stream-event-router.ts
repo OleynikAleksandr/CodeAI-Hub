@@ -116,6 +116,12 @@ export class ClaudeStreamEventRouter {
     return this.handleResultMessageInternal(session, message);
   }
 
+  async handleStreamCompleted(session: ActiveSession): Promise<void> {
+    await this.flushPendingAssistantText(session, "regular");
+    this.clearThinkingMessage(session);
+    this.contentStreamHandler.resetSession(session.sessionId);
+  }
+
   private async handleResultMessageInternal(
     session: ActiveSession,
     message: ClaudeStreamMessage

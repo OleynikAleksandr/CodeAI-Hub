@@ -129,6 +129,62 @@ test("SDKMessageProcessor processes queued turns in FIFO order", async () => {
   assert.equal(types.filter((type) => type === "turn_failed").length, 0);
 });
 
+test("SDKMessageProcessor completes Claude turn only after stream end", async () => {
+  const sessionManager = new SDKSessionManager();
+  const { tempId, session } = sessionManager.createSession(
+    "/tmp/claude-test-stream-boundary"
+  );
+  const processor = new SDKMessageProcessor(sessionManager, {
+    projectPath: "/tmp/claude-test-stream-boundary",
+  });
+  const events = collectMessageEvents(session);
+
+  processor.enqueueTurn(
+    tempId,
+    { content: "boundary", internal: false, enqueuedAt: Date.now() },
+    {
+      createIterator: () =>
+        createIterator([
+          {
+            type: "assistant",
+            session_id: "real-session-boundary",
+            message: {
+              content: [{ type: "text", text: "first visible chunk" }],
+            },
+          },
+          { type: "result", session_id: "real-session-boundary" },
+          {
+            type: "assistant",
+            session_id: "real-session-boundary",
+            message: {
+              content: [{ type: "text", text: "final visible tail" }],
+            },
+          },
+        ]),
+      onRealSessionId: ({ previousSessionId, realSessionId }) => {
+        sessionManager.updateSessionId(previousSessionId, realSessionId);
+      },
+    }
+  );
+
+  await waitForQueueDrain(session);
+
+  const finalTailIndex = events.findIndex(
+    (event) =>
+      event.type === "assistant" && event.content === "final visible tail"
+  );
+  const completedIndex = events.findIndex(
+    (event) => event.type === "turn_completed"
+  );
+  assert.notEqual(finalTailIndex, -1);
+  assert.notEqual(completedIndex, -1);
+  assert.equal(completedIndex > finalTailIndex, true);
+  assert.equal(
+    events.filter((event) => event.type === "turn_completed").length,
+    1
+  );
+});
+
 test("SDKMessageProcessor marks deferred Core feedback user_input events", async () => {
   const sessionManager = new SDKSessionManager();
   const { tempId, session } = sessionManager.createSession(

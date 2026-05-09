@@ -230,6 +230,7 @@ export class SDKMessageProcessor {
 
   async processResponses(options: ProcessResponseOptions): Promise<void> {
     let promotedSessionId: string | null = null;
+    let resultSessionId: string | null = null;
     try {
       for await (const message of options.iterator) {
         const activeSession = this.resolveSession(
@@ -242,9 +243,18 @@ export class SDKMessageProcessor {
           options.onRealSessionId(promotedSessionId);
         }
         await this.dispatchMessage(activeSession, message);
+        if (message.type === "result") {
+          resultSessionId =
+            message.session_id ?? promotedSessionId ?? options.sessionId;
+        }
       }
       const session = this.resolveSession(options.sessionId, promotedSessionId);
       if (session) {
+        if (resultSessionId) {
+          await this.streamEventRouter.handleStreamCompleted(session);
+          await this.finishHandler.completeTurn(session, resultSessionId);
+          return;
+        }
         this.finishHandler.emitTurnFailed(
           session,
           new Error("Claude stream ended without result"),
@@ -319,7 +329,6 @@ export class SDKMessageProcessor {
       }
       case "result": {
         await this.streamEventRouter.handleResultMessage(session, message);
-        await this.finishHandler.completeTurn(session, message.session_id);
         break;
       }
       default:
