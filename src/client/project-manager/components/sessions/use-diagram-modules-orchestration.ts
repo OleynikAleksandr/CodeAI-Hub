@@ -14,6 +14,11 @@ const DIAGRAM_MODULES_SEQUENCE_LOCK_REASON = "diagram_modules_sequence";
 const readStreamEventType = (value: unknown): string | null =>
   isRecord(value) && typeof value.type === "string" ? value.type : null;
 
+const readStringArray = (value: unknown): readonly string[] =>
+  Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
+    : [];
+
 const readDiagramModulesProgress = (
   value: unknown
 ): {
@@ -21,6 +26,7 @@ const readDiagramModulesProgress = (
   readonly activeSubturnStatus?: string;
   readonly currentPartId?: string;
   readonly expectedArtifactPath?: string;
+  readonly hasManagedCommitGate: boolean;
   readonly substep: string;
 } | null => {
   if (!isRecord(value) || typeof value.substep !== "string") {
@@ -32,11 +38,11 @@ const readDiagramModulesProgress = (
     typeof value.expectedArtifactPath === "string"
       ? value.expectedArtifactPath
       : undefined;
-  const acceptedPartIds = Array.isArray(value.acceptedPartIds)
-    ? value.acceptedPartIds.filter(
-        (entry): entry is string => typeof entry === "string"
-      )
-    : [];
+  const acceptedPartIds = readStringArray(value.acceptedPartIds);
+  const managedDirtyFiles = readStringArray(value.managedGitDirtyFiles);
+  const outOfOwnerDirtyFiles = readStringArray(
+    value.managedGitOutOfOwnerDirtyFiles
+  );
   const activeSubturn = isRecord(value.activeSubturn)
     ? value.activeSubturn
     : null;
@@ -49,6 +55,8 @@ const readDiagramModulesProgress = (
     activeSubturnStatus,
     currentPartId,
     expectedArtifactPath,
+    hasManagedCommitGate:
+      managedDirtyFiles.length > 0 || outOfOwnerDirtyFiles.length > 0,
     substep: value.substep,
   };
 };
@@ -158,6 +166,7 @@ export const useDiagramModulesOrchestration = (options: {
         if (
           progress?.substep === "generate_product_part" &&
           progress.activeSubturnStatus === "pending" &&
+          !progress.hasManagedCommitGate &&
           progress.currentPartId &&
           progress.expectedArtifactPath
         ) {

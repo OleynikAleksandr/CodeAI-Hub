@@ -8,15 +8,15 @@
   "planId": "managed-workflow-context-bundles-and-microtasks",
   "branch": "main",
   "baseHead": "1c304bdac",
-  "lastRecordedCommit": "113acbec8",
+  "lastRecordedCommit": "6c661d5ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md",
-  "currentTaskId": "managed-workflow-context.phase14b.task4",
-  "expectedCommitMessage": "docs: record managed sequencing release retest",
+  "currentTaskId": "managed-workflow-context.phase14c.task1",
+  "expectedCommitMessage": "fix: gate product part continuation on commit acceptance",
   "debt": {
-    "expectedCommitMessage": "docs: record managed sequencing release retest",
-    "preCommitHead": "113acbec8",
+    "expectedCommitMessage": "fix: gate product part continuation on commit acceptance",
+    "preCommitHead": "6c661d5ab",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-context.phase14b.task4"
+    "taskId": "managed-workflow-context.phase14c.task1"
   }
 }
 ```
@@ -176,14 +176,14 @@
 49. [DONE] `managed-workflow-context.phase14b.task3` Run release automation and verify VSIX/tarball outputs for the managed Product Part sequencing fix (scope: `package.json`, `package-lock.json`, `doc/tmp/releases/`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `chore: build managed sequencing release artifacts`).
 50. [DONE] Git Commit: `chore: build managed sequencing release artifacts` (hash: 113acbec8)
 51. [DONE] `managed-workflow-context.phase14b.task4` User retests the follow-up release with Claude Diagram Modules to confirm strict Product Part extraction and one-at-a-time task exposure; result: failed because Core emitted aggregate Product Part feedback, advanced the next target after a failed managed commit, and rejected Product Part index status updates as outside the active allowlist (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `docs: record managed sequencing release retest`).
-52. [PENDING] Git Commit: `docs: record managed sequencing release retest` (hash: TBD)
+52. [DONE] Git Commit: `docs: record managed sequencing release retest` (hash: 6c661d5ab)
 
 ## Phase 14C - Product Part Acceptance Repair (owner: Codex, updated: 2026-05-09)
 
 ### Stream: Target-Scoped Acceptance
 
-53. [TODO] `managed-workflow-context.phase14c.task1` Fix Diagram Modules Product Part acceptance feedback so a failed managed commit does not emit an accepted continuation or advance the next target, and Product Part subturn failures report only the current target rather than aggregate 1/4 state (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts`, `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: gate product part continuation on commit acceptance`).
-54. [TODO] Git Commit: `fix: gate product part continuation on commit acceptance` (hash: TBD)
+53. [DONE] `managed-workflow-context.phase14c.task1` Fix Diagram Modules Product Part acceptance feedback so a failed managed commit does not emit an accepted continuation or advance the next target, and Product Part subturn failures report only the current target rather than aggregate 1/4 state (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`, `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts`; expected commit: `fix: gate product part continuation on commit acceptance`).
+54. [PENDING] Git Commit: `fix: gate product part continuation on commit acceptance` (hash: TBD)
 55. [TODO] `managed-workflow-context.phase14c.task2` Fix managed commit ownership for Diagram Modules Product Part turns so Core-owned index status updates are included with the current Product Part commit while sibling Product Part files remain rejected (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`; expected commit: `fix: allow product part index status commits`).
 56. [TODO] Git Commit: `fix: allow product part index status commits` (hash: TBD)
 57. [TODO] `managed-workflow-context.phase14c.task3` Run focused Core regressions for Product Part target-scoped acceptance, managed commit allowlists, and managed plan sequencing; stop before release build confirmation (scope: `packages/core`, `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Context_Bundles_And_Microtasks.md`, `doc/TODO/todo-plan.md`; expected commit: `test: verify product part acceptance repair`).

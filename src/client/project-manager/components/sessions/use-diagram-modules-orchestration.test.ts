@@ -109,6 +109,14 @@ test("diagram modules orchestration source code invariants", async () => {
   );
   assert.ok(source.includes('if (eventType === "turn_failed") {'), "turn_failed unlocks sequence");
   assert.ok(source.includes('progress.activeSubturnStatus === "pending"'), "only pending product part state auto-continues");
+  assert.ok(
+    source.includes("!progress.hasManagedCommitGate"),
+    "managed dirty/blocked commit state must not auto-continue"
+  );
+  assert.ok(
+    source.includes("managedGitOutOfOwnerDirtyFiles"),
+    "out-of-target dirty files keep continuation blocked"
+  );
   for (const banned of ['visibility: "hidden"', "cachedPartTemplateRef"]) {
     assert.equal(source.includes(banned), false, `must not contain: ${banned}`);
   }

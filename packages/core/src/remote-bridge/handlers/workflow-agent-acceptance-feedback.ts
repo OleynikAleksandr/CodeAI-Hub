@@ -164,19 +164,21 @@ const createDiagramModulesErrors = (
 const createDiagramModulesActionLines = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
-  const hasSemanticErrors =
-    createProductPartDiagnosticErrors(progress).length > 0;
+  const managedDirtyFiles = [
+    ...readManagedGitOutOfOwnerDirtyFiles(progress),
+    ...readManagedGitDirtyFiles(progress),
+  ];
+  if (managedDirtyFiles.length > 0) {
+    return [
+      "Do not create or update Product Part artifacts in response to this message.",
+      "Wait for Core to finish or repair the managed commit boundary for the current target.",
+    ];
+  }
   if (isDiagramModulesRepairSubturn(progress)) {
     return [
       "Repair only this target artifact unless an error explicitly references another file.",
       "Do not create or update the next Product Part.",
       "When ready, stop with a content-readiness note for Core acceptance.",
-    ];
-  }
-  if (!hasSemanticErrors && readManagedGitDirtyFiles(progress).length > 0) {
-    return [
-      "Do not run Git commands. Core owns the managed commit and downstream unlock for these files.",
-      "Wait for Core to finish the commit/acceptance cycle or provide another Core feedback message.",
     ];
   }
   return [
@@ -240,27 +242,24 @@ const createOutOfOwnerDirtyError = (
 ): string =>
   `Core refused the managed documentation commit for ${stageTitle} because dirty files are outside the active stage allowlist: ${files.join(", ")}. Keep this stage limited to its owned artifacts and ask the user or Core to resolve unrelated workspace changes.`;
 
-const readManagedGitDirtyFiles = (progress: unknown): readonly string[] => {
-  const value = progress as { readonly managedGitDirtyFiles?: unknown };
-  return Array.isArray(value.managedGitDirtyFiles)
-    ? value.managedGitDirtyFiles.filter(
-        (entry): entry is string => typeof entry === "string"
-      )
+const readStringArray = (value: unknown): readonly string[] =>
+  Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
     : [];
-};
+
+const readManagedGitDirtyFiles = (progress: unknown): readonly string[] =>
+  readStringArray(
+    (progress as { readonly managedGitDirtyFiles?: unknown })
+      .managedGitDirtyFiles
+  );
 
 const readManagedGitOutOfOwnerDirtyFiles = (
   progress: unknown
-): readonly string[] => {
-  const value = progress as {
-    readonly managedGitOutOfOwnerDirtyFiles?: unknown;
-  };
-  return Array.isArray(value.managedGitOutOfOwnerDirtyFiles)
-    ? value.managedGitOutOfOwnerDirtyFiles.filter(
-        (entry): entry is string => typeof entry === "string"
-      )
-    : [];
-};
+): readonly string[] =>
+  readStringArray(
+    (progress as { readonly managedGitOutOfOwnerDirtyFiles?: unknown })
+      .managedGitOutOfOwnerDirtyFiles
+  );
 
 const readProductPartDiagnostics = (
   progress: DiagramModulesProgressSnapshot
