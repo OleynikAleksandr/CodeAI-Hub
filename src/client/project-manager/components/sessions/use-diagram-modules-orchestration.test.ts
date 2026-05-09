@@ -116,6 +116,11 @@ test("diagram modules orchestration source code invariants", async () => {
     "managed dirty/blocked commit state keeps PM input locked"
   );
   assert.equal(
+    source.includes(".finally(() => {\n        setSequenceLock"),
+    false,
+    "async continuation queue must not unlock input before Core state is known"
+  );
+  assert.equal(
     source.includes("api.sendSessionMessage("),
     false,
     "Project Manager must not send managed workflow continuation messages"
