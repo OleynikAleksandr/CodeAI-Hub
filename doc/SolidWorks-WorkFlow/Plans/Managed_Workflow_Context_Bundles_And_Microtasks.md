@@ -333,3 +333,14 @@ Implementation note:
 
 - The first repair blocks PM automatic Product Part continuation while the workflow-state payload still carries managed dirty or out-of-target dirty files.
 - The second repair keeps `product-parts.index.md` inside the current Product Part managed commit allowlist so provider-updated status markers can be committed with the accepted Product Part file.
+
+Verification:
+
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `npm run typecheck:webview` — passed.
+- `npm run build:project-manager` — passed.
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.js packages/core/dist/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js` — passed, 13/13 tests.
+
+Release status:
+
+- Stop before release build confirmation. No `build-all.sh` or `build-release.sh` was run for this repair stream.
