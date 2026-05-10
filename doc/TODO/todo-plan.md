@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "ff295b090",
+  "lastRecordedCommit": "99ee351b4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase11.stream1.task1",
-  "expectedCommitMessage": "fix: expose core managed context bundle endpoint",
+  "currentTaskId": "runtime-contract.phase11.stream2.task1",
+  "expectedCommitMessage": "test: cover core managed context bundle endpoint",
   "debt": {
-    "expectedCommitMessage": "fix: expose core managed context bundle endpoint",
-    "preCommitHead": "ff295b090",
+    "expectedCommitMessage": "test: cover core managed context bundle endpoint",
+    "preCommitHead": "99ee351b4",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream1.task1"
+    "taskId": "runtime-contract.phase11.stream2.task1"
   }
 }
 ```
@@ -363,12 +363,12 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 ### Stream: Core-Owned Initial Bundle Endpoint
 
 95. [DONE] `runtime-contract.phase11.stream1.task1` Add a Core-owned thin adapter `buildManagedWorkflowContextBundleForInitialStage({ stageId, workspacePath, workspaceSlug, providerId })` that constructs an internal `DocumentationRolloverContext` with rollover-specific fields nulled and delegates to the existing `buildManagedWorkflowContextBundle`; expose it through a new HTTP handler at `/api/v1/orchestrator/managed-context-bundle` registered in `http-api-router.ts`, returning the rendered bundle text verbatim (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts, packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts`; expected commit: `fix: expose core managed context bundle endpoint`).
-96. [PENDING] Git Commit: `fix: expose core managed context bundle endpoint` (hash: TBD)
+96. [DONE] Git Commit: `fix: expose core managed context bundle endpoint` (hash: 99ee351b4)
 
 ### Stream: Core Bundle Endpoint Coverage
 
-97. [TODO] `runtime-contract.phase11.stream2.task1` Add regression coverage for the new Core endpoint: round-trip test that calls the handler with a freshly seeded managed workspace and asserts the response matches `buildManagedWorkflowContextBundle` output (Plan Status with non-null `activeStage`, Workspace Plan Text and Active Stage Todo Plan Text non-empty, source artifacts embedded for the stage) (scope: `packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.test.ts`; expected commit: `test: cover core managed context bundle endpoint`).
-98. [TODO] Git Commit: `test: cover core managed context bundle endpoint` (hash: TBD)
+97. [DONE] `runtime-contract.phase11.stream2.task1` Add regression coverage for the new Core endpoint: round-trip test that calls the handler with a freshly seeded managed workspace and asserts the response matches `buildManagedWorkflowContextBundle` output (Plan Status with non-null `activeStage`, Workspace Plan Text and Active Stage Todo Plan Text non-empty, source artifacts embedded for the stage) (scope: `packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.test.ts`; expected commit: `test: cover core managed context bundle endpoint`).
+98. [PENDING] Git Commit: `test: cover core managed context bundle endpoint` (hash: TBD)
 
 ### Stream: Replace PM Builder And Sync SSOT
 
