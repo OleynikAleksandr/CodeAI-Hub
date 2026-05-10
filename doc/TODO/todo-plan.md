@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "a7c0c122f",
+  "lastRecordedCommit": "fb0df1057",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase11.stream5.task1",
-  "expectedCommitMessage": "build: release pm bundle source-of-truth repair",
+  "currentTaskId": "runtime-contract.phase11.stream5.task2",
+  "expectedCommitMessage": "build: bump release manifests to 1.2.220",
   "debt": {
-    "expectedCommitMessage": "build: release pm bundle source-of-truth repair",
-    "preCommitHead": "a7c0c122f",
+    "expectedCommitMessage": "build: bump release manifests to 1.2.220",
+    "preCommitHead": "fb0df1057",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream5.task1"
+    "taskId": "runtime-contract.phase11.stream5.task2"
   }
 }
 ```
@@ -385,9 +385,9 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 ### Stream: Release Build
 
 105. [DONE] `runtime-contract.phase11.stream5.task1` Prepare release notes / version-targeting README + CHANGELOG for the next release line (1.2.220) per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release pm bundle source-of-truth repair`).
-106. [PENDING] Git Commit: `build: release pm bundle source-of-truth repair` (hash: TBD)
-107. [TODO] `runtime-contract.phase11.stream5.task2` Commit version manifests, lockfile and any auto-bumped files produced by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
-108. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
+106. [DONE] Git Commit: `build: release pm bundle source-of-truth repair` (hash: fb0df1057)
+107. [DONE] `runtime-contract.phase11.stream5.task2` Commit version manifests, lockfile and any auto-bumped files produced by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to 1.2.220`).
+108. [PENDING] Git Commit: `build: bump release manifests to 1.2.220` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
