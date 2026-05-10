@@ -16,7 +16,7 @@ import {
 
 const execFileAsync = promisify(execFile);
 const DIAGRAM_MODULES_PLAN_COMMIT_RE =
-  /docs: update diagram modules artifacts/u;
+  /docs: update diagram modules product part index/u;
 const APPLICATION_SKELETON_PLAN_RE =
   /doc\/TODO\/stages\/application-skeleton\/todo-plan\.md/u;
 const APPLICATION_SKELETON_COMMIT_RE =

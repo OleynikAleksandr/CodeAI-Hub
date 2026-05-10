@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "2160c7504",
+  "lastRecordedCommit": "ca93cda55",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase2.fixture-migration.task1",
-  "expectedCommitMessage": "test: migrate fixture task ids to phased application skeleton ids",
+  "currentTaskId": "application-skeleton-orchestration.phase2.diagram-test-repair.task1",
+  "expectedCommitMessage": "test: align diagram modules adoption regex to current seed",
   "debt": {
-    "expectedCommitMessage": "test: migrate fixture task ids to phased application skeleton ids",
-    "preCommitHead": "2160c7504",
+    "expectedCommitMessage": "test: align diagram modules adoption regex to current seed",
+    "preCommitHead": "ca93cda55",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase2.fixture-migration.task1"
+    "taskId": "application-skeleton-orchestration.phase2.diagram-test-repair.task1"
   }
 }
 ```
@@ -99,12 +99,12 @@
 ### Stream: Legacy Task Id Fixture Migration
 
 9. [DONE] `application-skeleton-orchestration.phase2.fixture-migration.task1` Migrate hardcoded legacy `application-skeleton.stream1.task1/task2/task3` references in three core fixture tests to the new phased task ids (`application-skeleton.phase1a.draft.task1` / `application-skeleton.phase2.materialize.task1` / `application-skeleton.handoff.task1`) so fixtures stay consistent with the seed shape; preserve each test's existing behavioral assertions. Surfaced as a follow-up risk during `phase2.stage-plan.task1`. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `test: migrate fixture task ids to phased application skeleton ids`).
-10. [PENDING] Git Commit: `test: migrate fixture task ids to phased application skeleton ids` (hash: TBD)
+10. [DONE] Git Commit: `test: migrate fixture task ids to phased application skeleton ids` (hash: ca93cda55)
 
 ### Stream: Diagram Modules Adoption Test Repair
 
-11. [TODO] `application-skeleton-orchestration.phase2.diagram-test-repair.task1` Repair the pre-existing `DIAGRAM_MODULES_PLAN_COMMIT_RE` regex mismatch in the managed-workspace adoption test so it matches the current Diagram Modules seed commit (`docs: update diagram modules product part index`). Strictly outside Application Skeleton scope, but surfaced during `phase2.stage-plan.task1` test runs as a baseline failure on `main`; cleanup is opportunistic because the regex sits in a file already touched by this scope. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: align diagram modules adoption regex to current seed`).
-12. [TODO] Git Commit: `test: align diagram modules adoption regex to current seed` (hash: TBD)
+11. [DONE] `application-skeleton-orchestration.phase2.diagram-test-repair.task1` Repair the pre-existing `DIAGRAM_MODULES_PLAN_COMMIT_RE` regex mismatch in the managed-workspace adoption test so it matches the current Diagram Modules seed commit (`docs: update diagram modules product part index`). Strictly outside Application Skeleton scope, but surfaced during `phase2.stage-plan.task1` test runs as a baseline failure on `main`; cleanup is opportunistic because the regex sits in a file already touched by this scope. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: align diagram modules adoption regex to current seed`).
+12. [PENDING] Git Commit: `test: align diagram modules adoption regex to current seed` (hash: TBD)
 
 ### Stream: Phase Classifier
 
