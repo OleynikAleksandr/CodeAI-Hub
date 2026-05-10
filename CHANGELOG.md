@@ -4,7 +4,7 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
-## [1.2.217] - 2026-05-10
+## [1.2.218] - 2026-05-10
 ### Fixed
 - **Managed feedback ownership leak removed from corrective text.** `managed-git-stage-gate` and the workflow agent acceptance feedback no longer ask the provider to commit/clean files or run Git commands; corrective wording is now neutral content-readiness ("Core has not yet finalized the managed commit … respond with a content-readiness note", "Core is blocked by unrelated dirty paths … provider should not act on this").
 - **Post-turn arbitration deduplicates terminal events.** `SessionProviderEventRouter` computes a Core-normalized terminal-event identity (provider id/timestamp + Core-owned monotonic fallback) and tracks a per-session processed-event ledger; duplicate `turn_completed` / `turn_failed` deliveries are no-op. `ManagedWorkflowPostTurnService` adds an in-flight guard so concurrent post-turn invocations do not re-enter arbitration.

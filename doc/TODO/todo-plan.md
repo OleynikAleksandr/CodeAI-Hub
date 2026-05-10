@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "9d5a63d97",
+  "lastRecordedCommit": "b52d84816",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase9.stream9.task2",
-  "expectedCommitMessage": "build: release managed runtime conformance repair",
+  "currentTaskId": "runtime-contract.phase9.stream9.task2b",
+  "expectedCommitMessage": "build: bump release manifests to 1.2.218",
   "debt": {
-    "expectedCommitMessage": "build: release managed runtime conformance repair",
-    "preCommitHead": "9d5a63d97",
+    "expectedCommitMessage": "build: bump release manifests to 1.2.218",
+    "preCommitHead": "b52d84816",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase9.stream9.task2"
+    "taskId": "runtime-contract.phase9.stream9.task2b"
   }
 }
 ```
@@ -167,14 +167,16 @@
 ### Stream: Release Build
 
 44. [DONE] `runtime-contract.phase9.stream9.task2` After explicit confirmation only, prepare release notes/version files and run release build scripts per AGENTS Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release managed runtime conformance repair`).
-45. [PENDING] Git Commit: `build: release managed runtime conformance repair` (hash: TBD)
+45. [DONE] Git Commit: `build: release managed runtime conformance repair` (hash: b52d84816)
+46. [DONE] `runtime-contract.phase9.stream9.task2b` Commit version manifests, package-lock and README/CHANGELOG bumped by `build-all.sh` (build-all bumped release line to 1.2.218 because launcher tarball 1.2.217 already existed) so build-release.sh receives a clean tree (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to 1.2.218`).
+47. [PENDING] Git Commit: `build: bump release manifests to 1.2.218` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-46. [TODO] `runtime-contract.phase9.stream9.task3` User retests Diagram Modules, Application Skeleton, Quality Gates and at least one controlled managed rollover scenario on the new VSIX (scope: chat/process observation only; no commit required).
+48. [TODO] `runtime-contract.phase9.stream9.task3` User retests Diagram Modules, Application Skeleton, Quality Gates and at least one controlled managed rollover scenario on the new VSIX (scope: chat/process observation only; no commit required).
 
 ### Stream: Scope Closeout
 
-47. [TODO] `runtime-contract.phase9.stream9.task4` After explicit user acceptance, archive this todo plan, decide disposition for the planning documents, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed runtime conformance repair`).
-48. [TODO] Git Commit: `docs: close managed runtime conformance repair` (hash: TBD)
-49. [TODO] `runtime-contract.phase9.stream9.task5` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+49. [TODO] `runtime-contract.phase9.stream9.task4` After explicit user acceptance, archive this todo plan, decide disposition for the planning documents, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed runtime conformance repair`).
+50. [TODO] Git Commit: `docs: close managed runtime conformance repair` (hash: TBD)
+51. [TODO] `runtime-contract.phase9.stream9.task5` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
