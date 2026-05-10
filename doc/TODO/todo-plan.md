@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "02d6f8ebd",
+  "lastRecordedCommit": "ead1484e5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream6.task2",
-  "expectedCommitMessage": "test: cover application skeleton phase b rollover",
+  "currentTaskId": "runtime-contract.phase10.stream7.task1",
+  "expectedCommitMessage": "docs: sync application skeleton phase b ssot",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton phase b rollover",
-    "preCommitHead": "02d6f8ebd",
+    "expectedCommitMessage": "docs: sync application skeleton phase b ssot",
+    "preCommitHead": "ead1484e5",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream6.task2"
+    "taskId": "runtime-contract.phase10.stream7.task1"
   }
 }
 ```
@@ -280,12 +280,12 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 76. [DONE] `runtime-contract.phase10.stream6.task1` Chained happy-path test exercising R2/R3 in sequence: recogniser detects user phrasing → dispatcher fires materialisation prompt for awaiting-acceptance session → flipping `materialized: true` produces snapshot with `substep: "materialized"` (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`; expected commit: `test: cover application skeleton end-to-end happy path`).
 77. [DONE] Git Commit: `test: cover application skeleton end-to-end happy path` (hash: 02d6f8ebd)
 78. [DONE] `runtime-contract.phase10.stream6.task2` Forced-rollover Phase B regression: assert that R2 recogniser still fires for an Application Skeleton acceptance phrase received as the resumed user message after a rollover transition, and the dispatcher gate stays correct without re-firing if the materialised flag flipped between source and target (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton phase b rollover`). New single-file test relying on the existing recogniser/dispatcher units (full envelope rebuild already covered by Phase 6 regressions).
-79. [PENDING] Git Commit: `test: cover application skeleton phase b rollover` (hash: TBD)
+79. [DONE] Git Commit: `test: cover application skeleton phase b rollover` (hash: ead1484e5)
 
 ### Stream: SSOT Sync
 
-80. [TODO] `runtime-contract.phase10.stream7.task1` Sync the Phase B / B→A acceptance / materialisation continuation behaviours actually shipped into stable SSOT (Application Skeleton sections only; Quality Gates is intentionally deferred) (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase b ssot`).
-81. [TODO] Git Commit: `docs: sync application skeleton phase b ssot` (hash: TBD)
+80. [DONE] `runtime-contract.phase10.stream7.task1` Sync the Phase B / B→A acceptance / materialisation continuation behaviours actually shipped into stable SSOT (Application Skeleton sections only; Quality Gates is intentionally deferred) (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase b ssot`).
+81. [PENDING] Git Commit: `docs: sync application skeleton phase b ssot` (hash: TBD)
 
 ### Stream: Tooling Verification
 
