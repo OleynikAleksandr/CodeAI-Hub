@@ -104,6 +104,30 @@ const readStringArray = (
     : [];
 };
 
+const TRAILING_SLASH_RE = /\/+$/u;
+
+// Normalize `materializedPaths` shape so agent variations (directories with
+// trailing slashes, whitespace, duplicates from listing both a directory and
+// a file under it) do not produce spurious validation errors. The validator
+// downstream verifies each entry with `relativePathExists`, which accepts
+// both file and directory targets; normalization here just removes shape
+// noise and deduplicates.
+const normalizeMaterializedPaths = (
+  paths: readonly string[]
+): readonly string[] => {
+  const seen = new Set<string>();
+  const normalized: string[] = [];
+  for (const entry of paths) {
+    const trimmed = entry.trim().replace(TRAILING_SLASH_RE, "");
+    if (!trimmed || seen.has(trimmed)) {
+      continue;
+    }
+    seen.add(trimmed);
+    normalized.push(trimmed);
+  }
+  return normalized;
+};
+
 const readSourceRoot = (value: Record<string, unknown> | null): string =>
   typeof value?.sourceRoot === "string" && value.sourceRoot.trim().length > 0
     ? value.sourceRoot.trim()
@@ -328,9 +352,8 @@ export const validateApplicationSkeletonMaterialization = async (params: {
 }): Promise<ApplicationSkeletonMaterializationValidation> => {
   const sourceRoot = readSourceRoot(params.mapJson);
   const codePaths = collectCodePaths(params.mapJson);
-  const materializedPaths = readStringArray(
-    params.mapJson,
-    "materializedPaths"
+  const materializedPaths = normalizeMaterializedPaths(
+    readStringArray(params.mapJson, "materializedPaths")
   );
   const observedMaterialization =
     readMaterializedFlag(params.mapJson) ||

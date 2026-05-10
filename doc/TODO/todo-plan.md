@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "2d3ad255a",
+  "lastRecordedCommit": "fef3b07eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.recognizer.task1",
-  "expectedCommitMessage": "fix: broaden application skeleton acceptance phrase recognizer",
+  "currentTaskId": "application-skeleton-orchestration.phase16.gate-normalize.task1",
+  "expectedCommitMessage": "fix: normalize application skeleton materialized paths for managed commit gate",
   "debt": {
-    "expectedCommitMessage": "fix: broaden application skeleton acceptance phrase recognizer",
-    "preCommitHead": "2d3ad255a",
+    "expectedCommitMessage": "fix: normalize application skeleton materialized paths for managed commit gate",
+    "preCommitHead": "fef3b07eb",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.recognizer.task1"
+    "taskId": "application-skeleton-orchestration.phase16.gate-normalize.task1"
   }
 }
 ```
@@ -372,12 +372,12 @@
 ### Stream: Acceptance Phrase Recognizer Broadening
 
 91. [DONE] `application-skeleton-orchestration.phase16.recognizer.task1` Broaden `recognizeManagedContractAcceptancePhrase` to also accept English `accepted`/`accept`/`confirmed` and bare Russian verbs (`принимаю`/`подтверждаю`/`утверждаю`) without the mandatory `контракт` noun, gated on Phase 2 acceptance-eligible state. Route matched phrases through the same Core accept-contract handler path. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: broaden application skeleton acceptance phrase recognizer`).
-92. [PENDING] Git Commit: `fix: broaden application skeleton acceptance phrase recognizer` (hash: TBD)
+92. [DONE] Git Commit: `fix: broaden application skeleton acceptance phrase recognizer` (hash: fef3b07eb)
 
 ### Stream: Managed Commit Gate materializedPaths Normalization
 
-93. [TODO] `application-skeleton-orchestration.phase16.gate-normalize.task1` Update `workflow-state-managed-documentation-commit.ts` and `managed-documentation-commit-transaction.ts` so the managed commit gate normalizes the `materializedPaths` shape it reads from `application-skeleton-map.json` — accepting both tracked-files-only and directories-plus-files shapes — and does not block `feat: materialize application skeleton` on a shape-only mismatch. Add a peer test that locks down the normalized comparison. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: normalize application skeleton materialized paths for managed commit gate`).
-94. [TODO] Git Commit: `fix: normalize application skeleton materialized paths for managed commit gate` (hash: TBD)
+93. [DONE] `application-skeleton-orchestration.phase16.gate-normalize.task1` Re-audit during implementation showed the managed commit gate (`workflow-state-managed-documentation-commit.ts`, `managed-documentation-commit-transaction.ts`) does not perform shape comparison on `materializedPaths` at all — it triggers a commit whenever the Application Skeleton stage owns dirty files. The Phase 14 "Core gate did not finalize" symptom was driven by `application-skeleton-materialization-validator.ts` raising validation errors when declared `materializedPaths` entries had trailing slashes / whitespace / duplicates that did not resolve against `stat`. Scope shifts to that validator: normalize `materializedPaths` entries (trim whitespace, strip trailing slashes, deduplicate) before the `relativePathExists` check, so an agent's noisy-but-real path list is not punished with spurious validation errors. Add a peer test that locks down normalization. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `fix: normalize application skeleton materialized paths for managed commit gate`).
+94. [PENDING] Git Commit: `fix: normalize application skeleton materialized paths for managed commit gate` (hash: TBD)
 
 ### Stream: SSOT Sync
 

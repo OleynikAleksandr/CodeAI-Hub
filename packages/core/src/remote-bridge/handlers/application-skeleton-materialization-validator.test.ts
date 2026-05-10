@@ -150,3 +150,69 @@ test("materialized skeleton happy path passes validation when canonical identifi
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("materialized skeleton normalizes materializedPaths shape (trailing slashes, whitespace, duplicates)", async () => {
+  const workspaceRoot = await makeWorkspace();
+  try {
+    const realPaths = [
+      "product-parts/project-manager",
+      "product-parts/project-manager/clusters/workflow-ui",
+      "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+      "product-parts/project-manager/modules/settings",
+    ];
+    await createDirs(workspaceRoot, realPaths);
+
+    const noisyPaths = [
+      "  product-parts/project-manager/  ",
+      "product-parts/project-manager",
+      "product-parts/project-manager/clusters/workflow-ui///",
+      "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+      "product-parts/project-manager/modules/settings/",
+      "",
+      "   ",
+    ];
+
+    const result = await validateApplicationSkeletonMaterialization({
+      markdown: MATERIALIZED_MARKDOWN,
+      workspaceRoot,
+      mapJson: {
+        accepted: true,
+        materialized: true,
+        materializationState: "materialized",
+        materializedPaths: noisyPaths,
+        reviewState: "materialized",
+        sourceRoot: "product-parts",
+        productParts: [
+          {
+            id: "project-manager",
+            codePath: "product-parts/project-manager",
+            clusters: [
+              {
+                id: "workflow-ui",
+                codePath: "product-parts/project-manager/clusters/workflow-ui",
+                modules: [
+                  {
+                    id: "navigation",
+                    codePath:
+                      "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+                  },
+                ],
+              },
+            ],
+            standaloneModules: [
+              {
+                id: "settings",
+                codePath: "product-parts/project-manager/modules/settings",
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    assert.equal(result.observedMaterialization, true);
+    assert.deepEqual(result.validationErrors, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
