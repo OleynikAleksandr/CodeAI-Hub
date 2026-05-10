@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "b9c0bc6c4",
+  "lastRecordedCommit": "acc0ee383",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-rename.task1",
-  "expectedCommitMessage": "fix: rename application skeleton phase classifier values to plain numbering",
+  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-consumers.task1",
+  "expectedCommitMessage": "fix: align skeleton contract guard and review classifier to plain numbering",
   "debt": {
-    "expectedCommitMessage": "fix: rename application skeleton phase classifier values to plain numbering",
-    "preCommitHead": "b9c0bc6c4",
+    "expectedCommitMessage": "fix: align skeleton contract guard and review classifier to plain numbering",
+    "preCommitHead": "acc0ee383",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.classifier-rename.task1"
+    "taskId": "application-skeleton-orchestration.phase12.classifier-consumers.task1"
   }
 }
 ```
@@ -276,12 +276,12 @@
 ### Stream: Phase Classifier Enum Rename
 
 67. [DONE] `application-skeleton-orchestration.phase12.classifier-rename.task1` Rename `ApplicationSkeletonPhase` enum values to plain numbering (`phase_1a_draft → phase_1_draft`, `phase_1b_review → phase_2_review`, `phase_2_materialization → phase_3_materialization`; `phase_handoff` stays). The classifier returns the new values; the type union temporarily admits both new and deprecated-old values so the still-unmigrated consumers continue to type-check across Streams G/H/H_b until the alias is removed in `phase12.classifier-cleanup.task1`. Migrate `application-skeleton-phase-state.ts` (definition + classifier body + deprecated aliases), its peer test (`application-skeleton-phase-state.test.ts`, asserts new values), and the end-to-end test (`application-skeleton-end-to-end.test.ts`, var names `phase1aProgress` / `phase1bProgress` and enum strings) in lockstep. Scope changed from the original (`phase-state.ts, phase-state.test.ts, managed-workflow-post-turn-service.ts`) to (`phase-state.ts, phase-state.test.ts, application-skeleton-end-to-end.test.ts`) because the post-turn service does not use enum string literals (only the classifier function), while the end-to-end test pins both var names and enum strings and breaks the moment classifier returns new values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`; expected commit: `fix: rename application skeleton phase classifier values to plain numbering`).
-68. [PENDING] Git Commit: `fix: rename application skeleton phase classifier values to plain numbering` (hash: TBD)
+68. [DONE] Git Commit: `fix: rename application skeleton phase classifier values to plain numbering` (hash: acc0ee383)
 
 ### Stream: Phase Classifier Consumers (Guard + Review Classifier)
 
-69. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task1` Sync the contract guard and review-turn classifier (production + the contract guard's peer test) to the plain-numbering enum values. The review-turn classifier's peer test migrates with `phase12.classifier-consumers.task2` to keep the scope at three files. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts`; expected commit: `fix: align skeleton contract guard and review classifier to plain numbering`).
-70. [TODO] Git Commit: `fix: align skeleton contract guard and review classifier to plain numbering` (hash: TBD)
+69. [DONE] `application-skeleton-orchestration.phase12.classifier-consumers.task1` Sync the contract guard and review-turn classifier (production + the contract guard's peer test) to the plain-numbering enum values. The review-turn classifier's peer test migrates with `phase12.classifier-consumers.task2` to keep the scope at three files. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts`; expected commit: `fix: align skeleton contract guard and review classifier to plain numbering`).
+70. [PENDING] Git Commit: `fix: align skeleton contract guard and review classifier to plain numbering` (hash: TBD)
 
 ### Stream: Phase Classifier Consumers (Accept Contract Handler + Tests)
 

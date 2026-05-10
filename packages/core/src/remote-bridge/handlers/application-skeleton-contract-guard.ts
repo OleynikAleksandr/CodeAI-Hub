@@ -12,8 +12,8 @@ import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton
 //     or report blockers);
 //   - no terminal event → noop (Core continues waiting; no validation).
 //
-// Phases other than `phase_1a_draft` return noop because their guards are
-// owned by separate microtasks (Phase 1B revision classifier, Phase 2 gate).
+// Phases other than `phase_1_draft` return noop because their guards are
+// owned by separate microtasks (Phase 2 revision classifier, Phase 3 gate).
 // The decision is intentionally describable with a single tagged enum so the
 // caller can log/route without re-deriving state.
 
@@ -85,7 +85,7 @@ export const evaluateApplicationSkeletonContractGuard = (
   // structural draft checks: if the agent already touched materialization
   // scope, that is the most actionable repair signal to surface.
   if (
-    (input.phase === "phase_1a_draft" || input.phase === "phase_1b_review") &&
+    (input.phase === "phase_1_draft" || input.phase === "phase_2_review") &&
     input.prematureDecision?.kind === "blocked"
   ) {
     return {
@@ -94,7 +94,7 @@ export const evaluateApplicationSkeletonContractGuard = (
       reason: "premature_materialization_before_acceptance",
     };
   }
-  if (input.phase !== "phase_1a_draft") {
+  if (input.phase !== "phase_1_draft") {
     return { kind: "noop", reason: "out_of_scope_phase" };
   }
   if (input.ownedDirtyFiles.length === 0) {

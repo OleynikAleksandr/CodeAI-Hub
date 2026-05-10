@@ -23,7 +23,7 @@ test("guard noop when no terminal event arrived yet", () => {
     ownedDirtyFiles: [
       ".codeai-hub/demo/application_skeleton/application-skeleton.md",
     ],
-    phase: "phase_1a_draft",
+    phase: "phase_1_draft",
     progress: buildProgressSnapshot({
       markdownExists: true,
       mapExists: true,
@@ -40,8 +40,8 @@ test("guard noop when no terminal event arrived yet", () => {
 
 test("guard noop when phase is outside Phase 1A scope", () => {
   for (const phase of [
-    "phase_1b_review",
-    "phase_2_materialization",
+    "phase_2_review",
+    "phase_3_materialization",
     "phase_handoff",
   ] as const) {
     const decision = evaluateApplicationSkeletonContractGuard({
@@ -61,7 +61,7 @@ test("guard noop when phase is outside Phase 1A scope", () => {
 test("guard repair_no_progress in Phase 1A when terminal arrives without owned diff", () => {
   const decision = evaluateApplicationSkeletonContractGuard({
     ownedDirtyFiles: [],
-    phase: "phase_1a_draft",
+    phase: "phase_1_draft",
     progress: null,
     terminalEventReceived: true,
   });
@@ -78,7 +78,7 @@ test("guard commit_ready when terminal + owned diff produces a structurally comp
       ".codeai-hub/demo/application_skeleton/application-skeleton.md",
       ".codeai-hub/demo/application_skeleton/application-skeleton-map.json",
     ],
-    phase: "phase_1a_draft",
+    phase: "phase_1_draft",
     progress: buildProgressSnapshot({
       markdownExists: true,
       mapExists: true,
@@ -95,7 +95,7 @@ test("guard repair_invalid_draft when implicit readiness has structural gaps", (
     ownedDirtyFiles: [
       ".codeai-hub/demo/application_skeleton/application-skeleton.md",
     ],
-    phase: "phase_1a_draft",
+    phase: "phase_1_draft",
     progress: buildProgressSnapshot({
       markdownExists: true,
       mapExists: false,
@@ -120,7 +120,7 @@ test("guard repair_invalid_draft surfaces validator errors when map exists but i
     ownedDirtyFiles: [
       ".codeai-hub/demo/application_skeleton/application-skeleton-map.json",
     ],
-    phase: "phase_1a_draft",
+    phase: "phase_1_draft",
     progress: buildProgressSnapshot({
       markdownExists: true,
       mapExists: true,
@@ -146,7 +146,7 @@ test("guard repair_invalid_draft surfaces validator errors when map exists but i
 });
 
 test("guard returns repair_premature_materialization when premature decision is blocked in Phase 1A or 1B", () => {
-  for (const phase of ["phase_1a_draft", "phase_1b_review"] as const) {
+  for (const phase of ["phase_1_draft", "phase_2_review"] as const) {
     const decision = evaluateApplicationSkeletonContractGuard({
       ownedDirtyFiles: [
         "product-parts/demo/README.md",
@@ -177,7 +177,7 @@ test("guard returns repair_premature_materialization when premature decision is 
 test("guard ignores premature decision when phase is not Phase 1A or 1B", () => {
   const decision = evaluateApplicationSkeletonContractGuard({
     ownedDirtyFiles: ["product-parts/demo/README.md"],
-    phase: "phase_2_materialization",
+    phase: "phase_3_materialization",
     prematureDecision: {
       blockedPaths: ["product-parts/demo/README.md"],
       kind: "blocked",
@@ -199,7 +199,7 @@ test("guard repair_invalid_draft when progress snapshot is unavailable mid-draft
     ownedDirtyFiles: [
       ".codeai-hub/demo/application_skeleton/application-skeleton.md",
     ],
-    phase: "phase_1a_draft",
+    phase: "phase_1_draft",
     progress: null,
     terminalEventReceived: true,
   });
