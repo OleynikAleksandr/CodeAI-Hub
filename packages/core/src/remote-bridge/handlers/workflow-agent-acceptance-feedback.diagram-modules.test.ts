@@ -15,6 +15,10 @@ const CORE_OWNED_DIRTY_GATE_RE = /Core-owned managed commit is pending/u;
 const COMMIT_OR_CLEAN_RE = /Commit or clean/u;
 const PLAN_COMMIT_COMMAND_RE =
   /npm run plan:commit|current managed plan command/u;
+const FORBIDDEN_GIT_IMPERATIVES_RE =
+  /commit or clean|git add|git commit|stage these files|npm run plan:commit|do not run git commands/iu;
+const CONTENT_READINESS_NOTE_RE =
+  /respond with a content-readiness note once the artifacts are ready/u;
 const DIAGRAM_MODULES_REPAIR_RE =
   /Core rejected the current Diagram Modules artifact/u;
 const TARGET_ARTIFACT_REPAIR_RE = /Target artifact to repair:/u;
@@ -110,8 +114,10 @@ test("Diagram Modules feedback separates Core-owned dirty gate from artifact edi
 
     assert.equal(messages.length, 1);
     assert.match(messages[0] ?? "", CORE_OWNED_DIRTY_GATE_RE);
+    assert.match(messages[0] ?? "", CONTENT_READINESS_NOTE_RE);
     assert.doesNotMatch(messages[0] ?? "", COMMIT_OR_CLEAN_RE);
     assert.doesNotMatch(messages[0] ?? "", PLAN_COMMIT_COMMAND_RE);
+    assert.doesNotMatch(messages[0] ?? "", FORBIDDEN_GIT_IMPERATIVES_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -29,6 +29,10 @@ const OUT_OF_OWNER_DIRTY_RE =
   /dirty files are outside the active stage allowlist: scratch\/unmanaged\.txt/u;
 const PLAN_COMMIT_COMMAND_RE =
   /npm run plan:commit|current managed plan command/u;
+const FORBIDDEN_GIT_IMPERATIVES_RE =
+  /commit or clean|git add|git commit|stage these files|npm run plan:commit|do not run git commands/iu;
+const OUT_OF_OWNER_NEUTRAL_RE =
+  /Resolution required before continuation\. \(User-facing notice; provider should not act on this\.\)/u;
 
 const waitForImmediate = (): Promise<void> =>
   new Promise((resolve) => {
@@ -318,7 +322,9 @@ test("managed feedback reports out-of-owner dirty files without provider shell c
 
     assert.equal(messages.length, 1);
     assert.match(messages[0] ?? "", OUT_OF_OWNER_DIRTY_RE);
+    assert.match(messages[0] ?? "", OUT_OF_OWNER_NEUTRAL_RE);
     assert.doesNotMatch(messages[0] ?? "", PLAN_COMMIT_COMMAND_RE);
+    assert.doesNotMatch(messages[0] ?? "", FORBIDDEN_GIT_IMPERATIVES_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

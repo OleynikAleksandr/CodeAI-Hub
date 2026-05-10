@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "f72e28d24",
+  "lastRecordedCommit": "9a7069bdb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase2.stream1.task1",
-  "expectedCommitMessage": "fix: remove managed feedback git imperatives",
+  "currentTaskId": "runtime-contract.phase2.stream1.task2",
+  "expectedCommitMessage": "test: cover managed feedback ownership wording",
   "debt": {
-    "expectedCommitMessage": "fix: remove managed feedback git imperatives",
-    "preCommitHead": "f72e28d24",
+    "expectedCommitMessage": "test: cover managed feedback ownership wording",
+    "preCommitHead": "9a7069bdb",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase2.stream1.task1"
+    "taskId": "runtime-contract.phase2.stream1.task2"
   }
 }
 ```
@@ -77,9 +77,9 @@
 ### Stream: Provider-Visible Feedback Cleanup
 
 5. [DONE] `runtime-contract.phase2.stream1.task1` Remove provider-directed Git imperatives from managed dirty-state and acceptance feedback text (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: remove managed feedback git imperatives`).
-6. [PENDING] Git Commit: `fix: remove managed feedback git imperatives` (hash: TBD)
-7. [TODO] `runtime-contract.phase2.stream1.task2` Add regression coverage for forbidden substrings and allowed neutral content-readiness wording across managed stages (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts`; expected commit: `test: cover managed feedback ownership wording`).
-8. [TODO] Git Commit: `test: cover managed feedback ownership wording` (hash: TBD)
+6. [DONE] Git Commit: `fix: remove managed feedback git imperatives` (hash: 9a7069bdb)
+7. [DONE] `runtime-contract.phase2.stream1.task2` Add regression coverage for forbidden substrings and allowed neutral content-readiness wording across managed stages (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts`; expected commit: `test: cover managed feedback ownership wording`).
+8. [PENDING] Git Commit: `test: cover managed feedback ownership wording` (hash: TBD)
 
 ## Phase 3 — Gap A Post-Turn Arbitration Repeat (owner: next agent, updated: 2026-05-10)
 

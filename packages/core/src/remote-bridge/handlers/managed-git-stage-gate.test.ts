@@ -16,6 +16,12 @@ import { resolveWorkflowBlockedStages } from "./quality-gates-progress";
 const execFileAsync = promisify(execFile);
 const APPLICATION_SKELETON_DIRTY_ERROR_RE =
   /Application Skeleton-owned files: product-parts\/core-runtime\/README\.md/u;
+const FORBIDDEN_GIT_IMPERATIVES_RE =
+  /commit or clean|git add|git commit|stage these files|npm run plan:commit|do not run git commands/iu;
+const CORE_OWNED_DIRTY_GATE_RE =
+  /Core has not yet finalized the managed commit for [A-Za-z ]+-owned files/u;
+const CONTENT_READINESS_NOTE_RE =
+  /respond with a content-readiness note once the artifacts are ready/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -141,6 +147,24 @@ test("managed dirty files downgrade owning stage progress with precise errors", 
     skeletonProgress?.validationErrors[0] ?? "",
     APPLICATION_SKELETON_DIRTY_ERROR_RE
   );
+});
+
+test("managed dirty-gate error uses neutral content-readiness wording without git imperatives", () => {
+  const skeletonProgress = attachValidationDirtyGate(
+    {
+      materialized: true,
+      substep: "materialized",
+      validationErrors: [],
+    },
+    "Application Skeleton",
+    ["product-parts/core-runtime/README.md"]
+  );
+
+  assert.equal(skeletonProgress?.substep, "failed");
+  const error = skeletonProgress?.validationErrors[0] ?? "";
+  assert.match(error, CORE_OWNED_DIRTY_GATE_RE);
+  assert.match(error, CONTENT_READINESS_NOTE_RE);
+  assert.doesNotMatch(error, FORBIDDEN_GIT_IMPERATIVES_RE);
 });
 
 test("managed dirty Git blocks downstream workflow stages from Diagram Modules onward", () => {
