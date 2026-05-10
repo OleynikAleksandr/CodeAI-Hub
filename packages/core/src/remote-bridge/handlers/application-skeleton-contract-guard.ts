@@ -33,6 +33,11 @@ export type ApplicationSkeletonGuardDecision =
   | {
       readonly kind: "repair_no_progress";
       readonly reason: "terminal_no_owned_diff_in_phase_1a";
+    }
+  | {
+      readonly blockedPaths: readonly string[];
+      readonly kind: "repair_premature_materialization";
+      readonly reason: "premature_materialization_before_acceptance";
     };
 
 export type ApplicationSkeletonGuardNoopReason =
@@ -42,6 +47,7 @@ export type ApplicationSkeletonGuardNoopReason =
 export interface ApplicationSkeletonContractGuardInput {
   readonly ownedDirtyFiles: readonly string[];
   readonly phase: ApplicationSkeletonPhase;
+  readonly prematureDecision?: ApplicationSkeletonPrematureDecision;
   readonly progress: ApplicationSkeletonProgressSnapshot | null;
   readonly terminalEventReceived: boolean;
 }
@@ -72,6 +78,20 @@ export const evaluateApplicationSkeletonContractGuard = (
 ): ApplicationSkeletonGuardDecision => {
   if (!input.terminalEventReceived) {
     return { kind: "noop", reason: "no_terminal_event" };
+  }
+  // Premature materialization fires across both Phase 1A and Phase 1B because
+  // both phases run before Core opens Phase 2. Higher priority than the
+  // structural draft checks: if the agent already touched materialization
+  // scope, that is the most actionable repair signal to surface.
+  if (
+    (input.phase === "phase_1a_draft" || input.phase === "phase_1b_review") &&
+    input.prematureDecision?.kind === "blocked"
+  ) {
+    return {
+      blockedPaths: input.prematureDecision.blockedPaths,
+      kind: "repair_premature_materialization",
+      reason: "premature_materialization_before_acceptance",
+    };
   }
   if (input.phase !== "phase_1a_draft") {
     return { kind: "noop", reason: "out_of_scope_phase" };

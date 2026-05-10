@@ -145,6 +145,55 @@ test("guard repair_invalid_draft surfaces validator errors when map exists but i
   );
 });
 
+test("guard returns repair_premature_materialization when premature decision is blocked in Phase 1A or 1B", () => {
+  for (const phase of ["phase_1a_draft", "phase_1b_review"] as const) {
+    const decision = evaluateApplicationSkeletonContractGuard({
+      ownedDirtyFiles: [
+        "product-parts/demo/README.md",
+        ".codeai-hub/demo/application_skeleton/application-skeleton.md",
+      ],
+      phase,
+      prematureDecision: {
+        blockedPaths: ["product-parts/demo/README.md"],
+        kind: "blocked",
+        reasons: [
+          "Application Skeleton must be accepted before touching materialization-owned paths.",
+        ],
+      },
+      progress: buildProgressSnapshot({
+        markdownExists: true,
+        mapExists: true,
+        mappingReady: true,
+      }),
+      terminalEventReceived: true,
+    });
+    assert.equal(decision.kind, "repair_premature_materialization");
+    if (decision.kind === "repair_premature_materialization") {
+      assert.deepEqual(decision.blockedPaths, ["product-parts/demo/README.md"]);
+    }
+  }
+});
+
+test("guard ignores premature decision when phase is not Phase 1A or 1B", () => {
+  const decision = evaluateApplicationSkeletonContractGuard({
+    ownedDirtyFiles: ["product-parts/demo/README.md"],
+    phase: "phase_2_materialization",
+    prematureDecision: {
+      blockedPaths: ["product-parts/demo/README.md"],
+      kind: "blocked",
+      reasons: ["pretend block"],
+    },
+    progress: buildProgressSnapshot({
+      accepted: true,
+      markdownExists: true,
+      mapExists: true,
+      mappingReady: true,
+    }),
+    terminalEventReceived: true,
+  });
+  assert.equal(decision.kind, "noop");
+});
+
 test("guard repair_invalid_draft when progress snapshot is unavailable mid-draft", () => {
   const decision = evaluateApplicationSkeletonContractGuard({
     ownedDirtyFiles: [

@@ -10,6 +10,7 @@ import { sendApplicationSkeletonContinuationIfReady } from "./application-skelet
 import { buildApplicationSkeletonRepairFeedbackMessage } from "./application-skeleton-contract-feedback";
 import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton-contract-guard";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
+import { readAndEvaluateApplicationSkeletonPrematureMaterialization } from "./application-skeleton-premature-materialization-validator";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { classifyApplicationSkeletonReviewTurn } from "./application-skeleton-review-turn-classifier";
 import { runApplicationSkeletonRevisionInjection } from "./application-skeleton-revision-injection-runner";
@@ -370,11 +371,20 @@ export class ManagedWorkflowPostTurnService {
       "Application Skeleton",
       latestManagedGitStatus.dirtyByStage.application_skeleton
     );
+    const allOwnedDirtyForSkeleton = latestManagedGitStatus.dirtyFiles ?? [];
+    const applicationSkeletonPrematureDecision =
+      await readAndEvaluateApplicationSkeletonPrematureMaterialization({
+        accepted: latestApplicationSkeletonProgress?.accepted ?? false,
+        ownedDirtyFiles: allOwnedDirtyForSkeleton,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
     const applicationSkeletonContractGuardDecision =
       evaluateApplicationSkeletonContractGuard({
         ownedDirtyFiles:
           latestManagedGitStatus.dirtyByStage.application_skeleton ?? [],
         phase: applicationSkeletonPhase,
+        prematureDecision: applicationSkeletonPrematureDecision,
         progress: latestApplicationSkeletonProgress,
         terminalEventReceived: true,
       });

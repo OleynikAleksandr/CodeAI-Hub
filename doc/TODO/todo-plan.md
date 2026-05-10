@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "5281d2288",
+  "lastRecordedCommit": "cb181633c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase6.materialization.task1",
-  "expectedCommitMessage": "fix: block premature application skeleton materialization",
+  "currentTaskId": "application-skeleton-orchestration.phase6.materialization.task2",
+  "expectedCommitMessage": "fix: reject skeleton materialization before acceptance",
   "debt": {
-    "expectedCommitMessage": "fix: block premature application skeleton materialization",
-    "preCommitHead": "5281d2288",
+    "expectedCommitMessage": "fix: reject skeleton materialization before acceptance",
+    "preCommitHead": "cb181633c",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase6.materialization.task1"
+    "taskId": "application-skeleton-orchestration.phase6.materialization.task2"
   }
 }
 ```
@@ -172,12 +172,12 @@
 ### Stream: Premature Materialization Validator
 
 35. [DONE] `application-skeleton-orchestration.phase6.materialization.task1` Add a premature-materialization validator that derives blocked paths/state from the skeleton map and Application Skeleton stage ownership instead of a hardcoded `product-parts/**` glob. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: block premature application skeleton materialization`).
-36. [PENDING] Git Commit: `fix: block premature application skeleton materialization` (hash: TBD)
+36. [DONE] Git Commit: `fix: block premature application skeleton materialization` (hash: cb181633c)
 
 ### Stream: Phase 1A/1B Premature Block Integration
 
-37. [TODO] `application-skeleton-orchestration.phase6.materialization.task2` Run the premature-materialization validator from Phase 1A and Phase 1B structural guards, delivering one corrective turn only at the readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts`; expected commit: `fix: reject skeleton materialization before acceptance`).
-38. [TODO] Git Commit: `fix: reject skeleton materialization before acceptance` (hash: TBD)
+37. [DONE] `application-skeleton-orchestration.phase6.materialization.task2` Run the premature-materialization validator from Phase 1A and Phase 1B structural guards, delivering one corrective turn only at the readiness + terminal boundary. Scope adds the premature validator file because the guard integration needs an async wrapper that reads `application-skeleton-map.json` and runs the pure decision; without that wrapper the post-turn-service would have to inline file I/O outside its 500-line limit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: reject skeleton materialization before acceptance`).
+38. [PENDING] Git Commit: `fix: reject skeleton materialization before acceptance` (hash: TBD)
 
 ### Stream: Phase 2 Dispatcher Gate
 

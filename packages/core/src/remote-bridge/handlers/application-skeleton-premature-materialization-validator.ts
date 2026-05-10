@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { extractApplicationSkeletonMaterializedPaths } from "./application-skeleton-materialization-validator";
 
 // Premature-materialization validator for Phase 1A and Phase 1B.
@@ -33,6 +35,44 @@ const isInsidePath = (file: string, pathPrefix: string): boolean => {
     file.includes(`/${normalizedPrefix}/`)
   );
 };
+
+// Reads the Application Skeleton `map.json` for the given workspace and runs
+// the pure premature-materialization decision against the supplied owned
+// dirty files. Returns `permitted` when the map is missing or unparseable so
+// callers can continue with their normal flow without spurious blocks.
+export const readAndEvaluateApplicationSkeletonPrematureMaterialization =
+  async (params: {
+    readonly accepted: boolean;
+    readonly ownedDirtyFiles: readonly string[];
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<ApplicationSkeletonPrematureDecision> => {
+    const mapPath = path.join(
+      params.workspaceRoot,
+      `.codeai-hub/${params.workspaceSlug}/application_skeleton/application-skeleton-map.json`
+    );
+    const text = await readFile(mapPath, "utf8").catch(() => null);
+    let mapJson: Record<string, unknown> | null = null;
+    if (text) {
+      try {
+        const parsed = JSON.parse(text) as unknown;
+        if (
+          typeof parsed === "object" &&
+          parsed !== null &&
+          !Array.isArray(parsed)
+        ) {
+          mapJson = parsed as Record<string, unknown>;
+        }
+      } catch {
+        mapJson = null;
+      }
+    }
+    return evaluateApplicationSkeletonPrematureMaterialization({
+      accepted: params.accepted,
+      mapJson,
+      ownedDirtyFiles: params.ownedDirtyFiles,
+    });
+  };
 
 export const evaluateApplicationSkeletonPrematureMaterialization = (
   input: ApplicationSkeletonPrematureValidatorInput
