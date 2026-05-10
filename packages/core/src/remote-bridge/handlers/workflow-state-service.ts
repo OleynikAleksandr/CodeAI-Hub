@@ -350,6 +350,12 @@ export class WorkflowStateService {
     this.managedPostTurn.handle(sessionId);
   }
 
+  // Exposed for the HTTP transport / typed-fallback routing modules. Both go
+  // through the same Core command handler in the post-turn service.
+  get managedPostTurnService(): ManagedWorkflowPostTurnService {
+    return this.managedPostTurn;
+  }
+
   private resolveWorkspaceSlug(req: Request): WorkspaceSlugResult {
     const query = req.query as Record<string, unknown>;
     const workspaceSlug = readNonEmptyString(query.workspaceSlug);

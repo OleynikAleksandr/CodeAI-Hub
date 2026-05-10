@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "c4f12f14a",
+  "lastRecordedCommit": "6ed4d93b4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase5.accept.task1",
-  "expectedCommitMessage": "fix: handle application skeleton accept contract command",
+  "currentTaskId": "application-skeleton-orchestration.phase5.accept.task2",
+  "expectedCommitMessage": "fix: expose application skeleton accept contract endpoint",
   "debt": {
-    "expectedCommitMessage": "fix: handle application skeleton accept contract command",
-    "preCommitHead": "c4f12f14a",
+    "expectedCommitMessage": "fix: expose application skeleton accept contract endpoint",
+    "preCommitHead": "6ed4d93b4",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase5.accept.task1"
+    "taskId": "application-skeleton-orchestration.phase5.accept.task2"
   }
 }
 ```
@@ -150,12 +150,12 @@
 ### Stream: Core Command Handler
 
 27. [DONE] `application-skeleton-orchestration.phase5.accept.task1` Add a single Core acceptance command handler for Application Skeleton Phase 1B that validates acceptance preconditions, records Option B acceptance state, and marks the session for the existing Phase 2 materialization dispatcher. Scope expanded by two helper modules to keep `managed-workflow-post-turn-service.ts` under the 500-line architecture limit: a new accept-contract runner (`managed-stage-accept-contract-runner.ts`) and an extracted Phase 1B revision-injection runner (`application-skeleton-revision-injection-runner.ts`). (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: handle application skeleton accept contract command`).
-28. [PENDING] Git Commit: `fix: handle application skeleton accept contract command` (hash: TBD)
+28. [DONE] Git Commit: `fix: handle application skeleton accept contract command` (hash: 6ed4d93b4)
 
 ### Stream: HTTP Transport
 
-29. [TODO] `application-skeleton-orchestration.phase5.accept.task2` Expose `/api/v1/orchestrator/managed-stage-accept-contract` as transport only; route to the Core command handler and keep route/read-model code side-effect free outside the handler. (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts`; expected commit: `fix: expose application skeleton accept contract endpoint`).
-30. [TODO] Git Commit: `fix: expose application skeleton accept contract endpoint` (hash: TBD)
+29. [DONE] `application-skeleton-orchestration.phase5.accept.task2` Expose `/api/v1/orchestrator/managed-stage-accept-contract` as transport only; route to the Core command handler and keep route/read-model code side-effect free outside the handler. Scope adds `workflow-state-service.ts` for a thin getter that exposes the existing post-turn service instance to the new HTTP route (no decision logic). (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit: `fix: expose application skeleton accept contract endpoint`).
+30. [PENDING] Git Commit: `fix: expose application skeleton accept contract endpoint` (hash: TBD)
 
 ### Stream: Typed Fallback Routing
 
