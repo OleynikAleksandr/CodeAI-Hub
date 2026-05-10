@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "1c045f172",
+  "lastRecordedCommit": "fd15fd327",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase4.phase1b.task2",
-  "expectedCommitMessage": "fix: inject application skeleton review revision tasks",
+  "currentTaskId": "application-skeleton-orchestration.phase4.phase1b.task3",
+  "expectedCommitMessage": "fix: commit application skeleton review revisions",
   "debt": {
-    "expectedCommitMessage": "fix: inject application skeleton review revision tasks",
-    "preCommitHead": "1c045f172",
+    "expectedCommitMessage": "fix: commit application skeleton review revisions",
+    "preCommitHead": "fd15fd327",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase4.phase1b.task2"
+    "taskId": "application-skeleton-orchestration.phase4.phase1b.task3"
   }
 }
 ```
@@ -138,12 +138,12 @@
 ### Stream: Dynamic Revision Plan Injection
 
 23. [DONE] `application-skeleton-orchestration.phase4.phase1b.task2` Inject `revisionN.task1 + Git Commit` pairs before the open-ended Phase 1B review task for each structurally valid artifact-changing revision, then return `currentTaskId` to the open review task after commit. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: inject application skeleton review revision tasks`).
-24. [PENDING] Git Commit: `fix: inject application skeleton review revision tasks` (hash: TBD)
+24. [DONE] Git Commit: `fix: inject application skeleton review revision tasks` (hash: fd15fd327)
 
 ### Stream: Per-Revision Managed Commit
 
-25. [TODO] `application-skeleton-orchestration.phase4.phase1b.task3` Reuse the managed commit boundary for Phase 1B accepted revisions while preserving Phase 1A draft and Phase 2 materialization commit semantics. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: commit application skeleton review revisions`).
-26. [TODO] Git Commit: `fix: commit application skeleton review revisions` (hash: TBD)
+25. [DONE] `application-skeleton-orchestration.phase4.phase1b.task3` Reuse the managed commit boundary for Phase 1B accepted revisions while preserving Phase 1A draft and Phase 2 materialization commit semantics. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: commit application skeleton review revisions`).
+26. [PENDING] Git Commit: `fix: commit application skeleton review revisions` (hash: TBD)
 
 ## Phase 5 - Accept Contract Command And UI (owner: next agent, updated: 2026-05-10)
 

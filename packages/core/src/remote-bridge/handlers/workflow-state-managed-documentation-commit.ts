@@ -43,13 +43,19 @@ const hasCommittableDiagramModulesStage = (
   });
 };
 
+// Phase 1A draft, Phase 1B per-revision, and Phase 2 materialization all reuse
+// the same managed commit boundary. Any owned diff inside the Application
+// Skeleton stage scope is a candidate for a managed commit; the transaction
+// (`ManagedDocumentationCommitTransaction.commitAcceptedStage`) validates the
+// active task's expected commit message and the owned-path allowlist before
+// actually committing, so distinguishing draft vs revision vs materialize
+// here would only duplicate that decision. The previous `materialized`
+// requirement blocked Phase 1A and Phase 1B commits even when the active
+// child plan explicitly requested them.
 const hasCommittableApplicationSkeletonStage = (
   context: ManagedDocumentationProgressContext
 ): boolean =>
-  Boolean(
-    context.applicationSkeletonProgress?.materialized &&
-      context.managedGitStatus.dirtyByStage.application_skeleton.length > 0
-  );
+  context.managedGitStatus.dirtyByStage.application_skeleton.length > 0;
 
 const hasCommittableQualityGatesStage = (
   context: ManagedDocumentationProgressContext
