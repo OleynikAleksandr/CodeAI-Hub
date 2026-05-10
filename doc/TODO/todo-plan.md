@@ -8,15 +8,15 @@
   "planId": "managed-workflow-prompt-ownership-repair",
   "branch": "main",
   "baseHead": "30c150bf3",
-  "lastRecordedCommit": "1a97972e8",
+  "lastRecordedCommit": "37fd0b3bb",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
-  "currentTaskId": "prompt-ownership.phase4.task3",
-  "expectedCommitMessage": "chore: build 1.2.216 release artifacts",
+  "currentTaskId": "prompt-ownership.phase5.task1",
+  "expectedCommitMessage": "test: record managed prompt ownership acceptance",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.216 release artifacts",
-    "preCommitHead": "1a97972e8",
+    "expectedCommitMessage": "test: record managed prompt ownership acceptance",
+    "preCommitHead": "37fd0b3bb",
     "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase4.task3"
+    "taskId": "prompt-ownership.phase5.task1"
   }
 }
 ```
@@ -88,14 +88,14 @@
 19. [DONE] `prompt-ownership.phase4.task2` Prepare release documentation for v1.2.216 before version bump and package assembly (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.216 managed prompt ownership release`).
 20. [DONE] Git Commit: `docs: prepare 1.2.216 managed prompt ownership release` (hash: 1a97972e8)
 21. [DONE] `prompt-ownership.phase4.task3` Build v1.2.216 release artifacts with the standard release scripts after the release-doc commit (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.216 release artifacts`).
-22. [PENDING] Git Commit: `chore: build 1.2.216 release artifacts` (hash: TBD)
+22. [DONE] Git Commit: `chore: build 1.2.216 release artifacts` (hash: 37fd0b3bb)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-09)
 
 ### Stream: User Retest
 
-23. [TODO] `prompt-ownership.phase5.task1` User retests Application Skeleton / Quality Gates provider turns and confirms providers stop after content readiness while Core owns commits (scope: user workflow retest; expected commit: `test: record managed prompt ownership acceptance`).
-24. [TODO] Git Commit: `test: record managed prompt ownership acceptance` (hash: TBD)
+23. [DONE] `prompt-ownership.phase5.task1` User retests Application Skeleton / Quality Gates provider turns and confirms providers stop after content readiness while Core owns commits (scope: user workflow retest; expected commit: `test: record managed prompt ownership acceptance`).
+24. [PENDING] Git Commit: `test: record managed prompt ownership acceptance` (hash: TBD)
 
 ## Phase 6 — Scope Closeout (owner: Codex, updated: 2026-05-09)
 
