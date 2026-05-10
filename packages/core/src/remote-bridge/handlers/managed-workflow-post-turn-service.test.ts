@@ -51,24 +51,49 @@ test("recogniser rejects messages without acceptance verb", () => {
   assert.equal(recognizeManagedContractAcceptancePhrase("Контракт"), null);
 });
 
-test("recogniser rejects messages without contract noun", () => {
+test("recogniser accepts bare verbs without the contract noun (Option C — broaden recognizer)", () => {
   assert.equal(
     recognizeManagedContractAcceptancePhrase("Принимаю эту правку"),
-    null
+    "Принимаю контракт"
   );
   assert.equal(
     recognizeManagedContractAcceptancePhrase("Подтверждаю изменения"),
-    null
+    "Подтверждаю контракт"
   );
 });
 
-test("recogniser rejects negated acceptance verbs", () => {
+test("recogniser accepts bare English acceptance verbs", () => {
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("accepted"),
+    "Accept Contract"
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("I accept"),
+    "Accept Contract"
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("confirmed"),
+    "Accept Contract"
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("approve"),
+    "Accept Contract"
+  );
+});
+
+test("recogniser rejects negated acceptance verbs (Russian and English)", () => {
   assert.equal(
     recognizeManagedContractAcceptancePhrase("Не принимаю контракт"),
     null
   );
   assert.equal(
     recognizeManagedContractAcceptancePhrase("Не подтверждаю контракт пока"),
+    null
+  );
+  assert.equal(recognizeManagedContractAcceptancePhrase("not accepted"), null);
+  assert.equal(recognizeManagedContractAcceptancePhrase("don't accept"), null);
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("cannot confirm"),
     null
   );
 });

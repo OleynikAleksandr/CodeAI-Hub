@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "377ea3438",
+  "lastRecordedCommit": "2d3ad255a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.map-observer.task1",
-  "expectedCommitMessage": "fix: observe application skeleton acceptance from map.json",
+  "currentTaskId": "application-skeleton-orchestration.phase16.recognizer.task1",
+  "expectedCommitMessage": "fix: broaden application skeleton acceptance phrase recognizer",
   "debt": {
-    "expectedCommitMessage": "fix: observe application skeleton acceptance from map.json",
-    "preCommitHead": "377ea3438",
+    "expectedCommitMessage": "fix: broaden application skeleton acceptance phrase recognizer",
+    "preCommitHead": "2d3ad255a",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.map-observer.task1"
+    "taskId": "application-skeleton-orchestration.phase16.recognizer.task1"
   }
 }
 ```
@@ -367,12 +367,12 @@
 ### Stream: Core Map Observer (Option C)
 
 89. [DONE] `application-skeleton-orchestration.phase16.map-observer.task1` Add a Core read-model observer that detects `accepted: true` in `application-skeleton-map.json` and triggers the Phase 2 acceptance commit + Phase 3 continuation pipeline independent of whether the Core accept-contract handler, the agent (self-set), the typed-fallback router, or the PM button set the flag. Drop the `recentlyAcceptedSessions` marker as the exclusive gate for `sendApplicationSkeletonContinuationIfReady` — keep it as a hint, but allow the observer to set/trigger acceptance flow when the agent self-sets `accepted: true`. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts`; expected commit: `fix: observe application skeleton acceptance from map.json`).
-90. [PENDING] Git Commit: `fix: observe application skeleton acceptance from map.json` (hash: TBD)
+90. [DONE] Git Commit: `fix: observe application skeleton acceptance from map.json` (hash: 2d3ad255a)
 
 ### Stream: Acceptance Phrase Recognizer Broadening
 
-91. [TODO] `application-skeleton-orchestration.phase16.recognizer.task1` Broaden `recognizeManagedContractAcceptancePhrase` to also accept English `accepted`/`accept`/`confirmed` and bare Russian verbs (`принимаю`/`подтверждаю`/`утверждаю`) without the mandatory `контракт` noun, gated on Phase 2 acceptance-eligible state. Route matched phrases through the same Core accept-contract handler path. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: broaden application skeleton acceptance phrase recognizer`).
-92. [TODO] Git Commit: `fix: broaden application skeleton acceptance phrase recognizer` (hash: TBD)
+91. [DONE] `application-skeleton-orchestration.phase16.recognizer.task1` Broaden `recognizeManagedContractAcceptancePhrase` to also accept English `accepted`/`accept`/`confirmed` and bare Russian verbs (`принимаю`/`подтверждаю`/`утверждаю`) without the mandatory `контракт` noun, gated on Phase 2 acceptance-eligible state. Route matched phrases through the same Core accept-contract handler path. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: broaden application skeleton acceptance phrase recognizer`).
+92. [PENDING] Git Commit: `fix: broaden application skeleton acceptance phrase recognizer` (hash: TBD)
 
 ### Stream: Managed Commit Gate materializedPaths Normalization
 

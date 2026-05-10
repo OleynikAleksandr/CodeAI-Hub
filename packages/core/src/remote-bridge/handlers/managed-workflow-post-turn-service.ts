@@ -52,10 +52,17 @@ const ACCEPTANCE_VERB_TO_CANONICAL: Readonly<Record<string, string>> = {
   принимаю: "Принимаю контракт",
   подтверждаю: "Подтверждаю контракт",
   утверждаю: "Утверждаю контракт",
+  accept: "Accept Contract",
+  accepted: "Accept Contract",
+  confirm: "Accept Contract",
+  confirmed: "Accept Contract",
+  approve: "Accept Contract",
+  approved: "Accept Contract",
 };
-const ACCEPTANCE_VERB_RE = /(принимаю|подтверждаю|утверждаю)/iu;
-const NEGATED_ACCEPTANCE_VERB_RE = /не\s+(?:принимаю|подтверждаю|утверждаю)/iu;
-const CONTRACT_NOUN_RE = /контракт/iu;
+const ACCEPTANCE_VERB_RE =
+  /(?<!\p{L})(принимаю|подтверждаю|утверждаю|accept|accepted|confirm|confirmed|approve|approved)(?!\p{L})/iu;
+const NEGATED_ACCEPTANCE_VERB_RE =
+  /(?:не\s+(?:принимаю|подтверждаю|утверждаю)|(?:not|don'?t|won'?t|never|cannot|can'?t)\s+(?:accept(?:ed)?|confirm(?:ed)?|approve(?:d)?))/iu;
 
 export const recognizeManagedContractAcceptancePhrase = (
   content: string
@@ -74,10 +81,7 @@ export const recognizeManagedContractAcceptancePhrase = (
   if (!verbMatch) {
     return null;
   }
-  if (!CONTRACT_NOUN_RE.test(normalized)) {
-    return null;
-  }
-  return ACCEPTANCE_VERB_TO_CANONICAL[verbMatch[1]] ?? "Принимаю контракт";
+  return ACCEPTANCE_VERB_TO_CANONICAL[verbMatch[1]] ?? "Accept Contract";
 };
 
 const MANAGED_CONTRACT_ACCEPTANCE_STAGES: ReadonlySet<string> = new Set([
