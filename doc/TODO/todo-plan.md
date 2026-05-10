@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "eccc37754",
+  "lastRecordedCommit": "4d844c3bf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase2.stage-plan.task1",
-  "expectedCommitMessage": "fix: seed application skeleton phased stage plan",
+  "currentTaskId": "application-skeleton-orchestration.phase2.stage-plan.task2",
+  "expectedCommitMessage": "fix: realign development tree bootstrap gate to skeleton phase 2 task id",
   "debt": {
-    "expectedCommitMessage": "fix: seed application skeleton phased stage plan",
-    "preCommitHead": "eccc37754",
+    "expectedCommitMessage": "fix: realign development tree bootstrap gate to skeleton phase 2 task id",
+    "preCommitHead": "4d844c3bf",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase2.stage-plan.task1"
+    "taskId": "application-skeleton-orchestration.phase2.stage-plan.task2"
   }
 }
 ```
@@ -89,143 +89,153 @@
 ### Stream: Managed Stage Plan Seed
 
 5. [DONE] `application-skeleton-orchestration.phase2.stage-plan.task1` Seed the Application Skeleton managed stage todo-plan as Phase 1A draft, Phase 1B open-ended review, Phase 2 materialization, plus reserved handoff anchor; add bootstrap/recovery regression coverage for the seeded task ids and sync the installer regex fixture to the new phase 1A / phase 2 task ids. Bootstrap-gate realignment is split into `phase2.stage-plan.task2`. Scope crosses the ≤3-file guideline by one to keep the seed change atomic with its own existing fixture sync; further fixture migrations (`session-request-handler-managed-context-bundle.test.ts`, `workflow-state-managed-documentation-commit.test.ts`, `workflow-state-service-development-tree-bootstrap.test.ts`) only matter once those modules adopt phased task ids in later phases. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: seed application skeleton phased stage plan`).
-6. [PENDING] Git Commit: `fix: seed application skeleton phased stage plan` (hash: TBD)
+6. [DONE] Git Commit: `fix: seed application skeleton phased stage plan` (hash: 4d844c3bf)
 
 ### Stream: Bootstrap Gate Realignment
 
-7. [TODO] `application-skeleton-orchestration.phase2.stage-plan.task2` Realign Development Tree bootstrap gate from the legacy `application-skeleton.stream1.task2` task id to the new `application-skeleton.phase2.materialize.task1` Phase 2 materialization task id, and update the matching gate fixture so the gate continues to recognize the materialization commit on phased managed plans. Quality Gates blocked-task id stays out of scope. (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`; expected commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id`).
-8. [TODO] Git Commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id` (hash: TBD)
+7. [DONE] `application-skeleton-orchestration.phase2.stage-plan.task2` Realign Development Tree bootstrap gate from the legacy `application-skeleton.stream1.task2` task id to the new `application-skeleton.phase2.materialize.task1` Phase 2 materialization task id, and update the matching gate fixture so the gate continues to recognize the materialization commit on phased managed plans. Quality Gates blocked-task id stays out of scope. The plan microtasks for the two follow-up risk streams (`fixture-migration`, `diagram-test-repair`) are introduced in this same commit to keep the surfaced risks visible. (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id`).
+8. [PENDING] Git Commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id` (hash: TBD)
+
+### Stream: Legacy Task Id Fixture Migration
+
+9. [TODO] `application-skeleton-orchestration.phase2.fixture-migration.task1` Migrate hardcoded legacy `application-skeleton.stream1.task1/task2/task3` references in three core fixture tests to the new phased task ids (`application-skeleton.phase1a.draft.task1` / `application-skeleton.phase2.materialize.task1` / `application-skeleton.handoff.task1`) so fixtures stay consistent with the seed shape; preserve each test's existing behavioral assertions. Surfaced as a follow-up risk during `phase2.stage-plan.task1`. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `test: migrate fixture task ids to phased application skeleton ids`).
+10. [TODO] Git Commit: `test: migrate fixture task ids to phased application skeleton ids` (hash: TBD)
+
+### Stream: Diagram Modules Adoption Test Repair
+
+11. [TODO] `application-skeleton-orchestration.phase2.diagram-test-repair.task1` Repair the pre-existing `DIAGRAM_MODULES_PLAN_COMMIT_RE` regex mismatch in the managed-workspace adoption test so it matches the current Diagram Modules seed commit (`docs: update diagram modules product part index`). Strictly outside Application Skeleton scope, but surfaced during `phase2.stage-plan.task1` test runs as a baseline failure on `main`; cleanup is opportunistic because the regex sits in a file already touched by this scope. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: align diagram modules adoption regex to current seed`).
+12. [TODO] Git Commit: `test: align diagram modules adoption regex to current seed` (hash: TBD)
 
 ### Stream: Phase Classifier
 
-9. [TODO] `application-skeleton-orchestration.phase2.classifier.task1` Add an Application Skeleton-specific phase/sub-phase classifier for Phase 1A, Phase 1B and Phase 2, and consume it from post-turn arbitration without introducing a generalized phase metadata runtime. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton orchestration phases`).
-10. [TODO] Git Commit: `fix: classify application skeleton orchestration phases` (hash: TBD)
+13. [TODO] `application-skeleton-orchestration.phase2.classifier.task1` Add an Application Skeleton-specific phase/sub-phase classifier for Phase 1A, Phase 1B and Phase 2, and consume it from post-turn arbitration without introducing a generalized phase metadata runtime. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton orchestration phases`).
+14. [TODO] Git Commit: `fix: classify application skeleton orchestration phases` (hash: TBD)
 
 ## Phase 3 - Phase 1A Core-Gated Draft (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Draft Structural Guard
 
-11. [TODO] `application-skeleton-orchestration.phase3.phase1a.task1` Implement the Phase 1A post-turn structural guard with the Observe-vs-Dispatch rule and Readiness Resolution table: terminal + owned diff counts as implicit readiness; no terminal never validates; terminal + no diff in Phase 1A produces one non-commit repair decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: guard application skeleton draft post-turn`).
-12. [TODO] Git Commit: `fix: guard application skeleton draft post-turn` (hash: TBD)
+15. [TODO] `application-skeleton-orchestration.phase3.phase1a.task1` Implement the Phase 1A post-turn structural guard with the Observe-vs-Dispatch rule and Readiness Resolution table: terminal + owned diff counts as implicit readiness; no terminal never validates; terminal + no diff in Phase 1A produces one non-commit repair decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: guard application skeleton draft post-turn`).
+16. [TODO] Git Commit: `fix: guard application skeleton draft post-turn` (hash: TBD)
 
 ### Stream: Phase 1A Corrective Feedback
 
-13. [TODO] `application-skeleton-orchestration.phase3.phase1a.task2` Add Phase 1A corrective feedback text as a pure prompt builder and route corrective decisions through the existing post-turn arbitration contract; the builder must not own state or dispatch decisions. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: send application skeleton draft repair feedback`).
-14. [TODO] Git Commit: `fix: send application skeleton draft repair feedback` (hash: TBD)
+17. [TODO] `application-skeleton-orchestration.phase3.phase1a.task2` Add Phase 1A corrective feedback text as a pure prompt builder and route corrective decisions through the existing post-turn arbitration contract; the builder must not own state or dispatch decisions. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: send application skeleton draft repair feedback`).
+18. [TODO] Git Commit: `fix: send application skeleton draft repair feedback` (hash: TBD)
 
 ### Stream: Read-Model Side-Effect Guard
 
-15. [TODO] `application-skeleton-orchestration.phase3.phase1a.task3` Ensure workflow-state/read-model refreshes may expose Application Skeleton diagnostics but never dispatch provider-visible corrections before the post-turn readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: keep application skeleton corrections post-turn only`).
-16. [TODO] Git Commit: `fix: keep application skeleton corrections post-turn only` (hash: TBD)
+19. [TODO] `application-skeleton-orchestration.phase3.phase1a.task3` Ensure workflow-state/read-model refreshes may expose Application Skeleton diagnostics but never dispatch provider-visible corrections before the post-turn readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: keep application skeleton corrections post-turn only`).
+20. [TODO] Git Commit: `fix: keep application skeleton corrections post-turn only` (hash: TBD)
 
 ## Phase 4 - Phase 1B User Review Revisions (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Review Turn Classification
 
-17. [TODO] `application-skeleton-orchestration.phase4.phase1b.task1` Add the Phase 1B revision-vs-discussion classifier: tracked owned Application Skeleton contract diff means revision, no owned diff means standard session-history-only discussion/no-op. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton review turns`).
-18. [TODO] Git Commit: `fix: classify application skeleton review turns` (hash: TBD)
+21. [TODO] `application-skeleton-orchestration.phase4.phase1b.task1` Add the Phase 1B revision-vs-discussion classifier: tracked owned Application Skeleton contract diff means revision, no owned diff means standard session-history-only discussion/no-op. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton review turns`).
+22. [TODO] Git Commit: `fix: classify application skeleton review turns` (hash: TBD)
 
 ### Stream: Dynamic Revision Plan Injection
 
-19. [TODO] `application-skeleton-orchestration.phase4.phase1b.task2` Inject `revisionN.task1 + Git Commit` pairs before the open-ended Phase 1B review task for each structurally valid artifact-changing revision, then return `currentTaskId` to the open review task after commit. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: inject application skeleton review revision tasks`).
-20. [TODO] Git Commit: `fix: inject application skeleton review revision tasks` (hash: TBD)
+23. [TODO] `application-skeleton-orchestration.phase4.phase1b.task2` Inject `revisionN.task1 + Git Commit` pairs before the open-ended Phase 1B review task for each structurally valid artifact-changing revision, then return `currentTaskId` to the open review task after commit. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: inject application skeleton review revision tasks`).
+24. [TODO] Git Commit: `fix: inject application skeleton review revision tasks` (hash: TBD)
 
 ### Stream: Per-Revision Managed Commit
 
-21. [TODO] `application-skeleton-orchestration.phase4.phase1b.task3` Reuse the managed commit boundary for Phase 1B accepted revisions while preserving Phase 1A draft and Phase 2 materialization commit semantics. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: commit application skeleton review revisions`).
-22. [TODO] Git Commit: `fix: commit application skeleton review revisions` (hash: TBD)
+25. [TODO] `application-skeleton-orchestration.phase4.phase1b.task3` Reuse the managed commit boundary for Phase 1B accepted revisions while preserving Phase 1A draft and Phase 2 materialization commit semantics. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: commit application skeleton review revisions`).
+26. [TODO] Git Commit: `fix: commit application skeleton review revisions` (hash: TBD)
 
 ## Phase 5 - Accept Contract Command And UI (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Core Command Handler
 
-23. [TODO] `application-skeleton-orchestration.phase5.accept.task1` Add a single Core acceptance command handler for Application Skeleton Phase 1B that validates acceptance preconditions, records Option B acceptance state, and marks the session for the existing Phase 2 materialization dispatcher. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: handle application skeleton accept contract command`).
-24. [TODO] Git Commit: `fix: handle application skeleton accept contract command` (hash: TBD)
+27. [TODO] `application-skeleton-orchestration.phase5.accept.task1` Add a single Core acceptance command handler for Application Skeleton Phase 1B that validates acceptance preconditions, records Option B acceptance state, and marks the session for the existing Phase 2 materialization dispatcher. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: handle application skeleton accept contract command`).
+28. [TODO] Git Commit: `fix: handle application skeleton accept contract command` (hash: TBD)
 
 ### Stream: HTTP Transport
 
-25. [TODO] `application-skeleton-orchestration.phase5.accept.task2` Expose `/api/v1/orchestrator/managed-stage-accept-contract` as transport only; route to the Core command handler and keep route/read-model code side-effect free outside the handler. (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts`; expected commit: `fix: expose application skeleton accept contract endpoint`).
-26. [TODO] Git Commit: `fix: expose application skeleton accept contract endpoint` (hash: TBD)
+29. [TODO] `application-skeleton-orchestration.phase5.accept.task2` Expose `/api/v1/orchestrator/managed-stage-accept-contract` as transport only; route to the Core command handler and keep route/read-model code side-effect free outside the handler. (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts`; expected commit: `fix: expose application skeleton accept contract endpoint`).
+30. [TODO] Git Commit: `fix: expose application skeleton accept contract endpoint` (hash: TBD)
 
 ### Stream: Typed Fallback Routing
 
-27. [TODO] `application-skeleton-orchestration.phase5.accept.task3` Route typed acceptance fallback through the same Core command handler, gated to Phase 1B acceptance-eligible state only, and ensure matched acceptance text is not delivered as a provider user message. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route skeleton typed acceptance through command handler`).
-28. [TODO] Git Commit: `fix: route skeleton typed acceptance through command handler` (hash: TBD)
+31. [TODO] `application-skeleton-orchestration.phase5.accept.task3` Route typed acceptance fallback through the same Core command handler, gated to Phase 1B acceptance-eligible state only, and ensure matched acceptance text is not delivered as a provider user message. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route skeleton typed acceptance through command handler`).
+32. [TODO] Git Commit: `fix: route skeleton typed acceptance through command handler` (hash: TBD)
 
 ### Stream: Project Manager Command Surface
 
-29. [TODO] `application-skeleton-orchestration.phase5.ui.task1` Add the PM command client and Application Skeleton `Accept Contract` button with disabled-state reasons derived from workflow-state read-model preconditions only. (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx`; expected commit: `feat: add application skeleton accept contract button`).
-30. [TODO] Git Commit: `feat: add application skeleton accept contract button` (hash: TBD)
+33. [TODO] `application-skeleton-orchestration.phase5.ui.task1` Add the PM command client and Application Skeleton `Accept Contract` button with disabled-state reasons derived from workflow-state read-model preconditions only. (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx`; expected commit: `feat: add application skeleton accept contract button`).
+34. [TODO] Git Commit: `feat: add application skeleton accept contract button` (hash: TBD)
 
 ## Phase 6 - Premature Materialization And Phase 2 Gate (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Premature Materialization Validator
 
-31. [TODO] `application-skeleton-orchestration.phase6.materialization.task1` Add a premature-materialization validator that derives blocked paths/state from the skeleton map and Application Skeleton stage ownership instead of a hardcoded `product-parts/**` glob. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: block premature application skeleton materialization`).
-32. [TODO] Git Commit: `fix: block premature application skeleton materialization` (hash: TBD)
+35. [TODO] `application-skeleton-orchestration.phase6.materialization.task1` Add a premature-materialization validator that derives blocked paths/state from the skeleton map and Application Skeleton stage ownership instead of a hardcoded `product-parts/**` glob. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: block premature application skeleton materialization`).
+36. [TODO] Git Commit: `fix: block premature application skeleton materialization` (hash: TBD)
 
 ### Stream: Phase 1A/1B Premature Block Integration
 
-33. [TODO] `application-skeleton-orchestration.phase6.materialization.task2` Run the premature-materialization validator from Phase 1A and Phase 1B structural guards, delivering one corrective turn only at the readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts`; expected commit: `fix: reject skeleton materialization before acceptance`).
-34. [TODO] Git Commit: `fix: reject skeleton materialization before acceptance` (hash: TBD)
+37. [TODO] `application-skeleton-orchestration.phase6.materialization.task2` Run the premature-materialization validator from Phase 1A and Phase 1B structural guards, delivering one corrective turn only at the readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts`; expected commit: `fix: reject skeleton materialization before acceptance`).
+38. [TODO] Git Commit: `fix: reject skeleton materialization before acceptance` (hash: TBD)
 
 ### Stream: Phase 2 Dispatcher Gate
 
-35. [TODO] `application-skeleton-orchestration.phase6.materialization.task3` Ensure the existing Application Skeleton materialization dispatcher starts only after the Core acceptance command marker, and does not treat user text or premature `materialized` flips as Phase 2 authority. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: gate skeleton materialization on accept command`).
-36. [TODO] Git Commit: `fix: gate skeleton materialization on accept command` (hash: TBD)
+39. [TODO] `application-skeleton-orchestration.phase6.materialization.task3` Ensure the existing Application Skeleton materialization dispatcher starts only after the Core acceptance command marker, and does not treat user text or premature `materialized` flips as Phase 2 authority. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: gate skeleton materialization on accept command`).
+40. [TODO] Git Commit: `fix: gate skeleton materialization on accept command` (hash: TBD)
 
 ## Phase 7 - Regression Coverage (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Core End-To-End Coverage
 
-37. [TODO] `application-skeleton-orchestration.phase7.tests.task1` Add an end-to-end Application Skeleton A->B->A regression covering draft commit, artifact-changing review commit, no-op review turn without Git commit, premature materialization rejection, acceptance command, Phase 2 dispatcher, and materialization commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton a-b-a orchestration`).
-38. [TODO] Git Commit: `test: cover application skeleton a-b-a orchestration` (hash: TBD)
+41. [TODO] `application-skeleton-orchestration.phase7.tests.task1` Add an end-to-end Application Skeleton A->B->A regression covering draft commit, artifact-changing review commit, no-op review turn without Git commit, premature materialization rejection, acceptance command, Phase 2 dispatcher, and materialization commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton a-b-a orchestration`).
+42. [TODO] Git Commit: `test: cover application skeleton a-b-a orchestration` (hash: TBD)
 
 ### Stream: UI And Transport Coverage
 
-39. [TODO] `application-skeleton-orchestration.phase7.tests.task2` Add focused tests for the accept-contract HTTP transport/client/button disabled states without making PM read-model paths responsible for workflow decisions. (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx`; expected commit: `test: cover application skeleton accept contract surfaces`).
-40. [TODO] Git Commit: `test: cover application skeleton accept contract surfaces` (hash: TBD)
+43. [TODO] `application-skeleton-orchestration.phase7.tests.task2` Add focused tests for the accept-contract HTTP transport/client/button disabled states without making PM read-model paths responsible for workflow decisions. (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx`; expected commit: `test: cover application skeleton accept contract surfaces`).
+44. [TODO] Git Commit: `test: cover application skeleton accept contract surfaces` (hash: TBD)
 
 ## Phase 8 - SSOT Sync (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Stable Documentation
 
-41. [TODO] `application-skeleton-orchestration.phase8.docs.task1` Sync the implemented Application Skeleton A->B->A orchestration model into stable SSOT docs, including Core-owned command surface, Observe-vs-Dispatch, Stage Plan Shape, and premature-materialization block. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase orchestration ssot`).
-42. [TODO] Git Commit: `docs: sync application skeleton phase orchestration ssot` (hash: TBD)
+45. [TODO] `application-skeleton-orchestration.phase8.docs.task1` Sync the implemented Application Skeleton A->B->A orchestration model into stable SSOT docs, including Core-owned command surface, Observe-vs-Dispatch, Stage Plan Shape, and premature-materialization block. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase orchestration ssot`).
+46. [TODO] Git Commit: `docs: sync application skeleton phase orchestration ssot` (hash: TBD)
 
 ## Phase 9 - Targeted Verification (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Build And Test Evidence
 
-43. [TODO] `application-skeleton-orchestration.phase9.verify.task1` Run targeted Core tests for touched handlers, PM component/service tests, `npm run build --workspace @codeai-hub/core`, and `npm run typecheck:webview`; record evidence and any known residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton phase orchestration verification`).
-44. [TODO] Git Commit: `docs: record application skeleton phase orchestration verification` (hash: TBD)
+47. [TODO] `application-skeleton-orchestration.phase9.verify.task1` Run targeted Core tests for touched handlers, PM component/service tests, `npm run build --workspace @codeai-hub/core`, and `npm run typecheck:webview`; record evidence and any known residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton phase orchestration verification`).
+48. [TODO] Git Commit: `docs: record application skeleton phase orchestration verification` (hash: TBD)
 
 ## Phase 10 - Release Build Confirmation Gate (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Release Confirmation
 
-45. [TODO] `application-skeleton-orchestration.phase10.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts. (scope: chat/process observation only; no commit required).
+49. [TODO] `application-skeleton-orchestration.phase10.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts. (scope: chat/process observation only; no commit required).
 
 ### Stream: Release Preparation
 
-46. [TODO] `application-skeleton-orchestration.phase10.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton phase orchestration release`).
-47. [TODO] Git Commit: `docs: prepare application skeleton phase orchestration release` (hash: TBD)
+50. [TODO] `application-skeleton-orchestration.phase10.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton phase orchestration release`).
+51. [TODO] Git Commit: `docs: prepare application skeleton phase orchestration release` (hash: TBD)
 
 ### Stream: Release Build
 
-48. [TODO] `application-skeleton-orchestration.phase10.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase orchestration`).
-49. [TODO] Git Commit: `build: release application skeleton phase orchestration` (hash: TBD)
+52. [TODO] `application-skeleton-orchestration.phase10.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase orchestration`).
+53. [TODO] Git Commit: `build: release application skeleton phase orchestration` (hash: TBD)
 
 ## Phase 11 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-10)
 
 ### Stream: VSIX Retest
 
-50. [TODO] `application-skeleton-orchestration.phase11.acceptance.task1` User installs the new VSIX and retests Application Skeleton: Phase 1A draft repair, Phase 1B user revision/no-op turns, Accept Contract button, typed fallback if retained, premature-materialization block, Phase 2 materialization commit, and downstream handoff. (scope: chat/process observation only; no commit required).
+54. [TODO] `application-skeleton-orchestration.phase11.acceptance.task1` User installs the new VSIX and retests Application Skeleton: Phase 1A draft repair, Phase 1B user revision/no-op turns, Accept Contract button, typed fallback if retained, premature-materialization block, Phase 2 materialization commit, and downstream handoff. (scope: chat/process observation only; no commit required).
 
 ## Phase 12 - Scope Closeout (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Closeout After Acceptance
 
-51. [TODO] `application-skeleton-orchestration.phase12.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
-52. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
-53. [TODO] `application-skeleton-orchestration.phase12.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+55. [TODO] `application-skeleton-orchestration.phase12.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+56. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
+57. [TODO] `application-skeleton-orchestration.phase12.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

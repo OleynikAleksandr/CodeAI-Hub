@@ -15,7 +15,7 @@ const execFileAsync = promisify(execFile);
 const APPLICATION_SKELETON_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const APPLICATION_SKELETON_MATERIALIZATION_TASK =
-  "application-skeleton.stream1.task2";
+  "application-skeleton.phase2.materialize.task1";
 const WORKSPACE_PLAN_PATH = path.join("doc", "TODO", "workspace.plan.md");
 const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
 const QUALITY_GATES_INTEGRATION_TASK = "quality-gates.stream1.task2";
