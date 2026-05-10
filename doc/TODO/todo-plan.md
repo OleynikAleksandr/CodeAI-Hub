@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "375c47f10",
+  "lastRecordedCommit": "4a05a18b4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase8.stream8.task1",
-  "expectedCommitMessage": "docs: sync runtime conformance ssot",
+  "currentTaskId": "runtime-contract.phase8.stream8.task2",
+  "expectedCommitMessage": "docs: record runtime conformance verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync runtime conformance ssot",
-    "preCommitHead": "375c47f10",
+    "expectedCommitMessage": "docs: record runtime conformance verification",
+    "preCommitHead": "4a05a18b4",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase8.stream8.task1"
+    "taskId": "runtime-contract.phase8.stream8.task2"
   }
 }
 ```
@@ -144,12 +144,19 @@
 ### Stream: Documentation Sync
 
 39. [DONE] `runtime-contract.phase8.stream8.task1` Sync accepted runtime conformance behavior into stable SSOT docs after code is implemented (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit: `docs: sync runtime conformance ssot`).
-40. [PENDING] Git Commit: `docs: sync runtime conformance ssot` (hash: TBD)
+40. [DONE] Git Commit: `docs: sync runtime conformance ssot` (hash: 4a05a18b4)
 
 ### Stream: Tooling Verification
 
-41. [TODO] `runtime-contract.phase8.stream8.task2` Run targeted builds/tests for touched Core and Project Manager packages, record evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record runtime conformance verification`).
-42. [TODO] Git Commit: `docs: record runtime conformance verification` (hash: TBD)
+41. [DONE] `runtime-contract.phase8.stream8.task2` Run targeted builds/tests for touched Core and Project Manager packages, record evidence in this plan, and fix any TypeScript regressions surfaced by the Core build (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `docs: record runtime conformance verification`).
+42. [PENDING] Git Commit: `docs: record runtime conformance verification` (hash: TBD)
+
+**Verification evidence (2026-05-10):**
+
+- `npm run build --workspace @codeai-hub/core` → clean (`tsc` exit 0).
+- `npm run typecheck:webview` → clean (`tsc -p tsconfig.webview.json --pretty false` exit 0).
+- Targeted node:test runner (15 spec files под `packages/core/src/remote-bridge/handlers/` + `packages/core/src/unified-session/storage.test.ts`): **42/42 PASS** в 871ms; покрывает managed feedback ownership wording, dedup terminal-event identity, retry guard, acceptance command recognition, managed commit boundary refactor, audit stream append/isolation, managed rollover envelope (skeleton + non-managed), application skeleton materialization validator happy path, quality gates awaiting_acceptance regression и diagram modules subturn happy path.
+- Все pre-commit гейты проходят на каждом из 17 commit'ов scope (architecture/lint/knip/jscpd/UI SSOT).
 
 ## Phase 9 — Release And Acceptance (owner: next agent, updated: 2026-05-10)
 

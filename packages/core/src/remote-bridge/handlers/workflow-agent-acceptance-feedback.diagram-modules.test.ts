@@ -418,7 +418,6 @@ test("Diagram Modules happy path emits no feedback when aggregate is ready and s
       },
       progress: {
         aggregateReady: true,
-        currentPartId: null,
         generatedCount: 1,
         generatedPartIds: ["local-runtime"],
         plannedCount: 1,
