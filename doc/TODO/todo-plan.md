@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "ece2ac0fb",
+  "lastRecordedCommit": "68742258e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase10.release.task3",
-  "expectedCommitMessage": "build: release application skeleton phase orchestration",
+  "currentTaskId": "application-skeleton-orchestration.phase12.audit.task1",
+  "expectedCommitMessage": "docs: open application skeleton phase numbering refactor scope",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton phase orchestration",
-    "preCommitHead": "ece2ac0fb",
+    "expectedCommitMessage": "docs: open application skeleton phase numbering refactor scope",
+    "preCommitHead": "68742258e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase10.release.task3"
+    "taskId": "application-skeleton-orchestration.phase12.audit.task1"
   }
 }
 ```
@@ -224,18 +224,106 @@
 ### Stream: Release Build
 
 52. [DONE] `application-skeleton-orchestration.phase10.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase orchestration`).
-53. [PENDING] Git Commit: `build: release application skeleton phase orchestration` (hash: TBD)
+53. [DONE] Git Commit: `build: release application skeleton phase orchestration` (hash: 68742258e)
 
 ## Phase 11 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-10)
 
 ### Stream: VSIX Retest
 
-54. [TODO] `application-skeleton-orchestration.phase11.acceptance.task1` User installs the new VSIX and retests Application Skeleton: Phase 1A draft repair, Phase 1B user revision/no-op turns, Accept Contract button, typed fallback if retained, premature-materialization block, Phase 2 materialization commit, and downstream handoff. (scope: chat/process observation only; no commit required).
+54. [BLOCKED] `application-skeleton-orchestration.phase11.acceptance.task1` User installs the new VSIX and retests Application Skeleton: Phase 1A draft repair, Phase 1B user revision/no-op turns, Accept Contract button, typed fallback if retained, premature-materialization block, Phase 2 materialization commit, and downstream handoff. (scope: chat/process observation only; no commit required). **BLOCKED 2026-05-10:** retest in `CodeAI-Hub codex 5.4` workspace exposed two coupled defects in the shipped v1.2.221 VSIX: (1) advancement-skip bug — after the Phase 1A draft commit `docs: draft application skeleton contract` landed, `managed-plan-orchestrator-shim-source.ts::TASK_LINE_RE` did not match Pin 3 (`application-skeleton.phase1b.review.task1`, `expected commit: none — open until acceptance`) and the orchestrator silently jumped `currentTaskId` straight to Pin 4 (`application-skeleton.phase2.materialize.task1`), bypassing the entire user-led review phase; (2) phase numbering misalignment — task IDs `phase1a` / `phase1b` / `phase2.materialize` are out of sync with managed-plan headings `Phase 1` / `Phase 2` / `Phase 3`, conflating the Type A / Type B phase-type attribute with phase numbering and confusing both Core and the agent. Retest cannot resume until both defects are fixed and a new VSIX is shipped. Resumed retest is tracked under Phase 14.
 
-## Phase 12 - Scope Closeout (owner: next agent, updated: 2026-05-10)
+## Phase 12 - Phase Numbering Refactor And Advancement Bug Fix (owner: next agent, updated: 2026-05-10)
+
+### Stream: Scope Audit
+
+55. [DONE] `application-skeleton-orchestration.phase12.audit.task1` Open this refactor scope: block Phase 11 with the retest defect summary, record audit findings for the advancement regex skip and the phase-numbering misalignment (Type A/B is a phase-type attribute, not part of the phase number; managed plan headings already read `Phase 1` / `Phase 2` / `Phase 3` while task IDs lag at `phase1a` / `phase1b` / `phase2`), and enumerate the file inventory that future streams must touch. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton phase numbering refactor scope`).
+56. [PENDING] Git Commit: `docs: open application skeleton phase numbering refactor scope` (hash: TBD)
+
+#### Audit findings (HEAD = `68742258e`, 2026-05-10)
+
+- **Advancement skip surface.** `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts:26` defines `TASK_LINE_RE = /^\d+\. \[(?:TODO|IN_PROGRESS)\].*?\`([^\`]+)\`.*expected commit: \`([^\`]+)\`/u`. The trailing `expected commit: \`...\`` capture is mandatory, so any task line whose tail reads `expected commit: none — open until acceptance` (no backticks) is silently skipped by `readTaskLine()` and by the next-task scan in the post-commit advancement at lines 219–224. After the Phase 1A draft commit lands, the scan therefore selects the next backticked line — Pin 4 (`phase2.materialize.task1`) — and writes that as `currentTaskId` together with `expectedCommitMessage: "feat: materialize application skeleton"`, fully bypassing Pin 3 (`phase1b.review.task1`). No regression test currently locks down "after draft commit, currentTaskId advances to phase1b.review.task1".
+- **Phase-type vs phase-number conflation.** Task IDs `application-skeleton.phase1a.draft.task1`, `application-skeleton.phase1b.review.task1`, `application-skeleton.phase2.materialize.task1` encode the phase-type attribute (Type A / Type B / Type A) inside the phase number, while the managed plan headings already read `Phase 1` / `Phase 2` / `Phase 3` (see `packages/core/src/managed-workspace/managed-todo-tree.ts:291,306,312,319`). Result: `phase2.materialize.task1` lives under heading `Phase 3`, which makes both the agent and the orchestrator state hard to read and reason about. Type A / Type B remains a domain attribute that survives in SSOT prose only.
+- **Code surfaces touching legacy task IDs.** `packages/core/src/managed-workspace/managed-todo-tree.ts` (STAGE_PLANS seed, STAGE_TERMINAL_COMMITS), `packages/core/src/development-tree/development-tree-bootstrap-gate.ts` (bootstrap gate target task id), `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts` (dynamic revision injection labels), `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts` (per-revision commit message text).
+- **Internal classifier enum values.** `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts` exports type `ApplicationSkeletonPhase = "phase_1a_draft" | "phase_1b_review" | "phase_2_materialization" | "phase_handoff"`. Consumers: `application-skeleton-contract-guard.ts`, `application-skeleton-review-turn-classifier.ts`, `managed-stage-accept-contract-handler.ts`, `managed-stage-accept-contract-runner.ts`, `managed-workflow-post-turn-service.ts`, `application-skeleton-end-to-end.test.ts`, `application-skeleton-phase-state.test.ts`. These string values are internal classification, but renaming them in lockstep with task IDs keeps the codebase legible.
+- **Test fixtures touching legacy task IDs.** `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`, `packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`, `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts`, `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`, `packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`, `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`, `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts`.
+- **SSOT and planning docs.** `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`, `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`, `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`, `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md`. `CHANGELOG.md` is historical and stays untouched.
+
+### Stream: Advancement Regex Fix
+
+57. [TODO] `application-skeleton-orchestration.phase12.advance.task1` Extend `TASK_LINE_RE` so it matches both `expected commit: \`<message>\`` and `expected commit: none — open until acceptance` task lines, and update the post-commit advancement so an open-ended task surfaces with `expectedCommitMessage: null` instead of being silently skipped. Add a regression test asserting that after the Phase 1A draft commit advances, `currentTaskId` lands on the open-ended Phase 2 review task and not on the materialization task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: advance through open-ended managed plan tasks`).
+58. [TODO] Git Commit: `fix: advance through open-ended managed plan tasks` (hash: TBD)
+
+### Stream: Stage Plan Task ID Rename
+
+59. [TODO] `application-skeleton-orchestration.phase12.rename-seed.task1` Rename `STAGE_PLANS` task IDs in the Application Skeleton seed from `phase1a.draft.task1` / `phase1b.review.task1` / `phase2.materialize.task1` to `phase1.draft.task1` / `phase2.review.task1` / `phase3.materialize.task1`; update `STAGE_TERMINAL_COMMITS` if its keys reference any of these IDs; realign the Development Tree bootstrap gate target id from `application-skeleton.phase2.materialize.task1` to `application-skeleton.phase3.materialize.task1`. Headings (`Phase 1` / `Phase 2` / `Phase 3`) already match — no heading renames needed. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts`; expected commit: `fix: rename application skeleton stage plan task ids to plain phase numbering`).
+60. [TODO] Git Commit: `fix: rename application skeleton stage plan task ids to plain phase numbering` (hash: TBD)
+
+### Stream: Bootstrap Gate Fixture Sync
+
+61. [TODO] `application-skeleton-orchestration.phase12.rename-seed.task2` Sync the bootstrap gate fixture and the seed-shape regression to the new plain-phase task IDs (`phase1.draft` / `phase2.review` / `phase3.materialize`). (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `test: align bootstrap gate fixtures to plain phase task ids`).
+62. [TODO] Git Commit: `test: align bootstrap gate fixtures to plain phase task ids` (hash: TBD)
+
+### Stream: Handler Fixture Migration (Batch 1)
+
+63. [TODO] `application-skeleton-orchestration.phase12.fixture-migration.task1` Migrate hardcoded legacy `phase1a` / `phase1b` / `phase2.materialize` task IDs in handler test fixtures to the plain-phase task IDs while preserving each test's existing behavioral assertions. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `test: migrate handler fixture task ids to plain phase numbering (batch 1)`).
+64. [TODO] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 1)` (hash: TBD)
+
+### Stream: Handler Fixture Migration (Batch 2)
+
+65. [TODO] `application-skeleton-orchestration.phase12.fixture-migration.task2` Migrate hardcoded legacy task IDs in the remaining handler tests (workflow-state bootstrap, end-to-end, post-turn) to the plain-phase task IDs. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)`).
+66. [TODO] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)` (hash: TBD)
+
+### Stream: Phase Classifier Enum Rename
+
+67. [TODO] `application-skeleton-orchestration.phase12.classifier-rename.task1` Rename `ApplicationSkeletonPhase` enum values: `phase_1a_draft → phase_1_draft`, `phase_1b_review → phase_2_review`, `phase_2_materialization → phase_3_materialization` (`phase_handoff` stays). Update the classifier definition, its peer test, and the post-turn service consumer in lockstep so the build stays green; remaining consumers are migrated in `phase12.classifier-consumers.task1` and `task2`. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: rename application skeleton phase classifier values to plain numbering`).
+68. [TODO] Git Commit: `fix: rename application skeleton phase classifier values to plain numbering` (hash: TBD)
+
+### Stream: Phase Classifier Consumers (Handlers)
+
+69. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task1` Sync handler consumers of `ApplicationSkeletonPhase` to the plain-numbering enum values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: align skeleton phase consumers to plain numbering`).
+70. [TODO] Git Commit: `fix: align skeleton phase consumers to plain numbering` (hash: TBD)
+
+### Stream: Phase Classifier Consumers (Runners + Injection)
+
+71. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task2` Sync runner / injection / commit-transaction consumers to the plain-numbering enum values, and update dynamic revision injection labels (`phase1b.review.revisionN.task1 → phase2.review.revisionN.task1`) plus the per-revision managed commit message text (`docs: revise application skeleton contract — phase 1B revision N → docs: revise application skeleton contract — revision N`, dropping the phase-type label from the commit because Type B is a domain attribute, not commit text). (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts`; expected commit: `fix: align skeleton runner phase identifiers to plain numbering`).
+72. [TODO] Git Commit: `fix: align skeleton runner phase identifiers to plain numbering` (hash: TBD)
+
+### Stream: SSOT Sync
+
+73. [TODO] `application-skeleton-orchestration.phase12.docs-sync.task1` Sync SSOT and planning docs to plain phase numbering: replace `phase1a` / `phase1b` / `phase2.materialize` task IDs with the plain-phase forms; rephrase headings so `Phase 1A` / `Phase 1B` / `Phase 2` reads `Phase 1` / `Phase 2` / `Phase 3` (with Type A / Type B kept as a domain attribute clarifier in prose only); update the materialization-commit / revision-commit text references. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton plain phase numbering ssot`).
+74. [TODO] Git Commit: `docs: sync application skeleton plain phase numbering ssot` (hash: TBD)
+
+### Stream: Targeted Verification
+
+75. [TODO] `application-skeleton-orchestration.phase12.verify.task1` Run targeted Core tests for touched managed-workspace, development-tree, and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton plain phase numbering verification`).
+76. [TODO] Git Commit: `docs: record application skeleton plain phase numbering verification` (hash: TBD)
+
+## Phase 13 - Release Build Confirmation Gate (owner: next agent, updated: 2026-05-10)
+
+### Stream: Release Confirmation
+
+77. [TODO] `application-skeleton-orchestration.phase13.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts for the v1.2.222 VSIX containing the advancement fix and plain phase numbering. (scope: chat/process observation only; no commit required).
+
+### Stream: Release Preparation
+
+78. [TODO] `application-skeleton-orchestration.phase13.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton plain phase numbering release`).
+79. [TODO] Git Commit: `docs: prepare application skeleton plain phase numbering release` (hash: TBD)
+
+### Stream: Release Build
+
+80. [TODO] `application-skeleton-orchestration.phase13.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton plain phase numbering`).
+81. [TODO] Git Commit: `build: release application skeleton plain phase numbering` (hash: TBD)
+
+## Phase 14 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-10)
+
+### Stream: VSIX Retest
+
+82. [TODO] `application-skeleton-orchestration.phase14.acceptance.task1` User installs the new VSIX and reruns the Application Skeleton retest with focus on the regression that motivated this scope: after Phase 1A draft commit lands, `currentTaskId` advances to `application-skeleton.phase2.review.task1` (open-ended user-led review), Phase 1A → Phase 2 → Phase 3 numbering reads cleanly in the managed plan, and Accept Contract / premature-materialization block / Phase 3 materialization commit all behave as in Phase 11 expectations. (scope: chat/process observation only; no commit required).
+
+## Phase 15 - Scope Closeout (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Closeout After Acceptance
 
-55. [TODO] `application-skeleton-orchestration.phase12.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
-56. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
-57. [TODO] `application-skeleton-orchestration.phase12.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+83. [TODO] `application-skeleton-orchestration.phase15.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+84. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
+85. [TODO] `application-skeleton-orchestration.phase15.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
