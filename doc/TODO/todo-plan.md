@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "1440af2c2",
+  "lastRecordedCommit": "a9a17c0c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase6.materialization.task3",
-  "expectedCommitMessage": "fix: gate skeleton materialization on accept command",
+  "currentTaskId": "application-skeleton-orchestration.phase7.tests.task1",
+  "expectedCommitMessage": "test: cover application skeleton a-b-a orchestration",
   "debt": {
-    "expectedCommitMessage": "fix: gate skeleton materialization on accept command",
-    "preCommitHead": "1440af2c2",
+    "expectedCommitMessage": "test: cover application skeleton a-b-a orchestration",
+    "preCommitHead": "a9a17c0c2",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase6.materialization.task3"
+    "taskId": "application-skeleton-orchestration.phase7.tests.task1"
   }
 }
 ```
@@ -182,14 +182,14 @@
 ### Stream: Phase 2 Dispatcher Gate
 
 39. [DONE] `application-skeleton-orchestration.phase6.materialization.task3` Ensure the existing Application Skeleton materialization dispatcher starts only after the Core acceptance command marker, and does not treat user text or premature `materialized` flips as Phase 2 authority. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: gate skeleton materialization on accept command`).
-40. [PENDING] Git Commit: `fix: gate skeleton materialization on accept command` (hash: TBD)
+40. [DONE] Git Commit: `fix: gate skeleton materialization on accept command` (hash: a9a17c0c2)
 
 ## Phase 7 - Regression Coverage (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Core End-To-End Coverage
 
-41. [TODO] `application-skeleton-orchestration.phase7.tests.task1` Add an end-to-end Application Skeleton A->B->A regression covering draft commit, artifact-changing review commit, no-op review turn without Git commit, premature materialization rejection, acceptance command, Phase 2 dispatcher, and materialization commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton a-b-a orchestration`).
-42. [TODO] Git Commit: `test: cover application skeleton a-b-a orchestration` (hash: TBD)
+41. [DONE] `application-skeleton-orchestration.phase7.tests.task1` Add an end-to-end Application Skeleton A->B->A regression covering draft commit, artifact-changing review commit, no-op review turn without Git commit, premature materialization rejection, acceptance command, Phase 2 dispatcher, and materialization commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton a-b-a orchestration`).
+42. [PENDING] Git Commit: `test: cover application skeleton a-b-a orchestration` (hash: TBD)
 
 ### Stream: UI And Transport Coverage
 
