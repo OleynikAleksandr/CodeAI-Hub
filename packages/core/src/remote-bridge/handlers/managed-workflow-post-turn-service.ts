@@ -39,6 +39,7 @@ export class ManagedWorkflowPostTurnService {
   private readonly logger: Logger;
   private readonly transaction = new ManagedDocumentationCommitTransaction();
   private readonly sessionManager?: SessionManager;
+  private readonly inFlight = new Map<string, Promise<void>>();
 
   constructor(options: {
     readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
@@ -65,17 +66,27 @@ export class ManagedWorkflowPostTurnService {
     ) {
       return;
     }
+    if (this.inFlight.has(sessionId)) {
+      this.logger.debug(
+        "Managed workflow post-turn arbitration already in flight; skipping concurrent invocation",
+        { sessionId, workspaceSlug: session.initiativeSlug }
+      );
+      return;
+    }
     const workspaceRoot = session.workspacePath;
     const workspaceSlug = session.initiativeSlug;
-    this.run({ sessionId, workspaceRoot, workspaceSlug }).catch(
-      (error: unknown) => {
+    const task = this.run({ sessionId, workspaceRoot, workspaceSlug })
+      .catch((error: unknown) => {
         this.logger.warn("Managed workflow post-turn feedback failed", {
           sessionId,
           workspaceSlug,
           error: error instanceof Error ? error.message : String(error),
         });
-      }
-    );
+      })
+      .finally(() => {
+        this.inFlight.delete(sessionId);
+      });
+    this.inFlight.set(sessionId, task);
   }
 
   private async run(params: {

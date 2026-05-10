@@ -76,6 +76,8 @@ interface SessionProviderEventRouterDependencies {
   readonly workspaceRuntime?: WorkspaceRuntimeFacade;
 }
 
+const TERMINAL_EVENT_TYPES = new Set(["turn_completed", "turn_failed"]);
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -87,8 +89,29 @@ const readStringField = (
   return typeof value === "string" ? value : null;
 };
 
+const readProviderEventStableId = (
+  event: ProviderEventEnvelope
+): string | null => {
+  const record = event as unknown as Record<string, unknown>;
+  for (const key of ["id", "eventId", "sequence", "sequenceNumber"]) {
+    const value = record[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      return `${key}:${value.trim()}`;
+    }
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return `${key}:${value}`;
+    }
+  }
+  const timestamp = readStringField(record, "timestamp");
+  return timestamp && timestamp.trim().length > 0
+    ? `timestamp:${timestamp.trim()}`
+    : null;
+};
+
 export class SessionProviderEventRouter {
   private readonly deps: SessionProviderEventRouterDependencies;
+  private readonly processedTerminalEvents = new Map<string, Set<string>>();
+  private readonly terminalEventCounters = new Map<string, number>();
 
   constructor(deps: SessionProviderEventRouterDependencies) {
     this.deps = deps;
@@ -115,6 +138,17 @@ export class SessionProviderEventRouter {
     }
 
     const typedEvent = event as ProviderEventEnvelope;
+    if (
+      typeof typedEvent.type === "string" &&
+      TERMINAL_EVENT_TYPES.has(typedEvent.type) &&
+      this.isDuplicateTerminalEvent(sessionId, typedEvent)
+    ) {
+      this.deps.logger.debug(
+        "Skipping duplicate terminal provider event for managed arbitration",
+        { sessionId, eventType: typedEvent.type }
+      );
+      return;
+    }
     if (typedEvent.type === "turn_completed") {
       this.deps.markPostTurnContextDecisionPending(sessionId);
     }
@@ -134,6 +168,36 @@ export class SessionProviderEventRouter {
       this.logFlowNodeContinuityHandlerFailure(sessionId, error);
     });
     this.handleTypedProviderEvent(sessionId, typedEvent);
+  }
+
+  private isDuplicateTerminalEvent(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): boolean {
+    const identity = this.computeTerminalEventIdentity(sessionId, event);
+    let processed = this.processedTerminalEvents.get(sessionId);
+    if (!processed) {
+      processed = new Set();
+      this.processedTerminalEvents.set(sessionId, processed);
+    }
+    if (processed.has(identity)) {
+      return true;
+    }
+    processed.add(identity);
+    return false;
+  }
+
+  private computeTerminalEventIdentity(
+    sessionId: string,
+    event: ProviderEventEnvelope
+  ): string {
+    const providerStableId = readProviderEventStableId(event);
+    if (providerStableId) {
+      return `${sessionId}::${event.type}::provider:${providerStableId}`;
+    }
+    const next = (this.terminalEventCounters.get(sessionId) ?? 0) + 1;
+    this.terminalEventCounters.set(sessionId, next);
+    return `${sessionId}::${event.type}::core:${next}`;
   }
 
   private routeUntypedProviderEvent(sessionId: string, event: unknown): void {

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "9a7069bdb",
+  "lastRecordedCommit": "603b5abc3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase2.stream1.task2",
-  "expectedCommitMessage": "test: cover managed feedback ownership wording",
+  "currentTaskId": "runtime-contract.phase3.stream2.task1",
+  "expectedCommitMessage": "fix: dedupe managed post-turn arbitration events",
   "debt": {
-    "expectedCommitMessage": "test: cover managed feedback ownership wording",
-    "preCommitHead": "9a7069bdb",
+    "expectedCommitMessage": "fix: dedupe managed post-turn arbitration events",
+    "preCommitHead": "603b5abc3",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase2.stream1.task2"
+    "taskId": "runtime-contract.phase3.stream2.task1"
   }
 }
 ```
@@ -79,14 +79,14 @@
 5. [DONE] `runtime-contract.phase2.stream1.task1` Remove provider-directed Git imperatives from managed dirty-state and acceptance feedback text (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: remove managed feedback git imperatives`).
 6. [DONE] Git Commit: `fix: remove managed feedback git imperatives` (hash: 9a7069bdb)
 7. [DONE] `runtime-contract.phase2.stream1.task2` Add regression coverage for forbidden substrings and allowed neutral content-readiness wording across managed stages (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts`; expected commit: `test: cover managed feedback ownership wording`).
-8. [PENDING] Git Commit: `test: cover managed feedback ownership wording` (hash: TBD)
+8. [DONE] Git Commit: `test: cover managed feedback ownership wording` (hash: 603b5abc3)
 
 ## Phase 3 — Gap A Post-Turn Arbitration Repeat (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Terminal Event Dedup And Retry Guard
 
-9. [TODO] `runtime-contract.phase3.stream2.task1` Add Core-normalized terminal-event identity and processed-event ledger so managed post-turn arbitration runs once per new terminal event and duplicate delivery is no-op (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: dedupe managed post-turn arbitration events`).
-10. [TODO] Git Commit: `fix: dedupe managed post-turn arbitration events` (hash: TBD)
+9. [DONE] `runtime-contract.phase3.stream2.task1` Add Core-normalized terminal-event identity and processed-event ledger so managed post-turn arbitration runs once per new terminal event and duplicate delivery is no-op (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: dedupe managed post-turn arbitration events`).
+10. [PENDING] Git Commit: `fix: dedupe managed post-turn arbitration events` (hash: TBD)
 11. [TODO] `runtime-contract.phase3.stream2.task2` Add per-task retry guard and BLOCKED/pause handling for repeated failed managed arbitration attempts (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: guard repeated managed arbitration attempts`).
 12. [TODO] Git Commit: `fix: guard repeated managed arbitration attempts` (hash: TBD)
 

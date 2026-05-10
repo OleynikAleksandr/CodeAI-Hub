@@ -322,3 +322,136 @@ test("SessionProviderEventRouter delays turn_completed until provider messages f
     "arbitration",
   ]);
 });
+
+test("SessionProviderEventRouter deduplicates terminal events with the same provider id", () => {
+  const decisionPendingCalls: string[] = [];
+  const arbitrationCalls: string[] = [];
+
+  const router = new SessionProviderEventRouter({
+    appendDialogMessage: () => {
+      // noop
+    },
+    appendProviderMessage: () => {
+      // noop
+    },
+    broadcaster: () => {
+      // noop
+    },
+    clearPostTurnContextDecision: () => {
+      // noop
+    },
+    emitTurnStateEvent: () => {
+      // noop
+    },
+    finalizeFlowNodeContinuityLockOnBootstrapGate: () => {
+      // noop
+    },
+    handleFlowNodeContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleSessionContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleTurnCompletedWithFlowNodeArbitration: (sessionId) => {
+      arbitrationCalls.push(sessionId);
+    },
+    logger: new Logger("error"),
+    markPostTurnContextDecisionPending: (sessionId) => {
+      decisionPendingCalls.push(sessionId);
+    },
+    sessionManager: {
+      getSession: () => ({
+        id: "session-1",
+        workspacePath: "/tmp/workspace",
+        stage: "diagram_modules",
+        providerId: "codexCli",
+      }),
+    } as never,
+    updateBindingWithResolvedId: () => {
+      // noop
+    },
+    waitForProviderMessagePersistence: async () => {
+      // noop
+    },
+  });
+
+  const sameTerminalEvent = {
+    eventId: "evt-42",
+    provider: "codex",
+    type: "turn_completed",
+  };
+  router.handleProviderEvent("session-1", sameTerminalEvent);
+  router.handleProviderEvent("session-1", sameTerminalEvent);
+  router.handleProviderEvent("session-1", {
+    eventId: "evt-43",
+    provider: "codex",
+    type: "turn_completed",
+  });
+
+  assert.deepEqual(decisionPendingCalls, ["session-1", "session-1"]);
+});
+
+test("SessionProviderEventRouter deduplicates terminal events without provider id via Core counter", () => {
+  const decisionPendingCalls: string[] = [];
+
+  const router = new SessionProviderEventRouter({
+    appendDialogMessage: () => {
+      // noop
+    },
+    appendProviderMessage: () => {
+      // noop
+    },
+    broadcaster: () => {
+      // noop
+    },
+    clearPostTurnContextDecision: () => {
+      // noop
+    },
+    emitTurnStateEvent: () => {
+      // noop
+    },
+    finalizeFlowNodeContinuityLockOnBootstrapGate: () => {
+      // noop
+    },
+    handleFlowNodeContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleSessionContinuityProviderEvent: async () => {
+      // noop
+    },
+    handleTurnCompletedWithFlowNodeArbitration: () => {
+      // noop
+    },
+    logger: new Logger("error"),
+    markPostTurnContextDecisionPending: (sessionId) => {
+      decisionPendingCalls.push(sessionId);
+    },
+    sessionManager: {
+      getSession: () => ({
+        id: "session-1",
+        workspacePath: "/tmp/workspace",
+        stage: "diagram_modules",
+        providerId: "codexCli",
+      }),
+    } as never,
+    updateBindingWithResolvedId: () => {
+      // noop
+    },
+    waitForProviderMessagePersistence: async () => {
+      // noop
+    },
+  });
+
+  const eventWithTimestamp = {
+    timestamp: "2026-05-10T10:00:00.000Z",
+    type: "turn_completed",
+  };
+  router.handleProviderEvent("session-1", eventWithTimestamp);
+  router.handleProviderEvent("session-1", eventWithTimestamp);
+  router.handleProviderEvent("session-1", {
+    timestamp: "2026-05-10T10:00:01.000Z",
+    type: "turn_completed",
+  });
+
+  assert.deepEqual(decisionPendingCalls, ["session-1", "session-1"]);
+});
