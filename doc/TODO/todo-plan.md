@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "2afa0e527",
+  "lastRecordedCommit": "e7f6a0586",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase20.length-cap.task1",
-  "expectedCommitMessage": "fix: cap acceptance phrase recognizer to short user-typed messages",
+  "currentTaskId": "application-skeleton-orchestration.phase20.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton recognizer hotfix verification",
   "debt": {
-    "expectedCommitMessage": "fix: cap acceptance phrase recognizer to short user-typed messages",
-    "preCommitHead": "2afa0e527",
+    "expectedCommitMessage": "docs: record application skeleton recognizer hotfix verification",
+    "preCommitHead": "e7f6a0586",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase20.length-cap.task1"
+    "taskId": "application-skeleton-orchestration.phase20.verify.task1"
   }
 }
 ```
@@ -431,12 +431,19 @@
 ### Stream: Recognizer Length Cap
 
 106. [DONE] `application-skeleton-orchestration.phase20.length-cap.task1` Add a 200-character length cap at the top of `recognizeManagedContractAcceptancePhrase` so multi-kilobyte Core bootstrap prompts (and any other long-form context that incidentally contains an acceptance verb) are excluded before regex matching. Add a peer test that locks down the cap behaviour (long prompt → null; short bare-verb phrase → recognized). Scope expanded by one file (`max-lines-debt-allowlist.txt`) because the cap constant + explanatory comment pushed `managed-workflow-post-turn-service.ts` one line over the 500-line architecture limit; a deeper slice refactor is out of scope for the hot-fix. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `fix: cap acceptance phrase recognizer to short user-typed messages`).
-107. [PENDING] Git Commit: `fix: cap acceptance phrase recognizer to short user-typed messages` (hash: TBD)
+107. [DONE] Git Commit: `fix: cap acceptance phrase recognizer to short user-typed messages` (hash: e7f6a0586)
 
 ### Stream: Targeted Verification
 
-108. [TODO] `application-skeleton-orchestration.phase20.verify.task1` Run targeted Core tests for the recognizer and adjacent modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton recognizer hotfix verification`).
-109. [TODO] Git Commit: `docs: record application skeleton recognizer hotfix verification` (hash: TBD)
+108. [DONE] `application-skeleton-orchestration.phase20.verify.task1` Run targeted Core tests for the recognizer and adjacent modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton recognizer hotfix verification`).
+
+#### Verification evidence (HEAD = `e7f6a0586`, 2026-05-11)
+
+- **Targeted Core tests:** 33/33 pass across `managed-workflow-post-turn-service.test.ts` (15 tests, including the new release-blocker regression guard), `application-skeleton-end-to-end.test.ts` (2 tests), `application-skeleton-continuation-dispatcher.test.ts` (8 tests), and `managed-stage-accept-contract-handler.test.ts` (8 tests).
+- **`npm run build --workspace @codeai-hub/core`:** passes (no TypeScript errors).
+- **`npm run typecheck:webview`:** passes (no errors).
+- **Regression guard:** `recogniser rejects long-form prompts that incidentally contain acceptance verbs (release-blocker regression guard)` locks down the v1.2.223 failure mode — a ~3 KB bootstrap-style prompt containing both "Accept Contract" and "accepted" returns `null` from the recognizer; the broadened bare-verb / English-verb / negated-form invariants from Phase 16E continue to hold for short user-typed phrases.
+109. [PENDING] Git Commit: `docs: record application skeleton recognizer hotfix verification` (hash: TBD)
 
 ## Phase 21 - Hot-Fix Release Build (owner: next agent, updated: 2026-05-11)
 
