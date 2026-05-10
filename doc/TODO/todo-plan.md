@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "bab0e0f79",
+  "lastRecordedCommit": "50dbf80ba",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream4.task1",
-  "expectedCommitMessage": "fix: dispatch application skeleton materialization continuation",
+  "currentTaskId": "runtime-contract.phase10.stream4.task2",
+  "expectedCommitMessage": "test: cover application skeleton continuation dispatcher",
   "debt": {
-    "expectedCommitMessage": "fix: dispatch application skeleton materialization continuation",
-    "preCommitHead": "bab0e0f79",
+    "expectedCommitMessage": "test: cover application skeleton continuation dispatcher",
+    "preCommitHead": "50dbf80ba",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream4.task1"
+    "taskId": "runtime-contract.phase10.stream4.task2"
   }
 }
 ```
@@ -264,9 +264,9 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Application Skeleton Materialization Continuation Dispatcher
 
 68. [DONE] `runtime-contract.phase10.stream4.task1` Add new `application-skeleton-continuation-dispatcher.ts` (parallel to Diagram Modules dispatcher) that emits a materialisation continuation prompt to the agent once Core has registered an Application Skeleton acceptance command on a session in awaiting-acceptance state; track recently-accepted sessions inside the post-turn service to gate the dispatch (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: dispatch application skeleton materialization continuation`). New dispatcher file replaces the originally-listed feedback/progress edits.
-69. [PENDING] Git Commit: `fix: dispatch application skeleton materialization continuation` (hash: TBD)
-70. [TODO] `runtime-contract.phase10.stream4.task2` Regression coverage: dispatcher fires once per acceptance, transitions progress, and is no-op when stage is not Application Skeleton or state is not awaiting-acceptance (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `test: cover application skeleton continuation dispatcher`).
-71. [TODO] Git Commit: `test: cover application skeleton continuation dispatcher` (hash: TBD)
+69. [DONE] Git Commit: `fix: dispatch application skeleton materialization continuation` (hash: 50dbf80ba)
+70. [DONE] `runtime-contract.phase10.stream4.task2` Regression coverage for the new dispatcher: fires once per acceptance, no-op if no recently-accepted signal, no-op when already materialised (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts`; expected commit: `test: cover application skeleton continuation dispatcher`). New single-file test.
+71. [PENDING] Git Commit: `test: cover application skeleton continuation dispatcher` (hash: TBD)
 
 ### Stream: Application Skeleton Materialization Completion Observer
 
