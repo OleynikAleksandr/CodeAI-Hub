@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "8ebee86d3",
+  "lastRecordedCommit": "8f6bfe0d8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream1.task2",
-  "expectedCommitMessage": "docs: note phase types blockers in deferred design",
+  "currentTaskId": "runtime-contract.phase10.stream2.task1",
+  "expectedCommitMessage": "fix: write activestage on managed stage advance",
   "debt": {
-    "expectedCommitMessage": "docs: note phase types blockers in deferred design",
-    "preCommitHead": "8ebee86d3",
+    "expectedCommitMessage": "fix: write activestage on managed stage advance",
+    "preCommitHead": "8f6bfe0d8",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream1.task2"
+    "taskId": "runtime-contract.phase10.stream2.task1"
   }
 }
 ```
@@ -245,12 +245,12 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 56. [DONE] `runtime-contract.phase10.stream1.task1` Note R1/R2/R3 known gaps in `Managed_Workflow_Runtime_Contract_Conformance.md` so future agents do not assume Phase 4 fixes are complete; cross-link to Phase 10 in this active plan (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md, doc/TODO/todo-plan.md`; expected commit: `docs: note runtime conformance gaps in mandatory repair planning`).
 57. [DONE] Git Commit: `docs: note runtime conformance gaps in mandatory repair planning` (hash: 8ebee86d3)
 58. [DONE] `runtime-contract.phase10.stream1.task2` Note R1/R2/R3 as preconditions for any future Type B candidate microtask lifecycle in `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`; record that Phase 10 ships R1/R2/R3 fixes only and full Type B candidate runtime stays deferred (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/TODO/todo-plan.md`; expected commit: `docs: note phase types blockers in deferred design`).
-59. [PENDING] Git Commit: `docs: note phase types blockers in deferred design` (hash: TBD)
+59. [DONE] Git Commit: `docs: note phase types blockers in deferred design` (hash: 8f6bfe0d8)
 
 ### Stream: Stage Advance Writer For workspace.plan.md
 
-60. [TODO] `runtime-contract.phase10.stream2.task1` Add stage-advance writer that calls `updateWorkspacePlanState` with the new `activeStage` whenever managed workflow advances `Diagram Modules → Application Skeleton → Quality Gates`; pick the single advance code path (likely the post-stage-completion handler that currently rotates `activePlanPath`) so the bundle builder reflects the live stage (scope: `packages/core/src/remote-bridge/handlers/managed-todo-tree.ts, packages/core/src/remote-bridge/handlers/<advance-owner>.ts, packages/core/src/remote-bridge/handlers/managed-todo-tree.test.ts`; expected commit: `fix: write activestage on managed stage advance`). Concrete file 2 to be confirmed during implementation; if found scope exceeds 3 files split this task before editing code.
-61. [TODO] Git Commit: `fix: write activestage on managed stage advance` (hash: TBD)
+60. [DONE] `runtime-contract.phase10.stream2.task1` Add stage-advance writer in the embedded plan-orchestrator shim's `recordWorkspaceCommit` so terminal-commit messages for each managed stage roll `activeStage` and `activePlanPath` forward in `workspace.plan.md`; extract the embedded shim source into a sibling file so installer stays under the 500-line architecture limit (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: write activestage on managed stage advance`). Test moved to task2 to keep ≤3 files; actual code path lives under `managed-workspace/`, not `remote-bridge/handlers/` as originally hypothesised.
+61. [PENDING] Git Commit: `fix: write activestage on managed stage advance` (hash: TBD)
 62. [TODO] `runtime-contract.phase10.stream2.task2` Add multi-stage advance regression so a fresh managed workspace transitioning Diagram Modules → Application Skeleton produces a bundle with `activeStage: "application_skeleton"` and live stage todo-plan content (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/managed-todo-tree.test.ts`; expected commit: `test: cover managed stage advance writer`).
 63. [TODO] Git Commit: `test: cover managed stage advance writer` (hash: TBD)
 

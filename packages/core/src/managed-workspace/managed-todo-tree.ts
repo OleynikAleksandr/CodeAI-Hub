@@ -15,11 +15,28 @@ interface StageTemplate {
   readonly taskId: string;
 }
 
-const STAGE_PLANS: Readonly<Record<ManagedWorkflowPlanStage, string>> = {
+export const STAGE_PLANS: Readonly<Record<ManagedWorkflowPlanStage, string>> = {
   application_skeleton: "doc/TODO/stages/application-skeleton/todo-plan.md",
   diagram_modules: "doc/TODO/stages/diagram-modules/todo-plan.md",
   quality_gates: "doc/TODO/stages/quality-gates/todo-plan.md",
 };
+
+export const STAGE_TERMINAL_COMMITS: Readonly<
+  Record<ManagedWorkflowPlanStage, string>
+> = {
+  application_skeleton: "feat: materialize application skeleton",
+  diagram_modules: "docs: review diagram modules product map",
+  quality_gates: "feat: integrate quality gates baseline",
+};
+
+export const NEXT_STAGE_AFTER: Readonly<
+  Record<ManagedWorkflowPlanStage, ManagedWorkflowPlanStage | null>
+> = {
+  application_skeleton: "quality_gates",
+  diagram_modules: "application_skeleton",
+  quality_gates: null,
+};
+
 const WORKSPACE_PLAN_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
 const WORKSPACE_PLAN_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
 const JSON_FENCE_END_RE = /\s*```$/u;
