@@ -2,24 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.221**
+**Current Release — v1.2.222**
 
-This release ships the Application Skeleton Phase B orchestration pilot.
-The stage now runs as an explicit `Phase 1A → Phase 1B → Phase 2` sequence:
-Core-gated initial draft, user-led contract review with diff-based
-revision-vs-discussion classification and per-revision managed commits,
-and Core-led materialization gated on the Core-owned **Accept Contract**
-command. The command is exposed both through the new Project Manager
-button at `/api/v1/orchestrator/managed-stage-accept-contract` and via a
-typed-fallback acceptance phrase that routes through the same handler.
-A premature-materialization validator derives blocked paths from the
-Application Skeleton map (declared `materializedPaths` plus every cluster
-and module `codePath`) and runs from both Phase 1A and Phase 1B post-turn
-guards, delivering a single corrective turn at the readiness + terminal
-boundary. Acceptance Commit Policy: Option B (acceptance is folded into
-the Phase 2 transition; no separate accept commit). Read-model paths
-remain side-effect free for provider messages — only the post-turn
-arbitration boundary may dispatch corrective turns (Observe-vs-Dispatch).
+This release fixes the Phase 11 retest defects shipped in v1.2.221 and
+realigns the Application Skeleton phase model to plain numbering. The
+managed plan orchestrator's post-commit advancement regex (`TASK_LINE_RE`
+in `managed-plan-orchestrator-shim-source.ts`) now matches both backticked
+`expected commit: \`<message>\`` lines and open-ended `expected commit:
+none — open until acceptance` lines, so the user-led review task is no
+longer silently skipped after the Phase 1 draft commit. Task IDs across
+the stage seed, classifier, consumers, fixtures, and SSOT prose are
+renamed from the `phase1a` / `phase1b` / `phase2.materialize` form to
+plain `phase1` / `phase2` / `phase3.materialize`; the internal classifier
+union maps to `phase_1_draft` / `phase_2_review` / `phase_3_materialization`
+/ `phase_handoff`. Type A / Type B remains a domain attribute describing
+phase ownership (Core-gated vs user-led), not a phase number suffix. The
+per-revision managed commit message is now `docs: revise application
+skeleton contract — revision N` (no embedded phase-type label).
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

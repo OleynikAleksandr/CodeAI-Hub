@@ -4,6 +4,21 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.222] - 2026-05-11
+### Fixed
+- **Application Skeleton advancement-skip bug.** The managed plan orchestrator's `TASK_LINE_RE` regex in `managed-plan-orchestrator-shim-source.ts` now accepts both backticked `expected commit: \`<message>\`` lines and open-ended `expected commit: none — open until acceptance` lines. Before this fix, the post-commit scan silently skipped Pin 3 (`application-skeleton.phase2.review.task1`, open-ended user-led review) and jumped `currentTaskId` straight to the next backticked task — Pin 4 (`application-skeleton.phase3.materialize.task1`). After the fix, the open-ended review task receives `expectedCommitMessage: null` and `currentTaskId` lands on the review phase, exactly as the stage seed prescribes. A regression test in `managed-plan-orchestrator-installer.test.ts` locks down the post-draft advancement order.
+- **Phase numbering refactor — plain `Phase 1 / Phase 2 / Phase 3`.** Task IDs across the Application Skeleton seed, classifier consumers, fixtures, and SSOT prose are renamed from `phase1a` / `phase1b` / `phase2.materialize` to plain `phase1` / `phase2` / `phase3.materialize` so the task IDs read consistently with the managed plan headings (`Phase 1` / `Phase 2` / `Phase 3`). Renamed surfaces include:
+  - `managed-todo-tree.ts` stage seed (task IDs + stream-heading prefixes); the Development Tree bootstrap gate target id realigns from `application-skeleton.phase2.materialize.task1` to `application-skeleton.phase3.materialize.task1`.
+  - Internal `ApplicationSkeletonPhase` classifier values (`phase_1a_draft` / `phase_1b_review` / `phase_2_materialization` → `phase_1_draft` / `phase_2_review` / `phase_3_materialization`); `phase_handoff` stays.
+  - Dynamic revision injection labels (`phase1b.review.revisionN.task1` → `phase2.review.revisionN.task1`) in `managed-documentation-commit-transaction.ts` and `application-skeleton-revision-injection-runner.ts`.
+  - Per-revision managed commit message text: `docs: revise application skeleton contract — phase 1B revision N` → `docs: revise application skeleton contract — revision N` (the embedded phase-type label is dropped because Type B is a domain attribute, not commit text).
+  - All eight handler / managed-workspace test fixtures and the end-to-end test.
+- **SSOT sync.** `WorkflowSteps_Overview.md` and `Application_Skeleton_Architecture.md` are updated to describe the shipped `Phase 1 → Phase 2 → Phase 3` model and clarify that Type A / Type B describes phase ownership, not the phase number.
+
+### Tests
+- 54/60 targeted Core handler, managed-workspace, development-tree and end-to-end tests pass after the refactor. 6 pre-existing baseline failures (`workflow-state-managed-documentation-commit.test.ts` auto-commit suites and `workflow-state-service-development-tree-bootstrap.test.ts` acceptance-feedback scenarios) were verified to exist on the v1.2.221 baseline (commit `68742258e`) and are out of this scope; one previously failing bootstrap test now passes after the rename.
+- `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview` both clean.
+
 ## [1.2.221] - 2026-05-10
 ### Added
 - **Application Skeleton Phase B orchestration pilot.** The Application Skeleton stage now runs as an explicit `Phase 1A → Phase 1B → Phase 2` sequence with the following surfaces:

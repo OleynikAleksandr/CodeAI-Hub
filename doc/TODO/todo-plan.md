@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "3612e6d2a",
+  "lastRecordedCommit": "b8a9ce323",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton plain phase numbering verification",
+  "currentTaskId": "application-skeleton-orchestration.phase13.release.task2",
+  "expectedCommitMessage": "docs: prepare application skeleton plain phase numbering release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton plain phase numbering verification",
-    "preCommitHead": "3612e6d2a",
+    "expectedCommitMessage": "docs: prepare application skeleton plain phase numbering release",
+    "preCommitHead": "b8a9ce323",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase13.release.task2"
   }
 }
 ```
@@ -306,7 +306,7 @@
 ### Stream: Targeted Verification
 
 75. [DONE] `application-skeleton-orchestration.phase12.verify.task1` Run targeted Core tests for touched managed-workspace, development-tree, and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton plain phase numbering verification`).
-76. [PENDING] Git Commit: `docs: record application skeleton plain phase numbering verification` (hash: TBD)
+76. [DONE] Git Commit: `docs: record application skeleton plain phase numbering verification` (hash: b8a9ce323)
 
 #### Verification evidence (HEAD = `3612e6d2a`, 2026-05-10)
 
@@ -320,12 +320,12 @@
 
 ### Stream: Release Confirmation
 
-77. [TODO] `application-skeleton-orchestration.phase13.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts for the v1.2.222 VSIX containing the advancement fix and plain phase numbering. (scope: chat/process observation only; no commit required).
+77. [DONE] `application-skeleton-orchestration.phase13.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts for the v1.2.222 VSIX containing the advancement fix and plain phase numbering. (scope: chat/process observation only; no commit required). Result: user confirmed release-build at 2026-05-11.
 
 ### Stream: Release Preparation
 
-78. [TODO] `application-skeleton-orchestration.phase13.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton plain phase numbering release`).
-79. [TODO] Git Commit: `docs: prepare application skeleton plain phase numbering release` (hash: TBD)
+78. [DONE] `application-skeleton-orchestration.phase13.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton plain phase numbering release`).
+79. [PENDING] Git Commit: `docs: prepare application skeleton plain phase numbering release` (hash: TBD)
 
 ### Stream: Release Build
 
