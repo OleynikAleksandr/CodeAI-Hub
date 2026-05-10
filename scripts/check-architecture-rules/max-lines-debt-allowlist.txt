@@ -14,3 +14,11 @@
 # every provider message and a deeper refactor is out of scope for the pilot.
 # Remove this entry once the dispatch class is sliced into smaller modules.
 packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts
+
+# Application Skeleton acceptance flow refactor (Phase 16): adding the Phase 2
+# accept-commit Pin assertion to this fixture pushed it four lines over the
+# 500-line limit. Splitting the seed-shape fixture is out of scope for the
+# refactor — every test pins a different end-to-end shim invariant and they
+# share the same workspace bootstrap setup. Remove this entry once the test
+# file is sliced into focused fixture modules.
+packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts

@@ -307,20 +307,21 @@ const createStageFollowUpTasks = (
 
 ### Stream: User-Led Review
 
-3. [TODO] \`application-skeleton.phase2.review.task1\` Open-ended user-led review of the Application Skeleton contract; the user drives revisions and clarifying turns until the explicit Accept Contract command fires (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: none — open until acceptance).
+3. [TODO] \`application-skeleton.phase2.review.task1\` Open-ended user-led review of the Application Skeleton contract; the user drives revisions and clarifying turns until acceptance is recorded in \`application-skeleton-map.json\` (\`accepted: true\`) by any path — Core accept-contract handler, PM Accept Contract button, typed-fallback recognizer, or agent self-set per its prompt — at which point Core observes the flag and fires the explicit Phase 2 commit (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`docs: accept application skeleton contract\`).
+4. [TODO] Git Commit: \`docs: accept application skeleton contract\` (hash: TBD)
 
 ## Phase 3 — Application Skeleton Materialization
 
 ### Stream: Core-Led Materialization
 
-4. [TODO] \`application-skeleton.phase3.materialize.task1\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the Accept Contract command fires (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
-5. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
+5. [TODO] \`application-skeleton.phase3.materialize.task1\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the Phase 2 acceptance commit lands (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
+6. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
 
 ## Phase 4 — Handoff
 
 ### Stream: Reserved Post-Closeout Handoff Anchor
 
-6. [TODO] \`application-skeleton.handoff.task1\` Reserved post-closeout handoff anchor; do not execute automatically (scope: chat/process observation only; no commit required).
+7. [TODO] \`application-skeleton.handoff.task1\` Reserved post-closeout handoff anchor; do not execute automatically (scope: chat/process observation only; no commit required).
 `;
   }
   if (initialStage === "quality_gates") {

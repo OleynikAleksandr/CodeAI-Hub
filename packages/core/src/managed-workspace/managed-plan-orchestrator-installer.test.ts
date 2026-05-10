@@ -50,7 +50,10 @@ const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /Expected Commit: docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_REVIEW_TASK_RE =
   /Current Task: application-skeleton\.phase2\.review\.task1/u;
-const APPLICATION_SKELETON_REVIEW_OPEN_COMMIT_RE = /Expected Commit: none/u;
+const APPLICATION_SKELETON_REVIEW_ACCEPT_COMMIT_RE =
+  /Expected Commit: docs: accept application skeleton contract/u;
+const APPLICATION_SKELETON_ACCEPT_COMMIT_PIN_RE =
+  /\[TODO\] Git Commit: `docs: accept application skeleton contract`/u;
 const APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `application-skeleton\.phase2\.review\.task1`/u;
 const APPLICATION_SKELETON_MATERIALIZE_TODO_RE =
@@ -240,8 +243,9 @@ test("managed plan shim advances application skeleton draft commits to open-ende
     });
 
     assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_TASK_RE);
-    assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_OPEN_COMMIT_RE);
+    assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_ACCEPT_COMMIT_RE);
     assert.match(plan, APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE);
+    assert.match(plan, APPLICATION_SKELETON_ACCEPT_COMMIT_PIN_RE);
     assert.match(plan, APPLICATION_SKELETON_MATERIALIZE_TODO_RE);
     assert.match(plan, APPLICATION_SKELETON_BOUNDED_GROUP_RE);
     assert.equal(gitStatus.stdout.trim(), "");
