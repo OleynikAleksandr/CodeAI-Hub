@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "49cad0dc7",
+  "lastRecordedCommit": "821373294",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase13.release.task3",
-  "expectedCommitMessage": "build: release application skeleton plain phase numbering",
+  "currentTaskId": "application-skeleton-orchestration.phase16.audit.task1",
+  "expectedCommitMessage": "docs: open application skeleton acceptance flow refactor scope",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton plain phase numbering",
-    "preCommitHead": "49cad0dc7",
+    "expectedCommitMessage": "docs: open application skeleton acceptance flow refactor scope",
+    "preCommitHead": "821373294",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase13.release.task3"
+    "taskId": "application-skeleton-orchestration.phase16.audit.task1"
   }
 }
 ```
@@ -330,18 +330,87 @@
 ### Stream: Release Build
 
 80. [DONE] `application-skeleton-orchestration.phase13.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton plain phase numbering`).
-81. [PENDING] Git Commit: `build: release application skeleton plain phase numbering` (hash: TBD)
+81. [DONE] Git Commit: `build: release application skeleton plain phase numbering` (hash: 821373294)
 
 ## Phase 14 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-10)
 
 ### Stream: VSIX Retest
 
-82. [TODO] `application-skeleton-orchestration.phase14.acceptance.task1` User installs the new VSIX and reruns the Application Skeleton retest with focus on the regression that motivated this scope: after Phase 1A draft commit lands, `currentTaskId` advances to `application-skeleton.phase2.review.task1` (open-ended user-led review), Phase 1A → Phase 2 → Phase 3 numbering reads cleanly in the managed plan, and Accept Contract / premature-materialization block / Phase 3 materialization commit all behave as in Phase 11 expectations. (scope: chat/process observation only; no commit required).
+82. [BLOCKED] `application-skeleton-orchestration.phase14.acceptance.task1` User installs the new VSIX and reruns the Application Skeleton retest with focus on the regression that motivated this scope: after Phase 1A draft commit lands, `currentTaskId` advances to `application-skeleton.phase2.review.task1` (open-ended user-led review), Phase 1A → Phase 2 → Phase 3 numbering reads cleanly in the managed plan, and Accept Contract / premature-materialization block / Phase 3 materialization commit all behave as in Phase 11 expectations. (scope: chat/process observation only; no commit required). **BLOCKED 2026-05-11:** retest of v1.2.222 confirmed the Phase 12 advancement fix and plain numbering work (managed plan reads cleanly, `currentTaskId` correctly lands on `phase2.review.task1` after draft commit). However retest exposed five orthogonal defects in the Application Skeleton orchestration that are out of Phase 12's scope and require a fresh refactor: (1) Phase 2 has only one microtask (open-ended review) without a Git Commit pin — visually inconsistent vs Phase 1 / Phase 3 and incompatible with the user's expectation that every real microtask is followed by a commit; (2) Core feedback prompts to the agent are dispatched with `userMessageVisibility: "deferred"` and never written to the codex-cli session jsonl, so PM transcript hides them — unlike Diagram Modules, where continuation prompts are plain-string payloads that DO get recorded; (3) the Application Skeleton agent prompt instructs the agent to self-mark `accepted: true` and `materialized: true` after observing user acceptance text, which bypasses the Core accept-contract handler's `recentlyAcceptedSessions` marker and renders the PM Accept Contract button effectively redundant; (4) the typed-fallback recognizer only matches Russian `принимаю/подтверждаю/утверждаю` + the noun `контракт` and does not pick up the bare English `accepted` text the user typed; (5) `workflow-state-managed-documentation-commit.ts` gate blocked the Phase 3 managed commit `feat: materialize application skeleton` because the agent's `materializedPaths` shape (directories + files) differs from the gate's tracked-files expectation. Resumed retest is tracked under Phase 18.
 
-## Phase 15 - Scope Closeout (owner: next agent, updated: 2026-05-10)
+## Phase 16 - Acceptance Flow Refactor (Option C) (owner: next agent, updated: 2026-05-11)
+
+### Stream: Scope Audit
+
+83. [DONE] `application-skeleton-orchestration.phase16.audit.task1` Open this refactor scope: block Phase 14, record audit findings for the five Phase-14 defects (Phase 2 single-microtask, hidden Core feedback dispatch, agent self-acceptance vs Core handler, narrow typed-fallback recognizer, `materializedPaths` gate mismatch), and enumerate the file inventory each Stream must touch. Adopt **Option C** acceptance policy: any path that sets `accepted: true` in `application-skeleton-map.json` (Core handler, agent self-set, typed-fallback, or PM button) triggers the explicit `docs: accept application skeleton contract` Phase 2 commit; the PM button stays as a UI shortcut, not as the exclusive entry. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton acceptance flow refactor scope`).
+84. [PENDING] Git Commit: `docs: open application skeleton acceptance flow refactor scope` (hash: TBD)
+
+#### Audit findings (HEAD = `821373294`, 2026-05-11)
+
+- **Phase 2 single-microtask shape.** `packages/core/src/managed-workspace/managed-todo-tree.ts` seeds Phase 2 with one Pin (`application-skeleton.phase2.review.task1`, `expected commit: none — open until acceptance`) and no Git Commit pin, which violates the user's invariant that every real microtask is followed by a commit. The accepted commit message for Phase 2 acceptance will be `docs: accept application skeleton contract` (acceptance commit policy switches from Option B "folded into Phase 3 transition" to Option A "explicit accept commit", refined into Option C below).
+- **Hidden Core feedback dispatch.** `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts` (lines 364–370) sends Application Skeleton corrective prompts with `turnOptions: { userMessageVisibility: "deferred" }`, which `shouldHideUserMessage` in `workflow-turn-control.ts` honours by skipping `appendVisibleUserMessage` in `session-request-handler-message-dispatch.ts:191–198`. As a result the Core text never appears in `codex-cli` session jsonl and is invisible in PM transcript. `packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts:134` sends a plain-string payload that gets recorded as `role: "user"` and is therefore visible. The two dispatchers must align on the visible path.
+- **Agent self-acceptance vs Core handler.** The Application Skeleton agent system prompt (delivered through `assets/flow/managed/application-skeleton-instructions.md` or equivalent — confirmed by inspecting the first `role: "user"` payload in the Phase 14 session jsonl) instructs the agent to update `application-skeleton-map.json` to `accepted: true, materialized: true` after observing explicit user acceptance and to continue with materialization in the same session. This bypasses the Core `recentlyAcceptedSessions` marker set written by `managed-stage-accept-contract-handler.ts`, so `application-skeleton-continuation-dispatcher.ts::sendApplicationSkeletonContinuationIfReady` never fires its visible plain-string prompt — only the deferred `workflow-agent-acceptance-feedback.ts` path runs. Option C unifies the flows by making Core observe `accepted: true` in the map artifact (read-model) and trigger the acceptance commit regardless of who set the flag.
+- **Narrow typed-fallback recognizer.** `recognizeManagedContractAcceptancePhrase` in `managed-workflow-post-turn-service.ts` requires Russian glyphs (`принимаю/подтверждаю/утверждаю`) AND the noun `контракт`; bare English `accepted` and bare verbs like `принимаю` (without the noun) do not match. The retest user typed `accepted` and the recognizer ignored it, so the typed-fallback router (`application-skeleton-typed-acceptance-router.ts`) never invoked the Core handler. The recognizer must broaden to bare verbs and English equivalents when the session is in Phase 2 acceptance-eligible state.
+- **`materializedPaths` gate mismatch.** `workflow-state-managed-documentation-commit.ts` (auto-commit gate) and the agent's self-audit disagree on the shape of `materializedPaths`: the agent includes directories AND files; the gate expects tracked-file paths only. The mismatch blocked `feat: materialize application skeleton` from landing. Either the gate normalizes both shapes, or the agent prompt mandates a tracked-files-only `materializedPaths` shape. Audit will pick the gate-normalization path because the prompt rule alone has historically drifted (see Bug-3 finding).
+- **Code surfaces touching this scope.** Production: `managed-todo-tree.ts`, `managed-stage-accept-contract-handler.ts`, `managed-stage-accept-contract-runner.ts`, `managed-workflow-post-turn-service.ts`, `application-skeleton-continuation-dispatcher.ts`, `application-skeleton-typed-acceptance-router.ts`, `workflow-agent-acceptance-feedback.ts`, `workflow-state-managed-documentation-commit.ts`, `managed-documentation-commit-transaction.ts`. Tests: peer test files for each. Docs: `WorkflowSteps_Overview.md`, `SystemArchitecture.md`, `Application_Skeleton_Architecture.md`.
+
+### Stream: Phase 2 Stage Plan Restructure
+
+85. [TODO] `application-skeleton-orchestration.phase16.phase2-pin.task1` Add a Git Commit pin to Phase 2 in the Application Skeleton seed: the existing review task's expected commit becomes `docs: accept application skeleton contract`; a new Pin 4 `Git Commit: docs: accept application skeleton contract` follows it; the materialization task and its commit shift to Pins 5 and 6; the handoff anchor shifts to Pin 7. Sync the seed-shape fixture in `managed-plan-orchestrator-installer.test.ts` and the fixtures in `session-request-handler-workflow-session.managed-workspace.test.ts` so Phase 2 now asserts both the task and the Git Commit pin. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: seed application skeleton phase 2 accept commit pin`).
+86. [TODO] Git Commit: `fix: seed application skeleton phase 2 accept commit pin` (hash: TBD)
+
+### Stream: Application Skeleton Feedback Visibility
+
+87. [TODO] `application-skeleton-orchestration.phase16.feedback-visibility.task1` Drop `userMessageVisibility: "deferred"` from Application Skeleton feedback dispatches in `workflow-agent-acceptance-feedback.ts` so Core corrective prompts get appended to the codex-cli session jsonl as visible `role: "user"` entries (aligned with the Diagram Modules continuation dispatcher pattern). Update the peer test to assert visible dispatch for Application Skeleton feedback. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: make application skeleton core feedback visible in session log`).
+88. [TODO] Git Commit: `fix: make application skeleton core feedback visible in session log` (hash: TBD)
+
+### Stream: Core Map Observer (Option C)
+
+89. [TODO] `application-skeleton-orchestration.phase16.map-observer.task1` Add a Core read-model observer that detects `accepted: true` in `application-skeleton-map.json` and triggers the Phase 2 acceptance commit + Phase 3 continuation pipeline independent of whether the Core accept-contract handler, the agent (self-set), the typed-fallback router, or the PM button set the flag. Drop the `recentlyAcceptedSessions` marker as the exclusive gate for `sendApplicationSkeletonContinuationIfReady` — keep it as a hint, but allow the observer to set/trigger acceptance flow when the agent self-sets `accepted: true`. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts`; expected commit: `fix: observe application skeleton acceptance from map.json`).
+90. [TODO] Git Commit: `fix: observe application skeleton acceptance from map.json` (hash: TBD)
+
+### Stream: Acceptance Phrase Recognizer Broadening
+
+91. [TODO] `application-skeleton-orchestration.phase16.recognizer.task1` Broaden `recognizeManagedContractAcceptancePhrase` to also accept English `accepted`/`accept`/`confirmed` and bare Russian verbs (`принимаю`/`подтверждаю`/`утверждаю`) without the mandatory `контракт` noun, gated on Phase 2 acceptance-eligible state. Route matched phrases through the same Core accept-contract handler path. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: broaden application skeleton acceptance phrase recognizer`).
+92. [TODO] Git Commit: `fix: broaden application skeleton acceptance phrase recognizer` (hash: TBD)
+
+### Stream: Managed Commit Gate materializedPaths Normalization
+
+93. [TODO] `application-skeleton-orchestration.phase16.gate-normalize.task1` Update `workflow-state-managed-documentation-commit.ts` and `managed-documentation-commit-transaction.ts` so the managed commit gate normalizes the `materializedPaths` shape it reads from `application-skeleton-map.json` — accepting both tracked-files-only and directories-plus-files shapes — and does not block `feat: materialize application skeleton` on a shape-only mismatch. Add a peer test that locks down the normalized comparison. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: normalize application skeleton materialized paths for managed commit gate`).
+94. [TODO] Git Commit: `fix: normalize application skeleton materialized paths for managed commit gate` (hash: TBD)
+
+### Stream: SSOT Sync
+
+95. [TODO] `application-skeleton-orchestration.phase16.docs-sync.task1` Sync SSOT and planning docs to describe Option C acceptance flow: explicit Phase 2 accept commit, visible Core feedback dispatch, map.json-driven acceptance observation, broadened recognizer, normalized gate. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton acceptance flow ssot`).
+96. [TODO] Git Commit: `docs: sync application skeleton acceptance flow ssot` (hash: TBD)
+
+### Stream: Targeted Verification
+
+97. [TODO] `application-skeleton-orchestration.phase16.verify.task1` Run targeted Core tests for touched managed-workspace and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance flow verification`).
+98. [TODO] Git Commit: `docs: record application skeleton acceptance flow verification` (hash: TBD)
+
+## Phase 17 - Release Build (owner: next agent, updated: 2026-05-11)
+
+### Stream: Release Preparation
+
+99. [TODO] `application-skeleton-orchestration.phase17.release.task1` After Stream 16H verification clean, update README/CHANGELOG for v1.2.223 and record the release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16, so no separate explicit confirmation is required this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance flow release`).
+100. [TODO] Git Commit: `docs: prepare application skeleton acceptance flow release` (hash: TBD)
+
+### Stream: Release Build
+
+101. [TODO] `application-skeleton-orchestration.phase17.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance flow`).
+102. [TODO] Git Commit: `build: release application skeleton acceptance flow` (hash: TBD)
+
+## Phase 18 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
+
+### Stream: VSIX Retest
+
+103. [TODO] `application-skeleton-orchestration.phase18.acceptance.task1` User installs the v1.2.223 VSIX and reruns the Application Skeleton retest with focus on the Phase 16 regressions: Phase 2 now shows task + Git Commit pin; Core feedback prompts appear in PM transcript; the typed-fallback recognizer accepts `accepted`/bare verbs; map.json `accepted: true` from any source triggers the Phase 2 commit and Phase 3 continuation; the managed commit gate accepts the agent's `materializedPaths` shape; the full Phase 1 → Phase 2 → Phase 3 sequence lands all three commits cleanly. (scope: chat/process observation only; no commit required).
+
+## Phase 19 - Scope Closeout (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-83. [TODO] `application-skeleton-orchestration.phase15.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
-84. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
-85. [TODO] `application-skeleton-orchestration.phase15.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+104. [TODO] `application-skeleton-orchestration.phase19.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+105. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
+106. [TODO] `application-skeleton-orchestration.phase19.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
