@@ -17,7 +17,7 @@ Application Skeleton stage runs as an explicit `A → B → A` sequence. Core ac
 Two managed-stage orchestration types, each with its own contract.
 
 - **Phase A — Core ↔ Agent.** Core leads the conversation, sends continuation prompts, validates artifacts at end of turn, and commits when the agent reports readiness. The user is a passive observer; their input field is locked while a turn is in flight. Diagram Modules is the canonical Phase A example today.
-- **Phase B — User ↔ Agent.** The user leads the conversation; the agent responds to the user's instructions. Core does not steer content. Core enforces structural correctness at end of turn (artifact format, status fields, no premature state transitions) via a single corrective turn when needed. Per-revision autocommit applies only to artifact-changing revisions; pure discussion turns are recorded in audit/history without Git commits.
+- **Phase B — User ↔ Agent.** The user leads the conversation; the agent responds to the user's instructions. Core does not steer content. Core enforces structural correctness at end of turn (artifact format, status fields, no premature state transitions) via a single corrective turn when needed. Per-revision autocommit applies only to artifact-changing revisions; pure discussion turns are recorded in standard session history without Git commits.
 
 ## Application Skeleton Target Model
 
