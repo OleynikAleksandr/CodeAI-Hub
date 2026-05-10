@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "d90ff9df3",
+  "lastRecordedCommit": "0165fb07f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase6.stream6.task1",
-  "expectedCommitMessage": "fix: preserve managed context in rollover envelope",
+  "currentTaskId": "runtime-contract.phase6.stream6.task2",
+  "expectedCommitMessage": "test: cover managed stage rollover envelope",
   "debt": {
-    "expectedCommitMessage": "fix: preserve managed context in rollover envelope",
-    "preCommitHead": "d90ff9df3",
+    "expectedCommitMessage": "test: cover managed stage rollover envelope",
+    "preCommitHead": "0165fb07f",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase6.stream6.task1"
+    "taskId": "runtime-contract.phase6.stream6.task2"
   }
 }
 ```
@@ -122,9 +122,9 @@
 ### Stream: Managed Session Transition Prompt Shape
 
 27. [DONE] `runtime-contract.phase6.stream6.task1` Build managed rollover envelope as first resumed turn wrapper with initial managed workflow contract/context block, inline active stage todo-plan, Continuation Mode, current microtask state and no cold-start reset instructions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `fix: preserve managed context in rollover envelope`).
-28. [PENDING] Git Commit: `fix: preserve managed context in rollover envelope` (hash: TBD)
-29. [TODO] `runtime-contract.phase6.stream6.task2` Add forced-rollover regressions for Application Skeleton and Quality Gates midstream sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `test: cover managed stage rollover envelope`).
-30. [TODO] Git Commit: `test: cover managed stage rollover envelope` (hash: TBD)
+28. [DONE] Git Commit: `fix: preserve managed context in rollover envelope` (hash: 0165fb07f)
+29. [DONE] `runtime-contract.phase6.stream6.task2` Add forced-rollover regressions for Application Skeleton and Quality Gates midstream sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `test: cover managed stage rollover envelope`).
+30. [PENDING] Git Commit: `test: cover managed stage rollover envelope` (hash: TBD)
 31. [TODO] `runtime-contract.phase6.stream6.task3` Add non-managed rollover regression to prove Description and Virtual Simulation envelope behavior is unchanged (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit: `test: preserve non-managed rollover behavior`).
 32. [TODO] Git Commit: `test: preserve non-managed rollover behavior` (hash: TBD)
 

@@ -112,3 +112,93 @@ test("managed context bundle embeds plans, source artifacts, and derived plan st
     await rm(root, { force: true, recursive: true });
   }
 });
+
+const QUALITY_GATES_BUNDLE_TITLE_RE = /Managed Workflow Context Bundle/u;
+const QUALITY_GATES_ACTIVE_PLAN_TEXT_RE = /Active Stage Todo Plan Text/u;
+const QUALITY_GATES_CURRENT_TASK_RE = /Current task: quality-gates/u;
+const QUALITY_GATES_ARTIFACT_RE = /Source Artifact: quality-gates\.md/u;
+
+test("managed context bundle embeds Quality Gates plan, sources, and current microtask state", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "managed-context-bundle-qg-"));
+  try {
+    await write(
+      root,
+      "doc/TODO/workspace.plan.md",
+      `# Managed Workspace Plan
+
+<!-- codeai-workspace-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-workspace-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "activeStage": "quality_gates",
+  "activePlanPath": "doc/TODO/stages/quality-gates/todo-plan.md",
+  "acceptedCommits": ["def456"]
+}
+\`\`\`
+<!-- codeai-workspace-plan-state:end -->
+`
+    );
+    await write(
+      root,
+      "doc/TODO/stages/quality-gates/todo-plan.md",
+      `# Managed Quality Gates Plan
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "currentTaskId": "quality-gates.stream1.task1",
+  "expectedCommitMessage": "docs: draft quality gates contract",
+  "lastRecordedCommit": "def456"
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+`
+    );
+    await write(
+      root,
+      ".codeai-hub/demo/application_skeleton/application-skeleton.md",
+      "# App Skeleton"
+    );
+    await write(
+      root,
+      ".codeai-hub/demo/application_skeleton/application-skeleton-map.json",
+      "{}"
+    );
+    await write(
+      root,
+      ".codeai-hub/demo/quality_gates/quality-gates.md",
+      "# Quality Gates"
+    );
+    await write(
+      root,
+      ".codeai-hub/demo/quality_gates/quality-gates.json",
+      '{"commands":{}}'
+    );
+
+    const bundle = await buildManagedWorkflowContextBundle({
+      createdAtIso: "2026-05-09T00:00:00.000Z",
+      lastUserVisibleAssistantMessage: "Previous assistant text",
+      modelBinding: null,
+      providerId: "codexCli",
+      rolloverId: "rollover",
+      runSlug: null,
+      sourceSessionId: "source",
+      stageId: "quality_gates",
+      targetSessionId: "target",
+      workspacePath: root,
+      workspaceSlug: "demo",
+    });
+
+    assert.ok(bundle);
+    assert.equal(bundle.sourceArtifactCount, 4);
+    assert.match(bundle.rendered, QUALITY_GATES_BUNDLE_TITLE_RE);
+    assert.match(bundle.rendered, QUALITY_GATES_ACTIVE_PLAN_TEXT_RE);
+    assert.match(bundle.rendered, QUALITY_GATES_ARTIFACT_RE);
+    assert.match(bundle.planStatusText, QUALITY_GATES_CURRENT_TASK_RE);
+  } finally {
+    await rm(root, { force: true, recursive: true });
+  }
+});
