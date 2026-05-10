@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.224] - 2026-05-11
+### Fixed
+- **Release-blocker hot-fix: Application Skeleton session never started under v1.2.223.** The Phase 16E broadening of `recognizeManagedContractAcceptancePhrase` (bare `accept`/`accepted` verbs without the mandatory `контракт` noun) matched Core's ~100 KB bootstrap prompt because the prompt contains instructional text about the PM "Accept Contract" button. The Application Skeleton typed-fallback router (`application-skeleton-typed-acceptance-router.ts`) intercepted the bootstrap prompt as a typed acceptance and refused to deliver it to codex-cli, so the agent session never started. Symptom in Core log: `Session message received contentLength: 107827` immediately followed by `Skipping managed contract acceptance phrase, phrase: "Accept Contract"` and no `Dispatching message to provider adapter` line; the seeded `doc/TODO/stages/application-skeleton/todo-plan.md` existed but no agent jsonl was ever written. The hot-fix adds a 200-character length cap at the top of `recognizeManagedContractAcceptancePhrase`. Short user-typed phrases (1–50 chars, the realistic acceptance phrase shape) continue to match the Phase 16E broadened recognizer; multi-paragraph Core bootstrap prompts (10 KB–200 KB) are excluded before regex matching. A new regression test (`recogniser rejects long-form prompts that incidentally contain acceptance verbs (release-blocker regression guard)`) locks down the v1.2.223 failure mode.
+
+### Tests
+- 33/33 targeted Core tests pass across `managed-workflow-post-turn-service.test.ts` (15 — including the new regression guard), `application-skeleton-end-to-end.test.ts`, `application-skeleton-continuation-dispatcher.test.ts`, and `managed-stage-accept-contract-handler.test.ts`.
+- `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview` both clean.
+
 ## [1.2.223] - 2026-05-11
 ### Fixed
 - **Application Skeleton acceptance flow refactor (Option C).** The Phase 2 retest of v1.2.222 exposed five orthogonal defects in the Application Skeleton acceptance machinery. This release lands the Option C reconciliation:

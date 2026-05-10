@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "e7f6a0586",
+  "lastRecordedCommit": "b780f7b2f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase20.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton recognizer hotfix verification",
+  "currentTaskId": "application-skeleton-orchestration.phase21.release.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton recognizer hotfix release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton recognizer hotfix verification",
-    "preCommitHead": "e7f6a0586",
+    "expectedCommitMessage": "docs: prepare application skeleton recognizer hotfix release",
+    "preCommitHead": "b780f7b2f",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase20.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase21.release.task1"
   }
 }
 ```
@@ -443,14 +443,14 @@
 - **`npm run build --workspace @codeai-hub/core`:** passes (no TypeScript errors).
 - **`npm run typecheck:webview`:** passes (no errors).
 - **Regression guard:** `recogniser rejects long-form prompts that incidentally contain acceptance verbs (release-blocker regression guard)` locks down the v1.2.223 failure mode — a ~3 KB bootstrap-style prompt containing both "Accept Contract" and "accepted" returns `null` from the recognizer; the broadened bare-verb / English-verb / negated-form invariants from Phase 16E continue to hold for short user-typed phrases.
-109. [PENDING] Git Commit: `docs: record application skeleton recognizer hotfix verification` (hash: TBD)
+109. [DONE] Git Commit: `docs: record application skeleton recognizer hotfix verification` (hash: b780f7b2f)
 
 ## Phase 21 - Hot-Fix Release Build (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Release Preparation
 
-110. [TODO] `application-skeleton-orchestration.phase21.release.task1` Update README/CHANGELOG for v1.2.224 (release-blocker hot-fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16; the hot-fix inherits that approval. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton recognizer hotfix release`).
-111. [TODO] Git Commit: `docs: prepare application skeleton recognizer hotfix release` (hash: TBD)
+110. [DONE] `application-skeleton-orchestration.phase21.release.task1` Update README/CHANGELOG for v1.2.224 (release-blocker hot-fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16; the hot-fix inherits that approval. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton recognizer hotfix release`).
+111. [PENDING] Git Commit: `docs: prepare application skeleton recognizer hotfix release` (hash: TBD)
 
 ### Stream: Release Build
 
