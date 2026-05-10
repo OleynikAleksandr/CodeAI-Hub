@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-intake",
   "branch": "main",
   "baseHead": "694efceeb",
-  "lastRecordedCommit": "694efceeb",
+  "lastRecordedCommit": "087bcdde1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "phase-b-orchestration.intake.task1",
-  "expectedCommitMessage": "docs: open application skeleton phase b orchestration intake",
+  "currentTaskId": "phase-b-orchestration.intake.verify.task1",
+  "expectedCommitMessage": "docs: record phase b orchestration intake verification",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton phase b orchestration intake",
-    "preCommitHead": "694efceeb",
+    "expectedCommitMessage": "docs: record phase b orchestration intake verification",
+    "preCommitHead": "087bcdde1",
     "stage": "commit_pending",
-    "taskId": "phase-b-orchestration.intake.task1"
+    "taskId": "phase-b-orchestration.intake.verify.task1"
   }
 }
 ```
@@ -47,14 +47,20 @@
 ### Stream: Application Skeleton Phase B Orchestration Planning Doc
 
 1. [DONE] `phase-b-orchestration.intake.task1` Draft new planning document covering: Phase A vs Phase B orchestration model with reference back to the deferred design layer; per-turn autocommit policy for Phase B; end-of-turn-only correction policy in Phase B; UI Accept-Contract button as the explicit Phase 1 → Phase 2 trigger with a new Core HTTP endpoint; premature-materialization block until the UI trigger fires; pilot scope on Application Skeleton with an explicit note about Quality Gates symmetry as a separate follow-up cycle. Cross-link the Diagram Modules Phase A reference (continuation dispatcher pattern) and the Phase 11 PM bundle source-of-truth closeout. (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md`; expected commit: `docs: open application skeleton phase b orchestration intake`).
-2. [PENDING] Git Commit: `docs: open application skeleton phase b orchestration intake` (hash: TBD)
+2. [DONE] Git Commit: `docs: open application skeleton phase b orchestration intake` (hash: 087bcdde1)
 
 ## Phase 2 — Tooling Verification (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Plan Validation
 
-3. [TODO] `phase-b-orchestration.intake.verify.task1` Run `npm run plan:validate` and confirm the intake commit's pre-commit and pre-push hooks passed (architecture, lint, knip, jscpd, links). Record evidence inline in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase b orchestration intake verification`).
-4. [TODO] Git Commit: `docs: record phase b orchestration intake verification` (hash: TBD)
+3. [DONE] `phase-b-orchestration.intake.verify.task1` Run `npm run plan:validate` and confirm the intake commit's pre-commit and pre-push hooks passed (architecture, lint, knip, jscpd, links). Record evidence inline in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase b orchestration intake verification`).
+4. [PENDING] Git Commit: `docs: record phase b orchestration intake verification` (hash: TBD)
+
+**Intake verification evidence (2026-05-10).**
+
+- `npm run plan:validate` → `Plan validation: OK`.
+- Pre-commit hook on `087bcdde1` passed: architecture check (no >500-line blockers, 77 files in 400-500 warning zone, 29 facades), `ultracite check` (986 files, no fixes), `knip` (only redundant-entry hints, no errors), `jscpd` (2.71% duplication, within 3% threshold), UI style SSOT guardrails passed.
+- Plan post-commit hook auto-advanced `currentTaskId` to `phase-b-orchestration.intake.verify.task1`.
 
 ## Phase 3 — User Acceptance And Handoff (owner: user, updated: 2026-05-10)
 
