@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "6b00fd09e",
+  "lastRecordedCommit": "8524963de",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream10.task1",
-  "expectedCommitMessage": "build: release application skeleton phase b repair",
+  "currentTaskId": "runtime-contract.phase10.stream10.task2",
+  "expectedCommitMessage": "build: bump release manifests to 1.2.219",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton phase b repair",
-    "preCommitHead": "6b00fd09e",
+    "expectedCommitMessage": "build: bump release manifests to 1.2.219",
+    "preCommitHead": "8524963de",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream10.task1"
+    "taskId": "runtime-contract.phase10.stream10.task2"
   }
 }
 ```
@@ -305,9 +305,9 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Release Build
 
 85. [DONE] `runtime-contract.phase10.stream10.task1` After explicit confirmation only, prepare release notes/version files for the next version bump and run release build scripts per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase b repair`).
-86. [PENDING] Git Commit: `build: release application skeleton phase b repair` (hash: TBD)
-87. [TODO] `runtime-contract.phase10.stream10.task2` Commit version manifests, package-lock and README/CHANGELOG bumped by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
-88. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
+86. [DONE] Git Commit: `build: release application skeleton phase b repair` (hash: 8524963de)
+87. [DONE] `runtime-contract.phase10.stream10.task2` Commit version manifests and lockfile bumped by `build-all.sh`, plus add `native/apple-*-helper/.build/` to `.gitignore` since those native-helper build artifacts are regenerated on every run (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, .gitignore`; expected commit: `build: bump release manifests to 1.2.219`).
+88. [PENDING] Git Commit: `build: bump release manifests to 1.2.219` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 

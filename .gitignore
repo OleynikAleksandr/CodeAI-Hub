@@ -29,3 +29,5 @@ binaries/
 
 # Auto Claude data directory
 .auto-claude/
+native/apple-speech-helper/.build/
+native/apple-translation-helper/.build/
