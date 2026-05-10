@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance",
   "branch": "main",
   "baseHead": "70f3622e4",
-  "lastRecordedCommit": "70f3622e4",
+  "lastRecordedCommit": "b3d782e28",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-10 + WorkflowSteps_Overview.md SSOT lines 66-86, 82, 248-267, 333-342",
-  "currentTaskId": "runtime-contract.phase0.task1",
-  "expectedCommitMessage": "docs: open managed workflow runtime contract conformance plan",
+  "currentTaskId": "runtime-contract.phase0.task3",
+  "expectedCommitMessage": "docs: adopt runtime conformance planning docs",
   "debt": {
-    "expectedCommitMessage": "docs: open managed workflow runtime contract conformance plan",
-    "preCommitHead": "70f3622e4",
+    "expectedCommitMessage": "docs: adopt runtime conformance planning docs",
+    "preCommitHead": "b3d782e28",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase0.task1"
+    "taskId": "runtime-contract.phase0.task3"
   }
 }
 ```
@@ -60,4 +60,9 @@ Until планы интегрированы, активной задачей о�
 ### Stream: Plan Activation
 
 1. [DONE] `runtime-contract.phase0.task1` Open the new active plan for managed workflow runtime contract conformance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open managed workflow runtime contract conformance plan`).
-2. [PENDING] Git Commit: `docs: open managed workflow runtime contract conformance plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: open managed workflow runtime contract conformance plan` (hash: b3d782e28)
+3. [DONE] `runtime-contract.phase0.task2` Hold scope ACTIVE for planning document discussion; advance only after the planning document is accepted and converted into implementation phases (scope: chat/process observation only; expected commit: not required).
+4. [DONE] `runtime-contract.phase0.task3` Adopt the current runtime conformance planning documents into the active planning scope before Plans folder cleanup (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md, doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/TODO/todo-plan.md`; expected commit: `docs: adopt runtime conformance planning docs`).
+5. [PENDING] Git Commit: `docs: adopt runtime conformance planning docs` (hash: TBD)
+6. [TODO] `runtime-contract.phase0.task4` Archive closed Development Tree Phase 1 planning document and update planning navigation (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Phase1_UserStartedDocumentation.md -> doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_Phase1_UserStartedDocumentation.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive closed development tree phase 1 plan`).
+7. [TODO] Git Commit: `docs: archive closed development tree phase 1 plan` (hash: TBD)
