@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "dd4c54db7",
+  "lastRecordedCommit": "2afa0e527",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase20.hotfix-audit.task1",
-  "expectedCommitMessage": "docs: open application skeleton recognizer hotfix scope",
+  "currentTaskId": "application-skeleton-orchestration.phase20.length-cap.task1",
+  "expectedCommitMessage": "fix: cap acceptance phrase recognizer to short user-typed messages",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton recognizer hotfix scope",
-    "preCommitHead": "dd4c54db7",
+    "expectedCommitMessage": "fix: cap acceptance phrase recognizer to short user-typed messages",
+    "preCommitHead": "2afa0e527",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase20.hotfix-audit.task1"
+    "taskId": "application-skeleton-orchestration.phase20.length-cap.task1"
   }
 }
 ```
@@ -420,7 +420,7 @@
 ### Stream: Scope Audit
 
 104. [DONE] `application-skeleton-orchestration.phase20.hotfix-audit.task1` Open this hot-fix scope: block Phase 18, record the recognizer false-positive symptom and the bootstrap-prompt-vs-user-text overlap, scope the cap-by-length fix that keeps Stream 16E's broadening for short user-typed phrases while excluding multi-kilobyte Core bootstrap prompts. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton recognizer hotfix scope`).
-105. [PENDING] Git Commit: `docs: open application skeleton recognizer hotfix scope` (hash: TBD)
+105. [DONE] Git Commit: `docs: open application skeleton recognizer hotfix scope` (hash: 2afa0e527)
 
 #### Audit findings (HEAD = `dd4c54db7`, 2026-05-11)
 
@@ -430,8 +430,8 @@
 
 ### Stream: Recognizer Length Cap
 
-106. [TODO] `application-skeleton-orchestration.phase20.length-cap.task1` Add a 200-character length cap at the top of `recognizeManagedContractAcceptancePhrase` so multi-kilobyte Core bootstrap prompts (and any other long-form context that incidentally contains an acceptance verb) are excluded before regex matching. Add a peer test that locks down the cap behaviour (long prompt → null; short bare-verb phrase → recognized). (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: cap acceptance phrase recognizer to short user-typed messages`).
-107. [TODO] Git Commit: `fix: cap acceptance phrase recognizer to short user-typed messages` (hash: TBD)
+106. [DONE] `application-skeleton-orchestration.phase20.length-cap.task1` Add a 200-character length cap at the top of `recognizeManagedContractAcceptancePhrase` so multi-kilobyte Core bootstrap prompts (and any other long-form context that incidentally contains an acceptance verb) are excluded before regex matching. Add a peer test that locks down the cap behaviour (long prompt → null; short bare-verb phrase → recognized). Scope expanded by one file (`max-lines-debt-allowlist.txt`) because the cap constant + explanatory comment pushed `managed-workflow-post-turn-service.ts` one line over the 500-line architecture limit; a deeper slice refactor is out of scope for the hot-fix. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `fix: cap acceptance phrase recognizer to short user-typed messages`).
+107. [PENDING] Git Commit: `fix: cap acceptance phrase recognizer to short user-typed messages` (hash: TBD)
 
 ### Stream: Targeted Verification
 

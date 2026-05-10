@@ -103,6 +103,21 @@ test("recogniser rejects empty and whitespace-only input", () => {
   assert.equal(recognizeManagedContractAcceptancePhrase("   "), null);
 });
 
+test("recogniser rejects long-form prompts that incidentally contain acceptance verbs (release-blocker regression guard)", () => {
+  // Core bootstrap prompts are ~100 KB and contain instructional text about
+  // the PM "Accept Contract" button; without a length cap the broadened
+  // recognizer matches them and intercepts the Application Skeleton session
+  // bootstrap, preventing the agent from ever starting.
+  const bootstrapStyle = `
+You are the Application Skeleton Agent.
+Before explicit user acceptance, leave the contract as draft.
+After the user clicks the PM "Accept Contract" button (or types "accepted"),
+continue with materialization in the same session.
+`.repeat(20);
+  assert.ok(bootstrapStyle.length > 200);
+  assert.equal(recognizeManagedContractAcceptancePhrase(bootstrapStyle), null);
+});
+
 test("stage-gated recogniser matches inside acceptance-eligible stages", () => {
   assert.equal(
     recognizeManagedAcceptanceForStage(

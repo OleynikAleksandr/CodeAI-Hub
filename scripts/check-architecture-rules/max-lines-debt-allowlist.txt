@@ -22,3 +22,11 @@ packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatc
 # share the same workspace bootstrap setup. Remove this entry once the test
 # file is sliced into focused fixture modules.
 packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts
+
+# Application Skeleton acceptance phrase recognizer hot-fix (Phase 20): adding
+# the 200-character length cap + explanatory comment pushed
+# `managed-workflow-post-turn-service.ts` one line over the 500-line limit.
+# The post-turn service hosts the central arbitration pipeline; a deeper slice
+# refactor is out of scope for the hot-fix. Remove this entry once the post-turn
+# service is sliced into focused per-stage modules.
+packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts

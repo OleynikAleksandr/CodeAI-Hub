@@ -64,10 +64,19 @@ const ACCEPTANCE_VERB_RE =
 const NEGATED_ACCEPTANCE_VERB_RE =
   /(?:не\s+(?:принимаю|подтверждаю|утверждаю)|(?:not|don'?t|won'?t|never|cannot|can'?t)\s+(?:accept(?:ed)?|confirm(?:ed)?|approve(?:d)?))/iu;
 
+// Acceptance phrases are short user-typed messages (typically 1–50 chars).
+// Core bootstrap prompts, repair feedback, continuation prompts, and any
+// other multi-paragraph context can be 10 KB to 200 KB and frequently mention
+// acceptance flow language ("Accept Contract", "accepted state", etc.). The
+// length cap excludes those long-form contexts before regex matching so the
+// broadened recognizer cannot intercept a Core-built bootstrap prompt as a
+// false-positive typed acceptance.
+const ACCEPTANCE_PHRASE_MAX_LENGTH = 200;
+
 export const recognizeManagedContractAcceptancePhrase = (
   content: string
 ): string | null => {
-  if (!content) {
+  if (!content || content.length > ACCEPTANCE_PHRASE_MAX_LENGTH) {
     return null;
   }
   const normalized = content.trim().replace(/\s+/g, " ").toLowerCase();
