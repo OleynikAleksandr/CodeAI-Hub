@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "ef22ccf32",
+  "lastRecordedCommit": "55fb999aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase5.accept.task3",
-  "expectedCommitMessage": "fix: route skeleton typed acceptance through command handler",
+  "currentTaskId": "application-skeleton-orchestration.phase5.ui.task1",
+  "expectedCommitMessage": "feat: add application skeleton accept contract button",
   "debt": {
-    "expectedCommitMessage": "fix: route skeleton typed acceptance through command handler",
-    "preCommitHead": "ef22ccf32",
+    "expectedCommitMessage": "feat: add application skeleton accept contract button",
+    "preCommitHead": "55fb999aa",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase5.accept.task3"
+    "taskId": "application-skeleton-orchestration.phase5.ui.task1"
   }
 }
 ```
@@ -160,12 +160,12 @@
 ### Stream: Typed Fallback Routing
 
 31. [DONE] `application-skeleton-orchestration.phase5.accept.task3` Route typed acceptance fallback through the same Core command handler, gated to Phase 1B acceptance-eligible state only, and ensure matched acceptance text is not delivered as a provider user message. Scope adds a small router module (`application-skeleton-typed-acceptance-router.ts`) and an architecture allowlist entry that documents the residual four-line debt on `session-request-handler-message-dispatch.ts`; production wiring of the Core handler into the dispatch deps remains a follow-up via the new optional callback. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `fix: route skeleton typed acceptance through command handler`).
-32. [PENDING] Git Commit: `fix: route skeleton typed acceptance through command handler` (hash: TBD)
+32. [DONE] Git Commit: `fix: route skeleton typed acceptance through command handler` (hash: 55fb999aa)
 
 ### Stream: Project Manager Command Surface
 
-33. [TODO] `application-skeleton-orchestration.phase5.ui.task1` Add the PM command client and Application Skeleton `Accept Contract` button with disabled-state reasons derived from workflow-state read-model preconditions only. (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx`; expected commit: `feat: add application skeleton accept contract button`).
-34. [TODO] Git Commit: `feat: add application skeleton accept contract button` (hash: TBD)
+33. [DONE] `application-skeleton-orchestration.phase5.ui.task1` Add the PM command client and Application Skeleton `Accept Contract` button with disabled-state reasons derived from workflow-state read-model preconditions only. (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx`; expected commit: `feat: add application skeleton accept contract button`).
+34. [PENDING] Git Commit: `feat: add application skeleton accept contract button` (hash: TBD)
 
 ## Phase 6 - Premature Materialization And Phase 2 Gate (owner: next agent, updated: 2026-05-10)
 
