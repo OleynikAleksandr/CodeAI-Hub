@@ -353,6 +353,52 @@ test("Documentation Tree production rollover waits for next user turn before con
 
 const STRIP_JSONL_SUFFIX_RE = /\.jsonl$/u;
 
+test("Non-managed stages do not emit managed Artifact Mode marker in rollover envelope", async () => {
+  const { buildDocumentationContinuationEnvelope } = await import(
+    "./session-request-handler-documentation-continuation-envelope"
+  );
+
+  const description = await buildDocumentationContinuationEnvelope({
+    context: {
+      createdAtIso: "2026-05-09T00:00:00.000Z",
+      lastUserVisibleAssistantMessage: "Previous description text",
+      modelBinding: null,
+      providerId: "claudeCodeCli",
+      rolloverId: "rollover",
+      runSlug: null,
+      sourceSessionId: "source",
+      stageId: "description",
+      targetSessionId: "target",
+      workspacePath: "/tmp/non-managed-description",
+      workspaceSlug: "demo",
+    },
+    userMessage: "next user instruction",
+  });
+  assert.equal(description.includes("## Artifact Mode"), false);
+  assert.equal(
+    description.includes("artifact_mode: continue_active_microtask"),
+    false
+  );
+
+  const virtualSim = await buildDocumentationContinuationEnvelope({
+    context: {
+      createdAtIso: "2026-05-09T00:00:00.000Z",
+      lastUserVisibleAssistantMessage: "Previous virtual simulation text",
+      modelBinding: null,
+      providerId: "codexCli",
+      rolloverId: "rollover",
+      runSlug: null,
+      sourceSessionId: "source",
+      stageId: "virtual_simulation",
+      targetSessionId: "target",
+      workspacePath: "/tmp/non-managed-virtual",
+      workspaceSlug: "demo",
+    },
+    userMessage: "next user instruction",
+  });
+  assert.equal(virtualSim.includes("## Artifact Mode"), false);
+});
+
 test("Managed audit stream filename is isolated from primary provider session log", () => {
   const PRIMARY_SESSION_FILE = "session-1.jsonl";
   const MANAGED_AUDIT_FILENAME = "session-1.audit.jsonl";
