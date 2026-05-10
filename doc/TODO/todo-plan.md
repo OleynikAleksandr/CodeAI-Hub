@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "fd15fd327",
+  "lastRecordedCommit": "c4f12f14a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase4.phase1b.task3",
-  "expectedCommitMessage": "fix: commit application skeleton review revisions",
+  "currentTaskId": "application-skeleton-orchestration.phase5.accept.task1",
+  "expectedCommitMessage": "fix: handle application skeleton accept contract command",
   "debt": {
-    "expectedCommitMessage": "fix: commit application skeleton review revisions",
-    "preCommitHead": "fd15fd327",
+    "expectedCommitMessage": "fix: handle application skeleton accept contract command",
+    "preCommitHead": "c4f12f14a",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase4.phase1b.task3"
+    "taskId": "application-skeleton-orchestration.phase5.accept.task1"
   }
 }
 ```
@@ -143,14 +143,14 @@
 ### Stream: Per-Revision Managed Commit
 
 25. [DONE] `application-skeleton-orchestration.phase4.phase1b.task3` Reuse the managed commit boundary for Phase 1B accepted revisions while preserving Phase 1A draft and Phase 2 materialization commit semantics. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `fix: commit application skeleton review revisions`).
-26. [PENDING] Git Commit: `fix: commit application skeleton review revisions` (hash: TBD)
+26. [DONE] Git Commit: `fix: commit application skeleton review revisions` (hash: c4f12f14a)
 
 ## Phase 5 - Accept Contract Command And UI (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Core Command Handler
 
-27. [TODO] `application-skeleton-orchestration.phase5.accept.task1` Add a single Core acceptance command handler for Application Skeleton Phase 1B that validates acceptance preconditions, records Option B acceptance state, and marks the session for the existing Phase 2 materialization dispatcher. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: handle application skeleton accept contract command`).
-28. [TODO] Git Commit: `fix: handle application skeleton accept contract command` (hash: TBD)
+27. [DONE] `application-skeleton-orchestration.phase5.accept.task1` Add a single Core acceptance command handler for Application Skeleton Phase 1B that validates acceptance preconditions, records Option B acceptance state, and marks the session for the existing Phase 2 materialization dispatcher. Scope expanded by two helper modules to keep `managed-workflow-post-turn-service.ts` under the 500-line architecture limit: a new accept-contract runner (`managed-stage-accept-contract-runner.ts`) and an extracted Phase 1B revision-injection runner (`application-skeleton-revision-injection-runner.ts`). (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: handle application skeleton accept contract command`).
+28. [PENDING] Git Commit: `fix: handle application skeleton accept contract command` (hash: TBD)
 
 ### Stream: HTTP Transport
 

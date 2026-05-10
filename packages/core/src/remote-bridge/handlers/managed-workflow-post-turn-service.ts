@@ -1,5 +1,3 @@
-import { readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -14,20 +12,20 @@ import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { classifyApplicationSkeletonReviewTurn } from "./application-skeleton-review-turn-classifier";
+import { runApplicationSkeletonRevisionInjection } from "./application-skeleton-revision-injection-runner";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
   readDiagramModulesProgressSnapshot,
   syncDiagramModulesSubturnState,
 } from "./diagram-modules-progress";
-import {
-  injectApplicationSkeletonReviewRevisionPair,
-  ManagedDocumentationCommitTransaction,
-} from "./managed-documentation-commit-transaction";
+import { ManagedDocumentationCommitTransaction } from "./managed-documentation-commit-transaction";
 import {
   attachManagedGitStatus,
   attachValidationDirtyGate,
   readManagedGitStatus,
 } from "./managed-git-stage-gate";
+import type { ApplicationSkeletonAcceptContractDecision } from "./managed-stage-accept-contract-handler";
+import { runApplicationSkeletonAcceptContractCommand } from "./managed-stage-accept-contract-runner";
 import { readQualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   WorkflowAgentAcceptanceFeedback,
@@ -211,6 +209,28 @@ export class ManagedWorkflowPostTurnService {
     }
   }
 
+  // Application Skeleton accept-contract command: reads runtime state, calls
+  // the pure decision in `managed-stage-accept-contract-handler.ts`, and on
+  // acceptance routes the session through the existing Phase 2 dispatcher
+  // path (mark recently-accepted, append audit, hand off to `handle()`).
+  handleApplicationSkeletonAcceptContractCommand(params: {
+    readonly sessionId: string;
+    readonly source: "ui-button" | "typed-fallback";
+  }): Promise<ApplicationSkeletonAcceptContractDecision> {
+    return runApplicationSkeletonAcceptContractCommand({
+      appendAudit: (sessionId, record) =>
+        this.appendManagedAuditMessage(sessionId, record),
+      handle: (sessionId) => this.handle(sessionId),
+      logger: this.logger,
+      markAccepted: (sessionId) => this.recentlyAcceptedSessions.add(sessionId),
+      resetRetryCounter: (sessionId) => this.retryCounters.delete(sessionId),
+      resolveSession: (sessionId) =>
+        this.sessionManager?.getSession(sessionId) ?? null,
+      sessionId: params.sessionId,
+      source: params.source,
+    });
+  }
+
   handleContractAcceptance(params: {
     readonly phrase: string;
     readonly sessionId: string;
@@ -386,7 +406,8 @@ export class ManagedWorkflowPostTurnService {
       });
     }
     if (applicationSkeletonReviewTurnKind === "revision") {
-      await this.injectApplicationSkeletonRevisionPairIfNeeded({
+      await runApplicationSkeletonRevisionInjection({
+        logger: this.logger,
         sessionId: params.sessionId,
         stage: params.stage,
         workspaceRoot: params.workspaceRoot,
@@ -452,41 +473,6 @@ export class ManagedWorkflowPostTurnService {
           applicationSkeletonRepairMessage
         );
       }
-    }
-  }
-
-  private async injectApplicationSkeletonRevisionPairIfNeeded(params: {
-    readonly sessionId: string;
-    readonly stage: string;
-    readonly workspaceRoot: string;
-  }): Promise<void> {
-    const planPath = path.join(
-      params.workspaceRoot,
-      "doc/TODO/stages/application-skeleton/todo-plan.md"
-    );
-    const planText = await readFile(planPath, "utf8").catch(() => null);
-    if (!planText?.includes('"application-skeleton.phase1b.review.task1"')) {
-      return;
-    }
-    const injection = injectApplicationSkeletonReviewRevisionPair(planText);
-    if (!injection) {
-      return;
-    }
-    try {
-      await writeFile(planPath, injection.nextPlanText, "utf8");
-      this.logger.info("Injected Application Skeleton phase 1B revision pair", {
-        nextCommitMessage: injection.nextCommitMessage,
-        nextCurrentTaskId: injection.nextCurrentTaskId,
-        revisionNumber: injection.nextRevisionNumber,
-        sessionId: params.sessionId,
-        stage: params.stage,
-      });
-    } catch (error: unknown) {
-      this.logger.warn("Failed to inject phase 1B revision pair", {
-        error: error instanceof Error ? error.message : String(error),
-        sessionId: params.sessionId,
-        stage: params.stage,
-      });
     }
   }
 }
