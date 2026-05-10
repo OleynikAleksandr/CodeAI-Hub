@@ -142,3 +142,48 @@ test("Quality Gates progress accepts aggregate lifecycle hook runners", async ()
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("Quality Gates progress reports awaiting_acceptance until accepted flag flips", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-progress-acceptance-")
+  );
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.md",
+      "# Quality Gates Baseline\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.json",
+      `${JSON.stringify(
+        {
+          accepted: false,
+          commands: {
+            "qg-secret-scan": {
+              availability: "executable",
+              desiredStatus: "active",
+              id: "qg-secret-scan",
+            },
+          },
+          integrated: false,
+          requiredBeforeCommit: ["qg-secret-scan"],
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+
+    const draft = await readQualityGatesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+
+    assert.equal(draft?.accepted, false);
+    assert.equal(draft?.integrated, false);
+    assert.equal(draft?.substep, "awaiting_acceptance");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});

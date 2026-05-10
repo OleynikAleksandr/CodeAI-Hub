@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "c783af307",
+  "lastRecordedCommit": "cdefcdd98",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase7.stream7.task1",
-  "expectedCommitMessage": "test: cover application skeleton managed materialization",
+  "currentTaskId": "runtime-contract.phase7.stream7.task2",
+  "expectedCommitMessage": "test: cover quality gates managed integration",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton managed materialization",
-    "preCommitHead": "c783af307",
+    "expectedCommitMessage": "test: cover quality gates managed integration",
+    "preCommitHead": "cdefcdd98",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase7.stream7.task1"
+    "taskId": "runtime-contract.phase7.stream7.task2"
   }
 }
 ```
@@ -133,9 +133,9 @@
 ### Stream: Managed Step Happy Paths
 
 33. [DONE] `runtime-contract.phase7.stream7.task1` Cover Application Skeleton contract acceptance -> materialization -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `test: cover application skeleton managed materialization`).
-34. [PENDING] Git Commit: `test: cover application skeleton managed materialization` (hash: TBD)
-35. [TODO] `runtime-contract.phase7.stream7.task2` Cover Quality Gates contract acceptance -> integration -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: cover quality gates managed integration`).
-36. [TODO] Git Commit: `test: cover quality gates managed integration` (hash: TBD)
+34. [DONE] Git Commit: `test: cover application skeleton managed materialization` (hash: cdefcdd98)
+35. [DONE] `runtime-contract.phase7.stream7.task2` Cover Quality Gates contract acceptance -> integration -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: cover quality gates managed integration`).
+36. [PENDING] Git Commit: `test: cover quality gates managed integration` (hash: TBD)
 37. [TODO] `runtime-contract.phase7.stream7.task3` Re-run Diagram Modules happy-path regression around subturn continuation, feedback and post-turn acceptance after shared handler changes (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `test: preserve diagram modules managed subturns`).
 38. [TODO] Git Commit: `test: preserve diagram modules managed subturns` (hash: TBD)
 
