@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "d6d62e278",
+  "lastRecordedCommit": "c07b4f4b1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream0.task1",
-  "expectedCommitMessage": "docs: diagnose application skeleton phase b regression",
+  "currentTaskId": "runtime-contract.phase10.stream0.task2",
+  "expectedCommitMessage": "docs: cut phase 10 follow-up streams",
   "debt": {
-    "expectedCommitMessage": "docs: diagnose application skeleton phase b regression",
-    "preCommitHead": "d6d62e278",
+    "expectedCommitMessage": "docs: cut phase 10 follow-up streams",
+    "preCommitHead": "c07b4f4b1",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream0.task1"
+    "taskId": "runtime-contract.phase10.stream0.task2"
   }
 }
 ```
@@ -186,7 +186,7 @@
 ### Stream: Application Skeleton Phase B Regression Diagnosis
 
 52. [DONE] `runtime-contract.phase10.stream0.task1` Diagnose why Core did not track Application Skeleton Phase B in real time on VSIX 1.2.218. Examine: managed context bundle source and `activeStage` resolution for the Application Skeleton step prompt; acceptance phrase routing for stage-specific phrases (Phase 4 / Stream 3 / task1 reach into Application Skeleton runtime); managed materialization commit handler activation in Application Skeleton runtime (Phase 4 / Stream 4 / task1 reach); plan state advance timing relative to draft/materialize turns. Record findings, root-cause hypothesis confirmation, and proposed follow-up streams inline in this plan; do not edit code or planning documents in this microtask. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: diagnose application skeleton phase b regression`).
-53. [PENDING] Git Commit: `docs: diagnose application skeleton phase b regression` (hash: TBD)
+53. [DONE] Git Commit: `docs: diagnose application skeleton phase b regression` (hash: c07b4f4b1)
 
 **Diagnosis findings (2026-05-10).**
 
@@ -234,3 +234,81 @@ Proposed follow-up streams (to nail down before nibbling at code).
 - Stream 8: Release Build Confirmation Gate, Release Build, User Workflow Acceptance Testing, Scope Closeout (mirror of Phase 9 Stream 9 pattern).
 
 This covers the minimum to make Application Skeleton happy path work end-to-end without trying to implement full Type B candidate lifecycle. Quality Gates symmetric fix remains out of scope; full Type B candidate microtask runtime remains deferred.
+
+### Stream: Phase 10 Streams Layout
+
+54. [DONE] `runtime-contract.phase10.stream0.task2` Cut Phase 10 follow-up streams from the diagnosis findings under task1 (R1/R2/R3 fixes plus planning-doc corrections, SSOT sync, regression coverage, release and acceptance) into concrete ≤3-file microtasks inside this plan. Scope is plan-only; do not edit code or planning documents in this microtask. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: cut phase 10 follow-up streams`).
+55. [PENDING] Git Commit: `docs: cut phase 10 follow-up streams` (hash: TBD)
+
+### Stream: Planning Document Corrections
+
+56. [TODO] `runtime-contract.phase10.stream1.task1` Note R1/R2/R3 known gaps in `Managed_Workflow_Runtime_Contract_Conformance.md` so future agents do not assume Phase 4 fixes are complete; cross-link to Phase 10 in this active plan (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md, doc/TODO/todo-plan.md`; expected commit: `docs: note runtime conformance gaps in mandatory repair planning`).
+57. [TODO] Git Commit: `docs: note runtime conformance gaps in mandatory repair planning` (hash: TBD)
+58. [TODO] `runtime-contract.phase10.stream1.task2` Note R1/R2/R3 as preconditions for any future Type B candidate microtask lifecycle in `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`; record that Phase 10 ships R1/R2/R3 fixes only and full Type B candidate runtime stays deferred (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/TODO/todo-plan.md`; expected commit: `docs: note phase types blockers in deferred design`).
+59. [TODO] Git Commit: `docs: note phase types blockers in deferred design` (hash: TBD)
+
+### Stream: Stage Advance Writer For workspace.plan.md
+
+60. [TODO] `runtime-contract.phase10.stream2.task1` Add stage-advance writer that calls `updateWorkspacePlanState` with the new `activeStage` whenever managed workflow advances `Diagram Modules → Application Skeleton → Quality Gates`; pick the single advance code path (likely the post-stage-completion handler that currently rotates `activePlanPath`) so the bundle builder reflects the live stage (scope: `packages/core/src/remote-bridge/handlers/managed-todo-tree.ts, packages/core/src/remote-bridge/handlers/<advance-owner>.ts, packages/core/src/remote-bridge/handlers/managed-todo-tree.test.ts`; expected commit: `fix: write activestage on managed stage advance`). Concrete file 2 to be confirmed during implementation; if found scope exceeds 3 files split this task before editing code.
+61. [TODO] Git Commit: `fix: write activestage on managed stage advance` (hash: TBD)
+62. [TODO] `runtime-contract.phase10.stream2.task2` Add multi-stage advance regression so a fresh managed workspace transitioning Diagram Modules → Application Skeleton produces a bundle with `activeStage: "application_skeleton"` and live stage todo-plan content (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/managed-todo-tree.test.ts`; expected commit: `test: cover managed stage advance writer`).
+63. [TODO] Git Commit: `test: cover managed stage advance writer` (hash: TBD)
+
+### Stream: Robust Acceptance Phrase Recognition
+
+64. [TODO] `runtime-contract.phase10.stream3.task1` Replace exact-match in `recognizeManagedContractAcceptancePhrase` with a normalised contains-keyword recogniser that requires the canonical verb plus the canonical noun (`принимаю/подтверждаю/утверждаю` and `контракт`) inside one user message; gate recognition on acceptance-eligible Type B state via the existing `MANAGED_CONTRACT_ACCEPTANCE_STAGES` set; keep false-positive risk explicit by rejecting messages with conflicting verbs (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`; expected commit: `fix: broaden managed acceptance phrase recognition`).
+65. [TODO] Git Commit: `fix: broaden managed acceptance phrase recognition` (hash: TBD)
+66. [TODO] `runtime-contract.phase10.stream3.task2` Regression coverage for the broadened matcher: positive matches for the user's reported phrasing and the three canonical phrases, false-negative coverage outside Type B state, false-positive coverage for messages that mention "контракт" without acceptance verbs and for messages that combine multiple verbs (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test: cover acceptance phrase variants`).
+67. [TODO] Git Commit: `test: cover acceptance phrase variants` (hash: TBD)
+
+### Stream: Application Skeleton Materialization Continuation Dispatcher
+
+68. [TODO] `runtime-contract.phase10.stream4.task1` Add `sendApplicationSkeletonMaterializationContinuationIfReady` paralleling the Diagram Modules dispatcher: triggered when post-turn arbitration recognises an Application Skeleton acceptance command in awaiting-acceptance state; emits the materialisation continuation prompt to the agent and transitions Core's progress tracker to `materialization_in_progress` (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `fix: dispatch application skeleton materialization continuation`).
+69. [TODO] Git Commit: `fix: dispatch application skeleton materialization continuation` (hash: TBD)
+70. [TODO] `runtime-contract.phase10.stream4.task2` Regression coverage: dispatcher fires once per acceptance, transitions progress, and is no-op when stage is not Application Skeleton or state is not awaiting-acceptance (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `test: cover application skeleton continuation dispatcher`).
+71. [TODO] Git Commit: `test: cover application skeleton continuation dispatcher` (hash: TBD)
+
+### Stream: Application Skeleton Materialization Completion Observer
+
+72. [TODO] `runtime-contract.phase10.stream5.task1` On every Application Skeleton post-turn assistant reply in `materialization_in_progress` state, re-read `application-skeleton-map.json` and refresh `applicationSkeletonProgress.materialized` from its `materialized` field so the existing commit gate `hasCommittableApplicationSkeletonStage` fires; preserve idempotency for repeat replies (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`; expected commit: `fix: observe application skeleton materialization completion`).
+73. [TODO] Git Commit: `fix: observe application skeleton materialization completion` (hash: TBD)
+74. [TODO] `runtime-contract.phase10.stream5.task2` Runtime-shaped regression: agent reply with `materialized: true` in the on-disk map triggers commit gate without pre-staging the in-memory flag; failed reply (no map update) does not trigger commit (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `test: cover application skeleton completion observer`).
+75. [TODO] Git Commit: `test: cover application skeleton completion observer` (hash: TBD)
+
+### Stream: End-To-End Regression Coverage
+
+76. [TODO] `runtime-contract.phase10.stream6.task1` End-to-end happy path test for Application Skeleton: stage advance writes activeStage → bundle includes live stage todo-plan → agent emits draft readiness → Core commits task1 → user message "Принимаю контракт" recognised by broadened matcher → continuation dispatcher emits materialisation prompt → agent updates map.json + reports completion → completion observer flips materialized → commit gate fires task2 → plan advance to Quality Gates Baseline (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts`; expected commit: `test: cover application skeleton end-to-end happy path`).
+77. [TODO] Git Commit: `test: cover application skeleton end-to-end happy path` (hash: TBD)
+78. [TODO] `runtime-contract.phase10.stream6.task2` Forced-rollover regression inside Phase B: rollover envelope built mid-draft preserves stage advance state, awaiting-acceptance status, and last user-visible assistant message; resumed session does not lose the recogniser-eligible window (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts`; expected commit: `test: cover application skeleton phase b rollover`).
+79. [TODO] Git Commit: `test: cover application skeleton phase b rollover` (hash: TBD)
+
+### Stream: SSOT Sync
+
+80. [TODO] `runtime-contract.phase10.stream7.task1` Sync the Phase B / B→A acceptance / materialisation continuation behaviours actually shipped into stable SSOT (Application Skeleton sections only; Quality Gates is intentionally deferred) (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase b ssot`).
+81. [TODO] Git Commit: `docs: sync application skeleton phase b ssot` (hash: TBD)
+
+### Stream: Tooling Verification
+
+82. [TODO] `runtime-contract.phase10.stream8.task1` Run targeted builds and tests for touched Core packages (`npm run build --workspace @codeai-hub/core`, targeted node:test runner over Phase 10 spec files), record evidence inline in this plan, fix any TypeScript regressions surfaced by the Core build (scope: `doc/TODO/todo-plan.md` plus any single-file regression fix discovered during verification; expected commit: `docs: record phase 10 verification`).
+83. [TODO] Git Commit: `docs: record phase 10 verification` (hash: TBD)
+
+### Stream: Release Build Confirmation Gate
+
+84. [TODO] `runtime-contract.phase10.stream9.task1` Ask the user for explicit release build confirmation after implementation and verification are complete (scope: chat/process observation only; no commit required).
+
+### Stream: Release Build
+
+85. [TODO] `runtime-contract.phase10.stream10.task1` After explicit confirmation only, prepare release notes/version files for the next version bump and run release build scripts per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase b repair`).
+86. [TODO] Git Commit: `build: release application skeleton phase b repair` (hash: TBD)
+87. [TODO] `runtime-contract.phase10.stream10.task2` Commit version manifests, package-lock and README/CHANGELOG bumped by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
+88. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+89. [TODO] `runtime-contract.phase10.stream11.task1` User retests Application Skeleton (full draft → acceptance → materialisation → commit advance), reverifies Diagram Modules and at least one controlled managed rollover scenario inside Phase B on the new VSIX (scope: chat/process observation only; no commit required).
+
+### Stream: Scope Closeout
+
+90. [TODO] `runtime-contract.phase10.stream12.task1` After explicit user acceptance, archive this todo plan, decide disposition for the planning documents touched in Stream 1 and the deferred design layer, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton phase b repair`).
+91. [TODO] Git Commit: `docs: close application skeleton phase b repair` (hash: TBD)
+92. [TODO] `runtime-contract.phase10.stream12.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
