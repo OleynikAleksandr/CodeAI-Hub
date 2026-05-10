@@ -1,12 +1,12 @@
 # Managed Workflow Phase Types and Corrective Operations (Design Draft)
 
-**Status:** Deferred draft. Not in any active scope. Opens as a separate accepted scope only after the mandatory repair release stabilizes the happy path of `Application Skeleton` and `Quality Gates`. Until accepted, runtime behaviour after materialization/integration is the mandatory-repair default — terminal `handoff to user phase` decision with "step done, use Start step <next>", **without** an open-ended correction phase.
+**Status:** Deferred draft. Mandatory repair shipped 2026-05-10 as VSIX 1.2.218, but Application Skeleton happy path remains unstable due to three runtime regressions (R1/R2/R3) that turn out to be preconditions for any Type B candidate microtask lifecycle; see section 12. Active follow-up: Phase 10 in `doc/TODO/todo-plan.md` ships R1/R2/R3 only — full Type B candidate runtime stays deferred. Until this layer is accepted, runtime behaviour after materialization/integration is the mandatory-repair default — terminal `handoff to user phase` decision with "step done, use Start step <next>", **without** an open-ended correction phase.
 **Created:** 2026-05-10
 **Updated:** 2026-05-10
 **Owner:** Oleksandr + Codex
 **Scope:** новый дизайн классификации фаз managed workflow, универсальной финальной фазы корректировок, UI-триггеров между фазами и корректирующих операций. Этот документ — design layer; он расширяет SSOT и вводит новые runtime-механизмы.
 
-Параллельно с этим документом действует mandatory repair: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md`. Этот design layer **не должен реализовываться** до завершения mandatory repair; иначе репарационный scope расширится за пределы conformance и станет невозможно закрыть.
+Параллельно с этим документом действует mandatory repair: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md`. Этот design layer **не должен реализовываться** до завершения mandatory repair и до устранения R1/R2/R3 prerequisites (см. секцию 12); иначе репарационный scope расширится за пределы conformance и станет невозможно закрыть.
 
 ---
 
@@ -146,6 +146,18 @@ Type A — это семейство операций. Каждая операц
 ## 11. Связанные документы
 
 - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` — текущий SSOT, расширяется этим design layer.
-- `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md` — mandatory repair, prerequisite для этого design layer; содержит rollover envelope spec (Gap R).
+- `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md` — mandatory repair, prerequisite для этого design layer; содержит rollover envelope spec (Gap R) и section 12 с post-release retest findings (R1/R2/R3).
 - `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md` — архитектура skeleton, контекст по фазам.
 - `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md` — managed lifecycle контекст.
+
+## 12. Prerequisites surfaced by 2026-05-10 retest
+
+Mandatory repair release (VSIX 1.2.218) revealed three runtime regressions in the shipped Application Skeleton path. Each regression is a **prerequisite** for any of the design surfaces in sections 2–8 of this layer. Until they are repaired in runtime, none of this design layer can be implemented even partially without producing inconsistent behaviour. Active fix is Phase 10 in `doc/TODO/todo-plan.md`; see also `Managed_Workflow_Runtime_Contract_Conformance.md` section 12 for the same findings from the mandatory-repair perspective.
+
+**R1 — Stage advance writer for `workspace.plan.md`.** The bundle builder reads `activeStage` from `workspace.plan.md`, but no caller updates that file when the workflow advances between managed steps. Without this writer, the `## Managed Workflow Context Bundle` block in section 6 boundary note (Continuation Mode + initial managed workflow contract/context block) cannot identify the live stage in resumed sessions; section 2 candidate microtask lifecycle has no anchor for "current Type B phase".
+
+**R2 — Acceptance phrase recognition that survives natural user input.** Section 7 of this design layer defines step-specific acceptance commands ("Принять и материализовать", "Принять и интегрировать", "Применить структуру") as the typed-command secondary path that goes through the same Core command handler as the UI-button primary path. The mandatory repair shipped only the generic phrases as exact-match strings; real users type the verb plus contextual filler and the matcher returns null. A normalised contains-keyword recogniser scoped to the acceptance-eligible Type B state is the precondition for both the mandatory generic phrases and any future step-specific phrases this layer would add. False-positive guards from section 7 (recognition only in acceptance-eligible state, rejection of conflicting verbs) carry over unchanged.
+
+**R3 — Application Skeleton materialization continuation dispatcher and completion observer.** Section 4 of this design layer treats Phase 2 (Application Skeleton materialization) as a Type A operation with a Core-led microtask plan. Section 5 of this design layer extends Phase 3 (Корректировки) as another open-ended Type B feeding back into Type A through the same B→A trigger. Both depend on a working Application Skeleton primary materialization path. The mandatory repair did not wire the materialization continuation dispatcher (parallel to `sendDiagramModulesContinuationIfReady`) or the completion observer that updates Core's progress state from `application-skeleton-map.json` after the agent's reply. Without these, Type A primary materialization never completes, and Type B Phase 3 never opens — section 5 universal "Корректировки" rule cannot exist.
+
+**Open Question 5 implication.** Section 10 lists the runtime-state surface for candidate microtask lifecycle as an open question. R1/R2/R3 fixes do not implement this surface; they only restore the preconditions that any candidate microtask lifecycle would need (live `activeStage`, working acceptance trigger, working Type A primary materialization). The candidate microtask state itself remains designed-only and stays out of Phase 10 scope. A subsequent scope must answer Open Question 5 before this design layer can ship.
