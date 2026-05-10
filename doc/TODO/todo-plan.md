@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "dae240373",
+  "lastRecordedCommit": "e07f917fc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase7.tests.task2",
-  "expectedCommitMessage": "test: cover application skeleton accept contract surfaces",
+  "currentTaskId": "application-skeleton-orchestration.phase8.docs.task1",
+  "expectedCommitMessage": "docs: sync application skeleton phase orchestration ssot",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton accept contract surfaces",
-    "preCommitHead": "dae240373",
+    "expectedCommitMessage": "docs: sync application skeleton phase orchestration ssot",
+    "preCommitHead": "e07f917fc",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase7.tests.task2"
+    "taskId": "application-skeleton-orchestration.phase8.docs.task1"
   }
 }
 ```
@@ -194,14 +194,14 @@
 ### Stream: UI And Transport Coverage
 
 43. [DONE] `application-skeleton-orchestration.phase7.tests.task2` Add focused tests for the accept-contract HTTP transport/client/button disabled states without making PM read-model paths responsible for workflow decisions. Scope adds the button component file because the SSR test needs `React` in runtime scope (the button used `import type React`, which is erased at runtime). (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx`; expected commit: `test: cover application skeleton accept contract surfaces`).
-44. [PENDING] Git Commit: `test: cover application skeleton accept contract surfaces` (hash: TBD)
+44. [DONE] Git Commit: `test: cover application skeleton accept contract surfaces` (hash: e07f917fc)
 
 ## Phase 8 - SSOT Sync (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Stable Documentation
 
-45. [TODO] `application-skeleton-orchestration.phase8.docs.task1` Sync the implemented Application Skeleton A->B->A orchestration model into stable SSOT docs, including Core-owned command surface, Observe-vs-Dispatch, Stage Plan Shape, and premature-materialization block. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase orchestration ssot`).
-46. [TODO] Git Commit: `docs: sync application skeleton phase orchestration ssot` (hash: TBD)
+45. [DONE] `application-skeleton-orchestration.phase8.docs.task1` Sync the implemented Application Skeleton A->B->A orchestration model into stable SSOT docs, including Core-owned command surface, Observe-vs-Dispatch, Stage Plan Shape, and premature-materialization block. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase orchestration ssot`).
+46. [PENDING] Git Commit: `docs: sync application skeleton phase orchestration ssot` (hash: TBD)
 
 ## Phase 9 - Targeted Verification (owner: next agent, updated: 2026-05-10)
 

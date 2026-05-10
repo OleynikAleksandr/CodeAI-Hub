@@ -10,6 +10,8 @@
 
 > Follow-up refinement: `Archive/Application_Skeleton_Materialization_Prompt_Refactor.md` supersedes the earlier assumption that post-skeleton filesystem materialization should be owned by a separate downstream materialization layer. The current planning direction is: `Application Skeleton Agent` owns post-acceptance workspace skeleton materialization, and `Quality Gates Baseline Agent` owns post-acceptance gates integration.
 
+> Phase B orchestration pilot (shipped). The runtime now models the stage as `Phase 1A → Phase 1B → Phase 2`: Core-gated draft, user-led review with diff-based revision-vs-discussion classification and per-revision managed commits, Core-led materialization gated on the Core-owned Accept Contract command (UI button at `/api/v1/orchestrator/managed-stage-accept-contract` plus a typed-fallback phrase, both routed through the same handler). A premature-materialization validator derives blocked paths from the skeleton map and runs from the Phase 1A/1B post-turn guards. Acceptance Commit Policy: Option B (acceptance is folded into the Phase 2 transition; no separate accept commit). Read-model paths (e.g. `workflow-state` reads, PM refresh, button disabled-state derivation) remain side-effect free for provider messages — only the post-turn arbitration boundary may dispatch corrective turns.
+
 ## 1. Problem
 
 Текущий workflow после `Diagram Modules` слишком рано запускает Development Tree automation:
