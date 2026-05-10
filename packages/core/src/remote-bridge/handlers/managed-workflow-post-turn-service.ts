@@ -1,3 +1,5 @@
+import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -17,7 +19,10 @@ import {
   readDiagramModulesProgressSnapshot,
   syncDiagramModulesSubturnState,
 } from "./diagram-modules-progress";
-import { ManagedDocumentationCommitTransaction } from "./managed-documentation-commit-transaction";
+import {
+  injectApplicationSkeletonReviewRevisionPair,
+  ManagedDocumentationCommitTransaction,
+} from "./managed-documentation-commit-transaction";
 import {
   attachManagedGitStatus,
   attachValidationDirtyGate,
@@ -380,6 +385,13 @@ export class ManagedWorkflowPostTurnService {
         stage: params.stage,
       });
     }
+    if (applicationSkeletonReviewTurnKind === "revision") {
+      await this.injectApplicationSkeletonRevisionPairIfNeeded({
+        sessionId: params.sessionId,
+        stage: params.stage,
+        workspaceRoot: params.workspaceRoot,
+      });
+    }
     const qualityGatesProgress = attachValidationDirtyGate(
       latestQualityGatesProgress,
       "Quality Gates",
@@ -440,6 +452,41 @@ export class ManagedWorkflowPostTurnService {
           applicationSkeletonRepairMessage
         );
       }
+    }
+  }
+
+  private async injectApplicationSkeletonRevisionPairIfNeeded(params: {
+    readonly sessionId: string;
+    readonly stage: string;
+    readonly workspaceRoot: string;
+  }): Promise<void> {
+    const planPath = path.join(
+      params.workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    const planText = await readFile(planPath, "utf8").catch(() => null);
+    if (!planText?.includes('"application-skeleton.phase1b.review.task1"')) {
+      return;
+    }
+    const injection = injectApplicationSkeletonReviewRevisionPair(planText);
+    if (!injection) {
+      return;
+    }
+    try {
+      await writeFile(planPath, injection.nextPlanText, "utf8");
+      this.logger.info("Injected Application Skeleton phase 1B revision pair", {
+        nextCommitMessage: injection.nextCommitMessage,
+        nextCurrentTaskId: injection.nextCurrentTaskId,
+        revisionNumber: injection.nextRevisionNumber,
+        sessionId: params.sessionId,
+        stage: params.stage,
+      });
+    } catch (error: unknown) {
+      this.logger.warn("Failed to inject phase 1B revision pair", {
+        error: error instanceof Error ? error.message : String(error),
+        sessionId: params.sessionId,
+        stage: params.stage,
+      });
     }
   }
 }

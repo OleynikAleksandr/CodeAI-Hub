@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "acb91a52f",
+  "lastRecordedCommit": "1c045f172",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase4.phase1b.task1",
-  "expectedCommitMessage": "fix: classify application skeleton review turns",
+  "currentTaskId": "application-skeleton-orchestration.phase4.phase1b.task2",
+  "expectedCommitMessage": "fix: inject application skeleton review revision tasks",
   "debt": {
-    "expectedCommitMessage": "fix: classify application skeleton review turns",
-    "preCommitHead": "acb91a52f",
+    "expectedCommitMessage": "fix: inject application skeleton review revision tasks",
+    "preCommitHead": "1c045f172",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase4.phase1b.task1"
+    "taskId": "application-skeleton-orchestration.phase4.phase1b.task2"
   }
 }
 ```
@@ -133,12 +133,12 @@
 ### Stream: Review Turn Classification
 
 21. [DONE] `application-skeleton-orchestration.phase4.phase1b.task1` Add the Phase 1B revision-vs-discussion classifier: tracked owned Application Skeleton contract diff means revision, no owned diff means standard session-history-only discussion/no-op. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton review turns`).
-22. [PENDING] Git Commit: `fix: classify application skeleton review turns` (hash: TBD)
+22. [DONE] Git Commit: `fix: classify application skeleton review turns` (hash: 1c045f172)
 
 ### Stream: Dynamic Revision Plan Injection
 
-23. [TODO] `application-skeleton-orchestration.phase4.phase1b.task2` Inject `revisionN.task1 + Git Commit` pairs before the open-ended Phase 1B review task for each structurally valid artifact-changing revision, then return `currentTaskId` to the open review task after commit. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: inject application skeleton review revision tasks`).
-24. [TODO] Git Commit: `fix: inject application skeleton review revision tasks` (hash: TBD)
+23. [DONE] `application-skeleton-orchestration.phase4.phase1b.task2` Inject `revisionN.task1 + Git Commit` pairs before the open-ended Phase 1B review task for each structurally valid artifact-changing revision, then return `currentTaskId` to the open review task after commit. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: inject application skeleton review revision tasks`).
+24. [PENDING] Git Commit: `fix: inject application skeleton review revision tasks` (hash: TBD)
 
 ### Stream: Per-Revision Managed Commit
 

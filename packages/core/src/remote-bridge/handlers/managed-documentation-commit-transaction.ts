@@ -19,6 +19,76 @@ const JSON_FENCE_START_RE = /^```json\s*/u;
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const WORKSPACE_PLAN_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
 const WORKSPACE_PLAN_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
+const APPLICATION_SKELETON_REVIEW_TASK_LINE_RE =
+  /^(\d+)\.\s*\[\w+\]\s*`application-skeleton\.phase1b\.review\.task1`/mu;
+const APPLICATION_SKELETON_REVISION_TASK_RE =
+  /`application-skeleton\.phase1b\.review\.revision(\d+)\.task1`/gu;
+const ACTIVE_PLAN_STATE_BLOCK_RE =
+  /<!-- codeai-plan-state:start -->\s*```json\s*([\s\S]*?)\s*```\s*<!-- codeai-plan-state:end -->/u;
+
+export interface ApplicationSkeletonReviewRevisionInjection {
+  readonly nextCommitMessage: string;
+  readonly nextCurrentTaskId: string;
+  readonly nextPlanText: string;
+  readonly nextRevisionNumber: number;
+}
+
+// Inject a `phase1b.review.revisionN.task1` + `Git Commit` pair right above the
+// open-ended `phase1b.review.task1` line in an Application Skeleton stage plan,
+// and rewrite the JSON state block to point at the new revision task. Returns
+// `null` when the review task line or the JSON state block is missing —
+// callers must keep the original plan text in that case.
+export const injectApplicationSkeletonReviewRevisionPair = (
+  planText: string
+): ApplicationSkeletonReviewRevisionInjection | null => {
+  const reviewMatch = APPLICATION_SKELETON_REVIEW_TASK_LINE_RE.exec(planText);
+  if (!reviewMatch) {
+    return null;
+  }
+  let lastRevision = 0;
+  for (const match of planText.matchAll(
+    APPLICATION_SKELETON_REVISION_TASK_RE
+  )) {
+    const candidate = Number.parseInt(match[1] ?? "", 10);
+    if (Number.isFinite(candidate) && candidate > lastRevision) {
+      lastRevision = candidate;
+    }
+  }
+  const nextRevisionNumber = lastRevision + 1;
+  const nextCurrentTaskId = `application-skeleton.phase1b.review.revision${nextRevisionNumber}.task1`;
+  const nextCommitMessage = `docs: revise application skeleton contract — phase 1B revision ${nextRevisionNumber}`;
+  const startNumber = reviewMatch[1] ?? "1";
+  const newPair = [
+    `${startNumber}. [IN_PROGRESS] \`${nextCurrentTaskId}\` User-led Phase 1B revision ${nextRevisionNumber} of the Application Skeleton contract artifacts; structurally validate and commit before returning to the open-ended review (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${nextCommitMessage}\`).`,
+    `${startNumber}. [TODO] Git Commit: \`${nextCommitMessage}\` (hash: TBD)`,
+    "",
+  ].join("\n");
+  const reviewLineStart = reviewMatch.index;
+  const planWithInjection = `${planText.slice(0, reviewLineStart)}${newPair}${planText.slice(reviewLineStart)}`;
+  const stateBlockMatch = ACTIVE_PLAN_STATE_BLOCK_RE.exec(planWithInjection);
+  if (!stateBlockMatch) {
+    return null;
+  }
+  let state: Record<string, unknown>;
+  try {
+    state = JSON.parse(stateBlockMatch[1] ?? "{}") as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+  state.currentTaskId = nextCurrentTaskId;
+  state.expectedCommitMessage = nextCommitMessage;
+  const renderedState = `<!-- codeai-plan-state:start -->\n\`\`\`json\n${JSON.stringify(state, null, 2)}\n\`\`\`\n<!-- codeai-plan-state:end -->`;
+  const nextPlanText = planWithInjection.replace(
+    stateBlockMatch[0],
+    renderedState
+  );
+  return {
+    nextCommitMessage,
+    nextCurrentTaskId,
+    nextPlanText,
+    nextRevisionNumber,
+  };
+};
 
 type ManagedDocumentationCommitTransactionStatus =
   | "blocked"
