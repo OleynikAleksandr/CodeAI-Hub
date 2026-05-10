@@ -227,6 +227,7 @@ test("post-turn service does not dispatch via gateway without explicit handle() 
   const _service = new ManagedWorkflowPostTurnService({
     developmentTreeAgentSessions: {
       gateway: {
+        createSessionForWorkflow: () => Promise.resolve(null),
         handleMessage: (sessionId, content) => {
           dispatched.push({ content, sessionId });
           return Promise.resolve();

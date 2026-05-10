@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "e07f917fc",
+  "lastRecordedCommit": "4bdeaf94c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase8.docs.task1",
-  "expectedCommitMessage": "docs: sync application skeleton phase orchestration ssot",
+  "currentTaskId": "application-skeleton-orchestration.phase9.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton phase orchestration verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync application skeleton phase orchestration ssot",
-    "preCommitHead": "e07f917fc",
+    "expectedCommitMessage": "docs: record application skeleton phase orchestration verification",
+    "preCommitHead": "4bdeaf94c",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase8.docs.task1"
+    "taskId": "application-skeleton-orchestration.phase9.verify.task1"
   }
 }
 ```
@@ -201,14 +201,14 @@
 ### Stream: Stable Documentation
 
 45. [DONE] `application-skeleton-orchestration.phase8.docs.task1` Sync the implemented Application Skeleton A->B->A orchestration model into stable SSOT docs, including Core-owned command surface, Observe-vs-Dispatch, Stage Plan Shape, and premature-materialization block. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase orchestration ssot`).
-46. [PENDING] Git Commit: `docs: sync application skeleton phase orchestration ssot` (hash: TBD)
+46. [DONE] Git Commit: `docs: sync application skeleton phase orchestration ssot` (hash: 4bdeaf94c)
 
 ## Phase 9 - Targeted Verification (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Build And Test Evidence
 
-47. [TODO] `application-skeleton-orchestration.phase9.verify.task1` Run targeted Core tests for touched handlers, PM component/service tests, `npm run build --workspace @codeai-hub/core`, and `npm run typecheck:webview`; record evidence and any known residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton phase orchestration verification`).
-48. [TODO] Git Commit: `docs: record application skeleton phase orchestration verification` (hash: TBD)
+47. [DONE] `application-skeleton-orchestration.phase9.verify.task1` Run targeted Core tests for touched handlers, PM component/service tests, `npm run build --workspace @codeai-hub/core`, and `npm run typecheck:webview`; record evidence and any known residual risk in this plan. Scope expanded by four files because the build surfaced four narrow type errors that needed to land with the verification record. (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `docs: record application skeleton phase orchestration verification`).
+48. [PENDING] Git Commit: `docs: record application skeleton phase orchestration verification` (hash: TBD)
 
 ## Phase 10 - Release Build Confirmation Gate (owner: next agent, updated: 2026-05-10)
 

@@ -1,4 +1,5 @@
 import type { ApplicationSkeletonPhase } from "./application-skeleton-phase-state";
+import type { ApplicationSkeletonPrematureDecision } from "./application-skeleton-premature-materialization-validator";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 
 // Phase 1A post-turn structural guard.

@@ -65,7 +65,7 @@ export const runApplicationSkeletonAcceptContractCommand = async (
   const workspaceRoot = session?.workspacePath ?? null;
   const workspaceSlug = session?.initiativeSlug ?? null;
   if (
-    !(workspaceRoot && workspaceSlug) ||
+    !(session && workspaceRoot && workspaceSlug) ||
     session.stage !== "application_skeleton"
   ) {
     return {

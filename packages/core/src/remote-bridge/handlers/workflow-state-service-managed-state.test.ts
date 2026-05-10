@@ -224,6 +224,7 @@ test("workflow-state read with incomplete skeleton draft does not dispatch provi
     const service = new WorkflowStateService({
       developmentTreeAgentSessions: {
         gateway: {
+          createSessionForWorkflow: () => Promise.resolve(null),
           handleMessage: (sessionId, content) => {
             dispatched.push({
               content: typeof content === "string" ? content : "payload",
