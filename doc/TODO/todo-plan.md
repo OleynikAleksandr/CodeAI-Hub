@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "cda4b3a5e",
+  "lastRecordedCommit": "338789bf4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase4.stream4.task1",
-  "expectedCommitMessage": "fix: commit managed materialization phases",
+  "currentTaskId": "runtime-contract.phase4.stream4.task2",
+  "expectedCommitMessage": "fix: share managed commit boundary across phases",
   "debt": {
-    "expectedCommitMessage": "fix: commit managed materialization phases",
-    "preCommitHead": "cda4b3a5e",
+    "expectedCommitMessage": "fix: share managed commit boundary across phases",
+    "preCommitHead": "338789bf4",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase4.stream4.task1"
+    "taskId": "runtime-contract.phase4.stream4.task2"
   }
 }
 ```
@@ -102,9 +102,9 @@
 ### Stream: Materialization And Integration Commit Handler
 
 17. [DONE] `runtime-contract.phase4.stream4.task1` Open Core-owned materialization/integration phase after acceptance and wire managed commit + plan advance for Application Skeleton and Quality Gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: commit managed materialization phases`).
-18. [PENDING] Git Commit: `fix: commit managed materialization phases` (hash: TBD)
-19. [TODO] `runtime-contract.phase4.stream4.task2` Generalize managed commit boundary validation for draft/materialization/integration phases without duplicating Diagram Modules logic (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: share managed commit boundary across phases`).
-20. [TODO] Git Commit: `fix: share managed commit boundary across phases` (hash: TBD)
+18. [DONE] Git Commit: `fix: commit managed materialization phases` (hash: 338789bf4)
+19. [DONE] `runtime-contract.phase4.stream4.task2` Generalize managed commit boundary validation for draft/materialization/integration phases without duplicating Diagram Modules logic (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: share managed commit boundary across phases`).
+20. [PENDING] Git Commit: `fix: share managed commit boundary across phases` (hash: TBD)
 
 ## Phase 5 — Gap E User-Visible Delivery And Audit Storage (owner: next agent, updated: 2026-05-10)
 

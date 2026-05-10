@@ -214,43 +214,63 @@ const git = async (
   return stdout.trim();
 };
 
-const filterOwnedFilesForActivePlan = (params: {
+type StageScopeFilter = (params: {
   readonly activePlan: ManagedActivePlanState;
   readonly ownedFiles: readonly string[];
-  readonly stage: ManagedStageId;
-}): readonly string[] => {
-  if (params.stage !== "diagram_modules") {
-    return params.ownedFiles;
-  }
-  const workflowFiles = params.ownedFiles.filter((file) =>
+}) => readonly string[];
+
+const filterDiagramModulesForActivePlan: StageScopeFilter = ({
+  activePlan,
+  ownedFiles,
+}) => {
+  const workflowFiles = ownedFiles.filter((file) =>
     file.includes("/workflow/")
   );
   if (
-    params.activePlan.currentTaskId === "diagram-modules.stream1.task1" ||
-    params.activePlan.expectedCommitMessage.includes("product part index")
+    activePlan.currentTaskId === "diagram-modules.stream1.task1" ||
+    activePlan.expectedCommitMessage.includes("product part index")
   ) {
     return [
-      ...params.ownedFiles.filter((file) =>
+      ...ownedFiles.filter((file) =>
         file.endsWith("/diagram_modules/product-parts.index.md")
       ),
       ...workflowFiles,
     ];
   }
   const partId = DIAGRAM_MODULES_PRODUCT_PART_TASK_RE.exec(
-    params.activePlan.currentTaskId
+    activePlan.currentTaskId
   )?.[1];
   return partId
     ? [
-        ...params.ownedFiles.filter((file) =>
+        ...ownedFiles.filter((file) =>
           file.endsWith("/diagram_modules/product-parts.index.md")
         ),
-        ...params.ownedFiles.filter((file) =>
+        ...ownedFiles.filter((file) =>
           file.endsWith(`/diagram_modules/product-parts/${partId}.md`)
         ),
         ...workflowFiles,
       ]
-    : params.ownedFiles;
+    : ownedFiles;
 };
+
+const passthroughOwnedFilesFilter: StageScopeFilter = ({ ownedFiles }) =>
+  ownedFiles;
+
+const STAGE_SCOPE_FILTERS: Record<ManagedStageId, StageScopeFilter> = {
+  application_skeleton: passthroughOwnedFilesFilter,
+  diagram_modules: filterDiagramModulesForActivePlan,
+  quality_gates: passthroughOwnedFilesFilter,
+};
+
+const filterOwnedFilesForActivePlan = (params: {
+  readonly activePlan: ManagedActivePlanState;
+  readonly ownedFiles: readonly string[];
+  readonly stage: ManagedStageId;
+}): readonly string[] =>
+  STAGE_SCOPE_FILTERS[params.stage]({
+    activePlan: params.activePlan,
+    ownedFiles: params.ownedFiles,
+  });
 
 const listStagedFiles = async (
   workspaceRoot: string
