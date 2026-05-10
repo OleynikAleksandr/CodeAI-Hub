@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "3154d9c50",
+  "lastRecordedCommit": "375c47f10",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase7.stream7.task3",
-  "expectedCommitMessage": "test: preserve diagram modules managed subturns",
+  "currentTaskId": "runtime-contract.phase8.stream8.task1",
+  "expectedCommitMessage": "docs: sync runtime conformance ssot",
   "debt": {
-    "expectedCommitMessage": "test: preserve diagram modules managed subturns",
-    "preCommitHead": "3154d9c50",
+    "expectedCommitMessage": "docs: sync runtime conformance ssot",
+    "preCommitHead": "375c47f10",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase7.stream7.task3"
+    "taskId": "runtime-contract.phase8.stream8.task1"
   }
 }
 ```
@@ -137,14 +137,14 @@
 35. [DONE] `runtime-contract.phase7.stream7.task2` Cover Quality Gates contract acceptance -> integration -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: cover quality gates managed integration`).
 36. [DONE] Git Commit: `test: cover quality gates managed integration` (hash: 3154d9c50)
 37. [DONE] `runtime-contract.phase7.stream7.task3` Re-run Diagram Modules happy-path regression around subturn continuation, feedback and post-turn acceptance after shared handler changes (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `test: preserve diagram modules managed subturns`).
-38. [PENDING] Git Commit: `test: preserve diagram modules managed subturns` (hash: TBD)
+38. [DONE] Git Commit: `test: preserve diagram modules managed subturns` (hash: 375c47f10)
 
 ## Phase 8 — SSOT Sync And Targeted Verification (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Documentation Sync
 
-39. [TODO] `runtime-contract.phase8.stream8.task1` Sync accepted runtime conformance behavior into stable SSOT docs after code is implemented (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit: `docs: sync runtime conformance ssot`).
-40. [TODO] Git Commit: `docs: sync runtime conformance ssot` (hash: TBD)
+39. [DONE] `runtime-contract.phase8.stream8.task1` Sync accepted runtime conformance behavior into stable SSOT docs after code is implemented (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit: `docs: sync runtime conformance ssot`).
+40. [PENDING] Git Commit: `docs: sync runtime conformance ssot` (hash: TBD)
 
 ### Stream: Tooling Verification
 
