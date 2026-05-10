@@ -54,7 +54,7 @@ const buildAwaitingAcceptanceProgress =
     mapExists: true,
     mappingReady: true,
     markdownExists: true,
-    materializationState: "not_started",
+    materializationState: "artifact",
     materialized: false,
     observedMaterialization: false,
     substep: "awaiting_acceptance",

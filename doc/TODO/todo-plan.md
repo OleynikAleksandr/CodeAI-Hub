@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "ead1484e5",
+  "lastRecordedCommit": "494e00c65",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream7.task1",
-  "expectedCommitMessage": "docs: sync application skeleton phase b ssot",
+  "currentTaskId": "runtime-contract.phase10.stream8.task1",
+  "expectedCommitMessage": "docs: record phase 10 verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync application skeleton phase b ssot",
-    "preCommitHead": "ead1484e5",
+    "expectedCommitMessage": "docs: record phase 10 verification",
+    "preCommitHead": "494e00c65",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream7.task1"
+    "taskId": "runtime-contract.phase10.stream8.task1"
   }
 }
 ```
@@ -285,12 +285,18 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: SSOT Sync
 
 80. [DONE] `runtime-contract.phase10.stream7.task1` Sync the Phase B / B→A acceptance / materialisation continuation behaviours actually shipped into stable SSOT (Application Skeleton sections only; Quality Gates is intentionally deferred) (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton phase b ssot`).
-81. [PENDING] Git Commit: `docs: sync application skeleton phase b ssot` (hash: TBD)
+81. [DONE] Git Commit: `docs: sync application skeleton phase b ssot` (hash: 494e00c65)
 
 ### Stream: Tooling Verification
 
-82. [TODO] `runtime-contract.phase10.stream8.task1` Run targeted builds and tests for touched Core packages (`npm run build --workspace @codeai-hub/core`, targeted node:test runner over Phase 10 spec files), record evidence inline in this plan, fix any TypeScript regressions surfaced by the Core build (scope: `doc/TODO/todo-plan.md` plus any single-file regression fix discovered during verification; expected commit: `docs: record phase 10 verification`).
-83. [TODO] Git Commit: `docs: record phase 10 verification` (hash: TBD)
+82. [DONE] `runtime-contract.phase10.stream8.task1` Run targeted builds and tests for touched Core packages and fix two TypeScript regressions surfaced by the Core build (`materializationState: "not_started"` is not a valid `ApplicationSkeletonSubstep` — replaced with `"artifact"` in two new test fixtures) (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `docs: record phase 10 verification`).
+83. [PENDING] Git Commit: `docs: record phase 10 verification` (hash: TBD)
+
+**Phase 10 verification evidence (2026-05-10).**
+
+- `npm run build --workspace @codeai-hub/core` → clean (`tsc` exit 0) after the two `materializationState` fixture corrections noted above.
+- Targeted node:test runner over Phase 10 spec files (`managed-workflow-post-turn-service.test.ts`, `application-skeleton-continuation-dispatcher.test.ts`, `application-skeleton-completion-observer.test.ts`, `application-skeleton-end-to-end.test.ts`, `application-skeleton-phase-b-rollover.test.ts`, `managed-plan-orchestrator-installer.test.ts`): **26/26 PASS** in ≈4.43s.
+- Pre-commit gates passed on every Phase 10 commit through Stream 7.
 
 ### Stream: Release Build Confirmation Gate
 
