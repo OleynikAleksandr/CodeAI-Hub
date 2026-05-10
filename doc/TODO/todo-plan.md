@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "c280d78a4",
+  "lastRecordedCommit": "84a119ae4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.fixture-migration.task1",
-  "expectedCommitMessage": "test: migrate handler fixture task ids to plain phase numbering (batch 1)",
+  "currentTaskId": "application-skeleton-orchestration.phase12.fixture-migration.task2",
+  "expectedCommitMessage": "test: migrate handler fixture task ids to plain phase numbering (batch 2)",
   "debt": {
-    "expectedCommitMessage": "test: migrate handler fixture task ids to plain phase numbering (batch 1)",
-    "preCommitHead": "c280d78a4",
+    "expectedCommitMessage": "test: migrate handler fixture task ids to plain phase numbering (batch 2)",
+    "preCommitHead": "84a119ae4",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.fixture-migration.task1"
+    "taskId": "application-skeleton-orchestration.phase12.fixture-migration.task2"
   }
 }
 ```
@@ -266,12 +266,12 @@
 ### Stream: Handler Fixture Migration (Batch 1)
 
 63. [DONE] `application-skeleton-orchestration.phase12.fixture-migration.task1` Migrate hardcoded legacy `phase1a` / `phase1b` / `phase2.materialize` task IDs in handler test fixtures to the plain-phase task IDs while preserving each test's existing behavioral assertions. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts`; expected commit: `test: migrate handler fixture task ids to plain phase numbering (batch 1)`).
-64. [PENDING] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 1)` (hash: TBD)
+64. [DONE] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 1)` (hash: 84a119ae4)
 
 ### Stream: Handler Fixture Migration (Batch 2)
 
-65. [TODO] `application-skeleton-orchestration.phase12.fixture-migration.task2` Migrate hardcoded legacy task IDs in the remaining handler tests (workflow-state bootstrap, end-to-end, post-turn) to the plain-phase task IDs. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)`).
-66. [TODO] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)` (hash: TBD)
+65. [DONE] `application-skeleton-orchestration.phase12.fixture-migration.task2` Migrate hardcoded legacy task IDs in the remaining handler tests (workflow-state bootstrap and post-turn) to the plain-phase task IDs. The end-to-end test holds no task IDs — only classifier enum strings and variable names — so it migrates with Stream F instead. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)`).
+66. [PENDING] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)` (hash: TBD)
 
 ### Stream: Phase Classifier Enum Rename
 

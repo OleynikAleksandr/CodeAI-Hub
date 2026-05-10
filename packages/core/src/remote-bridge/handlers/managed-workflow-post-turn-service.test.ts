@@ -119,7 +119,7 @@ const REVISION_PLAN_TEMPLATE = [
   "{",
   '  "schema": "codeai-plan-v1",',
   '  "executionScopeStatus": "ACTIVE",',
-  '  "currentTaskId": "application-skeleton.phase1b.review.task1",',
+  '  "currentTaskId": "application-skeleton.phase2.review.task1",',
   '  "expectedCommitMessage": "(open-ended review)"',
   "}",
   "```",
@@ -129,7 +129,7 @@ const REVISION_PLAN_TEMPLATE = [
   "",
   "### Stream: Phase 1B User-Led Review",
   "",
-  "3. [TODO] `application-skeleton.phase1b.review.task1` Open-ended review.",
+  "3. [TODO] `application-skeleton.phase2.review.task1` Open-ended review.",
   "",
 ].join("\n");
 
@@ -141,13 +141,13 @@ const REVISION1_CURRENT_TASK_JSON_RE =
   /"currentTaskId": "application-skeleton\.phase1b\.review\.revision1\.task1"/u;
 const REVISION1_COMMIT_MSG_JSON_RE =
   /"expectedCommitMessage": "docs: revise application skeleton contract — phase 1B revision 1"/u;
-const REVIEW_OPEN_TASK_RE = /application-skeleton\.phase1b\.review\.task1/u;
+const REVIEW_OPEN_TASK_RE = /application-skeleton\.phase2\.review\.task1/u;
 const REVISION1_BACKTICKS_RE =
   /`application-skeleton\.phase1b\.review\.revision1\.task1`/u;
 const REVIEW_OPEN_BACKTICKS_RE =
-  /`application-skeleton\.phase1b\.review\.task1`/u;
+  /`application-skeleton\.phase2\.review\.task1`/u;
 const PLAN_REMOVAL_REVIEW_LINE_RE =
-  /3\. \[TODO\] `application-skeleton\.phase1b\.review\.task1` Open-ended review\./u;
+  /3\. \[TODO\] `application-skeleton\.phase2\.review\.task1` Open-ended review\./u;
 
 test("revision injection helper inserts revision1 task pair before review.task1", () => {
   const result = injectApplicationSkeletonReviewRevisionPair(
@@ -192,7 +192,7 @@ test("revision injection helper increments revision number on subsequent calls",
   // JSON state, but the revision1 task pair stays in the plan body.
   const planAfterAdvance = first.nextPlanText.replace(
     REVISION1_CURRENT_TASK_JSON_RE,
-    '"currentTaskId": "application-skeleton.phase1b.review.task1"'
+    '"currentTaskId": "application-skeleton.phase2.review.task1"'
   );
   const second = injectApplicationSkeletonReviewRevisionPair(planAfterAdvance);
   assert.ok(second);
