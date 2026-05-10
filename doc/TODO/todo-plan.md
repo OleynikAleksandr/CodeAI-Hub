@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "8524963de",
+  "lastRecordedCommit": "c56a34ac4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream10.task2",
-  "expectedCommitMessage": "build: bump release manifests to 1.2.219",
+  "currentTaskId": "runtime-contract.phase11.stream0.task1",
+  "expectedCommitMessage": "docs: diagnose pm initial context bundle source-of-truth gap",
   "debt": {
-    "expectedCommitMessage": "build: bump release manifests to 1.2.219",
-    "preCommitHead": "8524963de",
+    "expectedCommitMessage": "docs: diagnose pm initial context bundle source-of-truth gap",
+    "preCommitHead": "c56a34ac4",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream10.task2"
+    "taskId": "runtime-contract.phase11.stream0.task1"
   }
 }
 ```
@@ -307,14 +307,55 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 85. [DONE] `runtime-contract.phase10.stream10.task1` After explicit confirmation only, prepare release notes/version files for the next version bump and run release build scripts per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase b repair`).
 86. [DONE] Git Commit: `build: release application skeleton phase b repair` (hash: 8524963de)
 87. [DONE] `runtime-contract.phase10.stream10.task2` Commit version manifests and lockfile bumped by `build-all.sh`, plus add `native/apple-*-helper/.build/` to `.gitignore` since those native-helper build artifacts are regenerated on every run (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, .gitignore`; expected commit: `build: bump release manifests to 1.2.219`).
-88. [PENDING] Git Commit: `build: bump release manifests to 1.2.219` (hash: TBD)
+88. [DONE] Git Commit: `build: bump release manifests to 1.2.219` (hash: c56a34ac4)
 
 ### Stream: User Workflow Acceptance Testing
 
-89. [TODO] `runtime-contract.phase10.stream11.task1` User retests Application Skeleton (full draft → acceptance → materialisation → commit advance), reverifies Diagram Modules and at least one controlled managed rollover scenario inside Phase B on the new VSIX (scope: chat/process observation only; no commit required).
+89. [BLOCKED] `runtime-contract.phase10.stream11.task1` User retests Application Skeleton (full draft → acceptance → materialisation → commit advance), reverifies Diagram Modules and at least one controlled managed rollover scenario inside Phase B on the new VSIX (scope: chat/process observation only; no commit required). Result on VSIX 1.2.219: Diagram Modules retest immediately failed with `activeStage: null` preflight error in the embedded managed-workflow context bundle. Disk-side `workspace.plan.md` in the managed workspace is correct (`activeStage: "diagram_modules"`), but the PM-side initial context builder (`src/client/project-manager/services/managed-workflow-initial-context.ts`) constructs the bundle on Project Manager and reads workspace state via Core HTTP `workflow-artifact` endpoint whose allowlist refuses `doc/TODO/workspace.plan.md` (only `.codeai-hub/<slug>/` paths are allowed). PM is not the canonical source of truth for managed bundles; Core must be the only owner of bundle assembly. Acceptance is paused until Phase 11 removes the PM-side builder and routes initial sessions through Core's `buildManagedWorkflowContextBundle`.
 
 ### Stream: Scope Closeout
 
 90. [TODO] `runtime-contract.phase10.stream12.task1` After explicit user acceptance, archive this todo plan, decide disposition for the planning documents touched in Stream 1 and the deferred design layer, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton phase b repair`).
 91. [TODO] Git Commit: `docs: close application skeleton phase b repair` (hash: TBD)
 92. [TODO] `runtime-contract.phase10.stream12.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+
+## Phase 11 — PM Initial Context Bundle Source-Of-Truth Repair (owner: next agent, updated: 2026-05-10)
+
+### Stream: PM Initial Bundle Source-Of-Truth Diagnosis
+
+93. [DONE] `runtime-contract.phase11.stream0.task1` Diagnose the dual-bundle-builder regression surfaced on VSIX 1.2.219: PM-side `managed-workflow-initial-context.ts` builds the managed-workflow context bundle for new sessions while Core has its own `buildManagedWorkflowContextBundle` for rollover/continuation; the PM path also depends on a Core HTTP `workflow-artifact` endpoint whose allowlist refuses `doc/TODO/workspace.plan.md`. Identify all PM-side readers of authoritative state, the exact Core-side bundle assembly that should subsume them, and any new Core endpoint contract needed so PM can fetch a prepared bundle without owning state. Record findings, root-cause confirmation, and proposed follow-up streams inline in this plan; do not edit code or planning documents in this microtask. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: diagnose pm initial context bundle source-of-truth gap`).
+94. [PENDING] Git Commit: `docs: diagnose pm initial context bundle source-of-truth gap` (hash: TBD)
+
+**Diagnosis findings (2026-05-10).**
+
+The user has reasserted an architectural rule: Project Manager is a UI/control surface only, never a source of truth. Bundle assembly and authoritative state must live in Core; PM should fetch the assembled bundle and embed it verbatim. Phase 11 implements this rule for the managed-workflow context bundle.
+
+Root-cause chain confirmed.
+
+- Two bundle builders exist with divergent shape and divergent disk readers.
+  - PM-side: `src/client/project-manager/services/managed-workflow-initial-context.ts:60-138` (`buildManagedWorkflowInitialContext`). Reads workspace state via Core HTTP `/api/v1/orchestrator/workflow-artifact` for `doc/TODO/workspace.plan.md` and the active stage todo-plan; renders Plan Status with 6 fields; **does not embed any source artifacts** (no Final_Description, virtual-simulation, product-parts, etc.).
+  - Core-side: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts:46-84` (`buildManagedWorkflowContextBundle`). Reads `workspace.plan.md` directly from disk (no HTTP, no allowlist), renders Plan Status with 7 fields including `acceptedCommits.length`, and embeds source artifacts per stage via `readSourceArtifacts`.
+- PM HTTP request is rejected by allowlist. `packages/core/src/workflow/paths/workflow-artifact-paths.ts:67-77` (`isWorkflowWorkspacePathAllowed`) only allows paths starting with `.codeai-hub/<slug>/`. Path `doc/TODO/workspace.plan.md` does not match → handler returns error → `readArtifactText` returns `null` → `parseJsonBlock` returns `{}` → `activeStage` falls back to `null`.
+- Single PM caller of the broken builder. `src/client/project-manager/services/description-submit-service.ts:20, 479` imports and invokes `buildManagedWorkflowInitialContext`, then concatenates the bundle into the prompt at line 486-492 (`prompt: [contract.prompt, managedContext].filter(Boolean).join("\n\n")`). The same code path runs for every initial managed session (Diagram Modules / Application Skeleton / Quality Gates). No other PM-side consumer of the builder exists.
+- Other PM-side reads of managed state are descriptor-shaped, not source-of-truth. `workflow-source-artifact-descriptors.ts` hard-codes path patterns; `prompt-pack-builder.ts` consumes those descriptors; `workflow-step-start-service.ts` decides stage transitions but does not parse plan-state JSON. UI panels (`diagram-modules-panel.tsx`, `quality-gates-panel.tsx`, `application-skeleton-help.tsx`, `diagram-modules-progressive-model.ts`) read UI-shaped state, not disk artifacts. The "PM as source of truth" violation is concentrated in `managed-workflow-initial-context.ts` and its caller; that is the only surface this scope must remove.
+- Core has no HTTP endpoint that returns the assembled bundle. `packages/core/src/remote-bridge/handlers/http-api-router.ts:35, 166-168` registers `/api/v1/orchestrator/workflow-artifact` (per-file with allowlist) and the workflow-contract endpoints, but nothing for an assembled managed-context bundle. Phase 11 must add a new endpoint (working name `/api/v1/orchestrator/managed-context-bundle`) following the same registration pattern, backed by a thin adapter over `buildManagedWorkflowContextBundle`.
+- Core builder needs an initial-stage adapter. `DocumentationRolloverContext` (rollover-specific fields like `rolloverId`, `runSlug`, `sourceSessionId`, `targetSessionId`, `lastUserVisibleAssistantMessage`) is meaningless for initial sessions. The thinnest fit is a separate exported function `buildManagedWorkflowContextBundleForInitialStage({ stageId, workspacePath, workspaceSlug, providerId })` that constructs an internal context with rollover fields nulled and delegates to the existing `buildManagedWorkflowContextBundle` core; the rendered text is what the new HTTP endpoint returns.
+
+Why Diagram Modules retest succeeded on VSIX 1.2.218 but failed on VSIX 1.2.219. Bundle path was the same on both releases — `activeStage: null` always reached the agent. The visible difference is provider behaviour: this Codex CLI session strictly applied the `## Managed Workflow Context Bundle` preflight contract and stopped, where the prior 1.2.218 session let materialisation proceed. Either way the underlying allowlist gap was always present and the PM-side builder always shipped a hollowed-out bundle for managed-workspace state. Phase 11 fixes the root cause, not the provider behaviour.
+
+Test coverage to migrate.
+
+- PM-side: `src/client/project-manager/services/managed-workflow-initial-context.test.ts` (2 tests: happy path + pre-managed-stage rejection). To be deleted with the file.
+- Core-side: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts` (existing coverage of full bundle including artifact embedding and plan status). Stays. New tests cover the initial-stage adapter and the HTTP endpoint round-trip.
+
+Proposed follow-up streams.
+
+- Stream 1: Add Core-side initial-stage adapter and HTTP endpoint that returns the assembled bundle (`buildManagedWorkflowContextBundleForInitialStage` + new handler in `http-api-router.ts`). ≤3 files.
+- Stream 2: Regression coverage for the adapter and the HTTP endpoint round-trip. ≤2 files.
+- Stream 3: Replace the PM-side builder with a verbatim Core HTTP fetch. Delete `managed-workflow-initial-context.ts` (and its test file) and update `description-submit-service.ts` to call the new endpoint. ≤3 files.
+- Stream 4: Tooling Verification (targeted Core build + targeted node:test runner over the new spec files). ≤1 file (this plan only).
+- Stream 5: Release Build (release notes + version bump + `build-all.sh` + `build-release.sh`). Mirrors Phase 10 / Stream 10 pattern with version 1.2.220.
+- Stream 6: User Workflow Acceptance Testing (no-commit). Pause for user retest of Diagram Modules and Application Skeleton on the new VSIX.
+- Stream 7: Scope Closeout. Final reserved post-closeout handoff anchor.
+
+This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 retest. SSOT update in `WorkflowSteps_Overview.md` is intentionally rolled into Stream 3 (single edit at the same location as the Phase 10 sync) rather than split into a separate stream, keeping Phase 11 lean.
