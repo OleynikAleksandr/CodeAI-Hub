@@ -43,6 +43,28 @@ export interface ManagedContextBundle {
   readonly workspacePlanText: string | null;
 }
 
+export const buildManagedWorkflowContextBundleForInitialStage = (params: {
+  readonly providerId: string;
+  readonly stageId: string;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): Promise<ManagedContextBundle | null> => {
+  const initialContext: DocumentationRolloverContext = {
+    createdAtIso: new Date().toISOString(),
+    lastUserVisibleAssistantMessage: null,
+    modelBinding: null,
+    providerId: params.providerId,
+    rolloverId: "",
+    runSlug: null,
+    sourceSessionId: "",
+    stageId: params.stageId,
+    targetSessionId: "",
+    workspacePath: params.workspacePath,
+    workspaceSlug: params.workspaceSlug,
+  };
+  return buildManagedWorkflowContextBundle(initialContext);
+};
+
 export const buildManagedWorkflowContextBundle = async (
   context: DocumentationRolloverContext
 ): Promise<ManagedContextBundle | null> => {

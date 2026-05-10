@@ -19,6 +19,7 @@ import {
 } from "./idea-contract-service";
 import { InitiativesHttpHandler } from "./initiatives-http-handler";
 import { handleLocalizationBootstrapRead } from "./localization-bootstrap-http-handler";
+import { handleManagedContextBundleRead } from "./managed-context-bundle-http-handler";
 import type { SessionRequestHandler } from "./session-request-handler";
 import type {
   StatusInfo,
@@ -33,6 +34,8 @@ const LOCALIZATION_BOOTSTRAP_ENDPOINT = "/api/v1/localization/bootstrap";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
+const MANAGED_CONTEXT_BUNDLE_ENDPOINT =
+  "/api/v1/orchestrator/managed-context-bundle";
 
 export interface RouterDependencies {
   readonly app: Express;
@@ -166,6 +169,12 @@ export class HttpApiRouter {
     app.get(WORKFLOW_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
       await handleWorkflowArtifactRead(req, res);
     });
+    app.get(
+      MANAGED_CONTEXT_BUNDLE_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await handleManagedContextBundleRead(req, res);
+      }
+    );
     this.sessionRoutes.registerRoutes();
   }
 
