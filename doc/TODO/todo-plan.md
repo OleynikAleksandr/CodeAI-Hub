@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "34b12b06a",
+  "lastRecordedCommit": "bdb0f8de2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase11.stream3.task2",
-  "expectedCommitMessage": "docs: sync core-owned managed bundle ssot",
+  "currentTaskId": "runtime-contract.phase11.stream4.task1",
+  "expectedCommitMessage": "docs: record phase 11 verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync core-owned managed bundle ssot",
-    "preCommitHead": "34b12b06a",
+    "expectedCommitMessage": "docs: record phase 11 verification",
+    "preCommitHead": "bdb0f8de2",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream3.task2"
+    "taskId": "runtime-contract.phase11.stream4.task1"
   }
 }
 ```
@@ -375,12 +375,12 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 99. [DONE] `runtime-contract.phase11.stream3.task1` Rewrite PM-side `managed-workflow-initial-context.ts` as a thin HTTP wrapper around the new `/api/v1/orchestrator/managed-context-bundle` endpoint and update its tests; PM no longer parses workspace state or constructs the bundle (scope: `src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `fix: route pm initial bundle through core endpoint`). `description-submit-service.ts` is unchanged because the public PM-side function signature is preserved.
 100. [DONE] Git Commit: `fix: route pm initial bundle through core endpoint` (hash: 34b12b06a)
 101. [DONE] `runtime-contract.phase11.stream3.task2` Add SSOT note in `WorkflowSteps_Overview.md` reaffirming Core as the single owner of managed-workflow bundle assembly; cross-link Phase 11 in this active plan (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync core-owned managed bundle ssot`).
-102. [PENDING] Git Commit: `docs: sync core-owned managed bundle ssot` (hash: TBD)
+102. [DONE] Git Commit: `docs: sync core-owned managed bundle ssot` (hash: bdb0f8de2)
 
 ### Stream: Tooling Verification
 
-103. [TODO] `runtime-contract.phase11.stream4.task1` Run targeted Core build and node:test runner over Phase 11 spec files; record evidence inline; fix any regressions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase 11 verification`).
-104. [TODO] Git Commit: `docs: record phase 11 verification` (hash: TBD)
+103. [DONE] `runtime-contract.phase11.stream4.task1` Run targeted Core build and node:test runner over Phase 11 spec files; record evidence inline; fix any regressions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase 11 verification`).
+104. [PENDING] Git Commit: `docs: record phase 11 verification` (hash: TBD)
 
 ### Stream: Release Build
 
