@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "18ed74e93",
+  "lastRecordedCommit": "7b1816de7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.phase2-pin.task1",
-  "expectedCommitMessage": "fix: seed application skeleton phase 2 accept commit pin",
+  "currentTaskId": "application-skeleton-orchestration.phase16.feedback-visibility.task1",
+  "expectedCommitMessage": "fix: make application skeleton core feedback visible in session log",
   "debt": {
-    "expectedCommitMessage": "fix: seed application skeleton phase 2 accept commit pin",
-    "preCommitHead": "18ed74e93",
+    "expectedCommitMessage": "fix: make application skeleton core feedback visible in session log",
+    "preCommitHead": "7b1816de7",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.phase2-pin.task1"
+    "taskId": "application-skeleton-orchestration.phase16.feedback-visibility.task1"
   }
 }
 ```
@@ -357,12 +357,12 @@
 ### Stream: Phase 2 Stage Plan Restructure
 
 85. [DONE] `application-skeleton-orchestration.phase16.phase2-pin.task1` Add a Git Commit pin to Phase 2 in the Application Skeleton seed: the existing review task's expected commit becomes `docs: accept application skeleton contract`; a new Pin 4 `Git Commit: docs: accept application skeleton contract` follows it; the materialization task and its commit shift to Pins 5 and 6; the handoff anchor shifts to Pin 7. Sync the seed-shape fixture in `managed-plan-orchestrator-installer.test.ts` and the fixtures in `session-request-handler-workflow-session.managed-workspace.test.ts` so Phase 2 now asserts both the task and the Git Commit pin. Scope expanded by one file (`max-lines-debt-allowlist.txt`) because the new fixture assertion pushed `managed-plan-orchestrator-installer.test.ts` four lines over the 500-line architecture limit; splitting the seed-shape fixture is out of scope for the refactor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `fix: seed application skeleton phase 2 accept commit pin`).
-86. [PENDING] Git Commit: `fix: seed application skeleton phase 2 accept commit pin` (hash: TBD)
+86. [DONE] Git Commit: `fix: seed application skeleton phase 2 accept commit pin` (hash: 7b1816de7)
 
 ### Stream: Application Skeleton Feedback Visibility
 
-87. [TODO] `application-skeleton-orchestration.phase16.feedback-visibility.task1` Drop `userMessageVisibility: "deferred"` from Application Skeleton feedback dispatches in `workflow-agent-acceptance-feedback.ts` so Core corrective prompts get appended to the codex-cli session jsonl as visible `role: "user"` entries (aligned with the Diagram Modules continuation dispatcher pattern). Update the peer test to assert visible dispatch for Application Skeleton feedback. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: make application skeleton core feedback visible in session log`).
-88. [TODO] Git Commit: `fix: make application skeleton core feedback visible in session log` (hash: TBD)
+87. [DONE] `application-skeleton-orchestration.phase16.feedback-visibility.task1` Drop `userMessageVisibility: "deferred"` from Application Skeleton feedback dispatches in `workflow-agent-acceptance-feedback.ts` so Core corrective prompts get appended to the codex-cli session jsonl as visible `role: "user"` entries (aligned with the Diagram Modules continuation dispatcher pattern). Update the peer test to assert visible dispatch for Application Skeleton feedback. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: make application skeleton core feedback visible in session log`).
+88. [PENDING] Git Commit: `fix: make application skeleton core feedback visible in session log` (hash: TBD)
 
 ### Stream: Core Map Observer (Option C)
 

@@ -24,9 +24,6 @@ const execFileAsync = promisify(execFile);
 
 interface WorkflowAgentAcceptanceFeedbackPayload {
   readonly content: string;
-  readonly turnOptions: {
-    readonly userMessageVisibility: "deferred";
-  };
 }
 
 interface StageFeedbackRequest {
@@ -361,13 +358,13 @@ export class WorkflowAgentAcceptanceFeedback {
     try {
       const checkedAt = new Date().toISOString();
       params.gateway.markFeedbackTurnStarted?.(sessionId);
-      await params.gateway.handleMessage(sessionId, {
-        content: buildFeedbackMessage(params.request, {
+      await params.gateway.handleMessage(
+        sessionId,
+        buildFeedbackMessage(params.request, {
           checkedAt,
           snapshotHead: workspaceHead,
-        }),
-        turnOptions: { userMessageVisibility: "deferred" },
-      });
+        })
+      );
     } catch (error) {
       this.sentSignatures.delete(signature);
       throw error;

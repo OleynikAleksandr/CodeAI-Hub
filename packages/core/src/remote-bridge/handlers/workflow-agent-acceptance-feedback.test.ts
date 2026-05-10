@@ -235,7 +235,7 @@ test("managed feedback includes diagnostic check context for every managed stage
 
     const feedbackText = messages.join("\n---\n");
     assert.equal(messages.length, 3);
-    assert.deepEqual(visibilities, ["deferred", "deferred", "deferred"]);
+    assert.deepEqual(visibilities, [null, null, null]);
     assert.match(feedbackText, CORE_CHECKED_HEADING_RE);
     assert.match(feedbackText, DIAGRAM_MODULES_OBSERVED_RE);
     assert.match(feedbackText, DIAGRAM_MODULES_VALIDATOR_ERROR_RE);
