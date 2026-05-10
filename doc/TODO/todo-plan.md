@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "8e32e0c07",
+  "lastRecordedCommit": "946ca493c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-consumers.task3",
-  "expectedCommitMessage": "fix: align skeleton revision injection labels to plain numbering",
+  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-cleanup.task1",
+  "expectedCommitMessage": "fix: drop deprecated application skeleton phase aliases",
   "debt": {
-    "expectedCommitMessage": "fix: align skeleton revision injection labels to plain numbering",
-    "preCommitHead": "8e32e0c07",
+    "expectedCommitMessage": "fix: drop deprecated application skeleton phase aliases",
+    "preCommitHead": "946ca493c",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.classifier-consumers.task3"
+    "taskId": "application-skeleton-orchestration.phase12.classifier-cleanup.task1"
   }
 }
 ```
@@ -291,12 +291,12 @@
 ### Stream: Revision Injection And Commit Transaction Rename
 
 73. [DONE] `application-skeleton-orchestration.phase12.classifier-consumers.task3` Rename the dynamic revision injection labels (`phase1b.review.revisionN.task1 → phase2.review.revisionN.task1`) and the per-revision managed commit message text (`docs: revise application skeleton contract — phase 1B revision N → docs: revise application skeleton contract — revision N`, dropping the phase-type label from the commit text because Type B is a domain attribute, not commit text); update the legacy `phase1b.review.task1` plan-text lookup in the injection runner; the accept-contract runner is in scope only if it carries any phase string literal (it does not — it only forwards the classifier function call). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: align skeleton revision injection labels to plain numbering`).
-74. [PENDING] Git Commit: `fix: align skeleton revision injection labels to plain numbering` (hash: TBD)
+74. [DONE] Git Commit: `fix: align skeleton revision injection labels to plain numbering` (hash: 946ca493c)
 
 ### Stream: Phase Classifier Cleanup
 
-75. [TODO] `application-skeleton-orchestration.phase12.classifier-cleanup.task1` Remove the deprecated `phase_1a_draft` / `phase_1b_review` / `phase_2_materialization` aliases from the `ApplicationSkeletonPhase` type union now that every consumer reports the new values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts`; expected commit: `fix: drop deprecated application skeleton phase aliases`).
-76. [TODO] Git Commit: `fix: drop deprecated application skeleton phase aliases` (hash: TBD)
+75. [DONE] `application-skeleton-orchestration.phase12.classifier-cleanup.task1` Remove the deprecated `phase_1a_draft` / `phase_1b_review` / `phase_2_materialization` aliases from the `ApplicationSkeletonPhase` type union now that every consumer reports the new values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts`; expected commit: `fix: drop deprecated application skeleton phase aliases`).
+76. [PENDING] Git Commit: `fix: drop deprecated application skeleton phase aliases` (hash: TBD)
 
 ### Stream: SSOT Sync
 

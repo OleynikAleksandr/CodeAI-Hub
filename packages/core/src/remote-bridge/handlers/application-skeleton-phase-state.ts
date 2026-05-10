@@ -9,11 +9,7 @@ export type ApplicationSkeletonPhase =
   | "phase_1_draft"
   | "phase_2_review"
   | "phase_3_materialization"
-  | "phase_handoff"
-  // Deprecated aliases retained only while in-progress consumers migrate; removed in classifier-cleanup task.
-  | "phase_1a_draft"
-  | "phase_1b_review"
-  | "phase_2_materialization";
+  | "phase_handoff";
 
 export const classifyApplicationSkeletonPhase = (
   progress: ApplicationSkeletonProgressSnapshot | null
