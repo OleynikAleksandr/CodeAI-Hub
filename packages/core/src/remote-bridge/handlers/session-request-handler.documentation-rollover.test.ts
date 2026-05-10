@@ -350,3 +350,27 @@ test("Documentation Tree production rollover waits for next user turn before con
     await rm(tempHome, { recursive: true, force: true });
   }
 });
+
+const STRIP_JSONL_SUFFIX_RE = /\.jsonl$/u;
+
+test("Managed audit stream filename is isolated from primary provider session log", () => {
+  const PRIMARY_SESSION_FILE = "session-1.jsonl";
+  const MANAGED_AUDIT_FILENAME = "session-1.audit.jsonl";
+
+  assert.notEqual(PRIMARY_SESSION_FILE, MANAGED_AUDIT_FILENAME);
+  assert.equal(MANAGED_AUDIT_FILENAME.endsWith(".audit.jsonl"), true);
+  assert.equal(
+    PRIMARY_SESSION_FILE.endsWith(".audit.jsonl"),
+    false,
+    "Primary provider session log must not collide with managed audit suffix"
+  );
+  const primaryBasename = PRIMARY_SESSION_FILE.replace(
+    STRIP_JSONL_SUFFIX_RE,
+    ""
+  );
+  assert.equal(
+    MANAGED_AUDIT_FILENAME.startsWith(primaryBasename),
+    true,
+    "Managed audit filename should derive from the same basename"
+  );
+});

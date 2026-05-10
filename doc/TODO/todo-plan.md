@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "d936e6ce9",
+  "lastRecordedCommit": "4f0bdaad2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase5.stream6.task2",
-  "expectedCommitMessage": "fix: persist managed core audit stream",
+  "currentTaskId": "runtime-contract.phase5.stream6.task3",
+  "expectedCommitMessage": "test: isolate managed audit stream from replay",
   "debt": {
-    "expectedCommitMessage": "fix: persist managed core audit stream",
-    "preCommitHead": "d936e6ce9",
+    "expectedCommitMessage": "test: isolate managed audit stream from replay",
+    "preCommitHead": "4f0bdaad2",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase5.stream6.task2"
+    "taskId": "runtime-contract.phase5.stream6.task3"
   }
 }
 ```
@@ -113,9 +113,9 @@
 21. [DONE] `runtime-contract.phase5.stream6.task1` Route Core-managed corrective/continuation/decision messages through the existing Core/PM event stream for user-visible chat delivery (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts, packages/core/src/remote-bridge/handlers/websocket-manager.ts, src/client/project-manager/services/workflow-events-client.ts`; expected commit: `fix: surface managed core messages in workflow UI`).
 22. [DONE] Git Commit: `fix: surface managed core messages in workflow UI` (hash: d936e6ce9)
 23. [DONE] `runtime-contract.phase5.stream6.task2` Persist managed Core messages to a replay-safe `.audit.jsonl` stream derived from the existing session path builder (scope: `packages/core/src/unified-session/storage.ts, packages/core/src/unified-session/storage.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: persist managed core audit stream`).
-24. [PENDING] Git Commit: `fix: persist managed core audit stream` (hash: TBD)
-25. [TODO] `runtime-contract.phase5.stream6.task3` Ensure provider replay, rollover prompt builders and transcript reconstruction ignore managed audit stream records (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `test: isolate managed audit stream from replay`).
-26. [TODO] Git Commit: `test: isolate managed audit stream from replay` (hash: TBD)
+24. [DONE] Git Commit: `fix: persist managed core audit stream` (hash: 4f0bdaad2)
+25. [DONE] `runtime-contract.phase5.stream6.task3` Ensure provider replay, rollover prompt builders and transcript reconstruction ignore managed audit stream records (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `test: isolate managed audit stream from replay`).
+26. [PENDING] Git Commit: `test: isolate managed audit stream from replay` (hash: TBD)
 
 ## Phase 6 — Gap R Managed Rollover Envelope (owner: next agent, updated: 2026-05-10)
 
