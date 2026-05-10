@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "58de08eda",
+  "lastRecordedCommit": "062d50570",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream5.task2",
-  "expectedCommitMessage": "test: cover application skeleton completion observer",
+  "currentTaskId": "runtime-contract.phase10.stream6.task1",
+  "expectedCommitMessage": "test: cover application skeleton end-to-end happy path",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton completion observer",
-    "preCommitHead": "58de08eda",
+    "expectedCommitMessage": "test: cover application skeleton end-to-end happy path",
+    "preCommitHead": "062d50570",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream5.task2"
+    "taskId": "runtime-contract.phase10.stream6.task1"
   }
 }
 ```
@@ -273,12 +273,12 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 72. [DONE] `runtime-contract.phase10.stream5.task1` Existing post-turn arbitration already re-reads `application-skeleton-map.json` each turn (`readApplicationSkeletonProgressSnapshot`) and `hasCommittableApplicationSkeletonStage` fires once `materialized: true` is observed. Add explicit completion-observation log and drop the recently-accepted session marker so the Stream 4 dispatcher does not refire after materialisation completes (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: observe application skeleton materialization completion`).
 73. [DONE] Git Commit: `fix: observe application skeleton materialization completion` (hash: 58de08eda)
 74. [DONE] `runtime-contract.phase10.stream5.task2` Add completion observer regression in a new dedicated file: agent flipping `materialized: false → true` between turns produces `progress.materialized: true` and `substep: "materialized"` (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-completion-observer.test.ts`; expected commit: `test: cover application skeleton completion observer`). New single-file test; existing `application-skeleton-progress.test.ts` was nearing the 500-line limit.
-75. [PENDING] Git Commit: `test: cover application skeleton completion observer` (hash: TBD)
+75. [DONE] Git Commit: `test: cover application skeleton completion observer` (hash: 062d50570)
 
 ### Stream: End-To-End Regression Coverage
 
-76. [TODO] `runtime-contract.phase10.stream6.task1` End-to-end happy path test for Application Skeleton: stage advance writes activeStage → bundle includes live stage todo-plan → agent emits draft readiness → Core commits task1 → user message "Принимаю контракт" recognised by broadened matcher → continuation dispatcher emits materialisation prompt → agent updates map.json + reports completion → completion observer flips materialized → commit gate fires task2 → plan advance to Quality Gates Baseline (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts`; expected commit: `test: cover application skeleton end-to-end happy path`).
-77. [TODO] Git Commit: `test: cover application skeleton end-to-end happy path` (hash: TBD)
+76. [DONE] `runtime-contract.phase10.stream6.task1` Chained happy-path test exercising R2/R3 in sequence: recogniser detects user phrasing → dispatcher fires materialisation prompt for awaiting-acceptance session → flipping `materialized: true` produces snapshot with `substep: "materialized"` (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`; expected commit: `test: cover application skeleton end-to-end happy path`).
+77. [PENDING] Git Commit: `test: cover application skeleton end-to-end happy path` (hash: TBD)
 78. [TODO] `runtime-contract.phase10.stream6.task2` Forced-rollover regression inside Phase B: rollover envelope built mid-draft preserves stage advance state, awaiting-acceptance status, and last user-visible assistant message; resumed session does not lose the recogniser-eligible window (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts`; expected commit: `test: cover application skeleton phase b rollover`).
 79. [TODO] Git Commit: `test: cover application skeleton phase b rollover` (hash: TBD)
 
