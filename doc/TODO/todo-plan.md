@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "c767e21cc",
+  "lastRecordedCommit": "dd4c54db7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase17.release.task2",
-  "expectedCommitMessage": "build: release application skeleton acceptance flow",
+  "currentTaskId": "application-skeleton-orchestration.phase20.hotfix-audit.task1",
+  "expectedCommitMessage": "docs: open application skeleton recognizer hotfix scope",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton acceptance flow",
-    "preCommitHead": "c767e21cc",
+    "expectedCommitMessage": "docs: open application skeleton recognizer hotfix scope",
+    "preCommitHead": "dd4c54db7",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase17.release.task2"
+    "taskId": "application-skeleton-orchestration.phase20.hotfix-audit.task1"
   }
 }
 ```
@@ -407,13 +407,54 @@
 ### Stream: Release Build
 
 101. [DONE] `application-skeleton-orchestration.phase17.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance flow`).
-102. [PENDING] Git Commit: `build: release application skeleton acceptance flow` (hash: TBD)
+102. [DONE] Git Commit: `build: release application skeleton acceptance flow` (hash: dd4c54db7)
 
 ## Phase 18 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
 ### Stream: VSIX Retest
 
-103. [TODO] `application-skeleton-orchestration.phase18.acceptance.task1` User installs the v1.2.223 VSIX and reruns the Application Skeleton retest with focus on the Phase 16 regressions: Phase 2 now shows task + Git Commit pin; Core feedback prompts appear in PM transcript; the typed-fallback recognizer accepts `accepted`/bare verbs; map.json `accepted: true` from any source triggers the Phase 2 commit and Phase 3 continuation; the managed commit gate accepts the agent's `materializedPaths` shape; the full Phase 1 → Phase 2 → Phase 3 sequence lands all three commits cleanly. (scope: chat/process observation only; no commit required).
+103. [BLOCKED] `application-skeleton-orchestration.phase18.acceptance.task1` User installs the v1.2.223 VSIX and reruns the Application Skeleton retest with focus on the Phase 16 regressions: Phase 2 now shows task + Git Commit pin; Core feedback prompts appear in PM transcript; the typed-fallback recognizer accepts `accepted`/bare verbs; map.json `accepted: true` from any source triggers the Phase 2 commit and Phase 3 continuation; the managed commit gate accepts the agent's `materializedPaths` shape; the full Phase 1 → Phase 2 → Phase 3 sequence lands all three commits cleanly. (scope: chat/process observation only; no commit required). **BLOCKED 2026-05-11:** retest of v1.2.223 surfaced a release-blocker regression in Phase 16E. Stream 16E broadened `recognizeManagedContractAcceptancePhrase` to match bare `accept`/`accepted` verbs without requiring `контракт`. Bootstrap prompts sent by Core to start the Application Skeleton agent are ~107 KB and contain instructional text about the PM "Accept Contract" button — the broadened recognizer now triggers on those prompts, `routeApplicationSkeletonTypedAcceptance` intercepts the message as a typed-fallback acceptance and refuses to deliver it to codex-cli, so the Application Skeleton session never starts. Plan seeds (Stream 16B) and Core log entries land normally, but no agent jsonl is ever created. Hot-fix is tracked under Phase 20; resumed retest under Phase 22.
+
+## Phase 20 - Recognizer Hot-Fix (owner: next agent, updated: 2026-05-11)
+
+### Stream: Scope Audit
+
+104. [DONE] `application-skeleton-orchestration.phase20.hotfix-audit.task1` Open this hot-fix scope: block Phase 18, record the recognizer false-positive symptom and the bootstrap-prompt-vs-user-text overlap, scope the cap-by-length fix that keeps Stream 16E's broadening for short user-typed phrases while excluding multi-kilobyte Core bootstrap prompts. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton recognizer hotfix scope`).
+105. [PENDING] Git Commit: `docs: open application skeleton recognizer hotfix scope` (hash: TBD)
+
+#### Audit findings (HEAD = `dd4c54db7`, 2026-05-11)
+
+- **Symptom.** Core log at `23:07:47` shows `Session message received contentLength: 107827` followed by `Skipping managed contract acceptance phrase, phrase: "Accept Contract"` for the Application Skeleton session `855a2ec5-95a9-4c9e-a6da-4f511c7ffb88`. No `Dispatching message to provider adapter` line follows. The stage plan was seeded correctly (`doc/TODO/stages/application-skeleton/todo-plan.md` exists with `currentTaskId: "application-skeleton.phase1.draft.task1"`), but the agent jsonl was never written because `routeApplicationSkeletonTypedAcceptance` intercepted the bootstrap prompt as a typed acceptance phrase.
+- **Root cause.** Stream 16E in `managed-workflow-post-turn-service.ts::recognizeManagedContractAcceptancePhrase` broadened the regex to `(?<!\p{L})(принимаю|подтверждаю|утверждаю|accept|accepted|confirm|confirmed|approve|approved)(?!\p{L})` and dropped the previous `CONTRACT_NOUN_RE` requirement. Bootstrap prompts assembled by Core contain instructional text about the PM "Accept Contract" button and other acceptance flow language, so the broadened recognizer matches them. The downstream `application-skeleton-typed-acceptance-router.ts` then drops provider delivery and routes through the Core accept-contract command handler.
+- **Fix scope.** Cap recognizer input length to a short user-message ceiling (e.g. 200 characters). User acceptance phrases are typically 1–50 characters; Core bootstrap prompts are 100 KB+. The cap retains the Stream 16E broadening for short user-typed messages but excludes bootstrap and other multi-paragraph contexts where "accept" is incidental. Add a peer test for the cap.
+
+### Stream: Recognizer Length Cap
+
+106. [TODO] `application-skeleton-orchestration.phase20.length-cap.task1` Add a 200-character length cap at the top of `recognizeManagedContractAcceptancePhrase` so multi-kilobyte Core bootstrap prompts (and any other long-form context that incidentally contains an acceptance verb) are excluded before regex matching. Add a peer test that locks down the cap behaviour (long prompt → null; short bare-verb phrase → recognized). (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: cap acceptance phrase recognizer to short user-typed messages`).
+107. [TODO] Git Commit: `fix: cap acceptance phrase recognizer to short user-typed messages` (hash: TBD)
+
+### Stream: Targeted Verification
+
+108. [TODO] `application-skeleton-orchestration.phase20.verify.task1` Run targeted Core tests for the recognizer and adjacent modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton recognizer hotfix verification`).
+109. [TODO] Git Commit: `docs: record application skeleton recognizer hotfix verification` (hash: TBD)
+
+## Phase 21 - Hot-Fix Release Build (owner: next agent, updated: 2026-05-11)
+
+### Stream: Release Preparation
+
+110. [TODO] `application-skeleton-orchestration.phase21.release.task1` Update README/CHANGELOG for v1.2.224 (release-blocker hot-fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16; the hot-fix inherits that approval. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton recognizer hotfix release`).
+111. [TODO] Git Commit: `docs: prepare application skeleton recognizer hotfix release` (hash: TBD)
+
+### Stream: Release Build
+
+112. [TODO] `application-skeleton-orchestration.phase21.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton recognizer hotfix`).
+113. [TODO] Git Commit: `build: release application skeleton recognizer hotfix` (hash: TBD)
+
+## Phase 22 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
+
+### Stream: VSIX Retest
+
+114. [TODO] `application-skeleton-orchestration.phase22.acceptance.task1` User installs the v1.2.224 VSIX and reruns the Application Skeleton retest with focus on the recognizer hot-fix: the Application Skeleton session actually starts (agent jsonl is written); Phase 1 draft commit lands; Phase 2 review accepts both short typed acceptance phrases and the PM button; Phase 3 materialization commit lands. The Phase 16 invariants from Phase 18 also hold. (scope: chat/process observation only; no commit required).
 
 ## Phase 19 - Scope Closeout (owner: next agent, updated: 2026-05-11)
 
