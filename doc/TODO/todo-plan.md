@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "735b16af9",
+  "lastRecordedCommit": "3612e6d2a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.docs-sync.task1",
-  "expectedCommitMessage": "docs: sync application skeleton plain phase numbering ssot",
+  "currentTaskId": "application-skeleton-orchestration.phase12.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton plain phase numbering verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync application skeleton plain phase numbering ssot",
-    "preCommitHead": "735b16af9",
+    "expectedCommitMessage": "docs: record application skeleton plain phase numbering verification",
+    "preCommitHead": "3612e6d2a",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.docs-sync.task1"
+    "taskId": "application-skeleton-orchestration.phase12.verify.task1"
   }
 }
 ```
@@ -301,12 +301,20 @@
 ### Stream: SSOT Sync
 
 73. [DONE] `application-skeleton-orchestration.phase12.docs-sync.task1` Sync SSOT and planning docs to plain phase numbering: replace `phase1a` / `phase1b` / `phase2.materialize` task IDs with the plain-phase forms; rephrase headings so `Phase 1A` / `Phase 1B` / `Phase 2` reads `Phase 1` / `Phase 2` / `Phase 3` (with Type A / Type B kept as a domain attribute clarifier in prose only); update the materialization-commit / revision-commit text references. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton plain phase numbering ssot`).
-74. [PENDING] Git Commit: `docs: sync application skeleton plain phase numbering ssot` (hash: TBD)
+74. [DONE] Git Commit: `docs: sync application skeleton plain phase numbering ssot` (hash: 3612e6d2a)
 
 ### Stream: Targeted Verification
 
-75. [TODO] `application-skeleton-orchestration.phase12.verify.task1` Run targeted Core tests for touched managed-workspace, development-tree, and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton plain phase numbering verification`).
-76. [TODO] Git Commit: `docs: record application skeleton plain phase numbering verification` (hash: TBD)
+75. [DONE] `application-skeleton-orchestration.phase12.verify.task1` Run targeted Core tests for touched managed-workspace, development-tree, and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton plain phase numbering verification`).
+76. [PENDING] Git Commit: `docs: record application skeleton plain phase numbering verification` (hash: TBD)
+
+#### Verification evidence (HEAD = `3612e6d2a`, 2026-05-10)
+
+- **Targeted handler / managed-workspace / development-tree tests:** 54/60 pass on the post-Phase-12 HEAD across `managed-plan-orchestrator-installer.test.ts`, `development-tree-bootstrap-gate.test.ts`, `application-skeleton-phase-state.test.ts`, `application-skeleton-contract-guard.test.ts`, `application-skeleton-review-turn-classifier.test.ts`, `managed-stage-accept-contract-handler.test.ts`, `managed-workflow-post-turn-service.test.ts`, `application-skeleton-end-to-end.test.ts`, `session-request-handler-managed-context-bundle.test.ts`, `session-request-handler-workflow-session.managed-workspace.test.ts`, `workflow-state-managed-documentation-commit.test.ts`, and `workflow-state-service-development-tree-bootstrap.test.ts`. Every test that was directly touched by Phase 12 streams (advancement regex, stage plan rename, classifier enum, consumer migrations, revision injection labels, SSOT sync) passes after the migration.
+- **Remaining 6 failures are pre-existing on the v1.2.221 baseline (`68742258e`).** Verified by checking out `packages/core/src` from `68742258e` and re-running the same tests: `workflow-state-managed-documentation-commit.test.ts` reports 3 fail / 4 total ("auto-commits valid Diagram Modules artifacts and unlocks Application Skeleton", "auto-commits valid Application Skeleton artifacts and unlocks Quality Gates", "auto-commits valid Quality Gates artifacts" — git status not empty after `readWorkflowStatePayload`); `workflow-state-service-development-tree-bootstrap.test.ts` reports 4 fail / 17 total on baseline (same auto-commit pattern in feedback scenarios). The post-Phase-12 HEAD shows 3 / 4 and 3 / 17 failures respectively — one bootstrap test now passes that previously failed; the other 6 failures remain pre-existing and out of Phase 12 scope. They will be addressed in a follow-up scope (separate Stream / cycle).
+- **`npm run build --workspace @codeai-hub/core`:** passes (no TypeScript errors).
+- **`npm run typecheck:webview`:** passes (no errors).
+- **No new regressions:** post-Phase-12 failure count (6) ≤ baseline failure count (7); zero of the 6 remaining failures were introduced by Phase 12 streams; all touched code paths and renames type-check and pass their direct tests.
 
 ## Phase 13 - Release Build Confirmation Gate (owner: next agent, updated: 2026-05-10)
 
