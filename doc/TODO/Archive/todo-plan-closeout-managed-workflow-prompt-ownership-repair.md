@@ -1,3 +1,18 @@
+# Plan Closeout: managed-workflow-prompt-ownership-repair
+
+**Created:** 2026-05-10
+**Acceptance:** User retest on 2026-05-10 against v1.2.216 in workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`. Prompt-level ownership conforms to SSOT (provider asset prompts and runtime continuation/initial prompts no longer ask the provider to stage or commit; managed context bundle is embedded in initial prompts). Retest also revealed a runtime-level conformance gap relative to `WorkflowSteps_Overview.md` lines 76–86, 82, 256: Core acceptance validator does not re-run after corrective turn, the corrective turn text itself still contains provider-side commit asks, no `handoff to user phase` decision intercepts free-text user acceptance, and the Phase 2 materialization commit handler does not advance after content-readiness signal. That gap is **out of scope** for this prompt-ownership cycle and is routed to a follow-up runtime conformance scope.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** prompt-ownership.phase6.task1
+**Expected Commit:** docs: close managed prompt ownership repair
+**Last Recorded Commit:** 78d7e4f5c
+**Planning Source Disposition:** user_observation_retained_inline
+**Planning Source Path:** n/a (user observation, no archived planning document)
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-09",
   "currentTaskId": "prompt-ownership.phase6.task1",
   "expectedCommitMessage": "docs: close managed prompt ownership repair",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed prompt ownership repair",
-    "preCommitHead": "78d7e4f5c",
-    "stage": "commit_pending",
-    "taskId": "prompt-ownership.phase6.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -101,5 +111,10 @@
 
 ### Stream: Closeout
 
-25. [DONE] `prompt-ownership.phase6.task1` After explicit user acceptance, archive this plan and leave terminal NONE state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/*`; expected commit: `docs: close managed prompt ownership repair`).
-26. [PENDING] Git Commit: `docs: close managed prompt ownership repair` (hash: TBD)
+25. [IN_PROGRESS] `prompt-ownership.phase6.task1` After explicit user acceptance, archive this plan and leave terminal NONE state (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/*`; expected commit: `docs: close managed prompt ownership repair`).
+26. [TODO] Git Commit: `docs: close managed prompt ownership repair` (hash: TBD)
+````
+
+## Follow-up scope
+
+Runtime-level conformance gaps revealed by the retest (see `Acceptance` above) are routed to a separate scope: **`managed-workflow-runtime-contract-conformance`**. That scope addresses Core post-turn arbitration re-execution, corrective-feedback text cleanup, the `handoff to user phase` decision form, the Phase 2 materialization commit handler, and Codex CLI session writer audit records — strictly aligned with `WorkflowSteps_Overview.md` lines 66–86, 82, and 256.
