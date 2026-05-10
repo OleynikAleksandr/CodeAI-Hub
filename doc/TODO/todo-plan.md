@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "cb99b0a85",
+  "lastRecordedCommit": "34b12b06a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase11.stream3.task1",
-  "expectedCommitMessage": "fix: route pm initial bundle through core endpoint",
+  "currentTaskId": "runtime-contract.phase11.stream3.task2",
+  "expectedCommitMessage": "docs: sync core-owned managed bundle ssot",
   "debt": {
-    "expectedCommitMessage": "fix: route pm initial bundle through core endpoint",
-    "preCommitHead": "cb99b0a85",
+    "expectedCommitMessage": "docs: sync core-owned managed bundle ssot",
+    "preCommitHead": "34b12b06a",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream3.task1"
+    "taskId": "runtime-contract.phase11.stream3.task2"
   }
 }
 ```
@@ -373,9 +373,9 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 ### Stream: Replace PM Builder And Sync SSOT
 
 99. [DONE] `runtime-contract.phase11.stream3.task1` Rewrite PM-side `managed-workflow-initial-context.ts` as a thin HTTP wrapper around the new `/api/v1/orchestrator/managed-context-bundle` endpoint and update its tests; PM no longer parses workspace state or constructs the bundle (scope: `src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `fix: route pm initial bundle through core endpoint`). `description-submit-service.ts` is unchanged because the public PM-side function signature is preserved.
-100. [PENDING] Git Commit: `fix: route pm initial bundle through core endpoint` (hash: TBD)
-101. [TODO] `runtime-contract.phase11.stream3.task2` Add SSOT note in `WorkflowSteps_Overview.md` reaffirming Core as the single owner of managed-workflow bundle assembly; cross-link Phase 11 in this active plan (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync core-owned managed bundle ssot`).
-102. [TODO] Git Commit: `docs: sync core-owned managed bundle ssot` (hash: TBD)
+100. [DONE] Git Commit: `fix: route pm initial bundle through core endpoint` (hash: 34b12b06a)
+101. [DONE] `runtime-contract.phase11.stream3.task2` Add SSOT note in `WorkflowSteps_Overview.md` reaffirming Core as the single owner of managed-workflow bundle assembly; cross-link Phase 11 in this active plan (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync core-owned managed bundle ssot`).
+102. [PENDING] Git Commit: `docs: sync core-owned managed bundle ssot` (hash: TBD)
 
 ### Stream: Tooling Verification
 
