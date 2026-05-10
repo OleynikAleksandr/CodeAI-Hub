@@ -32,9 +32,12 @@ export type ApplicationSkeletonAcceptContractDecision =
 
 // Core-owned session marker (semantic): a session id appears in the
 // `recentlyAcceptedSessions` set after the Core accept-contract command
-// handler approves the request. The Phase 3 materialization continuation
-// dispatcher gates on that marker so that user text alone (which never
-// reaches the Core command handler) cannot authorize Phase 3 by itself.
+// handler approves the request. Under Option C the Phase 3 materialization
+// continuation dispatcher no longer treats this marker as the exclusive
+// authorization — it observes `accepted: true` on `application-skeleton-map.json`
+// regardless of which path set it (Core handler, agent self-set per its
+// Phase 2 prompt, typed-fallback router, or PM Accept Contract button). The
+// marker stays as an optional hint for the Core handler's own write path.
 
 export const evaluateApplicationSkeletonAcceptContractCommand = (
   context: ApplicationSkeletonAcceptContractContext

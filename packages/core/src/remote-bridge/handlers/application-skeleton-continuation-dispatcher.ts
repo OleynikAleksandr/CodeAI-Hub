@@ -33,37 +33,34 @@ const resolveLatestStageSessionId = (
   return best?.sessionId ?? null;
 };
 
-// The Phase 2 materialization continuation dispatch is gated on three
-// independent checks (must hold simultaneously):
-//   1. progress shows a Core-clean draft ready for materialization
-//      (`substep === "awaiting_acceptance" | "accepted"`, not materialized);
-//   2. the session is present in `recentlyAcceptedSessions` — the marker
-//      written by the Core accept-contract command handler. User text alone
-//      does not satisfy this check;
-//   3. progress.substep is not `"artifact"` (an incomplete draft must never
-//      flip into materialization, even if the accept marker is somehow set).
-// Premature `materialized: true` flips coming from the agent before T3 are
-// caught by the premature-materialization validator earlier in the pipeline;
-// this dispatcher therefore only enables the prompt, never authorizes it.
+// The Phase 3 materialization continuation dispatch fires when the read-model
+// snapshot observes `accepted: true` on `application-skeleton-map.json` —
+// regardless of which path set it (Core accept-contract handler,
+// PM Accept Contract button, typed-fallback recognizer, or the agent self-set
+// per its Phase 2 prompt). `recentlyAcceptedSessions` is kept as an optional
+// hint for the Core handler's own write path, no longer an exclusive gate.
+// Premature `materialized: true` flips coming from the agent before acceptance
+// are still caught by the premature-materialization validator earlier in the
+// pipeline; this dispatcher only enables the prompt, never authorizes it.
 const canContinueApplicationSkeleton = (
   progress: ApplicationSkeletonProgressSnapshot | null
 ): progress is ApplicationSkeletonProgressSnapshot =>
   progress !== null &&
-  (progress.substep === "awaiting_acceptance" ||
-    progress.substep === "accepted") &&
-  !progress.materialized;
+  progress.accepted === true &&
+  !progress.materialized &&
+  progress.substep !== "artifact";
 
 export const sendApplicationSkeletonContinuationIfReady = async (params: {
   readonly chains: readonly ContinuityChainSummary[];
   readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
   readonly progress: ApplicationSkeletonProgressSnapshot | null;
-  readonly recentlyAcceptedSessions: ReadonlySet<string>;
+  readonly recentlyAcceptedSessions?: ReadonlySet<string>;
 }): Promise<void> => {
   if (!(params.gateway && canContinueApplicationSkeleton(params.progress))) {
     return;
   }
   const sessionId = resolveLatestStageSessionId(params.chains);
-  if (!(sessionId && params.recentlyAcceptedSessions.has(sessionId))) {
+  if (!sessionId) {
     return;
   }
   const signature = `${APPLICATION_SKELETON_STAGE}\0${sessionId}\0${params.progress.substep}`;

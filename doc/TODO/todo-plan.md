@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "7b1816de7",
+  "lastRecordedCommit": "377ea3438",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.feedback-visibility.task1",
-  "expectedCommitMessage": "fix: make application skeleton core feedback visible in session log",
+  "currentTaskId": "application-skeleton-orchestration.phase16.map-observer.task1",
+  "expectedCommitMessage": "fix: observe application skeleton acceptance from map.json",
   "debt": {
-    "expectedCommitMessage": "fix: make application skeleton core feedback visible in session log",
-    "preCommitHead": "7b1816de7",
+    "expectedCommitMessage": "fix: observe application skeleton acceptance from map.json",
+    "preCommitHead": "377ea3438",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.feedback-visibility.task1"
+    "taskId": "application-skeleton-orchestration.phase16.map-observer.task1"
   }
 }
 ```
@@ -362,12 +362,12 @@
 ### Stream: Application Skeleton Feedback Visibility
 
 87. [DONE] `application-skeleton-orchestration.phase16.feedback-visibility.task1` Drop `userMessageVisibility: "deferred"` from Application Skeleton feedback dispatches in `workflow-agent-acceptance-feedback.ts` so Core corrective prompts get appended to the codex-cli session jsonl as visible `role: "user"` entries (aligned with the Diagram Modules continuation dispatcher pattern). Update the peer test to assert visible dispatch for Application Skeleton feedback. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: make application skeleton core feedback visible in session log`).
-88. [PENDING] Git Commit: `fix: make application skeleton core feedback visible in session log` (hash: TBD)
+88. [DONE] Git Commit: `fix: make application skeleton core feedback visible in session log` (hash: 377ea3438)
 
 ### Stream: Core Map Observer (Option C)
 
-89. [TODO] `application-skeleton-orchestration.phase16.map-observer.task1` Add a Core read-model observer that detects `accepted: true` in `application-skeleton-map.json` and triggers the Phase 2 acceptance commit + Phase 3 continuation pipeline independent of whether the Core accept-contract handler, the agent (self-set), the typed-fallback router, or the PM button set the flag. Drop the `recentlyAcceptedSessions` marker as the exclusive gate for `sendApplicationSkeletonContinuationIfReady` — keep it as a hint, but allow the observer to set/trigger acceptance flow when the agent self-sets `accepted: true`. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts`; expected commit: `fix: observe application skeleton acceptance from map.json`).
-90. [TODO] Git Commit: `fix: observe application skeleton acceptance from map.json` (hash: TBD)
+89. [DONE] `application-skeleton-orchestration.phase16.map-observer.task1` Add a Core read-model observer that detects `accepted: true` in `application-skeleton-map.json` and triggers the Phase 2 acceptance commit + Phase 3 continuation pipeline independent of whether the Core accept-contract handler, the agent (self-set), the typed-fallback router, or the PM button set the flag. Drop the `recentlyAcceptedSessions` marker as the exclusive gate for `sendApplicationSkeletonContinuationIfReady` — keep it as a hint, but allow the observer to set/trigger acceptance flow when the agent self-sets `accepted: true`. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts`; expected commit: `fix: observe application skeleton acceptance from map.json`).
+90. [PENDING] Git Commit: `fix: observe application skeleton acceptance from map.json` (hash: TBD)
 
 ### Stream: Acceptance Phrase Recognizer Broadening
 

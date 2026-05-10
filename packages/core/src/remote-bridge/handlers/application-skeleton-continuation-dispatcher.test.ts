@@ -18,7 +18,7 @@ const buildChain = (sessionId: string): ContinuityChainSummary =>
 const buildProgress = (
   overrides: Partial<ApplicationSkeletonProgressSnapshot> = {}
 ): ApplicationSkeletonProgressSnapshot => ({
-  accepted: false,
+  accepted: true,
   mapExists: true,
   mappingReady: true,
   markdownExists: true,
@@ -26,7 +26,7 @@ const buildProgress = (
     "not_started" as ApplicationSkeletonProgressSnapshot["materializationState"],
   materialized: false,
   observedMaterialization: false,
-  substep: "awaiting_acceptance",
+  substep: "accepted",
   validationErrors: [],
   ...overrides,
 });
@@ -51,14 +51,13 @@ const createSpyGateway = (): {
   return { gateway, calls, turnStarts };
 };
 
-test("dispatcher fires materialization prompt when accepted session is awaiting acceptance", async () => {
+test("dispatcher fires materialization prompt when progress reports accepted skeleton", async () => {
   const sessionId = "session-as-fire";
   const { gateway, calls, turnStarts } = createSpyGateway();
   await sendApplicationSkeletonContinuationIfReady({
     chains: [buildChain(sessionId)],
     gateway,
     progress: buildProgress(),
-    recentlyAcceptedSessions: new Set([sessionId]),
   });
   assert.equal(calls.length, 1);
   assert.equal(calls[0]?.sessionId, sessionId);
@@ -66,14 +65,16 @@ test("dispatcher fires materialization prompt when accepted session is awaiting 
   assert.deepEqual(turnStarts, [sessionId]);
 });
 
-test("dispatcher is a no-op when session is not in recently-accepted set", async () => {
+test("dispatcher is a no-op when progress.accepted is false (Option C trigger requires accepted flag)", async () => {
   const sessionId = "session-as-noaccept";
   const { gateway, calls } = createSpyGateway();
   await sendApplicationSkeletonContinuationIfReady({
     chains: [buildChain(sessionId)],
     gateway,
-    progress: buildProgress(),
-    recentlyAcceptedSessions: new Set(),
+    progress: buildProgress({
+      accepted: false,
+      substep: "awaiting_acceptance",
+    }),
   });
   assert.equal(calls.length, 0);
 });
@@ -89,7 +90,6 @@ test("dispatcher is a no-op when progress is already materialized", async () => 
       materialized: true,
       accepted: true,
     }),
-    recentlyAcceptedSessions: new Set([sessionId]),
   });
   assert.equal(calls.length, 0);
 });
@@ -101,7 +101,6 @@ test("dispatcher does not double-fire for the same session and substep", async (
     chains: [buildChain(sessionId)],
     gateway,
     progress: buildProgress(),
-    recentlyAcceptedSessions: new Set([sessionId]),
   };
   await sendApplicationSkeletonContinuationIfReady(params);
   await sendApplicationSkeletonContinuationIfReady(params);
@@ -113,7 +112,6 @@ test("dispatcher is a no-op when no gateway is provided", async () => {
   await sendApplicationSkeletonContinuationIfReady({
     chains: [buildChain(sessionId)],
     progress: buildProgress(),
-    recentlyAcceptedSessions: new Set([sessionId]),
   });
 });
 
@@ -130,7 +128,6 @@ test("dispatcher is a no-op when no chain matches Application Skeleton stage", a
     chains: [otherStageChain],
     gateway,
     progress: buildProgress(),
-    recentlyAcceptedSessions: new Set([sessionId]),
   });
   assert.equal(calls.length, 0);
 });
@@ -146,7 +143,6 @@ test("dispatcher is a no-op for an incomplete `artifact` substep even with the a
     chains: [buildChain(sessionId)],
     gateway,
     progress: buildProgress({ substep: "artifact" }),
-    recentlyAcceptedSessions: new Set([sessionId]),
   });
   assert.equal(calls.length, 0);
 });
@@ -158,7 +154,6 @@ test("dispatcher is a no-op when stage is already materialized (premature flip)"
     chains: [buildChain(sessionId)],
     gateway,
     progress: buildProgress({ materialized: true, substep: "materialized" }),
-    recentlyAcceptedSessions: new Set([sessionId]),
   });
   assert.equal(calls.length, 0);
 });
