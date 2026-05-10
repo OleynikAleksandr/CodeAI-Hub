@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "062d50570",
+  "lastRecordedCommit": "02d6f8ebd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream6.task1",
-  "expectedCommitMessage": "test: cover application skeleton end-to-end happy path",
+  "currentTaskId": "runtime-contract.phase10.stream6.task2",
+  "expectedCommitMessage": "test: cover application skeleton phase b rollover",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton end-to-end happy path",
-    "preCommitHead": "062d50570",
+    "expectedCommitMessage": "test: cover application skeleton phase b rollover",
+    "preCommitHead": "02d6f8ebd",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream6.task1"
+    "taskId": "runtime-contract.phase10.stream6.task2"
   }
 }
 ```
@@ -278,9 +278,9 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: End-To-End Regression Coverage
 
 76. [DONE] `runtime-contract.phase10.stream6.task1` Chained happy-path test exercising R2/R3 in sequence: recogniser detects user phrasing → dispatcher fires materialisation prompt for awaiting-acceptance session → flipping `materialized: true` produces snapshot with `substep: "materialized"` (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`; expected commit: `test: cover application skeleton end-to-end happy path`).
-77. [PENDING] Git Commit: `test: cover application skeleton end-to-end happy path` (hash: TBD)
-78. [TODO] `runtime-contract.phase10.stream6.task2` Forced-rollover regression inside Phase B: rollover envelope built mid-draft preserves stage advance state, awaiting-acceptance status, and last user-visible assistant message; resumed session does not lose the recogniser-eligible window (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts`; expected commit: `test: cover application skeleton phase b rollover`).
-79. [TODO] Git Commit: `test: cover application skeleton phase b rollover` (hash: TBD)
+77. [DONE] Git Commit: `test: cover application skeleton end-to-end happy path` (hash: 02d6f8ebd)
+78. [DONE] `runtime-contract.phase10.stream6.task2` Forced-rollover Phase B regression: assert that R2 recogniser still fires for an Application Skeleton acceptance phrase received as the resumed user message after a rollover transition, and the dispatcher gate stays correct without re-firing if the materialised flag flipped between source and target (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton phase b rollover`). New single-file test relying on the existing recogniser/dispatcher units (full envelope rebuild already covered by Phase 6 regressions).
+79. [PENDING] Git Commit: `test: cover application skeleton phase b rollover` (hash: TBD)
 
 ### Stream: SSOT Sync
 
