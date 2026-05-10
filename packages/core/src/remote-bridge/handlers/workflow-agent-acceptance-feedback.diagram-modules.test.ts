@@ -397,3 +397,40 @@ test("Diagram Modules repair feedback targets current artifact with snapshot met
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("Diagram Modules happy path emits no feedback when aggregate is ready and stage is clean", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-happy-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway: {
+        handleMessage: (_sessionId, content) => {
+          messages.push(stringifyFeedbackPayload(content));
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        aggregateReady: true,
+        currentPartId: null,
+        generatedCount: 1,
+        generatedPartIds: ["local-runtime"],
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        substep: "awaiting_review",
+      },
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.deepEqual(messages, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
