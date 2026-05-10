@@ -44,10 +44,9 @@ const ACCEPTANCE_VERB_TO_CANONICAL: Readonly<Record<string, string>> = {
   подтверждаю: "Подтверждаю контракт",
   утверждаю: "Утверждаю контракт",
 };
-const ACCEPTANCE_VERB_RE = /(?:^|\W)(принимаю|подтверждаю|утверждаю)\b/iu;
-const NEGATED_ACCEPTANCE_VERB_RE =
-  /\bне\s+(?:принимаю|подтверждаю|утверждаю)\b/iu;
-const CONTRACT_NOUN_RE = /\bконтракт(?:а|у|ом|е|ы)?\b/iu;
+const ACCEPTANCE_VERB_RE = /(принимаю|подтверждаю|утверждаю)/iu;
+const NEGATED_ACCEPTANCE_VERB_RE = /не\s+(?:принимаю|подтверждаю|утверждаю)/iu;
+const CONTRACT_NOUN_RE = /контракт/iu;
 
 export const recognizeManagedContractAcceptancePhrase = (
   content: string

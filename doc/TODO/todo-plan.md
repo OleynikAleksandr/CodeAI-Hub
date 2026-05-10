@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "9fcef00a5",
+  "lastRecordedCommit": "abd65da3a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream3.task1",
-  "expectedCommitMessage": "fix: broaden managed acceptance phrase recognition",
+  "currentTaskId": "runtime-contract.phase10.stream3.task2",
+  "expectedCommitMessage": "test: cover acceptance phrase variants",
   "debt": {
-    "expectedCommitMessage": "fix: broaden managed acceptance phrase recognition",
-    "preCommitHead": "9fcef00a5",
+    "expectedCommitMessage": "test: cover acceptance phrase variants",
+    "preCommitHead": "abd65da3a",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream3.task1"
+    "taskId": "runtime-contract.phase10.stream3.task2"
   }
 }
 ```
@@ -257,9 +257,9 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Robust Acceptance Phrase Recognition
 
 64. [DONE] `runtime-contract.phase10.stream3.task1` Replace exact-match in `recognizeManagedContractAcceptancePhrase` with a normalised contains-keyword recogniser that requires the canonical verb plus the canonical noun (`принимаю/подтверждаю/утверждаю` and `контракт`) inside one user message; gate recognition on acceptance-eligible Type B state via the existing `MANAGED_CONTRACT_ACCEPTANCE_STAGES` set; keep false-positive risk explicit by rejecting messages with conflicting verbs (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`; expected commit: `fix: broaden managed acceptance phrase recognition`).
-65. [PENDING] Git Commit: `fix: broaden managed acceptance phrase recognition` (hash: TBD)
-66. [TODO] `runtime-contract.phase10.stream3.task2` Regression coverage for the broadened matcher: positive matches for the user's reported phrasing and the three canonical phrases, false-negative coverage outside Type B state, false-positive coverage for messages that mention "контракт" without acceptance verbs and for messages that combine multiple verbs (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `test: cover acceptance phrase variants`).
-67. [TODO] Git Commit: `test: cover acceptance phrase variants` (hash: TBD)
+65. [DONE] Git Commit: `fix: broaden managed acceptance phrase recognition` (hash: abd65da3a)
+66. [DONE] `runtime-contract.phase10.stream3.task2` Regression coverage for the broadened matcher; also includes a regex hotfix that drops JS-incompatible word boundaries (`\b` does not work for Cyrillic in V8) so positive matches actually fire (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `test: cover acceptance phrase variants`).
+67. [PENDING] Git Commit: `test: cover acceptance phrase variants` (hash: TBD)
 
 ### Stream: Application Skeleton Materialization Continuation Dispatcher
 
