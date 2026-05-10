@@ -290,6 +290,19 @@ export class ManagedWorkflowPostTurnService {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
+    if (
+      latestApplicationSkeletonProgress?.materialized &&
+      !rawApplicationSkeletonProgress?.materialized
+    ) {
+      this.logger.info(
+        "Observed Application Skeleton materialization completion",
+        {
+          sessionId: params.sessionId,
+          stage: params.stage,
+        }
+      );
+      this.recentlyAcceptedSessions.delete(params.sessionId);
+    }
     const stageOwnedDirty =
       latestManagedGitStatus.dirtyByStage[
         params.stage as keyof typeof latestManagedGitStatus.dirtyByStage
