@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "d2c91d120",
+  "lastRecordedCommit": "60180d32e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open application skeleton phase b orchestration implementation",
+  "currentTaskId": "application-skeleton-orchestration.phase1.audit.task1",
+  "expectedCommitMessage": "docs: map application skeleton phase orchestration code surfaces",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton phase b orchestration implementation",
-    "preCommitHead": "d2c91d120",
+    "expectedCommitMessage": "docs: map application skeleton phase orchestration code surfaces",
+    "preCommitHead": "60180d32e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase0.plan.task1"
+    "taskId": "application-skeleton-orchestration.phase1.audit.task1"
   }
 }
 ```
@@ -63,14 +63,26 @@
 ### Stream: Accepted Planning Handoff
 
 1. [DONE] `application-skeleton-orchestration.phase0.plan.task1` Open this implementation plan from the accepted planning document and preserve the narrow intake revision closeout snapshot before replacing the terminal `NONE` plan. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-closeout-application-skeleton-phase-b-orchestration-intake-q7-fix.md`; expected commit: `docs: open application skeleton phase b orchestration implementation`).
-2. [PENDING] Git Commit: `docs: open application skeleton phase b orchestration implementation` (hash: TBD)
+2. [DONE] Git Commit: `docs: open application skeleton phase b orchestration implementation` (hash: 60180d32e)
 
 ## Phase 1 - Code Surface Audit (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Confirm Runtime Owners
 
-3. [TODO] `application-skeleton-orchestration.phase1.audit.task1` Re-audit current `HEAD` for exact owners of stage todo-plan seeding, Application Skeleton post-turn arbitration, acceptance command routing, HTTP route registration, PM panel state, premature-materialization validation, and managed commit boundaries. Update this plan if any provisional write scopes below need splitting or replacement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: map application skeleton phase orchestration code surfaces`).
-4. [TODO] Git Commit: `docs: map application skeleton phase orchestration code surfaces` (hash: TBD)
+3. [DONE] `application-skeleton-orchestration.phase1.audit.task1` Re-audit current `HEAD` for exact owners of stage todo-plan seeding, Application Skeleton post-turn arbitration, acceptance command routing, HTTP route registration, PM panel state, premature-materialization validation, and managed commit boundaries. Update this plan if any provisional write scopes below need splitting or replacement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: map application skeleton phase orchestration code surfaces`).
+4. [PENDING] Git Commit: `docs: map application skeleton phase orchestration code surfaces` (hash: TBD)
+
+#### Audit findings (HEAD = `60180d32e`, 2026-05-10)
+
+- **Surface 1 — stage plan seeding.** Owner: `packages/core/src/managed-workspace/managed-todo-tree.ts::ensureManagedTodoTree()` (uses `STAGE_PLANS` and `STAGE_TERMINAL_COMMITS` constants; Application Skeleton is one of three managed stages seeded here). Test peer `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` exists. Phase 2.stage-plan.task1 provisional scope (2 files) confirmed.
+- **Surface 2 — post-turn arbitration.** Owner: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts::ManagedWorkflowPostTurnService.run()` (already routes today's typed-acceptance via `recognizeManagedContractAcceptancePhrase()` and `handleContractAcceptance()`). Existing Application Skeleton modules in handlers: `application-skeleton-progress.ts/.test.ts`, `application-skeleton-continuation-dispatcher.ts/.test.ts`, `application-skeleton-materialization-validator.ts/.test.ts`, `application-skeleton-completion-observer.test.ts`, `application-skeleton-end-to-end.test.ts`, `application-skeleton-phase-b-rollover.test.ts`. New phase classifier file `application-skeleton-phase-state.ts` does not exist yet. Phase 2.classifier.task1 provisional scope (3 files) confirmed.
+- **Surface 3 — acceptance command routing.** Today's typed-acceptance fallback enters via `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` (imports `recognizeManagedAcceptanceForStage` from `managed-workflow-post-turn-service.ts`). No dedicated `managed-stage-accept-contract-handler.ts` exists. Phase 5.accept.task1 (3 files) and Phase 5.accept.task3 typed-fallback (3 files) provisional scopes confirmed.
+- **Surface 4 — HTTP route registration.** Central registry: `packages/core/src/remote-bridge/handlers/http-api-router.ts::HttpApiRouter.registerRoutes()` with a 1-line per-endpoint registration pattern (imported handler called inside `registerRoutes()`). New endpoint file `http-api-managed-stage-accept-contract.ts` is absent. Phase 5.accept.task2 provisional scope (3 files) confirmed.
+- **Surface 5 — PM panel / button / client.** Directory `src/client/project-manager/components/application-skeleton/` exists with `application-skeleton-help.tsx` and `application-skeleton-panel.tsx`; no accept-contract button yet. PM service-client pattern lives in `src/client/project-manager/services/` (`workflow-state-client.ts` already exposes `WorkflowStageStatus` / `ContinuityChainSnapshot` for disabled-state derivation). Phase 5.ui.task1 provisional scope (3 files) confirmed.
+- **Surface 6 — premature-materialization validation.** Existing `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts` encodes hardcoded draft-wording / `product-parts/**` patterns; no skeleton-map-driven derivation yet. Continuation dispatcher `application-skeleton-continuation-dispatcher.ts::sendApplicationSkeletonContinuationIfReady()` exists but is not yet Phase 1A-aware. Phase 6.materialization.task1 (3 files) and Phase 6.materialization.task3 dispatcher gate (3 files) provisional scopes confirmed.
+- **Surface 7 — managed commit boundaries.** Transaction owner: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts::ManagedDocumentationCommitTransaction.commitAcceptedStage()`. Workflow-state integration owner: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts::commitManagedDocumentationStageIfReady()` (currently checks `materialized` flag only — no Phase 1A vs Phase 1B distinction). Both production files and their test peers exist. Phase 4.phase1b.task3 provisional scope (3 files) confirmed.
+- **Coverage stubs already present.** `application-skeleton-end-to-end.test.ts` and `application-skeleton-phase-b-rollover.test.ts` exist today as stubs/placeholders; Phase 7.tests.task1 enriches these existing files rather than creating new ones — provisional scope (3 files) still valid.
+- **Conclusion.** No provisional microtask scope needs splitting or replacement. Every Phase 2..Phase 7 microtask stays within the ≤3-file limit on the current `HEAD`.
 
 ## Phase 2 - Stage Plan Shape And Phase Identity (owner: next agent, updated: 2026-05-10)
 
