@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "bef937396",
+  "lastRecordedCommit": "58de08eda",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream5.task1",
-  "expectedCommitMessage": "fix: observe application skeleton materialization completion",
+  "currentTaskId": "runtime-contract.phase10.stream5.task2",
+  "expectedCommitMessage": "test: cover application skeleton completion observer",
   "debt": {
-    "expectedCommitMessage": "fix: observe application skeleton materialization completion",
-    "preCommitHead": "bef937396",
+    "expectedCommitMessage": "test: cover application skeleton completion observer",
+    "preCommitHead": "58de08eda",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream5.task1"
+    "taskId": "runtime-contract.phase10.stream5.task2"
   }
 }
 ```
@@ -271,9 +271,9 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Application Skeleton Materialization Completion Observer
 
 72. [DONE] `runtime-contract.phase10.stream5.task1` Existing post-turn arbitration already re-reads `application-skeleton-map.json` each turn (`readApplicationSkeletonProgressSnapshot`) and `hasCommittableApplicationSkeletonStage` fires once `materialized: true` is observed. Add explicit completion-observation log and drop the recently-accepted session marker so the Stream 4 dispatcher does not refire after materialisation completes (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: observe application skeleton materialization completion`).
-73. [PENDING] Git Commit: `fix: observe application skeleton materialization completion` (hash: TBD)
-74. [TODO] `runtime-contract.phase10.stream5.task2` Runtime-shaped regression: agent reply with `materialized: true` in the on-disk map triggers commit gate without pre-staging the in-memory flag; failed reply (no map update) does not trigger commit (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `test: cover application skeleton completion observer`).
-75. [TODO] Git Commit: `test: cover application skeleton completion observer` (hash: TBD)
+73. [DONE] Git Commit: `fix: observe application skeleton materialization completion` (hash: 58de08eda)
+74. [DONE] `runtime-contract.phase10.stream5.task2` Add completion observer regression in a new dedicated file: agent flipping `materialized: false → true` between turns produces `progress.materialized: true` and `substep: "materialized"` (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-completion-observer.test.ts`; expected commit: `test: cover application skeleton completion observer`). New single-file test; existing `application-skeleton-progress.test.ts` was nearing the 500-line limit.
+75. [PENDING] Git Commit: `test: cover application skeleton completion observer` (hash: TBD)
 
 ### Stream: End-To-End Regression Coverage
 
