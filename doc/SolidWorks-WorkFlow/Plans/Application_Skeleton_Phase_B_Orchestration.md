@@ -49,6 +49,17 @@ This rule applies to both Phase 1A and Phase 1B and is the single largest behavi
 
 Diagram Modules already obeys this rule (see `Archive/Diagram_Modules_Core_Orchestrated_Subturns.md`). Application Skeleton does not, and that is the proximate cause of D1.
 
+### Readiness Resolution
+
+The "content readiness" half of the rule must not deadlock when the agent ends a turn with an owned artifact diff but forgets to write a readiness phrase. Resolution table:
+
+- *Terminal event + readiness/content-ready phrase* → explicit readiness; Core validates and proceeds per T1/T2.
+- *Terminal event + owned artifact diff but no readiness phrase* → **implicit readiness**; Core treats it as if a readiness phrase was present and validates the diff. Rationale: the terminal event means the agent finished its turn, and the owned diff is the work product — requiring an additional acknowledgement phrase would deadlock without value.
+- *Terminal event + no owned diff + no readiness phrase* → in Phase 1B this is a pure discussion / no-op turn (T2 outcome); in Phase 1A this is unfinished work, so Core dispatches one non-commit corrective turn asking the agent to either write the draft now or report blockers (input remains locked).
+- *No terminal event* → Core continues waiting; no validation, no correction, no commit.
+
+This table is normative for the Phase 1A and Phase 1B post-turn arbitration policy.
+
 ## Target Behaviour
 
 Five orthogonal rules. Each is small enough to ship as its own implementation stream.
@@ -58,7 +69,7 @@ Five orthogonal rules. Each is small enough to ship as its own implementation st
 **T2 — Phase 1B user-led review with Core structural guard.** Trigger: Phase 1A produced a Core-clean draft. User reads the contract. User may request revisions, ask clarifying questions, change stack/structure/assumptions, or accept the contract as-is. The agent responds to the user; the agent edits the contract only when the user requests changes. Core does not steer content and does not dispatch a continuation prompt of its own initiative. Core validates artifact-changing revisions only after readiness plus provider terminal event. Outcomes per turn:
 - *artifact-changing revision, structurally valid* → managed commit `docs: revise application skeleton contract — <short summary>` and control returns to user;
 - *artifact-changing revision, structurally invalid* → one corrective turn to the agent (input locked until repair), then re-validate and commit the clean revision;
-- *pure discussion / no-op turn* → recorded in session history and audit stream, no Git commit, control returns to user.
+- *pure discussion / no-op turn* → recorded in the standard session history (the existing JSONL session log captures every turn including timestamps, user message and assistant response). No Git commit and no new managed audit kind in the pilot. Cross-session reconstructability via a dedicated audit kind (working name `managed_phase_b_noop_turn`) is a deferred generalization; out of scope for this cycle.
 
 Phase 1B exits only via the explicit Core-owned acceptance command (T3).
 
@@ -88,17 +99,63 @@ The block scope is *derived from the skeleton map and stage ownership at validat
 
 The T3 acceptance command must produce one of these two outcomes — not a no-op Git commit and not a manual edit of machine-owned `todo-plan.md`:
 
-- **Option A — owned-diff commit.** The acceptance commit (`docs: accept application skeleton contract`) carries an explicitly owned diff: an acceptance marker in a managed stage artifact (e.g. `accepted: true` plus `acceptedAt` timestamp in `application-skeleton-map.json`, or a dedicated acceptance audit record under the existing managed audit stream). Plan-orchestrator advance follows in the post-commit hook as usual.
+- **Option A — owned-diff commit.** The acceptance commit (`docs: accept application skeleton contract`) carries an explicitly owned diff against a *tracked owned artifact* — for example, acceptance marker fields (`accepted: true`, `acceptedAt: <iso>`, `acceptedBy: "ui-button" | "text-pattern-fallback"`) inside `application-skeleton-map.json`, or another tracked stage control-plane file. The managed audit stream (replay-safe, isolated from provider replay) is **not** an acceptable sole diff for a Git commit because it is durable diagnostic storage, not a tracked Git artifact owned by the stage; an audit append may accompany the transition as supplementary evidence but cannot replace the tracked-artifact diff. Plan-orchestrator advance follows in the post-commit hook as usual.
 - **Option B — fold acceptance into Phase 2 transition transaction.** No separate acceptance commit. The T3 handler records acceptance internally, opens Phase 2 by dispatching the materialization continuation prompt, and the next managed commit is `feat: materialize application skeleton` with a side-effect-free header that records "acceptance recorded at <timestamp> by <command source>" inside the managed audit stream.
 
 The choice between A and B is one of the Open Questions below. Either choice is implementable; the document reserves the decision for user direction.
 
+## Stage Plan Shape
+
+The Application Skeleton managed stage todo-plan (lives at `doc/TODO/stages/application-skeleton/todo-plan.md` in the managed workspace, separate from the active development plan) models the A→B→A sequence as a fixed skeleton plus one open-ended dynamic stream.
+
+**Initial seed (owner: `managed-todo-tree.ts:ensureManagedTodoTree` at managed workspace bootstrap):**
+
+```text
+Phase 1 — Application Skeleton Contract Bootstrap
+  Stream: Phase 1A Core-Gated Initial Draft
+    1. application-skeleton.phase1a.draft.task1       — agent draft turn (Phase 1A)
+    2. Git Commit: docs: draft application skeleton contract
+
+Phase 2 — Application Skeleton Contract Review
+  Stream: Phase 1B User-Led Review
+    3. application-skeleton.phase1b.review.task1      — open-ended user review (no commit)
+
+Phase 3 — Application Skeleton Materialization
+  Stream: Phase 2 Core-Led Materialization
+    N.   application-skeleton.phase2.materialize.task1 — agent materialize turn (Phase 2)
+    N+1. Git Commit: feat: materialize application skeleton
+
+Phase 4 — Handoff
+  Stream: Reserved Post-Closeout Handoff Anchor
+    M.   application-skeleton.handoff.task1            — reserved anchor (no commit)
+```
+
+**Phase 1A retry on invalid draft does NOT add new task pairs.** Phase 1A corrective turns are subturns inside the same draft cycle; the draft commit closes only after Core's structural guard accepts the artifacts. The plan shape above is unchanged regardless of how many corrective subturns happen.
+
+**Phase 1B dynamic injection (owner: `managed-workflow-post-turn-service.ts` post-turn arbitration, on each artifact-changing valid revision):** Core injects a new task pair *before* the existing open-ended review task, then commits the revision. After the commit, `currentTaskId` advances back to the open-ended review task (it stays open until T3 fires). Schema after the first revision:
+
+```text
+Phase 2 — Application Skeleton Contract Review
+  Stream: Phase 1B User-Led Review
+    3. application-skeleton.phase1b.review.revision1.task1  — agent revision turn 1
+    4. Git Commit: docs: revise application skeleton contract — <short summary>
+    5. application-skeleton.phase1b.review.task1            — open-ended user review (continues)
+```
+
+Each subsequent valid revision injects another `revisionN.task1 + Git Commit` pair before the open-ended task. Pure discussion / no-op turns do not modify plan shape (T2 outcome).
+
+**Phase 1A → Phase 1B transition:** post-commit advance of `currentTaskId` from `application-skeleton.phase1a.draft.task1` to `application-skeleton.phase1b.review.task1` is automatic via the existing plan-orchestrator post-commit hook — no new code path, only the seeded plan shape.
+
+**Phase 1B → Phase 2 transition (T3 acceptance command):** Core's acceptance command handler advances `currentTaskId` from `application-skeleton.phase1b.review.task1` (no-commit) to `application-skeleton.phase2.materialize.task1` via the existing `plan-complete` no-commit advance mechanism (same mechanism used elsewhere in the orchestrator for handoff anchors). If Acceptance Commit Policy Option A is chosen, the acceptance commit injects an additional `application-skeleton.phase1b.review.accept.task1 + Git Commit` pair before the materialize task; if Option B is chosen, the acceptance is folded into the materialize transaction and no additional pair appears.
+
+This shape is Application Skeleton-specific. Generalization (per-stage Phase Type registry deciding seed shape and dynamic injection rules across all managed stages) is a deferred follow-up — see Open Question 5.
+
 ## Existing Code Inventory (verified)
 
-Snapshot of relevant Application Skeleton runtime as of `694efceeb`:
+Snapshot of relevant Application Skeleton runtime, verified during intake revision 1 against the working tree at the time. Future agents should re-verify against current `HEAD` before relying on specific line behaviour.
 
-- `application-skeleton-continuation-dispatcher.ts` — **Phase 2 materialization continuation dispatcher only.** Gates on `progress.substep === "awaiting_acceptance" || "accepted"` plus `!progress.materialized` plus session presence in `recentlyAcceptedSessions`. A Phase 1A corrective dispatcher does **not** exist; it is a new file in this scope.
-- `managed-workflow-post-turn-service.ts` — owns the Phase 10 broadened text-pattern acceptance recogniser (`recognizeManagedContractAcceptancePhrase`) and writes session ids into `recentlyAcceptedSessions`. The new T3 command handler must populate the same marker to reuse the existing Phase 2 dispatcher.
+- `application-skeleton-continuation-dispatcher.ts` — **Phase 2 materialization continuation dispatcher only.** Gates on `progress.substep === "awaiting_acceptance" || "accepted"` plus `!progress.materialized` plus session presence in `recentlyAcceptedSessions`. There is no Phase 1A corrective dispatcher in the codebase, and this scope deliberately does **not** add one as a standalone state owner — Phase 1A and Phase 1B corrective decision policy lives inside the existing post-turn arbitration contract (next bullet).
+- `managed-workflow-post-turn-service.ts` — owns the Phase 10 broadened text-pattern acceptance recogniser (`recognizeManagedContractAcceptancePhrase`) and writes session ids into `recentlyAcceptedSessions`. The new T3 command handler must populate the same marker to reuse the existing Phase 2 dispatcher. **This is also where Phase 1A and Phase 1B corrective decision policy is added in this scope.** A separate prompt-builder file is allowed for the corrective message text (e.g. `application-skeleton-phase-1a-corrective-prompt.ts` as a pure builder) but must not own state, gating, or dispatch decisions.
 - `application-skeleton-progress.ts` — observes `application-skeleton-map.json` and reports progress. Will be consumed by the new Phase 1A/1B structural guards.
 - `application-skeleton-materialization-validator.ts` — validates the materialization commit boundary. Will be consumed by T5; the inverse (premature-materialization rejection) is a new sibling validator.
 - `workflow-state-managed-documentation-commit.ts` — owns the managed commit boundary for Application Skeleton. T2 per-revision autocommit reuses this path with a microtask injector for managed stage todo-plan revisions.
@@ -109,10 +166,10 @@ Snapshot of relevant Application Skeleton runtime as of `694efceeb`:
 Anchor points for the implementation cycle, not commitments. Exact ≤3-file microtask carving happens in the implementation todo-plan after this planning doc is accepted.
 
 - Phase A / Phase B classifier registry (stage id + current sub-phase → phase type).
-- Phase 1A post-turn structural guard (consumes Observe-vs-Dispatch rule).
-- Phase 1A corrective dispatcher (new file, sibling to existing materialization dispatcher).
-- Phase 1B post-turn structural guard with revision-vs-discussion classifier (artifact diff present?).
-- Phase 1B per-revision autocommit driver (managed stage todo-plan microtask injector + reuse of existing managed commit transaction).
+- Phase 1A post-turn structural guard (consumes Observe-vs-Dispatch rule and the Readiness Resolution table).
+- Phase 1A corrective decision policy inside `managed-workflow-post-turn-service.ts` (existing post-turn arbitration contract); optional `application-skeleton-phase-1a-corrective-prompt.ts` as a pure prompt-builder, not a state owner.
+- Phase 1B post-turn structural guard with revision-vs-discussion classifier (artifact diff present? — see Readiness Resolution table for the no-op vs unfinished distinction).
+- Phase 1B per-revision autocommit driver (managed stage todo-plan microtask injector + reuse of existing managed commit transaction; see Stage Plan Shape).
 - Core acceptance command handler (single decision point; UI button transport and text-pattern fallback both route through it).
 - UI Accept Contract button on Application Skeleton stage panel (read-model preconditions only).
 - Core HTTP endpoint as transport only (`/api/v1/orchestrator/managed-stage-accept-contract`).

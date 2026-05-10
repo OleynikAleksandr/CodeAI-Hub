@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-intake",
   "branch": "main",
   "baseHead": "694efceeb",
-  "lastRecordedCommit": "90664cce9",
+  "lastRecordedCommit": "5cca71a99",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "phase-b-orchestration.intake.review.revision1.task1",
-  "expectedCommitMessage": "docs: revise application skeleton phase b orchestration intake — phase 1a/1b/2 split",
+  "currentTaskId": "phase-b-orchestration.intake.review.revision2.task1",
+  "expectedCommitMessage": "docs: revise application skeleton phase b orchestration intake — stage plan shape, owned diff, readiness fallback",
   "debt": {
-    "expectedCommitMessage": "docs: revise application skeleton phase b orchestration intake — phase 1a/1b/2 split",
-    "preCommitHead": "90664cce9",
+    "expectedCommitMessage": "docs: revise application skeleton phase b orchestration intake — stage plan shape, owned diff, readiness fallback",
+    "preCommitHead": "5cca71a99",
     "stage": "commit_pending",
-    "taskId": "phase-b-orchestration.intake.review.revision1.task1"
+    "taskId": "phase-b-orchestration.intake.review.revision2.task1"
   }
 }
 ```
@@ -71,6 +71,19 @@
 **Revision request 1 (2026-05-10):** user rejected the "hybrid Phase B for all of Phase 1" framing and requested an explicit `Phase 1A (Type A) → Phase 1B (Type B) → Phase 2 (Type A)` split with detailed rewrites of T1-T4 (now T1-T5), broader premature-materialization block, clarified Accept Contract command surface, owned-diff acceptance commit policy, scoped no-op autocommit policy, and verification of the existing `application-skeleton-continuation-dispatcher.ts` real responsibility.
 
 6. [DONE] `phase-b-orchestration.intake.review.revision1.task1` Rewrite planning document per user revision request 1: replace whole-Phase-1 hybrid framing with explicit Phase 1A / Phase 1B / Phase 2 split; rewrite T1 with `observe-vs-dispatch` rule and 1A/1B differentiation; rewrite T2 with artifact-changing-only autocommit and no-op audit policy; rewrite T3 with PM-button-as-command-surface, endpoint-as-transport, Core-handler-as-decision and disabled-state preconditions; rewrite T4 as Core-led materialization; replace narrow `product-parts/**` block with skeleton-map-ownership-derived T5 premature-materialization block; clarify acceptance-commit owned-diff requirement or fold into Phase 2 transition; verify existing `application-skeleton-continuation-dispatcher.ts` role and document accurately; tighten text-pattern fallback to same Core command handler with Phase 1B-only gating; explicit out-of-scope list (generalized phase runtime, Quality Gates, Diagram Modules review symmetry, full Type B candidate microtask runtime). (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md`; expected commit: `docs: revise application skeleton phase b orchestration intake — phase 1a/1b/2 split`).
-7. [PENDING] Git Commit: `docs: revise application skeleton phase b orchestration intake — phase 1a/1b/2 split` (hash: TBD)
+7. [DONE] Git Commit: `docs: revise application skeleton phase b orchestration intake — phase 1a/1b/2 split` (hash: 5cca71a99)
 
-8. [TODO] `phase-b-orchestration.intake.review.task2` User reviews the rewritten planning document; explicit acceptance or further revision request. Additional revisions queue as further `revisionN.task1 + Git Commit` pairs under this stream. (scope: chat/process observation only; no commit required).
+8. [DONE] `phase-b-orchestration.intake.review.task2` User reviews the rewritten planning document; explicit acceptance or further revision request. Additional revisions queue as further `revisionN.task1 + Git Commit` pairs under this stream. (scope: chat/process observation only; no commit required). Result: User accepts A→B→A frame and observe-vs-dispatch rule; requested six clarifications before final acceptance: P1 - narrow acceptance commit owned diff to tracked artifact only; add Stage Plan Shape section; define readiness-resolution fallback. P2 - reframe Phase 1A corrective as post-turn decision policy not standalone dispatcher; name audit owner for no-op turns explicitly; replace stale hash in Existing Code Inventory. Revision 2 task pair queued plus handoff anchor added.
+
+**Revision request 2 (2026-05-10):** user accepts the A→B→A frame and observe-vs-dispatch rule but requested six follow-up clarifications before final acceptance. P1: (1) narrow Acceptance Commit Policy Option A so the owned diff is a tracked owned artifact only — audit record may be additional evidence but not the sole diff; (2) add a Stage Plan Shape section describing how the managed stage todo-plan models Phase 1A → Phase 1B → Phase 2, including dynamic injection of revision task pairs in Phase 1B; (3) define readiness-resolution fallback when terminal event arrives with an owned diff but no readiness phrase. P2: (4) reframe Phase 1A corrective dispatcher as a post-turn decision policy inside the existing arbitration contract (separate file allowed only as prompt builder, not as state owner); (5) name the audit owner for no-op/discussion turns explicitly (audit kind name OR explicit reliance on standard session history); (6) replace stale `694efceeb` hash in Existing Code Inventory with non-pinned wording.
+
+9. [DONE] `phase-b-orchestration.intake.review.revision2.task1` Apply revision request 2 to the planning document: narrow Acceptance Commit Policy Option A to tracked owned artifact (audit record demoted to evidence); add Stage Plan Shape section for managed stage todo-plan structure across Phase 1A/1B/2 with dynamic revision injection; add readiness-resolution fallback (terminal + owned diff = implicit readiness; terminal + no diff = no-op or unfinished); reframe Phase 1A corrective as post-turn decision policy inside the existing arbitration contract with optional prompt-builder file; explicit no-op/discussion audit owner (standard session history, no new audit kind in pilot); replace `694efceeb` hash with non-pinned wording. (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md`; expected commit: `docs: revise application skeleton phase b orchestration intake — stage plan shape, owned diff, readiness fallback`).
+10. [PENDING] Git Commit: `docs: revise application skeleton phase b orchestration intake — stage plan shape, owned diff, readiness fallback` (hash: TBD)
+
+11. [TODO] `phase-b-orchestration.intake.review.task3` User reviews the rewritten planning document after revision 2; explicit acceptance or further revision request. (scope: chat/process observation only; no commit required).
+
+## Phase 4 — Handoff (owner: next agent, updated: 2026-05-10)
+
+### Stream: Reserved Post-Closeout Handoff Anchor
+
+12. [TODO] `phase-b-orchestration.intake.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically. After explicit user acceptance closes the review stream, this task closes the intake scope so a fresh implementation todo-plan can open against the accepted planning document. The planning document remains in `doc/SolidWorks-WorkFlow/Plans/`. (scope: chat/process observation only; no commit required).
