@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "68742258e",
+  "lastRecordedCommit": "355aca966",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.audit.task1",
-  "expectedCommitMessage": "docs: open application skeleton phase numbering refactor scope",
+  "currentTaskId": "application-skeleton-orchestration.phase12.advance.task1",
+  "expectedCommitMessage": "fix: advance through open-ended managed plan tasks",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton phase numbering refactor scope",
-    "preCommitHead": "68742258e",
+    "expectedCommitMessage": "fix: advance through open-ended managed plan tasks",
+    "preCommitHead": "355aca966",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.audit.task1"
+    "taskId": "application-skeleton-orchestration.phase12.advance.task1"
   }
 }
 ```
@@ -237,7 +237,7 @@
 ### Stream: Scope Audit
 
 55. [DONE] `application-skeleton-orchestration.phase12.audit.task1` Open this refactor scope: block Phase 11 with the retest defect summary, record audit findings for the advancement regex skip and the phase-numbering misalignment (Type A/B is a phase-type attribute, not part of the phase number; managed plan headings already read `Phase 1` / `Phase 2` / `Phase 3` while task IDs lag at `phase1a` / `phase1b` / `phase2`), and enumerate the file inventory that future streams must touch. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton phase numbering refactor scope`).
-56. [PENDING] Git Commit: `docs: open application skeleton phase numbering refactor scope` (hash: TBD)
+56. [DONE] Git Commit: `docs: open application skeleton phase numbering refactor scope` (hash: 355aca966)
 
 #### Audit findings (HEAD = `68742258e`, 2026-05-10)
 
@@ -250,8 +250,8 @@
 
 ### Stream: Advancement Regex Fix
 
-57. [TODO] `application-skeleton-orchestration.phase12.advance.task1` Extend `TASK_LINE_RE` so it matches both `expected commit: \`<message>\`` and `expected commit: none — open until acceptance` task lines, and update the post-commit advancement so an open-ended task surfaces with `expectedCommitMessage: null` instead of being silently skipped. Add a regression test asserting that after the Phase 1A draft commit advances, `currentTaskId` lands on the open-ended Phase 2 review task and not on the materialization task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: advance through open-ended managed plan tasks`).
-58. [TODO] Git Commit: `fix: advance through open-ended managed plan tasks` (hash: TBD)
+57. [DONE] `application-skeleton-orchestration.phase12.advance.task1` Extend `TASK_LINE_RE` so it matches both `expected commit: \`<message>\`` and `expected commit: none — open until acceptance` task lines, and update the post-commit advancement so an open-ended task surfaces with `expectedCommitMessage: null` instead of being silently skipped. Add a regression test asserting that after the Phase 1A draft commit advances, `currentTaskId` lands on the open-ended Phase 2 review task and not on the materialization task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: advance through open-ended managed plan tasks`).
+58. [PENDING] Git Commit: `fix: advance through open-ended managed plan tasks` (hash: TBD)
 
 ### Stream: Stage Plan Task ID Rename
 

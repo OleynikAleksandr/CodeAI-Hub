@@ -23,7 +23,7 @@ const START = "<!-- codeai-plan-state:start -->";
 const END = "<!-- codeai-plan-state:end -->";
 const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
 const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
-const TASK_LINE_RE = new RegExp("^\\\\d+\\\\. \\\\[(?:TODO|IN_PROGRESS)\\\\].*?\`([^\`]+)\`.*expected commit: \`([^\`]+)\`", "u");
+const TASK_LINE_RE = new RegExp("^\\\\d+\\\\. \\\\[(?:TODO|IN_PROGRESS)\\\\].*?\`([^\`]+)\`.*expected commit: (?:\`([^\`]+)\`|none)", "u");
 const PRODUCT_PART_DECLARATION_RE = /^###\\s+Product Part:\\s*([a-z0-9]+(?:-[a-z0-9]+)*)\\s*$/gimu;
 ${buildStageMappingsBlock()}
 
@@ -106,7 +106,7 @@ const nextTaskId = (taskId) => {
 };
 
 const readTaskLine = (line) => {
-  const match = TASK_LINE_RE.exec(line); return match ? { id: match[1], message: match[2] } : null;
+  const match = TASK_LINE_RE.exec(line); return match ? { id: match[1], message: match[2] ?? null } : null;
 };
 const summarizeStagedFiles = (files, fallbackMessage) => {
   const productParts = files
@@ -221,7 +221,7 @@ const advancePlanForCommit = (message) => {
   );
   const nextTask = readTaskLine(lines[nextTaskLineIndex] ?? "");
   const nextId = nextTask?.id ?? nextTaskId(state.currentTaskId);
-  const nextMessage = nextTask?.message ?? message;
+  const nextMessage = nextTask ? nextTask.message : message;
   lines[taskLineIndex] = formatTaskLine(
     lines[taskLineIndex],
     state.currentTaskId,

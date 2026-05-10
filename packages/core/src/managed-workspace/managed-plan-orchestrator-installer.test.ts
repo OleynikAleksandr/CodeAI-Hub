@@ -48,10 +48,13 @@ const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.phase1a\.draft\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /Expected Commit: docs: draft application skeleton contract/u;
-const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
-  /Current Task: application-skeleton\.phase2\.materialize\.task1/u;
-const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
-  /Expected Commit: feat: materialize application skeleton/u;
+const APPLICATION_SKELETON_REVIEW_TASK_RE =
+  /Current Task: application-skeleton\.phase1b\.review\.task1/u;
+const APPLICATION_SKELETON_REVIEW_OPEN_COMMIT_RE = /Expected Commit: none/u;
+const APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `application-skeleton\.phase1b\.review\.task1`/u;
+const APPLICATION_SKELETON_MATERIALIZE_TODO_RE =
+  /\[TODO\] `application-skeleton\.phase2\.materialize\.task1`/u;
 const APPLICATION_SKELETON_BOUNDED_GROUP_RE = /bounded target-group microtask/u;
 const APPLICATION_SKELETON_ACTIVE_STAGE_RE =
   /"activeStage": "application_skeleton"/u;
@@ -186,7 +189,7 @@ test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage
   }
 });
 
-test("managed plan shim advances filesystem stage draft commits to materialization", async () => {
+test("managed plan shim advances application skeleton draft commits to open-ended user-led review without skipping the review task", async () => {
   const workspaceRoot = await createWorkspaceRoot();
   try {
     await execFileAsync("git", ["init"], { cwd: workspaceRoot });
@@ -236,8 +239,10 @@ test("managed plan shim advances filesystem stage draft commits to materializati
       cwd: workspaceRoot,
     });
 
-    assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_TASK_RE);
-    assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE);
+    assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_TASK_RE);
+    assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_OPEN_COMMIT_RE);
+    assert.match(plan, APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE);
+    assert.match(plan, APPLICATION_SKELETON_MATERIALIZE_TODO_RE);
     assert.match(plan, APPLICATION_SKELETON_BOUNDED_GROUP_RE);
     assert.equal(gitStatus.stdout.trim(), "");
   } finally {
