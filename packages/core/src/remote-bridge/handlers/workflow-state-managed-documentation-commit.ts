@@ -43,17 +43,28 @@ const hasCommittableDiagramModulesStage = (
   });
 };
 
-const hasCommittableManagedStage = (
+const hasCommittableApplicationSkeletonStage = (
   context: ManagedDocumentationProgressContext
 ): boolean =>
   Boolean(
-    hasCommittableDiagramModulesStage(context) ||
-      (context.applicationSkeletonProgress?.materialized &&
-        context.managedGitStatus.dirtyByStage.application_skeleton.length >
-          0) ||
-      (context.qualityGatesProgress?.integrated &&
-        context.managedGitStatus.dirtyByStage.quality_gates.length > 0)
+    context.applicationSkeletonProgress?.materialized &&
+      context.managedGitStatus.dirtyByStage.application_skeleton.length > 0
   );
+
+const hasCommittableQualityGatesStage = (
+  context: ManagedDocumentationProgressContext
+): boolean =>
+  Boolean(
+    context.qualityGatesProgress?.integrated &&
+      context.managedGitStatus.dirtyByStage.quality_gates.length > 0
+  );
+
+const hasCommittableManagedStage = (
+  context: ManagedDocumentationProgressContext
+): boolean =>
+  hasCommittableDiagramModulesStage(context) ||
+  hasCommittableApplicationSkeletonStage(context) ||
+  hasCommittableQualityGatesStage(context);
 
 const readLatestManagedDocumentationProgress = async (params: {
   readonly workspaceRoot: string;

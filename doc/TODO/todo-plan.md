@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "a2c2d22ee",
+  "lastRecordedCommit": "cda4b3a5e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase4.stream3.task2",
-  "expectedCommitMessage": "test: cover managed acceptance command routing",
+  "currentTaskId": "runtime-contract.phase4.stream4.task1",
+  "expectedCommitMessage": "fix: commit managed materialization phases",
   "debt": {
-    "expectedCommitMessage": "test: cover managed acceptance command routing",
-    "preCommitHead": "a2c2d22ee",
+    "expectedCommitMessage": "fix: commit managed materialization phases",
+    "preCommitHead": "cda4b3a5e",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase4.stream3.task2"
+    "taskId": "runtime-contract.phase4.stream4.task1"
   }
 }
 ```
@@ -97,12 +97,12 @@
 13. [DONE] `runtime-contract.phase4.stream3.task1` Route contract acceptance as Core-owned commands and block provider delivery for matched full-message acceptance phrases (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix: route managed contract acceptance commands`).
 14. [DONE] Git Commit: `fix: route managed contract acceptance commands` (hash: a2c2d22ee)
 15. [DONE] `runtime-contract.phase4.stream3.task2` Add command validation tests for accepted phrases, rejected non-matches and provider-message isolation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts`; expected commit: `test: cover managed acceptance command routing`).
-16. [PENDING] Git Commit: `test: cover managed acceptance command routing` (hash: TBD)
+16. [DONE] Git Commit: `test: cover managed acceptance command routing` (hash: cda4b3a5e)
 
 ### Stream: Materialization And Integration Commit Handler
 
-17. [TODO] `runtime-contract.phase4.stream4.task1` Open Core-owned materialization/integration phase after acceptance and wire managed commit + plan advance for Application Skeleton and Quality Gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: commit managed materialization phases`).
-18. [TODO] Git Commit: `fix: commit managed materialization phases` (hash: TBD)
+17. [DONE] `runtime-contract.phase4.stream4.task1` Open Core-owned materialization/integration phase after acceptance and wire managed commit + plan advance for Application Skeleton and Quality Gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: commit managed materialization phases`).
+18. [PENDING] Git Commit: `fix: commit managed materialization phases` (hash: TBD)
 19. [TODO] `runtime-contract.phase4.stream4.task2` Generalize managed commit boundary validation for draft/materialization/integration phases without duplicating Diagram Modules logic (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: share managed commit boundary across phases`).
 20. [TODO] Git Commit: `fix: share managed commit boundary across phases` (hash: TBD)
 
