@@ -134,3 +134,31 @@ test("dispatcher is a no-op when no chain matches Application Skeleton stage", a
   });
   assert.equal(calls.length, 0);
 });
+
+test("dispatcher is a no-op for an incomplete `artifact` substep even with the accept marker", async () => {
+  // Phase 6 task3 invariant: a session that the user typed an acceptance
+  // phrase for must not flip into materialization until the draft is at least
+  // structurally complete (`awaiting_acceptance`). The accept marker guards
+  // who can authorize Phase 2; the substep guards what stage the agent is at.
+  const sessionId = "session-as-incomplete-draft";
+  const { gateway, calls } = createSpyGateway();
+  await sendApplicationSkeletonContinuationIfReady({
+    chains: [buildChain(sessionId)],
+    gateway,
+    progress: buildProgress({ substep: "artifact" }),
+    recentlyAcceptedSessions: new Set([sessionId]),
+  });
+  assert.equal(calls.length, 0);
+});
+
+test("dispatcher is a no-op when stage is already materialized (premature flip)", async () => {
+  const sessionId = "session-as-already-materialized";
+  const { gateway, calls } = createSpyGateway();
+  await sendApplicationSkeletonContinuationIfReady({
+    chains: [buildChain(sessionId)],
+    gateway,
+    progress: buildProgress({ materialized: true, substep: "materialized" }),
+    recentlyAcceptedSessions: new Set([sessionId]),
+  });
+  assert.equal(calls.length, 0);
+});

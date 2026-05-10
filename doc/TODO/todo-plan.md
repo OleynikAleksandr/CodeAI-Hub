@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "cb181633c",
+  "lastRecordedCommit": "1440af2c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase6.materialization.task2",
-  "expectedCommitMessage": "fix: reject skeleton materialization before acceptance",
+  "currentTaskId": "application-skeleton-orchestration.phase6.materialization.task3",
+  "expectedCommitMessage": "fix: gate skeleton materialization on accept command",
   "debt": {
-    "expectedCommitMessage": "fix: reject skeleton materialization before acceptance",
-    "preCommitHead": "cb181633c",
+    "expectedCommitMessage": "fix: gate skeleton materialization on accept command",
+    "preCommitHead": "1440af2c2",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase6.materialization.task2"
+    "taskId": "application-skeleton-orchestration.phase6.materialization.task3"
   }
 }
 ```
@@ -177,12 +177,12 @@
 ### Stream: Phase 1A/1B Premature Block Integration
 
 37. [DONE] `application-skeleton-orchestration.phase6.materialization.task2` Run the premature-materialization validator from Phase 1A and Phase 1B structural guards, delivering one corrective turn only at the readiness + terminal boundary. Scope adds the premature validator file because the guard integration needs an async wrapper that reads `application-skeleton-map.json` and runs the pure decision; without that wrapper the post-turn-service would have to inline file I/O outside its 500-line limit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: reject skeleton materialization before acceptance`).
-38. [PENDING] Git Commit: `fix: reject skeleton materialization before acceptance` (hash: TBD)
+38. [DONE] Git Commit: `fix: reject skeleton materialization before acceptance` (hash: 1440af2c2)
 
 ### Stream: Phase 2 Dispatcher Gate
 
-39. [TODO] `application-skeleton-orchestration.phase6.materialization.task3` Ensure the existing Application Skeleton materialization dispatcher starts only after the Core acceptance command marker, and does not treat user text or premature `materialized` flips as Phase 2 authority. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: gate skeleton materialization on accept command`).
-40. [TODO] Git Commit: `fix: gate skeleton materialization on accept command` (hash: TBD)
+39. [DONE] `application-skeleton-orchestration.phase6.materialization.task3` Ensure the existing Application Skeleton materialization dispatcher starts only after the Core acceptance command marker, and does not treat user text or premature `materialized` flips as Phase 2 authority. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: gate skeleton materialization on accept command`).
+40. [PENDING] Git Commit: `fix: gate skeleton materialization on accept command` (hash: TBD)
 
 ## Phase 7 - Regression Coverage (owner: next agent, updated: 2026-05-10)
 

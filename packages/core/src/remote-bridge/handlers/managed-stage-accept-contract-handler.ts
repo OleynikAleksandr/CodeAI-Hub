@@ -30,6 +30,12 @@ export type ApplicationSkeletonAcceptContractDecision =
       readonly stage: "application_skeleton";
     };
 
+// Core-owned session marker (semantic): a session id appears in the
+// `recentlyAcceptedSessions` set after the Core accept-contract command
+// handler approves the request. The Phase 2 materialization continuation
+// dispatcher gates on that marker so that user text alone (which never
+// reaches the Core command handler) cannot authorize Phase 2 by itself.
+
 export const evaluateApplicationSkeletonAcceptContractCommand = (
   context: ApplicationSkeletonAcceptContractContext
 ): ApplicationSkeletonAcceptContractDecision => {
