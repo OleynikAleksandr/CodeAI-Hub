@@ -11,6 +11,7 @@ import { buildApplicationSkeletonRepairFeedbackMessage } from "./application-ske
 import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton-contract-guard";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import { classifyApplicationSkeletonReviewTurn } from "./application-skeleton-review-turn-classifier";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
   readDiagramModulesProgressSnapshot,
@@ -365,6 +366,20 @@ export class ManagedWorkflowPostTurnService {
       buildApplicationSkeletonRepairFeedbackMessage(
         applicationSkeletonContractGuardDecision
       );
+    const applicationSkeletonReviewTurnKind =
+      classifyApplicationSkeletonReviewTurn({
+        ownedDirtyFiles:
+          latestManagedGitStatus.dirtyByStage.application_skeleton ?? [],
+        phase: applicationSkeletonPhase,
+      });
+    if (applicationSkeletonReviewTurnKind !== "out_of_scope") {
+      this.logger.info("Application Skeleton phase 1B review turn kind", {
+        kind: applicationSkeletonReviewTurnKind,
+        phase: applicationSkeletonPhase,
+        sessionId: params.sessionId,
+        stage: params.stage,
+      });
+    }
     const qualityGatesProgress = attachValidationDirtyGate(
       latestQualityGatesProgress,
       "Quality Gates",

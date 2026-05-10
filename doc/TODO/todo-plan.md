@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "91b23eb63",
+  "lastRecordedCommit": "acb91a52f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase3.phase1a.task3",
-  "expectedCommitMessage": "fix: keep application skeleton corrections post-turn only",
+  "currentTaskId": "application-skeleton-orchestration.phase4.phase1b.task1",
+  "expectedCommitMessage": "fix: classify application skeleton review turns",
   "debt": {
-    "expectedCommitMessage": "fix: keep application skeleton corrections post-turn only",
-    "preCommitHead": "91b23eb63",
+    "expectedCommitMessage": "fix: classify application skeleton review turns",
+    "preCommitHead": "acb91a52f",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase3.phase1a.task3"
+    "taskId": "application-skeleton-orchestration.phase4.phase1b.task1"
   }
 }
 ```
@@ -126,14 +126,14 @@
 ### Stream: Read-Model Side-Effect Guard
 
 19. [DONE] `application-skeleton-orchestration.phase3.phase1a.task3` Ensure workflow-state/read-model refreshes may expose Application Skeleton diagnostics but never dispatch provider-visible corrections before the post-turn readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: keep application skeleton corrections post-turn only`).
-20. [PENDING] Git Commit: `fix: keep application skeleton corrections post-turn only` (hash: TBD)
+20. [DONE] Git Commit: `fix: keep application skeleton corrections post-turn only` (hash: acb91a52f)
 
 ## Phase 4 - Phase 1B User Review Revisions (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Review Turn Classification
 
-21. [TODO] `application-skeleton-orchestration.phase4.phase1b.task1` Add the Phase 1B revision-vs-discussion classifier: tracked owned Application Skeleton contract diff means revision, no owned diff means standard session-history-only discussion/no-op. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton review turns`).
-22. [TODO] Git Commit: `fix: classify application skeleton review turns` (hash: TBD)
+21. [DONE] `application-skeleton-orchestration.phase4.phase1b.task1` Add the Phase 1B revision-vs-discussion classifier: tracked owned Application Skeleton contract diff means revision, no owned diff means standard session-history-only discussion/no-op. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton review turns`).
+22. [PENDING] Git Commit: `fix: classify application skeleton review turns` (hash: TBD)
 
 ### Stream: Dynamic Revision Plan Injection
 
