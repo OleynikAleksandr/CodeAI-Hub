@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "ea24aa7cf",
+  "lastRecordedCommit": "b6cb007b2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase2.classifier.task1",
-  "expectedCommitMessage": "fix: classify application skeleton orchestration phases",
+  "currentTaskId": "application-skeleton-orchestration.phase3.phase1a.task1",
+  "expectedCommitMessage": "fix: guard application skeleton draft post-turn",
   "debt": {
-    "expectedCommitMessage": "fix: classify application skeleton orchestration phases",
-    "preCommitHead": "ea24aa7cf",
+    "expectedCommitMessage": "fix: guard application skeleton draft post-turn",
+    "preCommitHead": "b6cb007b2",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase2.classifier.task1"
+    "taskId": "application-skeleton-orchestration.phase3.phase1a.task1"
   }
 }
 ```
@@ -109,14 +109,14 @@
 ### Stream: Phase Classifier
 
 13. [DONE] `application-skeleton-orchestration.phase2.classifier.task1` Add an Application Skeleton-specific phase/sub-phase classifier for Phase 1A, Phase 1B and Phase 2, and consume it from post-turn arbitration without introducing a generalized phase metadata runtime. Classifier coverage lives in a sibling test file (`application-skeleton-phase-state.test.ts`) instead of `application-skeleton-progress.test.ts` because folding it into the progress test pushed that file past the 500-line architecture limit; the inline classifier additions briefly committed to `application-skeleton-progress.test.ts` are reverted in the same commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: classify application skeleton orchestration phases`).
-14. [PENDING] Git Commit: `fix: classify application skeleton orchestration phases` (hash: TBD)
+14. [DONE] Git Commit: `fix: classify application skeleton orchestration phases` (hash: b6cb007b2)
 
 ## Phase 3 - Phase 1A Core-Gated Draft (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Draft Structural Guard
 
-15. [TODO] `application-skeleton-orchestration.phase3.phase1a.task1` Implement the Phase 1A post-turn structural guard with the Observe-vs-Dispatch rule and Readiness Resolution table: terminal + owned diff counts as implicit readiness; no terminal never validates; terminal + no diff in Phase 1A produces one non-commit repair decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: guard application skeleton draft post-turn`).
-16. [TODO] Git Commit: `fix: guard application skeleton draft post-turn` (hash: TBD)
+15. [DONE] `application-skeleton-orchestration.phase3.phase1a.task1` Implement the Phase 1A post-turn structural guard with the Observe-vs-Dispatch rule and Readiness Resolution table: terminal + owned diff counts as implicit readiness; no terminal never validates; terminal + no diff in Phase 1A produces one non-commit repair decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: guard application skeleton draft post-turn`).
+16. [PENDING] Git Commit: `fix: guard application skeleton draft post-turn` (hash: TBD)
 
 ### Stream: Phase 1A Corrective Feedback
 

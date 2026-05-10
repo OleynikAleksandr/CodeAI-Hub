@@ -7,6 +7,7 @@ import type {
   UnifiedSessionStorage,
 } from "../../unified-session/storage";
 import { sendApplicationSkeletonContinuationIfReady } from "./application-skeleton-continuation-dispatcher";
+import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton-contract-guard";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
@@ -342,6 +343,23 @@ export class ManagedWorkflowPostTurnService {
       "Application Skeleton",
       latestManagedGitStatus.dirtyByStage.application_skeleton
     );
+    const applicationSkeletonContractGuardDecision =
+      evaluateApplicationSkeletonContractGuard({
+        ownedDirtyFiles:
+          latestManagedGitStatus.dirtyByStage.application_skeleton ?? [],
+        phase: applicationSkeletonPhase,
+        progress: latestApplicationSkeletonProgress,
+        terminalEventReceived: true,
+      });
+    if (applicationSkeletonContractGuardDecision.kind !== "noop") {
+      this.logger.info("Application Skeleton phase 1A guard decision", {
+        decision: applicationSkeletonContractGuardDecision.kind,
+        phase: applicationSkeletonPhase,
+        reason: applicationSkeletonContractGuardDecision.reason,
+        sessionId: params.sessionId,
+        stage: params.stage,
+      });
+    }
     const qualityGatesProgress = attachValidationDirtyGate(
       latestQualityGatesProgress,
       "Quality Gates",
