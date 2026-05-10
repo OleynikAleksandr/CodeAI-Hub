@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "946ca493c",
+  "lastRecordedCommit": "735b16af9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-cleanup.task1",
-  "expectedCommitMessage": "fix: drop deprecated application skeleton phase aliases",
+  "currentTaskId": "application-skeleton-orchestration.phase12.docs-sync.task1",
+  "expectedCommitMessage": "docs: sync application skeleton plain phase numbering ssot",
   "debt": {
-    "expectedCommitMessage": "fix: drop deprecated application skeleton phase aliases",
-    "preCommitHead": "946ca493c",
+    "expectedCommitMessage": "docs: sync application skeleton plain phase numbering ssot",
+    "preCommitHead": "735b16af9",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.classifier-cleanup.task1"
+    "taskId": "application-skeleton-orchestration.phase12.docs-sync.task1"
   }
 }
 ```
@@ -296,12 +296,12 @@
 ### Stream: Phase Classifier Cleanup
 
 75. [DONE] `application-skeleton-orchestration.phase12.classifier-cleanup.task1` Remove the deprecated `phase_1a_draft` / `phase_1b_review` / `phase_2_materialization` aliases from the `ApplicationSkeletonPhase` type union now that every consumer reports the new values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts`; expected commit: `fix: drop deprecated application skeleton phase aliases`).
-76. [PENDING] Git Commit: `fix: drop deprecated application skeleton phase aliases` (hash: TBD)
+76. [DONE] Git Commit: `fix: drop deprecated application skeleton phase aliases` (hash: 735b16af9)
 
 ### Stream: SSOT Sync
 
-73. [TODO] `application-skeleton-orchestration.phase12.docs-sync.task1` Sync SSOT and planning docs to plain phase numbering: replace `phase1a` / `phase1b` / `phase2.materialize` task IDs with the plain-phase forms; rephrase headings so `Phase 1A` / `Phase 1B` / `Phase 2` reads `Phase 1` / `Phase 2` / `Phase 3` (with Type A / Type B kept as a domain attribute clarifier in prose only); update the materialization-commit / revision-commit text references. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton plain phase numbering ssot`).
-74. [TODO] Git Commit: `docs: sync application skeleton plain phase numbering ssot` (hash: TBD)
+73. [DONE] `application-skeleton-orchestration.phase12.docs-sync.task1` Sync SSOT and planning docs to plain phase numbering: replace `phase1a` / `phase1b` / `phase2.materialize` task IDs with the plain-phase forms; rephrase headings so `Phase 1A` / `Phase 1B` / `Phase 2` reads `Phase 1` / `Phase 2` / `Phase 3` (with Type A / Type B kept as a domain attribute clarifier in prose only); update the materialization-commit / revision-commit text references. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton plain phase numbering ssot`).
+74. [PENDING] Git Commit: `docs: sync application skeleton plain phase numbering ssot` (hash: TBD)
 
 ### Stream: Targeted Verification
 
