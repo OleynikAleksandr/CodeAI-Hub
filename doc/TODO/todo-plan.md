@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "b780f7b2f",
+  "lastRecordedCommit": "aaab75436",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase21.release.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton recognizer hotfix release",
+  "currentTaskId": "application-skeleton-orchestration.phase21.release.task2",
+  "expectedCommitMessage": "build: release application skeleton recognizer hotfix",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton recognizer hotfix release",
-    "preCommitHead": "b780f7b2f",
+    "expectedCommitMessage": "build: release application skeleton recognizer hotfix",
+    "preCommitHead": "aaab75436",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase21.release.task1"
+    "taskId": "application-skeleton-orchestration.phase21.release.task2"
   }
 }
 ```
@@ -450,12 +450,12 @@
 ### Stream: Release Preparation
 
 110. [DONE] `application-skeleton-orchestration.phase21.release.task1` Update README/CHANGELOG for v1.2.224 (release-blocker hot-fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16; the hot-fix inherits that approval. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton recognizer hotfix release`).
-111. [PENDING] Git Commit: `docs: prepare application skeleton recognizer hotfix release` (hash: TBD)
+111. [DONE] Git Commit: `docs: prepare application skeleton recognizer hotfix release` (hash: aaab75436)
 
 ### Stream: Release Build
 
-112. [TODO] `application-skeleton-orchestration.phase21.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton recognizer hotfix`).
-113. [TODO] Git Commit: `build: release application skeleton recognizer hotfix` (hash: TBD)
+112. [DONE] `application-skeleton-orchestration.phase21.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton recognizer hotfix`).
+113. [PENDING] Git Commit: `build: release application skeleton recognizer hotfix` (hash: TBD)
 
 ## Phase 22 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
