@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "99ee351b4",
+  "lastRecordedCommit": "cb99b0a85",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase11.stream2.task1",
-  "expectedCommitMessage": "test: cover core managed context bundle endpoint",
+  "currentTaskId": "runtime-contract.phase11.stream3.task1",
+  "expectedCommitMessage": "fix: route pm initial bundle through core endpoint",
   "debt": {
-    "expectedCommitMessage": "test: cover core managed context bundle endpoint",
-    "preCommitHead": "99ee351b4",
+    "expectedCommitMessage": "fix: route pm initial bundle through core endpoint",
+    "preCommitHead": "cb99b0a85",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream2.task1"
+    "taskId": "runtime-contract.phase11.stream3.task1"
   }
 }
 ```
@@ -368,31 +368,33 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 ### Stream: Core Bundle Endpoint Coverage
 
 97. [DONE] `runtime-contract.phase11.stream2.task1` Add regression coverage for the new Core endpoint: round-trip test that calls the handler with a freshly seeded managed workspace and asserts the response matches `buildManagedWorkflowContextBundle` output (Plan Status with non-null `activeStage`, Workspace Plan Text and Active Stage Todo Plan Text non-empty, source artifacts embedded for the stage) (scope: `packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.test.ts`; expected commit: `test: cover core managed context bundle endpoint`).
-98. [PENDING] Git Commit: `test: cover core managed context bundle endpoint` (hash: TBD)
+98. [DONE] Git Commit: `test: cover core managed context bundle endpoint` (hash: cb99b0a85)
 
 ### Stream: Replace PM Builder And Sync SSOT
 
-99. [TODO] `runtime-contract.phase11.stream3.task1` Replace PM-side bundle assembly with a verbatim Core HTTP fetch: delete `managed-workflow-initial-context.ts` and its test, update `description-submit-service.ts` to call the new `/api/v1/orchestrator/managed-context-bundle` endpoint and embed the response as `managedContext`, and add a SSOT note in `WorkflowSteps_Overview.md` reaffirming Core as the only owner of managed-workflow bundle assembly (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/managed-workflow-initial-context.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `fix: route pm initial bundle through core endpoint`). The PM-side test file is also deleted as part of this change; if scope exceeds 3 files the test deletion is split into a separate microtask.
-100. [TODO] Git Commit: `fix: route pm initial bundle through core endpoint` (hash: TBD)
+99. [DONE] `runtime-contract.phase11.stream3.task1` Rewrite PM-side `managed-workflow-initial-context.ts` as a thin HTTP wrapper around the new `/api/v1/orchestrator/managed-context-bundle` endpoint and update its tests; PM no longer parses workspace state or constructs the bundle (scope: `src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `fix: route pm initial bundle through core endpoint`). `description-submit-service.ts` is unchanged because the public PM-side function signature is preserved.
+100. [PENDING] Git Commit: `fix: route pm initial bundle through core endpoint` (hash: TBD)
+101. [TODO] `runtime-contract.phase11.stream3.task2` Add SSOT note in `WorkflowSteps_Overview.md` reaffirming Core as the single owner of managed-workflow bundle assembly; cross-link Phase 11 in this active plan (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync core-owned managed bundle ssot`).
+102. [TODO] Git Commit: `docs: sync core-owned managed bundle ssot` (hash: TBD)
 
 ### Stream: Tooling Verification
 
-101. [TODO] `runtime-contract.phase11.stream4.task1` Run targeted Core build and node:test runner over Phase 11 spec files; record evidence inline; fix any regressions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase 11 verification`).
-102. [TODO] Git Commit: `docs: record phase 11 verification` (hash: TBD)
+103. [TODO] `runtime-contract.phase11.stream4.task1` Run targeted Core build and node:test runner over Phase 11 spec files; record evidence inline; fix any regressions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase 11 verification`).
+104. [TODO] Git Commit: `docs: record phase 11 verification` (hash: TBD)
 
 ### Stream: Release Build
 
-103. [TODO] `runtime-contract.phase11.stream5.task1` Prepare release notes / version-targeting README + CHANGELOG for the next release line (1.2.220) per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release pm bundle source-of-truth repair`).
-104. [TODO] Git Commit: `build: release pm bundle source-of-truth repair` (hash: TBD)
-105. [TODO] `runtime-contract.phase11.stream5.task2` Commit version manifests, lockfile and any auto-bumped files produced by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
-106. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
+105. [TODO] `runtime-contract.phase11.stream5.task1` Prepare release notes / version-targeting README + CHANGELOG for the next release line (1.2.220) per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release pm bundle source-of-truth repair`).
+106. [TODO] Git Commit: `build: release pm bundle source-of-truth repair` (hash: TBD)
+107. [TODO] `runtime-contract.phase11.stream5.task2` Commit version manifests, lockfile and any auto-bumped files produced by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
+108. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-107. [TODO] `runtime-contract.phase11.stream6.task1` User retests Diagram Modules and Application Skeleton on the new VSIX; bundle must show non-null `activeStage` and the agent must proceed past preflight (scope: chat/process observation only; no commit required).
+109. [TODO] `runtime-contract.phase11.stream6.task1` User retests Diagram Modules and Application Skeleton on the new VSIX; bundle must show non-null `activeStage` and the agent must proceed past preflight (scope: chat/process observation only; no commit required).
 
 ### Stream: Scope Closeout
 
-108. [TODO] `runtime-contract.phase11.stream7.task1` After explicit user acceptance, archive this todo plan, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm bundle source-of-truth repair`).
-109. [TODO] Git Commit: `docs: close pm bundle source-of-truth repair` (hash: TBD)
-110. [TODO] `runtime-contract.phase11.stream7.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+110. [TODO] `runtime-contract.phase11.stream7.task1` After explicit user acceptance, archive this todo plan, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm bundle source-of-truth repair`).
+111. [TODO] Git Commit: `docs: close pm bundle source-of-truth repair` (hash: TBD)
+112. [TODO] `runtime-contract.phase11.stream7.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

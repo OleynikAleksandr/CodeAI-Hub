@@ -2,49 +2,25 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { buildManagedWorkflowInitialContext } from "./managed-workflow-initial-context";
 
-const workspacePlan = `# Workspace Plan
-
-<!-- codeai-workspace-plan-state:start -->
-\`\`\`json
-{
-  "activeStage": "application_skeleton",
-  "activePlanPath": "doc/TODO/stages/application-skeleton/todo-plan.md"
-}
-\`\`\`
-<!-- codeai-workspace-plan-state:end -->
+const STUB_BUNDLE = `## Managed Workflow Context Bundle
+Stage: application_skeleton
+## Plan Status
+activeStage: "application_skeleton"
 `;
 
-const stagePlan = `# Stage Plan
-
-<!-- codeai-plan-state:start -->
-\`\`\`json
-{
-  "executionScopeStatus": "ACTIVE",
-  "currentTaskId": "application-skeleton.stream1.task1",
-  "expectedCommitMessage": "docs: draft application skeleton contract",
-  "lastRecordedCommit": "abc123"
-}
-\`\`\`
-<!-- codeai-plan-state:end -->
-`;
-
-test("initial managed workflow context embeds plan text and active stage status", async () => {
+test("PM initial context returns the assembled bundle from Core endpoint verbatim", async () => {
   const originalFetch = globalThis.fetch;
   const originalWindow = globalThis.window;
-  const responses = new Map([
-    ["doc/TODO/workspace.plan.md", workspacePlan],
-    ["doc/TODO/stages/application-skeleton/todo-plan.md", stagePlan],
-  ]);
+  let observedUrl: string | null = null;
   globalThis.window = {
     codeaiBridgeConfig: { httpUrl: "http://core.test" },
   } as unknown as Window & typeof globalThis;
-  globalThis.fetch = (async (input: RequestInfo | URL) => {
-    const url = new URL(String(input));
-    const content = responses.get(url.searchParams.get("path") ?? "");
-    return {
-      ok: Boolean(content),
-      json: async () => ({ content }),
-    } as Response;
+  globalThis.fetch = ((input: RequestInfo | URL) => {
+    observedUrl = String(input);
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ content: STUB_BUNDLE, stage: "application_skeleton" }),
+    } as Response);
   }) as typeof fetch;
 
   try {
@@ -54,24 +30,55 @@ test("initial managed workflow context embeds plan text and active stage status"
       workspacePath: "/tmp/workspace",
       workspaceSlug: "demo",
     });
-
-    assert.ok(context);
-    assert.match(context, /## Managed Workflow Context Bundle/u);
-    assert.match(context, /activeStage: "application_skeleton"/u);
-    assert.match(context, /Expected commit: docs: draft application skeleton contract/u);
-    assert.match(context, /Current provider: codexCli/u);
+    assert.equal(context, STUB_BUNDLE);
+    assert.match(observedUrl ?? "", /\/api\/v1\/orchestrator\/managed-context-bundle\?/u);
+    assert.match(observedUrl ?? "", /stage=application_skeleton/u);
+    assert.match(observedUrl ?? "", /workspaceSlug=demo/u);
+    assert.match(observedUrl ?? "", /providerId=codexCli/u);
   } finally {
     globalThis.fetch = originalFetch;
     globalThis.window = originalWindow;
   }
 });
 
-test("pre-managed workflow stages do not receive managed context", async () => {
-  const context = await buildManagedWorkflowInitialContext({
-    stage: "description",
-    workspacePath: "/tmp/workspace",
-    workspaceSlug: "demo",
-  });
+test("PM initial context returns null for non-managed stages without HTTP fetch", async () => {
+  const originalFetch = globalThis.fetch;
+  let fetchCalled = false;
+  globalThis.fetch = (() => {
+    fetchCalled = true;
+    return Promise.resolve({ ok: false } as Response);
+  }) as typeof fetch;
+  try {
+    const context = await buildManagedWorkflowInitialContext({
+      stage: "description",
+      workspacePath: "/tmp/workspace",
+      workspaceSlug: "demo",
+    });
+    assert.equal(context, null);
+    assert.equal(fetchCalled, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
 
-  assert.equal(context, null);
+test("PM initial context returns null when Core endpoint fails", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalWindow = globalThis.window;
+  globalThis.window = {
+    codeaiBridgeConfig: { httpUrl: "http://core.test" },
+  } as unknown as Window & typeof globalThis;
+  globalThis.fetch = (() =>
+    Promise.resolve({ ok: false } as Response)) as typeof fetch;
+  try {
+    const context = await buildManagedWorkflowInitialContext({
+      providerId: "codexCli",
+      stage: "diagram_modules",
+      workspacePath: "/tmp/workspace",
+      workspaceSlug: "demo",
+    });
+    assert.equal(context, null);
+  } finally {
+    globalThis.fetch = originalFetch;
+    globalThis.window = originalWindow;
+  }
 });
