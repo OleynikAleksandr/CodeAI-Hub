@@ -10,6 +10,7 @@ interface StageTemplate {
   readonly commitMessage: string;
   readonly description: string;
   readonly heading: string;
+  readonly phaseLabel: string;
   readonly planId: string;
   readonly scope: string;
   readonly taskId: string;
@@ -48,18 +49,20 @@ const STAGE_TEMPLATES: Readonly<
   application_skeleton: {
     commitMessage: "docs: draft application skeleton contract",
     description:
-      "Draft Application Skeleton contract artifacts as the first managed microtask before filesystem materialization",
-    heading: "Application Skeleton Draft Contract",
+      "Run the Application Skeleton agent under Core gating to produce the initial contract artifacts before user review opens",
+    heading: "Phase 1A Core-Gated Initial Draft",
+    phaseLabel: "Application Skeleton Contract Bootstrap",
     planId: "managed-workspace-application-skeleton",
     scope:
       ".codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json",
-    taskId: "application-skeleton.stream1.task1",
+    taskId: "application-skeleton.phase1a.draft.task1",
   },
   diagram_modules: {
     commitMessage: "docs: update diagram modules product part index",
     description:
       "Update Diagram Modules Product Part index artifact through the managed workflow",
     heading: "Diagram Modules Artifacts",
+    phaseLabel: "Managed Workflow Stage",
     planId: "managed-workspace-diagram-modules",
     scope: ".codeai-hub/**/diagram_modules/product-parts.index.md",
     taskId: "diagram-modules.stream1.task1",
@@ -69,6 +72,7 @@ const STAGE_TEMPLATES: Readonly<
     description:
       "Draft Quality Gates contract artifacts as the first managed microtask before package and gate script integration",
     heading: "Quality Gates Draft Contract",
+    phaseLabel: "Managed Workflow Stage",
     planId: "managed-workspace-quality-gates",
     scope:
       ".codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json",
@@ -284,7 +288,7 @@ const createStagePlan = (initialStage: ManagedWorkflowPlanStage): string => {
   - \`.codeai-hub/workflow/index.json\`
 - Only this Context Pack is the recovery source for the current managed cycle.
 
-## Phase 1 — Managed Workflow Stage
+## Phase 1 — ${stage.phaseLabel}
 
 ### Stream: ${stage.heading}
 
@@ -299,12 +303,24 @@ const createStageFollowUpTasks = (
 ): string => {
   if (initialStage === "application_skeleton") {
     return `
-## Phase 2 — Managed Filesystem Materialization
+## Phase 2 — Application Skeleton Contract Review
 
-### Stream: Application Skeleton Materialization
+### Stream: Phase 1B User-Led Review
 
-3. [TODO] \`application-skeleton.stream1.task2\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the draft contract is accepted and committed (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
-4. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
+3. [TODO] \`application-skeleton.phase1b.review.task1\` Open-ended user-led review of the Application Skeleton contract; the user drives revisions and clarifying turns until the explicit Accept Contract command fires (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: none — open until acceptance).
+
+## Phase 3 — Application Skeleton Materialization
+
+### Stream: Phase 2 Core-Led Materialization
+
+4. [TODO] \`application-skeleton.phase2.materialize.task1\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the Accept Contract command fires (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
+5. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
+
+## Phase 4 — Handoff
+
+### Stream: Reserved Post-Closeout Handoff Anchor
+
+6. [TODO] \`application-skeleton.handoff.task1\` Reserved post-closeout handoff anchor; do not execute automatically (scope: chat/process observation only; no commit required).
 `;
   }
   if (initialStage === "quality_gates") {

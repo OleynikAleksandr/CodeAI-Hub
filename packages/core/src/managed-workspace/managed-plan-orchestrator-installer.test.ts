@@ -45,11 +45,11 @@ const DIAGRAM_USER_REVIEW_COMMIT_RE =
 const DIAGRAM_USER_REVIEW_PHASE_RE =
   /Phase 2 — User-Owned Diagram Modules Review/u;
 const APPLICATION_SKELETON_TASK_RE =
-  /Current Task: application-skeleton\.stream1\.task1/u;
+  /Current Task: application-skeleton\.phase1a\.draft\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /Expected Commit: docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
-  /Current Task: application-skeleton\.stream1\.task2/u;
+  /Current Task: application-skeleton\.phase2\.materialize\.task1/u;
 const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const APPLICATION_SKELETON_BOUNDED_GROUP_RE = /bounded target-group microtask/u;
