@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "b52d84816",
+  "lastRecordedCommit": "d6d62e278",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase9.stream9.task2b",
-  "expectedCommitMessage": "build: bump release manifests to 1.2.218",
+  "currentTaskId": "runtime-contract.phase10.stream0.task1",
+  "expectedCommitMessage": "docs: diagnose application skeleton phase b regression",
   "debt": {
-    "expectedCommitMessage": "build: bump release manifests to 1.2.218",
-    "preCommitHead": "b52d84816",
+    "expectedCommitMessage": "docs: diagnose application skeleton phase b regression",
+    "preCommitHead": "d6d62e278",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase9.stream9.task2b"
+    "taskId": "runtime-contract.phase10.stream0.task1"
   }
 }
 ```
@@ -169,14 +169,68 @@
 44. [DONE] `runtime-contract.phase9.stream9.task2` After explicit confirmation only, prepare release notes/version files and run release build scripts per AGENTS Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release managed runtime conformance repair`).
 45. [DONE] Git Commit: `build: release managed runtime conformance repair` (hash: b52d84816)
 46. [DONE] `runtime-contract.phase9.stream9.task2b` Commit version manifests, package-lock and README/CHANGELOG bumped by `build-all.sh` (build-all bumped release line to 1.2.218 because launcher tarball 1.2.217 already existed) so build-release.sh receives a clean tree (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to 1.2.218`).
-47. [PENDING] Git Commit: `build: bump release manifests to 1.2.218` (hash: TBD)
+47. [DONE] Git Commit: `build: bump release manifests to 1.2.218` (hash: d6d62e278)
 
 ### Stream: User Workflow Acceptance Testing
 
-48. [TODO] `runtime-contract.phase9.stream9.task3` User retests Diagram Modules, Application Skeleton, Quality Gates and at least one controlled managed rollover scenario on the new VSIX (scope: chat/process observation only; no commit required).
+48. [BLOCKED] `runtime-contract.phase9.stream9.task3` User retests Diagram Modules, Application Skeleton, Quality Gates and at least one controlled managed rollover scenario on the new VSIX (scope: chat/process observation only; no commit required). Result on VSIX 1.2.218: Diagram Modules passed; Application Skeleton surfaced a Type B phase tracking regression — Core does not observe agent/user draft contract loop in real time, plan hash is recorded only after the agent has already moved into Phase 2 materialization, and the materialization commit is never issued. Acceptance is paused until Phase 10 diagnoses and resolves the regression.
 
 ### Stream: Scope Closeout
 
 49. [TODO] `runtime-contract.phase9.stream9.task4` After explicit user acceptance, archive this todo plan, decide disposition for the planning documents, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed runtime conformance repair`).
 50. [TODO] Git Commit: `docs: close managed runtime conformance repair` (hash: TBD)
 51. [TODO] `runtime-contract.phase9.stream9.task5` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+
+## Phase 10 — Type B Phase Tracking Regression Repair (owner: next agent, updated: 2026-05-10)
+
+### Stream: Application Skeleton Phase B Regression Diagnosis
+
+52. [DONE] `runtime-contract.phase10.stream0.task1` Diagnose why Core did not track Application Skeleton Phase B in real time on VSIX 1.2.218. Examine: managed context bundle source and `activeStage` resolution for the Application Skeleton step prompt; acceptance phrase routing for stage-specific phrases (Phase 4 / Stream 3 / task1 reach into Application Skeleton runtime); managed materialization commit handler activation in Application Skeleton runtime (Phase 4 / Stream 4 / task1 reach); plan state advance timing relative to draft/materialize turns. Record findings, root-cause hypothesis confirmation, and proposed follow-up streams inline in this plan; do not edit code or planning documents in this microtask. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: diagnose application skeleton phase b regression`).
+53. [PENDING] Git Commit: `docs: diagnose application skeleton phase b regression` (hash: TBD)
+
+**Diagnosis findings (2026-05-10).**
+
+Three independent regressions stack to produce the symptom the user observed (Core silent during Phase B, late hash for task1, no commit for task2). All three are inside `packages/core/src/remote-bridge/handlers/`.
+
+R1 — Stage advance never writes `activeStage` into `workspace.plan.md`.
+- Bundle builder `session-request-handler-managed-context-bundle.ts:46-84` (`buildManagedWorkflowContextBundle`) reads `workspace.plan.md` via `parseWorkspacePlanState` (lines 239-252) and emits the stale value verbatim (line 132). `DEFAULT_STAGE_PLAN_PATHS` (lines 14-18) does map `application_skeleton`/`diagram_modules`/`quality_gates` to their stage todo-plans, but those are read only after `activeStage` is already known.
+- Initialisation: `managed-todo-tree.ts:81-103` (`ensureManagedTodoTree`) seeds `activeStage` once via `updateWorkspacePlanState` (line 118).
+- Gap: there is no caller that updates `workspace.plan.md` when the workflow advances `Diagram Modules → Application Skeleton → Quality Gates`. As a result the bundle for Application Skeleton in this test contained `activeStage: null`, `Execution scope status: unknown`, `Current task: none`, `Last recorded commit: none`, even though `doc/TODO/stages/application-skeleton/todo-plan.md` on disk was rich (`ACTIVE`, `currentTaskId: application-skeleton.stream1.task2`, `expectedCommitMessage: feat: materialize application skeleton`, `lastRecordedCommit: 24975b7`).
+- Diagram Modules tested fine because that stage was the first/initialised value — bundle-time readers happened to see a non-null `activeStage` for it.
+
+R2 — Acceptance phrase matcher is exact-match against three canonical strings only.
+- `recognizeManagedContractAcceptancePhrase` in `managed-workflow-post-turn-service.ts:48-64` uses `localeCompare(... === 0)` against the canonical list at lines 42-46: `Подтверждаю контракт`, `Принимаю контракт`, `Утверждаю контракт`. No substring/intent check.
+- The user's actual message — `"Контракт принимаю, можешь двигаться к фазе 2."` — does not equal any of the three canonical strings. Matcher returns `null`, so the dispatch in `session-request-handler-message-dispatch.ts:174-182` falls through to `appendVisibleUserMessage` and `providerSend.dispatch` (lines 186-227). The message reaches the provider unintercepted; Core never opens a managed acceptance flow.
+- Per-stage gating exists (`MANAGED_CONTRACT_ACCEPTANCE_STAGES = {application_skeleton, quality_gates}` at lines 66-69 inside `handleContractAcceptance` 187-217), but it only protects against false-positive acceptance for the wrong stage; it does nothing for false-negatives like this one. There is no per-stage code path difference between Diagram Modules and Application Skeleton at the matcher level.
+- Diagram Modules acceptance "works" via a different mechanism (subturn continuation dispatcher; see R3) and does not depend on this matcher at all.
+
+R3 — Application Skeleton has no materialization continuation dispatcher and no materialization-completion listener.
+- Diagram Modules has `diagram-modules-continuation-dispatcher.ts:104-142` (`sendDiagramModulesContinuationIfReady`) — fires post-acceptance, sends the next continuation prompt, and the cycle ends with the managed commit gate seeing the right stage state.
+- Application Skeleton has no parallel function. `workflow-agent-acceptance-feedback.ts:412-448` (`sendApplicationSkeletonFeedback`) only emits error-repair feedback; it never dispatches a materialization continuation.
+- Commit gate `workflow-state-managed-documentation-commit.ts:46-52` (`hasCommittableApplicationSkeletonStage`) requires `applicationSkeletonProgress?.materialized === true` plus dirty Application Skeleton files. Core never sets `materialized` itself; the agent writes `"materialized": true` into `application-skeleton-map.json`, but no handler observes that file change to update Core's in-memory `applicationSkeletonProgress` and trigger the commit. Tests in `workflow-state-managed-documentation-commit.test.ts` pre-stage the flag to true, which is why they pass while runtime does not.
+- Net effect on this run: agent finished materialisation and reported readiness; Core's commit gate stayed false; `managed-documentation-commit-transaction.ts:103-161` never invoked `npm run plan:commit -- "feat: materialize application skeleton"`. task2 stayed `IN_PROGRESS` indefinitely.
+
+Plan timing reconciliation (why hash for task1 appeared "late").
+- task1 (`docs: draft application skeleton contract`, hash `24975b7`) did get committed — most plausibly via the post-turn content-readiness path that reacted to the agent's draft-readiness messages (lines 6 and 9 of the session JSONL). plan-orchestrator's post-commit hook then advanced `currentTaskId` to `application-skeleton.stream1.task2` automatically.
+- That advance happened decoupled from the user's "Контракт принимаю..." message (R2 dropped that on the floor) and decoupled from the agent's actual "Phase 2" turn (R3 prevented any materialisation-side handling). From the user's vantage point Core "woke up" once: it stamped the draft hash and rolled the pointer to task2, then went silent again — exactly matching the symptom report.
+
+Type B candidate microtask lifecycle (deferred design, section 2).
+- Not implemented in any form in current runtime. There is no Core-side surface that observes per-turn user messages during Phase B, no candidate-promote-or-drop logic, no audit kind for dropped candidates. R1+R2+R3 above are necessary preconditions for Phase B to function at all; full Type B candidate lifecycle remains a separate, larger surface that this scope should not try to cover end-to-end.
+
+Confirmation against the original hypotheses.
+- Hypothesis (a) "Phase 4 fix wired to one code-path only" — partially confirmed for R3 (commit gate exists, but the trigger that should set `materialized: true` does not exist for Application Skeleton runtime).
+- Hypothesis (b) "Bundle builder doesn't get `activeStage`" — confirmed as R1, but the cause is upstream (no writer on stage advance), not in the bundle builder itself.
+- Hypothesis (c) "Acceptance phrase list too narrow" — confirmed as R2.
+- Additional finding not in original hypotheses: Application Skeleton lacks the continuation dispatcher pattern that makes Diagram Modules work; this is a structural gap, not just a list-of-phrases gap.
+
+Proposed follow-up streams (to nail down before nibbling at code).
+- Stream 1: Planning-document corrections. Update `Managed_Workflow_Runtime_Contract_Conformance.md` to mark Gap A/C/D fixes as having stage-advance and materialization-completion gaps; update `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md` to record that R1/R2/R3 are blockers for any Type B implementation. No new planning files.
+- Stream 2: Stage-advance writer for `workspace.plan.md`. Wire the workflow-advance code path that transitions stages to invoke `updateWorkspacePlanState(... newStage ...)` so the bundle builder reflects reality. ≤3 files including a regression test.
+- Stream 3: Robust acceptance phrase recognition. Replace exact-match with a normalisation-plus-pattern recogniser scoped to acceptance-eligible Type B states; add the user's actual phrasing and the design-layer step-specific phrases as test fixtures. ≤3 files.
+- Stream 4: Application Skeleton materialization continuation dispatcher. Parallel to `sendDiagramModulesContinuationIfReady` — fires after acceptance is recognised, sends the materialisation continuation prompt. ≤3 files.
+- Stream 5: Application Skeleton materialization-completion observer. Re-read `application-skeleton-map.json` after the agent's post-turn report, refresh `applicationSkeletonProgress.materialized`, and let the existing commit gate fire. Cover with a runtime-shaped regression that does not pre-stage the flag. ≤3 files.
+- Stream 6: End-to-end regression covering the full Application Skeleton happy path (start → draft → user-acceptance → materialise → commit task2 → plan advance) plus a forced-rollover variant inside Phase B. ≤3 files.
+- Stream 7: SSOT sync touching only `WorkflowSteps_Overview.md`/`SystemArchitecture.md` for the new behaviours actually shipped. Quality Gates is intentionally out of scope — its symmetric fix is a follow-up cycle, not part of Phase 10.
+- Stream 8: Release Build Confirmation Gate, Release Build, User Workflow Acceptance Testing, Scope Closeout (mirror of Phase 9 Stream 9 pattern).
+
+This covers the minimum to make Application Skeleton happy path work end-to-end without trying to implement full Type B candidate lifecycle. Quality Gates symmetric fix remains out of scope; full Type B candidate microtask runtime remains deferred.
