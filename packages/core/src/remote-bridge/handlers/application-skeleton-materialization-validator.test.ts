@@ -94,3 +94,59 @@ test("materialized skeleton validation requires canonical identifier fields", as
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("materialized skeleton happy path passes validation when canonical identifiers exist", async () => {
+  const workspaceRoot = await makeWorkspace();
+  try {
+    const paths = [
+      "product-parts/project-manager",
+      "product-parts/project-manager/clusters/workflow-ui",
+      "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+      "product-parts/project-manager/modules/settings",
+    ];
+    await createDirs(workspaceRoot, paths);
+
+    const result = await validateApplicationSkeletonMaterialization({
+      markdown: MATERIALIZED_MARKDOWN,
+      workspaceRoot,
+      mapJson: {
+        accepted: true,
+        materialized: true,
+        materializationState: "materialized",
+        materializedPaths: paths,
+        reviewState: "materialized",
+        sourceRoot: "product-parts",
+        productParts: [
+          {
+            id: "project-manager",
+            codePath: "product-parts/project-manager",
+            clusters: [
+              {
+                id: "workflow-ui",
+                codePath: "product-parts/project-manager/clusters/workflow-ui",
+                modules: [
+                  {
+                    id: "navigation",
+                    codePath:
+                      "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+                  },
+                ],
+              },
+            ],
+            standaloneModules: [
+              {
+                id: "settings",
+                codePath: "product-parts/project-manager/modules/settings",
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    assert.equal(result.observedMaterialization, true);
+    assert.deepEqual(result.validationErrors, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});

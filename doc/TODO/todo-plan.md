@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "b89ae19e7",
+  "lastRecordedCommit": "c783af307",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase6.stream6.task3",
-  "expectedCommitMessage": "test: preserve non-managed rollover behavior",
+  "currentTaskId": "runtime-contract.phase7.stream7.task1",
+  "expectedCommitMessage": "test: cover application skeleton managed materialization",
   "debt": {
-    "expectedCommitMessage": "test: preserve non-managed rollover behavior",
-    "preCommitHead": "b89ae19e7",
+    "expectedCommitMessage": "test: cover application skeleton managed materialization",
+    "preCommitHead": "c783af307",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase6.stream6.task3"
+    "taskId": "runtime-contract.phase7.stream7.task1"
   }
 }
 ```
@@ -126,14 +126,14 @@
 29. [DONE] `runtime-contract.phase6.stream6.task2` Add forced-rollover regressions for Application Skeleton and Quality Gates midstream sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts`; expected commit: `test: cover managed stage rollover envelope`).
 30. [DONE] Git Commit: `test: cover managed stage rollover envelope` (hash: b89ae19e7)
 31. [DONE] `runtime-contract.phase6.stream6.task3` Add non-managed rollover regression to prove Description and Virtual Simulation envelope behavior is unchanged (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md`; expected commit: `test: preserve non-managed rollover behavior`).
-32. [PENDING] Git Commit: `test: preserve non-managed rollover behavior` (hash: TBD)
+32. [DONE] Git Commit: `test: preserve non-managed rollover behavior` (hash: c783af307)
 
 ## Phase 7 — End-To-End Regression Coverage (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Managed Step Happy Paths
 
-33. [TODO] `runtime-contract.phase7.stream7.task1` Cover Application Skeleton contract acceptance -> materialization -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `test: cover application skeleton managed materialization`).
-34. [TODO] Git Commit: `test: cover application skeleton managed materialization` (hash: TBD)
+33. [DONE] `runtime-contract.phase7.stream7.task1` Cover Application Skeleton contract acceptance -> materialization -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `test: cover application skeleton managed materialization`).
+34. [PENDING] Git Commit: `test: cover application skeleton managed materialization` (hash: TBD)
 35. [TODO] `runtime-contract.phase7.stream7.task2` Cover Quality Gates contract acceptance -> integration -> managed commit -> terminal handoff happy path (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: cover quality gates managed integration`).
 36. [TODO] Git Commit: `test: cover quality gates managed integration` (hash: TBD)
 37. [TODO] `runtime-contract.phase7.stream7.task3` Re-run Diagram Modules happy-path regression around subturn continuation, feedback and post-turn acceptance after shared handler changes (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `test: preserve diagram modules managed subturns`).
