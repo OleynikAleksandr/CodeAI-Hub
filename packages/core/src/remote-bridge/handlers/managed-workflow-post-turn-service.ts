@@ -2,6 +2,10 @@ import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import type {
+  ManagedAuditRecord,
+  UnifiedSessionStorage,
+} from "../../unified-session/storage";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
@@ -89,6 +93,7 @@ export class ManagedWorkflowPostTurnService {
   private readonly retryLimitNotifier?: (
     notice: ManagedArbitrationRetryNotice
   ) => void;
+  private readonly unifiedSessionStorage?: UnifiedSessionStorage;
 
   constructor(options: {
     readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
@@ -98,6 +103,7 @@ export class ManagedWorkflowPostTurnService {
     ) => void;
     readonly retryLimit?: number;
     readonly sessionManager?: SessionManager;
+    readonly unifiedSessionStorage?: UnifiedSessionStorage;
   }) {
     this.acceptanceFeedback = new WorkflowAgentAcceptanceFeedback(
       options.logger
@@ -108,6 +114,28 @@ export class ManagedWorkflowPostTurnService {
     this.retryLimit =
       options.retryLimit ?? DEFAULT_MANAGED_ARBITRATION_RETRY_LIMIT;
     this.retryLimitNotifier = options.onRetryLimitReached;
+    this.unifiedSessionStorage = options.unifiedSessionStorage;
+  }
+
+  private async appendManagedAuditMessage(
+    sessionId: string,
+    record: ManagedAuditRecord
+  ): Promise<void> {
+    if (!this.unifiedSessionStorage) {
+      return;
+    }
+    try {
+      await this.unifiedSessionStorage.appendManagedAuditRecord({
+        record,
+        sessionId,
+      });
+    } catch (error: unknown) {
+      this.logger.warn("Failed to append managed audit record", {
+        sessionId,
+        kind: record.kind,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
 
   handle(sessionId: string): void {
@@ -179,6 +207,12 @@ export class ManagedWorkflowPostTurnService {
       phrase: params.phrase,
       stage,
     });
+    this.appendManagedAuditMessage(params.sessionId, {
+      kind: "managed_post_turn_decision",
+      source: "core",
+      text: `Managed contract acceptance accepted: ${params.phrase} (${stage})`,
+      timestamp: new Date().toISOString(),
+    }).catch(() => undefined);
     this.handle(params.sessionId);
   }
 
