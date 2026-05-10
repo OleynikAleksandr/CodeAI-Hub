@@ -7,6 +7,7 @@ import type {
   UnifiedSessionStorage,
 } from "../../unified-session/storage";
 import { sendApplicationSkeletonContinuationIfReady } from "./application-skeleton-continuation-dispatcher";
+import { buildApplicationSkeletonRepairFeedbackMessage } from "./application-skeleton-contract-feedback";
 import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton-contract-guard";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
@@ -360,6 +361,10 @@ export class ManagedWorkflowPostTurnService {
         stage: params.stage,
       });
     }
+    const applicationSkeletonRepairMessage =
+      buildApplicationSkeletonRepairFeedbackMessage(
+        applicationSkeletonContractGuardDecision
+      );
     const qualityGatesProgress = attachValidationDirtyGate(
       latestQualityGatesProgress,
       "Quality Gates",
@@ -409,5 +414,17 @@ export class ManagedWorkflowPostTurnService {
         workspaceSlug: params.workspaceSlug,
       }),
     ]);
+    if (gateway && applicationSkeletonRepairMessage) {
+      const skeletonSessionId =
+        chains
+          .find((chain) => chain.stage === "application_skeleton")
+          ?.segments.at(-1)?.sessionId ?? null;
+      if (skeletonSessionId) {
+        await gateway.handleMessage(
+          skeletonSessionId,
+          applicationSkeletonRepairMessage
+        );
+      }
+    }
   }
 }

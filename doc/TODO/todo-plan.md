@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "b6cb007b2",
+  "lastRecordedCommit": "6a1e2f199",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase3.phase1a.task1",
-  "expectedCommitMessage": "fix: guard application skeleton draft post-turn",
+  "currentTaskId": "application-skeleton-orchestration.phase3.phase1a.task2",
+  "expectedCommitMessage": "fix: send application skeleton draft repair feedback",
   "debt": {
-    "expectedCommitMessage": "fix: guard application skeleton draft post-turn",
-    "preCommitHead": "b6cb007b2",
+    "expectedCommitMessage": "fix: send application skeleton draft repair feedback",
+    "preCommitHead": "6a1e2f199",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase3.phase1a.task1"
+    "taskId": "application-skeleton-orchestration.phase3.phase1a.task2"
   }
 }
 ```
@@ -116,12 +116,12 @@
 ### Stream: Draft Structural Guard
 
 15. [DONE] `application-skeleton-orchestration.phase3.phase1a.task1` Implement the Phase 1A post-turn structural guard with the Observe-vs-Dispatch rule and Readiness Resolution table: terminal + owned diff counts as implicit readiness; no terminal never validates; terminal + no diff in Phase 1A produces one non-commit repair decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: guard application skeleton draft post-turn`).
-16. [PENDING] Git Commit: `fix: guard application skeleton draft post-turn` (hash: TBD)
+16. [DONE] Git Commit: `fix: guard application skeleton draft post-turn` (hash: 6a1e2f199)
 
 ### Stream: Phase 1A Corrective Feedback
 
-17. [TODO] `application-skeleton-orchestration.phase3.phase1a.task2` Add Phase 1A corrective feedback text as a pure prompt builder and route corrective decisions through the existing post-turn arbitration contract; the builder must not own state or dispatch decisions. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: send application skeleton draft repair feedback`).
-18. [TODO] Git Commit: `fix: send application skeleton draft repair feedback` (hash: TBD)
+17. [DONE] `application-skeleton-orchestration.phase3.phase1a.task2` Add Phase 1A corrective feedback text as a pure prompt builder and route corrective decisions through the existing post-turn arbitration contract; the builder must not own state or dispatch decisions. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: send application skeleton draft repair feedback`).
+18. [PENDING] Git Commit: `fix: send application skeleton draft repair feedback` (hash: TBD)
 
 ### Stream: Read-Model Side-Effect Guard
 
