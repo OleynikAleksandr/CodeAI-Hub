@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "338789bf4",
+  "lastRecordedCommit": "528fb9699",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase4.stream4.task2",
-  "expectedCommitMessage": "fix: share managed commit boundary across phases",
+  "currentTaskId": "runtime-contract.phase5.stream6.task1",
+  "expectedCommitMessage": "fix: surface managed core messages in workflow UI",
   "debt": {
-    "expectedCommitMessage": "fix: share managed commit boundary across phases",
-    "preCommitHead": "338789bf4",
+    "expectedCommitMessage": "fix: surface managed core messages in workflow UI",
+    "preCommitHead": "528fb9699",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase4.stream4.task2"
+    "taskId": "runtime-contract.phase5.stream6.task1"
   }
 }
 ```
@@ -104,14 +104,14 @@
 17. [DONE] `runtime-contract.phase4.stream4.task1` Open Core-owned materialization/integration phase after acceptance and wire managed commit + plan advance for Application Skeleton and Quality Gates (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: commit managed materialization phases`).
 18. [DONE] Git Commit: `fix: commit managed materialization phases` (hash: 338789bf4)
 19. [DONE] `runtime-contract.phase4.stream4.task2` Generalize managed commit boundary validation for draft/materialization/integration phases without duplicating Diagram Modules logic (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: share managed commit boundary across phases`).
-20. [PENDING] Git Commit: `fix: share managed commit boundary across phases` (hash: TBD)
+20. [DONE] Git Commit: `fix: share managed commit boundary across phases` (hash: 528fb9699)
 
 ## Phase 5 — Gap E User-Visible Delivery And Audit Storage (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Managed Core Messages
 
-21. [TODO] `runtime-contract.phase5.stream6.task1` Route Core-managed corrective/continuation/decision messages through the existing Core/PM event stream for user-visible chat delivery (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts, packages/core/src/remote-bridge/handlers/websocket-manager.ts, src/client/project-manager/services/workflow-events-client.ts`; expected commit: `fix: surface managed core messages in workflow UI`).
-22. [TODO] Git Commit: `fix: surface managed core messages in workflow UI` (hash: TBD)
+21. [DONE] `runtime-contract.phase5.stream6.task1` Route Core-managed corrective/continuation/decision messages through the existing Core/PM event stream for user-visible chat delivery (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts, packages/core/src/remote-bridge/handlers/websocket-manager.ts, src/client/project-manager/services/workflow-events-client.ts`; expected commit: `fix: surface managed core messages in workflow UI`).
+22. [PENDING] Git Commit: `fix: surface managed core messages in workflow UI` (hash: TBD)
 23. [TODO] `runtime-contract.phase5.stream6.task2` Persist managed Core messages to a replay-safe `.audit.jsonl` stream derived from the existing session path builder (scope: `packages/core/src/unified-session/storage.ts, packages/core/src/unified-session/storage.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: persist managed core audit stream`).
 24. [TODO] Git Commit: `fix: persist managed core audit stream` (hash: TBD)
 25. [TODO] `runtime-contract.phase5.stream6.task3` Ensure provider replay, rollover prompt builders and transcript reconstruction ignore managed audit stream records (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `test: isolate managed audit stream from replay`).

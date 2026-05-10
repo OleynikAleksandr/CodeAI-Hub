@@ -12,11 +12,23 @@ export type WorkflowEvent = {
   readonly gateId?: string;
   readonly detail?: string;
   readonly managedLifecycle?: WorkflowEventManagedLifecycle;
+  readonly managedCoreMessage?: WorkflowEventManagedCoreMessage;
 };
 
 export type WorkflowEventManagedLifecycle = {
   readonly blocker?: string;
   readonly status: string;
+};
+
+export type WorkflowEventManagedCoreMessageKind =
+  | "managed_corrective"
+  | "managed_continuation"
+  | "managed_acceptance_check"
+  | "managed_post_turn_decision";
+
+export type WorkflowEventManagedCoreMessage = {
+  readonly kind: WorkflowEventManagedCoreMessageKind;
+  readonly text: string;
 };
 
 type WorkflowEventsResponse = {
@@ -56,6 +68,40 @@ const normalizeEvent = (event: unknown): WorkflowEvent | null => {
     gateId: readNonEmptyString(event.gateId ?? undefined) ?? undefined,
     detail: readNonEmptyString(event.detail ?? undefined) ?? undefined,
     managedLifecycle: normalizeManagedLifecycle(event.managedLifecycle),
+    managedCoreMessage: normalizeManagedCoreMessage(event),
+  };
+};
+
+const MANAGED_CORE_MESSAGE_KINDS: ReadonlySet<WorkflowEventManagedCoreMessageKind> =
+  new Set([
+    "managed_corrective",
+    "managed_continuation",
+    "managed_acceptance_check",
+    "managed_post_turn_decision",
+  ]);
+
+const normalizeManagedCoreMessage = (
+  event: Record<string, unknown>
+): WorkflowEventManagedCoreMessage | undefined => {
+  if (event.type !== "managed.core.message") {
+    return undefined;
+  }
+  const kindCandidate = readNonEmptyString(event.kind);
+  const text = readNonEmptyString(event.text);
+  if (
+    !(
+      text &&
+      kindCandidate &&
+      MANAGED_CORE_MESSAGE_KINDS.has(
+        kindCandidate as WorkflowEventManagedCoreMessageKind
+      )
+    )
+  ) {
+    return undefined;
+  }
+  return {
+    kind: kindCandidate as WorkflowEventManagedCoreMessageKind,
+    text,
   };
 };
 
