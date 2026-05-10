@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "355aca966",
+  "lastRecordedCommit": "b58b9d20e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.advance.task1",
-  "expectedCommitMessage": "fix: advance through open-ended managed plan tasks",
+  "currentTaskId": "application-skeleton-orchestration.phase12.rename-seed.task1",
+  "expectedCommitMessage": "fix: rename application skeleton stage plan task ids to plain phase numbering",
   "debt": {
-    "expectedCommitMessage": "fix: advance through open-ended managed plan tasks",
-    "preCommitHead": "355aca966",
+    "expectedCommitMessage": "fix: rename application skeleton stage plan task ids to plain phase numbering",
+    "preCommitHead": "b58b9d20e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.advance.task1"
+    "taskId": "application-skeleton-orchestration.phase12.rename-seed.task1"
   }
 }
 ```
@@ -251,17 +251,17 @@
 ### Stream: Advancement Regex Fix
 
 57. [DONE] `application-skeleton-orchestration.phase12.advance.task1` Extend `TASK_LINE_RE` so it matches both `expected commit: \`<message>\`` and `expected commit: none — open until acceptance` task lines, and update the post-commit advancement so an open-ended task surfaces with `expectedCommitMessage: null` instead of being silently skipped. Add a regression test asserting that after the Phase 1A draft commit advances, `currentTaskId` lands on the open-ended Phase 2 review task and not on the materialization task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: advance through open-ended managed plan tasks`).
-58. [PENDING] Git Commit: `fix: advance through open-ended managed plan tasks` (hash: TBD)
+58. [DONE] Git Commit: `fix: advance through open-ended managed plan tasks` (hash: b58b9d20e)
 
 ### Stream: Stage Plan Task ID Rename
 
-59. [TODO] `application-skeleton-orchestration.phase12.rename-seed.task1` Rename `STAGE_PLANS` task IDs in the Application Skeleton seed from `phase1a.draft.task1` / `phase1b.review.task1` / `phase2.materialize.task1` to `phase1.draft.task1` / `phase2.review.task1` / `phase3.materialize.task1`; update `STAGE_TERMINAL_COMMITS` if its keys reference any of these IDs; realign the Development Tree bootstrap gate target id from `application-skeleton.phase2.materialize.task1` to `application-skeleton.phase3.materialize.task1`. Headings (`Phase 1` / `Phase 2` / `Phase 3`) already match — no heading renames needed. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts`; expected commit: `fix: rename application skeleton stage plan task ids to plain phase numbering`).
-60. [TODO] Git Commit: `fix: rename application skeleton stage plan task ids to plain phase numbering` (hash: TBD)
+59. [DONE] `application-skeleton-orchestration.phase12.rename-seed.task1` Rename `STAGE_PLANS` task IDs in the Application Skeleton seed from `phase1a.draft.task1` / `phase1b.review.task1` / `phase2.materialize.task1` to `phase1.draft.task1` / `phase2.review.task1` / `phase3.materialize.task1`; drop the "Phase 1A / Phase 1B / Phase 2" prefixes from stream headings inside the seed (Type A / Type B remains a domain attribute, not a stream-heading prefix); realign the Development Tree bootstrap gate target id from `application-skeleton.phase2.materialize.task1` to `application-skeleton.phase3.materialize.task1`; sync the seed-shape fixture in `managed-plan-orchestrator-installer.test.ts` so the Stream A regression test continues to assert the post-rename task IDs. Scope expanded by one file because `installer.test.ts` already pinned the legacy task IDs as fixtures and the rename would have left it red on `main` without the same-commit migration. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: rename application skeleton stage plan task ids to plain phase numbering`).
+60. [PENDING] Git Commit: `fix: rename application skeleton stage plan task ids to plain phase numbering` (hash: TBD)
 
 ### Stream: Bootstrap Gate Fixture Sync
 
-61. [TODO] `application-skeleton-orchestration.phase12.rename-seed.task2` Sync the bootstrap gate fixture and the seed-shape regression to the new plain-phase task IDs (`phase1.draft` / `phase2.review` / `phase3.materialize`). (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `test: align bootstrap gate fixtures to plain phase task ids`).
-62. [TODO] Git Commit: `test: align bootstrap gate fixtures to plain phase task ids` (hash: TBD)
+61. [TODO] `application-skeleton-orchestration.phase12.rename-seed.task2` Sync the bootstrap gate fixture to the new plain-phase task ID (`application-skeleton.phase3.materialize.task1`). (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`; expected commit: `test: align bootstrap gate fixture to plain phase task id`).
+62. [TODO] Git Commit: `test: align bootstrap gate fixture to plain phase task id` (hash: TBD)
 
 ### Stream: Handler Fixture Migration (Batch 1)
 

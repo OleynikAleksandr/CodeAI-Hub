@@ -45,16 +45,16 @@ const DIAGRAM_USER_REVIEW_COMMIT_RE =
 const DIAGRAM_USER_REVIEW_PHASE_RE =
   /Phase 2 — User-Owned Diagram Modules Review/u;
 const APPLICATION_SKELETON_TASK_RE =
-  /Current Task: application-skeleton\.phase1a\.draft\.task1/u;
+  /Current Task: application-skeleton\.phase1\.draft\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /Expected Commit: docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_REVIEW_TASK_RE =
-  /Current Task: application-skeleton\.phase1b\.review\.task1/u;
+  /Current Task: application-skeleton\.phase2\.review\.task1/u;
 const APPLICATION_SKELETON_REVIEW_OPEN_COMMIT_RE = /Expected Commit: none/u;
 const APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE =
-  /\[IN_PROGRESS\] `application-skeleton\.phase1b\.review\.task1`/u;
+  /\[IN_PROGRESS\] `application-skeleton\.phase2\.review\.task1`/u;
 const APPLICATION_SKELETON_MATERIALIZE_TODO_RE =
-  /\[TODO\] `application-skeleton\.phase2\.materialize\.task1`/u;
+  /\[TODO\] `application-skeleton\.phase3\.materialize\.task1`/u;
 const APPLICATION_SKELETON_BOUNDED_GROUP_RE = /bounded target-group microtask/u;
 const APPLICATION_SKELETON_ACTIVE_STAGE_RE =
   /"activeStage": "application_skeleton"/u;

@@ -50,12 +50,12 @@ const STAGE_TEMPLATES: Readonly<
     commitMessage: "docs: draft application skeleton contract",
     description:
       "Run the Application Skeleton agent under Core gating to produce the initial contract artifacts before user review opens",
-    heading: "Phase 1A Core-Gated Initial Draft",
+    heading: "Core-Gated Initial Draft",
     phaseLabel: "Application Skeleton Contract Bootstrap",
     planId: "managed-workspace-application-skeleton",
     scope:
       ".codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json",
-    taskId: "application-skeleton.phase1a.draft.task1",
+    taskId: "application-skeleton.phase1.draft.task1",
   },
   diagram_modules: {
     commitMessage: "docs: update diagram modules product part index",
@@ -305,15 +305,15 @@ const createStageFollowUpTasks = (
     return `
 ## Phase 2 — Application Skeleton Contract Review
 
-### Stream: Phase 1B User-Led Review
+### Stream: User-Led Review
 
-3. [TODO] \`application-skeleton.phase1b.review.task1\` Open-ended user-led review of the Application Skeleton contract; the user drives revisions and clarifying turns until the explicit Accept Contract command fires (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: none — open until acceptance).
+3. [TODO] \`application-skeleton.phase2.review.task1\` Open-ended user-led review of the Application Skeleton contract; the user drives revisions and clarifying turns until the explicit Accept Contract command fires (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: none — open until acceptance).
 
 ## Phase 3 — Application Skeleton Materialization
 
-### Stream: Phase 2 Core-Led Materialization
+### Stream: Core-Led Materialization
 
-4. [TODO] \`application-skeleton.phase2.materialize.task1\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the Accept Contract command fires (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
+4. [TODO] \`application-skeleton.phase3.materialize.task1\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the Accept Contract command fires (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
 5. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
 
 ## Phase 4 — Handoff
