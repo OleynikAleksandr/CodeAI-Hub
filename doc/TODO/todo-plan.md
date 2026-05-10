@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "7d8bb5237",
+  "lastRecordedCommit": "c767e21cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase17.release.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton acceptance flow release",
+  "currentTaskId": "application-skeleton-orchestration.phase17.release.task2",
+  "expectedCommitMessage": "build: release application skeleton acceptance flow",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton acceptance flow release",
-    "preCommitHead": "7d8bb5237",
+    "expectedCommitMessage": "build: release application skeleton acceptance flow",
+    "preCommitHead": "c767e21cc",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase17.release.task1"
+    "taskId": "application-skeleton-orchestration.phase17.release.task2"
   }
 }
 ```
@@ -402,12 +402,12 @@
 ### Stream: Release Preparation
 
 99. [DONE] `application-skeleton-orchestration.phase17.release.task1` After Stream 16H verification clean, update README/CHANGELOG for v1.2.223 and record the release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16, so no separate explicit confirmation is required this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance flow release`).
-100. [PENDING] Git Commit: `docs: prepare application skeleton acceptance flow release` (hash: TBD)
+100. [DONE] Git Commit: `docs: prepare application skeleton acceptance flow release` (hash: c767e21cc)
 
 ### Stream: Release Build
 
-101. [TODO] `application-skeleton-orchestration.phase17.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance flow`).
-102. [TODO] Git Commit: `build: release application skeleton acceptance flow` (hash: TBD)
+101. [DONE] `application-skeleton-orchestration.phase17.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance flow`).
+102. [PENDING] Git Commit: `build: release application skeleton acceptance flow` (hash: TBD)
 
 ## Phase 18 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
