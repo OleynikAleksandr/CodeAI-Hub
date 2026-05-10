@@ -2,19 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.219**
+**Current Release — v1.2.220**
 
-This release closes three Application Skeleton runtime regressions that survived
-the v1.2.218 mandatory repair: the managed-workspace plan-orchestrator shim now
-rolls `activeStage` and `activePlanPath` forward when a stage's terminal commit
-lands; the managed contract acceptance phrase recogniser accepts natural Russian
-phrasings such as "Контракт принимаю …" instead of only three exact strings,
-gated on acceptance-eligible Type B sessions; and Application Skeleton gains a
-materialisation continuation dispatcher plus a completion observer log that
-together close the post-acceptance loop so the existing `feat: materialize
-application skeleton` commit gate fires after the agent flips
-`application-skeleton-map.json` to `materialized: true`. Quality Gates
-symmetric fixes remain a follow-up cycle.
+This release closes a managed-workflow source-of-truth violation surfaced during
+the 1.2.219 retest. Project Manager no longer constructs the managed-workflow
+context bundle on its own and no longer reads `doc/TODO/workspace.plan.md` via
+the workflow-artifact HTTP endpoint (which was blocked by the allowlist and
+silently produced `activeStage: null`). Core gains a single canonical assembler
+exposed through the new `/api/v1/orchestrator/managed-context-bundle` endpoint;
+`buildManagedWorkflowContextBundleForInitialStage` adapts the existing builder
+for fresh sessions and returns the rendered bundle text. PM-side
+`managed-workflow-initial-context.ts` is now a thin HTTP wrapper that fetches
+the assembled bundle and embeds it verbatim. Architectural rule: PM is a
+UI/control surface, not a source of truth.
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

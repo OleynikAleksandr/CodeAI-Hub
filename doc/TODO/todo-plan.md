@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "bdb0f8de2",
+  "lastRecordedCommit": "a7c0c122f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase11.stream4.task1",
-  "expectedCommitMessage": "docs: record phase 11 verification",
+  "currentTaskId": "runtime-contract.phase11.stream5.task1",
+  "expectedCommitMessage": "build: release pm bundle source-of-truth repair",
   "debt": {
-    "expectedCommitMessage": "docs: record phase 11 verification",
-    "preCommitHead": "bdb0f8de2",
+    "expectedCommitMessage": "build: release pm bundle source-of-truth repair",
+    "preCommitHead": "a7c0c122f",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream4.task1"
+    "taskId": "runtime-contract.phase11.stream5.task1"
   }
 }
 ```
@@ -380,12 +380,12 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 ### Stream: Tooling Verification
 
 103. [DONE] `runtime-contract.phase11.stream4.task1` Run targeted Core build and node:test runner over Phase 11 spec files; record evidence inline; fix any regressions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record phase 11 verification`).
-104. [PENDING] Git Commit: `docs: record phase 11 verification` (hash: TBD)
+104. [DONE] Git Commit: `docs: record phase 11 verification` (hash: a7c0c122f)
 
 ### Stream: Release Build
 
-105. [TODO] `runtime-contract.phase11.stream5.task1` Prepare release notes / version-targeting README + CHANGELOG for the next release line (1.2.220) per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release pm bundle source-of-truth repair`).
-106. [TODO] Git Commit: `build: release pm bundle source-of-truth repair` (hash: TBD)
+105. [DONE] `runtime-contract.phase11.stream5.task1` Prepare release notes / version-targeting README + CHANGELOG for the next release line (1.2.220) per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release pm bundle source-of-truth repair`).
+106. [PENDING] Git Commit: `build: release pm bundle source-of-truth repair` (hash: TBD)
 107. [TODO] `runtime-contract.phase11.stream5.task2` Commit version manifests, lockfile and any auto-bumped files produced by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
 108. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
 

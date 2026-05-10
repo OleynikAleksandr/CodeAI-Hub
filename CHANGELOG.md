@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.220] - 2026-05-10
+### Fixed
+- **Single source of truth for managed-workflow context bundle.** Core gains `buildManagedWorkflowContextBundleForInitialStage` (a thin adapter over the existing `buildManagedWorkflowContextBundle`) and a new HTTP endpoint `/api/v1/orchestrator/managed-context-bundle` that returns the assembled bundle text. Project Manager's `managed-workflow-initial-context.ts` is rewritten as a thin HTTP wrapper that fetches the assembled bundle and embeds it verbatim; PM no longer reads `doc/TODO/workspace.plan.md` directly nor parses workspace ledger / stage todo-plan state. This removes the dual-builder drift surfaced during the 1.2.219 retest where PM's reads were silently rejected by the workflow-artifact endpoint allowlist (only `.codeai-hub/<slug>/...` paths were permitted) and produced `activeStage: null` for managed stages.
+
+### Tests
+- **3 new test commits** cover the Core endpoint round-trip (positive, unsupported stage, missing workspacePath), and the rewritten PM HTTP wrapper (verbatim relay, non-managed-stage shortcut, endpoint failure). Targeted node:test runner reports 8/8 PASS across Phase 11 spec files.
+
 ## [1.2.219] - 2026-05-10
 ### Fixed
 - **Managed-workspace stage advance now writes `activeStage`.** The embedded plan-orchestrator shim's `recordWorkspaceCommit` consults `STAGE_TERMINAL_COMMITS` and `NEXT_STAGE_AFTER` mappings (exported from `managed-todo-tree`) to roll `workspace.plan.md` forward when a stage's terminal commit lands (`docs: review diagram modules product map`, `feat: materialize application skeleton`, `feat: integrate quality gates baseline`). The previously-large installer file is split into a dedicated shim-source module so each file stays under the 500-line architecture limit.
