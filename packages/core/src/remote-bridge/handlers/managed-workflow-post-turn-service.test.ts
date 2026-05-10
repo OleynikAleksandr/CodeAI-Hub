@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { Logger } from "../../telemetry/logger";
 import {
+  ManagedWorkflowPostTurnService,
   recognizeManagedAcceptanceForStage,
   recognizeManagedContractAcceptancePhrase,
 } from "./managed-workflow-post-turn-service";
@@ -106,4 +108,28 @@ test("stage-gated recogniser ignores acceptance phrases outside Type B stages", 
     recognizeManagedAcceptanceForStage(undefined, "Принимаю контракт"),
     null
   );
+});
+
+test("post-turn service does not dispatch via gateway without explicit handle() invocation", () => {
+  const dispatched: Array<{
+    readonly content: unknown;
+    readonly sessionId: string;
+  }> = [];
+  // Constructing the service wires up the gateway but must not synchronously
+  // dispatch a provider-visible message. Provider-visible corrections are
+  // gated on an explicit handle() call originating from a terminal event,
+  // not on read-model snapshots or constructor side-effects.
+  const _service = new ManagedWorkflowPostTurnService({
+    developmentTreeAgentSessions: {
+      gateway: {
+        handleMessage: (sessionId, content) => {
+          dispatched.push({ content, sessionId });
+          return Promise.resolve();
+        },
+      },
+      providerId: "codexCli",
+    },
+    logger: new Logger("error"),
+  });
+  assert.deepEqual(dispatched, []);
 });

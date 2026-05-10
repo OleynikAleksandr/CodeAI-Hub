@@ -196,6 +196,68 @@ test("workflow-state read ignores malformed managed state while preserving skele
   }
 });
 
+test("workflow-state read with incomplete skeleton draft does not dispatch provider-visible corrections", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-service-read-side-effect-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const dispatched: Array<{
+    readonly content: string;
+    readonly sessionId: string;
+  }> = [];
+
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "# Final Description\n"
+    );
+    // Phase 1A in progress: markdown exists, map.json deliberately missing —
+    // a real Phase 1A guard would emit a repair decision, but only on the
+    // post-turn path. Reading workflow-state must NOT trigger that dispatch.
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`,
+      "# Application Skeleton (incomplete draft)\n"
+    );
+
+    const service = new WorkflowStateService({
+      developmentTreeAgentSessions: {
+        gateway: {
+          handleMessage: (sessionId, content) => {
+            dispatched.push({
+              content: typeof content === "string" ? content : "payload",
+              sessionId,
+            });
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
+      },
+      logger: new Logger("error"),
+    });
+
+    const first = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const second = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(first.status, 200);
+    assert.equal(second.status, 200);
+    // Two independent reads must produce zero provider-visible dispatches —
+    // read-model paths are side-effect free until the post-turn boundary.
+    assert.deepEqual(dispatched, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("ManagedWorkflowPostTurnService notifies retry-limit reached after dirty arbitration repeats", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "managed-arbitration-retry-")

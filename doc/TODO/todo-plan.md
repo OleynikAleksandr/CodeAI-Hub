@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "6a1e2f199",
+  "lastRecordedCommit": "91b23eb63",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase3.phase1a.task2",
-  "expectedCommitMessage": "fix: send application skeleton draft repair feedback",
+  "currentTaskId": "application-skeleton-orchestration.phase3.phase1a.task3",
+  "expectedCommitMessage": "fix: keep application skeleton corrections post-turn only",
   "debt": {
-    "expectedCommitMessage": "fix: send application skeleton draft repair feedback",
-    "preCommitHead": "6a1e2f199",
+    "expectedCommitMessage": "fix: keep application skeleton corrections post-turn only",
+    "preCommitHead": "91b23eb63",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase3.phase1a.task2"
+    "taskId": "application-skeleton-orchestration.phase3.phase1a.task3"
   }
 }
 ```
@@ -121,12 +121,12 @@
 ### Stream: Phase 1A Corrective Feedback
 
 17. [DONE] `application-skeleton-orchestration.phase3.phase1a.task2` Add Phase 1A corrective feedback text as a pure prompt builder and route corrective decisions through the existing post-turn arbitration contract; the builder must not own state or dispatch decisions. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: send application skeleton draft repair feedback`).
-18. [PENDING] Git Commit: `fix: send application skeleton draft repair feedback` (hash: TBD)
+18. [DONE] Git Commit: `fix: send application skeleton draft repair feedback` (hash: 91b23eb63)
 
 ### Stream: Read-Model Side-Effect Guard
 
-19. [TODO] `application-skeleton-orchestration.phase3.phase1a.task3` Ensure workflow-state/read-model refreshes may expose Application Skeleton diagnostics but never dispatch provider-visible corrections before the post-turn readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: keep application skeleton corrections post-turn only`).
-20. [TODO] Git Commit: `fix: keep application skeleton corrections post-turn only` (hash: TBD)
+19. [DONE] `application-skeleton-orchestration.phase3.phase1a.task3` Ensure workflow-state/read-model refreshes may expose Application Skeleton diagnostics but never dispatch provider-visible corrections before the post-turn readiness + terminal boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: keep application skeleton corrections post-turn only`).
+20. [PENDING] Git Commit: `fix: keep application skeleton corrections post-turn only` (hash: TBD)
 
 ## Phase 4 - Phase 1B User Review Revisions (owner: next agent, updated: 2026-05-10)
 
