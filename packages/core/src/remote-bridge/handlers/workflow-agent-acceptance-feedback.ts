@@ -134,7 +134,7 @@ const createDiagramModulesErrors = (
   const dirtyGateErrors =
     dirtyFiles.length > 0
       ? [
-          `Core-owned managed commit is pending for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Core owns this commit gate; do not run Git commands from the provider turn.`,
+          `Core-owned managed commit is pending for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Core owns this commit gate; respond with a content-readiness note once the artifacts are ready.`,
         ]
       : [];
   if (isDiagramModulesRepairSubturn(progress)) {
@@ -240,7 +240,7 @@ const createOutOfOwnerDirtyError = (
   stageTitle: string,
   files: readonly string[]
 ): string =>
-  `Core refused the managed documentation commit for ${stageTitle} because dirty files are outside the active stage allowlist: ${files.join(", ")}. Keep this stage limited to its owned artifacts and ask the user or Core to resolve unrelated workspace changes.`;
+  `Core is blocked from finalizing the ${stageTitle} managed commit because dirty files are outside the active stage allowlist: ${files.join(", ")}. Resolution required before continuation. (User-facing notice; provider should not act on this.)`;
 
 const readStringArray = (value: unknown): readonly string[] =>
   Array.isArray(value)

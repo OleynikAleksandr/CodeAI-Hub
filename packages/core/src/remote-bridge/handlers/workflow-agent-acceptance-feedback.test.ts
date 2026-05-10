@@ -270,7 +270,7 @@ test("Application Skeleton draft feedback does not instruct materialization befo
         observedMaterialization: false,
         substep: "failed",
         validationErrors: [
-          "Managed workspace Git status is dirty for Application Skeleton-owned files: .codeai-hub/demo/application_skeleton/application-skeleton.md.",
+          "Core has not yet finalized the managed commit for Application Skeleton-owned files: .codeai-hub/demo/application_skeleton/application-skeleton.md.",
         ],
       },
       workspaceRoot,

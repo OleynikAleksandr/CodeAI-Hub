@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "a3f3fb372",
+  "lastRecordedCommit": "f72e28d24",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase1.stream0.task1",
-  "expectedCommitMessage": "docs: map runtime conformance code surfaces",
+  "currentTaskId": "runtime-contract.phase2.stream1.task1",
+  "expectedCommitMessage": "fix: remove managed feedback git imperatives",
   "debt": {
-    "expectedCommitMessage": "docs: map runtime conformance code surfaces",
-    "preCommitHead": "a3f3fb372",
+    "expectedCommitMessage": "fix: remove managed feedback git imperatives",
+    "preCommitHead": "f72e28d24",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase1.stream0.task1"
+    "taskId": "runtime-contract.phase2.stream1.task1"
   }
 }
 ```
@@ -62,7 +62,7 @@
 ### Stream: Map Concrete Runtime Owners
 
 3. [DONE] `runtime-contract.phase1.stream0.task1` Audit actual code owners for Gaps A-E + R and update this plan if any provisional file scopes below need splitting or replacement (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: map runtime conformance code surfaces`).
-4. [PENDING] Git Commit: `docs: map runtime conformance code surfaces` (hash: TBD)
+4. [DONE] Git Commit: `docs: map runtime conformance code surfaces` (hash: f72e28d24)
 
 **Audit notes (2026-05-10):** provisional scopes below are grounded in current code search:
 
@@ -76,8 +76,8 @@
 
 ### Stream: Provider-Visible Feedback Cleanup
 
-5. [TODO] `runtime-contract.phase2.stream1.task1` Remove provider-directed Git imperatives from managed dirty-state and acceptance feedback text (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: remove managed feedback git imperatives`).
-6. [TODO] Git Commit: `fix: remove managed feedback git imperatives` (hash: TBD)
+5. [DONE] `runtime-contract.phase2.stream1.task1` Remove provider-directed Git imperatives from managed dirty-state and acceptance feedback text (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: remove managed feedback git imperatives`).
+6. [PENDING] Git Commit: `fix: remove managed feedback git imperatives` (hash: TBD)
 7. [TODO] `runtime-contract.phase2.stream1.task2` Add regression coverage for forbidden substrings and allowed neutral content-readiness wording across managed stages (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts`; expected commit: `test: cover managed feedback ownership wording`).
 8. [TODO] Git Commit: `test: cover managed feedback ownership wording` (hash: TBD)
 

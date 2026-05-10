@@ -89,7 +89,7 @@ const formatDirtyGateError = (
   stageTitle: string,
   files: readonly string[]
 ): string =>
-  `Managed workspace Git status is dirty for ${stageTitle}-owned files: ${files.join(", ")}. Commit or clean these files before Core can unlock the next managed stage.`;
+  `Core has not yet finalized the managed commit for ${stageTitle}-owned files: ${files.join(", ")}. Core owns this commit gate; respond with a content-readiness note once the artifacts are ready.`;
 
 export const attachManagedGitStatus = <T extends object>(
   progress: T | null,
