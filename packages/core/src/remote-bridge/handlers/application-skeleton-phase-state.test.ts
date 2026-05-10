@@ -19,7 +19,7 @@ const buildProgressSnapshot = (
 });
 
 test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration phases", () => {
-  assert.equal(classifyApplicationSkeletonPhase(null), "phase_1a_draft");
+  assert.equal(classifyApplicationSkeletonPhase(null), "phase_1_draft");
 
   assert.equal(
     classifyApplicationSkeletonPhase(
@@ -29,7 +29,7 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         substep: "artifact",
       })
     ),
-    "phase_1a_draft"
+    "phase_1_draft"
   );
 
   assert.equal(
@@ -40,7 +40,7 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         substep: "artifact",
       })
     ),
-    "phase_1a_draft"
+    "phase_1_draft"
   );
 
   assert.equal(
@@ -52,7 +52,7 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         substep: "awaiting_acceptance",
       })
     ),
-    "phase_1b_review"
+    "phase_2_review"
   );
 
   assert.equal(
@@ -65,7 +65,7 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         substep: "accepted",
       })
     ),
-    "phase_2_materialization"
+    "phase_3_materialization"
   );
 
   assert.equal(
@@ -79,7 +79,7 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         substep: "materializing",
       })
     ),
-    "phase_2_materialization"
+    "phase_3_materialization"
   );
 
   assert.equal(
@@ -109,6 +109,6 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         validationErrors: ["application-skeleton.md status reviewState …"],
       })
     ),
-    "phase_1b_review"
+    "phase_2_review"
   );
 });

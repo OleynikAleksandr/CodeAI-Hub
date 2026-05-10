@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "84a119ae4",
+  "lastRecordedCommit": "b9c0bc6c4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.fixture-migration.task2",
-  "expectedCommitMessage": "test: migrate handler fixture task ids to plain phase numbering (batch 2)",
+  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-rename.task1",
+  "expectedCommitMessage": "fix: rename application skeleton phase classifier values to plain numbering",
   "debt": {
-    "expectedCommitMessage": "test: migrate handler fixture task ids to plain phase numbering (batch 2)",
-    "preCommitHead": "84a119ae4",
+    "expectedCommitMessage": "fix: rename application skeleton phase classifier values to plain numbering",
+    "preCommitHead": "b9c0bc6c4",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.fixture-migration.task2"
+    "taskId": "application-skeleton-orchestration.phase12.classifier-rename.task1"
   }
 }
 ```
@@ -271,22 +271,32 @@
 ### Stream: Handler Fixture Migration (Batch 2)
 
 65. [DONE] `application-skeleton-orchestration.phase12.fixture-migration.task2` Migrate hardcoded legacy task IDs in the remaining handler tests (workflow-state bootstrap and post-turn) to the plain-phase task IDs. The end-to-end test holds no task IDs — only classifier enum strings and variable names — so it migrates with Stream F instead. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)`).
-66. [PENDING] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)` (hash: TBD)
+66. [DONE] Git Commit: `test: migrate handler fixture task ids to plain phase numbering (batch 2)` (hash: b9c0bc6c4)
 
 ### Stream: Phase Classifier Enum Rename
 
-67. [TODO] `application-skeleton-orchestration.phase12.classifier-rename.task1` Rename `ApplicationSkeletonPhase` enum values: `phase_1a_draft → phase_1_draft`, `phase_1b_review → phase_2_review`, `phase_2_materialization → phase_3_materialization` (`phase_handoff` stays). Update the classifier definition, its peer test, and the post-turn service consumer in lockstep so the build stays green; remaining consumers are migrated in `phase12.classifier-consumers.task1` and `task2`. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: rename application skeleton phase classifier values to plain numbering`).
-68. [TODO] Git Commit: `fix: rename application skeleton phase classifier values to plain numbering` (hash: TBD)
+67. [DONE] `application-skeleton-orchestration.phase12.classifier-rename.task1` Rename `ApplicationSkeletonPhase` enum values to plain numbering (`phase_1a_draft → phase_1_draft`, `phase_1b_review → phase_2_review`, `phase_2_materialization → phase_3_materialization`; `phase_handoff` stays). The classifier returns the new values; the type union temporarily admits both new and deprecated-old values so the still-unmigrated consumers continue to type-check across Streams G/H/H_b until the alias is removed in `phase12.classifier-cleanup.task1`. Migrate `application-skeleton-phase-state.ts` (definition + classifier body + deprecated aliases), its peer test (`application-skeleton-phase-state.test.ts`, asserts new values), and the end-to-end test (`application-skeleton-end-to-end.test.ts`, var names `phase1aProgress` / `phase1bProgress` and enum strings) in lockstep. Scope changed from the original (`phase-state.ts, phase-state.test.ts, managed-workflow-post-turn-service.ts`) to (`phase-state.ts, phase-state.test.ts, application-skeleton-end-to-end.test.ts`) because the post-turn service does not use enum string literals (only the classifier function), while the end-to-end test pins both var names and enum strings and breaks the moment classifier returns new values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`; expected commit: `fix: rename application skeleton phase classifier values to plain numbering`).
+68. [PENDING] Git Commit: `fix: rename application skeleton phase classifier values to plain numbering` (hash: TBD)
 
-### Stream: Phase Classifier Consumers (Handlers)
+### Stream: Phase Classifier Consumers (Guard + Review Classifier)
 
-69. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task1` Sync handler consumers of `ApplicationSkeletonPhase` to the plain-numbering enum values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts`; expected commit: `fix: align skeleton phase consumers to plain numbering`).
-70. [TODO] Git Commit: `fix: align skeleton phase consumers to plain numbering` (hash: TBD)
+69. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task1` Sync the contract guard and review-turn classifier (production + the contract guard's peer test) to the plain-numbering enum values. The review-turn classifier's peer test migrates with `phase12.classifier-consumers.task2` to keep the scope at three files. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts`; expected commit: `fix: align skeleton contract guard and review classifier to plain numbering`).
+70. [TODO] Git Commit: `fix: align skeleton contract guard and review classifier to plain numbering` (hash: TBD)
 
-### Stream: Phase Classifier Consumers (Runners + Injection)
+### Stream: Phase Classifier Consumers (Accept Contract Handler + Tests)
 
-71. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task2` Sync runner / injection / commit-transaction consumers to the plain-numbering enum values, and update dynamic revision injection labels (`phase1b.review.revisionN.task1 → phase2.review.revisionN.task1`) plus the per-revision managed commit message text (`docs: revise application skeleton contract — phase 1B revision N → docs: revise application skeleton contract — revision N`, dropping the phase-type label from the commit because Type B is a domain attribute, not commit text). (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts`; expected commit: `fix: align skeleton runner phase identifiers to plain numbering`).
-72. [TODO] Git Commit: `fix: align skeleton runner phase identifiers to plain numbering` (hash: TBD)
+71. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task2` Sync the accept-contract handler (production + peer test) and the deferred review-turn classifier peer test to the plain-numbering enum values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: align skeleton accept contract handler to plain numbering`).
+72. [TODO] Git Commit: `fix: align skeleton accept contract handler to plain numbering` (hash: TBD)
+
+### Stream: Revision Injection And Commit Transaction Rename
+
+73. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task3` Rename the dynamic revision injection labels (`phase1b.review.revisionN.task1 → phase2.review.revisionN.task1`) and the per-revision managed commit message text (`docs: revise application skeleton contract — phase 1B revision N → docs: revise application skeleton contract — revision N`, dropping the phase-type label from the commit text because Type B is a domain attribute, not commit text); update the legacy `phase1b.review.task1` plan-text lookup in the injection runner; the accept-contract runner is in scope only if it carries any phase string literal (it does not — it only forwards the classifier function call). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: align skeleton revision injection labels to plain numbering`).
+74. [TODO] Git Commit: `fix: align skeleton revision injection labels to plain numbering` (hash: TBD)
+
+### Stream: Phase Classifier Cleanup
+
+75. [TODO] `application-skeleton-orchestration.phase12.classifier-cleanup.task1` Remove the deprecated `phase_1a_draft` / `phase_1b_review` / `phase_2_materialization` aliases from the `ApplicationSkeletonPhase` type union now that every consumer reports the new values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts`; expected commit: `fix: drop deprecated application skeleton phase aliases`).
+76. [TODO] Git Commit: `fix: drop deprecated application skeleton phase aliases` (hash: TBD)
 
 ### Stream: SSOT Sync
 

@@ -83,7 +83,7 @@ const buildAwaitingAcceptanceProgress =
 test("application skeleton A→B→A pipeline: classifier, guard, premature, review classifier, accept handler", () => {
   // Phase 1A draft state (markdown only, map missing) → guard fires
   // repair_no_progress when there is no owned diff; otherwise repair_invalid_draft.
-  const phase1aProgress = {
+  const phase1Progress = {
     accepted: false,
     mapExists: false,
     mappingReady: false,
@@ -95,34 +95,34 @@ test("application skeleton A→B→A pipeline: classifier, guard, premature, rev
     validationErrors: [],
   } satisfies ApplicationSkeletonProgressSnapshot;
   assert.equal(
-    classifyApplicationSkeletonPhase(phase1aProgress),
-    "phase_1a_draft"
+    classifyApplicationSkeletonPhase(phase1Progress),
+    "phase_1_draft"
   );
   const guardNoProgress = evaluateApplicationSkeletonContractGuard({
     ownedDirtyFiles: [],
-    phase: "phase_1a_draft",
-    progress: phase1aProgress,
+    phase: "phase_1_draft",
+    progress: phase1Progress,
     terminalEventReceived: true,
   });
   assert.equal(guardNoProgress.kind, "repair_no_progress");
 
   // Phase 1B review state (draft Core-clean, awaiting acceptance).
-  const phase1bProgress = {
-    ...phase1aProgress,
+  const phase2Progress = {
+    ...phase1Progress,
     mapExists: true,
     mappingReady: true,
     markdownExists: true,
     substep: "awaiting_acceptance" as const,
   };
   assert.equal(
-    classifyApplicationSkeletonPhase(phase1bProgress),
-    "phase_1b_review"
+    classifyApplicationSkeletonPhase(phase2Progress),
+    "phase_2_review"
   );
   // Discussion turn (no owned diff) → review classifier returns discussion.
   assert.equal(
     classifyApplicationSkeletonReviewTurn({
       ownedDirtyFiles: [],
-      phase: "phase_1b_review",
+      phase: "phase_2_review",
     }),
     "discussion"
   );
@@ -132,7 +132,7 @@ test("application skeleton A→B→A pipeline: classifier, guard, premature, rev
       ownedDirtyFiles: [
         ".codeai-hub/demo/application_skeleton/application-skeleton.md",
       ],
-      phase: "phase_1b_review",
+      phase: "phase_2_review",
     }),
     "revision"
   );
@@ -151,27 +151,27 @@ test("application skeleton A→B→A pipeline: classifier, guard, premature, rev
   // Guard wired to that premature decision returns repair_premature_materialization.
   const guardPremature = evaluateApplicationSkeletonContractGuard({
     ownedDirtyFiles: ["product-parts/demo/README.md"],
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
     prematureDecision: prematureBlocked,
-    progress: phase1bProgress,
+    progress: phase2Progress,
     terminalEventReceived: true,
   });
   assert.equal(guardPremature.kind, "repair_premature_materialization");
 
   // Accept-contract command on a clean Phase 1B state → accepted.
   const acceptDecision = evaluateApplicationSkeletonAcceptContractCommand({
-    applicationSkeletonProgress: phase1bProgress,
+    applicationSkeletonProgress: phase2Progress,
     managedGitStatus: buildGitStatus(),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(acceptDecision.kind, "accepted");
   // Accept-contract command on a still-pending revision → rejected.
   const acceptRejected = evaluateApplicationSkeletonAcceptContractCommand({
-    applicationSkeletonProgress: phase1bProgress,
+    applicationSkeletonProgress: phase2Progress,
     managedGitStatus: buildGitStatus([
       ".codeai-hub/demo/application_skeleton/application-skeleton.md",
     ]),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(acceptRejected.kind, "rejected");
 });
