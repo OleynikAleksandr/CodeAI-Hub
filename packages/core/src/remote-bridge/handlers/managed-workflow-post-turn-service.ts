@@ -39,11 +39,15 @@ const MANAGED_POST_TURN_STAGES = new Set([
 
 const DEFAULT_MANAGED_ARBITRATION_RETRY_LIMIT = 5;
 
-const MANAGED_CONTRACT_ACCEPTANCE_PHRASES = [
-  "Подтверждаю контракт",
-  "Принимаю контракт",
-  "Утверждаю контракт",
-] as const;
+const ACCEPTANCE_VERB_TO_CANONICAL: Readonly<Record<string, string>> = {
+  принимаю: "Принимаю контракт",
+  подтверждаю: "Подтверждаю контракт",
+  утверждаю: "Утверждаю контракт",
+};
+const ACCEPTANCE_VERB_RE = /(?:^|\W)(принимаю|подтверждаю|утверждаю)\b/iu;
+const NEGATED_ACCEPTANCE_VERB_RE =
+  /\bне\s+(?:принимаю|подтверждаю|утверждаю)\b/iu;
+const CONTRACT_NOUN_RE = /\bконтракт(?:а|у|ом|е|ы)?\b/iu;
 
 export const recognizeManagedContractAcceptancePhrase = (
   content: string
@@ -51,22 +55,35 @@ export const recognizeManagedContractAcceptancePhrase = (
   if (!content) {
     return null;
   }
-  const normalized = content.trim().replace(/\s+/g, " ");
+  const normalized = content.trim().replace(/\s+/g, " ").toLowerCase();
   if (!normalized) {
     return null;
   }
-  for (const phrase of MANAGED_CONTRACT_ACCEPTANCE_PHRASES) {
-    if (normalized.localeCompare(phrase, "ru", { sensitivity: "base" }) === 0) {
-      return phrase;
-    }
+  if (NEGATED_ACCEPTANCE_VERB_RE.test(normalized)) {
+    return null;
   }
-  return null;
+  const verbMatch = normalized.match(ACCEPTANCE_VERB_RE);
+  if (!verbMatch) {
+    return null;
+  }
+  if (!CONTRACT_NOUN_RE.test(normalized)) {
+    return null;
+  }
+  return ACCEPTANCE_VERB_TO_CANONICAL[verbMatch[1]] ?? "Принимаю контракт";
 };
 
-const MANAGED_CONTRACT_ACCEPTANCE_STAGES = new Set([
+const MANAGED_CONTRACT_ACCEPTANCE_STAGES: ReadonlySet<string> = new Set([
   "application_skeleton",
   "quality_gates",
 ]);
+
+export const recognizeManagedAcceptanceForStage = (
+  stage: string | null | undefined,
+  content: string
+): string | null =>
+  stage && MANAGED_CONTRACT_ACCEPTANCE_STAGES.has(stage)
+    ? recognizeManagedContractAcceptancePhrase(content)
+    : null;
 
 export interface ManagedArbitrationRetryNotice {
   readonly attempts: number;
