@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "4a05a18b4",
+  "lastRecordedCommit": "9d5a63d97",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase8.stream8.task2",
-  "expectedCommitMessage": "docs: record runtime conformance verification",
+  "currentTaskId": "runtime-contract.phase9.stream9.task2",
+  "expectedCommitMessage": "build: release managed runtime conformance repair",
   "debt": {
-    "expectedCommitMessage": "docs: record runtime conformance verification",
-    "preCommitHead": "4a05a18b4",
+    "expectedCommitMessage": "build: release managed runtime conformance repair",
+    "preCommitHead": "9d5a63d97",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase8.stream8.task2"
+    "taskId": "runtime-contract.phase9.stream9.task2"
   }
 }
 ```
@@ -149,7 +149,7 @@
 ### Stream: Tooling Verification
 
 41. [DONE] `runtime-contract.phase8.stream8.task2` Run targeted builds/tests for touched Core and Project Manager packages, record evidence in this plan, and fix any TypeScript regressions surfaced by the Core build (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `docs: record runtime conformance verification`).
-42. [PENDING] Git Commit: `docs: record runtime conformance verification` (hash: TBD)
+42. [DONE] Git Commit: `docs: record runtime conformance verification` (hash: 9d5a63d97)
 
 **Verification evidence (2026-05-10):**
 
@@ -162,12 +162,12 @@
 
 ### Stream: Release Build Confirmation Gate
 
-43. [TODO] `runtime-contract.phase9.stream9.task1` Ask the user for explicit release build confirmation after implementation and verification are complete (scope: chat/process observation only; no commit required).
+43. [DONE] `runtime-contract.phase9.stream9.task1` Ask the user for explicit release build confirmation after implementation and verification are complete (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build via chat instruction
 
 ### Stream: Release Build
 
-44. [TODO] `runtime-contract.phase9.stream9.task2` After explicit confirmation only, prepare release notes/version files and run release build scripts per AGENTS Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release managed runtime conformance repair`).
-45. [TODO] Git Commit: `build: release managed runtime conformance repair` (hash: TBD)
+44. [DONE] `runtime-contract.phase9.stream9.task2` After explicit confirmation only, prepare release notes/version files and run release build scripts per AGENTS Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release managed runtime conformance repair`).
+45. [PENDING] Git Commit: `build: release managed runtime conformance repair` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
