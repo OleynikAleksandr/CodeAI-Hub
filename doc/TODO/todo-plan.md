@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "ca93cda55",
+  "lastRecordedCommit": "ea24aa7cf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase2.diagram-test-repair.task1",
-  "expectedCommitMessage": "test: align diagram modules adoption regex to current seed",
+  "currentTaskId": "application-skeleton-orchestration.phase2.classifier.task1",
+  "expectedCommitMessage": "fix: classify application skeleton orchestration phases",
   "debt": {
-    "expectedCommitMessage": "test: align diagram modules adoption regex to current seed",
-    "preCommitHead": "ca93cda55",
+    "expectedCommitMessage": "fix: classify application skeleton orchestration phases",
+    "preCommitHead": "ea24aa7cf",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase2.diagram-test-repair.task1"
+    "taskId": "application-skeleton-orchestration.phase2.classifier.task1"
   }
 }
 ```
@@ -104,12 +104,12 @@
 ### Stream: Diagram Modules Adoption Test Repair
 
 11. [DONE] `application-skeleton-orchestration.phase2.diagram-test-repair.task1` Repair the pre-existing `DIAGRAM_MODULES_PLAN_COMMIT_RE` regex mismatch in the managed-workspace adoption test so it matches the current Diagram Modules seed commit (`docs: update diagram modules product part index`). Strictly outside Application Skeleton scope, but surfaced during `phase2.stage-plan.task1` test runs as a baseline failure on `main`; cleanup is opportunistic because the regex sits in a file already touched by this scope. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: align diagram modules adoption regex to current seed`).
-12. [PENDING] Git Commit: `test: align diagram modules adoption regex to current seed` (hash: TBD)
+12. [DONE] Git Commit: `test: align diagram modules adoption regex to current seed` (hash: ea24aa7cf)
 
 ### Stream: Phase Classifier
 
-13. [TODO] `application-skeleton-orchestration.phase2.classifier.task1` Add an Application Skeleton-specific phase/sub-phase classifier for Phase 1A, Phase 1B and Phase 2, and consume it from post-turn arbitration without introducing a generalized phase metadata runtime. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: classify application skeleton orchestration phases`).
-14. [TODO] Git Commit: `fix: classify application skeleton orchestration phases` (hash: TBD)
+13. [DONE] `application-skeleton-orchestration.phase2.classifier.task1` Add an Application Skeleton-specific phase/sub-phase classifier for Phase 1A, Phase 1B and Phase 2, and consume it from post-turn arbitration without introducing a generalized phase metadata runtime. Classifier coverage lives in a sibling test file (`application-skeleton-phase-state.test.ts`) instead of `application-skeleton-progress.test.ts` because folding it into the progress test pushed that file past the 500-line architecture limit; the inline classifier additions briefly committed to `application-skeleton-progress.test.ts` are reverted in the same commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, doc/TODO/todo-plan.md`; expected commit: `fix: classify application skeleton orchestration phases`).
+14. [PENDING] Git Commit: `fix: classify application skeleton orchestration phases` (hash: TBD)
 
 ## Phase 3 - Phase 1A Core-Gated Draft (owner: next agent, updated: 2026-05-10)
 

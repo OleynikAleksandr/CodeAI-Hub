@@ -7,6 +7,7 @@ import type {
   UnifiedSessionStorage,
 } from "../../unified-session/storage";
 import { sendApplicationSkeletonContinuationIfReady } from "./application-skeleton-continuation-dispatcher";
+import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
@@ -290,6 +291,9 @@ export class ManagedWorkflowPostTurnService {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
+    const applicationSkeletonPhase = classifyApplicationSkeletonPhase(
+      latestApplicationSkeletonProgress
+    );
     if (
       latestApplicationSkeletonProgress?.materialized &&
       !rawApplicationSkeletonProgress?.materialized
@@ -297,6 +301,7 @@ export class ManagedWorkflowPostTurnService {
       this.logger.info(
         "Observed Application Skeleton materialization completion",
         {
+          phase: applicationSkeletonPhase,
           sessionId: params.sessionId,
           stage: params.stage,
         }
