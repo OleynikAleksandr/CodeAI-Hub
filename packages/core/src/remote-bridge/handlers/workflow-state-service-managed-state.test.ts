@@ -1,11 +1,46 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import type { Request, Response } from "express";
+import type { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
+import {
+  type ManagedArbitrationRetryNotice,
+  ManagedWorkflowPostTurnService,
+} from "./managed-workflow-post-turn-service";
 import { WorkflowStateService } from "./workflow-state-service";
+
+const execFileAsync = promisify(execFile);
+const RETRY_LIMIT_REASON_RE =
+  /Managed arbitration exceeded the per-stage retry limit/u;
+
+const initWorkspaceWithDirtyDiagramModules = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<void> => {
+  await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+  await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+    cwd: workspaceRoot,
+  });
+  await execFileAsync("git", ["config", "user.name", "CodeAI Test"], {
+    cwd: workspaceRoot,
+  });
+  await writeFile(path.join(workspaceRoot, "README.md"), "# Demo\n", "utf8");
+  await execFileAsync("git", ["add", "README.md"], { cwd: workspaceRoot });
+  await execFileAsync("git", ["commit", "-m", "test: initial"], {
+    cwd: workspaceRoot,
+  });
+  const dirtyPath = path.join(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`
+  );
+  await mkdir(path.dirname(dirtyPath), { recursive: true });
+  await writeFile(dirtyPath, "# Product Parts\n", "utf8");
+};
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -156,6 +191,54 @@ test("workflow-state read ignores malformed managed state while preserving skele
       ).catch(() => null),
       null
     );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("ManagedWorkflowPostTurnService notifies retry-limit reached after dirty arbitration repeats", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-arbitration-retry-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const notices: ManagedArbitrationRetryNotice[] = [];
+
+  try {
+    await initWorkspaceWithDirtyDiagramModules(workspaceRoot, workspaceSlug);
+    const sessionManager = {
+      getSession: () => ({
+        id: "session-1",
+        workspacePath: workspaceRoot,
+        initiativeSlug: workspaceSlug,
+        stage: "diagram_modules",
+        providerId: "codexCli",
+      }),
+    } as unknown as SessionManager;
+
+    const service = new ManagedWorkflowPostTurnService({
+      logger: new Logger("error"),
+      onRetryLimitReached: (notice) => {
+        notices.push(notice);
+      },
+      retryLimit: 2,
+      sessionManager,
+    });
+
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      service.handle("session-1");
+      await service.whenIdle("session-1");
+    }
+
+    assert.ok(
+      notices.length >= 1,
+      `Expected retry-limit notifier to fire; got ${notices.length}`
+    );
+    const firstNotice = notices[0];
+    assert.equal(firstNotice?.sessionId, "session-1");
+    assert.equal(firstNotice?.stage, "diagram_modules");
+    assert.equal(firstNotice?.retryLimit, 2);
+    assert.ok((firstNotice?.attempts ?? 0) > 2);
+    assert.match(firstNotice?.reason ?? "", RETRY_LIMIT_REASON_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

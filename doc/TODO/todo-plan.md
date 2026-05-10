@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "603b5abc3",
+  "lastRecordedCommit": "a2a430269",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase3.stream2.task1",
-  "expectedCommitMessage": "fix: dedupe managed post-turn arbitration events",
+  "currentTaskId": "runtime-contract.phase3.stream2.task2",
+  "expectedCommitMessage": "fix: guard repeated managed arbitration attempts",
   "debt": {
-    "expectedCommitMessage": "fix: dedupe managed post-turn arbitration events",
-    "preCommitHead": "603b5abc3",
+    "expectedCommitMessage": "fix: guard repeated managed arbitration attempts",
+    "preCommitHead": "a2a430269",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase3.stream2.task1"
+    "taskId": "runtime-contract.phase3.stream2.task2"
   }
 }
 ```
@@ -86,9 +86,9 @@
 ### Stream: Terminal Event Dedup And Retry Guard
 
 9. [DONE] `runtime-contract.phase3.stream2.task1` Add Core-normalized terminal-event identity and processed-event ledger so managed post-turn arbitration runs once per new terminal event and duplicate delivery is no-op (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: dedupe managed post-turn arbitration events`).
-10. [PENDING] Git Commit: `fix: dedupe managed post-turn arbitration events` (hash: TBD)
-11. [TODO] `runtime-contract.phase3.stream2.task2` Add per-task retry guard and BLOCKED/pause handling for repeated failed managed arbitration attempts (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: guard repeated managed arbitration attempts`).
-12. [TODO] Git Commit: `fix: guard repeated managed arbitration attempts` (hash: TBD)
+10. [DONE] Git Commit: `fix: dedupe managed post-turn arbitration events` (hash: a2a430269)
+11. [DONE] `runtime-contract.phase3.stream2.task2` Add per-task retry guard and BLOCKED/pause handling for repeated failed managed arbitration attempts (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: guard repeated managed arbitration attempts`).
+12. [PENDING] Git Commit: `fix: guard repeated managed arbitration attempts` (hash: TBD)
 
 ## Phase 4 — Gaps C/D Acceptance And Materialization (owner: next agent, updated: 2026-05-10)
 

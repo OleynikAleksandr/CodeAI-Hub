@@ -97,6 +97,12 @@ export class WorkflowStateService {
     this.managedPostTurn = new ManagedWorkflowPostTurnService({
       developmentTreeAgentSessions: options.developmentTreeAgentSessions,
       logger: options.logger,
+      onRetryLimitReached: (notice) => {
+        options.logger.warn(
+          "Managed arbitration retry limit reached for managed stage",
+          notice
+        );
+      },
       sessionManager: options.sessionManager,
     });
     this.developmentTreeState.subscribeSnapshot(

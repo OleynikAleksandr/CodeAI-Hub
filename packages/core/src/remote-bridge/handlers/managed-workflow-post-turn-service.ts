@@ -33,6 +33,17 @@ const MANAGED_POST_TURN_STAGES = new Set([
   "quality_gates",
 ]);
 
+const DEFAULT_MANAGED_ARBITRATION_RETRY_LIMIT = 5;
+
+export interface ManagedArbitrationRetryNotice {
+  readonly attempts: number;
+  readonly reason: string;
+  readonly retryLimit: number;
+  readonly sessionId: string;
+  readonly stage: string;
+  readonly workspaceSlug: string;
+}
+
 export class ManagedWorkflowPostTurnService {
   private readonly acceptanceFeedback: WorkflowAgentAcceptanceFeedback;
   private readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
@@ -40,10 +51,22 @@ export class ManagedWorkflowPostTurnService {
   private readonly transaction = new ManagedDocumentationCommitTransaction();
   private readonly sessionManager?: SessionManager;
   private readonly inFlight = new Map<string, Promise<void>>();
+  private readonly retryCounters = new Map<
+    string,
+    { stage: string; count: number }
+  >();
+  private readonly retryLimit: number;
+  private readonly retryLimitNotifier?: (
+    notice: ManagedArbitrationRetryNotice
+  ) => void;
 
   constructor(options: {
     readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
     readonly logger: Logger;
+    readonly onRetryLimitReached?: (
+      notice: ManagedArbitrationRetryNotice
+    ) => void;
+    readonly retryLimit?: number;
     readonly sessionManager?: SessionManager;
   }) {
     this.acceptanceFeedback = new WorkflowAgentAcceptanceFeedback(
@@ -52,6 +75,9 @@ export class ManagedWorkflowPostTurnService {
     this.developmentTreeAgentSessions = options.developmentTreeAgentSessions;
     this.logger = options.logger;
     this.sessionManager = options.sessionManager;
+    this.retryLimit =
+      options.retryLimit ?? DEFAULT_MANAGED_ARBITRATION_RETRY_LIMIT;
+    this.retryLimitNotifier = options.onRetryLimitReached;
   }
 
   handle(sessionId: string): void {
@@ -75,7 +101,8 @@ export class ManagedWorkflowPostTurnService {
     }
     const workspaceRoot = session.workspacePath;
     const workspaceSlug = session.initiativeSlug;
-    const task = this.run({ sessionId, workspaceRoot, workspaceSlug })
+    const stage = session.stage;
+    const task = this.run({ sessionId, stage, workspaceRoot, workspaceSlug })
       .catch((error: unknown) => {
         this.logger.warn("Managed workflow post-turn feedback failed", {
           sessionId,
@@ -89,8 +116,38 @@ export class ManagedWorkflowPostTurnService {
     this.inFlight.set(sessionId, task);
   }
 
+  async whenIdle(sessionId: string): Promise<void> {
+    while (this.inFlight.has(sessionId)) {
+      const current = this.inFlight.get(sessionId);
+      if (!current) {
+        return;
+      }
+      await current.catch(() => undefined);
+    }
+  }
+
+  private trackArbitrationAttempt(
+    sessionId: string,
+    stage: string,
+    stageDirty: boolean
+  ): { attempts: number; blocked: boolean } {
+    if (!stageDirty) {
+      this.retryCounters.delete(sessionId);
+      return { attempts: 0, blocked: false };
+    }
+    const current = this.retryCounters.get(sessionId);
+    const nextAttempts =
+      current && current.stage === stage ? current.count + 1 : 1;
+    this.retryCounters.set(sessionId, { stage, count: nextAttempts });
+    return {
+      attempts: nextAttempts,
+      blocked: nextAttempts > this.retryLimit,
+    };
+  }
+
   private async run(params: {
     readonly sessionId: string;
+    readonly stage: string;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
@@ -124,6 +181,31 @@ export class ManagedWorkflowPostTurnService {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
+    const stageOwnedDirty =
+      latestManagedGitStatus.dirtyByStage[
+        params.stage as keyof typeof latestManagedGitStatus.dirtyByStage
+      ] ?? [];
+    const retryStatus = this.trackArbitrationAttempt(
+      params.sessionId,
+      params.stage,
+      stageOwnedDirty.length > 0
+    );
+    if (retryStatus.blocked) {
+      const notice: ManagedArbitrationRetryNotice = {
+        attempts: retryStatus.attempts,
+        reason: `Managed arbitration exceeded the per-stage retry limit of ${this.retryLimit} attempts without progress; pause issued for user-actionable resolution.`,
+        retryLimit: this.retryLimit,
+        sessionId: params.sessionId,
+        stage: params.stage,
+        workspaceSlug: params.workspaceSlug,
+      };
+      this.logger.warn(
+        "Managed arbitration retry limit exceeded; pausing dispatch",
+        notice
+      );
+      this.retryLimitNotifier?.(notice);
+      return;
+    }
     const diagramModulesProgress = attachManagedGitStatus(
       latestDiagramModulesProgress,
       latestManagedGitStatus.dirtyByStage.diagram_modules
