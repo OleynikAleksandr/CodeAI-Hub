@@ -4,6 +4,34 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.221] - 2026-05-10
+### Added
+- **Application Skeleton Phase B orchestration pilot.** The Application Skeleton stage now runs as an explicit `Phase 1A → Phase 1B → Phase 2` sequence with the following surfaces:
+  - **Phase classifier** (`application-skeleton-phase-state.ts`) maps progress snapshots to `phase_1a_draft` / `phase_1b_review` / `phase_2_materialization` / `phase_handoff`.
+  - **Phase 1A structural guard** (`application-skeleton-contract-guard.ts`) implements the Observe-vs-Dispatch rule and Readiness Resolution table: terminal + owned diff = implicit readiness; terminal + no diff in Phase 1A = a single non-commit `repair_no_progress` corrective turn; structurally invalid drafts emit `repair_invalid_draft` with the gaps; phases outside Phase 1A are noop.
+  - **Phase 1A corrective feedback** (`application-skeleton-contract-feedback.ts`) is a pure prompt-builder that produces content-readiness wording without ever asking the agent to run Git, staging, or plan commands.
+  - **Phase 1B revision-vs-discussion classifier** (`application-skeleton-review-turn-classifier.ts`): tracked owned diff = revision (Core injects a `phase1b.review.revisionN.task1 + Git Commit` pair before the open-ended review task and the managed commit boundary fires `docs: revise application skeleton contract — phase 1B revision N`); no owned diff = discussion / no-op recorded only in standard session history.
+  - **Phase 1B revision injection** in the Application Skeleton stage plan (`application-skeleton-revision-injection-runner.ts` + helper in `managed-documentation-commit-transaction.ts`) and the per-phase managed commit boundary (`workflow-state-managed-documentation-commit.ts`) now reused for Phase 1A draft, every Phase 1B revision, and Phase 2 materialization.
+  - **Core-owned Accept Contract command** (`managed-stage-accept-contract-handler.ts` pure decision + `managed-stage-accept-contract-runner.ts` async runner) validates Phase 1B preconditions (Core-clean draft, no uncommitted owned diff, no out-of-owner dirty paths) and routes the session through the existing Phase 2 dispatcher (Acceptance Commit Policy: Option B — acceptance folded into the Phase 2 transition).
+  - **HTTP transport** at `POST /api/v1/orchestrator/managed-stage-accept-contract` (`http-api-managed-stage-accept-contract.ts`); transport-only handler that parses the body and delegates to the Core decision.
+  - **Typed-fallback router** (`application-skeleton-typed-acceptance-router.ts`) routes recognized acceptance phrases through the same Core handler when the Application Skeleton stage is acceptance-eligible; the matched phrase is never delivered to the provider as a regular user message.
+  - **Project Manager Accept Contract button** (`application-skeleton-accept-contract-button.tsx`) and HTTP client (`managed-stage-accept-contract-client.ts`); disabled-state reasons are derived from the workflow-state read-model only — the button never queries Core gating logic on its own.
+  - **Premature-materialization validator** (`application-skeleton-premature-materialization-validator.ts`) derives the blocked path set from the Application Skeleton map (declared `materializedPaths` plus every productPart / cluster / module `codePath`) and runs from both Phase 1A and Phase 1B post-turn structural guards. Any owned write inside that scope before T3 acceptance produces a single corrective `repair_premature_materialization` turn at the readiness + terminal boundary; the block lifts the moment the Accept Contract command fires.
+  - **Phase 2 dispatcher gate** (`application-skeleton-continuation-dispatcher.ts`) only emits the materialization continuation prompt when the post-turn arbitration runs, the session is present in the Core-owned `recentlyAcceptedSessions` marker set, and the substep is at least `awaiting_acceptance` and not yet `materialized`. User text alone never authorizes Phase 2.
+  - **Stage plan seed** (`managed-todo-tree.ts`) is reshaped to seed Phase 1A draft, Phase 1B open-ended review, Phase 2 materialization, and a reserved post-closeout handoff anchor for Application Skeleton; the legacy `application-skeleton.stream1.task2` materialization gate identifier in `development-tree-bootstrap-gate.ts` is realigned to `application-skeleton.phase2.materialize.task1`, and the three core fixture tests that hardcoded the legacy ids are migrated to the phased ids.
+
+### Tests
+- **End-to-end A→B→A regression** (`application-skeleton-end-to-end.test.ts`) now exercises the classifier, structural guard, premature validator, review-turn classifier, and accept-contract command on a single fixture chain.
+- **HTTP transport tests** (`http-api-managed-stage-accept-contract.test.ts`) cover the missing-sessionId path, the accepted JSON shape, the typed-fallback `source` round-trip, and the rejected-with-reasons path.
+- **PM client and button tests** (`managed-stage-accept-contract-client.test.ts` + `application-skeleton-accept-contract-button.test.tsx`) cover the request body, accepted/rejected decisions, the typed-fallback source, and the button disabled-state under SSR.
+- All 67 targeted Core handler tests, both PM service / button tests, `npm run build --workspace @codeai-hub/core`, and `npm run typecheck:webview` pass clean for this scope.
+
+### Documentation
+- `WorkflowSteps_Overview.md` and `Application_Skeleton_Architecture.md` document the shipped Phase 1A/1B/2 model, the Core-owned command surface, the Observe-vs-Dispatch rule, and the premature-materialization block. `SystemArchitecture.md` carries a top-of-file pointer to those updated docs.
+
+### Repaired side-effects
+- One unrelated baseline regex mismatch in `session-request-handler-workflow-session.managed-workspace.test.ts` (`DIAGRAM_MODULES_PLAN_COMMIT_RE`) was fixed opportunistically because the regex sat in a file already touched by this scope.
+
 ## [1.2.220] - 2026-05-10
 ### Fixed
 - **Single source of truth for managed-workflow context bundle.** Core gains `buildManagedWorkflowContextBundleForInitialStage` (a thin adapter over the existing `buildManagedWorkflowContextBundle`) and a new HTTP endpoint `/api/v1/orchestrator/managed-context-bundle` that returns the assembled bundle text. Project Manager's `managed-workflow-initial-context.ts` is rewritten as a thin HTTP wrapper that fetches the assembled bundle and embeds it verbatim; PM no longer reads `doc/TODO/workspace.plan.md` directly nor parses workspace ledger / stage todo-plan state. This removes the dual-builder drift surfaced during the 1.2.219 retest where PM's reads were silently rejected by the workflow-artifact endpoint allowlist (only `.codeai-hub/<slug>/...` paths were permitted) and produced `activeStage: null` for managed stages.

@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "4bdeaf94c",
+  "lastRecordedCommit": "0b8d38cf7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase9.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton phase orchestration verification",
+  "currentTaskId": "application-skeleton-orchestration.phase10.release.task2",
+  "expectedCommitMessage": "docs: prepare application skeleton phase orchestration release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton phase orchestration verification",
-    "preCommitHead": "4bdeaf94c",
+    "expectedCommitMessage": "docs: prepare application skeleton phase orchestration release",
+    "preCommitHead": "0b8d38cf7",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase9.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase10.release.task2"
   }
 }
 ```
@@ -208,18 +208,18 @@
 ### Stream: Build And Test Evidence
 
 47. [DONE] `application-skeleton-orchestration.phase9.verify.task1` Run targeted Core tests for touched handlers, PM component/service tests, `npm run build --workspace @codeai-hub/core`, and `npm run typecheck:webview`; record evidence and any known residual risk in this plan. Scope expanded by four files because the build surfaced four narrow type errors that needed to land with the verification record. (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `docs: record application skeleton phase orchestration verification`).
-48. [PENDING] Git Commit: `docs: record application skeleton phase orchestration verification` (hash: TBD)
+48. [DONE] Git Commit: `docs: record application skeleton phase orchestration verification` (hash: 0b8d38cf7)
 
 ## Phase 10 - Release Build Confirmation Gate (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Release Confirmation
 
-49. [TODO] `application-skeleton-orchestration.phase10.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts. (scope: chat/process observation only; no commit required).
+49. [DONE] `application-skeleton-orchestration.phase10.release.task1` Ask the user for separate explicit confirmation before preparing release notes, bumping versions, or running release build scripts. (scope: chat/process observation only; no commit required). Result: User confirmed release-build at 2026-05-10; proceeding with README/CHANGELOG update for v1.2.221 and build pipeline.
 
 ### Stream: Release Preparation
 
-50. [TODO] `application-skeleton-orchestration.phase10.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton phase orchestration release`).
-51. [TODO] Git Commit: `docs: prepare application skeleton phase orchestration release` (hash: TBD)
+50. [DONE] `application-skeleton-orchestration.phase10.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton phase orchestration release`).
+51. [PENDING] Git Commit: `docs: prepare application skeleton phase orchestration release` (hash: TBD)
 
 ### Stream: Release Build
 

@@ -2,19 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.220**
+**Current Release — v1.2.221**
 
-This release closes a managed-workflow source-of-truth violation surfaced during
-the 1.2.219 retest. Project Manager no longer constructs the managed-workflow
-context bundle on its own and no longer reads `doc/TODO/workspace.plan.md` via
-the workflow-artifact HTTP endpoint (which was blocked by the allowlist and
-silently produced `activeStage: null`). Core gains a single canonical assembler
-exposed through the new `/api/v1/orchestrator/managed-context-bundle` endpoint;
-`buildManagedWorkflowContextBundleForInitialStage` adapts the existing builder
-for fresh sessions and returns the rendered bundle text. PM-side
-`managed-workflow-initial-context.ts` is now a thin HTTP wrapper that fetches
-the assembled bundle and embeds it verbatim. Architectural rule: PM is a
-UI/control surface, not a source of truth.
+This release ships the Application Skeleton Phase B orchestration pilot.
+The stage now runs as an explicit `Phase 1A → Phase 1B → Phase 2` sequence:
+Core-gated initial draft, user-led contract review with diff-based
+revision-vs-discussion classification and per-revision managed commits,
+and Core-led materialization gated on the Core-owned **Accept Contract**
+command. The command is exposed both through the new Project Manager
+button at `/api/v1/orchestrator/managed-stage-accept-contract` and via a
+typed-fallback acceptance phrase that routes through the same handler.
+A premature-materialization validator derives blocked paths from the
+Application Skeleton map (declared `materializedPaths` plus every cluster
+and module `codePath`) and runs from both Phase 1A and Phase 1B post-turn
+guards, delivering a single corrective turn at the readiness + terminal
+boundary. Acceptance Commit Policy: Option B (acceptance is folded into
+the Phase 2 transition; no separate accept commit). Read-model paths
+remain side-effect free for provider messages — only the post-turn
+arbitration boundary may dispatch corrective turns (Observe-vs-Dispatch).
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
