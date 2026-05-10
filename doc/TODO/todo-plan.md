@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "acc0ee383",
+  "lastRecordedCommit": "9955ed2b5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-consumers.task1",
-  "expectedCommitMessage": "fix: align skeleton contract guard and review classifier to plain numbering",
+  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-consumers.task2",
+  "expectedCommitMessage": "fix: align skeleton accept contract handler to plain numbering",
   "debt": {
-    "expectedCommitMessage": "fix: align skeleton contract guard and review classifier to plain numbering",
-    "preCommitHead": "acc0ee383",
+    "expectedCommitMessage": "fix: align skeleton accept contract handler to plain numbering",
+    "preCommitHead": "9955ed2b5",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.classifier-consumers.task1"
+    "taskId": "application-skeleton-orchestration.phase12.classifier-consumers.task2"
   }
 }
 ```
@@ -281,12 +281,12 @@
 ### Stream: Phase Classifier Consumers (Guard + Review Classifier)
 
 69. [DONE] `application-skeleton-orchestration.phase12.classifier-consumers.task1` Sync the contract guard and review-turn classifier (production + the contract guard's peer test) to the plain-numbering enum values. The review-turn classifier's peer test migrates with `phase12.classifier-consumers.task2` to keep the scope at three files. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.ts, packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts`; expected commit: `fix: align skeleton contract guard and review classifier to plain numbering`).
-70. [PENDING] Git Commit: `fix: align skeleton contract guard and review classifier to plain numbering` (hash: TBD)
+70. [DONE] Git Commit: `fix: align skeleton contract guard and review classifier to plain numbering` (hash: 9955ed2b5)
 
 ### Stream: Phase Classifier Consumers (Accept Contract Handler + Tests)
 
-71. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task2` Sync the accept-contract handler (production + peer test) and the deferred review-turn classifier peer test to the plain-numbering enum values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: align skeleton accept contract handler to plain numbering`).
-72. [TODO] Git Commit: `fix: align skeleton accept contract handler to plain numbering` (hash: TBD)
+71. [DONE] `application-skeleton-orchestration.phase12.classifier-consumers.task2` Sync the accept-contract handler (production + peer test) and the deferred review-turn classifier peer test to the plain-numbering enum values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: align skeleton accept contract handler to plain numbering`).
+72. [PENDING] Git Commit: `fix: align skeleton accept contract handler to plain numbering` (hash: TBD)
 
 ### Stream: Revision Injection And Commit Transaction Rename
 

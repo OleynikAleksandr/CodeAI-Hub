@@ -4,16 +4,16 @@ import type { ManagedGitStatus } from "./managed-git-stage-gate";
 
 // Core-owned command handler for Application Skeleton "Accept Contract".
 // Pilot scope: Application Skeleton only. The handler is a pure decision —
-// callers are responsible for routing it to the existing Phase 2 materialization
+// callers are responsible for routing it to the existing Phase 3 materialization
 // dispatcher (Option B acceptance commit policy: acceptance is folded into the
 // next managed commit, not produced as a separate `docs: accept ...` commit).
 //
-// Preconditions (Phase 1B → Phase 2 transition):
-//   - phase classifier reports `phase_1b_review`;
+// Preconditions (Phase 2 → Phase 3 transition):
+//   - phase classifier reports `phase_2_review`;
 //   - Application Skeleton draft exists (markdown + map) and is parseable;
 //   - the draft is not yet materialized;
 //   - there is no uncommitted owned diff (the latest revision must already be
-//     committed by the Phase 1B per-revision boundary);
+//     committed by the Phase 2 per-revision boundary);
 //   - the Git tree has no out-of-owner dirty paths blocking the stage.
 
 export interface ApplicationSkeletonAcceptContractContext {
@@ -32,17 +32,17 @@ export type ApplicationSkeletonAcceptContractDecision =
 
 // Core-owned session marker (semantic): a session id appears in the
 // `recentlyAcceptedSessions` set after the Core accept-contract command
-// handler approves the request. The Phase 2 materialization continuation
+// handler approves the request. The Phase 3 materialization continuation
 // dispatcher gates on that marker so that user text alone (which never
-// reaches the Core command handler) cannot authorize Phase 2 by itself.
+// reaches the Core command handler) cannot authorize Phase 3 by itself.
 
 export const evaluateApplicationSkeletonAcceptContractCommand = (
   context: ApplicationSkeletonAcceptContractContext
 ): ApplicationSkeletonAcceptContractDecision => {
   const reasons: string[] = [];
-  if (context.phase !== "phase_1b_review") {
+  if (context.phase !== "phase_2_review") {
     reasons.push(
-      "Application Skeleton stage is not in Phase 1B review (current phase: " +
+      "Application Skeleton stage is not in Phase 2 review (current phase: " +
         `${context.phase}).`
     );
   }

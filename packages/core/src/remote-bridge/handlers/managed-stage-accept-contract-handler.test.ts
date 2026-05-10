@@ -45,16 +45,16 @@ test("handler accepts a clean Phase 1B draft with no dirty paths", () => {
   const decision = evaluateApplicationSkeletonAcceptContractCommand({
     applicationSkeletonProgress: buildAcceptedDraft(),
     managedGitStatus: buildGitStatus(),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(decision.kind, "accepted");
   assert.equal(decision.stage, "application_skeleton");
 });
 
-test("handler rejects when phase is not Phase 1B review", () => {
+test("handler rejects when phase is not Phase 2 review", () => {
   for (const phase of [
-    "phase_1a_draft",
-    "phase_2_materialization",
+    "phase_1_draft",
+    "phase_3_materialization",
     "phase_handoff",
   ] as const) {
     const decision = evaluateApplicationSkeletonAcceptContractCommand({
@@ -65,7 +65,7 @@ test("handler rejects when phase is not Phase 1B review", () => {
     assert.equal(decision.kind, "rejected");
     if (decision.kind === "rejected") {
       assert.ok(
-        decision.reasons.some((r) => r.includes("not in Phase 1B review")),
+        decision.reasons.some((r) => r.includes("not in Phase 2 review")),
         `expected phase rejection reason for ${phase}; got ${decision.reasons.join(" | ")}`
       );
     }
@@ -79,7 +79,7 @@ test("handler rejects when draft markdown or map.json is missing", () => {
       mapExists: false,
     }),
     managedGitStatus: buildGitStatus(),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(decision.kind, "rejected");
   if (decision.kind === "rejected") {
@@ -97,7 +97,7 @@ test("handler rejects when map.json is unparseable", () => {
       mappingReady: false,
     }),
     managedGitStatus: buildGitStatus(),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(decision.kind, "rejected");
   if (decision.kind === "rejected") {
@@ -115,7 +115,7 @@ test("handler rejects when application_skeleton owned diff is uncommitted", () =
         ".codeai-hub/demo/application_skeleton/application-skeleton.md",
       ],
     }),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(decision.kind, "rejected");
   if (decision.kind === "rejected") {
@@ -131,7 +131,7 @@ test("handler rejects when out-of-owner dirty paths block the workspace", () => 
     managedGitStatus: buildGitStatus({
       diagram_modules: [".codeai-hub/demo/diagram_modules/scratch.md"],
     }),
-    phase: "phase_1b_review",
+    phase: "phase_2_review",
   });
   assert.equal(decision.kind, "rejected");
   if (decision.kind === "rejected") {
@@ -198,7 +198,7 @@ test("handler rejects when stage is already materialized", () => {
       substep: "materialized",
     }),
     managedGitStatus: buildGitStatus(),
-    phase: "phase_2_materialization",
+    phase: "phase_3_materialization",
   });
   assert.equal(decision.kind, "rejected");
 });
