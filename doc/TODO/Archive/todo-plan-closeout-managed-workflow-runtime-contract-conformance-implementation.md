@@ -1,3 +1,18 @@
+# Plan Closeout: managed-workflow-runtime-contract-conformance-implementation
+
+**Created:** 2026-05-10T15:24:57.413Z
+**Acceptance:** User accepted Phase 11 PM bundle source-of-truth repair on VSIX 1.2.220 — Diagram Modules end-to-end pass. Application Skeleton phase-type orchestration carved into separate scope (per-turn autocommit, end-of-turn-only correction, UI Accept-Contract button, premature-materialization block).
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** runtime-contract.phase11.stream7.task1
+**Expected Commit:** docs: close pm bundle source-of-truth repair
+**Last Recorded Commit:** b68ef55fd
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Runtime_Contract_Conformance.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Runtime_Contract_Conformance.md",
   "currentTaskId": "runtime-contract.phase11.stream7.task1",
   "expectedCommitMessage": "docs: close pm bundle source-of-truth repair",
-  "debt": {
-    "expectedCommitMessage": "docs: close pm bundle source-of-truth repair",
-    "preCommitHead": "b68ef55fd",
-    "stage": "commit_pending",
-    "taskId": "runtime-contract.phase11.stream7.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -395,6 +405,7 @@ This Phase 11 closes the dual-source-of-truth violation surfaced by the 1.2.219 
 
 ### Stream: Scope Closeout
 
-110. [DONE] `runtime-contract.phase11.stream7.task1` After explicit user acceptance, archive this todo plan, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/*.md, doc/SolidWorks-WorkFlow/Plans/Archive/**`; expected commit: `docs: close pm bundle source-of-truth repair`).
-111. [PENDING] Git Commit: `docs: close pm bundle source-of-truth repair` (hash: TBD)
+110. [IN_PROGRESS] `runtime-contract.phase11.stream7.task1` After explicit user acceptance, archive this todo plan, update Docs Index if needed, and leave active plan in terminal NONE (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm bundle source-of-truth repair`).
+111. [TODO] Git Commit: `docs: close pm bundle source-of-truth repair` (hash: TBD)
 112. [TODO] `runtime-contract.phase11.stream7.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
