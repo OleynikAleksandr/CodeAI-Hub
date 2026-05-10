@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "0b8d38cf7",
+  "lastRecordedCommit": "ece2ac0fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase10.release.task2",
-  "expectedCommitMessage": "docs: prepare application skeleton phase orchestration release",
+  "currentTaskId": "application-skeleton-orchestration.phase10.release.task3",
+  "expectedCommitMessage": "build: release application skeleton phase orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton phase orchestration release",
-    "preCommitHead": "0b8d38cf7",
+    "expectedCommitMessage": "build: release application skeleton phase orchestration",
+    "preCommitHead": "ece2ac0fb",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase10.release.task2"
+    "taskId": "application-skeleton-orchestration.phase10.release.task3"
   }
 }
 ```
@@ -219,12 +219,12 @@
 ### Stream: Release Preparation
 
 50. [DONE] `application-skeleton-orchestration.phase10.release.task2` After explicit confirmation only, update README/CHANGELOG for the future release version and record the release-preparation evidence in this plan before running `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton phase orchestration release`).
-51. [PENDING] Git Commit: `docs: prepare application skeleton phase orchestration release` (hash: TBD)
+51. [DONE] Git Commit: `docs: prepare application skeleton phase orchestration release` (hash: ece2ac0fb)
 
 ### Stream: Release Build
 
-52. [TODO] `application-skeleton-orchestration.phase10.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase orchestration`).
-53. [TODO] Git Commit: `build: release application skeleton phase orchestration` (hash: TBD)
+52. [DONE] `application-skeleton-orchestration.phase10.release.task3` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase orchestration`).
+53. [PENDING] Git Commit: `build: release application skeleton phase orchestration` (hash: TBD)
 
 ## Phase 11 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-10)
 
