@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "fef3b07eb",
+  "lastRecordedCommit": "c1296adb0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.gate-normalize.task1",
-  "expectedCommitMessage": "fix: normalize application skeleton materialized paths for managed commit gate",
+  "currentTaskId": "application-skeleton-orchestration.phase16.docs-sync.task1",
+  "expectedCommitMessage": "docs: sync application skeleton acceptance flow ssot",
   "debt": {
-    "expectedCommitMessage": "fix: normalize application skeleton materialized paths for managed commit gate",
-    "preCommitHead": "fef3b07eb",
+    "expectedCommitMessage": "docs: sync application skeleton acceptance flow ssot",
+    "preCommitHead": "c1296adb0",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.gate-normalize.task1"
+    "taskId": "application-skeleton-orchestration.phase16.docs-sync.task1"
   }
 }
 ```
@@ -377,12 +377,12 @@
 ### Stream: Managed Commit Gate materializedPaths Normalization
 
 93. [DONE] `application-skeleton-orchestration.phase16.gate-normalize.task1` Re-audit during implementation showed the managed commit gate (`workflow-state-managed-documentation-commit.ts`, `managed-documentation-commit-transaction.ts`) does not perform shape comparison on `materializedPaths` at all — it triggers a commit whenever the Application Skeleton stage owns dirty files. The Phase 14 "Core gate did not finalize" symptom was driven by `application-skeleton-materialization-validator.ts` raising validation errors when declared `materializedPaths` entries had trailing slashes / whitespace / duplicates that did not resolve against `stat`. Scope shifts to that validator: normalize `materializedPaths` entries (trim whitespace, strip trailing slashes, deduplicate) before the `relativePathExists` check, so an agent's noisy-but-real path list is not punished with spurious validation errors. Add a peer test that locks down normalization. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `fix: normalize application skeleton materialized paths for managed commit gate`).
-94. [PENDING] Git Commit: `fix: normalize application skeleton materialized paths for managed commit gate` (hash: TBD)
+94. [DONE] Git Commit: `fix: normalize application skeleton materialized paths for managed commit gate` (hash: c1296adb0)
 
 ### Stream: SSOT Sync
 
-95. [TODO] `application-skeleton-orchestration.phase16.docs-sync.task1` Sync SSOT and planning docs to describe Option C acceptance flow: explicit Phase 2 accept commit, visible Core feedback dispatch, map.json-driven acceptance observation, broadened recognizer, normalized gate. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton acceptance flow ssot`).
-96. [TODO] Git Commit: `docs: sync application skeleton acceptance flow ssot` (hash: TBD)
+95. [DONE] `application-skeleton-orchestration.phase16.docs-sync.task1` Sync SSOT and planning docs to describe Option C acceptance flow: explicit Phase 2 accept commit, visible Core feedback dispatch, map.json-driven acceptance observation, broadened recognizer, normalized gate. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton acceptance flow ssot`).
+96. [PENDING] Git Commit: `docs: sync application skeleton acceptance flow ssot` (hash: TBD)
 
 ### Stream: Targeted Verification
 
