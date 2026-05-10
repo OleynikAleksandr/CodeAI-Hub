@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "68b85e477",
+  "lastRecordedCommit": "a2c2d22ee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase4.stream3.task1",
-  "expectedCommitMessage": "fix: route managed contract acceptance commands",
+  "currentTaskId": "runtime-contract.phase4.stream3.task2",
+  "expectedCommitMessage": "test: cover managed acceptance command routing",
   "debt": {
-    "expectedCommitMessage": "fix: route managed contract acceptance commands",
-    "preCommitHead": "68b85e477",
+    "expectedCommitMessage": "test: cover managed acceptance command routing",
+    "preCommitHead": "a2c2d22ee",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase4.stream3.task1"
+    "taskId": "runtime-contract.phase4.stream3.task2"
   }
 }
 ```
@@ -95,9 +95,9 @@
 ### Stream: Core-Owned Acceptance Commands
 
 13. [DONE] `runtime-contract.phase4.stream3.task1` Route contract acceptance as Core-owned commands and block provider delivery for matched full-message acceptance phrases (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix: route managed contract acceptance commands`).
-14. [PENDING] Git Commit: `fix: route managed contract acceptance commands` (hash: TBD)
-15. [TODO] `runtime-contract.phase4.stream3.task2` Add command validation tests for accepted phrases, rejected non-matches and provider-message isolation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts`; expected commit: `test: cover managed acceptance command routing`).
-16. [TODO] Git Commit: `test: cover managed acceptance command routing` (hash: TBD)
+14. [DONE] Git Commit: `fix: route managed contract acceptance commands` (hash: a2c2d22ee)
+15. [DONE] `runtime-contract.phase4.stream3.task2` Add command validation tests for accepted phrases, rejected non-matches and provider-message isolation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts`; expected commit: `test: cover managed acceptance command routing`).
+16. [PENDING] Git Commit: `test: cover managed acceptance command routing` (hash: TBD)
 
 ### Stream: Materialization And Integration Commit Handler
 

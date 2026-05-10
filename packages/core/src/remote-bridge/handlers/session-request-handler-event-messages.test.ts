@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { SessionManager } from "../../session-manager";
+import { recognizeManagedContractAcceptancePhrase } from "./managed-workflow-post-turn-service";
 import { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 
 const noop = (): void => {
@@ -143,4 +144,38 @@ test("SessionRequestHandlerEventMessages preserves append order during async per
     "Core acceptance check failed for Diagram Modules.",
     "Reading the Core feedback.",
   ]);
+});
+
+test("recognizeManagedContractAcceptancePhrase matches the three accepted phrases under whitespace and case normalization", () => {
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("Подтверждаю контракт"),
+    "Подтверждаю контракт"
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("  Принимаю   контракт  "),
+    "Принимаю контракт"
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("утверждаю контракт"),
+    "Утверждаю контракт"
+  );
+});
+
+test("recognizeManagedContractAcceptancePhrase returns null for non-matching messages", () => {
+  assert.equal(recognizeManagedContractAcceptancePhrase(""), null);
+  assert.equal(recognizeManagedContractAcceptancePhrase("   "), null);
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("Принимаю эту правку"),
+    null
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase("Подтверждаю контракт детально"),
+    null
+  );
+  assert.equal(
+    recognizeManagedContractAcceptancePhrase(
+      "обычное пользовательское сообщение"
+    ),
+    null
+  );
 });
