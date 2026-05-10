@@ -55,7 +55,7 @@ test("managed context bundle embeds plans, source artifacts, and derived plan st
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "currentTaskId": "application-skeleton.phase1a.draft.task1",
+  "currentTaskId": "application-skeleton.phase1.draft.task1",
   "expectedCommitMessage": "docs: draft application skeleton contract",
   "lastRecordedCommit": "abc123"
 }

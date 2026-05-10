@@ -25,25 +25,24 @@ const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_STAGE_RE = /"activeStage": "application_skeleton"/u;
 const APPLICATION_SKELETON_INITIAL_TASK_RE =
-  /"currentTaskId": "application-skeleton\.phase1a\.draft\.task1"/u;
+  /"currentTaskId": "application-skeleton\.phase1\.draft\.task1"/u;
 const APPLICATION_SKELETON_INITIAL_COMMIT_RE =
   /"expectedCommitMessage": "docs: draft application skeleton contract"/u;
-const APPLICATION_SKELETON_PHASE1A_TASK_RE =
-  /application-skeleton\.phase1a\.draft\.task1/u;
-const APPLICATION_SKELETON_PHASE1B_TASK_RE =
-  /application-skeleton\.phase1b\.review\.task1/u;
+const APPLICATION_SKELETON_PHASE1_TASK_RE =
+  /application-skeleton\.phase1\.draft\.task1/u;
 const APPLICATION_SKELETON_PHASE2_TASK_RE =
-  /application-skeleton\.phase2\.materialize\.task1/u;
+  /application-skeleton\.phase2\.review\.task1/u;
+const APPLICATION_SKELETON_PHASE3_TASK_RE =
+  /application-skeleton\.phase3\.materialize\.task1/u;
 const APPLICATION_SKELETON_HANDOFF_TASK_RE =
   /application-skeleton\.handoff\.task1/u;
 const APPLICATION_SKELETON_PHASE_BOOTSTRAP_RE =
   /## Phase 1 — Application Skeleton Contract Bootstrap/u;
-const APPLICATION_SKELETON_PHASE1A_HEADING_RE =
-  /### Stream: Phase 1A Core-Gated Initial Draft/u;
-const APPLICATION_SKELETON_PHASE1B_HEADING_RE =
-  /### Stream: Phase 1B User-Led Review/u;
-const APPLICATION_SKELETON_PHASE2_HEADING_RE =
-  /### Stream: Phase 2 Core-Led Materialization/u;
+const APPLICATION_SKELETON_PHASE1_HEADING_RE =
+  /### Stream: Core-Gated Initial Draft/u;
+const APPLICATION_SKELETON_PHASE2_HEADING_RE = /### Stream: User-Led Review/u;
+const APPLICATION_SKELETON_PHASE3_HEADING_RE =
+  /### Stream: Core-Led Materialization/u;
 const APPLICATION_SKELETON_HANDOFF_HEADING_RE =
   /### Stream: Reserved Post-Closeout Handoff Anchor/u;
 const HANDOFF_COMMIT_RE = /chore: switch managed workspace stage/u;
@@ -339,15 +338,15 @@ test("default managed lifecycle switches active stage before technical work", as
     );
     assert.match(
       applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE1A_TASK_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE1B_TASK_RE
+      APPLICATION_SKELETON_PHASE1_TASK_RE
     );
     assert.match(
       applicationSkeletonPlanText,
       APPLICATION_SKELETON_PHASE2_TASK_RE
+    );
+    assert.match(
+      applicationSkeletonPlanText,
+      APPLICATION_SKELETON_PHASE3_TASK_RE
     );
     assert.match(
       applicationSkeletonPlanText,
@@ -359,15 +358,15 @@ test("default managed lifecycle switches active stage before technical work", as
     );
     assert.match(
       applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE1A_HEADING_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE1B_HEADING_RE
+      APPLICATION_SKELETON_PHASE1_HEADING_RE
     );
     assert.match(
       applicationSkeletonPlanText,
       APPLICATION_SKELETON_PHASE2_HEADING_RE
+    );
+    assert.match(
+      applicationSkeletonPlanText,
+      APPLICATION_SKELETON_PHASE3_HEADING_RE
     );
     assert.match(
       applicationSkeletonPlanText,
