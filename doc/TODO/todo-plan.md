@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "c1296adb0",
+  "lastRecordedCommit": "323d0f5cf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.docs-sync.task1",
-  "expectedCommitMessage": "docs: sync application skeleton acceptance flow ssot",
+  "currentTaskId": "application-skeleton-orchestration.phase16.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton acceptance flow verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync application skeleton acceptance flow ssot",
-    "preCommitHead": "c1296adb0",
+    "expectedCommitMessage": "docs: record application skeleton acceptance flow verification",
+    "preCommitHead": "323d0f5cf",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.docs-sync.task1"
+    "taskId": "application-skeleton-orchestration.phase16.verify.task1"
   }
 }
 ```
@@ -382,12 +382,20 @@
 ### Stream: SSOT Sync
 
 95. [DONE] `application-skeleton-orchestration.phase16.docs-sync.task1` Sync SSOT and planning docs to describe Option C acceptance flow: explicit Phase 2 accept commit, visible Core feedback dispatch, map.json-driven acceptance observation, broadened recognizer, normalized gate. (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md`; expected commit: `docs: sync application skeleton acceptance flow ssot`).
-96. [PENDING] Git Commit: `docs: sync application skeleton acceptance flow ssot` (hash: TBD)
+96. [DONE] Git Commit: `docs: sync application skeleton acceptance flow ssot` (hash: 323d0f5cf)
 
 ### Stream: Targeted Verification
 
-97. [TODO] `application-skeleton-orchestration.phase16.verify.task1` Run targeted Core tests for touched managed-workspace and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance flow verification`).
-98. [TODO] Git Commit: `docs: record application skeleton acceptance flow verification` (hash: TBD)
+97. [DONE] `application-skeleton-orchestration.phase16.verify.task1` Run targeted Core tests for touched managed-workspace and remote-bridge handler modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. Scope expanded by one file (`application-skeleton-end-to-end.test.ts`) because the verification run surfaced one test fixture (`buildAwaitingAcceptanceProgress`) that still asserted the pre-Option-C invariant (`accepted: false`, `substep: "awaiting_acceptance"`) and needed to be re-pinned to the new Option C invariant (`accepted: true`, `substep: "accepted"`). (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts`; expected commit: `docs: record application skeleton acceptance flow verification`).
+
+#### Verification evidence (HEAD = `323d0f5cf`, 2026-05-11)
+
+- **Targeted Core tests:** 67/67 pass after the Stream 16H fixture realignment, across `managed-plan-orchestrator-installer.test.ts`, `development-tree-bootstrap-gate.test.ts`, `application-skeleton-phase-state.test.ts`, `application-skeleton-contract-guard.test.ts`, `application-skeleton-review-turn-classifier.test.ts`, `managed-stage-accept-contract-handler.test.ts`, `managed-workflow-post-turn-service.test.ts`, `application-skeleton-end-to-end.test.ts`, `application-skeleton-continuation-dispatcher.test.ts`, `application-skeleton-materialization-validator.test.ts`, `workflow-agent-acceptance-feedback.test.ts`, and `session-request-handler-workflow-session.managed-workspace.test.ts`.
+- **`npm run build --workspace @codeai-hub/core`:** passes (no TypeScript errors).
+- **`npm run typecheck:webview`:** passes (no errors).
+- **Pre-existing baseline failures from Phase 12 (Phase 14 retest backlog) remain out of Phase 16 scope:** `workflow-state-managed-documentation-commit.test.ts` (3 auto-commit suites) and `workflow-state-service-development-tree-bootstrap.test.ts` (3 acceptance-feedback scenarios). Phase 16 changes do not regress them and Phase 16 streams do not touch their owning production code paths.
+- **No new regressions.** Every Phase 16 stream's direct test peer passes; the broaden-recognizer change is locked down by `recogniser accepts bare verbs / accepts bare English / rejects negated forms` cases; the map.json observer change is locked down by `dispatcher fires materialization prompt when progress reports accepted skeleton` + `dispatcher is a no-op when progress.accepted is false`; the feedback-visibility change is locked down by `visibilities === [null, null, null]`; the `materializedPaths` normalization is locked down by the new `normalizes materializedPaths shape (trailing slashes, whitespace, duplicates)` case.
+98. [PENDING] Git Commit: `docs: record application skeleton acceptance flow verification` (hash: TBD)
 
 ## Phase 17 - Release Build (owner: next agent, updated: 2026-05-11)
 

@@ -69,14 +69,14 @@ const writeSkeleton = async (params: {
 
 const buildAwaitingAcceptanceProgress =
   (): ApplicationSkeletonProgressSnapshot => ({
-    accepted: false,
+    accepted: true,
     mapExists: true,
     mappingReady: true,
     markdownExists: true,
     materializationState: "artifact",
     materialized: false,
     observedMaterialization: false,
-    substep: "awaiting_acceptance",
+    substep: "accepted",
     validationErrors: [],
   });
 
