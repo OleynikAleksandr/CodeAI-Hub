@@ -124,6 +124,20 @@ const buildWorkflowStartContract = async (
   ].join("\n\n");
 };
 
+const buildArtifactModeSection = (
+  context: DocumentationRolloverContext
+): readonly string[] => {
+  if (!MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
+    return [];
+  }
+  return [
+    "## Artifact Mode",
+    "- artifact_mode: continue_active_microtask",
+    "- Do NOT treat this turn as `create_initial_draft`.",
+    "- Continue only the current managed microtask/target named in the Plan Status above; stop for Core acceptance once the readiness note is produced.",
+  ];
+};
+
 export const buildDocumentationContinuationEnvelope = async (options: {
   readonly context: DocumentationRolloverContext | null;
   readonly userMessage: string;
@@ -147,6 +161,7 @@ export const buildDocumentationContinuationEnvelope = async (options: {
     "- Do not search for legacy recovery reports and do not create a legacy root todo plan.",
     "- The previous provider session ended after the assistant message below.",
     "- The user's message after this block is the user's answer or next instruction in response to that assistant message.",
+    ...buildArtifactModeSection(options.context),
     "## Last Assistant Message Before Rollover",
     options.context.lastUserVisibleAssistantMessage ??
       "(No user-visible assistant message was captured.)",
