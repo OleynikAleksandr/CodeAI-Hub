@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "62eb9b697",
+  "lastRecordedCommit": "a3f3fb372",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase0.task1",
-  "expectedCommitMessage": "docs: finalize runtime conformance implementation plan",
+  "currentTaskId": "runtime-contract.phase1.stream0.task1",
+  "expectedCommitMessage": "docs: map runtime conformance code surfaces",
   "debt": {
-    "expectedCommitMessage": "docs: finalize runtime conformance implementation plan",
-    "preCommitHead": "62eb9b697",
+    "expectedCommitMessage": "docs: map runtime conformance code surfaces",
+    "preCommitHead": "a3f3fb372",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase0.task1"
+    "taskId": "runtime-contract.phase1.stream0.task1"
   }
 }
 ```
@@ -55,14 +55,22 @@
 ### Stream: Accepted Planning Docs And Execution Plan
 
 1. [DONE] `runtime-contract.phase0.task1` Finalize the two planning documents after review and cut this active implementation plan (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md, doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/TODO/todo-plan.md`; expected commit: `docs: finalize runtime conformance implementation plan`).
-2. [PENDING] Git Commit: `docs: finalize runtime conformance implementation plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: finalize runtime conformance implementation plan` (hash: a3f3fb372)
 
 ## Phase 1 — Code Surface Audit (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Map Concrete Runtime Owners
 
-3. [TODO] `runtime-contract.phase1.stream0.task1` Audit actual code owners for Gaps A-E + R and update this plan if any provisional file scopes below need splitting or replacement (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: map runtime conformance code surfaces`).
-4. [TODO] Git Commit: `docs: map runtime conformance code surfaces` (hash: TBD)
+3. [DONE] `runtime-contract.phase1.stream0.task1` Audit actual code owners for Gaps A-E + R and update this plan if any provisional file scopes below need splitting or replacement (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: map runtime conformance code surfaces`).
+4. [PENDING] Git Commit: `docs: map runtime conformance code surfaces` (hash: TBD)
+
+**Audit notes (2026-05-10):** provisional scopes below are grounded in current code search:
+
+- Gap B ownership leak surfaces: `managed-git-stage-gate.ts` holds the forbidden `Commit or clean` wording; `workflow-agent-acceptance-feedback.ts` composes provider-visible managed feedback.
+- Gap A arbitration surfaces: provider terminal events route through `session-provider-event-router.ts`; managed post-turn acceptance/feedback runs through `managed-workflow-post-turn-service.ts`.
+- Gap C/D managed acceptance/materialization surfaces: message dispatch and post-turn service are the likely command ingress; `workflow-state-managed-documentation-commit.ts`, `application-skeleton-progress.ts`, `quality-gates-progress.ts` and `managed-documentation-commit-transaction.ts` own stage commit/progress validation.
+- Gap E/R surfaces: user-visible delivery likely passes through workflow event/websocket services; durable history is under `packages/core/src/unified-session/`; managed context and rollover envelope are under `session-request-handler-managed-context-bundle.ts` and `session-request-handler-documentation-continuation-envelope.ts`.
+- The implementation tasks keep the exact ≤3 file scopes below; if Stream 2+ discovers a wider boundary, split the task before editing code.
 
 ## Phase 2 — Gap B Corrective Text Ownership (owner: next agent, updated: 2026-05-10)
 
