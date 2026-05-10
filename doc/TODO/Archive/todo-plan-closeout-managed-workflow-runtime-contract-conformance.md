@@ -4,13 +4,13 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "NONE",
+  "executionScopeStatus": "ACTIVE",
   "planId": "managed-workflow-runtime-contract-conformance",
   "branch": "main",
   "baseHead": "70f3622e4",
   "lastRecordedCommit": "e58e1056c",
   "planningSource": "user-observed Application Skeleton Codex retest on 2026-05-10 + WorkflowSteps_Overview.md SSOT lines 66-86, 82, 248-267, 333-342",
-  "currentTaskId": null,
+  "currentTaskId": "runtime-contract.phase0.task5",
   "expectedCommitMessage": null,
   "debt": null
 }
@@ -61,5 +61,5 @@ Until планы интегрированы, активной задачей о�
 5. [DONE] Git Commit: `docs: adopt runtime conformance planning docs` (hash: a3a25d69a)
 6. [DONE] `runtime-contract.phase0.task4` Archive closed Development Tree Phase 1 planning document and update planning navigation (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Phase1_UserStartedDocumentation.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_Phase1_UserStartedDocumentation.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive closed development tree phase 1 plan`).
 7. [DONE] Git Commit: `docs: archive closed development tree phase 1 plan` (hash: e58e1056c)
-8. [DONE] `runtime-contract.phase0.task5` Keep scope ACTIVE while parallel runtime conformance planning documents are revised and reviewed (scope: chat/process observation only; no commit required). Result: Closed by explicit user request so the next agent can cut a fresh implementation plan from the reviewed runtime conformance planning documents.
-9. [DONE] `runtime-contract.phase0.task6` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Result: Scope closed by Plan Orchestrator; start a new plan only from NONE state.
+8. [DONE] `runtime-contract.phase0.task5` Keep scope ACTIVE while parallel runtime conformance planning documents are revised and reviewed (scope: chat/process observation only; no commit required). Result: closed by explicit user request so the next agent can cut a fresh implementation plan from the reviewed runtime conformance planning documents.
+9. [TODO] `runtime-contract.phase0.task6` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
