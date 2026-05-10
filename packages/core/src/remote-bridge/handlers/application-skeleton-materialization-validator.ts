@@ -131,6 +131,25 @@ const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   return paths;
 };
 
+// Public helper for downstream gates (premature-materialization validator).
+// Returns the union of explicitly declared `materializedPaths` and any
+// `codePath` entries from the productParts tree, deduplicated.
+export const extractApplicationSkeletonMaterializedPaths = (
+  mapJson: Record<string, unknown> | null
+): readonly string[] => {
+  if (!mapJson) {
+    return [];
+  }
+  const declared = Array.isArray(mapJson.materializedPaths)
+    ? mapJson.materializedPaths.filter(
+        (entry): entry is string =>
+          typeof entry === "string" && entry.trim().length > 0
+      )
+    : [];
+  const fromTree = collectCodePaths(mapJson);
+  return Array.from(new Set([...declared, ...fromTree]));
+};
+
 const collectCodePaths = (
   value: Record<string, unknown> | null
 ): readonly string[] => {

@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "55fb999aa",
+  "lastRecordedCommit": "5281d2288",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase5.ui.task1",
-  "expectedCommitMessage": "feat: add application skeleton accept contract button",
+  "currentTaskId": "application-skeleton-orchestration.phase6.materialization.task1",
+  "expectedCommitMessage": "fix: block premature application skeleton materialization",
   "debt": {
-    "expectedCommitMessage": "feat: add application skeleton accept contract button",
-    "preCommitHead": "55fb999aa",
+    "expectedCommitMessage": "fix: block premature application skeleton materialization",
+    "preCommitHead": "5281d2288",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase5.ui.task1"
+    "taskId": "application-skeleton-orchestration.phase6.materialization.task1"
   }
 }
 ```
@@ -165,14 +165,14 @@
 ### Stream: Project Manager Command Surface
 
 33. [DONE] `application-skeleton-orchestration.phase5.ui.task1` Add the PM command client and Application Skeleton `Accept Contract` button with disabled-state reasons derived from workflow-state read-model preconditions only. (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx`; expected commit: `feat: add application skeleton accept contract button`).
-34. [PENDING] Git Commit: `feat: add application skeleton accept contract button` (hash: TBD)
+34. [DONE] Git Commit: `feat: add application skeleton accept contract button` (hash: 5281d2288)
 
 ## Phase 6 - Premature Materialization And Phase 2 Gate (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Premature Materialization Validator
 
-35. [TODO] `application-skeleton-orchestration.phase6.materialization.task1` Add a premature-materialization validator that derives blocked paths/state from the skeleton map and Application Skeleton stage ownership instead of a hardcoded `product-parts/**` glob. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: block premature application skeleton materialization`).
-36. [TODO] Git Commit: `fix: block premature application skeleton materialization` (hash: TBD)
+35. [DONE] `application-skeleton-orchestration.phase6.materialization.task1` Add a premature-materialization validator that derives blocked paths/state from the skeleton map and Application Skeleton stage ownership instead of a hardcoded `product-parts/**` glob. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: block premature application skeleton materialization`).
+36. [PENDING] Git Commit: `fix: block premature application skeleton materialization` (hash: TBD)
 
 ### Stream: Phase 1A/1B Premature Block Integration
 
