@@ -53,7 +53,7 @@ const writeManagedPlanEvidence = async (params: {
               message: "feat: materialize application skeleton",
               planPath: "doc/TODO/stages/application-skeleton/todo-plan.md",
               stage: "application_skeleton",
-              taskId: "application-skeleton.phase2.materialize.task1",
+              taskId: "application-skeleton.phase3.materialize.task1",
             },
             {
               commitHash: "abc1234",
