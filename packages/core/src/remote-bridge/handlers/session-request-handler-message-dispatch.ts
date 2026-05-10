@@ -10,6 +10,7 @@ import {
   serializeSessionModelBinding,
   shouldBroadcastAppliedProviderModelUpdate,
 } from "../types";
+import { recognizeManagedContractAcceptancePhrase } from "./managed-workflow-post-turn-service";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { buildDocumentationContinuationEnvelope } from "./session-request-handler-documentation-continuation-envelope";
@@ -170,6 +171,15 @@ export class SessionRequestHandlerMessageDispatch {
   }): Promise<void> {
     const { content, hiddenUserMessage, session, sessionId, turnOptions } =
       options;
+    const acceptancePhrase = recognizeManagedContractAcceptancePhrase(content);
+    if (acceptancePhrase) {
+      this.deps.logger.info("Skipping managed contract acceptance phrase", {
+        sessionId,
+        stage: session.stage ?? null,
+        phrase: acceptancePhrase,
+      });
+      return;
+    }
     if (
       !(
         hiddenUserMessage ||

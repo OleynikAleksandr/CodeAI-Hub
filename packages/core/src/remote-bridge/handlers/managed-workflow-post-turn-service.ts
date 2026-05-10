@@ -35,6 +35,35 @@ const MANAGED_POST_TURN_STAGES = new Set([
 
 const DEFAULT_MANAGED_ARBITRATION_RETRY_LIMIT = 5;
 
+const MANAGED_CONTRACT_ACCEPTANCE_PHRASES = [
+  "Подтверждаю контракт",
+  "Принимаю контракт",
+  "Утверждаю контракт",
+] as const;
+
+export const recognizeManagedContractAcceptancePhrase = (
+  content: string
+): string | null => {
+  if (!content) {
+    return null;
+  }
+  const normalized = content.trim().replace(/\s+/g, " ");
+  if (!normalized) {
+    return null;
+  }
+  for (const phrase of MANAGED_CONTRACT_ACCEPTANCE_PHRASES) {
+    if (normalized.localeCompare(phrase, "ru", { sensitivity: "base" }) === 0) {
+      return phrase;
+    }
+  }
+  return null;
+};
+
+const MANAGED_CONTRACT_ACCEPTANCE_STAGES = new Set([
+  "application_skeleton",
+  "quality_gates",
+]);
+
 export interface ManagedArbitrationRetryNotice {
   readonly attempts: number;
   readonly reason: string;
@@ -42,6 +71,7 @@ export interface ManagedArbitrationRetryNotice {
   readonly sessionId: string;
   readonly stage: string;
   readonly workspaceSlug: string;
+  readonly [extraField: string]: unknown;
 }
 
 export class ManagedWorkflowPostTurnService {
@@ -124,6 +154,32 @@ export class ManagedWorkflowPostTurnService {
       }
       await current.catch(() => undefined);
     }
+  }
+
+  handleContractAcceptance(params: {
+    readonly phrase: string;
+    readonly sessionId: string;
+  }): void {
+    const session = this.sessionManager?.getSession(params.sessionId);
+    const stage = session?.stage ?? null;
+    if (!(stage && MANAGED_CONTRACT_ACCEPTANCE_STAGES.has(stage))) {
+      this.logger.warn(
+        "Managed contract acceptance command ignored for non-managed stage",
+        {
+          sessionId: params.sessionId,
+          phrase: params.phrase,
+          stage: stage ?? null,
+        }
+      );
+      return;
+    }
+    this.retryCounters.delete(params.sessionId);
+    this.logger.info("Managed contract acceptance command accepted by Core", {
+      sessionId: params.sessionId,
+      phrase: params.phrase,
+      stage,
+    });
+    this.handle(params.sessionId);
   }
 
   private trackArbitrationAttempt(

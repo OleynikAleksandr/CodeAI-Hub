@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "a2a430269",
+  "lastRecordedCommit": "68b85e477",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase3.stream2.task2",
-  "expectedCommitMessage": "fix: guard repeated managed arbitration attempts",
+  "currentTaskId": "runtime-contract.phase4.stream3.task1",
+  "expectedCommitMessage": "fix: route managed contract acceptance commands",
   "debt": {
-    "expectedCommitMessage": "fix: guard repeated managed arbitration attempts",
-    "preCommitHead": "a2a430269",
+    "expectedCommitMessage": "fix: route managed contract acceptance commands",
+    "preCommitHead": "68b85e477",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase3.stream2.task2"
+    "taskId": "runtime-contract.phase4.stream3.task1"
   }
 }
 ```
@@ -88,14 +88,14 @@
 9. [DONE] `runtime-contract.phase3.stream2.task1` Add Core-normalized terminal-event identity and processed-event ledger so managed post-turn arbitration runs once per new terminal event and duplicate delivery is no-op (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: dedupe managed post-turn arbitration events`).
 10. [DONE] Git Commit: `fix: dedupe managed post-turn arbitration events` (hash: a2a430269)
 11. [DONE] `runtime-contract.phase3.stream2.task2` Add per-task retry guard and BLOCKED/pause handling for repeated failed managed arbitration attempts (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: guard repeated managed arbitration attempts`).
-12. [PENDING] Git Commit: `fix: guard repeated managed arbitration attempts` (hash: TBD)
+12. [DONE] Git Commit: `fix: guard repeated managed arbitration attempts` (hash: 68b85e477)
 
 ## Phase 4 — Gaps C/D Acceptance And Materialization (owner: next agent, updated: 2026-05-10)
 
 ### Stream: Core-Owned Acceptance Commands
 
-13. [TODO] `runtime-contract.phase4.stream3.task1` Route contract acceptance as Core-owned commands and block provider delivery for matched full-message acceptance phrases (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix: route managed contract acceptance commands`).
-14. [TODO] Git Commit: `fix: route managed contract acceptance commands` (hash: TBD)
+13. [DONE] `runtime-contract.phase4.stream3.task1` Route contract acceptance as Core-owned commands and block provider delivery for matched full-message acceptance phrases (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts`; expected commit: `fix: route managed contract acceptance commands`).
+14. [PENDING] Git Commit: `fix: route managed contract acceptance commands` (hash: TBD)
 15. [TODO] `runtime-contract.phase4.stream3.task2` Add command validation tests for accepted phrases, rejected non-matches and provider-message isolation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.test.ts`; expected commit: `test: cover managed acceptance command routing`).
 16. [TODO] Git Commit: `test: cover managed acceptance command routing` (hash: TBD)
 
