@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "323d0f5cf",
+  "lastRecordedCommit": "7d8bb5237",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase16.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton acceptance flow verification",
+  "currentTaskId": "application-skeleton-orchestration.phase17.release.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton acceptance flow release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton acceptance flow verification",
-    "preCommitHead": "323d0f5cf",
+    "expectedCommitMessage": "docs: prepare application skeleton acceptance flow release",
+    "preCommitHead": "7d8bb5237",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase16.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase17.release.task1"
   }
 }
 ```
@@ -395,14 +395,14 @@
 - **`npm run typecheck:webview`:** passes (no errors).
 - **Pre-existing baseline failures from Phase 12 (Phase 14 retest backlog) remain out of Phase 16 scope:** `workflow-state-managed-documentation-commit.test.ts` (3 auto-commit suites) and `workflow-state-service-development-tree-bootstrap.test.ts` (3 acceptance-feedback scenarios). Phase 16 changes do not regress them and Phase 16 streams do not touch their owning production code paths.
 - **No new regressions.** Every Phase 16 stream's direct test peer passes; the broaden-recognizer change is locked down by `recogniser accepts bare verbs / accepts bare English / rejects negated forms` cases; the map.json observer change is locked down by `dispatcher fires materialization prompt when progress reports accepted skeleton` + `dispatcher is a no-op when progress.accepted is false`; the feedback-visibility change is locked down by `visibilities === [null, null, null]`; the `materializedPaths` normalization is locked down by the new `normalizes materializedPaths shape (trailing slashes, whitespace, duplicates)` case.
-98. [PENDING] Git Commit: `docs: record application skeleton acceptance flow verification` (hash: TBD)
+98. [DONE] Git Commit: `docs: record application skeleton acceptance flow verification` (hash: 7d8bb5237)
 
 ## Phase 17 - Release Build (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Release Preparation
 
-99. [TODO] `application-skeleton-orchestration.phase17.release.task1` After Stream 16H verification clean, update README/CHANGELOG for v1.2.223 and record the release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16, so no separate explicit confirmation is required this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance flow release`).
-100. [TODO] Git Commit: `docs: prepare application skeleton acceptance flow release` (hash: TBD)
+99. [DONE] `application-skeleton-orchestration.phase17.release.task1` After Stream 16H verification clean, update README/CHANGELOG for v1.2.223 and record the release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval was given by the user when opening Phase 16, so no separate explicit confirmation is required this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance flow release`).
+100. [PENDING] Git Commit: `docs: prepare application skeleton acceptance flow release` (hash: TBD)
 
 ### Stream: Release Build
 

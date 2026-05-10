@@ -4,6 +4,23 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.223] - 2026-05-11
+### Fixed
+- **Application Skeleton acceptance flow refactor (Option C).** The Phase 2 retest of v1.2.222 exposed five orthogonal defects in the Application Skeleton acceptance machinery. This release lands the Option C reconciliation:
+  - **Phase 2 stage plan restructure.** The Application Skeleton seed in `managed-todo-tree.ts` now pins Phase 2 as `task + Git Commit (docs: accept application skeleton contract)`, symmetric with Phase 1 and Phase 3. Acceptance commit policy moves from Option B (folded into Phase 3 transition) to Option C (explicit accept commit observable in the managed plan).
+  - **Core map.json observer.** `application-skeleton-continuation-dispatcher.ts::sendApplicationSkeletonContinuationIfReady` now gates on `progress.accepted === true` plus `progress.substep !== "artifact"` and `!progress.materialized`. The `recentlyAcceptedSessions` marker stays as an optional hint, no longer the exclusive gate. Any path that records `accepted: true` in `application-skeleton-map.json` (Core handler, PM button, typed-fallback, agent self-set) triggers Phase 3 continuation.
+  - **Application Skeleton feedback visibility.** `workflow-agent-acceptance-feedback.ts` drops `turnOptions: { userMessageVisibility: "deferred" }` from feedback dispatches. Core corrective prompts are now plain-string payloads appended to the codex-cli session jsonl as visible `role: "user"` entries — aligned with the Diagram Modules continuation dispatcher pattern. PM transcript shows what Core told the agent.
+  - **Acceptance phrase recognizer broadening.** `recognizeManagedContractAcceptancePhrase` accepts bare Russian verbs (`принимаю`/`подтверждаю`/`утверждаю`) and bare English acceptance verbs (`accept`/`accepted`/`confirm`/`confirmed`/`approve`/`approved`) without requiring the noun `контракт`. Negated forms (`не принимаю …`, `not accepted`, `don't accept`, `cannot confirm`) still resolve to `null`. Word boundaries use Unicode-aware lookaround (`(?<!\p{L})…(?!\p{L})`) so cyrillic letters match correctly.
+  - **`materializedPaths` normalization.** `application-skeleton-materialization-validator.ts` trims whitespace, strips trailing slashes, and deduplicates `materializedPaths` entries before checking filesystem existence. Noisy-but-real path lists from the agent (directories with trailing slashes, blank lines) no longer raise spurious `application skeleton materializedPath is missing: …` validation errors.
+
+### Documentation
+- `WorkflowSteps_Overview.md` and `Application_Skeleton_Architecture.md` document the Option C acceptance flow, the broadened recognizer, visible feedback dispatch, and `materializedPaths` normalization.
+
+### Tests
+- 67/67 targeted Core tests pass across the touched managed-workspace, development-tree, and remote-bridge handler modules. The end-to-end fixture (`buildAwaitingAcceptanceProgress`) was re-pinned to the Option C invariant (`accepted: true`, `substep: "accepted"`).
+- `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview` both clean.
+- Six pre-existing baseline failures from Phase 12 (auto-commit suites in `workflow-state-managed-documentation-commit.test.ts` and acceptance-feedback scenarios in `workflow-state-service-development-tree-bootstrap.test.ts`) remain out of scope for this refactor.
+
 ## [1.2.222] - 2026-05-11
 ### Fixed
 - **Application Skeleton advancement-skip bug.** The managed plan orchestrator's `TASK_LINE_RE` regex in `managed-plan-orchestrator-shim-source.ts` now accepts both backticked `expected commit: \`<message>\`` lines and open-ended `expected commit: none — open until acceptance` lines. Before this fix, the post-commit scan silently skipped Pin 3 (`application-skeleton.phase2.review.task1`, open-ended user-led review) and jumped `currentTaskId` straight to the next backticked task — Pin 4 (`application-skeleton.phase3.materialize.task1`). After the fix, the open-ended review task receives `expectedCommitMessage: null` and `currentTaskId` lands on the review phase, exactly as the stage seed prescribes. A regression test in `managed-plan-orchestrator-installer.test.ts` locks down the post-draft advancement order.

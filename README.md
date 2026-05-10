@@ -2,23 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.222**
+**Current Release — v1.2.223**
 
-This release fixes the Phase 11 retest defects shipped in v1.2.221 and
-realigns the Application Skeleton phase model to plain numbering. The
-managed plan orchestrator's post-commit advancement regex (`TASK_LINE_RE`
-in `managed-plan-orchestrator-shim-source.ts`) now matches both backticked
-`expected commit: \`<message>\`` lines and open-ended `expected commit:
-none — open until acceptance` lines, so the user-led review task is no
-longer silently skipped after the Phase 1 draft commit. Task IDs across
-the stage seed, classifier, consumers, fixtures, and SSOT prose are
-renamed from the `phase1a` / `phase1b` / `phase2.materialize` form to
-plain `phase1` / `phase2` / `phase3.materialize`; the internal classifier
-union maps to `phase_1_draft` / `phase_2_review` / `phase_3_materialization`
-/ `phase_handoff`. Type A / Type B remains a domain attribute describing
-phase ownership (Core-gated vs user-led), not a phase number suffix. The
-per-revision managed commit message is now `docs: revise application
-skeleton contract — revision N` (no embedded phase-type label).
+This release refactors the Application Skeleton acceptance flow to
+**Option C**: any path that sets `accepted: true` in
+`application-skeleton-map.json` — the Core accept-contract handler reached
+via the PM Accept Contract button, the typed-fallback recognizer (broadened
+to bare Russian verbs and bare English `accept`/`accepted`/`confirm`/
+`approve`), or the agent self-set per its Phase 2 prompt — triggers the
+explicit Phase 2 commit `docs: accept application skeleton contract` and
+the Phase 3 materialization continuation. The PM button stays as a UI
+shortcut, not the exclusive entry. The legacy `recentlyAcceptedSessions`
+marker is kept as an optional hint, not the exclusive gate. The seed plan
+now pins Phase 2 as `task + Git Commit (docs: accept application skeleton
+contract)`, matching the symmetric Phase 1 and Phase 3 shapes. Core
+feedback prompts to the agent are now sent as plain-string payloads
+(visible in the codex-cli session jsonl and PM transcript), aligned with
+the Diagram Modules continuation dispatcher. The materialization validator
+normalizes `materializedPaths` entries (trim whitespace, strip trailing
+slashes, dedupe) before filesystem existence checks, so an agent's
+noisy-but-real path list no longer raises spurious validation errors.
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
