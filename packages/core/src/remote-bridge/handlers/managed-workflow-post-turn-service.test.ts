@@ -134,16 +134,16 @@ const REVISION_PLAN_TEMPLATE = [
 ].join("\n");
 
 const REVISION1_TASK_RE =
-  /application-skeleton\.phase1b\.review\.revision1\.task1/u;
+  /application-skeleton\.phase2\.review\.revision1\.task1/u;
 const REVISION2_TASK_RE =
-  /application-skeleton\.phase1b\.review\.revision2\.task1/u;
+  /application-skeleton\.phase2\.review\.revision2\.task1/u;
 const REVISION1_CURRENT_TASK_JSON_RE =
-  /"currentTaskId": "application-skeleton\.phase1b\.review\.revision1\.task1"/u;
+  /"currentTaskId": "application-skeleton\.phase2\.review\.revision1\.task1"/u;
 const REVISION1_COMMIT_MSG_JSON_RE =
-  /"expectedCommitMessage": "docs: revise application skeleton contract — phase 1B revision 1"/u;
+  /"expectedCommitMessage": "docs: revise application skeleton contract — revision 1"/u;
 const REVIEW_OPEN_TASK_RE = /application-skeleton\.phase2\.review\.task1/u;
 const REVISION1_BACKTICKS_RE =
-  /`application-skeleton\.phase1b\.review\.revision1\.task1`/u;
+  /`application-skeleton\.phase2\.review\.revision1\.task1`/u;
 const REVIEW_OPEN_BACKTICKS_RE =
   /`application-skeleton\.phase2\.review\.task1`/u;
 const PLAN_REMOVAL_REVIEW_LINE_RE =
@@ -159,11 +159,11 @@ test("revision injection helper inserts revision1 task pair before review.task1"
   }
   assert.equal(
     result.nextCurrentTaskId,
-    "application-skeleton.phase1b.review.revision1.task1"
+    "application-skeleton.phase2.review.revision1.task1"
   );
   assert.equal(
     result.nextCommitMessage,
-    "docs: revise application skeleton contract — phase 1B revision 1"
+    "docs: revise application skeleton contract — revision 1"
   );
   assert.equal(result.nextRevisionNumber, 1);
   assert.match(result.nextPlanText, REVISION1_TASK_RE);

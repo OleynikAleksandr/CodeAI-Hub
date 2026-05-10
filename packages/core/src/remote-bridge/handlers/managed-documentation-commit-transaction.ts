@@ -20,9 +20,9 @@ const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const WORKSPACE_PLAN_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
 const WORKSPACE_PLAN_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
 const APPLICATION_SKELETON_REVIEW_TASK_LINE_RE =
-  /^(\d+)\.\s*\[\w+\]\s*`application-skeleton\.phase1b\.review\.task1`/mu;
+  /^(\d+)\.\s*\[\w+\]\s*`application-skeleton\.phase2\.review\.task1`/mu;
 const APPLICATION_SKELETON_REVISION_TASK_RE =
-  /`application-skeleton\.phase1b\.review\.revision(\d+)\.task1`/gu;
+  /`application-skeleton\.phase2\.review\.revision(\d+)\.task1`/gu;
 const ACTIVE_PLAN_STATE_BLOCK_RE =
   /<!-- codeai-plan-state:start -->\s*```json\s*([\s\S]*?)\s*```\s*<!-- codeai-plan-state:end -->/u;
 
@@ -33,8 +33,8 @@ export interface ApplicationSkeletonReviewRevisionInjection {
   readonly nextRevisionNumber: number;
 }
 
-// Inject a `phase1b.review.revisionN.task1` + `Git Commit` pair right above the
-// open-ended `phase1b.review.task1` line in an Application Skeleton stage plan,
+// Inject a `phase2.review.revisionN.task1` + `Git Commit` pair right above the
+// open-ended `phase2.review.task1` line in an Application Skeleton stage plan,
 // and rewrite the JSON state block to point at the new revision task. Returns
 // `null` when the review task line or the JSON state block is missing —
 // callers must keep the original plan text in that case.
@@ -55,11 +55,11 @@ export const injectApplicationSkeletonReviewRevisionPair = (
     }
   }
   const nextRevisionNumber = lastRevision + 1;
-  const nextCurrentTaskId = `application-skeleton.phase1b.review.revision${nextRevisionNumber}.task1`;
-  const nextCommitMessage = `docs: revise application skeleton contract — phase 1B revision ${nextRevisionNumber}`;
+  const nextCurrentTaskId = `application-skeleton.phase2.review.revision${nextRevisionNumber}.task1`;
+  const nextCommitMessage = `docs: revise application skeleton contract — revision ${nextRevisionNumber}`;
   const startNumber = reviewMatch[1] ?? "1";
   const newPair = [
-    `${startNumber}. [IN_PROGRESS] \`${nextCurrentTaskId}\` User-led Phase 1B revision ${nextRevisionNumber} of the Application Skeleton contract artifacts; structurally validate and commit before returning to the open-ended review (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${nextCommitMessage}\`).`,
+    `${startNumber}. [IN_PROGRESS] \`${nextCurrentTaskId}\` User-led Phase 2 revision ${nextRevisionNumber} of the Application Skeleton contract artifacts; structurally validate and commit before returning to the open-ended review (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${nextCommitMessage}\`).`,
     `${startNumber}. [TODO] Git Commit: \`${nextCommitMessage}\` (hash: TBD)`,
     "",
   ].join("\n");

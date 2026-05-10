@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "9955ed2b5",
+  "lastRecordedCommit": "8e32e0c07",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-consumers.task2",
-  "expectedCommitMessage": "fix: align skeleton accept contract handler to plain numbering",
+  "currentTaskId": "application-skeleton-orchestration.phase12.classifier-consumers.task3",
+  "expectedCommitMessage": "fix: align skeleton revision injection labels to plain numbering",
   "debt": {
-    "expectedCommitMessage": "fix: align skeleton accept contract handler to plain numbering",
-    "preCommitHead": "9955ed2b5",
+    "expectedCommitMessage": "fix: align skeleton revision injection labels to plain numbering",
+    "preCommitHead": "8e32e0c07",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase12.classifier-consumers.task2"
+    "taskId": "application-skeleton-orchestration.phase12.classifier-consumers.task3"
   }
 }
 ```
@@ -286,12 +286,12 @@
 ### Stream: Phase Classifier Consumers (Accept Contract Handler + Tests)
 
 71. [DONE] `application-skeleton-orchestration.phase12.classifier-consumers.task2` Sync the accept-contract handler (production + peer test) and the deferred review-turn classifier peer test to the plain-numbering enum values. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: align skeleton accept contract handler to plain numbering`).
-72. [PENDING] Git Commit: `fix: align skeleton accept contract handler to plain numbering` (hash: TBD)
+72. [DONE] Git Commit: `fix: align skeleton accept contract handler to plain numbering` (hash: 8e32e0c07)
 
 ### Stream: Revision Injection And Commit Transaction Rename
 
-73. [TODO] `application-skeleton-orchestration.phase12.classifier-consumers.task3` Rename the dynamic revision injection labels (`phase1b.review.revisionN.task1 → phase2.review.revisionN.task1`) and the per-revision managed commit message text (`docs: revise application skeleton contract — phase 1B revision N → docs: revise application skeleton contract — revision N`, dropping the phase-type label from the commit text because Type B is a domain attribute, not commit text); update the legacy `phase1b.review.task1` plan-text lookup in the injection runner; the accept-contract runner is in scope only if it carries any phase string literal (it does not — it only forwards the classifier function call). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: align skeleton revision injection labels to plain numbering`).
-74. [TODO] Git Commit: `fix: align skeleton revision injection labels to plain numbering` (hash: TBD)
+73. [DONE] `application-skeleton-orchestration.phase12.classifier-consumers.task3` Rename the dynamic revision injection labels (`phase1b.review.revisionN.task1 → phase2.review.revisionN.task1`) and the per-revision managed commit message text (`docs: revise application skeleton contract — phase 1B revision N → docs: revise application skeleton contract — revision N`, dropping the phase-type label from the commit text because Type B is a domain attribute, not commit text); update the legacy `phase1b.review.task1` plan-text lookup in the injection runner; the accept-contract runner is in scope only if it carries any phase string literal (it does not — it only forwards the classifier function call). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: align skeleton revision injection labels to plain numbering`).
+74. [PENDING] Git Commit: `fix: align skeleton revision injection labels to plain numbering` (hash: TBD)
 
 ### Stream: Phase Classifier Cleanup
 

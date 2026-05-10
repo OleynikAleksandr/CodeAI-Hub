@@ -6,7 +6,7 @@ import { injectApplicationSkeletonReviewRevisionPair } from "./managed-documenta
 // `injectApplicationSkeletonReviewRevisionPair` helper. Reads the Application
 // Skeleton stage plan, asks the helper to compute an injection, writes the
 // result back, and reports the outcome through the supplied logger. Only the
-// open-ended `phase1b.review.task1` state triggers an injection.
+// open-ended `phase2.review.task1` state triggers an injection.
 
 export interface ApplicationSkeletonRevisionInjectionLogger {
   readonly info: (message: string, payload?: Record<string, unknown>) => void;
@@ -28,7 +28,7 @@ export const runApplicationSkeletonRevisionInjection = async (
     "doc/TODO/stages/application-skeleton/todo-plan.md"
   );
   const planText = await readFile(planPath, "utf8").catch(() => null);
-  if (!planText?.includes('"application-skeleton.phase1b.review.task1"')) {
+  if (!planText?.includes('"application-skeleton.phase2.review.task1"')) {
     return;
   }
   const injection = injectApplicationSkeletonReviewRevisionPair(planText);
@@ -37,19 +37,16 @@ export const runApplicationSkeletonRevisionInjection = async (
   }
   await writeFile(planPath, injection.nextPlanText, "utf8")
     .then(() =>
-      params.logger.info(
-        "Injected Application Skeleton phase 1B revision pair",
-        {
-          nextCommitMessage: injection.nextCommitMessage,
-          nextCurrentTaskId: injection.nextCurrentTaskId,
-          revisionNumber: injection.nextRevisionNumber,
-          sessionId: params.sessionId,
-          stage: params.stage,
-        }
-      )
+      params.logger.info("Injected Application Skeleton review revision pair", {
+        nextCommitMessage: injection.nextCommitMessage,
+        nextCurrentTaskId: injection.nextCurrentTaskId,
+        revisionNumber: injection.nextRevisionNumber,
+        sessionId: params.sessionId,
+        stage: params.stage,
+      })
     )
     .catch((error: unknown) =>
-      params.logger.warn("Failed to inject phase 1B revision pair", {
+      params.logger.warn("Failed to inject review revision pair", {
         error: error instanceof Error ? error.message : String(error),
         sessionId: params.sessionId,
         stage: params.stage,
