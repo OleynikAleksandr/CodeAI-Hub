@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "c07b4f4b1",
+  "lastRecordedCommit": "739d8409c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream0.task2",
-  "expectedCommitMessage": "docs: cut phase 10 follow-up streams",
+  "currentTaskId": "runtime-contract.phase10.stream1.task1",
+  "expectedCommitMessage": "docs: note runtime conformance gaps in mandatory repair planning",
   "debt": {
-    "expectedCommitMessage": "docs: cut phase 10 follow-up streams",
-    "preCommitHead": "c07b4f4b1",
+    "expectedCommitMessage": "docs: note runtime conformance gaps in mandatory repair planning",
+    "preCommitHead": "739d8409c",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream0.task2"
+    "taskId": "runtime-contract.phase10.stream1.task1"
   }
 }
 ```
@@ -238,12 +238,12 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Phase 10 Streams Layout
 
 54. [DONE] `runtime-contract.phase10.stream0.task2` Cut Phase 10 follow-up streams from the diagnosis findings under task1 (R1/R2/R3 fixes plus planning-doc corrections, SSOT sync, regression coverage, release and acceptance) into concrete ≤3-file microtasks inside this plan. Scope is plan-only; do not edit code or planning documents in this microtask. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: cut phase 10 follow-up streams`).
-55. [PENDING] Git Commit: `docs: cut phase 10 follow-up streams` (hash: TBD)
+55. [DONE] Git Commit: `docs: cut phase 10 follow-up streams` (hash: 739d8409c)
 
 ### Stream: Planning Document Corrections
 
-56. [TODO] `runtime-contract.phase10.stream1.task1` Note R1/R2/R3 known gaps in `Managed_Workflow_Runtime_Contract_Conformance.md` so future agents do not assume Phase 4 fixes are complete; cross-link to Phase 10 in this active plan (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md, doc/TODO/todo-plan.md`; expected commit: `docs: note runtime conformance gaps in mandatory repair planning`).
-57. [TODO] Git Commit: `docs: note runtime conformance gaps in mandatory repair planning` (hash: TBD)
+56. [DONE] `runtime-contract.phase10.stream1.task1` Note R1/R2/R3 known gaps in `Managed_Workflow_Runtime_Contract_Conformance.md` so future agents do not assume Phase 4 fixes are complete; cross-link to Phase 10 in this active plan (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md, doc/TODO/todo-plan.md`; expected commit: `docs: note runtime conformance gaps in mandatory repair planning`).
+57. [PENDING] Git Commit: `docs: note runtime conformance gaps in mandatory repair planning` (hash: TBD)
 58. [TODO] `runtime-contract.phase10.stream1.task2` Note R1/R2/R3 as preconditions for any future Type B candidate microtask lifecycle in `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`; record that Phase 10 ships R1/R2/R3 fixes only and full Type B candidate runtime stays deferred (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/TODO/todo-plan.md`; expected commit: `docs: note phase types blockers in deferred design`).
 59. [TODO] Git Commit: `docs: note phase types blockers in deferred design` (hash: TBD)
 

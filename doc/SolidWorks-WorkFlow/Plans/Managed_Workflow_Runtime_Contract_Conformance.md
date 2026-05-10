@@ -1,12 +1,14 @@
 # Managed Workflow Runtime Contract Conformance
 
-**Status:** Draft for review (revised 2026-05-10).
+**Status:** Shipped as VSIX 1.2.218 (commit `d6d62e278`, 2026-05-10) with three known downstream regressions; see section 12. Active follow-up: Phase 10 in `doc/TODO/todo-plan.md`.
 **Created:** 2026-05-10
 **Updated:** 2026-05-10
 **Owner:** Oleksandr + Codex
 **Scope:** mandatory runtime repair, приводящий реализацию Core / Project Manager / Codex adapter в соответствие уже зафиксированному в `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` контракту managed workflow steps. Покрывает только Gaps A–E + R (см. секцию 4). Не вводит новых workflow-контрактов, не расширяет SSOT, не добавляет UI surfaces, не реализует корректирующие операции и не вводит универсальной фазы корректировок.
 
 Связанный design layer (новые контракты фаз, UI-триггеры, корректирующие операции) вынесен в отдельный отложенный документ `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md` и реализуется отдельным scope после стабилизации happy path mandatory repair.
+
+> **Post-release retest update (2026-05-10).** Mandatory repair was implemented and shipped, but Application Skeleton retest on VSIX 1.2.218 surfaced three runtime regressions (R1/R2/R3) where Phase 4 fixes (Gaps A/C/D) do not reach the Application Skeleton runtime path. Sections 1–11 below describe what was supposed to ship and remain authoritative. Section 12 records what actually shipped vs what slipped through. Future agents must read section 12 before assuming any Gap A/C/D fix is complete in runtime.
 
 ---
 
@@ -240,4 +242,16 @@ Type-A/Type-B классификация и user-led фазы корректир
 - `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md` — managed lifecycle.
 - `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md` — архитектура skeleton.
 - `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md` — отложенный design layer (фаза корректировок, UI-триггеры, корректирующие операции, формализация типов фаз).
+
+## 12. Post-release retest findings (2026-05-10)
+
+Mandatory repair was shipped as VSIX 1.2.218 (commit `d6d62e278`). User retest of Application Skeleton on the new release surfaced three runtime regressions, each tracing back to incomplete code reach of fixes shipped under Gap A/C/D. None of these invalidate Sections 1–11 — they document where the Section 6 solutions did not land in the actual Application Skeleton runtime path. Diagram Modules continued to work in the same release.
+
+**R1 — Stage advance does not write `activeStage` into `workspace.plan.md`.** Bundle builder (`packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts`) reads the persisted value through `parseWorkspacePlanState`, but no caller updates `workspace.plan.md` when the workflow advances Diagram Modules → Application Skeleton → Quality Gates. The managed context bundle for Application Skeleton therefore ships with `activeStage: null` even after the stage has begun. Diagram Modules works because that stage is the first/initialised value seeded by `ensureManagedTodoTree`. Section 6 Gap A fixes (event identity ledger, retry guard) were correct in their own surface but assume the bundle correctly identifies the active stage; they do not paper over the missing stage-advance writer.
+
+**R2 — Acceptance phrase matcher is exact-match only.** Section 6 Gap C specifies "full-message match (без substring-логики, after normalization: trim, case-insensitive, single-space)". The implementation in `recognizeManagedContractAcceptancePhrase` honoured that literally — `localeCompare === 0` against the three canonical phrases. In production, real users type the acceptance verb plus contextual filler (the retest message was "Контракт принимаю, можешь двигаться к фазе 2."), which equals none of the three canonical strings. The matcher returns null and the message reaches the provider unintercepted. The mandatory repair design avoided substring matching to prevent false positives ("Принимаю эту правку"), but the resulting matcher is too strict for real user input. A normalised contains-keyword recogniser scoped to the acceptance-eligible Type B state stays consistent with Section 6 Gap C intent while accepting natural acceptance phrasings; it must reject the same false-positive cases the original design called out.
+
+**R3 — Application Skeleton has no materialization continuation dispatcher and no completion observer.** Section 6 Gap D specifies that Core opens a managed materialization phase after acceptance and runs the standard turn cycle. The shipped Phase 4 fixes wired the commit gate (`hasCommittableApplicationSkeletonStage` requires `applicationSkeletonProgress.materialized === true`) and the commit transaction (`managed-documentation-commit-transaction.ts` invokes `npm run plan:commit`), but did not wire two upstream signals: (a) an Application Skeleton materialization continuation dispatcher analogous to `sendDiagramModulesContinuationIfReady`, and (b) a post-turn observer that re-reads `application-skeleton-map.json` and refreshes the `materialized` flag in Core's progress state. Tests pre-stage the flag, which is why they pass; in runtime the gate stays false, the commit never fires, the plan stays at task2 IN_PROGRESS indefinitely. The user-visible symptom was that Core "woke up only once" — it stamped the draft commit hash and rolled the pointer to task2, then went silent.
+
+**Active follow-up.** Phase 10 in `doc/TODO/todo-plan.md` covers fixes for R1, R2 and R3 plus end-to-end happy-path coverage and a forced-rollover regression inside Phase B. Quality Gates symmetric fix is intentionally out of scope for Phase 10 — it follows after Application Skeleton stabilises and ships separately. Full Type B candidate microtask lifecycle remains in the deferred design layer (`Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`); R1/R2/R3 are the prerequisites that must ship before that layer can be implemented in any form.
 - `doc/TODO/Archive/todo-plan-closeout-managed-workflow-prompt-ownership-repair.md` — closeout предыдущего scope, который вычистил prompt-level ownership.
