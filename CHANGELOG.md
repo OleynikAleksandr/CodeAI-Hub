@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.219] - 2026-05-10
+### Fixed
+- **Managed-workspace stage advance now writes `activeStage`.** The embedded plan-orchestrator shim's `recordWorkspaceCommit` consults `STAGE_TERMINAL_COMMITS` and `NEXT_STAGE_AFTER` mappings (exported from `managed-todo-tree`) to roll `workspace.plan.md` forward when a stage's terminal commit lands (`docs: review diagram modules product map`, `feat: materialize application skeleton`, `feat: integrate quality gates baseline`). The previously-large installer file is split into a dedicated shim-source module so each file stays under the 500-line architecture limit.
+- **Managed contract acceptance recogniser accepts natural Russian phrasings.** `recognizeManagedContractAcceptancePhrase` replaces exact-match `localeCompare` against three canonical strings with a normalised contains-keyword recogniser that requires an acceptance verb (`принимаю` / `подтверждаю` / `утверждаю`) plus the noun `контракт` and rejects negated forms (`не принимаю …`). Recognition is gated on acceptance-eligible Type B sessions via `recognizeManagedAcceptanceForStage` so non-managed stages stay unaffected.
+- **Application Skeleton materialisation continuation dispatcher.** A new `application-skeleton-continuation-dispatcher` mirrors the Diagram Modules pattern: after Core registers an acceptance command on a session in awaiting-acceptance state, the dispatcher emits an explicit Phase 2 materialisation prompt to the agent. `ManagedWorkflowPostTurnService` tracks recently-accepted sessions in-memory and clears the marker once `applicationSkeletonProgress.materialized` is observed, so the dispatcher does not refire after materialisation completes.
+
+### Tests
+- **8 new test commits landed alongside the Phase 10 fixes** covering the stage advance writer, broadened acceptance phrase variants, dispatcher gating + dedup, completion observer flip detection, end-to-end chained surfaces and a forced-rollover Phase B regression. Targeted node:test runner over six Phase 10 spec files reports 26/26 PASS.
+
 ## [1.2.218] - 2026-05-10
 ### Fixed
 - **Managed feedback ownership leak removed from corrective text.** `managed-git-stage-gate` and the workflow agent acceptance feedback no longer ask the provider to commit/clean files or run Git commands; corrective wording is now neutral content-readiness ("Core has not yet finalized the managed commit … respond with a content-readiness note", "Core is blocked by unrelated dirty paths … provider should not act on this").

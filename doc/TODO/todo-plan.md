@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "494e00c65",
+  "lastRecordedCommit": "6b00fd09e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream8.task1",
-  "expectedCommitMessage": "docs: record phase 10 verification",
+  "currentTaskId": "runtime-contract.phase10.stream10.task1",
+  "expectedCommitMessage": "build: release application skeleton phase b repair",
   "debt": {
-    "expectedCommitMessage": "docs: record phase 10 verification",
-    "preCommitHead": "494e00c65",
+    "expectedCommitMessage": "build: release application skeleton phase b repair",
+    "preCommitHead": "6b00fd09e",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream8.task1"
+    "taskId": "runtime-contract.phase10.stream10.task1"
   }
 }
 ```
@@ -290,7 +290,7 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Tooling Verification
 
 82. [DONE] `runtime-contract.phase10.stream8.task1` Run targeted builds and tests for touched Core packages and fix two TypeScript regressions surfaced by the Core build (`materializationState: "not_started"` is not a valid `ApplicationSkeletonSubstep` — replaced with `"artifact"` in two new test fixtures) (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `docs: record phase 10 verification`).
-83. [PENDING] Git Commit: `docs: record phase 10 verification` (hash: TBD)
+83. [DONE] Git Commit: `docs: record phase 10 verification` (hash: 6b00fd09e)
 
 **Phase 10 verification evidence (2026-05-10).**
 
@@ -300,12 +300,12 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 
 ### Stream: Release Build Confirmation Gate
 
-84. [TODO] `runtime-contract.phase10.stream9.task1` Ask the user for explicit release build confirmation after implementation and verification are complete (scope: chat/process observation only; no commit required).
+84. [DONE] `runtime-contract.phase10.stream9.task1` Ask the user for explicit release build confirmation after implementation and verification are complete (scope: chat/process observation only; no commit required). Result: User confirmed release build via chat instruction earlier in this session
 
 ### Stream: Release Build
 
-85. [TODO] `runtime-contract.phase10.stream10.task1` After explicit confirmation only, prepare release notes/version files for the next version bump and run release build scripts per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase b repair`).
-86. [TODO] Git Commit: `build: release application skeleton phase b repair` (hash: TBD)
+85. [DONE] `runtime-contract.phase10.stream10.task1` After explicit confirmation only, prepare release notes/version files for the next version bump and run release build scripts per Release Build Checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton phase b repair`).
+86. [PENDING] Git Commit: `build: release application skeleton phase b repair` (hash: TBD)
 87. [TODO] `runtime-contract.phase10.stream10.task2` Commit version manifests, package-lock and README/CHANGELOG bumped by `build-all.sh` so `build-release.sh` receives a clean tree; capture the actual final release version in the commit message (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: bump release manifests to <version>`).
 88. [TODO] Git Commit: `build: bump release manifests to <version>` (hash: TBD)
 

@@ -2,17 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.218**
+**Current Release — v1.2.219**
 
-This release brings the managed workflow runtime in line with the existing
-content-readiness contract. Provider-visible managed feedback is rewritten in
-neutral content-readiness wording (no Git imperatives), Core post-turn
-arbitration deduplicates terminal events with a stable identity ledger and a
-per-stage retry guard, inbound contract acceptance phrases route as Core-owned
-commands instead of provider messages, managed Core messages stream through the
-workflow events feed and a durable `.audit.jsonl` audit channel, and the managed
-rollover envelope now carries an explicit Artifact Mode marker that prevents
-agents from treating resumption as a cold-start draft.
+This release closes three Application Skeleton runtime regressions that survived
+the v1.2.218 mandatory repair: the managed-workspace plan-orchestrator shim now
+rolls `activeStage` and `activePlanPath` forward when a stage's terminal commit
+lands; the managed contract acceptance phrase recogniser accepts natural Russian
+phrasings such as "Контракт принимаю …" instead of only three exact strings,
+gated on acceptance-eligible Type B sessions; and Application Skeleton gains a
+materialisation continuation dispatcher plus a completion observer log that
+together close the post-acceptance loop so the existing `feat: materialize
+application skeleton` commit gate fires after the agent flips
+`application-skeleton-map.json` to `materialized: true`. Quality Gates
+symmetric fixes remain a follow-up cycle.
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
