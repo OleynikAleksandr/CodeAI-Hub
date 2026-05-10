@@ -1,5 +1,4 @@
-import type React from "react";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   acceptApplicationSkeletonContract,
   type AcceptApplicationSkeletonContractDecision,

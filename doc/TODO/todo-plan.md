@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "a9a17c0c2",
+  "lastRecordedCommit": "dae240373",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase7.tests.task1",
-  "expectedCommitMessage": "test: cover application skeleton a-b-a orchestration",
+  "currentTaskId": "application-skeleton-orchestration.phase7.tests.task2",
+  "expectedCommitMessage": "test: cover application skeleton accept contract surfaces",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton a-b-a orchestration",
-    "preCommitHead": "a9a17c0c2",
+    "expectedCommitMessage": "test: cover application skeleton accept contract surfaces",
+    "preCommitHead": "dae240373",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase7.tests.task1"
+    "taskId": "application-skeleton-orchestration.phase7.tests.task2"
   }
 }
 ```
@@ -189,12 +189,12 @@
 ### Stream: Core End-To-End Coverage
 
 41. [DONE] `application-skeleton-orchestration.phase7.tests.task1` Add an end-to-end Application Skeleton A->B->A regression covering draft commit, artifact-changing review commit, no-op review turn without Git commit, premature materialization rejection, acceptance command, Phase 2 dispatcher, and materialization commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts`; expected commit: `test: cover application skeleton a-b-a orchestration`).
-42. [PENDING] Git Commit: `test: cover application skeleton a-b-a orchestration` (hash: TBD)
+42. [DONE] Git Commit: `test: cover application skeleton a-b-a orchestration` (hash: dae240373)
 
 ### Stream: UI And Transport Coverage
 
-43. [TODO] `application-skeleton-orchestration.phase7.tests.task2` Add focused tests for the accept-contract HTTP transport/client/button disabled states without making PM read-model paths responsible for workflow decisions. (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx`; expected commit: `test: cover application skeleton accept contract surfaces`).
-44. [TODO] Git Commit: `test: cover application skeleton accept contract surfaces` (hash: TBD)
+43. [DONE] `application-skeleton-orchestration.phase7.tests.task2` Add focused tests for the accept-contract HTTP transport/client/button disabled states without making PM read-model paths responsible for workflow decisions. Scope adds the button component file because the SSR test needs `React` in runtime scope (the button used `import type React`, which is erased at runtime). (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx`; expected commit: `test: cover application skeleton accept contract surfaces`).
+44. [PENDING] Git Commit: `test: cover application skeleton accept contract surfaces` (hash: TBD)
 
 ## Phase 8 - SSOT Sync (owner: next agent, updated: 2026-05-10)
 
