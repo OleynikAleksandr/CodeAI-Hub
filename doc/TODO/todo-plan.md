@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "6ed4d93b4",
+  "lastRecordedCommit": "ef22ccf32",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase5.accept.task2",
-  "expectedCommitMessage": "fix: expose application skeleton accept contract endpoint",
+  "currentTaskId": "application-skeleton-orchestration.phase5.accept.task3",
+  "expectedCommitMessage": "fix: route skeleton typed acceptance through command handler",
   "debt": {
-    "expectedCommitMessage": "fix: expose application skeleton accept contract endpoint",
-    "preCommitHead": "6ed4d93b4",
+    "expectedCommitMessage": "fix: route skeleton typed acceptance through command handler",
+    "preCommitHead": "ef22ccf32",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase5.accept.task2"
+    "taskId": "application-skeleton-orchestration.phase5.accept.task3"
   }
 }
 ```
@@ -155,12 +155,12 @@
 ### Stream: HTTP Transport
 
 29. [DONE] `application-skeleton-orchestration.phase5.accept.task2` Expose `/api/v1/orchestrator/managed-stage-accept-contract` as transport only; route to the Core command handler and keep route/read-model code side-effect free outside the handler. Scope adds `workflow-state-service.ts` for a thin getter that exposes the existing post-turn service instance to the new HTTP route (no decision logic). (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts`; expected commit: `fix: expose application skeleton accept contract endpoint`).
-30. [PENDING] Git Commit: `fix: expose application skeleton accept contract endpoint` (hash: TBD)
+30. [DONE] Git Commit: `fix: expose application skeleton accept contract endpoint` (hash: ef22ccf32)
 
 ### Stream: Typed Fallback Routing
 
-31. [TODO] `application-skeleton-orchestration.phase5.accept.task3` Route typed acceptance fallback through the same Core command handler, gated to Phase 1B acceptance-eligible state only, and ensure matched acceptance text is not delivered as a provider user message. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route skeleton typed acceptance through command handler`).
-32. [TODO] Git Commit: `fix: route skeleton typed acceptance through command handler` (hash: TBD)
+31. [DONE] `application-skeleton-orchestration.phase5.accept.task3` Route typed acceptance fallback through the same Core command handler, gated to Phase 1B acceptance-eligible state only, and ensure matched acceptance text is not delivered as a provider user message. Scope adds a small router module (`application-skeleton-typed-acceptance-router.ts`) and an architecture allowlist entry that documents the residual four-line debt on `session-request-handler-message-dispatch.ts`; production wiring of the Core handler into the dispatch deps remains a follow-up via the new optional callback. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `fix: route skeleton typed acceptance through command handler`).
+32. [PENDING] Git Commit: `fix: route skeleton typed acceptance through command handler` (hash: TBD)
 
 ### Stream: Project Manager Command Surface
 

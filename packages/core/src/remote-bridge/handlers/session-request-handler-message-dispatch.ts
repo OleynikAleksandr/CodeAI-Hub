@@ -10,6 +10,7 @@ import {
   serializeSessionModelBinding,
   shouldBroadcastAppliedProviderModelUpdate,
 } from "../types";
+import { routeApplicationSkeletonTypedAcceptance } from "./application-skeleton-typed-acceptance-router";
 import { recognizeManagedAcceptanceForStage } from "./managed-workflow-post-turn-service";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
@@ -43,10 +44,9 @@ const extractStaleProviderSessionId = (error: unknown): string | null => {
     return null;
   }
   const candidate = (error as { providerSessionId?: string }).providerSessionId;
-  if (typeof candidate === "string" && candidate.trim().length > 0) {
-    return candidate.trim();
-  }
-  return null;
+  return typeof candidate === "string" && candidate.trim().length > 0
+    ? candidate.trim()
+    : null;
 };
 
 interface SessionRequestHandlerMessageDispatchDependencies {
@@ -57,6 +57,10 @@ interface SessionRequestHandlerMessageDispatchDependencies {
     readonly sessionId: string;
     readonly state: "idle" | "running";
   }) => void;
+  readonly handleManagedAcceptContractCommand?: (params: {
+    readonly sessionId: string;
+    readonly source: "typed-fallback";
+  }) => Promise<unknown>;
   readonly handleProviderFailure: (
     providerId: string,
     error: unknown,
@@ -174,10 +178,13 @@ export class SessionRequestHandlerMessageDispatch {
     const stage = session.stage ?? null;
     const acceptancePhrase = recognizeManagedAcceptanceForStage(stage, content);
     if (acceptancePhrase) {
-      this.deps.logger.info("Skipping managed contract acceptance phrase", {
+      await routeApplicationSkeletonTypedAcceptance({
+        acceptancePhrase,
+        handleManagedAcceptContractCommand:
+          this.deps.handleManagedAcceptContractCommand,
+        logger: this.deps.logger,
         sessionId,
         stage,
-        phrase: acceptancePhrase,
       });
       return;
     }

@@ -143,6 +143,49 @@ test("handler rejects when out-of-owner dirty paths block the workspace", () => 
   }
 });
 
+test("typed acceptance router only forwards Application Skeleton phrases", async () => {
+  const { routeApplicationSkeletonTypedAcceptance } = await import(
+    "./application-skeleton-typed-acceptance-router"
+  );
+  const recorded: Array<{ sessionId: string; source: string }> = [];
+  const logged: string[] = [];
+  const logger = {
+    info: (message: string) => logged.push(message),
+  } as unknown as Parameters<
+    typeof routeApplicationSkeletonTypedAcceptance
+  >[0]["logger"];
+
+  await routeApplicationSkeletonTypedAcceptance({
+    acceptancePhrase: "Принимаю контракт",
+    handleManagedAcceptContractCommand: (params) => {
+      recorded.push(params);
+      return Promise.resolve();
+    },
+    logger,
+    sessionId: "session-1",
+    stage: "application_skeleton",
+  });
+  assert.deepEqual(recorded, [
+    { sessionId: "session-1", source: "typed-fallback" },
+  ]);
+  assert.equal(logged.length, 1);
+
+  await routeApplicationSkeletonTypedAcceptance({
+    acceptancePhrase: "Принимаю контракт",
+    handleManagedAcceptContractCommand: (params) => {
+      recorded.push(params);
+      return Promise.resolve();
+    },
+    logger,
+    sessionId: "session-2",
+    stage: "quality_gates",
+  });
+  // Quality Gates stage skips the Application Skeleton command callback —
+  // only the log line fires. Recorded set must remain unchanged.
+  assert.equal(recorded.length, 1);
+  assert.equal(logged.length, 2);
+});
+
 test("handler rejects when stage is already materialized", () => {
   const decision = evaluateApplicationSkeletonAcceptContractCommand({
     applicationSkeletonProgress: buildProgressSnapshot({
