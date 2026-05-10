@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "abd65da3a",
+  "lastRecordedCommit": "bab0e0f79",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream3.task2",
-  "expectedCommitMessage": "test: cover acceptance phrase variants",
+  "currentTaskId": "runtime-contract.phase10.stream4.task1",
+  "expectedCommitMessage": "fix: dispatch application skeleton materialization continuation",
   "debt": {
-    "expectedCommitMessage": "test: cover acceptance phrase variants",
-    "preCommitHead": "abd65da3a",
+    "expectedCommitMessage": "fix: dispatch application skeleton materialization continuation",
+    "preCommitHead": "bab0e0f79",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream3.task2"
+    "taskId": "runtime-contract.phase10.stream4.task1"
   }
 }
 ```
@@ -259,12 +259,12 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 64. [DONE] `runtime-contract.phase10.stream3.task1` Replace exact-match in `recognizeManagedContractAcceptancePhrase` with a normalised contains-keyword recogniser that requires the canonical verb plus the canonical noun (`принимаю/подтверждаю/утверждаю` and `контракт`) inside one user message; gate recognition on acceptance-eligible Type B state via the existing `MANAGED_CONTRACT_ACCEPTANCE_STAGES` set; keep false-positive risk explicit by rejecting messages with conflicting verbs (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts`; expected commit: `fix: broaden managed acceptance phrase recognition`).
 65. [DONE] Git Commit: `fix: broaden managed acceptance phrase recognition` (hash: abd65da3a)
 66. [DONE] `runtime-contract.phase10.stream3.task2` Regression coverage for the broadened matcher; also includes a regex hotfix that drops JS-incompatible word boundaries (`\b` does not work for Cyrillic in V8) so positive matches actually fire (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `test: cover acceptance phrase variants`).
-67. [PENDING] Git Commit: `test: cover acceptance phrase variants` (hash: TBD)
+67. [DONE] Git Commit: `test: cover acceptance phrase variants` (hash: bab0e0f79)
 
 ### Stream: Application Skeleton Materialization Continuation Dispatcher
 
-68. [TODO] `runtime-contract.phase10.stream4.task1` Add `sendApplicationSkeletonMaterializationContinuationIfReady` paralleling the Diagram Modules dispatcher: triggered when post-turn arbitration recognises an Application Skeleton acceptance command in awaiting-acceptance state; emits the materialisation continuation prompt to the agent and transitions Core's progress tracker to `materialization_in_progress` (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `fix: dispatch application skeleton materialization continuation`).
-69. [TODO] Git Commit: `fix: dispatch application skeleton materialization continuation` (hash: TBD)
+68. [DONE] `runtime-contract.phase10.stream4.task1` Add new `application-skeleton-continuation-dispatcher.ts` (parallel to Diagram Modules dispatcher) that emits a materialisation continuation prompt to the agent once Core has registered an Application Skeleton acceptance command on a session in awaiting-acceptance state; track recently-accepted sessions inside the post-turn service to gate the dispatch (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `fix: dispatch application skeleton materialization continuation`). New dispatcher file replaces the originally-listed feedback/progress edits.
+69. [PENDING] Git Commit: `fix: dispatch application skeleton materialization continuation` (hash: TBD)
 70. [TODO] `runtime-contract.phase10.stream4.task2` Regression coverage: dispatcher fires once per acceptance, transitions progress, and is no-op when stage is not Application Skeleton or state is not awaiting-acceptance (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `test: cover application skeleton continuation dispatcher`).
 71. [TODO] Git Commit: `test: cover application skeleton continuation dispatcher` (hash: TBD)
 

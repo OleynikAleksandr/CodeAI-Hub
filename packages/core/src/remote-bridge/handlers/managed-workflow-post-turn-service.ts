@@ -6,6 +6,7 @@ import type {
   ManagedAuditRecord,
   UnifiedSessionStorage,
 } from "../../unified-session/storage";
+import { sendApplicationSkeletonContinuationIfReady } from "./application-skeleton-continuation-dispatcher";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
@@ -101,6 +102,7 @@ export class ManagedWorkflowPostTurnService {
   private readonly transaction = new ManagedDocumentationCommitTransaction();
   private readonly sessionManager?: SessionManager;
   private readonly inFlight = new Map<string, Promise<void>>();
+  private readonly recentlyAcceptedSessions = new Set<string>();
   private readonly retryCounters = new Map<
     string,
     { stage: string; count: number }
@@ -218,6 +220,7 @@ export class ManagedWorkflowPostTurnService {
       return;
     }
     this.retryCounters.delete(params.sessionId);
+    this.recentlyAcceptedSessions.add(params.sessionId);
     this.logger.info("Managed contract acceptance command accepted by Core", {
       sessionId: params.sessionId,
       phrase: params.phrase,
@@ -348,6 +351,12 @@ export class ManagedWorkflowPostTurnService {
         progress: diagramModulesProgress,
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
+      }),
+      sendApplicationSkeletonContinuationIfReady({
+        chains,
+        gateway,
+        progress: applicationSkeletonProgress,
+        recentlyAcceptedSessions: this.recentlyAcceptedSessions,
       }),
       this.acceptanceFeedback.sendApplicationSkeletonFeedback({
         chains,
