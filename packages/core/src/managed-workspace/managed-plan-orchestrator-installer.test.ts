@@ -13,6 +13,11 @@ import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
 import { ManagedPlanOrchestratorInstaller } from "./managed-plan-orchestrator-installer";
+import {
+  NEXT_STAGE_AFTER,
+  STAGE_PLANS,
+  STAGE_TERMINAL_COMMITS,
+} from "./managed-todo-tree";
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "managed-plan-"));
@@ -48,6 +53,10 @@ const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
 const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const APPLICATION_SKELETON_BOUNDED_GROUP_RE = /bounded target-group microtask/u;
+const APPLICATION_SKELETON_ACTIVE_STAGE_RE =
+  /"activeStage": "application_skeleton"/u;
+const APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE =
+  /"activePlanPath": "doc\/TODO\/stages\/application-skeleton\/todo-plan\.md"/u;
 const LEDGER_COMMIT_RE = /chore: record managed workspace ledger/u;
 const DIAGRAM_MODULES_COMMIT_RE =
   /docs: update diagram modules product part index/u;
@@ -421,4 +430,66 @@ test("managed plan shim advances the active task inside plan commits", async () 
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
+});
+
+test("managed plan shim preserves activeStage on non-terminal commit", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const draftArtifactPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton/application-skeleton.md"
+    );
+    await mkdir(path.dirname(draftArtifactPath), { recursive: true });
+    await writeFile(draftArtifactPath, "# Application Skeleton\n", "utf8");
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: draft application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const workspacePlan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      "utf8"
+    );
+    assert.match(workspacePlan, APPLICATION_SKELETON_ACTIVE_STAGE_RE);
+    assert.match(workspacePlan, APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed stage advance mappings cover all managed workflow stages", () => {
+  assert.deepEqual(STAGE_TERMINAL_COMMITS, {
+    application_skeleton: "feat: materialize application skeleton",
+    diagram_modules: "docs: review diagram modules product map",
+    quality_gates: "feat: integrate quality gates baseline",
+  });
+  assert.deepEqual(NEXT_STAGE_AFTER, {
+    application_skeleton: "quality_gates",
+    diagram_modules: "application_skeleton",
+    quality_gates: null,
+  });
+  assert.deepEqual(STAGE_PLANS, {
+    application_skeleton: "doc/TODO/stages/application-skeleton/todo-plan.md",
+    diagram_modules: "doc/TODO/stages/diagram-modules/todo-plan.md",
+    quality_gates: "doc/TODO/stages/quality-gates/todo-plan.md",
+  });
 });

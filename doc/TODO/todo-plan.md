@@ -8,15 +8,15 @@
   "planId": "managed-workflow-runtime-contract-conformance-implementation",
   "branch": "main",
   "baseHead": "62eb9b697",
-  "lastRecordedCommit": "8f6bfe0d8",
+  "lastRecordedCommit": "4ba87c639",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md",
-  "currentTaskId": "runtime-contract.phase10.stream2.task1",
-  "expectedCommitMessage": "fix: write activestage on managed stage advance",
+  "currentTaskId": "runtime-contract.phase10.stream2.task2",
+  "expectedCommitMessage": "test: cover managed stage advance writer",
   "debt": {
-    "expectedCommitMessage": "fix: write activestage on managed stage advance",
-    "preCommitHead": "8f6bfe0d8",
+    "expectedCommitMessage": "test: cover managed stage advance writer",
+    "preCommitHead": "4ba87c639",
     "stage": "commit_pending",
-    "taskId": "runtime-contract.phase10.stream2.task1"
+    "taskId": "runtime-contract.phase10.stream2.task2"
   }
 }
 ```
@@ -250,9 +250,9 @@ This covers the minimum to make Application Skeleton happy path work end-to-end 
 ### Stream: Stage Advance Writer For workspace.plan.md
 
 60. [DONE] `runtime-contract.phase10.stream2.task1` Add stage-advance writer in the embedded plan-orchestrator shim's `recordWorkspaceCommit` so terminal-commit messages for each managed stage roll `activeStage` and `activePlanPath` forward in `workspace.plan.md`; extract the embedded shim source into a sibling file so installer stays under the 500-line architecture limit (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: write activestage on managed stage advance`). Test moved to task2 to keep ≤3 files; actual code path lives under `managed-workspace/`, not `remote-bridge/handlers/` as originally hypothesised.
-61. [PENDING] Git Commit: `fix: write activestage on managed stage advance` (hash: TBD)
-62. [TODO] `runtime-contract.phase10.stream2.task2` Add multi-stage advance regression so a fresh managed workspace transitioning Diagram Modules → Application Skeleton produces a bundle with `activeStage: "application_skeleton"` and live stage todo-plan content (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/managed-todo-tree.test.ts`; expected commit: `test: cover managed stage advance writer`).
-63. [TODO] Git Commit: `test: cover managed stage advance writer` (hash: TBD)
+61. [DONE] Git Commit: `fix: write activestage on managed stage advance` (hash: 4ba87c639)
+62. [DONE] `runtime-contract.phase10.stream2.task2` Add stage-advance regression in the shim test suite: assert mappings (`STAGE_TERMINAL_COMMITS`, `NEXT_STAGE_AFTER`, `STAGE_PLANS`) and verify that a non-terminal commit (Application Skeleton draft) keeps `activeStage` unchanged. Full terminal-commit happy path (advance + auto-create next stage plan) is deferred to Stream 4 because it requires materialisation continuation dispatcher and next-plan auto-creation that live outside R1 scope (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `test: cover managed stage advance writer`).
+63. [PENDING] Git Commit: `test: cover managed stage advance writer` (hash: TBD)
 
 ### Stream: Robust Acceptance Phrase Recognition
 
