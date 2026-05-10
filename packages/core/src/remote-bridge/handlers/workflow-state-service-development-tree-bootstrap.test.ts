@@ -97,7 +97,7 @@ const writeManagedPlanEvidence = async (
             message: "feat: materialize application skeleton",
             planPath: "doc/TODO/stages/application-skeleton/todo-plan.md",
             stage: "application_skeleton",
-            taskId: "application-skeleton.stream1.task2",
+            taskId: "application-skeleton.phase2.materialize.task1",
           },
           {
             commitHash: "abc1234",
@@ -118,7 +118,7 @@ const writeManagedPlanEvidence = async (
   for (const [planPath, currentTaskId] of [
     [
       "doc/TODO/stages/application-skeleton/todo-plan.md",
-      "application-skeleton.stream1.task3",
+      "application-skeleton.handoff.task1",
     ],
     [
       "doc/TODO/stages/quality-gates/todo-plan.md",

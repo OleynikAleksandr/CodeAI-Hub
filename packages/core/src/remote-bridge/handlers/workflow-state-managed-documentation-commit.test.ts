@@ -335,7 +335,7 @@ test("workflow-state auto-commits valid Application Skeleton artifacts and unloc
     await setActivePlanTask(
       workspaceRoot,
       "doc/TODO/stages/application-skeleton/todo-plan.md",
-      "application-skeleton.stream1.task2",
+      "application-skeleton.phase2.materialize.task1",
       "feat: materialize application skeleton"
     );
     await runGit(workspaceRoot, ["add", "."]);

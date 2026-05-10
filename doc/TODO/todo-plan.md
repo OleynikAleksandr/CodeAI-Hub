@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "4d844c3bf",
+  "lastRecordedCommit": "2160c7504",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase2.stage-plan.task2",
-  "expectedCommitMessage": "fix: realign development tree bootstrap gate to skeleton phase 2 task id",
+  "currentTaskId": "application-skeleton-orchestration.phase2.fixture-migration.task1",
+  "expectedCommitMessage": "test: migrate fixture task ids to phased application skeleton ids",
   "debt": {
-    "expectedCommitMessage": "fix: realign development tree bootstrap gate to skeleton phase 2 task id",
-    "preCommitHead": "4d844c3bf",
+    "expectedCommitMessage": "test: migrate fixture task ids to phased application skeleton ids",
+    "preCommitHead": "2160c7504",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase2.stage-plan.task2"
+    "taskId": "application-skeleton-orchestration.phase2.fixture-migration.task1"
   }
 }
 ```
@@ -94,12 +94,12 @@
 ### Stream: Bootstrap Gate Realignment
 
 7. [DONE] `application-skeleton-orchestration.phase2.stage-plan.task2` Realign Development Tree bootstrap gate from the legacy `application-skeleton.stream1.task2` task id to the new `application-skeleton.phase2.materialize.task1` Phase 2 materialization task id, and update the matching gate fixture so the gate continues to recognize the materialization commit on phased managed plans. Quality Gates blocked-task id stays out of scope. The plan microtasks for the two follow-up risk streams (`fixture-migration`, `diagram-test-repair`) are introduced in this same commit to keep the surfaced risks visible. (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id`).
-8. [PENDING] Git Commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id` (hash: TBD)
+8. [DONE] Git Commit: `fix: realign development tree bootstrap gate to skeleton phase 2 task id` (hash: 2160c7504)
 
 ### Stream: Legacy Task Id Fixture Migration
 
-9. [TODO] `application-skeleton-orchestration.phase2.fixture-migration.task1` Migrate hardcoded legacy `application-skeleton.stream1.task1/task2/task3` references in three core fixture tests to the new phased task ids (`application-skeleton.phase1a.draft.task1` / `application-skeleton.phase2.materialize.task1` / `application-skeleton.handoff.task1`) so fixtures stay consistent with the seed shape; preserve each test's existing behavioral assertions. Surfaced as a follow-up risk during `phase2.stage-plan.task1`. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `test: migrate fixture task ids to phased application skeleton ids`).
-10. [TODO] Git Commit: `test: migrate fixture task ids to phased application skeleton ids` (hash: TBD)
+9. [DONE] `application-skeleton-orchestration.phase2.fixture-migration.task1` Migrate hardcoded legacy `application-skeleton.stream1.task1/task2/task3` references in three core fixture tests to the new phased task ids (`application-skeleton.phase1a.draft.task1` / `application-skeleton.phase2.materialize.task1` / `application-skeleton.handoff.task1`) so fixtures stay consistent with the seed shape; preserve each test's existing behavioral assertions. Surfaced as a follow-up risk during `phase2.stage-plan.task1`. (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `test: migrate fixture task ids to phased application skeleton ids`).
+10. [PENDING] Git Commit: `test: migrate fixture task ids to phased application skeleton ids` (hash: TBD)
 
 ### Stream: Diagram Modules Adoption Test Repair
 
