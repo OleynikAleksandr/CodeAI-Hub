@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "75b342573",
+  "lastRecordedCommit": "196f5f91b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase29.release.task2",
-  "expectedCommitMessage": "build: release application skeleton acceptance wiring",
+  "currentTaskId": "application-skeleton-orchestration.phase32.audit.task1",
+  "expectedCommitMessage": "docs: open application skeleton handoff anchor regex scope",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton acceptance wiring",
-    "preCommitHead": "75b342573",
+    "expectedCommitMessage": "docs: open application skeleton handoff anchor regex scope",
+    "preCommitHead": "196f5f91b",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase29.release.task2"
+    "taskId": "application-skeleton-orchestration.phase32.audit.task1"
   }
 }
 ```
@@ -567,13 +567,55 @@
 ### Stream: Release Build
 
 136. [DONE] `application-skeleton-orchestration.phase29.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance wiring`).
-137. [PENDING] Git Commit: `build: release application skeleton acceptance wiring` (hash: TBD)
+137. [DONE] Git Commit: `build: release application skeleton acceptance wiring` (hash: 196f5f91b)
 
 ## Phase 30 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
 ### Stream: VSIX Retest
 
-138. [TODO] `application-skeleton-orchestration.phase30.acceptance.task1` User installs the v1.2.226 VSIX and reruns the Application Skeleton retest. The Core log must now show the runner's `Application Skeleton accept-contract command` entry followed by `Application Skeleton acceptance map.json write` after a typed acceptance (or button click). The map file must flip to `accepted: true`. Core must auto-commit `docs: accept application skeleton contract` (Phase 2). The Phase 3 materialization continuation prompt must reach the agent. Phase 3 commit `feat: materialize application skeleton` must land. (scope: chat/process observation only; no commit required).
+138. [BLOCKED] `application-skeleton-orchestration.phase30.acceptance.task1` User installs the v1.2.226 VSIX and reruns the Application Skeleton retest. The Core log must now show the runner's `Application Skeleton accept-contract command` entry followed by `Application Skeleton acceptance map.json write` after a typed acceptance (or button click). The map file must flip to `accepted: true`. Core must auto-commit `docs: accept application skeleton contract` (Phase 2). The Phase 3 materialization continuation prompt must reach the agent. Phase 3 commit `feat: materialize application skeleton` must land. (scope: chat/process observation only; no commit required). **BLOCKED 2026-05-11:** retest of v1.2.226 confirmed the Phase 28 callback wiring works end-to-end through Phase 3 (Core log session `0b6ddc0e-…` shows `Application Skeleton accept-contract command, decision: accepted`, `Application Skeleton acceptance map.json write, status: patched`, all three managed commits landed cleanly: `920d32b` draft, `5f0d524` accept, `b5049d1` materialize). But Phase 4 handoff never advanced: post-materialize advancement in `managed-plan-orchestrator-shim-source.ts::TASK_LINE_RE` does not match the Phase 4 handoff seed line because that line lacks the `expected commit:` clause entirely (it only says "no commit required" inside the scope clause). Advancement falls into the fallback-insert branch and synthesizes a spurious `phase3.materialize.task2` continuation pair with the SAME commit message `feat: materialize application skeleton`. The user's plan now shows a duplicated Pin 7 (synthesized continuation + original handoff anchor) and `phase3.materialize.task2` stuck IN_PROGRESS waiting for a duplicate commit that nobody will land. Hot-fix tracked under Phase 32; resumed retest under Phase 34.
+
+## Phase 32 - Handoff Anchor Regex Fix (owner: next agent, updated: 2026-05-11)
+
+### Stream: Scope Audit
+
+139. [DONE] `application-skeleton-orchestration.phase32.audit.task1` Open this scope: block Phase 30 with the handoff anchor regex gap, document the fallback-insert pollution, and pin the seed-line fix. After fix, the Phase 4 handoff seed line includes `expected commit: none — reserved handoff anchor` inside its parenthetical scope clause so `TASK_LINE_RE` matches it; advancement after Phase 3 materialize lands cleanly on the handoff task with `expectedCommitMessage: null`; the workspace stage transition mapping (`recordWorkspaceCommit` in `managed-todo-tree` ledger) then switches `activeStage: application_skeleton → quality_gates` through the normal path. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton handoff anchor regex scope`).
+140. [PENDING] Git Commit: `docs: open application skeleton handoff anchor regex scope` (hash: TBD)
+
+#### Audit findings (HEAD = `196f5f91b`, 2026-05-11)
+
+- **Symptom.** Phase 30 user retest of v1.2.226: Phase 1 / 2 / 3 commits all landed (`920d32b`, `5f0d524`, `b5049d1`); after `b5049d1` plan shows Pin 7 = `[IN_PROGRESS] application-skeleton.phase3.materialize.task2 expected commit: feat: materialize application skeleton` and Pin 8 = `[TODO] Git Commit: feat: materialize application skeleton` synthesized by the fallback-insert branch in `managed-plan-orchestrator-shim-source.ts`; the original Phase 4 handoff anchor was textually shifted but kept its number `7.`, producing the visible duplicate-Pin-7 state.
+- **Root cause.** Phase 4 handoff seed line in `managed-todo-tree.ts:324` reads `(scope: chat/process observation only; no commit required)` and never includes the literal `expected commit:` substring. Stream A's `TASK_LINE_RE` requires `.*expected commit: (?:\`([^\`]+)\`|none)`. Without that substring the handoff line is invisible to advancement. The fallback-insert branch at `managed-plan-orchestrator-shim-source.ts:242–259` then runs unconditionally and creates a continuation pair with `nextId = nextTaskId(currentTaskId)` and `nextMessage = current commit message`, producing the duplicate.
+- **Fix scope.** Single-character-class change in the seed line text plus matching fixture in the two tests that pin the seed shape (`managed-plan-orchestrator-installer.test.ts`, `session-request-handler-workflow-session.managed-workspace.test.ts`). The change reads `(scope: chat/process observation only; expected commit: none — reserved handoff anchor)`. The fallback-insert branch is not modified — it is correct in the wider Diagram Modules / Quality Gates flows where dynamic continuation injection is intentional; it is only the Application Skeleton seed that needs the handoff anchor to be regex-matchable.
+- **Manual retest cleanup.** The Phase 30 user workspace already contains the polluted plan with duplicate Pin 7 and an unstaged `application-skeleton.md` edit. The cleanest retest path is to delete `doc/TODO/stages/application-skeleton/todo-plan.md` (and let `ensureManagedTodoTree` re-seed it on the next workflow tick) before the v1.2.227 install. Phase 34 retest scope records this manual step.
+
+### Stream: Handoff Seed Line Regex Match
+
+141. [TODO] `application-skeleton-orchestration.phase32.handoff-regex.task1` Add `expected commit: none — reserved handoff anchor` inside the Phase 4 handoff seed line in `managed-todo-tree.ts` so `TASK_LINE_RE` matches it; sync the matching fixture text in `managed-plan-orchestrator-installer.test.ts` (if it asserts the handoff line literal) and `session-request-handler-workflow-session.managed-workspace.test.ts` (which pins the handoff task regex shape). After the fix, post-Phase-3-materialize advancement lands on `application-skeleton.handoff.task1` with `expectedCommitMessage: null` and no fallback-insert pollution. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: make application skeleton handoff anchor regex-matchable`).
+142. [TODO] Git Commit: `fix: make application skeleton handoff anchor regex-matchable` (hash: TBD)
+
+### Stream: Targeted Verification
+
+143. [TODO] `application-skeleton-orchestration.phase32.verify.task1` Run targeted Core tests for the shim, seed-shape, and workflow-session managed-workspace fixtures; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton handoff anchor verification`).
+144. [TODO] Git Commit: `docs: record application skeleton handoff anchor verification` (hash: TBD)
+
+## Phase 33 - Release Build (owner: next agent, updated: 2026-05-11)
+
+### Stream: Release Preparation
+
+145. [TODO] `application-skeleton-orchestration.phase33.release.task1` Update README/CHANGELOG for v1.2.227 (handoff anchor regex fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from earlier release scopes; no separate confirmation gate. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton handoff anchor release`).
+146. [TODO] Git Commit: `docs: prepare application skeleton handoff anchor release` (hash: TBD)
+
+### Stream: Release Build
+
+147. [TODO] `application-skeleton-orchestration.phase33.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton handoff anchor`).
+148. [TODO] Git Commit: `build: release application skeleton handoff anchor` (hash: TBD)
+
+## Phase 34 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
+
+### Stream: VSIX Retest
+
+149. [TODO] `application-skeleton-orchestration.phase34.acceptance.task1` Before installing v1.2.227, manually delete `doc/TODO/stages/application-skeleton/todo-plan.md` in the test workspace so the new seed (with the regex-matchable handoff anchor) is generated fresh; then install the v1.2.227 VSIX and rerun Application Skeleton end-to-end. Phase 1 / 2 / 3 commits must land as in Phase 30; after `feat: materialize application skeleton`, the plan must advance cleanly to `application-skeleton.handoff.task1` with `expectedCommitMessage: null`, no spurious `phase3.materialize.task2` continuation pair, and the workspace stage transition (`recordWorkspaceCommit`) must switch `activeStage` to `quality_gates`. (scope: chat/process observation only; no commit required).
 
 ## Phase 19 - Scope Closeout (owner: next agent, updated: 2026-05-11)
 
@@ -595,6 +637,14 @@
 
 ### Stream: Closeout After Acceptance
 
-139. [TODO] `application-skeleton-orchestration.phase31.closeout.task1` After explicit user acceptance of Phase 30 retest of v1.2.226, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+139. [BLOCKED] `application-skeleton-orchestration.phase31.closeout.task1` After explicit user acceptance of Phase 30 retest of v1.2.226, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`). **SUPERSEDED 2026-05-11:** Phase 30 retest revealed the handoff anchor regex gap; closeout relocated to Phase 35.
 140. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
-141. [TODO] `application-skeleton-orchestration.phase31.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+141. [BLOCKED] `application-skeleton-orchestration.phase31.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. **SUPERSEDED 2026-05-11:** handoff anchor relocated to Phase 35.
+
+## Phase 35 - Scope Closeout (owner: next agent, updated: 2026-05-11)
+
+### Stream: Closeout After Acceptance
+
+150. [TODO] `application-skeleton-orchestration.phase35.closeout.task1` After explicit user acceptance of Phase 34 retest of v1.2.227, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+151. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
+152. [TODO] `application-skeleton-orchestration.phase35.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
