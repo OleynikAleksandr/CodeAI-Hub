@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "58483babb",
+  "lastRecordedCommit": "fbb90b4df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9k.status.task1",
-  "expectedCommitMessage": "fix: keep application skeleton pending before materialization",
+  "currentTaskId": "application-skeleton.phase9k.repair-handoff.task1",
+  "expectedCommitMessage": "fix: hand off application skeleton after materialization repair",
   "debt": {
-    "expectedCommitMessage": "fix: keep application skeleton pending before materialization",
-    "preCommitHead": "58483babb",
+    "expectedCommitMessage": "fix: hand off application skeleton after materialization repair",
+    "preCommitHead": "fbb90b4df",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9k.status.task1"
+    "taskId": "application-skeleton.phase9k.repair-handoff.task1"
   }
 }
 ```
@@ -427,9 +427,9 @@ Application Skeleton Quality Gates handoff release build evidence (2026-05-11):
 119. [DONE] `application-skeleton.phase9k.repair-scope.task1` Include misplaced `.codeai-hub/**/product-parts/**` cleanup in generated Application Skeleton repair task scopes so the child plan accurately covers removal or relocation of the invalid projection. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope application skeleton misplaced product parts cleanup`).
 120. [DONE] Git Commit: `fix: scope application skeleton misplaced product parts cleanup` (hash: 58483babb)
 121. [DONE] `application-skeleton.phase9k.status.task1` Harden Application Skeleton workflow-state hydration so the stage cannot remain visually completed or launch Quality Gates before materialized progress is true and the managed lifecycle is clean. (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton pending before materialization`).
-122. [PENDING] Git Commit: `fix: keep application skeleton pending before materialization` (hash: TBD)
-123. [TODO] `application-skeleton.phase9k.repair-handoff.task1` Treat a successful materialization repair commit that creates root `product-parts/**` as the terminal Application Skeleton handoff so Core creates the Quality Gates child plan and advances the workspace ledger. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hand off application skeleton after materialization repair`).
-124. [TODO] Git Commit: `fix: hand off application skeleton after materialization repair` (hash: TBD)
+122. [DONE] Git Commit: `fix: keep application skeleton pending before materialization` (hash: fbb90b4df)
+123. [DONE] `application-skeleton.phase9k.repair-handoff.task1` Treat a successful materialization repair commit that creates root `product-parts/**` as the terminal Application Skeleton handoff so Core creates the Quality Gates child plan and advances the workspace ledger. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hand off application skeleton after materialization repair`).
+124. [PENDING] Git Commit: `fix: hand off application skeleton after materialization repair` (hash: TBD)
 125. [TODO] `application-skeleton.phase9k.verify.task1` Run targeted feedback, mutator, workflow-state, managed shim, and core build checks; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton misplaced product parts repair verification`).
 126. [TODO] Git Commit: `docs: record application skeleton misplaced product parts repair verification` (hash: TBD)
 
@@ -448,6 +448,11 @@ Application Skeleton pending-state evidence (2026-05-11):
 
 - PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-progress-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts` - 7 tests passed.
 - Fixed status rule: if Application Skeleton artifacts made the watcher mark the stage `completed`, but Core has no materialized progress snapshot yet, workflow-state hydration downgrades the stage to `in_progress` and keeps Quality Gates blocked.
+
+Application Skeleton materialization repair handoff evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts` - 9 tests passed.
+- Fixed handoff rule: `docs: repair application skeleton phase3.materialize attempt N` becomes a terminal Application Skeleton handoff only when the repair commit includes root `product-parts/**`; the generated shim then creates the Quality Gates child plan, advances `workspace.plan.md` to `activeStage: "quality_gates"`, and keeps Application Skeleton Phase 4 open for user-return revisions.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 

@@ -67,6 +67,8 @@ const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const APPLICATION_SKELETON_MATERIALIZE_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `application-skeleton\.phase3\.materialize\.task1`/u;
+const APPLICATION_SKELETON_MATERIALIZE_REPAIR_COMMIT =
+  "docs: repair application skeleton phase3.materialize attempt 1";
 const APPLICATION_SKELETON_USER_RETURN_PHASE_RE =
   /Phase 4 — Persistent Application Skeleton User Return/u;
 const APPLICATION_SKELETON_USER_RETURN_IN_PROGRESS_RE =
@@ -421,6 +423,127 @@ test("managed plan shim advances application skeleton acceptance commits to mate
     assert.match(
       userReturnPlan,
       APPLICATION_SKELETON_USER_RETURN_COMMIT_PIN_RE
+    );
+    assert.match(qualityGatesPlan, QUALITY_GATES_PLAN_ID_RE);
+    assert.match(qualityGatesPlan, QUALITY_GATES_TASK_RE);
+    assert.match(workspacePlan, QUALITY_GATES_ACTIVE_STAGE_RE);
+    assert.match(lastCommit.stdout, LEDGER_COMMIT_RE);
+    assert.equal(gitStatus.stdout, "");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed plan shim hands off application skeleton after materialization repair commits", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH);
+    const artifactRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton"
+    );
+    await mkdir(artifactRoot, { recursive: true });
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n",
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: draft application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const acceptanceInjection = injectApplicationSkeletonTaskPair({
+      kind: "acceptance",
+      planText: await readFile(planPath, "utf8"),
+    });
+    assert.ok(acceptanceInjection);
+    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      `${JSON.stringify({ accepted: true, lifecycle: "accepted" }, null, 2)}\n`,
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: accept application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const repairInjection = injectApplicationSkeletonTaskPair({
+      diagnostics: ["misplaced .codeai-hub/demo-workspace/product-parts"],
+      kind: "repair",
+      planText: await readFile(planPath, "utf8"),
+      targetPhase: "phase3.materialize",
+      targetSummary: "Move misplaced product-parts projection to root",
+    });
+    assert.ok(repairInjection);
+    await writeFile(planPath, repairInjection.nextPlanText, "utf8");
+    await mkdir(path.join(workspaceRoot, "product-parts/project-manager"), {
+      recursive: true,
+    });
+    await writeFile(
+      path.join(workspaceRoot, "product-parts/project-manager/README.md"),
+      "# Project Manager\n",
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n\nMaterialized by repair.\n",
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      `${JSON.stringify({ accepted: true, lifecycle: "materialized" }, null, 2)}\n`,
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", APPLICATION_SKELETON_MATERIALIZE_REPAIR_COMMIT],
+      { cwd: workspaceRoot }
+    );
+
+    const userReturnPlan = await readFile(planPath, "utf8");
+    const qualityGatesPlan = await readFile(
+      path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH),
+      "utf8"
+    );
+    const workspacePlan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      "utf8"
+    );
+    const gitStatus = await execFileAsync("git", ["status", "--short"], {
+      cwd: workspaceRoot,
+    });
+    const lastCommit = await execFileAsync("git", ["log", "-1", "--oneline"], {
+      cwd: workspaceRoot,
+    });
+
+    assert.match(userReturnPlan, APPLICATION_SKELETON_USER_RETURN_PHASE_RE);
+    assert.match(
+      userReturnPlan,
+      APPLICATION_SKELETON_USER_RETURN_IN_PROGRESS_RE
     );
     assert.match(qualityGatesPlan, QUALITY_GATES_PLAN_ID_RE);
     assert.match(qualityGatesPlan, QUALITY_GATES_TASK_RE);

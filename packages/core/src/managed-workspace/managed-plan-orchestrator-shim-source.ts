@@ -222,11 +222,12 @@ const insertApplicationSkeletonMaterializationTaskPair = (lines, commitLineIndex
 };
 const existingApplicationSkeletonUserReturnRevisionNumbers = (lines) =>
   lines.map((line) => /application-skeleton\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
-const shouldInsertApplicationSkeletonUserReturnRevision = (state, message) =>
+const shouldInsertApplicationSkeletonUserReturnRevision = (state, message, changedFiles) =>
   (state.currentTaskId === "application-skeleton.phase3.materialize.task1" && message === "feat: materialize application skeleton") ||
+  (/^application-skeleton\\.phase3\\.materialize\\.repair\\d+\\.task1$/u.test(state.currentTaskId ?? "") && isApplicationSkeletonMaterializationRepairCommit({ changedFiles, message }, "application_skeleton")) ||
   (/^application-skeleton\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(state.currentTaskId ?? "") && /^docs: revise application skeleton user return revision \\d+$/u.test(message));
-const insertApplicationSkeletonUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message) => {
-  if (!shouldInsertApplicationSkeletonUserReturnRevision(state, message)) {
+const insertApplicationSkeletonUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message, changedFiles) => {
+  if (!shouldInsertApplicationSkeletonUserReturnRevision(state, message, changedFiles)) {
     return;
   }
   const existingRevisions = existingApplicationSkeletonUserReturnRevisionNumbers(lines);
@@ -303,7 +304,7 @@ const advancePlanForCommit = (message) => {
   insertDiagramModulesProductPartTasks(lines, commitLineIndex, changedFiles);
   insertApplicationSkeletonReviewTaskPair(lines, commitLineIndex, state, message);
   insertApplicationSkeletonMaterializationTaskPair(lines, commitLineIndex, state, message);
-  insertApplicationSkeletonUserReturnRevisionTaskPair(lines, commitLineIndex, state, message);
+  insertApplicationSkeletonUserReturnRevisionTaskPair(lines, commitLineIndex, state, message, changedFiles);
 
   const nextTaskLineIndex = lines.findIndex(
     (line, index) => index > commitLineIndex && readTaskLine(line)
@@ -393,16 +394,14 @@ const shouldUnlockDiagramModulesNextStage = (event, currentStage) => {
     planState?.currentTaskId ?? ""
   );
 };
+const isApplicationSkeletonMaterializationRepairCommit = (event, currentStage) => currentStage === "application_skeleton" && /^docs: repair application skeleton phase3\\.materialize attempt \\d+$/u.test(event.message) && event.changedFiles.some((file) => file.startsWith("product-parts/"));
 const resolveWorkspaceLifecycleFields = (event, workspaceState) => {
   const currentStage = typeof workspaceState.activeStage === "string" ? workspaceState.activeStage : null;
   if (!currentStage) {
     return {};
   }
   const terminalMessage = STAGE_TERMINAL_COMMITS[currentStage];
-  const terminalNextStage =
-    typeof terminalMessage === "string" && terminalMessage === event.message
-      ? NEXT_STAGE_AFTER[currentStage] ?? null
-      : null;
+  const terminalNextStage = (typeof terminalMessage === "string" && terminalMessage === event.message) || isApplicationSkeletonMaterializationRepairCommit(event, currentStage) ? NEXT_STAGE_AFTER[currentStage] ?? null : null;
   const unlockedNextStage = shouldUnlockDiagramModulesNextStage(event, currentStage)
     ? NEXT_STAGE_AFTER[currentStage] ?? null
     : terminalNextStage;
