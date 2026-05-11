@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "4bf171ffd",
+  "lastRecordedCommit": "73f3a94fa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase33.release.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton handoff anchor release",
+  "currentTaskId": "application-skeleton-orchestration.phase33.release.task2",
+  "expectedCommitMessage": "build: release application skeleton handoff anchor",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton handoff anchor release",
-    "preCommitHead": "4bf171ffd",
+    "expectedCommitMessage": "build: release application skeleton handoff anchor",
+    "preCommitHead": "73f3a94fa",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase33.release.task1"
+    "taskId": "application-skeleton-orchestration.phase33.release.task2"
   }
 }
 ```
@@ -611,12 +611,12 @@
 ### Stream: Release Preparation
 
 145. [DONE] `application-skeleton-orchestration.phase33.release.task1` Update README/CHANGELOG for v1.2.227 (handoff anchor regex fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from earlier release scopes; no separate confirmation gate. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton handoff anchor release`).
-146. [PENDING] Git Commit: `docs: prepare application skeleton handoff anchor release` (hash: TBD)
+146. [DONE] Git Commit: `docs: prepare application skeleton handoff anchor release` (hash: 73f3a94fa)
 
 ### Stream: Release Build
 
-147. [TODO] `application-skeleton-orchestration.phase33.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton handoff anchor`).
-148. [TODO] Git Commit: `build: release application skeleton handoff anchor` (hash: TBD)
+147. [DONE] `application-skeleton-orchestration.phase33.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton handoff anchor`).
+148. [PENDING] Git Commit: `build: release application skeleton handoff anchor` (hash: TBD)
 
 ## Phase 34 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
