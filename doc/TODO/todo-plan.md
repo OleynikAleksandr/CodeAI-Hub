@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-planning",
   "branch": "main",
   "baseHead": "1106f0c72",
-  "lastRecordedCommit": "1106f0c72",
+  "lastRecordedCommit": "96879fc7f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-planning.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open quality gates planning intake",
+  "currentTaskId": "quality-gates-planning.phase1.scenario.task1",
+  "expectedCommitMessage": "docs: draft quality gates managed orchestration scenario",
   "debt": {
-    "expectedCommitMessage": "docs: open quality gates planning intake",
-    "preCommitHead": "1106f0c72",
+    "expectedCommitMessage": "docs: draft quality gates managed orchestration scenario",
+    "preCommitHead": "96879fc7f",
     "stage": "commit_pending",
-    "taskId": "quality-gates-planning.phase0.plan.task1"
+    "taskId": "quality-gates-planning.phase1.scenario.task1"
   }
 }
 ```
@@ -56,14 +56,14 @@
 ### Stream: Intake Plan
 
 1. [DONE] `quality-gates-planning.phase0.plan.task1` Open a minimal planning intake plan for the Quality Gates managed orchestration document after Application Skeleton acceptance. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open quality gates planning intake`).
-2. [PENDING] Git Commit: `docs: open quality gates planning intake` (hash: TBD)
+2. [DONE] Git Commit: `docs: open quality gates planning intake` (hash: 96879fc7f)
 
 ## Phase 1 - Quality Gates Scenario Document (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Managed Step Scenario
 
-3. [TODO] `quality-gates-planning.phase1.scenario.task1` Create the Quality Gates managed orchestration scenario from the archived Diagram Modules and Application Skeleton scenarios plus the v1.2.228-v1.2.238 retest lessons. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: draft quality gates managed orchestration scenario`).
-4. [TODO] Git Commit: `docs: draft quality gates managed orchestration scenario` (hash: TBD)
+3. [DONE] `quality-gates-planning.phase1.scenario.task1` Create the Quality Gates managed orchestration scenario from the archived Diagram Modules and Application Skeleton scenarios plus the v1.2.228-v1.2.238 retest lessons. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: draft quality gates managed orchestration scenario`).
+4. [PENDING] Git Commit: `docs: draft quality gates managed orchestration scenario` (hash: TBD)
 
 ## Phase 2 - User Review (owner: user, updated: 2026-05-11)
 

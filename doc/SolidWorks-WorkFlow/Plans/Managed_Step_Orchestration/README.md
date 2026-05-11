@@ -5,6 +5,10 @@
 
 This folder is the working area for scenario-level contracts of managed documentation steps that are still being planned or implemented.
 
+The active planning document is:
+
+- `Quality_Gates_Scenario.md`
+
 It keeps the still-useful planning sources that led to the current managed workflow implementation and will be used by the next `Quality Gates Baseline` planning intake:
 
 - `Managed_Workspace_Lifecycle_From_Diagram_Modules.md`
@@ -19,7 +23,7 @@ The superseded top-level `Application_Skeleton_Phase_B_Orchestration.md` plan wa
 - `Plans/Archive/Managed_Step_Orchestration_Application_Skeleton_Architecture_1.2.238.md`
 - `Plans/Archive/Managed_Step_Orchestration_Application_Skeleton_Scenario_1.2.238.md`
 
-Quality Gates Baseline follows as the next managed-step planning scope. Its planning document should explicitly reuse the Diagram Modules and Application Skeleton lifecycle lessons, but it must not reopen those closed implementation scopes.
+Quality Gates Baseline is the active managed-step planning scope. `Quality_Gates_Scenario.md` explicitly reuses the Diagram Modules and Application Skeleton lifecycle lessons, but it does not reopen those closed implementation scopes.
 
 ## Core Invariant
 
