@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "82fac908b",
+  "lastRecordedCommit": "de977a95a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase6.docs.task1",
-  "expectedCommitMessage": "docs: finalize application skeleton orchestration scenario",
+  "currentTaskId": "application-skeleton.phase6.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton orchestration verification",
   "debt": {
-    "expectedCommitMessage": "docs: finalize application skeleton orchestration scenario",
-    "preCommitHead": "82fac908b",
+    "expectedCommitMessage": "docs: record application skeleton orchestration verification",
+    "preCommitHead": "de977a95a",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase6.docs.task1"
+    "taskId": "application-skeleton.phase6.verify.task1"
   }
 }
 ```
@@ -114,12 +114,19 @@
 ### Stream: Scenario Documentation
 
 29. [DONE] `application-skeleton.phase6.docs.task1` Update Application Skeleton planning docs and the docs index with the implemented dynamic orchestration, rejection, acceptance, materialization, and post-completion revision semantics. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize application skeleton orchestration scenario`).
-30. [PENDING] Git Commit: `docs: finalize application skeleton orchestration scenario` (hash: TBD)
+30. [DONE] Git Commit: `docs: finalize application skeleton orchestration scenario` (hash: de977a95a)
 
 ### Stream: Targeted Verification
 
-31. [TODO] `application-skeleton.phase6.verify.task1` Run targeted Application Skeleton managed-workflow tests, the core package build, and `npm run plan:validate`; record exact evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton orchestration verification`).
-32. [TODO] Git Commit: `docs: record application skeleton orchestration verification` (hash: TBD)
+31. [DONE] `application-skeleton.phase6.verify.task1` Run targeted Application Skeleton managed-workflow tests, the core package build, and `npm run plan:validate`; record exact evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton orchestration verification`).
+32. [PENDING] Git Commit: `docs: record application skeleton orchestration verification` (hash: TBD)
+
+Verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-repair-attempt-evidence.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-contract-guard.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts` — 80 tests passed.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Residual risk: user must still verify the packaged VSIX in Project Manager against a real Application Skeleton workflow; this remains Phase 7 / Phase 9 acceptance.
 
 ## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
 
