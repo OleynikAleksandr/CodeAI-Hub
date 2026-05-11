@@ -4,20 +4,15 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "ACTIVE",
+  "executionScopeStatus": "NONE",
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "532d48a63",
+  "lastRecordedCommit": "4059c08f6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase10.plans-disposition.task1",
-  "expectedCommitMessage": "docs: close application skeleton planning disposition",
-  "debt": {
-    "expectedCommitMessage": "docs: close application skeleton planning disposition",
-    "preCommitHead": "532d48a63",
-    "stage": "commit_pending",
-    "taskId": "application-skeleton.phase10.plans-disposition.task1"
-  }
+  "currentTaskId": null,
+  "expectedCommitMessage": null,
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -535,5 +530,6 @@ Application Skeleton completed-stage LED boundary release build evidence (2026-0
 142. [DONE] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
 143. [DONE] Git Commit: `docs: archive application skeleton orchestration scope` (hash: 532d48a63)
 144. [DONE] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/Archive/**, doc/TODO/todo-plan.md`; expected commit: `docs: close application skeleton planning disposition`).
-145. [PENDING] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-146. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+145. [DONE] Git Commit: `docs: close application skeleton planning disposition` (hash: 4059c08f6)
+146. [DONE] `application-skeleton.phase10.closeout-anchor.task1` Final closeout transition marker after planning disposition. (scope: process only; no commit required). Result: Scope closed after accepted release 1.2.238 and planning disposition; start the Quality Gates planning intake from NONE state.
+147. [DONE] `application-skeleton.phase10.closeout-handoff.task1` Reserved post-closeout handoff anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required). Result: Scope closed by Plan Orchestrator; start a new plan only from NONE state.
