@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "10b53f626",
+  "lastRecordedCommit": "5857395f3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase8.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton orchestration release",
+  "currentTaskId": "application-skeleton.phase8.release-build.task1",
+  "expectedCommitMessage": "chore: build application skeleton orchestration release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton orchestration release",
-    "preCommitHead": "10b53f626",
+    "expectedCommitMessage": "chore: build application skeleton orchestration release",
+    "preCommitHead": "5857395f3",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase8.release-docs.task1"
+    "taskId": "application-skeleton.phase8.release-build.task1"
   }
 }
 ```
@@ -139,15 +139,23 @@ Verification evidence (2026-05-11):
 ### Stream: Release Confirmation And Packaging
 
 34. [DONE] `application-skeleton.phase8.release-docs.task1` After separate explicit release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton orchestration release`).
-35. [PENDING] Git Commit: `docs: prepare application skeleton orchestration release` (hash: TBD)
-36. [TODO] `application-skeleton.phase8.release-build.task1` Run the approved release build sequence and record artifact paths, VSIX version, and release evidence. (scope: `doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton orchestration release`).
-37. [TODO] Git Commit: `chore: build application skeleton orchestration release` (hash: TBD)
+35. [DONE] Git Commit: `docs: prepare application skeleton orchestration release` (hash: 5857395f3)
+36. [DONE] `application-skeleton.phase8.release-build.task1` Run the approved release build sequence with the same managed-plan dirty-state exception used by the accepted Diagram Modules release, then record artifact paths, VSIX version, and release evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton orchestration release`).
+37. [PENDING] Git Commit: `chore: build application skeleton orchestration release` (hash: TBD)
 
 Release docs preparation evidence (2026-05-11):
 
 - Future release version before packaging: `1.2.230` (`package.json` currently reports `1.2.229`; `build-all.sh` owns the version bump).
 - Updated `README.md` current-release marker and `CHANGELOG.md` release notes for Application Skeleton managed orchestration.
 - Explicit release-build confirmation was provided by the user in this thread: proceed through packaging without pauses and report after the new release is built.
+
+Release build evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` built unified version `1.2.230` with the managed-plan dirty-state exception. Provider, core, UI, and CEF launcher artifacts were produced in `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` packaged `codeai-hub-1.2.230.vsix`, verified SDK exclusions, validated local artifacts, checked markdown links, ran duplication advisory check, pruned/restored production dependencies, and verified the VSIX runtime package surface.
+- VSIX: `codeai-hub-1.2.230.vsix` (`48M`).
+- Release bundle paths: `doc/tmp/releases/*1.2.230*` and `~/.codeai-hub/releases/*1.2.230*`.
+- Tarballs present in `doc/tmp/releases/`: `claude-module-1.2.230.tar.bz2`, `codex-module-1.2.230.tar.bz2`, `gemini-module-1.2.230.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.230.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.230.tar.bz2`, `vscode-webview-1.2.230.tar.bz2`, `project-manager-1.2.230.tar.bz2`.
 
 ## Phase 9 - Release Acceptance Testing (owner: user, updated: 2026-05-11)
 
