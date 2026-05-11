@@ -29,7 +29,7 @@ Some providers can write files but cannot run shell commands such as `npm run pl
 The stable ownership split is:
 
 - Agent: create or revise owned documentation artifacts.
-- Core: validate artifacts, validate dirty Git ownership, stage only allowed paths, commit through the managed plan transaction, re-check clean Git, update plan state, and unlock the next step.
+- Core: validate artifacts, validate dirty Git ownership, create repair/revision task pairs before provider-visible feedback, stage only allowed paths, commit through the managed plan transaction, re-check clean Git, update plan state, and unlock the next step.
 
 ## Core Commit Transaction
 
@@ -44,7 +44,7 @@ Core may create a managed documentation commit only when all of these conditions
 7. After commit, Core re-runs plan status, stage validation, and Git clean checks.
 8. Downstream stages unlock only after the post-commit checks pass.
 
-If any condition fails, Core must not commit. It sends feedback to the owning agent session with the concrete blocker.
+If any condition fails, Core must not commit the target as accepted. Before it sends feedback to the owning agent session, it must create the next repair microtask and paired `Git Commit:` item in the active child plan. The next agent attempt is then committed either as accepted owned changes or as tracked failed-attempt evidence.
 
 The implemented runtime path is provider-event driven. Core starts managed documentation acceptance only from the post-turn pipeline after the provider emits a terminal event and Core has flushed already received assistant/dialog messages. A green `Diagram Modules`, `Application Skeleton`, or `Quality Gates Baseline` validator may trigger the managed documentation commit transaction inside that post-turn boundary. After a successful transaction, Core reads the child plan, Git state, and stage progress again and uses that post-commit snapshot for unlock, continuation, and feedback decisions.
 
@@ -52,7 +52,11 @@ Read-model paths are explicitly side-effect free. `workflow-state`, PM sidebar/s
 
 `Diagram Modules` has an additional subturn invariant: Core validates and commits exactly one active `expectedArtifact` at a time. `product-parts.index.md` is accepted before any `product-parts/<part-id>.md` turn starts. Each Product Part turn is accepted, repaired, or held pending independently; pending is a continuation state, not an error. Repair feedback must name the current `expectedArtifactPath`, validator, snapshot head, checked time, and exact diagnostics. Core sends the next Product Part instruction only after the previous artifact is accepted and the managed commit is complete.
 
-`Application Skeleton` and `Quality Gates Baseline` follow the same managed-task shape even when their provider work is physically smaller than Diagram Modules. The first accepted draft artifact is its own microtask and commit. Any later materialized or integrated target group is a separate Core-owned task/commit boundary, derived from accepted runtime artifacts instead of hardcoded product names. Core must not advance or unlock a downstream stage from an aggregate provider turn until the active child-plan task has been validated, committed, and re-read from the clean post-commit state.
+`Application Skeleton` and `Quality Gates Baseline` follow the same managed-task shape even when their provider work is physically smaller than Diagram Modules. The first accepted draft artifact is its own microtask and commit. User acceptance is its own Core-owned state transition and commit. Any later materialized or integrated target group is a separate Core-owned task/commit boundary, derived from accepted runtime artifacts instead of hardcoded product names. Core must not advance or unlock a downstream stage from an aggregate provider turn until the active child-plan task has been validated, committed, and re-read from the clean post-commit state.
+
+`Quality Gates Baseline` mirrors `Application Skeleton`: contract draft, user review, acceptance commit, integration commit, and post-completion user-return revisions. The integration prompt can be sent only after the acceptance commit exists. After accepted integration, Core opens a standing user-return revision phase for later gate changes; this phase is not the handoff to Development Tree.
+
+Every managed rejection is part of Git history. If the agent's repair attempt changes valid owned artifacts, Core commits those changes under the active repair task. If the attempt produces no acceptable artifact diff, Core writes tracked attempt evidence with the target, validation errors, observed dirty owned paths, agent outcome, and next repair direction, then commits that evidence. Repeated failed attempts must not exist only in provider jsonl, ignored runtime folders, or UI transcript.
 
 The transaction is intentionally narrow:
 
@@ -73,7 +77,7 @@ Examples:
 
 - `Diagram Modules`: `.codeai-hub/<workspaceSlug>/diagram_modules/**`
 - `Application Skeleton`: `.codeai-hub/<workspaceSlug>/application_skeleton/**` and the skeleton materialized production paths declared by the accepted map.
-- `Quality Gates Baseline`: `.codeai-hub/<workspaceSlug>/quality_gates/**`, gate scripts, lifecycle hook files, and package manifest files explicitly required by the quality-gates contract.
+- `Quality Gates Baseline`: draft/review owns `.codeai-hub/<workspaceSlug>/quality_gates/**`; integration additionally owns only gate scripts, package manifest files, tool configs, and Core hook-registry output explicitly required by the accepted quality-gates contract.
 - Development Tree documentation node: only that node's draft/specification/contract paths and the Core-owned node lifecycle metadata required for that node.
 
 Any dirty file outside the active stage allowlist is a hard blocker.
@@ -91,6 +95,8 @@ Core-owned prompts for managed stages are context bundles, not link lists. When 
 Every managed-stage provider prompt must include an explicit managed context preflight. The provider may write artifacts only when the prompt contains a Core-owned `## Managed Workflow Context Bundle` with a Plan Status line such as `activeStage: "diagram_modules"`, `activeStage: "application_skeleton"`, or `activeStage: "quality_gates"` for the current step. If that bundle or active-stage line is absent, the provider must stop before writing files and report a Core preflight failure instead of reading plan files, running `npm run plan:status`, staging files, or committing.
 
 For `Diagram Modules`, Core owns the automatic Phase 1 conversation until all Product Parts declared in `product-parts.index.md` have been accepted and committed one at a time. After that, Core stops automatic continuation and opens the user-owned review phase; every later user correction is a separate Core-tracked microtask and commit boundary.
+
+For `Application Skeleton` and `Quality Gates Baseline`, Core owns the same post-completion user-return boundary after materialization/integration acceptance. User-return turns that request changes create concrete `revisionN` task pairs and commits; discussion-only turns remain in session history.
 
 Provider-specific shell capability can be useful for diagnostics, but it is not part of the managed documentation lifecycle contract.
 

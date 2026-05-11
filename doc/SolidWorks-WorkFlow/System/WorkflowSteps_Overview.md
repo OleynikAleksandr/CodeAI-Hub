@@ -57,7 +57,7 @@ Diagram Modules
 
 `Description` и `Virtual Simulation` остаются pre-managed документными шагами. Когда пользователь запускает `Diagram Modules`, Core до первого turn-а агента переводит workspace в managed mode:
 - инициализирует Git repo, если его ещё нет;
-- устанавливает минимальный Plan Orchestrator lifecycle: `doc/TODO/todo-plan.md`, scripts/shims, hooks и validation/repair commands;
+- устанавливает минимальный Plan Orchestrator lifecycle: `doc/TODO/workspace.plan.md`, child plans under `doc/TODO/stages/<stage>/todo-plan.md`, scripts/shims, hooks и validation/repair commands;
 - создаёт tracked control plane `.codeai-hub/workflow/` и ignored machine state `.codeai-hub/runtime/`, `.codeai-hub/logs/`, `.codeai-hub/cache/`;
 - фиксирует `Description` и `Virtual Simulation` как read-only baselines: артефакты и история доступны для просмотра, но новые сообщения и прямые правки этих шагов блокируются.
 
@@ -71,7 +71,7 @@ Core Runtime является самостоятельным `Product Part`, а 
 - Project Manager является UI/read-model consumer и command surface, но не автором provider-visible continuation/acceptance messages.
 - Provider adapters являются transport/runtime boundary и сообщают Core о ходе turn-а через SDK/provider events; они не принимают решений о workflow acceptance.
 - Managed Git commit, stage acceptance, continuation prompt, rollover/autocompact и session summary должны получать состояние через один Core-owned post-turn contract, а не через конкурирующие read endpoints, timers или UI polling.
-- Settings, active `todo-plan.md`, provider SDK terminal events и Git state являются отдельными canonical sources; UI-карточки и status panels только записывают или отображают эти источники, но не создают параллельную правду.
+- Settings, active managed workspace ledger/child plan, provider SDK terminal events и Git state являются отдельными canonical sources; UI-карточки и status panels только записывают или отображают эти источники, но не создают параллельную правду.
 
 Для managed workflow stages порядок закрытия turn-а фиксирован:
 1. Provider SDK/adapter emits terminal event (`turn_completed` / `turn_failed`) for the active turn.
@@ -80,6 +80,8 @@ Core Runtime является самостоятельным `Product Part`, а 
 4. Core sends exactly one provider-visible decision for the next turn: acceptance continuation, rejection/repair feedback, pause, or handoff to user phase.
 
 Provider-visible managed prompts are content-readiness contracts. Они не должны просить агента выполнить `git add`, `git commit`, `npm run plan:commit` или "commit before final response". Даже когда шаг физически создаёт несколько файлов (`Application Skeleton`, `Quality Gates Baseline`), durable acceptance происходит только в Core-owned post-turn transaction. Допустимы нейтральные констатации факта в content-readiness терминах: "Core has not yet finalized the managed commit … respond with a content-readiness note" или "Core is blocked by unrelated dirty paths … provider should not act on this". Запрещены императивы вида "Commit or clean these files", "do not run Git commands from the provider turn" и любые прямые просьбы к провайдеру выполнять Git-операции.
+
+Core rejection is executable work, not transcript-only feedback. Before Core sends a provider-visible repair/retry/revision message for a managed stage, the active child plan must already contain the concrete microtask and the following `Git Commit:` item. If the agent attempt is still rejected, Core commits either accepted owned artifact changes or tracked failed-attempt evidence so the attempt is recoverable from Git and the stage plan.
 
 Runtime conformance constraints для managed post-turn arbitration (релиз 1.2.217):
 - Каждый новый terminal event провайдера получает Core-normalized stable identity (provider id/timestamp + Core-owned monotonic fallback). Повторный delivery того же event — no-op для arbitration; in-flight guard на (sessionId) защищает от concurrent re-entry.
@@ -94,7 +96,7 @@ Runtime conformance constraints для managed post-turn arbitration (релиз
 
 Текущий статус реализации Development Tree:
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
-- Materialization gate: Core держит Development Tree sessions disabled, пока `application-skeleton-map.json` не содержит `materialized: true`, а `quality-gates.json` не содержит `integrated: true`. Sidebar показывает locked-row вместо раннего session bootstrap.
+- Materialization gate: Core держит Development Tree sessions disabled, пока `application-skeleton-map.json` не содержит committed `materialized: true`, а `quality-gates.json` не содержит committed `integrated: true`. Sidebar показывает locked-row вместо раннего session bootstrap.
 - Materialization: Application Skeleton Agent создаёт project skeleton и production code folder projection, Quality Gates Agent интегрирует gate tooling, затем Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`. Core больше не pre-creates все node draft files и не bootstraps все Product Part / Cluster / Module sessions автоматически.
 - User-started node lifecycle: каждый Product Part / Cluster / Module node получает `lifecycle.startState = "not_started"` и `startable: true`, пока у него нет node session. Пользователь выбирает нужный node, provider/model/reasoning на Start card и запускает только этот node. Core проверяет clean Git, materialized node folder, пишет draft artifacts только выбранного node и создаёт session с `runSlug: "development-tree"`.
 - Branch-node selection: `pm:branch:selected` opens the real working surface: left node session pane and right draft artifact pane.
@@ -295,6 +297,8 @@ A premature-materialization validator derives the blocked-path set from the Appl
 
 Без этого шага Development Tree sessions не стартуют: агентам нельзя писать код, пока project skeleton не создан и quality gates не интегрированы в реальную файловую систему.
 
+Lifecycle этого шага является прямым аналогом `Application Skeleton`: Core-gated draft contract, user-led review, explicit Core-owned acceptance commit, Core-led integration, then post-completion user-return revision phase. Integration не начинается из draft/review turn-а и не начинается от одного только `accepted: true`; сначала должен существовать commit `docs: accept quality gates contract`, после чего Core создаёт integration microtask и paired `Git Commit:`.
+
 ### Входы
 
 - `application-skeleton.md`
@@ -307,8 +311,10 @@ A premature-materialization validator derives the blocked-path set from the Appl
 
 ### Execution contract
 
-- **Draft phase:** до explicit acceptance агент пишет только `quality-gates.md` и `quality-gates.json`; он не создаёт package scripts, configs, hooks, CI files или production code.
-- **Integration phase:** после explicit acceptance в той же сессии агент интегрирует accepted gates в materialized skeleton: package scripts/devDependencies, выбранные lint/format configs, Knip config, size/layout scripts, gate scripts/manifests и optional update automation config.
+- **Phase 1 - Contract draft:** до explicit acceptance агент пишет только `quality-gates.md` и `quality-gates.json`; он не создаёт package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts или production code. Core validates and commits the draft as `docs: draft quality gates contract`.
+- **Phase 2 - User review and acceptance:** пользователь обсуждает contract с агентом. Любая правка артефактов становится `revisionN` microtask + paired `Git Commit:`. Acceptance is Core-owned and must be committed as `docs: accept quality gates contract`.
+- **Phase 3 - Integration:** после acceptance commit в той же сессии агент интегрирует accepted gates в materialized skeleton: package scripts/devDependencies, выбранные lint/format configs, Knip config, size/layout scripts, gate scripts/manifests и optional update automation config. Core validates and commits integration as `feat: integrate quality gates baseline`.
+- **Phase 4 - User-return revisions:** после accepted integration шаг остаётся доступен для будущих пользовательских правок; каждая такая правка получает concrete revision task pair and commit, while Development Tree handoff remains a separate workspace lifecycle transition.
 - Hook structure остаётся Core-owned: Quality Gates описывает и создаёт gate content, а Core валидирует manifest и детерминированно регенерирует hook wiring через Hook Registry.
 - `quality-gates.json` обязан разделять намерение и фактическую исполнимость: `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `blockingIn`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, `verification`.
 - Advisory/planned/deferred gates не могут быть active blockers. `availability: "not_integrated"` для required gate допустим только с `integrationRequired: true` и конкретными `plannedIntegrationPaths`.
