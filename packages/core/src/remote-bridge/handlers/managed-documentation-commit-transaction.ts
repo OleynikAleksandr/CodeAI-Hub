@@ -14,6 +14,8 @@ const ACTIVE_PLAN_STATE_END = "<!-- codeai-plan-state:end -->";
 const ACTIVE_PLAN_STATE_START = "<!-- codeai-plan-state:start -->";
 const DIAGRAM_MODULES_PRODUCT_PART_TASK_RE =
   /^diagram-modules\.product-part\.([a-z0-9]+(?:-[a-z0-9]+)*)$/u;
+const DIAGRAM_MODULES_PLAN_PATH =
+  "doc/TODO/stages/diagram-modules/todo-plan.md";
 const JSON_FENCE_END_RE = /\s*```$/u;
 const JSON_FENCE_START_RE = /^```json\s*/u;
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
@@ -296,6 +298,9 @@ const filterDiagramModulesForActivePlan: StageScopeFilter = ({
   const workflowFiles = ownedFiles.filter((file) =>
     file.includes("/workflow/")
   );
+  const childPlanFiles = ownedFiles.filter(
+    (file) => file === DIAGRAM_MODULES_PLAN_PATH
+  );
   if (
     activePlan.currentTaskId === "diagram-modules.stream1.task1" ||
     activePlan.expectedCommitMessage.includes("product part index")
@@ -305,6 +310,7 @@ const filterDiagramModulesForActivePlan: StageScopeFilter = ({
         file.endsWith("/diagram_modules/product-parts.index.md")
       ),
       ...workflowFiles,
+      ...childPlanFiles,
     ];
   }
   const partId = DIAGRAM_MODULES_PRODUCT_PART_TASK_RE.exec(
@@ -319,6 +325,7 @@ const filterDiagramModulesForActivePlan: StageScopeFilter = ({
           file.endsWith(`/diagram_modules/product-parts/${partId}.md`)
         ),
         ...workflowFiles,
+        ...childPlanFiles,
       ]
     : ownedFiles;
 };

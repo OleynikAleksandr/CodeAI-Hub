@@ -19,6 +19,8 @@ const MANAGED_STAGE_IDS: readonly ManagedStageId[] = [
   "application_skeleton",
   "quality_gates",
 ];
+const DIAGRAM_MODULES_PLAN_PATH =
+  "doc/TODO/stages/diagram-modules/todo-plan.md";
 
 export const isManagedStageId = (value: string): value is ManagedStageId =>
   MANAGED_STAGE_IDS.includes(value as ManagedStageId);
@@ -55,7 +57,8 @@ export const readManagedGitStatus = async (
   for (const file of dirtyFiles) {
     if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/diagram_modules/`) ||
-      file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/`)
+      file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/`) ||
+      file === DIAGRAM_MODULES_PLAN_PATH
     ) {
       dirtyByStage.diagram_modules.push(file);
     } else if (
