@@ -1,3 +1,6 @@
+import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { injectApplicationSkeletonTaskPair } from "../../managed-workspace/managed-application-skeleton-plan-mutator";
 import type { ManagedAuditRecord } from "../../unified-session/storage";
 import {
   type ApplicationSkeletonAcceptanceWriteResult,
@@ -16,6 +19,9 @@ import {
   type ApplicationSkeletonAcceptContractDecision,
   evaluateApplicationSkeletonAcceptContractCommand,
 } from "./managed-stage-accept-contract-handler";
+
+const APPLICATION_SKELETON_PLAN_PATH =
+  "doc/TODO/stages/application-skeleton/todo-plan.md";
 
 // Side-effecting runner for the Application Skeleton accept-contract command.
 // Reads runtime state, calls the pure decision handler, and on acceptance
@@ -40,6 +46,9 @@ export interface ApplicationSkeletonAcceptContractRunnerDeps {
     record: ManagedAuditRecord
   ) => Promise<void>;
   readonly handle: (sessionId: string) => void;
+  readonly injectAcceptanceTaskPair?: (params: {
+    readonly workspaceRoot: string;
+  }) => Promise<boolean>;
   readonly logger: ApplicationSkeletonAcceptContractRunnerLogger;
   readonly markAccepted: (sessionId: string) => void;
   readonly readApplicationSkeletonProgress?: (params: {
@@ -64,6 +73,31 @@ export interface ApplicationSkeletonAcceptContractRunnerInput {
   readonly sessionId: string;
   readonly source: "ui-button" | "typed-fallback";
 }
+
+const injectAcceptanceTaskPair = async (params: {
+  readonly workspaceRoot: string;
+}): Promise<boolean> => {
+  const planPath = path.join(
+    params.workspaceRoot,
+    APPLICATION_SKELETON_PLAN_PATH
+  );
+  const planText = await readFile(planPath, "utf8").catch(() => null);
+  if (!planText) {
+    return false;
+  }
+  if (planText.includes('"application-skeleton.phase2.acceptance.task1"')) {
+    return true;
+  }
+  const injection = injectApplicationSkeletonTaskPair({
+    kind: "acceptance",
+    planText,
+  });
+  if (!injection) {
+    return false;
+  }
+  await writeFile(planPath, injection.nextPlanText, "utf8");
+  return true;
+};
 
 export const runApplicationSkeletonAcceptContractCommand = async (
   params: ApplicationSkeletonAcceptContractRunnerInput &
@@ -103,6 +137,20 @@ export const runApplicationSkeletonAcceptContractCommand = async (
   });
   if (decision.kind !== "accepted") {
     return decision;
+  }
+  const injectTaskPair =
+    params.injectAcceptanceTaskPair ?? injectAcceptanceTaskPair;
+  const acceptanceTaskInjected = await injectTaskPair({
+    workspaceRoot,
+  });
+  if (!acceptanceTaskInjected) {
+    return {
+      kind: "rejected",
+      reasons: [
+        "Core could not inject the Application Skeleton acceptance microtask.",
+      ],
+      stage: "application_skeleton",
+    };
   }
   // Variant A (Phase 24 acceptance write-path fix): the runner is the single
   // owner of the `accepted: true` write on `application-skeleton-map.json`.

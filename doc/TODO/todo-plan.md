@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "cce18f6a4",
+  "lastRecordedCommit": "f65bb2445",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase3.review-revisions.task1",
-  "expectedCommitMessage": "feat: track application skeleton review revisions",
+  "currentTaskId": "application-skeleton.phase3.acceptance.task1",
+  "expectedCommitMessage": "fix: commit application skeleton acceptance before materialization",
   "debt": {
-    "expectedCommitMessage": "feat: track application skeleton review revisions",
-    "preCommitHead": "cce18f6a4",
+    "expectedCommitMessage": "fix: commit application skeleton acceptance before materialization",
+    "preCommitHead": "f65bb2445",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase3.review-revisions.task1"
+    "taskId": "application-skeleton.phase3.acceptance.task1"
   }
 }
 ```
@@ -81,9 +81,9 @@
 ### Stream: Contract Review Revisions
 
 13. [DONE] `application-skeleton.phase3.review-revisions.task1` Ensure user review messages before acceptance inject `review-revisionN` task pairs and commit changed Application Skeleton draft artifacts before the next review decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `feat: track application skeleton review revisions`).
-14. [PENDING] Git Commit: `feat: track application skeleton review revisions` (hash: TBD)
-15. [TODO] `application-skeleton.phase3.acceptance.task1` Make the Accept Contract command inject and commit explicit acceptance state before materialization can be requested. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts`; expected commit: `fix: commit application skeleton acceptance before materialization`).
-16. [TODO] Git Commit: `fix: commit application skeleton acceptance before materialization` (hash: TBD)
+14. [DONE] Git Commit: `feat: track application skeleton review revisions` (hash: f65bb2445)
+15. [DONE] `application-skeleton.phase3.acceptance.task1` Make the Accept Contract command inject and commit explicit acceptance state before materialization can be requested. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts`; expected commit: `fix: commit application skeleton acceptance before materialization`).
+16. [PENDING] Git Commit: `fix: commit application skeleton acceptance before materialization` (hash: TBD)
 17. [TODO] `application-skeleton.phase3.materialization-gate.task1` Gate the materialization continuation on completed acceptance commit evidence, then inject only the materialization microtask and its paired commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `fix: gate application skeleton materialization after acceptance commit`).
 18. [TODO] Git Commit: `fix: gate application skeleton materialization after acceptance commit` (hash: TBD)
 

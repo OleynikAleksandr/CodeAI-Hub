@@ -38,6 +38,7 @@ const buildCleanGitStatus = (): ManagedGitStatus => ({
 interface RunnerSpy {
   readonly auditCalls: Array<{ sessionId: string; text: string }>;
   readonly handleCalls: string[];
+  readonly injectCalls: Array<{ workspaceRoot: string }>;
   readonly logCalls: Array<{
     message: string;
     payload?: Record<string, unknown>;
@@ -59,6 +60,7 @@ const buildRunnerDeps = (
   const spy: RunnerSpy = {
     auditCalls: [],
     handleCalls: [],
+    injectCalls: [],
     logCalls: [],
     markAcceptedCalls: [],
     resetRetryCalls: [],
@@ -77,6 +79,10 @@ const buildRunnerDeps = (
       },
       handle: (sessionId) => {
         spy.handleCalls.push(sessionId);
+      },
+      injectAcceptanceTaskPair: (params) => {
+        spy.injectCalls.push(params);
+        return Promise.resolve(true);
       },
       logger: {
         info: (message, payload) => {
@@ -110,6 +116,7 @@ test("runner patches application-skeleton-map.json on accepted decision (Variant
   const decision = await runApplicationSkeletonAcceptContractCommand(deps);
 
   assert.equal(decision.kind, "accepted");
+  assert.deepEqual(spy.injectCalls, [{ workspaceRoot: WORKSPACE_PATH }]);
   assert.deepEqual(spy.writeCalls, [
     { workspaceRoot: WORKSPACE_PATH, workspaceSlug: WORKSPACE_SLUG },
   ]);
@@ -133,6 +140,7 @@ test("runner does not patch map.json when the handler rejects acceptance", async
 
   assert.equal(decision.kind, "rejected");
   assert.deepEqual(spy.writeCalls, []);
+  assert.deepEqual(spy.injectCalls, []);
   assert.deepEqual(spy.markAcceptedCalls, []);
   assert.deepEqual(spy.handleCalls, []);
   assert.equal(spy.auditCalls.length, 0);
