@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "04cb14660",
+  "lastRecordedCommit": "7fbac07cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9l.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton misplaced product parts repair release",
+  "currentTaskId": "application-skeleton.phase9l.release-build.task1",
+  "expectedCommitMessage": "chore: build application skeleton misplaced product parts repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton misplaced product parts repair release",
-    "preCommitHead": "04cb14660",
+    "expectedCommitMessage": "chore: build application skeleton misplaced product parts repair release",
+    "preCommitHead": "7fbac07cc",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9l.release-docs.task1"
+    "taskId": "application-skeleton.phase9l.release-build.task1"
   }
 }
 ```
@@ -468,15 +468,23 @@ Application Skeleton misplaced product-parts repair verification evidence (2026-
 
 127. [DONE] `application-skeleton.phase9l.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Application Skeleton misplaced product-parts repair. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build for the Application Skeleton misplaced product-parts repair.
 128. [DONE] `application-skeleton.phase9l.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton misplaced product-parts repair. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton misplaced product parts repair release`).
-129. [PENDING] Git Commit: `docs: prepare application skeleton misplaced product parts repair release` (hash: TBD)
-130. [TODO] `application-skeleton.phase9l.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton misplaced product parts repair release`).
-131. [TODO] Git Commit: `chore: build application skeleton misplaced product parts repair release` (hash: TBD)
+129. [DONE] Git Commit: `docs: prepare application skeleton misplaced product parts repair release` (hash: 7fbac07cc)
+130. [DONE] `application-skeleton.phase9l.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton misplaced product parts repair release`).
+131. [PENDING] Git Commit: `chore: build application skeleton misplaced product parts repair release` (hash: TBD)
 132. [TODO] `application-skeleton.phase9l.release-acceptance.task1` User installs the produced release and retests Application Skeleton misplaced product-parts repair, materialization repair handoff, green-state prevention, Quality Gates child-plan creation, and next-step launch. (scope: chat/process observation only; no commit required).
 
 Application Skeleton misplaced product-parts repair release docs preparation evidence (2026-05-11):
 
 - Future release version before packaging: `1.2.237` (`package.json` currently reports `1.2.236`; `build-all.sh` owns the version bump).
 - Explicit release-build confirmation was provided by the user in this thread: "Создаем новый релиз."
+
+Application Skeleton misplaced product-parts repair release build evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` completed the unified provider/core/UI/launcher build and bumped the repository version to `1.2.237`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` completed architecture checks, type-check, compile, SDK exclusions, local artefact validation, markdown link checks, duplication checks, VSIX packaging, and runtime package surface verification.
+- VSIX: `codeai-hub-1.2.237.vsix` (`48M`).
+- Release tarballs refreshed under `doc/tmp/releases/`: `claude-module-1.2.237.tar.bz2`, `codex-module-1.2.237.tar.bz2`, `gemini-module-1.2.237.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.237.tar.bz2`, `vscode-webview-1.2.237.tar.bz2`, `project-manager-1.2.237.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.237.tar.bz2`.
+- User retest target: install `codeai-hub-1.2.237.vsix`, retest Application Skeleton misplaced product-parts repair, materialization repair handoff, green-state prevention, Quality Gates child-plan creation, and next-step launch.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
