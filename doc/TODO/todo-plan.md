@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "212517ef2",
+  "lastRecordedCommit": "9b76980c9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9g.release-build.task1",
-  "expectedCommitMessage": "chore: build managed stage isolation release",
+  "currentTaskId": "application-skeleton.phase9h.plan.task1",
+  "expectedCommitMessage": "docs: plan virtual simulation alias recovery",
   "debt": {
-    "expectedCommitMessage": "chore: build managed stage isolation release",
-    "preCommitHead": "212517ef2",
+    "expectedCommitMessage": "docs: plan virtual simulation alias recovery",
+    "preCommitHead": "9b76980c9",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9g.release-build.task1"
+    "taskId": "application-skeleton.phase9h.plan.task1"
   }
 }
 ```
@@ -306,8 +306,8 @@ Managed stage isolation verification evidence (2026-05-11):
 82. [DONE] `application-skeleton.phase9g.release-docs.task1` Prepare release metadata for the approved managed stage isolation fix by updating `README.md` and `CHANGELOG.md` to the next release version. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed stage isolation release`).
 83. [DONE] Git Commit: `docs: prepare managed stage isolation release` (hash: 212517ef2)
 84. [DONE] `application-skeleton.phase9g.release-build.task1` Run the approved release build sequence for the managed stage isolation fix, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed stage isolation release`).
-85. [PENDING] Git Commit: `chore: build managed stage isolation release` (hash: TBD)
-86. [TODO] `application-skeleton.phase9g.release-acceptance.task1` User installs the produced release and retests Diagram Modules first-turn acceptance plus Application Skeleton unlock on a clean managed workspace. (scope: chat/process observation only; no commit required).
+85. [DONE] Git Commit: `chore: build managed stage isolation release` (hash: 9b76980c9)
+86. [DONE] `application-skeleton.phase9g.release-acceptance.task1` User installs the produced release and retests Diagram Modules first-turn acceptance plus Application Skeleton unlock on a clean managed workspace. (scope: chat/process observation only; no commit required). Result: Release 1.2.234 retest rejected before Diagram Modules because Virtual Simulation wrote `virtual-simulation.md` into a provider-created `virtual-simulation/` alias directory while the Core gate requires canonical `virtual_simulation/virtual-simulation.md`.
 
 Managed stage isolation release docs preparation evidence (2026-05-11):
 
@@ -323,6 +323,17 @@ Managed stage isolation release build evidence (2026-05-11):
 - Release bundle paths: `doc/tmp/releases/*1.2.234*` and `~/.codeai-hub/releases/*1.2.234*`.
 - Tarballs present in `doc/tmp/releases/`: `claude-module-1.2.234.tar.bz2`, `codex-module-1.2.234.tar.bz2`, `gemini-module-1.2.234.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.234.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.234.tar.bz2`, `vscode-webview-1.2.234.tar.bz2`, `project-manager-1.2.234.tar.bz2`.
 - User retest target: reinstall `codeai-hub-1.2.234.vsix`, then retest Diagram Modules first-turn acceptance on a clean managed workspace and continue to Application Skeleton unlock.
+
+## Phase 9H - Release Blocker: Virtual Simulation Alias Recovery (owner: Codex, updated: 2026-05-11)
+
+### Stream: Canonical Artifact Directory Repair
+
+87. [DONE] `application-skeleton.phase9h.plan.task1` Record the v1.2.234 blocker where Codex wrote `virtual-simulation.md` under the non-canonical `virtual-simulation/` directory while Core gates read only `virtual_simulation/`, and split the repair into deterministic canonicalization plus verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan virtual simulation alias recovery`).
+88. [PENDING] Git Commit: `docs: plan virtual simulation alias recovery` (hash: TBD)
+89. [TODO] `application-skeleton.phase9h.canonicalize.task1` Canonicalize a provider-created `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` alias into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` before workflow-state hydration, validation, and Diagram Modules gating; add regression coverage for the recovered gate. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: recover virtual simulation artifact alias`).
+90. [TODO] Git Commit: `fix: recover virtual simulation artifact alias` (hash: TBD)
+91. [TODO] `application-skeleton.phase9h.verify.task1` Run targeted workflow-state tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record virtual simulation alias recovery verification`).
+92. [TODO] Git Commit: `docs: record virtual simulation alias recovery verification` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
