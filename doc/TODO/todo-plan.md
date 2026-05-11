@@ -8,11 +8,16 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "5ac196dae",
+  "lastRecordedCommit": "4a4c6568e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase28.wiring.task1",
-  "expectedCommitMessage": "fix: wire application skeleton accept contract callback in production",
-  "debt": null
+  "currentTaskId": "application-skeleton-orchestration.phase28.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton acceptance wiring verification",
+  "debt": {
+    "expectedCommitMessage": "docs: record application skeleton acceptance wiring verification",
+    "preCommitHead": "4a4c6568e",
+    "stage": "commit_pending",
+    "taskId": "application-skeleton-orchestration.phase28.verify.task1"
+  }
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -536,13 +541,21 @@
 
 ### Stream: Production Callback Wiring
 
-130. [IN_PROGRESS] `application-skeleton-orchestration.phase28.wiring.task1` Wire the Phase 5 / Phase 24 acceptance pipeline end-to-end: add an optional `handleManagedAcceptContractCommand` field to `SessionRequestHandlerOptions` (and the runtime deps interface mirror), forward it through `createSessionRequestHandlerRuntime` → `createSessionRequestHandlerRuntimeCore` into the `SessionRequestHandlerMessageDispatch` deps, and bind it at composition time in `remote-bridge-bootstrap.ts` via the existing forward-declared `workflowStateService` (late-bound to `managedPostTurnService.handleApplicationSkeletonAcceptContractCommand`). Scope expanded by two interface-type files because the option must be typed in both the public `SessionRequestHandlerOptions` AND the internal `SessionRequestHandlerRuntimeDependencies` for the runtime layer to forward it; without both, the build fails with `TS2304 Cannot find name 'ApplicationSkeletonAcceptContractDecision'`. (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-types.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-types.ts`; expected commit: `fix: wire application skeleton accept contract callback in production`).
-131. [TODO] Git Commit: `fix: wire application skeleton accept contract callback in production` (hash: TBD)
+130. [DONE] `application-skeleton-orchestration.phase28.wiring.task1` Wire the Phase 5 / Phase 24 acceptance pipeline end-to-end: add an optional `handleManagedAcceptContractCommand` field to `SessionRequestHandlerOptions` (and the runtime deps interface mirror), forward it through `createSessionRequestHandlerRuntime` → `createSessionRequestHandlerRuntimeCore` into the `SessionRequestHandlerMessageDispatch` deps, and bind it at composition time in `remote-bridge-bootstrap.ts` via the existing forward-declared `workflowStateService` (late-bound to `managedPostTurnService.handleApplicationSkeletonAcceptContractCommand`). Scope expanded by two interface-type files because the option must be typed in both the public `SessionRequestHandlerOptions` AND the internal `SessionRequestHandlerRuntimeDependencies` for the runtime layer to forward it; without both, the build fails with `TS2304 Cannot find name 'ApplicationSkeletonAcceptContractDecision'`. (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-types.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-types.ts`; expected commit: `fix: wire application skeleton accept contract callback in production`).
+131. [DONE] Git Commit: `fix: wire application skeleton accept contract callback in production` (hash: 4a4c6568e)
 
 ### Stream: Targeted Verification
 
-132. [TODO] `application-skeleton-orchestration.phase28.verify.task1` Run targeted Core tests for the dispatch, runner, writer, and end-to-end modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance wiring verification`).
-133. [TODO] Git Commit: `docs: record application skeleton acceptance wiring verification` (hash: TBD)
+132. [DONE] `application-skeleton-orchestration.phase28.verify.task1` Run targeted Core tests for the dispatch, runner, writer, and end-to-end modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance wiring verification`).
+
+#### Verification evidence (HEAD = `4a4c6568e`, 2026-05-11)
+
+- **Targeted Core tests:** 43/43 pass across `application-skeleton-acceptance-writer.test.ts` (7), `managed-stage-accept-contract-runner.test.ts` (3), `managed-stage-accept-contract-handler.test.ts` (8), `application-skeleton-continuation-dispatcher.test.ts` (8), `managed-workflow-post-turn-service.test.ts` (15), `application-skeleton-end-to-end.test.ts` (2).
+- **`npm run build --workspace @codeai-hub/core`:** passes (no TypeScript errors).
+- **`npm run typecheck:webview`:** passes (no errors).
+- **Wiring proof.** `grep -rn "handleManagedAcceptContractCommand:" packages/core/src` (excluding `.test.`) now returns **two** matches: the existing **read** site `session-request-handler-message-dispatch.ts:183` (router callback forward) AND the new **write** sites — `remote-bridge-bootstrap.ts` (late-bound to `workflowStateService.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand`), `session-request-handler.ts` (forward into runtime), `session-request-handler-runtime-core.ts` (forward into dispatch deps factory).
+- **End-to-end path closed.** Typed-fallback (router) and PM Accept Contract button (HTTP endpoint) both reach the post-turn service's `handleApplicationSkeletonAcceptContractCommand`, which delegates to the Phase 24 runner, which calls the Phase 24 writer, which patches `application-skeleton-map.json::accepted: true` + `reviewState: "accepted"`. The managed commit gate then auto-commits `docs: accept application skeleton contract`, the read-model snapshot reports `progress.accepted === true`, and the Phase 3 continuation dispatcher fires.
+133. [PENDING] Git Commit: `docs: record application skeleton acceptance wiring verification` (hash: TBD)
 
 ## Phase 29 - Release Build (owner: next agent, updated: 2026-05-11)
 
