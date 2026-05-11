@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "ffba1dff6",
+  "lastRecordedCommit": "b67375168",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9j.review-anchor.task1",
-  "expectedCommitMessage": "fix: close application skeleton review anchor on acceptance",
+  "currentTaskId": "application-skeleton.phase9j.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton quality gates handoff verification",
   "debt": {
-    "expectedCommitMessage": "fix: close application skeleton review anchor on acceptance",
-    "preCommitHead": "ffba1dff6",
+    "expectedCommitMessage": "docs: record application skeleton quality gates handoff verification",
+    "preCommitHead": "b67375168",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9j.review-anchor.task1"
+    "taskId": "application-skeleton.phase9j.verify.task1"
   }
 }
 ```
@@ -380,9 +380,18 @@ Virtual Simulation alias recovery release build evidence (2026-05-11):
 103. [DONE] `application-skeleton.phase9j.quality-plan.task1` Make the managed plan shim create the next stage child plan before terminal workspace-ledger rollover commits, and cover the real Application Skeleton -> Quality Gates path without pre-created Quality Gates plan. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: create quality gates plan before application skeleton handoff`).
 104. [DONE] Git Commit: `fix: create quality gates plan before application skeleton handoff` (hash: ffba1dff6)
 105. [DONE] `application-skeleton.phase9j.review-anchor.task1` Close the open Application Skeleton Phase 2 review anchor when the user accepts without a revision, so later accepted/materialized tasks cannot coexist with a stale `IN_PROGRESS` review task. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: close application skeleton review anchor on acceptance`).
-106. [PENDING] Git Commit: `fix: close application skeleton review anchor on acceptance` (hash: TBD)
-107. [TODO] `application-skeleton.phase9j.verify.task1` Run targeted managed-plan rollover tests, Application Skeleton mutator tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton quality gates handoff verification`).
-108. [TODO] Git Commit: `docs: record application skeleton quality gates handoff verification` (hash: TBD)
+106. [DONE] Git Commit: `fix: close application skeleton review anchor on acceptance` (hash: b67375168)
+107. [DONE] `application-skeleton.phase9j.verify.task1` Run targeted managed-plan rollover tests, Application Skeleton mutator tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton quality gates handoff verification`).
+108. [PENDING] Git Commit: `docs: record application skeleton quality gates handoff verification` (hash: TBD)
+
+Application Skeleton Quality Gates handoff repair verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts` - 13 tests passed.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Covered regression: Application Skeleton materialization no longer relies on a pre-created `doc/TODO/stages/quality-gates/todo-plan.md`; the generated managed shim creates the Quality Gates child plan before workspace-ledger rollover, includes it in the ledger commit, moves `workspace.plan.md` to `activeStage: "quality_gates"`, and leaves the managed workspace Git status clean.
+- Covered regression: accepting the Application Skeleton contract without a user revision closes the Phase 2 review anchor and marks its revision commit pair as not-created due to acceptance, so Phase 2 cannot stay visually `IN_PROGRESS` after acceptance/materialization.
+- Residual requirement: package a new VSIX only after separate release-build confirmation; no release build scripts were run for this handoff repair yet.
 
 ### Stream: Rebuild And Retest Boundary
 
