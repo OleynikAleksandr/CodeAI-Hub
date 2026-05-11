@@ -112,6 +112,81 @@ test("managed Git status classifies dirty files by owning managed stage", async 
   }
 });
 
+test("managed Git status ignores volatile Core metadata after restart", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-git-stage-gate-volatile-")
+  );
+  const workspaceSlug = "demo";
+
+  try {
+    await initCommittedWorkspace(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+      `${JSON.stringify(
+        {
+          workspaceSlug,
+          workspacePath: workspaceRoot,
+          createdAt: "2026-05-11T12:00:00.000Z",
+          updatedAt: "2026-05-11T12:00:00.000Z",
+          finalPath: `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+        },
+        null,
+        2
+      )}\n`
+    );
+    await execFileAsync(
+      "git",
+      ["add", `.codeai-hub/${workspaceSlug}/description/description-step.json`],
+      { cwd: workspaceRoot }
+    );
+    await execFileAsync("git", ["commit", "-m", "docs: record description"], {
+      cwd: workspaceRoot,
+    });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+      `${JSON.stringify(
+        {
+          workspaceSlug,
+          workspacePath: workspaceRoot,
+          createdAt: "2026-05-11T12:00:00.000Z",
+          updatedAt: "2026-05-11T13:33:04.373Z",
+          finalPath: `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/state/task-timers.json",
+      `${JSON.stringify(
+        {
+          schemaVersion: 2,
+          totals: {
+            description: 15,
+            diagram_modules: 150,
+            virtual_simulation: 10,
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+
+    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+
+    assert.equal(status.clean, true);
+    assert.deepEqual(status.dirtyFiles, []);
+    assert.deepEqual(status.dirtyByStage.diagram_modules, []);
+    assert.deepEqual(status.dirtyByStage.application_skeleton, []);
+    assert.deepEqual(status.dirtyByStage.quality_gates, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("managed dirty files downgrade owning stage progress with precise errors", () => {
   const diagramProgress = attachManagedGitStatus(
     {

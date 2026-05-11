@@ -27,6 +27,13 @@ const APPLICATION_SKELETON_PLAN_PATH =
 export const isManagedStageId = (value: string): value is ManagedStageId =>
   MANAGED_STAGE_IDS.includes(value as ManagedStageId);
 
+const isVolatileCoreMetadataPath = (
+  file: string,
+  workspaceSlug: string
+): boolean =>
+  file.startsWith(".codeai-hub/state/") ||
+  file === `.codeai-hub/${workspaceSlug}/description/description-step.json`;
+
 const parseGitStatusPath = (line: string): string | null => {
   const rawPath = line.slice(3).trim();
   if (!rawPath) {
@@ -50,7 +57,8 @@ export const readManagedGitStatus = async (
   const dirtyFiles = stdout
     .split("\n")
     .map((line) => parseGitStatusPath(line))
-    .filter((entry): entry is string => Boolean(entry));
+    .filter((entry): entry is string => Boolean(entry))
+    .filter((file) => !isVolatileCoreMetadataPath(file, workspaceSlug));
   const dirtyByStage: Record<ManagedStageId, string[]> = {
     diagram_modules: [],
     application_skeleton: [],
