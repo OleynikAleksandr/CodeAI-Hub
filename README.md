@@ -2,22 +2,31 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.224** (release-blocker hot-fix for v1.2.223)
+**Current Release — v1.2.225** (acceptance write-path fix for v1.2.224)
 
-This hot-fix release addresses a release-blocker regression in v1.2.223:
-the Phase 16E acceptance phrase recognizer broadening (bare `accept`/
-`accepted` verbs without requiring `контракт`) matched Core's ~100 KB
-bootstrap prompts because those prompts contain instructional text about
-the PM "Accept Contract" button. The Application Skeleton typed-fallback
-router intercepted the bootstrap prompt as a typed acceptance and refused
-to deliver it to codex-cli, so the Application Skeleton session never
-started. The fix caps recognizer input to 200 characters — short
-user-typed phrases (1–50 chars) are still recognized with the Phase 16E
-broadening, but multi-paragraph Core prompts are excluded. All other
-Phase 16 Option C invariants (Phase 2 task + Git Commit pin, visible
-Core feedback dispatch, map.json-driven acceptance observation, broadened
-recognizer for short phrases, `materializedPaths` normalization) remain
-in place.
+This release closes the last missing piece of the Phase 16 Option C
+acceptance flow: the `accepted: true` write on
+`application-skeleton-map.json`. Before v1.2.225, every acceptance entry
+point (PM Accept Contract button via HTTP endpoint, typed-fallback
+recognizer with broadened verbs, Core accept-contract handler decision)
+only set the in-memory `recentlyAcceptedSessions` Set. Nobody patched
+the map file. The Phase 3 continuation dispatcher (Stream 16D Option C)
+gates on `progress.accepted === true` reading the file, so it never
+fired. User-typed "accepted" was silently intercepted by the typed-
+fallback router with no follow-up turn, no Phase 2 accept commit, and
+no Phase 3 materialization prompt.
+
+The fix introduces a single-owner writer module
+(`application-skeleton-acceptance-writer.ts`) that patches the map file
+to `accepted: true` (and `reviewState: "accepted"` for draft maps;
+materialized maps preserve their `reviewState`). The Core accept-contract
+runner calls it on `kind: "accepted"`, so both the PM button (via HTTP
+endpoint) and the typed-fallback router funnel through the same writer.
+The patched file becomes a dirty Application Skeleton-owned artifact;
+the managed commit gate auto-commits `docs: accept application skeleton
+contract` (Phase 2 commit); the next read-model snapshot reports
+`progress.accepted === true`; the Phase 3 dispatcher fires the
+materialization continuation prompt to the agent.
 
 - SolidWorks-WorkFlow docs index: `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - System SSOT: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`

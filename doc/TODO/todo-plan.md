@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "df9786fad",
+  "lastRecordedCommit": "8b7187ff4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase24.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton acceptance write-path verification",
+  "currentTaskId": "application-skeleton-orchestration.phase25.release.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton acceptance write-path release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton acceptance write-path verification",
-    "preCommitHead": "df9786fad",
+    "expectedCommitMessage": "docs: prepare application skeleton acceptance write-path release",
+    "preCommitHead": "8b7187ff4",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase24.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase25.release.task1"
   }
 }
 ```
@@ -504,14 +504,14 @@
 - **`npm run typecheck:webview`:** passes.
 - **End-to-end flow.** Recognizer matches "accepted" → typed-fallback router calls runner → runner reads progress → handler decides `kind: "accepted"` → runner calls `writeApplicationSkeletonAcceptance` → `application-skeleton-map.json` gets `accepted: true` + `reviewState: "accepted"` → managed-git-status now lists the file under `dirtyByStage.application_skeleton` → `hasCommittableApplicationSkeletonStage` returns true → `commitManagedDocumentationStageIfReady` auto-commits `docs: accept application skeleton contract` (the plan's `expectedCommitMessage`) → plan advances to Phase 3 (`phase3.materialize.task1`) → next read-model snapshot reports `progress.accepted === true` → `sendApplicationSkeletonContinuationIfReady` fires the Phase 3 materialization continuation prompt to the agent.
 - **PM button parity.** HTTP endpoint `/api/v1/orchestrator/managed-stage-accept-contract` → `handleApplicationSkeletonAcceptContractCommand` → same runner → same writer. Variant A single-owner contract holds for both entry points.
-122. [PENDING] Git Commit: `docs: record application skeleton acceptance write-path verification` (hash: TBD)
+122. [DONE] Git Commit: `docs: record application skeleton acceptance write-path verification` (hash: 8b7187ff4)
 
 ## Phase 25 - Release Build (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Release Preparation
 
-123. [TODO] `application-skeleton-orchestration.phase25.release.task1` Update README/CHANGELOG for v1.2.225 (acceptance write-path fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance write-path release`).
-124. [TODO] Git Commit: `docs: prepare application skeleton acceptance write-path release` (hash: TBD)
+123. [DONE] `application-skeleton-orchestration.phase25.release.task1` Update README/CHANGELOG for v1.2.225 (acceptance write-path fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance write-path release`).
+124. [PENDING] Git Commit: `docs: prepare application skeleton acceptance write-path release` (hash: TBD)
 
 ### Stream: Release Build
 
