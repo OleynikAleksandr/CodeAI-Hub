@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "ad604f588",
+  "lastRecordedCommit": "fb8f51592",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9f.diagram-feedback-gate.task1",
-  "expectedCommitMessage": "fix: surface diagram modules dirty commit feedback",
+  "currentTaskId": "application-skeleton.phase9f.verify.task1",
+  "expectedCommitMessage": "docs: record managed stage isolation verification",
   "debt": {
-    "expectedCommitMessage": "fix: surface diagram modules dirty commit feedback",
-    "preCommitHead": "ad604f588",
+    "expectedCommitMessage": "docs: record managed stage isolation verification",
+    "preCommitHead": "fb8f51592",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9f.diagram-feedback-gate.task1"
+    "taskId": "application-skeleton.phase9f.verify.task1"
   }
 }
 ```
@@ -284,9 +284,20 @@ Clean rebuild release evidence (2026-05-11):
 76. [DONE] `application-skeleton.phase9f.diagram-index-boundary.task1` Keep Diagram Modules on the index subturn until the index commit boundary is clean, so Core cannot continue to the first Product Part before committing `product-parts.index.md`. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `fix: keep diagram modules index on commit boundary`).
 77. [DONE] Git Commit: `fix: keep diagram modules index on commit boundary` (hash: ad604f588)
 78. [DONE] `application-skeleton.phase9f.diagram-feedback-gate.task1` Make dirty/blocked Diagram Modules commit-gate state visible to the provider instead of suppressing feedback while a subturn is pending. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `fix: surface diagram modules dirty commit feedback`).
-79. [PENDING] Git Commit: `fix: surface diagram modules dirty commit feedback` (hash: TBD)
-80. [TODO] `application-skeleton.phase9f.verify.task1` Reproduce the v1.2.233 Diagram Modules first-turn regression in tests, run targeted managed workflow tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed stage isolation verification`).
-81. [TODO] Git Commit: `docs: record managed stage isolation verification` (hash: TBD)
+79. [DONE] Git Commit: `fix: surface diagram modules dirty commit feedback` (hash: fb8f51592)
+80. [DONE] `application-skeleton.phase9f.verify.task1` Reproduce the v1.2.233 Diagram Modules first-turn regression in tests, run targeted managed workflow tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed stage isolation verification`).
+81. [PENDING] Git Commit: `docs: record managed stage isolation verification` (hash: TBD)
+
+Managed stage isolation verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts` - 39 tests passed.
+- PASS: regression `session:create prepares diagram modules lifecycle baseline before provider session` verifies only the active Diagram Modules child plan exists at Diagram Modules start; Application Skeleton and Quality Gates plans are absent.
+- PASS: regression `post-turn service does not mutate future stage plans during diagram modules arbitration` reproduces an existing future Application Skeleton plan and verifies Diagram Modules post-turn does not mutate it.
+- PASS: regression `Diagram Modules progress keeps a dirty Product Part index on the index commit boundary` verifies a dirty/uncommitted `product-parts.index.md` stays on the index subturn until Git commit, then advances to the first Product Part.
+- PASS: regression `Diagram Modules dirty pending index emits a Core-owned commit gate notice` verifies dirty pending index state is visible feedback instead of a silent pending subturn.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Root cause fixed: v1.2.233 combined eager future-stage plan creation, cross-stage post-turn repair, premature Diagram Modules index advancement, and pending-subturn feedback suppression. The current implementation isolates post-turn by active stage, creates child plans progressively, keeps the index on its commit boundary, and surfaces blocked dirty commit gates.
 
 ## Phase 9G - Release Build: Managed Stage Isolation Fix (owner: Codex, updated: 2026-05-11)
 
