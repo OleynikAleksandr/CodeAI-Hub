@@ -38,12 +38,11 @@ const DIAGRAM_THIRD_TASK_RE =
   /Current Task: diagram-modules\.product-part\.core-runtime/u;
 const DIAGRAM_THIRD_COMMIT_RE =
   /Expected Commit: docs: update diagram modules product part core-runtime/u;
-const DIAGRAM_USER_REVIEW_TASK_RE =
-  /Current Task: diagram-modules\.user-review\.task1/u;
-const DIAGRAM_USER_REVIEW_COMMIT_RE =
-  /Expected Commit: docs: review diagram modules product map/u;
-const DIAGRAM_USER_REVIEW_PHASE_RE =
-  /Phase 2 — User-Owned Diagram Modules Review/u;
+const DIAGRAM_USER_RETURN_TASK_RE =
+  /Current Task: diagram-modules\.user-return\.task1/u;
+const DIAGRAM_USER_RETURN_COMMIT_RE = /Expected Commit: none/u;
+const DIAGRAM_USER_RETURN_PHASE_RE =
+  /Phase 2 — Persistent Diagram Modules User Return/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.phase1\.draft\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
@@ -84,6 +83,10 @@ const WORKSPACE_ACCEPTED_COMMIT_RE = /"acceptedCommits": \[\n\s+\{/u;
 const WORKSPACE_LAST_COMMIT_RE =
   /"lastAcceptedCommitMessage": "docs: update diagram modules product part index"/u;
 const WORKSPACE_PLAN_ACTIVE_STAGE_RE = /"activeStage": "diagram_modules"/u;
+const WORKSPACE_COMPLETED_DIAGRAM_STAGE_RE =
+  /"completedStages": \[\n\s+"diagram_modules"/u;
+const WORKSPACE_UNLOCKED_APPLICATION_STAGE_RE =
+  /"unlockedStages": \[[\s\S]*"application_skeleton"/u;
 const DIAGRAM_STAGE_PLAN_RE =
   /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
 const ROOT_TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -424,18 +427,28 @@ test("managed plan shim advances the active task inside plan commits", async () 
       { cwd: workspaceRoot }
     );
 
-    const userReviewStatus = await execFileAsync(
+    const userReturnStatus = await execFileAsync(
       process.execPath,
       [scriptPath, "status"],
       { cwd: workspaceRoot }
     );
-    const userReviewPlan = await readFile(
+    const userReturnPlan = await readFile(
       path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH),
       "utf8"
     );
-    assert.match(userReviewStatus.stdout, DIAGRAM_USER_REVIEW_TASK_RE);
-    assert.match(userReviewStatus.stdout, DIAGRAM_USER_REVIEW_COMMIT_RE);
-    assert.match(userReviewPlan, DIAGRAM_USER_REVIEW_PHASE_RE);
+    const userReturnWorkspacePlan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      "utf8"
+    );
+    assert.match(userReturnStatus.stdout, DIAGRAM_USER_RETURN_TASK_RE);
+    assert.match(userReturnStatus.stdout, DIAGRAM_USER_RETURN_COMMIT_RE);
+    assert.match(userReturnPlan, DIAGRAM_USER_RETURN_PHASE_RE);
+    assert.match(userReturnWorkspacePlan, WORKSPACE_PLAN_ACTIVE_STAGE_RE);
+    assert.match(userReturnWorkspacePlan, WORKSPACE_COMPLETED_DIAGRAM_STAGE_RE);
+    assert.match(
+      userReturnWorkspacePlan,
+      WORKSPACE_UNLOCKED_APPLICATION_STAGE_RE
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -488,7 +501,7 @@ test("managed plan shim preserves activeStage on non-terminal commit", async () 
 test("managed stage advance mappings cover all managed workflow stages", () => {
   assert.deepEqual(STAGE_TERMINAL_COMMITS, {
     application_skeleton: "feat: materialize application skeleton",
-    diagram_modules: "docs: review diagram modules product map",
+    diagram_modules: null,
     quality_gates: "feat: integrate quality gates baseline",
   });
   assert.deepEqual(NEXT_STAGE_AFTER, {

@@ -67,6 +67,16 @@ const readState = () => {
 
 const readPlanText = () => readFileSync(activePlanPath(), "utf8");
 const readWorkspaceText = () => readFileSync(WORKSPACE_PLAN_PATH, "utf8");
+const readPlanStateAt = (planPath) => {
+  if (!(typeof planPath === "string" && existsSync(planPath))) {
+    return null;
+  }
+  try {
+    return parseJsonBlock(readFileSync(planPath, "utf8"), START, END, "codeai-plan-state");
+  } catch {
+    return null;
+  }
+};
 
 const validate = () => {
   const state = readState();
@@ -275,14 +285,49 @@ const backfillPlanCommitHash = (event, commitHash) => {
   );
 };
 
+const stringArray = (value) => Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
+const appendUniqueString = (values, value) => typeof value === "string" && value.length > 0 && !values.includes(value) ? [...values, value] : values;
+const shouldUnlockDiagramModulesNextStage = (event, currentStage) => {
+  if (currentStage !== "diagram_modules") {
+    return false;
+  }
+  const planState = readPlanStateAt(event.planPath);
+  return planState?.currentTaskId === "diagram-modules.user-return.task1";
+};
+const resolveWorkspaceLifecycleFields = (event, workspaceState) => {
+  const currentStage = typeof workspaceState.activeStage === "string" ? workspaceState.activeStage : null;
+  if (!currentStage) {
+    return {};
+  }
+  const terminalMessage = STAGE_TERMINAL_COMMITS[currentStage];
+  const terminalNextStage =
+    typeof terminalMessage === "string" && terminalMessage === event.message
+      ? NEXT_STAGE_AFTER[currentStage] ?? null
+      : null;
+  const unlockedNextStage = shouldUnlockDiagramModulesNextStage(event, currentStage)
+    ? NEXT_STAGE_AFTER[currentStage] ?? null
+    : terminalNextStage;
+  const baseUnlockedStages = stringArray(workspaceState.unlockedStages);
+  const unlockedStages = appendUniqueString(
+    appendUniqueString(baseUnlockedStages, currentStage),
+    unlockedNextStage
+  );
+  const completedStages =
+    terminalNextStage || unlockedNextStage
+      ? appendUniqueString(stringArray(workspaceState.completedStages), currentStage)
+      : stringArray(workspaceState.completedStages);
+  return {
+    ...(terminalNextStage ? { activeStage: terminalNextStage, activePlanPath: STAGE_PLANS[terminalNextStage] } : {}),
+    completedStages,
+    unlockedStages,
+  };
+};
+
 const recordWorkspaceCommit = (event, workspaceState, commitHash, commitFullHash) => {
   const acceptedCommits = Array.isArray(workspaceState.acceptedCommits) ? workspaceState.acceptedCommits : [];
   const commitRecord = { commitFullHash, commitHash, changedFiles: event.changedFiles, message: event.message, planPath: event.planPath, stage: event.stage, summary: event.summary, taskId: event.taskId };
-  const currentStage = typeof workspaceState.activeStage === "string" ? workspaceState.activeStage : null;
-  const isTerminalCommit = Boolean(currentStage && STAGE_TERMINAL_COMMITS[currentStage] === event.message);
-  const nextStage = isTerminalCommit ? NEXT_STAGE_AFTER[currentStage] ?? null : null;
-  const stageAdvanceFields = nextStage ? { activeStage: nextStage, activePlanPath: STAGE_PLANS[nextStage] } : {};
-  const nextState = { ...workspaceState, ...stageAdvanceFields, lastAcceptedCommitHash: commitHash, lastAcceptedCommitMessage: event.message, acceptedCommits: [...acceptedCommits, commitRecord] };
+  const lifecycleFields = resolveWorkspaceLifecycleFields(event, workspaceState);
+  const nextState = { ...workspaceState, ...lifecycleFields, lastAcceptedCommitHash: commitHash, lastAcceptedCommitMessage: event.message, acceptedCommits: [...acceptedCommits, commitRecord] };
   writeFileSync(WORKSPACE_PLAN_PATH, replaceWorkspaceState(readWorkspaceText(), nextState), "utf8");
 };
 

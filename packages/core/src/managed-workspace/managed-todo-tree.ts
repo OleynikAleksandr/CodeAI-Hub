@@ -23,10 +23,10 @@ export const STAGE_PLANS: Readonly<Record<ManagedWorkflowPlanStage, string>> = {
 };
 
 export const STAGE_TERMINAL_COMMITS: Readonly<
-  Record<ManagedWorkflowPlanStage, string>
+  Record<ManagedWorkflowPlanStage, string | null>
 > = {
   application_skeleton: "feat: materialize application skeleton",
-  diagram_modules: "docs: review diagram modules product map",
+  diagram_modules: null,
   quality_gates: "feat: integrate quality gates baseline",
 };
 
@@ -245,6 +245,10 @@ const createWorkspacePlan = (params: {
   "activeStage": "${params.activeStage}",
   "activePlanPath": "${STAGE_PLANS[params.activeStage]}",
   "stagePlans": ${JSON.stringify(STAGE_PLANS, null, 2).replace(/\n/g, "\n  ")},
+  "unlockedStages": [
+    "${params.activeStage}"
+  ],
+  "completedStages": [],
   "lastAcceptedCommitHash": null,
   "lastAcceptedCommitMessage": null,
   "acceptedCommits": [],

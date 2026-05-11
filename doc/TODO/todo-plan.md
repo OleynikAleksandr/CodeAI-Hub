@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "18770dfa9",
+  "lastRecordedCommit": "25b63df33",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase3.user-return.task1",
-  "expectedCommitMessage": "feat: keep diagram modules user return phase open",
+  "currentTaskId": "diagram-modules-repair.phase3.downstream.task1",
+  "expectedCommitMessage": "fix: decouple diagram modules return loop from downstream handoff",
   "debt": {
-    "expectedCommitMessage": "feat: keep diagram modules user return phase open",
-    "preCommitHead": "18770dfa9",
+    "expectedCommitMessage": "fix: decouple diagram modules return loop from downstream handoff",
+    "preCommitHead": "25b63df33",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase3.user-return.task1"
+    "taskId": "diagram-modules-repair.phase3.downstream.task1"
   }
 }
 ```
@@ -77,9 +77,9 @@
 ### Stream: Persistent Diagram Modules Revision Surface
 
 13. [DONE] `diagram-modules-repair.phase3.user-return.task1` Replace the one-shot Diagram Modules review task with a persistent user-return revision loop that can inject `revisionN` task pairs after all Product Parts are accepted. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `feat: keep diagram modules user return phase open`).
-14. [PENDING] Git Commit: `feat: keep diagram modules user return phase open` (hash: TBD)
-15. [TODO] `diagram-modules-repair.phase3.downstream.task1` Keep downstream handoff separate from the Diagram Modules user-return loop by recording the Application Skeleton unlock in the workspace ledger without treating the Diagram Modules return phase as a terminal handoff anchor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: decouple diagram modules return loop from downstream handoff`).
-16. [TODO] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: TBD)
+14. [DONE] Git Commit: `feat: keep diagram modules user return phase open` (hash: 25b63df33)
+15. [DONE] `diagram-modules-repair.phase3.downstream.task1` Keep downstream handoff separate from the Diagram Modules user-return loop by recording the Application Skeleton unlock in the workspace ledger without treating the Diagram Modules return phase as a terminal handoff anchor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: decouple diagram modules return loop from downstream handoff`).
+16. [PENDING] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: TBD)
 
 ## Phase 4 - Deterministic Rejection Testing (owner: Codex, updated: 2026-05-11)
 
