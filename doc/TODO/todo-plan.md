@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "570f5bf3d",
+  "lastRecordedCommit": "b774bbef7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase2.evidence.task1",
-  "expectedCommitMessage": "feat: record application skeleton repair attempt evidence",
+  "currentTaskId": "application-skeleton.phase2.orchestration.task1",
+  "expectedCommitMessage": "feat: orchestrate application skeleton repair attempts",
   "debt": {
-    "expectedCommitMessage": "feat: record application skeleton repair attempt evidence",
-    "preCommitHead": "570f5bf3d",
+    "expectedCommitMessage": "feat: orchestrate application skeleton repair attempts",
+    "preCommitHead": "b774bbef7",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase2.evidence.task1"
+    "taskId": "application-skeleton.phase2.orchestration.task1"
   }
 }
 ```
@@ -70,9 +70,9 @@
 ### Stream: Repair Task Injection Before Feedback
 
 7. [DONE] `application-skeleton.phase2.evidence.task1` Add Application Skeleton repair-attempt evidence under `.codeai-hub/<workspace>/workflow/revisions/application-skeleton/attempts/` with target phase, validator diagnostics, attempt number, and outcome fields. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-attempt-evidence.ts, packages/core/src/remote-bridge/handlers/application-skeleton-repair-attempt-evidence.test.ts`; expected commit: `feat: record application skeleton repair attempt evidence`).
-8. [PENDING] Git Commit: `feat: record application skeleton repair attempt evidence` (hash: TBD)
-9. [TODO] `application-skeleton.phase2.orchestration.task1` Integrate Application Skeleton repair orchestration into the post-turn path so Core injects the next repair task pair before provider-visible feedback. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `feat: orchestrate application skeleton repair attempts`).
-10. [TODO] Git Commit: `feat: orchestrate application skeleton repair attempts` (hash: TBD)
+8. [DONE] Git Commit: `feat: record application skeleton repair attempt evidence` (hash: b774bbef7)
+9. [DONE] `application-skeleton.phase2.orchestration.task1` Integrate Application Skeleton repair orchestration into the post-turn path so Core injects the next repair task pair before provider-visible feedback. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `feat: orchestrate application skeleton repair attempts`).
+10. [PENDING] Git Commit: `feat: orchestrate application skeleton repair attempts` (hash: TBD)
 11. [TODO] `application-skeleton.phase2.commit-task1` Commit failed Application Skeleton attempts when the target artifact is still invalid by allowing tracked attempt evidence without marking the draft, revision, or materialization as accepted. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts`; expected commit: `feat: commit rejected application skeleton repair attempts`).
 12. [TODO] Git Commit: `feat: commit rejected application skeleton repair attempts` (hash: TBD)
 

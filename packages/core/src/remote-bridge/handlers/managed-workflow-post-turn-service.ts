@@ -12,6 +12,7 @@ import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readAndEvaluateApplicationSkeletonPrematureMaterialization } from "./application-skeleton-premature-materialization-validator";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import { runApplicationSkeletonRepairOrchestration } from "./application-skeleton-repair-orchestration";
 import { classifyApplicationSkeletonReviewTurn } from "./application-skeleton-review-turn-classifier";
 import { runApplicationSkeletonRevisionInjection } from "./application-skeleton-revision-injection-runner";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
@@ -422,6 +423,15 @@ export class ManagedWorkflowPostTurnService {
       buildApplicationSkeletonRepairFeedbackMessage(
         applicationSkeletonContractGuardDecision
       );
+    await runApplicationSkeletonRepairOrchestration({
+      decision: applicationSkeletonContractGuardDecision,
+      logger: this.logger,
+      managedGitStatus: latestManagedGitStatus,
+      phase: applicationSkeletonPhase,
+      progress: latestApplicationSkeletonProgress,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
     const applicationSkeletonReviewTurnKind =
       classifyApplicationSkeletonReviewTurn({
         ownedDirtyFiles:
