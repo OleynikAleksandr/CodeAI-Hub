@@ -20,6 +20,8 @@ const CORE_REJECTED_HASH_RE = /hash: not-created-core-rejected/u;
 const APPLICATION_SKELETON_MAP_RE = /application-skeleton-map\.json/u;
 const APPLICATION_SKELETON_REVISIONS_RE =
   /workflow\/revisions\/application-skeleton/u;
+const MISPLACED_PRODUCT_PARTS_SCOPE_RE =
+  /\.codeai-hub\/\*\*\/product-parts\/\*\*/u;
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
@@ -161,6 +163,7 @@ test("injects repair task pair and blocks rejected current task", () => {
   assert.match(result.nextPlanText, BLOCKED_MATERIALIZE_TASK_RE);
   assert.match(result.nextPlanText, CORE_REJECTED_HASH_RE);
   assert.match(result.nextPlanText, APPLICATION_SKELETON_MAP_RE);
+  assert.match(result.nextPlanText, MISPLACED_PRODUCT_PARTS_SCOPE_RE);
   assertImmediateCommitPair(
     result.nextPlanText,
     result.nextCurrentTaskId,

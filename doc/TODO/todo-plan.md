@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "656d812ea",
+  "lastRecordedCommit": "7e098197a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9k.feedback.task1",
-  "expectedCommitMessage": "fix: guide application skeleton misplaced product parts repair",
+  "currentTaskId": "application-skeleton.phase9k.repair-scope.task1",
+  "expectedCommitMessage": "fix: scope application skeleton misplaced product parts cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: guide application skeleton misplaced product parts repair",
-    "preCommitHead": "656d812ea",
+    "expectedCommitMessage": "fix: scope application skeleton misplaced product parts cleanup",
+    "preCommitHead": "7e098197a",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9k.feedback.task1"
+    "taskId": "application-skeleton.phase9k.repair-scope.task1"
   }
 }
 ```
@@ -423,9 +423,9 @@ Application Skeleton Quality Gates handoff release build evidence (2026-05-11):
 115. [DONE] `application-skeleton.phase9k.plan.task1` Record the v1.2.236 blocker where provider-created `.codeai-hub/<workspaceSlug>/product-parts/**` was reported as a wait-only lifecycle boundary instead of an actionable Application Skeleton repair, then split the fix into repair feedback, plan scope, terminal handoff, and verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton misplaced product parts repair`).
 116. [DONE] Git Commit: `docs: plan application skeleton misplaced product parts repair` (hash: 656d812ea)
 117. [DONE] `application-skeleton.phase9k.feedback.task1` Make Application Skeleton feedback classify misplaced `.codeai-hub/<workspaceSlug>/product-parts/**` as an actionable repair condition that tells the agent to move the projection to root `product-parts/**`, not wait for Core. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: guide application skeleton misplaced product parts repair`).
-118. [PENDING] Git Commit: `fix: guide application skeleton misplaced product parts repair` (hash: TBD)
-119. [TODO] `application-skeleton.phase9k.repair-scope.task1` Include misplaced `.codeai-hub/**/product-parts/**` cleanup in generated Application Skeleton repair task scopes so the child plan accurately covers removal or relocation of the invalid projection. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope application skeleton misplaced product parts cleanup`).
-120. [TODO] Git Commit: `fix: scope application skeleton misplaced product parts cleanup` (hash: TBD)
+118. [DONE] Git Commit: `fix: guide application skeleton misplaced product parts repair` (hash: 7e098197a)
+119. [DONE] `application-skeleton.phase9k.repair-scope.task1` Include misplaced `.codeai-hub/**/product-parts/**` cleanup in generated Application Skeleton repair task scopes so the child plan accurately covers removal or relocation of the invalid projection. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope application skeleton misplaced product parts cleanup`).
+120. [PENDING] Git Commit: `fix: scope application skeleton misplaced product parts cleanup` (hash: TBD)
 121. [TODO] `application-skeleton.phase9k.status.task1` Harden Application Skeleton workflow-state hydration so the stage cannot remain visually completed or launch Quality Gates before materialized progress is true and the managed lifecycle is clean. (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton pending before materialization`).
 122. [TODO] Git Commit: `fix: keep application skeleton pending before materialization` (hash: TBD)
 123. [TODO] `application-skeleton.phase9k.repair-handoff.task1` Treat a successful materialization repair commit that creates root `product-parts/**` as the terminal Application Skeleton handoff so Core creates the Quality Gates child plan and advances the workspace ledger. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hand off application skeleton after materialization repair`).
@@ -438,6 +438,11 @@ Application Skeleton misplaced product-parts feedback evidence (2026-05-11):
 - PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts` - 6 tests passed.
 - Fixed text rule: when Core sees `.codeai-hub/<workspaceSlug>/product-parts/**` after Application Skeleton materialization, it must instruct the agent to move that projection to root `product-parts/**` and remove the misplaced copy; it must not send a wait-only `Do not update Application Skeleton artifacts` lifecycle-boundary message for this actionable repair.
 - Carried user-observed status risk forward: Application Skeleton must not appear completed or unlock Quality Gates before materialized progress is true and the managed lifecycle is clean.
+
+Application Skeleton repair scope evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts` - 5 tests passed.
+- Repair task scope now includes `.codeai-hub/**/product-parts/**`, so an agent correction can remove the misplaced managed-metadata projection and create root `product-parts/**` in the same managed repair microtask.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 

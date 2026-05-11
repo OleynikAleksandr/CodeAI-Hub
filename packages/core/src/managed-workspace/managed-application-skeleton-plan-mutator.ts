@@ -209,7 +209,7 @@ const resolveTaskPair = (
   return {
     message,
     scope:
-      ".codeai-hub/**/application_skeleton/**, product-parts/**, .codeai-hub/**/workflow/revisions/application-skeleton/attempts/**",
+      ".codeai-hub/**/application_skeleton/**, product-parts/**, .codeai-hub/**/product-parts/**, .codeai-hub/**/workflow/revisions/application-skeleton/attempts/**",
     sequenceNumber,
     shouldBlockCurrentTask: true,
     summary: `${params.targetSummary?.trim() || "Core rejected the previous Application Skeleton attempt; repair only the named artifact set"}; target phase: \`${targetPhase}\`; diagnostics: ${diagnosticsSummary(params.diagnostics)}`,
