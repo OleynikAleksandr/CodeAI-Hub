@@ -12,12 +12,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
   "currentTaskId": "application-skeleton.phase10.closeout-plan.task1",
   "expectedCommitMessage": "docs: archive application skeleton orchestration scope",
-  "debt": {
-    "expectedCommitMessage": "docs: archive application skeleton orchestration scope",
-    "preCommitHead": "5e4739ce6",
-    "stage": "commit_pending",
-    "taskId": "application-skeleton.phase10.closeout-plan.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -532,8 +527,8 @@ Application Skeleton completed-stage LED boundary release build evidence (2026-0
 
 ### Stream: Archive And Planning Disposition
 
-142. [DONE] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-143. [PENDING] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+142. [IN_PROGRESS] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+143. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
 144. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
 145. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
 146. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).

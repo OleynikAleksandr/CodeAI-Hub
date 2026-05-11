@@ -1,9 +1,9 @@
 # Application Skeleton Scenario
 
-**Status:** implemented scenario, pending release/user acceptance.
+**Status:** implemented and accepted in release `1.2.238`.
 **Scope:** managed orchestration behavior for the `application_skeleton` workflow step.
 **Baseline source:** `Application_Skeleton_Architecture.md`.
-**Implementation note:** current scope implements the incremental child-plan growth, Core rejection/repair loop, acceptance commit boundary, materialization gate, Quality Gates handoff, and post-completion user-return revision loop.
+**Implementation note:** release `1.2.238` implements and user-accepts the incremental child-plan growth, Core rejection/repair loop, acceptance commit boundary, materialization gate, Quality Gates handoff, post-completion user-return revision loop, and completed-stage LED boundary. Quality Gates scenario details remain a separate future planning scope.
 
 ## Target Shape
 
