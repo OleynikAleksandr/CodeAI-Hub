@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "8327589ed",
+  "lastRecordedCommit": "4b02f1711",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase4.rejection-test.task1",
-  "expectedCommitMessage": "test: cover diagram modules forced repair rejection",
+  "currentTaskId": "diagram-modules-repair.phase4.regression-task1",
+  "expectedCommitMessage": "docs: record diagram modules repair test evidence",
   "debt": {
-    "expectedCommitMessage": "test: cover diagram modules forced repair rejection",
-    "preCommitHead": "8327589ed",
+    "expectedCommitMessage": "docs: record diagram modules repair test evidence",
+    "preCommitHead": "4b02f1711",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase4.rejection-test.task1"
+    "taskId": "diagram-modules-repair.phase4.regression-task1"
   }
 }
 ```
@@ -86,9 +86,13 @@
 ### Stream: Forced Core Rejection Harness
 
 17. [DONE] `diagram-modules-repair.phase4.rejection-test.task1` Add a deterministic forced-rejection integration test: initialize a managed Diagram Modules workspace, write a valid Product Part index plus invalid Product Part artifact, assert Core injects `repair1` before provider feedback, then assert the failed attempt is committed with tracked evidence instead of disappearing into runtime/session state. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts`; expected commit: `test: cover diagram modules forced repair rejection`).
-18. [PENDING] Git Commit: `test: cover diagram modules forced repair rejection` (hash: TBD)
-19. [TODO] `diagram-modules-repair.phase4.regression-task1` Run targeted Diagram Modules managed-workflow tests and record the exact commands/results in this plan before broader verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair test evidence`).
-20. [TODO] Git Commit: `docs: record diagram modules repair test evidence` (hash: TBD)
+18. [DONE] Git Commit: `test: cover diagram modules forced repair rejection` (hash: 4b02f1711)
+19. [DONE] `diagram-modules-repair.phase4.regression-task1` Run targeted Diagram Modules managed-workflow tests and record the exact commands/results in this plan before broader verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair test evidence`).
+20. [PENDING] Git Commit: `docs: record diagram modules repair test evidence` (hash: TBD)
+
+#### Phase 4 Evidence
+
+- 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 25`, `pass 25`, `fail 0`, `duration_ms 4085.077833`).
 
 ## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-05-11)
 
