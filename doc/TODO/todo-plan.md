@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "81164d294",
+  "lastRecordedCommit": "077d3bf04",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9a.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton restart gate verification",
+  "currentTaskId": "application-skeleton.phase9b.release-gate-plan.task1",
+  "expectedCommitMessage": "docs: add application skeleton restart release gate",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton restart gate verification",
-    "preCommitHead": "81164d294",
+    "expectedCommitMessage": "docs: add application skeleton restart release gate",
+    "preCommitHead": "077d3bf04",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9a.verify.task1"
+    "taskId": "application-skeleton.phase9b.release-gate-plan.task1"
   }
 }
 ```
@@ -172,7 +172,7 @@ Release build evidence (2026-05-11):
 41. [DONE] `application-skeleton.phase9a.restart-regression.task1` Add workflow-state read regression for a restarted Core with valid Diagram Modules artifacts plus volatile metadata dirty state: Application Skeleton must be unblocked and the UI gate must not report the product-parts index as missing. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton restart gate recovery`).
 42. [DONE] Git Commit: `test: cover application skeleton restart gate recovery` (hash: 81164d294)
 43. [DONE] `application-skeleton.phase9a.verify.task1` Run targeted managed gate/workflow-state tests, core build, and `npm run plan:validate`; record exact evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton restart gate verification`).
-44. [PENDING] Git Commit: `docs: record application skeleton restart gate verification` (hash: TBD)
+44. [DONE] Git Commit: `docs: record application skeleton restart gate verification` (hash: 077d3bf04)
 
 Restart gate verification evidence (2026-05-11):
 
@@ -184,12 +184,25 @@ Restart gate verification evidence (2026-05-11):
 - Root cause confirmed: after extension/Core reinstall, volatile Core metadata such as `.codeai-hub/state/task-timers.json` and `.codeai-hub/<workspace>/description/description-step.json` timestamp refreshes were counted as managed dirty state; Application Skeleton then stayed blocked and Project Manager surfaced the misleading `product-parts.index.md not found` readiness text.
 - Residual requirement: package a new VSIX only after separate release-build confirmation, then user must retest the Application Skeleton start gate in the installed extension.
 
+## Phase 9B - Restart Fix Release Gate (owner: Codex, updated: 2026-05-11)
+
+### Stream: Rebuild And Retest Boundary
+
+45. [DONE] `application-skeleton.phase9b.release-gate-plan.task1` Insert an explicit restart-fix release/retest boundary so the active scope cannot advance to closeout before a new VSIX is built and accepted by the user. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add application skeleton restart release gate`).
+46. [PENDING] Git Commit: `docs: add application skeleton restart release gate` (hash: TBD)
+47. [TODO] `application-skeleton.phase9b.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Core restart gate fix. (scope: chat/process observation only; no commit required).
+48. [TODO] `application-skeleton.phase9b.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton restart gate fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton restart fix release`).
+49. [TODO] Git Commit: `docs: prepare application skeleton restart fix release` (hash: TBD)
+50. [TODO] `application-skeleton.phase9b.release-build.task1` Run the approved release build sequence, then record artifact paths, VSIX version, and restart-fix release evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton restart fix release`).
+51. [TODO] Git Commit: `chore: build application skeleton restart fix release` (hash: TBD)
+52. [TODO] `application-skeleton.phase9b.release-acceptance.task1` User installs the produced restart-fix release and accepts or rejects the Application Skeleton start gate behavior after extension/Core restart. (scope: chat/process observation only; no commit required).
+
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-45. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-46. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-47. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-48. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-49. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+53. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+54. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+55. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+56. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+57. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
