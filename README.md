@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.235** (Virtual Simulation alias recovery)
+**Current Release — v1.2.236** (Application Skeleton Quality Gates handoff recovery)
+
+This release fixes the Application Skeleton handoff blocker found during
+v1.2.235 retesting. After `feat: materialize application skeleton`, Core
+now creates `doc/TODO/stages/quality-gates/todo-plan.md` before moving
+the workspace ledger to `activeStage: "quality_gates"` and committing
+the ledger update.
+
+Application Skeleton acceptance also closes the Phase 2 review anchor
+when the user accepts without a review revision, so the child plan no
+longer shows an old review task as `IN_PROGRESS` after acceptance and
+materialization.
+
+**Previous release: v1.2.235** (Virtual Simulation alias recovery)
 
 This release fixes the Virtual Simulation artifact alias blocker found
 during v1.2.234 retesting. If a provider writes

@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "b67375168",
+  "lastRecordedCommit": "0aa4dc923",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9j.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton quality gates handoff verification",
+  "currentTaskId": "application-skeleton.phase9j.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton quality gates handoff release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton quality gates handoff verification",
-    "preCommitHead": "b67375168",
+    "expectedCommitMessage": "docs: prepare application skeleton quality gates handoff release",
+    "preCommitHead": "0aa4dc923",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9j.verify.task1"
+    "taskId": "application-skeleton.phase9j.release-docs.task1"
   }
 }
 ```
@@ -382,7 +382,7 @@ Virtual Simulation alias recovery release build evidence (2026-05-11):
 105. [DONE] `application-skeleton.phase9j.review-anchor.task1` Close the open Application Skeleton Phase 2 review anchor when the user accepts without a revision, so later accepted/materialized tasks cannot coexist with a stale `IN_PROGRESS` review task. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: close application skeleton review anchor on acceptance`).
 106. [DONE] Git Commit: `fix: close application skeleton review anchor on acceptance` (hash: b67375168)
 107. [DONE] `application-skeleton.phase9j.verify.task1` Run targeted managed-plan rollover tests, Application Skeleton mutator tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton quality gates handoff verification`).
-108. [PENDING] Git Commit: `docs: record application skeleton quality gates handoff verification` (hash: TBD)
+108. [DONE] Git Commit: `docs: record application skeleton quality gates handoff verification` (hash: 0aa4dc923)
 
 Application Skeleton Quality Gates handoff repair verification evidence (2026-05-11):
 
@@ -395,12 +395,18 @@ Application Skeleton Quality Gates handoff repair verification evidence (2026-05
 
 ### Stream: Rebuild And Retest Boundary
 
-109. [TODO] `application-skeleton.phase9j.release-confirmation.task1` Get separate explicit confirmation from the user before preparing another release build for the Application Skeleton Quality Gates handoff repair. (scope: chat/process observation only; no commit required).
-110. [TODO] `application-skeleton.phase9j.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton Quality Gates handoff repair. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton quality gates handoff release`).
-111. [TODO] Git Commit: `docs: prepare application skeleton quality gates handoff release` (hash: TBD)
+109. [DONE] `application-skeleton.phase9j.release-confirmation.task1` Get separate explicit confirmation from the user before preparing another release build for the Application Skeleton Quality Gates handoff repair. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build for the Application Skeleton Quality Gates handoff repair.
+110. [DONE] `application-skeleton.phase9j.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton Quality Gates handoff repair. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton quality gates handoff release`).
+111. [PENDING] Git Commit: `docs: prepare application skeleton quality gates handoff release` (hash: TBD)
 112. [TODO] `application-skeleton.phase9j.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton quality gates handoff release`).
 113. [TODO] Git Commit: `chore: build application skeleton quality gates handoff release` (hash: TBD)
 114. [TODO] `application-skeleton.phase9j.release-acceptance.task1` User installs the produced release and retests Application Skeleton materialization, Quality Gates child-plan creation, and next-step launch. (scope: chat/process observation only; no commit required).
+
+Application Skeleton Quality Gates handoff release docs preparation evidence (2026-05-11):
+
+- Future release version before packaging: `1.2.236` (`package.json` currently reports `1.2.235`; `build-all.sh` owns the version bump).
+- Updated `README.md` current-release marker and `CHANGELOG.md` release notes for the Application Skeleton Quality Gates handoff repair.
+- Explicit release-build confirmation was provided by the user in this thread: "Собирай новый релиз."
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 

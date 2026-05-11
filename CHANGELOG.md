@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.236] - 2026-05-11
+### Fixed
+- **Application Skeleton creates the Quality Gates child plan before handoff.** After `feat: materialize application skeleton`, the generated managed shim now creates `doc/TODO/stages/quality-gates/todo-plan.md`, includes it in the workspace-ledger commit, switches `workspace.plan.md` to `activeStage: "quality_gates"`, and leaves the managed workspace Git status clean.
+- **Application Skeleton Phase 2 review anchors close on acceptance.** When the user accepts the draft without a review revision, Core marks the open review anchor and its paired revision commit as completed with a not-created marker, preventing stale `IN_PROGRESS` review state after acceptance/materialization.
+
+### Tests
+- Targeted handoff suite passed: `13/13` tests across the managed plan shim and Application Skeleton plan mutator.
+- `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.235] - 2026-05-11
 ### Fixed
 - **Virtual Simulation alias artifacts are recovered before gating.** If a provider writes `virtual-simulation.md` into `.codeai-hub/<workspace>/virtual-simulation/` instead of canonical `.codeai-hub/<workspace>/virtual_simulation/`, Core moves it into the canonical directory during workflow-state filesystem hydration.
