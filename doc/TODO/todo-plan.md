@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "08c53267c",
+  "lastRecordedCommit": "8096966ae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9h.canonicalize.task1",
-  "expectedCommitMessage": "fix: recover virtual simulation artifact alias",
+  "currentTaskId": "application-skeleton.phase9h.verify.task1",
+  "expectedCommitMessage": "docs: record virtual simulation alias recovery verification",
   "debt": {
-    "expectedCommitMessage": "fix: recover virtual simulation artifact alias",
-    "preCommitHead": "08c53267c",
+    "expectedCommitMessage": "docs: record virtual simulation alias recovery verification",
+    "preCommitHead": "8096966ae",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9h.canonicalize.task1"
+    "taskId": "application-skeleton.phase9h.verify.task1"
   }
 }
 ```
@@ -331,9 +331,18 @@ Managed stage isolation release build evidence (2026-05-11):
 87. [DONE] `application-skeleton.phase9h.plan.task1` Record the v1.2.234 blocker where Codex wrote `virtual-simulation.md` under the non-canonical `virtual-simulation/` directory while Core gates read only `virtual_simulation/`, and split the repair into deterministic canonicalization plus verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan virtual simulation alias recovery`).
 88. [DONE] Git Commit: `docs: plan virtual simulation alias recovery` (hash: 08c53267c)
 89. [DONE] `application-skeleton.phase9h.canonicalize.task1` Canonicalize a provider-created `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` alias into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` before workflow-state hydration, validation, and Diagram Modules gating; add regression coverage for the recovered gate. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: recover virtual simulation artifact alias`).
-90. [PENDING] Git Commit: `fix: recover virtual simulation artifact alias` (hash: TBD)
-91. [TODO] `application-skeleton.phase9h.verify.task1` Run targeted workflow-state tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record virtual simulation alias recovery verification`).
-92. [TODO] Git Commit: `docs: record virtual simulation alias recovery verification` (hash: TBD)
+90. [DONE] Git Commit: `fix: recover virtual simulation artifact alias` (hash: 8096966ae)
+91. [DONE] `application-skeleton.phase9h.verify.task1` Run targeted workflow-state tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record virtual simulation alias recovery verification`).
+92. [PENDING] Git Commit: `docs: record virtual simulation alias recovery verification` (hash: TBD)
+
+Virtual Simulation alias recovery verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts` - 5 tests passed.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Root cause confirmed from the v1.2.234 retest workspace: Core pre-created canonical `virtual_simulation/`, but Codex wrote the artifact into provider-derived alias `virtual-simulation/`; workflow-state hydration and Diagram Modules gating only read the canonical underscore directory, so the next step reported `virtual-simulation.md not found` even though a file existed nearby.
+- Fixed behavior: on workflow-state read, Core moves `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` when the canonical file is missing, then hydrates and validates the canonical artifact.
+- Residual requirement: package a new VSIX only after separate release-build confirmation; no release build scripts were run for this fix yet.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
