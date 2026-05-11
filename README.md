@@ -2,7 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.226** (acceptance callback wiring fix for v1.2.225)
+**Current Release — v1.2.227** (handoff anchor regex fix for v1.2.226)
+
+This release fixes the last missing pin of the Application Skeleton
+phase orchestration: the Phase 4 handoff seed line in
+`managed-todo-tree.ts` did not contain the literal `expected commit:`
+substring (it only said "no commit required" inside the scope clause),
+so the post-Stream-A `TASK_LINE_RE` could not match it. After Phase 3
+materialize commit, advancement could not find the next task line and
+fell into the fallback-insert branch, synthesizing a spurious
+`phase3.materialize.task2` continuation pair with the same commit
+message — visible as a duplicate Pin 7 in the user plan and a stuck
+IN_PROGRESS continuation. The fix adds `expected commit: none —
+reserved handoff anchor` inside the parenthetical scope clause of the
+handoff seed line. After the fix, advancement after Phase 3 materialize
+lands cleanly on `application-skeleton.handoff.task1` with
+`expectedCommitMessage: null`; the workspace stage transition
+(`recordWorkspaceCommit`) then switches `activeStage` to
+`quality_gates` through the normal path. End-to-end Application
+Skeleton orchestration (Phase 1 → 2 → 3 → 4 handoff → Quality Gates)
+now completes cleanly.
+
+**Previous release: v1.2.226** (acceptance callback wiring fix for v1.2.225)
 
 This release closes the production wiring gap that left v1.2.225's
 acceptance write-path unreachable at runtime. The Phase 24 writer +

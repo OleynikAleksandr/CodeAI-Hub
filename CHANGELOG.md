@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.227] - 2026-05-11
+### Fixed
+- **Application Skeleton Phase 4 handoff anchor regex match (Phase 30 retest follow-up).** Phase 30 retest of v1.2.226 confirmed end-to-end acceptance and materialization land cleanly through `b5049d1` (Phase 3 commit). However the Phase 4 handoff seed line in `managed-todo-tree.ts` did not contain the literal `expected commit:` substring (it said `(scope: chat/process observation only; no commit required)` instead), so `TASK_LINE_RE` in `managed-plan-orchestrator-shim-source.ts` (which requires `.*expected commit: (?:\`([^\`]+)\`|none)`) could not match it. After Phase 3 materialize commit, advancement could not find the next task line and fell into the fallback-insert branch (`managed-plan-orchestrator-shim-source.ts:242–259`), synthesizing a `phase3.materialize.task2` continuation pair with the same commit message `feat: materialize application skeleton` and producing a visible duplicate Pin 7 in the plan with `phase3.materialize.task2` stuck IN_PROGRESS.
+- **Single-line seed fix.** The handoff seed line now reads `(scope: chat/process observation only; expected commit: none — reserved handoff anchor)`. The task id and stream heading are unchanged. Post-Phase-3-materialize advancement now lands on `application-skeleton.handoff.task1` with `expectedCommitMessage: null`; no fallback-insert pollution; the workspace stage transition mapping switches `activeStage` to `quality_gates` through the normal `recordWorkspaceCommit` path.
+
+### Tests
+- 57/57 targeted Core tests pass across the shim, seed-shape, development-tree bootstrap gate, acceptance writer, runner, handler, continuation dispatcher, post-turn service, end-to-end, and workflow-session managed-workspace modules. The existing handoff regex assertions only pin the task id and heading text; the new "expected commit" clause does not break them.
+- `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview` both clean.
+
+### Manual upgrade note
+- Test workspaces that already ran the Phase 30 retest of v1.2.226 have a polluted plan (synthesized `phase3.materialize.task2` continuation pair). Before installing v1.2.227, delete `doc/TODO/stages/application-skeleton/todo-plan.md` in those workspaces so the new seed (with the regex-matchable handoff anchor) is generated fresh on the next workflow tick. Fresh workspaces are not affected.
+
 ## [1.2.226] - 2026-05-11
 ### Fixed
 - **Application Skeleton acceptance callback wiring (release-blocker for v1.2.225).** Phase 26 retest of v1.2.225 confirmed the writer/runner from Phase 24 are correct and unit-tested, but the typed-fallback router's optional `handleManagedAcceptContractCommand` callback was never assigned in production. `grep -rn "handleManagedAcceptContractCommand:" packages/core/src` (excluding tests) returned exactly one match — the **read** site `session-request-handler-message-dispatch.ts:183` — and zero **write** sites. The optional chain at `application-skeleton-typed-acceptance-router.ts:31` therefore silently no-op'd, runner never executed, map.json never patched, no Phase 2 commit, no Phase 3 continuation. The Phase 5.accept.task3 audit had explicitly recorded this as debt ("production wiring of the Core handler into the dispatch deps remains a follow-up via the new optional callback"); the Phase 16 and Phase 24 audits both relied on a (incorrect) agent report claiming the callback was wired. Reality grep proves otherwise.

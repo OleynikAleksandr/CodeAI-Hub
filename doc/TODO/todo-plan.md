@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "7dcb013fb",
+  "lastRecordedCommit": "4bf171ffd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase32.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton handoff anchor verification",
+  "currentTaskId": "application-skeleton-orchestration.phase33.release.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton handoff anchor release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton handoff anchor verification",
-    "preCommitHead": "7dcb013fb",
+    "expectedCommitMessage": "docs: prepare application skeleton handoff anchor release",
+    "preCommitHead": "4bf171ffd",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase32.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase33.release.task1"
   }
 }
 ```
@@ -604,14 +604,14 @@
 - **`npm run build --workspace @codeai-hub/core`:** passes.
 - **`npm run typecheck:webview`:** passes.
 - **Logical end-to-end check.** After Phase 3 materialize commit, advancement reads the next task line: the new Phase 4 handoff seed now includes `expected commit: none — reserved handoff anchor`, so `TASK_LINE_RE` matches (`message` captured as `null`). Plan state advances to `currentTaskId: application-skeleton.handoff.task1`, `expectedCommitMessage: null`. No fallback-insert pollution. The workspace stage transition mapping (`recordWorkspaceCommit` in the ledger) then fires `application_skeleton → quality_gates` as designed.
-144. [PENDING] Git Commit: `docs: record application skeleton handoff anchor verification` (hash: TBD)
+144. [DONE] Git Commit: `docs: record application skeleton handoff anchor verification` (hash: 4bf171ffd)
 
 ## Phase 33 - Release Build (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Release Preparation
 
-145. [TODO] `application-skeleton-orchestration.phase33.release.task1` Update README/CHANGELOG for v1.2.227 (handoff anchor regex fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from earlier release scopes; no separate confirmation gate. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton handoff anchor release`).
-146. [TODO] Git Commit: `docs: prepare application skeleton handoff anchor release` (hash: TBD)
+145. [DONE] `application-skeleton-orchestration.phase33.release.task1` Update README/CHANGELOG for v1.2.227 (handoff anchor regex fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from earlier release scopes; no separate confirmation gate. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton handoff anchor release`).
+146. [PENDING] Git Commit: `docs: prepare application skeleton handoff anchor release` (hash: TBD)
 
 ### Stream: Release Build
 
