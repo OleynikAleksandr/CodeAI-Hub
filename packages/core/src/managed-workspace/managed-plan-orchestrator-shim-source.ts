@@ -1,3 +1,4 @@
+import { createDiagramModulesPlanMutatorShimSource } from "./managed-diagram-modules-plan-mutator";
 import {
   NEXT_STAGE_AFTER,
   STAGE_PLANS,
@@ -140,27 +141,7 @@ const formatTaskLine = (line, taskId, status, summary, files, message) => {
 };
 
 const formatNewTaskLine = (number, taskId, status, summary, scope, message) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
-const collectProductPartIdsFromIndex = (files) => {
-  const indexFile = files.find((file) => file.includes("/diagram_modules/product-parts.index.md")) ?? files.map((file) => file.replace(/\\/diagram_modules\\/product-parts\\/[^/]+\\.md$/u, "/diagram_modules/product-parts.index.md")).find((file) => file.includes("/diagram_modules/product-parts.index.md"));
-  if (!indexFile || !existsSync(indexFile)) { return []; }
-  return [...readFileSync(indexFile, "utf8").matchAll(PRODUCT_PART_DECLARATION_RE)].map((match) => match[1]?.trim()).filter((id, index, ids) => id && id !== "part-id" && ids.indexOf(id) === index);
-};
-const committedProductPartIds = (lines, files) => {
-  const fromPlan = lines.map((line) => /^\\d+\\. \\[DONE\\] \`diagram-modules\\.product-part\\.([a-z0-9]+(?:-[a-z0-9]+)*)\`/u.exec(line)?.[1]).filter(Boolean);
-  const fromCommit = files.map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1]).filter(Boolean);
-  return [...new Set([...fromPlan, ...fromCommit])];
-};
-const insertDiagramModulesProductPartTasks = (lines, commitLineIndex, files) => {
-  const ids = collectProductPartIdsFromIndex(files);
-  if (ids.length === 0) { return; }
-  const completed = committedProductPartIds(lines, files);
-  const id = ids.find((candidate) => !completed.includes(candidate));
-  if (!id) { insertDiagramModulesUserReviewTask(lines, commitLineIndex); return; }
-  if (lines.some((line) => line.includes(\`diagram-modules.product-part.\${id}\`))) { return; }
-  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = \`docs: update diagram modules product part \${id}\`;
-  const inserted = [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];
-  lines.splice(commitLineIndex + 1, 0, ...inserted);
-};
+${createDiagramModulesPlanMutatorShimSource()}
 const insertDiagramModulesUserReviewTask = (lines, commitLineIndex) => { if (lines.some((line) => line.includes("diagram-modules.user-review.task1"))) { return; } const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = "docs: review diagram modules product map"; lines.splice(commitLineIndex + 1, 0, "", "## Phase 2 — User-Owned Diagram Modules Review", "", "### Stream: User Review And Corrections", "", formatNewTaskLine(taskNumber, "diagram-modules.user-review.task1", "TODO", "Wait for user-requested Diagram Modules corrections after Core accepted every Product Part; each user turn is a standalone Core-tracked microtask", ".codeai-hub/**/diagram_modules/**", message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`); };
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
