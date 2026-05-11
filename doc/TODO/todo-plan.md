@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "de977a95a",
+  "lastRecordedCommit": "10b53f626",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase6.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton orchestration verification",
+  "currentTaskId": "application-skeleton.phase8.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton orchestration release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton orchestration verification",
-    "preCommitHead": "de977a95a",
+    "expectedCommitMessage": "docs: prepare application skeleton orchestration release",
+    "preCommitHead": "10b53f626",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase6.verify.task1"
+    "taskId": "application-skeleton.phase8.release-docs.task1"
   }
 }
 ```
@@ -119,7 +119,7 @@
 ### Stream: Targeted Verification
 
 31. [DONE] `application-skeleton.phase6.verify.task1` Run targeted Application Skeleton managed-workflow tests, the core package build, and `npm run plan:validate`; record exact evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton orchestration verification`).
-32. [PENDING] Git Commit: `docs: record application skeleton orchestration verification` (hash: TBD)
+32. [DONE] Git Commit: `docs: record application skeleton orchestration verification` (hash: 10b53f626)
 
 Verification evidence (2026-05-11):
 
@@ -138,10 +138,16 @@ Verification evidence (2026-05-11):
 
 ### Stream: Release Confirmation And Packaging
 
-34. [TODO] `application-skeleton.phase8.release-docs.task1` After separate explicit release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton orchestration release`).
-35. [TODO] Git Commit: `docs: prepare application skeleton orchestration release` (hash: TBD)
+34. [DONE] `application-skeleton.phase8.release-docs.task1` After separate explicit release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton orchestration release`).
+35. [PENDING] Git Commit: `docs: prepare application skeleton orchestration release` (hash: TBD)
 36. [TODO] `application-skeleton.phase8.release-build.task1` Run the approved release build sequence and record artifact paths, VSIX version, and release evidence. (scope: `doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton orchestration release`).
 37. [TODO] Git Commit: `chore: build application skeleton orchestration release` (hash: TBD)
+
+Release docs preparation evidence (2026-05-11):
+
+- Future release version before packaging: `1.2.230` (`package.json` currently reports `1.2.229`; `build-all.sh` owns the version bump).
+- Updated `README.md` current-release marker and `CHANGELOG.md` release notes for Application Skeleton managed orchestration.
+- Explicit release-build confirmation was provided by the user in this thread: proceed through packaging without pauses and report after the new release is built.
 
 ## Phase 9 - Release Acceptance Testing (owner: user, updated: 2026-05-11)
 

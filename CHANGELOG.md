@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.230] - 2026-05-11
+### Fixed
+- **Application Skeleton now uses the managed dynamic plan lifecycle.** The generated child plan starts with the draft contract task and grows at runtime for Core rejection repairs, review revisions, explicit acceptance, materialization, and post-completion user-return revisions. User-visible Core correction turns and user-return edits now receive concrete microtasks with paired `Git Commit` lines.
+- **Acceptance and materialization are committed at separate boundaries.** Core commits the accepted contract state before requesting materialization, and materialization can start only after that acceptance commit evidence exists in the workspace ledger.
+- **Rejected Application Skeleton attempts are preserved.** Invalid retry attempts write tracked evidence under `.codeai-hub/<workspace>/workflow/revisions/application-skeleton/attempts/` and are committed, so failed Core-agent repair loops remain visible in Git history.
+
+### Tests
+- Targeted Application Skeleton managed-workflow suite passed: `80/80` tests.
+- `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.229] - 2026-05-11
 ### Fixed
 - **Diagram Modules user-return revisions now have commit pairs.** After all Product Parts are accepted, Core opens `diagram-modules.user-return.revision1.task1` with a paired `Git Commit` instead of the v1.2.228 no-commit `diagram-modules.user-return.task1` anchor. Each committed user-return revision opens the next `revisionN` task and commit pair, preserving the phase as an ongoing return surface without losing Git history.
