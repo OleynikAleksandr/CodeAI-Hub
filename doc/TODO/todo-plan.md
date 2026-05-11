@@ -5,18 +5,18 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "diagram-modules-managed-repair-orchestration",
+  "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
-  "baseHead": "07cf50548",
-  "lastRecordedCommit": "8e02f90ef",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md",
-  "currentTaskId": "diagram-modules-repair.phase9.closeout.task1",
-  "expectedCommitMessage": "docs: close diagram modules repair orchestration scope",
+  "baseHead": "131e22079",
+  "lastRecordedCommit": "131e22079",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
+  "currentTaskId": "application-skeleton.phase0.plan.task1",
+  "expectedCommitMessage": "docs: plan application skeleton managed orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: close diagram modules repair orchestration scope",
-    "preCommitHead": "8e02f90ef",
+    "expectedCommitMessage": "docs: plan application skeleton managed orchestration",
+    "preCommitHead": "131e22079",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase9.closeout.task1"
+    "taskId": "application-skeleton.phase0.plan.task1"
   }
 }
 ```
@@ -24,7 +24,7 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
@@ -32,190 +32,120 @@
   - `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workspace_Lifecycle_From_Diagram_Modules.md`
 - Only this Context Pack is the recovery source for the current implementation cycle.
 
 ## Execution Rules
 
-- This scope implements the accepted `Diagram Modules` managed-step scenario. The user typo `Diagram Modeless` is treated as `Diagram Modules`.
+- This scope implements the managed `Application Skeleton` orchestration using the accepted `Diagram Modules` release `1.2.229` behavior as the precedent.
+- The generated Application Skeleton child plan must grow dynamically from runtime decisions. Core must not pre-seed a static Phase 1 / 2 / 3 / 4 block at stage bootstrap.
+- Every provider-visible Core correction, repair, retry, user review revision, acceptance command, materialization attempt, and post-completion user-return turn must be represented in the Application Skeleton child plan before Core sends feedback to the agent or records the Core command.
+- Every executable microtask in the generated child plan must have the next separate `Git Commit: ...` item. A phase that accepts user interaction must never appear without a paired commit task for the next possible revision.
+- If Core rejects the agent output, the attempt must still be committed. If there is no valid artifact diff to accept, Core writes tracked attempt evidence and commits that evidence.
+- User acceptance is a Core command. Core must commit acceptance state first, and only then inject/send the materialization microtask.
+- Post-completion Application Skeleton Phase 4 is a user-return revision loop, not a handoff anchor. Quality Gates handoff is a separate workspace-ledger transition after materialization acceptance.
+- Keep every implementation microtask at three files or fewer. If a task needs broader edits, split it before changing code.
 - Do not run release build scripts in this scope without a separate explicit release-build confirmation.
-- Keep every microtask at three files or fewer. If a test fixture needs more surface, split the task before editing.
-- Every provider-visible Core correction, repair, retry, or user-return revision turn must be represented in the child managed plan before Core sends that message to the agent.
-- Every repair attempt must create a Git commit. If the agent does not produce an accepted artifact diff, Core must write tracked attempt evidence and commit that evidence with the repair microtask.
-- The forced-rejection test must be deterministic and must not depend on a live provider response: use a temp managed workspace, a deliberately invalid Diagram Modules artifact, and assertions over the child plan, feedback, attempt evidence, and Git log.
 
 ## Phase 0 - Scope Activation (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Implementation Plan
 
-1. [DONE] `diagram-modules-repair.phase0.plan.task1` Open this active implementation plan for the accepted `Diagram Modules` scenario, including the deterministic forced-rejection test strategy for Core repair turns. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan diagram modules managed repair orchestration`).
-2. [DONE] Git Commit: `docs: plan diagram modules managed repair orchestration` (hash: 3f411941c)
+1. [DONE] `application-skeleton.phase0.plan.task1` Open this active implementation plan for the accepted Application Skeleton orchestration scope, explicitly carrying forward the Diagram Modules lessons about dynamic child plans, mandatory commit-paired user turns, and Core rejection persistence. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton managed orchestration`).
+2. [PENDING] Git Commit: `docs: plan application skeleton managed orchestration` (hash: TBD)
 
-## Phase 1 - Child Plan Mutation And Repair Task Injection (owner: Codex, updated: 2026-05-11)
+## Phase 1 - Dynamic Child Plan Shape (owner: Codex, updated: 2026-05-11)
 
-### Stream: Dynamic Diagram Modules Microtasks
+### Stream: Runtime-Grown Application Skeleton Tasks
 
-3. [DONE] `diagram-modules-repair.phase1.plan-mutator.task1` Extract and extend Diagram Modules child-plan mutation so Product Part tasks and `repairN` task pairs are generated by a tested helper instead of ad hoc shim-only string logic. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts`; expected commit: `feat: add diagram modules repair task injection`).
-4. [DONE] Git Commit: `feat: add diagram modules repair task injection` (hash: af80f751e)
-5. [DONE] `diagram-modules-repair.phase1.plan-dirty.task1` Allow the active Diagram Modules child plan to be treated as Core-owned dirty state during repair injection, and include that plan path in the managed transaction target filter. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts`; expected commit: `fix: allow diagram modules repair plan commits`).
-6. [DONE] Git Commit: `fix: allow diagram modules repair plan commits` (hash: 0b983c85c)
+3. [TODO] `application-skeleton.phase1.seed.task1` Change Application Skeleton stage seeding so the generated child plan starts with only the draft-contract microtask and its paired commit, while future review, acceptance, materialization, and user-return tasks are injected dynamically. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: seed application skeleton dynamic child plan`).
+4. [TODO] Git Commit: `fix: seed application skeleton dynamic child plan` (hash: TBD)
+5. [TODO] `application-skeleton.phase1.mutator.task1` Add a tested Application Skeleton child-plan mutator for `draft`, `review-revisionN`, `acceptance`, `materialize`, `repairN`, and `user-return revisionN` task pairs. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `feat: add application skeleton plan mutator`).
+6. [TODO] Git Commit: `feat: add application skeleton plan mutator` (hash: TBD)
 
-## Phase 2 - Repair Attempt Evidence And Commit Semantics (owner: Codex, updated: 2026-05-11)
+## Phase 2 - Core Rejection And Attempt Persistence (owner: Codex, updated: 2026-05-11)
 
-### Stream: Rejected Attempt Persistence
+### Stream: Repair Task Injection Before Feedback
 
-7. [DONE] `diagram-modules-repair.phase2.evidence.task1` Add a Diagram Modules repair-attempt evidence writer under `.codeai-hub/<workspace>/workflow/revisions/diagram-modules/attempts/` with target artifact, validator diagnostics, attempt number, and outcome fields. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts`; expected commit: `feat: record diagram modules repair attempt evidence`).
-8. [DONE] Git Commit: `feat: record diagram modules repair attempt evidence` (hash: 66dbaa599)
-9. [DONE] `diagram-modules-repair.phase2.post-turn.task1` Integrate repair planning into the post-turn path so Core injects a repair task before feedback, and writes attempt evidence when the active repair attempt still fails validation or produces no accepted artifact diff. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`; expected commit: `feat: orchestrate diagram modules repair attempts`).
-10. [DONE] Git Commit: `feat: orchestrate diagram modules repair attempts` (hash: 9716392e6)
-11. [DONE] `diagram-modules-repair.phase2.commit-task1` Commit Diagram Modules repair attempts even when the target artifact is still invalid by allowing tracked attempt evidence and preventing repair commits from being counted as accepted Product Part completion. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts`; expected commit: `feat: commit rejected diagram modules repair attempts`).
-12. [DONE] Git Commit: `feat: commit rejected diagram modules repair attempts` (hash: 18770dfa9)
+7. [TODO] `application-skeleton.phase2.evidence.task1` Add Application Skeleton repair-attempt evidence under `.codeai-hub/<workspace>/workflow/revisions/application-skeleton/attempts/` with target phase, validator diagnostics, attempt number, and outcome fields. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-attempt-evidence.ts, packages/core/src/remote-bridge/handlers/application-skeleton-repair-attempt-evidence.test.ts`; expected commit: `feat: record application skeleton repair attempt evidence`).
+8. [TODO] Git Commit: `feat: record application skeleton repair attempt evidence` (hash: TBD)
+9. [TODO] `application-skeleton.phase2.orchestration.task1` Integrate Application Skeleton repair orchestration into the post-turn path so Core injects the next repair task pair before provider-visible feedback. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `feat: orchestrate application skeleton repair attempts`).
+10. [TODO] Git Commit: `feat: orchestrate application skeleton repair attempts` (hash: TBD)
+11. [TODO] `application-skeleton.phase2.commit-task1` Commit failed Application Skeleton attempts when the target artifact is still invalid by allowing tracked attempt evidence without marking the draft, revision, or materialization as accepted. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts`; expected commit: `feat: commit rejected application skeleton repair attempts`).
+12. [TODO] Git Commit: `feat: commit rejected application skeleton repair attempts` (hash: TBD)
 
-## Phase 3 - Post-Completion User Return Loop (owner: Codex, updated: 2026-05-11)
+## Phase 3 - Review Acceptance And Materialization Boundary (owner: Codex, updated: 2026-05-11)
 
-### Stream: Persistent Diagram Modules Revision Surface
+### Stream: Contract Review Revisions
 
-13. [DONE] `diagram-modules-repair.phase3.user-return.task1` Replace the one-shot Diagram Modules review task with a persistent user-return revision loop that can inject `revisionN` task pairs after all Product Parts are accepted. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `feat: keep diagram modules user return phase open`).
-14. [DONE] Git Commit: `feat: keep diagram modules user return phase open` (hash: 25b63df33)
-15. [DONE] `diagram-modules-repair.phase3.downstream.task1` Keep downstream handoff separate from the Diagram Modules user-return loop by recording the Application Skeleton unlock in the workspace ledger without treating the Diagram Modules return phase as a terminal handoff anchor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: decouple diagram modules return loop from downstream handoff`).
-16. [DONE] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: 8327589ed)
+13. [TODO] `application-skeleton.phase3.review-revisions.task1` Ensure user review messages before acceptance inject `review-revisionN` task pairs and commit changed Application Skeleton draft artifacts before the next review decision. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `feat: track application skeleton review revisions`).
+14. [TODO] Git Commit: `feat: track application skeleton review revisions` (hash: TBD)
+15. [TODO] `application-skeleton.phase3.acceptance.task1` Make the Accept Contract command inject and commit explicit acceptance state before materialization can be requested. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts`; expected commit: `fix: commit application skeleton acceptance before materialization`).
+16. [TODO] Git Commit: `fix: commit application skeleton acceptance before materialization` (hash: TBD)
+17. [TODO] `application-skeleton.phase3.materialization-gate.task1` Gate the materialization continuation on completed acceptance commit evidence, then inject only the materialization microtask and its paired commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `fix: gate application skeleton materialization after acceptance commit`).
+18. [TODO] Git Commit: `fix: gate application skeleton materialization after acceptance commit` (hash: TBD)
 
-## Phase 4 - Deterministic Rejection Testing (owner: Codex, updated: 2026-05-11)
+## Phase 4 - Post-Completion User Return And Downstream Handoff (owner: Codex, updated: 2026-05-11)
 
-### Stream: Forced Core Rejection Harness
+### Stream: Open Revision Surface
 
-17. [DONE] `diagram-modules-repair.phase4.rejection-test.task1` Add a deterministic forced-rejection integration test: initialize a managed Diagram Modules workspace, write a valid Product Part index plus invalid Product Part artifact, assert Core injects `repair1` before provider feedback, then assert the failed attempt is committed with tracked evidence instead of disappearing into runtime/session state. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts`; expected commit: `test: cover diagram modules forced repair rejection`).
-18. [DONE] Git Commit: `test: cover diagram modules forced repair rejection` (hash: 4b02f1711)
-19. [DONE] `diagram-modules-repair.phase4.regression-task1` Run targeted Diagram Modules managed-workflow tests and record the exact commands/results in this plan before broader verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair test evidence`).
-20. [DONE] Git Commit: `docs: record diagram modules repair test evidence` (hash: ef0eea54a)
+19. [TODO] `application-skeleton.phase4.user-return.task1` Replace the reserved post-closeout anchor with a real post-completion user-return revision loop that injects `revisionN` task pairs after materialization acceptance. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `feat: keep application skeleton user return phase open`).
+20. [TODO] Git Commit: `feat: keep application skeleton user return phase open` (hash: TBD)
+21. [TODO] `application-skeleton.phase4.handoff.task1` Separate Quality Gates ledger handoff from the Application Skeleton user-return loop so Quality Gates can unlock while Application Skeleton remains revisable. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `fix: decouple application skeleton return loop from quality gates handoff`).
+22. [TODO] Git Commit: `fix: decouple application skeleton return loop from quality gates handoff` (hash: TBD)
 
-#### Phase 4 Evidence
+## Phase 5 - Deterministic Regression Tests (owner: Codex, updated: 2026-05-11)
 
-- 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 25`, `pass 25`, `fail 0`, `duration_ms 4085.077833`).
+### Stream: Rejection And Revision Harness
 
-## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-05-11)
+23. [TODO] `application-skeleton.phase5.dynamic-seed-test.task1` Add regression coverage that Application Skeleton bootstrap does not create static future phases and that every injected phase with user interaction has an immediate paired `Git Commit:` task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton dynamic plan seed`).
+24. [TODO] Git Commit: `test: cover application skeleton dynamic plan seed` (hash: TBD)
+25. [TODO] `application-skeleton.phase5.rejection-test.task1` Add a deterministic forced-rejection test: initialize a managed Application Skeleton workspace, make Core reject draft or materialization output, assert repair injection before feedback, then assert failed-attempt evidence is committed. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `test: cover application skeleton forced repair rejection`).
+26. [TODO] Git Commit: `test: cover application skeleton forced repair rejection` (hash: TBD)
+27. [TODO] `application-skeleton.phase5.user-return-test.task1` Add regression coverage for a post-materialization user request that updates Application Skeleton artifacts and produces a real child-plan revision task plus commit instead of dirty uncommitted state. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton user return commits`).
+28. [TODO] Git Commit: `test: cover application skeleton user return commits` (hash: TBD)
 
-### Stream: Targeted Build And Quality Gates
+## Phase 6 - Documentation And Tooling Verification (owner: Codex, updated: 2026-05-11)
 
-21. [DONE] `diagram-modules-repair.phase5.verify.task1` Run targeted package verification for the core package plus `npm run plan:validate`; record evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair verification`).
-22. [DONE] Git Commit: `docs: record diagram modules repair verification` (hash: 60016028c)
+### Stream: Scenario Documentation
 
-#### Phase 5 Evidence
+29. [TODO] `application-skeleton.phase6.docs.task1` Update Application Skeleton planning docs and the docs index with the implemented dynamic orchestration, rejection, acceptance, materialization, and post-completion revision semantics. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize application skeleton orchestration scenario`).
+30. [TODO] Git Commit: `docs: finalize application skeleton orchestration scenario` (hash: TBD)
 
-- 2026-05-11: `npm run build --workspace=@codeai-hub/core` - PASS (`@codeai-hub/core@1.2.227 build`, `tsc` completed with exit code 0).
-- 2026-05-11: `npm run plan:validate` - PASS (`Plan validation: OK`).
-- Residual risk: release packaging has not been run in this scope yet. Per Release Build Confirmation Gate, release scripts require separate explicit user confirmation before `build-all.sh` or `build-release.sh` starts.
+### Stream: Targeted Verification
 
-## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
+31. [TODO] `application-skeleton.phase6.verify.task1` Run targeted Application Skeleton managed-workflow tests, the core package build, and `npm run plan:validate`; record exact evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton orchestration verification`).
+32. [TODO] Git Commit: `docs: record application skeleton orchestration verification` (hash: TBD)
 
-### Stream: Release Candidate Review
+## Phase 7 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
 
-23. [DONE] `diagram-modules-repair.phase6.acceptance.task1` User reviews the implemented Diagram Modules behavior in a local workflow run, including at least one normal Product Part sequence and one forced Core rejection scenario. (scope: chat/process observation only; no commit required). Result: User explicitly requested and confirmed release build on 2026-05-11.
+### Stream: Local Workflow Review
 
-## Phase 7 - Release Build (owner: Codex, updated: 2026-05-11)
+33. [TODO] `application-skeleton.phase7.acceptance.task1` User verifies the next release candidate in Project Manager: dynamic Application Skeleton plan, Core rejection repair loop, Accept Contract commit boundary, materialization commit, post-completion revision commit, and Quality Gates unlock. (scope: chat/process observation only; no commit required).
 
-### Stream: Release Documentation Prep
+## Phase 8 - Release Build (owner: Codex, updated: 2026-05-11)
 
-24. [DONE] `diagram-modules-repair.phase7.release-docs.task1` After explicit user release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules repair release 1.2.228`).
-25. [DONE] Git Commit: `docs: prepare diagram modules repair release 1.2.228` (hash: b8cfb8508)
+### Stream: Release Confirmation And Packaging
 
-#### Phase 7 Release Docs Evidence
+34. [TODO] `application-skeleton.phase8.release-docs.task1` After separate explicit release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton orchestration release`).
+35. [TODO] Git Commit: `docs: prepare application skeleton orchestration release` (hash: TBD)
+36. [TODO] `application-skeleton.phase8.release-build.task1` Run the approved release build sequence and record artifact paths, VSIX version, and release evidence. (scope: `doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton orchestration release`).
+37. [TODO] Git Commit: `chore: build application skeleton orchestration release` (hash: TBD)
 
-- 2026-05-11: user explicitly requested release build in chat. Next unified version determined from `package.json` `1.2.227` -> `1.2.228`; `README.md` and `CHANGELOG.md` updated before `build-all.sh`.
+## Phase 9 - Release Acceptance Testing (owner: user, updated: 2026-05-11)
 
-### Stream: Release Build Artifacts
+### Stream: Installed Release Review
 
-26. [DONE] `diagram-modules-repair.phase7.release-build.task1` Run `./scripts/build-all.sh --allow-dirty` for the next unified version because plan-orchestrator leaves only the active `doc/TODO/todo-plan.md` transition dirty between managed commits; record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules repair release`).
-27. [DONE] Git Commit: `chore: build diagram modules repair release` (hash: a24b46410)
-28. [DONE] `diagram-modules-repair.phase7.release-package.task1` Run `./scripts/build-release.sh --use-current-version --allow-dirty` because only the active `doc/TODO/todo-plan.md` transition is dirty after the build commit; verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none). Result: Release 1.2.228 built successfully; VSIX codeai-hub-1.2.228.vsix is ready for user retest.
+38. [TODO] `application-skeleton.phase9.release-acceptance.task1` User installs the produced release and accepts or rejects Application Skeleton behavior based on real workflow testing. (scope: chat/process observation only; no commit required).
 
-#### Phase 7 Build-All Evidence
+## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
-- 2026-05-11: `./scripts/build-all.sh --allow-dirty` - PASS. Unified version bumped to `1.2.228`; provider/core/UI/launcher artifacts produced in both `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
-- Artifacts: `claude-module-1.2.228.tar.bz2`, `codex-module-1.2.228.tar.bz2`, `gemini-module-1.2.228.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.228.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.228.tar.bz2`, `vscode-webview-1.2.228.tar.bz2`, `project-manager-1.2.228.tar.bz2`.
+### Stream: Archive And Planning Disposition
 
-#### Phase 7 Packaging Evidence
-
-- 2026-05-11: `./scripts/build-release.sh --use-current-version --allow-dirty` - PASS for `1.2.228`. Verified `Step 7: Verifying SDK exclusions`, local artifact validation, markdown links, duplication advisory check, dev dependency prune/restore, VSIX package creation, and VSIX runtime package surface.
-- VSIX: `codeai-hub-1.2.228.vsix` (`48M`).
-- Release bundle paths: `doc/tmp/releases/*1.2.228*` and `~/.codeai-hub/releases/*1.2.228*`.
-
-## Phase 8 - User Release Acceptance Testing (owner: user, updated: 2026-05-11)
-
-### Stream: Release Retest
-
-29. [DONE] `diagram-modules-repair.phase8.release-acceptance.task1` User installs the new release VSIX and retests Diagram Modules normal Product Part sequencing plus forced Core rejection repair behavior. (scope: chat/process observation only; no commit required). Result: Release 1.2.228 retest found a blocking Diagram Modules user-return bug: Phase 2 opened without a Git Commit pair and user-requested Project Manager edits stayed dirty instead of being committed.
-
-## Phase 8A - Release Blocker: Diagram Modules User Return Revisions (owner: Codex, updated: 2026-05-11)
-
-### Stream: Persistent Revision Commit Pair
-
-30. [DONE] `diagram-modules-repair.phase8a.user-return-revision.task1` Replace the Diagram Modules no-commit user-return anchor with an always-open `revisionN` microtask plus paired `Git Commit`, and after each user-return commit open the next revision task. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `fix: track diagram modules user return revisions`).
-31. [DONE] Git Commit: `fix: track diagram modules user return revisions` (hash: f6dc39550)
-32. [DONE] `diagram-modules-repair.phase8a.user-return-regression.task1` Cover the installed shim and managed commit boundary for Diagram Modules user-return revisions so a user-requested Project Manager edit is committed instead of left as dirty state. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules user return commit boundary`).
-33. [DONE] Git Commit: `test: cover diagram modules user return commit boundary` (hash: 724b4d93d)
-
-#### Phase 8A Regression Evidence
-
-- 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 9`, `pass 9`, `fail 0`, `duration_ms 3975.424334`). Covered installed shim final Product Part -> `revision1`, revision commit -> `revision2`, and managed commit transaction committing a user-requested Project Manager artifact revision instead of leaving dirty state.
-
-## Phase 8B - Post-Fix Verification And Release Gate (owner: Codex, updated: 2026-05-11)
-
-### Stream: Verification Before Next Release
-
-34. [DONE] `diagram-modules-repair.phase8b.verify.task1` Run targeted Diagram Modules managed-workflow tests, core build, and plan validation after the user-return revision fix; record evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules user return verification`).
-35. [DONE] Git Commit: `docs: record diagram modules user return verification` (hash: 47ab6d019)
-36. [DONE] `diagram-modules-repair.phase8b.release-confirmation.task1` Release Build Confirmation Gate for the next retest release after the Diagram Modules user-return fix. Do not prepare release notes, bump versions, or run release scripts until the user explicitly confirms the new release build. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed in chat on 2026-05-11 to continue through the new release build without stopping for another confirmation.
-
-#### Phase 8B Verification Evidence
-
-- 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 26`, `pass 26`, `fail 0`, `duration_ms 4609.0315`).
-- 2026-05-11: `npm run build --workspace=@codeai-hub/core` - PASS (`@codeai-hub/core@1.2.228 build`, `tsc` completed with exit code 0).
-- 2026-05-11: `npm run plan:validate` - PASS (`Plan validation: OK`).
-
-## Phase 8C - Release Build For Retest 1.2.229 (owner: Codex, updated: 2026-05-11)
-
-### Stream: Release Documentation Prep
-
-37. [DONE] `diagram-modules-repair.phase8c.release-docs.task1` After explicit user release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules user return release 1.2.229`).
-38. [DONE] Git Commit: `docs: prepare diagram modules user return release 1.2.229` (hash: 4da2a6500)
-
-#### Phase 8C Release Docs Evidence
-
-- 2026-05-11: user explicitly instructed Codex to continue through the new release build without stopping for another confirmation. Next unified version determined from `package.json` `1.2.228` -> `1.2.229`; `README.md` and `CHANGELOG.md` updated before `build-all.sh`.
-
-### Stream: Release Build Artifacts
-
-39. [DONE] `diagram-modules-repair.phase8c.release-build.task1` Run `./scripts/build-all.sh --allow-dirty` for the next unified version because plan-orchestrator leaves only the active `doc/TODO/todo-plan.md` transition dirty between managed commits; record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules user return release`).
-40. [DONE] Git Commit: `chore: build diagram modules user return release` (hash: 8e02f90ef)
-41. [DONE] `diagram-modules-repair.phase8c.release-package.task1` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none). Result: Release 1.2.229 built successfully; VSIX codeai-hub-1.2.229.vsix is ready for user retest.
-
-#### Phase 8C Build-All Evidence
-
-- 2026-05-11: `./scripts/build-all.sh --allow-dirty` - PASS. Unified version bumped to `1.2.229`; provider/core/UI/launcher artifacts produced in both `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
-- Artifacts: `claude-module-1.2.229.tar.bz2`, `codex-module-1.2.229.tar.bz2`, `gemini-module-1.2.229.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.229.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.229.tar.bz2`, `vscode-webview-1.2.229.tar.bz2`, `project-manager-1.2.229.tar.bz2`.
-
-#### Phase 8C Packaging Evidence
-
-- 2026-05-11: `./scripts/build-release.sh --use-current-version --allow-dirty` - PASS for `1.2.229`. Verified `Step 7: Verifying SDK exclusions`, local artifact validation, markdown links, duplication advisory check, dev dependency prune/restore, VSIX package creation, and VSIX runtime package surface.
-- VSIX: `codeai-hub-1.2.229.vsix` (`48M`).
-- Release bundle paths: `doc/tmp/releases/*1.2.229*` and `~/.codeai-hub/releases/*1.2.229*`.
-
-## Phase 8D - User Release Acceptance Testing (owner: user, updated: 2026-05-11)
-
-### Stream: Release Retest
-
-42. [DONE] `diagram-modules-repair.phase8d.release-acceptance.task1` User installs the new release VSIX and retests Diagram Modules normal Product Part sequencing, forced Core rejection repair behavior, and post-completion user-return revision commit behavior. (scope: chat/process observation only; no commit required). Result: User accepted release 1.2.229: Diagram Modules now works correctly, including normal Product Part sequencing, forced Core rejection repair behavior, and post-completion user-return revision commits.
-
-## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-11)
-
-### Stream: Closeout After Acceptance
-
-43. [DONE] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Plans/Archive/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
-    - Acceptance (2026-05-11): user accepted release `1.2.229` and confirmed Diagram Modules now works correctly.
-    - Closeout archive: `doc/TODO/Archive/todo-plan-closeout-diagram-modules-managed-repair-orchestration.md`.
-    - Planning disposition: `Diagram_Modules_Scenario.md` is accepted and archived as `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md`.
-    - Active planning remains under `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` for `Application Skeleton`; its next implementation plan must reuse the Diagram Modules lessons: dynamic `revisionN + Git Commit` user-return loops, repair/correction microtasks before provider-visible feedback, and commit/evidence for every attempt.
-44. [PENDING] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
-45. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+39. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+40. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+41. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+42. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+43. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
