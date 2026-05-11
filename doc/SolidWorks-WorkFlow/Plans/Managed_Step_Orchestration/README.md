@@ -8,6 +8,11 @@ This folder is the working area for scenario-level contracts of managed document
 - `Diagram_Modules_Scenario.md`
 - `Application_Skeleton_Scenario.md`
 
+It also keeps the still-useful planning sources that led to the current managed workflow implementation:
+
+- `Managed_Workspace_Lifecycle_From_Diagram_Modules.md`
+- `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`
+
 Quality Gates Baseline follows after these two scenarios are accepted.
 
 ## Core Invariant
