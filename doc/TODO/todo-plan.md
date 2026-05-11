@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "f6dc39550",
+  "lastRecordedCommit": "724b4d93d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase8a.user-return-regression.task1",
-  "expectedCommitMessage": "test: cover diagram modules user return commit boundary",
+  "currentTaskId": "diagram-modules-repair.phase8b.verify.task1",
+  "expectedCommitMessage": "docs: record diagram modules user return verification",
   "debt": {
-    "expectedCommitMessage": "test: cover diagram modules user return commit boundary",
-    "preCommitHead": "f6dc39550",
+    "expectedCommitMessage": "docs: record diagram modules user return verification",
+    "preCommitHead": "724b4d93d",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase8a.user-return-regression.task1"
+    "taskId": "diagram-modules-repair.phase8b.verify.task1"
   }
 }
 ```
@@ -154,16 +154,30 @@
 30. [DONE] `diagram-modules-repair.phase8a.user-return-revision.task1` Replace the Diagram Modules no-commit user-return anchor with an always-open `revisionN` microtask plus paired `Git Commit`, and after each user-return commit open the next revision task. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `fix: track diagram modules user return revisions`).
 31. [DONE] Git Commit: `fix: track diagram modules user return revisions` (hash: f6dc39550)
 32. [DONE] `diagram-modules-repair.phase8a.user-return-regression.task1` Cover the installed shim and managed commit boundary for Diagram Modules user-return revisions so a user-requested Project Manager edit is committed instead of left as dirty state. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules user return commit boundary`).
-33. [PENDING] Git Commit: `test: cover diagram modules user return commit boundary` (hash: TBD)
+33. [DONE] Git Commit: `test: cover diagram modules user return commit boundary` (hash: 724b4d93d)
 
 #### Phase 8A Regression Evidence
 
 - 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 9`, `pass 9`, `fail 0`, `duration_ms 3975.424334`). Covered installed shim final Product Part -> `revision1`, revision commit -> `revision2`, and managed commit transaction committing a user-requested Project Manager artifact revision instead of leaving dirty state.
 
+## Phase 8B - Post-Fix Verification And Release Gate (owner: Codex, updated: 2026-05-11)
+
+### Stream: Verification Before Next Release
+
+34. [DONE] `diagram-modules-repair.phase8b.verify.task1` Run targeted Diagram Modules managed-workflow tests, core build, and plan validation after the user-return revision fix; record evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules user return verification`).
+35. [PENDING] Git Commit: `docs: record diagram modules user return verification` (hash: TBD)
+36. [TODO] `diagram-modules-repair.phase8b.release-confirmation.task1` Release Build Confirmation Gate for the next retest release after the Diagram Modules user-return fix. Do not prepare release notes, bump versions, or run release scripts until the user explicitly confirms the new release build. (scope: chat/process observation only; no commit required).
+
+#### Phase 8B Verification Evidence
+
+- 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 26`, `pass 26`, `fail 0`, `duration_ms 4609.0315`).
+- 2026-05-11: `npm run build --workspace=@codeai-hub/core` - PASS (`@codeai-hub/core@1.2.228 build`, `tsc` completed with exit code 0).
+- 2026-05-11: `npm run plan:validate` - PASS (`Plan validation: OK`).
+
 ## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-34. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
-35. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
-36. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+37. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
+38. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
+39. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
