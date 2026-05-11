@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "196f5f91b",
+  "lastRecordedCommit": "02a7e86ef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase32.audit.task1",
-  "expectedCommitMessage": "docs: open application skeleton handoff anchor regex scope",
+  "currentTaskId": "application-skeleton-orchestration.phase32.handoff-regex.task1",
+  "expectedCommitMessage": "fix: make application skeleton handoff anchor regex-matchable",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton handoff anchor regex scope",
-    "preCommitHead": "196f5f91b",
+    "expectedCommitMessage": "fix: make application skeleton handoff anchor regex-matchable",
+    "preCommitHead": "02a7e86ef",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase32.audit.task1"
+    "taskId": "application-skeleton-orchestration.phase32.handoff-regex.task1"
   }
 }
 ```
@@ -580,7 +580,7 @@
 ### Stream: Scope Audit
 
 139. [DONE] `application-skeleton-orchestration.phase32.audit.task1` Open this scope: block Phase 30 with the handoff anchor regex gap, document the fallback-insert pollution, and pin the seed-line fix. After fix, the Phase 4 handoff seed line includes `expected commit: none — reserved handoff anchor` inside its parenthetical scope clause so `TASK_LINE_RE` matches it; advancement after Phase 3 materialize lands cleanly on the handoff task with `expectedCommitMessage: null`; the workspace stage transition mapping (`recordWorkspaceCommit` in `managed-todo-tree` ledger) then switches `activeStage: application_skeleton → quality_gates` through the normal path. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton handoff anchor regex scope`).
-140. [PENDING] Git Commit: `docs: open application skeleton handoff anchor regex scope` (hash: TBD)
+140. [DONE] Git Commit: `docs: open application skeleton handoff anchor regex scope` (hash: 02a7e86ef)
 
 #### Audit findings (HEAD = `196f5f91b`, 2026-05-11)
 
@@ -591,8 +591,8 @@
 
 ### Stream: Handoff Seed Line Regex Match
 
-141. [TODO] `application-skeleton-orchestration.phase32.handoff-regex.task1` Add `expected commit: none — reserved handoff anchor` inside the Phase 4 handoff seed line in `managed-todo-tree.ts` so `TASK_LINE_RE` matches it; sync the matching fixture text in `managed-plan-orchestrator-installer.test.ts` (if it asserts the handoff line literal) and `session-request-handler-workflow-session.managed-workspace.test.ts` (which pins the handoff task regex shape). After the fix, post-Phase-3-materialize advancement lands on `application-skeleton.handoff.task1` with `expectedCommitMessage: null` and no fallback-insert pollution. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: make application skeleton handoff anchor regex-matchable`).
-142. [TODO] Git Commit: `fix: make application skeleton handoff anchor regex-matchable` (hash: TBD)
+141. [DONE] `application-skeleton-orchestration.phase32.handoff-regex.task1` Add `expected commit: none — reserved handoff anchor` inside the Phase 4 handoff seed line in `managed-todo-tree.ts` so `TASK_LINE_RE` matches it; sync the matching fixture text in `managed-plan-orchestrator-installer.test.ts` (if it asserts the handoff line literal) and `session-request-handler-workflow-session.managed-workspace.test.ts` (which pins the handoff task regex shape). After the fix, post-Phase-3-materialize advancement lands on `application-skeleton.handoff.task1` with `expectedCommitMessage: null` and no fallback-insert pollution. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: make application skeleton handoff anchor regex-matchable`).
+142. [PENDING] Git Commit: `fix: make application skeleton handoff anchor regex-matchable` (hash: TBD)
 
 ### Stream: Targeted Verification
 

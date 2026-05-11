@@ -321,7 +321,7 @@ const createStageFollowUpTasks = (
 
 ### Stream: Reserved Post-Closeout Handoff Anchor
 
-7. [TODO] \`application-skeleton.handoff.task1\` Reserved post-closeout handoff anchor; do not execute automatically (scope: chat/process observation only; no commit required).
+7. [TODO] \`application-skeleton.handoff.task1\` Reserved post-closeout handoff anchor; do not execute automatically (scope: chat/process observation only; expected commit: none — reserved handoff anchor).
 `;
   }
   if (initialStage === "quality_gates") {
