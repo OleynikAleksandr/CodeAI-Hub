@@ -242,7 +242,7 @@ test("managed dirty-gate error uses neutral content-readiness wording without gi
   assert.doesNotMatch(error, FORBIDDEN_GIT_IMPERATIVES_RE);
 });
 
-test("managed dirty Git blocks downstream workflow stages from Diagram Modules onward", () => {
+test("managed dirty Git does not re-block completed upstream Application Skeleton", () => {
   const cleanBlocked = resolveWorkflowBlockedStages({
     applicationSkeletonProgress: { materialized: true } as never,
     description: {
@@ -261,9 +261,20 @@ test("managed dirty Git blocks downstream workflow stages from Diagram Modules o
     managedGitClean: false,
     state: createWorkflowState(),
   });
+  const dirtyBeforeSkeletonMaterialized = resolveWorkflowBlockedStages({
+    applicationSkeletonProgress: { materialized: false } as never,
+    description: {
+      finalPath: ".codeai-hub/demo/description/Final_Description.md",
+    },
+    diagramModulesProgress: { aggregateReady: true } as never,
+    managedGitClean: false,
+    state: createWorkflowState(),
+  });
 
   assert.equal(cleanBlocked.application_skeleton, false);
   assert.equal(cleanBlocked.quality_gates, false);
-  assert.equal(dirtyBlocked.application_skeleton, true);
+  assert.equal(dirtyBlocked.application_skeleton, false);
   assert.equal(dirtyBlocked.quality_gates, true);
+  assert.equal(dirtyBeforeSkeletonMaterialized.application_skeleton, true);
+  assert.equal(dirtyBeforeSkeletonMaterialized.quality_gates, true);
 });

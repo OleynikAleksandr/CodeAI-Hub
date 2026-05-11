@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "7fbac07cc",
+  "lastRecordedCommit": "878e8b783",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9l.release-build.task1",
-  "expectedCommitMessage": "chore: build application skeleton misplaced product parts repair release",
+  "currentTaskId": "application-skeleton.phase9m.led-boundary.task1",
+  "expectedCommitMessage": "fix: keep completed application skeleton green",
   "debt": {
-    "expectedCommitMessage": "chore: build application skeleton misplaced product parts repair release",
-    "preCommitHead": "7fbac07cc",
+    "expectedCommitMessage": "fix: keep completed application skeleton green",
+    "preCommitHead": "878e8b783",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9l.release-build.task1"
+    "taskId": "application-skeleton.phase9m.led-boundary.task1"
   }
 }
 ```
@@ -470,8 +470,8 @@ Application Skeleton misplaced product-parts repair verification evidence (2026-
 128. [DONE] `application-skeleton.phase9l.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton misplaced product-parts repair. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton misplaced product parts repair release`).
 129. [DONE] Git Commit: `docs: prepare application skeleton misplaced product parts repair release` (hash: 7fbac07cc)
 130. [DONE] `application-skeleton.phase9l.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton misplaced product parts repair release`).
-131. [PENDING] Git Commit: `chore: build application skeleton misplaced product parts repair release` (hash: TBD)
-132. [TODO] `application-skeleton.phase9l.release-acceptance.task1` User installs the produced release and retests Application Skeleton misplaced product-parts repair, materialization repair handoff, green-state prevention, Quality Gates child-plan creation, and next-step launch. (scope: chat/process observation only; no commit required).
+131. [DONE] Git Commit: `chore: build application skeleton misplaced product parts repair release` (hash: 878e8b783)
+132. [DONE] `application-skeleton.phase9l.release-acceptance.task1` User installs the produced release and retests Application Skeleton misplaced product-parts repair, materialization repair handoff, green-state prevention, Quality Gates child-plan creation, and next-step launch. (scope: chat/process observation only; no commit required). Result: Release 1.2.237 retest rejected: Application Skeleton completed and unlocked the next step, but after the user started Quality Gates the Application Skeleton LED turned red because managed dirty-state from the downstream technical stage was treated as a blocker for the already completed upstream stage.
 
 Application Skeleton misplaced product-parts repair release docs preparation evidence (2026-05-11):
 
@@ -486,12 +486,31 @@ Application Skeleton misplaced product-parts repair release build evidence (2026
 - Release tarballs refreshed under `doc/tmp/releases/`: `claude-module-1.2.237.tar.bz2`, `codex-module-1.2.237.tar.bz2`, `gemini-module-1.2.237.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.237.tar.bz2`, `vscode-webview-1.2.237.tar.bz2`, `project-manager-1.2.237.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.237.tar.bz2`.
 - User retest target: install `codeai-hub-1.2.237.vsix`, retest Application Skeleton misplaced product-parts repair, materialization repair handoff, green-state prevention, Quality Gates child-plan creation, and next-step launch.
 
+## Phase 9M - Release Blocker: Completed Stage LED Boundary (owner: Codex, updated: 2026-05-11)
+
+### Stream: Canonical Upstream Completion State
+
+133. [DONE] `application-skeleton.phase9m.led-boundary.task1` Prevent managed dirty state from a downstream technical stage from marking an already materialized Application Skeleton stage blocked/red; workflow-state must keep the completed upstream stage green and only block the current/downstream target. (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep completed application skeleton green`).
+134. [PENDING] Git Commit: `fix: keep completed application skeleton green` (hash: TBD)
+135. [TODO] `application-skeleton.phase9m.verify.task1` Run targeted workflow blocked-stage tests, core build, and `npm run plan:validate`; record the LED-boundary evidence before release packaging. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton led boundary verification`).
+136. [TODO] Git Commit: `docs: record application skeleton led boundary verification` (hash: TBD)
+
+## Phase 9N - Release Build: Completed Stage LED Boundary Fix (owner: Codex, updated: 2026-05-11)
+
+### Stream: Package Retest Release
+
+137. [TODO] `application-skeleton.phase9n.release-docs.task1` Use the user's explicit release-build confirmation from this thread, determine the next release version, and update release-facing docs for the completed-stage LED boundary fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton led boundary release`).
+138. [TODO] Git Commit: `docs: prepare application skeleton led boundary release` (hash: TBD)
+139. [TODO] `application-skeleton.phase9n.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton led boundary release`).
+140. [TODO] Git Commit: `chore: build application skeleton led boundary release` (hash: TBD)
+141. [TODO] `application-skeleton.phase9n.release-acceptance.task1` User installs the produced release and retests that Application Skeleton stays green after Quality Gates is started, while Quality Gates remains outside this scope for a later dedicated plan. (scope: chat/process observation only; no commit required).
+
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-133. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-134. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-135. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-136. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-137. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+142. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+143. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+144. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+145. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+146. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).

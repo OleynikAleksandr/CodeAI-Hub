@@ -401,13 +401,15 @@ export const resolveWorkflowBlockedStages = (params: {
     fileName: "virtual-simulation.md",
   });
   const managedGitBlocked = params.managedGitClean === false;
+  const applicationSkeletonMaterialized =
+    params.applicationSkeletonProgress?.materialized === true;
   return {
     description: managedModeActive,
     virtual_simulation: managedModeActive || !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
     application_skeleton:
-      managedGitBlocked || !params.diagramModulesProgress?.aggregateReady,
-    quality_gates:
-      managedGitBlocked || !params.applicationSkeletonProgress?.materialized,
+      !params.diagramModulesProgress?.aggregateReady ||
+      (managedGitBlocked && !applicationSkeletonMaterialized),
+    quality_gates: managedGitBlocked || !applicationSkeletonMaterialized,
   };
 };
