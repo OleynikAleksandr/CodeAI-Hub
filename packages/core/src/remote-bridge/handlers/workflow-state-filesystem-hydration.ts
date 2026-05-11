@@ -1,4 +1,5 @@
-import { stat } from "node:fs/promises";
+import { mkdir, readdir, rename, rm, stat } from "node:fs/promises";
+import path from "node:path";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import type { WorkflowArtifactFileName } from "../../workflow/paths/workflow-paths-types";
 import type {
@@ -22,6 +23,11 @@ const FILESYSTEM_HYDRATION_TARGETS: readonly {
   { stage: "quality_gates", fileName: "quality-gates.md" },
   { stage: "quality_gates", fileName: "quality-gates.json" },
 ] as const;
+
+const VIRTUAL_SIMULATION_ALIAS_DIR = "virtual-simulation";
+
+const isDisposableAliasEntry = (entry: string): boolean =>
+  entry === ".DS_Store";
 
 const upsertArtifact = (
   artifacts: readonly WorkflowArtifactState[],
@@ -56,9 +62,13 @@ const hydrateStageFromFilesystem = async (params: {
     return params.stageState;
   }
 
-  const artifactStat = await stat(artifactPath.value.absolutePath).catch(
-    () => null
-  );
+  const artifactStat = await resolveCanonicalArtifactStat({
+    absolutePath: artifactPath.value.absolutePath,
+    fileName: params.fileName,
+    stage: params.stage,
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  });
   if (!artifactStat?.isFile()) {
     return params.stageState;
   }
@@ -81,6 +91,65 @@ const hydrateStageFromFilesystem = async (params: {
         ? artifactUpdatedAt
         : params.stageState.updatedAt,
   };
+};
+
+const resolveCanonicalArtifactStat = async (params: {
+  readonly absolutePath: string;
+  readonly fileName: WorkflowArtifactFileName;
+  readonly stage: WorkflowStageId;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<Awaited<ReturnType<typeof stat>> | null> => {
+  const canonicalStat = await stat(params.absolutePath).catch(() => null);
+  if (canonicalStat?.isFile()) {
+    return canonicalStat;
+  }
+
+  if (
+    params.stage !== "virtual_simulation" ||
+    params.fileName !== "virtual-simulation.md"
+  ) {
+    return canonicalStat;
+  }
+
+  await moveVirtualSimulationAliasIfPresent({
+    canonicalAbsolutePath: params.absolutePath,
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  });
+  return await stat(params.absolutePath).catch(() => null);
+};
+
+const moveVirtualSimulationAliasIfPresent = async (params: {
+  readonly canonicalAbsolutePath: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  const aliasDir = path.join(
+    params.workspaceRoot,
+    ".codeai-hub",
+    params.workspaceSlug,
+    VIRTUAL_SIMULATION_ALIAS_DIR
+  );
+  const aliasPath = path.join(aliasDir, "virtual-simulation.md");
+  const aliasStat = await stat(aliasPath).catch(() => null);
+  if (!aliasStat?.isFile()) {
+    return;
+  }
+
+  await mkdir(path.dirname(params.canonicalAbsolutePath), { recursive: true });
+  await rename(aliasPath, params.canonicalAbsolutePath);
+  await removeEmptyVirtualSimulationAliasDir(aliasDir);
+};
+
+const removeEmptyVirtualSimulationAliasDir = async (
+  aliasDir: string
+): Promise<void> => {
+  const entries = await readdir(aliasDir).catch(() => null);
+  if (!entries || entries.some((entry) => !isDisposableAliasEntry(entry))) {
+    return;
+  }
+  await rm(aliasDir, { force: true, recursive: true });
 };
 
 export const hydrateWorkflowStateFromFilesystem = async (params: {

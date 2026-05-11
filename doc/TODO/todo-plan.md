@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "9b76980c9",
+  "lastRecordedCommit": "08c53267c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9h.plan.task1",
-  "expectedCommitMessage": "docs: plan virtual simulation alias recovery",
+  "currentTaskId": "application-skeleton.phase9h.canonicalize.task1",
+  "expectedCommitMessage": "fix: recover virtual simulation artifact alias",
   "debt": {
-    "expectedCommitMessage": "docs: plan virtual simulation alias recovery",
-    "preCommitHead": "9b76980c9",
+    "expectedCommitMessage": "fix: recover virtual simulation artifact alias",
+    "preCommitHead": "08c53267c",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9h.plan.task1"
+    "taskId": "application-skeleton.phase9h.canonicalize.task1"
   }
 }
 ```
@@ -329,9 +329,9 @@ Managed stage isolation release build evidence (2026-05-11):
 ### Stream: Canonical Artifact Directory Repair
 
 87. [DONE] `application-skeleton.phase9h.plan.task1` Record the v1.2.234 blocker where Codex wrote `virtual-simulation.md` under the non-canonical `virtual-simulation/` directory while Core gates read only `virtual_simulation/`, and split the repair into deterministic canonicalization plus verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan virtual simulation alias recovery`).
-88. [PENDING] Git Commit: `docs: plan virtual simulation alias recovery` (hash: TBD)
-89. [TODO] `application-skeleton.phase9h.canonicalize.task1` Canonicalize a provider-created `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` alias into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` before workflow-state hydration, validation, and Diagram Modules gating; add regression coverage for the recovered gate. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: recover virtual simulation artifact alias`).
-90. [TODO] Git Commit: `fix: recover virtual simulation artifact alias` (hash: TBD)
+88. [DONE] Git Commit: `docs: plan virtual simulation alias recovery` (hash: 08c53267c)
+89. [DONE] `application-skeleton.phase9h.canonicalize.task1` Canonicalize a provider-created `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` alias into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` before workflow-state hydration, validation, and Diagram Modules gating; add regression coverage for the recovered gate. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: recover virtual simulation artifact alias`).
+90. [PENDING] Git Commit: `fix: recover virtual simulation artifact alias` (hash: TBD)
 91. [TODO] `application-skeleton.phase9h.verify.task1` Run targeted workflow-state tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record virtual simulation alias recovery verification`).
 92. [TODO] Git Commit: `docs: record virtual simulation alias recovery verification` (hash: TBD)
 

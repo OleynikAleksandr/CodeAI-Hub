@@ -347,6 +347,7 @@ Workflow directory preflight:
 - Core Runtime создаёт директории workflow artifacts до отправки provider prompt: `description/`, `virtual_simulation/`, `diagram_modules/`, `diagram_modules/product-parts/`, `application_skeleton/` и `quality_gates/` для соответствующих шагов.
 - Prompt агенту должен указывать уже готовый target path для artifact write, а не просить его искать, создавать или проверять stage directory.
 - Agent instructions описывают обязанность заполнить target artifact content; ответственность за existence/preflight directory принадлежит Core.
+- `virtual_simulation/` является единственным каноническим каталогом Virtual Simulation. Если provider ошибочно создаёт alias `virtual-simulation/virtual-simulation.md`, Core при filesystem hydration переносит файл в `virtual_simulation/virtual-simulation.md` до validation/gating, чтобы Diagram Modules не блокировался ложным `virtual-simulation.md not found`.
 
 Workflow artifact edit contract:
 - Markdown artifacts пишутся как UTF-8 + LF.
