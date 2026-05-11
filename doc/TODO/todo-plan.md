@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "aaab75436",
+  "lastRecordedCommit": "257565787",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase21.release.task2",
-  "expectedCommitMessage": "build: release application skeleton recognizer hotfix",
+  "currentTaskId": "application-skeleton-orchestration.phase24.audit.task1",
+  "expectedCommitMessage": "docs: open application skeleton acceptance write-path scope",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton recognizer hotfix",
-    "preCommitHead": "aaab75436",
+    "expectedCommitMessage": "docs: open application skeleton acceptance write-path scope",
+    "preCommitHead": "257565787",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase21.release.task2"
+    "taskId": "application-skeleton-orchestration.phase24.audit.task1"
   }
 }
 ```
@@ -455,18 +455,79 @@
 ### Stream: Release Build
 
 112. [DONE] `application-skeleton-orchestration.phase21.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton recognizer hotfix`).
-113. [PENDING] Git Commit: `build: release application skeleton recognizer hotfix` (hash: TBD)
+113. [DONE] Git Commit: `build: release application skeleton recognizer hotfix` (hash: 257565787)
 
 ## Phase 22 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
 ### Stream: VSIX Retest
 
-114. [TODO] `application-skeleton-orchestration.phase22.acceptance.task1` User installs the v1.2.224 VSIX and reruns the Application Skeleton retest with focus on the recognizer hot-fix: the Application Skeleton session actually starts (agent jsonl is written); Phase 1 draft commit lands; Phase 2 review accepts both short typed acceptance phrases and the PM button; Phase 3 materialization commit lands. The Phase 16 invariants from Phase 18 also hold. (scope: chat/process observation only; no commit required).
+114. [BLOCKED] `application-skeleton-orchestration.phase22.acceptance.task1` User installs the v1.2.224 VSIX and reruns the Application Skeleton retest with focus on the recognizer hot-fix: the Application Skeleton session actually starts (agent jsonl is written); Phase 1 draft commit lands; Phase 2 review accepts both short typed acceptance phrases and the PM button; Phase 3 materialization commit lands. The Phase 16 invariants from Phase 18 also hold. (scope: chat/process observation only; no commit required). **BLOCKED 2026-05-11:** retest of v1.2.224 confirmed the Phase 20 length-cap hot-fix (Application Skeleton session bootstrap now reaches codex-cli, Phase 1 draft commit `4256791` landed cleanly, plan advanced to Phase 2 review correctly). But the typed-fallback path silently dropped three user acceptance attempts: Core log shows `Skipping managed contract acceptance phrase, phrase: "Подтверждаю контракт"` at 01:28:14 / 01:28:42 and `phrase: "Accept Contract"` at 09:04:52 with no `Dispatching message to provider adapter` after, no agent response, no Phase 2 commit, no Phase 3 continuation. Root cause is a Phase 5 design hole that survived through Phase 16: the typed-fallback router's optional `handleManagedAcceptContractCommand` callback IS wired in production (to `markAccepted` from `ManagedWorkflowPostTurnService` line ~239), but that callback only updates the in-memory `recentlyAcceptedSessions` Set; nobody writes `accepted: true` to `application-skeleton-map.json`. The Phase 3 continuation dispatcher (Stream 16D Option C) gates on `progress.accepted === true` reading the file, but no path — Core handler, runner, HTTP endpoint, button, typed-fallback, agent self-set — actually patches the file. Hot-fix is tracked under Phase 24; resumed retest under Phase 26.
+
+## Phase 24 - Acceptance Write-Path Fix (owner: next agent, updated: 2026-05-11)
+
+### Stream: Scope Audit
+
+115. [DONE] `application-skeleton-orchestration.phase24.audit.task1` Open this scope: block Phase 22 with the acceptance write-path findings, document the design hole (every existing acceptance path only sets the in-memory `recentlyAcceptedSessions` marker, none patches `application-skeleton-map.json::accepted: true`), and adopt **Variant A** — the Core accept-contract runner owns the `accepted: true` write so that PM button (via HTTP endpoint), typed-fallback router (via callback), and any future programmatic acceptance entry point all funnel through one writer. The agent's own self-set per its Phase 2 prompt continues to work as a parallel path. After the write lands, `application-skeleton-map.json` becomes a dirty Application Skeleton-owned file, the managed commit gate auto-commits it as `docs: accept application skeleton contract` (Phase 2 acceptance commit), the next read-model snapshot reports `progress.accepted === true`, and `sendApplicationSkeletonContinuationIfReady` fires the Phase 3 materialization prompt. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton acceptance write-path scope`).
+116. [PENDING] Git Commit: `docs: open application skeleton acceptance write-path scope` (hash: TBD)
+
+#### Audit findings (HEAD = `257565787`, 2026-05-11)
+
+- **Phase 22 retest symptom (v1.2.224 session `bac50e46-e460-4526-8d9f-d6d39cadba61`).** Phase 1 bootstrap succeeded, agent produced draft, Core auto-committed `4256791` (`docs: draft application skeleton contract`), plan advanced to Phase 2 review. User typed three acceptance phrases (47 chars, 11 chars, 41 chars) at 01:28:14 / 01:28:42 / 09:04:52. Each one matched the broadened recognizer and was intercepted by `routeApplicationSkeletonTypedAcceptance`. Core log records `Skipping managed contract acceptance phrase, phrase: "…"` for each, with no `Dispatching message to provider adapter` after. Native codex rollout `rollout-2026-05-11T01-25-42-019e1435…` ends at 01:27:18.587Z and never gets another entry. PM-side `codex-bac50e46-…-application-skeleton.jsonl` ends at the same timestamp. Nothing patched `application-skeleton-map.json` — it still reads `accepted: false`. `progress.accepted` therefore stays `false`, `canContinueApplicationSkeleton` returns `false`, `sendApplicationSkeletonContinuationIfReady` short-circuits. Plan stays at `currentTaskId: application-skeleton.phase2.review.task1` with `expectedCommitMessage: "docs: accept application skeleton contract"` waiting for a dirty owned file that never arrives.
+- **Existing write-paths today (none patch map.json):**
+  - `application-skeleton-typed-acceptance-router.ts::routeApplicationSkeletonTypedAcceptance` invokes optional callback `handleManagedAcceptContractCommand?.({sessionId, source: "typed-fallback"})`. Callback is wired in `session-request-handler-message-dispatch.ts:181–189` to the post-turn service's `handleApplicationSkeletonAcceptContractCommand` (delegates to `managed-stage-accept-contract-runner.ts`).
+  - `managed-stage-accept-contract-handler.ts::evaluateApplicationSkeletonAcceptContractCommand` is a **pure decision** — no side effects.
+  - `managed-stage-accept-contract-runner.ts` only invokes `params.markAccepted(sessionId)` (which calls `this.recentlyAcceptedSessions.add(sessionId)` on the post-turn service) and `params.handle()`. **No `application-skeleton-map.json` patch.**
+  - `http-api-managed-stage-accept-contract.ts` returns the runner's `accepted | rejected` decision as JSON to the PM client. **No file system write.**
+  - `managed-workflow-post-turn-service.ts` updates `recentlyAcceptedSessions` in `markAccepted` (~line 239) and `handleContractAcceptance` (~line 266); removes the session on materialized (~line 351). All in-memory.
+- **Read-path that gates Phase 3 dispatch:**
+  - `application-skeleton-progress.ts:164` reads `accepted = markdownExists && mapExists && readAcceptedFlag(mapJson)` — purely from `application-skeleton-map.json`. Stream 16D switched the dispatcher gate to `progress.accepted === true` (Option C). With no writer, the gate never opens.
+- **Variant A target.** `managed-stage-accept-contract-runner.ts` becomes the single owner of the accepted-write. After `evaluateApplicationSkeletonAcceptContractCommand` returns `kind: "accepted"`, the runner patches `application-skeleton-map.json` setting `accepted: true` (and optionally `reviewState: "accepted"` to mirror the agent prompt's expected shape), then proceeds with its existing `markAccepted` + `handle` flow. The patch lives in a new helper `application-skeleton-acceptance-writer.ts` so the runner stays under the architecture limit and the writer is unit-testable. The managed commit gate (`workflow-state-managed-documentation-commit.ts::hasCommittableApplicationSkeletonStage`) already triggers on any owned dirty file in `application_skeleton` stage scope, so the auto-commit pipeline fires `docs: accept application skeleton contract` with no further wiring. Phase 3 dispatcher fires on the next read-model snapshot.
+
+### Stream: Map.json Acceptance Writer
+
+117. [TODO] `application-skeleton-orchestration.phase24.writer.task1` Add a new pure helper `application-skeleton-acceptance-writer.ts` that reads `application-skeleton-map.json`, patches `accepted: true` (and `reviewState: "accepted"` if absent), and writes it back. Add peer test `application-skeleton-acceptance-writer.test.ts` covering happy path, missing-file path, and idempotency (already-accepted map is a noop). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts`; expected commit: `fix: add application skeleton acceptance map.json writer`).
+118. [TODO] Git Commit: `fix: add application skeleton acceptance map.json writer` (hash: TBD)
+
+### Stream: Runner Integration
+
+119. [TODO] `application-skeleton-orchestration.phase24.runner-write.task1` Wire the new writer into `managed-stage-accept-contract-runner.ts` so that after `evaluateApplicationSkeletonAcceptContractCommand` returns `kind: "accepted"`, the runner patches `application-skeleton-map.json` before calling `markAccepted` + `handle`. Update the runner's peer test (or `managed-stage-accept-contract-handler.test.ts`) to assert the file gets patched on accept and stays untouched on reject. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: patch application skeleton map.json from accept contract runner`).
+120. [TODO] Git Commit: `fix: patch application skeleton map.json from accept contract runner` (hash: TBD)
+
+### Stream: Targeted Verification
+
+121. [TODO] `application-skeleton-orchestration.phase24.verify.task1` Run targeted Core tests for the writer, runner, dispatcher, and end-to-end modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance write-path verification`).
+122. [TODO] Git Commit: `docs: record application skeleton acceptance write-path verification` (hash: TBD)
+
+## Phase 25 - Release Build (owner: next agent, updated: 2026-05-11)
+
+### Stream: Release Preparation
+
+123. [TODO] `application-skeleton-orchestration.phase25.release.task1` Update README/CHANGELOG for v1.2.225 (acceptance write-path fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance write-path release`).
+124. [TODO] Git Commit: `docs: prepare application skeleton acceptance write-path release` (hash: TBD)
+
+### Stream: Release Build
+
+125. [TODO] `application-skeleton-orchestration.phase25.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance write-path`).
+126. [TODO] Git Commit: `build: release application skeleton acceptance write-path` (hash: TBD)
+
+## Phase 26 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
+
+### Stream: VSIX Retest
+
+127. [TODO] `application-skeleton-orchestration.phase26.acceptance.task1` User installs the v1.2.225 VSIX and reruns the Application Skeleton retest: Phase 1 draft commit lands; typed acceptance ("accepted", "принимаю", PM button) flips `application-skeleton-map.json::accepted: true`; Core auto-commits `docs: accept application skeleton contract`; Phase 3 materialization continuation prompt arrives at the agent; Phase 3 commit `feat: materialize application skeleton` lands; downstream handoff to Quality Gates Baseline. (scope: chat/process observation only; no commit required).
 
 ## Phase 19 - Scope Closeout (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-104. [TODO] `application-skeleton-orchestration.phase19.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+104. [BLOCKED] `application-skeleton-orchestration.phase19.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`). **SUPERSEDED 2026-05-11:** Phase 18 retest blocked → Phase 16 + Phase 20 + Phase 22 follow-up scopes opened. Closeout deferred to Phase 27 once Phase 26 retest of v1.2.225 lands.
 105. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
-106. [TODO] `application-skeleton-orchestration.phase19.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+106. [BLOCKED] `application-skeleton-orchestration.phase19.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. **SUPERSEDED 2026-05-11:** handoff anchor relocated to Phase 27.
+
+## Phase 27 - Scope Closeout (owner: next agent, updated: 2026-05-11)
+
+### Stream: Closeout After Acceptance
+
+128. [TODO] `application-skeleton-orchestration.phase27.closeout.task1` After explicit user acceptance of Phase 26 retest, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+129. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
+130. [TODO] `application-skeleton-orchestration.phase27.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
