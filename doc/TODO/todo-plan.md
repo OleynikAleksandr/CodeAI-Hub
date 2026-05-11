@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "89c79d053",
+  "lastRecordedCommit": "aadf57388",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9i.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare virtual simulation alias recovery release",
+  "currentTaskId": "application-skeleton.phase9i.release-build.task1",
+  "expectedCommitMessage": "chore: build virtual simulation alias recovery release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare virtual simulation alias recovery release",
-    "preCommitHead": "89c79d053",
+    "expectedCommitMessage": "chore: build virtual simulation alias recovery release",
+    "preCommitHead": "aadf57388",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9i.release-docs.task1"
+    "taskId": "application-skeleton.phase9i.release-build.task1"
   }
 }
 ```
@@ -352,9 +352,9 @@ Virtual Simulation alias recovery verification evidence (2026-05-11):
 94. [DONE] Git Commit: `docs: add virtual simulation alias release gate` (hash: 89c79d053)
 95. [DONE] `application-skeleton.phase9i.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Virtual Simulation alias recovery fix. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build for the Virtual Simulation alias recovery fix.
 96. [DONE] `application-skeleton.phase9i.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Virtual Simulation alias recovery fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare virtual simulation alias recovery release`).
-97. [PENDING] Git Commit: `docs: prepare virtual simulation alias recovery release` (hash: TBD)
-98. [TODO] `application-skeleton.phase9i.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build virtual simulation alias recovery release`).
-99. [TODO] Git Commit: `chore: build virtual simulation alias recovery release` (hash: TBD)
+97. [DONE] Git Commit: `docs: prepare virtual simulation alias recovery release` (hash: aadf57388)
+98. [DONE] `application-skeleton.phase9i.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build virtual simulation alias recovery release`).
+99. [PENDING] Git Commit: `chore: build virtual simulation alias recovery release` (hash: TBD)
 100. [TODO] `application-skeleton.phase9i.release-acceptance.task1` User installs the produced release and retests Virtual Simulation alias recovery, Diagram Modules unlock, and continuation into Application Skeleton. (scope: chat/process observation only; no commit required).
 
 Virtual Simulation alias recovery release docs preparation evidence (2026-05-11):
@@ -362,6 +362,14 @@ Virtual Simulation alias recovery release docs preparation evidence (2026-05-11)
 - Future release version before packaging: `1.2.235` (`package.json` currently reports `1.2.234`; `build-all.sh` owns the version bump).
 - Updated `README.md` current-release marker and `CHANGELOG.md` release notes for Virtual Simulation alias recovery and Diagram Modules false-missing gate recovery.
 - Explicit release-build confirmation was provided by the user in this thread: "Ладно, собираем новый релиз."
+
+Virtual Simulation alias recovery release build evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` completed the unified provider/core/UI/launcher build for version `1.2.235`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` completed packaging for version `1.2.235`, including SDK exclusion verification, local artefact validation, markdown link check, duplication check, and VSIX runtime package surface verification.
+- Produced VSIX: `codeai-hub-1.2.235.vsix` (48M on disk; release script reports package size 49M).
+- Fresh local release bundles are present under `doc/tmp/releases/`: `claude-module-1.2.235.tar.bz2`, `codex-module-1.2.235.tar.bz2`, `gemini-module-1.2.235.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.235.tar.bz2`, `vscode-webview-1.2.235.tar.bz2`, `project-manager-1.2.235.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.235.tar.bz2`.
+- Retest target for user acceptance: install `codeai-hub-1.2.235.vsix`, rerun the Virtual Simulation -> Diagram Modules transition on a clean/restarted extension environment, confirm Core recovers any provider-created `virtual-simulation/virtual-simulation.md` alias into canonical `virtual_simulation/virtual-simulation.md`, then continue into Application Skeleton.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
