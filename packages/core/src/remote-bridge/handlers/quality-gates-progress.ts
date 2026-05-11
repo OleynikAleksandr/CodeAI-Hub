@@ -345,15 +345,23 @@ export const applyTechnicalRootProgressToState = (params: {
   readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
   readonly state: WorkflowState;
 }): WorkflowState => {
-  const applicationSkeleton = params.applicationSkeletonProgress
-    ? updateTechnicalStage({
-        stage: params.state.stages.application_skeleton,
-        complete: params.applicationSkeletonProgress.materialized,
-        hasArtifact:
-          params.applicationSkeletonProgress.markdownExists ||
-          params.applicationSkeletonProgress.mapExists,
-      })
-    : params.state.stages.application_skeleton;
+  const applicationSkeleton = updateTechnicalStage({
+    stage: params.state.stages.application_skeleton,
+    complete: params.applicationSkeletonProgress?.materialized === true,
+    hasArtifact:
+      params.applicationSkeletonProgress?.markdownExists === true ||
+      params.applicationSkeletonProgress?.mapExists === true ||
+      stageHasArtifact({
+        state: params.state,
+        stage: "application_skeleton",
+        fileName: "application-skeleton.md",
+      }) ||
+      stageHasArtifact({
+        state: params.state,
+        stage: "application_skeleton",
+        fileName: "application-skeleton-map.json",
+      }),
+  });
   const qualityGates = params.qualityGatesProgress
     ? updateTechnicalStage({
         stage: params.state.stages.quality_gates,
