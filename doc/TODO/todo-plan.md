@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "b8cfb8508",
+  "lastRecordedCommit": "a24b46410",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase7.release-build.task1",
-  "expectedCommitMessage": "chore: build diagram modules repair release",
+  "currentTaskId": "diagram-modules-repair.phase8a.user-return-revision.task1",
+  "expectedCommitMessage": "fix: track diagram modules user return revisions",
   "debt": {
-    "expectedCommitMessage": "chore: build diagram modules repair release",
-    "preCommitHead": "b8cfb8508",
+    "expectedCommitMessage": "fix: track diagram modules user return revisions",
+    "preCommitHead": "a24b46410",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase7.release-build.task1"
+    "taskId": "diagram-modules-repair.phase8a.user-return-revision.task1"
   }
 }
 ```
@@ -127,24 +127,39 @@
 ### Stream: Release Build Artifacts
 
 26. [DONE] `diagram-modules-repair.phase7.release-build.task1` Run `./scripts/build-all.sh --allow-dirty` for the next unified version because plan-orchestrator leaves only the active `doc/TODO/todo-plan.md` transition dirty between managed commits; record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules repair release`).
-27. [PENDING] Git Commit: `chore: build diagram modules repair release` (hash: TBD)
-28. [TODO] `diagram-modules-repair.phase7.release-package.task1` On a clean tree run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none).
+27. [DONE] Git Commit: `chore: build diagram modules repair release` (hash: a24b46410)
+28. [DONE] `diagram-modules-repair.phase7.release-package.task1` Run `./scripts/build-release.sh --use-current-version --allow-dirty` because only the active `doc/TODO/todo-plan.md` transition is dirty after the build commit; verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none). Result: Release 1.2.228 built successfully; VSIX codeai-hub-1.2.228.vsix is ready for user retest.
 
 #### Phase 7 Build-All Evidence
 
 - 2026-05-11: `./scripts/build-all.sh --allow-dirty` - PASS. Unified version bumped to `1.2.228`; provider/core/UI/launcher artifacts produced in both `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
 - Artifacts: `claude-module-1.2.228.tar.bz2`, `codex-module-1.2.228.tar.bz2`, `gemini-module-1.2.228.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.228.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.228.tar.bz2`, `vscode-webview-1.2.228.tar.bz2`, `project-manager-1.2.228.tar.bz2`.
 
+#### Phase 7 Packaging Evidence
+
+- 2026-05-11: `./scripts/build-release.sh --use-current-version --allow-dirty` - PASS for `1.2.228`. Verified `Step 7: Verifying SDK exclusions`, local artifact validation, markdown links, duplication advisory check, dev dependency prune/restore, VSIX package creation, and VSIX runtime package surface.
+- VSIX: `codeai-hub-1.2.228.vsix` (`48M`).
+- Release bundle paths: `doc/tmp/releases/*1.2.228*` and `~/.codeai-hub/releases/*1.2.228*`.
+
 ## Phase 8 - User Release Acceptance Testing (owner: user, updated: 2026-05-11)
 
 ### Stream: Release Retest
 
-29. [TODO] `diagram-modules-repair.phase8.release-acceptance.task1` User installs the new release VSIX and retests Diagram Modules normal Product Part sequencing plus forced Core rejection repair behavior. (scope: chat/process observation only; no commit required).
+29. [DONE] `diagram-modules-repair.phase8.release-acceptance.task1` User installs the new release VSIX and retests Diagram Modules normal Product Part sequencing plus forced Core rejection repair behavior. (scope: chat/process observation only; no commit required). Result: Release 1.2.228 retest found a blocking Diagram Modules user-return bug: Phase 2 opened without a Git Commit pair and user-requested Project Manager edits stayed dirty instead of being committed.
+
+## Phase 8A - Release Blocker: Diagram Modules User Return Revisions (owner: Codex, updated: 2026-05-11)
+
+### Stream: Persistent Revision Commit Pair
+
+30. [DONE] `diagram-modules-repair.phase8a.user-return-revision.task1` Replace the Diagram Modules no-commit user-return anchor with an always-open `revisionN` microtask plus paired `Git Commit`, and after each user-return commit open the next revision task. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `fix: track diagram modules user return revisions`).
+31. [PENDING] Git Commit: `fix: track diagram modules user return revisions` (hash: TBD)
+32. [TODO] `diagram-modules-repair.phase8a.user-return-regression.task1` Cover the installed shim and managed commit boundary for Diagram Modules user-return revisions so a user-requested Project Manager edit is committed instead of left as dirty state. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules user return commit boundary`).
+33. [TODO] Git Commit: `test: cover diagram modules user return commit boundary` (hash: TBD)
 
 ## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-30. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
-31. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
-32. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+34. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
+35. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
+36. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

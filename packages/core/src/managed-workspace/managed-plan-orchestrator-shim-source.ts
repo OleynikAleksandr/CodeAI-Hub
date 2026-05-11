@@ -151,9 +151,7 @@ const formatTaskLine = (line, taskId, status, summary, files, message) => {
 };
 
 const formatNewTaskLine = (number, taskId, status, summary, scope, message) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
-const formatNewNoCommitTaskLine = (number, taskId, status, summary, scope) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: none).\`;
 ${createDiagramModulesPlanMutatorShimSource()}
-const insertDiagramModulesUserReturnTask = (lines, commitLineIndex) => { if (lines.some((line) => line.includes("diagram-modules.user-return.task1"))) { return; } const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1; lines.splice(commitLineIndex + 1, 0, "", "## Phase 2 — Persistent Diagram Modules User Return", "", "### Stream: User Return And Revisions", "", formatNewNoCommitTaskLine(taskNumber, "diagram-modules.user-return.task1", "TODO", "Keep Diagram Modules open for future user-requested revisions; Core must inject a revisionN microtask pair before any provider-visible revision feedback", ".codeai-hub/**/diagram_modules/**, .codeai-hub/**/workflow/revisions/diagram-modules/**")); };
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
@@ -292,7 +290,9 @@ const shouldUnlockDiagramModulesNextStage = (event, currentStage) => {
     return false;
   }
   const planState = readPlanStateAt(event.planPath);
-  return planState?.currentTaskId === "diagram-modules.user-return.task1";
+  return /^diagram-modules\\.user-return\\.revision\\d+\\.task1$/u.test(
+    planState?.currentTaskId ?? ""
+  );
 };
 const resolveWorkspaceLifecycleFields = (event, workspaceState) => {
   const currentStage = typeof workspaceState.activeStage === "string" ? workspaceState.activeStage : null;

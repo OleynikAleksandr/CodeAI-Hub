@@ -275,12 +275,32 @@ const committedProductPartIds = (lines, files, commitLineIndex) => {
   const fromCommit = isDiagramModulesRepairTaskLine(currentTaskLine) ? [] : files.map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1]).filter(Boolean);
   return [...new Set([...fromPlan, ...fromCommit])];
 };
+const existingUserReturnRevisionNumbers = (lines) =>
+  lines.map((line) => /diagram-modules\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
+const insertDiagramModulesUserReturnRevisionTaskPair = (lines, commitLineIndex) => {
+  const existingRevisions = existingUserReturnRevisionNumbers(lines);
+  const nextRevision = (existingRevisions.length > 0 ? Math.max(...existingRevisions) : 0) + 1;
+  const taskId = \`diagram-modules.user-return.revision\${nextRevision}.task1\`;
+  if (lines.some((line) => line.includes(\`\${taskId}\`))) { return; }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  const message = \`docs: revise diagram modules user return revision \${nextRevision}\`;
+  const phaseLines = lines.some((line) => line.includes("Phase 2 — Persistent Diagram Modules User Return"))
+    ? []
+    : ["", "## Phase 2 — Persistent Diagram Modules User Return", "", "### Stream: User Return And Revisions", ""];
+  lines.splice(
+    commitLineIndex + 1,
+    0,
+    ...phaseLines,
+    formatNewTaskLine(taskNumber, taskId, "TODO", \`Apply user-requested Diagram Modules revision \${nextRevision} and stop for Core acceptance\`, ".codeai-hub/**/diagram_modules/**, .codeai-hub/**/workflow/revisions/diagram-modules/**", message),
+    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`
+  );
+};
 const insertDiagramModulesProductPartTasks = (lines, commitLineIndex, files) => {
   const ids = collectProductPartIdsFromIndex(files);
   if (ids.length === 0) { return; }
   const completed = committedProductPartIds(lines, files, commitLineIndex);
   const id = ids.find((candidate) => !completed.includes(candidate));
-  if (!id) { insertDiagramModulesUserReturnTask(lines, commitLineIndex); return; }
+  if (!id) { insertDiagramModulesUserReturnRevisionTaskPair(lines, commitLineIndex); return; }
   if (lines.some((line) => line.includes(\`diagram-modules.product-part.\${id}\`))) { return; }
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = \`docs: update diagram modules product part \${id}\`;
   const inserted = [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];

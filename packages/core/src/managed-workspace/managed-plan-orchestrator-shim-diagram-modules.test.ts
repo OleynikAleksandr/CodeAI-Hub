@@ -10,13 +10,19 @@ import { ManagedPlanOrchestratorInstaller } from "./managed-plan-orchestrator-in
 const execFileAsync = promisify(execFile);
 const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 const USER_RETURN_TASK_RE =
-  /Current Task: diagram-modules\.user-return\.task1/u;
-const EXPECTED_NONE_RE = /Expected Commit: none/u;
+  /Current Task: diagram-modules\.user-return\.revision1\.task1/u;
+const USER_RETURN_REVISION2_TASK_RE =
+  /Current Task: diagram-modules\.user-return\.revision2\.task1/u;
+const USER_RETURN_COMMIT_RE =
+  /Expected Commit: docs: revise diagram modules user return revision 1/u;
+const USER_RETURN_REVISION2_COMMIT_RE =
+  /Expected Commit: docs: revise diagram modules user return revision 2/u;
 const USER_RETURN_PHASE_RE =
   /Phase 2 — Persistent Diagram Modules User Return/u;
+const USER_RETURN_PLAN_COMMIT_RE =
+  /Git Commit: `docs: revise diagram modules user return revision 1`/u;
 const USER_REVIEW_TASK_RE = /diagram-modules\.user-review\.task1/u;
 const USER_REVIEW_COMMIT_RE = /docs: review diagram modules product map/u;
-const REVISION_INJECTION_RULE_RE = /inject a revisionN microtask pair/u;
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "managed-diagram-shim-"));
@@ -53,7 +59,7 @@ const createProductPartsIndex = (): string =>
     "",
   ].join("\n");
 
-test("Diagram Modules final Product Part opens persistent user-return task without review commit", async () => {
+test("Diagram Modules final Product Part opens a persistent user-return revision commit pair", async () => {
   const workspaceRoot = await createWorkspaceRoot();
 
   try {
@@ -106,11 +112,37 @@ test("Diagram Modules final Product Part opens persistent user-return task witho
     );
 
     assert.match(status.stdout, USER_RETURN_TASK_RE);
-    assert.match(status.stdout, EXPECTED_NONE_RE);
+    assert.match(status.stdout, USER_RETURN_COMMIT_RE);
     assert.match(plan, USER_RETURN_PHASE_RE);
-    assert.match(plan, REVISION_INJECTION_RULE_RE);
+    assert.match(plan, USER_RETURN_PLAN_COMMIT_RE);
     assert.doesNotMatch(plan, USER_REVIEW_TASK_RE);
     assert.doesNotMatch(plan, USER_REVIEW_COMMIT_RE);
+    assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/local-runtime.md",
+      "# Product Part: local-runtime\n\nRevision 1\n"
+    );
+    await runGit(workspaceRoot, ["add", "."]);
+    await execFileAsync(
+      process.execPath,
+      [
+        scriptPath,
+        "commit",
+        "docs: revise diagram modules user return revision 1",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const revisionStatus = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+
+    assert.match(revisionStatus.stdout, USER_RETURN_REVISION2_TASK_RE);
+    assert.match(revisionStatus.stdout, USER_RETURN_REVISION2_COMMIT_RE);
     assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
