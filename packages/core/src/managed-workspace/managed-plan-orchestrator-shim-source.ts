@@ -192,6 +192,34 @@ const insertApplicationSkeletonMaterializationTaskPair = (lines, commitLineIndex
     \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: materialize application skeleton\\\` (hash: TBD)\`
   );
 };
+const existingApplicationSkeletonUserReturnRevisionNumbers = (lines) =>
+  lines.map((line) => /application-skeleton\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
+const shouldInsertApplicationSkeletonUserReturnRevision = (state, message) =>
+  (state.currentTaskId === "application-skeleton.phase3.materialize.task1" && message === "feat: materialize application skeleton") ||
+  (/^application-skeleton\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(state.currentTaskId ?? "") && /^docs: revise application skeleton user return revision \\d+$/u.test(message));
+const insertApplicationSkeletonUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message) => {
+  if (!shouldInsertApplicationSkeletonUserReturnRevision(state, message)) {
+    return;
+  }
+  const existingRevisions = existingApplicationSkeletonUserReturnRevisionNumbers(lines);
+  const nextRevision = (existingRevisions.length > 0 ? Math.max(...existingRevisions) : 0) + 1;
+  const taskId = \`application-skeleton.phase4.user-return.revision\${nextRevision}.task1\`;
+  if (lines.some((line) => line.includes(\`\${taskId}\`))) {
+    return;
+  }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  const messageForRevision = \`docs: revise application skeleton user return revision \${nextRevision}\`;
+  const phaseLines = lines.some((line) => line.includes("Phase 4 — Persistent Application Skeleton User Return"))
+    ? []
+    : ["", "## Phase 4 — Persistent Application Skeleton User Return", "", "### Stream: User Return And Revisions", ""];
+  lines.splice(
+    commitLineIndex + 1,
+    0,
+    ...phaseLines,
+    formatNewTaskLine(taskNumber, taskId, "TODO", \`Apply post-completion Application Skeleton user revision \${nextRevision} and stop for Core acceptance\`, "product-parts/**, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**", messageForRevision),
+    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${messageForRevision}\\\` (hash: TBD)\`
+  );
+};
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
@@ -247,6 +275,7 @@ const advancePlanForCommit = (message) => {
   insertDiagramModulesProductPartTasks(lines, commitLineIndex, changedFiles);
   insertApplicationSkeletonReviewTaskPair(lines, commitLineIndex, state, message);
   insertApplicationSkeletonMaterializationTaskPair(lines, commitLineIndex, state, message);
+  insertApplicationSkeletonUserReturnRevisionTaskPair(lines, commitLineIndex, state, message);
 
   const nextTaskLineIndex = lines.findIndex(
     (line, index) => index > commitLineIndex && readTaskLine(line)

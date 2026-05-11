@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "a8f6a152c",
+  "lastRecordedCommit": "78ef8b06f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase3.materialization-shim.task1",
-  "expectedCommitMessage": "fix: inject application skeleton materialization task after acceptance commit",
+  "currentTaskId": "application-skeleton.phase4.user-return.task1",
+  "expectedCommitMessage": "feat: keep application skeleton user return phase open",
   "debt": {
-    "expectedCommitMessage": "fix: inject application skeleton materialization task after acceptance commit",
-    "preCommitHead": "a8f6a152c",
+    "expectedCommitMessage": "feat: keep application skeleton user return phase open",
+    "preCommitHead": "78ef8b06f",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase3.materialization-shim.task1"
+    "taskId": "application-skeleton.phase4.user-return.task1"
   }
 }
 ```
@@ -87,14 +87,14 @@
 17. [DONE] `application-skeleton.phase3.materialization-gate.task1` Gate the materialization continuation on completed acceptance commit evidence, then inject only the materialization microtask and its paired commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `fix: gate application skeleton materialization after acceptance commit`).
 18. [DONE] Git Commit: `fix: gate application skeleton materialization after acceptance commit` (hash: a8f6a152c)
 19. [DONE] `application-skeleton.phase3.materialization-shim.task1` Make the generated managed plan shim inject the Application Skeleton materialization task pair immediately after the acceptance commit. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: inject application skeleton materialization task after acceptance commit`).
-20. [PENDING] Git Commit: `fix: inject application skeleton materialization task after acceptance commit` (hash: TBD)
+20. [DONE] Git Commit: `fix: inject application skeleton materialization task after acceptance commit` (hash: 78ef8b06f)
 
 ## Phase 4 - Post-Completion User Return And Downstream Handoff (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Open Revision Surface
 
-19. [TODO] `application-skeleton.phase4.user-return.task1` Replace the reserved post-closeout anchor with a real post-completion user-return revision loop that injects `revisionN` task pairs after materialization acceptance. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `feat: keep application skeleton user return phase open`).
-20. [TODO] Git Commit: `feat: keep application skeleton user return phase open` (hash: TBD)
+19. [DONE] `application-skeleton.phase4.user-return.task1` Replace the reserved post-closeout anchor with a real post-completion user-return revision loop that injects `revisionN` task pairs after materialization acceptance. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `feat: keep application skeleton user return phase open`).
+20. [PENDING] Git Commit: `feat: keep application skeleton user return phase open` (hash: TBD)
 21. [TODO] `application-skeleton.phase4.handoff.task1` Separate Quality Gates ledger handoff from the Application Skeleton user-return loop so Quality Gates can unlock while Application Skeleton remains revisable. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `fix: decouple application skeleton return loop from quality gates handoff`).
 22. [TODO] Git Commit: `fix: decouple application skeleton return loop from quality gates handoff` (hash: TBD)
 

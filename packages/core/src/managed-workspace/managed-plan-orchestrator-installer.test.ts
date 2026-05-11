@@ -67,6 +67,12 @@ const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
   /Expected Commit: feat: materialize application skeleton/u;
 const APPLICATION_SKELETON_MATERIALIZE_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `application-skeleton\.phase3\.materialize\.task1`/u;
+const APPLICATION_SKELETON_USER_RETURN_PHASE_RE =
+  /Phase 4 — Persistent Application Skeleton User Return/u;
+const APPLICATION_SKELETON_USER_RETURN_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `application-skeleton\.phase4\.user-return\.revision1\.task1`/u;
+const APPLICATION_SKELETON_USER_RETURN_COMMIT_PIN_RE =
+  /\[TODO\] Git Commit: `docs: revise application skeleton user return revision 1`/u;
 const APPLICATION_SKELETON_STATIC_REVIEW_RE =
   /Application Skeleton Contract Review/u;
 const APPLICATION_SKELETON_STATIC_MATERIALIZE_RE =
@@ -347,6 +353,77 @@ test("managed plan shim advances application skeleton acceptance commits to mate
     assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_TASK_RE);
     assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE);
     assert.match(plan, APPLICATION_SKELETON_MATERIALIZE_IN_PROGRESS_RE);
+
+    const qualityGatesPlanPath = path.join(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md"
+    );
+    await mkdir(path.dirname(qualityGatesPlanPath), { recursive: true });
+    await writeFile(
+      qualityGatesPlanPath,
+      `# Managed Workspace TODO Plan
+
+<!-- codeai-plan-state:start -->
+\`\`\`json
+{
+  "schema": "codeai-plan-v1",
+  "executionScopeStatus": "ACTIVE",
+  "planId": "managed-workspace-quality-gates",
+  "branch": "main",
+  "baseHead": "TBD",
+  "lastRecordedCommit": "TBD",
+  "planningSource": ".codeai-hub/workflow/index.json",
+  "currentTaskId": "quality-gates.stream1.task1",
+  "expectedCommitMessage": "docs: draft quality gates contract",
+  "debt": null
+}
+\`\`\`
+<!-- codeai-plan-state:end -->
+
+## Phase 1 — Managed Workflow Stage
+
+### Stream: Quality Gates Draft Contract
+
+1. [IN_PROGRESS] \`quality-gates.stream1.task1\` Draft Quality Gates contract artifacts as the first managed microtask before package and gate script integration (scope: \`.codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json\`; expected commit: \`docs: draft quality gates contract\`).
+2. [TODO] Git Commit: \`docs: draft quality gates contract\` (hash: TBD)
+`,
+      "utf8"
+    );
+    await mkdir(path.join(workspaceRoot, "product-parts/project-manager"), {
+      recursive: true,
+    });
+    await writeFile(
+      path.join(workspaceRoot, "product-parts/project-manager/README.md"),
+      "# Project Manager\n",
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n\nMaterialized.\n",
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      `${JSON.stringify({ accepted: true, lifecycle: "materialized" }, null, 2)}\n`,
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "feat: materialize application skeleton"],
+      { cwd: workspaceRoot }
+    );
+
+    const userReturnPlan = await readFile(planPath, "utf8");
+    assert.match(userReturnPlan, APPLICATION_SKELETON_USER_RETURN_PHASE_RE);
+    assert.match(
+      userReturnPlan,
+      APPLICATION_SKELETON_USER_RETURN_IN_PROGRESS_RE
+    );
+    assert.match(
+      userReturnPlan,
+      APPLICATION_SKELETON_USER_RETURN_COMMIT_PIN_RE
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
