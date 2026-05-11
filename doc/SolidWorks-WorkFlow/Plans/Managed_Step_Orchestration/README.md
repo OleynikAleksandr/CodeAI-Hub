@@ -3,9 +3,8 @@
 **Status:** active planning folder.
 **Purpose:** collect the current design work for managed workflow step orchestration before it becomes implementation scope.
 
-This folder is the working area for scenario-level contracts of managed documentation steps:
+This folder is the working area for scenario-level contracts of managed documentation steps that are still being planned or implemented:
 
-- `Diagram_Modules_Scenario.md`
 - `Application_Skeleton_Scenario.md`
 
 It also keeps the still-useful planning sources that led to the current managed workflow implementation:
@@ -16,7 +15,9 @@ It also keeps the still-useful planning sources that led to the current managed 
 
 The superseded top-level `Application_Skeleton_Phase_B_Orchestration.md` plan was removed from active planning because it encoded the wrong static Application Skeleton phase model. The replacement planning entry point is `Application_Skeleton_Scenario.md`.
 
-Quality Gates Baseline follows after these two scenarios are accepted.
+`Diagram Modules` is accepted and archived at `Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md`.
+
+Quality Gates Baseline follows after the Application Skeleton scenario is accepted and implemented.
 
 ## Core Invariant
 

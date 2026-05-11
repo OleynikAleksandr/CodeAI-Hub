@@ -12,12 +12,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md",
   "currentTaskId": "diagram-modules-repair.phase9.closeout.task1",
   "expectedCommitMessage": "docs: close diagram modules repair orchestration scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close diagram modules repair orchestration scope",
-    "preCommitHead": "8e02f90ef",
-    "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase9.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -212,10 +207,10 @@
 
 ### Stream: Closeout After Acceptance
 
-43. [DONE] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Plans/Archive/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
+43. [IN_PROGRESS] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Plans/Archive/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
     - Acceptance (2026-05-11): user accepted release `1.2.229` and confirmed Diagram Modules now works correctly.
     - Closeout archive: `doc/TODO/Archive/todo-plan-closeout-diagram-modules-managed-repair-orchestration.md`.
     - Planning disposition: `Diagram_Modules_Scenario.md` is accepted and archived as `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md`.
     - Active planning remains under `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` for `Application Skeleton`; its next implementation plan must reuse the Diagram Modules lessons: dynamic `revisionN + Git Commit` user-return loops, repair/correction microtasks before provider-visible feedback, and commit/evidence for every attempt.
-44. [PENDING] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
+44. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
 45. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
