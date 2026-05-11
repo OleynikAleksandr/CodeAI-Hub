@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "077d3bf04",
+  "lastRecordedCommit": "5e5712404",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9b.release-gate-plan.task1",
-  "expectedCommitMessage": "docs: add application skeleton restart release gate",
+  "currentTaskId": "application-skeleton.phase9b.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton restart fix release",
   "debt": {
-    "expectedCommitMessage": "docs: add application skeleton restart release gate",
-    "preCommitHead": "077d3bf04",
+    "expectedCommitMessage": "docs: prepare application skeleton restart fix release",
+    "preCommitHead": "5e5712404",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9b.release-gate-plan.task1"
+    "taskId": "application-skeleton.phase9b.release-docs.task1"
   }
 }
 ```
@@ -189,13 +189,19 @@ Restart gate verification evidence (2026-05-11):
 ### Stream: Rebuild And Retest Boundary
 
 45. [DONE] `application-skeleton.phase9b.release-gate-plan.task1` Insert an explicit restart-fix release/retest boundary so the active scope cannot advance to closeout before a new VSIX is built and accepted by the user. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add application skeleton restart release gate`).
-46. [PENDING] Git Commit: `docs: add application skeleton restart release gate` (hash: TBD)
-47. [TODO] `application-skeleton.phase9b.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Core restart gate fix. (scope: chat/process observation only; no commit required).
-48. [TODO] `application-skeleton.phase9b.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton restart gate fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton restart fix release`).
-49. [TODO] Git Commit: `docs: prepare application skeleton restart fix release` (hash: TBD)
+46. [DONE] Git Commit: `docs: add application skeleton restart release gate` (hash: 5e5712404)
+47. [DONE] `application-skeleton.phase9b.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Core restart gate fix. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build after the Application Skeleton Core restart gate fix.
+48. [DONE] `application-skeleton.phase9b.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton restart gate fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton restart fix release`).
+49. [PENDING] Git Commit: `docs: prepare application skeleton restart fix release` (hash: TBD)
 50. [TODO] `application-skeleton.phase9b.release-build.task1` Run the approved release build sequence, then record artifact paths, VSIX version, and restart-fix release evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton restart fix release`).
 51. [TODO] Git Commit: `chore: build application skeleton restart fix release` (hash: TBD)
 52. [TODO] `application-skeleton.phase9b.release-acceptance.task1` User installs the produced restart-fix release and accepts or rejects the Application Skeleton start gate behavior after extension/Core restart. (scope: chat/process observation only; no commit required).
+
+Restart-fix release docs preparation evidence (2026-05-11):
+
+- Future release version before packaging: `1.2.231` (`package.json` currently reports `1.2.230`; `build-all.sh` owns the version bump).
+- Updated `README.md` current-release marker and `CHANGELOG.md` release notes for the Application Skeleton Core restart gate recovery fix.
+- Explicit release-build confirmation was provided by the user in this thread after the fix: "После исправления собери новый релиз."
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 

@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.231] - 2026-05-11
+### Fixed
+- **Application Skeleton unlocks after Core restart/reinstall when Diagram Modules artifacts are valid.** Volatile Core metadata such as `.codeai-hub/state/task-timers.json` and timestamp-only `.codeai-hub/<workspace>/description/description-step.json` refreshes no longer count as managed dirty state for downstream gate blocking.
+- **The misleading `product-parts.index.md not found` blocker is removed for the restart path.** Workflow-state recovery now reports `gating.blocked.application_skeleton: false` when the Product Parts index and Product Part artifacts are present and valid on disk, even if Core refreshed its own runtime metadata after reinstall.
+
+### Tests
+- Added managed Git status coverage for volatile Core metadata after restart.
+- Added workflow-state regression coverage for a restarted Core with valid Diagram Modules artifacts and only volatile metadata dirty state.
+- Targeted restart-gate suite passed: `9/9` tests. `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.230] - 2026-05-11
 ### Fixed
 - **Application Skeleton now uses the managed dynamic plan lifecycle.** The generated child plan starts with the draft contract task and grows at runtime for Core rejection repairs, review revisions, explicit acceptance, materialization, and post-completion user-return revisions. User-visible Core correction turns and user-return edits now receive concrete microtasks with paired `Git Commit` lines.

@@ -2,7 +2,34 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.230** (Application Skeleton managed orchestration)
+**Current Release — v1.2.231** (Application Skeleton restart gate recovery)
+
+This release fixes the Core restart/reinstall blocker found during
+v1.2.230 retesting. Application Skeleton start-gate recovery now ignores
+volatile Core metadata, including `.codeai-hub/state/task-timers.json`
+and timestamp-only `.codeai-hub/<workspace>/description/description-step.json`
+refreshes, when classifying managed dirty state. If the Diagram Modules
+artifacts are valid on disk, Application Skeleton unlocks after Core
+restart instead of showing the misleading `product-parts.index.md not
+found` readiness text.
+
+The regression suite now reproduces a restarted Core with valid
+`product-parts.index.md`, accepted Product Part artifacts, and only
+volatile metadata dirty state, then asserts that
+`gating.blocked.application_skeleton` remains `false`. The real retest
+workspace was also diagnosed clean with all four Product Parts valid.
+
+**Previous release: v1.2.230** (Application Skeleton managed orchestration)
+
+Application Skeleton now uses the managed dynamic plan lifecycle. The
+generated child plan starts with the draft contract task and grows at
+runtime for Core rejection repairs, review revisions, explicit
+acceptance, materialization, and post-completion user-return revisions.
+Acceptance and materialization are committed at separate boundaries, and
+invalid retry attempts write tracked evidence under the workspace
+revision tree instead of disappearing into runtime state.
+
+**Previous release: v1.2.229** (Diagram Modules user-return revisions)
 
 This release fixes the post-completion Diagram Modules return loop from
 v1.2.228. After all Product Parts are accepted, Phase 2 now opens an
