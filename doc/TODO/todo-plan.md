@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "8734586be",
+  "lastRecordedCommit": "82fac908b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase5.user-return-test.task1",
-  "expectedCommitMessage": "test: cover application skeleton user return commits",
+  "currentTaskId": "application-skeleton.phase6.docs.task1",
+  "expectedCommitMessage": "docs: finalize application skeleton orchestration scenario",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton user return commits",
-    "preCommitHead": "8734586be",
+    "expectedCommitMessage": "docs: finalize application skeleton orchestration scenario",
+    "preCommitHead": "82fac908b",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase5.user-return-test.task1"
+    "taskId": "application-skeleton.phase6.docs.task1"
   }
 }
 ```
@@ -107,14 +107,14 @@
 25. [DONE] `application-skeleton.phase5.rejection-test.task1` Add a deterministic forced-rejection test: initialize a managed Application Skeleton workspace, make Core reject draft or materialization output, assert repair injection before feedback, then assert failed-attempt evidence is committed. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `test: cover application skeleton forced repair rejection`).
 26. [DONE] Git Commit: `test: cover application skeleton forced repair rejection` (hash: 8734586be)
 27. [DONE] `application-skeleton.phase5.user-return-test.task1` Add regression coverage for a post-materialization user request that updates Application Skeleton artifacts and produces a real child-plan revision task plus commit instead of dirty uncommitted state. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `test: cover application skeleton user return commits`).
-28. [PENDING] Git Commit: `test: cover application skeleton user return commits` (hash: TBD)
+28. [DONE] Git Commit: `test: cover application skeleton user return commits` (hash: 82fac908b)
 
 ## Phase 6 - Documentation And Tooling Verification (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Scenario Documentation
 
-29. [TODO] `application-skeleton.phase6.docs.task1` Update Application Skeleton planning docs and the docs index with the implemented dynamic orchestration, rejection, acceptance, materialization, and post-completion revision semantics. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize application skeleton orchestration scenario`).
-30. [TODO] Git Commit: `docs: finalize application skeleton orchestration scenario` (hash: TBD)
+29. [DONE] `application-skeleton.phase6.docs.task1` Update Application Skeleton planning docs and the docs index with the implemented dynamic orchestration, rejection, acceptance, materialization, and post-completion revision semantics. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize application skeleton orchestration scenario`).
+30. [PENDING] Git Commit: `docs: finalize application skeleton orchestration scenario` (hash: TBD)
 
 ### Stream: Targeted Verification
 

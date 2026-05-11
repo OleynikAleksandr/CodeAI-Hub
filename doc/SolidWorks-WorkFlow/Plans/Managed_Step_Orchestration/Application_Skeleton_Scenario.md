@@ -1,8 +1,9 @@
 # Application Skeleton Scenario
 
-**Status:** active planning scenario.
+**Status:** implemented scenario, pending release/user acceptance.
 **Scope:** managed orchestration behavior for the `application_skeleton` workflow step.
 **Baseline source:** `Application_Skeleton_Architecture.md`.
+**Implementation note:** current scope implements the incremental child-plan growth, Core rejection/repair loop, acceptance commit boundary, materialization gate, Quality Gates handoff, and post-completion user-return revision loop.
 
 ## Target Shape
 
@@ -21,6 +22,14 @@ Application Skeleton should follow the same incremental discipline as Diagram Mo
 9. Core validates Markdown, JSON, and filesystem agreement.
 10. If accepted, Core commits materialization, opens the post-completion user-return phase, creates the next step's active plan if needed, and advances the workspace ledger to Quality Gates Baseline.
 
+Runtime constraints:
+
+- the generated Application Skeleton child plan starts with only Phase 1 draft and its paired commit;
+- Phase 2 review is inserted only after the draft commit;
+- acceptance is committed as `docs: accept application skeleton contract` before materialization can be prompted;
+- Phase 3 materialization is inserted only after the acceptance commit evidence exists in the workspace ledger;
+- all managed stage child plans are present before ledger handoff, so the terminal materialization commit can switch `activeStage` to Quality Gates without a missing-plan failure.
+
 ## Correction Turns
 
 If Core rejects draft, review, acceptance-state, or materialization output, Core must create a repair microtask before sending provider-visible feedback.
@@ -36,6 +45,12 @@ Required sequence:
 
 The attempt commit must exist even when the agent failed to satisfy Core. If the agent produced no valid artifact diff, Core writes tracked attempt evidence: target, Core errors, agent response result, and the next required repair. This is mandatory so repeated attempts are recoverable from Git and the stage plan.
 
+Implemented forced-rejection behavior:
+
+- Core injects the repair task pair before provider-visible feedback;
+- repeated invalid repair output writes `.codeai-hub/<workspaceSlug>/workflow/revisions/application-skeleton/attempts/attempt-*.json`;
+- the failed attempt evidence is committed under the active repair task instead of silently leaving dirty state.
+
 ## Post-Completion User Return
 
 After materialization is accepted, Application Skeleton remains available for later user corrections.
@@ -46,6 +61,8 @@ This post-completion phase is not a handoff anchor. It is a user-return revision
 - the agent can update the skeleton contract and, when needed, the materialized projection;
 - Core records the result as accepted changes or tracked attempt evidence;
 - downstream stages may need outdated/revision propagation, but that propagation is a follow-up after this step scenario is accepted.
+
+The open revision surface uses concrete `revisionN` task pairs. The standing user-return anchor stays available for subsequent returns, while the active concrete revision is the only `IN_PROGRESS` task at commit time.
 
 ## Handoff To Quality Gates
 
