@@ -21,7 +21,7 @@ const REPAIR_COMMIT_MESSAGE =
   "docs: repair diagram modules product part local-runtime attempt 1";
 const REPAIR_COMMIT_RE =
   /docs: repair diagram modules product part local-runtime attempt 1/u;
-const USER_REVIEW_RE = /diagram-modules\.user-review\.task1/u;
+const USER_RETURN_RE = /diagram-modules\.user-return\.task1/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -163,7 +163,7 @@ test("repair attempt evidence makes invalid Diagram Modules repair committable w
     );
     assert.doesNotMatch(
       await readFile(path.join(workspaceRoot, DIAGRAM_PLAN_PATH), "utf8"),
-      USER_REVIEW_RE
+      USER_RETURN_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "25b63df33",
+  "lastRecordedCommit": "8327589ed",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase3.downstream.task1",
-  "expectedCommitMessage": "fix: decouple diagram modules return loop from downstream handoff",
+  "currentTaskId": "diagram-modules-repair.phase4.rejection-test.task1",
+  "expectedCommitMessage": "test: cover diagram modules forced repair rejection",
   "debt": {
-    "expectedCommitMessage": "fix: decouple diagram modules return loop from downstream handoff",
-    "preCommitHead": "25b63df33",
+    "expectedCommitMessage": "test: cover diagram modules forced repair rejection",
+    "preCommitHead": "8327589ed",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase3.downstream.task1"
+    "taskId": "diagram-modules-repair.phase4.rejection-test.task1"
   }
 }
 ```
@@ -79,14 +79,14 @@
 13. [DONE] `diagram-modules-repair.phase3.user-return.task1` Replace the one-shot Diagram Modules review task with a persistent user-return revision loop that can inject `revisionN` task pairs after all Product Parts are accepted. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `feat: keep diagram modules user return phase open`).
 14. [DONE] Git Commit: `feat: keep diagram modules user return phase open` (hash: 25b63df33)
 15. [DONE] `diagram-modules-repair.phase3.downstream.task1` Keep downstream handoff separate from the Diagram Modules user-return loop by recording the Application Skeleton unlock in the workspace ledger without treating the Diagram Modules return phase as a terminal handoff anchor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: decouple diagram modules return loop from downstream handoff`).
-16. [PENDING] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: TBD)
+16. [DONE] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: 8327589ed)
 
 ## Phase 4 - Deterministic Rejection Testing (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Forced Core Rejection Harness
 
-17. [TODO] `diagram-modules-repair.phase4.rejection-test.task1` Add a deterministic forced-rejection integration test: initialize a managed Diagram Modules workspace, write a valid Product Part index plus invalid Product Part artifact, assert Core injects `repair1` before provider feedback, then assert the failed attempt is committed with tracked evidence instead of disappearing into runtime/session state. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts`; expected commit: `test: cover diagram modules forced repair rejection`).
-18. [TODO] Git Commit: `test: cover diagram modules forced repair rejection` (hash: TBD)
+17. [DONE] `diagram-modules-repair.phase4.rejection-test.task1` Add a deterministic forced-rejection integration test: initialize a managed Diagram Modules workspace, write a valid Product Part index plus invalid Product Part artifact, assert Core injects `repair1` before provider feedback, then assert the failed attempt is committed with tracked evidence instead of disappearing into runtime/session state. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts`; expected commit: `test: cover diagram modules forced repair rejection`).
+18. [PENDING] Git Commit: `test: cover diagram modules forced repair rejection` (hash: TBD)
 19. [TODO] `diagram-modules-repair.phase4.regression-task1` Run targeted Diagram Modules managed-workflow tests and record the exact commands/results in this plan before broader verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair test evidence`).
 20. [TODO] Git Commit: `docs: record diagram modules repair test evidence` (hash: TBD)
 
