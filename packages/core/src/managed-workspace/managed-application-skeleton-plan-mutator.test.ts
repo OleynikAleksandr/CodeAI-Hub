@@ -6,6 +6,12 @@ const REVIEW_REVISION_TASK_RE =
   /\[IN_PROGRESS\] `application-skeleton\.phase2\.review\.revision1\.task1`/u;
 const REVIEW_REVISION_COMMIT_RE =
   /Git Commit: `docs: revise application skeleton review revision 1`/u;
+const REVIEW_ANCHOR_CLOSED_RE =
+  /\[DONE\] `application-skeleton\.phase2\.review\.task1`/u;
+const REVIEW_ANCHOR_NO_REVISION_COMMIT_RE =
+  /\[DONE\] Git Commit: `docs: revise application skeleton review revision 1` \(hash: not-created-user-accepted-without-review-revision\)/u;
+const STALE_REVIEW_ANCHOR_RE =
+  /\[IN_PROGRESS\] `application-skeleton\.phase2\.review\.task1`/u;
 const MATERIALIZE_TASK_RE = /application-skeleton\.phase3\.materialize\.task1/u;
 const PRODUCT_PARTS_SCOPE_RE = /product-parts\/\*\*/u;
 const BLOCKED_MATERIALIZE_TASK_RE =
@@ -102,6 +108,9 @@ test("injects explicit acceptance before materialization", () => {
     "docs: accept application skeleton contract"
   );
   assert.doesNotMatch(result.nextPlanText, MATERIALIZE_TASK_RE);
+  assert.doesNotMatch(result.nextPlanText, STALE_REVIEW_ANCHOR_RE);
+  assert.match(result.nextPlanText, REVIEW_ANCHOR_CLOSED_RE);
+  assert.match(result.nextPlanText, REVIEW_ANCHOR_NO_REVISION_COMMIT_RE);
   assertImmediateCommitPair(
     result.nextPlanText,
     result.nextCurrentTaskId,

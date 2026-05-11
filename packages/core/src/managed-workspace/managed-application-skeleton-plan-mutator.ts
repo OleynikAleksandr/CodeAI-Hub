@@ -4,7 +4,10 @@ const STATUS_TOKEN_RE = /\[(TODO|IN_PROGRESS|DONE|BLOCKED|PENDING)\]/u;
 const TASK_NUMBER_PREFIX_RE = /^\d+\. /u;
 const REVIEW_REVISION_RE =
   /`application-skeleton\.phase2\.review\.revision(\d+)\.task1`/gu;
+const REVIEW_TASK_ID = "application-skeleton.phase2.review.task1";
 const REPAIR_RE = /`application-skeleton\.[^`]+\.repair(\d+)\.task1`/gu;
+const REVIEW_ACCEPTED_WITHOUT_REVISION_HASH =
+  "hash: not-created-user-accepted-without-review-revision";
 const USER_RETURN_REVISION_RE =
   /`application-skeleton\.phase4\.user-return\.revision(\d+)\.task1`/gu;
 const TASK_LINE_NUMBER_RE = /^(\d+)\./u;
@@ -113,6 +116,25 @@ const findPairedCommitLineIndex = (
   lines.findIndex(
     (line, index) => index > taskLineIndex && line.includes("Git Commit:")
   );
+
+const closeOpenReviewAnchorForAcceptance = (params: {
+  readonly currentTaskId: string;
+  readonly lines: string[];
+  readonly pairedCommitLineIndex: number;
+  readonly taskLineIndex: number;
+}): void => {
+  if (params.currentTaskId !== REVIEW_TASK_ID) {
+    return;
+  }
+  params.lines[params.taskLineIndex] = replaceStatus(
+    params.lines[params.taskLineIndex] ?? "",
+    "DONE"
+  );
+  params.lines[params.pairedCommitLineIndex] = replaceStatus(
+    params.lines[params.pairedCommitLineIndex] ?? "",
+    "DONE"
+  ).replace("hash: TBD", REVIEW_ACCEPTED_WITHOUT_REVISION_HASH);
+};
 
 const diagnosticsSummary = (
   diagnostics: readonly string[] | undefined
@@ -268,6 +290,14 @@ export const injectApplicationSkeletonTaskPair = (
       nextLines[pairedCommitLineIndex] ?? "",
       "BLOCKED"
     ).replace("hash: TBD", "hash: not-created-core-rejected-before-commit");
+  }
+  if (params.kind === "acceptance") {
+    closeOpenReviewAnchorForAcceptance({
+      currentTaskId,
+      lines: nextLines,
+      pairedCommitLineIndex,
+      taskLineIndex: currentTaskLineIndex,
+    });
   }
   nextLines.splice(
     pairedCommitLineIndex + 1,
