@@ -2,17 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.234** (Managed stage isolation fix)
+**Current Release — v1.2.235** (Virtual Simulation alias recovery)
+
+This release fixes the Virtual Simulation artifact alias blocker found
+during v1.2.234 retesting. If a provider writes
+`virtual-simulation.md` under the non-canonical
+`.codeai-hub/<workspace>/virtual-simulation/` directory, Core now moves
+it into the canonical `.codeai-hub/<workspace>/virtual_simulation/`
+directory before workflow-state validation and Diagram Modules gating.
+
+Diagram Modules should no longer report `virtual-simulation.md not found`
+when the artifact exists in the provider-created alias directory.
+
+**Previous release: v1.2.234** (Managed stage isolation fix)
 
 This release fixes the managed stage orchestration regression found
 during v1.2.233 retesting. Starting Diagram Modules now creates only the
 active Diagram Modules child plan, post-turn arbitration is scoped to the
 active provider stage, and Core keeps `product-parts.index.md` on its own
 commit boundary before continuing to Product Part materialization.
-
-Dirty Diagram Modules commit-gate state is now surfaced as Core-owned
-feedback instead of being hidden by a pending subturn, so the provider no
-longer waits silently when Core cannot finish the managed commit.
 
 **Previous release: v1.2.233** (Application Skeleton clean retest rebuild)
 

@@ -4,6 +4,15 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.235] - 2026-05-11
+### Fixed
+- **Virtual Simulation alias artifacts are recovered before gating.** If a provider writes `virtual-simulation.md` into `.codeai-hub/<workspace>/virtual-simulation/` instead of canonical `.codeai-hub/<workspace>/virtual_simulation/`, Core moves it into the canonical directory during workflow-state filesystem hydration.
+- **Diagram Modules no longer blocks on a false missing Virtual Simulation artifact.** The next-step gate now sees the recovered canonical `virtual_simulation/virtual-simulation.md` before validation and readiness checks.
+
+### Tests
+- Targeted workflow-state alias recovery suite passed: `5/5` tests across filesystem hydration and workflow-state behavior.
+- `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.234] - 2026-05-11
 ### Fixed
 - **Managed stage plans are created progressively again.** Starting Diagram Modules now creates the active Diagram Modules child plan only; Application Skeleton and Quality Gates child plans are not pre-seeded as ACTIVE future-stage plans.
