@@ -221,10 +221,17 @@ export const injectApplicationSkeletonTaskPair = (
   const taskPair = resolveTaskPair(params);
   const taskNumber = taskNumberBefore(lines, pairedCommitLineIndex);
   const nextLines = [...lines];
-  if (params.kind === "review_revision") {
+  if (
+    params.kind === "review_revision" ||
+    params.kind === "user_return_revision"
+  ) {
     const revisionTaskNumber = readTaskLineNumber(
       nextLines[currentTaskLineIndex] ?? "",
       taskNumber
+    );
+    nextLines[currentTaskLineIndex] = replaceStatus(
+      nextLines[currentTaskLineIndex] ?? "",
+      "TODO"
     );
     nextLines.splice(
       currentTaskLineIndex,

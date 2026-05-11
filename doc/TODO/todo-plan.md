@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "01ac0989c",
+  "lastRecordedCommit": "8734586be",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase5.rejection-test.task1",
-  "expectedCommitMessage": "test: cover application skeleton forced repair rejection",
+  "currentTaskId": "application-skeleton.phase5.user-return-test.task1",
+  "expectedCommitMessage": "test: cover application skeleton user return commits",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton forced repair rejection",
-    "preCommitHead": "01ac0989c",
+    "expectedCommitMessage": "test: cover application skeleton user return commits",
+    "preCommitHead": "8734586be",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase5.rejection-test.task1"
+    "taskId": "application-skeleton.phase5.user-return-test.task1"
   }
 }
 ```
@@ -105,9 +105,9 @@
 23. [DONE] `application-skeleton.phase5.dynamic-seed-test.task1` Add regression coverage that Application Skeleton bootstrap does not create static future phases and that every injected phase with user interaction has an immediate paired commit task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton dynamic plan seed`).
 24. [DONE] Git Commit: `test: cover application skeleton dynamic plan seed` (hash: 01ac0989c)
 25. [DONE] `application-skeleton.phase5.rejection-test.task1` Add a deterministic forced-rejection test: initialize a managed Application Skeleton workspace, make Core reject draft or materialization output, assert repair injection before feedback, then assert failed-attempt evidence is committed. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `test: cover application skeleton forced repair rejection`).
-26. [PENDING] Git Commit: `test: cover application skeleton forced repair rejection` (hash: TBD)
-27. [TODO] `application-skeleton.phase5.user-return-test.task1` Add regression coverage for a post-materialization user request that updates Application Skeleton artifacts and produces a real child-plan revision task plus commit instead of dirty uncommitted state. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton user return commits`).
-28. [TODO] Git Commit: `test: cover application skeleton user return commits` (hash: TBD)
+26. [DONE] Git Commit: `test: cover application skeleton forced repair rejection` (hash: 8734586be)
+27. [DONE] `application-skeleton.phase5.user-return-test.task1` Add regression coverage for a post-materialization user request that updates Application Skeleton artifacts and produces a real child-plan revision task plus commit instead of dirty uncommitted state. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `test: cover application skeleton user return commits`).
+28. [PENDING] Git Commit: `test: cover application skeleton user return commits` (hash: TBD)
 
 ## Phase 6 - Documentation And Tooling Verification (owner: Codex, updated: 2026-05-11)
 
