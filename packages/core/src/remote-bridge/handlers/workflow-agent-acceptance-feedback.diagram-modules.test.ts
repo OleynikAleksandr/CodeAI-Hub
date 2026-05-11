@@ -204,9 +204,6 @@ test("Diagram Modules pending Product Part waits for continuation instead of agg
           valid: false,
           validator: "diagram_modules.product_part",
         },
-        managedGitDirtyFiles: [
-          ".codeai-hub/demo/diagram_modules/product-parts.index.md",
-        ],
         nextPartId: "local-runtime",
         plannedCount: 1,
         plannedPartIds: ["local-runtime"],
@@ -225,6 +222,70 @@ test("Diagram Modules pending Product Part waits for continuation instead of agg
     });
 
     assert.deepEqual(messages, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules dirty pending index emits a Core-owned commit gate notice", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-agent-feedback-pending-index-dirty-")
+  );
+  const messages: string[] = [];
+
+  try {
+    await initWorkspace(workspaceRoot);
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendDiagramModulesFeedback({
+      chains: createChains("diagram_modules", "diagram-session"),
+      gateway: {
+        handleMessage: (_sessionId, content) => {
+          messages.push(stringifyFeedbackPayload(content));
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        acceptedPartIds: [],
+        activeSubturn: {
+          kind: "index",
+          status: "pending",
+        },
+        aggregateReady: false,
+        expectedArtifactPath:
+          ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+        generatedCount: 0,
+        generatedPartIds: [],
+        lastValidation: {
+          diagnostics: [],
+          expectedArtifactPath:
+            ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+          valid: false,
+          validator: "diagram_modules.index",
+        },
+        managedGitDirtyFiles: [
+          ".codeai-hub/demo/diagram_modules/product-parts.index.md",
+        ],
+        nextPartId: "local-runtime",
+        plannedCount: 1,
+        plannedPartIds: ["local-runtime"],
+        productPartDiagnostics: [
+          {
+            error: "Product Part artifact file is missing.",
+            partId: "local-runtime",
+            path: ".codeai-hub/demo/diagram_modules/product-parts/local-runtime.md",
+            valid: false,
+          },
+        ],
+        substep: "index",
+      } as never,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(messages.length, 1);
+    assert.match(messages[0] ?? "", CORE_OWNED_DIRTY_GATE_RE);
+    assert.match(messages[0] ?? "", CONTENT_READINESS_NOTE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

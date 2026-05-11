@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "7de09e505",
+  "lastRecordedCommit": "ad604f588",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9f.diagram-index-boundary.task1",
-  "expectedCommitMessage": "fix: keep diagram modules index on commit boundary",
+  "currentTaskId": "application-skeleton.phase9f.diagram-feedback-gate.task1",
+  "expectedCommitMessage": "fix: surface diagram modules dirty commit feedback",
   "debt": {
-    "expectedCommitMessage": "fix: keep diagram modules index on commit boundary",
-    "preCommitHead": "7de09e505",
+    "expectedCommitMessage": "fix: surface diagram modules dirty commit feedback",
+    "preCommitHead": "ad604f588",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9f.diagram-index-boundary.task1"
+    "taskId": "application-skeleton.phase9f.diagram-feedback-gate.task1"
   }
 }
 ```
@@ -282,9 +282,9 @@ Clean rebuild release evidence (2026-05-11):
 74. [DONE] `application-skeleton.phase9f.post-turn-stage-scope.task1` Scope managed post-turn commit, repair, feedback, and continuation dispatch to the active provider stage so future stages cannot mutate plans during Diagram Modules. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: scope managed post-turn to active stage`).
 75. [DONE] Git Commit: `fix: scope managed post-turn to active stage` (hash: 7de09e505)
 76. [DONE] `application-skeleton.phase9f.diagram-index-boundary.task1` Keep Diagram Modules on the index subturn until the index commit boundary is clean, so Core cannot continue to the first Product Part before committing `product-parts.index.md`. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `fix: keep diagram modules index on commit boundary`).
-77. [PENDING] Git Commit: `fix: keep diagram modules index on commit boundary` (hash: TBD)
-78. [TODO] `application-skeleton.phase9f.diagram-feedback-gate.task1` Make dirty/blocked Diagram Modules commit-gate state visible to the provider instead of suppressing feedback while a subturn is pending. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `fix: surface diagram modules dirty commit feedback`).
-79. [TODO] Git Commit: `fix: surface diagram modules dirty commit feedback` (hash: TBD)
+77. [DONE] Git Commit: `fix: keep diagram modules index on commit boundary` (hash: ad604f588)
+78. [DONE] `application-skeleton.phase9f.diagram-feedback-gate.task1` Make dirty/blocked Diagram Modules commit-gate state visible to the provider instead of suppressing feedback while a subturn is pending. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `fix: surface diagram modules dirty commit feedback`).
+79. [PENDING] Git Commit: `fix: surface diagram modules dirty commit feedback` (hash: TBD)
 80. [TODO] `application-skeleton.phase9f.verify.task1` Reproduce the v1.2.233 Diagram Modules first-turn regression in tests, run targeted managed workflow tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed stage isolation verification`).
 81. [TODO] Git Commit: `docs: record managed stage isolation verification` (hash: TBD)
 

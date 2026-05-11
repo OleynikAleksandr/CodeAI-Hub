@@ -123,10 +123,6 @@ const createDiagramModulesErrors = (
       createOutOfOwnerDirtyError("Diagram Modules", outOfOwnerDirtyFiles),
     ];
   }
-  if (isDiagramModulesPendingSubturn(progress)) {
-    return [];
-  }
-  const semanticErrors = createProductPartDiagnosticErrors(progress);
   const dirtyFiles = readManagedGitDirtyFiles(progress);
   const dirtyGateErrors =
     dirtyFiles.length > 0
@@ -134,12 +130,19 @@ const createDiagramModulesErrors = (
           `Core-owned managed commit is pending for Diagram Modules-owned files: ${dirtyFiles.join(", ")}. Core owns this commit gate; respond with a content-readiness note once the artifacts are ready.`,
         ]
       : [];
+  if (dirtyGateErrors.length > 0) {
+    return dirtyGateErrors;
+  }
+  if (isDiagramModulesPendingSubturn(progress)) {
+    return [];
+  }
+  const semanticErrors = createProductPartDiagnosticErrors(progress);
   if (isDiagramModulesRepairSubturn(progress)) {
     const repairErrors = createDiagramModulesRepairErrors(progress);
     return repairErrors.length > 0 ? repairErrors : semanticErrors;
   }
-  if (semanticErrors.length > 0 || dirtyGateErrors.length > 0) {
-    return [...semanticErrors, ...dirtyGateErrors];
+  if (semanticErrors.length > 0) {
+    return semanticErrors;
   }
   if (progress.substep === "blocked_ambiguity") {
     return [
