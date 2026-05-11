@@ -15,6 +15,25 @@ const APPLICATION_SKELETON_MAP_RE = /application-skeleton-map\.json/u;
 const APPLICATION_SKELETON_REVISIONS_RE =
   /workflow\/revisions\/application-skeleton/u;
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
+
+const assertImmediateCommitPair = (
+  planText: string,
+  taskId: string,
+  message: string
+): void => {
+  const lines = planText.split("\n");
+  const taskLineIndex = lines.findIndex((line) =>
+    line.includes(`\`${taskId}\``)
+  );
+  assert.notEqual(taskLineIndex, -1, `Missing task ${taskId}`);
+  assert.match(
+    lines[taskLineIndex + 1] ?? "",
+    new RegExp(`Git Commit: \`${escapeRegExp(message)}\``, "u")
+  );
+};
+
 const createPlanText = (taskId = "application-skeleton.phase2.review.task1") =>
   `# Managed Workspace TODO Plan
 
@@ -60,6 +79,11 @@ test("injects review revision task pair and advances plan state", () => {
   );
   assert.match(result.nextPlanText, REVIEW_REVISION_TASK_RE);
   assert.match(result.nextPlanText, REVIEW_REVISION_COMMIT_RE);
+  assertImmediateCommitPair(
+    result.nextPlanText,
+    result.nextCurrentTaskId,
+    result.nextCommitMessage
+  );
 });
 
 test("injects explicit acceptance before materialization", () => {
@@ -78,6 +102,11 @@ test("injects explicit acceptance before materialization", () => {
     "docs: accept application skeleton contract"
   );
   assert.doesNotMatch(result.nextPlanText, MATERIALIZE_TASK_RE);
+  assertImmediateCommitPair(
+    result.nextPlanText,
+    result.nextCurrentTaskId,
+    result.nextCommitMessage
+  );
 });
 
 test("injects materialization task pair only when requested", () => {
@@ -96,6 +125,11 @@ test("injects materialization task pair only when requested", () => {
     "feat: materialize application skeleton"
   );
   assert.match(result.nextPlanText, PRODUCT_PARTS_SCOPE_RE);
+  assertImmediateCommitPair(
+    result.nextPlanText,
+    result.nextCurrentTaskId,
+    result.nextCommitMessage
+  );
 });
 
 test("injects repair task pair and blocks rejected current task", () => {
@@ -118,6 +152,11 @@ test("injects repair task pair and blocks rejected current task", () => {
   assert.match(result.nextPlanText, BLOCKED_MATERIALIZE_TASK_RE);
   assert.match(result.nextPlanText, CORE_REJECTED_HASH_RE);
   assert.match(result.nextPlanText, APPLICATION_SKELETON_MAP_RE);
+  assertImmediateCommitPair(
+    result.nextPlanText,
+    result.nextCurrentTaskId,
+    result.nextCommitMessage
+  );
 });
 
 test("injects post-completion user-return revision task pairs", () => {
@@ -136,4 +175,9 @@ test("injects post-completion user-return revision task pairs", () => {
     "docs: revise application skeleton user return revision 1"
   );
   assert.match(result.nextPlanText, APPLICATION_SKELETON_REVISIONS_RE);
+  assertImmediateCommitPair(
+    result.nextPlanText,
+    result.nextCurrentTaskId,
+    result.nextCommitMessage
+  );
 });

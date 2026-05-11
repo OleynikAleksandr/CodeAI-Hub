@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "203cdecc1",
+  "lastRecordedCommit": "97dadca85",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase4.handoff.task1",
-  "expectedCommitMessage": "fix: decouple application skeleton return loop from quality gates handoff",
+  "currentTaskId": "application-skeleton.phase5.dynamic-seed-test.task1",
+  "expectedCommitMessage": "test: cover application skeleton dynamic plan seed",
   "debt": {
-    "expectedCommitMessage": "fix: decouple application skeleton return loop from quality gates handoff",
-    "preCommitHead": "203cdecc1",
+    "expectedCommitMessage": "test: cover application skeleton dynamic plan seed",
+    "preCommitHead": "97dadca85",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase4.handoff.task1"
+    "taskId": "application-skeleton.phase5.dynamic-seed-test.task1"
   }
 }
 ```
@@ -96,14 +96,14 @@
 19. [DONE] `application-skeleton.phase4.user-return.task1` Replace the reserved post-closeout anchor with a real post-completion user-return revision loop that injects `revisionN` task pairs after materialization acceptance. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `feat: keep application skeleton user return phase open`).
 20. [DONE] Git Commit: `feat: keep application skeleton user return phase open` (hash: 203cdecc1)
 21. [DONE] `application-skeleton.phase4.handoff.task1` Separate Quality Gates ledger handoff from the Application Skeleton user-return loop so Quality Gates can unlock while Application Skeleton remains revisable. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `fix: decouple application skeleton return loop from quality gates handoff`).
-22. [PENDING] Git Commit: `fix: decouple application skeleton return loop from quality gates handoff` (hash: TBD)
+22. [DONE] Git Commit: `fix: decouple application skeleton return loop from quality gates handoff` (hash: 97dadca85)
 
 ## Phase 5 - Deterministic Regression Tests (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Rejection And Revision Harness
 
-23. [TODO] `application-skeleton.phase5.dynamic-seed-test.task1` Add regression coverage that Application Skeleton bootstrap does not create static future phases and that every injected phase with user interaction has an immediate paired `Git Commit:` task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton dynamic plan seed`).
-24. [TODO] Git Commit: `test: cover application skeleton dynamic plan seed` (hash: TBD)
+23. [DONE] `application-skeleton.phase5.dynamic-seed-test.task1` Add regression coverage that Application Skeleton bootstrap does not create static future phases and that every injected phase with user interaction has an immediate paired commit task. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton dynamic plan seed`).
+24. [PENDING] Git Commit: `test: cover application skeleton dynamic plan seed` (hash: TBD)
 25. [TODO] `application-skeleton.phase5.rejection-test.task1` Add a deterministic forced-rejection test: initialize a managed Application Skeleton workspace, make Core reject draft or materialization output, assert repair injection before feedback, then assert failed-attempt evidence is committed. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.application-skeleton-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `test: cover application skeleton forced repair rejection`).
 26. [TODO] Git Commit: `test: cover application skeleton forced repair rejection` (hash: TBD)
 27. [TODO] `application-skeleton.phase5.user-return-test.task1` Add regression coverage for a post-materialization user request that updates Application Skeleton artifacts and produces a real child-plan revision task plus commit instead of dirty uncommitted state. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `test: cover application skeleton user return commits`).
