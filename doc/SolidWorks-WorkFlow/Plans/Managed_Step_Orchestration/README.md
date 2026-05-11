@@ -12,6 +12,9 @@ It also keeps the still-useful planning sources that led to the current managed 
 
 - `Managed_Workspace_Lifecycle_From_Diagram_Modules.md`
 - `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`
+- `Application_Skeleton_Architecture.md`
+
+The superseded top-level `Application_Skeleton_Phase_B_Orchestration.md` plan was removed from active planning because it encoded the wrong static Application Skeleton phase model. The replacement planning entry point is `Application_Skeleton_Scenario.md`.
 
 Quality Gates Baseline follows after these two scenarios are accepted.
 

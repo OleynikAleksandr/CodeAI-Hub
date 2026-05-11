@@ -2,6 +2,7 @@
 
 **Status:** active planning scenario.
 **Scope:** managed orchestration behavior for the `application_skeleton` workflow step.
+**Baseline source:** `Application_Skeleton_Architecture.md`.
 
 ## Target Shape
 
