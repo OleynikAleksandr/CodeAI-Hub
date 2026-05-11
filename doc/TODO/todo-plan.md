@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "832b9773c",
+  "lastRecordedCommit": "df9786fad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase24.runner-write.task1",
-  "expectedCommitMessage": "fix: patch application skeleton map.json from accept contract runner",
+  "currentTaskId": "application-skeleton-orchestration.phase24.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton acceptance write-path verification",
   "debt": {
-    "expectedCommitMessage": "fix: patch application skeleton map.json from accept contract runner",
-    "preCommitHead": "832b9773c",
+    "expectedCommitMessage": "docs: record application skeleton acceptance write-path verification",
+    "preCommitHead": "df9786fad",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase24.runner-write.task1"
+    "taskId": "application-skeleton-orchestration.phase24.verify.task1"
   }
 }
 ```
@@ -491,12 +491,20 @@
 ### Stream: Runner Integration
 
 119. [DONE] `application-skeleton-orchestration.phase24.runner-write.task1` Wire the new writer into `managed-stage-accept-contract-runner.ts` so that after `evaluateApplicationSkeletonAcceptContractCommand` returns `kind: "accepted"`, the runner patches `application-skeleton-map.json` before calling `markAccepted` + `handle`. Add a dedicated runner peer test `managed-stage-accept-contract-runner.test.ts` that asserts the file gets patched on accept and stays untouched on reject. Scope shifted from the existing `managed-stage-accept-contract-handler.test.ts` (pure decision tests) to a new runner peer test file so writer-injection spies stay scoped to runner integration and do not pollute the handler decision suite. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts`; expected commit: `fix: patch application skeleton map.json from accept contract runner`).
-120. [PENDING] Git Commit: `fix: patch application skeleton map.json from accept contract runner` (hash: TBD)
+120. [DONE] Git Commit: `fix: patch application skeleton map.json from accept contract runner` (hash: df9786fad)
 
 ### Stream: Targeted Verification
 
-121. [TODO] `application-skeleton-orchestration.phase24.verify.task1` Run targeted Core tests for the writer, runner, dispatcher, and end-to-end modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance write-path verification`).
-122. [TODO] Git Commit: `docs: record application skeleton acceptance write-path verification` (hash: TBD)
+121. [DONE] `application-skeleton-orchestration.phase24.verify.task1` Run targeted Core tests for the writer, runner, dispatcher, and end-to-end modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance write-path verification`).
+
+#### Verification evidence (HEAD = `df9786fad`, 2026-05-11)
+
+- **Targeted Core tests:** 43/43 pass across `application-skeleton-acceptance-writer.test.ts` (7 — happy path, idempotency for accepted and materialized states, materialized reviewState preservation, map_missing, invalid_json, path_unresolved), `managed-stage-accept-contract-runner.test.ts` (3 — patch on accept, no-write on reject, log-payload status forwarding), `managed-stage-accept-contract-handler.test.ts` (8), `application-skeleton-continuation-dispatcher.test.ts` (8), `managed-workflow-post-turn-service.test.ts` (15, including the Phase 20 release-blocker guard), and `application-skeleton-end-to-end.test.ts` (2).
+- **`npm run build --workspace @codeai-hub/core`:** passes.
+- **`npm run typecheck:webview`:** passes.
+- **End-to-end flow.** Recognizer matches "accepted" → typed-fallback router calls runner → runner reads progress → handler decides `kind: "accepted"` → runner calls `writeApplicationSkeletonAcceptance` → `application-skeleton-map.json` gets `accepted: true` + `reviewState: "accepted"` → managed-git-status now lists the file under `dirtyByStage.application_skeleton` → `hasCommittableApplicationSkeletonStage` returns true → `commitManagedDocumentationStageIfReady` auto-commits `docs: accept application skeleton contract` (the plan's `expectedCommitMessage`) → plan advances to Phase 3 (`phase3.materialize.task1`) → next read-model snapshot reports `progress.accepted === true` → `sendApplicationSkeletonContinuationIfReady` fires the Phase 3 materialization continuation prompt to the agent.
+- **PM button parity.** HTTP endpoint `/api/v1/orchestrator/managed-stage-accept-contract` → `handleApplicationSkeletonAcceptContractCommand` → same runner → same writer. Variant A single-owner contract holds for both entry points.
+122. [PENDING] Git Commit: `docs: record application skeleton acceptance write-path verification` (hash: TBD)
 
 ## Phase 25 - Release Build (owner: next agent, updated: 2026-05-11)
 
