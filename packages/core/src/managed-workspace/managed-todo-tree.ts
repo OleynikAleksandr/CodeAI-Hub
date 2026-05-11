@@ -38,6 +38,11 @@ export const NEXT_STAGE_AFTER: Readonly<
   quality_gates: null,
 };
 
+const MANAGED_STAGE_ORDER: readonly ManagedWorkflowPlanStage[] = [
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+];
 const WORKSPACE_PLAN_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
 const WORKSPACE_PLAN_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
 const JSON_FENCE_END_RE = /\s*```$/u;
@@ -112,9 +117,15 @@ export const ensureManagedTodoTree = async (
   let created = false;
 
   await mkdir(todoRoot, { recursive: true });
-  await mkdir(path.dirname(stagePlanPath), { recursive: true });
-  if (await writeIfMissing(stagePlanPath, createStagePlan(initialStage))) {
-    created = true;
+  for (const stage of MANAGED_STAGE_ORDER) {
+    const targetStagePlanPath = path.resolve(
+      path.dirname(path.dirname(todoRoot)),
+      STAGE_PLANS[stage]
+    );
+    await mkdir(path.dirname(targetStagePlanPath), { recursive: true });
+    if (await writeIfMissing(targetStagePlanPath, createStagePlan(stage))) {
+      created = true;
+    }
   }
   if (await ensureWorkspacePlan(workspacePlanPath, initialStage)) {
     created = true;

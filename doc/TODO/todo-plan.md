@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "78ef8b06f",
+  "lastRecordedCommit": "203cdecc1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase4.user-return.task1",
-  "expectedCommitMessage": "feat: keep application skeleton user return phase open",
+  "currentTaskId": "application-skeleton.phase4.handoff.task1",
+  "expectedCommitMessage": "fix: decouple application skeleton return loop from quality gates handoff",
   "debt": {
-    "expectedCommitMessage": "feat: keep application skeleton user return phase open",
-    "preCommitHead": "78ef8b06f",
+    "expectedCommitMessage": "fix: decouple application skeleton return loop from quality gates handoff",
+    "preCommitHead": "203cdecc1",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase4.user-return.task1"
+    "taskId": "application-skeleton.phase4.handoff.task1"
   }
 }
 ```
@@ -94,9 +94,9 @@
 ### Stream: Open Revision Surface
 
 19. [DONE] `application-skeleton.phase4.user-return.task1` Replace the reserved post-closeout anchor with a real post-completion user-return revision loop that injects `revisionN` task pairs after materialization acceptance. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `feat: keep application skeleton user return phase open`).
-20. [PENDING] Git Commit: `feat: keep application skeleton user return phase open` (hash: TBD)
-21. [TODO] `application-skeleton.phase4.handoff.task1` Separate Quality Gates ledger handoff from the Application Skeleton user-return loop so Quality Gates can unlock while Application Skeleton remains revisable. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `fix: decouple application skeleton return loop from quality gates handoff`).
-22. [TODO] Git Commit: `fix: decouple application skeleton return loop from quality gates handoff` (hash: TBD)
+20. [DONE] Git Commit: `feat: keep application skeleton user return phase open` (hash: 203cdecc1)
+21. [DONE] `application-skeleton.phase4.handoff.task1` Separate Quality Gates ledger handoff from the Application Skeleton user-return loop so Quality Gates can unlock while Application Skeleton remains revisable. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `fix: decouple application skeleton return loop from quality gates handoff`).
+22. [PENDING] Git Commit: `fix: decouple application skeleton return loop from quality gates handoff` (hash: TBD)
 
 ## Phase 5 - Deterministic Regression Tests (owner: Codex, updated: 2026-05-11)
 

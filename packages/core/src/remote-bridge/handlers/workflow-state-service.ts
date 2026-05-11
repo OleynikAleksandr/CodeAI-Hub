@@ -50,6 +50,10 @@ const readAbsolutePath = (value: unknown): string | null => {
   }
   return path.isAbsolute(trimmed) ? trimmed : null;
 };
+const isManagedWorkflowActive = (state: WorkflowState): boolean =>
+  state.stages.diagram_modules.status !== "idle" ||
+  state.stages.application_skeleton.status !== "idle" ||
+  state.stages.quality_gates.status !== "idle";
 type WorkspaceSlugResult =
   | { readonly ok: true; readonly value: string }
   | { readonly ok: false; readonly status: number; readonly error: string };
@@ -58,7 +62,7 @@ const resolveManagedLifecycle = (params: {
   readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
   readonly state: WorkflowState;
 }): ManagedWorkflowLifecyclePayload => {
-  const active = params.state.stages.diagram_modules.status !== "idle";
+  const active = isManagedWorkflowActive(params.state);
   const blockers = [
     ...(params.applicationSkeletonProgress?.validationErrors ?? []),
     ...(params.qualityGatesProgress?.validationErrors ?? []),
