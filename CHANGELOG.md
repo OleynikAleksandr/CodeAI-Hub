@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.228] - 2026-05-11
+### Fixed
+- **Diagram Modules Core rejection lifecycle.** Core now turns every rejected Diagram Modules provider-visible correction into a managed `repairN` microtask pair before sending feedback to the agent. The rejected task and paired commit line are blocked, the repair task becomes the only current child-plan task, and the repair commit message is pinned to the target artifact and attempt number.
+- **Rejected repair attempts are committed.** If the repair attempt still fails validation or produces no accepted artifact diff, Core writes tracked JSON evidence under `.codeai-hub/<workspace>/workflow/revisions/diagram-modules/attempts/` and commits the repair attempt instead of losing it in session/runtime state. Repair commits no longer make dirty Product Part files look accepted.
+- **Persistent Diagram Modules return phase.** After all Product Parts are accepted, Diagram Modules now opens `diagram-modules.user-return.task1` with `expected commit: none` instead of the old one-shot review commit. The workspace ledger unlocks Application Skeleton separately, so users can return to Diagram Modules later without blocking downstream handoff.
+
+### Tests
+- Added deterministic forced-rejection integration coverage: valid Product Part index, invalid Product Part artifact, `repair1` injection before feedback, repair feedback payload, failed-attempt evidence, managed repair commit, and clean temp workspace.
+- Targeted Diagram Modules managed-workflow suite passed: `25/25` tests. `npm run build --workspace=@codeai-hub/core` and `npm run plan:validate` both pass.
+
 ## [1.2.227] - 2026-05-11
 ### Fixed
 - **Application Skeleton Phase 4 handoff anchor regex match (Phase 30 retest follow-up).** Phase 30 retest of v1.2.226 confirmed end-to-end acceptance and materialization land cleanly through `b5049d1` (Phase 3 commit). However the Phase 4 handoff seed line in `managed-todo-tree.ts` did not contain the literal `expected commit:` substring (it said `(scope: chat/process observation only; no commit required)` instead), so `TASK_LINE_RE` in `managed-plan-orchestrator-shim-source.ts` (which requires `.*expected commit: (?:\`([^\`]+)\`|none)`) could not match it. After Phase 3 materialize commit, advancement could not find the next task line and fell into the fallback-insert branch (`managed-plan-orchestrator-shim-source.ts:242–259`), synthesizing a `phase3.materialize.task2` continuation pair with the same commit message `feat: materialize application skeleton` and producing a visible duplicate Pin 7 in the plan with `phase3.materialize.task2` stuck IN_PROGRESS.

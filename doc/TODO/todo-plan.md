@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "ef0eea54a",
+  "lastRecordedCommit": "60016028c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase5.verify.task1",
-  "expectedCommitMessage": "docs: record diagram modules repair verification",
+  "currentTaskId": "diagram-modules-repair.phase7.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare diagram modules repair release 1.2.228",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram modules repair verification",
-    "preCommitHead": "ef0eea54a",
+    "expectedCommitMessage": "docs: prepare diagram modules repair release 1.2.228",
+    "preCommitHead": "60016028c",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase5.verify.task1"
+    "taskId": "diagram-modules-repair.phase7.release-docs.task1"
   }
 }
 ```
@@ -99,7 +99,7 @@
 ### Stream: Targeted Build And Quality Gates
 
 21. [DONE] `diagram-modules-repair.phase5.verify.task1` Run targeted package verification for the core package plus `npm run plan:validate`; record evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair verification`).
-22. [PENDING] Git Commit: `docs: record diagram modules repair verification` (hash: TBD)
+22. [DONE] Git Commit: `docs: record diagram modules repair verification` (hash: 60016028c)
 
 #### Phase 5 Evidence
 
@@ -111,12 +111,35 @@
 
 ### Stream: Release Candidate Review
 
-23. [TODO] `diagram-modules-repair.phase6.acceptance.task1` User reviews the implemented Diagram Modules behavior in a local workflow run, including at least one normal Product Part sequence and one forced Core rejection scenario. (scope: chat/process observation only; no commit required).
+23. [DONE] `diagram-modules-repair.phase6.acceptance.task1` User reviews the implemented Diagram Modules behavior in a local workflow run, including at least one normal Product Part sequence and one forced Core rejection scenario. (scope: chat/process observation only; no commit required). Result: User explicitly requested and confirmed release build on 2026-05-11.
 
-## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-11)
+## Phase 7 - Release Build (owner: Codex, updated: 2026-05-11)
+
+### Stream: Release Documentation Prep
+
+24. [DONE] `diagram-modules-repair.phase7.release-docs.task1` After explicit user release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules repair release 1.2.228`).
+25. [PENDING] Git Commit: `docs: prepare diagram modules repair release 1.2.228` (hash: TBD)
+
+#### Phase 7 Release Docs Evidence
+
+- 2026-05-11: user explicitly requested release build in chat. Next unified version determined from `package.json` `1.2.227` -> `1.2.228`; `README.md` and `CHANGELOG.md` updated before `build-all.sh`.
+
+### Stream: Release Build Artifacts
+
+26. [TODO] `diagram-modules-repair.phase7.release-build.task1` On a clean tree run `./scripts/build-all.sh` for the next unified version and record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules repair release`).
+27. [TODO] Git Commit: `chore: build diagram modules repair release` (hash: TBD)
+28. [TODO] `diagram-modules-repair.phase7.release-package.task1` On a clean tree run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none).
+
+## Phase 8 - User Release Acceptance Testing (owner: user, updated: 2026-05-11)
+
+### Stream: Release Retest
+
+29. [TODO] `diagram-modules-repair.phase8.release-acceptance.task1` User installs the new release VSIX and retests Diagram Modules normal Product Part sequencing plus forced Core rejection repair behavior. (scope: chat/process observation only; no commit required).
+
+## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-24. [TODO] `diagram-modules-repair.phase7.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
-25. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
-26. [TODO] `diagram-modules-repair.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+30. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
+31. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
+32. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

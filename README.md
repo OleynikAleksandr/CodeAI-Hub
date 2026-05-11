@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.227** (handoff anchor regex fix for v1.2.226)
+**Current Release — v1.2.228** (Diagram Modules managed repair orchestration)
+
+This release makes Diagram Modules managed-step orchestration durable
+when Core rejects an agent turn. Core now injects a dedicated
+`repairN` microtask pair before provider-visible correction feedback,
+commits each repair attempt even if the artifact is still invalid, and
+writes tracked attempt evidence under the workspace revision tree so
+failed tries do not disappear into runtime state. Product Part commits
+no longer count dirty repair artifacts as accepted Product Parts.
+
+The post-completion Diagram Modules phase is now a persistent
+`user-return` surface rather than a one-shot review commit. After all
+Product Parts are accepted, the child plan remains open for future
+user-requested revisions, while the workspace ledger separately unlocks
+Application Skeleton. A deterministic forced-rejection integration test
+covers the full path: invalid Product Part, repair task injection,
+repair feedback, tracked evidence, managed commit, and clean temp
+workspace.
+
+**Previous release: v1.2.227** (handoff anchor regex fix for v1.2.226)
 
 This release fixes the last missing pin of the Application Skeleton
 phase orchestration: the Phase 4 handoff seed line in
