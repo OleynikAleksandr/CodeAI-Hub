@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { injectApplicationSkeletonReviewRevisionPair } from "./managed-documentation-commit-transaction";
+import { injectApplicationSkeletonTaskPair } from "../../managed-workspace/managed-application-skeleton-plan-mutator";
 
 // Side-effecting runner around the pure
 // `injectApplicationSkeletonReviewRevisionPair` helper. Reads the Application
@@ -31,7 +31,10 @@ export const runApplicationSkeletonRevisionInjection = async (
   if (!planText?.includes('"application-skeleton.phase2.review.task1"')) {
     return;
   }
-  const injection = injectApplicationSkeletonReviewRevisionPair(planText);
+  const injection = injectApplicationSkeletonTaskPair({
+    kind: "review_revision",
+    planText,
+  });
   if (!injection) {
     return;
   }
@@ -40,7 +43,7 @@ export const runApplicationSkeletonRevisionInjection = async (
       params.logger.info("Injected Application Skeleton review revision pair", {
         nextCommitMessage: injection.nextCommitMessage,
         nextCurrentTaskId: injection.nextCurrentTaskId,
-        revisionNumber: injection.nextRevisionNumber,
+        revisionNumber: injection.sequenceNumber,
         sessionId: params.sessionId,
         stage: params.stage,
       })

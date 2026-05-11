@@ -7,6 +7,7 @@ const REVIEW_REVISION_RE =
 const REPAIR_RE = /`application-skeleton\.[^`]+\.repair(\d+)\.task1`/gu;
 const USER_RETURN_REVISION_RE =
   /`application-skeleton\.phase4\.user-return\.revision(\d+)\.task1`/gu;
+const TASK_LINE_NUMBER_RE = /^(\d+)\./u;
 
 export type ApplicationSkeletonPlanTaskKind =
   | "acceptance"
@@ -40,6 +41,11 @@ const taskNumberBefore = (
   lines
     .slice(0, lineIndex + 1)
     .filter((line) => TASK_NUMBER_PREFIX_RE.test(line)).length + 1;
+
+const readTaskLineNumber = (line: string, fallback: number): number => {
+  const parsed = Number.parseInt(TASK_LINE_NUMBER_RE.exec(line)?.[1] ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
 
 const formatTaskLine = (
   number: number,
@@ -215,6 +221,37 @@ export const injectApplicationSkeletonTaskPair = (
   const taskPair = resolveTaskPair(params);
   const taskNumber = taskNumberBefore(lines, pairedCommitLineIndex);
   const nextLines = [...lines];
+  if (params.kind === "review_revision") {
+    const revisionTaskNumber = readTaskLineNumber(
+      nextLines[currentTaskLineIndex] ?? "",
+      taskNumber
+    );
+    nextLines.splice(
+      currentTaskLineIndex,
+      0,
+      formatTaskLine(
+        revisionTaskNumber,
+        taskPair.taskId,
+        "IN_PROGRESS",
+        taskPair.summary,
+        taskPair.scope,
+        taskPair.message
+      ),
+      formatCommitLine(revisionTaskNumber, taskPair.message),
+      ""
+    );
+    const nextPlanText = replaceState(nextLines.join("\n"), {
+      ...state,
+      currentTaskId: taskPair.taskId,
+      expectedCommitMessage: taskPair.message,
+    });
+    return {
+      nextCommitMessage: taskPair.message,
+      nextCurrentTaskId: taskPair.taskId,
+      nextPlanText,
+      sequenceNumber: taskPair.sequenceNumber,
+    };
+  }
   if (taskPair.shouldBlockCurrentTask) {
     nextLines[currentTaskLineIndex] = replaceStatus(
       nextLines[currentTaskLineIndex] ?? "",
