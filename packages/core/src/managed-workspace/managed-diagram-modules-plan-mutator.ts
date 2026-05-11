@@ -280,7 +280,7 @@ const insertDiagramModulesProductPartTasks = (lines, commitLineIndex, files) => 
   if (ids.length === 0) { return; }
   const completed = committedProductPartIds(lines, files, commitLineIndex);
   const id = ids.find((candidate) => !completed.includes(candidate));
-  if (!id) { insertDiagramModulesUserReviewTask(lines, commitLineIndex); return; }
+  if (!id) { insertDiagramModulesUserReturnTask(lines, commitLineIndex); return; }
   if (lines.some((line) => line.includes(\`diagram-modules.product-part.\${id}\`))) { return; }
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1, message = \`docs: update diagram modules product part \${id}\`;
   const inserted = [formatNewTaskLine(taskNumber, \`diagram-modules.product-part.\${id}\`, "TODO", \`Materialize only Diagram Modules Product Part "\${id}" and stop for Core acceptance\`, \`.codeai-hub/**/diagram_modules/product-parts/\${id}.md\`, message), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${message}\\\` (hash: TBD)\`];

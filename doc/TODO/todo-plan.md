@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "9716392e6",
+  "lastRecordedCommit": "18770dfa9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase2.commit-task1",
-  "expectedCommitMessage": "feat: commit rejected diagram modules repair attempts",
+  "currentTaskId": "diagram-modules-repair.phase3.user-return.task1",
+  "expectedCommitMessage": "feat: keep diagram modules user return phase open",
   "debt": {
-    "expectedCommitMessage": "feat: commit rejected diagram modules repair attempts",
-    "preCommitHead": "9716392e6",
+    "expectedCommitMessage": "feat: keep diagram modules user return phase open",
+    "preCommitHead": "18770dfa9",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase2.commit-task1"
+    "taskId": "diagram-modules-repair.phase3.user-return.task1"
   }
 }
 ```
@@ -70,14 +70,14 @@
 9. [DONE] `diagram-modules-repair.phase2.post-turn.task1` Integrate repair planning into the post-turn path so Core injects a repair task before feedback, and writes attempt evidence when the active repair attempt still fails validation or produces no accepted artifact diff. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`; expected commit: `feat: orchestrate diagram modules repair attempts`).
 10. [DONE] Git Commit: `feat: orchestrate diagram modules repair attempts` (hash: 9716392e6)
 11. [DONE] `diagram-modules-repair.phase2.commit-task1` Commit Diagram Modules repair attempts even when the target artifact is still invalid by allowing tracked attempt evidence and preventing repair commits from being counted as accepted Product Part completion. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts`; expected commit: `feat: commit rejected diagram modules repair attempts`).
-12. [PENDING] Git Commit: `feat: commit rejected diagram modules repair attempts` (hash: TBD)
+12. [DONE] Git Commit: `feat: commit rejected diagram modules repair attempts` (hash: 18770dfa9)
 
 ## Phase 3 - Post-Completion User Return Loop (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Persistent Diagram Modules Revision Surface
 
-13. [TODO] `diagram-modules-repair.phase3.user-return.task1` Replace the one-shot Diagram Modules review task with a persistent user-return revision loop that can inject `revisionN` task pairs after all Product Parts are accepted. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `feat: keep diagram modules user return phase open`).
-14. [TODO] Git Commit: `feat: keep diagram modules user return phase open` (hash: TBD)
+13. [DONE] `diagram-modules-repair.phase3.user-return.task1` Replace the one-shot Diagram Modules review task with a persistent user-return revision loop that can inject `revisionN` task pairs after all Product Parts are accepted. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `feat: keep diagram modules user return phase open`).
+14. [PENDING] Git Commit: `feat: keep diagram modules user return phase open` (hash: TBD)
 15. [TODO] `diagram-modules-repair.phase3.downstream.task1` Keep downstream handoff separate from the Diagram Modules user-return loop by recording the Application Skeleton unlock in the workspace ledger without treating the Diagram Modules return phase as a terminal handoff anchor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: decouple diagram modules return loop from downstream handoff`).
 16. [TODO] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: TBD)
 
