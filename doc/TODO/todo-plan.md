@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "fe1a2ec72",
+  "lastRecordedCommit": "1b31b8155",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9a.restart-gate.task1",
-  "expectedCommitMessage": "fix: unblock application skeleton after core restart",
+  "currentTaskId": "application-skeleton.phase9a.restart-regression.task1",
+  "expectedCommitMessage": "test: cover application skeleton restart gate recovery",
   "debt": {
-    "expectedCommitMessage": "fix: unblock application skeleton after core restart",
-    "preCommitHead": "fe1a2ec72",
+    "expectedCommitMessage": "test: cover application skeleton restart gate recovery",
+    "preCommitHead": "1b31b8155",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9a.restart-gate.task1"
+    "taskId": "application-skeleton.phase9a.restart-regression.task1"
   }
 }
 ```
@@ -168,9 +168,9 @@ Release build evidence (2026-05-11):
 ### Stream: Volatile Metadata Does Not Block Application Skeleton
 
 39. [DONE] `application-skeleton.phase9a.restart-gate.task1` Exclude Core volatile metadata from managed dirty-gate blocking after restart/reinstall, and cover the managed Git status classification so `description-step.json` timestamp refreshes and workspace task timers do not masquerade as pending managed commits. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unblock application skeleton after core restart`).
-40. [PENDING] Git Commit: `fix: unblock application skeleton after core restart` (hash: TBD)
-41. [TODO] `application-skeleton.phase9a.restart-regression.task1` Add workflow-state read regression for a restarted Core with valid Diagram Modules artifacts plus volatile metadata dirty state: Application Skeleton must be unblocked and the UI gate must not report the product-parts index as missing. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton restart gate recovery`).
-42. [TODO] Git Commit: `test: cover application skeleton restart gate recovery` (hash: TBD)
+40. [DONE] Git Commit: `fix: unblock application skeleton after core restart` (hash: 1b31b8155)
+41. [DONE] `application-skeleton.phase9a.restart-regression.task1` Add workflow-state read regression for a restarted Core with valid Diagram Modules artifacts plus volatile metadata dirty state: Application Skeleton must be unblocked and the UI gate must not report the product-parts index as missing. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton restart gate recovery`).
+42. [PENDING] Git Commit: `test: cover application skeleton restart gate recovery` (hash: TBD)
 43. [TODO] `application-skeleton.phase9a.verify.task1` Run targeted managed gate/workflow-state tests, core build, and `npm run plan:validate`; record exact evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton restart gate verification`).
 44. [TODO] Git Commit: `docs: record application skeleton restart gate verification` (hash: TBD)
 

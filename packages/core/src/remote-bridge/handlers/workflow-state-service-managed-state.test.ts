@@ -81,6 +81,155 @@ const readWorkflowState = async (params: {
     params.service.handleWorkflowStateRead(req, res);
   });
 
+test("workflow-state read unblocks Application Skeleton after Core restart with only volatile metadata dirty", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-service-restart-gate-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "CodeAI Test"], {
+      cwd: workspaceRoot,
+    });
+    await writeWorkspaceFile(workspaceRoot, "README.md", "# Demo\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "# Final Description\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+      `${JSON.stringify(
+        {
+          finalPath: `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+          updatedAt: "2026-05-11T12:28:23.134Z",
+          workspacePath: workspaceRoot,
+          workspaceSlug,
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      "# Virtual Simulation\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      [
+        "# Product Parts Index",
+        "",
+        "## Product Parts",
+        "",
+        "### Product Part: project-manager",
+        "- Id: project-manager",
+        "- Title: Project Manager",
+        "- Purpose: Manages the product workflow.",
+        "- Status: generated",
+        "",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
+      [
+        "# Product Part: Project Manager",
+        "",
+        "## Identity",
+        "",
+        "| Field | Value |",
+        "| --- | --- |",
+        "| Part ID | `project-manager` |",
+        "| Product Part | `Project Manager` |",
+        "| Purpose | Manages the product workflow. |",
+        "",
+        "## Purpose",
+        "",
+        "Manages the product workflow.",
+        "",
+        "## Owned Clusters",
+        "",
+        "### `workflow-ui`",
+        "",
+        "**Purpose:** Coordinates the workflow user interface.",
+        "",
+        "| `module-id` | Responsibility |",
+        "| --- | --- |",
+        "| `step-card` | Shows step start state. |",
+        "",
+      ].join("\n")
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      "git",
+      ["commit", "-m", "docs: accept diagram modules"],
+      {
+        cwd: workspaceRoot,
+      }
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+      `${JSON.stringify(
+        {
+          finalPath: `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+          updatedAt: "2026-05-11T13:33:04.373Z",
+          workspacePath: workspaceRoot,
+          workspaceSlug,
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/state/task-timers.json",
+      `${JSON.stringify(
+        {
+          schemaVersion: 2,
+          totals: {
+            description: 15,
+            diagram_modules: 150,
+            virtual_simulation: 10,
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    const { payload, status } = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const progress = payload.diagramModulesProgress as {
+      readonly aggregateReady?: boolean;
+      readonly generatedCount?: number;
+      readonly plannedCount?: number;
+    };
+    const gating = payload.gating as {
+      readonly blocked?: Record<string, boolean>;
+    };
+
+    assert.equal(status, 200);
+    assert.equal(progress.aggregateReady, true);
+    assert.equal(progress.generatedCount, 1);
+    assert.equal(progress.plannedCount, 1);
+    assert.equal(gating.blocked?.application_skeleton, false);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("workflow-state read ignores malformed managed state while preserving skeleton progress", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-managed-")
