@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "ccb3c8c5e",
+  "lastRecordedCommit": "832b9773c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase24.writer.task1",
-  "expectedCommitMessage": "fix: add application skeleton acceptance map.json writer",
+  "currentTaskId": "application-skeleton-orchestration.phase24.runner-write.task1",
+  "expectedCommitMessage": "fix: patch application skeleton map.json from accept contract runner",
   "debt": {
-    "expectedCommitMessage": "fix: add application skeleton acceptance map.json writer",
-    "preCommitHead": "ccb3c8c5e",
+    "expectedCommitMessage": "fix: patch application skeleton map.json from accept contract runner",
+    "preCommitHead": "832b9773c",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase24.writer.task1"
+    "taskId": "application-skeleton-orchestration.phase24.runner-write.task1"
   }
 }
 ```
@@ -486,12 +486,12 @@
 ### Stream: Map.json Acceptance Writer
 
 117. [DONE] `application-skeleton-orchestration.phase24.writer.task1` Add a new pure helper `application-skeleton-acceptance-writer.ts` that reads `application-skeleton-map.json`, patches `accepted: true` (and `reviewState: "accepted"` if absent), and writes it back. Add peer test `application-skeleton-acceptance-writer.test.ts` covering happy path, missing-file path, and idempotency (already-accepted map is a noop). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts`; expected commit: `fix: add application skeleton acceptance map.json writer`).
-118. [PENDING] Git Commit: `fix: add application skeleton acceptance map.json writer` (hash: TBD)
+118. [DONE] Git Commit: `fix: add application skeleton acceptance map.json writer` (hash: 832b9773c)
 
 ### Stream: Runner Integration
 
-119. [TODO] `application-skeleton-orchestration.phase24.runner-write.task1` Wire the new writer into `managed-stage-accept-contract-runner.ts` so that after `evaluateApplicationSkeletonAcceptContractCommand` returns `kind: "accepted"`, the runner patches `application-skeleton-map.json` before calling `markAccepted` + `handle`. Update the runner's peer test (or `managed-stage-accept-contract-handler.test.ts`) to assert the file gets patched on accept and stays untouched on reject. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: patch application skeleton map.json from accept contract runner`).
-120. [TODO] Git Commit: `fix: patch application skeleton map.json from accept contract runner` (hash: TBD)
+119. [DONE] `application-skeleton-orchestration.phase24.runner-write.task1` Wire the new writer into `managed-stage-accept-contract-runner.ts` so that after `evaluateApplicationSkeletonAcceptContractCommand` returns `kind: "accepted"`, the runner patches `application-skeleton-map.json` before calling `markAccepted` + `handle`. Add a dedicated runner peer test `managed-stage-accept-contract-runner.test.ts` that asserts the file gets patched on accept and stays untouched on reject. Scope shifted from the existing `managed-stage-accept-contract-handler.test.ts` (pure decision tests) to a new runner peer test file so writer-injection spies stay scoped to runner integration and do not pollute the handler decision suite. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts`; expected commit: `fix: patch application skeleton map.json from accept contract runner`).
+120. [PENDING] Git Commit: `fix: patch application skeleton map.json from accept contract runner` (hash: TBD)
 
 ### Stream: Targeted Verification
 

@@ -1,4 +1,8 @@
 import type { ManagedAuditRecord } from "../../unified-session/storage";
+import {
+  type ApplicationSkeletonAcceptanceWriteResult,
+  writeApplicationSkeletonAcceptance,
+} from "./application-skeleton-acceptance-writer";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import {
   type ApplicationSkeletonProgressSnapshot,
@@ -50,6 +54,10 @@ export interface ApplicationSkeletonAcceptContractRunnerDeps {
   readonly resolveSession: (
     sessionId: string
   ) => ApplicationSkeletonAcceptContractSession | null | undefined;
+  readonly writeAcceptanceFlag?: (params: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }) => Promise<ApplicationSkeletonAcceptanceWriteResult>;
 }
 
 export interface ApplicationSkeletonAcceptContractRunnerInput {
@@ -96,6 +104,24 @@ export const runApplicationSkeletonAcceptContractCommand = async (
   if (decision.kind !== "accepted") {
     return decision;
   }
+  // Variant A (Phase 24 acceptance write-path fix): the runner is the single
+  // owner of the `accepted: true` write on `application-skeleton-map.json`.
+  // PM button (via HTTP endpoint) and typed-fallback recognizer both funnel
+  // through this runner, so patching the map here closes the Phase 22 hole
+  // where every acceptance entry point only set the in-memory marker and the
+  // Phase 3 dispatcher (Option C) never observed `progress.accepted === true`.
+  const writeAcceptance =
+    params.writeAcceptanceFlag ?? writeApplicationSkeletonAcceptance;
+  const writeResult = await writeAcceptance({
+    workspaceRoot,
+    workspaceSlug,
+  });
+  params.logger.info("Application Skeleton acceptance map.json write", {
+    sessionId: params.sessionId,
+    source: params.source,
+    status: writeResult.status,
+    workspaceSlug,
+  });
   params.resetRetryCounter(params.sessionId);
   params.markAccepted(params.sessionId);
   params
