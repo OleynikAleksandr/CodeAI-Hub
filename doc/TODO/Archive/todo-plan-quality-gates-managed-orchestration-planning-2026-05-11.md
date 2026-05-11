@@ -12,12 +12,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
   "currentTaskId": "quality-gates-planning.phase3.closeout.task1",
   "expectedCommitMessage": "docs: close quality gates planning intake",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates planning intake",
-    "preCommitHead": "449d5a37b",
-    "stage": "commit_pending",
-    "taskId": "quality-gates-planning.phase3.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -80,6 +75,6 @@
 
 ### Stream: Archive Intake Plan
 
-11. [DONE] `quality-gates-planning.phase3.closeout.task1` After explicit user acceptance, archive this planning intake TODO plan or roll it into the next implementation TODO plan according to user direction. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close quality gates planning intake`).
-12. [PENDING] Git Commit: `docs: close quality gates planning intake` (hash: TBD)
+11. [IN_PROGRESS] `quality-gates-planning.phase3.closeout.task1` After explicit user acceptance, archive this planning intake TODO plan or roll it into the next implementation TODO plan according to user direction. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close quality gates planning intake`).
+12. [TODO] Git Commit: `docs: close quality gates planning intake` (hash: TBD)
 13. [TODO] `quality-gates-planning.phase3.closeout-handoff.task1` Reserved post-closeout handoff anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
