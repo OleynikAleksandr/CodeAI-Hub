@@ -95,6 +95,19 @@ export const createRemoteBridgeBootstrap = (options: {
     onTurnCompleted: (sessionId) => {
       workflowStateService?.handleManagedWorkflowPostTurn(sessionId);
     },
+    // Phase 28 production wiring: typed-fallback router and PM Accept Contract
+    // button both funnel through `handleApplicationSkeletonAcceptContractCommand`
+    // on the post-turn service, which delegates to the Phase 24 runner that
+    // patches `application-skeleton-map.json::accepted: true` before
+    // `markAccepted` + `handle`. Late-bound through the forward-declared
+    // `workflowStateService` reference (the post-turn service instance is
+    // created on line 116 below, after this composition).
+    handleManagedAcceptContractCommand: (params) =>
+      workflowStateService
+        ? workflowStateService.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand(
+            params
+          )
+        : Promise.resolve(undefined),
     broadcaster: (event) => {
       options.broadcaster(event as BridgeEvent);
     },

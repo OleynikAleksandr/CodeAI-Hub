@@ -8,16 +8,11 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "bd8625183",
+  "lastRecordedCommit": "5ac196dae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase28.wiring-audit.task1",
-  "expectedCommitMessage": "docs: open application skeleton acceptance wiring scope",
-  "debt": {
-    "expectedCommitMessage": "docs: open application skeleton acceptance wiring scope",
-    "preCommitHead": "bd8625183",
-    "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase28.wiring-audit.task1"
-  }
+  "currentTaskId": "application-skeleton-orchestration.phase28.wiring.task1",
+  "expectedCommitMessage": "fix: wire application skeleton accept contract callback in production",
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -529,7 +524,7 @@
 ### Stream: Scope Audit
 
 128. [DONE] `application-skeleton-orchestration.phase28.wiring-audit.task1` Open this scope: block Phase 26 with the wiring-gap findings, document the entry / exit points the late-bound callback must connect, and pin the three-file fix surface (bootstrap composition, session handler options, runtime-core dispatch factory). After wiring lands, the typed-fallback router's `handleManagedAcceptContractCommand?.()` call actually reaches `ManagedWorkflowPostTurnService::handleApplicationSkeletonAcceptContractCommand`, which delegates to `managed-stage-accept-contract-runner.ts`, which calls the Phase 24 writer + dispatches the Phase 3 continuation. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton acceptance wiring scope`).
-129. [PENDING] Git Commit: `docs: open application skeleton acceptance wiring scope` (hash: TBD)
+129. [DONE] Git Commit: `docs: open application skeleton acceptance wiring scope` (hash: 5ac196dae)
 
 #### Audit findings (HEAD = `bd8625183`, 2026-05-11)
 
@@ -541,7 +536,7 @@
 
 ### Stream: Production Callback Wiring
 
-130. [TODO] `application-skeleton-orchestration.phase28.wiring.task1` Wire the Phase 5 / Phase 24 acceptance pipeline end-to-end: add an optional `handleManagedAcceptContractCommand` field to `SessionRequestHandlerOptions`, forward it through `createSessionRequestHandlerRuntimeCore` into the `SessionRequestHandlerMessageDispatch` deps, and bind it at composition time in `remote-bridge-bootstrap.ts` via the existing forward-declared `workflowStateService`. (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`; expected commit: `fix: wire application skeleton accept contract callback in production`).
+130. [IN_PROGRESS] `application-skeleton-orchestration.phase28.wiring.task1` Wire the Phase 5 / Phase 24 acceptance pipeline end-to-end: add an optional `handleManagedAcceptContractCommand` field to `SessionRequestHandlerOptions` (and the runtime deps interface mirror), forward it through `createSessionRequestHandlerRuntime` → `createSessionRequestHandlerRuntimeCore` into the `SessionRequestHandlerMessageDispatch` deps, and bind it at composition time in `remote-bridge-bootstrap.ts` via the existing forward-declared `workflowStateService` (late-bound to `managedPostTurnService.handleApplicationSkeletonAcceptContractCommand`). Scope expanded by two interface-type files because the option must be typed in both the public `SessionRequestHandlerOptions` AND the internal `SessionRequestHandlerRuntimeDependencies` for the runtime layer to forward it; without both, the build fails with `TS2304 Cannot find name 'ApplicationSkeletonAcceptContractDecision'`. (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-types.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-types.ts`; expected commit: `fix: wire application skeleton accept contract callback in production`).
 131. [TODO] Git Commit: `fix: wire application skeleton accept contract callback in production` (hash: TBD)
 
 ### Stream: Targeted Verification

@@ -274,6 +274,8 @@ export const createSessionRequestHandlerRuntimeCore = (
     broadcaster: options.broadcaster,
     logger: options.logger,
     emitTurnStateEvent: options.callbacks.emitTurnStateEvent,
+    handleManagedAcceptContractCommand:
+      options.handleManagedAcceptContractCommand,
     handleProviderFailure: options.callbacks.handleProviderFailure,
     trackPendingUserIntent: (sessionId, content) =>
       retryState.trackPendingUserIntent(sessionId, content),
