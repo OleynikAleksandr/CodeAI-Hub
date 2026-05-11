@@ -19,6 +19,7 @@ import {
   readDiagramModulesProgressSnapshot,
   syncDiagramModulesSubturnState,
 } from "./diagram-modules-progress";
+import { runDiagramModulesRepairOrchestration } from "./diagram-modules-repair-orchestration";
 import { ManagedDocumentationCommitTransaction } from "./managed-documentation-commit-transaction";
 import {
   attachManagedGitStatus,
@@ -375,6 +376,13 @@ export class ManagedWorkflowPostTurnService {
       this.retryLimitNotifier?.(notice);
       return;
     }
+    await runDiagramModulesRepairOrchestration({
+      logger: this.logger,
+      managedGitStatus: latestManagedGitStatus,
+      progress: latestDiagramModulesProgress,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
     const diagramModulesProgress = attachManagedGitStatus(
       latestDiagramModulesProgress,
       latestManagedGitStatus.dirtyByStage.diagram_modules
