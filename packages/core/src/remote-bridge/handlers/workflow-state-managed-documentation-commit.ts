@@ -11,6 +11,8 @@ import { readQualityGatesProgressSnapshot } from "./quality-gates-progress";
 
 const DIAGRAM_MODULES_PRODUCT_PART_FILE_RE =
   /\/diagram_modules\/product-parts\/([^/]+)\.md$/u;
+const DIAGRAM_MODULES_REPAIR_ATTEMPT_EVIDENCE_RE =
+  /\/workflow\/revisions\/diagram-modules\/attempts\/attempt-\d{4}-[^/]+\.json$/u;
 
 export interface ManagedDocumentationProgressContext {
   readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
@@ -26,6 +28,13 @@ const hasCommittableDiagramModulesStage = (
   const progress = context.diagramModulesProgress;
   if (!progress || dirtyFiles.length === 0) {
     return false;
+  }
+  if (
+    dirtyFiles.some((file) =>
+      DIAGRAM_MODULES_REPAIR_ATTEMPT_EVIDENCE_RE.test(file)
+    )
+  ) {
+    return true;
   }
   if (progress.aggregateReady) {
     return true;

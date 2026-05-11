@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "66dbaa599",
+  "lastRecordedCommit": "9716392e6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase2.post-turn.task1",
-  "expectedCommitMessage": "feat: orchestrate diagram modules repair attempts",
+  "currentTaskId": "diagram-modules-repair.phase2.commit-task1",
+  "expectedCommitMessage": "feat: commit rejected diagram modules repair attempts",
   "debt": {
-    "expectedCommitMessage": "feat: orchestrate diagram modules repair attempts",
-    "preCommitHead": "66dbaa599",
+    "expectedCommitMessage": "feat: commit rejected diagram modules repair attempts",
+    "preCommitHead": "9716392e6",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase2.post-turn.task1"
+    "taskId": "diagram-modules-repair.phase2.commit-task1"
   }
 }
 ```
@@ -68,9 +68,9 @@
 7. [DONE] `diagram-modules-repair.phase2.evidence.task1` Add a Diagram Modules repair-attempt evidence writer under `.codeai-hub/<workspace>/workflow/revisions/diagram-modules/attempts/` with target artifact, validator diagnostics, attempt number, and outcome fields. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts`; expected commit: `feat: record diagram modules repair attempt evidence`).
 8. [DONE] Git Commit: `feat: record diagram modules repair attempt evidence` (hash: 66dbaa599)
 9. [DONE] `diagram-modules-repair.phase2.post-turn.task1` Integrate repair planning into the post-turn path so Core injects a repair task before feedback, and writes attempt evidence when the active repair attempt still fails validation or produces no accepted artifact diff. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`; expected commit: `feat: orchestrate diagram modules repair attempts`).
-10. [PENDING] Git Commit: `feat: orchestrate diagram modules repair attempts` (hash: TBD)
-11. [TODO] `diagram-modules-repair.phase2.commit-task1` Commit Diagram Modules repair attempts even when the target artifact is still invalid by allowing tracked attempt evidence and the active child plan mutation to satisfy the managed commit boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts`; expected commit: `feat: commit rejected diagram modules repair attempts`).
-12. [TODO] Git Commit: `feat: commit rejected diagram modules repair attempts` (hash: TBD)
+10. [DONE] Git Commit: `feat: orchestrate diagram modules repair attempts` (hash: 9716392e6)
+11. [DONE] `diagram-modules-repair.phase2.commit-task1` Commit Diagram Modules repair attempts even when the target artifact is still invalid by allowing tracked attempt evidence and preventing repair commits from being counted as accepted Product Part completion. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts`; expected commit: `feat: commit rejected diagram modules repair attempts`).
+12. [PENDING] Git Commit: `feat: commit rejected diagram modules repair attempts` (hash: TBD)
 
 ## Phase 3 - Post-Completion User Return Loop (owner: Codex, updated: 2026-05-11)
 
