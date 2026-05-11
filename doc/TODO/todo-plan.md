@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "b6136a3e5",
+  "lastRecordedCommit": "7b79850d5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9c.out-of-owner-feedback.task1",
-  "expectedCommitMessage": "fix: keep application skeleton out-of-owner blockers non-actionable",
+  "currentTaskId": "application-skeleton.phase9c.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton lifecycle blocker verification",
   "debt": {
-    "expectedCommitMessage": "fix: keep application skeleton out-of-owner blockers non-actionable",
-    "preCommitHead": "b6136a3e5",
+    "expectedCommitMessage": "docs: record application skeleton lifecycle blocker verification",
+    "preCommitHead": "7b79850d5",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9c.out-of-owner-feedback.task1"
+    "taskId": "application-skeleton.phase9c.verify.task1"
   }
 }
 ```
@@ -218,10 +218,20 @@ Restart-fix release build evidence (2026-05-11):
 53. [DONE] `application-skeleton.phase9c.lifecycle-upgrade.task1` Commit Core-owned managed lifecycle/shim upgrades before Application Skeleton provider sessions start, so `scripts/plan-orchestrator/plan-cli.mjs` cannot remain as out-of-stage dirty state and block the draft artifact commit. (scope: `packages/core/src/managed-workspace/managed-workspace-lifecycle-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed lifecycle upgrades before application skeleton`).
 54. [DONE] Git Commit: `fix: commit managed lifecycle upgrades before application skeleton` (hash: b6136a3e5)
 55. [DONE] `application-skeleton.phase9c.out-of-owner-feedback.task1` Ensure Application Skeleton out-of-owner dirty blockers do not send actionable artifact-correction instructions to the provider; Core must either resolve its own boundary or surface a non-provider wait/block notice. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton out-of-owner blockers non-actionable`).
-56. [PENDING] Git Commit: `fix: keep application skeleton out-of-owner blockers non-actionable` (hash: TBD)
-57. [TODO] `application-skeleton.phase9c.verify.task1` Reproduce the v1.2.231 dirty lifecycle-script blocker in a test workspace, verify Core commits the lifecycle upgrade before Application Skeleton work, run targeted tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton lifecycle blocker verification`).
-58. [TODO] Git Commit: `docs: record application skeleton lifecycle blocker verification` (hash: TBD)
+56. [DONE] Git Commit: `fix: keep application skeleton out-of-owner blockers non-actionable` (hash: 7b79850d5)
+57. [DONE] `application-skeleton.phase9c.verify.task1` Reproduce the v1.2.231 dirty lifecycle-script blocker in a test workspace, verify Core commits the lifecycle upgrade before Application Skeleton work, run targeted tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton lifecycle blocker verification`).
+58. [PENDING] Git Commit: `docs: record application skeleton lifecycle blocker verification` (hash: TBD)
 59. [TODO] `application-skeleton.phase9c.release-confirmation.task1` Get separate explicit confirmation from the user before preparing another release build for the managed lifecycle dirty-state fix. (scope: chat/process observation only; no commit required).
+
+Lifecycle blocker verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts` — 11 tests passed.
+- PASS: regression `default managed lifecycle commits installed shim upgrades before technical stage work` reproduces an existing workspace with a stale tracked `scripts/plan-orchestrator/plan-cli.mjs`, then verifies `ensureReady(application_skeleton)` creates `chore: update managed workspace lifecycle` before `chore: switch managed workspace stage` and leaves `git status --short` empty.
+- PASS: regression `managed feedback reports out-of-owner dirty files without provider actions` verifies Application Skeleton out-of-owner blockers say not to update Application Skeleton artifacts and do not include Git/plan shell instructions or draft/materialization correction instructions.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Root cause confirmed from v1.2.231 retest: Core reinstalled/upgraded the managed child-plan shim inside the existing test workspace, leaving `scripts/plan-orchestrator/plan-cli.mjs` dirty outside the active Application Skeleton microtask; the draft commit then blocked before Core could finalize `application-skeleton.md` and `application-skeleton-map.json`.
+- Residual requirement: package a new VSIX only after separate release-build confirmation, then user must retest Application Skeleton draft commit advancement on an existing workspace after Core/lifecycle upgrade.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
