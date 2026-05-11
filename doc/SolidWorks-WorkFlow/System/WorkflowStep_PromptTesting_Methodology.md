@@ -2,7 +2,7 @@
 
 **Status:** Active (process)
 **Owner:** Oleksandr + Codex
-**Updated:** 2026-05-06
+**Updated:** 2026-05-11
 
 ## Назначение
 
@@ -22,6 +22,8 @@
 - tool/profile capabilities;
 - stage completion boundary;
 - правила acceptance;
+- managed child-plan / commit boundary;
+- Core rejection / repair feedback boundary;
 - machine-readable schema для artifacts;
 - запреты на работу вне stage scope.
 
@@ -40,6 +42,8 @@
 - не начал ли он materialization раньше времени;
 - задавал ли вопросы до того, как сам мог подготовить draft;
 - оставил ли acceptance на пользователе;
+- не начал ли post-acceptance integration/materialization до Core-owned acceptance commit;
+- сможет ли Core при отказе создать repair microtask и paired `Git Commit:` до следующего сообщения агенту;
 - остановился ли на границе своего шага.
 
 Хороший тест выявляет дефекты prompt'а раньше, чем они превратятся в дефекты реализации.
@@ -83,6 +87,7 @@
 - насколько prompt удерживает агента без промежуточного coaching;
 - какие open decisions агент выносит в конец;
 - сохраняет ли он draft/accepted boundary;
+- сохраняет ли он accepted/integrated или accepted/materialized boundary;
 - насколько machine-readable artifact согласован с human-readable artifact;
 - какие ошибки повторяются системно и должны стать правилами prompt'а.
 
@@ -99,6 +104,7 @@
 - не материализует файлы вне полномочий шага;
 - не создаёт downstream sessions;
 - держит `accepted=false` до явного пользовательского подтверждения;
+- держит `integrated=false` / `materialized=false` до отдельной post-acceptance continuation phase;
 - в финале задаёт только реальные open decisions.
 
 Ключевой критерий: пользователь должен обсуждать решения, а не объяснять агенту базовый алгоритм его шага.
@@ -112,10 +118,12 @@
 - не читает accepted upstream artifacts;
 - путает текущий stage и следующий stage;
 - предлагает materialization, хотя step contract-only;
+- начинает integration/materialization в том же turn-е, где пользователь принимает contract;
 - включает deferred gates в active blockers;
 - смешивает выбранный baseline с strict-only checks;
 - не различает human-readable reasoning и machine-readable contract;
 - не понимает, чем заканчивается его работа;
+- оставляет Core без однозначного repair path при rejected artifacts;
 - просит пользователя подтвердить то, что уже должно быть выведено из skeleton или prior artifacts.
 
 Такие ошибки нужно исправлять в стартовом prompt'е, contract reference, schema или runtime-provided context. Не нужно считать их проблемой конкретной сессии, если они вызваны слабым входным контрактом.
@@ -137,6 +145,15 @@
 - что является Definition of Done;
 - что запрещено после Done;
 - какой следующий step должен запускаться отдельно.
+
+Если step имеет Core-managed acceptance/materialization или acceptance/integration phases, добавляется **Managed Lifecycle Boundary**:
+
+- draft task and commit;
+- user review revisions as concrete task pairs;
+- acceptance commit before continuation;
+- materialization/integration task and commit;
+- post-completion user-return revision phase;
+- repair task pair before Core rejection feedback.
 
 Если агент путает статусы, добавляется **Machine Contract Consistency**:
 
@@ -194,6 +211,10 @@ Markdown может быть понятным человеку и одновре
 - architecture gate был недостаточно first-class;
 - completion boundary не был достаточно явным;
 - machine-readable contract мог смешивать `selectedBaseline`, strict-only checks, active required arrays и deferred gates.
+- later managed-step testing showed that draft acceptance and integration must be separate Core-owned lifecycle phases, mirroring `Application Skeleton`;
+- agent must not edit package scripts, hooks, configs, gate scripts, CI, production code, or Development Tree artifacts during draft/review;
+- `quality-gates.json` must keep `commands` as an object keyed by gate id and separate `accepted` from `integrated`;
+- Core rejection must be testable as repair microtask + paired `Git Commit:` before feedback, with failed-attempt evidence commits.
 
 Исправление было внесено не в тестовый artifact, а в step front:
 
@@ -202,6 +223,8 @@ Markdown может быть понятным человеку и одновре
 - добавлена first-class architecture gate requirement;
 - добавлена completion boundary;
 - добавлены `id`, `proposedCommand`, `status`, `baseline`, `blockingIn` и consistency check для machine-readable contract.
+- добавлен lifecycle boundary: draft commit, user acceptance commit, integration commit, and post-completion user-return phase;
+- добавлены обязательные rejection-path tests for Core refusing agent output.
 
 После этого агент начал сам исследовать, создавать draft без промежуточных вопросов и выносить только финальные open decisions.
 
@@ -215,6 +238,8 @@ Prompt testing считается успешным, если:
 - финальные вопросы относятся к реальным user decisions;
 - scope шага не расширяется самопроизвольно;
 - artifacts остаются draft до explicit acceptance;
+- acceptance does not trigger integration/materialization until the Core-owned acceptance commit exists;
+- rejected agent output creates a repair path that is represented in the child plan and Git history;
 - следующий step получает понятный и согласованный contract.
 
 Если эти условия выполнены, тест можно завершать даже без принятия конкретного artifact из тестового workspace.

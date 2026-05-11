@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-planning",
   "branch": "main",
   "baseHead": "1106f0c72",
-  "lastRecordedCommit": "2bba7e479",
+  "lastRecordedCommit": "f76e8c959",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-planning.phase2.system-docs-core.task1",
-  "expectedCommitMessage": "docs: align system workflow docs for quality gates lifecycle",
+  "currentTaskId": "quality-gates-planning.phase2.system-docs-process.task1",
+  "expectedCommitMessage": "docs: align workflow process docs for quality gates lifecycle",
   "debt": {
-    "expectedCommitMessage": "docs: align system workflow docs for quality gates lifecycle",
-    "preCommitHead": "2bba7e479",
+    "expectedCommitMessage": "docs: align workflow process docs for quality gates lifecycle",
+    "preCommitHead": "f76e8c959",
     "stage": "commit_pending",
-    "taskId": "quality-gates-planning.phase2.system-docs-core.task1"
+    "taskId": "quality-gates-planning.phase2.system-docs-process.task1"
   }
 }
 ```
@@ -71,9 +71,9 @@
 
 5. [DONE] `quality-gates-planning.phase2.review.task1` User reviews the Quality Gates planning document and accepts it, rejects it, or requests revisions before implementation planning starts. (scope: chat/process observation only; no commit required). Result: User requested System SSOT alignment before Quality Gates implementation planning acceptance.
 6. [DONE] `quality-gates-planning.phase2.system-docs-core.task1` Align canonical System workflow docs with the accepted Diagram Modules/Application Skeleton behavior and the planned Quality Gates lifecycle. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`; expected commit: `docs: align system workflow docs for quality gates lifecycle`).
-7. [PENDING] Git Commit: `docs: align system workflow docs for quality gates lifecycle` (hash: TBD)
-8. [TODO] `quality-gates-planning.phase2.system-docs-process.task1` Align process System docs with managed-step rollout and prompt-testing lessons for Quality Gates. (scope: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/System/WorkflowStep_PromptTesting_Methodology.md`; expected commit: `docs: align workflow process docs for quality gates lifecycle`).
-9. [TODO] Git Commit: `docs: align workflow process docs for quality gates lifecycle` (hash: TBD)
+7. [DONE] Git Commit: `docs: align system workflow docs for quality gates lifecycle` (hash: f76e8c959)
+8. [DONE] `quality-gates-planning.phase2.system-docs-process.task1` Align process System docs with managed-step rollout and prompt-testing lessons for Quality Gates. (scope: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/System/WorkflowStep_PromptTesting_Methodology.md`; expected commit: `docs: align workflow process docs for quality gates lifecycle`).
+9. [PENDING] Git Commit: `docs: align workflow process docs for quality gates lifecycle` (hash: TBD)
 10. [TODO] `quality-gates-planning.phase2.review.updated.task1` User reviews the updated Quality Gates planning document and System SSOT alignment before implementation planning starts. (scope: chat/process observation only; no commit required).
 
 ## Phase 3 - Scope Closeout (owner: Codex, updated: 2026-05-11)

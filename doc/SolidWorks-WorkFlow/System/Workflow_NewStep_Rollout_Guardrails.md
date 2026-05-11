@@ -1,7 +1,7 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-04-10
+**Updated:** 2026-05-11
 **Owner:** Oleksandr + Codex
 **Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
 
@@ -18,11 +18,14 @@ Workflow step считается поддерживаемым только ка�
 - canonical readiness / `READY-DONE-OUTDATED-ERROR` semantics;
 - canonical continuity binding;
 - canonical workspace restore truth;
+- canonical managed child-plan lifecycle, when the step writes tracked artifacts;
 - Project Manager parity;
 - regression tests;
 - packaged release validation.
 
 Если хотя бы один слой отсутствует, шаг считается `INCOMPLETE`.
+
+Для managed trunk steps начиная с `Diagram Modules` полный contract также включает progressive child-plan growth, one executable microtask followed by one paired `Git Commit:` item, Core-owned commits, Core rejection/repair task pairs, failed-attempt evidence commits, and a post-completion user-return phase when the step remains revisable.
 
 Это правило одинаково действует:
 
@@ -57,6 +60,7 @@ Workflow step считается поддерживаемым только ка�
 3. canonical readiness/status snapshot;
 4. canonical continuity binding (`root/dialog/providerSessionId`);
 5. canonical active-stage pointer для workspace restore.
+6. canonical completion truth for sidebar LED/status surfaces.
 
 Этот passport может materialize-иться разными внутренними слоями, но user-visible truth не имеет права зависеть от догадок.
 
@@ -123,6 +127,8 @@ Continuity хранит историю диалога. Workflow-state храни
 - workspace auto-select (last active non-idle stage);
 - startup restore.
 
+Для managed technical root stages зеленый индикатор означает только completed state этого stage from canonical workflow-state, not "some artifact exists". Downstream dirty state or blockers must not turn a completed upstream stage red unless the revision graph marks that upstream stage outdated.
+
 Инвариант навигации:
 
 - tree stage click;
@@ -155,6 +161,17 @@ Trunk stages являются leaf nodes в sidebar (секция Documentation 
 - `Description`
 - `Virtual Simulation`
 - `Diagram Modules`
+- `Application Skeleton`
+- `Quality Gates Baseline`
+
+Для managed steps regression matrix must also cover:
+
+1. bootstrap creates only the current executable microtask plus paired `Git Commit:`;
+2. Core rejection creates a repair microtask plus paired `Git Commit:` before provider-visible feedback;
+3. failed repair attempts are committed as artifact changes or tracked attempt evidence;
+4. acceptance commits precede materialization/integration continuations;
+5. post-completion user-return revisions create concrete `revisionN` task pairs;
+6. downstream blockers do not recolor completed upstream stage LEDs.
 
 Release gate:
 
@@ -176,9 +193,10 @@ Release gate:
 4. Gating основан на semantic readiness, а не на случайном найденном файле.
 5. Workflow-state и continuity не расходятся по active step truth после restart.
 6. PM parity с mature reference step достигнут.
-7. User-facing copy локализована через canonical ownership.
-8. Есть regression tests на identity, artifact path, gating/hydration, startup restore, stale-state self-heal и duplicate continuity handling.
-9. Packaged release подтверждает, что исправление работает вне source-tree happy path.
+7. Managed lifecycle steps use progressive child-plan growth, Core-owned commits, repair attempt commits, acceptance commits, and post-completion user-return phases where applicable.
+8. User-facing copy локализована через canonical ownership.
+9. Есть regression tests на identity, artifact path, gating/hydration, startup restore, stale-state self-heal, duplicate continuity handling, Core rejection/repair, and completed-stage LED boundaries.
+10. Packaged release подтверждает, что исправление работает вне source-tree happy path.
 
 Если хотя бы один пункт не выполнен, rollout не выпускается.
 
