@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "168447743",
+  "lastRecordedCommit": "f87682baa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9e.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton clean rebuild release",
+  "currentTaskId": "application-skeleton.phase9e.release-build.task1",
+  "expectedCommitMessage": "chore: build application skeleton clean rebuild release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton clean rebuild release",
-    "preCommitHead": "168447743",
+    "expectedCommitMessage": "chore: build application skeleton clean rebuild release",
+    "preCommitHead": "f87682baa",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9e.release-docs.task1"
+    "taskId": "application-skeleton.phase9e.release-build.task1"
   }
 }
 ```
@@ -257,10 +257,19 @@ Lifecycle-fix release build evidence (2026-05-11):
 ### Stream: Package Fresh Retest Release
 
 65. [DONE] `application-skeleton.phase9e.release-docs.task1` Prepare release metadata for a clean retest rebuild after the user cleared old local tails, updating `README.md` and `CHANGELOG.md` to the next release version. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton clean rebuild release`).
-66. [PENDING] Git Commit: `docs: prepare application skeleton clean rebuild release` (hash: TBD)
-67. [TODO] `application-skeleton.phase9e.release-build.task1` Run the approved rebuild sequence with a new version number, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton clean rebuild release`).
-68. [TODO] Git Commit: `chore: build application skeleton clean rebuild release` (hash: TBD)
+66. [DONE] Git Commit: `docs: prepare application skeleton clean rebuild release` (hash: f87682baa)
+67. [DONE] `application-skeleton.phase9e.release-build.task1` Run the approved rebuild sequence with a new version number, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton clean rebuild release`).
+68. [PENDING] Git Commit: `chore: build application skeleton clean rebuild release` (hash: TBD)
 69. [TODO] `application-skeleton.phase9e.release-acceptance.task1` User installs the freshly rebuilt release after clearing old local tails and retests Application Skeleton. (scope: chat/process observation only; no commit required).
+
+Clean rebuild release evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` built unified version `1.2.233`. Provider, core, UI, and CEF launcher artifacts were produced in `~/.codeai-hub/releases/` and copied to `doc/tmp/releases/`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` packaged `codeai-hub-1.2.233.vsix`, verified SDK exclusions, validated local artifacts, checked markdown links, ran duplication advisory check, pruned/restored production dependencies, and verified the VSIX runtime package surface.
+- VSIX: `codeai-hub-1.2.233.vsix` (`48M`).
+- Release bundle paths: `doc/tmp/releases/*1.2.233*` and `~/.codeai-hub/releases/*1.2.233*`.
+- Tarballs present in `doc/tmp/releases/`: `claude-module-1.2.233.tar.bz2`, `codex-module-1.2.233.tar.bz2`, `gemini-module-1.2.233.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.233.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.233.tar.bz2`, `vscode-webview-1.2.233.tar.bz2`, `project-manager-1.2.233.tar.bz2`.
+- User retest target: reinstall `codeai-hub-1.2.233.vsix` after clearing old local tails, then retest Application Skeleton from the cleaned environment.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
