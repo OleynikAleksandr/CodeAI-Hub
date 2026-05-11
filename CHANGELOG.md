@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.234] - 2026-05-11
+### Fixed
+- **Managed stage plans are created progressively again.** Starting Diagram Modules now creates the active Diagram Modules child plan only; Application Skeleton and Quality Gates child plans are not pre-seeded as ACTIVE future-stage plans.
+- **Post-turn arbitration is scoped to the active provider stage.** Diagram Modules turns can no longer trigger Application Skeleton repair orchestration or mutate the Application Skeleton child plan before Diagram Modules is accepted.
+- **Diagram Modules index has its own commit boundary.** A dirty or uncommitted `product-parts.index.md` stays on the index subturn until Core commits it, then advances to the first Product Part.
+- **Dirty pending Diagram Modules state is visible.** Core-owned dirty commit-gate feedback is emitted even when the active subturn is pending, preventing the silent wait observed in v1.2.233.
+
+### Tests
+- Targeted managed stage isolation suite passed: `39/39` tests across managed plan bootstrap, session-create stage routing, post-turn stage scope, Diagram Modules progress, and Diagram Modules feedback.
+- `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.233] - 2026-05-11
 ### Changed
 - **Clean retest rebuild after clearing old local tails.** Repackages the Application Skeleton managed lifecycle upgrade fix from v1.2.232 under a fresh version so Project Manager and the extension runtime can be tested from a clean install state.

@@ -2,13 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.233** (Application Skeleton clean retest rebuild)
+**Current Release — v1.2.234** (Managed stage isolation fix)
 
-This release is a clean rebuild of the managed lifecycle upgrade fix
-after the retest environment was cleared of old local tails. It carries
+This release fixes the managed stage orchestration regression found
+during v1.2.233 retesting. Starting Diagram Modules now creates only the
+active Diagram Modules child plan, post-turn arbitration is scoped to the
+active provider stage, and Core keeps `product-parts.index.md` on its own
+commit boundary before continuing to Product Part materialization.
+
+Dirty Diagram Modules commit-gate state is now surfaced as Core-owned
+feedback instead of being hidden by a pending subturn, so the provider no
+longer waits silently when Core cannot finish the managed commit.
+
+**Previous release: v1.2.233** (Application Skeleton clean retest rebuild)
+
+This release was a clean rebuild of the managed lifecycle upgrade fix
+after the retest environment was cleared of old local tails. It carried
 the same Application Skeleton lifecycle-boundary fix as v1.2.232 under a
-fresh package version so Project Manager and the extension runtime can be
-retested from a clean local install state.
+fresh package version so Project Manager and the extension runtime could
+be retested from a clean local install state.
 
 **Previous release: v1.2.232** (Application Skeleton managed lifecycle upgrade boundary)
 

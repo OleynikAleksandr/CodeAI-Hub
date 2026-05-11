@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "fb8f51592",
+  "lastRecordedCommit": "3aadf28a4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9f.verify.task1",
-  "expectedCommitMessage": "docs: record managed stage isolation verification",
+  "currentTaskId": "application-skeleton.phase9g.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare managed stage isolation release",
   "debt": {
-    "expectedCommitMessage": "docs: record managed stage isolation verification",
-    "preCommitHead": "fb8f51592",
+    "expectedCommitMessage": "docs: prepare managed stage isolation release",
+    "preCommitHead": "3aadf28a4",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9f.verify.task1"
+    "taskId": "application-skeleton.phase9g.release-docs.task1"
   }
 }
 ```
@@ -286,7 +286,7 @@ Clean rebuild release evidence (2026-05-11):
 78. [DONE] `application-skeleton.phase9f.diagram-feedback-gate.task1` Make dirty/blocked Diagram Modules commit-gate state visible to the provider instead of suppressing feedback while a subturn is pending. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `fix: surface diagram modules dirty commit feedback`).
 79. [DONE] Git Commit: `fix: surface diagram modules dirty commit feedback` (hash: fb8f51592)
 80. [DONE] `application-skeleton.phase9f.verify.task1` Reproduce the v1.2.233 Diagram Modules first-turn regression in tests, run targeted managed workflow tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed stage isolation verification`).
-81. [PENDING] Git Commit: `docs: record managed stage isolation verification` (hash: TBD)
+81. [DONE] Git Commit: `docs: record managed stage isolation verification` (hash: 3aadf28a4)
 
 Managed stage isolation verification evidence (2026-05-11):
 
@@ -303,11 +303,17 @@ Managed stage isolation verification evidence (2026-05-11):
 
 ### Stream: Package Retest Release
 
-82. [TODO] `application-skeleton.phase9g.release-docs.task1` Prepare release metadata for the approved managed stage isolation fix by updating `README.md` and `CHANGELOG.md` to the next release version. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed stage isolation release`).
-83. [TODO] Git Commit: `docs: prepare managed stage isolation release` (hash: TBD)
+82. [DONE] `application-skeleton.phase9g.release-docs.task1` Prepare release metadata for the approved managed stage isolation fix by updating `README.md` and `CHANGELOG.md` to the next release version. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed stage isolation release`).
+83. [PENDING] Git Commit: `docs: prepare managed stage isolation release` (hash: TBD)
 84. [TODO] `application-skeleton.phase9g.release-build.task1` Run the approved release build sequence for the managed stage isolation fix, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed stage isolation release`).
 85. [TODO] Git Commit: `chore: build managed stage isolation release` (hash: TBD)
 86. [TODO] `application-skeleton.phase9g.release-acceptance.task1` User installs the produced release and retests Diagram Modules first-turn acceptance plus Application Skeleton unlock on a clean managed workspace. (scope: chat/process observation only; no commit required).
+
+Managed stage isolation release docs preparation evidence (2026-05-11):
+
+- Future release version before packaging: `1.2.234` (`package.json` currently reports `1.2.233`; `build-all.sh` owns the version bump).
+- Updated `README.md` current-release marker and `CHANGELOG.md` release notes for managed stage isolation, progressive child-plan creation, active-stage post-turn arbitration, Diagram Modules index commit boundary, and dirty pending feedback visibility.
+- Explicit release-build confirmation was provided by the user in this thread: "Делай фикс и собирай новый релиз."
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
