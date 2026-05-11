@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.238] - 2026-05-11
+### Fixed
+- **Application Skeleton stays green after completion.** A global managed dirty-state no longer sets `gating.blocked.application_skeleton` after Application Skeleton is materialized. Starting the next technical step can block that current/downstream target, but it must not recolor the completed upstream stage.
+
+### Deferred
+- **Quality Gates scenario work remains out of scope.** This release does not implement or redesign Quality Gates orchestration; its planning document and TODO plan will be created later as a separate scope.
+
+### Tests
+- Targeted LED-boundary suite passed: `12/12` tests across managed Git gating and Application Skeleton progress.
+- `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.237] - 2026-05-11
 ### Fixed
 - **Application Skeleton misplaced product-parts materialization is now actionable.** When Core detects `.codeai-hub/<workspace>/product-parts/**` after Application Skeleton materialization, it tells the provider to move the projection to root `product-parts/**` and remove the misplaced copy instead of sending a wait-only lifecycle-boundary message.
