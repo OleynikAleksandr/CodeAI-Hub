@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "878e8b783",
+  "lastRecordedCommit": "416ac96db",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9m.led-boundary.task1",
-  "expectedCommitMessage": "fix: keep completed application skeleton green",
+  "currentTaskId": "application-skeleton.phase9m.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton led boundary verification",
   "debt": {
-    "expectedCommitMessage": "fix: keep completed application skeleton green",
-    "preCommitHead": "878e8b783",
+    "expectedCommitMessage": "docs: record application skeleton led boundary verification",
+    "preCommitHead": "416ac96db",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9m.led-boundary.task1"
+    "taskId": "application-skeleton.phase9m.verify.task1"
   }
 }
 ```
@@ -491,9 +491,17 @@ Application Skeleton misplaced product-parts repair release build evidence (2026
 ### Stream: Canonical Upstream Completion State
 
 133. [DONE] `application-skeleton.phase9m.led-boundary.task1` Prevent managed dirty state from a downstream technical stage from marking an already materialized Application Skeleton stage blocked/red; workflow-state must keep the completed upstream stage green and only block the current/downstream target. (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep completed application skeleton green`).
-134. [PENDING] Git Commit: `fix: keep completed application skeleton green` (hash: TBD)
-135. [TODO] `application-skeleton.phase9m.verify.task1` Run targeted workflow blocked-stage tests, core build, and `npm run plan:validate`; record the LED-boundary evidence before release packaging. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton led boundary verification`).
-136. [TODO] Git Commit: `docs: record application skeleton led boundary verification` (hash: TBD)
+134. [DONE] Git Commit: `fix: keep completed application skeleton green` (hash: 416ac96db)
+135. [DONE] `application-skeleton.phase9m.verify.task1` Run targeted workflow blocked-stage tests, core build, and `npm run plan:validate`; record the LED-boundary evidence before release packaging. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton led boundary verification`).
+136. [PENDING] Git Commit: `docs: record application skeleton led boundary verification` (hash: TBD)
+
+Application Skeleton completed-stage LED boundary verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts` - 12 tests passed.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Fixed LED rule: a global managed dirty state no longer sets `gating.blocked.application_skeleton` to `true` after Application Skeleton is materialized. The completed upstream step stays green; the dirty/current downstream target remains blocked.
+- Scope boundary: this release does not implement or redesign the Quality Gates scenario; a dedicated Quality Gates planning document and TODO plan remain deferred as requested by the user.
 
 ## Phase 9N - Release Build: Completed Stage LED Boundary Fix (owner: Codex, updated: 2026-05-11)
 
