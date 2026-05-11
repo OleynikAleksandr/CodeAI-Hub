@@ -8,15 +8,15 @@
   "planId": "managed-step-orchestration-plans-revision",
   "branch": "main",
   "baseHead": "5f596b7d9",
-  "lastRecordedCommit": "5f596b7d9",
+  "lastRecordedCommit": "d50b87cde",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md",
-  "currentTaskId": "managed-step-orchestration.phase0.reset.task1",
-  "expectedCommitMessage": "docs: reset managed workflow step orchestration plan",
+  "currentTaskId": "managed-step-orchestration.phase1.scenarios.task1",
+  "expectedCommitMessage": "docs: draft managed step orchestration scenarios",
   "debt": {
-    "expectedCommitMessage": "docs: reset managed workflow step orchestration plan",
-    "preCommitHead": "5f596b7d9",
+    "expectedCommitMessage": "docs: draft managed step orchestration scenarios",
+    "preCommitHead": "d50b87cde",
     "stage": "commit_pending",
-    "taskId": "managed-step-orchestration.phase0.reset.task1"
+    "taskId": "managed-step-orchestration.phase1.scenarios.task1"
   }
 }
 ```
@@ -51,14 +51,14 @@
 ### Stream: Planning Reset
 
 1. [DONE] `managed-step-orchestration.phase0.reset.task1` Stop the expanded Application Skeleton implementation plan without marking the unfinished retest as DONE, preserve a blocked/superseded archive snapshot, and open this new planning scope for managed step orchestration scenario documents. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-stopped-application-skeleton-phase-b-orchestration-implementation-2026-05-11.md`; expected commit: `docs: reset managed workflow step orchestration plan`).
-2. [PENDING] Git Commit: `docs: reset managed workflow step orchestration plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: reset managed workflow step orchestration plan` (hash: d50b87cde)
 
 ## Phase 1 - Plans Folder Revision And Step Scenarios (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Managed Step Orchestration Planning Docs
 
-3. [TODO] `managed-step-orchestration.phase1.scenarios.task1` Create `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` and draft the two active scenario documents for `Diagram Modules` and `Application Skeleton`, including the managed correction-turn microtask invariant and post-completion user-return revision loop. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: draft managed step orchestration scenarios`).
-4. [TODO] Git Commit: `docs: draft managed step orchestration scenarios` (hash: TBD)
+3. [DONE] `managed-step-orchestration.phase1.scenarios.task1` Create `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` and draft the two active scenario documents for `Diagram Modules` and `Application Skeleton`, including the managed correction-turn microtask invariant and post-completion user-return revision loop. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: draft managed step orchestration scenarios`).
+4. [PENDING] Git Commit: `docs: draft managed step orchestration scenarios` (hash: TBD)
 5. [TODO] `managed-step-orchestration.phase1.rehome.task1` Move still-useful managed workflow planning sources from the top-level `Plans/` folder into `Managed_Step_Orchestration/` so active step-orchestration planning has one folder. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md, doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: group managed workflow lifecycle planning docs`).
 6. [TODO] Git Commit: `docs: group managed workflow lifecycle planning docs` (hash: TBD)
 7. [TODO] `managed-step-orchestration.phase1.rehome.task2` Move the still-useful Application Skeleton architecture baseline into `Managed_Step_Orchestration/` and delete the superseded Phase B orchestration document that drove the wrong static phase model. (scope: `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: replace superseded application skeleton orchestration plan`).
