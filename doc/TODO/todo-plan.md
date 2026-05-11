@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "683c818ed",
+  "lastRecordedCommit": "1875295ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9j.plan.task1",
-  "expectedCommitMessage": "docs: plan application skeleton quality gates handoff repair",
+  "currentTaskId": "application-skeleton.phase9j.quality-plan.task1",
+  "expectedCommitMessage": "fix: create quality gates plan before application skeleton handoff",
   "debt": {
-    "expectedCommitMessage": "docs: plan application skeleton quality gates handoff repair",
-    "preCommitHead": "683c818ed",
+    "expectedCommitMessage": "fix: create quality gates plan before application skeleton handoff",
+    "preCommitHead": "1875295ea",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9j.plan.task1"
+    "taskId": "application-skeleton.phase9j.quality-plan.task1"
   }
 }
 ```
@@ -376,9 +376,9 @@ Virtual Simulation alias recovery release build evidence (2026-05-11):
 ### Stream: Ledger Rollover Repair
 
 101. [DONE] `application-skeleton.phase9j.plan.task1` Record the v1.2.235 blocker where Application Skeleton materialization commits, but Core leaves the Phase 2 review task open, switches `workspace.plan.md` to Quality Gates before creating `doc/TODO/stages/quality-gates/todo-plan.md`, and leaves ledger changes staged so the next step cannot launch. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton quality gates handoff repair`).
-102. [PENDING] Git Commit: `docs: plan application skeleton quality gates handoff repair` (hash: TBD)
-103. [TODO] `application-skeleton.phase9j.quality-plan.task1` Make the managed plan shim create the next stage child plan before terminal workspace-ledger rollover commits, and cover the real Application Skeleton -> Quality Gates path without pre-created Quality Gates plan. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: create quality gates plan before application skeleton handoff`).
-104. [TODO] Git Commit: `fix: create quality gates plan before application skeleton handoff` (hash: TBD)
+102. [DONE] Git Commit: `docs: plan application skeleton quality gates handoff repair` (hash: 1875295ea)
+103. [DONE] `application-skeleton.phase9j.quality-plan.task1` Make the managed plan shim create the next stage child plan before terminal workspace-ledger rollover commits, and cover the real Application Skeleton -> Quality Gates path without pre-created Quality Gates plan. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: create quality gates plan before application skeleton handoff`).
+104. [PENDING] Git Commit: `fix: create quality gates plan before application skeleton handoff` (hash: TBD)
 105. [TODO] `application-skeleton.phase9j.review-anchor.task1` Close the open Application Skeleton Phase 2 review anchor when the user accepts without a revision, so later accepted/materialized tasks cannot coexist with a stale `IN_PROGRESS` review task. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: close application skeleton review anchor on acceptance`).
 106. [TODO] Git Commit: `fix: close application skeleton review anchor on acceptance` (hash: TBD)
 107. [TODO] `application-skeleton.phase9j.verify.task1` Run targeted managed-plan rollover tests, Application Skeleton mutator tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton quality gates handoff verification`).

@@ -113,7 +113,9 @@ export const ensureManagedTodoTree = async (
 
   await mkdir(todoRoot, { recursive: true });
   await mkdir(path.dirname(stagePlanPath), { recursive: true });
-  if (await writeIfMissing(stagePlanPath, createStagePlan(initialStage))) {
+  if (
+    await writeIfMissing(stagePlanPath, createManagedStagePlan(initialStage))
+  ) {
     created = true;
   }
   if (await ensureWorkspacePlan(workspacePlanPath, initialStage)) {
@@ -264,7 +266,9 @@ const createWorkspacePlan = (params: {
 - Future implementation plans must mirror materialized Product Part / Cluster / Module ownership.
 `;
 
-const createStagePlan = (initialStage: ManagedWorkflowPlanStage): string => {
+export const createManagedStagePlan = (
+  initialStage: ManagedWorkflowPlanStage
+): string => {
   const stage = STAGE_TEMPLATES[initialStage];
   return `# Managed Workspace TODO Plan
 

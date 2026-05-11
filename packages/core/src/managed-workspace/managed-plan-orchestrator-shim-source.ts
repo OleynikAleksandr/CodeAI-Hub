@@ -1,5 +1,6 @@
 import { createDiagramModulesPlanMutatorShimSource } from "./managed-diagram-modules-plan-mutator";
 import {
+  createManagedStagePlan,
   NEXT_STAGE_AFTER,
   STAGE_PLANS,
   STAGE_TERMINAL_COMMITS,
@@ -10,10 +11,15 @@ const buildStageMappingsBlock = (): string =>
     `const STAGE_PLANS = ${JSON.stringify(STAGE_PLANS)};`,
     `const STAGE_TERMINAL_COMMITS = ${JSON.stringify(STAGE_TERMINAL_COMMITS)};`,
     `const NEXT_STAGE_AFTER = ${JSON.stringify(NEXT_STAGE_AFTER)};`,
+    `const STAGE_INITIAL_PLAN_TEXTS = ${JSON.stringify({
+      application_skeleton: createManagedStagePlan("application_skeleton"),
+      diagram_modules: createManagedStagePlan("diagram_modules"),
+      quality_gates: createManagedStagePlan("quality_gates"),
+    })};`,
   ].join("\n");
 
 export const createPlanCliShim = (): string => `#!/usr/bin/env node
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
@@ -76,6 +82,28 @@ const readPlanStateAt = (planPath) => {
   } catch {
     return null;
   }
+};
+
+const ensureParentDirectory = (filePath) => {
+  const parts = filePath.split("/");
+  parts.pop();
+  const directory = parts.join("/");
+  if (directory) {
+    mkdirSync(directory, { recursive: true });
+  }
+};
+
+const ensureStagePlanForStage = (stage) => {
+  const planPath = STAGE_PLANS[stage];
+  const planText = STAGE_INITIAL_PLAN_TEXTS[stage];
+  if (!(typeof planPath === "string" && typeof planText === "string")) {
+    return null;
+  }
+  if (!existsSync(planPath)) {
+    ensureParentDirectory(planPath);
+    writeFileSync(planPath, planText, "utf8");
+  }
+  return planPath;
 };
 
 const validate = () => {
@@ -398,12 +426,15 @@ const recordWorkspaceCommit = (event, workspaceState, commitHash, commitFullHash
   const acceptedCommits = Array.isArray(workspaceState.acceptedCommits) ? workspaceState.acceptedCommits : [];
   const commitRecord = { commitFullHash, commitHash, changedFiles: event.changedFiles, message: event.message, planPath: event.planPath, stage: event.stage, summary: event.summary, taskId: event.taskId };
   const lifecycleFields = resolveWorkspaceLifecycleFields(event, workspaceState);
+  if (typeof lifecycleFields.activeStage === "string") {
+    ensureStagePlanForStage(lifecycleFields.activeStage);
+  }
   const nextState = { ...workspaceState, ...lifecycleFields, lastAcceptedCommitHash: commitHash, lastAcceptedCommitMessage: event.message, acceptedCommits: [...acceptedCommits, commitRecord] };
   writeFileSync(WORKSPACE_PLAN_PATH, replaceWorkspaceState(readWorkspaceText(), nextState), "utf8");
 };
 
 const createWorkspaceLedgerCommit = () => {
-  runGit(["add", WORKSPACE_PLAN_PATH]);
+  runGit(["add", WORKSPACE_PLAN_PATH, ...Object.values(STAGE_PLANS).filter((planPath) => existsSync(planPath))]);
   if (!hasStagedChanges()) {
     return;
   }
