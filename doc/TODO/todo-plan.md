@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "60016028c",
+  "lastRecordedCommit": "b8cfb8508",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase7.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare diagram modules repair release 1.2.228",
+  "currentTaskId": "diagram-modules-repair.phase7.release-build.task1",
+  "expectedCommitMessage": "chore: build diagram modules repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare diagram modules repair release 1.2.228",
-    "preCommitHead": "60016028c",
+    "expectedCommitMessage": "chore: build diagram modules repair release",
+    "preCommitHead": "b8cfb8508",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase7.release-docs.task1"
+    "taskId": "diagram-modules-repair.phase7.release-build.task1"
   }
 }
 ```
@@ -118,7 +118,7 @@
 ### Stream: Release Documentation Prep
 
 24. [DONE] `diagram-modules-repair.phase7.release-docs.task1` After explicit user release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules repair release 1.2.228`).
-25. [PENDING] Git Commit: `docs: prepare diagram modules repair release 1.2.228` (hash: TBD)
+25. [DONE] Git Commit: `docs: prepare diagram modules repair release 1.2.228` (hash: b8cfb8508)
 
 #### Phase 7 Release Docs Evidence
 
@@ -126,9 +126,14 @@
 
 ### Stream: Release Build Artifacts
 
-26. [TODO] `diagram-modules-repair.phase7.release-build.task1` On a clean tree run `./scripts/build-all.sh` for the next unified version and record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules repair release`).
-27. [TODO] Git Commit: `chore: build diagram modules repair release` (hash: TBD)
+26. [DONE] `diagram-modules-repair.phase7.release-build.task1` Run `./scripts/build-all.sh --allow-dirty` for the next unified version because plan-orchestrator leaves only the active `doc/TODO/todo-plan.md` transition dirty between managed commits; record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules repair release`).
+27. [PENDING] Git Commit: `chore: build diagram modules repair release` (hash: TBD)
 28. [TODO] `diagram-modules-repair.phase7.release-package.task1` On a clean tree run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none).
+
+#### Phase 7 Build-All Evidence
+
+- 2026-05-11: `./scripts/build-all.sh --allow-dirty` - PASS. Unified version bumped to `1.2.228`; provider/core/UI/launcher artifacts produced in both `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
+- Artifacts: `claude-module-1.2.228.tar.bz2`, `codex-module-1.2.228.tar.bz2`, `gemini-module-1.2.228.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.228.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.228.tar.bz2`, `vscode-webview-1.2.228.tar.bz2`, `project-manager-1.2.228.tar.bz2`.
 
 ## Phase 8 - User Release Acceptance Testing (owner: user, updated: 2026-05-11)
 
