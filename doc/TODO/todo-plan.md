@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "8b7187ff4",
+  "lastRecordedCommit": "66a291c60",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase25.release.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton acceptance write-path release",
+  "currentTaskId": "application-skeleton-orchestration.phase25.release.task2",
+  "expectedCommitMessage": "build: release application skeleton acceptance write-path",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton acceptance write-path release",
-    "preCommitHead": "8b7187ff4",
+    "expectedCommitMessage": "build: release application skeleton acceptance write-path",
+    "preCommitHead": "66a291c60",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase25.release.task1"
+    "taskId": "application-skeleton-orchestration.phase25.release.task2"
   }
 }
 ```
@@ -511,12 +511,12 @@
 ### Stream: Release Preparation
 
 123. [DONE] `application-skeleton-orchestration.phase25.release.task1` Update README/CHANGELOG for v1.2.225 (acceptance write-path fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance write-path release`).
-124. [PENDING] Git Commit: `docs: prepare application skeleton acceptance write-path release` (hash: TBD)
+124. [DONE] Git Commit: `docs: prepare application skeleton acceptance write-path release` (hash: 66a291c60)
 
 ### Stream: Release Build
 
-125. [TODO] `application-skeleton-orchestration.phase25.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance write-path`).
-126. [TODO] Git Commit: `build: release application skeleton acceptance write-path` (hash: TBD)
+125. [DONE] `application-skeleton-orchestration.phase25.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance write-path`).
+126. [PENDING] Git Commit: `build: release application skeleton acceptance write-path` (hash: TBD)
 
 ## Phase 26 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
