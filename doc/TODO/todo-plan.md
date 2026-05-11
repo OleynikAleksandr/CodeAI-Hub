@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "1b31b8155",
+  "lastRecordedCommit": "81164d294",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9a.restart-regression.task1",
-  "expectedCommitMessage": "test: cover application skeleton restart gate recovery",
+  "currentTaskId": "application-skeleton.phase9a.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton restart gate verification",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton restart gate recovery",
-    "preCommitHead": "1b31b8155",
+    "expectedCommitMessage": "docs: record application skeleton restart gate verification",
+    "preCommitHead": "81164d294",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9a.restart-regression.task1"
+    "taskId": "application-skeleton.phase9a.verify.task1"
   }
 }
 ```
@@ -170,9 +170,19 @@ Release build evidence (2026-05-11):
 39. [DONE] `application-skeleton.phase9a.restart-gate.task1` Exclude Core volatile metadata from managed dirty-gate blocking after restart/reinstall, and cover the managed Git status classification so `description-step.json` timestamp refreshes and workspace task timers do not masquerade as pending managed commits. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unblock application skeleton after core restart`).
 40. [DONE] Git Commit: `fix: unblock application skeleton after core restart` (hash: 1b31b8155)
 41. [DONE] `application-skeleton.phase9a.restart-regression.task1` Add workflow-state read regression for a restarted Core with valid Diagram Modules artifacts plus volatile metadata dirty state: Application Skeleton must be unblocked and the UI gate must not report the product-parts index as missing. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton restart gate recovery`).
-42. [PENDING] Git Commit: `test: cover application skeleton restart gate recovery` (hash: TBD)
-43. [TODO] `application-skeleton.phase9a.verify.task1` Run targeted managed gate/workflow-state tests, core build, and `npm run plan:validate`; record exact evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton restart gate verification`).
-44. [TODO] Git Commit: `docs: record application skeleton restart gate verification` (hash: TBD)
+42. [DONE] Git Commit: `test: cover application skeleton restart gate recovery` (hash: 81164d294)
+43. [DONE] `application-skeleton.phase9a.verify.task1` Run targeted managed gate/workflow-state tests, core build, and `npm run plan:validate`; record exact evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton restart gate verification`).
+44. [PENDING] Git Commit: `docs: record application skeleton restart gate verification` (hash: TBD)
+
+Restart gate verification evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts` — 9 tests passed.
+- PASS: real workspace managed Git diagnostic for `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` and slug `codeai-hub-codex-5-4` returned `clean: true`, empty `dirtyFiles`, and empty `dirtyByStage` for `diagram_modules`, `application_skeleton`, and `quality_gates`.
+- PASS: real workspace workflow-state diagnostic returned HTTP status `200`, `gating.blocked.application_skeleton: false`, `diagramModulesProgress.aggregateReady: true`, `plannedCount: 4`, `generatedCount: 4`, and all four product parts valid.
+- PASS: `npm run build --workspace packages/core`.
+- PASS: `npm run plan:validate`.
+- Root cause confirmed: after extension/Core reinstall, volatile Core metadata such as `.codeai-hub/state/task-timers.json` and `.codeai-hub/<workspace>/description/description-step.json` timestamp refreshes were counted as managed dirty state; Application Skeleton then stayed blocked and Project Manager surfaced the misleading `product-parts.index.md not found` readiness text.
+- Residual requirement: package a new VSIX only after separate release-build confirmation, then user must retest the Application Skeleton start gate in the installed extension.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
