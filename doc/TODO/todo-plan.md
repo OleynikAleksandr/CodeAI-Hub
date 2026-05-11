@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "8096966ae",
+  "lastRecordedCommit": "83f6eef68",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9h.verify.task1",
-  "expectedCommitMessage": "docs: record virtual simulation alias recovery verification",
+  "currentTaskId": "application-skeleton.phase9i.release-gate-plan.task1",
+  "expectedCommitMessage": "docs: add virtual simulation alias release gate",
   "debt": {
-    "expectedCommitMessage": "docs: record virtual simulation alias recovery verification",
-    "preCommitHead": "8096966ae",
+    "expectedCommitMessage": "docs: add virtual simulation alias release gate",
+    "preCommitHead": "83f6eef68",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9h.verify.task1"
+    "taskId": "application-skeleton.phase9i.release-gate-plan.task1"
   }
 }
 ```
@@ -333,7 +333,7 @@ Managed stage isolation release build evidence (2026-05-11):
 89. [DONE] `application-skeleton.phase9h.canonicalize.task1` Canonicalize a provider-created `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` alias into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` before workflow-state hydration, validation, and Diagram Modules gating; add regression coverage for the recovered gate. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: recover virtual simulation artifact alias`).
 90. [DONE] Git Commit: `fix: recover virtual simulation artifact alias` (hash: 8096966ae)
 91. [DONE] `application-skeleton.phase9h.verify.task1` Run targeted workflow-state tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record virtual simulation alias recovery verification`).
-92. [PENDING] Git Commit: `docs: record virtual simulation alias recovery verification` (hash: TBD)
+92. [DONE] Git Commit: `docs: record virtual simulation alias recovery verification` (hash: 83f6eef68)
 
 Virtual Simulation alias recovery verification evidence (2026-05-11):
 
@@ -344,12 +344,25 @@ Virtual Simulation alias recovery verification evidence (2026-05-11):
 - Fixed behavior: on workflow-state read, Core moves `.codeai-hub/<workspaceSlug>/virtual-simulation/virtual-simulation.md` into `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` when the canonical file is missing, then hydrates and validates the canonical artifact.
 - Residual requirement: package a new VSIX only after separate release-build confirmation; no release build scripts were run for this fix yet.
 
+## Phase 9I - Release Build: Virtual Simulation Alias Recovery (owner: Codex, updated: 2026-05-11)
+
+### Stream: Package Retest Release
+
+93. [DONE] `application-skeleton.phase9i.release-gate-plan.task1` Insert an explicit release/retest boundary for the Virtual Simulation alias recovery fix so the scope cannot move to closeout before a new VSIX is built and accepted. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add virtual simulation alias release gate`).
+94. [PENDING] Git Commit: `docs: add virtual simulation alias release gate` (hash: TBD)
+95. [TODO] `application-skeleton.phase9i.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Virtual Simulation alias recovery fix. (scope: chat/process observation only; no commit required).
+96. [TODO] `application-skeleton.phase9i.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Virtual Simulation alias recovery fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare virtual simulation alias recovery release`).
+97. [TODO] Git Commit: `docs: prepare virtual simulation alias recovery release` (hash: TBD)
+98. [TODO] `application-skeleton.phase9i.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build virtual simulation alias recovery release`).
+99. [TODO] Git Commit: `chore: build virtual simulation alias recovery release` (hash: TBD)
+100. [TODO] `application-skeleton.phase9i.release-acceptance.task1` User installs the produced release and retests Virtual Simulation alias recovery, Diagram Modules unlock, and continuation into Application Skeleton. (scope: chat/process observation only; no commit required).
+
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-70. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-71. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-72. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-73. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-74. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+101. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+102. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+103. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+104. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+105. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
