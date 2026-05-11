@@ -18,3 +18,7 @@
    - быть заменён короткой `compat/redirect`-нотой в `Plans/Archive/`, если сам путь нужен только для старых ссылок из session reports или archived TODO;
    - быть удалённым, если это был временный refactoring/cleanup design и все живые SSOT уже синхронизированы.
 5. `Contracts/`, `Modules/`, `Clusters/`, `System/` содержат только реализованные и актуальные документы, а compat-redirect notes живут только в `Plans/Archive/`.
+
+## Active Subfolders
+
+- `Managed_Step_Orchestration/` — текущая рабочая папка для настройки managed workflow steps. В ней находятся сценарии `Diagram Modules` и `Application Skeleton`, а также перенесённые актуальные planning sources по managed lifecycle / phase types. Устаревший top-level `Application_Skeleton_Phase_B_Orchestration.md` удалён из активных planning-доков.

@@ -8,15 +8,15 @@
   "planId": "managed-step-orchestration-plans-revision",
   "branch": "main",
   "baseHead": "5f596b7d9",
-  "lastRecordedCommit": "37b19a3f4",
+  "lastRecordedCommit": "29e84c3ec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md",
-  "currentTaskId": "managed-step-orchestration.phase1.rehome.task2",
-  "expectedCommitMessage": "docs: replace superseded application skeleton orchestration plan",
+  "currentTaskId": "managed-step-orchestration.phase1.index.task1",
+  "expectedCommitMessage": "docs: index managed step orchestration planning folder",
   "debt": {
-    "expectedCommitMessage": "docs: replace superseded application skeleton orchestration plan",
-    "preCommitHead": "37b19a3f4",
+    "expectedCommitMessage": "docs: index managed step orchestration planning folder",
+    "preCommitHead": "29e84c3ec",
     "stage": "commit_pending",
-    "taskId": "managed-step-orchestration.phase1.rehome.task2"
+    "taskId": "managed-step-orchestration.phase1.index.task1"
   }
 }
 ```
@@ -62,9 +62,9 @@
 5. [DONE] `managed-step-orchestration.phase1.rehome.task1` Move still-useful managed workflow planning sources from the top-level `Plans/` folder into `Managed_Step_Orchestration/` so active step-orchestration planning has one folder. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md, doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: group managed workflow lifecycle planning docs`).
 6. [DONE] Git Commit: `docs: group managed workflow lifecycle planning docs` (hash: 37b19a3f4)
 7. [DONE] `managed-step-orchestration.phase1.rehome.task2` Move the still-useful Application Skeleton architecture baseline into `Managed_Step_Orchestration/` and delete the superseded Phase B orchestration document that drove the wrong static phase model. (scope: `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: replace superseded application skeleton orchestration plan`).
-8. [PENDING] Git Commit: `docs: replace superseded application skeleton orchestration plan` (hash: TBD)
-9. [TODO] `managed-step-orchestration.phase1.index.task1` Update planning navigation so `Docs_Index.md` and `Plans/README.md` point to the new managed step orchestration folder and no longer list deleted top-level planning docs as active. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md`; expected commit: `docs: index managed step orchestration planning folder`).
-10. [TODO] Git Commit: `docs: index managed step orchestration planning folder` (hash: TBD)
+8. [DONE] Git Commit: `docs: replace superseded application skeleton orchestration plan` (hash: 29e84c3ec)
+9. [DONE] `managed-step-orchestration.phase1.index.task1` Update planning navigation so `Docs_Index.md`, `Plans/README.md`, stable architecture links, and moved managed-step planning docs point to the new managed step orchestration folder and no longer list deleted top-level planning docs as active. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: index managed step orchestration planning folder`).
+10. [PENDING] Git Commit: `docs: index managed step orchestration planning folder` (hash: TBD)
 
 ## Phase 2 - Documentation Verification (owner: Codex, updated: 2026-05-11)
 

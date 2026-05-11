@@ -147,8 +147,8 @@ Type A — это семейство операций. Каждая операц
 
 - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md` — текущий SSOT, расширяется этим design layer.
 - `doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Runtime_Contract_Conformance.md` — mandatory repair, prerequisite для этого design layer; содержит rollover envelope spec (Gap R) и section 12 с post-release retest findings (R1/R2/R3).
-- `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md` — архитектура skeleton, контекст по фазам.
-- `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md` — managed lifecycle контекст.
+- `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md` — архитектура skeleton, контекст по фазам.
+- `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workspace_Lifecycle_From_Diagram_Modules.md` — managed lifecycle контекст.
 
 ## 12. Prerequisites surfaced by 2026-05-10 retest
 
