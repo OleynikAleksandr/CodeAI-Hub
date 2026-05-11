@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "aadf57388",
+  "lastRecordedCommit": "683c818ed",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9i.release-build.task1",
-  "expectedCommitMessage": "chore: build virtual simulation alias recovery release",
+  "currentTaskId": "application-skeleton.phase9j.plan.task1",
+  "expectedCommitMessage": "docs: plan application skeleton quality gates handoff repair",
   "debt": {
-    "expectedCommitMessage": "chore: build virtual simulation alias recovery release",
-    "preCommitHead": "aadf57388",
+    "expectedCommitMessage": "docs: plan application skeleton quality gates handoff repair",
+    "preCommitHead": "683c818ed",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9i.release-build.task1"
+    "taskId": "application-skeleton.phase9j.plan.task1"
   }
 }
 ```
@@ -354,8 +354,8 @@ Virtual Simulation alias recovery verification evidence (2026-05-11):
 96. [DONE] `application-skeleton.phase9i.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Virtual Simulation alias recovery fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare virtual simulation alias recovery release`).
 97. [DONE] Git Commit: `docs: prepare virtual simulation alias recovery release` (hash: aadf57388)
 98. [DONE] `application-skeleton.phase9i.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build virtual simulation alias recovery release`).
-99. [PENDING] Git Commit: `chore: build virtual simulation alias recovery release` (hash: TBD)
-100. [TODO] `application-skeleton.phase9i.release-acceptance.task1` User installs the produced release and retests Virtual Simulation alias recovery, Diagram Modules unlock, and continuation into Application Skeleton. (scope: chat/process observation only; no commit required).
+99. [DONE] Git Commit: `chore: build virtual simulation alias recovery release` (hash: 683c818ed)
+100. [DONE] `application-skeleton.phase9i.release-acceptance.task1` User installs the produced release and retests Virtual Simulation alias recovery, Diagram Modules unlock, and continuation into Application Skeleton. (scope: chat/process observation only; no commit required). Result: Release 1.2.235 retest rejected: Application Skeleton materialized artifact commit succeeded, but Core left Phase 2 review in progress, failed to create the Quality Gates child plan before workspace-ledger rollover, and left workspace/stage ledger changes staged; user could not start the next step.
 
 Virtual Simulation alias recovery release docs preparation evidence (2026-05-11):
 
@@ -371,12 +371,34 @@ Virtual Simulation alias recovery release build evidence (2026-05-11):
 - Fresh local release bundles are present under `doc/tmp/releases/`: `claude-module-1.2.235.tar.bz2`, `codex-module-1.2.235.tar.bz2`, `gemini-module-1.2.235.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.235.tar.bz2`, `vscode-webview-1.2.235.tar.bz2`, `project-manager-1.2.235.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.235.tar.bz2`.
 - Retest target for user acceptance: install `codeai-hub-1.2.235.vsix`, rerun the Virtual Simulation -> Diagram Modules transition on a clean/restarted extension environment, confirm Core recovers any provider-created `virtual-simulation/virtual-simulation.md` alias into canonical `virtual_simulation/virtual-simulation.md`, then continue into Application Skeleton.
 
+## Phase 9J - Release Blocker: Application Skeleton Quality Gates Handoff (owner: Codex, updated: 2026-05-11)
+
+### Stream: Ledger Rollover Repair
+
+101. [DONE] `application-skeleton.phase9j.plan.task1` Record the v1.2.235 blocker where Application Skeleton materialization commits, but Core leaves the Phase 2 review task open, switches `workspace.plan.md` to Quality Gates before creating `doc/TODO/stages/quality-gates/todo-plan.md`, and leaves ledger changes staged so the next step cannot launch. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton quality gates handoff repair`).
+102. [PENDING] Git Commit: `docs: plan application skeleton quality gates handoff repair` (hash: TBD)
+103. [TODO] `application-skeleton.phase9j.quality-plan.task1` Make the managed plan shim create the next stage child plan before terminal workspace-ledger rollover commits, and cover the real Application Skeleton -> Quality Gates path without pre-created Quality Gates plan. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: create quality gates plan before application skeleton handoff`).
+104. [TODO] Git Commit: `fix: create quality gates plan before application skeleton handoff` (hash: TBD)
+105. [TODO] `application-skeleton.phase9j.review-anchor.task1` Close the open Application Skeleton Phase 2 review anchor when the user accepts without a revision, so later accepted/materialized tasks cannot coexist with a stale `IN_PROGRESS` review task. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: close application skeleton review anchor on acceptance`).
+106. [TODO] Git Commit: `fix: close application skeleton review anchor on acceptance` (hash: TBD)
+107. [TODO] `application-skeleton.phase9j.verify.task1` Run targeted managed-plan rollover tests, Application Skeleton mutator tests, core build, and `npm run plan:validate`; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton quality gates handoff verification`).
+108. [TODO] Git Commit: `docs: record application skeleton quality gates handoff verification` (hash: TBD)
+
+### Stream: Rebuild And Retest Boundary
+
+109. [TODO] `application-skeleton.phase9j.release-confirmation.task1` Get separate explicit confirmation from the user before preparing another release build for the Application Skeleton Quality Gates handoff repair. (scope: chat/process observation only; no commit required).
+110. [TODO] `application-skeleton.phase9j.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton Quality Gates handoff repair. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton quality gates handoff release`).
+111. [TODO] Git Commit: `docs: prepare application skeleton quality gates handoff release` (hash: TBD)
+112. [TODO] `application-skeleton.phase9j.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton quality gates handoff release`).
+113. [TODO] Git Commit: `chore: build application skeleton quality gates handoff release` (hash: TBD)
+114. [TODO] `application-skeleton.phase9j.release-acceptance.task1` User installs the produced release and retests Application Skeleton materialization, Quality Gates child-plan creation, and next-step launch. (scope: chat/process observation only; no commit required).
+
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-101. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-102. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-103. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-104. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-105. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+115. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+116. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+117. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+118. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+119. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
