@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
+import { ManagedPlanOrchestratorInstaller } from "../../managed-workspace/managed-plan-orchestrator-installer";
+import type { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { injectApplicationSkeletonReviewRevisionPair } from "./managed-documentation-commit-transaction";
 import {
@@ -7,6 +14,10 @@ import {
   recognizeManagedAcceptanceForStage,
   recognizeManagedContractAcceptancePhrase,
 } from "./managed-workflow-post-turn-service";
+
+const execFileAsync = promisify(execFile);
+const APPLICATION_SKELETON_PLAN_PATH =
+  "doc/TODO/stages/application-skeleton/todo-plan.md";
 
 test("recogniser matches user-reported colloquial acceptance phrasing", () => {
   assert.equal(
@@ -279,3 +290,58 @@ test("post-turn service does not dispatch via gateway without explicit handle() 
   });
   assert.deepEqual(dispatched, []);
 });
+
+test("post-turn service does not mutate future stage plans during diagram modules arbitration", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-post-turn-stage-scope-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sessionId = "diagram-session";
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "Test User"]);
+    const installer = new ManagedPlanOrchestratorInstaller();
+    await installer.install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    await installer.install(workspaceRoot, { initialStage: "diagram_modules" });
+    const applicationSkeletonPlanPath = path.join(
+      workspaceRoot,
+      APPLICATION_SKELETON_PLAN_PATH
+    );
+    const applicationSkeletonPlanBefore = await readFile(
+      applicationSkeletonPlanPath,
+      "utf8"
+    );
+    await git(workspaceRoot, ["add", "."]);
+    await git(workspaceRoot, ["commit", "-m", "baseline"]);
+
+    const service = new ManagedWorkflowPostTurnService({
+      logger: new Logger("error"),
+      sessionManager: {
+        getSession: () => ({
+          initiativeSlug: workspaceSlug,
+          stage: "diagram_modules",
+          workspacePath: workspaceRoot,
+        }),
+      } as unknown as SessionManager,
+    });
+
+    service.handle(sessionId);
+    await service.whenIdle(sessionId);
+
+    assert.equal(
+      await readFile(applicationSkeletonPlanPath, "utf8"),
+      applicationSkeletonPlanBefore
+    );
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+const git = async (cwd: string, args: readonly string[]): Promise<string> => {
+  const { stdout } = await execFileAsync("git", [...args], { cwd });
+  return stdout.trim();
+};

@@ -1,4 +1,5 @@
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
+import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -11,12 +12,16 @@ import { buildApplicationSkeletonRepairFeedbackMessage } from "./application-ske
 import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton-contract-guard";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { readAndEvaluateApplicationSkeletonPrematureMaterialization } from "./application-skeleton-premature-materialization-validator";
-import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import {
+  type ApplicationSkeletonProgressSnapshot,
+  readApplicationSkeletonProgressSnapshot,
+} from "./application-skeleton-progress";
 import { runApplicationSkeletonRepairOrchestration } from "./application-skeleton-repair-orchestration";
 import { classifyApplicationSkeletonReviewTurn } from "./application-skeleton-review-turn-classifier";
 import { runApplicationSkeletonRevisionInjection } from "./application-skeleton-revision-injection-runner";
 import { sendDiagramModulesContinuationIfReady } from "./diagram-modules-continuation-dispatcher";
 import {
+  type DiagramModulesProgressSnapshot,
   readDiagramModulesProgressSnapshot,
   syncDiagramModulesSubturnState,
 } from "./diagram-modules-progress";
@@ -25,11 +30,15 @@ import { ManagedDocumentationCommitTransaction } from "./managed-documentation-c
 import {
   attachManagedGitStatus,
   attachValidationDirtyGate,
+  type ManagedGitStatus,
   readManagedGitStatus,
 } from "./managed-git-stage-gate";
 import type { ApplicationSkeletonAcceptContractDecision } from "./managed-stage-accept-contract-handler";
 import { runApplicationSkeletonAcceptContractCommand } from "./managed-stage-accept-contract-runner";
-import { readQualityGatesProgressSnapshot } from "./quality-gates-progress";
+import {
+  type QualityGatesProgressSnapshot,
+  readQualityGatesProgressSnapshot,
+} from "./quality-gates-progress";
 import {
   WorkflowAgentAcceptanceFeedback,
   type WorkflowAgentAcceptanceFeedbackGateway,
@@ -335,23 +344,6 @@ export class ManagedWorkflowPostTurnService {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
-    const applicationSkeletonPhase = classifyApplicationSkeletonPhase(
-      latestApplicationSkeletonProgress
-    );
-    if (
-      latestApplicationSkeletonProgress?.materialized &&
-      !rawApplicationSkeletonProgress?.materialized
-    ) {
-      this.logger.info(
-        "Observed Application Skeleton materialization completion",
-        {
-          phase: applicationSkeletonPhase,
-          sessionId: params.sessionId,
-          stage: params.stage,
-        }
-      );
-      this.recentlyAcceptedSessions.delete(params.sessionId);
-    }
     const stageOwnedDirty =
       latestManagedGitStatus.dirtyByStage[
         params.stage as keyof typeof latestManagedGitStatus.dirtyByStage
@@ -377,76 +369,190 @@ export class ManagedWorkflowPostTurnService {
       this.retryLimitNotifier?.(notice);
       return;
     }
-    await runDiagramModulesRepairOrchestration({
-      logger: this.logger,
-      managedGitStatus: latestManagedGitStatus,
-      progress: latestDiagramModulesProgress,
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-    });
-    const diagramModulesProgress = attachManagedGitStatus(
-      latestDiagramModulesProgress,
-      latestManagedGitStatus.dirtyByStage.diagram_modules
-    );
-    const applicationSkeletonProgress = attachValidationDirtyGate(
-      latestApplicationSkeletonProgress,
-      "Application Skeleton",
-      latestManagedGitStatus.dirtyByStage.application_skeleton
-    );
-    const allOwnedDirtyForSkeleton = latestManagedGitStatus.dirtyFiles ?? [];
-    const applicationSkeletonPrematureDecision =
-      await readAndEvaluateApplicationSkeletonPrematureMaterialization({
-        accepted: latestApplicationSkeletonProgress?.accepted ?? false,
-        ownedDirtyFiles: allOwnedDirtyForSkeleton,
+    const gateway = this.developmentTreeAgentSessions?.gateway as
+      | WorkflowAgentAcceptanceFeedbackGateway
+      | undefined;
+    if (params.stage === "diagram_modules") {
+      await this.runDiagramModulesPostTurn({
+        chains,
+        gateway,
+        managedGitStatus: latestManagedGitStatus,
+        progress: latestDiagramModulesProgress,
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
       });
-    const applicationSkeletonContractGuardDecision =
-      evaluateApplicationSkeletonContractGuard({
-        ownedDirtyFiles:
-          latestManagedGitStatus.dirtyByStage.application_skeleton ?? [],
-        phase: applicationSkeletonPhase,
-        prematureDecision: applicationSkeletonPrematureDecision,
-        progress: latestApplicationSkeletonProgress,
-        terminalEventReceived: true,
-      });
-    if (applicationSkeletonContractGuardDecision.kind !== "noop") {
-      this.logger.info("Application Skeleton phase 1A guard decision", {
-        decision: applicationSkeletonContractGuardDecision.kind,
-        phase: applicationSkeletonPhase,
-        reason: applicationSkeletonContractGuardDecision.reason,
+      return;
+    }
+    if (params.stage === "application_skeleton") {
+      await this.runApplicationSkeletonPostTurn({
+        chains,
+        gateway,
+        latestProgress: latestApplicationSkeletonProgress,
+        managedGitStatus: latestManagedGitStatus,
+        rawProgress: rawApplicationSkeletonProgress,
         sessionId: params.sessionId,
         stage: params.stage,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
+      return;
+    }
+    if (params.stage === "quality_gates") {
+      await this.runQualityGatesPostTurn({
+        chains,
+        gateway,
+        managedGitStatus: latestManagedGitStatus,
+        progress: latestQualityGatesProgress,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
       });
     }
-    const applicationSkeletonRepairMessage =
-      buildApplicationSkeletonRepairFeedbackMessage(
-        applicationSkeletonContractGuardDecision
-      );
-    await runApplicationSkeletonRepairOrchestration({
-      decision: applicationSkeletonContractGuardDecision,
+  }
+
+  private async runDiagramModulesPostTurn(params: {
+    readonly chains: readonly ContinuityChainSummary[];
+    readonly gateway: WorkflowAgentAcceptanceFeedbackGateway | undefined;
+    readonly managedGitStatus: ManagedGitStatus;
+    readonly progress: DiagramModulesProgressSnapshot | null;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    await runDiagramModulesRepairOrchestration({
       logger: this.logger,
-      managedGitStatus: latestManagedGitStatus,
-      phase: applicationSkeletonPhase,
-      progress: latestApplicationSkeletonProgress,
+      managedGitStatus: params.managedGitStatus,
+      progress: params.progress,
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
-    const applicationSkeletonReviewTurnKind =
-      classifyApplicationSkeletonReviewTurn({
-        ownedDirtyFiles:
-          latestManagedGitStatus.dirtyByStage.application_skeleton ?? [],
-        phase: applicationSkeletonPhase,
+    const progress = attachManagedGitStatus(
+      params.progress,
+      params.managedGitStatus.dirtyByStage.diagram_modules
+    );
+    await Promise.all([
+      syncDiagramModulesSubturnState({
+        progress: params.progress,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      }),
+      this.acceptanceFeedback.sendDiagramModulesFeedback({
+        chains: params.chains,
+        gateway: params.gateway,
+        progress,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      }),
+      sendDiagramModulesContinuationIfReady({
+        chains: params.chains,
+        gateway: params.gateway,
+        progress,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      }),
+    ]);
+  }
+
+  private async runApplicationSkeletonPostTurn(params: {
+    readonly chains: readonly ContinuityChainSummary[];
+    readonly gateway: WorkflowAgentAcceptanceFeedbackGateway | undefined;
+    readonly latestProgress: ApplicationSkeletonProgressSnapshot | null;
+    readonly managedGitStatus: ManagedGitStatus;
+    readonly rawProgress: ApplicationSkeletonProgressSnapshot | null;
+    readonly sessionId: string;
+    readonly stage: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const phase = classifyApplicationSkeletonPhase(params.latestProgress);
+    if (
+      params.latestProgress?.materialized &&
+      !params.rawProgress?.materialized
+    ) {
+      this.logger.info(
+        "Observed Application Skeleton materialization completion",
+        { phase, sessionId: params.sessionId, stage: params.stage }
+      );
+      this.recentlyAcceptedSessions.delete(params.sessionId);
+    }
+    const progress = attachValidationDirtyGate(
+      params.latestProgress,
+      "Application Skeleton",
+      params.managedGitStatus.dirtyByStage.application_skeleton
+    );
+    const prematureDecision =
+      await readAndEvaluateApplicationSkeletonPrematureMaterialization({
+        accepted: params.latestProgress?.accepted ?? false,
+        ownedDirtyFiles: params.managedGitStatus.dirtyFiles ?? [],
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
       });
-    if (applicationSkeletonReviewTurnKind !== "out_of_scope") {
-      this.logger.info("Application Skeleton phase 1B review turn kind", {
-        kind: applicationSkeletonReviewTurnKind,
-        phase: applicationSkeletonPhase,
+    const guardDecision = evaluateApplicationSkeletonContractGuard({
+      ownedDirtyFiles:
+        params.managedGitStatus.dirtyByStage.application_skeleton ?? [],
+      phase,
+      prematureDecision,
+      progress: params.latestProgress,
+      terminalEventReceived: true,
+    });
+    if (guardDecision.kind !== "noop") {
+      this.logger.info("Application Skeleton phase 1A guard decision", {
+        decision: guardDecision.kind,
+        phase,
+        reason: guardDecision.reason,
         sessionId: params.sessionId,
         stage: params.stage,
       });
     }
-    if (applicationSkeletonReviewTurnKind === "revision") {
+    const repairMessage =
+      buildApplicationSkeletonRepairFeedbackMessage(guardDecision);
+    await runApplicationSkeletonRepairOrchestration({
+      decision: guardDecision,
+      logger: this.logger,
+      managedGitStatus: params.managedGitStatus,
+      phase,
+      progress: params.latestProgress,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    await this.runApplicationSkeletonReviewAndFeedback({
+      chains: params.chains,
+      gateway: params.gateway,
+      ownedDirtyFiles:
+        params.managedGitStatus.dirtyByStage.application_skeleton ?? [],
+      phase,
+      progress,
+      repairMessage,
+      sessionId: params.sessionId,
+      stage: params.stage,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+  }
+
+  private async runApplicationSkeletonReviewAndFeedback(params: {
+    readonly chains: readonly ContinuityChainSummary[];
+    readonly gateway: WorkflowAgentAcceptanceFeedbackGateway | undefined;
+    readonly ownedDirtyFiles: readonly string[];
+    readonly phase: ReturnType<typeof classifyApplicationSkeletonPhase>;
+    readonly progress: ApplicationSkeletonProgressSnapshot | null;
+    readonly repairMessage: string | null;
+    readonly sessionId: string;
+    readonly stage: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const reviewTurnKind = classifyApplicationSkeletonReviewTurn({
+      ownedDirtyFiles: params.ownedDirtyFiles,
+      phase: params.phase,
+    });
+    if (reviewTurnKind !== "out_of_scope") {
+      this.logger.info("Application Skeleton phase 1B review turn kind", {
+        kind: reviewTurnKind,
+        phase: params.phase,
+        sessionId: params.sessionId,
+        stage: params.stage,
+      });
+    }
+    if (reviewTurnKind === "revision") {
       await runApplicationSkeletonRevisionInjection({
         logger: this.logger,
         sessionId: params.sessionId,
@@ -454,66 +560,60 @@ export class ManagedWorkflowPostTurnService {
         workspaceRoot: params.workspaceRoot,
       });
     }
-    const qualityGatesProgress = attachValidationDirtyGate(
-      latestQualityGatesProgress,
-      "Quality Gates",
-      latestManagedGitStatus.dirtyByStage.quality_gates
-    );
-    const gateway = this.developmentTreeAgentSessions?.gateway as
-      | WorkflowAgentAcceptanceFeedbackGateway
-      | undefined;
     await Promise.all([
-      syncDiagramModulesSubturnState({
-        progress: latestDiagramModulesProgress,
-        workspaceRoot: params.workspaceRoot,
-        workspaceSlug: params.workspaceSlug,
-      }),
-      this.acceptanceFeedback.sendDiagramModulesFeedback({
-        chains,
-        gateway,
-        progress: diagramModulesProgress,
-        workspaceRoot: params.workspaceRoot,
-        workspaceSlug: params.workspaceSlug,
-      }),
-      sendDiagramModulesContinuationIfReady({
-        chains,
-        gateway,
-        progress: diagramModulesProgress,
-        workspaceRoot: params.workspaceRoot,
-        workspaceSlug: params.workspaceSlug,
-      }),
       sendApplicationSkeletonContinuationIfReady({
-        chains,
-        gateway,
-        progress: applicationSkeletonProgress,
+        chains: params.chains,
+        gateway: params.gateway,
+        progress: params.progress,
         recentlyAcceptedSessions: this.recentlyAcceptedSessions,
       }),
       this.acceptanceFeedback.sendApplicationSkeletonFeedback({
-        chains,
-        gateway,
-        progress: applicationSkeletonProgress,
-        workspaceRoot: params.workspaceRoot,
-        workspaceSlug: params.workspaceSlug,
-      }),
-      this.acceptanceFeedback.sendQualityGatesFeedback({
-        chains,
-        gateway,
-        progress: qualityGatesProgress,
+        chains: params.chains,
+        gateway: params.gateway,
+        progress: params.progress,
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
       }),
     ]);
-    if (gateway && applicationSkeletonRepairMessage) {
-      const skeletonSessionId =
-        chains
-          .find((chain) => chain.stage === "application_skeleton")
-          ?.segments.at(-1)?.sessionId ?? null;
-      if (skeletonSessionId) {
-        await gateway.handleMessage(
-          skeletonSessionId,
-          applicationSkeletonRepairMessage
-        );
-      }
+    await this.sendApplicationSkeletonRepairMessage(params);
+  }
+
+  private async sendApplicationSkeletonRepairMessage(params: {
+    readonly chains: readonly ContinuityChainSummary[];
+    readonly gateway: WorkflowAgentAcceptanceFeedbackGateway | undefined;
+    readonly repairMessage: string | null;
+  }): Promise<void> {
+    if (!(params.gateway && params.repairMessage)) {
+      return;
     }
+    const sessionId =
+      params.chains
+        .find((chain) => chain.stage === "application_skeleton")
+        ?.segments.at(-1)?.sessionId ?? null;
+    if (sessionId) {
+      await params.gateway.handleMessage(sessionId, params.repairMessage);
+    }
+  }
+
+  private async runQualityGatesPostTurn(params: {
+    readonly chains: readonly ContinuityChainSummary[];
+    readonly gateway: WorkflowAgentAcceptanceFeedbackGateway | undefined;
+    readonly managedGitStatus: ManagedGitStatus;
+    readonly progress: QualityGatesProgressSnapshot | null;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const progress = attachValidationDirtyGate(
+      params.progress,
+      "Quality Gates",
+      params.managedGitStatus.dirtyByStage.quality_gates
+    );
+    await this.acceptanceFeedback.sendQualityGatesFeedback({
+      chains: params.chains,
+      gateway: params.gateway,
+      progress,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
   }
 }
