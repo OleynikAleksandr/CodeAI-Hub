@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "487ad0f93",
+  "lastRecordedCommit": "5c5d615c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase1.seed.task1",
-  "expectedCommitMessage": "fix: seed application skeleton dynamic child plan",
+  "currentTaskId": "application-skeleton.phase1.mutator.task1",
+  "expectedCommitMessage": "feat: add application skeleton plan mutator",
   "debt": {
-    "expectedCommitMessage": "fix: seed application skeleton dynamic child plan",
-    "preCommitHead": "487ad0f93",
+    "expectedCommitMessage": "feat: add application skeleton plan mutator",
+    "preCommitHead": "5c5d615c2",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase1.seed.task1"
+    "taskId": "application-skeleton.phase1.mutator.task1"
   }
 }
 ```
@@ -61,9 +61,9 @@
 ### Stream: Runtime-Grown Application Skeleton Tasks
 
 3. [DONE] `application-skeleton.phase1.seed.task1` Change Application Skeleton stage seeding so the generated child plan starts with only the draft-contract microtask and its paired commit, while future review, acceptance, materialization, and user-return tasks are injected dynamically. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: seed application skeleton dynamic child plan`).
-4. [PENDING] Git Commit: `fix: seed application skeleton dynamic child plan` (hash: TBD)
-5. [TODO] `application-skeleton.phase1.mutator.task1` Add a tested Application Skeleton child-plan mutator for `draft`, `review-revisionN`, `acceptance`, `materialize`, `repairN`, and `user-return revisionN` task pairs. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `feat: add application skeleton plan mutator`).
-6. [TODO] Git Commit: `feat: add application skeleton plan mutator` (hash: TBD)
+4. [DONE] Git Commit: `fix: seed application skeleton dynamic child plan` (hash: 5c5d615c2)
+5. [DONE] `application-skeleton.phase1.mutator.task1` Add a tested Application Skeleton child-plan mutator for `draft`, `review-revisionN`, `acceptance`, `materialize`, `repairN`, and `user-return revisionN` task pairs. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `feat: add application skeleton plan mutator`).
+6. [PENDING] Git Commit: `feat: add application skeleton plan mutator` (hash: TBD)
 
 ## Phase 2 - Core Rejection And Attempt Persistence (owner: Codex, updated: 2026-05-11)
 
