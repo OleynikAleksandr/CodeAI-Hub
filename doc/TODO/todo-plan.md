@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "fc386bfa8",
+  "lastRecordedCommit": "72466f224",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9n.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton led boundary release",
+  "currentTaskId": "application-skeleton.phase9n.release-build.task1",
+  "expectedCommitMessage": "chore: build application skeleton led boundary release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton led boundary release",
-    "preCommitHead": "fc386bfa8",
+    "expectedCommitMessage": "chore: build application skeleton led boundary release",
+    "preCommitHead": "72466f224",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9n.release-docs.task1"
+    "taskId": "application-skeleton.phase9n.release-build.task1"
   }
 }
 ```
@@ -508,9 +508,9 @@ Application Skeleton completed-stage LED boundary verification evidence (2026-05
 ### Stream: Package Retest Release
 
 137. [DONE] `application-skeleton.phase9n.release-docs.task1` Use the user's explicit release-build confirmation from this thread, determine the next release version, and update release-facing docs for the completed-stage LED boundary fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton led boundary release`).
-138. [PENDING] Git Commit: `docs: prepare application skeleton led boundary release` (hash: TBD)
-139. [TODO] `application-skeleton.phase9n.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton led boundary release`).
-140. [TODO] Git Commit: `chore: build application skeleton led boundary release` (hash: TBD)
+138. [DONE] Git Commit: `docs: prepare application skeleton led boundary release` (hash: 72466f224)
+139. [DONE] `application-skeleton.phase9n.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton led boundary release`).
+140. [PENDING] Git Commit: `chore: build application skeleton led boundary release` (hash: TBD)
 141. [TODO] `application-skeleton.phase9n.release-acceptance.task1` User installs the produced release and retests that Application Skeleton stays green after Quality Gates is started, while Quality Gates remains outside this scope for a later dedicated plan. (scope: chat/process observation only; no commit required).
 
 Application Skeleton completed-stage LED boundary release docs preparation evidence (2026-05-11):
@@ -519,6 +519,14 @@ Application Skeleton completed-stage LED boundary release docs preparation evide
 - Updated `README.md` current-release marker and `CHANGELOG.md` release notes for the completed-stage LED boundary fix.
 - Explicit release-build confirmation was provided by the user in this thread: "Делай фикс и собирай новый релиз."
 - Release scope note: Quality Gates planning and implementation remain deferred to a later dedicated scope.
+
+Application Skeleton completed-stage LED boundary release build evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` completed the unified provider/core/UI/launcher build and bumped the repository version to `1.2.238`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` completed architecture checks, type-check, compile, SDK exclusions, local artefact validation, markdown link checks, duplication checks, VSIX packaging, and runtime package surface verification.
+- VSIX: `codeai-hub-1.2.238.vsix` (`48M`).
+- Release tarballs refreshed under `doc/tmp/releases/`: `claude-module-1.2.238.tar.bz2`, `codex-module-1.2.238.tar.bz2`, `gemini-module-1.2.238.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.238.tar.bz2`, `vscode-webview-1.2.238.tar.bz2`, `project-manager-1.2.238.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.238.tar.bz2`.
+- User retest target: install `codeai-hub-1.2.238.vsix`, retest that Application Skeleton stays green after starting the next step; do not evaluate Quality Gates behavior in this scope beyond the deferred boundary.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
