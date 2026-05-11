@@ -5,7 +5,7 @@ import { sendApplicationSkeletonContinuationIfReady } from "./application-skelet
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import type { WorkflowAgentAcceptanceFeedbackGateway } from "./workflow-agent-acceptance-feedback";
 
-const MATERIALIZATION_PROMPT_RE = /Begin Phase 2 materialization/u;
+const MATERIALIZATION_PROMPT_RE = /Begin Phase 3 materialization/u;
 
 const buildChain = (sessionId: string): ContinuityChainSummary =>
   ({
@@ -19,6 +19,7 @@ const buildProgress = (
   overrides: Partial<ApplicationSkeletonProgressSnapshot> = {}
 ): ApplicationSkeletonProgressSnapshot => ({
   accepted: true,
+  acceptanceCommitted: true,
   mapExists: true,
   mappingReady: true,
   markdownExists: true,
@@ -75,6 +76,17 @@ test("dispatcher is a no-op when progress.accepted is false (Option C trigger re
       accepted: false,
       substep: "awaiting_acceptance",
     }),
+  });
+  assert.equal(calls.length, 0);
+});
+
+test("dispatcher is a no-op until acceptance commit evidence is present", async () => {
+  const sessionId = "session-as-uncommitted-acceptance";
+  const { gateway, calls } = createSpyGateway();
+  await sendApplicationSkeletonContinuationIfReady({
+    chains: [buildChain(sessionId)],
+    gateway,
+    progress: buildProgress({ acceptanceCommitted: false }),
   });
   assert.equal(calls.length, 0);
 });

@@ -8,7 +8,7 @@ const sentSignatures = new Set<string>();
 const buildMaterializationContinuationPrompt = (): string =>
   [
     "Core accepted the Application Skeleton draft contract.",
-    "Begin Phase 2 materialization in this same session per your Application Skeleton agent instructions.",
+    "Begin Phase 3 materialization in this same session per your Application Skeleton agent instructions.",
     "Materialize the Product Part / Cluster / Module filesystem projection now and update both canonical artifacts to reflect the materialized state.",
     "When materialization is complete, report content readiness; Core owns the managed commit and plan advancement.",
   ].join("\n");
@@ -47,6 +47,7 @@ const canContinueApplicationSkeleton = (
 ): progress is ApplicationSkeletonProgressSnapshot =>
   progress !== null &&
   progress.accepted === true &&
+  progress.acceptanceCommitted === true &&
   !progress.materialized &&
   progress.substep !== "artifact";
 
