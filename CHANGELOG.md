@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.237] - 2026-05-11
+### Fixed
+- **Application Skeleton misplaced product-parts materialization is now actionable.** When Core detects `.codeai-hub/<workspace>/product-parts/**` after Application Skeleton materialization, it tells the provider to move the projection to root `product-parts/**` and remove the misplaced copy instead of sending a wait-only lifecycle-boundary message.
+- **Application Skeleton no longer appears complete before materialization.** Workflow-state hydration downgrades stale completed markers when materialized progress is unavailable, keeping Quality Gates blocked until the managed lifecycle is actually ready.
+- **Application Skeleton repair commits can complete materialization.** A successful `docs: repair application skeleton phase3.materialize attempt N` commit with root `product-parts/**` now opens the persistent user-return phase, creates the Quality Gates child plan, and advances the workspace ledger to `activeStage: "quality_gates"`.
+
+### Tests
+- Targeted repair suite passed: `27/27` tests across Application Skeleton feedback, plan mutator, workflow-state progress, and the managed plan shim.
+- `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.236] - 2026-05-11
 ### Fixed
 - **Application Skeleton creates the Quality Gates child plan before handoff.** After `feat: materialize application skeleton`, the generated managed shim now creates `doc/TODO/stages/quality-gates/todo-plan.md`, includes it in the workspace-ledger commit, switches `workspace.plan.md` to `activeStage: "quality_gates"`, and leaves the managed workspace Git status clean.

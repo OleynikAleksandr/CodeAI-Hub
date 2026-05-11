@@ -2,27 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.236** (Application Skeleton Quality Gates handoff recovery)
+**Current Release — v1.2.237** (Application Skeleton misplaced product-parts repair)
+
+This release fixes the Application Skeleton repair blocker found during
+v1.2.236 retesting. If the provider writes materialized `product-parts/**`
+under `.codeai-hub/<workspace>/product-parts/**`, Core now sends an
+actionable repair instruction to move the projection to root
+`product-parts/**` and clean up the misplaced copy, instead of telling
+the agent to wait.
+
+Application Skeleton also stays visually pending until materialization is
+really complete. A successful materialization repair commit with root
+`product-parts/**` now opens the persistent user-return phase, creates the
+Quality Gates child plan, and advances the workspace ledger to
+`activeStage: "quality_gates"`.
+
+**Previous release: v1.2.236** (Application Skeleton Quality Gates handoff recovery)
 
 This release fixes the Application Skeleton handoff blocker found during
 v1.2.235 retesting. After `feat: materialize application skeleton`, Core
 now creates `doc/TODO/stages/quality-gates/todo-plan.md` before moving
 the workspace ledger to `activeStage: "quality_gates"` and committing
 the ledger update.
-
-Application Skeleton acceptance also closes the Phase 2 review anchor
-when the user accepts without a review revision, so the child plan no
-longer shows an old review task as `IN_PROGRESS` after acceptance and
-materialization.
-
-**Previous release: v1.2.235** (Virtual Simulation alias recovery)
-
-This release fixes the Virtual Simulation artifact alias blocker found
-during v1.2.234 retesting. If a provider writes
-`virtual-simulation.md` under the non-canonical
-`.codeai-hub/<workspace>/virtual-simulation/` directory, Core now moves
-it into the canonical `.codeai-hub/<workspace>/virtual_simulation/`
-directory before workflow-state validation and Diagram Modules gating.
 
 Diagram Modules should no longer report `virtual-simulation.md not found`
 when the artifact exists in the provider-created alias directory.

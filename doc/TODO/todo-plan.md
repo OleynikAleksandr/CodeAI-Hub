@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "728913b98",
+  "lastRecordedCommit": "04cb14660",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9k.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton misplaced product parts repair verification",
+  "currentTaskId": "application-skeleton.phase9l.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton misplaced product parts repair release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton misplaced product parts repair verification",
-    "preCommitHead": "728913b98",
+    "expectedCommitMessage": "docs: prepare application skeleton misplaced product parts repair release",
+    "preCommitHead": "04cb14660",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9k.verify.task1"
+    "taskId": "application-skeleton.phase9l.release-docs.task1"
   }
 }
 ```
@@ -431,7 +431,7 @@ Application Skeleton Quality Gates handoff release build evidence (2026-05-11):
 123. [DONE] `application-skeleton.phase9k.repair-handoff.task1` Treat a successful materialization repair commit that creates root `product-parts/**` as the terminal Application Skeleton handoff so Core creates the Quality Gates child plan and advances the workspace ledger. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hand off application skeleton after materialization repair`).
 124. [DONE] Git Commit: `fix: hand off application skeleton after materialization repair` (hash: 728913b98)
 125. [DONE] `application-skeleton.phase9k.verify.task1` Run targeted feedback, mutator, workflow-state, managed shim, and core build checks; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton misplaced product parts repair verification`).
-126. [PENDING] Git Commit: `docs: record application skeleton misplaced product parts repair verification` (hash: TBD)
+126. [DONE] Git Commit: `docs: record application skeleton misplaced product parts repair verification` (hash: 04cb14660)
 
 Application Skeleton misplaced product-parts feedback evidence (2026-05-11):
 
@@ -462,12 +462,28 @@ Application Skeleton misplaced product-parts repair verification evidence (2026-
 - Covered regression: Core no longer tells the agent to wait when the actionable problem is misplaced Application Skeleton `product-parts/**`; the repair task scope covers the cleanup, the UI state stays pending until real materialization, and a successful repair commit with root `product-parts/**` performs the same Quality Gates handoff as the original materialization commit.
 - Residual requirement: package a new VSIX only after separate release-build confirmation; no release build scripts were run for this repair yet.
 
+## Phase 9L - Release Build: Application Skeleton Misplaced Product Parts Repair (owner: Codex, updated: 2026-05-11)
+
+### Stream: Package Retest Release
+
+127. [DONE] `application-skeleton.phase9l.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Application Skeleton misplaced product-parts repair. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build for the Application Skeleton misplaced product-parts repair.
+128. [DONE] `application-skeleton.phase9l.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton misplaced product-parts repair. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton misplaced product parts repair release`).
+129. [PENDING] Git Commit: `docs: prepare application skeleton misplaced product parts repair release` (hash: TBD)
+130. [TODO] `application-skeleton.phase9l.release-build.task1` Run the approved release build sequence, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton misplaced product parts repair release`).
+131. [TODO] Git Commit: `chore: build application skeleton misplaced product parts repair release` (hash: TBD)
+132. [TODO] `application-skeleton.phase9l.release-acceptance.task1` User installs the produced release and retests Application Skeleton misplaced product-parts repair, materialization repair handoff, green-state prevention, Quality Gates child-plan creation, and next-step launch. (scope: chat/process observation only; no commit required).
+
+Application Skeleton misplaced product-parts repair release docs preparation evidence (2026-05-11):
+
+- Future release version before packaging: `1.2.237` (`package.json` currently reports `1.2.236`; `build-all.sh` owns the version bump).
+- Explicit release-build confirmation was provided by the user in this thread: "Создаем новый релиз."
+
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-127. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-128. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-129. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-130. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-131. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+133. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+134. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+135. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+136. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+137. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
