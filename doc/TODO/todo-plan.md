@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "257565787",
+  "lastRecordedCommit": "ccb3c8c5e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase24.audit.task1",
-  "expectedCommitMessage": "docs: open application skeleton acceptance write-path scope",
+  "currentTaskId": "application-skeleton-orchestration.phase24.writer.task1",
+  "expectedCommitMessage": "fix: add application skeleton acceptance map.json writer",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton acceptance write-path scope",
-    "preCommitHead": "257565787",
+    "expectedCommitMessage": "fix: add application skeleton acceptance map.json writer",
+    "preCommitHead": "ccb3c8c5e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase24.audit.task1"
+    "taskId": "application-skeleton-orchestration.phase24.writer.task1"
   }
 }
 ```
@@ -468,7 +468,7 @@
 ### Stream: Scope Audit
 
 115. [DONE] `application-skeleton-orchestration.phase24.audit.task1` Open this scope: block Phase 22 with the acceptance write-path findings, document the design hole (every existing acceptance path only sets the in-memory `recentlyAcceptedSessions` marker, none patches `application-skeleton-map.json::accepted: true`), and adopt **Variant A** — the Core accept-contract runner owns the `accepted: true` write so that PM button (via HTTP endpoint), typed-fallback router (via callback), and any future programmatic acceptance entry point all funnel through one writer. The agent's own self-set per its Phase 2 prompt continues to work as a parallel path. After the write lands, `application-skeleton-map.json` becomes a dirty Application Skeleton-owned file, the managed commit gate auto-commits it as `docs: accept application skeleton contract` (Phase 2 acceptance commit), the next read-model snapshot reports `progress.accepted === true`, and `sendApplicationSkeletonContinuationIfReady` fires the Phase 3 materialization prompt. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton acceptance write-path scope`).
-116. [PENDING] Git Commit: `docs: open application skeleton acceptance write-path scope` (hash: TBD)
+116. [DONE] Git Commit: `docs: open application skeleton acceptance write-path scope` (hash: ccb3c8c5e)
 
 #### Audit findings (HEAD = `257565787`, 2026-05-11)
 
@@ -485,8 +485,8 @@
 
 ### Stream: Map.json Acceptance Writer
 
-117. [TODO] `application-skeleton-orchestration.phase24.writer.task1` Add a new pure helper `application-skeleton-acceptance-writer.ts` that reads `application-skeleton-map.json`, patches `accepted: true` (and `reviewState: "accepted"` if absent), and writes it back. Add peer test `application-skeleton-acceptance-writer.test.ts` covering happy path, missing-file path, and idempotency (already-accepted map is a noop). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts`; expected commit: `fix: add application skeleton acceptance map.json writer`).
-118. [TODO] Git Commit: `fix: add application skeleton acceptance map.json writer` (hash: TBD)
+117. [DONE] `application-skeleton-orchestration.phase24.writer.task1` Add a new pure helper `application-skeleton-acceptance-writer.ts` that reads `application-skeleton-map.json`, patches `accepted: true` (and `reviewState: "accepted"` if absent), and writes it back. Add peer test `application-skeleton-acceptance-writer.test.ts` covering happy path, missing-file path, and idempotency (already-accepted map is a noop). (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts`; expected commit: `fix: add application skeleton acceptance map.json writer`).
+118. [PENDING] Git Commit: `fix: add application skeleton acceptance map.json writer` (hash: TBD)
 
 ### Stream: Runner Integration
 
