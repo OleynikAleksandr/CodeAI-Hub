@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "4b02f1711",
+  "lastRecordedCommit": "ef0eea54a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase4.regression-task1",
-  "expectedCommitMessage": "docs: record diagram modules repair test evidence",
+  "currentTaskId": "diagram-modules-repair.phase5.verify.task1",
+  "expectedCommitMessage": "docs: record diagram modules repair verification",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram modules repair test evidence",
-    "preCommitHead": "4b02f1711",
+    "expectedCommitMessage": "docs: record diagram modules repair verification",
+    "preCommitHead": "ef0eea54a",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase4.regression-task1"
+    "taskId": "diagram-modules-repair.phase5.verify.task1"
   }
 }
 ```
@@ -88,7 +88,7 @@
 17. [DONE] `diagram-modules-repair.phase4.rejection-test.task1` Add a deterministic forced-rejection integration test: initialize a managed Diagram Modules workspace, write a valid Product Part index plus invalid Product Part artifact, assert Core injects `repair1` before provider feedback, then assert the failed attempt is committed with tracked evidence instead of disappearing into runtime/session state. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts`; expected commit: `test: cover diagram modules forced repair rejection`).
 18. [DONE] Git Commit: `test: cover diagram modules forced repair rejection` (hash: 4b02f1711)
 19. [DONE] `diagram-modules-repair.phase4.regression-task1` Run targeted Diagram Modules managed-workflow tests and record the exact commands/results in this plan before broader verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair test evidence`).
-20. [PENDING] Git Commit: `docs: record diagram modules repair test evidence` (hash: TBD)
+20. [DONE] Git Commit: `docs: record diagram modules repair test evidence` (hash: ef0eea54a)
 
 #### Phase 4 Evidence
 
@@ -98,8 +98,14 @@
 
 ### Stream: Targeted Build And Quality Gates
 
-21. [TODO] `diagram-modules-repair.phase5.verify.task1` Run targeted package verification for the core package plus `npm run plan:validate`; record evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair verification`).
-22. [TODO] Git Commit: `docs: record diagram modules repair verification` (hash: TBD)
+21. [DONE] `diagram-modules-repair.phase5.verify.task1` Run targeted package verification for the core package plus `npm run plan:validate`; record evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair verification`).
+22. [PENDING] Git Commit: `docs: record diagram modules repair verification` (hash: TBD)
+
+#### Phase 5 Evidence
+
+- 2026-05-11: `npm run build --workspace=@codeai-hub/core` - PASS (`@codeai-hub/core@1.2.227 build`, `tsc` completed with exit code 0).
+- 2026-05-11: `npm run plan:validate` - PASS (`Plan validation: OK`).
+- Residual risk: release packaging has not been run in this scope yet. Per Release Build Confirmation Gate, release scripts require separate explicit user confirmation before `build-all.sh` or `build-release.sh` starts.
 
 ## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
 
