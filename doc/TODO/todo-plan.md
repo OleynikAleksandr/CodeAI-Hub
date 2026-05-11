@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "02a7e86ef",
+  "lastRecordedCommit": "7dcb013fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase32.handoff-regex.task1",
-  "expectedCommitMessage": "fix: make application skeleton handoff anchor regex-matchable",
+  "currentTaskId": "application-skeleton-orchestration.phase32.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton handoff anchor verification",
   "debt": {
-    "expectedCommitMessage": "fix: make application skeleton handoff anchor regex-matchable",
-    "preCommitHead": "02a7e86ef",
+    "expectedCommitMessage": "docs: record application skeleton handoff anchor verification",
+    "preCommitHead": "7dcb013fb",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase32.handoff-regex.task1"
+    "taskId": "application-skeleton-orchestration.phase32.verify.task1"
   }
 }
 ```
@@ -592,12 +592,19 @@
 ### Stream: Handoff Seed Line Regex Match
 
 141. [DONE] `application-skeleton-orchestration.phase32.handoff-regex.task1` Add `expected commit: none — reserved handoff anchor` inside the Phase 4 handoff seed line in `managed-todo-tree.ts` so `TASK_LINE_RE` matches it; sync the matching fixture text in `managed-plan-orchestrator-installer.test.ts` (if it asserts the handoff line literal) and `session-request-handler-workflow-session.managed-workspace.test.ts` (which pins the handoff task regex shape). After the fix, post-Phase-3-materialize advancement lands on `application-skeleton.handoff.task1` with `expectedCommitMessage: null` and no fallback-insert pollution. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: make application skeleton handoff anchor regex-matchable`).
-142. [PENDING] Git Commit: `fix: make application skeleton handoff anchor regex-matchable` (hash: TBD)
+142. [DONE] Git Commit: `fix: make application skeleton handoff anchor regex-matchable` (hash: 7dcb013fb)
 
 ### Stream: Targeted Verification
 
-143. [TODO] `application-skeleton-orchestration.phase32.verify.task1` Run targeted Core tests for the shim, seed-shape, and workflow-session managed-workspace fixtures; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton handoff anchor verification`).
-144. [TODO] Git Commit: `docs: record application skeleton handoff anchor verification` (hash: TBD)
+143. [DONE] `application-skeleton-orchestration.phase32.verify.task1` Run targeted Core tests for the shim, seed-shape, and workflow-session managed-workspace fixtures; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton handoff anchor verification`).
+
+#### Verification evidence (HEAD = `7dcb013fb`, 2026-05-11)
+
+- **Targeted Core tests:** 57/57 pass across `managed-plan-orchestrator-installer.test.ts` (7 — seed-shape and shim advancement, including the post-Stream-A "draft commit advances to open-ended user-led review" lock-down), `development-tree-bootstrap-gate.test.ts` (2), `application-skeleton-acceptance-writer.test.ts` (7), `managed-stage-accept-contract-runner.test.ts` (3), `managed-stage-accept-contract-handler.test.ts` (8), `application-skeleton-continuation-dispatcher.test.ts` (8), `managed-workflow-post-turn-service.test.ts` (15), `application-skeleton-end-to-end.test.ts` (2), and `session-request-handler-workflow-session.managed-workspace.test.ts` (5 — including the handoff task / heading regex assertions which keep matching with the new "expected commit: none — reserved handoff anchor" clause because the regex constants only pin the task id and heading text).
+- **`npm run build --workspace @codeai-hub/core`:** passes.
+- **`npm run typecheck:webview`:** passes.
+- **Logical end-to-end check.** After Phase 3 materialize commit, advancement reads the next task line: the new Phase 4 handoff seed now includes `expected commit: none — reserved handoff anchor`, so `TASK_LINE_RE` matches (`message` captured as `null`). Plan state advances to `currentTaskId: application-skeleton.handoff.task1`, `expectedCommitMessage: null`. No fallback-insert pollution. The workspace stage transition mapping (`recordWorkspaceCommit` in the ledger) then fires `application_skeleton → quality_gates` as designed.
+144. [PENDING] Git Commit: `docs: record application skeleton handoff anchor verification` (hash: TBD)
 
 ## Phase 33 - Release Build (owner: next agent, updated: 2026-05-11)
 
