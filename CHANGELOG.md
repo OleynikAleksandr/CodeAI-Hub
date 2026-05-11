@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.229] - 2026-05-11
+### Fixed
+- **Diagram Modules user-return revisions now have commit pairs.** After all Product Parts are accepted, Core opens `diagram-modules.user-return.revision1.task1` with a paired `Git Commit` instead of the v1.2.228 no-commit `diagram-modules.user-return.task1` anchor. Each committed user-return revision opens the next `revisionN` task and commit pair, preserving the phase as an ongoing return surface without losing Git history.
+- **Post-completion Project Manager edits are committed.** A user-requested update to `product-parts/project-manager.md` after Diagram Modules completion now routes through the managed documentation commit transaction and is committed as `docs: revise diagram modules user return revision N` instead of being left as Core-owned dirty state with no expected commit.
+
+### Tests
+- Added installed-shim coverage for final Product Part -> `revision1` and revision commit -> `revision2`.
+- Added managed commit transaction coverage for a user-requested Project Manager artifact revision after Diagram Modules completion.
+- Targeted Diagram Modules managed-workflow suite passed: `26/26` tests. `npm run build --workspace=@codeai-hub/core` and `npm run plan:validate` both pass.
+
 ## [1.2.228] - 2026-05-11
 ### Fixed
 - **Diagram Modules Core rejection lifecycle.** Core now turns every rejected Diagram Modules provider-visible correction into a managed `repairN` microtask pair before sending feedback to the agent. The rejected task and paired commit line are blocked, the repair task becomes the only current child-plan task, and the repair commit message is pinned to the target artifact and attempt number.

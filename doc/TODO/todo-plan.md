@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "724b4d93d",
+  "lastRecordedCommit": "47ab6d019",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase8b.verify.task1",
-  "expectedCommitMessage": "docs: record diagram modules user return verification",
+  "currentTaskId": "diagram-modules-repair.phase8c.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare diagram modules user return release 1.2.229",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram modules user return verification",
-    "preCommitHead": "724b4d93d",
+    "expectedCommitMessage": "docs: prepare diagram modules user return release 1.2.229",
+    "preCommitHead": "47ab6d019",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase8b.verify.task1"
+    "taskId": "diagram-modules-repair.phase8c.release-docs.task1"
   }
 }
 ```
@@ -165,8 +165,8 @@
 ### Stream: Verification Before Next Release
 
 34. [DONE] `diagram-modules-repair.phase8b.verify.task1` Run targeted Diagram Modules managed-workflow tests, core build, and plan validation after the user-return revision fix; record evidence before asking for a new release build. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules user return verification`).
-35. [PENDING] Git Commit: `docs: record diagram modules user return verification` (hash: TBD)
-36. [TODO] `diagram-modules-repair.phase8b.release-confirmation.task1` Release Build Confirmation Gate for the next retest release after the Diagram Modules user-return fix. Do not prepare release notes, bump versions, or run release scripts until the user explicitly confirms the new release build. (scope: chat/process observation only; no commit required).
+35. [DONE] Git Commit: `docs: record diagram modules user return verification` (hash: 47ab6d019)
+36. [DONE] `diagram-modules-repair.phase8b.release-confirmation.task1` Release Build Confirmation Gate for the next retest release after the Diagram Modules user-return fix. Do not prepare release notes, bump versions, or run release scripts until the user explicitly confirms the new release build. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed in chat on 2026-05-11 to continue through the new release build without stopping for another confirmation.
 
 #### Phase 8B Verification Evidence
 
@@ -174,10 +174,33 @@
 - 2026-05-11: `npm run build --workspace=@codeai-hub/core` - PASS (`@codeai-hub/core@1.2.228 build`, `tsc` completed with exit code 0).
 - 2026-05-11: `npm run plan:validate` - PASS (`Plan validation: OK`).
 
+## Phase 8C - Release Build For Retest 1.2.229 (owner: Codex, updated: 2026-05-11)
+
+### Stream: Release Documentation Prep
+
+37. [DONE] `diagram-modules-repair.phase8c.release-docs.task1` After explicit user release-build confirmation, determine the next release version and update release-facing docs before `build-all.sh`. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules user return release 1.2.229`).
+38. [PENDING] Git Commit: `docs: prepare diagram modules user return release 1.2.229` (hash: TBD)
+
+#### Phase 8C Release Docs Evidence
+
+- 2026-05-11: user explicitly instructed Codex to continue through the new release build without stopping for another confirmation. Next unified version determined from `package.json` `1.2.228` -> `1.2.229`; `README.md` and `CHANGELOG.md` updated before `build-all.sh`.
+
+### Stream: Release Build Artifacts
+
+39. [TODO] `diagram-modules-repair.phase8c.release-build.task1` Run `./scripts/build-all.sh --allow-dirty` for the next unified version because plan-orchestrator leaves only the active `doc/TODO/todo-plan.md` transition dirty between managed commits; record generated version/artifact evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build diagram modules user return release`).
+40. [TODO] Git Commit: `chore: build diagram modules user return release` (hash: TBD)
+41. [TODO] `diagram-modules-repair.phase8c.release-package.task1` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify SDK exclusions, dev dependency pruning, and VSIX package creation, then hand off the artifact path for user retest. (scope: release packaging output only; expected commit: none).
+
+## Phase 8D - User Release Acceptance Testing (owner: user, updated: 2026-05-11)
+
+### Stream: Release Retest
+
+42. [TODO] `diagram-modules-repair.phase8d.release-acceptance.task1` User installs the new release VSIX and retests Diagram Modules normal Product Part sequencing, forced Core rejection repair behavior, and post-completion user-return revision commit behavior. (scope: chat/process observation only; no commit required).
+
 ## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-37. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
-38. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
-39. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+43. [TODO] `diagram-modules-repair.phase9.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
+44. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
+45. [TODO] `diagram-modules-repair.phase9.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

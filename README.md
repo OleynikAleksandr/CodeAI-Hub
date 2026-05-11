@@ -2,7 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.228** (Diagram Modules managed repair orchestration)
+**Current Release — v1.2.229** (Diagram Modules user-return revision commits)
+
+This release fixes the post-completion Diagram Modules return loop from
+v1.2.228. After all Product Parts are accepted, Phase 2 now opens an
+always-current `diagram-modules.user-return.revisionN.task1` with a
+paired `Git Commit` instead of an idle no-commit anchor. User-requested
+revisions, such as updating the `Project Manager` Product Part from an
+external document, are now committed through the managed boundary and
+the next revision task is opened immediately afterward.
+
+The managed commit transaction and installed plan shim both have
+regression coverage for the release-blocker path: final Product Part
+commit creates `revision1`, committing that revision creates
+`revision2`, and a dirty `product-parts/project-manager.md` change is
+committed instead of being left as pending Core-owned dirty state.
+
+**Previous release: v1.2.228** (Diagram Modules managed repair orchestration)
 
 This release makes Diagram Modules managed-step orchestration durable
 when Core rejects an agent turn. Core now injects a dedicated
