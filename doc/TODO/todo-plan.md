@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "4a4c6568e",
+  "lastRecordedCommit": "8cf034dd3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase28.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton acceptance wiring verification",
+  "currentTaskId": "application-skeleton-orchestration.phase29.release.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton acceptance wiring release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton acceptance wiring verification",
-    "preCommitHead": "4a4c6568e",
+    "expectedCommitMessage": "docs: prepare application skeleton acceptance wiring release",
+    "preCommitHead": "8cf034dd3",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase28.verify.task1"
+    "taskId": "application-skeleton-orchestration.phase29.release.task1"
   }
 }
 ```
@@ -555,14 +555,14 @@
 - **`npm run typecheck:webview`:** passes (no errors).
 - **Wiring proof.** `grep -rn "handleManagedAcceptContractCommand:" packages/core/src` (excluding `.test.`) now returns **two** matches: the existing **read** site `session-request-handler-message-dispatch.ts:183` (router callback forward) AND the new **write** sites — `remote-bridge-bootstrap.ts` (late-bound to `workflowStateService.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand`), `session-request-handler.ts` (forward into runtime), `session-request-handler-runtime-core.ts` (forward into dispatch deps factory).
 - **End-to-end path closed.** Typed-fallback (router) and PM Accept Contract button (HTTP endpoint) both reach the post-turn service's `handleApplicationSkeletonAcceptContractCommand`, which delegates to the Phase 24 runner, which calls the Phase 24 writer, which patches `application-skeleton-map.json::accepted: true` + `reviewState: "accepted"`. The managed commit gate then auto-commits `docs: accept application skeleton contract`, the read-model snapshot reports `progress.accepted === true`, and the Phase 3 continuation dispatcher fires.
-133. [PENDING] Git Commit: `docs: record application skeleton acceptance wiring verification` (hash: TBD)
+133. [DONE] Git Commit: `docs: record application skeleton acceptance wiring verification` (hash: 8cf034dd3)
 
 ## Phase 29 - Release Build (owner: next agent, updated: 2026-05-11)
 
 ### Stream: Release Preparation
 
-134. [TODO] `application-skeleton-orchestration.phase29.release.task1` Update README/CHANGELOG for v1.2.226 (acceptance wiring fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20 / Phase 24; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance wiring release`).
-135. [TODO] Git Commit: `docs: prepare application skeleton acceptance wiring release` (hash: TBD)
+134. [DONE] `application-skeleton-orchestration.phase29.release.task1` Update README/CHANGELOG for v1.2.226 (acceptance wiring fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20 / Phase 24; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance wiring release`).
+135. [PENDING] Git Commit: `docs: prepare application skeleton acceptance wiring release` (hash: TBD)
 
 ### Stream: Release Build
 

@@ -2,7 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.225** (acceptance write-path fix for v1.2.224)
+**Current Release — v1.2.226** (acceptance callback wiring fix for v1.2.225)
+
+This release closes the production wiring gap that left v1.2.225's
+acceptance write-path unreachable at runtime. The Phase 24 writer +
+runner were correctly implemented and unit-tested, but the typed-fallback
+router's optional `handleManagedAcceptContractCommand` callback was
+**never assigned** anywhere in production code — only the read site in
+`session-request-handler-message-dispatch.ts` existed, leaving the
+optional chain a silent no-op. As a result, typing "Контракт принимаю,
+можешь продолжать" or "accepted" got intercepted by the recognizer,
+logged as `Skipping managed contract acceptance phrase`, and dropped on
+the floor. No runner, no map.json patch, no Phase 2 commit, no Phase 3
+continuation. The fix adds the late-bound callback at the
+`remote-bridge-bootstrap.ts` composition site (mirroring the existing
+`onTurnCompleted` pattern), threads it through
+`SessionRequestHandlerOptions` and the runtime deps interfaces, and
+hands it to the `SessionRequestHandlerMessageDispatch` factory. The
+end-to-end flow now executes as designed.
+
+**Previous release: v1.2.225** (acceptance write-path fix for v1.2.224)
 
 This release closes the last missing piece of the Phase 16 Option C
 acceptance flow: the `accepted: true` write on
