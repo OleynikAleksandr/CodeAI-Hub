@@ -110,6 +110,10 @@ const DIAGRAM_STAGE_PLAN_RE =
   /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
 const ROOT_TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
 const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
+const APPLICATION_STAGE_PLAN_PATH =
+  "doc/TODO/stages/application-skeleton/todo-plan.md";
+const QUALITY_GATES_STAGE_PLAN_PATH =
+  "doc/TODO/stages/quality-gates/todo-plan.md";
 
 test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package scripts", async () => {
   const workspaceRoot = await createWorkspaceRoot();
@@ -150,6 +154,12 @@ test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package s
     assert.match(
       await readFile(path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH), "utf8"),
       DIAGRAM_PLAN_TASK_RE
+    );
+    await assert.rejects(
+      access(path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH))
+    );
+    await assert.rejects(
+      access(path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH))
     );
     await assert.rejects(access(path.join(workspaceRoot, ROOT_TODO_PLAN_PATH)));
 
@@ -207,10 +217,7 @@ test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage
       { cwd: workspaceRoot }
     );
     const plan = await readFile(
-      path.join(
-        workspaceRoot,
-        "doc/TODO/stages/application-skeleton/todo-plan.md"
-      ),
+      path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH),
       "utf8"
     );
 
@@ -218,6 +225,12 @@ test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage
     assert.match(result.stdout, APPLICATION_SKELETON_DRAFT_COMMIT_RE);
     assert.doesNotMatch(plan, APPLICATION_SKELETON_STATIC_REVIEW_RE);
     assert.doesNotMatch(plan, APPLICATION_SKELETON_STATIC_MATERIALIZE_RE);
+    await assert.rejects(
+      access(path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH))
+    );
+    await assert.rejects(
+      access(path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH))
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

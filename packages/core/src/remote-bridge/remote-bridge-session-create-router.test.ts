@@ -19,9 +19,9 @@ import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-
 
 const execFileAsync = promisify(execFile);
 const DIAGRAM_MODULES_EXPECTED_COMMIT_RE =
-  /docs: update diagram modules artifacts/u;
+  /docs: update diagram modules product part index/u;
 const APPLICATION_SKELETON_EXPECTED_COMMIT_RE =
-  /feat: materialize application skeleton/u;
+  /docs: draft application skeleton contract/u;
 const QUALITY_GATES_EXPECTED_COMMIT_RE =
   /feat: integrate quality gates baseline/u;
 const ROOT_TODO_PLAN_PATH = path.join("doc", "TODO", "todo-plan.md");
@@ -105,6 +105,12 @@ test("session:create prepares diagram modules lifecycle baseline before provider
           ),
           DIAGRAM_MODULES_EXPECTED_COMMIT_RE
         );
+        await assert.rejects(
+          access(path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH))
+        );
+        await assert.rejects(
+          access(path.join(workspacePath, QUALITY_GATES_STAGE_PLAN_PATH))
+        );
         assert.match(
           await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
           DIAGRAM_MODULES_ACTIVE_PLAN_PATH_RE
@@ -172,16 +178,13 @@ test("session:create bootstraps managed workspace before application skeleton se
           path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH)
         );
         await assert.rejects(
-          access(path.join(workspacePath, ROOT_TODO_PLAN_PATH))
+          access(path.join(workspacePath, DIAGRAM_MODULES_STAGE_PLAN_PATH))
         );
-        assert.equal(
-          (
-            await readFile(
-              path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH),
-              "utf8"
-            )
-          ).includes("feat: materialize application skeleton"),
-          true
+        await assert.rejects(
+          access(path.join(workspacePath, QUALITY_GATES_STAGE_PLAN_PATH))
+        );
+        await assert.rejects(
+          access(path.join(workspacePath, ROOT_TODO_PLAN_PATH))
         );
         assert.equal(
           await git(workspacePath, ["log", "-1", "--pretty=%s"]),
