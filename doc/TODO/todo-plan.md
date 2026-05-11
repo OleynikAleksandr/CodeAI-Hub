@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "131e22079",
+  "lastRecordedCommit": "487ad0f93",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan application skeleton managed orchestration",
+  "currentTaskId": "application-skeleton.phase1.seed.task1",
+  "expectedCommitMessage": "fix: seed application skeleton dynamic child plan",
   "debt": {
-    "expectedCommitMessage": "docs: plan application skeleton managed orchestration",
-    "preCommitHead": "131e22079",
+    "expectedCommitMessage": "fix: seed application skeleton dynamic child plan",
+    "preCommitHead": "487ad0f93",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase0.plan.task1"
+    "taskId": "application-skeleton.phase1.seed.task1"
   }
 }
 ```
@@ -54,14 +54,14 @@
 ### Stream: Implementation Plan
 
 1. [DONE] `application-skeleton.phase0.plan.task1` Open this active implementation plan for the accepted Application Skeleton orchestration scope, explicitly carrying forward the Diagram Modules lessons about dynamic child plans, mandatory commit-paired user turns, and Core rejection persistence. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton managed orchestration`).
-2. [PENDING] Git Commit: `docs: plan application skeleton managed orchestration` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan application skeleton managed orchestration` (hash: 487ad0f93)
 
 ## Phase 1 - Dynamic Child Plan Shape (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Runtime-Grown Application Skeleton Tasks
 
-3. [TODO] `application-skeleton.phase1.seed.task1` Change Application Skeleton stage seeding so the generated child plan starts with only the draft-contract microtask and its paired commit, while future review, acceptance, materialization, and user-return tasks are injected dynamically. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: seed application skeleton dynamic child plan`).
-4. [TODO] Git Commit: `fix: seed application skeleton dynamic child plan` (hash: TBD)
+3. [DONE] `application-skeleton.phase1.seed.task1` Change Application Skeleton stage seeding so the generated child plan starts with only the draft-contract microtask and its paired commit, while future review, acceptance, materialization, and user-return tasks are injected dynamically. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: seed application skeleton dynamic child plan`).
+4. [PENDING] Git Commit: `fix: seed application skeleton dynamic child plan` (hash: TBD)
 5. [TODO] `application-skeleton.phase1.mutator.task1` Add a tested Application Skeleton child-plan mutator for `draft`, `review-revisionN`, `acceptance`, `materialize`, `repairN`, and `user-return revisionN` task pairs. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-todo-tree.ts`; expected commit: `feat: add application skeleton plan mutator`).
 6. [TODO] Git Commit: `feat: add application skeleton plan mutator` (hash: TBD)
 

@@ -54,15 +54,16 @@ const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /Expected Commit: docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_REVIEW_TASK_RE =
   /Current Task: application-skeleton\.phase2\.review\.task1/u;
-const APPLICATION_SKELETON_REVIEW_ACCEPT_COMMIT_RE =
-  /Expected Commit: docs: accept application skeleton contract/u;
-const APPLICATION_SKELETON_ACCEPT_COMMIT_PIN_RE =
-  /\[TODO\] Git Commit: `docs: accept application skeleton contract`/u;
+const APPLICATION_SKELETON_REVIEW_REVISION_COMMIT_RE =
+  /Expected Commit: docs: revise application skeleton review revision 1/u;
+const APPLICATION_SKELETON_REVIEW_REVISION_COMMIT_PIN_RE =
+  /\[TODO\] Git Commit: `docs: revise application skeleton review revision 1`/u;
 const APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `application-skeleton\.phase2\.review\.task1`/u;
-const APPLICATION_SKELETON_MATERIALIZE_TODO_RE =
-  /\[TODO\] `application-skeleton\.phase3\.materialize\.task1`/u;
-const APPLICATION_SKELETON_BOUNDED_GROUP_RE = /bounded target-group microtask/u;
+const APPLICATION_SKELETON_STATIC_REVIEW_RE =
+  /Application Skeleton Contract Review/u;
+const APPLICATION_SKELETON_STATIC_MATERIALIZE_RE =
+  /application-skeleton\.phase3\.materialize\.task1/u;
 const APPLICATION_SKELETON_ACTIVE_STAGE_RE =
   /"activeStage": "application_skeleton"/u;
 const APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE =
@@ -192,9 +193,18 @@ test("ManagedPlanOrchestratorInstaller seeds todo plan for active workflow stage
       [scriptPath, "status"],
       { cwd: workspaceRoot }
     );
+    const plan = await readFile(
+      path.join(
+        workspaceRoot,
+        "doc/TODO/stages/application-skeleton/todo-plan.md"
+      ),
+      "utf8"
+    );
 
     assert.match(result.stdout, APPLICATION_SKELETON_TASK_RE);
     assert.match(result.stdout, APPLICATION_SKELETON_DRAFT_COMMIT_RE);
+    assert.doesNotMatch(plan, APPLICATION_SKELETON_STATIC_REVIEW_RE);
+    assert.doesNotMatch(plan, APPLICATION_SKELETON_STATIC_MATERIALIZE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -251,11 +261,10 @@ test("managed plan shim advances application skeleton draft commits to open-ende
     });
 
     assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_TASK_RE);
-    assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_ACCEPT_COMMIT_RE);
+    assert.match(status.stdout, APPLICATION_SKELETON_REVIEW_REVISION_COMMIT_RE);
     assert.match(plan, APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE);
-    assert.match(plan, APPLICATION_SKELETON_ACCEPT_COMMIT_PIN_RE);
-    assert.match(plan, APPLICATION_SKELETON_MATERIALIZE_TODO_RE);
-    assert.match(plan, APPLICATION_SKELETON_BOUNDED_GROUP_RE);
+    assert.match(plan, APPLICATION_SKELETON_REVIEW_REVISION_COMMIT_PIN_RE);
+    assert.doesNotMatch(plan, APPLICATION_SKELETON_STATIC_MATERIALIZE_RE);
     assert.equal(gitStatus.stdout.trim(), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

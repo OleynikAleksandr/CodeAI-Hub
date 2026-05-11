@@ -152,6 +152,26 @@ const formatTaskLine = (line, taskId, status, summary, files, message) => {
 
 const formatNewTaskLine = (number, taskId, status, summary, scope, message) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
 ${createDiagramModulesPlanMutatorShimSource()}
+const insertApplicationSkeletonReviewTaskPair = (lines, commitLineIndex, state, message) => {
+  if (state.currentTaskId !== "application-skeleton.phase1.draft.task1" || message !== "docs: draft application skeleton contract") {
+    return;
+  }
+  if (lines.some((line) => line.includes("application-skeleton.phase2.review.task1"))) {
+    return;
+  }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  lines.splice(
+    commitLineIndex + 1,
+    0,
+    "",
+    "## Phase 2 — Application Skeleton Contract Review",
+    "",
+    "### Stream: User-Led Review",
+    "",
+    formatNewTaskLine(taskNumber, "application-skeleton.phase2.review.task1", "TODO", "Open Application Skeleton contract review for user-driven revisions; Core must inject revision task pairs or an explicit acceptance task before materialization", ".codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json", "docs: revise application skeleton review revision 1"),
+    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise application skeleton review revision 1\\\` (hash: TBD)\`
+  );
+};
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
@@ -205,6 +225,7 @@ const advancePlanForCommit = (message) => {
   }
 
   insertDiagramModulesProductPartTasks(lines, commitLineIndex, changedFiles);
+  insertApplicationSkeletonReviewTaskPair(lines, commitLineIndex, state, message);
 
   const nextTaskLineIndex = lines.findIndex(
     (line, index) => index > commitLineIndex && readTaskLine(line)

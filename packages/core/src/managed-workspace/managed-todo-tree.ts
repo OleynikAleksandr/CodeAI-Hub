@@ -305,29 +305,6 @@ ${createStageFollowUpTasks(initialStage)}
 const createStageFollowUpTasks = (
   initialStage: ManagedWorkflowPlanStage
 ): string => {
-  if (initialStage === "application_skeleton") {
-    return `
-## Phase 2 — Application Skeleton Contract Review
-
-### Stream: User-Led Review
-
-3. [TODO] \`application-skeleton.phase2.review.task1\` Open-ended user-led review of the Application Skeleton contract; the user drives revisions and clarifying turns until acceptance is recorded in \`application-skeleton-map.json\` (\`accepted: true\`) by any path — Core accept-contract handler, PM Accept Contract button, typed-fallback recognizer, or agent self-set per its prompt — at which point Core observes the flag and fires the explicit Phase 2 commit (scope: \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`docs: accept application skeleton contract\`).
-4. [TODO] Git Commit: \`docs: accept application skeleton contract\` (hash: TBD)
-
-## Phase 3 — Application Skeleton Materialization
-
-### Stream: Core-Led Materialization
-
-5. [TODO] \`application-skeleton.phase3.materialize.task1\` Materialize Application Skeleton tracked filesystem projection as one bounded target-group microtask after the Phase 2 acceptance commit lands (scope: \`product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`feat: materialize application skeleton\`).
-6. [TODO] Git Commit: \`feat: materialize application skeleton\` (hash: TBD)
-
-## Phase 4 — Handoff
-
-### Stream: Reserved Post-Closeout Handoff Anchor
-
-7. [TODO] \`application-skeleton.handoff.task1\` Reserved post-closeout handoff anchor; do not execute automatically (scope: chat/process observation only; expected commit: none — reserved handoff anchor).
-`;
-  }
   if (initialStage === "quality_gates") {
     return `
 ## Phase 2 — Managed Gate Integration
