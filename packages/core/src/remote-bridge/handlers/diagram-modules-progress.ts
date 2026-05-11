@@ -1,8 +1,11 @@
+import { execFile } from "node:child_process";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { promisify } from "node:util";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import { normalizeAndValidateWorkflowStageArtifact } from "./http-api-artifact-validation";
 
+const execFileAsync = promisify(execFile);
 const PRODUCT_PART_ID_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
 const PRODUCT_PART_ORDERED_ITEM_RE =
@@ -232,6 +235,7 @@ const resolveActiveSubturn = (params: {
   readonly currentDiagnostic: ProductPartDiagnostic | null;
   readonly currentPartId: string | undefined;
   readonly generatedPartIds: readonly string[];
+  readonly indexDirty: boolean;
   readonly plannedPartIds: readonly string[];
 }): DiagramModulesSubturnProgress => {
   if (params.blockedAmbiguity || params.plannedPartIds.length === 0) {
@@ -239,6 +243,9 @@ const resolveActiveSubturn = (params: {
       kind: "index",
       status: params.blockedAmbiguity ? "repair_pending" : "pending",
     };
+  }
+  if (params.indexDirty) {
+    return { kind: "index", status: "pending" };
   }
   if (!params.currentPartId) {
     return { kind: "aggregate", status: "accepted" };
@@ -300,6 +307,22 @@ const resolveLastValidation = (params: {
   };
 };
 
+const isGitPathDirty = async (params: {
+  readonly relativePath: string;
+  readonly workspaceRoot: string;
+}): Promise<boolean> => {
+  try {
+    const { stdout } = await execFileAsync(
+      "git",
+      ["status", "--short", "--untracked-files=all", "--", params.relativePath],
+      { cwd: params.workspaceRoot }
+    );
+    return stdout.trim().length > 0;
+  } catch {
+    return false;
+  }
+};
+
 export const readDiagramModulesProgressSnapshot = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -336,11 +359,16 @@ export const readDiagramModulesProgressSnapshot = async (params: {
       (diagnostic) => diagnostic.partId === currentPartId
     ) ?? null;
   const blockedAmbiguity = BLOCKED_AMBIGUITY_RE.test(indexMarkdown);
+  const indexDirty = await isGitPathDirty({
+    relativePath: indexPath.value.relativePath,
+    workspaceRoot: params.workspaceRoot,
+  });
   const activeSubturn = resolveActiveSubturn({
     blockedAmbiguity,
     currentDiagnostic,
     currentPartId,
     generatedPartIds,
+    indexDirty,
     plannedPartIds,
   });
   const lastValidation = resolveLastValidation({
@@ -353,7 +381,7 @@ export const readDiagramModulesProgressSnapshot = async (params: {
   let substep: DiagramModulesSubstep = "index";
   if (blockedAmbiguity) {
     substep = "blocked_ambiguity";
-  } else if (plannedPartIds.length === 0) {
+  } else if (plannedPartIds.length === 0 || indexDirty) {
     substep = "index";
   } else if (currentPartId) {
     substep = "generate_product_part";

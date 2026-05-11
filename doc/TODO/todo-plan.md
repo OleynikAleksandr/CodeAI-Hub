@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "1ed29c613",
+  "lastRecordedCommit": "7de09e505",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9f.post-turn-stage-scope.task1",
-  "expectedCommitMessage": "fix: scope managed post-turn to active stage",
+  "currentTaskId": "application-skeleton.phase9f.diagram-index-boundary.task1",
+  "expectedCommitMessage": "fix: keep diagram modules index on commit boundary",
   "debt": {
-    "expectedCommitMessage": "fix: scope managed post-turn to active stage",
-    "preCommitHead": "1ed29c613",
+    "expectedCommitMessage": "fix: keep diagram modules index on commit boundary",
+    "preCommitHead": "7de09e505",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9f.post-turn-stage-scope.task1"
+    "taskId": "application-skeleton.phase9f.diagram-index-boundary.task1"
   }
 }
 ```
@@ -280,21 +280,23 @@ Clean rebuild release evidence (2026-05-11):
 72. [DONE] `application-skeleton.phase9f.progressive-stage-plans.task1` Stop eager creation of downstream managed stage plans at workspace bootstrap while preserving the workspace ledger paths and active stage plan creation. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts`; expected commit: `fix: create managed stage plans progressively`).
 73. [DONE] Git Commit: `fix: create managed stage plans progressively` (hash: 1ed29c613)
 74. [DONE] `application-skeleton.phase9f.post-turn-stage-scope.task1` Scope managed post-turn commit, repair, feedback, and continuation dispatch to the active provider stage so future stages cannot mutate plans during Diagram Modules. (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: scope managed post-turn to active stage`).
-75. [PENDING] Git Commit: `fix: scope managed post-turn to active stage` (hash: TBD)
-76. [TODO] `application-skeleton.phase9f.diagram-index-boundary.task1` Keep Diagram Modules on the index subturn until the index commit boundary is clean, and make dirty/blocked index state visible instead of silently suppressing feedback. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `fix: keep diagram modules index on commit boundary`).
-77. [TODO] Git Commit: `fix: keep diagram modules index on commit boundary` (hash: TBD)
-78. [TODO] `application-skeleton.phase9f.verify.task1` Reproduce the v1.2.233 Diagram Modules first-turn regression in tests, run targeted managed workflow tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed stage isolation verification`).
-79. [TODO] Git Commit: `docs: record managed stage isolation verification` (hash: TBD)
+75. [DONE] Git Commit: `fix: scope managed post-turn to active stage` (hash: 7de09e505)
+76. [DONE] `application-skeleton.phase9f.diagram-index-boundary.task1` Keep Diagram Modules on the index subturn until the index commit boundary is clean, so Core cannot continue to the first Product Part before committing `product-parts.index.md`. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `fix: keep diagram modules index on commit boundary`).
+77. [PENDING] Git Commit: `fix: keep diagram modules index on commit boundary` (hash: TBD)
+78. [TODO] `application-skeleton.phase9f.diagram-feedback-gate.task1` Make dirty/blocked Diagram Modules commit-gate state visible to the provider instead of suppressing feedback while a subturn is pending. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `fix: surface diagram modules dirty commit feedback`).
+79. [TODO] Git Commit: `fix: surface diagram modules dirty commit feedback` (hash: TBD)
+80. [TODO] `application-skeleton.phase9f.verify.task1` Reproduce the v1.2.233 Diagram Modules first-turn regression in tests, run targeted managed workflow tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed stage isolation verification`).
+81. [TODO] Git Commit: `docs: record managed stage isolation verification` (hash: TBD)
 
 ## Phase 9G - Release Build: Managed Stage Isolation Fix (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Package Retest Release
 
-80. [TODO] `application-skeleton.phase9g.release-docs.task1` Prepare release metadata for the approved managed stage isolation fix by updating `README.md` and `CHANGELOG.md` to the next release version. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed stage isolation release`).
-81. [TODO] Git Commit: `docs: prepare managed stage isolation release` (hash: TBD)
-82. [TODO] `application-skeleton.phase9g.release-build.task1` Run the approved release build sequence for the managed stage isolation fix, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed stage isolation release`).
-83. [TODO] Git Commit: `chore: build managed stage isolation release` (hash: TBD)
-84. [TODO] `application-skeleton.phase9g.release-acceptance.task1` User installs the produced release and retests Diagram Modules first-turn acceptance plus Application Skeleton unlock on a clean managed workspace. (scope: chat/process observation only; no commit required).
+82. [TODO] `application-skeleton.phase9g.release-docs.task1` Prepare release metadata for the approved managed stage isolation fix by updating `README.md` and `CHANGELOG.md` to the next release version. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed stage isolation release`).
+83. [TODO] Git Commit: `docs: prepare managed stage isolation release` (hash: TBD)
+84. [TODO] `application-skeleton.phase9g.release-build.task1` Run the approved release build sequence for the managed stage isolation fix, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed stage isolation release`).
+85. [TODO] Git Commit: `chore: build managed stage isolation release` (hash: TBD)
+86. [TODO] `application-skeleton.phase9g.release-acceptance.task1` User installs the produced release and retests Diagram Modules first-turn acceptance plus Application Skeleton unlock on a clean managed workspace. (scope: chat/process observation only; no commit required).
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 

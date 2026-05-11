@@ -1,14 +1,17 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import {
   readDiagramModulesPersistedSubturnState,
   readDiagramModulesProgressSnapshot,
   syncDiagramModulesSubturnState,
 } from "./diagram-modules-progress";
 
+const execFileAsync = promisify(execFile);
 const PRODUCT_PART_MISSING_FILE_RE = /Product Part artifact file is missing\./u;
 const PRODUCT_PART_HEADER_ERROR_RE =
   /missing '# Module Inventory' or '# Product Part:' header/u;
@@ -180,6 +183,73 @@ test("Diagram Modules progress exposes aggregate accepted subturn when every Pro
   }
 });
 
+test("Diagram Modules progress keeps a dirty Product Part index on the index commit boundary", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-progress-dirty-index-")
+  );
+
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await mkdir(
+      path.join(workspaceRoot, ".codeai-hub/demo-workspace/diagram_modules"),
+      { recursive: true }
+    );
+    const indexPath = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+    );
+    await writeFile(
+      indexPath,
+      [
+        "# Product Parts Index",
+        "",
+        "### Product Part: local-runtime",
+        "- Id: local-runtime",
+        "- Title: Local Runtime",
+        "- Purpose: Runs local orchestration.",
+        "- Status: planned",
+        "",
+      ].join("\n"),
+      "utf8"
+    );
+
+    const dirtyProgress = await readDiagramModulesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(dirtyProgress?.substep, "index");
+    assert.deepEqual(dirtyProgress?.activeSubturn, {
+      kind: "index",
+      status: "pending",
+    });
+    assert.equal(
+      dirtyProgress?.expectedArtifactPath?.endsWith(
+        "diagram_modules/product-parts.index.md"
+      ),
+      true
+    );
+
+    await git(workspaceRoot, ["add", "."]);
+    await git(workspaceRoot, ["commit", "-m", "docs: commit index"]);
+    const cleanProgress = await readDiagramModulesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(cleanProgress?.substep, "generate_product_part");
+    assert.deepEqual(cleanProgress?.activeSubturn, {
+      kind: "product_part",
+      partId: "local-runtime",
+      status: "pending",
+    });
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("Diagram Modules subturn state persists the active expected artifact for recovery", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "diagram-modules-subturn-state-")
@@ -240,3 +310,8 @@ test("Diagram Modules subturn state persists the active expected artifact for re
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+const git = async (cwd: string, args: readonly string[]): Promise<string> => {
+  const { stdout } = await execFileAsync("git", [...args], { cwd });
+  return stdout.trim();
+};
