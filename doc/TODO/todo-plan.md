@@ -5,18 +5,18 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "managed-step-orchestration-plans-revision",
+  "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
-  "baseHead": "5f596b7d9",
-  "lastRecordedCommit": "f96bd55ac",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md",
-  "currentTaskId": "managed-step-orchestration.phase4.closeout.task1",
-  "expectedCommitMessage": "docs: close managed step orchestration planning scope",
+  "baseHead": "07cf50548",
+  "lastRecordedCommit": "07cf50548",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
+  "currentTaskId": "diagram-modules-repair.phase0.plan.task1",
+  "expectedCommitMessage": "docs: plan diagram modules managed repair orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: close managed step orchestration planning scope",
-    "preCommitHead": "f96bd55ac",
+    "expectedCommitMessage": "docs: plan diagram modules managed repair orchestration",
+    "preCommitHead": "07cf50548",
     "stage": "commit_pending",
-    "taskId": "managed-step-orchestration.phase4.closeout.task1"
+    "taskId": "diagram-modules-repair.phase0.plan.task1"
   }
 }
 ```
@@ -24,69 +24,89 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`
-- **Stopped previous scope snapshot:** `doc/TODO/Archive/todo-plan-stopped-application-skeleton-phase-b-orchestration-implementation-2026-05-11.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`
   - `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workspace_Lifecycle_From_Diagram_Modules.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md`
-- Only this Context Pack is the recovery source for the current planning cycle.
+- Only this Context Pack is the recovery source for the current implementation cycle.
 
 ## Execution Rules
 
-- This is a planning/documentation reset scope, not a release-build scope.
-- Do not run release build scripts in this scope.
-- Do not revive the stopped Application Skeleton v1.2.227 hot-fix plan.
-- Keep each microtask to a small tracked-document surface; if the `Plans/` revision grows, split it before committing.
-- Every provider-visible Core correction turn in future managed-step designs must be represented as a tracked managed microtask with a paired `Git Commit:` item.
-- `Phase 4` for managed documentation steps is a post-completion user-return revision loop, not a handoff anchor.
+- This scope implements the accepted `Diagram Modules` managed-step scenario. The user typo `Diagram Modeless` is treated as `Diagram Modules`.
+- Do not run release build scripts in this scope without a separate explicit release-build confirmation.
+- Keep every microtask at three files or fewer. If a test fixture needs more surface, split the task before editing.
+- Every provider-visible Core correction, repair, retry, or user-return revision turn must be represented in the child managed plan before Core sends that message to the agent.
+- Every repair attempt must create a Git commit. If the agent does not produce an accepted artifact diff, Core must write tracked attempt evidence and commit that evidence with the repair microtask.
+- The forced-rejection test must be deterministic and must not depend on a live provider response: use a temp managed workspace, a deliberately invalid Diagram Modules artifact, and assertions over the child plan, feedback, attempt evidence, and Git log.
 
-## Phase 0 - Stop Previous Scope And Open New Planning Scope (owner: Codex, updated: 2026-05-11)
+## Phase 0 - Scope Activation (owner: Codex, updated: 2026-05-11)
 
-### Stream: Planning Reset
+### Stream: Implementation Plan
 
-1. [DONE] `managed-step-orchestration.phase0.reset.task1` Stop the expanded Application Skeleton implementation plan without marking the unfinished retest as DONE, preserve a blocked/superseded archive snapshot, and open this new planning scope for managed step orchestration scenario documents. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-stopped-application-skeleton-phase-b-orchestration-implementation-2026-05-11.md`; expected commit: `docs: reset managed workflow step orchestration plan`).
-2. [DONE] Git Commit: `docs: reset managed workflow step orchestration plan` (hash: d50b87cde)
+1. [DONE] `diagram-modules-repair.phase0.plan.task1` Open this active implementation plan for the accepted `Diagram Modules` scenario, including the deterministic forced-rejection test strategy for Core repair turns. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan diagram modules managed repair orchestration`).
+2. [PENDING] Git Commit: `docs: plan diagram modules managed repair orchestration` (hash: TBD)
 
-## Phase 1 - Plans Folder Revision And Step Scenarios (owner: Codex, updated: 2026-05-11)
+## Phase 1 - Child Plan Mutation And Repair Task Injection (owner: Codex, updated: 2026-05-11)
 
-### Stream: Managed Step Orchestration Planning Docs
+### Stream: Dynamic Diagram Modules Microtasks
 
-3. [DONE] `managed-step-orchestration.phase1.scenarios.task1` Create `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` and draft the two active scenario documents for `Diagram Modules` and `Application Skeleton`, including the managed correction-turn microtask invariant and post-completion user-return revision loop. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: draft managed step orchestration scenarios`).
-4. [DONE] Git Commit: `docs: draft managed step orchestration scenarios` (hash: 48aa1726f)
-5. [DONE] `managed-step-orchestration.phase1.rehome.task1` Move still-useful managed workflow planning sources from the top-level `Plans/` folder into `Managed_Step_Orchestration/` so active step-orchestration planning has one folder. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Workspace_Lifecycle_From_Diagram_Modules.md, doc/SolidWorks-WorkFlow/Plans/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: group managed workflow lifecycle planning docs`).
-6. [DONE] Git Commit: `docs: group managed workflow lifecycle planning docs` (hash: 37b19a3f4)
-7. [DONE] `managed-step-orchestration.phase1.rehome.task2` Move the still-useful Application Skeleton architecture baseline into `Managed_Step_Orchestration/` and delete the superseded Phase B orchestration document that drove the wrong static phase model. (scope: `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: replace superseded application skeleton orchestration plan`).
-8. [DONE] Git Commit: `docs: replace superseded application skeleton orchestration plan` (hash: 29e84c3ec)
-9. [DONE] `managed-step-orchestration.phase1.index.task1` Update planning navigation so `Docs_Index.md`, `Plans/README.md`, stable architecture links, and moved managed-step planning docs point to the new managed step orchestration folder and no longer list deleted top-level planning docs as active. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: index managed step orchestration planning folder`).
-10. [DONE] Git Commit: `docs: index managed step orchestration planning folder` (hash: 5825fabc9)
+3. [TODO] `diagram-modules-repair.phase1.plan-mutator.task1` Extract and extend Diagram Modules child-plan mutation so Product Part tasks and `repairN` task pairs are generated by a tested helper instead of ad hoc shim-only string logic. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts`; expected commit: `feat: add diagram modules repair task injection`).
+4. [TODO] Git Commit: `feat: add diagram modules repair task injection` (hash: TBD)
+5. [TODO] `diagram-modules-repair.phase1.plan-dirty.task1` Allow the active Diagram Modules child plan to be treated as Core-owned dirty state during repair injection, and include that plan path in the managed transaction target filter. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts`; expected commit: `fix: allow diagram modules repair plan commits`).
+6. [TODO] Git Commit: `fix: allow diagram modules repair plan commits` (hash: TBD)
 
-## Phase 2 - Documentation Verification (owner: Codex, updated: 2026-05-11)
+## Phase 2 - Repair Attempt Evidence And Commit Semantics (owner: Codex, updated: 2026-05-11)
 
-### Stream: Plan And Link Checks
+### Stream: Rejected Attempt Persistence
 
-11. [DONE] `managed-step-orchestration.phase2.verify.task1` Run `npm run plan:validate` and targeted documentation/link diagnostics needed for the moved/deleted planning paths; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed step orchestration planning verification`).
-    - Evidence (2026-05-11): `npm run plan:status` reported `Validation: OK`, `npm run check:links` reported `Markdown links OK (387 files checked)`, and targeted `rg` for deleted/moved top-level planning paths found only historical DONE task scope lines in this active plan.
-    - Residual risk: the scenario documents are ready for user review, but no runtime orchestrator changes are planned in this scope until the user accepts the `Diagram Modules` and `Application Skeleton` scenarios.
-12. [DONE] Git Commit: `docs: record managed step orchestration planning verification` (hash: f96bd55ac)
+7. [TODO] `diagram-modules-repair.phase2.evidence.task1` Add a Diagram Modules repair-attempt evidence writer under `.codeai-hub/<workspace>/workflow/revisions/diagram-modules/attempts/` with target artifact, validator diagnostics, attempt number, and outcome fields. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-attempt-evidence.test.ts`; expected commit: `feat: record diagram modules repair attempt evidence`).
+8. [TODO] Git Commit: `feat: record diagram modules repair attempt evidence` (hash: TBD)
+9. [TODO] `diagram-modules-repair.phase2.post-turn.task1` Integrate repair planning into the post-turn path so Core injects a repair task before feedback, and writes attempt evidence when the active repair attempt still fails validation or produces no accepted artifact diff. (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts`; expected commit: `feat: orchestrate diagram modules repair attempts`).
+10. [TODO] Git Commit: `feat: orchestrate diagram modules repair attempts` (hash: TBD)
+11. [TODO] `diagram-modules-repair.phase2.commit-task1` Commit Diagram Modules repair attempts even when the target artifact is still invalid by allowing tracked attempt evidence and the active child plan mutation to satisfy the managed commit boundary. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts`; expected commit: `feat: commit rejected diagram modules repair attempts`).
+12. [TODO] Git Commit: `feat: commit rejected diagram modules repair attempts` (hash: TBD)
 
-## Phase 3 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
+## Phase 3 - Post-Completion User Return Loop (owner: Codex, updated: 2026-05-11)
 
-### Stream: Scenario Review
+### Stream: Persistent Diagram Modules Revision Surface
 
-13. [DONE] `managed-step-orchestration.phase3.acceptance.task1` User reviews the `Diagram Modules` and `Application Skeleton` scenario documents and confirms whether they match the intended managed-step lifecycle before implementation planning begins. (scope: chat/process observation only; no commit required). Result: User accepted Diagram Modules and Application Skeleton scenario documents and requested a new Diagram Modules implementation plan.
+13. [TODO] `diagram-modules-repair.phase3.user-return.task1` Replace the one-shot Diagram Modules review task with a persistent user-return revision loop that can inject `revisionN` task pairs after all Product Parts are accepted. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `feat: keep diagram modules user return phase open`).
+14. [TODO] Git Commit: `feat: keep diagram modules user return phase open` (hash: TBD)
+15. [TODO] `diagram-modules-repair.phase3.downstream.task1` Keep downstream handoff separate from the Diagram Modules user-return loop by recording the Application Skeleton unlock in the workspace ledger without treating the Diagram Modules return phase as a terminal handoff anchor. (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: decouple diagram modules return loop from downstream handoff`).
+16. [TODO] Git Commit: `fix: decouple diagram modules return loop from downstream handoff` (hash: TBD)
 
-## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-11)
+## Phase 4 - Deterministic Rejection Testing (owner: Codex, updated: 2026-05-11)
+
+### Stream: Forced Core Rejection Harness
+
+17. [TODO] `diagram-modules-repair.phase4.rejection-test.task1` Add a deterministic forced-rejection integration test: initialize a managed Diagram Modules workspace, write a valid Product Part index plus invalid Product Part artifact, assert Core injects `repair1` before provider feedback, then assert the failed attempt is committed with tracked evidence instead of disappearing into runtime/session state. (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.diagram-modules-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts`; expected commit: `test: cover diagram modules forced repair rejection`).
+18. [TODO] Git Commit: `test: cover diagram modules forced repair rejection` (hash: TBD)
+19. [TODO] `diagram-modules-repair.phase4.regression-task1` Run targeted Diagram Modules managed-workflow tests and record the exact commands/results in this plan before broader verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair test evidence`).
+20. [TODO] Git Commit: `docs: record diagram modules repair test evidence` (hash: TBD)
+
+## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-05-11)
+
+### Stream: Targeted Build And Quality Gates
+
+21. [TODO] `diagram-modules-repair.phase5.verify.task1` Run targeted package verification for the core package plus `npm run plan:validate`; record evidence and residual risks in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules repair verification`).
+22. [TODO] Git Commit: `docs: record diagram modules repair verification` (hash: TBD)
+
+## Phase 6 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
+
+### Stream: Release Candidate Review
+
+23. [TODO] `diagram-modules-repair.phase6.acceptance.task1` User reviews the implemented Diagram Modules behavior in a local workflow run, including at least one normal Product Part sequence and one forced Core rejection scenario. (scope: chat/process observation only; no commit required).
+
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Closeout After Acceptance
 
-14. [DONE] `managed-step-orchestration.phase4.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the `Managed_Step_Orchestration` planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close managed step orchestration planning scope`).
-    - Acceptance (2026-05-11): user accepted both scenario documents and requested the next implementation plan for `Diagram Modules`.
-    - Planning disposition: keep `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` active because the accepted `Diagram_Modules_Scenario.md` is the planning source for the next implementation scope; no `Docs_Index.md` path change is needed during this closeout.
-15. [PENDING] Git Commit: `docs: close managed step orchestration planning scope` (hash: TBD)
-16. [TODO] `managed-step-orchestration.phase4.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+24. [TODO] `diagram-modules-repair.phase7.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the Diagram Modules planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close diagram modules repair orchestration scope`).
+25. [TODO] Git Commit: `docs: close diagram modules repair orchestration scope` (hash: TBD)
+26. [TODO] `diagram-modules-repair.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
