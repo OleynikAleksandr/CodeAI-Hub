@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "a04dd7dcf",
+  "lastRecordedCommit": "25cacc017",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9d.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton lifecycle release",
+  "currentTaskId": "application-skeleton.phase9d.release-build.task1",
+  "expectedCommitMessage": "chore: build application skeleton lifecycle release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton lifecycle release",
-    "preCommitHead": "a04dd7dcf",
+    "expectedCommitMessage": "chore: build application skeleton lifecycle release",
+    "preCommitHead": "25cacc017",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9d.release-docs.task1"
+    "taskId": "application-skeleton.phase9d.release-build.task1"
   }
 }
 ```
@@ -238,10 +238,19 @@ Lifecycle blocker verification evidence (2026-05-11):
 ### Stream: Package Retest Release
 
 60. [DONE] `application-skeleton.phase9d.release-docs.task1` Prepare release metadata for the approved managed lifecycle dirty-state fix by updating `README.md` and `CHANGELOG.md` to the next release version and recording release intent. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton lifecycle release`).
-61. [PENDING] Git Commit: `docs: prepare application skeleton lifecycle release` (hash: TBD)
-62. [TODO] `application-skeleton.phase9d.release-build.task1` Run the approved release build sequence for the managed lifecycle dirty-state fix, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton lifecycle release`).
-63. [TODO] Git Commit: `chore: build application skeleton lifecycle release` (hash: TBD)
+61. [DONE] Git Commit: `docs: prepare application skeleton lifecycle release` (hash: 25cacc017)
+62. [DONE] `application-skeleton.phase9d.release-build.task1` Run the approved release build sequence for the managed lifecycle dirty-state fix, verify VSIX and tarball outputs, and record artifact paths for user retest. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton lifecycle release`).
+63. [PENDING] Git Commit: `chore: build application skeleton lifecycle release` (hash: TBD)
 64. [TODO] `application-skeleton.phase9d.release-acceptance.task1` User installs the produced release and retests Application Skeleton on an existing managed workspace after Core/lifecycle upgrade. (scope: chat/process observation only; no commit required).
+
+Lifecycle-fix release build evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` built unified version `1.2.232`. Provider, core, UI, and CEF launcher artifacts were produced in `~/.codeai-hub/releases/` and copied to `doc/tmp/releases/`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` packaged `codeai-hub-1.2.232.vsix`, verified SDK exclusions, validated local artifacts, checked markdown links, ran duplication advisory check, pruned/restored production dependencies, and verified the VSIX runtime package surface.
+- VSIX: `codeai-hub-1.2.232.vsix` (`48M`).
+- Release bundle paths: `doc/tmp/releases/*1.2.232*` and `~/.codeai-hub/releases/*1.2.232*`.
+- Tarballs present in `doc/tmp/releases/`: `claude-module-1.2.232.tar.bz2`, `codex-module-1.2.232.tar.bz2`, `gemini-module-1.2.232.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.232.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.232.tar.bz2`, `vscode-webview-1.2.232.tar.bz2`, `project-manager-1.2.232.tar.bz2`.
+- User retest target: reinstall `codeai-hub-1.2.232.vsix`, then run Application Skeleton on an existing managed workspace that has already gone through Diagram Modules and extension/Core restart or upgrade.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
