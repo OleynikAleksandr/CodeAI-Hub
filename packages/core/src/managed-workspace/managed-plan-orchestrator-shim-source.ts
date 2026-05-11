@@ -172,6 +172,26 @@ const insertApplicationSkeletonReviewTaskPair = (lines, commitLineIndex, state, 
     \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise application skeleton review revision 1\\\` (hash: TBD)\`
   );
 };
+const insertApplicationSkeletonMaterializationTaskPair = (lines, commitLineIndex, state, message) => {
+  if (state.currentTaskId !== "application-skeleton.phase2.acceptance.task1" || message !== "docs: accept application skeleton contract") {
+    return;
+  }
+  if (lines.some((line) => line.includes("application-skeleton.phase3.materialize.task1"))) {
+    return;
+  }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  lines.splice(
+    commitLineIndex + 1,
+    0,
+    "",
+    "## Phase 3 — Application Skeleton Materialization",
+    "",
+    "### Stream: Filesystem Projection",
+    "",
+    formatNewTaskLine(taskNumber, "application-skeleton.phase3.materialize.task1", "TODO", "Materialize the accepted Application Skeleton filesystem projection and stop for Core validation", "product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json", "feat: materialize application skeleton"),
+    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: materialize application skeleton\\\` (hash: TBD)\`
+  );
+};
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
@@ -226,6 +246,7 @@ const advancePlanForCommit = (message) => {
 
   insertDiagramModulesProductPartTasks(lines, commitLineIndex, changedFiles);
   insertApplicationSkeletonReviewTaskPair(lines, commitLineIndex, state, message);
+  insertApplicationSkeletonMaterializationTaskPair(lines, commitLineIndex, state, message);
 
   const nextTaskLineIndex = lines.findIndex(
     (line, index) => index > commitLineIndex && readTaskLine(line)

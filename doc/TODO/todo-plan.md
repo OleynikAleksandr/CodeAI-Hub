@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "e096efe5e",
+  "lastRecordedCommit": "a8f6a152c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase3.materialization-gate.task1",
-  "expectedCommitMessage": "fix: gate application skeleton materialization after acceptance commit",
+  "currentTaskId": "application-skeleton.phase3.materialization-shim.task1",
+  "expectedCommitMessage": "fix: inject application skeleton materialization task after acceptance commit",
   "debt": {
-    "expectedCommitMessage": "fix: gate application skeleton materialization after acceptance commit",
-    "preCommitHead": "e096efe5e",
+    "expectedCommitMessage": "fix: inject application skeleton materialization task after acceptance commit",
+    "preCommitHead": "a8f6a152c",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase3.materialization-gate.task1"
+    "taskId": "application-skeleton.phase3.materialization-shim.task1"
   }
 }
 ```
@@ -85,9 +85,9 @@
 15. [DONE] `application-skeleton.phase3.acceptance.task1` Make the Accept Contract command inject and commit explicit acceptance state before materialization can be requested. (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts`; expected commit: `fix: commit application skeleton acceptance before materialization`).
 16. [DONE] Git Commit: `fix: commit application skeleton acceptance before materialization` (hash: e096efe5e)
 17. [DONE] `application-skeleton.phase3.materialization-gate.task1` Gate the materialization continuation on completed acceptance commit evidence, then inject only the materialization microtask and its paired commit. (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `fix: gate application skeleton materialization after acceptance commit`).
-18. [PENDING] Git Commit: `fix: gate application skeleton materialization after acceptance commit` (hash: TBD)
-19. [TODO] `application-skeleton.phase3.materialization-shim.task1` Make the generated managed plan shim inject the Application Skeleton materialization task pair immediately after the acceptance commit. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: inject application skeleton materialization task after acceptance commit`).
-20. [TODO] Git Commit: `fix: inject application skeleton materialization task after acceptance commit` (hash: TBD)
+18. [DONE] Git Commit: `fix: gate application skeleton materialization after acceptance commit` (hash: a8f6a152c)
+19. [DONE] `application-skeleton.phase3.materialization-shim.task1` Make the generated managed plan shim inject the Application Skeleton materialization task pair immediately after the acceptance commit. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts`; expected commit: `fix: inject application skeleton materialization task after acceptance commit`).
+20. [PENDING] Git Commit: `fix: inject application skeleton materialization task after acceptance commit` (hash: TBD)
 
 ## Phase 4 - Post-Completion User Return And Downstream Handoff (owner: Codex, updated: 2026-05-11)
 

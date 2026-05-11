@@ -12,6 +12,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import { injectApplicationSkeletonTaskPair } from "./managed-application-skeleton-plan-mutator";
 import { ManagedPlanOrchestratorInstaller } from "./managed-plan-orchestrator-installer";
 import {
   NEXT_STAGE_AFTER,
@@ -60,6 +61,12 @@ const APPLICATION_SKELETON_REVIEW_REVISION_COMMIT_PIN_RE =
   /\[TODO\] Git Commit: `docs: revise application skeleton review revision 1`/u;
 const APPLICATION_SKELETON_REVIEW_IN_PROGRESS_RE =
   /\[IN_PROGRESS\] `application-skeleton\.phase2\.review\.task1`/u;
+const APPLICATION_SKELETON_MATERIALIZE_TASK_RE =
+  /Current Task: application-skeleton\.phase3\.materialize\.task1/u;
+const APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE =
+  /Expected Commit: feat: materialize application skeleton/u;
+const APPLICATION_SKELETON_MATERIALIZE_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `application-skeleton\.phase3\.materialize\.task1`/u;
 const APPLICATION_SKELETON_STATIC_REVIEW_RE =
   /Application Skeleton Contract Review/u;
 const APPLICATION_SKELETON_STATIC_MATERIALIZE_RE =
@@ -266,6 +273,80 @@ test("managed plan shim advances application skeleton draft commits to open-ende
     assert.match(plan, APPLICATION_SKELETON_REVIEW_REVISION_COMMIT_PIN_RE);
     assert.doesNotMatch(plan, APPLICATION_SKELETON_STATIC_MATERIALIZE_RE);
     assert.equal(gitStatus.stdout.trim(), "");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed plan shim advances application skeleton acceptance commits to materialization", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    const artifactRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton"
+    );
+    await mkdir(artifactRoot, { recursive: true });
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n",
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: draft application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const acceptanceInjection = injectApplicationSkeletonTaskPair({
+      kind: "acceptance",
+      planText: await readFile(planPath, "utf8"),
+    });
+    assert.ok(acceptanceInjection);
+    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      `${JSON.stringify({ accepted: true, lifecycle: "accepted" }, null, 2)}\n`,
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: accept application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const status = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    const plan = await readFile(planPath, "utf8");
+
+    assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_TASK_RE);
+    assert.match(status.stdout, APPLICATION_SKELETON_MATERIALIZE_COMMIT_RE);
+    assert.match(plan, APPLICATION_SKELETON_MATERIALIZE_IN_PROGRESS_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
