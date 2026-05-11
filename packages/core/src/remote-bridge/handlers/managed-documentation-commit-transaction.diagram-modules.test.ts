@@ -15,6 +15,12 @@ const WORKSPACE_SLUG = "demo-workspace";
 const DIAGRAM_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 const REPAIR_COMMIT_RE =
   /docs: repair diagram modules product part index attempt 1/u;
+const USER_RETURN_REVISION1_STATE_RE =
+  /"currentTaskId": "diagram-modules\.user-return\.revision1\.task1"/u;
+const USER_RETURN_REVISION2_STATE_RE =
+  /"currentTaskId": "diagram-modules\.user-return\.revision2\.task1"/u;
+const USER_RETURN_REVISION_COMMIT_RE =
+  /docs: revise diagram modules user return revision 1/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -70,6 +76,36 @@ const injectIndexRepairTask = async (workspaceRoot: string): Promise<void> => {
   await writeFile(absolutePlanPath, injection.nextPlanText, "utf8");
 };
 
+const createProjectManagerIndex = (status: "generated" | "planned"): string =>
+  [
+    "# Product Parts Index",
+    "",
+    "### Product Part: project-manager",
+    "- Id: project-manager",
+    "- Title: Project Manager",
+    "- Purpose: Owns the workflow shell.",
+    `- Status: ${status}`,
+    "",
+  ].join("\n");
+
+const createProjectManagerPart = (body: string): string =>
+  [
+    "# Product Part: project-manager",
+    "",
+    "## Identity",
+    "",
+    "| Field | Value |",
+    "| ----- | ----- |",
+    "| Part ID | `project-manager` |",
+    "",
+    "## Standalone Modules",
+    "",
+    "| Module | Responsibility |",
+    "| --- | --- |",
+    `| workflow-shell | ${body} |`,
+    "",
+  ].join("\n");
+
 test("Diagram Modules child plan is Core-owned dirty state for repair commits", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "diagram-modules-plan-dirty-")
@@ -96,6 +132,76 @@ test("Diagram Modules child plan is Core-owned dirty state for repair commits", 
     assert.match(
       await runGit(workspaceRoot, ["log", "--oneline", "-3"]),
       REPAIR_COMMIT_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules user-return revision commits Project Manager artifact edits", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-user-return-commit-")
+  );
+
+  try {
+    await initManagedWorkspace(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+      createProjectManagerIndex("planned")
+    );
+
+    const indexResult =
+      await new ManagedDocumentationCommitTransaction().commitAcceptedStage({
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+    assert.equal(indexResult.status, "committed");
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+      createProjectManagerIndex("generated")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/project-manager.md`,
+      createProjectManagerPart("Initial generated ownership.")
+    );
+
+    const partResult =
+      await new ManagedDocumentationCommitTransaction().commitAcceptedStage({
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+    assert.equal(partResult.status, "committed");
+    assert.match(
+      await readFile(path.join(workspaceRoot, DIAGRAM_PLAN_PATH), "utf8"),
+      USER_RETURN_REVISION1_STATE_RE
+    );
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/project-manager.md`,
+      createProjectManagerPart("User-requested Project Manager revision.")
+    );
+
+    const revisionResult =
+      await new ManagedDocumentationCommitTransaction().commitAcceptedStage({
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+
+    assert.equal(revisionResult.status, "committed");
+    assert.deepEqual(revisionResult.unmanagedDirtyFiles, []);
+    assert.deepEqual(await runGit(workspaceRoot, ["status", "--short"]), "");
+    assert.match(
+      await readFile(path.join(workspaceRoot, DIAGRAM_PLAN_PATH), "utf8"),
+      USER_RETURN_REVISION2_STATE_RE
+    );
+    assert.match(
+      await runGit(workspaceRoot, ["log", "--oneline", "-3"]),
+      USER_RETURN_REVISION_COMMIT_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

@@ -8,15 +8,15 @@
   "planId": "diagram-modules-managed-repair-orchestration",
   "branch": "main",
   "baseHead": "07cf50548",
-  "lastRecordedCommit": "a24b46410",
+  "lastRecordedCommit": "f6dc39550",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Scenario.md",
-  "currentTaskId": "diagram-modules-repair.phase8a.user-return-revision.task1",
-  "expectedCommitMessage": "fix: track diagram modules user return revisions",
+  "currentTaskId": "diagram-modules-repair.phase8a.user-return-regression.task1",
+  "expectedCommitMessage": "test: cover diagram modules user return commit boundary",
   "debt": {
-    "expectedCommitMessage": "fix: track diagram modules user return revisions",
-    "preCommitHead": "a24b46410",
+    "expectedCommitMessage": "test: cover diagram modules user return commit boundary",
+    "preCommitHead": "f6dc39550",
     "stage": "commit_pending",
-    "taskId": "diagram-modules-repair.phase8a.user-return-revision.task1"
+    "taskId": "diagram-modules-repair.phase8a.user-return-regression.task1"
   }
 }
 ```
@@ -152,9 +152,13 @@
 ### Stream: Persistent Revision Commit Pair
 
 30. [DONE] `diagram-modules-repair.phase8a.user-return-revision.task1` Replace the Diagram Modules no-commit user-return anchor with an always-open `revisionN` microtask plus paired `Git Commit`, and after each user-return commit open the next revision task. (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `fix: track diagram modules user return revisions`).
-31. [PENDING] Git Commit: `fix: track diagram modules user return revisions` (hash: TBD)
-32. [TODO] `diagram-modules-repair.phase8a.user-return-regression.task1` Cover the installed shim and managed commit boundary for Diagram Modules user-return revisions so a user-requested Project Manager edit is committed instead of left as dirty state. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules user return commit boundary`).
-33. [TODO] Git Commit: `test: cover diagram modules user return commit boundary` (hash: TBD)
+31. [DONE] Git Commit: `fix: track diagram modules user return revisions` (hash: f6dc39550)
+32. [DONE] `diagram-modules-repair.phase8a.user-return-regression.task1` Cover the installed shim and managed commit boundary for Diagram Modules user-return revisions so a user-requested Project Manager edit is committed instead of left as dirty state. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules user return commit boundary`).
+33. [PENDING] Git Commit: `test: cover diagram modules user return commit boundary` (hash: TBD)
+
+#### Phase 8A Regression Evidence
+
+- 2026-05-11: `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` - PASS (`tests 9`, `pass 9`, `fail 0`, `duration_ms 3975.424334`). Covered installed shim final Product Part -> `revision1`, revision commit -> `revision2`, and managed commit transaction committing a user-requested Project Manager artifact revision instead of leaving dirty state.
 
 ## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 

@@ -39,8 +39,13 @@ const DIAGRAM_THIRD_TASK_RE =
 const DIAGRAM_THIRD_COMMIT_RE =
   /Expected Commit: docs: update diagram modules product part core-runtime/u;
 const DIAGRAM_USER_RETURN_TASK_RE =
-  /Current Task: diagram-modules\.user-return\.task1/u;
-const DIAGRAM_USER_RETURN_COMMIT_RE = /Expected Commit: none/u;
+  /Current Task: diagram-modules\.user-return\.revision1\.task1/u;
+const DIAGRAM_USER_RETURN_REVISION2_TASK_RE =
+  /Current Task: diagram-modules\.user-return\.revision2\.task1/u;
+const DIAGRAM_USER_RETURN_COMMIT_RE =
+  /Expected Commit: docs: revise diagram modules user return revision 1/u;
+const DIAGRAM_USER_RETURN_REVISION2_COMMIT_RE =
+  /Expected Commit: docs: revise diagram modules user return revision 2/u;
 const DIAGRAM_USER_RETURN_PHASE_RE =
   /Phase 2 — Persistent Diagram Modules User Return/u;
 const APPLICATION_SKELETON_TASK_RE =
@@ -448,6 +453,33 @@ test("managed plan shim advances the active task inside plan commits", async () 
     assert.match(
       userReturnWorkspacePlan,
       WORKSPACE_UNLOCKED_APPLICATION_STAGE_RE
+    );
+
+    await writeFile(
+      corePath,
+      "# Product Part: core-runtime\n\nUser-requested revision\n",
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [
+        scriptPath,
+        "commit",
+        "docs: revise diagram modules user return revision 1",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const revisionStatus = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    assert.match(revisionStatus.stdout, DIAGRAM_USER_RETURN_REVISION2_TASK_RE);
+    assert.match(
+      revisionStatus.stdout,
+      DIAGRAM_USER_RETURN_REVISION2_COMMIT_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
