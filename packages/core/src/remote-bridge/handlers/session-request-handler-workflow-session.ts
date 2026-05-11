@@ -3,6 +3,7 @@ import { promisify } from "node:util";
 import { ManagedPlanOrchestratorInstaller } from "../../managed-workspace/managed-plan-orchestrator-installer";
 import { ManagedWorkspaceAdoptionCommitter } from "../../managed-workspace/managed-workspace-adoption-committer";
 import { ManagedWorkspaceBootstrapper } from "../../managed-workspace/managed-workspace-bootstrapper";
+import { ManagedWorkspaceLifecycleCommitter } from "../../managed-workspace/managed-workspace-lifecycle-committer";
 import {
   type ManagedWorkspaceValidationResult,
   ManagedWorkspaceValidator,
@@ -120,6 +121,8 @@ export class DefaultManagedWorkspaceLifecycle
   private readonly adoptionCommitter = new ManagedWorkspaceAdoptionCommitter();
   private readonly bootstrapper = new ManagedWorkspaceBootstrapper();
   private readonly installer = new ManagedPlanOrchestratorInstaller();
+  private readonly lifecycleCommitter =
+    new ManagedWorkspaceLifecycleCommitter();
   private readonly validator = new ManagedWorkspaceValidator();
 
   async ensureReady(
@@ -129,6 +132,7 @@ export class DefaultManagedWorkspaceLifecycle
     await this.bootstrapper.bootstrap(workspaceRoot);
     await this.installer.install(workspaceRoot, { initialStage });
     await this.adoptionCommitter.commitInitialBaseline(workspaceRoot);
+    await this.lifecycleCommitter.commitInstalledLifecycle(workspaceRoot);
     await commitManagedStageHandoff(workspaceRoot);
     return await this.validator.validate(workspaceRoot);
   }

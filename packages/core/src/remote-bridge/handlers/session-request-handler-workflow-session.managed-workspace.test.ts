@@ -19,8 +19,6 @@ const DIAGRAM_MODULES_PLAN_COMMIT_RE =
   /docs: update diagram modules product part index/u;
 const APPLICATION_SKELETON_PLAN_RE =
   /doc\/TODO\/stages\/application-skeleton\/todo-plan\.md/u;
-const APPLICATION_SKELETON_COMMIT_RE =
-  /feat: materialize application skeleton/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_STAGE_RE = /"activeStage": "application_skeleton"/u;
@@ -30,22 +28,15 @@ const APPLICATION_SKELETON_INITIAL_COMMIT_RE =
   /"expectedCommitMessage": "docs: draft application skeleton contract"/u;
 const APPLICATION_SKELETON_PHASE1_TASK_RE =
   /application-skeleton\.phase1\.draft\.task1/u;
-const APPLICATION_SKELETON_PHASE2_TASK_RE =
-  /application-skeleton\.phase2\.review\.task1/u;
-const APPLICATION_SKELETON_PHASE3_TASK_RE =
-  /application-skeleton\.phase3\.materialize\.task1/u;
-const APPLICATION_SKELETON_HANDOFF_TASK_RE =
-  /application-skeleton\.handoff\.task1/u;
 const APPLICATION_SKELETON_PHASE_BOOTSTRAP_RE =
   /## Phase 1 — Application Skeleton Contract Bootstrap/u;
 const APPLICATION_SKELETON_PHASE1_HEADING_RE =
   /### Stream: Core-Gated Initial Draft/u;
-const APPLICATION_SKELETON_PHASE2_HEADING_RE = /### Stream: User-Led Review/u;
-const APPLICATION_SKELETON_PHASE3_HEADING_RE =
-  /### Stream: Core-Led Materialization/u;
-const APPLICATION_SKELETON_HANDOFF_HEADING_RE =
-  /### Stream: Reserved Post-Closeout Handoff Anchor/u;
 const HANDOFF_COMMIT_RE = /chore: switch managed workspace stage/u;
+const LIFECYCLE_UPGRADE_COMMIT_RE =
+  /chore: update managed workspace lifecycle/u;
+const APPLICATION_SKELETON_SHIM_MUTATOR_RE =
+  /insertApplicationSkeletonReviewTaskPair/u;
 
 const createAdapter = (): ProviderAdapter => ({
   closeSession: () => Promise.resolve(),
@@ -323,7 +314,6 @@ test("default managed lifecycle switches active stage before technical work", as
       ),
       "utf8"
     );
-    assert.match(applicationSkeletonPlanText, APPLICATION_SKELETON_COMMIT_RE);
     assert.match(
       applicationSkeletonPlanText,
       APPLICATION_SKELETON_DRAFT_COMMIT_RE
@@ -342,18 +332,6 @@ test("default managed lifecycle switches active stage before technical work", as
     );
     assert.match(
       applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE2_TASK_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE3_TASK_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_HANDOFF_TASK_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
       APPLICATION_SKELETON_PHASE_BOOTSTRAP_RE
     );
     assert.match(
@@ -361,20 +339,70 @@ test("default managed lifecycle switches active stage before technical work", as
       APPLICATION_SKELETON_PHASE1_HEADING_RE
     );
     assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE2_HEADING_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_PHASE3_HEADING_RE
-    );
-    assert.match(
-      applicationSkeletonPlanText,
-      APPLICATION_SKELETON_HANDOFF_HEADING_RE
-    );
-    assert.match(
       await git(workspaceRoot, ["log", "--pretty=%s", "-2"]),
       HANDOFF_COMMIT_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("default managed lifecycle commits installed shim upgrades before technical stage work", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-managed-lifecycle-upgrade-")
+  );
+  try {
+    await new DefaultManagedWorkspaceLifecycle().ensureReady(
+      workspaceRoot,
+      "diagram_modules"
+    );
+    const planCliPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    await writeFile(
+      planCliPath,
+      "#!/usr/bin/env node\nconsole.log('old managed lifecycle');\n",
+      "utf8"
+    );
+    await execFileAsync(
+      "git",
+      ["add", "--", "scripts/plan-orchestrator/plan-cli.mjs"],
+      { cwd: workspaceRoot }
+    );
+    await execFileAsync(
+      "git",
+      [
+        "-c",
+        "core.hooksPath=",
+        "-c",
+        "user.name=CodeAI Hub Test",
+        "-c",
+        "user.email=codeai-hub-test@example.local",
+        "commit",
+        "-m",
+        "test: simulate old managed lifecycle",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const result = await new DefaultManagedWorkspaceLifecycle().ensureReady(
+      workspaceRoot,
+      "application_skeleton"
+    );
+
+    assert.equal(result.ok, true);
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
+    const recentSubjects = await git(workspaceRoot, [
+      "log",
+      "--pretty=%s",
+      "-3",
+    ]);
+    assert.match(recentSubjects, HANDOFF_COMMIT_RE);
+    assert.match(recentSubjects, LIFECYCLE_UPGRADE_COMMIT_RE);
+    assert.match(
+      await readFile(planCliPath, "utf8"),
+      APPLICATION_SKELETON_SHIM_MUTATOR_RE
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

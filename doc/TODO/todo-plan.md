@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "5f05f7997",
+  "lastRecordedCommit": "52c767ee9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9b.release-build.task1",
-  "expectedCommitMessage": "chore: build application skeleton restart fix release",
+  "currentTaskId": "application-skeleton.phase9c.lifecycle-upgrade.task1",
+  "expectedCommitMessage": "fix: commit managed lifecycle upgrades before application skeleton",
   "debt": {
-    "expectedCommitMessage": "chore: build application skeleton restart fix release",
-    "preCommitHead": "5f05f7997",
+    "expectedCommitMessage": "fix: commit managed lifecycle upgrades before application skeleton",
+    "preCommitHead": "52c767ee9",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9b.release-build.task1"
+    "taskId": "application-skeleton.phase9c.lifecycle-upgrade.task1"
   }
 }
 ```
@@ -194,8 +194,8 @@ Restart gate verification evidence (2026-05-11):
 48. [DONE] `application-skeleton.phase9b.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton restart gate fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton restart fix release`).
 49. [DONE] Git Commit: `docs: prepare application skeleton restart fix release` (hash: 5f05f7997)
 50. [DONE] `application-skeleton.phase9b.release-build.task1` Run the approved release build sequence, then record artifact paths, VSIX version, and restart-fix release evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton restart fix release`).
-51. [PENDING] Git Commit: `chore: build application skeleton restart fix release` (hash: TBD)
-52. [TODO] `application-skeleton.phase9b.release-acceptance.task1` User installs the produced restart-fix release and accepts or rejects the Application Skeleton start gate behavior after extension/Core restart. (scope: chat/process observation only; no commit required).
+51. [DONE] Git Commit: `chore: build application skeleton restart fix release` (hash: 52c767ee9)
+52. [DONE] `application-skeleton.phase9b.release-acceptance.task1` User installs the produced restart-fix release and accepts or rejects the Application Skeleton start gate behavior after extension/Core restart. (scope: chat/process observation only; no commit required). Result: Release 1.2.231 retest rejected: Application Skeleton started, but Core left scripts/plan-orchestrator/plan-cli.mjs dirty after managed lifecycle upgrade, blocked the draft commit as out-of-stage, sent contradictory provider feedback, and did not create a new correction microtask with a paired Git Commit.
 
 Restart-fix release docs preparation evidence (2026-05-11):
 
@@ -211,12 +211,24 @@ Restart-fix release build evidence (2026-05-11):
 - Release bundle paths: `doc/tmp/releases/*1.2.231*` and `~/.codeai-hub/releases/*1.2.231*`.
 - Tarballs present in `doc/tmp/releases/`: `claude-module-1.2.231.tar.bz2`, `codex-module-1.2.231.tar.bz2`, `gemini-module-1.2.231.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.231.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.231.tar.bz2`, `vscode-webview-1.2.231.tar.bz2`, `project-manager-1.2.231.tar.bz2`.
 
+## Phase 9C - Release Blocker: Managed Lifecycle Upgrade Dirty State (owner: Codex, updated: 2026-05-11)
+
+### Stream: Core-Owned Shim Upgrade Boundary
+
+53. [DONE] `application-skeleton.phase9c.lifecycle-upgrade.task1` Commit Core-owned managed lifecycle/shim upgrades before Application Skeleton provider sessions start, so `scripts/plan-orchestrator/plan-cli.mjs` cannot remain as out-of-stage dirty state and block the draft artifact commit. (scope: `packages/core/src/managed-workspace/managed-workspace-lifecycle-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed lifecycle upgrades before application skeleton`).
+54. [PENDING] Git Commit: `fix: commit managed lifecycle upgrades before application skeleton` (hash: TBD)
+55. [TODO] `application-skeleton.phase9c.out-of-owner-feedback.task1` Ensure Application Skeleton out-of-owner dirty blockers do not send actionable artifact-correction instructions to the provider; Core must either resolve its own boundary or surface a non-provider wait/block notice. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton out-of-owner blockers non-actionable`).
+56. [TODO] Git Commit: `fix: keep application skeleton out-of-owner blockers non-actionable` (hash: TBD)
+57. [TODO] `application-skeleton.phase9c.verify.task1` Reproduce the v1.2.231 dirty lifecycle-script blocker in a test workspace, verify Core commits the lifecycle upgrade before Application Skeleton work, run targeted tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton lifecycle blocker verification`).
+58. [TODO] Git Commit: `docs: record application skeleton lifecycle blocker verification` (hash: TBD)
+59. [TODO] `application-skeleton.phase9c.release-confirmation.task1` Get separate explicit confirmation from the user before preparing another release build for the managed lifecycle dirty-state fix. (scope: chat/process observation only; no commit required).
+
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-53. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-54. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-55. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-56. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-57. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+60. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+61. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+62. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+63. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+64. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
