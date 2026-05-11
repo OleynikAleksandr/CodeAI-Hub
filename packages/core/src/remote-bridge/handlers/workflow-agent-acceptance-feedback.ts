@@ -424,15 +424,22 @@ export class WorkflowAgentAcceptanceFeedback {
         ? params.progress.validationErrors
         : []),
     ];
+    let actionLines: readonly string[] = [];
+    if (outOfOwnerDirtyFiles.length > 0) {
+      actionLines = [
+        "Do not update Application Skeleton artifacts in response to this message.",
+        "Wait for Core to finish or repair the managed lifecycle boundary for the current target.",
+      ];
+    } else if (params.progress) {
+      actionLines = createApplicationSkeletonActionLines(params.progress);
+    }
     await this.sendManagedStageFeedback({
       chains: params.chains,
       gateway: params.gateway,
       request:
         params.progress && errors.length > 0
           ? {
-              actionLines: [
-                ...createApplicationSkeletonActionLines(params.progress),
-              ],
+              actionLines: [...actionLines],
               checkLines: createApplicationSkeletonCheckLines(params.progress),
               errors,
               stage: APPLICATION_SKELETON_STAGE,

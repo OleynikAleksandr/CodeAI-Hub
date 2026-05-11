@@ -23,6 +23,8 @@ const APPLICATION_SKELETON_DRAFT_RULE_RE =
   /draft application-skeleton-map\.json and application-skeleton\.md must be complete and committed before user review/u;
 const APPLICATION_SKELETON_NO_MATERIALIZE_RE =
   /Do not create product-parts\/\*\* or mark the skeleton accepted\/materialized until explicit user acceptance/u;
+const APPLICATION_SKELETON_WAIT_RE =
+  /Do not update Application Skeleton artifacts in response to this message/u;
 const QUALITY_GATES_OBSERVED_RE =
   /Observed accepted: true; integrated: false; integrationState: integrated; substep: failed\./u;
 const OUT_OF_OWNER_DIRTY_RE =
@@ -289,7 +291,7 @@ test("Application Skeleton draft feedback does not instruct materialization befo
   }
 });
 
-test("managed feedback reports out-of-owner dirty files without provider shell commands", async () => {
+test("managed feedback reports out-of-owner dirty files without provider actions", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-agent-feedback-out-of-owner-")
   );
@@ -319,12 +321,40 @@ test("managed feedback reports out-of-owner dirty files without provider shell c
       workspaceRoot,
       workspaceSlug: "demo-workspace",
     });
+    await new WorkflowAgentAcceptanceFeedback(
+      new Logger("error")
+    ).sendApplicationSkeletonFeedback({
+      chains: createChains("application_skeleton", "skeleton-session"),
+      gateway: {
+        handleMessage: (sessionId, content) => {
+          messages.push(`${sessionId}\n${stringifyFeedbackPayload(content)}`);
+          return Promise.resolve();
+        },
+      },
+      progress: {
+        accepted: false,
+        managedGitOutOfOwnerDirtyFiles: ["scratch/unmanaged.txt"],
+        mapExists: true,
+        mappingReady: true,
+        markdownExists: true,
+        materializationState: "artifact",
+        materialized: false,
+        observedMaterialization: false,
+        substep: "awaiting_acceptance",
+        validationErrors: [],
+      } as never,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
 
-    assert.equal(messages.length, 1);
-    assert.match(messages[0] ?? "", OUT_OF_OWNER_DIRTY_RE);
-    assert.match(messages[0] ?? "", OUT_OF_OWNER_NEUTRAL_RE);
-    assert.doesNotMatch(messages[0] ?? "", PLAN_COMMIT_COMMAND_RE);
-    assert.doesNotMatch(messages[0] ?? "", FORBIDDEN_GIT_IMPERATIVES_RE);
+    assert.equal(messages.length, 2);
+    const feedbackText = messages.join("\n---\n");
+    assert.match(feedbackText, OUT_OF_OWNER_DIRTY_RE);
+    assert.match(feedbackText, OUT_OF_OWNER_NEUTRAL_RE);
+    assert.match(feedbackText, APPLICATION_SKELETON_WAIT_RE);
+    assert.doesNotMatch(feedbackText, PLAN_COMMIT_COMMAND_RE);
+    assert.doesNotMatch(feedbackText, FORBIDDEN_GIT_IMPERATIVES_RE);
+    assert.doesNotMatch(feedbackText, APPLICATION_SKELETON_NO_MATERIALIZE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

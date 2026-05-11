@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "52c767ee9",
+  "lastRecordedCommit": "b6136a3e5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9c.lifecycle-upgrade.task1",
-  "expectedCommitMessage": "fix: commit managed lifecycle upgrades before application skeleton",
+  "currentTaskId": "application-skeleton.phase9c.out-of-owner-feedback.task1",
+  "expectedCommitMessage": "fix: keep application skeleton out-of-owner blockers non-actionable",
   "debt": {
-    "expectedCommitMessage": "fix: commit managed lifecycle upgrades before application skeleton",
-    "preCommitHead": "52c767ee9",
+    "expectedCommitMessage": "fix: keep application skeleton out-of-owner blockers non-actionable",
+    "preCommitHead": "b6136a3e5",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9c.lifecycle-upgrade.task1"
+    "taskId": "application-skeleton.phase9c.out-of-owner-feedback.task1"
   }
 }
 ```
@@ -216,9 +216,9 @@ Restart-fix release build evidence (2026-05-11):
 ### Stream: Core-Owned Shim Upgrade Boundary
 
 53. [DONE] `application-skeleton.phase9c.lifecycle-upgrade.task1` Commit Core-owned managed lifecycle/shim upgrades before Application Skeleton provider sessions start, so `scripts/plan-orchestrator/plan-cli.mjs` cannot remain as out-of-stage dirty state and block the draft artifact commit. (scope: `packages/core/src/managed-workspace/managed-workspace-lifecycle-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed lifecycle upgrades before application skeleton`).
-54. [PENDING] Git Commit: `fix: commit managed lifecycle upgrades before application skeleton` (hash: TBD)
-55. [TODO] `application-skeleton.phase9c.out-of-owner-feedback.task1` Ensure Application Skeleton out-of-owner dirty blockers do not send actionable artifact-correction instructions to the provider; Core must either resolve its own boundary or surface a non-provider wait/block notice. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton out-of-owner blockers non-actionable`).
-56. [TODO] Git Commit: `fix: keep application skeleton out-of-owner blockers non-actionable` (hash: TBD)
+54. [DONE] Git Commit: `fix: commit managed lifecycle upgrades before application skeleton` (hash: b6136a3e5)
+55. [DONE] `application-skeleton.phase9c.out-of-owner-feedback.task1` Ensure Application Skeleton out-of-owner dirty blockers do not send actionable artifact-correction instructions to the provider; Core must either resolve its own boundary or surface a non-provider wait/block notice. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton out-of-owner blockers non-actionable`).
+56. [PENDING] Git Commit: `fix: keep application skeleton out-of-owner blockers non-actionable` (hash: TBD)
 57. [TODO] `application-skeleton.phase9c.verify.task1` Reproduce the v1.2.231 dirty lifecycle-script blocker in a test workspace, verify Core commits the lifecycle upgrade before Application Skeleton work, run targeted tests, core build, and `npm run plan:validate`. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton lifecycle blocker verification`).
 58. [TODO] Git Commit: `docs: record application skeleton lifecycle blocker verification` (hash: TBD)
 59. [TODO] `application-skeleton.phase9c.release-confirmation.task1` Get separate explicit confirmation from the user before preparing another release build for the managed lifecycle dirty-state fix. (scope: chat/process observation only; no commit required).
