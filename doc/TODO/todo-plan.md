@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "e28a4946f",
+  "lastRecordedCommit": "656d812ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9k.plan.task1",
-  "expectedCommitMessage": "docs: plan application skeleton misplaced product parts repair",
+  "currentTaskId": "application-skeleton.phase9k.feedback.task1",
+  "expectedCommitMessage": "fix: guide application skeleton misplaced product parts repair",
   "debt": {
-    "expectedCommitMessage": "docs: plan application skeleton misplaced product parts repair",
-    "preCommitHead": "e28a4946f",
+    "expectedCommitMessage": "fix: guide application skeleton misplaced product parts repair",
+    "preCommitHead": "656d812ea",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9k.plan.task1"
+    "taskId": "application-skeleton.phase9k.feedback.task1"
   }
 }
 ```
@@ -421,22 +421,30 @@ Application Skeleton Quality Gates handoff release build evidence (2026-05-11):
 ### Stream: Repair Instruction And Commit Boundary
 
 115. [DONE] `application-skeleton.phase9k.plan.task1` Record the v1.2.236 blocker where provider-created `.codeai-hub/<workspaceSlug>/product-parts/**` was reported as a wait-only lifecycle boundary instead of an actionable Application Skeleton repair, then split the fix into repair feedback, plan scope, terminal handoff, and verification. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton misplaced product parts repair`).
-116. [PENDING] Git Commit: `docs: plan application skeleton misplaced product parts repair` (hash: TBD)
-117. [TODO] `application-skeleton.phase9k.feedback.task1` Make Application Skeleton feedback classify misplaced `.codeai-hub/<workspaceSlug>/product-parts/**` as an actionable repair condition that tells the agent to move the projection to root `product-parts/**`, not wait for Core. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: guide application skeleton misplaced product parts repair`).
-118. [TODO] Git Commit: `fix: guide application skeleton misplaced product parts repair` (hash: TBD)
+116. [DONE] Git Commit: `docs: plan application skeleton misplaced product parts repair` (hash: 656d812ea)
+117. [DONE] `application-skeleton.phase9k.feedback.task1` Make Application Skeleton feedback classify misplaced `.codeai-hub/<workspaceSlug>/product-parts/**` as an actionable repair condition that tells the agent to move the projection to root `product-parts/**`, not wait for Core. (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: guide application skeleton misplaced product parts repair`).
+118. [PENDING] Git Commit: `fix: guide application skeleton misplaced product parts repair` (hash: TBD)
 119. [TODO] `application-skeleton.phase9k.repair-scope.task1` Include misplaced `.codeai-hub/**/product-parts/**` cleanup in generated Application Skeleton repair task scopes so the child plan accurately covers removal or relocation of the invalid projection. (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope application skeleton misplaced product parts cleanup`).
 120. [TODO] Git Commit: `fix: scope application skeleton misplaced product parts cleanup` (hash: TBD)
-121. [TODO] `application-skeleton.phase9k.repair-handoff.task1` Treat a successful materialization repair commit that creates root `product-parts/**` as the terminal Application Skeleton handoff so Core creates the Quality Gates child plan and advances the workspace ledger. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hand off application skeleton after materialization repair`).
-122. [TODO] Git Commit: `fix: hand off application skeleton after materialization repair` (hash: TBD)
-123. [TODO] `application-skeleton.phase9k.verify.task1` Run targeted feedback, mutator, managed shim, and core build checks; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton misplaced product parts repair verification`).
-124. [TODO] Git Commit: `docs: record application skeleton misplaced product parts repair verification` (hash: TBD)
+121. [TODO] `application-skeleton.phase9k.status.task1` Harden Application Skeleton workflow-state hydration so the stage cannot remain visually completed or launch Quality Gates before materialized progress is true and the managed lifecycle is clean. (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton pending before materialization`).
+122. [TODO] Git Commit: `fix: keep application skeleton pending before materialization` (hash: TBD)
+123. [TODO] `application-skeleton.phase9k.repair-handoff.task1` Treat a successful materialization repair commit that creates root `product-parts/**` as the terminal Application Skeleton handoff so Core creates the Quality Gates child plan and advances the workspace ledger. (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hand off application skeleton after materialization repair`).
+124. [TODO] Git Commit: `fix: hand off application skeleton after materialization repair` (hash: TBD)
+125. [TODO] `application-skeleton.phase9k.verify.task1` Run targeted feedback, mutator, workflow-state, managed shim, and core build checks; record exact evidence and residual release-build requirement. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton misplaced product parts repair verification`).
+126. [TODO] Git Commit: `docs: record application skeleton misplaced product parts repair verification` (hash: TBD)
+
+Application Skeleton misplaced product-parts feedback evidence (2026-05-11):
+
+- PASS: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts` - 6 tests passed.
+- Fixed text rule: when Core sees `.codeai-hub/<workspaceSlug>/product-parts/**` after Application Skeleton materialization, it must instruct the agent to move that projection to root `product-parts/**` and remove the misplaced copy; it must not send a wait-only `Do not update Application Skeleton artifacts` lifecycle-boundary message for this actionable repair.
+- Carried user-observed status risk forward: Application Skeleton must not appear completed or unlock Quality Gates before materialized progress is true and the managed lifecycle is clean.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Archive And Planning Disposition
 
-125. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
-126. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
-127. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
-128. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
-129. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).
+127. [TODO] `application-skeleton.phase10.closeout-plan.task1` After explicit user acceptance, archive the active TODO plan and record the accepted Application Skeleton closeout state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Scenario.md`; expected commit: `docs: archive application skeleton orchestration scope`).
+128. [TODO] Git Commit: `docs: archive application skeleton orchestration scope` (hash: TBD)
+129. [TODO] `application-skeleton.phase10.plans-disposition.task1` Move or update planning documents according to their final disposition and refresh documentation indexes after closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton planning disposition`).
+130. [TODO] Git Commit: `docs: close application skeleton planning disposition` (hash: TBD)
+131. [TODO] `application-skeleton.phase10.closeout-anchor.task1` Reserved post-closeout terminal anchor after plan completion scripts move the scope to terminal `NONE` state. (scope: process only; no commit required).

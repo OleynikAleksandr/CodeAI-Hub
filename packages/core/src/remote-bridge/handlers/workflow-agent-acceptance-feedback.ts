@@ -8,7 +8,6 @@ import type {
   ProductPartDiagnostic,
 } from "./diagram-modules-progress";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
-
 export interface WorkflowAgentAcceptanceFeedbackGateway {
   readonly handleMessage: (
     sessionId: string,
@@ -16,16 +15,13 @@ export interface WorkflowAgentAcceptanceFeedbackGateway {
   ) => Promise<void>;
   readonly markFeedbackTurnStarted?: (sessionId: string) => void;
 }
-
 const QUALITY_GATES_STAGE = "quality_gates";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const execFileAsync = promisify(execFile);
-
 interface WorkflowAgentAcceptanceFeedbackPayload {
   readonly content: string;
 }
-
 interface StageFeedbackRequest {
   readonly actionLines: readonly string[];
   readonly checkLines: readonly string[];
@@ -36,12 +32,10 @@ interface StageFeedbackRequest {
   readonly title: string;
   readonly validator?: string | null;
 }
-
 interface FeedbackSnapshotMetadata {
   readonly checkedAt: string;
   readonly snapshotHead: string;
 }
-
 const resolveLatestStageSessionId = (
   chains: readonly ContinuityChainSummary[],
   stage: string
@@ -62,7 +56,6 @@ const resolveLatestStageSessionId = (
   }
   return best?.sessionId ?? null;
 };
-
 const buildFeedbackMessage = (
   request: StageFeedbackRequest,
   metadata: FeedbackSnapshotMetadata
@@ -99,7 +92,6 @@ const buildFeedbackMessage = (
     ...request.actionLines.map((action) => `- ${action}`),
   ].join("\n");
 };
-
 const readWorkspaceHead = async (workspaceRoot: string): Promise<string> => {
   try {
     const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], {
@@ -110,10 +102,8 @@ const readWorkspaceHead = async (workspaceRoot: string): Promise<string> => {
     return "unknown-head";
   }
 };
-
 const formatList = (items: readonly string[]): string =>
   items.length > 0 ? items.join(", ") : "(none)";
-
 const createDiagramModulesErrors = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
@@ -160,7 +150,6 @@ const createDiagramModulesErrors = (
     `Diagram Modules is not complete: ${progress.generatedCount}/${progress.plannedCount} Product Part artifacts are valid; next missing or invalid Product Part is "${missingPart}".`,
   ];
 };
-
 const createDiagramModulesActionLines = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
@@ -186,19 +175,15 @@ const createDiagramModulesActionLines = (
     "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
   ];
 };
-
 const readDiagramModulesSubturnStatus = (
   progress: DiagramModulesProgressSnapshot
 ): string | null => progress.activeSubturn?.status ?? null;
-
 const isDiagramModulesPendingSubturn = (
   progress: DiagramModulesProgressSnapshot
 ): boolean => readDiagramModulesSubturnStatus(progress) === "pending";
-
 const isDiagramModulesRepairSubturn = (
   progress: DiagramModulesProgressSnapshot
 ): boolean => readDiagramModulesSubturnStatus(progress) === "repair_pending";
-
 const createDiagramModulesRepairErrors = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
@@ -214,7 +199,6 @@ const createDiagramModulesRepairErrors = (
     (diagnostic) => diagnostic.error ?? "unknown validation error"
   );
 };
-
 const createProductPartDiagnosticErrors = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => {
@@ -235,24 +219,28 @@ const createProductPartDiagnosticErrors = (
     `Product Part "${missingPart}" is missing or invalid, but no validator diagnostic was captured.`,
   ];
 };
-
 const createOutOfOwnerDirtyError = (
   stageTitle: string,
   files: readonly string[]
 ): string =>
   `Core is blocked from finalizing the ${stageTitle} managed commit because dirty files are outside the active stage allowlist: ${files.join(", ")}. Resolution required before continuation. (User-facing notice; provider should not act on this.)`;
-
+const isMisplacedApplicationSkeletonProductPart = (
+  file: string,
+  workspaceSlug: string
+): boolean => file.startsWith(`.codeai-hub/${workspaceSlug}/product-parts/`);
+const createMisplacedApplicationSkeletonProductPartsError = (
+  files: readonly string[]
+): string =>
+  `Application Skeleton materialization wrote production product-parts inside the managed metadata root instead of root product-parts/**: ${files.join(", ")}.`;
 const readStringArray = (value: unknown): readonly string[] =>
   Array.isArray(value)
     ? value.filter((entry): entry is string => typeof entry === "string")
     : [];
-
 const readManagedGitDirtyFiles = (progress: unknown): readonly string[] =>
   readStringArray(
     (progress as { readonly managedGitDirtyFiles?: unknown })
       .managedGitDirtyFiles
   );
-
 const readManagedGitOutOfOwnerDirtyFiles = (
   progress: unknown
 ): readonly string[] =>
@@ -260,14 +248,12 @@ const readManagedGitOutOfOwnerDirtyFiles = (
     (progress as { readonly managedGitOutOfOwnerDirtyFiles?: unknown })
       .managedGitOutOfOwnerDirtyFiles
   );
-
 const readProductPartDiagnostics = (
   progress: DiagramModulesProgressSnapshot
 ): readonly ProductPartDiagnostic[] =>
   Array.isArray(progress.productPartDiagnostics)
     ? progress.productPartDiagnostics
     : [];
-
 const createDiagramModulesCheckLines = (
   progress: DiagramModulesProgressSnapshot
 ): readonly string[] => [
@@ -278,7 +264,6 @@ const createDiagramModulesCheckLines = (
   `Valid generated Product Parts: ${formatList(progress.generatedPartIds)}.`,
   `Next missing or invalid Product Part: ${progress.currentPartId ?? "(none)"}.`,
 ];
-
 const createApplicationSkeletonCheckLines = (
   progress: ApplicationSkeletonProgressSnapshot
 ): readonly string[] => [
@@ -290,7 +275,6 @@ const createApplicationSkeletonCheckLines = (
   `Observed accepted: ${progress.accepted}; materialized: ${progress.materialized}; materializationState: ${progress.materializationState}; substep: ${progress.substep}.`,
   `Observed filesystem materialization signal: ${progress.observedMaterialization}.`,
 ];
-
 const createApplicationSkeletonActionLines = (
   progress: ApplicationSkeletonProgressSnapshot
 ): readonly string[] =>
@@ -304,7 +288,6 @@ const createApplicationSkeletonActionLines = (
         "Do not create product-parts/** or mark the skeleton accepted/materialized until explicit user acceptance advances the managed plan.",
         "When the draft artifacts are ready, respond with a content-readiness note; Core owns the managed commit and user review unlock.",
       ];
-
 const createQualityGatesCheckLines = (
   progress: QualityGatesProgressSnapshot
 ): readonly string[] => [
@@ -313,15 +296,12 @@ const createQualityGatesCheckLines = (
   `Observed quality-gates.json exists: ${progress.jsonExists}; quality-gates.md exists: ${progress.markdownExists}; command contract ready: ${progress.commandContractReady}.`,
   `Observed accepted: ${progress.accepted}; integrated: ${progress.integrated}; integrationState: ${progress.integrationState ?? "(missing)"}; substep: ${progress.substep}.`,
 ];
-
 export class WorkflowAgentAcceptanceFeedback {
   private readonly logger: Logger;
   private readonly sentSignatures = new Set<string>();
-
   constructor(logger: Logger) {
     this.logger = logger;
   }
-
   async sendManagedStageFeedback(params: {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
@@ -373,7 +353,6 @@ export class WorkflowAgentAcceptanceFeedback {
       throw error;
     }
   }
-
   async sendDiagramModulesFeedback(params: {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
@@ -408,7 +387,6 @@ export class WorkflowAgentAcceptanceFeedback {
       workspaceSlug: params.workspaceSlug,
     });
   }
-
   async sendApplicationSkeletonFeedback(params: {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
@@ -419,16 +397,36 @@ export class WorkflowAgentAcceptanceFeedback {
     const outOfOwnerDirtyFiles = params.progress
       ? readManagedGitOutOfOwnerDirtyFiles(params.progress)
       : [];
+    const misplacedProductParts = outOfOwnerDirtyFiles.filter((file) =>
+      isMisplacedApplicationSkeletonProductPart(file, params.workspaceSlug)
+    );
+    const otherOutOfOwnerDirtyFiles = outOfOwnerDirtyFiles.filter(
+      (file) =>
+        !isMisplacedApplicationSkeletonProductPart(file, params.workspaceSlug)
+    );
     const errors = [
-      ...outOfOwnerDirtyFiles.map((file) =>
+      ...otherOutOfOwnerDirtyFiles.map((file) =>
         createOutOfOwnerDirtyError("Application Skeleton", [file])
       ),
+      ...(misplacedProductParts.length > 0
+        ? [
+            createMisplacedApplicationSkeletonProductPartsError(
+              misplacedProductParts
+            ),
+          ]
+        : []),
       ...(params.progress?.substep === "failed"
         ? params.progress.validationErrors
         : []),
     ];
     let actionLines: readonly string[] = [];
-    if (outOfOwnerDirtyFiles.length > 0) {
+    if (misplacedProductParts.length > 0) {
+      actionLines = [
+        `Move the misplaced .codeai-hub/${params.workspaceSlug}/product-parts/** projection to root product-parts/** so every declared codePath and materializedPath exists from the workspace root.`,
+        `Remove the misplaced .codeai-hub/${params.workspaceSlug}/product-parts/** projection after root product-parts/** contains the same tracked README placeholders.`,
+        "When the repair is ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
+      ];
+    } else if (outOfOwnerDirtyFiles.length > 0) {
       actionLines = [
         "Do not update Application Skeleton artifacts in response to this message.",
         "Wait for Core to finish or repair the managed lifecycle boundary for the current target.",
@@ -453,7 +451,6 @@ export class WorkflowAgentAcceptanceFeedback {
       workspaceSlug: params.workspaceSlug,
     });
   }
-
   async sendQualityGatesFeedback(params: {
     readonly chains: readonly ContinuityChainSummary[];
     readonly gateway?: WorkflowAgentAcceptanceFeedbackGateway;
