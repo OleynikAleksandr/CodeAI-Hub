@@ -56,16 +56,19 @@ export const readManagedGitStatus = async (
   };
   for (const file of dirtyFiles) {
     if (
+      file.startsWith(`.codeai-hub/${workspaceSlug}/application_skeleton/`) ||
+      file.startsWith(
+        `.codeai-hub/${workspaceSlug}/workflow/revisions/application-skeleton/`
+      ) ||
+      file.startsWith("product-parts/")
+    ) {
+      dirtyByStage.application_skeleton.push(file);
+    } else if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/diagram_modules/`) ||
       file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/`) ||
       file === DIAGRAM_MODULES_PLAN_PATH
     ) {
       dirtyByStage.diagram_modules.push(file);
-    } else if (
-      file.startsWith(`.codeai-hub/${workspaceSlug}/application_skeleton/`) ||
-      file.startsWith("product-parts/")
-    ) {
-      dirtyByStage.application_skeleton.push(file);
     } else if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/quality_gates/`) ||
       file.startsWith("scripts/gates/") ||
