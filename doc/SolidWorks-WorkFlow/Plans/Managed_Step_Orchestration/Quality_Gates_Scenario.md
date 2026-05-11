@@ -1,6 +1,6 @@
 # Quality Gates Scenario
 
-**Status:** planning draft for user review.
+**Status:** accepted for implementation planning.
 **Scope:** managed orchestration behavior for the `quality_gates` workflow step.
 **Baseline sources:**
 
