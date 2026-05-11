@@ -12,12 +12,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md",
   "currentTaskId": "managed-step-orchestration.phase4.closeout.task1",
   "expectedCommitMessage": "docs: close managed step orchestration planning scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed step orchestration planning scope",
-    "preCommitHead": "f96bd55ac",
-    "stage": "commit_pending",
-    "taskId": "managed-step-orchestration.phase4.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -85,8 +80,8 @@
 
 ### Stream: Closeout After Acceptance
 
-14. [DONE] `managed-step-orchestration.phase4.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the `Managed_Step_Orchestration` planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close managed step orchestration planning scope`).
+14. [IN_PROGRESS] `managed-step-orchestration.phase4.closeout.task1` After explicit user acceptance, archive this plan, decide final disposition for the `Managed_Step_Orchestration` planning documents, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: close managed step orchestration planning scope`).
     - Acceptance (2026-05-11): user accepted both scenario documents and requested the next implementation plan for `Diagram Modules`.
     - Planning disposition: keep `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/` active because the accepted `Diagram_Modules_Scenario.md` is the planning source for the next implementation scope; no `Docs_Index.md` path change is needed during this closeout.
-15. [PENDING] Git Commit: `docs: close managed step orchestration planning scope` (hash: TBD)
+15. [TODO] Git Commit: `docs: close managed step orchestration planning scope` (hash: TBD)
 16. [TODO] `managed-step-orchestration.phase4.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
