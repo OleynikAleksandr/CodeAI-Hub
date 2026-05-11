@@ -8,15 +8,15 @@
   "planId": "managed-step-orchestration-plans-revision",
   "branch": "main",
   "baseHead": "5f596b7d9",
-  "lastRecordedCommit": "29e84c3ec",
+  "lastRecordedCommit": "5825fabc9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md",
-  "currentTaskId": "managed-step-orchestration.phase1.index.task1",
-  "expectedCommitMessage": "docs: index managed step orchestration planning folder",
+  "currentTaskId": "managed-step-orchestration.phase2.verify.task1",
+  "expectedCommitMessage": "docs: record managed step orchestration planning verification",
   "debt": {
-    "expectedCommitMessage": "docs: index managed step orchestration planning folder",
-    "preCommitHead": "29e84c3ec",
+    "expectedCommitMessage": "docs: record managed step orchestration planning verification",
+    "preCommitHead": "5825fabc9",
     "stage": "commit_pending",
-    "taskId": "managed-step-orchestration.phase1.index.task1"
+    "taskId": "managed-step-orchestration.phase2.verify.task1"
   }
 }
 ```
@@ -64,14 +64,16 @@
 7. [DONE] `managed-step-orchestration.phase1.rehome.task2` Move the still-useful Application Skeleton architecture baseline into `Managed_Step_Orchestration/` and delete the superseded Phase B orchestration document that drove the wrong static phase model. (scope: `doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Architecture.md, doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: replace superseded application skeleton orchestration plan`).
 8. [DONE] Git Commit: `docs: replace superseded application skeleton orchestration plan` (hash: 29e84c3ec)
 9. [DONE] `managed-step-orchestration.phase1.index.task1` Update planning navigation so `Docs_Index.md`, `Plans/README.md`, stable architecture links, and moved managed-step planning docs point to the new managed step orchestration folder and no longer list deleted top-level planning docs as active. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/README.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**`; expected commit: `docs: index managed step orchestration planning folder`).
-10. [PENDING] Git Commit: `docs: index managed step orchestration planning folder` (hash: TBD)
+10. [DONE] Git Commit: `docs: index managed step orchestration planning folder` (hash: 5825fabc9)
 
 ## Phase 2 - Documentation Verification (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Plan And Link Checks
 
-11. [TODO] `managed-step-orchestration.phase2.verify.task1` Run `npm run plan:validate` and targeted documentation/link diagnostics needed for the moved/deleted planning paths; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed step orchestration planning verification`).
-12. [TODO] Git Commit: `docs: record managed step orchestration planning verification` (hash: TBD)
+11. [DONE] `managed-step-orchestration.phase2.verify.task1` Run `npm run plan:validate` and targeted documentation/link diagnostics needed for the moved/deleted planning paths; record evidence and any residual risk in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed step orchestration planning verification`).
+    - Evidence (2026-05-11): `npm run plan:status` reported `Validation: OK`, `npm run check:links` reported `Markdown links OK (387 files checked)`, and targeted `rg` for deleted/moved top-level planning paths found only historical DONE task scope lines in this active plan.
+    - Residual risk: the scenario documents are ready for user review, but no runtime orchestrator changes are planned in this scope until the user accepts the `Diagram Modules` and `Application Skeleton` scenarios.
+12. [PENDING] Git Commit: `docs: record managed step orchestration planning verification` (hash: TBD)
 
 ## Phase 3 - User Workflow Acceptance Testing (owner: user, updated: 2026-05-11)
 
