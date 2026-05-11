@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.231** (Application Skeleton restart gate recovery)
+**Current Release — v1.2.232** (Application Skeleton managed lifecycle upgrade boundary)
+
+This release fixes the managed-workspace lifecycle upgrade blocker found
+during v1.2.231 retesting. When an existing managed workspace receives a
+new Core-managed `scripts/plan-orchestrator/plan-cli.mjs` shim after
+extension reinstall, Core now commits that lifecycle upgrade before
+starting Application Skeleton provider work. The upgraded shim no longer
+remains as out-of-stage dirty state that blocks the draft artifact commit.
+
+Application Skeleton out-of-owner dirty feedback is also non-actionable
+for the provider: Core tells the agent to wait while Core repairs the
+managed lifecycle boundary instead of mixing lifecycle errors with
+artifact-edit instructions.
+
+**Previous release: v1.2.231** (Application Skeleton restart gate recovery)
 
 This release fixes the Core restart/reinstall blocker found during
 v1.2.230 retesting. Application Skeleton start-gate recovery now ignores

@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.232] - 2026-05-11
+### Fixed
+- **Application Skeleton no longer stalls on managed lifecycle shim upgrades after extension reinstall.** Existing managed workspaces now commit Core-owned lifecycle updates, including `scripts/plan-orchestrator/plan-cli.mjs`, before Application Skeleton provider work starts. This prevents the upgraded shim from appearing as out-of-stage dirty state and blocking the draft artifact commit.
+- **Application Skeleton out-of-owner dirty feedback is non-actionable for the provider.** Core now tells the agent to wait for Core lifecycle-boundary repair instead of sending artifact edit instructions when the blocker is a Core-owned managed lifecycle file.
+
+### Tests
+- Added managed workspace lifecycle regression coverage for upgrading an existing workspace with a stale committed plan shim before Application Skeleton starts.
+- Added Application Skeleton feedback regression coverage for out-of-owner dirty blockers.
+- Targeted lifecycle suite passed: `11/11` tests. `npm run build --workspace packages/core` and `npm run plan:validate` both pass before release packaging.
+
 ## [1.2.231] - 2026-05-11
 ### Fixed
 - **Application Skeleton unlocks after Core restart/reinstall when Diagram Modules artifacts are valid.** Volatile Core metadata such as `.codeai-hub/state/task-timers.json` and timestamp-only `.codeai-hub/<workspace>/description/description-step.json` refreshes no longer count as managed dirty state for downstream gate blocking.
