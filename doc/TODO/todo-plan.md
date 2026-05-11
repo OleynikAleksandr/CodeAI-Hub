@@ -8,15 +8,15 @@
   "planId": "application-skeleton-phase-b-orchestration-implementation",
   "branch": "main",
   "baseHead": "d2c91d120",
-  "lastRecordedCommit": "66a291c60",
+  "lastRecordedCommit": "bd8625183",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Application_Skeleton_Phase_B_Orchestration.md",
-  "currentTaskId": "application-skeleton-orchestration.phase25.release.task2",
-  "expectedCommitMessage": "build: release application skeleton acceptance write-path",
+  "currentTaskId": "application-skeleton-orchestration.phase28.wiring-audit.task1",
+  "expectedCommitMessage": "docs: open application skeleton acceptance wiring scope",
   "debt": {
-    "expectedCommitMessage": "build: release application skeleton acceptance write-path",
-    "preCommitHead": "66a291c60",
+    "expectedCommitMessage": "docs: open application skeleton acceptance wiring scope",
+    "preCommitHead": "bd8625183",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-orchestration.phase25.release.task2"
+    "taskId": "application-skeleton-orchestration.phase28.wiring-audit.task1"
   }
 }
 ```
@@ -516,13 +516,56 @@
 ### Stream: Release Build
 
 125. [DONE] `application-skeleton-orchestration.phase25.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance write-path`).
-126. [PENDING] Git Commit: `build: release application skeleton acceptance write-path` (hash: TBD)
+126. [DONE] Git Commit: `build: release application skeleton acceptance write-path` (hash: bd8625183)
 
 ## Phase 26 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
 
 ### Stream: VSIX Retest
 
-127. [TODO] `application-skeleton-orchestration.phase26.acceptance.task1` User installs the v1.2.225 VSIX and reruns the Application Skeleton retest: Phase 1 draft commit lands; typed acceptance ("accepted", "принимаю", PM button) flips `application-skeleton-map.json::accepted: true`; Core auto-commits `docs: accept application skeleton contract`; Phase 3 materialization continuation prompt arrives at the agent; Phase 3 commit `feat: materialize application skeleton` lands; downstream handoff to Quality Gates Baseline. (scope: chat/process observation only; no commit required).
+127. [BLOCKED] `application-skeleton-orchestration.phase26.acceptance.task1` User installs the v1.2.225 VSIX and reruns the Application Skeleton retest: Phase 1 draft commit lands; typed acceptance ("accepted", "принимаю", PM button) flips `application-skeleton-map.json::accepted: true`; Core auto-commits `docs: accept application skeleton contract`; Phase 3 materialization continuation prompt arrives at the agent; Phase 3 commit `feat: materialize application skeleton` lands; downstream handoff to Quality Gates Baseline. (scope: chat/process observation only; no commit required). **BLOCKED 2026-05-11:** retest of v1.2.225 exposed that the Phase 24 writer + runner integration is correct and unit-tested but never reached at runtime because the typed-fallback router's optional `handleManagedAcceptContractCommand` callback is **not wired in production**. Core log for session `f11c26b6-…` shows `Skipping managed contract acceptance phrase, phrase: "Принимаю контракт"` at 09:38:07, but no `Application Skeleton accept-contract command` log entry from `managed-stage-accept-contract-runner.ts:90` and no `Application Skeleton acceptance map.json write` log entry from `managed-stage-accept-contract-runner.ts:104` — runner never invoked. `grep -rn "handleManagedAcceptContractCommand:"` across `packages/core/src` (excluding tests) returns exactly one match — the **read** site at `session-request-handler-message-dispatch.ts:183`. No production code path **assigns** the callback. The Phase 5.accept.task3 audit explicitly recorded this as debt ("production wiring of the Core handler into the dispatch deps remains a follow-up via the new optional callback"). Phase 16 and Phase 24 audits both relied on an Explore-agent report claiming the callback was wired; reality grep proves otherwise. Hot-fix tracked under Phase 28; resumed retest under Phase 30.
+
+## Phase 28 - Acceptance Callback Wiring (owner: next agent, updated: 2026-05-11)
+
+### Stream: Scope Audit
+
+128. [DONE] `application-skeleton-orchestration.phase28.wiring-audit.task1` Open this scope: block Phase 26 with the wiring-gap findings, document the entry / exit points the late-bound callback must connect, and pin the three-file fix surface (bootstrap composition, session handler options, runtime-core dispatch factory). After wiring lands, the typed-fallback router's `handleManagedAcceptContractCommand?.()` call actually reaches `ManagedWorkflowPostTurnService::handleApplicationSkeletonAcceptContractCommand`, which delegates to `managed-stage-accept-contract-runner.ts`, which calls the Phase 24 writer + dispatches the Phase 3 continuation. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton acceptance wiring scope`).
+129. [PENDING] Git Commit: `docs: open application skeleton acceptance wiring scope` (hash: TBD)
+
+#### Audit findings (HEAD = `bd8625183`, 2026-05-11)
+
+- **Read site (correct, unchanged).** `session-request-handler-message-dispatch.ts:181–189` reads `this.deps.handleManagedAcceptContractCommand` and passes it as the router callback. The router (`application-skeleton-typed-acceptance-router.ts:31`) uses optional chaining, so an `undefined` callback silently no-ops — exactly what the v1.2.225 retest log shows.
+- **Missing write site.** `session-request-handler-runtime-core.ts:267–280` constructs `new SessionRequestHandlerMessageDispatch({...})` without setting `handleManagedAcceptContractCommand` in the deps argument. No other production file assigns it.
+- **Available implementation.** `ManagedWorkflowPostTurnService::handleApplicationSkeletonAcceptContractCommand` (line ~230 of `managed-workflow-post-turn-service.ts`) delegates to `runApplicationSkeletonAcceptContractCommand` from `managed-stage-accept-contract-runner.ts`, which now (Phase 24) calls `writeApplicationSkeletonAcceptance` plus `markAccepted` + `handle`. The full back half of the pipeline is in place and unit-tested.
+- **Composition site.** `remote-bridge/remote-bridge-bootstrap.ts:86–106` already constructs `SessionRequestHandler` with a forward-declared `workflowStateService: WorkflowStateService | null = null` and a late-bound `onTurnCompleted: (sessionId) => workflowStateService?.handleManagedWorkflowPostTurn(sessionId)` (lines 95–97). `workflowStateService` is assigned at line 116 with the post-turn service available via `workflowStateService.managedPostTurnService`. The acceptance callback must follow the same late-bound pattern.
+- **Three-file fix.** (1) `remote-bridge-bootstrap.ts` adds `handleManagedAcceptContractCommand: (params) => workflowStateService?.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand(params) ?? defaultRejectedDecision()` to the `SessionRequestHandler` options. (2) `session-request-handler.ts` accepts the new option and forwards it into `createSessionRequestHandlerRuntimeCore` callbacks. (3) `session-request-handler-runtime-core.ts:267` adds the deps property to the `new SessionRequestHandlerMessageDispatch({...})` call.
+
+### Stream: Production Callback Wiring
+
+130. [TODO] `application-skeleton-orchestration.phase28.wiring.task1` Wire the Phase 5 / Phase 24 acceptance pipeline end-to-end: add an optional `handleManagedAcceptContractCommand` field to `SessionRequestHandlerOptions`, forward it through `createSessionRequestHandlerRuntimeCore` into the `SessionRequestHandlerMessageDispatch` deps, and bind it at composition time in `remote-bridge-bootstrap.ts` via the existing forward-declared `workflowStateService`. (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`; expected commit: `fix: wire application skeleton accept contract callback in production`).
+131. [TODO] Git Commit: `fix: wire application skeleton accept contract callback in production` (hash: TBD)
+
+### Stream: Targeted Verification
+
+132. [TODO] `application-skeleton-orchestration.phase28.verify.task1` Run targeted Core tests for the dispatch, runner, writer, and end-to-end modules; run `npm run build --workspace @codeai-hub/core` and `npm run typecheck:webview`; record evidence in this plan. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton acceptance wiring verification`).
+133. [TODO] Git Commit: `docs: record application skeleton acceptance wiring verification` (hash: TBD)
+
+## Phase 29 - Release Build (owner: next agent, updated: 2026-05-11)
+
+### Stream: Release Preparation
+
+134. [TODO] `application-skeleton-orchestration.phase29.release.task1` Update README/CHANGELOG for v1.2.226 (acceptance wiring fix) and record release-preparation evidence in this plan before running `build-all.sh`. Release-build pre-approval inherited from Phase 16 / Phase 20 / Phase 24; no separate confirmation gate this cycle. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton acceptance wiring release`).
+135. [TODO] Git Commit: `docs: prepare application skeleton acceptance wiring release` (hash: TBD)
+
+### Stream: Release Build
+
+136. [TODO] `application-skeleton-orchestration.phase29.release.task2` After the release-preparation commit and clean tree, run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`; record artifact paths, release output evidence, and version/manifest changes. (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `build: release application skeleton acceptance wiring`).
+137. [TODO] Git Commit: `build: release application skeleton acceptance wiring` (hash: TBD)
+
+## Phase 30 - User Workflow Acceptance Testing Rerun (owner: user, updated: 2026-05-11)
+
+### Stream: VSIX Retest
+
+138. [TODO] `application-skeleton-orchestration.phase30.acceptance.task1` User installs the v1.2.226 VSIX and reruns the Application Skeleton retest. The Core log must now show the runner's `Application Skeleton accept-contract command` entry followed by `Application Skeleton acceptance map.json write` after a typed acceptance (or button click). The map file must flip to `accepted: true`. Core must auto-commit `docs: accept application skeleton contract` (Phase 2). The Phase 3 materialization continuation prompt must reach the agent. Phase 3 commit `feat: materialize application skeleton` must land. (scope: chat/process observation only; no commit required).
 
 ## Phase 19 - Scope Closeout (owner: next agent, updated: 2026-05-11)
 
@@ -536,6 +579,14 @@
 
 ### Stream: Closeout After Acceptance
 
-128. [TODO] `application-skeleton-orchestration.phase27.closeout.task1` After explicit user acceptance of Phase 26 retest, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+128. [BLOCKED] `application-skeleton-orchestration.phase27.closeout.task1` After explicit user acceptance of Phase 26 retest, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`). **SUPERSEDED 2026-05-11:** Phase 26 retest revealed the Phase 24 wiring gap; closeout relocated to Phase 31 once Phase 30 retest of v1.2.226 lands.
 129. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
-130. [TODO] `application-skeleton-orchestration.phase27.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+130. [BLOCKED] `application-skeleton-orchestration.phase27.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. **SUPERSEDED 2026-05-11:** handoff anchor relocated to Phase 31.
+
+## Phase 31 - Scope Closeout (owner: next agent, updated: 2026-05-11)
+
+### Stream: Closeout After Acceptance
+
+139. [TODO] `application-skeleton-orchestration.phase31.closeout.task1` After explicit user acceptance of Phase 30 retest of v1.2.226, archive this plan, decide final disposition for the planning document, update `Docs_Index.md` if needed, and leave active state terminal `NONE`. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close application skeleton phase orchestration implementation`).
+140. [TODO] Git Commit: `docs: close application skeleton phase orchestration implementation` (hash: TBD)
+141. [TODO] `application-skeleton-orchestration.phase31.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
