@@ -8,15 +8,15 @@
   "planId": "application-skeleton-managed-orchestration",
   "branch": "main",
   "baseHead": "131e22079",
-  "lastRecordedCommit": "5e5712404",
+  "lastRecordedCommit": "5f05f7997",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Architecture.md",
-  "currentTaskId": "application-skeleton.phase9b.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton restart fix release",
+  "currentTaskId": "application-skeleton.phase9b.release-build.task1",
+  "expectedCommitMessage": "chore: build application skeleton restart fix release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton restart fix release",
-    "preCommitHead": "5e5712404",
+    "expectedCommitMessage": "chore: build application skeleton restart fix release",
+    "preCommitHead": "5f05f7997",
     "stage": "commit_pending",
-    "taskId": "application-skeleton.phase9b.release-docs.task1"
+    "taskId": "application-skeleton.phase9b.release-build.task1"
   }
 }
 ```
@@ -192,9 +192,9 @@ Restart gate verification evidence (2026-05-11):
 46. [DONE] Git Commit: `docs: add application skeleton restart release gate` (hash: 5e5712404)
 47. [DONE] `application-skeleton.phase9b.release-confirmation.task1` Get separate explicit confirmation from the user before preparing release notes, running `build-all.sh`, or packaging the next VSIX for the Core restart gate fix. (scope: chat/process observation only; no commit required). Result: User explicitly confirmed release build after the Application Skeleton Core restart gate fix.
 48. [DONE] `application-skeleton.phase9b.release-docs.task1` After release-build confirmation, determine the next release version and update release-facing docs for the Application Skeleton restart gate fix. (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton restart fix release`).
-49. [PENDING] Git Commit: `docs: prepare application skeleton restart fix release` (hash: TBD)
-50. [TODO] `application-skeleton.phase9b.release-build.task1` Run the approved release build sequence, then record artifact paths, VSIX version, and restart-fix release evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton restart fix release`).
-51. [TODO] Git Commit: `chore: build application skeleton restart fix release` (hash: TBD)
+49. [DONE] Git Commit: `docs: prepare application skeleton restart fix release` (hash: 5f05f7997)
+50. [DONE] `application-skeleton.phase9b.release-build.task1` Run the approved release build sequence, then record artifact paths, VSIX version, and restart-fix release evidence. (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton restart fix release`).
+51. [PENDING] Git Commit: `chore: build application skeleton restart fix release` (hash: TBD)
 52. [TODO] `application-skeleton.phase9b.release-acceptance.task1` User installs the produced restart-fix release and accepts or rejects the Application Skeleton start gate behavior after extension/Core restart. (scope: chat/process observation only; no commit required).
 
 Restart-fix release docs preparation evidence (2026-05-11):
@@ -202,6 +202,14 @@ Restart-fix release docs preparation evidence (2026-05-11):
 - Future release version before packaging: `1.2.231` (`package.json` currently reports `1.2.230`; `build-all.sh` owns the version bump).
 - Updated `README.md` current-release marker and `CHANGELOG.md` release notes for the Application Skeleton Core restart gate recovery fix.
 - Explicit release-build confirmation was provided by the user in this thread after the fix: "После исправления собери новый релиз."
+
+Restart-fix release build evidence (2026-05-11):
+
+- PASS: `./scripts/build-all.sh --allow-dirty` built unified version `1.2.231` with the managed-plan dirty-state exception. Provider, core, UI, and CEF launcher artifacts were produced in `~/.codeai-hub/releases/` and copied to `doc/tmp/releases/`.
+- PASS: `./scripts/build-release.sh --use-current-version --allow-dirty` packaged `codeai-hub-1.2.231.vsix`, verified SDK exclusions, validated local artifacts, checked markdown links, ran duplication advisory check, pruned/restored production dependencies, and verified the VSIX runtime package surface.
+- VSIX: `codeai-hub-1.2.231.vsix` (`49M`).
+- Release bundle paths: `doc/tmp/releases/*1.2.231*` and `~/.codeai-hub/releases/*1.2.231*`.
+- Tarballs present in `doc/tmp/releases/`: `claude-module-1.2.231.tar.bz2`, `codex-module-1.2.231.tar.bz2`, `gemini-module-1.2.231.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.231.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.231.tar.bz2`, `vscode-webview-1.2.231.tar.bz2`, `project-manager-1.2.231.tar.bz2`.
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
 
