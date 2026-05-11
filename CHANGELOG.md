@@ -4,6 +4,13 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.233] - 2026-05-11
+### Changed
+- **Clean retest rebuild after clearing old local tails.** Repackages the Application Skeleton managed lifecycle upgrade fix from v1.2.232 under a fresh version so Project Manager and the extension runtime can be tested from a clean install state.
+
+### Tests
+- Rebuild target remains the v1.2.232 managed lifecycle fix: Core commits managed workspace lifecycle/shim upgrades before Application Skeleton provider work, and Application Skeleton out-of-owner dirty feedback stays non-actionable for the provider.
+
 ## [1.2.232] - 2026-05-11
 ### Fixed
 - **Application Skeleton no longer stalls on managed lifecycle shim upgrades after extension reinstall.** Existing managed workspaces now commit Core-owned lifecycle updates, including `scripts/plan-orchestrator/plan-cli.mjs`, before Application Skeleton provider work starts. This prevents the upgraded shim from appearing as out-of-stage dirty state and blocking the draft artifact commit.

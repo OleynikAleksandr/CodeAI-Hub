@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.232** (Application Skeleton managed lifecycle upgrade boundary)
+**Current Release — v1.2.233** (Application Skeleton clean retest rebuild)
+
+This release is a clean rebuild of the managed lifecycle upgrade fix
+after the retest environment was cleared of old local tails. It carries
+the same Application Skeleton lifecycle-boundary fix as v1.2.232 under a
+fresh package version so Project Manager and the extension runtime can be
+retested from a clean local install state.
+
+**Previous release: v1.2.232** (Application Skeleton managed lifecycle upgrade boundary)
 
 This release fixes the managed-workspace lifecycle upgrade blocker found
 during v1.2.231 retesting. When an existing managed workspace receives a
